@@ -21,3 +21,16 @@ body{
 	width: 250px;
 	height: 50px;
 }
+
+#dataLoadButton, #dataSaveButton{
+	float:right;
+}
+
+.hidden{
+	display: none;
+}
+
+#bioEditor{
+	height: 24em;
+    width: 20em;
+}

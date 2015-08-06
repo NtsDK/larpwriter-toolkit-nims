@@ -1,38 +1,38 @@
-init = function(selectedStory){
-	var selector = document.getElementById("storySelector");
-	removeChildren(selector);
-	
-	for ( var name in Database) {
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode(name));
-		selector.appendChild(option);
-	}
-	
-	var index = 0;
-	if(selectedStory){
-		for ( var name in Database) {
-			if (name == selectedStory) {
-				break;
-			} else {
-				index++;
-			}
-		}
-	}
-	
-	selector.selectedIndex = index;
-
-	
-	selector.addEventListener("change", onStorySelectorChange);
-	
-	CurrentStory = Database[selector.value];
-	var button = document.getElementById("createStoryButton");
-	button.addEventListener("click", createStory);
-	
-	var button = document.getElementById("makeBriefings");
-	button.addEventListener("click", makeBriefings);
-	
-	onLoad();
-}
+//init = function(selectedStory){
+//	var selector = document.getElementById("storySelector");
+//	removeChildren(selector);
+//	
+//	for ( var name in Database) {
+//		var option = document.createElement("option");
+//		option.appendChild(document.createTextNode(name));
+//		selector.appendChild(option);
+//	}
+//	
+//	var index = 0;
+//	if(selectedStory){
+//		for ( var name in Database) {
+//			if (name == selectedStory) {
+//				break;
+//			} else {
+//				index++;
+//			}
+//		}
+//	}
+//	
+//	selector.selectedIndex = index;
+//
+//	
+//	selector.addEventListener("change", onStorySelectorChange);
+//	
+//	CurrentStory = Database[selector.value];
+//	var button = document.getElementById("createStoryButton");
+//	button.addEventListener("click", createStory);
+//	
+//	var button = document.getElementById("makeBriefings");
+//	button.addEventListener("click", makeBriefings);
+//	
+//	onLoad();
+//}
 
 makeBriefings = function(){
 	
@@ -138,8 +138,8 @@ onLoad = function() {
 		appendEventInput(table, CurrentStory.events[i], i + 1);
 	}
 
-	var button = document.getElementById("createCharacterButton");
-	button.addEventListener("click", createCharacter);
+//	var button = document.getElementById("createCharacterButton");
+//	button.addEventListener("click", createCharacter);
 
 	var button = document.getElementById("createEventButton");
 	button.addEventListener("click", createEvent);
@@ -166,8 +166,8 @@ onLoad = function() {
 	
 	updatePersonalStories();
 	
-	var button = document.getElementById("renameCharacter");
-	button.addEventListener("click", renameCharacter);
+//	var button = document.getElementById("renameCharacter");
+//	button.addEventListener("click", renameCharacter);
 	
 	updatePositionSelector();
 	
@@ -193,39 +193,39 @@ swapEvents = function(){
 	onLoad();
 }
 
-renameCharacter = function(){
-	var fromName = document.getElementById("fromName").value.trim();
-	var toName = document.getElementById("toName").value.trim();
-	
-	if(fromName == "" || toName == ""){
-		alert("Одно из имен не указано.");
-		return;
-	}
-	
-	if(fromName ==  toName){
-		alert("Имена совпадают.");
-		return;
-	}
-	
-	if(!CurrentStory.characters[fromName]){
-		alert("Персонажа " + fromName + " не существует.");
-		return;
-	}
-	
-	CurrentStory.characters[toName] = true;
-	delete CurrentStory.characters[fromName];
-	
-	var events = CurrentStory.events;
-	
-	for (var i = 0; i < events.length; i++) {
-		if(events[i].characters[fromName]){
-			events[i].characters[toName] = events[i].characters[fromName];
-			delete events[i].characters[fromName];
-		}
-	}
-	
-	onLoad();
-}
+//renameCharacter = function(){
+//	var fromName = document.getElementById("fromName").value.trim();
+//	var toName = document.getElementById("toName").value.trim();
+//	
+//	if(fromName == "" || toName == ""){
+//		alert("Одно из имен не указано.");
+//		return;
+//	}
+//	
+//	if(fromName ==  toName){
+//		alert("Имена совпадают.");
+//		return;
+//	}
+//	
+//	if(!CurrentStory.characters[fromName]){
+//		alert("Персонажа " + fromName + " не существует.");
+//		return;
+//	}
+//	
+//	CurrentStory.characters[toName] = true;
+//	delete CurrentStory.characters[fromName];
+//	
+//	var events = CurrentStory.events;
+//	
+//	for (var i = 0; i < events.length; i++) {
+//		if(events[i].characters[fromName]){
+//			events[i].characters[toName] = events[i].characters[fromName];
+//			delete events[i].characters[fromName];
+//		}
+//	}
+//	
+//	onLoad();
+//}
 
 updatePersonalStories = function(){
 	var table = document.getElementById("personalStories");
@@ -385,29 +385,29 @@ updatePositionSelector = function(){
 	
 }
 
-createCharacter = function() {
-	var characterNameInput = document.getElementById("characterNameInput");
-	var name = characterNameInput.value.trim();
-	
-	if(name == ""){
-		alert("Имя персонажа не указано");
-		return;
-	}
-
-	// for(var i=0;i<Database.characters.length;++i){
-	// if(Database.characters[i] == name){
-	if (CurrentStory.characters[name]) {
-		alert("Такой персонаж уже существует");
-		return;
-	}
-	// }
-
-	// Database.characters.push(name);
-	CurrentStory.characters[name] = true;
-
-	var input = document.getElementById("characterBlock");
-	appendCharacterInput(input, name);
-}
+//createCharacter = function() {
+//	var characterNameInput = document.getElementById("characterNameInput");
+//	var name = characterNameInput.value.trim();
+//	
+//	if(name == ""){
+//		alert("Имя персонажа не указано");
+//		return;
+//	}
+//
+//	// for(var i=0;i<Database.characters.length;++i){
+//	// if(Database.characters[i] == name){
+//	if (CurrentStory.characters[name]) {
+//		alert("Такой персонаж уже существует");
+//		return;
+//	}
+//	// }
+//
+//	// Database.characters.push(name);
+//	CurrentStory.characters[name] = true;
+//
+//	var input = document.getElementById("characterBlock");
+//	appendCharacterInput(input, name);
+//}
 
 function appendEventInput(table, event, index) {
 	var tr = document.createElement("tr");

@@ -11,13 +11,18 @@
 <!-- <script src="libs/dateFormat.js"></script> -->
 <!-- <link href="libs/vis.css" rel="stylesheet" type="text/css" /> -->
 </head>
-<body onload="init()">
+<body onload="PageManager.onLoad()">
 
 	<script src="js/utils.js"></script>
 	<script src="js/fileUtils.js"></script>
-	<script src="js/data.js"></script>
+<!-- 	<script src="js/data.js"></script> -->
+	<script src="js/data2.js"></script>
 	<script src="js/core.js"></script>
 
+	<script src="js/pageManager.js"></script>
+	<script src="js/overview.js"></script>
+	<script src="js/characters.js"></script>
+	
 	<!--   <script src="js/gameCommon.js"></script> -->
 
 	<!--   <script src="js/trialEditor.js"></script> -->
@@ -27,116 +32,94 @@
 
 	<!--   <script src="js/ui.js"></script> -->
 	
-	 <div class="block">
-    Выбор истории
-    <select id="storySelector"></select>
-    <input id="createStoryName"></input><button id="createStoryButton">Создать историю</button>
-    
-    <button id="makeBriefings">Сформировать вводные</button>
-    <input type="checkbox" id="toSeparateFileCheckbox"></input> Каждую в отдельный файл
-
+	<div class="block" id="navigation">
+	
+	</div>
+	
+	 <div class="block" id="contentArea">
+  
+  </div>
+  
+  <div class="hidden">
+  <div id="charactersDiv">
+          <input id="characterNameInput"></input>
+          <button id="createCharacterButton">Добавить</button> <br> 
+          Переименовать 
+          из  <select id="fromName"></select>
+          в <input id="toName"></input> <button id="renameCharacter">OK</button><br>
+          <select id="characterRemoveSelector"></select><button id="removeCharacterButton">Удалить</button>
+          <br><br>
+          Биографии<br>
+          <table cellspacing=0 cellpadding=0>
+          <tr>
+          <td><select size=20 id="bioEditorSelector"></select></td>
+          <td><textarea id="bioEditor"></textarea></td>
+          </tr>
+          </table>
+  
+  </div>
   </div>
 	
-	<div class="block">
-		<table>
-			<tr>
-				<td>Персонажи<br> <input id="characterNameInput"></input>
-					<button id="createCharacterButton">Добавить</button> <br> 
-					Переименовать 
-					<br>
-					из  <input id="fromName"></input>
-					<br> 
-					в <input id="toName"></input> <button id="renameCharacter">OK</button>
-					
-					<br><br>
-					
-					
-					<div id="characterBlock"></div> <br> <br>Мастерская история<br> <textarea
-						id="masterStoryArea"></textarea>
-				</td>
+<!-- 	 <div class="block"> -->
+<!--     Выбор истории -->
+<!--     <select id="storySelector"></select> -->
+<!--     <input id="createStoryName"></input><button id="createStoryButton">Создать историю</button> -->
+    
+<!--     <button id="makeBriefings">Сформировать вводные</button> -->
+<!--     <input type="checkbox" id="toSeparateFileCheckbox"></input> Каждую в отдельный файл -->
 
-				<td >События<br> <textarea id="eventInput"
-						class="eventText"></textarea><select id="positionSelector"></select>
-					<button id="createEventButton">Добавить</button> 
-					<br>
-					Поменять местами <select id="firstEvent"></select> и <select id="secondEvent"></select> <button id="swapEventsButton">OK</button>
+<!--   </div> -->
+	
+<!-- 	<div class="block"> -->
+<!-- 		<table> -->
+<!-- 			<tr> -->
+<!-- 				<td>Персонажи<br> <input id="characterNameInput"></input> -->
+<!-- 					<button id="createCharacterButton">Добавить</button> <br>  -->
+<!-- 					Переименовать  -->
+<!-- 					<br> -->
+<!-- 					из  <input id="fromName"></input> -->
+<!-- 					<br>  -->
+<!-- 					в <input id="toName"></input> <button id="renameCharacter">OK</button> -->
 					
-					<br> <br>
+<!-- 					<br><br> -->
 					
 					
-					<table id="eventBlock"></table>
-				</td>
-			</tr>
+<!-- 					<div id="characterBlock"></div> <br> <br>Мастерская история<br> <textarea -->
+<!-- 						id="masterStoryArea"></textarea> -->
+<!-- 				</td> -->
 
-			<tr>
-			<td></td>
-				<td>Персональные истории 
-				<select id="personalStoriesCharacter"></select>
+<!-- 				<td >События<br> <textarea id="eventInput" -->
+<!-- 						class="eventText"></textarea><select id="positionSelector"></select> -->
+<!-- 					<button id="createEventButton">Добавить</button>  -->
+<!-- 					<br> -->
+<!-- 					Поменять местами <select id="firstEvent"></select> и <select id="secondEvent"></select> <button id="swapEventsButton">OK</button> -->
+					
+<!-- 					<br> <br> -->
+					
+					
+<!-- 					<table id="eventBlock"></table> -->
+<!-- 				</td> -->
+<!-- 			</tr> -->
+
+<!-- 			<tr> -->
+<!-- 			<td></td> -->
+<!-- 				<td>Персональные истории  -->
+<!-- 				<select id="personalStoriesCharacter"></select> -->
 				
-				<input type="checkbox" id="showUnfinishedStoriesOnly"></input> Показать только незавершенные
-				<table id="personalStories"></table>
-				</td>
-			</tr>
-		</table>
+<!-- 				<input type="checkbox" id="showUnfinishedStoriesOnly"></input> Показать только незавершенные -->
+<!-- 				<table id="personalStories"></table> -->
+<!-- 				</td> -->
+<!-- 			</tr> -->
+<!-- 		</table> -->
 
-	</div>
+<!-- 	</div> -->
 
-	<button id="saveButton">Очистить</button>
+<!-- 	<button id="saveButton">Очистить</button> -->
 
-	<div class="block">
-		Загрузить из файла<input type="file" id="fileinput" /> <br>
-		<button id="saveFileButton">Сохранить</button>
-	</div>
-
-
-
-	<!--   <div class="block"> -->
-	<!--     Timeline -->
-	<!--     <div id="visualization"></div> -->
-
-	<!--   </div> -->
-
-	<!--    <div class="block"> -->
-	<!--     Log -->
-	<!--     <table id="logTable" class="standardTable"> -->
-	<!--     </table> -->
-
-	<!--   </div> -->
-
-	<!--   <div class="block"> -->
-	<!--     Players -->
-	<!--     <table id="playersTable" class="standardTable"> -->
-	<!--     </table> -->
-
-	<!--   </div> -->
-
-	<!--   <div class="block"> -->
-	<!--     <select id="gameBodyDungeonSelector"></select> -->
-	<!--     <button id="gameBodyMappingActivator">Активировать данж</button> -->
-	<!--     <table id="mappingTable" class="block"></table> -->
-
-	<!--   </div> -->
-
-	<!--   <div class="block"> -->
-	<!--     Расширенное тестирование данжей<br> <select -->
-	<!--       id="playerSelector"> -->
-	<!--     </select> <select id="pointSelector"> -->
-	<!--     </select> -->
-
-	<!--     <button onclick="startPoint()">Активировать портал</button> -->
-
-	<!--       Схема данжа -->
-	<!--       <div id="gameTestDungeonSchema"></div> -->
-	<!--       <table class="block"><tr id="playersLogs"></tr></table> -->
-
-	<!--   </div> -->
-
-
-	<!--   <div class="block"> -->
-	<!--     Загрузить из файла<input type="file" id="fileinput" /> <br> -->
-	<!--     <button id="saveFileButton">Сохранить</button> -->
-	<!--   </div> -->
-
+<!-- 	<div class="block"> -->
+<!-- 		Загрузить из файла<input type="file" id="fileinput" /> <br> -->
+<!-- 		<button id="saveFileButton">Сохранить</button> -->
+<!-- 	</div> -->
 
 </body>
 </html>

@@ -1,12 +1,14 @@
-basicFileUtilsInit = function(){
-	document.getElementById('fileinput').addEventListener('change',
-			readSingleFile, false);
+FileUtils = {};
+
+FileUtils.init = function(){
+	document.getElementById('dataLoadButton').addEventListener('change',
+			FileUtils.readSingleFile, false);
 	
-	var button = document.getElementById('saveFileButton');
-	button.addEventListener('click', saveFile);
+	var button = document.getElementById('dataSaveButton');
+	button.addEventListener('click', FileUtils.saveFile);
 }
 
-function readSingleFile(evt) {
+FileUtils.readSingleFile = function(evt) {
 	// Retrieve the first (and only!) File from the FileList object
 	var f = evt.target.files[0];
 
@@ -20,7 +22,7 @@ function readSingleFile(evt) {
 //			// + "starts with: " + contents.substr(1, contents.indexOf("n"))
 //			);
 			Database = JSON.parse(contents);
-			onLoad();
+//			onLoad();
 		}
 		r.readAsText(f);
 	} else {
@@ -28,6 +30,6 @@ function readSingleFile(evt) {
 	}
 }
 
-function saveFile() {
+FileUtils.saveFile = function() {
     window.open("data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Database, null, '  ')) );
 }
