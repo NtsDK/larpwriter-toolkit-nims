@@ -22,6 +22,7 @@ FileUtils.readSingleFile = function(evt) {
 //			// + "starts with: " + contents.substr(1, contents.indexOf("n"))
 //			);
 			Database = JSON.parse(contents);
+			PageManager.currentView.refresh();
 //			onLoad();
 		}
 		r.readAsText(f);

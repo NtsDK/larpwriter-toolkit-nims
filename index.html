@@ -22,6 +22,8 @@
 	<script src="js/pageManager.js"></script>
 	<script src="js/overview.js"></script>
 	<script src="js/characters.js"></script>
+	<script src="js/stories.js"></script>
+	<script src="js/storyEvents.js"></script>
 	
 	<!--   <script src="js/gameCommon.js"></script> -->
 
@@ -39,28 +41,77 @@
 	 <div class="block" id="contentArea">
   
   </div>
-  
-  <div class="hidden">
-  <div id="charactersDiv">
-          <input id="characterNameInput"></input>
-          <button id="createCharacterButton">Добавить</button> <br> 
-          Переименовать 
-          из  <select id="fromName"></select>
-          в <input id="toName"></input> <button id="renameCharacter">OK</button><br>
-          <select id="characterRemoveSelector"></select><button id="removeCharacterButton">Удалить</button>
-          <br><br>
-          Биографии<br>
-          <table cellspacing=0 cellpadding=0>
-          <tr>
-          <td><select size=20 id="bioEditorSelector"></select></td>
-          <td><textarea id="bioEditor"></textarea></td>
-          </tr>
-          </table>
-  
-  </div>
-  </div>
-	
-<!-- 	 <div class="block"> -->
+
+	<div class="hidden">
+		<div id="charactersDiv">
+			<input id="characterNameInput"></input>
+			<button id="createCharacterButton">Добавить</button>
+			<br> Переименовать из <select id="fromName"></select> в <input
+				id="toName"></input>
+			<button id="renameCharacter">OK</button>
+			<br> <select id="characterRemoveSelector"></select>
+			<button id="removeCharacterButton">Удалить</button>
+			<br> <br> Биографии<br>
+			<table cellspacing=0 cellpadding=0>
+				<tr>
+					<td><select size=20 id="bioEditorSelector"></select></td>
+					<td><textarea id="bioEditor"></textarea></td>
+				</tr>
+			</table>
+
+		</div>
+
+		<div id="storiesDiv">
+		  <input id="createStoryName"></input>
+      <button id="createStoryButton">Добавить</button>
+      <br> Переименовать из <select id="fromStory"></select> в <input
+        id="toStory"></input>
+      <button id="renameStoryButton">OK</button>
+      <br> <select id="storyRemoveSelector"></select>
+      <button id="removeStoryButton">Удалить</button>
+      
+<!--       <button id="removeStoryButton">Удалить историю</button><br> -->
+<!--       <button id="renameStoryButton">Переименовать историю</button> -->
+		
+		
+		
+<!-- 			Выбор истории  -->
+<!-- 			 <input id="createStoryName"></input>  -->
+<!-- 			<button id="createStoryButton">Создать историю</button>  -->
+			<table>
+				<tr>
+				  <th></th>
+					<th>Мастерская история</th>
+					<th id="storiesNavigation"></th>
+				</tr>
+				<tr>
+					<td><select size=20 id="storySelector"></select></textarea></td>
+					<td><textarea id="masterStoryArea"></textarea></td>
+					<td id="storiesContent"></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div id="storyEventsDiv">
+		  Название<input id="eventNameInput"></input><br>
+			<textarea id="eventInput" class="eventText"></textarea>
+			<select id="positionSelector"></select>
+			<button id="createEventButton">Добавить</button>
+			<br> Поменять местами <select id="firstEvent"></select> и <select
+				id="secondEvent"></select>
+			<button id="swapEventsButton">OK</button>
+			<br>
+			<select id="removeEventSelector"></select>	<button id="removeEventButton">Удалить</button>
+			<br> <br>
+			
+			<table id="eventBlock"></table>
+		</div>
+
+
+	</div>
+
+	<!-- 	 <div class="block"> -->
 <!--     Выбор истории -->
 <!--     <select id="storySelector"></select> -->
 <!--     <input id="createStoryName"></input><button id="createStoryButton">Создать историю</button> -->
@@ -84,7 +135,9 @@
 <!-- 					<br><br> -->
 					
 					
-<!-- 					<div id="characterBlock"></div> <br> <br>Мастерская история<br> <textarea -->
+<!-- 					<div id="characterBlock"></div> <br> <br> -->
+					
+<!-- 					Мастерская история<br> <textarea -->
 <!-- 						id="masterStoryArea"></textarea> -->
 <!-- 				</td> -->
 

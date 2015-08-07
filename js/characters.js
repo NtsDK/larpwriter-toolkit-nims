@@ -13,7 +13,7 @@ Characters.init = function(){
 	button.addEventListener("click", Characters.removeCharacter);
 
 	var button = document.getElementById("bioEditorSelector");
-	button.addEventListener("change", Characters.showBio);
+	button.addEventListener("change", Characters.showBioDelegate);
 	
 	var button = document.getElementById("bioEditor");
 	button.addEventListener("change", Characters.updateBio);
@@ -56,8 +56,11 @@ Characters.refresh = function(){
 	}
 	
 	var editor = document.getElementById("bioEditor");
-	editor.name = null;
-	editor.value = "";
+	Characters.showBio(names[0]);
+//	editor.name = null;
+//	editor.value = "";
+//	editor.name = null;
+//	editor.value = "";
 };
 
 Characters.createCharacter = function() {
@@ -99,7 +102,12 @@ Characters.renameCharacter = function(){
 		return;
 	}
 	
-//	if(!Database.Characters[fromName]){
+	if(Database.Characters[toName]){
+		alert("Имя " + toName + " уже используется.");
+		return;
+	}
+
+	//	if(!Database.Characters[fromName]){
 //		alert("Персонажа " + fromName + " не существует.");
 //		return;
 //	}
@@ -131,9 +139,18 @@ Characters.removeCharacter = function(){
 	}
 };
 
-Characters.showBio = function(event){
+Characters.showBioDelegate = function(event){
 //	var name = document.getElementById("bioEditorSelector").value.trim();
 	var name = event.target.value.trim();
+	Characters.showBio(name);
+//	var editor = document.getElementById("bioEditor");
+//	editor.name = name;
+//	editor.value = Database.Characters[name].bio;
+};
+
+Characters.showBio = function(name){
+////	var name = document.getElementById("bioEditorSelector").value.trim();
+//	var name = event.target.value.trim();
 	var editor = document.getElementById("bioEditor");
 	editor.name = name;
 	editor.value = Database.Characters[name].bio;

@@ -1,3 +1,40 @@
+Utils = {};
+
+Utils.addView = function(rootObject, name, view, displayName, navigationId, contentAreaId, mainPage){
+	view.init();
+//	var viewContent = initializer();
+	rootObject.views[name] = view;
+	var navigation = document.getElementById(navigationId);
+	var button = document.createElement("button");
+	button.appendChild(document.createTextNode(displayName));
+	navigation.appendChild(button)
+	
+	var onClickDelegate = function(view){
+		return function(){
+			var contentArea = document.getElementById(contentAreaId);
+			removeChildren(contentArea);
+			contentArea.appendChild(view.content);
+			rootObject.currentView = view;
+			view.refresh();
+		};
+	}
+	
+	button.addEventListener("click", onClickDelegate(view));
+	if(mainPage){
+		var contentArea = document.getElementById(contentAreaId);
+		contentArea.appendChild(view.content);
+		rootObject.currentView = view;
+//		view.refresh();
+	}
+}
+
+//Array Remove - By John Resig (MIT Licensed)
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+
 if(document.getElementsByClassName) {
 
 	getElementsByClass = function(classList, node) {    
