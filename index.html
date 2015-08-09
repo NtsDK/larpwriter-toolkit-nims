@@ -28,6 +28,7 @@
 	<script src="js/storyCharacters.js"></script>
 	<script src="js/eventPresence.js"></script>
 	<script src="js/events.js"></script>
+	<script src="js/briefings.js"></script>
 	
 	<!--   <script src="js/gameCommon.js"></script> -->
 
@@ -128,12 +129,26 @@
     
     <div id="eventsDiv">
         <select id="personalStoriesCharacter"></select>
-        
 <!--        <input type="checkbox" id="showUnfinishedStoriesOnly"></input> Показать только незавершенные -->
        <table id="personalStories"></table>
     </div>
-
-
+    
+    
+    <div id="briefingsDiv">
+        <button id="makeBriefings">Сформировать вводные</button>
+        <input type="checkbox" id="toSeparateFileCheckbox"></input> Каждую в отдельный файл
+        
+        <br><br>
+        
+        Предварительный просмотр
+        <br>
+        <select id="briefingCharacter"></select>
+        <div id="briefingContent">
+        
+        </div>
+        
+    </div>
+    
 	</div>
 
 	<!-- 	 <div class="block"> -->

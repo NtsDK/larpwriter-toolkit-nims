@@ -26,7 +26,7 @@ Utils.addView = function(rootObject, name, view, displayName, navigationId, cont
 		rootObject.currentView = view;
 //		view.refresh();
 	}
-}
+};
 
 //Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function(from, to) {
@@ -71,7 +71,7 @@ function charOrdA(a, b) {
 	if (a < b)
 		return -1;
 	return 0;
-}
+};
 
 
 
@@ -82,11 +82,11 @@ removeChildren = function(myNode){
 	while (myNode.firstChild) {
 	    myNode.removeChild(myNode.firstChild);
 	}
-}
+};
 
 function isEmpty(obj){
     return (Object.getOwnPropertyNames(obj).length === 0);
-}
+};
 
 function clone(o) {
 	if (!o || 'object' !== typeof o) {
@@ -105,4 +105,4 @@ function clone(o) {
 		}
 	}
 	return c;
-}
+};

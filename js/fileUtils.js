@@ -6,7 +6,7 @@ FileUtils.init = function(){
 	
 	var button = document.getElementById('dataSaveButton');
 	button.addEventListener('click', FileUtils.saveFile);
-}
+};
 
 FileUtils.readSingleFile = function(evt) {
 	// Retrieve the first (and only!) File from the FileList object
@@ -29,8 +29,8 @@ FileUtils.readSingleFile = function(evt) {
 	} else {
 		alert("Failed to load file");
 	}
-}
+};
 
 FileUtils.saveFile = function() {
     window.open("data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Database, null, '  ')) );
-}
+};

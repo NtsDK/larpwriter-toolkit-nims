@@ -10,8 +10,8 @@ PageManager.onLoad = function(){
 	Utils.addView(root, "Overview", Overview, "Обзор", nav, content);
 	Utils.addView(root, "Characters", Characters, "Персонажи", nav, content);
 	Utils.addView(root, "Stories", Stories, "Истории", nav, content);
-	Utils.addView(root, "Events", Events, "События", nav, content, true);
-	Utils.addView(root, "Briefings", Overview, "Вводные", nav, content);
+	Utils.addView(root, "Events", Events, "События", nav, content);
+	Utils.addView(root, "Briefings", Briefings, "Вводные", nav, content, true);
 	
 	var navigation = document.getElementById(nav);
 	var button = document.createElement("input");
@@ -27,32 +27,16 @@ PageManager.onLoad = function(){
 	FileUtils.init();
 	
 	PageManager.currentView.refresh();
+};
+
+
+window.onbeforeunload = function (evt) {
+    var message = "Убедитесь, что сохранили данные. После закрытия страницы все несохраненные изменения будут потеряны.";
+    if (typeof evt == "undefined") {
+        evt = window.event;
+    }
+    if (evt) {
+        evt.returnValue = message;
+    }
+    return message;
 }
-
-
-//PageManager.addView = function(rootObject, name, view, displayName, navigationId, contentAreaId, mainPage){
-//	view.init();
-////	var viewContent = initializer();
-//	PageManager.views[name] = view;
-//	var navigation = document.getElementById("navigation");
-//	var button = document.createElement("button");
-//	button.appendChild(document.createTextNode(displayName));
-//	navigation.appendChild(button)
-//	
-//	var onClickDelegate = function(view){
-//		return function(){
-//			var contentArea = document.getElementById("contentArea");
-//			removeChildren(contentArea);
-//			contentArea.appendChild(view.content);
-//			PageManager.currentView = view;
-//			view.refresh();
-//		};
-//	}
-//	
-//	button.addEventListener("click", onClickDelegate(view));
-//	if(mainPage){
-//		contentArea.appendChild(view.content);
-//		PageManager.currentView = view;
-//		view.refresh();
-//	}
-//}

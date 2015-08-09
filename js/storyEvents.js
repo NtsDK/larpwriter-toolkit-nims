@@ -11,7 +11,7 @@ StoryEvents.init = function(){
 	button.addEventListener("click", StoryEvents.removeEvent);
 	
 	StoryEvents.content = document.getElementById("storyEventsDiv");
-}
+};
 
 StoryEvents.refresh = function(){
 	
@@ -62,7 +62,7 @@ StoryEvents.refresh = function(){
 		selector3.appendChild(option);
 	}
 	
-}
+};
 
 StoryEvents.createEvent = function() {
 	var eventName = document.getElementById("eventNameInput").value.trim();
@@ -95,7 +95,7 @@ StoryEvents.createEvent = function() {
 	}
 
 	StoryEvents.refresh();
-}
+};
 
 StoryEvents.swapEvents = function(){
 	var index1 = document.getElementById("firstEvent").selectedIndex;
@@ -140,7 +140,7 @@ StoryEvents.appendEventHeader = function(table) {
 	var td = document.createElement("td");
 	tr.appendChild(td);
 	td.appendChild(document.createTextNode("Время"));
-}
+};
 
 StoryEvents.appendEventInput = function(table, event, index) {
 	var tr = document.createElement("tr");

@@ -6,7 +6,9 @@ Overview.init = function(){
 	overviewDiv.appendChild(document.createTextNode("Overview"));
 	
 	Overview.content = overviewDiv;
-//	return overviewDiv;
-}
+//	Stories.content = document.getElementById("storiesDiv");
+};
 
-Overview.refresh = function(){}
+Overview.refresh = function(){
+	
+};

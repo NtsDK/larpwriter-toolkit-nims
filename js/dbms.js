@@ -1,6 +1,17 @@
 DBMS = {};
 
-DBMS.getCharacterNamesArray = function(storyName) {
+DBMS.getCharacterNamesArray = function() {
+	var characterArray = [];
+	
+	for ( var name in Database.Characters) {
+		characterArray.push(name);
+	}
+	
+	characterArray.sort(charOrdA);
+	return characterArray;
+};
+
+DBMS.getStoryCharacterNamesArray = function(storyName) {
 	var characterArray = [];
 	
 	var localCharacters;

@@ -11,7 +11,7 @@ EventPresence.refresh = function(){
 	
 	EventPresence.appendTableHeader(table);
 	
-	var characterArray = DBMS.getCharacterNamesArray();
+	var characterArray = DBMS.getStoryCharacterNamesArray();
 
 	for (var i = 0; i < Stories.CurrentStory.events.length; ++i) {
 		EventPresence.appendTableInput(table, Stories.CurrentStory.events[i],characterArray);
@@ -23,7 +23,7 @@ EventPresence.appendTableHeader = function(table) {
 		var td = document.createElement("th");
 			td.appendChild(document.createTextNode("Событие"));	
 		tr.appendChild(td);
-		var characterArray = DBMS.getCharacterNamesArray();
+		var characterArray = DBMS.getStoryCharacterNamesArray();
 		
 		for (var i = 0; i < characterArray.length; i++) {
 			var td = document.createElement("th");

@@ -33,7 +33,7 @@ Stories.init = function(){
 	}
 	
 	Stories.content = document.getElementById("storiesDiv");
-}
+};
 
 Stories.refresh = function(){
 	var selector = document.getElementById("storySelector");
@@ -67,7 +67,7 @@ Stories.refresh = function(){
 	}
 	
 	Stories.currentView.refresh();
-}
+};
 
 Stories.createStory = function(){
 	var storyName = document.getElementById("createStoryName").value.trim();
@@ -133,7 +133,7 @@ Stories.removeStory = function(){
 Stories.onStorySelectorChangeDelegate = function(event){
 	var storyName = event.target.value;
 	Stories.onStorySelectorChange(storyName);
-}
+};
 
 Stories.onStorySelectorChange = function(storyName){
 	Stories.CurrentStory = Database.Stories[storyName];
@@ -152,10 +152,10 @@ Stories.onStorySelectorChange = function(storyName){
 //	for (var i = 0; i < Stories.CurrentStory.events.length; ++i) {
 //		Stories.appendEventInput(table, Stories.CurrentStory.events[i], i + 1);
 //	}
-}
+};
 
 Stories.updateMasterStory = function(event){
 	var storyArea = document.getElementById("masterStoryArea");
 	Stories.CurrentStory.story = storyArea.value;
-}
+};
 
