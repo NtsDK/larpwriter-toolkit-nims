@@ -24,6 +24,8 @@
 	<script src="js/characters.js"></script>
 	<script src="js/stories.js"></script>
 	<script src="js/storyEvents.js"></script>
+	<script src="js/storyCharacters.js"></script>
+	<script src="js/eventPresense.js"></script>
 	
 	<!--   <script src="js/gameCommon.js"></script> -->
 
@@ -107,6 +109,26 @@
 			
 			<table id="eventBlock"></table>
 		</div>
+		
+		<div id="storyCharactersDiv">
+		<select id="storyCharactersAddSelector"></select><button id="storyCharactersAddButton">Добавить</button><br>
+		<select id="storyCharactersRemoveSelector"></select><button id="storyCharactersRemoveButton">Удалить</button>
+      <br> <br>
+      
+      <table id="storyCharactersTable"></table>
+      Контроль:<span id="inventoryCheck"></span>
+    </div>
+
+		<div id="eventPresenseDiv">
+		
+		<table id="eventPresenseTable" cellspacing=0 cellpadding=0></table>
+<!-- 		<select id="storyCharactersAddSelector"></select><button id="storyCharactersAddButton">Добавить</button><br> -->
+<!-- 		<select id="storyCharactersRemoveSelector"></select><button id="storyCharactersRemoveButton">Удалить</button> -->
+<!--       <br> <br> -->
+      
+<!--       <table id="storyCharactersTable"></table> -->
+<!--       Контроль:<span id="inventoryCheck"></span> -->
+    </div>
 
 
 	</div>

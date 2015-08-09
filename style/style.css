@@ -34,3 +34,18 @@ body{
 	height: 24em;
     width: 20em;
 }
+
+#eventPresenseTable th{
+	padding: 5px;
+}
+
+#eventPresenseTable tr:nth-child(odd),
+#eventPresenseTable tr td:nth-child(odd){ 
+    background-color: rgba(255,255,255,0.5);
+}
+ 
+#eventPresenseTable tr:nth-child(even),
+#eventPresenseTable tr td:nth-child(even){ 
+	background-color: rgba(222,226,228,0.5);
+}
+
