@@ -10,6 +10,13 @@
 <!-- <script src="libs/viz.js"></script> -->
 <!-- <script src="libs/dateFormat.js"></script> -->
 <!-- <link href="libs/vis.css" rel="stylesheet" type="text/css" /> -->
+
+<link rel="stylesheet" type="text/css" href="libs/vis.css"/ >
+<script src="libs/vis.js"></script>
+<link rel="stylesheet" type="text/css" href="libs/jquery.datetimepicker.css"/ >
+<script src="libs/jquery-2.1.4.js"></script>
+<script src="libs/jquery.datetimepicker.js"></script>
+
 </head>
 <body onload="PageManager.onLoad()">
 
@@ -29,6 +36,8 @@
 	<script src="js/eventPresence.js"></script>
 	<script src="js/events.js"></script>
 	<script src="js/briefings.js"></script>
+	<script src="js/timeline.js"></script>
+
 	
 	<!--   <script src="js/gameCommon.js"></script> -->
 
@@ -75,14 +84,6 @@
       <br> <select id="storyRemoveSelector"></select>
       <button id="removeStoryButton">Удалить</button>
       
-<!--       <button id="removeStoryButton">Удалить историю</button><br> -->
-<!--       <button id="renameStoryButton">Переименовать историю</button> -->
-		
-		
-		
-<!-- 			Выбор истории  -->
-<!-- 			 <input id="createStoryName"></input>  -->
-<!-- 			<button id="createStoryButton">Создать историю</button>  -->
 			<table>
 				<tr>
 				  <th></th>
@@ -147,6 +148,18 @@
         
         </div>
         
+    </div>
+    
+    <div id="overviewDiv">
+        Название<input id="gameNameInput"></input><br>
+        Игровая дата<input id="gameDatePicker"></input><br>
+        Дата начала доигровых событий<input id="preGameDatePicker"></input><br>
+        Описание<br><textarea id="gameDescription"></textarea>
+    </div>
+
+    <div id="timelineDiv">
+        Хронология
+        <div id="timelineContainer"></div>
     </div>
     
 	</div>

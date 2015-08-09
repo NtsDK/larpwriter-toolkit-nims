@@ -25,6 +25,7 @@ StoryEvents.refresh = function(){
 		StoryEvents.appendEventInput(table, Stories.CurrentStory.events[i], i + 1);
 	}
 	
+
 	// refresh position selector
 	var positionSelector = document.getElementById("positionSelector");
 	removeChildren(positionSelector);
@@ -167,18 +168,6 @@ StoryEvents.appendEventInput = function(table, event, index) {
 	input.addEventListener("change", StoryEvents.updateEventText);
 	td.appendChild(input);
 
-//	// for(var i=0;i<Database.characters.length;++i){
-//	for ( var name in CurrentStory.characters) {
-//		var td = document.createElement("td");
-//		tr.appendChild(td);
-//		var input = document.createElement("input");
-//		input.type = "checkbox";
-//		if(event.characters[name]){
-//			input.checked = true;
-//		}
-//		input.addEventListener("change", characterCheckboxDelegateCreator(name, event));
-//		td.appendChild(input);
-//	}
 	var td = document.createElement("td");
 	tr.appendChild(td);
 	var input = document.createElement("input");
@@ -187,10 +176,40 @@ StoryEvents.appendEventInput = function(table, event, index) {
 	
 	input.eventInfo = event;
 	
+	var opts = {
+		lang: "ru",
+		mask:true,
+		startDate: new Date(Database.Meta.preGameDate),
+		endDate: new Date(Database.Meta.date),
+		onChangeDateTime : StoryEvents.onChangeDateTimeCreator(input),
+	};
+	
+	if(event.time != ""){
+		opts.value = event.time;
+	} else {
+		opts.value = Database.Meta.date;
+		input.className = "eventTime defaultDate";
+	}
+	
+	jQuery(input).datetimepicker(opts);
+	
+//	input.myFunc = function(){
+//		
+//		alert("sdfsdfsdfsdfsdf")
+//	}
+	
 //	input.addEventListener("change", myAlert);
-	input.addEventListener("change", StoryEvents.updateTime);
+//	input.addEventListener("change", StoryEvents.updateTime);
 	// input.type = "checkbox";
 	td.appendChild(input);
+};
+
+StoryEvents.onChangeDateTimeCreator = function(myInput){
+	return function(dp, input){
+		myInput.eventInfo.time = input.val();
+		StoryEvents.lastDate = input.val();
+		myInput.className = "eventTime";
+	}
 };
 
 StoryEvents.updateEventName = function(event){

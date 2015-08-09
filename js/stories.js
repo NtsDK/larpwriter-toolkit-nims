@@ -5,9 +5,9 @@ Stories.init = function(){
 	root.views = {};
 	var nav = "storiesNavigation";
 	var content = "storiesContent";
-	Utils.addView(root, "StoryEvents", StoryEvents, "События", nav, content);
+	Utils.addView(root, "StoryEvents", StoryEvents, "События", nav, content, true);
 	Utils.addView(root, "StoryCharacters", StoryCharacters, "Персонажи", nav, content);
-	Utils.addView(root, "EventPresence", EventPresence, "Присутствие", nav, content, true);
+	Utils.addView(root, "EventPresence", EventPresence, "Присутствие", nav, content);
 	
 	var selector = document.getElementById("storySelector");
 	selector.addEventListener("change", Stories.onStorySelectorChangeDelegate);

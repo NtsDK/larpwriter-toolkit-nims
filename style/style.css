@@ -56,3 +56,19 @@ body{
 	width: 300px;
 	height: 100px;
 }
+
+.bioInput{
+  width: 300px;
+  height: 100px;
+}
+.inventoryInput{
+  width: 300px;
+}
+
+.defaultDate{
+	background-color: rgba(255,0,0,0.1);
+}
+
+#timelineContainer{
+	background-color: #fff;
+}

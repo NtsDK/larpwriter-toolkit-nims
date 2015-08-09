@@ -67,19 +67,32 @@ Events.showPersonalStories = function(storyName, characterName){
 			table.appendChild(tr);
 			
 			var td = document.createElement("td");
-			var span = document.createElement("div");
-			span.appendChild(document.createTextNode(events[i].text));
-			span.className = "eventOriginalStory";
+				var span = document.createElement("div");
+				span.appendChild(document.createTextNode(events[i].name));
+//				span.className = "eventOriginalStory";
 			td.appendChild(span);
+				
+				var input = document.createElement("textarea");
+				input.className = "eventPersonalStory";
+				input.value = events[i].text;
+				input.eventInfo = events[i];
+				
+				input.addEventListener("change", Events.onChangePersonalStoryDelegate);
+			td.appendChild(input);
 			tr.appendChild(td);
 			
 			td = document.createElement("td");
-			var input = document.createElement("textarea");
-			input.className = "eventPersonalStory";
-			input.value = events[i].characters[characterName].text;
-			input.eventInfo = events[i].characters[characterName];
+				var span = document.createElement("div");
+				span.appendChild(document.createTextNode("\u00A0"));
+//			span.className = "eventOriginalStory";
+			td.appendChild(span);
 			
-			input.addEventListener("change", Events.onChangePersonalStoryDelegate);
+				var input = document.createElement("textarea");
+				input.className = "eventPersonalStory";
+				input.value = events[i].characters[characterName].text;
+				input.eventInfo = events[i].characters[characterName];
+				
+				input.addEventListener("change", Events.onChangePersonalStoryDelegate);
 			td.appendChild(input);
 			tr.appendChild(td);
 		}

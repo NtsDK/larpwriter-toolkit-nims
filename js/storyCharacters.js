@@ -107,6 +107,7 @@ StoryCharacters.appendCharacterInput = function(table, character, index) {
 			var input = document.createElement("input");
 				input.value = character.inventory;
 				input.characterInfo = character;
+				input.className = "inventoryInput";
 				input.addEventListener("change", StoryCharacters.updateCharacterInventory);
 			td.appendChild(input);
 		tr.appendChild(td);

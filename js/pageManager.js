@@ -11,7 +11,8 @@ PageManager.onLoad = function(){
 	Utils.addView(root, "Characters", Characters, "Персонажи", nav, content);
 	Utils.addView(root, "Stories", Stories, "Истории", nav, content);
 	Utils.addView(root, "Events", Events, "События", nav, content);
-	Utils.addView(root, "Briefings", Briefings, "Вводные", nav, content, true);
+	Utils.addView(root, "Briefings", Briefings, "Вводные", nav, content);
+	Utils.addView(root, "Timeline", Timeline, "Хронология", nav, content, true);
 	
 	var navigation = document.getElementById(nav);
 	var button = document.createElement("input");
