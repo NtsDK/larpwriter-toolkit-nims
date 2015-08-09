@@ -11,7 +11,7 @@ EventPresence.refresh = function(){
 	
 	EventPresence.appendTableHeader(table);
 	
-	var characterArray = EventPresence.getCharacterArray();
+	var characterArray = DBMS.getCharacterNamesArray();
 
 	for (var i = 0; i < Stories.CurrentStory.events.length; ++i) {
 		EventPresence.appendTableInput(table, Stories.CurrentStory.events[i],characterArray);
@@ -23,7 +23,7 @@ EventPresence.appendTableHeader = function(table) {
 		var td = document.createElement("th");
 			td.appendChild(document.createTextNode("Событие"));	
 		tr.appendChild(td);
-		var characterArray = EventPresence.getCharacterArray();
+		var characterArray = DBMS.getCharacterNamesArray();
 		
 		for (var i = 0; i < characterArray.length; i++) {
 			var td = document.createElement("th");
@@ -33,17 +33,7 @@ EventPresence.appendTableHeader = function(table) {
 	table.appendChild(tr);
 };
 
-EventPresence.getCharacterArray = function() {
-	var characterArray = [];
-	
-	var localCharacters = Stories.CurrentStory.characters;
-	for ( var name in localCharacters) {
-		characterArray.push(name);
-	}
-	
-	characterArray.sort(charOrdA);
-	return characterArray;
-};
+
 
 EventPresence.appendTableInput = function(table, event, characterArray) {
 	var tr = document.createElement("tr");

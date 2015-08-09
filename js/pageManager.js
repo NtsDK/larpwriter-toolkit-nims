@@ -9,8 +9,8 @@ PageManager.onLoad = function(){
 	var content = "contentArea";
 	Utils.addView(root, "Overview", Overview, "Обзор", nav, content);
 	Utils.addView(root, "Characters", Characters, "Персонажи", nav, content);
-	Utils.addView(root, "Stories", Stories, "Истории", nav, content, true);
-	Utils.addView(root, "Events", Overview, "События", nav, content);
+	Utils.addView(root, "Stories", Stories, "Истории", nav, content);
+	Utils.addView(root, "Events", Events, "События", nav, content, true);
 	Utils.addView(root, "Briefings", Overview, "Вводные", nav, content);
 	
 	var navigation = document.getElementById(nav);

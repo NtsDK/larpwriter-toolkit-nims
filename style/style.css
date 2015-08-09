@@ -35,17 +35,24 @@ body{
     width: 20em;
 }
 
-#eventPresenseTable th{
+#eventPresenceTable th{
 	padding: 5px;
 }
 
-#eventPresenseTable tr:nth-child(odd),
-#eventPresenseTable tr td:nth-child(odd){ 
+#eventPresenceTable tr:nth-child(odd),
+#eventPresenceTable tr td:nth-child(odd){ 
     background-color: rgba(255,255,255,0.5);
 }
  
-#eventPresenseTable tr:nth-child(even),
-#eventPresenseTable tr td:nth-child(even){ 
+#eventPresenceTable tr:nth-child(even),
+#eventPresenceTable tr td:nth-child(even){ 
 	background-color: rgba(222,226,228,0.5);
 }
 
+.eventOriginalStory {
+	width: 300px;
+}
+.eventPersonalStory {
+	width: 300px;
+	height: 100px;
+}
