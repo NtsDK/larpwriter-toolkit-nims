@@ -255,6 +255,14 @@ Database = {
 				"Ряба" : {
 					"name" : "Ряба",
 					"inventory" : ""
+				},
+				"бабка" : {
+					"name" : "бабка",
+					"inventory" : "метла"
+				},
+				"дед" : {
+					"name" : "дед",
+					"inventory" : ""
 				}
 			},
 			"events" : []
