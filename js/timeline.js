@@ -1,6 +1,9 @@
 Timeline = {};
 
 Timeline.init = function(){
+	var selector = document.getElementById("timelineStorySelector");
+	selector.addEventListener("change", Timeline.onStorySelectorChangeDelegate);
+	
 	var container = document.getElementById('timelineContainer');
 	
 	Timeline.TimelineDataset = new vis.DataSet();
@@ -10,12 +13,9 @@ Timeline.init = function(){
 	// specify options
 	var options = {
 		orientation : 'top',
-		showCurrentTime : true,
+		showCurrentTime : false,
 		end: new Date(Database.Meta.date),
 		start: new Date(Database.Meta.preGameDate)
-//		start : new Date(),
-//		// end: new Date(1000*60*60*24 + (new Date()).valueOf()),
-//		end : new Date(1000 * 60 * 5 + (new Date()).valueOf()),
 	};
 	
 	// Create a Timeline
@@ -24,7 +24,46 @@ Timeline.init = function(){
 	timeline.setGroups(Timeline.TagDataset);
 	timeline.setItems(Timeline.TimelineDataset);
 	
-	for(var storyName in Database.Stories){
+	
+	
+	Timeline.content = document.getElementById("timelineDiv");
+};
+
+Timeline.refresh = function(){
+	var selector = document.getElementById("timelineStorySelector");
+	removeChildren(selector);
+	
+	for ( var name in Database.Stories) {
+		var option = document.createElement("option");
+		option.appendChild(document.createTextNode(name));
+		selector.appendChild(option);
+	}
+	
+	for ( var name in Database.Stories) {
+		Timeline.onStorySelectorChange([name]);
+		break;
+	}
+};
+
+
+Timeline.onStorySelectorChangeDelegate = function(event){
+//	var storyName = event.target.value;
+	var selOptions = event.target.selectedOptions;
+	var storyNames = [];
+	for (var i = 0; i < selOptions.length; i++) {
+		storyNames.push(selOptions[i].text);
+	}
+	Timeline.onStorySelectorChange(storyNames);
+};
+
+Timeline.onStorySelectorChange = function(storyNames){
+	Timeline.TagDataset.clear();
+	Timeline.TimelineDataset.clear();
+	
+//	for(var storyName in Database.Stories){
+	for (var i = 0; i < storyNames.length; i++) {
+		var storyName = storyNames[i];
+		
 		Timeline.TagDataset.add({
 			id : storyName,
 			content : storyName
@@ -45,53 +84,27 @@ Timeline.init = function(){
 				group : storyName
 			});
 		}
-		
-		
 	}
 	
-	Timeline.content = document.getElementById("timelineDiv");
-};
-
-Timeline.refresh = function(){
+	Timeline.TimelineDataset.add({
+		content : "Начало игры",
+		start : new Date(Database.Meta.date),
+		group : storyName,
+		className : "importantItem"
+	});
+	Timeline.TimelineDataset.add({
+		content : "Начало доигровых событий",
+		start : new Date(Database.Meta.preGameDate),
+		group : storyName,
+		className : "importantItem"
+	});
+	
+//	Stories.CurrentStory = Database.Stories[storyName];
+//	
+//	var storyArea = document.getElementById("masterStoryArea");
+//	storyArea.value = Stories.CurrentStory.story;
+	
+//	Stories.currentView.refresh();
 	
 };
 
-
-
-//Log.initTimeline = function() {
-//	var container = document.getElementById('visualization');
-//
-//	// specify options
-//	var options = {
-//		orientation : 'top',
-////		showCurrentTime : true,
-//		start : new Date(),
-//		// end: new Date(1000*60*60*24 + (new Date()).valueOf()),
-//		end : new Date(1000 * 60 * 5 + (new Date()).valueOf()),
-//	};
-//	
-//	// Create a Timeline
-//	// var timeline = new vis.Timeline(container, items, options);
-//	var timeline = new vis.Timeline(container, null, options);
-//	timeline.setGroups(TagDataset);
-//	timeline.setItems(TimelineDataset);
-//	
-////	TagDataset.add({
-////		id : "future",
-////		content : "future"
-////	});
-////	
-////	for(var playerName in Database.Profiles){
-////		TagDataset.add({
-////			id : playerName,
-////			content : playerName
-////		});
-////	}
-//
-//	// TagDataset.add({
-//	// // id:1,
-//	// id:"test",
-//	// content: "test"
-//	// });
-//
-//}

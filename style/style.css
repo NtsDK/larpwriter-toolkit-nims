@@ -72,3 +72,33 @@ body{
 #timelineContainer{
 	background-color: #fff;
 }
+
+
+#timelineFlexRoot{
+	display: flex;
+}
+#storySelectorContainer{
+	flex-basis: 150px;
+	flex-grow: 0;
+}
+#storySelectorContainer > select{
+	width:90%;
+}
+
+#timelineContainer{
+	flex-grow: 1;
+}
+
+.importantItem .vis-item-content  {
+  color: white;
+  background-color: red;
+  border-color: darkred;
+}
+#gameNameInput{
+	width: 450px;
+}
+
+#gameDescription{
+	width: 450px;
+	height: 500px;
+}

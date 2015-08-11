@@ -5,14 +5,8 @@ Briefings.init = function(){
 	button.addEventListener("click", Briefings.makeBriefings);
 
 	var button = document.getElementById("docxBriefings");
-//	button.addEventListener("change", Briefings.readTemplateFile, false);
 	button.addEventListener("change", Briefings.readTemplateFile);
 	
-//	document.getElementById('dataLoadButton').addEventListener('change',
-//			FileUtils.readSingleFile, false);
-//	var button = document.getElementById("docxBriefings");
-//	button.addEventListener("click", Briefings.makeDocxBriefings);
-
 	var button = document.getElementById("briefingCharacter");
 	button.addEventListener("change", Briefings.buildContentDelegate);
 	
@@ -216,7 +210,11 @@ Briefings.makeBriefings = function(){
 	
 	if(toSeparateFiles){
 		for(var charName in characterList){
-			window.open("data:text/plain;charset=utf-8," + encodeURIComponent(charName + "\n\n" + characterList[charName]) );
+			var blob = new Blob([charName + "\n\n" + characterList[charName]], {type: "text/plain;charset=utf-8"});
+			saveAs(blob, charName + ".txt");
+			
+//			saveAs(out, "output.docx")
+//			window.open("data:text/plain;charset=utf-8," + encodeURIComponent(charName + "\n\n" + characterList[charName]) );
 		}
 	} else {
 		var result = "";
@@ -224,7 +222,9 @@ Briefings.makeBriefings = function(){
 			result += charName + "\n\n";
 			result += characterList[charName];
 		}
-		window.open("data:text/plain;charset=utf-8," + encodeURIComponent(result) );
+		var blob = new Blob([result], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, "briefings.txt");
+//		window.open("data:text/plain;charset=utf-8," + encodeURIComponent(result) );
 	}
 	
 };

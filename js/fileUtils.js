@@ -32,5 +32,7 @@ FileUtils.readSingleFile = function(evt) {
 };
 
 FileUtils.saveFile = function() {
-    window.open("data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Database, null, '  ')) );
+	var blob = new Blob([JSON.stringify(Database, null, '  ')], {type: "text/plain;charset=utf-8"});
+	saveAs(blob, "database.json");
+//    window.open("data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Database, null, '  ')) );
 };

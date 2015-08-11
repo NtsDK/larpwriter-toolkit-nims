@@ -57,10 +57,6 @@ Characters.refresh = function(){
 	
 	var editor = document.getElementById("bioEditor");
 	Characters.showBio(names[0]);
-//	editor.name = null;
-//	editor.value = "";
-//	editor.name = null;
-//	editor.value = "";
 };
 
 Characters.createCharacter = function() {

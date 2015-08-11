@@ -2,11 +2,9 @@ Overview = {};
 
 Overview.init = function(){
 	var name=document.getElementById("gameNameInput");
-	name.value = Database.Meta.name;
 	name.addEventListener("change", Overview.updateName);
 	
 	var date=document.getElementById("gameDatePicker");
-	date.value = Database.Meta.date;
 
 	var opts = {
 		lang : "ru",
@@ -17,7 +15,6 @@ Overview.init = function(){
 	jQuery(date).datetimepicker(opts);
 
 	var date=document.getElementById("preGameDatePicker");
-	date.value = Database.Meta.preGameDate;
 	
 	var opts = {
 			lang : "ru",
@@ -28,13 +25,24 @@ Overview.init = function(){
 	jQuery(date).datetimepicker(opts);
 	
 	var descr=document.getElementById("gameDescription");
-	descr.value = Database.Meta.description;
 	descr.addEventListener("change", Overview.updateDescr);
 	
 	Overview.content = document.getElementById("overviewDiv");
 };
 
 Overview.refresh = function(){
+	var name=document.getElementById("gameNameInput");
+	name.value = Database.Meta.name;
+	
+	var date=document.getElementById("gameDatePicker");
+	date.value = Database.Meta.date;
+	
+	var date=document.getElementById("preGameDatePicker");
+	date.value = Database.Meta.preGameDate;
+	
+	var descr=document.getElementById("gameDescription");
+	descr.value = Database.Meta.description;
+	
 };
 
 Overview.updateName = function(event){
