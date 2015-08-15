@@ -1,5 +1,20 @@
 DBMS = {};
 
+DBMS.createCharacter = function(name){
+	Database.Characters[name] = {name: name, bio:""};
+};
+
+DBMS.renameCharacter = function(fromName, toName){
+	var data = Database.Characters[fromName];
+	data.name = toName;
+	Database.Characters[toName] = data;
+	delete Database.Characters[fromName];
+};
+
+DBMS.removeCharacter = function(name) {
+	delete Database.Characters[name];
+};
+
 DBMS.getCharacterNamesArray = function() {
 	var characterArray = [];
 	
