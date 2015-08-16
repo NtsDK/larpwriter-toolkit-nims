@@ -24,6 +24,7 @@
 
 <script src="libs/FileSaver.js"></script>
 <script src="libs/jszip-utils.js"></script>
+<script src="libs/jszip.js"></script>
 
 <!-- <script src="libs/docxgen.js"></script> -->
 <script src="libs/docxgen.min.js"></script>
@@ -148,10 +149,15 @@
     
     
     <div id="briefingsDiv">
-        <button id="makeBriefings">Сформировать вводные</button>
-        <input type="checkbox" id="toSeparateFileCheckbox"></input> Каждую в отдельный файл
+        <input type="checkbox" id="toSeparateFileCheckbox">Каждую в отдельный файл</input> 
         <br>
-        <input type="file" id="docxBriefings">Сформировать вводные docx</input>
+        <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio">Группировать события по историям</input> 
+        <br>
+        <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio">Сортировать события по хронологии</input> 
+        <br>
+        
+        Сформировать вводные docx<input type="file" id="docxBriefings"></input><br>
+        <button id="makeBriefings">Сформировать вводные txt</button>
         <br><br>
         
         Предварительный просмотр

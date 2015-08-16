@@ -73,6 +73,16 @@ function charOrdA(a, b) {
 	return 0;
 };
 
+function eventsByTime(a, b) {
+	a = new Date(a.time);
+	b = new Date(b.time);
+	if (a > b)
+		return 1;
+	if (a < b)
+		return -1;
+	return 0;
+};
+
 
 
 removeChildren = function(myNode){

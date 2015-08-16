@@ -2,13 +2,19 @@ Briefings = {};
 
 Briefings.init = function(){
 	var button = document.getElementById("makeBriefings");
-	button.addEventListener("click", Briefings.makeBriefings);
+	button.addEventListener("click", Briefings.makeTextBriefings);
 
 	var button = document.getElementById("docxBriefings");
 	button.addEventListener("change", Briefings.readTemplateFile);
 	
 	var button = document.getElementById("briefingCharacter");
 	button.addEventListener("change", Briefings.buildContentDelegate);
+
+	var button = document.getElementById("eventGroupingByStoryRadio");
+	button.addEventListener("change", Briefings.refresh);
+	
+	var button = document.getElementById("eventGroupingByTimeRadio");
+	button.addEventListener("change", Briefings.refresh);
 	
 	Briefings.content = document.getElementById("briefingsDiv");
 };
@@ -85,6 +91,69 @@ Briefings.buildContent = function(characterName){
 	content.appendChild(document.createTextNode("События"));
 	content.appendChild(document.createElement("br"));
 	
+	var groupingByStory = document.getElementById("eventGroupingByStoryRadio").checked;
+	if(groupingByStory){
+		Briefings.showEventsByStory(content, characterName);
+	} else {
+		Briefings.showEventsByTime(content, characterName);
+	}
+
+	
+};
+
+Briefings.showEventsByTime = function(content, characterName){
+	var allStories = [];
+	for(var storyName in Database.Stories){
+		if(!Database.Stories[storyName].characters[characterName]){
+			continue;
+		}
+		
+		var events = Database.Stories[storyName].events;
+		for (var i = 0; i < events.length; i++) {
+			var event = events[i];
+			if(event.characters[characterName]){
+				allStories.push(event);
+			}
+		}
+	}
+	
+	allStories.sort(eventsByTime);
+	
+	for (var i = 0; i < allStories.length; i++) {
+		var event = allStories[i];
+		var type;
+		if(event.characters[characterName].text == ""){
+			type = "История";
+		} else {
+			type = "Персонаж";
+		}
+		
+		content.appendChild(document.createTextNode(event.time + " " + event.name + ": " + type));
+		content.appendChild(document.createElement("br"));
+		
+		var input = document.createElement("textarea");
+		input.className = "eventPersonalStory";
+		
+		if(event.characters[characterName].text == ""){
+			input.value = event.text;
+			input.eventInfo = event;
+		} else {
+			input.value = event.characters[characterName].text;
+			input.eventInfo = event.characters[characterName];
+		}
+		
+		input.addEventListener("change", Briefings.onChangePersonalStory);
+		content.appendChild(input);
+		
+		content.appendChild(document.createElement("br"));
+		content.appendChild(document.createElement("br"));
+		
+	}
+	
+	
+};
+
+Briefings.showEventsByStory = function(content, characterName){
 	for(var storyName in Database.Stories){
 		if(!Database.Stories[storyName].characters[characterName]){
 			continue;
@@ -103,7 +172,7 @@ Briefings.buildContent = function(characterName){
 					type = "Персонаж";
 				}
 				
-				content.appendChild(document.createTextNode(event.name + ": " + type));
+				content.appendChild(document.createTextNode(event.time + " " + event.name + ": " + type));
 				content.appendChild(document.createElement("br"));
 				
 					var input = document.createElement("textarea");
@@ -119,26 +188,15 @@ Briefings.buildContent = function(characterName){
 	//					content.appendChild(document.createTextNode(event.characters[characterName].text));
 					}
 					
-					input.addEventListener("change", Briefings.onChangePersonalStoryDelegate);
+					input.addEventListener("change", Briefings.onChangePersonalStory);
 				content.appendChild(input);
 				
-//				if(event.characters[characterName].text == ""){
-//					content.appendChild(document.createTextNode(event.text));
-//				} else {
-//					content.appendChild(document.createTextNode(event.characters[characterName].text));
-//				}
 				content.appendChild(document.createElement("br"));
 				content.appendChild(document.createElement("br"));
 			}
 		}
 	
-		if(story.characters[characterName] && story.characters[characterName].inventory && 
-				story.characters[characterName].inventory != ""){
-			content.appendChild(document.createTextNode(storyName + ":" + story.characters[characterName].inventory));
-			content.appendChild(document.createElement("br"));
-		}
 	}
-	
 };
 
 Briefings.updateBio = function(event){
@@ -155,76 +213,72 @@ Briefings.onChangePersonalStory = function(event){
 	eventObject.text = text;
 };
 
-Briefings.makeBriefings = function(){
+Briefings.makeTextBriefings = function(){
+	
+	var data = Briefings.getBriefingData();
 	
 	var characterList = {};
 	
-	for(var charName in Database.Characters){
-		characterList[charName] = "";
-	}
-	
-	for(var charName in Database.Characters){
-		characterList[charName] += "----------------------------------\n";
-		characterList[charName] += "Биография\n";
-		characterList[charName] += Database.Characters[charName].bio + "\n";
-		characterList[charName] += "----------------------------------\n\n";
+	for (var i = 0; i < data.briefings.length; i++) {
+		var briefingData = data.briefings[i];
 		
-		characterList[charName] += "----------------------------------\n";
-		characterList[charName] += "Инвентарь\n";
+		var briefing = "";
 		
-		for(var storyName in Database.Stories){
-			var story = Database.Stories[storyName];
-			if(story.characters[charName] && story.characters[charName].inventory && 
-					story.characters[charName].inventory != ""){
+		briefing += briefingData.name + "\n\n";
+		
+		briefing += "----------------------------------\n";
+		briefing += "Биография\n";
+		briefing += briefingData.bio + "\n";
+		briefing += "----------------------------------\n\n";
+		
+		briefing += "----------------------------------\n";
+		briefing += "Инвентарь\n";
+		briefing += briefingData.inventory + "\n";
+		briefing += "----------------------------------\n\n";
+		
+		if(briefingData.storiesInfo){
+			for (var j = 0; j < briefingData.storiesInfo.length; j++) {
+				var storyInfo = briefingData.storiesInfo[j];
+				briefing += "----------------------------------\n";
+				briefing += storyInfo.name + "\n\n";
 				
-				characterList[charName] += story.characters[charName].inventory + ", ";
+				for (var k = 0; k < storyInfo.eventsInfo.length; k++) {
+					var event = storyInfo.eventsInfo[k];
+					briefing += event.time + ": " + event.text + "\n\n";
+				}
+				
+				briefing += "----------------------------------\n\n";
 			}
 		}
-		characterList[charName] += "\n";
 		
-		characterList[charName] += "----------------------------------\n\n";
-		
-		for(var storyName in Database.Stories){
-			var story = Database.Stories[storyName];
-			if(!story.characters[charName]){
-				continue;
+		if(briefingData.eventsInfo){
+			briefing += "----------------------------------\n";
+			
+			for (var k = 0; k < briefingData.eventsInfo.length; k++) {
+				var event = briefingData.eventsInfo[k];
+				briefing += event.time + ": " + event.text + "\n\n";
 			}
 			
-			characterList[charName] += "----------------------------------\n";
-			characterList[charName] += storyName + "\n\n";
-			for(var i=0;i<story.events.length; ++i){
-				var event = story.events[i];
-				if(event.characters[charName]){
-					if(event.characters[charName].text != ""){
-						characterList[charName] += event.characters[charName].text + "\n\n";
-					} else {
-						characterList[charName] += event.text + "\n\n";
-					}
-				}
-			}
-			characterList[charName] += "----------------------------------\n\n";
+			briefing += "----------------------------------\n\n";
 		}
+		
+		characterList[briefingData.name] = briefing;
 	}
 	
 	var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
 	
 	if(toSeparateFiles){
 		for(var charName in characterList){
-			var blob = new Blob([charName + "\n\n" + characterList[charName]], {type: "text/plain;charset=utf-8"});
+			var blob = new Blob([characterList[charName]], {type: "text/plain;charset=utf-8"});
 			saveAs(blob, charName + ".txt");
-			
-//			saveAs(out, "output.docx")
-//			window.open("data:text/plain;charset=utf-8," + encodeURIComponent(charName + "\n\n" + characterList[charName]) );
 		}
 	} else {
 		var result = "";
 		for(var charName in characterList){
-			result += charName + "\n\n";
 			result += characterList[charName];
 		}
 		var blob = new Blob([result], {type: "text/plain;charset=utf-8"});
 		saveAs(blob, "briefings.txt");
-//		window.open("data:text/plain;charset=utf-8," + encodeURIComponent(result) );
 	}
 	
 };
@@ -244,47 +298,90 @@ Briefings.getBriefingData = function(){
 			}
 		}
 		
-		var storiesInfo = [];
+		var groupingByStory = document.getElementById("eventGroupingByStoryRadio").checked;
 		
-		for(var storyName in Database.Stories){
-			var storyInfo = {};
-			
-			var story = Database.Stories[storyName];
-			if(!story.characters[charName]){
-				continue;
-			}
-			
-			storyInfo.name = storyName;
-			var eventsInfo = [];
-			
-			for(var i=0;i<story.events.length; ++i){
-				var event = story.events[i];
-				var eventInfo = {};
-				if(event.characters[charName]){
-					if(event.characters[charName].text != ""){
-						eventInfo.text = event.characters[charName].text;
-					} else {
-						eventInfo.text = event.text;
-					}
-					eventInfo.time = event.time;
-					eventsInfo.push(eventInfo);
-				}
-			}
-			storyInfo.eventsInfo = eventsInfo;
-			
-			storiesInfo.push(storyInfo);
+		if(groupingByStory){
+			var storiesInfo = Briefings.getStoriesInfo(charName);
+		} else {
+			var eventsInfo = Briefings.getEventsInfo(charName);
 		}
 		
 		charArray.push({
 			"name":charName,
 			"bio":Database.Characters[charName].bio,
 			"inventory":inventory,
-			"storiesInfo":storiesInfo
+			"storiesInfo":storiesInfo,
+			"eventsInfo":eventsInfo
 		});
 	}
 	
 	data["briefings"] = charArray;
 	return data;
+};
+
+Briefings.getEventsInfo = function(charName) {
+	var eventsInfo = [];
+	for(var storyName in Database.Stories){
+		var storyInfo = {};
+		
+		var story = Database.Stories[storyName];
+		if(!story.characters[charName]){
+			continue;
+		}
+		
+		storyInfo.name = storyName;
+		
+		for(var i=0;i<story.events.length; ++i){
+			var event = story.events[i];
+			var eventInfo = {};
+			if(event.characters[charName]){
+				if(event.characters[charName].text != ""){
+					eventInfo.text = event.characters[charName].text;
+				} else {
+					eventInfo.text = event.text;
+				}
+				eventInfo.time = event.time;
+				eventsInfo.push(eventInfo);
+			}
+		}
+	}
+	eventsInfo.sort(eventsByTime);
+	
+	return eventsInfo;
+};
+
+
+Briefings.getStoriesInfo = function(charName) {
+	var storiesInfo = [];
+	for(var storyName in Database.Stories){
+		var storyInfo = {};
+		
+		var story = Database.Stories[storyName];
+		if(!story.characters[charName]){
+			continue;
+		}
+		
+		storyInfo.name = storyName;
+		var eventsInfo = [];
+		
+		for(var i=0;i<story.events.length; ++i){
+			var event = story.events[i];
+			var eventInfo = {};
+			if(event.characters[charName]){
+				if(event.characters[charName].text != ""){
+					eventInfo.text = event.characters[charName].text;
+				} else {
+					eventInfo.text = event.text;
+				}
+				eventInfo.time = event.time;
+				eventsInfo.push(eventInfo);
+			}
+		}
+		storyInfo.eventsInfo = eventsInfo;
+		
+		storiesInfo.push(storyInfo);
+	}
+	return storiesInfo;
 };
 
 Briefings.readTemplateFile = function(evt) {
@@ -295,31 +392,44 @@ Briefings.readTemplateFile = function(evt) {
 		var r = new FileReader();
 		r.onload = function(e) {
 			var contents = e.target.result;
-//			doc = new DocxGen(contents)
-			doc = new window.Docxgen(contents)
-//			doc.setData({
-//				"first_name" : "Hipp",
-//				"last_name" : "Edgar",
-//				"phone" : "0652455478",
-//				"description" : "New Website"
-//			}) //set the templateVariables
-//			doc.setData({
-//				"briefings" :
-//					[{
-//						"name": "дед"
-//					},{
-//						"name": "бабка"
-//					}]
-//			}) //set the templateVariables
-			doc.setData(Briefings.getBriefingData());
-			doc.render() //apply them (replace all occurences of {first_name} by Hipp, ...)
-			out = doc.getZip().generate({
-				type : "blob"
-			})
-			saveAs(out, "output.docx")
+			Briefings.generateDocxBriefings(contents);
 		}
 		r.readAsBinaryString(f);
 	} else {
 		alert("Failed to load file");
+	}
+};
+
+Briefings.generateDocxBriefings = function(contents){
+	
+	var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
+	
+	var briefingData=Briefings.getBriefingData();
+	if(toSeparateFiles){
+		var zip = new JSZip();
+		content = zip.generate();
+		
+		for (var i = 0; i < briefingData.briefings.length; i++) {
+			var doc = new window.Docxgen(contents);
+			var briefing = briefingData.briefings[i];
+			var tmpData = {
+				briefings : [ briefing ]
+			};
+			doc.setData(tmpData);
+			doc.render() //apply them (replace all occurences of {first_name} by Hipp, ...)
+			out = doc.getZip().generate({
+				type : "Uint8Array"
+			});
+			zip.file(briefing.name + ".docx", out);
+		}
+		saveAs(zip.generate({type : "blob"}), "briefings.zip");
+	} else {
+		var doc = new window.Docxgen(contents);
+		doc.setData(briefingData);
+		doc.render() //apply them (replace all occurences of {first_name} by Hipp, ...)
+		out = doc.getZip().generate({
+			type : "blob"
+		});
+		saveAs(out, "briefings.docx");
 	}
 };
