@@ -6,12 +6,19 @@ StoryEvents.init = function(){
 	
 	var button = document.getElementById("swapEventsButton");
 	button.addEventListener("click", StoryEvents.swapEvents);
+	
+	var button = document.getElementById("cloneEventButton");
+	button.addEventListener("click", StoryEvents.cloneEvent);
+	
+	var button = document.getElementById("mergeEventButton");
+	button.addEventListener("click", StoryEvents.mergeEvents);
 
 	var button = document.getElementById("removeEventButton");
 	button.addEventListener("click", StoryEvents.removeEvent);
 	
 	StoryEvents.content = document.getElementById("storyEventsDiv");
 };
+
 
 StoryEvents.refresh = function(){
 	
@@ -25,7 +32,6 @@ StoryEvents.refresh = function(){
 		StoryEvents.appendEventInput(table, Stories.CurrentStory.events[i], i + 1);
 	}
 	
-
 	// refresh position selector
 	var positionSelector = document.getElementById("positionSelector");
 	removeChildren(positionSelector);
@@ -43,24 +49,24 @@ StoryEvents.refresh = function(){
 	positionSelector.selectedIndex = Stories.CurrentStory.events.length;
 	
 	// refresh swap selector
-	var selector1 = document.getElementById("firstEvent");
-	var selector2 = document.getElementById("secondEvent");
-	var selector3 = document.getElementById("removeEventSelector");
+	var selectorArr = [];
+
+	selectorArr.push(document.getElementById("firstEvent"));
+	selectorArr.push(document.getElementById("secondEvent"));
+	selectorArr.push(document.getElementById("removeEventSelector"));
+	selectorArr.push(document.getElementById("cloneEventSelector"));
+	selectorArr.push(document.getElementById("mergeEventSelector"));
 	
-	removeChildren(selector1);
-	removeChildren(selector2);
-	removeChildren(selector3);
+	for (var i = 0; i < selectorArr.length; i++) {
+		removeChildren(selectorArr[i]);
+	}
 	
 	for (var i = 0; i < Stories.CurrentStory.events.length; i++) {
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode((i+1)));
-		selector1.appendChild(option);
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode((i+1)));
-		selector2.appendChild(option);
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode((i+1)));
-		selector3.appendChild(option);
+		for (var j = 0; j < selectorArr.length; j++) {
+			var option = document.createElement("option");
+			option.appendChild(document.createTextNode((i+1)));
+			selectorArr[j].appendChild(option);
+		}
 	}
 	
 };
@@ -113,6 +119,40 @@ StoryEvents.swapEvents = function(){
 	StoryEvents.refresh();
 };
 
+
+StoryEvents.cloneEvent = function(){
+	var index = document.getElementById("cloneEventSelector").selectedIndex;
+	var event = Stories.CurrentStory.events[index];
+	var copy = clone(event);
+	
+	Stories.CurrentStory.events.splice(index, 0, event);
+	StoryEvents.refresh();
+};
+
+StoryEvents.mergeEvents = function(){
+	var index = document.getElementById("mergeEventSelector").selectedIndex;
+	if(!Stories.CurrentStory.events[index+1]){
+		alert("Событие объединяется со следующим событием. Последнее событие не с кем объединять.");
+		return;
+	}
+	
+	var event1 = Stories.CurrentStory.events[index];
+	var event2 = Stories.CurrentStory.events[index+1];
+	
+	event1.name += event2.name;
+	event1.text += event2.text;
+	for(var characterName in event2.characters){
+		if(event1.characters[characterName]){
+			event1.characters[characterName].text += event2.characters[characterName].text;
+			event1.characters[characterName].ready = false;
+		} else {
+			event1.characters[characterName] = event2.characters[characterName];
+		}
+	}
+	Stories.CurrentStory.events.remove(index+1);
+	StoryEvents.refresh();
+};
+
 StoryEvents.removeEvent = function(){
 	var index = document.getElementById("removeEventSelector").selectedIndex;
 	
@@ -121,7 +161,6 @@ StoryEvents.removeEvent = function(){
 		StoryEvents.refresh();
 	}
 };
-
 
 StoryEvents.appendEventHeader = function(table) {
 	var tr = document.createElement("tr");
@@ -133,11 +172,6 @@ StoryEvents.appendEventHeader = function(table) {
 	tr.appendChild(td);
 	td.appendChild(document.createTextNode("Событие"));
 
-//	for ( var name in CurrentStory.characters) {
-//		var td = document.createElement("td");
-//		tr.appendChild(td);
-//		td.appendChild(document.createTextNode(name));
-//	}
 	var td = document.createElement("td");
 	tr.appendChild(td);
 	td.appendChild(document.createTextNode("Время"));
@@ -193,14 +227,6 @@ StoryEvents.appendEventInput = function(table, event, index) {
 	
 	jQuery(input).datetimepicker(opts);
 	
-//	input.myFunc = function(){
-//		
-//		alert("sdfsdfsdfsdfsdf")
-//	}
-	
-//	input.addEventListener("change", myAlert);
-//	input.addEventListener("change", StoryEvents.updateTime);
-	// input.type = "checkbox";
 	td.appendChild(input);
 };
 
