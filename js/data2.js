@@ -218,7 +218,8 @@ Database = {
 								"text" : ""
 							},
 							"мышка" : {
-								"text" : ""
+								"text" : "",
+								"ready" : true
 							}
 						},
 						"name" : "Позвали мышку"
@@ -227,7 +228,8 @@ Database = {
 						"time" : "1984/09/10 13:45",
 						"characters" : {
 							"мышка" : {
-								"text" : ""
+								"text" : "",
+								"ready" : true
 							},
 							"кошка" : {
 								"text" : ""
