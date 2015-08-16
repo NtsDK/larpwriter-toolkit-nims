@@ -15,7 +15,17 @@ Timeline.init = function(){
 		orientation : 'top',
 		showCurrentTime : false,
 		end: new Date(Database.Meta.date),
-		start: new Date(Database.Meta.preGameDate)
+		start: new Date(Database.Meta.preGameDate),
+		editable: {
+			updateTime : true
+		},
+		onMove: function(item, callback){
+			if(item.extra){
+				item.extra.time = dateFormat(item.start, "yyyy/mm/dd h:MM");
+				callback(item);
+			}
+		},
+		multiselect: true
 	};
 	
 	// Create a Timeline
@@ -23,8 +33,6 @@ Timeline.init = function(){
 	var timeline = new vis.Timeline(container, null, options);
 	timeline.setGroups(Timeline.TagDataset);
 	timeline.setItems(Timeline.TimelineDataset);
-	
-	
 	
 	Timeline.content = document.getElementById("timelineDiv");
 };
@@ -47,7 +55,6 @@ Timeline.refresh = function(){
 
 
 Timeline.onStorySelectorChangeDelegate = function(event){
-//	var storyName = event.target.value;
 	var selOptions = event.target.selectedOptions;
 	var storyNames = [];
 	for (var i = 0; i < selOptions.length; i++) {
@@ -60,7 +67,6 @@ Timeline.onStorySelectorChange = function(storyNames){
 	Timeline.TagDataset.clear();
 	Timeline.TimelineDataset.clear();
 	
-//	for(var storyName in Database.Stories){
 	for (var i = 0; i < storyNames.length; i++) {
 		var storyName = storyNames[i];
 		
@@ -81,7 +87,8 @@ Timeline.onStorySelectorChange = function(storyNames){
 			Timeline.TimelineDataset.add({
 				content : event.name,
 				start : date,
-				group : storyName
+				group : storyName,
+				extra : event
 			});
 		}
 	}
@@ -90,21 +97,16 @@ Timeline.onStorySelectorChange = function(storyNames){
 		content : "Начало игры",
 		start : new Date(Database.Meta.date),
 		group : storyName,
-		className : "importantItem"
+		className : "importantItem",
+		editable: false
 	});
 	Timeline.TimelineDataset.add({
 		content : "Начало доигровых событий",
 		start : new Date(Database.Meta.preGameDate),
 		group : storyName,
-		className : "importantItem"
+		className : "importantItem", 
+		editable: false
 	});
-	
-//	Stories.CurrentStory = Database.Stories[storyName];
-//	
-//	var storyArea = document.getElementById("masterStoryArea");
-//	storyArea.value = Stories.CurrentStory.story;
-	
-//	Stories.currentView.refresh();
 	
 };
 
