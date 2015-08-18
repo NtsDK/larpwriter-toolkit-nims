@@ -13,6 +13,7 @@ PageManager.onLoad = function(){
 	Utils.addView(root, "Events", Events, "События", nav, content);
 	Utils.addView(root, "Briefings", Briefings, "Вводные", nav, content);
 	Utils.addView(root, "Timeline", Timeline, "Хронология", nav, content);
+	Utils.addView(root, "SocialNetwork", SocialNetwork, "Социальная сеть", nav, content);
 	
 	var navigation = document.getElementById(nav);
 	var button = document.createElement("input");

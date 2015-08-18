@@ -3,6 +3,9 @@ StoryCharacters = {};
 StoryCharacters.init = function(){
 	var button = document.getElementById("storyCharactersAddButton");
 	button.addEventListener("click", StoryCharacters.addCharacter);
+
+	var button = document.getElementById("storyCharactersSwitchButton");
+	button.addEventListener("click", StoryCharacters.switchCharacters);
 	
 	var button = document.getElementById("storyCharactersRemoveButton");
 	button.addEventListener("click", StoryCharacters.removeCharacter);
@@ -13,9 +16,13 @@ StoryCharacters.init = function(){
 StoryCharacters.refresh = function(){
 	var addSelector = document.getElementById("storyCharactersAddSelector");
 	var removeSelector = document.getElementById("storyCharactersRemoveSelector");
+	var fromSelector = document.getElementById("storyCharactersFromSelector");
+	var toSelector = document.getElementById("storyCharactersToSelector");
 	
 	removeChildren(addSelector);
 	removeChildren(removeSelector);
+	removeChildren(fromSelector);
+	removeChildren(toSelector);
 	
 	var addArray = [];
 	var removeArray = [];
@@ -38,11 +45,17 @@ StoryCharacters.refresh = function(){
 		var option = document.createElement("option");
 		option.appendChild(document.createTextNode(addArray[i]));
 		addSelector.appendChild(option);
+		var option = document.createElement("option");
+		option.appendChild(document.createTextNode(addArray[i]));
+		toSelector.appendChild(option);
 	}
 	for (var i = 0; i < removeArray.length; i++) {
 		var option = document.createElement("option");
 		option.appendChild(document.createTextNode(removeArray[i]));
 		removeSelector.appendChild(option);
+		var option = document.createElement("option");
+		option.appendChild(document.createTextNode(removeArray[i]));
+		fromSelector.appendChild(option);
 	}
 	
 	var table = document.getElementById("storyCharactersTable");
@@ -68,6 +81,25 @@ StoryCharacters.addCharacter = function() {
 			inventory:""
 	};
 
+	StoryCharacters.refresh();
+};
+
+StoryCharacters.switchCharacters = function() {
+	var fromName = document.getElementById("storyCharactersFromSelector").value.trim();
+	var toName = document.getElementById("storyCharactersToSelector").value.trim();
+	
+	Stories.CurrentStory.characters[toName] = Stories.CurrentStory.characters[fromName];
+	Stories.CurrentStory.characters[toName].name = toName;
+	delete Stories.CurrentStory.characters[fromName];
+	for (var i = 0; i < Stories.CurrentStory.events.length; ++i) {
+		var event = Stories.CurrentStory.events[i];
+		if(event.characters[fromName]){
+			event.characters[fromName].name = toName;
+			event.characters[toName] = event.characters[fromName]; 
+			delete event.characters[fromName];
+		}
+	}
+	
 	StoryCharacters.refresh();
 };
 

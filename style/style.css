@@ -102,3 +102,10 @@ body{
 	width: 450px;
 	height: 500px;
 }
+
+/* social network */
+#socialNetworkContainer {
+	width: 800px;
+	height: 800px;
+	border: 1px solid lightgray;
+}

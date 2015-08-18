@@ -35,6 +35,20 @@ DBMS.renameCharacter = function(fromName, toName) {
 
 DBMS.removeCharacter = function(name) {
 	delete Database.Characters[name];
+	
+	for ( var storyName in Database.Stories) {
+		var story = Database.Stories[storyName];
+		if (story.characters[name]) {
+			delete story.characters[name];
+
+			for (var i = 0; i < story.events.length; ++i) {
+				var event = story.events[i];
+				if (event.characters[name]) {
+					delete event.characters[name];
+				}
+			}
+		}
+	}
 };
 
 DBMS.getCharacterNamesArray = function() {
