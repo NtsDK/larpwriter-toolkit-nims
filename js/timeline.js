@@ -77,8 +77,8 @@ Timeline.onStorySelectorChange = function(storyNames){
 		var story = Database.Stories[storyName];
 		var events = story.events;
 		
-		for (var i = 0; i < events.length; i++) {
-			var event = events[i];
+		for (var j = 0; j < events.length; j++) {
+			var event = events[j];
 			var date = Database.Meta.date;
 			if(event.time){
 				date = event.time;

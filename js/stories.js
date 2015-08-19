@@ -36,34 +36,30 @@ Stories.init = function(){
 };
 
 Stories.refresh = function(){
-	var selector = document.getElementById("storySelector");
-	removeChildren(selector);
+	var selector1 = document.getElementById("storySelector");
+	removeChildren(selector1);
+	var selector2 = document.getElementById("fromStory");
+	removeChildren(selector2);
+	var selector3 = document.getElementById("storyRemoveSelector");
+	removeChildren(selector3);
 	
-	for ( var name in Database.Stories) {
+	var storyNames = DBMS.getStoryNamesArray();
+	
+	for (var i=0;i<storyNames.length;++i) {
+		var name = storyNames[i];
 		var option = document.createElement("option");
 		option.appendChild(document.createTextNode(name));
-		selector.appendChild(option);
-	}
-	var selector = document.getElementById("fromStory");
-	removeChildren(selector);
-	
-	for ( var name in Database.Stories) {
+		selector1.appendChild(option);
 		var option = document.createElement("option");
 		option.appendChild(document.createTextNode(name));
-		selector.appendChild(option);
-	}
-	var selector = document.getElementById("storyRemoveSelector");
-	removeChildren(selector);
-	
-	for ( var name in Database.Stories) {
+		selector2.appendChild(option);
 		var option = document.createElement("option");
 		option.appendChild(document.createTextNode(name));
-		selector.appendChild(option);
+		selector3.appendChild(option);
 	}
 	
-	for ( var name in Database.Stories) {
-		Stories.onStorySelectorChange(name);
-		break;
+	if(storyNames[0]){
+		Stories.onStorySelectorChange(storyNames[0]);
 	}
 	
 	Stories.currentView.refresh();
