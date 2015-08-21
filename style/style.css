@@ -74,18 +74,20 @@ body{
 }
 
 
-#timelineFlexRoot{
+.flexRoot{
 	display: flex;
 }
-#storySelectorContainer{
+
+.storySelectorContainer{
 	flex-basis: 150px;
 	flex-grow: 0;
 }
-#storySelectorContainer > select{
+
+.storySelectorContainer > select{
 	width:90%;
 }
 
-#timelineContainer{
+.visualObjectContainer{
 	flex-grow: 1;
 }
 
@@ -106,6 +108,7 @@ body{
 /* social network */
 #socialNetworkContainer {
 	width: 800px;
-	height: 800px;
+	height: 600px;
+/* 	height: 100%; */
 	border: 1px solid lightgray;
 }
