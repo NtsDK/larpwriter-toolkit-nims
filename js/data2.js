@@ -12,7 +12,7 @@ Database = {
 	}, {
 		"name" : "Пол",
 		"type" : "enum",
-		"value" : "М,Ж,не важно"
+		"value" : "не важно,М,Ж"
 	}, {
 		"name" : "Возраст",
 		"type" : "number",

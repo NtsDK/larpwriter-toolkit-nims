@@ -16,6 +16,8 @@ Briefings.init = function(){
 	var button = document.getElementById("eventGroupingByTimeRadio");
 	button.addEventListener("change", Briefings.refresh);
 	
+	document.getElementById("eventGroupingByStoryRadio").checked = true;
+	
 	Briefings.content = document.getElementById("briefingsDiv");
 };
 
@@ -48,17 +50,38 @@ Briefings.buildContent = function(characterName){
 	content.appendChild(document.createElement("br"));
 	content.appendChild(document.createElement("br"));
 	
-	content.appendChild(document.createTextNode("Биография"));
-	content.appendChild(document.createElement("br"));
-
-//	content.appendChild(document.createTextNode(Database.Characters[characterName].bio));
-		var bioInput = document.createElement("textarea");
-		bioInput.value = Database.Characters[characterName].bio;
-		bioInput.className = "bioInput";
-		bioInput.bioObject = Database.Characters[characterName];
-		bioInput.addEventListener("change", Briefings.updateBio);
-//	Database.Characters[name].bio = event.target.value;
-	content.appendChild(bioInput);
+//	content.appendChild(document.createTextNode("Биография"));
+//	content.appendChild(document.createElement("br"));
+//
+////	content.appendChild(document.createTextNode(Database.Characters[characterName].bio));
+//		var bioInput = document.createElement("textarea");
+//		bioInput.value = Database.Characters[characterName].bio;
+//		bioInput.className = "bioInput";
+//		bioInput.bioObject = Database.Characters[characterName];
+//		bioInput.addEventListener("change", Briefings.updateBio);
+////	Database.Characters[name].bio = event.target.value;
+//	content.appendChild(bioInput);
+	var character = Database.Characters[characterName];
+	
+	Database.ProfileSettings.forEach(function(element){
+		content.appendChild(document.createTextNode(element.name + ": "));
+		switch(element.type){
+		case "text":
+			content.appendChild(document.createElement("br"));
+			content.appendChild(document.createTextNode(character[element.name]));
+			content.appendChild(document.createElement("br"));
+			break;
+		case "enum":
+		case "number":
+			content.appendChild(document.createTextNode(character[element.name]));
+			content.appendChild(document.createElement("br"));
+			break;
+		case "checkbox":
+			content.appendChild(document.createTextNode(character[element.name] ? "Да" : "Нет"));
+			content.appendChild(document.createElement("br"));
+			break;
+		}
+	});
 	
 	
 	content.appendChild(document.createElement("br"));
@@ -83,7 +106,6 @@ Briefings.buildContent = function(characterName){
 			content.appendChild(document.createElement("br"));
 		}
 	}
-//	content.appendChild(document.createTextNode(Database.Characters[characterName].bio));
 	content.appendChild(document.createElement("br"));
 	content.appendChild(document.createElement("br"));
 	
@@ -199,9 +221,9 @@ Briefings.showEventsByStory = function(content, characterName){
 	}
 };
 
-Briefings.updateBio = function(event){
-	event.target.bioObject.bio = event.target.value;
-};
+//Briefings.updateBio = function(event){
+//	event.target.bioObject.bio = event.target.value;
+//};
 
 Briefings.updateCharacterInventory = function(event){
 	event.target.characterInfo.inventory = event.target.value;
@@ -226,10 +248,21 @@ Briefings.makeTextBriefings = function(){
 		
 		briefing += briefingData.name + "\n\n";
 		
-		briefing += "----------------------------------\n";
-		briefing += "Биография\n";
-		briefing += briefingData.bio + "\n";
-		briefing += "----------------------------------\n\n";
+		var regex = new RegExp('^profileInfo');
+		
+		Object.keys(briefingData).filter(function(element){
+			return regex.test(element);
+		}).forEach(function(element){
+			briefing += "----------------------------------\n";
+			briefing += element.substring("profileInfo.".length, element.length) + "\n";
+			briefing += briefingData[element] + "\n";
+			briefing += "----------------------------------\n\n";
+		});
+		
+//		briefing += "----------------------------------\n";
+//		briefing += "Биография\n";
+//		briefing += briefingData.bio + "\n";
+//		briefing += "----------------------------------\n\n";
 		
 		briefing += "----------------------------------\n";
 		briefing += "Инвентарь\n";
@@ -299,24 +332,48 @@ Briefings.getBriefingData = function(){
 		}
 		
 		var groupingByStory = document.getElementById("eventGroupingByStoryRadio").checked;
+		var profileInfo = Briefings.getProfileInfo(charName);
 		
 		if(groupingByStory){
 			var storiesInfo = Briefings.getStoriesInfo(charName);
 		} else {
 			var eventsInfo = Briefings.getEventsInfo(charName);
 		}
-		
-		charArray.push({
+		var dataObject = {
 			"name":charName,
-			"bio":Database.Characters[charName].bio,
 			"inventory":inventory,
 			"storiesInfo":storiesInfo,
 			"eventsInfo":eventsInfo
+		};
+		
+		Object.keys(profileInfo).forEach(function(element){
+			dataObject["profileInfo." + element] = profileInfo[element];
 		});
+		
+		charArray.push(dataObject);
 	}
 	
 	data["briefings"] = charArray;
 	return data;
+};
+
+Briefings.getProfileInfo = function(charName) {
+	var character = Database.Characters[charName];
+	var profileInfo = {};
+	
+	Database.ProfileSettings.forEach(function(element){
+		switch(element.type){
+		case "text":
+		case "enum":
+		case "number":
+			profileInfo[element.name] = character[element.name];
+			break;
+		case "checkbox":
+			profileInfo[element.name] = character[element.name] ? "Да" : "Нет";
+			break;
+		}
+	});
+	return profileInfo;
 };
 
 Briefings.getEventsInfo = function(charName) {
