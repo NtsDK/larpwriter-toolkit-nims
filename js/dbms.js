@@ -1,10 +1,20 @@
 DBMS = {};
 
 DBMS.createCharacter = function(name) {
-	Database.Characters[name] = {
-		name : name,
-		bio : ""
+	var newCharacter = {
+		name : name
 	};
+	
+	for (var i = 0; i < Database.ProfileSettings.length; i++) {
+		var profileSettings = Database.ProfileSettings[i];
+		if(profileSettings.type == "enum"){
+			newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
+		} else {
+			newCharacter[profileSettings.name] = profileSettings.value;
+		}
+	}
+	
+	Database.Characters[name] = newCharacter;
 };
 
 DBMS.renameCharacter = function(fromName, toName) {

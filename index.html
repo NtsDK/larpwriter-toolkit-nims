@@ -43,15 +43,22 @@
 
 	<script src="js/pageManager.js"></script>
 	<script src="js/overview.js"></script>
+
 	<script src="js/characters.js"></script>
+	<script src="js/characterProfile.js"></script>
+	<script src="js/characterFilter.js"></script>
+	<script src="js/characterProfileConfigurer.js"></script>
+	
 	<script src="js/stories.js"></script>
 	<script src="js/storyEvents.js"></script>
 	<script src="js/storyCharacters.js"></script>
 	<script src="js/eventPresence.js"></script>
+	
 	<script src="js/events.js"></script>
 	<script src="js/briefings.js"></script>
 	<script src="js/timeline.js"></script>
 	<script src="js/socialNetwork.js"></script>
+	
 	<script src="js/WorldCup2014.js"></script>
 
 	
@@ -73,6 +80,23 @@
   </div>
 
 	<div class="hidden">
+<!-- 		<div id="charactersDiv"> -->
+<!-- 			<input id="characterNameInput"></input> -->
+<!-- 			<button id="createCharacterButton">Добавить</button> -->
+<!-- 			<br> Переименовать из <select id="fromName"></select> в <input -->
+<!-- 				id="toName"></input> -->
+<!-- 			<button id="renameCharacter">OK</button> -->
+<!-- 			<br> <select id="characterRemoveSelector"></select> -->
+<!-- 			<button id="removeCharacterButton">Удалить</button> -->
+<!-- 			<br> <br> Персонажи<br> -->
+<!-- 			<table cellspacing=0 cellpadding=0> -->
+<!-- 				<tr> -->
+<!-- 					<td><select size=20 id="bioEditorSelector"></select></td> -->
+<!-- 					<td><textarea id="bioEditor"></textarea></td> -->
+<!-- 				</tr> -->
+<!-- 			</table> -->
+<!-- 		</div> -->
+		
 		<div id="charactersDiv">
 			<input id="characterNameInput"></input>
 			<button id="createCharacterButton">Добавить</button>
@@ -81,15 +105,75 @@
 			<button id="renameCharacter">OK</button>
 			<br> <select id="characterRemoveSelector"></select>
 			<button id="removeCharacterButton">Удалить</button>
-			<br> <br> Биографии<br>
-			<table cellspacing=0 cellpadding=0>
-				<tr>
-					<td><select size=20 id="bioEditorSelector"></select></td>
-					<td><textarea id="bioEditor"></textarea></td>
-				</tr>
-			</table>
+<!-- 			<br> <br> Персонажи<br> -->
+<!-- 			<table cellspacing=0 cellpadding=0> -->
+<!-- 				<tr> -->
+<!-- 					<td><select size=20 id="bioEditorSelector"></select></td> -->
+<!-- 					<td><textarea id="bioEditor"></textarea></td> -->
+<!-- 				</tr> -->
+<!-- 			</table> -->
+			<div id="charactersNavigation" class="block"></div>
+			<div id="charactersContent" class="block"></div>
+
 
 		</div>
+		
+		<div id="characterProfile">
+		  <table>
+        <tr>
+          <th>Персонажи</th>
+<!--           <th>Мастерская история</th> -->
+<!--           <th id="charactersNavigation"></th> -->
+        </tr>
+        <tr>
+          <td><select size=20 id="bioEditorSelector"></select></td>
+<!--           <td><textarea id="masterStoryArea"></textarea></td> -->
+<!--           <td></td> -->
+          <td >
+          <div id="profileContentDiv"></div>
+          
+<!--           <textarea id="bioEditor"></textarea> -->
+          
+          </td>
+        </tr>
+      </table>
+		  
+		</div>
+
+		<div id="characterProfileConfigurer">
+<!-- 		  characterProfileConfigurer -->
+		  
+		  Название<input id="profileItemNameInput"></input>
+		  
+<!--       <textarea id="eventInput" class="eventText"></textarea> -->
+      Тип<select id="profileItemTypeSelector">
+      </select>
+      Позиция <select id="profileItemPositionSelector">
+      </select>
+      <button id="createProfileItemButton">Добавить</button>
+      <br>
+      Поменять местами <select id="firstProfileField"></select> и <select
+        id="secondProfileField"></select>
+      <button id="swapProfileFieldsButton">OK</button>
+      <br>
+      <select id="removeProfileItemSelector"></select>  <button id="removeProfileItemButton">Удалить</button>
+      <br>
+		  
+		  <table id="profileConfigBlock"></table>
+<!-- 		  <textarea id="bioEditor"></textarea> -->
+		</div>
+		
+		<div id="characterFilterDiv">
+      <table>
+        <tr>
+          <td>
+          <div id="filterSettingsDiv"></div></td>
+          <td >
+          <div id="filterContentDiv"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
 
 		<div id="storiesDiv">
 		  <input id="createStoryName"></input>
@@ -107,7 +191,7 @@
 					<th id="storiesNavigation"></th>
 				</tr>
 				<tr>
-					<td><select size=20 id="storySelector"></select></textarea></td>
+					<td><select size=20 id="storySelector"></select></td>
 					<td><textarea id="masterStoryArea"></textarea></td>
 					<td id="storiesContent"></td>
 				</tr>

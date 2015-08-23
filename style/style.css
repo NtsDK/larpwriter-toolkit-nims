@@ -1,18 +1,18 @@
-body{
-  background-color: #ededed;
+body {
+	background-color: #ededed;
 }
 
 .block {
-  border: 1px solid grey;
-  padding: 10px;
-  margin: 5px;
+	border: 1px solid grey;
+	padding: 10px;
+	margin: 5px;
 }
 
-.block table td{
+.block table td {
 	vertical-align: top;
 }
 
-#masterStoryArea{
+#masterStoryArea {
 	width: 280px;
 	height: 250px;
 }
@@ -22,85 +22,87 @@ body{
 	height: 50px;
 }
 
-#dataLoadButton, #dataSaveButton{
-	float:right;
+#dataLoadButton, #dataSaveButton {
+	float: right;
 }
 
-.hidden{
+.hidden {
 	display: none;
 }
 
-#bioEditor{
-	height: 24em;
-    width: 20em;
+.profileTextInput {
+	height: 250px;
+	width: 550px;
 }
 
-#eventPresenceTable th{
+#eventPresenceTable th {
 	padding: 5px;
 }
 
-#eventPresenceTable tr:nth-child(odd),
-#eventPresenceTable tr td:nth-child(odd){ 
-    background-color: rgba(255,255,255,0.5);
+#eventPresenceTable tr:nth-child(odd), #eventPresenceTable tr td:nth-child(odd)
+	{
+	background-color: rgba(255, 255, 255, 0.5);
 }
- 
-#eventPresenceTable tr:nth-child(even),
-#eventPresenceTable tr td:nth-child(even){ 
-	background-color: rgba(222,226,228,0.5);
+
+#eventPresenceTable tr:nth-child(even), #eventPresenceTable tr td:nth-child(even)
+	{
+	background-color: rgba(222, 226, 228, 0.5);
 }
 
 .eventOriginalStory {
 	width: 300px;
 }
+
 .eventPersonalStory {
 	width: 300px;
 	height: 100px;
 }
 
-.bioInput{
-  width: 300px;
-  height: 100px;
-}
-.inventoryInput{
-  width: 300px;
+.bioInput {
+	width: 300px;
+	height: 100px;
 }
 
-.defaultDate{
-	background-color: rgba(255,0,0,0.1);
+.inventoryInput {
+	width: 300px;
 }
 
-#timelineContainer{
+.defaultDate {
+	background-color: rgba(255, 0, 0, 0.1);
+}
+
+#timelineContainer {
 	background-color: #fff;
 }
 
-
-.flexRoot{
+.flexRoot {
 	display: flex;
 }
 
-.storySelectorContainer{
+.storySelectorContainer {
 	flex-basis: 150px;
 	flex-grow: 0;
 }
 
-.storySelectorContainer > select{
-	width:90%;
+.storySelectorContainer>select {
+	width: 90%;
 }
 
-.visualObjectContainer{
+.visualObjectContainer {
 	flex-grow: 1;
 }
 
-.importantItem .vis-item-content  {
-  color: white;
-  background-color: red;
-  border-color: darkred;
+.importantItem .vis-item-content {
+	color: white;
+	background-color: red;
+	border-color: darkred;
 }
-#gameNameInput{
+
+#gameNameInput {
 	width: 450px;
 }
 
-#gameDescription{
+#gameDescription {
 	width: 450px;
 	height: 500px;
 }
@@ -109,6 +111,6 @@ body{
 #socialNetworkContainer {
 	width: 800px;
 	height: 600px;
-/* 	height: 100%; */
+	/* 	height: 100%; */
 	border: 1px solid lightgray;
 }

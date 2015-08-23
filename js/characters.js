@@ -2,6 +2,14 @@
 Characters = {};
 
 Characters.init = function() {
+	var root = Characters;
+	root.views = {};
+	var nav = "charactersNavigation";
+	var content = "charactersContent";
+	Utils.addView(root, "CharacterProfile", CharacterProfile, "Досье", nav, content, true);
+	Utils.addView(root, "CharacterFilter", CharacterFilter, "Фильтр", nav, content);
+	Utils.addView(root, "CharacterProfileConfigurer", CharacterProfileConfigurer, "Редактор досье", nav, content);
+	
 	var button = document.getElementById("createCharacterButton");
 	button.addEventListener("click", Characters.createCharacter);
 
@@ -10,12 +18,6 @@ Characters.init = function() {
 
 	var button = document.getElementById("removeCharacterButton");
 	button.addEventListener("click", Characters.removeCharacter);
-
-	var button = document.getElementById("bioEditorSelector");
-	button.addEventListener("change", Characters.showBioDelegate);
-
-	var button = document.getElementById("bioEditor");
-	button.addEventListener("change", Characters.updateBio);
 
 	Characters.content = document.getElementById("charactersDiv");
 };
@@ -42,17 +44,8 @@ Characters.refresh = function() {
 		option.appendChild(document.createTextNode(names[i]));
 		selector.appendChild(option);
 	}
-
-	selector = document.getElementById("bioEditorSelector");
-	removeChildren(selector);
-	for (var i = 0; i < names.length; i++) {
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode(names[i]));
-		selector.appendChild(option);
-	}
-
-	var editor = document.getElementById("bioEditor");
-	Characters.showBio(names[0]);
+	
+	Characters.currentView.refresh();
 };
 
 Characters.createCharacter = function() {
@@ -107,24 +100,4 @@ Characters.removeCharacter = function() {
 	}
 };
 
-Characters.showBioDelegate = function(event) {
-	var name = event.target.value.trim();
-	Characters.showBio(name);
-};
 
-Characters.showBio = function(name) {
-	var editor = document.getElementById("bioEditor");
-	editor.name = name;
-	editor.value = Database.Characters[name].bio;
-};
-
-Characters.updateBio = function(event) {
-	var name = event.target.name;
-	if (name) {
-		if (!Database.Characters[name]) {
-			alert("Такого персонажа нет в базе");
-			return;
-		}
-		Database.Characters[name].bio = event.target.value;
-	}
-};
