@@ -38,6 +38,7 @@ CharacterProfile.refresh = function(){
 //	var editor = document.getElementById("bioEditor");
 	if(names.length > 0){
 		CharacterProfile.showProfileInfo(names[0]);
+		selector.value = names[0];
 	}
 };
 

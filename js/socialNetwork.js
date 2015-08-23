@@ -1,31 +1,65 @@
 SocialNetwork = {};
 
 SocialNetwork.init = function() {
-	SocialNetwork.content = document.getElementById("socialNetworkDiv");
+	
+	SocialNetwork.highlightActive = true;
+	
+	var selector = document.getElementById("networkNodeGroupSelector");
+	selector.addEventListener("change", function(event){
+		SocialNetwork.updateNodes(event.target.value);
+//		SocialNetwork.refresh
+	});
+	
+	var groups = ["Без групп"].concat(Database.ProfileSettings.filter(function(element){
+		return element.type == "enum" || element.type == "checkbox";
+	}).map(function(elem){
+		return elem.name;
+	}));
+	
+	groups.forEach(function(group){
+		var option = document.createElement("option");
+		option.appendChild(document.createTextNode(group));
+		selector.appendChild(option);
+	});
 	
 	var selector = document.getElementById("networkSelector");
 	selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
 	
 	var networks = ["Простая сеть", "Детальная сеть", "Человек-история"];
 	
-	for (var i = 0; i < networks.length; i++) {
-		var network = networks[i];
+	networks.forEach(function(network){
 		var option = document.createElement("option");
-		option.appendChild(document.createTextNode(network ));
+		option.appendChild(document.createTextNode(network));
 		selector.appendChild(option);
-	}
-
+	});
+	
+	selector.value = networks[0];
+	
 	SocialNetwork.network;
 	SocialNetwork.allNodes;
 	SocialNetwork.highlightActive = false;
 
 	SocialNetwork.onNetworkSelectorChange(networks[0]);
+	SocialNetwork.content = document.getElementById("socialNetworkDiv");
 };
 
 SocialNetwork.refresh = function() {
 	SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes); // these come from
 	SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges); // these come from
 	SocialNetwork.redrawAll();
+};
+
+SocialNetwork.updateNodes = function(groupName){
+	Object.keys(Database.Characters).forEach(function(characterName){
+		var character = Database.Characters[characterName];
+		SocialNetwork.nodesDataset.update({
+			id : character.name,
+//			label : name,
+			label : character.name.split(" ").join("\n"),
+			group: character[groupName]+""
+//			group: 0 
+		});
+	});
 };
 
 SocialNetwork.onNetworkSelectorChangeDelegate = function(event){
@@ -55,15 +89,28 @@ SocialNetwork.onNetworkSelectorChange = function(selectedNetwork){
 };
 
 SocialNetwork.getCharacterNodes = function(){
+	var groupName = document.getElementById("networkNodeGroupSelector").value;
+	
 	var nodes = [];
-	for ( var name in Database.Characters) {
+	Object.keys(Database.Characters).forEach(function(characterName){
+		var character = Database.Characters[characterName];
 		nodes.push({
-			id : name,
+			id : character.name,
 //			label : name,
-			label : name.split(" ").join("\n"),
-			group: 0
+			label : character.name.split(" ").join("\n"),
+			group: character[groupName]+""
+//			group: 0 
 		});
-	}
+	});
+	
+//	for ( var name in Database.Characters) {
+//		nodes.push({
+//			id : name,
+////			label : name,
+//			label : name.split(" ").join("\n"),
+//			group: 0
+//		});
+//	}
 	return nodes;
 };
 
@@ -90,7 +137,8 @@ SocialNetwork.getStoryEdges = function(){
 		for ( var char1 in story.characters) {
 			edges.push({
 				from : "St:" + name,
-				to : char1
+				to : char1,
+				color : "grey"
 			});
 		}
 	}
@@ -118,7 +166,8 @@ SocialNetwork.getSimpleEdges = function(){
 //						edgesCheck[char1 + char2] = true;
 						edges.push({
 							from : char1,
-							to : char2
+							to : char2,
+							color : "grey"
 						});
 					}
 				}
@@ -174,7 +223,8 @@ SocialNetwork.getDetailedEdges = function(){
 			from : edgeInfo.from,
 			to : edgeInfo.to,
 			title : edgeInfo.value + ":" + title,
-			value : edgeInfo.value
+			value : edgeInfo.value,
+			color : "grey"
 		});
 	}
 	return edges;
@@ -216,8 +266,8 @@ SocialNetwork.redrawAll = function() {
 		},
 		physics : {
 			barnesHut : {
-//				gravitationalConstant : -30000
-				gravitationalConstant : -60000
+				gravitationalConstant : -30000
+//				gravitationalConstant : -60000
 			},
 			stabilization : {
 				iterations : 2500
@@ -225,6 +275,9 @@ SocialNetwork.redrawAll = function() {
 		},
 		// physics : false,
 //		 layout : true,
+		layout: {
+			randomSeed: 1200
+		},
 		interaction : {
 			tooltipDelay : 200,
 //			hideEdgesOnDrag : true
@@ -252,7 +305,7 @@ SocialNetwork.neighbourhoodHighlight = function(params) {
 	var network = SocialNetwork.network;
 	var nodesDataset = SocialNetwork.nodesDataset;
 	if (params.nodes.length > 0) {
-		highlightActive = true;
+		SocialNetwork.highlightActive = true;
 		var i, j;
 		var selectedNode = params.nodes[0];
 		var degrees = 2;
@@ -302,7 +355,7 @@ SocialNetwork.neighbourhoodHighlight = function(params) {
 		}
 		
 	} else if (params.edges.length > 0) {
-		highlightActive = true;
+		SocialNetwork.highlightActive = true;
 		var i, j;
 //		var selectedNode = params.nodes[0];
 		var selectedEdge = params.edges[0];
@@ -352,7 +405,7 @@ SocialNetwork.neighbourhoodHighlight = function(params) {
 //			allNodes[selectedNode].hiddenLabel = undefined;
 //		}
 		
-	} else if (highlightActive === true) {
+	} else if (SocialNetwork.highlightActive === true) {
 		// reset all nodes
 		for ( var nodeId in allNodes) {
 			allNodes[nodeId].color = undefined;
@@ -361,7 +414,7 @@ SocialNetwork.neighbourhoodHighlight = function(params) {
 				allNodes[nodeId].hiddenLabel = undefined;
 			}
 		}
-		highlightActive = false
+		SocialNetwork.highlightActive = false;
 	}
 
 	// transform the object into an array
