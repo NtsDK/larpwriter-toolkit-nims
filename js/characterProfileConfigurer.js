@@ -14,6 +14,10 @@ CharacterProfileConfigurer.mapping = {
 		displayName : "Текст",
 		value : ""
 	},
+	"string" : {
+		displayName : "Строка",
+		value : ""
+	},
 	"enum" : {
 		displayName : "Перечисление",
 		value : "_"
@@ -217,6 +221,7 @@ CharacterProfileConfigurer.appendInput = function(table, profileSettings, index)
 			input.info = profileSettings;
 			switch (profileSettings.type) {
 			case "text":
+			case "string":
 			case "enum":
 				input.value = profileSettings.value;
 				break;
@@ -241,6 +246,9 @@ CharacterProfileConfigurer.updateDefaultValue = function(event){
 	
 	switch (type) {
 	case "text":
+		event.target.info.value = event.target.value;
+		break;
+	case "string":
 		event.target.info.value = event.target.value;
 		break;
 	case "enum":

@@ -55,7 +55,11 @@
 	<script src="js/eventPresence.js"></script>
 	
 	<script src="js/events.js"></script>
+	
 	<script src="js/briefings.js"></script>
+	<script src="js/briefingExport.js"></script>
+	<script src="js/briefingPreview.js"></script>
+	
 	<script src="js/timeline.js"></script>
 	<script src="js/socialNetwork.js"></script>
 	
@@ -80,22 +84,13 @@
   </div>
 
 	<div class="hidden">
-<!-- 		<div id="charactersDiv"> -->
-<!-- 			<input id="characterNameInput"></input> -->
-<!-- 			<button id="createCharacterButton">Добавить</button> -->
-<!-- 			<br> Переименовать из <select id="fromName"></select> в <input -->
-<!-- 				id="toName"></input> -->
-<!-- 			<button id="renameCharacter">OK</button> -->
-<!-- 			<br> <select id="characterRemoveSelector"></select> -->
-<!-- 			<button id="removeCharacterButton">Удалить</button> -->
-<!-- 			<br> <br> Персонажи<br> -->
-<!-- 			<table cellspacing=0 cellpadding=0> -->
-<!-- 				<tr> -->
-<!-- 					<td><select size=20 id="bioEditorSelector"></select></td> -->
-<!-- 					<td><textarea id="bioEditor"></textarea></td> -->
-<!-- 				</tr> -->
-<!-- 			</table> -->
-<!-- 		</div> -->
+	    <div id="overviewDiv">
+        Название<input id="gameNameInput"></input><br>
+        Игровая дата<input id="gameDatePicker"></input><br>
+        Дата начала доигровых событий<input id="preGameDatePicker"></input><br>
+        Описание<br><textarea id="gameDescription"></textarea>
+    </div>
+
 		
 		<div id="charactersDiv">
 			<input id="characterNameInput"></input>
@@ -105,35 +100,19 @@
 			<button id="renameCharacter">OK</button>
 			<br> <select id="characterRemoveSelector"></select>
 			<button id="removeCharacterButton">Удалить</button>
-<!-- 			<br> <br> Персонажи<br> -->
-<!-- 			<table cellspacing=0 cellpadding=0> -->
-<!-- 				<tr> -->
-<!-- 					<td><select size=20 id="bioEditorSelector"></select></td> -->
-<!-- 					<td><textarea id="bioEditor"></textarea></td> -->
-<!-- 				</tr> -->
-<!-- 			</table> -->
 			<div id="charactersNavigation" class="block"></div>
 			<div id="charactersContent" class="block"></div>
-
-
 		</div>
 		
 		<div id="characterProfile">
 		  <table>
         <tr>
           <th>Персонажи</th>
-<!--           <th>Мастерская история</th> -->
-<!--           <th id="charactersNavigation"></th> -->
         </tr>
         <tr>
           <td><select size=20 id="bioEditorSelector"></select></td>
-<!--           <td><textarea id="masterStoryArea"></textarea></td> -->
-<!--           <td></td> -->
           <td >
           <div id="profileContentDiv"></div>
-          
-<!--           <textarea id="bioEditor"></textarea> -->
-          
           </td>
         </tr>
       </table>
@@ -141,11 +120,9 @@
 		</div>
 
 		<div id="characterProfileConfigurer">
-<!-- 		  characterProfileConfigurer -->
 		  
 		  Название<input id="profileItemNameInput"></input>
 		  
-<!--       <textarea id="eventInput" class="eventText"></textarea> -->
       Тип<select id="profileItemTypeSelector">
       </select>
       Позиция <select id="profileItemPositionSelector">
@@ -160,7 +137,6 @@
       <br>
 		  
 		  <table id="profileConfigBlock"></table>
-<!-- 		  <textarea id="bioEditor"></textarea> -->
 		</div>
 		
 		<div id="characterFilterDiv">
@@ -242,20 +218,39 @@
     </div>
     
     
+<!--     <div id="briefingsDiv"> -->
+<!--         <input type="checkbox" id="toSeparateFileCheckbox">Каждую в отдельный файл</input>  -->
+<!--         <br> -->
+<!--         <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio">Группировать события по историям</input>  -->
+<!--         <br> -->
+<!--         <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio">Сортировать события по хронологии</input>  -->
+<!--         <br> -->
+        
+<!--         Сформировать вводные docx<input type="file" id="docxBriefings"></input><br> -->
+<!--         <button id="makeBriefings">Сформировать вводные txt</button> -->
+<!--         <br><br> -->
+        
+<!--         Предварительный просмотр -->
+<!--         <br> -->
+<!--         <select id="briefingCharacter"></select> -->
+<!--         <div id="briefingContent"> -->
+        
+<!--         </div> -->
+        
+<!--     </div> -->
+    
     <div id="briefingsDiv">
-        <input type="checkbox" id="toSeparateFileCheckbox">Каждую в отдельный файл</input> 
-        <br>
+      <div id="briefingsNavigation" class="block"></div>
+      <div id="briefingsContent" class="block"></div>
+    </div>
+    
+    <div id="briefingPreviewDiv">
         <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio">Группировать события по историям</input> 
         <br>
         <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio">Сортировать события по хронологии</input> 
         <br>
+    
         
-        Сформировать вводные docx<input type="file" id="docxBriefings"></input><br>
-        <button id="makeBriefings">Сформировать вводные txt</button>
-        <br><br>
-        
-        Предварительный просмотр
-        <br>
         <select id="briefingCharacter"></select>
         <div id="briefingContent">
         
@@ -263,12 +258,21 @@
         
     </div>
     
-    <div id="overviewDiv">
-        Название<input id="gameNameInput"></input><br>
-        Игровая дата<input id="gameDatePicker"></input><br>
-        Дата начала доигровых событий<input id="preGameDatePicker"></input><br>
-        Описание<br><textarea id="gameDescription"></textarea>
+    <div id="briefingExportDiv">
+        <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2">Группировать события по историям</input> 
+        <br>
+        <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2">Сортировать события по хронологии</input> 
+        <br>
+        <input type="checkbox" id="toSeparateFileCheckbox">Каждую в отдельный файл</input> 
+        <br>
+
+        
+        Сформировать вводные docx<input type="file" id="docxBriefings"></input><br>
+        <button id="makeBriefings">Сформировать вводные txt</button>
+        <br><br>
     </div>
+    
+
 
     <div id="timelineDiv">
         

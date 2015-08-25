@@ -30,9 +30,15 @@ body {
 	display: none;
 }
 
+/* characterProfile.js */
 .profileTextInput {
 	height: 250px;
 	width: 550px;
+}
+
+/* characterProfile.js */
+.profileStringInput {
+	width: 400px;
 }
 
 #eventPresenceTable th {

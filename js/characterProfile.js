@@ -2,12 +2,8 @@ CharacterProfile = {};
 
 CharacterProfile.init = function(){
 	var button = document.getElementById("bioEditorSelector");
-//	button.addEventListener("change", CharacterProfile.showBioDelegate);
 	button.addEventListener("change", CharacterProfile.showProfileInfoDelegate);
 
-//	var button = document.getElementById("bioEditor");
-//	button.addEventListener("change", CharacterProfile.updateBio);
-	
 	CharacterProfile.content = document.getElementById("characterProfile");
 };
 
@@ -34,8 +30,6 @@ CharacterProfile.refresh = function(){
 		CharacterProfile.appendInput(profileContentDiv, Database.ProfileSettings[i]);
 	}
 	
-
-//	var editor = document.getElementById("bioEditor");
 	if(names.length > 0){
 		CharacterProfile.showProfileInfo(names[0]);
 		selector.value = names[0];
@@ -55,6 +49,19 @@ CharacterProfile.appendInput = function(root, profileItemConfig){
 		root.inputItems[profileItemConfig.name] = textarea;
 		
 		textarea.addEventListener("change", function(event){
+			var profileContentDiv = document.getElementById("profileContentDiv");
+			profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
+		});
+		
+		break;
+	case "string":
+		var input = document.createElement("input");
+		input.className = "profileStringInput";
+		input.selfName = profileItemConfig.name;
+		root.appendChild(input);
+		root.inputItems[profileItemConfig.name] = input;
+		
+		input.addEventListener("change", function(event){
 			var profileContentDiv = document.getElementById("profileContentDiv");
 			profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
 		});
@@ -120,11 +127,7 @@ CharacterProfile.showProfileInfoDelegate = function(event) {
 	var name = event.target.value.trim();
 	CharacterProfile.showProfileInfo(name);
 };
-//CharacterProfile.showBioDelegate = function(event) {
-//	var name = event.target.value.trim();
-//	CharacterProfile.showBio(name);
-//};
-//
+
 CharacterProfile.showProfileInfo = function(name) {
 	var profileContentDiv = document.getElementById("profileContentDiv");
 	var profile = Database.Characters[name];
@@ -138,24 +141,4 @@ CharacterProfile.showProfileInfo = function(name) {
 			inputNames[name].value = profile[name];
 		}
 	}
-	
-//	var editor = document.getElementById("bioEditor");
-//	editor.name = name;
-//	editor.value = Database.Characters[name].bio;
 };
-//CharacterProfile.showBio = function(name) {
-//	var editor = document.getElementById("bioEditor");
-//	editor.name = name;
-//	editor.value = Database.Characters[name].bio;
-//};
-//
-//CharacterProfile.updateBio = function(event) {
-//	var name = event.target.name;
-//	if (name) {
-//		if (!Database.Characters[name]) {
-//			alert("Такого персонажа нет в базе");
-//			return;
-//		}
-//		Database.Characters[name].bio = event.target.value;
-//	}
-//};

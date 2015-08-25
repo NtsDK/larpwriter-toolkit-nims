@@ -21,7 +21,7 @@ CharacterFilter.refresh = function(){
 		name : "name",
 		type : "text"
 	};
-	input.value = "*";
+	input.value = "";
 	filterSettingsDiv.appendChild(input);
 	filterSettingsDiv.inputItems["name"] = input;
 	input.addEventListener("change",CharacterFilter.rebuildContent);
@@ -123,11 +123,9 @@ CharacterFilter.acceptDataRow = function(element){
 			
 			break;
 		case "text":
-			
+		case "string":
 			var regex = Utils.globStringToRegex(inputItem.value); 
-			
 			result = element[inputItem.selfInfo.name].match(regex);
-			
 			break;
 		}
 		
@@ -147,6 +145,7 @@ CharacterFilter.sortDataRows = function(a,b){
 	
 	switch(type){
 	case "text":
+	case "string":
 	case "enum":
 		a = a[CharacterFilter.sortKey].toLowerCase();
 		b = b[CharacterFilter.sortKey].toLowerCase();
@@ -228,9 +227,10 @@ CharacterFilter.appendInput = function(root, profileItemConfig){
 	
 	switch (profileItemConfig.type) {
 	case "text":
+	case "string":
 		var input = document.createElement("input");
 		input.selfInfo = profileItemConfig;
-		input.value = "*";
+		input.value = "";
 		root.appendChild(input);
 		root.inputItems[profileItemConfig.name] = input;
 		
