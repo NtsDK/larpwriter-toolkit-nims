@@ -1,101 +1,102 @@
 DBMS = {};
 
 DBMS.createCharacter = function(name) {
-	var newCharacter = {
-		name : name
-	};
-	
-	for (var i = 0; i < Database.ProfileSettings.length; i++) {
-		var profileSettings = Database.ProfileSettings[i];
-		if(profileSettings.type === "enum"){
-			newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
-		} else {
-			newCharacter[profileSettings.name] = profileSettings.value;
-		}
-	}
-	
-	Database.Characters[name] = newCharacter;
+    var newCharacter = {
+        name : name
+    };
+
+    for (var i = 0; i < Database.ProfileSettings.length; i++) {
+        var profileSettings = Database.ProfileSettings[i];
+        if (profileSettings.type === "enum") {
+            newCharacter[profileSettings.name] = profileSettings.value
+                    .split(",")[0];
+        } else {
+            newCharacter[profileSettings.name] = profileSettings.value;
+        }
+    }
+
+    Database.Characters[name] = newCharacter;
 };
 
 DBMS.renameCharacter = function(fromName, toName) {
-	var data = Database.Characters[fromName];
-	data.name = toName;
-	Database.Characters[toName] = data;
-	delete Database.Characters[fromName];
+    var data = Database.Characters[fromName];
+    data.name = toName;
+    Database.Characters[toName] = data;
+    delete Database.Characters[fromName];
 
-	for ( var storyName in Database.Stories) {
-		var story = Database.Stories[storyName];
-		if (story.characters[fromName]) {
-			var data = story.characters[fromName];
-			data.name = toName;
-			story.characters[toName] = data;
-			delete story.characters[fromName];
+    for ( var storyName in Database.Stories) {
+        var story = Database.Stories[storyName];
+        if (story.characters[fromName]) {
+            var data = story.characters[fromName];
+            data.name = toName;
+            story.characters[toName] = data;
+            delete story.characters[fromName];
 
-			for (var i = 0; i < story.events.length; ++i) {
-				var event = story.events[i];
-				if (event.characters[fromName]) {
-					var data = event.characters[fromName];
-					event.characters[toName] = data;
-					delete event.characters[fromName];
-				}
-			}
-		}
-	}
+            for (var i = 0; i < story.events.length; ++i) {
+                var event = story.events[i];
+                if (event.characters[fromName]) {
+                    var data = event.characters[fromName];
+                    event.characters[toName] = data;
+                    delete event.characters[fromName];
+                }
+            }
+        }
+    }
 };
 
 DBMS.removeCharacter = function(name) {
-	delete Database.Characters[name];
-	
-	for ( var storyName in Database.Stories) {
-		var story = Database.Stories[storyName];
-		if (story.characters[name]) {
-			delete story.characters[name];
+    delete Database.Characters[name];
 
-			for (var i = 0; i < story.events.length; ++i) {
-				var event = story.events[i];
-				if (event.characters[name]) {
-					delete event.characters[name];
-				}
-			}
-		}
-	}
+    for ( var storyName in Database.Stories) {
+        var story = Database.Stories[storyName];
+        if (story.characters[name]) {
+            delete story.characters[name];
+
+            for (var i = 0; i < story.events.length; ++i) {
+                var event = story.events[i];
+                if (event.characters[name]) {
+                    delete event.characters[name];
+                }
+            }
+        }
+    }
 };
 
 DBMS.getCharacterNamesArray = function() {
-	var characterArray = [];
+    var characterArray = [];
 
-	for ( var name in Database.Characters) {
-		characterArray.push(name);
-	}
+    for ( var name in Database.Characters) {
+        characterArray.push(name);
+    }
 
-	characterArray.sort(charOrdA);
-	return characterArray;
+    characterArray.sort(charOrdA);
+    return characterArray;
 };
 
 DBMS.getStoryCharacterNamesArray = function(storyName) {
-	var characterArray = [];
+    var characterArray = [];
 
-	var localCharacters;
-	if (storyName === undefined) {
-		localCharacters = Stories.CurrentStory.characters;
-	} else {
-		localCharacters = Database.Stories[storyName].characters;
-	}
-	for ( var name in localCharacters) {
-		characterArray.push(name);
-	}
+    var localCharacters;
+    if (storyName === undefined) {
+        localCharacters = Stories.CurrentStory.characters;
+    } else {
+        localCharacters = Database.Stories[storyName].characters;
+    }
+    for ( var name in localCharacters) {
+        characterArray.push(name);
+    }
 
-	characterArray.sort(charOrdA);
-	return characterArray;
+    characterArray.sort(charOrdA);
+    return characterArray;
 };
 
 DBMS.getStoryNamesArray = function(storyName) {
-	var stroyNamesArray = [];
+    var stroyNamesArray = [];
 
-	for ( var name in Database.Stories) {
-		stroyNamesArray.push(name);
-	}
+    for ( var name in Database.Stories) {
+        stroyNamesArray.push(name);
+    }
 
-	stroyNamesArray.sort(charOrdA);
-	return stroyNamesArray;
+    stroyNamesArray.sort(charOrdA);
+    return stroyNamesArray;
 };

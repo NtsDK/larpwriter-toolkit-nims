@@ -425,7 +425,7 @@ SocialNetwork.neighbourhoodHighlight = function(params) {
 		// all second degree nodes get a different color and their label back
 		for (i = 0; i < allConnectedNodes.length; i++) {
 			allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.75)';
-			if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+            			if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
 				allNodes[allConnectedNodes[i]].label = allNodes[allConnectedNodes[i]].hiddenLabel;
 				allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
 			}
