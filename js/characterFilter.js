@@ -41,7 +41,7 @@ CharacterFilter.rebuildContent = function() {
 	removeChildren(filterContent);
 //
 //	var profileSettings = Database.ProfileSettings.filter(function(value) {
-//		return value.type != "text";
+//		return value.type !== "text";
 //	});
 	var profileSettings = Database.ProfileSettings.filter(function(value) {
 		return true;
@@ -93,10 +93,10 @@ CharacterFilter.acceptDataRow = function(element){
 			var selectedOptions = {}; 
 			
 			if(inputItem.options[0].selected){
-				selectedOptions[inputItem.options[0].value == "Да" ? "true" : "false"] = true;
+				selectedOptions[inputItem.options[0].value === "Да" ? "true" : "false"] = true;
 			} 
 			if(inputItem.options[1].selected){
-				selectedOptions[inputItem.options[1].value == "Да" ? "true" : "false"] = true;
+				selectedOptions[inputItem.options[1].value === "Да" ? "true" : "false"] = true;
 			} 
 			
 			if(!selectedOptions[element[inputItem.selfInfo.name]]){
@@ -114,7 +114,7 @@ CharacterFilter.acceptDataRow = function(element){
 				result = element[inputItem.selfInfo.name] > num;
 				break;
 			case "Равно":
-				result = element[inputItem.selfInfo.name] == num;
+				result = element[inputItem.selfInfo.name] === num;
 				break;
 			case "Меньше":
 				result = element[inputItem.selfInfo.name] < num;
@@ -138,9 +138,9 @@ CharacterFilter.sortDataRows = function(a,b){
 	a = Database.Characters[a];
 	b = Database.Characters[b];
 	
-	var type = CharacterFilter.sortKey == "name" ? "text":
+	var type = CharacterFilter.sortKey === "name" ? "text":
 	Database.ProfileSettings.filter(function(element){
-		return element.name == CharacterFilter.sortKey;
+		return element.name === CharacterFilter.sortKey;
 	})[0].type;
 	
 	switch(type){
@@ -160,9 +160,9 @@ CharacterFilter.sortDataRows = function(a,b){
 		break;
 	}
 	if (a > b)
-		return CharacterFilter.sortDir == "asc" ? 1 : -1;
+		return CharacterFilter.sortDir === "asc" ? 1 : -1;
 	if (a < b)
-		return CharacterFilter.sortDir == "asc" ? -1 : 1;
+		return CharacterFilter.sortDir === "asc" ? -1 : 1;
 	return 0;
 };
 
@@ -176,9 +176,9 @@ CharacterFilter.appendDataString = function(table, character, profileSettings){
 	
 	profileSettings.forEach(function(profileItemInfo){
 		var td = document.createElement("td");
-		if(profileItemInfo.type == "checkbox"){
+		if(profileItemInfo.type === "checkbox"){
 			td.appendChild(document.createTextNode(character[profileItemInfo.name] ? "Да" : "Нет"));
-		} else if(profileItemInfo.type == "text" && profileItemInfo.name != "name"){
+		} else if(profileItemInfo.type === "text" && profileItemInfo.name !== "name"){
 			var regex = Utils.globStringToRegex(inputItems[profileItemInfo.name].value); 
 			var pos = character[profileItemInfo.name].search(regex);
 			td.appendChild(document.createTextNode(character[profileItemInfo.name].substring(pos-5,pos+15)));
@@ -212,8 +212,8 @@ CharacterFilter.appendContentHeader = function(table, profileSettings){
 };
 
 CharacterFilter.onSortChange = function(event){
-	if(CharacterFilter.sortKey == event.target.info){
-		CharacterFilter.sortDir = CharacterFilter.sortDir == "asc" ? "desc" : "asc";
+	if(CharacterFilter.sortKey === event.target.info){
+		CharacterFilter.sortDir = CharacterFilter.sortDir === "asc" ? "desc" : "asc";
 	} else {
 		CharacterFilter.sortKey = event.target.info;
 		CharacterFilter.sortDir = "asc";

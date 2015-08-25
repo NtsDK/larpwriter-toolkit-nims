@@ -75,7 +75,7 @@ BriefingPreview.buildContent = function(characterName){
 	for(var storyName in Database.Stories){
 		var story = Database.Stories[storyName];
 		if(story.characters[characterName] && story.characters[characterName].inventory && 
-				story.characters[characterName].inventory != ""){
+				story.characters[characterName].inventory !== ""){
 //			content.appendChild(document.createTextNode(storyName + ":" + story.characters[characterName].inventory));
 			content.appendChild(document.createTextNode(storyName + ":"));
 			var input = document.createElement("input");
@@ -126,7 +126,7 @@ BriefingPreview.showEventsByTime = function(content, characterName){
 	for (var i = 0; i < allStories.length; i++) {
 		var event = allStories[i];
 		var type;
-		if(event.characters[characterName].text == ""){
+		if(event.characters[characterName].text === ""){
 			type = "История";
 		} else {
 			type = "Персонаж";
@@ -138,7 +138,7 @@ BriefingPreview.showEventsByTime = function(content, characterName){
 		var input = document.createElement("textarea");
 		input.className = "eventPersonalStory";
 		
-		if(event.characters[characterName].text == ""){
+		if(event.characters[characterName].text === ""){
 			input.value = event.text;
 			input.eventInfo = event;
 		} else {
@@ -170,7 +170,7 @@ BriefingPreview.showEventsByStory = function(content, characterName){
 			var event = events[i];
 			if(event.characters[characterName]){
 				var type;
-				if(event.characters[characterName].text == ""){
+				if(event.characters[characterName].text === ""){
 					type = "История";
 				} else {
 					type = "Персонаж";
@@ -182,7 +182,7 @@ BriefingPreview.showEventsByStory = function(content, characterName){
 					var input = document.createElement("textarea");
 					input.className = "eventPersonalStory";
 					
-					if(event.characters[characterName].text == ""){
+					if(event.characters[characterName].text === ""){
 						input.value = event.text;
 						input.eventInfo = event;
 	//					content.appendChild(document.createTextNode(event.text));

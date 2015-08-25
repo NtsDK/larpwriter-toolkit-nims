@@ -67,7 +67,7 @@ Stories.refresh = function(){
 
 Stories.createStory = function(){
 	var storyName = document.getElementById("createStoryName").value.trim();
-	if(storyName == ""){
+	if(storyName === ""){
 		alert("Название истории пусто.");
 		return;
 	}
@@ -93,12 +93,12 @@ Stories.renameStory = function(){
 	var fromName = document.getElementById("fromStory").value.trim();
 	var toName = document.getElementById("toStory").value.trim();
 	
-	if(toName == ""){
+	if(toName === ""){
 		alert("Новое имя не указано.");
 		return;
 	}
 	
-	if(fromName ==  toName){
+	if(fromName ===  toName){
 		alert("Имена совпадают.");
 		return;
 	}

@@ -135,7 +135,7 @@ CharacterProfile.showProfileInfo = function(name) {
 	var inputNames = profileContentDiv.inputItems;
 	
 	for(var name in inputNames){
-		if(inputNames[name].type == "checkbox"){
+		if(inputNames[name].type === "checkbox"){
 			inputNames[name].checked = profile[name];
 		} else {
 			inputNames[name].value = profile[name];

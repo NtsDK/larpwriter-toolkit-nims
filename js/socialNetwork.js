@@ -13,7 +13,7 @@ SocialNetwork.init = function() {
 	});
 	
 	var groups = ["Без групп"].concat(Database.ProfileSettings.filter(function(element){
-		return element.type == "enum" || element.type == "checkbox";
+		return element.type === "enum" || element.type === "checkbox";
 	}).map(function(elem){
 		return elem.name;
 	}));
@@ -82,7 +82,7 @@ SocialNetwork.updateNodes = function(groupName){
 //			group: character[groupName]+""
 //			color: SocialNetwork.colorMap[groupName  + "." + character[groupName]]
 //			group: groupName  + "." + character[groupName]
-		group: groupName == "Без групп" ? groupName : groupName  + "." + character[groupName]
+		group: groupName === "Без групп" ? groupName : groupName  + "." + character[groupName]
 //			group: character[groupName]+""
 //			group: 0 
 		});
@@ -127,7 +127,7 @@ SocialNetwork.getCharacterNodes = function(){
 //			label : name,
 			label : character.name.split(" ").join("\n"),
 //			group: character[groupName]+""
-			group: groupName == "Без групп" ? groupName : groupName  + "." + character[groupName]
+			group: groupName === "Без групп" ? groupName : groupName  + "." + character[groupName]
 //			color: SocialNetwork.colorMap[groupName  + "." + character[groupName]]
 //			group: 0 
 		});
@@ -187,16 +187,10 @@ SocialNetwork.getSimpleEdges = function(){
 			var event = story.events[i];
 			for ( var char1 in event.characters) {
 				for ( var char2 in event.characters) {
-					// remove duplicates
-//					if (char1 != char2 && !edgesCheck[char1 + char2]
-//							&& !edgesCheck[char2 + char1])
-					// show all connections
-					if (char1 != char2 && !edgesCheck[name + char1 + char2]
+					if (char1 !== char2 && !edgesCheck[name + char1 + char2]
 							&& !edgesCheck[name + char2 + char1]) 
-//						if (char1 != char2) 
 					{
 						edgesCheck[name + char1 + char2] = true;
-//						edgesCheck[char1 + char2] = true;
 						edges.push({
 							from : char1,
 							to : char2,
@@ -219,7 +213,7 @@ SocialNetwork.getDetailedEdges = function(){
 			var event = story.events[i];
 			for ( var char1 in event.characters) {
 				for ( var char2 in event.characters) {
-					if (char1 != char2) {
+					if (char1 !== char2) {
 						if(!edgesCheck[char1 + char2] && !edgesCheck[char2 + char1]){
 							var obj = {};
 							obj[name] = true;

@@ -103,7 +103,7 @@ BriefingExport.getBriefingData = function(){
 		for(var storyName in Database.Stories){
 			var story = Database.Stories[storyName];
 			if(story.characters[charName] && story.characters[charName].inventory && 
-					story.characters[charName].inventory != ""){
+					story.characters[charName].inventory !== ""){
 				inventory += story.characters[charName].inventory + ", ";
 			}
 		}
@@ -170,7 +170,7 @@ BriefingExport.getEventsInfo = function(charName) {
 			var event = story.events[i];
 			var eventInfo = {};
 			if(event.characters[charName]){
-				if(event.characters[charName].text != ""){
+				if(event.characters[charName].text !== ""){
 					eventInfo.text = event.characters[charName].text;
 				} else {
 					eventInfo.text = event.text;
@@ -203,7 +203,7 @@ BriefingExport.getStoriesInfo = function(charName) {
 			var event = story.events[i];
 			var eventInfo = {};
 			if(event.characters[charName]){
-				if(event.characters[charName].text != ""){
+				if(event.characters[charName].text !== ""){
 					eventInfo.text = event.characters[charName].text;
 				} else {
 					eventInfo.text = event.text;

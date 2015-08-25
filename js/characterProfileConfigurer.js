@@ -121,7 +121,7 @@ CharacterProfileConfigurer.createProfileItem = function(){
 	var positionSelector = document.getElementById("profileItemPositionSelector");
 	
 	var position = positionSelector.value;
-	if(position == "В конец"){
+	if(position === "В конец"){
 		Database.ProfileSettings.push(profileItem);
 	} else {
 		Database.ProfileSettings.splice(positionSelector.selectedIndex, 0, profileItem);
@@ -133,7 +133,7 @@ CharacterProfileConfigurer.createProfileItem = function(){
 CharacterProfileConfigurer.swapProfileItems = function() {
 	var index1 = document.getElementById("firstProfileField").selectedIndex;
 	var index2 = document.getElementById("secondProfileField").selectedIndex;
-	if(index1 == index2){
+	if(index1 === index2){
 		alert("Позиции совпадают");
 		return;
 	}
@@ -252,13 +252,11 @@ CharacterProfileConfigurer.updateDefaultValue = function(event){
 		event.target.info.value = event.target.value;
 		break;
 	case "enum":
-		if(event.target.value == ""){
+		if(event.target.value === ""){
 			alert("Значение перечислимого поля не может быть пустым");
 			event.target.value = event.target.info.value;
 			return;
 		}
-//		var oldOptions = event.target.info.value == "" ? [] : event.target.info.value.split(",");
-//		var newOptions = event.target.value == "" ? [] : event.target.value.split(",");
 		var oldOptions = event.target.info.value.split(",");
 		var newOptions = event.target.value.split(",");
 		
@@ -273,20 +271,9 @@ CharacterProfileConfigurer.updateDefaultValue = function(event){
 			if(!newOptionsMap[oldOption]){
 				missedValues.push(oldOption);
 			}
-//			var valueStillHere = false; 
-//			for (var j = 0; j < newOptions.length; j++) {
-//				var newOption = newOptions[j];
-//				if(oldOption == newOption){
-//					valueStillHere = true;
-//					break;
-//				}
-//			}
-//			if(!valueStillHere){
-//				missedValues.push(oldOption);
-//			}
 		}
 		
-		if(missedValues.length != 0){
+		if(missedValues.length !== 0){
 			if(confirm("Новое значение перечисления удаляет предыдущие значения: " + missedValues.join(",") + 
 			". Это приведет к обновлению существующих профилей. Вы уверены?" )){
 				event.target.info.value = event.target.value;
@@ -344,18 +331,18 @@ CharacterProfileConfigurer.renameProfileItem = function(event){
 };
 
 CharacterProfileConfigurer.validateProfileItemName = function(name){
-	if(name == ""){
+	if(name === ""){
 		alert("Название поля не указано");
 		return false;
 	}
 	
-	if(name == "name"){
+	if(name === "name"){
 		alert("Название поля не может быть name");
 		return false;
 	}
 	
 	for (var i = 0; i < Database.ProfileSettings.length; ++i) {
-		if(name == Database.ProfileSettings[i].name){
+		if(name === Database.ProfileSettings[i].name){
 			alert("Такое имя уже используется.");
 			return false;
 		}

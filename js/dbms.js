@@ -7,7 +7,7 @@ DBMS.createCharacter = function(name) {
 	
 	for (var i = 0; i < Database.ProfileSettings.length; i++) {
 		var profileSettings = Database.ProfileSettings[i];
-		if(profileSettings.type == "enum"){
+		if(profileSettings.type === "enum"){
 			newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
 		} else {
 			newCharacter[profileSettings.name] = profileSettings.value;
@@ -76,7 +76,7 @@ DBMS.getStoryCharacterNamesArray = function(storyName) {
 	var characterArray = [];
 
 	var localCharacters;
-	if (storyName == null) {
+	if (storyName === undefined) {
 		localCharacters = Stories.CurrentStory.characters;
 	} else {
 		localCharacters = Database.Stories[storyName].characters;

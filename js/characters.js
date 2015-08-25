@@ -52,7 +52,7 @@ Characters.createCharacter = function() {
 	var characterNameInput = document.getElementById("characterNameInput");
 	var name = characterNameInput.value.trim();
 
-	if (name == "") {
+	if (name === "") {
 		alert("Имя персонажа не указано");
 		return;
 	}
@@ -70,12 +70,12 @@ Characters.renameCharacter = function() {
 	var fromName = document.getElementById("fromName").value.trim();
 	var toName = document.getElementById("toName").value.trim();
 
-	if (toName == "") {
+	if (toName === "") {
 		alert("Новое имя не указано.");
 		return;
 	}
 
-	if (fromName == toName) {
+	if (fromName === toName) {
 		alert("Имена совпадают.");
 		return;
 	}

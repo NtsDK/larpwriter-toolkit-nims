@@ -84,7 +84,7 @@ Events.showPersonalStories = function(storyName, characterName){
 	for (var i = 0; i < events.length; i++) {
 		if(events[i].characters[characterName]){
 //			if(showUnfinishedOnly){
-//				if(events[i].characters[name].text != ""){
+//				if(events[i].characters[name].text !== ""){
 //					continue;
 //				}
 //			}

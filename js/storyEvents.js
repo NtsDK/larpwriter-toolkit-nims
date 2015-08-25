@@ -76,11 +76,11 @@ StoryEvents.createEvent = function() {
 	var input = document.getElementById("eventInput");
 	var eventText = input.value.trim();
 
-	if (eventName == "") {
+	if (eventName === "") {
 		alert("Название события не указано");
 		return;
 	}
-	if (eventText == "") {
+	if (eventText === "") {
 		alert("Событие пусто");
 		return;
 	}
@@ -95,7 +95,7 @@ StoryEvents.createEvent = function() {
 	var positionSelector = document.getElementById("positionSelector");
 	
 	var position = positionSelector.value;
-	if(position == "В конец"){
+	if(position === "В конец"){
 		Stories.CurrentStory.events.push(event);
 	} else {
 		Stories.CurrentStory.events.splice(positionSelector.selectedIndex, 0, event);
@@ -107,7 +107,7 @@ StoryEvents.createEvent = function() {
 StoryEvents.swapEvents = function(){
 	var index1 = document.getElementById("firstEvent").selectedIndex;
 	var index2 = document.getElementById("secondEvent").selectedIndex;
-	if(index1 == index2){
+	if(index1 === index2){
 		alert("Позиции событий совпадают");
 		return;
 	}
@@ -218,7 +218,7 @@ StoryEvents.appendEventInput = function(table, event, index) {
 		onChangeDateTime : StoryEvents.onChangeDateTimeCreator(input),
 	};
 	
-	if(event.time != ""){
+	if(event.time !== ""){
 		opts.value = event.time;
 	} else {
 		opts.value = Database.Meta.date;
