@@ -1,4 +1,6 @@
-Database = {
+"use strict";
+
+var Database = {
     "Meta" : {
         "name" : "Разные сказки",
         "date" : "1993/06/14 20:00",

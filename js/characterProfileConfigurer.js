@@ -1,13 +1,15 @@
-// Профиль игрока уже содержит поле name. 
-// У меня был выбор: 
-// 1. убрать это поле в принципе, 
+"use strict";
+
+// Профиль игрока уже содержит поле name.
+// У меня был выбор:
+// 1. убрать это поле в принципе,
 // 2. добавить уровень вложенности для данных профиля,
 // 3. запретить называть так поля профиля.
 // 1 уже используется в ряде мест
 // 2 - на мой взгляд усложнит формат данных
 // 3 просто и без усложнений, выбран 3 вариант
 
-CharacterProfileConfigurer = {};
+var CharacterProfileConfigurer = {};
 
 CharacterProfileConfigurer.mapping = {
     "text" : {
@@ -32,7 +34,7 @@ CharacterProfileConfigurer.mapping = {
     }
 };
 
-CharacterProfileConfigurer.init = function() {
+CharacterProfileConfigurer.init = function () {
     var selector = document.getElementById("profileItemTypeSelector");
     removeChildren(selector);
     CharacterProfileConfigurer.fillSelector(selector);
@@ -53,7 +55,7 @@ CharacterProfileConfigurer.init = function() {
             .getElementById("characterProfileConfigurer");
 };
 
-CharacterProfileConfigurer.refresh = function() {
+CharacterProfileConfigurer.refresh = function () {
     var positionSelector = document
             .getElementById("profileItemPositionSelector");
     removeChildren(positionSelector);
@@ -99,7 +101,7 @@ CharacterProfileConfigurer.refresh = function() {
     }
 };
 
-CharacterProfileConfigurer.createProfileItem = function() {
+CharacterProfileConfigurer.createProfileItem = function () {
     var name = document.getElementById("profileItemNameInput").value.trim();
 
     if (!CharacterProfileConfigurer.validateProfileItemName(name)) {
@@ -137,7 +139,7 @@ CharacterProfileConfigurer.createProfileItem = function() {
     CharacterProfileConfigurer.refresh();
 };
 
-CharacterProfileConfigurer.swapProfileItems = function() {
+CharacterProfileConfigurer.swapProfileItems = function () {
     var index1 = document.getElementById("firstProfileField").selectedIndex;
     var index2 = document.getElementById("secondProfileField").selectedIndex;
     if (index1 === index2) {
@@ -152,7 +154,7 @@ CharacterProfileConfigurer.swapProfileItems = function() {
     CharacterProfileConfigurer.refresh();
 };
 
-CharacterProfileConfigurer.removeProfileItem = function() {
+CharacterProfileConfigurer.removeProfileItem = function () {
     var index = document.getElementById("removeProfileItemSelector").selectedIndex;
 
     if (confirm("Вы уверены, что хотите удалить поле профиля "
@@ -167,7 +169,7 @@ CharacterProfileConfigurer.removeProfileItem = function() {
     }
 };
 
-CharacterProfileConfigurer.appendHeader = function(table) {
+CharacterProfileConfigurer.appendHeader = function (table) {
     var tr = document.createElement("tr");
 
     var td = document.createElement("th");
@@ -188,7 +190,7 @@ CharacterProfileConfigurer.appendHeader = function(table) {
     table.appendChild(tr);
 };
 
-CharacterProfileConfigurer.fillSelector = function(selector) {
+CharacterProfileConfigurer.fillSelector = function (selector) {
     for ( var name in CharacterProfileConfigurer.mapping) {
         var option = document.createElement("option");
         option
@@ -199,7 +201,8 @@ CharacterProfileConfigurer.fillSelector = function(selector) {
     }
 };
 
-CharacterProfileConfigurer.appendInput = function(table, profileSettings, index) {
+CharacterProfileConfigurer.appendInput = function (table, profileSettings,
+        index) {
     var tr = document.createElement("tr");
 
     var td = document.createElement("td");
@@ -253,7 +256,7 @@ CharacterProfileConfigurer.appendInput = function(table, profileSettings, index)
     table.appendChild(tr);
 };
 
-CharacterProfileConfigurer.updateDefaultValue = function(event) {
+CharacterProfileConfigurer.updateDefaultValue = function (event) {
     var type = event.target.info.type;
 
     switch (type) {
@@ -272,7 +275,7 @@ CharacterProfileConfigurer.updateDefaultValue = function(event) {
         var oldOptions = event.target.info.value.split(",");
         var newOptions = event.target.value.split(",");
 
-        var newOptionsMap = [ {} ].concat(newOptions).reduce(function(a, b) {
+        var newOptionsMap = [ {} ].concat(newOptions).reduce(function (a, b) {
             a[b] = true;
             return a;
         });
@@ -324,7 +327,7 @@ CharacterProfileConfigurer.updateDefaultValue = function(event) {
 
 };
 
-CharacterProfileConfigurer.renameProfileItem = function(event) {
+CharacterProfileConfigurer.renameProfileItem = function (event) {
     var newName = event.target.value.trim();
     var oldName = event.target.info.name;
 
@@ -342,7 +345,7 @@ CharacterProfileConfigurer.renameProfileItem = function(event) {
     event.target.info.name = newName;
 };
 
-CharacterProfileConfigurer.validateProfileItemName = function(name) {
+CharacterProfileConfigurer.validateProfileItemName = function (name) {
     if (name === "") {
         alert("Название поля не указано");
         return false;
@@ -362,7 +365,7 @@ CharacterProfileConfigurer.validateProfileItemName = function(name) {
     return true;
 };
 
-CharacterProfileConfigurer.changeProfileItemType = function(event) {
+CharacterProfileConfigurer.changeProfileItemType = function (event) {
     if (confirm("Вы уверены, что хотите изменить тип поля профиля "
             + event.target.info.name
             + "? Все заполнение данного поле в досье будет потеряно.")) {

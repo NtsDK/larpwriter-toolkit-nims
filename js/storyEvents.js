@@ -1,6 +1,8 @@
-StoryEvents = {};
+"use strict";
 
-StoryEvents.init = function() {
+var StoryEvents = {};
+
+StoryEvents.init = function () {
     var button = document.getElementById("createEventButton");
     button.addEventListener("click", StoryEvents.createEvent);
 
@@ -19,7 +21,7 @@ StoryEvents.init = function() {
     StoryEvents.content = document.getElementById("storyEventsDiv");
 };
 
-StoryEvents.refresh = function() {
+StoryEvents.refresh = function () {
 
     // event part
     var table = document.getElementById("eventBlock");
@@ -71,7 +73,7 @@ StoryEvents.refresh = function() {
 
 };
 
-StoryEvents.createEvent = function() {
+StoryEvents.createEvent = function () {
     var eventName = document.getElementById("eventNameInput").value.trim();
     var input = document.getElementById("eventInput");
     var eventText = input.value.trim();
@@ -105,7 +107,7 @@ StoryEvents.createEvent = function() {
     StoryEvents.refresh();
 };
 
-StoryEvents.swapEvents = function() {
+StoryEvents.swapEvents = function () {
     var index1 = document.getElementById("firstEvent").selectedIndex;
     var index2 = document.getElementById("secondEvent").selectedIndex;
     if (index1 === index2) {
@@ -120,7 +122,7 @@ StoryEvents.swapEvents = function() {
     StoryEvents.refresh();
 };
 
-StoryEvents.cloneEvent = function() {
+StoryEvents.cloneEvent = function () {
     var index = document.getElementById("cloneEventSelector").selectedIndex;
     var event = Stories.CurrentStory.events[index];
     var copy = clone(event);
@@ -129,7 +131,7 @@ StoryEvents.cloneEvent = function() {
     StoryEvents.refresh();
 };
 
-StoryEvents.mergeEvents = function() {
+StoryEvents.mergeEvents = function () {
     var index = document.getElementById("mergeEventSelector").selectedIndex;
     if (!Stories.CurrentStory.events[index + 1]) {
         alert("Событие объединяется со следующим событием. Последнее событие не с кем объединять.");
@@ -153,7 +155,7 @@ StoryEvents.mergeEvents = function() {
     StoryEvents.refresh();
 };
 
-StoryEvents.removeEvent = function() {
+StoryEvents.removeEvent = function () {
     var index = document.getElementById("removeEventSelector").selectedIndex;
 
     if (confirm("Вы уверены, что хотите удалить событие " + name
@@ -163,7 +165,7 @@ StoryEvents.removeEvent = function() {
     }
 };
 
-StoryEvents.appendEventHeader = function(table) {
+StoryEvents.appendEventHeader = function (table) {
     var tr = document.createElement("tr");
     table.appendChild(tr);
     var td = document.createElement("th");
@@ -178,7 +180,7 @@ StoryEvents.appendEventHeader = function(table) {
     td.appendChild(document.createTextNode("Время"));
 };
 
-StoryEvents.appendEventInput = function(table, event, index) {
+StoryEvents.appendEventInput = function (table, event, index) {
     var tr = document.createElement("tr");
     table.appendChild(tr);
     var td = document.createElement("td");
@@ -231,22 +233,22 @@ StoryEvents.appendEventInput = function(table, event, index) {
     td.appendChild(input);
 };
 
-StoryEvents.onChangeDateTimeCreator = function(myInput) {
-    return function(dp, input) {
+StoryEvents.onChangeDateTimeCreator = function (myInput) {
+    return function (dp, input) {
         myInput.eventInfo.time = input.val();
         StoryEvents.lastDate = input.val();
         myInput.className = "eventTime";
     }
 };
 
-StoryEvents.updateEventName = function(event) {
+StoryEvents.updateEventName = function (event) {
     event.target.eventInfo.name = event.target.value;
 };
 
-StoryEvents.updateEventText = function(event) {
+StoryEvents.updateEventText = function (event) {
     event.target.eventInfo.text = event.target.value;
 };
 
-StoryEvents.updateTime = function(event) {
+StoryEvents.updateTime = function (event) {
     event.target.eventInfo.time = event.target.value;
 };

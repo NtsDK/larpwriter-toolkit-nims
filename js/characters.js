@@ -1,6 +1,8 @@
-Characters = {};
+"use strict";
 
-Characters.init = function() {
+var Characters = {};
+
+Characters.init = function () {
     var root = Characters;
     root.views = {};
     var nav = "charactersNavigation";
@@ -24,7 +26,7 @@ Characters.init = function() {
     Characters.content = document.getElementById("charactersDiv");
 };
 
-Characters.refresh = function() {
+Characters.refresh = function () {
     var names = [];
     for ( var name in Database.Characters) {
         names.push(name);
@@ -50,7 +52,7 @@ Characters.refresh = function() {
     Characters.currentView.refresh();
 };
 
-Characters.createCharacter = function() {
+Characters.createCharacter = function () {
     var characterNameInput = document.getElementById("characterNameInput");
     var name = characterNameInput.value.trim();
 
@@ -68,7 +70,7 @@ Characters.createCharacter = function() {
     Characters.refresh();
 };
 
-Characters.renameCharacter = function() {
+Characters.renameCharacter = function () {
     var fromName = document.getElementById("fromName").value.trim();
     var toName = document.getElementById("toName").value.trim();
 
@@ -92,7 +94,7 @@ Characters.renameCharacter = function() {
     Characters.refresh();
 };
 
-Characters.removeCharacter = function() {
+Characters.removeCharacter = function () {
     var name = document.getElementById("characterRemoveSelector").value.trim();
 
     if (confirm("Вы уверены, что хотите удалить " + name

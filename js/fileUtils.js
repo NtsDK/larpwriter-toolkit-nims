@@ -1,6 +1,8 @@
-FileUtils = {};
+"use strict";
 
-FileUtils.init = function() {
+var FileUtils = {};
+
+FileUtils.init = function () {
     document.getElementById('dataLoadButton').addEventListener('change',
             FileUtils.readSingleFile, false);
 
@@ -8,13 +10,13 @@ FileUtils.init = function() {
     button.addEventListener('click', FileUtils.saveFile);
 };
 
-FileUtils.readSingleFile = function(evt) {
+FileUtils.readSingleFile = function (evt) {
     // Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0];
 
     if (f) {
         var r = new FileReader();
-        r.onload = function(e) {
+        r.onload = function (e) {
             var contents = e.target.result;
             // alert("Got the file.n" + "name: " + f.name + "n" + "type: "
             // + f.type + "n" + "size: " + f.size + " bytesn"
@@ -31,7 +33,7 @@ FileUtils.readSingleFile = function(evt) {
     }
 };
 
-FileUtils.saveFile = function() {
+FileUtils.saveFile = function () {
     var blob = new Blob([ JSON.stringify(Database, null, '  ') ], {
         type : "text/plain;charset=utf-8"
     });

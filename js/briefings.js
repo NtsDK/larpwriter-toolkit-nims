@@ -1,6 +1,8 @@
-Briefings = {};
+"use strict";
 
-Briefings.init = function() {
+var Briefings = {};
+
+Briefings.init = function () {
     var root = Briefings;
     root.views = {};
     var nav = "briefingsNavigation";
@@ -13,6 +15,6 @@ Briefings.init = function() {
     Briefings.content = document.getElementById("briefingsDiv");
 };
 
-Briefings.refresh = function() {
+Briefings.refresh = function () {
     Briefings.currentView.refresh();
 };

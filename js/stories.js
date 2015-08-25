@@ -1,6 +1,8 @@
-Stories = {};
+"use strict";
 
-Stories.init = function() {
+var Stories = {};
+
+Stories.init = function () {
     var root = Stories;
     root.views = {};
     var nav = "storiesNavigation";
@@ -38,7 +40,7 @@ Stories.init = function() {
     Stories.content = document.getElementById("storiesDiv");
 };
 
-Stories.refresh = function() {
+Stories.refresh = function () {
     var selector1 = document.getElementById("storySelector");
     removeChildren(selector1);
     var selector2 = document.getElementById("fromStory");
@@ -68,7 +70,7 @@ Stories.refresh = function() {
     Stories.currentView.refresh();
 };
 
-Stories.createStory = function() {
+Stories.createStory = function () {
     var storyName = document.getElementById("createStoryName").value.trim();
     if (storyName === "") {
         alert("Название истории пусто.");
@@ -92,7 +94,7 @@ Stories.createStory = function() {
 
 };
 
-Stories.renameStory = function() {
+Stories.renameStory = function () {
     var fromName = document.getElementById("fromStory").value.trim();
     var toName = document.getElementById("toStory").value.trim();
 
@@ -119,7 +121,7 @@ Stories.renameStory = function() {
 
 };
 
-Stories.removeStory = function() {
+Stories.removeStory = function () {
     var name = document.getElementById("storyRemoveSelector").value.trim();
 
     if (confirm("Вы уверены, что хотите удалить историю " + name
@@ -129,12 +131,12 @@ Stories.removeStory = function() {
     }
 };
 
-Stories.onStorySelectorChangeDelegate = function(event) {
+Stories.onStorySelectorChangeDelegate = function (event) {
     var storyName = event.target.value;
     Stories.onStorySelectorChange(storyName);
 };
 
-Stories.onStorySelectorChange = function(storyName) {
+Stories.onStorySelectorChange = function (storyName) {
     Stories.CurrentStory = Database.Stories[storyName];
 
     var storyArea = document.getElementById("masterStoryArea");
@@ -153,7 +155,7 @@ Stories.onStorySelectorChange = function(storyName) {
     // }
 };
 
-Stories.updateMasterStory = function(event) {
+Stories.updateMasterStory = function (event) {
     var storyArea = document.getElementById("masterStoryArea");
     Stories.CurrentStory.story = storyArea.value;
 };

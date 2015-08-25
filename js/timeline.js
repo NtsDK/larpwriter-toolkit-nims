@@ -1,6 +1,8 @@
-Timeline = {};
+"use strict";
 
-Timeline.init = function() {
+var Timeline = {};
+
+Timeline.init = function () {
     var selector = document.getElementById("timelineStorySelector");
     selector.addEventListener("change", Timeline.onStorySelectorChangeDelegate);
 
@@ -19,7 +21,7 @@ Timeline.init = function() {
         editable : {
             updateTime : true
         },
-        onMove : function(item, callback) {
+        onMove : function (item, callback) {
             if (item.extra) {
                 item.extra.time = dateFormat(item.start, "yyyy/mm/dd h:MM");
                 callback(item);
@@ -37,7 +39,7 @@ Timeline.init = function() {
     Timeline.content = document.getElementById("timelineDiv");
 };
 
-Timeline.refresh = function() {
+Timeline.refresh = function () {
     var selector = document.getElementById("timelineStorySelector");
     removeChildren(selector);
 
@@ -53,7 +55,7 @@ Timeline.refresh = function() {
     }
 };
 
-Timeline.onStorySelectorChangeDelegate = function(event) {
+Timeline.onStorySelectorChangeDelegate = function (event) {
     var selOptions = event.target.selectedOptions;
     var storyNames = [];
     for (var i = 0; i < selOptions.length; i++) {
@@ -62,7 +64,7 @@ Timeline.onStorySelectorChangeDelegate = function(event) {
     Timeline.onStorySelectorChange(storyNames);
 };
 
-Timeline.onStorySelectorChange = function(storyNames) {
+Timeline.onStorySelectorChange = function (storyNames) {
     Timeline.TagDataset.clear();
     Timeline.TimelineDataset.clear();
 

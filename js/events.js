@@ -1,6 +1,8 @@
-Events = {};
+"use strict";
 
-Events.init = function() {
+var Events = {};
+
+Events.init = function () {
     var selector = document.getElementById("personalStoriesCharacter");
     selector.addEventListener("change", Events.showPersonalStoriesDelegate);
 
@@ -10,7 +12,7 @@ Events.init = function() {
     Events.content = document.getElementById("eventsDiv");
 };
 
-Events.refresh = function() {
+Events.refresh = function () {
     var selector = document.getElementById("personalStoriesCharacter");
     removeChildren(selector);
 
@@ -45,7 +47,7 @@ Events.refresh = function() {
     }
 };
 
-Events.isStoryFinishedForCharacter = function(storyName, characterName) {
+Events.isStoryFinishedForCharacter = function (storyName, characterName) {
     var story = Database.Stories[storyName];
     for (var i = 0; i < story.events.length; i++) {
         var event = story.events[i];
@@ -58,14 +60,14 @@ Events.isStoryFinishedForCharacter = function(storyName, characterName) {
 
 };
 
-Events.showPersonalStoriesDelegate = function(event) {
+Events.showPersonalStoriesDelegate = function (event) {
     var option = event.target.selectedOptions[0];
     var storyName = option.storyInfo;
     var characterName = option.characterInfo;
     Events.showPersonalStories(storyName, characterName);
 };
 
-Events.showPersonalStories = function(storyName, characterName) {
+Events.showPersonalStories = function (storyName, characterName) {
     // alert(event.target.value);
 
     // alert(option.extra);
@@ -143,18 +145,18 @@ Events.showPersonalStories = function(storyName, characterName) {
     }
 };
 
-Events.onChangeReadyStatus = function(event) {
+Events.onChangeReadyStatus = function (event) {
     var eventObject = event.target.eventInfo;
     var value = event.target.checked;
     eventObject.ready = value;
 };
 
-Events.onChangePersonalStoryDelegate = function(event) {
+Events.onChangePersonalStoryDelegate = function (event) {
     var eventObject = event.target.eventInfo;
     var text = event.target.value;
     Events.onChangePersonalStory(eventObject, text);
 };
 
-Events.onChangePersonalStory = function(eventObject, text) {
+Events.onChangePersonalStory = function (eventObject, text) {
     eventObject.text = text;
 };

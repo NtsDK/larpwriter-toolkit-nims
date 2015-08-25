@@ -1,10 +1,12 @@
-EventPresence = {};
+"use strict";
 
-EventPresence.init = function() {
+var EventPresence = {};
+
+EventPresence.init = function () {
     EventPresence.content = document.getElementById("eventPresenceDiv");
 };
 
-EventPresence.refresh = function() {
+EventPresence.refresh = function () {
     var table = document.getElementById("eventPresenceTable");
     removeChildren(table);
 
@@ -18,7 +20,7 @@ EventPresence.refresh = function() {
     }
 };
 
-EventPresence.appendTableHeader = function(table) {
+EventPresence.appendTableHeader = function (table) {
     var tr = document.createElement("tr");
     var td = document.createElement("th");
     td.appendChild(document.createTextNode("Событие"));
@@ -33,7 +35,7 @@ EventPresence.appendTableHeader = function(table) {
     table.appendChild(tr);
 };
 
-EventPresence.appendTableInput = function(table, event, characterArray) {
+EventPresence.appendTableInput = function (table, event, characterArray) {
     var tr = document.createElement("tr");
     var td = document.createElement("td");
     td.appendChild(document.createTextNode(event.name));
@@ -60,7 +62,7 @@ EventPresence.appendTableInput = function(table, event, characterArray) {
     table.appendChild(tr);
 };
 
-EventPresence.onChangeCharacterCheckbox = function(event) {
+EventPresence.onChangeCharacterCheckbox = function (event) {
     if (event.target.checked) {
         event.target.eventInfo.characters[event.target.nameInfo] = {
             text : ""

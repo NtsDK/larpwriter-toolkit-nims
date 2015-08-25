@@ -1,7 +1,12 @@
+/*global
+PageManager, Utils, Overview, Characters, Stories, Events, Briefings, Timeline, SocialNetwork, FileUtils
+ */
 
-PageManager = {};
+"use strict";
 
-PageManager.onLoad = function() {
+var PageManager = {};
+
+PageManager.onLoad = function () {
     var root = PageManager;
     root.views = {};
     var nav = "navigation";
@@ -31,7 +36,7 @@ PageManager.onLoad = function() {
     PageManager.currentView.refresh();
 };
 
-window.onbeforeunload = function(evt) {
+window.onbeforeunload = function (evt) {
     var message = "Убедитесь, что сохранили данные. После закрытия страницы все несохраненные изменения будут потеряны.";
     if (typeof evt == "undefined") {
         evt = window.event;
@@ -40,4 +45,4 @@ window.onbeforeunload = function(evt) {
         evt.returnValue = message;
     }
     return message;
-}
+};

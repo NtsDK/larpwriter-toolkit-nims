@@ -1,6 +1,8 @@
-Utils = {};
+"use strict";
 
-Utils.addView = function(rootObject, name, view, displayName, navigationId,
+var Utils = {};
+
+Utils.addView = function (rootObject, name, view, displayName, navigationId,
         contentAreaId, mainPage) {
     view.init();
     // var viewContent = initializer();
@@ -8,17 +10,17 @@ Utils.addView = function(rootObject, name, view, displayName, navigationId,
     var navigation = document.getElementById(navigationId);
     var button = document.createElement("button");
     button.appendChild(document.createTextNode(displayName));
-    navigation.appendChild(button)
+    navigation.appendChild(button);
 
-    var onClickDelegate = function(view) {
-        return function() {
+    var onClickDelegate = function (view) {
+        return function () {
             var contentArea = document.getElementById(contentAreaId);
             removeChildren(contentArea);
             contentArea.appendChild(view.content);
             rootObject.currentView = view;
             view.refresh();
         };
-    }
+    };
 
     button.addEventListener("click", onClickDelegate(view));
     if (mainPage) {
@@ -29,11 +31,11 @@ Utils.addView = function(rootObject, name, view, displayName, navigationId,
     }
 };
 
-Utils.globStringToRegex = function(str) {
+Utils.globStringToRegex = function (str) {
     return new RegExp(Utils.preg_quote(str).replace(/\\\*/g, '.*').replace(
             /\\\?/g, '.'), 'g');
-}
-Utils.preg_quote = function(str, delimiter) {
+};
+Utils.preg_quote = function (str, delimiter) {
     // http://kevin.vanzonneveld.net
     // + original by: booeyOH
     // + improved by: Ates Goral (http://magnetiq.com)
@@ -48,14 +50,14 @@ Utils.preg_quote = function(str, delimiter) {
     // * returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
     return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\'
             + (delimiter || '') + '-]', 'g'), '\\$&');
-}
+};
 
-String.prototype.endsWith = function(suffix) {
+String.prototype.endsWith = function (suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
 // Array Remove - By John Resig (MIT Licensed)
-Array.prototype.remove = function(from, to) {
+Array.prototype.remove = function (from, to) {
     var rest = this.slice((to || from) + 1 || this.length);
     this.length = from < 0 ? this.length + from : from;
     return this.push.apply(this, rest);
@@ -63,29 +65,29 @@ Array.prototype.remove = function(from, to) {
 
 if (document.getElementsByClassName) {
 
-    getElementsByClass = function(classList, node) {
-        return (node || document).getElementsByClassName(classList)
-    }
+    var getElementsByClass = function (classList, node) {
+        return (node || document).getElementsByClassName(classList);
+    };
 
 } else {
 
-    getElementsByClass = function(classList, node) {
+    var getElementsByClass = function (classList, node) {
         var node = node || document, list = node.getElementsByTagName('*'), length = list.length, classArray = classList
                 .split(/\s+/), classes = classArray.length, result = [], i, j
         for (i = 0; i < length; i++) {
             for (j = 0; j < classes; j++) {
                 if (list[i].className.search('\\b' + classArray[j] + '\\b') !== -1) {
-                    result.push(list[i])
-                    break
+                    result.push(list[i]);
+                    break;
                 }
             }
         }
 
-        return result
-    }
+        return result;
+    };
 }
 
-function charOrdA(a, b) {
+function charOrdA (a, b) {
     a = a.toLowerCase();
     b = b.toLowerCase();
     if (a > b)
@@ -95,7 +97,7 @@ function charOrdA(a, b) {
     return 0;
 };
 
-function eventsByTime(a, b) {
+function eventsByTime (a, b) {
     a = new Date(a.time);
     b = new Date(b.time);
     if (a > b)
@@ -105,7 +107,7 @@ function eventsByTime(a, b) {
     return 0;
 };
 
-removeChildren = function(myNode) {
+function removeChildren (myNode) {
     if (!myNode) {
         return;
     }
@@ -114,11 +116,11 @@ removeChildren = function(myNode) {
     }
 };
 
-function isEmpty(obj) {
+function isEmpty (obj) {
     return (Object.getOwnPropertyNames(obj).length === 0);
 };
 
-function clone(o) {
+function clone (o) {
     if (!o || 'object' !== typeof o) {
         return o;
     }

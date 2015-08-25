@@ -1,6 +1,8 @@
-Overview = {};
+"use strict";
 
-Overview.init = function() {
+var Overview = {};
+
+Overview.init = function () {
     var name = document.getElementById("gameNameInput");
     name.addEventListener("change", Overview.updateName);
 
@@ -30,7 +32,7 @@ Overview.init = function() {
     Overview.content = document.getElementById("overviewDiv");
 };
 
-Overview.refresh = function() {
+Overview.refresh = function () {
     var name = document.getElementById("gameNameInput");
     name.value = Database.Meta.name;
 
@@ -45,15 +47,15 @@ Overview.refresh = function() {
 
 };
 
-Overview.updateName = function(event) {
+Overview.updateName = function (event) {
     Database.Meta.name = event.target.value;
 };
-Overview.updateTime = function(dp, input) {
+Overview.updateTime = function (dp, input) {
     Database.Meta.date = input.val();
 };
-Overview.updatePreGameDate = function(dp, input) {
+Overview.updatePreGameDate = function (dp, input) {
     Database.Meta.preGameDate = input.val();
 };
-Overview.updateDescr = function(event) {
+Overview.updateDescr = function (event) {
     Database.Meta.description = event.target.value;
 };

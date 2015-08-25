@@ -1,6 +1,8 @@
-BriefingExport = {};
+"use strict";
 
-BriefingExport.init = function() {
+var BriefingExport = {};
+
+BriefingExport.init = function () {
     var button = document.getElementById("makeBriefings");
     button.addEventListener("click", BriefingExport.makeTextBriefings);
 
@@ -13,11 +15,11 @@ BriefingExport.init = function() {
     BriefingExport.content = document.getElementById("briefingExportDiv");
 };
 
-BriefingExport.refresh = function() {
+BriefingExport.refresh = function () {
 
 };
 
-BriefingExport.makeTextBriefings = function() {
+BriefingExport.makeTextBriefings = function () {
 
     var data = BriefingExport.getBriefingData();
 
@@ -32,10 +34,10 @@ BriefingExport.makeTextBriefings = function() {
 
         var regex = new RegExp('^profileInfo');
 
-        Object.keys(briefingData).filter(function(element) {
+        Object.keys(briefingData).filter(function (element) {
             return regex.test(element);
         }).forEach(
-                function(element) {
+                function (element) {
                     briefing += "----------------------------------\n";
                     briefing += element.substring("profileInfo.".length,
                             element.length)
@@ -100,7 +102,7 @@ BriefingExport.makeTextBriefings = function() {
 
 };
 
-BriefingExport.getBriefingData = function() {
+BriefingExport.getBriefingData = function () {
     var data = {};
 
     var charArray = [];
@@ -132,7 +134,7 @@ BriefingExport.getBriefingData = function() {
             "eventsInfo" : eventsInfo
         };
 
-        Object.keys(profileInfo).forEach(function(element) {
+        Object.keys(profileInfo).forEach(function (element) {
             dataObject["profileInfo." + element] = profileInfo[element];
         });
 
@@ -143,11 +145,11 @@ BriefingExport.getBriefingData = function() {
     return data;
 };
 
-BriefingExport.getProfileInfo = function(charName) {
+BriefingExport.getProfileInfo = function (charName) {
     var character = Database.Characters[charName];
     var profileInfo = {};
 
-    Database.ProfileSettings.forEach(function(element) {
+    Database.ProfileSettings.forEach(function (element) {
         switch (element.type) {
         case "text":
         case "string":
@@ -163,7 +165,7 @@ BriefingExport.getProfileInfo = function(charName) {
     return profileInfo;
 };
 
-BriefingExport.getEventsInfo = function(charName) {
+BriefingExport.getEventsInfo = function (charName) {
     var eventsInfo = [];
     for ( var storyName in Database.Stories) {
         var storyInfo = {};
@@ -194,7 +196,7 @@ BriefingExport.getEventsInfo = function(charName) {
     return eventsInfo;
 };
 
-BriefingExport.getStoriesInfo = function(charName) {
+BriefingExport.getStoriesInfo = function (charName) {
     var storiesInfo = [];
     for ( var storyName in Database.Stories) {
         var storyInfo = {};
@@ -227,13 +229,13 @@ BriefingExport.getStoriesInfo = function(charName) {
     return storiesInfo;
 };
 
-BriefingExport.readTemplateFile = function(evt) {
+BriefingExport.readTemplateFile = function (evt) {
     // Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0];
 
     if (f) {
         var r = new FileReader();
-        r.onload = function(e) {
+        r.onload = function (e) {
             var contents = e.target.result;
             BriefingExport.generateDocxBriefings(contents);
         }
@@ -243,7 +245,7 @@ BriefingExport.readTemplateFile = function(evt) {
     }
 };
 
-BriefingExport.generateDocxBriefings = function(contents) {
+BriefingExport.generateDocxBriefings = function (contents) {
 
     var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
 
@@ -260,7 +262,7 @@ BriefingExport.generateDocxBriefings = function(contents) {
             };
             doc.setData(tmpData);
             doc.render() // apply them (replace all occurences of
-                            // {first_name} by Hipp, ...)
+            // {first_name} by Hipp, ...)
             out = doc.getZip().generate({
                 type : "Uint8Array"
             });
@@ -273,7 +275,7 @@ BriefingExport.generateDocxBriefings = function(contents) {
         var doc = new window.Docxgen(contents);
         doc.setData(briefingData);
         doc.render() // apply them (replace all occurences of {first_name} by
-                        // Hipp, ...)
+        // Hipp, ...)
         out = doc.getZip().generate({
             type : "blob"
         });

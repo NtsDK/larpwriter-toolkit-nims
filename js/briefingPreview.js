@@ -1,6 +1,8 @@
-BriefingPreview = {};
+"use strict";
 
-BriefingPreview.init = function() {
+var BriefingPreview = {};
+
+BriefingPreview.init = function () {
     var button = document.getElementById("briefingCharacter");
     button.addEventListener("change", BriefingPreview.buildContentDelegate);
 
@@ -14,7 +16,7 @@ BriefingPreview.init = function() {
     BriefingPreview.content = document.getElementById("briefingPreviewDiv");
 };
 
-BriefingPreview.refresh = function() {
+BriefingPreview.refresh = function () {
     var selector = document.getElementById("briefingCharacter");
     removeChildren(selector);
     var names = DBMS.getCharacterNamesArray();
@@ -30,11 +32,11 @@ BriefingPreview.refresh = function() {
     }
 };
 
-BriefingPreview.buildContentDelegate = function(event) {
+BriefingPreview.buildContentDelegate = function (event) {
     BriefingPreview.buildContent(event.target.value);
 };
 
-BriefingPreview.buildContent = function(characterName) {
+BriefingPreview.buildContent = function (characterName) {
     var content = document.getElementById("briefingContent");
     removeChildren(content);
 
@@ -44,7 +46,7 @@ BriefingPreview.buildContent = function(characterName) {
 
     var character = Database.Characters[characterName];
 
-    Database.ProfileSettings.forEach(function(element) {
+    Database.ProfileSettings.forEach(function (element) {
         content.appendChild(document.createTextNode(element.name + ": "));
         switch (element.type) {
         case "text":
@@ -108,7 +110,7 @@ BriefingPreview.buildContent = function(characterName) {
 
 };
 
-BriefingPreview.showEventsByTime = function(content, characterName) {
+BriefingPreview.showEventsByTime = function (content, characterName) {
     var allStories = [];
     for ( var storyName in Database.Stories) {
         if (!Database.Stories[storyName].characters[characterName]) {
@@ -160,7 +162,7 @@ BriefingPreview.showEventsByTime = function(content, characterName) {
 
 };
 
-BriefingPreview.showEventsByStory = function(content, characterName) {
+BriefingPreview.showEventsByStory = function (content, characterName) {
     for ( var storyName in Database.Stories) {
         if (!Database.Stories[storyName].characters[characterName]) {
             continue;
@@ -208,11 +210,11 @@ BriefingPreview.showEventsByStory = function(content, characterName) {
     }
 };
 
-BriefingPreview.updateCharacterInventory = function(event) {
+BriefingPreview.updateCharacterInventory = function (event) {
     event.target.characterInfo.inventory = event.target.value;
 };
 
-BriefingPreview.onChangePersonalStory = function(event) {
+BriefingPreview.onChangePersonalStory = function (event) {
     var eventObject = event.target.eventInfo;
     var text = event.target.value;
     eventObject.text = text;

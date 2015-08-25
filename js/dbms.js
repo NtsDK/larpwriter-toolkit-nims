@@ -1,6 +1,8 @@
-DBMS = {};
+"use strict";
 
-DBMS.createCharacter = function(name) {
+var DBMS = {};
+
+DBMS.createCharacter = function (name) {
     var newCharacter = {
         name : name
     };
@@ -18,7 +20,7 @@ DBMS.createCharacter = function(name) {
     Database.Characters[name] = newCharacter;
 };
 
-DBMS.renameCharacter = function(fromName, toName) {
+DBMS.renameCharacter = function (fromName, toName) {
     var data = Database.Characters[fromName];
     data.name = toName;
     Database.Characters[toName] = data;
@@ -44,7 +46,7 @@ DBMS.renameCharacter = function(fromName, toName) {
     }
 };
 
-DBMS.removeCharacter = function(name) {
+DBMS.removeCharacter = function (name) {
     delete Database.Characters[name];
 
     for ( var storyName in Database.Stories) {
@@ -62,7 +64,7 @@ DBMS.removeCharacter = function(name) {
     }
 };
 
-DBMS.getCharacterNamesArray = function() {
+DBMS.getCharacterNamesArray = function () {
     var characterArray = [];
 
     for ( var name in Database.Characters) {
@@ -73,7 +75,7 @@ DBMS.getCharacterNamesArray = function() {
     return characterArray;
 };
 
-DBMS.getStoryCharacterNamesArray = function(storyName) {
+DBMS.getStoryCharacterNamesArray = function (storyName) {
     var characterArray = [];
 
     var localCharacters;
@@ -90,7 +92,7 @@ DBMS.getStoryCharacterNamesArray = function(storyName) {
     return characterArray;
 };
 
-DBMS.getStoryNamesArray = function(storyName) {
+DBMS.getStoryNamesArray = function (storyName) {
     var stroyNamesArray = [];
 
     for ( var name in Database.Stories) {

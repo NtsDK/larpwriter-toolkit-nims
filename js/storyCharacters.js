@@ -1,6 +1,8 @@
-StoryCharacters = {};
+"use strict";
 
-StoryCharacters.init = function() {
+var StoryCharacters = {};
+
+StoryCharacters.init = function () {
     var button = document.getElementById("storyCharactersAddButton");
     button.addEventListener("click", StoryCharacters.addCharacter);
 
@@ -13,7 +15,7 @@ StoryCharacters.init = function() {
     StoryCharacters.content = document.getElementById("storyCharactersDiv");
 };
 
-StoryCharacters.refresh = function() {
+StoryCharacters.refresh = function () {
     var addSelector = document.getElementById("storyCharactersAddSelector");
     var removeSelector = document
             .getElementById("storyCharactersRemoveSelector");
@@ -76,7 +78,7 @@ StoryCharacters.refresh = function() {
 
 };
 
-StoryCharacters.addCharacter = function() {
+StoryCharacters.addCharacter = function () {
     var characterName = document.getElementById("storyCharactersAddSelector").value
             .trim();
 
@@ -88,7 +90,7 @@ StoryCharacters.addCharacter = function() {
     StoryCharacters.refresh();
 };
 
-StoryCharacters.switchCharacters = function() {
+StoryCharacters.switchCharacters = function () {
     var fromName = document.getElementById("storyCharactersFromSelector").value
             .trim();
     var toName = document.getElementById("storyCharactersToSelector").value
@@ -109,7 +111,7 @@ StoryCharacters.switchCharacters = function() {
     StoryCharacters.refresh();
 };
 
-StoryCharacters.removeCharacter = function() {
+StoryCharacters.removeCharacter = function () {
     var characterName = document
             .getElementById("storyCharactersRemoveSelector").value.trim();
 
@@ -126,7 +128,7 @@ StoryCharacters.removeCharacter = function() {
     }
 };
 
-StoryCharacters.appendCharacterHeader = function(table) {
+StoryCharacters.appendCharacterHeader = function (table) {
     var tr = document.createElement("tr");
     table.appendChild(tr);
     var td = document.createElement("th");
@@ -137,7 +139,7 @@ StoryCharacters.appendCharacterHeader = function(table) {
     td.appendChild(document.createTextNode("Инвентарь"));
 };
 
-StoryCharacters.appendCharacterInput = function(table, character, index) {
+StoryCharacters.appendCharacterInput = function (table, character, index) {
     var tr = document.createElement("tr");
     var td = document.createElement("td");
     td.appendChild(document.createTextNode(character.name));
@@ -154,7 +156,7 @@ StoryCharacters.appendCharacterInput = function(table, character, index) {
     table.appendChild(tr);
 };
 
-StoryCharacters.updateCharacterInventory = function(event) {
+StoryCharacters.updateCharacterInventory = function (event) {
     event.target.characterInfo.inventory = event.target.value;
     var inventoryCheck = document.getElementById("inventoryCheck");
     removeChildren(inventoryCheck);

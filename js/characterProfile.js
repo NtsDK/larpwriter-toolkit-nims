@@ -1,20 +1,22 @@
-CharacterProfile = {};
+"use strict";
 
-CharacterProfile.init = function() {
+var CharacterProfile = {};
+
+CharacterProfile.init = function () {
     var button = document.getElementById("bioEditorSelector");
     button.addEventListener("change", CharacterProfile.showProfileInfoDelegate);
 
     CharacterProfile.content = document.getElementById("characterProfile");
 };
 
-CharacterProfile.refresh = function() {
+CharacterProfile.refresh = function () {
     var names = [];
     for ( var name in Database.Characters) {
         names.push(name);
     }
     names.sort(charOrdA);
 
-    selector = document.getElementById("bioEditorSelector");
+    var selector = document.getElementById("bioEditorSelector");
     removeChildren(selector);
     for (var i = 0; i < names.length; i++) {
         var option = document.createElement("option");
@@ -37,7 +39,7 @@ CharacterProfile.refresh = function() {
     }
 };
 
-CharacterProfile.appendInput = function(root, profileItemConfig) {
+CharacterProfile.appendInput = function (root, profileItemConfig) {
     root.appendChild(document.createTextNode(profileItemConfig.name));
 
     switch (profileItemConfig.type) {
@@ -52,7 +54,7 @@ CharacterProfile.appendInput = function(root, profileItemConfig) {
         textarea
                 .addEventListener(
                         "change",
-                        function(event) {
+                        function (event) {
                             var profileContentDiv = document
                                     .getElementById("profileContentDiv");
                             profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
@@ -69,7 +71,7 @@ CharacterProfile.appendInput = function(root, profileItemConfig) {
         input
                 .addEventListener(
                         "change",
-                        function(event) {
+                        function (event) {
                             var profileContentDiv = document
                                     .getElementById("profileContentDiv");
                             profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
@@ -92,7 +94,7 @@ CharacterProfile.appendInput = function(root, profileItemConfig) {
         selector
                 .addEventListener(
                         "change",
-                        function(event) {
+                        function (event) {
                             var profileContentDiv = document
                                     .getElementById("profileContentDiv");
                             profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
@@ -109,7 +111,7 @@ CharacterProfile.appendInput = function(root, profileItemConfig) {
         input
                 .addEventListener(
                         "change",
-                        function(event) {
+                        function (event) {
                             var profileContentDiv = document
                                     .getElementById("profileContentDiv");
                             if (isNaN(event.target.value)) {
@@ -133,7 +135,7 @@ CharacterProfile.appendInput = function(root, profileItemConfig) {
         input
                 .addEventListener(
                         "change",
-                        function(event) {
+                        function (event) {
                             var profileContentDiv = document
                                     .getElementById("profileContentDiv");
                             profileContentDiv.profileInfo[event.target.selfName] = event.target.checked;
@@ -145,12 +147,12 @@ CharacterProfile.appendInput = function(root, profileItemConfig) {
     root.appendChild(document.createElement("br"));
 };
 
-CharacterProfile.showProfileInfoDelegate = function(event) {
+CharacterProfile.showProfileInfoDelegate = function (event) {
     var name = event.target.value.trim();
     CharacterProfile.showProfileInfo(name);
 };
 
-CharacterProfile.showProfileInfo = function(name) {
+CharacterProfile.showProfileInfo = function (name) {
     var profileContentDiv = document.getElementById("profileContentDiv");
     var profile = Database.Characters[name];
     profileContentDiv.profileInfo = profile;

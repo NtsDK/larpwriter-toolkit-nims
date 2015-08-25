@@ -1,11 +1,13 @@
-CharacterFilter = {};
+"use strict";
 
-CharacterFilter.init = function() {
+var CharacterFilter = {};
+
+CharacterFilter.init = function () {
 
     CharacterFilter.content = document.getElementById("characterFilterDiv");
 };
 
-CharacterFilter.refresh = function() {
+CharacterFilter.refresh = function () {
     CharacterFilter.sortKey = "name";
     CharacterFilter.sortDir = "asc";
 
@@ -37,14 +39,14 @@ CharacterFilter.refresh = function() {
 
 };
 
-CharacterFilter.rebuildContent = function() {
+CharacterFilter.rebuildContent = function () {
     var filterContent = document.getElementById("filterContent");
     removeChildren(filterContent);
     //
     // var profileSettings = Database.ProfileSettings.filter(function(value) {
     // return value.type !== "text";
     // });
-    var profileSettings = Database.ProfileSettings.filter(function(value) {
+    var profileSettings = Database.ProfileSettings.filter(function (value) {
         return true;
     });
 
@@ -57,20 +59,20 @@ CharacterFilter.rebuildContent = function() {
 
     Object.keys(Database.Characters).filter(CharacterFilter.acceptDataRow)
             .sort(CharacterFilter.sortDataRows).forEach(
-                    function(name) {
+                    function (name) {
                         CharacterFilter.appendDataString(filterContent,
                                 Database.Characters[name], profileSettings);
                     });
 };
 
-CharacterFilter.acceptDataRow = function(element) {
+CharacterFilter.acceptDataRow = function (element) {
     element = Database.Characters[element];
     var filterSettingsDiv = document.getElementById("filterSettingsDiv");
     var result = true;
     Object
             .keys(filterSettingsDiv.inputItems)
             .forEach(
-                    function(inputItemName) {
+                    function (inputItemName) {
                         if (inputItemName.endsWith(":numberInput")) {
                             return;
                         }
@@ -144,12 +146,12 @@ CharacterFilter.acceptDataRow = function(element) {
     return result;
 };
 
-CharacterFilter.sortDataRows = function(a, b) {
+CharacterFilter.sortDataRows = function (a, b) {
     a = Database.Characters[a];
     b = Database.Characters[b];
 
     var type = CharacterFilter.sortKey === "name" ? "text"
-            : Database.ProfileSettings.filter(function(element) {
+            : Database.ProfileSettings.filter(function (element) {
                 return element.name === CharacterFilter.sortKey;
             })[0].type;
 
@@ -176,14 +178,14 @@ CharacterFilter.sortDataRows = function(a, b) {
     return 0;
 };
 
-CharacterFilter.appendDataString = function(table, character, profileSettings) {
+CharacterFilter.appendDataString = function (table, character, profileSettings) {
     var tr = document.createElement("tr");
 
     var inputItems = document.getElementById("filterSettingsDiv").inputItems;
 
     // result = element[inputItem.selfInfo.name].match(regex);
 
-    profileSettings.forEach(function(profileItemInfo) {
+    profileSettings.forEach(function (profileItemInfo) {
         var td = document.createElement("td");
         if (profileItemInfo.type === "checkbox") {
             td.appendChild(document
@@ -207,7 +209,7 @@ CharacterFilter.appendDataString = function(table, character, profileSettings) {
     table.appendChild(tr);
 };
 
-CharacterFilter.appendContentHeader = function(table, profileSettings) {
+CharacterFilter.appendContentHeader = function (table, profileSettings) {
     var tr = document.createElement("tr");
 
     var td = document.createElement("th");
@@ -216,7 +218,7 @@ CharacterFilter.appendContentHeader = function(table, profileSettings) {
     td.addEventListener("click", CharacterFilter.onSortChange);
     tr.appendChild(td);
 
-    profileSettings.forEach(function(element) {
+    profileSettings.forEach(function (element) {
         var td = document.createElement("th");
         td.appendChild(document.createTextNode(element.name));
         td.info = element.name;
@@ -227,7 +229,7 @@ CharacterFilter.appendContentHeader = function(table, profileSettings) {
     table.appendChild(tr);
 };
 
-CharacterFilter.onSortChange = function(event) {
+CharacterFilter.onSortChange = function (event) {
     if (CharacterFilter.sortKey === event.target.info) {
         CharacterFilter.sortDir = CharacterFilter.sortDir === "asc" ? "desc"
                 : "asc";
@@ -238,7 +240,7 @@ CharacterFilter.onSortChange = function(event) {
     CharacterFilter.rebuildContent();
 };
 
-CharacterFilter.appendInput = function(root, profileItemConfig) {
+CharacterFilter.appendInput = function (root, profileItemConfig) {
     root.appendChild(document.createTextNode(profileItemConfig.name));
     root.appendChild(document.createElement("br"));
 

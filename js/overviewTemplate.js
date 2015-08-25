@@ -1,4 +1,6 @@
-Overview = {};
+"use strict";
+
+var Overview = {};
 
 Overview.init = function() {
     var overviewDiv = document.createElement("div");
