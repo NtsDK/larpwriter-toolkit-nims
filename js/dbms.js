@@ -1,82 +1,87 @@
+/*global
+ Utils, Database, Stories
+ */
+// БД зависит от Stories - это нехорошо
+
+
 "use strict";
 
 var DBMS = {};
 
 DBMS.createCharacter = function (name) {
+    "use strict";
     var newCharacter = {
         name : name
     };
 
-    for (var i = 0; i < Database.ProfileSettings.length; i++) {
-        var profileSettings = Database.ProfileSettings[i];
+    Database.ProfileSettings.forEach(function (profileSettings) {
         if (profileSettings.type === "enum") {
-            newCharacter[profileSettings.name] = profileSettings.value
-                    .split(",")[0];
+            newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
         } else {
             newCharacter[profileSettings.name] = profileSettings.value;
         }
-    }
+    });
 
     Database.Characters[name] = newCharacter;
 };
 
 DBMS.renameCharacter = function (fromName, toName) {
+    "use strict";
     var data = Database.Characters[fromName];
     data.name = toName;
     Database.Characters[toName] = data;
     delete Database.Characters[fromName];
 
-    for ( var storyName in Database.Stories) {
-        var story = Database.Stories[storyName];
+    var storyName, story;
+
+    var renameEventCharacter = function (event) {
+        if (event.characters[fromName]) {
+            data = event.characters[fromName];
+            event.characters[toName] = data;
+            delete event.characters[fromName];
+        }
+    };
+
+    for (storyName in Database.Stories) {
+        story = Database.Stories[storyName];
         if (story.characters[fromName]) {
-            var data = story.characters[fromName];
+            data = story.characters[fromName];
             data.name = toName;
             story.characters[toName] = data;
             delete story.characters[fromName];
 
-            for (var i = 0; i < story.events.length; ++i) {
-                var event = story.events[i];
-                if (event.characters[fromName]) {
-                    var data = event.characters[fromName];
-                    event.characters[toName] = data;
-                    delete event.characters[fromName];
-                }
-            }
+            story.events.forEach(renameEventCharacter);
         }
     }
 };
 
 DBMS.removeCharacter = function (name) {
+    "use strict";
     delete Database.Characters[name];
+    var storyName, story;
 
-    for ( var storyName in Database.Stories) {
-        var story = Database.Stories[storyName];
+    var cleanEvent = function (event) {
+        if (event.characters[name]) {
+            delete event.characters[name];
+        }
+    };
+
+    for (storyName in Database.Stories) {
+        story = Database.Stories[storyName];
         if (story.characters[name]) {
             delete story.characters[name];
-
-            for (var i = 0; i < story.events.length; ++i) {
-                var event = story.events[i];
-                if (event.characters[name]) {
-                    delete event.characters[name];
-                }
-            }
+            story.events.forEach(cleanEvent);
         }
     }
 };
 
 DBMS.getCharacterNamesArray = function () {
-    var characterArray = [];
-
-    for ( var name in Database.Characters) {
-        characterArray.push(name);
-    }
-
-    characterArray.sort(charOrdA);
-    return characterArray;
+    "use strict";
+    return Object.keys(Database.Characters).sort(Utils.charOrdA);
 };
 
 DBMS.getStoryCharacterNamesArray = function (storyName) {
-    var characterArray = [];
+    "use strict";
 
     var localCharacters;
     if (storyName === undefined) {
@@ -84,21 +89,11 @@ DBMS.getStoryCharacterNamesArray = function (storyName) {
     } else {
         localCharacters = Database.Stories[storyName].characters;
     }
-    for ( var name in localCharacters) {
-        characterArray.push(name);
-    }
 
-    characterArray.sort(charOrdA);
-    return characterArray;
+    return Object.keys(localCharacters).sort(Utils.charOrdA);
 };
 
-DBMS.getStoryNamesArray = function (storyName) {
-    var stroyNamesArray = [];
-
-    for ( var name in Database.Stories) {
-        stroyNamesArray.push(name);
-    }
-
-    stroyNamesArray.sort(charOrdA);
-    return stroyNamesArray;
+DBMS.getStoryNamesArray = function () {
+    "use strict";
+    return Object.keys(Database.Stories).sort(Utils.charOrdA);
 };

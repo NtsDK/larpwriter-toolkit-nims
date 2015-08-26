@@ -1,8 +1,13 @@
+/*global
+ jQuery, Database
+ */
+
 "use strict";
 
 var Overview = {};
 
 Overview.init = function () {
+    "use strict";
     var name = document.getElementById("gameNameInput");
     name.addEventListener("change", Overview.updateName);
 
@@ -11,17 +16,17 @@ Overview.init = function () {
     var opts = {
         lang : "ru",
         mask : true,
-        onChangeDateTime : Overview.updateTime,
+        onChangeDateTime : Overview.updateTime
     };
 
     jQuery(date).datetimepicker(opts);
 
-    var date = document.getElementById("preGameDatePicker");
+    date = document.getElementById("preGameDatePicker");
 
-    var opts = {
+    opts = {
         lang : "ru",
         mask : true,
-        onChangeDateTime : Overview.updatePreGameDate,
+        onChangeDateTime : Overview.updatePreGameDate
     };
 
     jQuery(date).datetimepicker(opts);
@@ -33,13 +38,14 @@ Overview.init = function () {
 };
 
 Overview.refresh = function () {
+    "use strict";
     var name = document.getElementById("gameNameInput");
     name.value = Database.Meta.name;
 
     var date = document.getElementById("gameDatePicker");
     date.value = Database.Meta.date;
 
-    var date = document.getElementById("preGameDatePicker");
+    date = document.getElementById("preGameDatePicker");
     date.value = Database.Meta.preGameDate;
 
     var descr = document.getElementById("gameDescription");
@@ -48,14 +54,18 @@ Overview.refresh = function () {
 };
 
 Overview.updateName = function (event) {
+    "use strict";
     Database.Meta.name = event.target.value;
 };
 Overview.updateTime = function (dp, input) {
+    "use strict";
     Database.Meta.date = input.val();
 };
 Overview.updatePreGameDate = function (dp, input) {
+    "use strict";
     Database.Meta.preGameDate = input.val();
 };
 Overview.updateDescr = function (event) {
+    "use strict";
     Database.Meta.description = event.target.value;
 };

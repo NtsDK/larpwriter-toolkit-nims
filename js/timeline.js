@@ -41,7 +41,7 @@ Timeline.init = function () {
 
 Timeline.refresh = function () {
     var selector = document.getElementById("timelineStorySelector");
-    removeChildren(selector);
+    Utils.removeChildren(selector);
 
     for ( var name in Database.Stories) {
         var option = document.createElement("option");

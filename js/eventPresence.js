@@ -8,7 +8,7 @@ EventPresence.init = function () {
 
 EventPresence.refresh = function () {
     var table = document.getElementById("eventPresenceTable");
-    removeChildren(table);
+    Utils.removeChildren(table);
 
     EventPresence.appendTableHeader(table);
 
@@ -68,7 +68,7 @@ EventPresence.onChangeCharacterCheckbox = function (event) {
             text : ""
         };
     } else {
-        if (confirm("Вы уверены, что хотите удалить персонажа "
+        if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
                 + event.target.nameInfo
                 + " из события '"
                 + event.target.eventInfo.name

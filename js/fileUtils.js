@@ -18,7 +18,7 @@ FileUtils.readSingleFile = function (evt) {
         var r = new FileReader();
         r.onload = function (e) {
             var contents = e.target.result;
-            // alert("Got the file.n" + "name: " + f.name + "n" + "type: "
+            // Utils.alert("Got the file.n" + "name: " + f.name + "n" + "type: "
             // + f.type + "n" + "size: " + f.size + " bytesn"
             // + JSON.parse(contents)
             // // + "starts with: " + contents.substr(1, contents.indexOf("n"))
@@ -29,7 +29,7 @@ FileUtils.readSingleFile = function (evt) {
         }
         r.readAsText(f);
     } else {
-        alert("Failed to load file");
+        Utils.alert("Failed to load file");
     }
 };
 

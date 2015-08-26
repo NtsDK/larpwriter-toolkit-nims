@@ -241,7 +241,7 @@ BriefingExport.readTemplateFile = function (evt) {
         }
         r.readAsBinaryString(f);
     } else {
-        alert("Failed to load file");
+        Utils.alert("Failed to load file");
     }
 };
 

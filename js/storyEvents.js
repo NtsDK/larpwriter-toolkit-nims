@@ -25,7 +25,7 @@ StoryEvents.refresh = function () {
 
     // event part
     var table = document.getElementById("eventBlock");
-    removeChildren(table);
+    Utils.removeChildren(table);
 
     StoryEvents.appendEventHeader(table);
 
@@ -36,7 +36,7 @@ StoryEvents.refresh = function () {
 
     // refresh position selector
     var positionSelector = document.getElementById("positionSelector");
-    removeChildren(positionSelector);
+    Utils.removeChildren(positionSelector);
 
     for (var i = 0; i < Stories.CurrentStory.events.length; i++) {
         var option = document.createElement("option");
@@ -60,7 +60,7 @@ StoryEvents.refresh = function () {
     selectorArr.push(document.getElementById("mergeEventSelector"));
 
     for (var i = 0; i < selectorArr.length; i++) {
-        removeChildren(selectorArr[i]);
+        Utils.removeChildren(selectorArr[i]);
     }
 
     for (var i = 0; i < Stories.CurrentStory.events.length; i++) {
@@ -79,11 +79,11 @@ StoryEvents.createEvent = function () {
     var eventText = input.value.trim();
 
     if (eventName === "") {
-        alert("Название события не указано");
+        Utils.alert("Название события не указано");
         return;
     }
     if (eventText === "") {
-        alert("Событие пусто");
+        Utils.alert("Событие пусто");
         return;
     }
 
@@ -111,7 +111,7 @@ StoryEvents.swapEvents = function () {
     var index1 = document.getElementById("firstEvent").selectedIndex;
     var index2 = document.getElementById("secondEvent").selectedIndex;
     if (index1 === index2) {
-        alert("Позиции событий совпадают");
+        Utils.alert("Позиции событий совпадают");
         return;
     }
 
@@ -134,7 +134,7 @@ StoryEvents.cloneEvent = function () {
 StoryEvents.mergeEvents = function () {
     var index = document.getElementById("mergeEventSelector").selectedIndex;
     if (!Stories.CurrentStory.events[index + 1]) {
-        alert("Событие объединяется со следующим событием. Последнее событие не с кем объединять.");
+        Utils.alert("Событие объединяется со следующим событием. Последнее событие не с кем объединять.");
         return;
     }
 
@@ -158,7 +158,7 @@ StoryEvents.mergeEvents = function () {
 StoryEvents.removeEvent = function () {
     var index = document.getElementById("removeEventSelector").selectedIndex;
 
-    if (confirm("Вы уверены, что хотите удалить событие " + name
+    if (Utils.confirm("Вы уверены, что хотите удалить событие " + name
             + "? Все данные связанные с событием будут удалены безвозвратно.")) {
         Stories.CurrentStory.events.remove(index);
         StoryEvents.refresh();

@@ -1,3 +1,7 @@
+/*global
+ Utils, Database, DBMS
+ */
+
 "use strict";
 
 // Профиль игрока уже содержит поле name.
@@ -12,59 +16,56 @@
 var CharacterProfileConfigurer = {};
 
 CharacterProfileConfigurer.mapping = {
-    "text" : {
+    text : {
         displayName : "Текст",
         value : ""
     },
-    "string" : {
+    string : {
         displayName : "Строка",
         value : ""
     },
-    "enum" : {
+    enum : {
         displayName : "Перечисление",
         value : "_"
     },
-    "number" : {
+    number : {
         displayName : "Число",
         value : 0
     },
-    "checkbox" : {
+    checkbox : {
         displayName : "Галочка",
         value : false
     }
 };
 
 CharacterProfileConfigurer.init = function () {
+    'use strict';
     var selector = document.getElementById("profileItemTypeSelector");
-    removeChildren(selector);
+    Utils.removeChildren(selector);
     CharacterProfileConfigurer.fillSelector(selector);
 
     var button = document.getElementById("createProfileItemButton");
-    button.addEventListener("click",
-            CharacterProfileConfigurer.createProfileItem);
+    button.addEventListener("click", CharacterProfileConfigurer.createProfileItem);
 
-    var button = document.getElementById("swapProfileFieldsButton");
-    button.addEventListener("click",
-            CharacterProfileConfigurer.swapProfileItems);
+    button = document.getElementById("swapProfileFieldsButton");
+    button.addEventListener("click", CharacterProfileConfigurer.swapProfileItems);
 
-    var button = document.getElementById("removeProfileItemButton");
-    button.addEventListener("click",
-            CharacterProfileConfigurer.removeProfileItem);
+    button = document.getElementById("removeProfileItemButton");
+    button.addEventListener("click", CharacterProfileConfigurer.removeProfileItem);
 
-    CharacterProfileConfigurer.content = document
-            .getElementById("characterProfileConfigurer");
+    CharacterProfileConfigurer.content = document.getElementById("characterProfileConfigurer");
 };
 
 CharacterProfileConfigurer.refresh = function () {
-    var positionSelector = document
-            .getElementById("profileItemPositionSelector");
-    removeChildren(positionSelector);
+    'use strict';
+    var positionSelector = document.getElementById("profileItemPositionSelector");
+    Utils.removeChildren(positionSelector);
 
-    for (var i = 0; i < Database.ProfileSettings.length; i++) {
+    Database.ProfileSettings.forEach(function (elem, i) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode("Перед " + (i + 1)));
         positionSelector.appendChild(option);
-    }
+    });
 
     var option = document.createElement("option");
     option.appendChild(document.createTextNode("В конец"));
@@ -73,14 +74,13 @@ CharacterProfileConfigurer.refresh = function () {
     positionSelector.selectedIndex = Database.ProfileSettings.length;
 
     var table = document.getElementById("profileConfigBlock");
-    removeChildren(table);
+    Utils.removeChildren(table);
 
     CharacterProfileConfigurer.appendHeader(table);
 
-    for (var i = 0; i < Database.ProfileSettings.length; ++i) {
-        CharacterProfileConfigurer.appendInput(table,
-                Database.ProfileSettings[i], i + 1);
-    }
+    Database.ProfileSettings.forEach(function (profileSettings, i) {
+        CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
+    });
 
     var selectorArr = [];
 
@@ -88,20 +88,18 @@ CharacterProfileConfigurer.refresh = function () {
     selectorArr.push(document.getElementById("secondProfileField"));
     selectorArr.push(document.getElementById("removeProfileItemSelector"));
 
-    for (var i = 0; i < selectorArr.length; i++) {
-        removeChildren(selectorArr[i]);
-    }
-
-    for (var i = 0; i < Database.ProfileSettings.length; i++) {
-        for (var j = 0; j < selectorArr.length; j++) {
-            var option = document.createElement("option");
-            option.appendChild(document.createTextNode((i + 1)));
-            selectorArr[j].appendChild(option);
-        }
-    }
+    selectorArr.forEach(function (selector) {
+        Utils.removeChildren(selector);
+        Database.ProfileSettings.forEach(function (profileSettings, i) {
+            option = document.createElement("option");
+            option.appendChild(document.createTextNode(i + 1));
+            selector.appendChild(option);
+        });
+    });
 };
 
 CharacterProfileConfigurer.createProfileItem = function () {
+    'use strict';
     var name = document.getElementById("profileItemNameInput").value.trim();
 
     if (!CharacterProfileConfigurer.validateProfileItemName(name)) {
@@ -111,7 +109,7 @@ CharacterProfileConfigurer.createProfileItem = function () {
     var type = document.getElementById("profileItemTypeSelector").value.trim();
 
     if (!CharacterProfileConfigurer.mapping[type]) {
-        alert("Неизвестный тип поля: " + type);
+        Utils.alert("Неизвестный тип поля: " + type);
         return;
     }
 
@@ -121,12 +119,11 @@ CharacterProfileConfigurer.createProfileItem = function () {
         value : CharacterProfileConfigurer.mapping[type].value
     };
 
-    for ( var characterName in Database.Characters) {
+    Object.keys(Database.Characters).forEach(function (characterName) {
         Database.Characters[characterName][name] = CharacterProfileConfigurer.mapping[type].value;
-    }
+    });
 
-    var positionSelector = document
-            .getElementById("profileItemPositionSelector");
+    var positionSelector = document.getElementById("profileItemPositionSelector");
 
     var position = positionSelector.value;
     if (position === "В конец") {
@@ -140,10 +137,11 @@ CharacterProfileConfigurer.createProfileItem = function () {
 };
 
 CharacterProfileConfigurer.swapProfileItems = function () {
+    'use strict';
     var index1 = document.getElementById("firstProfileField").selectedIndex;
     var index2 = document.getElementById("secondProfileField").selectedIndex;
     if (index1 === index2) {
-        alert("Позиции совпадают");
+        Utils.alert("Позиции совпадают");
         return;
     }
 
@@ -155,54 +153,55 @@ CharacterProfileConfigurer.swapProfileItems = function () {
 };
 
 CharacterProfileConfigurer.removeProfileItem = function () {
+    'use strict';
     var index = document.getElementById("removeProfileItemSelector").selectedIndex;
 
-    if (confirm("Вы уверены, что хотите удалить поле профиля "
-            + Database.ProfileSettings[index].name
-            + "? Все данные связанные с этим полем будут удалены безвозвратно.")) {
+    if (Utils.confirm("Вы уверены, что хотите удалить поле профиля "
+                    + Database.ProfileSettings[index].name
+                    + "? Все данные связанные с этим полем будут удалены безвозвратно.")) {
         var name = Database.ProfileSettings[index].name;
-        for ( var characterName in Database.Characters) {
+        Object.keys(Database.Characters).forEach(function (characterName) {
             delete Database.Characters[characterName][name];
-        }
+        });
         Database.ProfileSettings.remove(index);
         CharacterProfileConfigurer.refresh();
     }
 };
 
 CharacterProfileConfigurer.appendHeader = function (table) {
+    'use strict';
     var tr = document.createElement("tr");
 
     var td = document.createElement("th");
     td.appendChild(document.createTextNode("№"));
     tr.appendChild(td);
 
-    var td = document.createElement("th");
+    td = document.createElement("th");
     td.appendChild(document.createTextNode("Название поля"));
     tr.appendChild(td);
 
-    var td = document.createElement("th");
+    td = document.createElement("th");
     td.appendChild(document.createTextNode("Тип"));
     tr.appendChild(td);
 
-    var td = document.createElement("th");
+    td = document.createElement("th");
     td.appendChild(document.createTextNode("Значения"));
     tr.appendChild(td);
     table.appendChild(tr);
 };
 
 CharacterProfileConfigurer.fillSelector = function (selector) {
-    for ( var name in CharacterProfileConfigurer.mapping) {
+    'use strict';
+    Object.keys(CharacterProfileConfigurer.mapping).forEach(function (name) {
         var option = document.createElement("option");
-        option
-                .appendChild(document
-                        .createTextNode(CharacterProfileConfigurer.mapping[name].displayName));
+        option.appendChild(document.createTextNode(CharacterProfileConfigurer.mapping[name].displayName));
         option.value = name;
         selector.appendChild(option);
-    }
+    });
 };
 
-CharacterProfileConfigurer.appendInput = function (table, profileSettings,
-        index) {
+CharacterProfileConfigurer.appendInput = function (table, profileSettings, index) {
+    'use strict';
     var tr = document.createElement("tr");
 
     var td = document.createElement("td");
@@ -211,7 +210,7 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings,
     td.appendChild(span);
     tr.appendChild(td);
 
-    var td = document.createElement("td");
+    td = document.createElement("td");
     var input = document.createElement("input");
     input.value = profileSettings.name;
     input.info = profileSettings;
@@ -220,7 +219,7 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings,
     td.appendChild(input);
     tr.appendChild(td);
 
-    var td = document.createElement("td");
+    td = document.createElement("td");
     var selector = document.createElement("select");
     CharacterProfileConfigurer.fillSelector(selector);
     selector.value = profileSettings.type;
@@ -230,9 +229,10 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings,
             CharacterProfileConfigurer.changeProfileItemType);
     tr.appendChild(td);
 
-    var td = document.createElement("td");
-    var input = document.createElement("input");
+    td = document.createElement("td");
+    input = document.createElement("input");
     input.info = profileSettings;
+
     switch (profileSettings.type) {
     case "text":
     case "string":
@@ -249,15 +249,17 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings,
         break;
     }
 
-    input.addEventListener("change",
-            CharacterProfileConfigurer.updateDefaultValue);
+    input.addEventListener("change", CharacterProfileConfigurer.updateDefaultValue);
     td.appendChild(input);
     tr.appendChild(td);
     table.appendChild(tr);
 };
 
 CharacterProfileConfigurer.updateDefaultValue = function (event) {
+    'use strict';
     var type = event.target.info.type;
+
+    var oldOptions, newOptions, newOptionsMap, missedValues, name;
 
     switch (type) {
     case "text":
@@ -268,39 +270,35 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         break;
     case "enum":
         if (event.target.value === "") {
-            alert("Значение перечислимого поля не может быть пустым");
+            Utils.alert("Значение перечислимого поля не может быть пустым");
             event.target.value = event.target.info.value;
             return;
         }
-        var oldOptions = event.target.info.value.split(",");
-        var newOptions = event.target.value.split(",");
+        oldOptions = event.target.info.value.split(",");
+        newOptions = event.target.value.split(",");
 
-        var newOptionsMap = [ {} ].concat(newOptions).reduce(function (a, b) {
+        newOptionsMap = [{}].concat(newOptions).reduce(function (a, b) {
             a[b] = true;
             return a;
         });
 
-        var missedValues = [];
-        for (var i = 0; i < oldOptions.length; i++) {
-            var oldOption = oldOptions[i];
-            if (!newOptionsMap[oldOption]) {
-                missedValues.push(oldOption);
-            }
-        }
+        missedValues = oldOptions.filter(function (oldOption) {
+            return !newOptionsMap[oldOption];
+        });
 
         if (missedValues.length !== 0) {
-            if (confirm("Новое значение перечисления удаляет предыдущие значения: "
-                    + missedValues.join(",")
-                    + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
+            if (Utils.confirm("Новое значение перечисления удаляет предыдущие значения: "
+                            + missedValues.join(",")
+                            + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
                 event.target.info.value = event.target.value;
-                var name = event.target.info.name;
+                name = event.target.info.name;
 
-                for ( var characterName in Database.Characters) {
+                Object.keys(Database.Characters).forEach(function (characterName) {
                     var enumValue = Database.Characters[characterName][name];
                     if (!newOptionsMap[enumValue]) {
                         Database.Characters[characterName][name] = newOptions[0];
                     }
-                }
+                });
 
                 return;
             } else {
@@ -313,12 +311,11 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         break;
     case "number":
         if (isNaN(event.target.value)) {
-            alert("Введено не число");
+            Utils.alert("Введено не число");
             event.target.value = event.target.info.value;
             return;
-        } else {
-            event.target.info.value = new Number(event.target.value);
         }
+        event.target.info.value = Number(event.target.value);
         break;
     case "checkbox":
         event.target.info.value = event.target.checked;
@@ -328,6 +325,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
 };
 
 CharacterProfileConfigurer.renameProfileItem = function (event) {
+    'use strict';
     var newName = event.target.value.trim();
     var oldName = event.target.info.name;
 
@@ -336,45 +334,50 @@ CharacterProfileConfigurer.renameProfileItem = function (event) {
         return;
     }
 
-    for ( var characterName in Database.Characters) {
+    Object.keys(Database.Characters).forEach(function (characterName) {
         var tmp = Database.Characters[characterName][oldName];
         delete Database.Characters[characterName][oldName];
         Database.Characters[characterName][newName] = tmp;
-    }
+    });
 
     event.target.info.name = newName;
 };
 
 CharacterProfileConfigurer.validateProfileItemName = function (name) {
+    'use strict';
     if (name === "") {
-        alert("Название поля не указано");
+        Utils.alert("Название поля не указано");
         return false;
     }
 
     if (name === "name") {
-        alert("Название поля не может быть name");
+        Utils.alert("Название поля не может быть name");
         return false;
     }
 
-    for (var i = 0; i < Database.ProfileSettings.length; ++i) {
-        if (name === Database.ProfileSettings[i].name) {
-            alert("Такое имя уже используется.");
-            return false;
-        }
+    var nameUsedTest = function (profile) {
+        return name === profile.name;
+    };
+
+    if (Database.ProfileSettings.some(nameUsedTest)) {
+        Utils.alert("Такое имя уже используется.");
+        return false;
     }
+
     return true;
 };
 
 CharacterProfileConfigurer.changeProfileItemType = function (event) {
-    if (confirm("Вы уверены, что хотите изменить тип поля профиля "
+    'use strict';
+    if (Utils.confirm("Вы уверены, что хотите изменить тип поля профиля "
             + event.target.info.name
             + "? Все заполнение данного поле в досье будет потеряно.")) {
         event.target.info.type = event.target.value;
         event.target.info.value = CharacterProfileConfigurer.mapping[event.target.value].value;
 
-        for ( var characterName in Database.Characters) {
+        Object.keys(Database.Characters).forEach(function (characterName) {
             Database.Characters[characterName][event.target.info.name] = CharacterProfileConfigurer.mapping[event.target.value].value;
-        }
+        });
     } else {
         event.target.value = event.target.info.type;
     }

@@ -22,10 +22,10 @@ StoryCharacters.refresh = function () {
     var fromSelector = document.getElementById("storyCharactersFromSelector");
     var toSelector = document.getElementById("storyCharactersToSelector");
 
-    removeChildren(addSelector);
-    removeChildren(removeSelector);
-    removeChildren(fromSelector);
-    removeChildren(toSelector);
+    Utils.removeChildren(addSelector);
+    Utils.removeChildren(removeSelector);
+    Utils.removeChildren(fromSelector);
+    Utils.removeChildren(toSelector);
 
     var addArray = [];
     var removeArray = [];
@@ -41,8 +41,8 @@ StoryCharacters.refresh = function () {
         }
     }
 
-    addArray.sort(charOrdA);
-    removeArray.sort(charOrdA);
+    addArray.sort(Utils.charOrdA);
+    removeArray.sort(Utils.charOrdA);
 
     for (var i = 0; i < addArray.length; i++) {
         var option = document.createElement("option");
@@ -62,7 +62,7 @@ StoryCharacters.refresh = function () {
     }
 
     var table = document.getElementById("storyCharactersTable");
-    removeChildren(table);
+    Utils.removeChildren(table);
 
     StoryCharacters.appendCharacterHeader(table);
 
@@ -115,7 +115,7 @@ StoryCharacters.removeCharacter = function () {
     var characterName = document
             .getElementById("storyCharactersRemoveSelector").value.trim();
 
-    if (confirm("Вы уверены, что хотите удалить персонажа "
+    if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
             + name
             + " из истории? Все данные связанные с персонажем будут удалены безвозвратно.")) {
         delete Stories.CurrentStory.characters[characterName];
@@ -159,7 +159,7 @@ StoryCharacters.appendCharacterInput = function (table, character, index) {
 StoryCharacters.updateCharacterInventory = function (event) {
     event.target.characterInfo.inventory = event.target.value;
     var inventoryCheck = document.getElementById("inventoryCheck");
-    removeChildren(inventoryCheck);
+    Utils.removeChildren(inventoryCheck);
     var arr = event.target.characterInfo.inventory.split(",");
     for (var i = 0; i < arr.length; i++) {
         arr[i] = arr[i].trim();

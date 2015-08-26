@@ -14,7 +14,7 @@ Events.init = function () {
 
 Events.refresh = function () {
     var selector = document.getElementById("personalStoriesCharacter");
-    removeChildren(selector);
+    Utils.removeChildren(selector);
 
     var showOnlyFinishedStory = document
             .getElementById("finishedStoryCheckbox").checked;
@@ -68,12 +68,12 @@ Events.showPersonalStoriesDelegate = function (event) {
 };
 
 Events.showPersonalStories = function (storyName, characterName) {
-    // alert(event.target.value);
+    // Utils.alert(event.target.value);
 
-    // alert(option.extra);
+    // Utils.alert(option.extra);
 
     var table = document.getElementById("personalStories");
-    removeChildren(table);
+    Utils.removeChildren(table);
 
     var tr = document.createElement("tr");
     table.appendChild(tr);

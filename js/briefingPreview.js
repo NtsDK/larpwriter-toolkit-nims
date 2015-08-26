@@ -18,7 +18,7 @@ BriefingPreview.init = function () {
 
 BriefingPreview.refresh = function () {
     var selector = document.getElementById("briefingCharacter");
-    removeChildren(selector);
+    Utils.removeChildren(selector);
     var names = DBMS.getCharacterNamesArray();
 
     for (var i = 0; i < names.length; i++) {
@@ -38,7 +38,7 @@ BriefingPreview.buildContentDelegate = function (event) {
 
 BriefingPreview.buildContent = function (characterName) {
     var content = document.getElementById("briefingContent");
-    removeChildren(content);
+    Utils.removeChildren(content);
 
     content.appendChild(document.createTextNode("Персонаж: " + characterName));
     content.appendChild(document.createElement("br"));

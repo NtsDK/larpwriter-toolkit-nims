@@ -42,11 +42,11 @@ Stories.init = function () {
 
 Stories.refresh = function () {
     var selector1 = document.getElementById("storySelector");
-    removeChildren(selector1);
+    Utils.removeChildren(selector1);
     var selector2 = document.getElementById("fromStory");
-    removeChildren(selector2);
+    Utils.removeChildren(selector2);
     var selector3 = document.getElementById("storyRemoveSelector");
-    removeChildren(selector3);
+    Utils.removeChildren(selector3);
 
     var storyNames = DBMS.getStoryNamesArray();
 
@@ -73,12 +73,12 @@ Stories.refresh = function () {
 Stories.createStory = function () {
     var storyName = document.getElementById("createStoryName").value.trim();
     if (storyName === "") {
-        alert("Название истории пусто.");
+        Utils.alert("Название истории пусто.");
         return;
     }
 
     if (Database.Stories[storyName]) {
-        alert("История с таким именем уже существует.")
+        Utils.alert("История с таким именем уже существует.")
         return;
     }
 
@@ -99,17 +99,17 @@ Stories.renameStory = function () {
     var toName = document.getElementById("toStory").value.trim();
 
     if (toName === "") {
-        alert("Новое имя не указано.");
+        Utils.alert("Новое имя не указано.");
         return;
     }
 
     if (fromName === toName) {
-        alert("Имена совпадают.");
+        Utils.alert("Имена совпадают.");
         return;
     }
 
     if (Database.Stories[toName]) {
-        alert("Имя " + toName + " уже используется.");
+        Utils.alert("Имя " + toName + " уже используется.");
         return;
     }
 
@@ -124,7 +124,7 @@ Stories.renameStory = function () {
 Stories.removeStory = function () {
     var name = document.getElementById("storyRemoveSelector").value.trim();
 
-    if (confirm("Вы уверены, что хотите удалить историю " + name
+    if (Utils.confirm("Вы уверены, что хотите удалить историю " + name
             + "? Все данные связанные с историей будут удалены безвозвратно.")) {
         delete Database.Stories[name];
         Stories.refresh();
@@ -146,7 +146,7 @@ Stories.onStorySelectorChange = function (storyName) {
 
     // // event part
     // var table = document.getElementById("eventBlock");
-    // removeChildren(table);
+    // Utils.removeChildren(table);
     //
     // Stories.appendEventHeader(table);
     //

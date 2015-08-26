@@ -15,7 +15,7 @@ Utils.addView = function (rootObject, name, view, displayName, navigationId,
     var onClickDelegate = function (view) {
         return function () {
             var contentArea = document.getElementById(contentAreaId);
-            removeChildren(contentArea);
+            Utils.removeChildren(contentArea);
             contentArea.appendChild(view.content);
             rootObject.currentView = view;
             view.refresh();
@@ -86,8 +86,7 @@ if (document.getElementsByClassName) {
         return result;
     };
 }
-
-function charOrdA (a, b) {
+Utils.charOrdA = function (a, b) {
     a = a.toLowerCase();
     b = b.toLowerCase();
     if (a > b)
@@ -107,7 +106,15 @@ function eventsByTime (a, b) {
     return 0;
 };
 
-function removeChildren (myNode) {
+Utils.alert = function (message) {
+    window.alert(message);
+};
+
+Utils.confirm = function (message) {
+    return window.confirm(message);
+};
+
+Utils.removeChildren = function (myNode) {
     if (!myNode) {
         return;
     }
