@@ -2,8 +2,8 @@
 
 var Utils = {};
 
-Utils.addView = function (rootObject, name, view, displayName, navigationId,
-        contentAreaId, mainPage) {
+Utils.addView = function (rootObject, name, view, displayName, navigationId, contentAreaId, mainPage) {
+    "use strict";
     view.init();
     // var viewContent = initializer();
     rootObject.views[name] = view;
@@ -32,10 +32,12 @@ Utils.addView = function (rootObject, name, view, displayName, navigationId,
 };
 
 Utils.globStringToRegex = function (str) {
+    "use strict";
     return new RegExp(Utils.preg_quote(str).replace(/\\\*/g, '.*').replace(
             /\\\?/g, '.'), 'g');
 };
 Utils.preg_quote = function (str, delimiter) {
+    "use strict";
     // http://kevin.vanzonneveld.net
     // + original by: booeyOH
     // + improved by: Ates Goral (http://magnetiq.com)
@@ -53,11 +55,13 @@ Utils.preg_quote = function (str, delimiter) {
 };
 
 String.prototype.endsWith = function (suffix) {
+    "use strict";
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
 // Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function (from, to) {
+    "use strict";
     var rest = this.slice((to || from) + 1 || this.length);
     this.length = from < 0 ? this.length + from : from;
     return this.push.apply(this, rest);
@@ -85,8 +89,10 @@ if (document.getElementsByClassName) {
 
         return result;
     };
-}
+};
+
 Utils.charOrdA = function (a, b) {
+    "use strict";
     a = a.toLowerCase();
     b = b.toLowerCase();
     if (a > b)
@@ -97,6 +103,7 @@ Utils.charOrdA = function (a, b) {
 };
 
 function eventsByTime (a, b) {
+    "use strict";
     a = new Date(a.time);
     b = new Date(b.time);
     if (a > b)
@@ -107,14 +114,17 @@ function eventsByTime (a, b) {
 };
 
 Utils.alert = function (message) {
+    "use strict";
     window.alert(message);
 };
 
 Utils.confirm = function (message) {
+    "use strict";
     return window.confirm(message);
 };
 
 Utils.removeChildren = function (myNode) {
+    "use strict";
     if (!myNode) {
         return;
     }
@@ -124,10 +134,12 @@ Utils.removeChildren = function (myNode) {
 };
 
 function isEmpty (obj) {
+    "use strict";
     return (Object.getOwnPropertyNames(obj).length === 0);
 };
 
-function clone (o) {
+Utils.clone = function (o) {
+    "use strict";
     if (!o || 'object' !== typeof o) {
         return o;
     }
@@ -137,7 +149,7 @@ function clone (o) {
         if (o.hasOwnProperty(p)) {
             v = o[p];
             if (v && 'object' === typeof v) {
-                c[p] = clone(v);
+                c[p] = Utils.clone(v);
             } else {
                 c[p] = v;
             }

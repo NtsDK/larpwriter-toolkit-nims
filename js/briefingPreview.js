@@ -1,31 +1,37 @@
+/*global
+ Utils, DBMS, Database
+ */
+
 "use strict";
 
 var BriefingPreview = {};
 
 BriefingPreview.init = function () {
+    "use strict";
     var button = document.getElementById("briefingCharacter");
     button.addEventListener("change", BriefingPreview.buildContentDelegate);
 
-    var button = document.getElementById("eventGroupingByStoryRadio");
+    button = document.getElementById("eventGroupingByStoryRadio");
     button.addEventListener("change", BriefingPreview.refresh);
     button.checked = true;
 
-    var button = document.getElementById("eventGroupingByTimeRadio");
+    button = document.getElementById("eventGroupingByTimeRadio");
     button.addEventListener("change", BriefingPreview.refresh);
 
     BriefingPreview.content = document.getElementById("briefingPreviewDiv");
 };
 
 BriefingPreview.refresh = function () {
+    "use strict";
     var selector = document.getElementById("briefingCharacter");
     Utils.removeChildren(selector);
     var names = DBMS.getCharacterNamesArray();
 
-    for (var i = 0; i < names.length; i++) {
+    names.forEach(function (name) {
         var option = document.createElement("option");
-        option.appendChild(document.createTextNode(names[i]));
+        option.appendChild(document.createTextNode(name));
         selector.appendChild(option);
-    }
+    });
 
     if (names[0]) {
         BriefingPreview.buildContent(names[0]);
@@ -33,10 +39,12 @@ BriefingPreview.refresh = function () {
 };
 
 BriefingPreview.buildContentDelegate = function (event) {
+    "use strict";
     BriefingPreview.buildContent(event.target.value);
 };
 
 BriefingPreview.buildContent = function (characterName) {
+    "use strict";
     var content = document.getElementById("briefingContent");
     Utils.removeChildren(content);
 
@@ -51,20 +59,17 @@ BriefingPreview.buildContent = function (characterName) {
         switch (element.type) {
         case "text":
             content.appendChild(document.createElement("br"));
-            content.appendChild(document
-                    .createTextNode(character[element.name]));
+            content.appendChild(document.createTextNode(character[element.name]));
             content.appendChild(document.createElement("br"));
             break;
         case "enum":
         case "number":
         case "string":
-            content.appendChild(document
-                    .createTextNode(character[element.name]));
+            content.appendChild(document.createTextNode(character[element.name]));
             content.appendChild(document.createElement("br"));
             break;
         case "checkbox":
-            content.appendChild(document
-                    .createTextNode(character[element.name] ? "Да" : "Нет"));
+            content.appendChild(document.createTextNode(character[element.name] ? "Да" : "Нет"));
             content.appendChild(document.createElement("br"));
             break;
         }
@@ -88,8 +93,7 @@ BriefingPreview.buildContent = function (characterName) {
             input.value = story.characters[characterName].inventory;
             input.characterInfo = story.characters[characterName];
             input.className = "inventoryInput";
-            input.addEventListener("change",
-                    BriefingPreview.updateCharacterInventory);
+            input.addEventListener("change", BriefingPreview.updateCharacterInventory);
             content.appendChild(input);
 
             content.appendChild(document.createElement("br"));
@@ -111,39 +115,34 @@ BriefingPreview.buildContent = function (characterName) {
 };
 
 BriefingPreview.showEventsByTime = function (content, characterName) {
+    "use strict";
     var allStories = [];
-    for ( var storyName in Database.Stories) {
-        if (!Database.Stories[storyName].characters[characterName]) {
-            continue;
-        }
-
+    
+    Object.keys(Database.Stories).filter(function(storyName){
+        return Database.Stories[storyName].characters[characterName];
+    }).forEach(function (storyName) {
         var events = Database.Stories[storyName].events;
-        for (var i = 0; i < events.length; i++) {
-            var event = events[i];
-            if (event.characters[characterName]) {
-                allStories.push(event);
-            }
-        }
-    }
-
+        allStories = allStories.concat(events.filter(function (event) {
+            return event.characters[characterName];
+        }));
+    });
+    
     allStories.sort(eventsByTime);
 
-    for (var i = 0; i < allStories.length; i++) {
-        var event = allStories[i];
-        var type;
+    var type, input;
+    allStories.forEach(function (event) {
         if (event.characters[characterName].text === "") {
             type = "История";
         } else {
             type = "Персонаж";
         }
-
-        content.appendChild(document.createTextNode(event.time + " "
-                + event.name + ": " + type));
+        
+        content.appendChild(document.createTextNode(event.time + " " + event.name + ": " + type));
         content.appendChild(document.createElement("br"));
-
-        var input = document.createElement("textarea");
+        
+        input = document.createElement("textarea");
         input.className = "eventPersonalStory";
-
+        
         if (event.characters[characterName].text === "") {
             input.value = event.text;
             input.eventInfo = event;
@@ -151,70 +150,65 @@ BriefingPreview.showEventsByTime = function (content, characterName) {
             input.value = event.characters[characterName].text;
             input.eventInfo = event.characters[characterName];
         }
-
+        
         input.addEventListener("change", BriefingPreview.onChangePersonalStory);
         content.appendChild(input);
-
+        
         content.appendChild(document.createElement("br"));
         content.appendChild(document.createElement("br"));
-
-    }
-
+    });
 };
 
 BriefingPreview.showEventsByStory = function (content, characterName) {
-    for ( var storyName in Database.Stories) {
-        if (!Database.Stories[storyName].characters[characterName]) {
-            continue;
-        } else {
-            content.appendChild(document.createTextNode(storyName));
-            content.appendChild(document.createElement("br"));
-        }
+    "use strict";
+    
+    Object.keys(Database.Stories).filter(function(storyName){
+        return Database.Stories[storyName].characters[characterName];
+    }).forEach(function (storyName) {
+        content.appendChild(document.createTextNode(storyName));
+        content.appendChild(document.createElement("br"));
+        
         var events = Database.Stories[storyName].events;
-        for (var i = 0; i < events.length; i++) {
-            var event = events[i];
-            if (event.characters[characterName]) {
-                var type;
-                if (event.characters[characterName].text === "") {
-                    type = "История";
-                } else {
-                    type = "Персонаж";
-                }
-
-                content.appendChild(document.createTextNode(event.time + " "
-                        + event.name + ": " + type));
-                content.appendChild(document.createElement("br"));
-
-                var input = document.createElement("textarea");
-                input.className = "eventPersonalStory";
-
-                if (event.characters[characterName].text === "") {
-                    input.value = event.text;
-                    input.eventInfo = event;
-                    // content.appendChild(document.createTextNode(event.text));
-                } else {
-                    input.value = event.characters[characterName].text;
-                    input.eventInfo = event.characters[characterName];
-                    // content.appendChild(document.createTextNode(event.characters[characterName].text));
-                }
-
-                input.addEventListener("change",
-                        BriefingPreview.onChangePersonalStory);
-                content.appendChild(input);
-
-                content.appendChild(document.createElement("br"));
-                content.appendChild(document.createElement("br"));
+        events.filter(function (event) {
+            return event.characters[characterName];
+        }).forEach(function (event) {
+            var type;
+            if (event.characters[characterName].text === "") {
+                type = "История";
+            } else {
+                type = "Персонаж";
             }
-        }
-
-    }
+            
+            content.appendChild(document.createTextNode(event.time + " " + event.name + ": " + type));
+            content.appendChild(document.createElement("br"));
+            
+            var input = document.createElement("textarea");
+            input.className = "eventPersonalStory";
+            
+            if (event.characters[characterName].text === "") {
+                input.value = event.text;
+                input.eventInfo = event;
+            } else {
+                input.value = event.characters[characterName].text;
+                input.eventInfo = event.characters[characterName];
+            }
+            
+            input.addEventListener("change", BriefingPreview.onChangePersonalStory);
+            content.appendChild(input);
+            
+            content.appendChild(document.createElement("br"));
+            content.appendChild(document.createElement("br"));
+        });
+    });
 };
 
 BriefingPreview.updateCharacterInventory = function (event) {
+    "use strict";
     event.target.characterInfo.inventory = event.target.value;
 };
 
 BriefingPreview.onChangePersonalStory = function (event) {
+    "use strict";
     var eventObject = event.target.eventInfo;
     var text = event.target.value;
     eventObject.text = text;

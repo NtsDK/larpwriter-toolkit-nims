@@ -1,84 +1,83 @@
+/*global
+ Utils, DBMS, Database
+ */
+
 "use strict";
 
 var BriefingExport = {};
 
 BriefingExport.init = function () {
+    "use strict";
     var button = document.getElementById("makeBriefings");
     button.addEventListener("click", BriefingExport.makeTextBriefings);
 
-    var button = document.getElementById("docxBriefings");
+    button = document.getElementById("docxBriefings");
     button.addEventListener("change", BriefingExport.readTemplateFile);
 
-    var button = document.getElementById("eventGroupingByStoryRadio2");
+    button = document.getElementById("eventGroupingByStoryRadio2");
     button.checked = true;
 
     BriefingExport.content = document.getElementById("briefingExportDiv");
 };
 
 BriefingExport.refresh = function () {
-
+    "use strict";
 };
 
 BriefingExport.makeTextBriefings = function () {
+    "use strict";
 
     var data = BriefingExport.getBriefingData();
 
     var characterList = {};
 
-    for (var i = 0; i < data.briefings.length; i++) {
-        var briefingData = data.briefings[i];
-
+    data.briefings.forEach(function (briefingData) {
         var briefing = "";
-
+        
         briefing += briefingData.name + "\n\n";
-
+        
         var regex = new RegExp('^profileInfo');
-
+        
         Object.keys(briefingData).filter(function (element) {
             return regex.test(element);
         }).forEach(
                 function (element) {
                     briefing += "----------------------------------\n";
-                    briefing += element.substring("profileInfo.".length,
-                            element.length)
-                            + "\n";
+                    briefing += element.substring("profileInfo.".length, element.length) + "\n";
                     briefing += briefingData[element] + "\n";
                     briefing += "----------------------------------\n\n";
                 });
-
+        
         briefing += "----------------------------------\n";
         briefing += "Инвентарь\n";
         briefing += briefingData.inventory + "\n";
         briefing += "----------------------------------\n\n";
-
+        
         if (briefingData.storiesInfo) {
-            for (var j = 0; j < briefingData.storiesInfo.length; j++) {
-                var storyInfo = briefingData.storiesInfo[j];
+            briefingData.storiesInfo.forEach(function (storyInfo) {
                 briefing += "----------------------------------\n";
                 briefing += storyInfo.name + "\n\n";
-
-                for (var k = 0; k < storyInfo.eventsInfo.length; k++) {
-                    var event = storyInfo.eventsInfo[k];
+                
+                storyInfo.eventsInfo.forEach(function (event) {
                     briefing += event.time + ": " + event.text + "\n\n";
-                }
-
+                });
+                
                 briefing += "----------------------------------\n\n";
-            }
+            });
         }
-
+        
         if (briefingData.eventsInfo) {
             briefing += "----------------------------------\n";
-
-            for (var k = 0; k < briefingData.eventsInfo.length; k++) {
-                var event = briefingData.eventsInfo[k];
+            
+            briefingData.eventsInfo.forEach(function (event) {
                 briefing += event.time + ": " + event.text + "\n\n";
-            }
-
+            });
+            
             briefing += "----------------------------------\n\n";
         }
-
+        
         characterList[briefingData.name] = briefing;
-    }
+    });
 
     var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
 
@@ -103,6 +102,7 @@ BriefingExport.makeTextBriefings = function () {
 };
 
 BriefingExport.getBriefingData = function () {
+    "use strict";
     var data = {};
 
     var charArray = [];
@@ -118,8 +118,7 @@ BriefingExport.getBriefingData = function () {
             }
         }
 
-        var groupingByStory = document
-                .getElementById("eventGroupingByStoryRadio2").checked;
+        var groupingByStory = document.getElementById("eventGroupingByStoryRadio2").checked;
         var profileInfo = BriefingExport.getProfileInfo(charName);
 
         if (groupingByStory) {
@@ -134,9 +133,9 @@ BriefingExport.getBriefingData = function () {
             "eventsInfo" : eventsInfo
         };
 
-        Object.keys(profileInfo).forEach(function (element) {
+        for ( var element in profileInfo) {
             dataObject["profileInfo." + element] = profileInfo[element];
-        });
+        }
 
         charArray.push(dataObject);
     }
@@ -146,6 +145,7 @@ BriefingExport.getBriefingData = function () {
 };
 
 BriefingExport.getProfileInfo = function (charName) {
+    "use strict";
     var character = Database.Characters[charName];
     var profileInfo = {};
 
@@ -166,6 +166,7 @@ BriefingExport.getProfileInfo = function (charName) {
 };
 
 BriefingExport.getEventsInfo = function (charName) {
+    "use strict";
     var eventsInfo = [];
     for ( var storyName in Database.Stories) {
         var storyInfo = {};
@@ -177,19 +178,18 @@ BriefingExport.getEventsInfo = function (charName) {
 
         storyInfo.name = storyName;
 
-        for (var i = 0; i < story.events.length; ++i) {
-            var event = story.events[i];
+        story.events.filter(function (event) {
+            return event.characters[charName];
+        }).forEach(function (event) {
             var eventInfo = {};
-            if (event.characters[charName]) {
-                if (event.characters[charName].text !== "") {
-                    eventInfo.text = event.characters[charName].text;
-                } else {
-                    eventInfo.text = event.text;
-                }
-                eventInfo.time = event.time;
-                eventsInfo.push(eventInfo);
+            if (event.characters[charName].text !== "") {
+                eventInfo.text = event.characters[charName].text;
+            } else {
+                eventInfo.text = event.text;
             }
-        }
+            eventInfo.time = event.time;
+            eventsInfo.push(eventInfo);
+        });
     }
     eventsInfo.sort(eventsByTime);
 
@@ -197,6 +197,7 @@ BriefingExport.getEventsInfo = function (charName) {
 };
 
 BriefingExport.getStoriesInfo = function (charName) {
+    "use strict";
     var storiesInfo = [];
     for ( var storyName in Database.Stories) {
         var storyInfo = {};
@@ -209,19 +210,18 @@ BriefingExport.getStoriesInfo = function (charName) {
         storyInfo.name = storyName;
         var eventsInfo = [];
 
-        for (var i = 0; i < story.events.length; ++i) {
-            var event = story.events[i];
+        story.events.filter(function (event) {
+            return event.characters[charName];
+        }).forEach(function (event) {
             var eventInfo = {};
-            if (event.characters[charName]) {
-                if (event.characters[charName].text !== "") {
-                    eventInfo.text = event.characters[charName].text;
-                } else {
-                    eventInfo.text = event.text;
-                }
-                eventInfo.time = event.time;
-                eventsInfo.push(eventInfo);
+            if (event.characters[charName].text !== "") {
+                eventInfo.text = event.characters[charName].text;
+            } else {
+                eventInfo.text = event.text;
             }
-        }
+            eventInfo.time = event.time;
+            eventsInfo.push(eventInfo);
+        });
         storyInfo.eventsInfo = eventsInfo;
 
         storiesInfo.push(storyInfo);
@@ -230,6 +230,7 @@ BriefingExport.getStoriesInfo = function (charName) {
 };
 
 BriefingExport.readTemplateFile = function (evt) {
+    "use strict";
     // Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0];
 
@@ -246,19 +247,20 @@ BriefingExport.readTemplateFile = function (evt) {
 };
 
 BriefingExport.generateDocxBriefings = function (contents) {
+    "use strict";
 
     var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
 
+    var out;
     var briefingData = BriefingExport.getBriefingData();
     if (toSeparateFiles) {
         var zip = new JSZip();
         content = zip.generate();
 
-        for (var i = 0; i < briefingData.briefings.length; i++) {
+        briefingData.briefings.forEach(function (briefing) {
             var doc = new window.Docxgen(contents);
-            var briefing = briefingData.briefings[i];
             var tmpData = {
-                briefings : [ briefing ]
+                    briefings : [ briefing ]
             };
             doc.setData(tmpData);
             doc.render() // apply them (replace all occurences of
@@ -267,7 +269,7 @@ BriefingExport.generateDocxBriefings = function (contents) {
                 type : "Uint8Array"
             });
             zip.file(briefing.name + ".docx", out);
-        }
+        });
         saveAs(zip.generate({
             type : "blob"
         }), "briefings.zip");

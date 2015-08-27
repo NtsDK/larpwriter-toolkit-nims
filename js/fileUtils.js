@@ -1,16 +1,21 @@
+/*global
+ Utils, PageManager, Database, saveAs, FileReader, Blob
+ */
+
 "use strict";
 
 var FileUtils = {};
 
 FileUtils.init = function () {
-    document.getElementById('dataLoadButton').addEventListener('change',
-            FileUtils.readSingleFile, false);
+    "use strict";
+    document.getElementById('dataLoadButton').addEventListener('change', FileUtils.readSingleFile, false);
 
     var button = document.getElementById('dataSaveButton');
     button.addEventListener('click', FileUtils.saveFile);
 };
 
 FileUtils.readSingleFile = function (evt) {
+    "use strict";
     // Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0];
 
@@ -26,7 +31,7 @@ FileUtils.readSingleFile = function (evt) {
             Database = JSON.parse(contents);
             PageManager.currentView.refresh();
             // onLoad();
-        }
+        };
         r.readAsText(f);
     } else {
         Utils.alert("Failed to load file");
@@ -34,6 +39,7 @@ FileUtils.readSingleFile = function (evt) {
 };
 
 FileUtils.saveFile = function () {
+    "use strict";
     var blob = new Blob([ JSON.stringify(Database, null, '  ') ], {
         type : "text/plain;charset=utf-8"
     });

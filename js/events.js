@@ -1,66 +1,68 @@
+/*global
+ Utils, Database, DBMS
+ */
+
+
 "use strict";
 
 var Events = {};
 
 Events.init = function () {
+    "use strict";
     var selector = document.getElementById("personalStoriesCharacter");
     selector.addEventListener("change", Events.showPersonalStoriesDelegate);
 
-    var selector = document.getElementById("finishedStoryCheckbox");
+    selector = document.getElementById("finishedStoryCheckbox");
     selector.addEventListener("change", Events.refresh);
 
     Events.content = document.getElementById("eventsDiv");
 };
 
 Events.refresh = function () {
+    "use strict";
     var selector = document.getElementById("personalStoriesCharacter");
     Utils.removeChildren(selector);
 
-    var showOnlyFinishedStory = document
-            .getElementById("finishedStoryCheckbox").checked;
+    var showOnlyFinishedStory = document.getElementById("finishedStoryCheckbox").checked;
 
     var storyNames = DBMS.getStoryNamesArray();
     var isFirst = true;
-    for (var i = 0; i < storyNames.length; i++) {
-        var storyName = storyNames[i];
+    storyNames.forEach(function (storyName) {
         var characterArray = DBMS.getStoryCharacterNamesArray(storyName);
-        for (var j = 0; j < characterArray.length; j++) {
-            var characterName = characterArray[j];
-            var storyFinishedForCharacter = Events.isStoryFinishedForCharacter(
-                    storyName, characterName);
-            if (showOnlyFinishedStory && storyFinishedForCharacter) {
-                continue;
+        characterArray.filter(function(characterName){
+            if(showOnlyFinishedStory){
+                return !Events.isStoryFinishedForCharacter(storyName, characterName);
+            } else {
+                return true;
             }
-
+        }).forEach(function (characterName) {
             if (isFirst) {
                 Events.showPersonalStories(storyName, characterName);
                 isFirst = false;
             }
-            var suffix = storyFinishedForCharacter ? "(завершено)" : "";
+            var suffix = Events.isStoryFinishedForCharacter(storyName, characterName) ? "(завершено)" : "";
             var option = document.createElement("option");
-            option.appendChild(document.createTextNode(storyName + ":"
-                    + characterName + " " + suffix));
+            option.appendChild(document.createTextNode(storyName + ":" + characterName + " " + suffix));
             option.storyInfo = storyName;
             option.characterInfo = characterName;
             selector.appendChild(option);
-        }
-    }
+        });
+    });
 };
 
 Events.isStoryFinishedForCharacter = function (storyName, characterName) {
-    var story = Database.Stories[storyName];
-    for (var i = 0; i < story.events.length; i++) {
-        var event = story.events[i];
-        if (event.characters[characterName]
-                && !event.characters[characterName].ready) {
-            return false;
+    "use strict";
+    return Database.Stories[storyName].events.every(function(event){
+        if(event.characters[characterName]){
+            return event.characters[characterName].ready;
+        } else {
+            return true;
         }
-    }
-    return true;
-
+    });
 };
 
 Events.showPersonalStoriesDelegate = function (event) {
+    "use strict";
     var option = event.target.selectedOptions[0];
     var storyName = option.storyInfo;
     var characterName = option.characterInfo;
@@ -68,10 +70,7 @@ Events.showPersonalStoriesDelegate = function (event) {
 };
 
 Events.showPersonalStories = function (storyName, characterName) {
-    // Utils.alert(event.target.value);
-
-    // Utils.alert(option.extra);
-
+    "use strict";
     var table = document.getElementById("personalStories");
     Utils.removeChildren(table);
 
@@ -79,84 +78,73 @@ Events.showPersonalStories = function (storyName, characterName) {
     table.appendChild(tr);
     var headers = [ "Оригинал", "Адаптация", "Описание завершено" ];
 
-    for (var i = 0; i < headers.length; i++) {
+    headers.forEach(function (header) {
         var th = document.createElement("th");
-        th.appendChild(document.createTextNode(headers[i]));
+        th.appendChild(document.createTextNode(header));
         tr.appendChild(th);
-    }
+    });
+    var td, span, input;
+    Database.Stories[storyName].events.filter(function (event) {
+        return event.characters[characterName];
+    }).forEach(function (event) {
+        tr = document.createElement("tr");
+        table.appendChild(tr);
 
-    var events = Database.Stories[storyName].events;
+        td = document.createElement("td");
+        span = document.createElement("div");
+        span.appendChild(document.createTextNode(event.name));
+        td.appendChild(span);
 
-    for (var i = 0; i < events.length; i++) {
-        if (events[i].characters[characterName]) {
-            // if(showUnfinishedOnly){
-            // if(events[i].characters[name].text !== ""){
-            // continue;
-            // }
-            // }
-            var tr = document.createElement("tr");
-            table.appendChild(tr);
+        input = document.createElement("textarea");
+        input.className = "eventPersonalStory";
+        input.value = event.text;
+        input.eventInfo = event;
 
-            var td = document.createElement("td");
-            var span = document.createElement("div");
-            span.appendChild(document.createTextNode(events[i].name));
-            // span.className = "eventOriginalStory";
-            td.appendChild(span);
+        input.addEventListener("change", Events.onChangePersonalStoryDelegate);
+        td.appendChild(input);
+        tr.appendChild(td);
 
-            var input = document.createElement("textarea");
-            input.className = "eventPersonalStory";
-            input.value = events[i].text;
-            input.eventInfo = events[i];
+        td = document.createElement("td");
+        span = document.createElement("div");
+        span.appendChild(document.createTextNode("\u00A0"));
+        td.appendChild(span);
 
-            input.addEventListener("change",
-                    Events.onChangePersonalStoryDelegate);
-            td.appendChild(input);
-            tr.appendChild(td);
-
-            td = document.createElement("td");
-            var span = document.createElement("div");
-            span.appendChild(document.createTextNode("\u00A0"));
-            // span.className = "eventOriginalStory";
-            td.appendChild(span);
-
-            var input = document.createElement("textarea");
-            input.className = "eventPersonalStory";
-            input.value = events[i].characters[characterName].text;
-            input.eventInfo = events[i].characters[characterName];
-
-            input.addEventListener("change",
-                    Events.onChangePersonalStoryDelegate);
-            td.appendChild(input);
-            tr.appendChild(td);
-
-            td = document.createElement("td");
-            var input = document.createElement("input");
-            input.type = "checkbox";
-            input.checked = events[i].characters[characterName].ready;
-            // // input.className = "eventPersonalStory";
-            // input.value = events[i].text;
-            input.eventInfo = events[i].characters[characterName];
-
-            input.addEventListener("change", Events.onChangeReadyStatus);
-            td.appendChild(input);
-            //			
-            tr.appendChild(td);
-        }
-    }
+        input = document.createElement("textarea");
+        input.className = "eventPersonalStory";
+        input.value = event.characters[characterName].text;
+        input.eventInfo = event.characters[characterName];
+        
+        input.addEventListener("change", Events.onChangePersonalStoryDelegate);
+        td.appendChild(input);
+        tr.appendChild(td);
+        
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = event.characters[characterName].ready;
+        input.eventInfo = event.characters[characterName];
+        
+        input.addEventListener("change", Events.onChangeReadyStatus);
+        td.appendChild(input);
+        tr.appendChild(td);
+    });
 };
 
 Events.onChangeReadyStatus = function (event) {
+    "use strict";
     var eventObject = event.target.eventInfo;
     var value = event.target.checked;
     eventObject.ready = value;
 };
 
 Events.onChangePersonalStoryDelegate = function (event) {
+    "use strict";
     var eventObject = event.target.eventInfo;
     var text = event.target.value;
     Events.onChangePersonalStory(eventObject, text);
 };
 
 Events.onChangePersonalStory = function (eventObject, text) {
+    "use strict";
     eventObject.text = text;
 };

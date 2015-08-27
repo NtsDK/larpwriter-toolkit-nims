@@ -1,18 +1,20 @@
+/*global
+ Utils, Database, DBMS, StoryEvents, StoryCharacters, EventPresence
+ */
+
 "use strict";
 
 var Stories = {};
 
 Stories.init = function () {
+    "use strict";
     var root = Stories;
     root.views = {};
     var nav = "storiesNavigation";
     var content = "storiesContent";
-    Utils.addView(root, "StoryEvents", StoryEvents, "События", nav, content,
-            true);
-    Utils.addView(root, "StoryCharacters", StoryCharacters, "Персонажи", nav,
-            content);
-    Utils.addView(root, "EventPresence", EventPresence, "Присутствие", nav,
-            content);
+    Utils.addView(root, "StoryEvents", StoryEvents, "События", nav, content, true);
+    Utils.addView(root, "StoryCharacters", StoryCharacters, "Персонажи", nav, content);
+    Utils.addView(root, "EventPresence", EventPresence, "Присутствие", nav, content);
 
     var selector = document.getElementById("storySelector");
     selector.addEventListener("change", Stories.onStorySelectorChangeDelegate);
@@ -20,19 +22,16 @@ Stories.init = function () {
     var button = document.getElementById("createStoryButton");
     button.addEventListener("click", Stories.createStory);
 
-    var button = document.getElementById("renameStoryButton");
+    button = document.getElementById("renameStoryButton");
     button.addEventListener("click", Stories.renameStory);
 
-    var button = document.getElementById("removeStoryButton");
+    button = document.getElementById("removeStoryButton");
     button.addEventListener("click", Stories.removeStory);
 
-    var button = document.getElementById("masterStoryArea");
+    button = document.getElementById("masterStoryArea");
     button.addEventListener("change", Stories.updateMasterStory);
 
-    // var button = document.getElementById("createEventButton");
-    // button.addEventListener("click", Stories.createEvent);
-
-    for ( var name in Database.Stories) {
+    for ( name in Database.Stories) {
         Stories.CurrentStory = Database.Stories[name];
         break;
     }
@@ -41,6 +40,7 @@ Stories.init = function () {
 };
 
 Stories.refresh = function () {
+    "use strict";
     var selector1 = document.getElementById("storySelector");
     Utils.removeChildren(selector1);
     var selector2 = document.getElementById("fromStory");
@@ -50,18 +50,17 @@ Stories.refresh = function () {
 
     var storyNames = DBMS.getStoryNamesArray();
 
-    for (var i = 0; i < storyNames.length; ++i) {
-        var name = storyNames[i];
+    storyNames.forEach(function (name) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode(name));
         selector1.appendChild(option);
-        var option = document.createElement("option");
+        option = document.createElement("option");
         option.appendChild(document.createTextNode(name));
         selector2.appendChild(option);
-        var option = document.createElement("option");
+        option = document.createElement("option");
         option.appendChild(document.createTextNode(name));
         selector3.appendChild(option);
-    }
+    });
 
     if (storyNames[0]) {
         Stories.onStorySelectorChange(storyNames[0]);
@@ -71,6 +70,7 @@ Stories.refresh = function () {
 };
 
 Stories.createStory = function () {
+    "use strict";
     var storyName = document.getElementById("createStoryName").value.trim();
     if (storyName === "") {
         Utils.alert("Название истории пусто.");
@@ -78,7 +78,7 @@ Stories.createStory = function () {
     }
 
     if (Database.Stories[storyName]) {
-        Utils.alert("История с таким именем уже существует.")
+        Utils.alert("История с таким именем уже существует.");
         return;
     }
 
@@ -95,6 +95,7 @@ Stories.createStory = function () {
 };
 
 Stories.renameStory = function () {
+    "use strict";
     var fromName = document.getElementById("fromStory").value.trim();
     var toName = document.getElementById("toStory").value.trim();
 
@@ -122,6 +123,7 @@ Stories.renameStory = function () {
 };
 
 Stories.removeStory = function () {
+    "use strict";
     var name = document.getElementById("storyRemoveSelector").value.trim();
 
     if (Utils.confirm("Вы уверены, что хотите удалить историю " + name
@@ -132,30 +134,23 @@ Stories.removeStory = function () {
 };
 
 Stories.onStorySelectorChangeDelegate = function (event) {
+    "use strict";
     var storyName = event.target.value;
     Stories.onStorySelectorChange(storyName);
 };
 
 Stories.onStorySelectorChange = function (storyName) {
+    "use strict";
     Stories.CurrentStory = Database.Stories[storyName];
 
     var storyArea = document.getElementById("masterStoryArea");
     storyArea.value = Stories.CurrentStory.story;
 
     Stories.currentView.refresh();
-
-    // // event part
-    // var table = document.getElementById("eventBlock");
-    // Utils.removeChildren(table);
-    //
-    // Stories.appendEventHeader(table);
-    //
-    // for (var i = 0; i < Stories.CurrentStory.events.length; ++i) {
-    // Stories.appendEventInput(table, Stories.CurrentStory.events[i], i + 1);
-    // }
 };
 
-Stories.updateMasterStory = function (event) {
+Stories.updateMasterStory = function () {
+    "use strict";
     var storyArea = document.getElementById("masterStoryArea");
     Stories.CurrentStory.story = storyArea.value;
 };
