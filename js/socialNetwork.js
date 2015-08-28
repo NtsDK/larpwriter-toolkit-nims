@@ -8,6 +8,38 @@ var SocialNetwork = {};
 
 SocialNetwork.colorMap = {};
 
+SocialNetwork.colorPalette = [ {
+    color : { // aquamarine-blue
+        background : 'rgb(151,194,252)',
+        border : 'rgb(43,124,233)'
+    }
+}, { // rose-red
+    color : {
+        background : 'rgb(251,126,129)',
+        border : 'rgb(250,10,16)'
+    }
+}, { // green-deep green
+    color : { 
+        background : 'rgb(123,225,65)',
+        border : 'rgb(65,169,6)'
+    }
+} ];
+
+SocialNetwork.fixedColors = {
+    "storyColor" : {
+        color : {
+            background : 'rgb(255,255,0)',
+            border : 'rgb(255,168,3)'
+        }
+    },
+    "Без групп" : {
+        color : {
+            background : 'rgb(151,194,252)',
+            border : 'rgb(43,124,233)'
+        }
+    }
+};
+
 SocialNetwork.init = function () {
     "use strict";
 
@@ -18,18 +50,42 @@ SocialNetwork.init = function () {
         SocialNetwork.updateNodes(event.target.value);
     });
 
-    var groups = [ "Без групп" ].concat(Database.ProfileSettings.filter(function (element) {
+    var groups = Database.ProfileSettings.filter(function (element) {
         return element.type === "enum" || element.type === "checkbox";
-    }).map(function (elem) {
+    });
+    
+    var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
         return elem.name;
     }));
 
-    groups.forEach(function (group) {
+    groupNames.forEach(function (group) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode(group));
         selector.appendChild(option);
     });
-
+    
+    SocialNetwork.groupColors = {};
+    
+    for ( var groupName in SocialNetwork.fixedColors) {
+        SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
+    }
+    
+    groups.forEach(function (group) {
+        if(group.type === "enum"){
+            group.value.split(",").forEach(function (subGroupName, i){
+                SocialNetwork.groupColors[group.name + "." + subGroupName] = SocialNetwork.colorPalette[i];
+            });
+        } else if( group.type === "checkbox"){
+            if(group.value){
+                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[0];
+                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[1];
+            } else {
+                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[1];
+                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[0];
+            }
+        }
+    });
+    
     // "name" : "Участие в тендере",
     // "type" : "checkbox",
     // "value" : false
@@ -332,72 +388,7 @@ SocialNetwork.redrawAll = function () {
             tooltipDelay : 200,
         // hideEdgesOnDrag : true
         },
-        groups : {
-            "storyColor" : {
-                color : {
-                    background : 'rgb(255,255,0)',
-                    border : 'rgb(255,168,3)'
-                }
-            }, // yellow-orange
-            "Без групп" : {
-                color : {
-                    background : 'rgb(151,194,252)',
-                    border : 'rgb(43,124,233)'
-                }
-            }, // aquamarine-blue
-            "Пол.M" : {
-                color : {
-                    background : 'rgb(151,194,252)',
-                    border : 'rgb(43,124,233)'
-                }
-            }, // aquamarine-blue
-            "Пол.не важно" : {
-                color : {
-                    background : 'rgb(123,225,65)',
-                    border : 'rgb(65,169,6)'
-                }
-            }, // green-deep green
-            "Пол.Ж" : {
-                color : {
-                    background : 'rgb(251,126,129)',
-                    border : 'rgb(250,10,16)'
-                }
-            }, // rose-red
-            "Участие в тендере.false" : {
-                color : {
-                    background : 'rgb(151,194,252)',
-                    border : 'rgb(43,124,233)'
-                }
-            }, // aquamarine-blue
-            "Участие в тендере.true" : {
-                color : {
-                    background : 'rgb(251,126,129)',
-                    border : 'rgb(250,10,16)'
-                }
-            }, // rose-red
-            // diamonds: {
-            // color: {background:'red',border:'white'},
-            // shape: 'diamond'
-            // },
-            // dotsWithLabel: {
-            // label: "I'm a dot!",
-            // shape: 'dot',
-            // color: 'cyan'
-            // },
-            // mints: {color:'rgb(0,255,140)'},
-            // icons: {
-            // shape: 'icon',
-            // icon: {
-            // face: 'FontAwesome',
-            // code: '\uf0c0',
-            // size: 50,
-            // color: 'orange'
-            // }
-            // },
-            // source: {
-            // color:{border:'white'}
-            // }
-        }
+        groups : SocialNetwork.groupColors
     };
     var data = {
         nodes : SocialNetwork.nodesDataset,

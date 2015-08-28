@@ -14,7 +14,7 @@ var Database = {
     }, {
         "name" : "Пол",
         "type" : "enum",
-        "value" : "не важно,М,Ж"
+        "value" : "М,Ж,не важно"
     }, {
         "name" : "Возраст",
         "type" : "number",
