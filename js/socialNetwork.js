@@ -125,10 +125,11 @@ SocialNetwork.init = function () {
     selector.value = networks[0];
 
     SocialNetwork.network;
-    SocialNetwork.allNodes;
+//    SocialNetwork.allNodes;
     SocialNetwork.highlightActive = false;
 
     SocialNetwork.onNetworkSelectorChange(networks[0]);
+    SocialNetwork.updateNodes("Без групп");
 
     SocialNetwork.content = document.getElementById("socialNetworkDiv");
 };
@@ -140,8 +141,35 @@ SocialNetwork.refresh = function () {
     SocialNetwork.redrawAll();
 };
 
+SocialNetwork.refreshLegend = function (groupName) {
+    "use strict";
+    var colorLegend = document.getElementById("colorLegend");
+    Utils.removeChildren(colorLegend);
+    var colorDiv;
+    
+    Object.keys(SocialNetwork.groupColors).filter(function (value){
+        return value.substring(0, groupName.length) === groupName;
+    }).forEach(function (value) {
+        colorDiv = document.createElement("div");
+        colorDiv.appendChild(document.createTextNode(value));
+        colorDiv.style.backgroundColor = SocialNetwork.groupColors[value].color.background;
+        colorDiv.style.border = "solid 2px " + SocialNetwork.groupColors[value].color.border;
+        colorLegend.appendChild(colorDiv);
+    });
+    
+    if(SocialNetwork.selectedNetwork === "Человек-история"){
+        colorDiv = document.createElement("div");
+        colorDiv.appendChild(document.createTextNode("История"));
+        colorDiv.style.backgroundColor = SocialNetwork.fixedColors["storyColor"].color.background;
+        colorDiv.style.border = "solid 2px " + SocialNetwork.fixedColors["storyColor"].color.border;
+        colorLegend.appendChild(colorDiv);
+    }
+};
+
 SocialNetwork.updateNodes = function (groupName) {
     "use strict";
+    SocialNetwork.refreshLegend(groupName);
+    
     Object.keys(Database.Characters).forEach(function (characterName) {
         var character = Database.Characters[characterName];
         SocialNetwork.nodesDataset.update({
@@ -167,6 +195,7 @@ SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
 
 SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     "use strict";
+    SocialNetwork.selectedNetwork = selectedNetwork;
     SocialNetwork.nodes = [];
     SocialNetwork.edges = [];
 
@@ -184,6 +213,8 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
         SocialNetwork.edges = SocialNetwork.getStoryEdges();
         break;
     }
+    
+    SocialNetwork.refreshLegend(document.getElementById("networkNodeGroupSelector").value);
 
     SocialNetwork.refresh();
 };
@@ -397,10 +428,10 @@ SocialNetwork.redrawAll = function () {
 
     SocialNetwork.network = new vis.Network(container, data, options);
 
-    // get a JSON object
-    SocialNetwork.allNodes = SocialNetwork.nodesDataset.get({
-        returnType : "Object"
-    });
+//    // get a JSON object
+//    SocialNetwork.allNodes = SocialNetwork.nodesDataset.get({
+//        returnType : "Object"
+//    });
 
     SocialNetwork.network.on("click", SocialNetwork.neighbourhoodHighlight);
 };
@@ -408,8 +439,13 @@ SocialNetwork.redrawAll = function () {
 SocialNetwork.neighbourhoodHighlight = function (params) {
     "use strict";
     // if something is selected:
+    
 
-    var allNodes = SocialNetwork.allNodes;
+    // get a JSON object
+    var allNodes = SocialNetwork.nodesDataset.get({
+        returnType : "Object"
+    });
+
     var network = SocialNetwork.network;
     var nodesDataset = SocialNetwork.nodesDataset;
     if (params.nodes.length > 0) {
