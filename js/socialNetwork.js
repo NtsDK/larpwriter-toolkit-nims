@@ -37,6 +37,24 @@ SocialNetwork.fixedColors = {
             background : 'rgb(151,194,252)',
             border : 'rgb(43,124,233)'
         }
+    },
+    "thirdDegreeNode" : {
+        color : {
+            background : 'rgba(200,200,200,0.5)',
+            border : 'rgba(200,200,200,0.5)'
+        }
+    },
+    "secondDegreeNode" : {
+        color : {
+            background : 'rgba(150,150,150,0.75)',
+            border : 'rgba(150,150,150,0.75)'
+        }
+    },
+    "firstDegreeNode" : {
+        color : {
+            background : 'rgb(151,194,252)',
+            border : 'rgb(43,124,233)'
+        }
     }
 };
 
@@ -453,6 +471,15 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
         var i, j;
         var selectedNode = params.nodes[0];
         var degrees = 2;
+        
+//        Object.keys(Database.Characters).forEach(function (characterName) {
+//            var character = Database.Characters[characterName];
+//            SocialNetwork.nodesDataset.update({
+//                id : character.name,
+//                label : "",
+//                group : "thirdDegreeNode"
+//            });
+//        });
 
         // mark all nodes as hard to read.
         for ( var nodeId in allNodes) {
@@ -462,32 +489,56 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
                 allNodes[nodeId].label = undefined;
             }
         }
-        var connectedNodes = network.getConnectedNodes(selectedNode);
-        var allConnectedNodes = [];
+        var firstDegreeNodes = network.getConnectedNodes(selectedNode);
+        var secondDegreeNodes = [];
+//        var connectedNodes = network.getConnectedNodes(selectedEdge);
+//        var allConnectedNodes = [];
 
         // get the second degree nodes
         for (i = 1; i < degrees; i++) {
-            for (j = 0; j < connectedNodes.length; j++) {
-                allConnectedNodes = allConnectedNodes.concat(network
-                        .getConnectedNodes(connectedNodes[j]));
+            for (j = 0; j < firstDegreeNodes.length; j++) {
+                secondDegreeNodes = secondDegreeNodes.concat(network
+                        .getConnectedNodes(firstDegreeNodes[j]));
             }
         }
 
+//        secondDegreeNodes.forEach(function (node) {
+//            SocialNetwork.nodesDataset.update({
+//                id : node,
+//                label : node.split(" ").join("\n"),
+//                group : "secondDegreeNode"
+//            });
+//        });
+//        
+//        firstDegreeNodes.forEach(function (node) {
+//            SocialNetwork.nodesDataset.update({
+//                id : node,
+//                label : node.split(" ").join("\n"),
+//                group : "firstDegreeNode"
+//            });
+//        });
+//        
+//        SocialNetwork.nodesDataset.update({
+//            id : selectedNode,
+//            label : selectedNode.split(" ").join("\n"),
+//            group : "firstDegreeNode"
+//        });
+        
         // all second degree nodes get a different color and their label back
-        for (i = 0; i < allConnectedNodes.length; i++) {
-            allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.75)';
-            if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
-                allNodes[allConnectedNodes[i]].label = allNodes[allConnectedNodes[i]].hiddenLabel;
-                allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+        for (i = 0; i < secondDegreeNodes.length; i++) {
+            allNodes[secondDegreeNodes[i]].color = 'rgba(150,150,150,0.75)';
+            if (allNodes[secondDegreeNodes[i]].hiddenLabel !== undefined) {
+                allNodes[secondDegreeNodes[i]].label = allNodes[secondDegreeNodes[i]].hiddenLabel;
+                allNodes[secondDegreeNodes[i]].hiddenLabel = undefined;
             }
         }
 
         // all first degree nodes get their own color and their label back
-        for (i = 0; i < connectedNodes.length; i++) {
-            allNodes[connectedNodes[i]].color = undefined;
-            if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
-                allNodes[connectedNodes[i]].label = allNodes[connectedNodes[i]].hiddenLabel;
-                allNodes[connectedNodes[i]].hiddenLabel = undefined;
+        for (i = 0; i < firstDegreeNodes.length; i++) {
+            allNodes[firstDegreeNodes[i]].color = undefined;
+            if (allNodes[firstDegreeNodes[i]].hiddenLabel !== undefined) {
+                allNodes[firstDegreeNodes[i]].label = allNodes[firstDegreeNodes[i]].hiddenLabel;
+                allNodes[firstDegreeNodes[i]].hiddenLabel = undefined;
             }
         }
 
