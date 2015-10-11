@@ -8,6 +8,8 @@ var SocialNetwork = {};
 
 SocialNetwork.colorMap = {};
 
+SocialNetwork.networks = [ "Простая сеть", "Детальная сеть", "Человек-история" ];
+
 SocialNetwork.colorPalette = [ {
     color : { // aquamarine-blue
         background : 'rgb(151,194,252)',
@@ -131,32 +133,28 @@ SocialNetwork.init = function () {
     selector = document.getElementById("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
 
-    var networks = [ "Простая сеть", "Детальная сеть", "Человек-история" ];
-
     var option;
-    networks.forEach(function (network) {
+    SocialNetwork.networks.forEach(function (network) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(network));
         selector.appendChild(option);
     });
 
-    selector.value = networks[0];
-
     SocialNetwork.network;
 //    SocialNetwork.allNodes;
     SocialNetwork.highlightActive = false;
-
-    SocialNetwork.onNetworkSelectorChange(networks[0]);
-    SocialNetwork.updateNodes("Без групп");
 
     SocialNetwork.content = document.getElementById("socialNetworkDiv");
 };
 
 SocialNetwork.refresh = function () {
     "use strict";
-    SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
-    SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);
-    SocialNetwork.redrawAll();
+    
+    var selector = document.getElementById("networkSelector");
+    selector.value = SocialNetwork.networks[0];
+    
+    SocialNetwork.onNetworkSelectorChange(SocialNetwork.networks[0]);
+    SocialNetwork.updateNodes("Без групп");
 };
 
 SocialNetwork.refreshLegend = function (groupName) {
@@ -234,7 +232,11 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     
     SocialNetwork.refreshLegend(document.getElementById("networkNodeGroupSelector").value);
 
-    SocialNetwork.refresh();
+//    SocialNetwork.refresh();
+    
+    SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
+    SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);
+    SocialNetwork.redrawAll();
 };
 
 SocialNetwork.getCharacterNodes = function () {
