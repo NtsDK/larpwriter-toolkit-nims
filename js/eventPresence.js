@@ -48,8 +48,6 @@ EventPresence.appendTableInput = function (table, event, characterArray) {
     td.appendChild(document.createTextNode(event.name));
     tr.appendChild(td);
 
-    // for(var i=0;i<Database.characters.length;++i){
-    // for ( var name in CurrentStory.characters) {
     characterArray.forEach(function (character) {
         td = document.createElement("td");
         var input = document.createElement("input");

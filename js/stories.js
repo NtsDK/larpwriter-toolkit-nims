@@ -12,8 +12,8 @@ Stories.init = function () {
     root.views = {};
     var nav = "storiesNavigation";
     var content = "storiesContent";
-    Utils.addView(root, "StoryEvents", StoryEvents, "События", nav, content, true);
-    Utils.addView(root, "StoryCharacters", StoryCharacters, "Персонажи", nav, content);
+    Utils.addView(root, "StoryEvents", StoryEvents, "События", nav, content);
+    Utils.addView(root, "StoryCharacters", StoryCharacters, "Персонажи", nav, content, true);
     Utils.addView(root, "EventPresence", EventPresence, "Присутствие", nav, content);
 
     var selector = document.getElementById("storySelector");
@@ -50,10 +50,15 @@ Stories.refresh = function () {
 
     var storyNames = DBMS.getStoryNamesArray();
 
+    var first = true;
     storyNames.forEach(function (name) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode(name));
         selector1.appendChild(option);
+        if(first){
+            option.selected = true;
+            first = false;
+        }
         option = document.createElement("option");
         option.appendChild(document.createTextNode(name));
         selector2.appendChild(option);

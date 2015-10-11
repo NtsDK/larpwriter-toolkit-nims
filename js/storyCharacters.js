@@ -6,6 +6,10 @@
 
 var StoryCharacters = {};
 
+StoryCharacters.inventoryHeader = ["Имя", "Инвентарь"];
+StoryCharacters.characterActivityHeader = ["Имя", "Актив", "Спутник", "Защита", "Пассив"];
+StoryCharacters.characterActivityTypes = ["active", "follower", "defensive", "passive"];
+
 StoryCharacters.init = function () {
     "use strict";
     var button = document.getElementById("storyCharactersAddButton");
@@ -67,11 +71,20 @@ StoryCharacters.refresh = function () {
         option.appendChild(document.createTextNode(removeValue));
         fromSelector.appendChild(option);
     });
-
-    var table = document.getElementById("storyCharactersTable");
+    
+    var table = document.getElementById("story-characterActivityTable");
     Utils.removeChildren(table);
 
-    StoryCharacters.appendCharacterHeader(table);
+    StoryCharacters.appendCharacterHeader(table, "th", StoryCharacters.characterActivityHeader);
+    
+    removeArray.forEach(function (removeValue) {
+        StoryCharacters.appendCharacterActivity(table, Stories.CurrentStory.characters[removeValue]);
+    });
+
+    table = document.getElementById("storyCharactersTable");
+    Utils.removeChildren(table);
+
+    StoryCharacters.appendCharacterHeader(table, "th", StoryCharacters.inventoryHeader);
 
     removeArray.forEach(function (removeValue) {
         StoryCharacters.appendCharacterInput(table, Stories.CurrentStory.characters[removeValue]);
@@ -85,7 +98,8 @@ StoryCharacters.addCharacter = function () {
 
     Stories.CurrentStory.characters[characterName] = {
         name : characterName,
-        inventory : ""
+        inventory : "",
+        activity: {}
     };
 
     StoryCharacters.refresh();
@@ -126,19 +140,20 @@ StoryCharacters.removeCharacter = function () {
     }
 };
 
-StoryCharacters.appendCharacterHeader = function (table) {
+StoryCharacters.appendCharacterHeader = function (table, tag, values) {
     "use strict";
+    var td;
     var tr = document.createElement("tr");
+    values.forEach(function(value){
+        td = document.createElement(tag);
+        tr.appendChild(td);
+        td.appendChild(document.createTextNode(value));
+    });
+    
     table.appendChild(tr);
-    var td = document.createElement("th");
-    tr.appendChild(td);
-    td.appendChild(document.createTextNode("Имя"));
-    td = document.createElement("th");
-    tr.appendChild(td);
-    td.appendChild(document.createTextNode("Инвентарь"));
 };
 
-StoryCharacters.appendCharacterInput = function (table, character, index) {
+StoryCharacters.appendCharacterInput = function (table, character) {
     "use strict";
     var tr = document.createElement("tr");
     var td = document.createElement("td");
@@ -153,6 +168,40 @@ StoryCharacters.appendCharacterInput = function (table, character, index) {
     input.addEventListener("change", StoryCharacters.updateCharacterInventory);
     td.appendChild(input);
     tr.appendChild(td);
+    table.appendChild(tr);
+};
+
+StoryCharacters.onChangeCharacterActivity = function (event) {
+    "use strict";
+    if (event.target.checked) {
+        event.target.activities[event.target.activityType] = true;
+    } else {
+        delete event.target.activities[event.target.activityType];
+    }
+};
+
+StoryCharacters.appendCharacterActivity = function (table, character) {
+    "use strict";
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.appendChild(document.createTextNode(character.name));
+    tr.appendChild(td);
+    
+    var input;
+    StoryCharacters.characterActivityTypes.forEach(function (activityType) {
+        td = document.createElement("td");
+        input = document.createElement("input");
+        input.type = "checkbox";
+        if (character.activity[activityType]) {
+            input.checked = true;
+        }
+        input.activities = character.activity;
+        input.activityType = activityType;
+        input.addEventListener("change", StoryCharacters.onChangeCharacterActivity);
+        td.appendChild(input);
+        tr.appendChild(td);
+    });
+    
     table.appendChild(tr);
 };
 
