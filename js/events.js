@@ -7,9 +7,17 @@
 
 var Events = {};
 
+Events.headers = [ "Оригинал", "Адаптация"];
+Events.finishedText = "Описание завершено";
+Events.finishedSuffix = "(завершено)";
+
+
 Events.init = function () {
     "use strict";
-    var selector = document.getElementById("personalStoriesCharacter");
+    var selector = document.getElementById("events-storySelector");
+    selector.addEventListener("change", Events.updateCharacterSelectorDelegate);
+    
+    selector = document.getElementById("events-characterSelector");
     selector.addEventListener("change", Events.showPersonalStoriesDelegate);
 
     selector = document.getElementById("finishedStoryCheckbox");
@@ -20,33 +28,58 @@ Events.init = function () {
 
 Events.refresh = function () {
     "use strict";
-    var selector = document.getElementById("personalStoriesCharacter");
+    var selector = document.getElementById("events-storySelector");
     Utils.removeChildren(selector);
-
-    var showOnlyFinishedStory = document.getElementById("finishedStoryCheckbox").checked;
 
     var storyNames = DBMS.getStoryNamesArray();
     var isFirst = true;
     storyNames.forEach(function (storyName) {
-        var characterArray = DBMS.getStoryCharacterNamesArray(storyName);
-        characterArray.filter(function(characterName){
-            if(showOnlyFinishedStory){
-                return !Events.isStoryFinishedForCharacter(storyName, characterName);
-            } else {
-                return true;
-            }
-        }).forEach(function (characterName) {
-            if (isFirst) {
-                Events.showPersonalStories(storyName, characterName);
-                isFirst = false;
-            }
-            var suffix = Events.isStoryFinishedForCharacter(storyName, characterName) ? "(завершено)" : "";
-            var option = document.createElement("option");
-            option.appendChild(document.createTextNode(storyName + ":" + characterName + " " + suffix));
-            option.storyInfo = storyName;
-            option.characterInfo = characterName;
-            selector.appendChild(option);
-        });
+        var option = document.createElement("option");
+        option.appendChild(document.createTextNode(storyName));
+        if (isFirst) {
+            Events.updateCharacterSelector(storyName);
+            option.selected = true;
+            isFirst = false;
+        }
+        
+        option.storyInfo = storyName;
+        selector.appendChild(option);
+    });
+};
+
+Events.updateCharacterSelectorDelegate = function (event) {
+    "use strict";
+    Events.updateCharacterSelector(event.target.selectedOptions[0].storyInfo);
+};
+
+Events.updateCharacterSelector = function (storyName) {
+    "use strict";
+    var selector = document.getElementById("events-characterSelector");
+    Utils.removeChildren(selector);
+    
+    var showOnlyFinishedStory = document.getElementById("finishedStoryCheckbox").checked;
+
+    var isFirst = true;
+    var characterArray = DBMS.getStoryCharacterNamesArray(storyName);
+    characterArray.filter(function (characterName) {
+        if (showOnlyFinishedStory) {
+            return !Events.isStoryFinishedForCharacter(storyName, characterName);
+        } else {
+            return true;
+        }
+    }).forEach(function (characterName) {
+        var suffix = Events.isStoryFinishedForCharacter(storyName, characterName) ? Events.finishedSuffix : "";
+        var option = document.createElement("option");
+        option.appendChild(document.createTextNode(characterName + " " + suffix));
+        if (isFirst) {
+            Events.showPersonalStories(storyName, [characterName]);
+            option.selected = true;
+            isFirst = false;
+        }
+
+        option.storyInfo = storyName;
+        option.characterInfo = characterName;
+        selector.appendChild(option);
     });
 };
 
@@ -63,36 +96,51 @@ Events.isStoryFinishedForCharacter = function (storyName, characterName) {
 
 Events.showPersonalStoriesDelegate = function (event) {
     "use strict";
+    
+    if(event.target.selectedOptions.length == 0){
+        return;
+    }
+    
     var option = event.target.selectedOptions[0];
     var storyName = option.storyInfo;
-    var characterName = option.characterInfo;
-    Events.showPersonalStories(storyName, characterName);
+    var characterNames = [];
+    
+    var i;
+    for (i = 0; i < event.target.selectedOptions.length; i +=1) {
+        characterNames.push(event.target.selectedOptions[i].characterInfo);
+    }
+    
+    Events.showPersonalStories(storyName, characterNames);
 };
 
-Events.showPersonalStories = function (storyName, characterName) {
+Events.showPersonalStories = function (storyName, characterNames) {
     "use strict";
     var table = document.getElementById("personalStories");
     Utils.removeChildren(table);
 
     var tr = document.createElement("tr");
     table.appendChild(tr);
-    var headers = [ "Оригинал", "Адаптация", "Описание завершено" ];
-
-    headers.forEach(function (header) {
+    
+    Events.headers.forEach(function (header) {
         var th = document.createElement("th");
         th.appendChild(document.createTextNode(header));
         tr.appendChild(th);
     });
-    var td, span, input;
+    var td, span, input, i, div, divContainer;
     Database.Stories[storyName].events.filter(function (event) {
-        return event.characters[characterName];
+        for (i = 0; i < characterNames.length; i++) {
+            if(event.characters[characterNames[i]]){
+                return true;
+            }
+        }
+        return false;
     }).forEach(function (event) {
         tr = document.createElement("tr");
         table.appendChild(tr);
 
         td = document.createElement("td");
         span = document.createElement("div");
-        span.appendChild(document.createTextNode(event.name));
+        span.appendChild(document.createTextNode(storyName + ":" + event.name));
         td.appendChild(span);
 
         input = document.createElement("textarea");
@@ -105,27 +153,42 @@ Events.showPersonalStories = function (storyName, characterName) {
         tr.appendChild(td);
 
         td = document.createElement("td");
-        span = document.createElement("div");
-        span.appendChild(document.createTextNode("\u00A0"));
-        td.appendChild(span);
+        
+        divContainer = document.createElement("div");
+        divContainer.className = "events-eventsContainer";
+        
+        for (var i = 0; i < characterNames.length; i++) {
+            var characterName = characterNames[i];
+            
+            if(!event.characters[characterName]){
+                continue;
+            }
+            div = document.createElement("div");
+            div.className = "events-singleEventAdaptation";
+            div.appendChild(document.createTextNode(characterName));
+            
+            input = document.createElement("textarea");
+            input.className = "eventPersonalStory";
+            input.value = event.characters[characterName].text;
+            input.eventInfo = event.characters[characterName];
+            
+            input.addEventListener("change", Events.onChangePersonalStoryDelegate);
+            div.appendChild(input);
 
-        input = document.createElement("textarea");
-        input.className = "eventPersonalStory";
-        input.value = event.characters[characterName].text;
-        input.eventInfo = event.characters[characterName];
+            input = document.createElement("input");
+            input.type = "checkbox";
+            input.checked = event.characters[characterName].ready;
+            input.eventInfo = event.characters[characterName];
+            
+            input.addEventListener("change", Events.onChangeReadyStatus);
+            div.appendChild(input);
+            div.appendChild(document.createTextNode(Events.finishedText));
+            
+            divContainer.appendChild(div);
+        }
         
-        input.addEventListener("change", Events.onChangePersonalStoryDelegate);
-        td.appendChild(input);
-        tr.appendChild(td);
+        td.appendChild(divContainer);
         
-        td = document.createElement("td");
-        input = document.createElement("input");
-        input.type = "checkbox";
-        input.checked = event.characters[characterName].ready;
-        input.eventInfo = event.characters[characterName];
-        
-        input.addEventListener("change", Events.onChangeReadyStatus);
-        td.appendChild(input);
         tr.appendChild(td);
     });
 };

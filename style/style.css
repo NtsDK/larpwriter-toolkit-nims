@@ -55,6 +55,7 @@ body {
 	background-color: rgba(222, 226, 228, 0.5);
 }
 
+/** events.js */
 .eventOriginalStory {
 	width: 300px;
 }
@@ -62,7 +63,25 @@ body {
 .eventPersonalStory {
 	width: 300px;
 	height: 100px;
+	display: block;
 }
+
+#personalStoriesCharacterContainer{
+	width: 210px;
+	overflow: auto;
+}
+
+#events-storySelector, #events-characterSelector {
+	display: block;
+	width:100%;
+}
+
+.events-eventsContainer{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+/* events.js **/
 
 .bioInput {
 	width: 300px;

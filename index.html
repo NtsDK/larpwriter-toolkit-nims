@@ -208,37 +208,28 @@
 		<div id="eventPresenceDiv">
 		  <table id="eventPresenceTable" cellspacing=0 cellpadding=0></table>
     </div>
-    
-    
-    <div id="eventsDiv">
-        <input type="checkbox" id="finishedStoryCheckbox">Показывать только незавершенные истории</input><br>
-        <select id="personalStoriesCharacter"></select>
-<!--        <input type="checkbox" id="showUnfinishedStoriesOnly"></input> Показать только незавершенные -->
-       <table id="personalStories"></table>
-    </div>
-    
-    
-<!--     <div id="briefingsDiv"> -->
-<!--         <input type="checkbox" id="toSeparateFileCheckbox">Каждую в отдельный файл</input>  -->
-<!--         <br> -->
-<!--         <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio">Группировать события по историям</input>  -->
-<!--         <br> -->
-<!--         <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio">Сортировать события по хронологии</input>  -->
-<!--         <br> -->
-        
-<!--         Сформировать вводные docx<input type="file" id="docxBriefings"></input><br> -->
-<!--         <button id="makeBriefings">Сформировать вводные txt</button> -->
-<!--         <br><br> -->
-        
-<!--         Предварительный просмотр -->
-<!--         <br> -->
-<!--         <select id="briefingCharacter"></select> -->
-<!--         <div id="briefingContent"> -->
-        
-<!--         </div> -->
-        
-<!--     </div> -->
-    
+
+
+		<div id="eventsDiv">
+			<input type="checkbox" id="finishedStoryCheckbox">Показывать
+			только незавершенные истории</input><br>
+			<table cellspacing=0 cellpadding=0>
+				<tr>
+					<td>
+					<div id="personalStoriesCharacterContainer">
+					История
+					  <select id="events-storySelector" size=10></select>
+					  Персонажи
+					  <select id="events-characterSelector" multiple size=15></select>
+					</div>
+					</td>
+					<td>
+						<table id="personalStories"></table>
+					</td>
+				</tr>
+			</table>
+		</div>
+
     <div id="briefingsDiv">
       <div id="briefingsNavigation" class="block"></div>
       <div id="briefingsContent" class="block"></div>
