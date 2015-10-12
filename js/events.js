@@ -32,19 +32,33 @@ Events.refresh = function () {
     Utils.removeChildren(selector);
 
     var storyNames = DBMS.getStoryNamesArray();
-    var isFirst = true;
-    storyNames.forEach(function (storyName) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(storyName));
-        if (isFirst) {
-            Events.updateCharacterSelector(storyName);
-            option.selected = true;
-            isFirst = false;
+    
+    if (storyNames.length > 0) {
+        if(!Database.Settings["Events"]){
+            Database.Settings["Events"] = {
+                storyName : storyNames[0]
+            };
         }
-        
-        option.storyInfo = storyName;
-        selector.appendChild(option);
-    });
+        var storyName = Database.Settings["Events"].storyName;
+        if(storyNames.indexOf(storyName) === -1){
+            Database.Settings["Events"].storyName = storyNames[0];
+            storyName = storyNames[0];
+        }
+    
+        var isFirst = true;
+        storyNames.forEach(function (tmpStoryName) {
+            var option = document.createElement("option");
+            option.appendChild(document.createTextNode(tmpStoryName));
+            if (tmpStoryName === storyName) {
+                Events.updateCharacterSelector(tmpStoryName);
+                option.selected = true;
+                isFirst = false;
+            }
+            
+            option.storyInfo = tmpStoryName;
+            selector.appendChild(option);
+        });
+    }
 };
 
 Events.updateCharacterSelectorDelegate = function (event) {
@@ -54,6 +68,8 @@ Events.updateCharacterSelectorDelegate = function (event) {
 
 Events.updateCharacterSelector = function (storyName) {
     "use strict";
+    
+    Database.Settings["Events"].storyName = storyName;
     var selector = document.getElementById("events-characterSelector");
     Utils.removeChildren(selector);
     
@@ -61,26 +77,42 @@ Events.updateCharacterSelector = function (storyName) {
 
     var isFirst = true;
     var characterArray = DBMS.getStoryCharacterNamesArray(storyName);
-    characterArray.filter(function (characterName) {
-        if (showOnlyFinishedStory) {
-            return !Events.isStoryFinishedForCharacter(storyName, characterName);
-        } else {
-            return true;
+    
+    if (characterArray.length > 0) {
+        if(!Database.Settings["Events"].characterNames){
+            Database.Settings["Events"].characterNames = [];
         }
-    }).forEach(function (characterName) {
-        var suffix = Events.isStoryFinishedForCharacter(storyName, characterName) ? Events.finishedSuffix : "";
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(characterName + " " + suffix));
-        if (isFirst) {
-            Events.showPersonalStories(storyName, [characterName]);
-            option.selected = true;
-            isFirst = false;
-        }
-
-        option.storyInfo = storyName;
-        option.characterInfo = characterName;
-        selector.appendChild(option);
-    });
+        
+        var characterNames = Database.Settings["Events"].characterNames;
+        var existingCharacterNames = characterNames.filter(function(name){
+            return characterArray.indexOf(name) !== -1;
+        });
+        
+        Database.Settings["Events"].characterNames = existingCharacterNames;
+        characterNames = existingCharacterNames;
+        
+        characterArray.filter(function (characterName) {
+            if (showOnlyFinishedStory) {
+                return !Events.isStoryFinishedForCharacter(storyName, characterName);
+            } else {
+                return true;
+            }
+        }).forEach(function (characterName) {
+            var suffix = Events.isStoryFinishedForCharacter(storyName, characterName) ? Events.finishedSuffix : "";
+            var option = document.createElement("option");
+            option.appendChild(document.createTextNode(characterName + " " + suffix));
+            if (characterNames.indexOf(characterName) !== -1) {
+                option.selected = true;
+                isFirst = false;
+            }
+    
+            option.storyInfo = storyName;
+            option.characterInfo = characterName;
+            selector.appendChild(option);
+        });
+        
+        Events.showPersonalStories(storyName, characterNames);
+    }
 };
 
 Events.isStoryFinishedForCharacter = function (storyName, characterName) {
@@ -109,6 +141,8 @@ Events.showPersonalStoriesDelegate = function (event) {
     for (i = 0; i < event.target.selectedOptions.length; i +=1) {
         characterNames.push(event.target.selectedOptions[i].characterInfo);
     }
+    
+    Database.Settings["Events"].characterNames = characterNames;
     
     Events.showPersonalStories(storyName, characterNames);
 };

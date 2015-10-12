@@ -33,10 +33,21 @@ CharacterProfile.refresh = function () {
     Database.ProfileSettings.forEach(function (profileSettings) {
         CharacterProfile.appendInput(profileContentDiv, profileSettings);
     });
+    
 
     if (names.length > 0) {
-        CharacterProfile.showProfileInfo(names[0]);
-        selector.value = names[0];
+        if(!Database.Settings["CharacterProfile"]){
+            Database.Settings["CharacterProfile"] = {
+                characterName : names[0]
+            };
+        }
+        var characterName = Database.Settings["CharacterProfile"].characterName;
+        if(names.indexOf(characterName) === -1){
+            Database.Settings["CharacterProfile"].characterName = names[0];
+            characterName = names[0];
+        }
+        CharacterProfile.showProfileInfo(characterName);
+        selector.value = characterName;
     }
 };
 
@@ -139,6 +150,8 @@ CharacterProfile.showProfileInfoDelegate = function (event) {
 CharacterProfile.showProfileInfo = function (name) {
     "use strict";
     var profileContentDiv = document.getElementById("profileContentDiv");
+    Database.Settings["CharacterProfile"].characterName = name;
+    
     var profile = Database.Characters[name];
     profileContentDiv.profileInfo = profile;
     var inputNames = profileContentDiv.inputItems;

@@ -31,11 +31,6 @@ Stories.init = function () {
     button = document.getElementById("masterStoryArea");
     button.addEventListener("change", Stories.updateMasterStory);
 
-    for ( name in Database.Stories) {
-        Stories.CurrentStory = Database.Stories[name];
-        break;
-    }
-
     Stories.content = document.getElementById("storiesDiv");
 };
 
@@ -49,27 +44,39 @@ Stories.refresh = function () {
     Utils.removeChildren(selector3);
 
     var storyNames = DBMS.getStoryNamesArray();
-
-    var first = true;
-    storyNames.forEach(function (name) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
-        selector1.appendChild(option);
-        if(first){
-            option.selected = true;
-            first = false;
+    
+    if (storyNames.length > 0) {
+        if(!Database.Settings["Stories"]){
+            Database.Settings["Stories"] = {
+                storyName : storyNames[0]
+            };
         }
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
-        selector2.appendChild(option);
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
-        selector3.appendChild(option);
-    });
-
-    if (storyNames[0]) {
-        Stories.onStorySelectorChange(storyNames[0]);
+        var storyName = Database.Settings["Stories"].storyName;
+        if(storyNames.indexOf(storyName) === -1){
+            Database.Settings["Stories"].storyName = storyNames[0];
+            storyName = storyNames[0];
+        }
+        
+        var first = true;
+        storyNames.forEach(function (name) {
+            var option = document.createElement("option");
+            option.appendChild(document.createTextNode(name));
+            selector1.appendChild(option);
+            if(name === storyName){
+                option.selected = true;
+                first = false;
+            }
+            option = document.createElement("option");
+            option.appendChild(document.createTextNode(name));
+            selector2.appendChild(option);
+            option = document.createElement("option");
+            option.appendChild(document.createTextNode(name));
+            selector3.appendChild(option);
+        });
+        
+        Stories.onStorySelectorChange(storyName);
     }
+
 
     Stories.currentView.refresh();
 };
@@ -147,6 +154,8 @@ Stories.onStorySelectorChangeDelegate = function (event) {
 Stories.onStorySelectorChange = function (storyName) {
     "use strict";
     Stories.CurrentStory = Database.Stories[storyName];
+    
+    Database.Settings["Stories"].storyName = storyName;
 
     var storyArea = document.getElementById("masterStoryArea");
     storyArea.value = Stories.CurrentStory.story;

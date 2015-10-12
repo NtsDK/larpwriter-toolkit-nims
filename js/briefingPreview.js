@@ -26,15 +26,29 @@ BriefingPreview.refresh = function () {
     var selector = document.getElementById("briefingCharacter");
     Utils.removeChildren(selector);
     var names = DBMS.getCharacterNamesArray();
-
-    names.forEach(function (name) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
-        selector.appendChild(option);
-    });
-
-    if (names[0]) {
-        BriefingPreview.buildContent(names[0]);
+    
+    if (names.length > 0) {
+        if(!Database.Settings["BriefingPreview"]){
+            Database.Settings["BriefingPreview"] = {
+                characterName : names[0]
+            };
+        }
+        var characterName = Database.Settings["BriefingPreview"].characterName;
+        if(names.indexOf(characterName) === -1){
+            Database.Settings["BriefingPreview"].characterName = names[0];
+            characterName = names[0];
+        }
+        
+        names.forEach(function (name) {
+            var option = document.createElement("option");
+            option.appendChild(document.createTextNode(name));
+            if(name === characterName){
+                option.selected = true;
+            }
+            selector.appendChild(option);
+        });
+        
+        BriefingPreview.buildContent(characterName);
     }
 };
 
@@ -45,6 +59,7 @@ BriefingPreview.buildContentDelegate = function (event) {
 
 BriefingPreview.buildContent = function (characterName) {
     "use strict";
+    Database.Settings["BriefingPreview"].characterName = characterName;
     var content = document.getElementById("briefingContent");
     Utils.removeChildren(content);
 

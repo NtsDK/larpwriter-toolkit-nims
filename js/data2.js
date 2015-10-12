@@ -28,6 +28,21 @@ var Database = {
         "type" : "checkbox",
         "value" : false
     } ],
+    "Settings" : {
+        "Events" : {
+            "storyName" : "Репка",
+            "characterNames" : [ "внучка", "Жучка" ]
+        },
+        "BriefingPreview" : {
+            "characterName" : "Мышка-норушка"
+        },
+        "Stories" : {
+            "storyName" : "Ряба"
+        },
+        "CharacterProfile" : {
+            "characterName" : "кошка"
+        }
+    },
     "Characters" : {
         "дед" : {
             "name" : "дед",
