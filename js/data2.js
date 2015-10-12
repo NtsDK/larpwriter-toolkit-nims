@@ -37,7 +37,7 @@ var Database = {
             "characterName" : "Мышка-норушка"
         },
         "Stories" : {
-            "storyName" : "Ряба"
+            "storyName" : "Теремок"
         },
         "CharacterProfile" : {
             "characterName" : "кошка"
@@ -189,32 +189,49 @@ var Database = {
                 "дед" : {
                     "name" : "дед",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "бабка" : {
                     "name" : "бабка",
                     "inventory" : "журнал, пестик, бутылка кефира, полбатона",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true,
+                        "follower" : true
+                    }
                 },
                 "внучка" : {
                     "name" : "внучка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true,
+                        "follower" : true
+                    }
                 },
                 "кошка" : {
                     "name" : "кошка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true,
+                        "follower" : true
+                    }
                 },
                 "Жучка" : {
                     "name" : "Жучка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true,
+                        "follower" : true
+                    }
                 },
                 "мышка" : {
                     "name" : "мышка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true,
+                        "follower" : true
+                    }
                 }
             },
             "events" : [ {
@@ -401,32 +418,44 @@ var Database = {
                 "дед" : {
                     "name" : "дед",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "бабка" : {
                     "name" : "бабка",
                     "inventory" : "журнал, пестик, бутылка кефира, полбатона",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "внучка" : {
                     "name" : "внучка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "кошка" : {
                     "name" : "кошка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "мышка" : {
                     "name" : "мышка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "Жучка" : {
                     "name" : "Жучка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 }
             },
             "events" : [ {
@@ -609,22 +638,30 @@ var Database = {
                 "Ряба" : {
                     "name" : "Ряба",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "бабка" : {
                     "name" : "бабка",
                     "inventory" : "метла",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "дед" : {
                     "name" : "дед",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "мышка" : {
                     "name" : "мышка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 }
             },
             "events" : [
@@ -837,22 +874,30 @@ var Database = {
                 "внучка" : {
                     "name" : "внучка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "бабка" : {
                     "name" : "бабка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "дед" : {
                     "name" : "дед",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "Медведь" : {
                     "name" : "Медведь",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 }
             },
             "events" : [
@@ -974,32 +1019,47 @@ var Database = {
                 "Медведь" : {
                     "name" : "Медведь",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "defensive" : true
+                    }
                 },
                 "Лиса" : {
                     "name" : "Лиса",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "defensive" : true
+                    }
                 },
                 "Заяц" : {
                     "name" : "Заяц",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "defensive" : true,
+                        "active" : true,
+                        "follower" : true,
+                        "passive" : true
+                    }
                 },
                 "Волк" : {
                     "name" : "Волк",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "defensive" : true
+                    }
                 },
                 "Лягушка" : {
                     "name" : "Лягушка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "defensive" : true
+                    }
                 },
                 "Мышка-норушка" : {
                     "name" : "Мышка-норушка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "defensive" : true
+                    }
                 }
             },
             "events" : [
@@ -1174,32 +1234,44 @@ var Database = {
                 "бабка" : {
                     "name" : "бабка",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "дед" : {
                     "name" : "дед",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "Ряба" : {
                     "name" : "Ряба",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "active" : true
+                    }
                 },
                 "Петушок" : {
                     "name" : "Петушок",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "Корова" : {
                     "name" : "Корова",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 },
                 "Кузнец" : {
                     "name" : "Кузнец",
                     "inventory" : "",
-                    "activity" : {}
+                    "activity" : {
+                        "passive" : true
+                    }
                 }
             },
             "events" : [

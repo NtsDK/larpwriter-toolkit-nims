@@ -8,6 +8,7 @@ var StoryCharacters = {};
 
 StoryCharacters.inventoryHeader = ["Имя", "Инвентарь"];
 StoryCharacters.characterActivityHeader = ["Имя", "Актив", "Спутник", "Защита", "Пассив"];
+StoryCharacters.characterActivityDisplayNames = ["Актив", "Спутник", "Защита", "Пассив"];
 StoryCharacters.characterActivityTypes = ["active", "follower", "defensive", "passive"];
 
 StoryCharacters.init = function () {

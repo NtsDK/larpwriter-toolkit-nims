@@ -1,5 +1,5 @@
 /*global
- Utils, DBMS, Database
+ Utils, DBMS, Database, StoryCharacters
  */
 
 "use strict";
@@ -8,7 +8,15 @@ var SocialNetwork = {};
 
 SocialNetwork.colorMap = {};
 
-SocialNetwork.networks = [ "Простая сеть", "Детальная сеть", "Человек-история" ];
+SocialNetwork.networks = [ "Простая сеть", "Детальная сеть", "Человек-история", "Человек-история 2" ];
+
+SocialNetwork.activityColors = {
+        "active": "red", 
+        "follower": "blue", 
+        "defensive": "green", 
+        "passive": "grey"
+};
+
 
 SocialNetwork.colorPalette = [ {
     color : { // aquamarine-blue
@@ -139,6 +147,18 @@ SocialNetwork.init = function () {
         option.appendChild(document.createTextNode(network));
         selector.appendChild(option);
     });
+    
+    selector = document.getElementById("activitySelector");
+    selector.addEventListener("change", SocialNetwork.onActivitySelectorChangeDelegate);
+    
+    StoryCharacters.characterActivityTypes.forEach(function (activity, i) {
+        option = document.createElement("option");
+        option.appendChild(document.createTextNode(StoryCharacters.characterActivityDisplayNames[i]));
+        option.activity = activity;
+        selector.appendChild(option);
+    });
+    
+    SocialNetwork.selectedActivities = {};
 
     SocialNetwork.network;
 //    SocialNetwork.allNodes;
@@ -204,6 +224,20 @@ SocialNetwork.updateNodes = function (groupName) {
     });
 };
 
+SocialNetwork.onActivitySelectorChangeDelegate = function (event) {
+    "use strict";
+    SocialNetwork.selectedActivities = {};
+
+    var i;
+    for (i = 0; i < event.target.selectedOptions.length; i +=1) {
+        SocialNetwork.selectedActivities[event.target.selectedOptions[i].activity] = true;
+    }
+    
+    if(SocialNetwork.selectedNetwork === "Человек-история 2"){
+        SocialNetwork.onNetworkSelectorChange(SocialNetwork.selectedNetwork);
+    }
+};
+
 SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
     "use strict";
     SocialNetwork.onNetworkSelectorChange(event.target.value);
@@ -227,6 +261,10 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     case "Человек-история":
         SocialNetwork.nodes = SocialNetwork.getCharacterNodes().concat(SocialNetwork.getStoryNodes());
         SocialNetwork.edges = SocialNetwork.getStoryEdges();
+        break;
+    case "Человек-история 2":
+        SocialNetwork.nodes = SocialNetwork.getCharacterNodes().concat(SocialNetwork.getStoryNodes());
+        SocialNetwork.edges = SocialNetwork.getActivityEdges();
         break;
     }
     
@@ -287,6 +325,32 @@ SocialNetwork.getStoryNodes = function () {
         };
     });
     return nodes;
+};
+
+
+
+SocialNetwork.getActivityEdges = function () {
+    "use strict";
+    var edges = [];
+    var edgesCheck = {};
+    for ( var name in Database.Stories) {
+        var story = Database.Stories[name];
+        for ( var char1 in story.characters) {
+            for(var activity in story.characters[char1].activity){
+                if(SocialNetwork.selectedActivities[activity]){
+                    edges.push({
+                        from : "St:" + name,
+                        to : char1,
+                        color : SocialNetwork.activityColors[activity],
+                        width: 2,
+                        hoverWidth: 4
+                    });
+                }
+                
+            }
+        }
+    }
+    return edges;
 };
 
 SocialNetwork.getStoryEdges = function () {
@@ -418,16 +482,21 @@ SocialNetwork.redrawAll = function () {
                 inherit : 'from'
             },
             smooth : {
-                type : 'continuous'
+//                type : 'continuous'
+                type : 'dynamic'
             }
         },
         physics : {
             barnesHut : {
-                gravitationalConstant : -30000
-            // gravitationalConstant : -60000
+//                gravitationalConstant : -15000
+                gravitationalConstant : -30000,
+//             gravitationalConstant : -60000
+//                springLength: 20,
+                springConstant: 0.1
             },
             stabilization : {
-                iterations : 2500
+//                iterations : 2500
+                iterations : 50
             }
         },
         // physics : false,
@@ -447,6 +516,24 @@ SocialNetwork.redrawAll = function () {
     } // Note: data is coming from ./datasources/WorldCup2014.js
 
     SocialNetwork.network = new vis.Network(container, data, options);
+    
+//    var options = {
+//            manipulation: {
+//              enabled: false,
+//              initiallyActive: false,
+//              addNode: true,
+//              addEdge: true,
+//              editNode: undefined,
+//              editEdge: true,
+//              deleteNode: true,
+//              deleteEdge: true,
+//              controlNodeStyle:{
+//                // all node options are valid.
+//              }
+//            }
+//          }
+//    
+//    SocialNetwork.network.setOptions(options);
 
 //    // get a JSON object
 //    SocialNetwork.allNodes = SocialNetwork.nodesDataset.get({
