@@ -282,7 +282,7 @@
 		<div id="socialNetworkDiv">
 
 			<div class="flexRoot">
-				<div class="storySelectorContainer">
+				<div class="storySelectorContainer" id="commonSettingsContainer">
 					<b>Общие настройки</b> <br /> Раскраска узлов <select
 						id="networkNodeGroupSelector"></select> Легенда
 					<div id="colorLegend"></div>
@@ -300,7 +300,7 @@
           </div>
 					
 				</div>
-				<div class="storySelectorContainer">
+				<div class="storySelectorContainer" id="privateSettingsContainer">
 					<b>Частные настройки</b> <br /> Социальная сеть <select size=4
 						id="networkSelector"></select>
 
@@ -309,11 +309,19 @@
 					</div>
 
 					<button id="drawNetworkButton">Нарисовать</button>
+					<button id="hideNetworkSettingsButton">Спрятать панель</button>
+					
 
 				</div>
+				
+				<div class="storySelectorContainer2 hidden" id="showSettingsButtonContainer">
+					<button id="showNetworkSettingsButton" >+</button>
+				</div>
+				
 				<div class="visualObjectContainer" id="socialNetworkContainer"></div>
 			</div>
 		</div>
+		
 
 	</div>
 

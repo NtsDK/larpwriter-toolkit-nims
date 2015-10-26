@@ -109,6 +109,12 @@ body {
 	flex-grow: 0;
 }
 
+
+.storySelectorContainer2 {
+    flex-basis: 20px;
+    flex-grow: 0;
+}
+
 .storySelectorContainer>select {
 	width: 90%;
 }

@@ -145,6 +145,11 @@ SocialNetwork.init = function () {
     SocialNetwork.network;
 //    SocialNetwork.allNodes;
     SocialNetwork.highlightActive = false;
+    
+    
+    document.getElementById("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.hidePanel);
+    document.getElementById("showNetworkSettingsButton").addEventListener("click", SocialNetwork.showPanel);
+    
 
     SocialNetwork.content = document.getElementById("socialNetworkDiv");
 };
@@ -710,4 +715,16 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
         }
     }
     nodesDataset.update(updateArray);
+};
+
+SocialNetwork.hidePanel = function () {
+    document.getElementById("commonSettingsContainer").className = "storySelectorContainer hidden";
+    document.getElementById("privateSettingsContainer").className = "storySelectorContainer hidden";
+    document.getElementById("showSettingsButtonContainer").className = "storySelectorContainer2";
+};
+
+SocialNetwork.showPanel = function () {
+    document.getElementById("commonSettingsContainer").className = "storySelectorContainer";
+    document.getElementById("privateSettingsContainer").className = "storySelectorContainer";
+    document.getElementById("showSettingsButtonContainer").className = "storySelectorContainer2 hidden";
 };
