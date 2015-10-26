@@ -155,6 +155,7 @@ SocialNetwork.refresh = function () {
     var selector = document.getElementById("networkSelector");
     selector.value = SocialNetwork.networks[0];
     
+    NetworkSubsetsSelector.refresh();
     SocialNetwork.onNetworkSelectorChange(SocialNetwork.networks[0]);
     SocialNetwork.updateNodes("Без групп");
 };

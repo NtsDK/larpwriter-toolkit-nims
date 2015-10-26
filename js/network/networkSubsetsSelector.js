@@ -13,6 +13,13 @@ NetworkSubsetsSelector.init = function () {
     "use strict";
     
     var selector = document.getElementById("networkSubsetsSelector");
+    selector.addEventListener("change", NetworkSubsetsSelector.onNetworkSubsetsChange);
+};
+
+NetworkSubsetsSelector.refresh = function () {
+    var selector = document.getElementById("networkSubsetsSelector");
+    Utils.removeChildren(selector);
+    
     var firstEl = true;
     
     var option;
@@ -25,9 +32,9 @@ NetworkSubsetsSelector.init = function () {
         }
         selector.appendChild(option);
     });
-    selector.addEventListener("change", NetworkSubsetsSelector.onNetworkSubsetsChange);
     
     selector = document.getElementById("networkCharacterSelector");
+    Utils.removeChildren(selector);
     
     DBMS.getCharacterNamesArray().forEach(function (name) {
         option = document.createElement("option");
@@ -36,13 +43,13 @@ NetworkSubsetsSelector.init = function () {
     });
     
     selector = document.getElementById("networkStorySelector");
+    Utils.removeChildren(selector);
     
     DBMS.getStoryNamesArray().forEach(function (story) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(story));
         selector.appendChild(option);
     });
-    
 };
 
 NetworkSubsetsSelector.getStoryNames = function () {

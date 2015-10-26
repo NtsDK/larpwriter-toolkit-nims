@@ -1,5 +1,5 @@
 /*global
- Utils, PageManager, Database, saveAs, FileReader, Blob
+ Utils, PageManager, Database, saveAs, FileReader, Blob, Migrator
  */
 
 "use strict";
@@ -29,6 +29,7 @@ FileUtils.readSingleFile = function (evt) {
             // // + "starts with: " + contents.substr(1, contents.indexOf("n"))
             // );
             Database = JSON.parse(contents);
+            Database = Migrator.migrate(Database);
             PageManager.currentView.refresh();
             // onLoad();
         };
@@ -46,4 +47,5 @@ FileUtils.saveFile = function () {
     saveAs(blob, "database.json");
     // window.open("data:application/json;charset=utf-8," +
     // encodeURIComponent(JSON.stringify(Database, null, ' ')) );
+    //window.open(document.getElementById("testst").toDataURL("image/png"))
 };
