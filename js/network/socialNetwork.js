@@ -8,7 +8,8 @@ var SocialNetwork = {};
 
 SocialNetwork.colorMap = {};
 
-SocialNetwork.networks = [ "Простая сеть", "Детальная сеть", "Человек-история", "Человек-история 2" ];
+//SocialNetwork.networks = [ "Простая сеть", "Детальная сеть", "Человек-история", "Человек-история 2" ];
+SocialNetwork.networks = [ "Детальная сеть", "Человек-история", "Человек-история 2" ];
 
 SocialNetwork.activityColors = {
         "active": "red", 
@@ -16,7 +17,6 @@ SocialNetwork.activityColors = {
         "defensive": "green", 
         "passive": "grey"
 };
-
 
 SocialNetwork.colorPalette = [ {
     color : { // aquamarine-blue
@@ -72,7 +72,9 @@ SocialNetwork.init = function () {
     "use strict";
 
     SocialNetwork.highlightActive = true;
-
+    
+    NetworkSubsetsSelector.init();
+    
     var selector = document.getElementById("networkNodeGroupSelector");
     selector.addEventListener("change", function (event) {
         SocialNetwork.updateNodes(event.target.value);
@@ -114,32 +116,11 @@ SocialNetwork.init = function () {
         }
     });
     
-    // "name" : "Участие в тендере",
-    // "type" : "checkbox",
-    // "value" : false
-    // }, {
-    // "name" : "Пол",
-    // "type" : "enum",
-    // "value" : "не важно,М,Ж"
-    //	
-    // SocialNetwork.colorMap["storyColor"] = {background:'rgb(255,255,0)',
-    // border:'rgb(255,168,3)'}; // yellow-orange
-    // SocialNetwork.colorMap["Без групп"] = {background:'rgb(151,194,252)',
-    // border:'rgb(43,124,233)'}; // aquamarine-blue
-    // SocialNetwork.colorMap["Пол.не важно"] = {background:'rgb(151,194,252)',
-    // border:'rgb(43,124,233)'}; // aquamarine-blue
-    // SocialNetwork.colorMap["Пол.M"] = {background:'rgb(123,225,65)',
-    // border:'rgb(65,169,6)'}; // green-deep green
-    // SocialNetwork.colorMap["Пол.Ж"] = {background:'rgb(251,126,129)',
-    // border:'rgb(250,10,16)'}; // rose-red
-    // SocialNetwork.colorMap["Участие в тендере.false"] =
-    // {background:'rgb(151,194,252)', border:'rgb(43,124,233)'}; //
-    // aquamarine-blue
-    // SocialNetwork.colorMap["Участие в тендере.true"] =
-    // {background:'rgb(251,126,129)', border:'rgb(250,10,16)'}; // rose-red
-
     selector = document.getElementById("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
+    
+    var button = document.getElementById("drawNetworkButton");
+    button.addEventListener("click", SocialNetwork.onDrawNetwork);
 
     var option;
     SocialNetwork.networks.forEach(function (network) {
@@ -154,6 +135,7 @@ SocialNetwork.init = function () {
     StoryCharacters.characterActivityTypes.forEach(function (activity, i) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(StoryCharacters.characterActivityDisplayNames[i]));
+        option.style = "color:" + SocialNetwork.activityColors[StoryCharacters.characterActivityTypes[i] ] + ";";
         option.activity = activity;
         selector.appendChild(option);
     });
@@ -206,7 +188,8 @@ SocialNetwork.updateNodes = function (groupName) {
     "use strict";
     SocialNetwork.refreshLegend(groupName);
     
-    Object.keys(Database.Characters).forEach(function (characterName) {
+//    Object.keys(Database.Characters).forEach(function (characterName) {
+    NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
         var character = Database.Characters[characterName];
         SocialNetwork.nodesDataset.update({
             id : character.name,
@@ -232,15 +215,30 @@ SocialNetwork.onActivitySelectorChangeDelegate = function (event) {
     for (i = 0; i < event.target.selectedOptions.length; i +=1) {
         SocialNetwork.selectedActivities[event.target.selectedOptions[i].activity] = true;
     }
+};
+
+SocialNetwork.onNetworkSubsetsChange = function (event) {
+    var selectedSubset = event.target.value;
     
-    if(SocialNetwork.selectedNetwork === "Человек-история 2"){
-        SocialNetwork.onNetworkSelectorChange(SocialNetwork.selectedNetwork);
-    }
+    var selector1 = document.getElementById("networkCharacterDiv");
+    var selector2 = document.getElementById("networkStoryDiv");
+    selector1.className = selectedSubset === SocialNetwork.objectSubsets[1] ? "" : "hidden";
+    selector2.className = selectedSubset === SocialNetwork.objectSubsets[2] ? "" : "hidden";
+    
 };
 
 SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
     "use strict";
-    SocialNetwork.onNetworkSelectorChange(event.target.value);
+    var selectedNetwork = event.target.value;
+    var activityBlock = document.getElementById("activityBlock");
+    activityBlock.className = selectedNetwork === "Человек-история 2" ? "" : "hidden";
+};
+
+SocialNetwork.onDrawNetwork = function () {
+    "use strict";
+    var selector = document.getElementById("networkSelector");
+    
+    SocialNetwork.onNetworkSelectorChange(selector.value);
 };
 
 SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
@@ -282,7 +280,8 @@ SocialNetwork.getCharacterNodes = function () {
     var groupName = document.getElementById("networkNodeGroupSelector").value;
 
     var nodes = [];
-    Object.keys(Database.Characters).forEach(
+//    Object.keys(Database.Characters).forEach(
+    NetworkSubsetsSelector.getCharacterNames().forEach(
             function (characterName) {
                 var character = Database.Characters[characterName];
                 nodes.push({
@@ -311,7 +310,8 @@ SocialNetwork.getCharacterNodes = function () {
 
 SocialNetwork.getStoryNodes = function () {
     "use strict";
-    var nodes = Object.keys(Database.Stories).map(function (name) {
+//    var nodes = Object.keys(Database.Stories).map(function (name) {
+    var nodes = NetworkSubsetsSelector.getStoryNames().map(function (name) {
         return {
             id : "St:" + name,
             // label : name,

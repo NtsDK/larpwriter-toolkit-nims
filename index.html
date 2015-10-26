@@ -61,7 +61,8 @@
 	<script src="js/briefingPreview.js"></script>
 	
 	<script src="js/timeline.js"></script>
-	<script src="js/socialNetwork.js"></script>
+	<script src="js/network/socialNetwork.js"></script>
+	<script src="js/network/networkSubsetsSelector.js"></script>
 	
 	<script src="js/WorldCup2014.js"></script>
 
@@ -276,24 +277,43 @@
         </div>
         
     </div>
-    
-    <div id="socialNetworkDiv">
-    
-        <div class="flexRoot">
-        <div class="storySelectorContainer">
-        Раскраска узлов
-        <select id="networkNodeGroupSelector" ></select>
-        Легенда
-        <div id="colorLegend"></div>
-        Социальная сеть
-        <select size=20 id="networkSelector" ></select>
-        Активность
-        <select size=4 id="activitySelector" multiple></select>
-        </div>
-        <div class="visualObjectContainer" id="socialNetworkContainer"></div>
-        </div>
-    </div>
-    
+
+		<div id="socialNetworkDiv">
+
+			<div class="flexRoot">
+				<div class="storySelectorContainer">
+					<b>Общие настройки</b> <br /> Раскраска узлов <select
+						id="networkNodeGroupSelector"></select> Легенда
+					<div id="colorLegend"></div>
+					
+					Выборка
+					<select size=3 id="networkSubsetsSelector"></select>
+					<div id="networkCharacterDiv" class="hidden">
+					   Персонажи<br />
+					   <select size=20 id="networkCharacterSelector" multiple></select>
+					</div>
+					
+					<div id="networkStoryDiv" class="hidden">
+             Истории<br />
+             <select size=20 id="networkStorySelector" multiple></select>
+          </div>
+					
+				</div>
+				<div class="storySelectorContainer">
+					<b>Частные настройки</b> <br /> Социальная сеть <select size=4
+						id="networkSelector"></select>
+
+					<div id="activityBlock" class="hidden">
+						Активность <select size=4 id="activitySelector" multiple></select>
+					</div>
+
+					<button id="drawNetworkButton">Нарисовать</button>
+
+				</div>
+				<div class="visualObjectContainer" id="socialNetworkContainer"></div>
+			</div>
+		</div>
+
 	</div>
 
 </body>
