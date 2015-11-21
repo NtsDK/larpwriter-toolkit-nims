@@ -5,16 +5,26 @@ var Utils = {};
 Utils.addView = function (rootObject, name, view, displayName, navigationId, contentAreaId, mainPage) {
     "use strict";
     view.init();
+    var buttonClass = "navigation-button";
     // var viewContent = initializer();
     rootObject.views[name] = view;
     var navigation = document.getElementById(navigationId);
-    var button = document.createElement("button");
+    var button = document.createElement("div");
+    button.className = buttonClass;
     button.appendChild(document.createTextNode(displayName));
     navigation.appendChild(button);
+    
 
+    var contentArea, elems, i;
     var onClickDelegate = function (view) {
-        return function () {
-            var contentArea = document.getElementById(contentAreaId);
+        return function (evt) {
+            elems = navigation.getElementsByClassName(buttonClass);
+            for (i = 0; i < elems.length; i++) {
+                removeClass(elems[i], "active");
+            }
+            addClass(evt.target, "active");
+            
+            contentArea = document.getElementById(contentAreaId);
             Utils.removeChildren(contentArea);
             contentArea.appendChild(view.content);
             rootObject.currentView = view;
@@ -24,6 +34,7 @@ Utils.addView = function (rootObject, name, view, displayName, navigationId, con
 
     button.addEventListener("click", onClickDelegate(view));
     if (mainPage) {
+        addClass(button, "active");
         var contentArea = document.getElementById(contentAreaId);
         contentArea.appendChild(view.content);
         rootObject.currentView = view;
@@ -156,4 +167,15 @@ Utils.clone = function (o) {
         }
     }
     return c;
+};
+
+function addClass(o, c){
+    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+    if (re.test(o.className)) return
+    o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "")
+};
+ 
+function removeClass(o, c){
+    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+    o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "")
 };

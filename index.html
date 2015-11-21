@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
-<meta charset="UTF-8">
 <head>
-<title>Briefing Work</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMTK story master toolkit</title>
 
+<link rel="stylesheet" href="style/bootstrap.min.css" >
 <link rel="stylesheet" type="text/css" href="style/style.css"
 	media="screen" />
 <!-- <script src="libs/vis.js"></script> -->
@@ -13,6 +16,8 @@
 
 <link rel="stylesheet" type="text/css" href="libs/vis.css"/ >
 <script src="libs/vis.js"></script>
+
+
 <link rel="stylesheet" type="text/css" href="libs/jquery.datetimepicker.css"/ >
 <script src="libs/jquery-2.1.4.js"></script>
 <script src="libs/jquery.datetimepicker.js"></script>
@@ -35,11 +40,11 @@
 
 	<script src="js/utils.js"></script>
 	<script src="js/fileUtils.js"></script>
-<!-- 	<script src="js/data.js"></script> -->
+	<!-- 	<script src="js/data.js"></script> -->
 	<script src="js/data2.js"></script>
-<!-- 	<script src="js/data3.js"></script> -->
+	<!-- 	<script src="js/data3.js"></script> -->
 	<script src="js/DBMS.js"></script>
-<!-- 	<script src="js/core.js"></script> -->
+	<!-- 	<script src="js/core.js"></script> -->
 
 	<script src="js/pageManager.js"></script>
 	<script src="js/migrator.js"></script>
@@ -49,25 +54,25 @@
 	<script src="js/characterProfile.js"></script>
 	<script src="js/characterFilter.js"></script>
 	<script src="js/characterProfileConfigurer.js"></script>
-	
+
 	<script src="js/stories.js"></script>
 	<script src="js/storyEvents.js"></script>
 	<script src="js/storyCharacters.js"></script>
 	<script src="js/eventPresence.js"></script>
-	
+
 	<script src="js/events.js"></script>
-	
+
 	<script src="js/briefings.js"></script>
 	<script src="js/briefingExport.js"></script>
 	<script src="js/briefingPreview.js"></script>
-	
+
 	<script src="js/timeline.js"></script>
 	<script src="js/network/socialNetwork.js"></script>
 	<script src="js/network/networkSubsetsSelector.js"></script>
-	
+
 	<script src="js/WorldCup2014.js"></script>
 
-	
+
 	<!--   <script src="js/gameCommon.js"></script> -->
 
 	<!--   <script src="js/trialEditor.js"></script> -->
@@ -76,97 +81,98 @@
 	<!--   <script src="js/gameBody.js"></script> -->
 
 	<!--   <script src="js/ui.js"></script> -->
-	
-	<div class="block" id="navigation">
+
+	<!-- 	<div class="block" id="navigation"> -->
+	<div id="navigation">
 	
 	</div>
-	
-	 <div class="block" id="contentArea">
-  
-  </div>
+
+	<div class="block" id="contentArea"></div>
 
 	<div class="hidden">
-	    <div id="overviewDiv">
-        Название<input id="gameNameInput"></input><br>
-        Игровая дата<input id="gameDatePicker"></input><br>
-        Дата начала доигровых событий<input id="preGameDatePicker"></input><br>
-        Описание<br><textarea id="gameDescription"></textarea>
-    </div>
+		<div id="overviewDiv">
+			Название<input id="gameNameInput"></input><br> Игровая дата<input
+				id="gameDatePicker"></input><br> Дата начала доигровых событий<input
+				id="preGameDatePicker"></input><br> Описание<br>
+			<textarea id="gameDescription"></textarea>
+		</div>
 
-		
+
 		<div id="charactersDiv">
-			<input id="characterNameInput"></input>
-			<button id="createCharacterButton">Добавить</button>
-			<br> Переименовать из <select id="fromName"></select> в <input
-				id="toName"></input>
-			<button id="renameCharacter">OK</button>
-			<br> <select id="characterRemoveSelector"></select>
-			<button id="removeCharacterButton">Удалить</button>
-			<div id="charactersNavigation" class="block"></div>
+		  <div class="block">
+				<input id="characterNameInput"></input>
+				<button id="createCharacterButton">Добавить</button>
+				<br> Переименовать из <select id="fromName"></select> в <input
+					id="toName"></input>
+				<button id="renameCharacter">OK</button>
+				<br> <select id="characterRemoveSelector"></select>
+				<button id="removeCharacterButton">Удалить</button>
+		  </div>
+			<div id="charactersNavigation"></div>
 			<div id="charactersContent" class="block"></div>
 		</div>
-		
+
 		<div id="characterProfile">
-		  <table>
-        <tr>
-          <th>Персонажи</th>
-        </tr>
-        <tr>
-          <td><select size=20 id="bioEditorSelector"></select></td>
-          <td >
-          <div id="profileContentDiv"></div>
-          </td>
-        </tr>
-      </table>
-		  
+			<table>
+				<tr>
+					<th>Персонажи</th>
+				</tr>
+				<tr>
+					<td><select size=20 id="bioEditorSelector"></select></td>
+					<td>
+						<div id="profileContentDiv"></div>
+					</td>
+				</tr>
+			</table>
+
 		</div>
 
 		<div id="characterProfileConfigurer">
-		  
-		  Название<input id="profileItemNameInput"></input>
-		  
-      Тип<select id="profileItemTypeSelector">
-      </select>
-      Позиция <select id="profileItemPositionSelector">
-      </select>
-      <button id="createProfileItemButton">Добавить</button>
-      <br>
-      Поменять местами <select id="firstProfileField"></select> и <select
-        id="secondProfileField"></select>
-      <button id="swapProfileFieldsButton">OK</button>
-      <br>
-      <select id="removeProfileItemSelector"></select>  <button id="removeProfileItemButton">Удалить</button>
-      <br>
-		  
-		  <table id="profileConfigBlock"></table>
-		</div>
-		
-		<div id="characterFilterDiv">
-      <table>
-        <tr>
-          <td>
-          <div id="filterSettingsDiv"></div></td>
-          <td >
-          <table id="filterContent"></table>
-          </td>
-        </tr>
-      </table>
-    </div>
 
-		<div id="storiesDiv">
-		  <input id="createStoryName"></input>
-      <button id="createStoryButton">Добавить</button>
-      <br> Переименовать из <select id="fromStory"></select> в <input
-        id="toStory"></input>
-      <button id="renameStoryButton">OK</button>
-      <br> <select id="storyRemoveSelector"></select>
-      <button id="removeStoryButton">Удалить</button>
-      
+			Название<input id="profileItemNameInput"></input> Тип<select
+				id="profileItemTypeSelector">
+			</select> Позиция <select id="profileItemPositionSelector">
+			</select>
+			<button id="createProfileItemButton">Добавить</button>
+			<br> Поменять местами <select id="firstProfileField"></select> и
+			<select id="secondProfileField"></select>
+			<button id="swapProfileFieldsButton">OK</button>
+			<br> <select id="removeProfileItemSelector"></select>
+			<button id="removeProfileItemButton">Удалить</button>
+			<br>
+
+			<table id="profileConfigBlock"></table>
+		</div>
+
+		<div id="characterFilterDiv">
 			<table>
 				<tr>
-				  <th></th>
+					<td>
+						<div id="filterSettingsDiv"></div>
+					</td>
+					<td>
+						<table id="filterContent"></table>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="storiesDiv">
+		  <div class="block">
+				<input id="createStoryName"></input>
+				<button id="createStoryButton">Добавить</button>
+				<br> Переименовать из <select id="fromStory"></select> в <input
+					id="toStory"></input>
+				<button id="renameStoryButton">OK</button>
+				<br> <select id="storyRemoveSelector"></select>
+				<button id="removeStoryButton">Удалить</button>
+		  </div>
+
+			<table>
+				<tr>
+					<th></th>
 					<th>Мастерская история</th>
-					<th id="storiesNavigation"></th>
+					<th ><div id="storiesNavigation"></div></th>
 				</tr>
 				<tr>
 					<td><select size=20 id="storySelector"></select></td>
@@ -178,39 +184,42 @@
 
 
 		<div id="storyEventsDiv">
-		  Название<input id="eventNameInput"></input><br>
+			Название<input id="eventNameInput"></input><br>
 			<textarea id="eventInput" class="eventText"></textarea>
 			<select id="positionSelector"></select>
 			<button id="createEventButton">Добавить</button>
 			<br> Поменять местами <select id="firstEvent"></select> и <select
 				id="secondEvent"></select>
 			<button id="swapEventsButton">OK</button>
-			<br>
-			<select id="cloneEventSelector"></select>	<button id="cloneEventButton">Клонировать</button>
-			<br>
-			<select id="mergeEventSelector"></select>	<button id="mergeEventButton">Объединить</button>
-			<br>
-			<select id="removeEventSelector"></select>	<button id="removeEventButton">Удалить</button>
-			<br>
-			<br> <br>
-			
+			<br> <select id="cloneEventSelector"></select>
+			<button id="cloneEventButton">Клонировать</button>
+			<br> <select id="mergeEventSelector"></select>
+			<button id="mergeEventButton">Объединить</button>
+			<br> <select id="removeEventSelector"></select>
+			<button id="removeEventButton">Удалить</button>
+			<br> <br> <br>
+
 			<table id="eventBlock"></table>
 		</div>
-		
+
 		<div id="storyCharactersDiv">
-		<select id="storyCharactersAddSelector"></select><button id="storyCharactersAddButton">Добавить</button><br>
-		Заменить<select id="storyCharactersFromSelector"></select> на <select id="storyCharactersToSelector"></select><button id="storyCharactersSwitchButton">Добавить</button><br>
-		<select id="storyCharactersRemoveSelector"></select><button id="storyCharactersRemoveButton">Удалить</button>
-      <br> <br>
-      
-      <table id="story-characterActivityTable"></table>
-      <table id="storyCharactersTable"></table>
-      Контроль:<span id="inventoryCheck"></span>
-    </div>
+			<select id="storyCharactersAddSelector"></select>
+			<button id="storyCharactersAddButton">Добавить</button>
+			<br> Заменить<select id="storyCharactersFromSelector"></select>
+			на <select id="storyCharactersToSelector"></select>
+			<button id="storyCharactersSwitchButton">Добавить</button>
+			<br> <select id="storyCharactersRemoveSelector"></select>
+			<button id="storyCharactersRemoveButton">Удалить</button>
+			<br> <br>
+
+			<table id="story-characterActivityTable"></table>
+			<table id="storyCharactersTable"></table>
+			Контроль:<span id="inventoryCheck"></span>
+		</div>
 
 		<div id="eventPresenceDiv">
-		  <table id="eventPresenceTable" cellspacing=0 cellpadding=0></table>
-    </div>
+			<table id="eventPresenceTable" cellspacing=0 cellpadding=0></table>
+		</div>
 
 
 		<div id="eventsDiv">
@@ -219,12 +228,10 @@
 			<table cellspacing=0 cellpadding=0>
 				<tr>
 					<td>
-					<div id="personalStoriesCharacterContainer">
-					История
-					  <select id="events-storySelector" size=10></select>
-					  Персонажи
-					  <select id="events-characterSelector" multiple size=15></select>
-					</div>
+						<div id="personalStoriesCharacterContainer">
+							История <select id="events-storySelector" size=10></select>
+							Персонажи <select id="events-characterSelector" multiple size=15></select>
+						</div>
 					</td>
 					<td>
 						<table id="personalStories"></table>
@@ -233,51 +240,48 @@
 			</table>
 		</div>
 
-    <div id="briefingsDiv">
-      <div id="briefingsNavigation" class="block"></div>
-      <div id="briefingsContent" class="block"></div>
-    </div>
-    
-    <div id="briefingPreviewDiv">
-        <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio">Группировать события по историям</input> 
-        <br>
-        <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio">Сортировать события по хронологии</input> 
-        <br>
-    
-        
-        <select id="briefingCharacter"></select>
-        <div id="briefingContent">
-        
-        </div>
-        
-    </div>
-    
-    <div id="briefingExportDiv">
-        <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2">Группировать события по историям</input> 
-        <br>
-        <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2">Сортировать события по хронологии</input> 
-        <br>
-        <input type="checkbox" id="toSeparateFileCheckbox">Каждую в отдельный файл</input> 
-        <br>
+		<div id="briefingsDiv">
+			<div id="briefingsNavigation"></div>
+			<div id="briefingsContent" class="block"></div>
+		</div>
 
-        
-        Сформировать вводные docx<input type="file" id="docxBriefings"></input><br>
-        <button id="makeBriefings">Сформировать вводные txt</button>
-        <br><br>
-    </div>
-    
+		<div id="briefingPreviewDiv">
+			<input type="radio" name="eventsGroupBy" value="story"
+				id="eventGroupingByStoryRadio">Группировать события по
+			историям</input> <br> <input type="radio" name="eventsGroupBy"
+				value="time" id="eventGroupingByTimeRadio">Сортировать
+			события по хронологии</input> <br> <select id="briefingCharacter"></select>
+			<div id="briefingContent"></div>
+
+		</div>
+
+		<div id="briefingExportDiv">
+			<input type="radio" name="eventsGroupBy2" value="story"
+				id="eventGroupingByStoryRadio2">Группировать события по
+			историям</input> <br> <input type="radio" name="eventsGroupBy2"
+				value="time" id="eventGroupingByTimeRadio2">Сортировать
+			события по хронологии</input> <br> <input type="checkbox"
+				id="toSeparateFileCheckbox">Каждую в отдельный файл</input> <br>
 
 
-    <div id="timelineDiv">
-        
-        <div class="flexRoot">
-        <div class="storySelectorContainer">
-        Истории
-        <select size=20 id="timelineStorySelector" multiple ></select></div>
-        <div class="visualObjectContainer" id="timelineContainer"></div>
-        </div>
-        
-    </div>
+			Сформировать вводные docx<input type="file" id="docxBriefings"></input><br>
+			<button id="makeBriefings">Сформировать вводные txt</button>
+			<br>
+			<br>
+		</div>
+
+
+
+		<div id="timelineDiv">
+
+			<div class="flexRoot">
+				<div class="storySelectorContainer">
+					Истории <select size=20 id="timelineStorySelector" multiple></select>
+				</div>
+				<div class="visualObjectContainer" id="timelineContainer"></div>
+			</div>
+
+		</div>
 
 		<div id="socialNetworkDiv">
 
@@ -286,19 +290,17 @@
 					<b>Общие настройки</b> <br /> Раскраска узлов <select
 						id="networkNodeGroupSelector"></select> Легенда
 					<div id="colorLegend"></div>
-					
-					Выборка
-					<select size=3 id="networkSubsetsSelector"></select>
+
+					Выборка <select size=3 id="networkSubsetsSelector"></select>
 					<div id="networkCharacterDiv" class="hidden">
-					   Персонажи<br />
-					   <select size=20 id="networkCharacterSelector" multiple></select>
+						Персонажи<br /> <select size=20 id="networkCharacterSelector"
+							multiple></select>
 					</div>
-					
+
 					<div id="networkStoryDiv" class="hidden">
-             Истории<br />
-             <select size=20 id="networkStorySelector" multiple></select>
-          </div>
-					
+						Истории<br /> <select size=20 id="networkStorySelector" multiple></select>
+					</div>
+
 				</div>
 				<div class="storySelectorContainer" id="privateSettingsContainer">
 					<b>Частные настройки</b> <br /> Социальная сеть <select size=4
@@ -310,18 +312,19 @@
 
 					<button id="drawNetworkButton">Нарисовать</button>
 					<button id="hideNetworkSettingsButton">Спрятать панель</button>
-					
+
 
 				</div>
-				
-				<div class="storySelectorContainer2 hidden" id="showSettingsButtonContainer">
-					<button id="showNetworkSettingsButton" >+</button>
+
+				<div class="storySelectorContainer2 hidden"
+					id="showSettingsButtonContainer">
+					<button id="showNetworkSettingsButton">+</button>
 				</div>
-				
+
 				<div class="visualObjectContainer" id="socialNetworkContainer"></div>
 			</div>
 		</div>
-		
+
 
 	</div>
 

@@ -261,8 +261,9 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         selector = document.createElement("select");
         selector.selfInfo = profileItemConfig;
         selector.multiple = "multiple";
-
+        
         values = profileItemConfig.value.split(",");
+        selector.size = values.length;
 
         values.forEach(function (value) {
             var option = document.createElement("option");
@@ -303,6 +304,7 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         selector = document.createElement("select");
         selector.selfInfo = profileItemConfig;
         selector.multiple = "multiple";
+        selector.size = 2;
 
         values = [ "Да", "Нет" ];
         values.forEach(function (value) {

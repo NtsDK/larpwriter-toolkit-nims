@@ -14,8 +14,6 @@ Characters.init = function () {
     var content = "charactersContent";
     Utils.addView(root, "CharacterProfile", CharacterProfile, "Досье", nav,
             content, true);
-    Utils.addView(root, "CharacterFilter", CharacterFilter, "Фильтр", nav,
-            content);
     Utils.addView(root, "CharacterProfileConfigurer",
             CharacterProfileConfigurer, "Редактор досье", nav, content);
 
