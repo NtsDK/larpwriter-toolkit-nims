@@ -132,10 +132,13 @@ SocialNetwork.init = function () {
     selector = document.getElementById("activitySelector");
     selector.addEventListener("change", SocialNetwork.onActivitySelectorChangeDelegate);
     
+    var st;
     StoryCharacters.characterActivityTypes.forEach(function (activity, i) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(StoryCharacters.characterActivityDisplayNames[i]));
-        option.style = "color:" + SocialNetwork.activityColors[StoryCharacters.characterActivityTypes[i] ] + ";";
+        st = option.style;
+        st.color = SocialNetwork.activityColors[StoryCharacters.characterActivityTypes[i] ];
+        //option.style = "color:" + SocialNetwork.activityColors[StoryCharacters.characterActivityTypes[i] ] + ";";
         option.activity = activity;
         selector.appendChild(option);
     });

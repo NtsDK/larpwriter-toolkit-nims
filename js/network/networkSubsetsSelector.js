@@ -113,22 +113,29 @@ NetworkSubsetsSelector.getCharacterNames = function () {
             primaryCharacters[selector.selectedOptions[i].value] = true;
         }
         
-        var story, storyCharacters;
+        var story, storyCharacters, eventCharacters;
         var character;
         var isPrimaryCharacter = function(name){
             return primaryCharacters[name];
         }
         
+        var event;
         Object.keys(Database.Stories).forEach(function(storyName){
             story = Database.Stories[storyName];
             storyCharacters = Object.keys(story.characters);
             
+            
             if(storyCharacters.some(isPrimaryCharacter)){
-                storyCharacters.filter(function(name){
-                    return !primaryCharacters[name];
-                }).forEach(function(name){
-                    secondaryCharacters[name] = true;
-                });
+                story.events.forEach(function(event){
+                    eventCharacters = Object.keys(event.characters);
+                    if(eventCharacters.some(isPrimaryCharacter)){
+                        eventCharacters.forEach(function(name){
+                            if(!isPrimaryCharacter(name)){
+                                secondaryCharacters[name] = true;
+                            }
+                        });
+                    }
+                })
             }
         });
         
