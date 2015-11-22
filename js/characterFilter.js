@@ -62,10 +62,12 @@ CharacterFilter.rebuildContent = function () {
         type : "text"
     });
 
+    var tbody = document.createElement("tbody");
     Object.keys(Database.Characters).filter(CharacterFilter.acceptDataRow).
         sort(CharacterFilter.sortDataRows).forEach(function (name) {
-            CharacterFilter.appendDataString(filterContent, Database.Characters[name], profileSettings);
+            CharacterFilter.appendDataString(tbody, Database.Characters[name], profileSettings);
     });
+    filterContent.appendChild(tbody);
 };
 
 CharacterFilter.acceptDataRow = function (element) {
@@ -134,8 +136,8 @@ CharacterFilter.acceptDataRow = function (element) {
             break;
         case "text":
         case "string":
-            regex = Utils.globStringToRegex(inputItem.value);
-            result = element[inputItem.selfInfo.name].match(regex);
+            regex = Utils.globStringToRegex(inputItem.value.toLowerCase());
+            result = element[inputItem.selfInfo.name].toLowerCase().match(regex);
             break;
         }
 
@@ -208,6 +210,7 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
 
 CharacterFilter.appendContentHeader = function (table, profileSettings) {
     "use strict";
+    var thead = document.createElement("thead");
     var tr = document.createElement("tr");
 
     var td = document.createElement("th");
@@ -224,7 +227,8 @@ CharacterFilter.appendContentHeader = function (table, profileSettings) {
         tr.appendChild(td);
     });
 
-    table.appendChild(tr);
+    thead.appendChild(tr);
+    table.appendChild(thead);
 };
 
 CharacterFilter.onSortChange = function (event) {
