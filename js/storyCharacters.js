@@ -40,7 +40,11 @@ StoryCharacters.refresh = function () {
     var addArray = [];
     var removeArray = [];
 
-    var localCharacters = Stories.CurrentStory.characters;
+    var localCharacters = {};
+    if(Stories.CurrentStory){
+        localCharacters =  Stories.CurrentStory.characters;
+    }
+    
     for ( var name in localCharacters) {
         removeArray.push(name);
     }
@@ -79,7 +83,7 @@ StoryCharacters.refresh = function () {
     StoryCharacters.appendCharacterHeader(table, "th", StoryCharacters.characterActivityHeader);
     
     removeArray.forEach(function (removeValue) {
-        StoryCharacters.appendCharacterActivity(table, Stories.CurrentStory.characters[removeValue]);
+        StoryCharacters.appendCharacterActivity(table, localCharacters[removeValue]);
     });
 
     table = document.getElementById("storyCharactersTable");
@@ -88,7 +92,7 @@ StoryCharacters.refresh = function () {
     StoryCharacters.appendCharacterHeader(table, "th", StoryCharacters.inventoryHeader);
 
     removeArray.forEach(function (removeValue) {
-        StoryCharacters.appendCharacterInput(table, Stories.CurrentStory.characters[removeValue]);
+        StoryCharacters.appendCharacterInput(table, localCharacters[removeValue]);
     });
 
 };

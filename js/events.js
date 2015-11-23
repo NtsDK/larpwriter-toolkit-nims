@@ -30,6 +30,12 @@ Events.refresh = function () {
     "use strict";
     var selector = document.getElementById("events-storySelector");
     Utils.removeChildren(selector);
+    
+    var selector2 = document.getElementById("events-characterSelector");
+    Utils.removeChildren(selector2);
+    
+    var table = document.getElementById("personalStories");
+    Utils.removeChildren(table);
 
     var storyNames = DBMS.getStoryNamesArray();
     

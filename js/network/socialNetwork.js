@@ -18,22 +18,105 @@ SocialNetwork.activityColors = {
         "passive": "grey"
 };
 
-SocialNetwork.colorPalette = [ {
-    color : { // aquamarine-blue
-        background : 'rgb(151,194,252)',
-        border : 'rgb(43,124,233)'
-    }
-}, { // rose-red
-    color : {
-        background : 'rgb(251,126,129)',
-        border : 'rgb(250,10,16)'
-    }
-}, { // green-deep green
-    color : { 
-        background : 'rgb(123,225,65)',
-        border : 'rgb(65,169,6)'
-    }
-} ];
+SocialNetwork.generatedColors = [];
+
+// used http://tools.medialab.sciences-po.fr/iwanthue/
+//SocialNetwork.generatedColors = ["#47CA9D",
+//                                 "#F7ABE7",
+//                                 "#D1CE4A",
+//                                 "#62D8FD",
+//                                 "#E1A07B",
+//                                 "#DADDEC",
+//                                 "#8CCB64",
+//                                 "#F5DE8F",
+//                                 "#FFB3C2",
+//                                 "#9FC3F7",
+//                                 "#C1A5C3",
+//                                 "#37DAE2",
+//                                 "#BBE65C",
+//                                 "#98B6BD",
+//                                 "#BDA7E4",
+//                                 "#E4A197",
+//                                 "#CBF1F2",
+//                                 "#E89A6C",
+//                                 "#F0A9BA",
+//                                 "#F1ABA2"];
+
+// the Colour Alphabet Project suggested by Paul Green-Armytage 
+//SocialNetwork.generatedColors = [
+//"rgb(240,163,255)",
+//"rgb(0,117,220)",
+//"rgb(153,63,0)",
+//"rgb(76,0,92)",
+//"rgb(25,25,25)",
+//"rgb(0,92,49)",
+//"rgb(43,206,72)",
+//"rgb(255,204,153)",
+//"rgb(128,128,128)",
+//"rgb(148,255,181)",
+//"rgb(143,124,0)",
+//"rgb(157,204,0)",
+//"rgb(194,0,136)",
+//"rgb(0,51,128)",
+//"rgb(255,164,5)",
+//"rgb(255,168,187)",
+//"rgb(66,102,0)",
+//"rgb(255,0,16)",
+//"rgb(94,241,242)",
+//"rgb(0,153,143)",
+//"rgb(224,255,102)",
+//"rgb(116,10,255)",
+//"rgb(153,0,0)",
+//"rgb(255,255,128)",
+//"rgb(255,255,0)",
+//"rgb(255,80,5)"
+//];
+
+SocialNetwork.colorPalette = [
+//  {color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"}, hover: {border: "#2B7CE9", background: "#D2E5FF"}}}, // 0: blue
+//  {color: {border: "#FFA500", background: "#FFFF00", highlight: {border: "#FFA500", background: "#FFFFA3"}, hover: {border: "#FFA500", background: "#FFFFA3"}}}, // 1: yellow
+  {color: {border: "#FA0A10", background: "#FB7E81", highlight: {border: "#FA0A10", background: "#FFAFB1"}, hover: {border: "#FA0A10", background: "#FFAFB1"}}}, // 2: red
+  {color: {border: "#41A906", background: "#7BE141", highlight: {border: "#41A906", background: "#A1EC76"}, hover: {border: "#41A906", background: "#A1EC76"}}}, // 3: green
+  {color: {border: "#E129F0", background: "#EB7DF4", highlight: {border: "#E129F0", background: "#F0B3F5"}, hover: {border: "#E129F0", background: "#F0B3F5"}}}, // 4: magenta
+  {color: {border: "#7C29F0", background: "#AD85E4", highlight: {border: "#7C29F0", background: "#D3BDF0"}, hover: {border: "#7C29F0", background: "#D3BDF0"}}}, // 5: purple
+  {color: {border: "#C37F00", background: "#FFA807", highlight: {border: "#C37F00", background: "#FFCA66"}, hover: {border: "#C37F00", background: "#FFCA66"}}}, // 6: orange
+  {color: {border: "#4220FB", background: "#6E6EFD", highlight: {border: "#4220FB", background: "#9B9BFD"}, hover: {border: "#4220FB", background: "#9B9BFD"}}}, // 7: darkblue
+  {color: {border: "#FD5A77", background: "#FFC0CB", highlight: {border: "#FD5A77", background: "#FFD1D9"}, hover: {border: "#FD5A77", background: "#FFD1D9"}}}, // 8: pink
+  {color: {border: "#4AD63A", background: "#C2FABC", highlight: {border: "#4AD63A", background: "#E6FFE3"}, hover: {border: "#4AD63A", background: "#E6FFE3"}}}, // 9: mint
+
+  {color: {border: "#990000", background: "#EE0000", highlight: {border: "#BB0000", background: "#FF3333"}, hover: {border: "#BB0000", background: "#FF3333"}}}, // 10:bright red
+
+  {color: {border: "#FF6000", background: "#FF6000", highlight: {border: "#FF6000", background: "#FF6000"}, hover: {border: "#FF6000", background: "#FF6000"}}}, // 12: real orange
+  {color: {border: "#97C2FC", background: "#2B7CE9", highlight: {border: "#D2E5FF", background: "#2B7CE9"}, hover: {border: "#D2E5FF", background: "#2B7CE9"}}}, // 13: blue
+  {color: {border: "#399605", background: "#255C03", highlight: {border: "#399605", background: "#255C03"}, hover: {border: "#399605", background: "#255C03"}}}, // 14: green
+  {color: {border: "#B70054", background: "#FF007E", highlight: {border: "#B70054", background: "#FF007E"}, hover: {border: "#B70054", background: "#FF007E"}}}, // 15: magenta
+  {color: {border: "#AD85E4", background: "#7C29F0", highlight: {border: "#D3BDF0", background: "#7C29F0"}, hover: {border: "#D3BDF0", background: "#7C29F0"}}}, // 16: purple
+  {color: {border: "#4557FA", background: "#000EA1", highlight: {border: "#6E6EFD", background: "#000EA1"}, hover: {border: "#6E6EFD", background: "#000EA1"}}}, // 17: darkblue
+  {color: {border: "#FFC0CB", background: "#FD5A77", highlight: {border: "#FFD1D9", background: "#FD5A77"}, hover: {border: "#FFD1D9", background: "#FD5A77"}}}, // 18: pink
+  {color: {border: "#C2FABC", background: "#74D66A", highlight: {border: "#E6FFE3", background: "#74D66A"}, hover: {border: "#E6FFE3", background: "#74D66A"}}}, // 19: mint
+
+  {color: {border: "#EE0000", background: "#990000", highlight: {border: "#FF3333", background: "#BB0000"}, hover: {border: "#FF3333", background: "#BB0000"}}} // 20:bright red
+];
+
+//SocialNetwork.colorPalette = [ 
+////                               {
+////    color : { // aquamarine-blue
+////        background : 'rgb(151,194,252)',
+////        border : 'rgb(43,124,233)'
+////    }
+////}, { // rose-red
+////    color : {
+////        background : 'rgb(251,126,129)',
+////        border : 'rgb(250,10,16)'
+////    }
+////}, { // green-deep green
+////    color : { 
+////        background : 'rgb(123,225,65)',
+////        border : 'rgb(65,169,6)'
+////    }
+////} 
+//
+//];
 
 SocialNetwork.fixedColors = {
     "storyColor" : {
@@ -75,46 +158,14 @@ SocialNetwork.init = function () {
     
     NetworkSubsetsSelector.init();
     
+    SocialNetwork.fillColorPalette();
+    
     var selector = document.getElementById("networkNodeGroupSelector");
     selector.addEventListener("change", function (event) {
         SocialNetwork.updateNodes(event.target.value);
     });
 
-    var groups = Database.ProfileSettings.filter(function (element) {
-        return element.type === "enum" || element.type === "checkbox";
-    });
-    
-    var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
-        return elem.name;
-    }));
 
-    groupNames.forEach(function (group) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(group));
-        selector.appendChild(option);
-    });
-    
-    SocialNetwork.groupColors = {};
-    
-    for ( var groupName in SocialNetwork.fixedColors) {
-        SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
-    }
-    
-    groups.forEach(function (group) {
-        if(group.type === "enum"){
-            group.value.split(",").forEach(function (subGroupName, i){
-                SocialNetwork.groupColors[group.name + "." + subGroupName] = SocialNetwork.colorPalette[i];
-            });
-        } else if( group.type === "checkbox"){
-            if(group.value){
-                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[0];
-                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[1];
-            } else {
-                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[1];
-                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[0];
-            }
-        }
-    });
     
     selector = document.getElementById("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
@@ -157,11 +208,62 @@ SocialNetwork.init = function () {
     SocialNetwork.content = document.getElementById("socialNetworkDiv");
 };
 
+SocialNetwork.fillColorPalette = function(){
+    "use strict";
+    SocialNetwork.generatedColors.forEach(function(genColor){
+        SocialNetwork.colorPalette.push({
+            color : { 
+                background : genColor,
+                border : genColor
+            }
+        });  
+    });
+};
+
 SocialNetwork.refresh = function () {
     "use strict";
     
     var selector = document.getElementById("networkSelector");
     selector.value = SocialNetwork.networks[0];
+    
+    selector = document.getElementById("networkNodeGroupSelector");
+    Utils.removeChildren(selector);
+    
+    var groups = Database.ProfileSettings.filter(function (element) {
+        return element.type === "enum" || element.type === "checkbox";
+    });
+    
+    var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
+        return elem.name;
+    }));
+
+    groupNames.forEach(function (group) {
+        var option = document.createElement("option");
+        option.appendChild(document.createTextNode(group));
+        selector.appendChild(option);
+    });
+    
+    SocialNetwork.groupColors = {};
+    
+    for ( var groupName in SocialNetwork.fixedColors) {
+        SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
+    }
+    
+    groups.forEach(function (group) {
+        if(group.type === "enum"){
+            group.value.split(",").forEach(function (subGroupName, i){
+                SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = SocialNetwork.colorPalette[i];
+            });
+        } else if( group.type === "checkbox"){
+            if(group.value){
+                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[0];
+                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[1];
+            } else {
+                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[1];
+                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[0];
+            }
+        }
+    });
     
     NetworkSubsetsSelector.refresh();
 //    SocialNetwork.onNetworkSelectorChange(SocialNetwork.networks[0]);
@@ -198,18 +300,20 @@ SocialNetwork.updateNodes = function (groupName) {
     SocialNetwork.refreshLegend(groupName);
     
 //    Object.keys(Database.Characters).forEach(function (characterName) {
+    var group;
     NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
         var character = Database.Characters[characterName];
+        group = groupName === "Без групп" ? groupName : groupName + "." + character[groupName];
         SocialNetwork.nodesDataset.update({
             id : character.name,
             // label : name,
-            label : character.name.split(" ").join("\n"),
+//            label : character.name.split(" ").join("\n"),
+//            color: SocialNetwork.groupColors[group],
             // group: character[groupName]+""
             // color: SocialNetwork.colorMap[groupName + "." +
             // character[groupName]]
             // group: groupName + "." + character[groupName]
-            group : groupName === "Без групп" ? groupName : groupName
-                    + "." + character[groupName]
+            group : group
         // group: character[groupName]+""
         // group: 0
         });

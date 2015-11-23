@@ -16,7 +16,7 @@ PageManager.onLoad = function () {
     Utils.addView(root, "Overview", Overview, "Обзор", nav, content, true);
     Utils.addView(root, "Characters", Characters, "Персонажи", nav, content);
     Utils.addView(root, "Stories", Stories, "Истории", nav, content);
-    Utils.addView(root, "Events", Events, "События", nav, content);
+    Utils.addView(root, "Events", Events, "Адаптации", nav, content);
     Utils.addView(root, "Briefings", Briefings, "Вводные", nav, content);
     
     button = document.createElement("div");

@@ -12,6 +12,46 @@ FileUtils.init = function () {
 
     var button = document.getElementById('dataSaveButton');
     button.addEventListener('click', FileUtils.saveFile);
+    
+    button = document.getElementById('newBaseButton');
+    button.addEventListener('click', FileUtils.makeNewBase);
+
+    button = document.getElementById('mainHelpButton');
+    button.addEventListener('click', FileUtils.openHelp);
+};
+
+FileUtils.makeNewBase = function () {
+    "use strict";
+    if(Utils.confirm("Вы уверены, что хотите создать новую базу? Все несохраненные изменения будут потеряны.")) {
+        Database = {
+            "Meta": {
+                "name" : "",
+                "date" : "",
+                "preGameDate" : "",
+                "description" : ""
+            },
+            "Characters": {},
+            "ProfileSettings" : [],
+            "Stories": {},
+            "Settings" : {
+                "Events" : {
+                },
+                "BriefingPreview" : {
+                },
+                "Stories" : {
+                },
+                "CharacterProfile" : {
+                }
+            },
+        };
+        PageManager.currentView.refresh();
+    }
+    
+};
+
+FileUtils.openHelp = function () {
+    "use strict";
+    window.open("doc/nims.html");
 };
 
 FileUtils.readSingleFile = function (evt) {
@@ -44,7 +84,7 @@ FileUtils.saveFile = function () {
     var blob = new Blob([ JSON.stringify(Database, null, '  ') ], {
         type : "text/plain;charset=utf-8"
     });
-    saveAs(blob, "database.json");
+    saveAs(blob, "nims-base.json");
     // window.open("data:application/json;charset=utf-8," +
     // encodeURIComponent(JSON.stringify(Database, null, ' ')) );
     //window.open(document.getElementById("testst").toDataURL("image/png"))

@@ -34,13 +34,17 @@ StoryEvents.refresh = function () {
 
     StoryEvents.appendEventHeader(table);
 
-    Stories.CurrentStory.events.forEach(function (event, i) {
-        StoryEvents.appendEventInput(table, event, i + 1);
-    });
-
     // refresh position selector
     var positionSelector = document.getElementById("positionSelector");
     Utils.removeChildren(positionSelector);
+    
+    if(Stories.CurrentStory === undefined){
+        return;
+    }
+
+    Stories.CurrentStory.events.forEach(function (event, i) {
+        StoryEvents.appendEventInput(table, event, i + 1);
+    });
 
     Stories.CurrentStory.events.forEach(function (event, i) {
         var option = document.createElement("option");

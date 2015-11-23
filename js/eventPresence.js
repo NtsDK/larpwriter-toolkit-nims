@@ -15,6 +15,10 @@ EventPresence.refresh = function () {
     "use strict";
     var table = document.getElementById("eventPresenceTable");
     Utils.removeChildren(table);
+    
+    if(Stories.CurrentStory == undefined){
+        return;
+    }
 
     EventPresence.appendTableHeader(table);
 

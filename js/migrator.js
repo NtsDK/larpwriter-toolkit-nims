@@ -23,5 +23,8 @@ Migrator.migrate = function(data){
         
         data.Version = "0.0.4";
     }
+    if(data.Version === "0.0.4"){ // new versioning rule
+        data.Version = "0.4.1";
+    }
     return data;
 };

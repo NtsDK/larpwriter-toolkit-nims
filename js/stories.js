@@ -75,6 +75,8 @@ Stories.refresh = function () {
         });
         
         Stories.onStorySelectorChange(storyName);
+    } else {
+        Stories.onStorySelectorChange();
     }
 
 
@@ -154,11 +156,15 @@ Stories.onStorySelectorChangeDelegate = function (event) {
 Stories.onStorySelectorChange = function (storyName) {
     "use strict";
     Stories.CurrentStory = Database.Stories[storyName];
-    
-    Database.Settings["Stories"].storyName = storyName;
-
     var storyArea = document.getElementById("masterStoryArea");
-    storyArea.value = Stories.CurrentStory.story;
+    
+    if(Stories.CurrentStory){
+        Database.Settings["Stories"].storyName = storyName;
+        storyArea.value = Stories.CurrentStory.story;
+    } else {
+        Database.Settings["Stories"].storyName = null;
+        storyArea.value = "";
+    }
 
     Stories.currentView.refresh();
 };
