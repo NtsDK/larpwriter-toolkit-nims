@@ -174,7 +174,7 @@
 		<div id="characterProfileConfigurer">
 		  <div class="panel panel-default">
         <div class="panel-body">
-					Название<input id="profileItemNameInput"></input> Тип<select
+					Название<input id="profileItemNameInput" class="itemNameInput"></input> Тип<select
 						id="profileItemTypeSelector">
 					</select> Позиция <select id="profileItemPositionSelector">
 					</select>
@@ -186,7 +186,17 @@
 					<button id="removeProfileItemButton">Удалить</button>
 					<br>
 		
-					<table id="profileConfigBlock"></table>
+					<table class="table table-bordered" style="width: auto;">
+					<thead>
+					  <tr>
+		          <th>№</th>
+		          <th>Название поля</th>
+		          <th>Тип</th>
+		          <th>Значения</th>
+		        </tr>
+					</thead>
+					<tbody id="profileConfigBlock"></tbody>
+					</table>
         </div>
       </div>
 
@@ -209,7 +219,10 @@
 					<td>
 			      <div class="panel panel-default">
 			        <div class="panel-body">
-								<table id="filterContent" class="table table-striped table-bordered"></table>
+								<table  class="table table-striped table-bordered">
+								<thead id="filterHead"></thead>
+								<tbody id="filterContent"></tbody>
+								</table>
 			        </div>
 			      </div>
 					</td>
@@ -220,45 +233,74 @@
 
 
 		<div id="storiesDiv">
-		  <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Управление историями</h3>
+			<div style="display: flex;justify-content:space-around;">
+			  <div class="panel panel-default">
+	        <div class="panel-heading">
+	          <h3 class="panel-title">Истории</h3>
+	        </div>
+	        <div class="panel-body">
+	          <select size=4 id="storySelector"></select>
+	        </div>
+	      </div>
+			  <div class="panel panel-default">
+	        <div class="panel-heading">
+	          <h3 class="panel-title">Управление историями</h3>
+	        </div>
+	        <div class="panel-body">
+						<input id="createStoryName"></input>
+						<button id="createStoryButton">Добавить</button>
+						<br> Переименовать из <select id="fromStory"></select> в <input
+							id="toStory"></input>
+						<button id="renameStoryButton">OK</button>
+						<br> <select id="storyRemoveSelector"></select>
+						<button id="removeStoryButton">Удалить</button>
+	        </div>
+	      </div>
+	    </div>
+
+      <div>
+        <div style="display:flex;">
+          <div style="width:50%;display:flex;margin-right:10px;">
+	          <div class="navigation-button" id="masterStoryNavButton">Мастерская история</div>
+          </div>
+          <div id="storiesNavigation"></div>
         </div>
-        <div class="panel-body">
-					<input id="createStoryName"></input>
-					<button id="createStoryButton">Добавить</button>
-					<br> Переименовать из <select id="fromStory"></select> в <input
-						id="toStory"></input>
-					<button id="renameStoryButton">OK</button>
-					<br> <select id="storyRemoveSelector"></select>
-					<button id="removeStoryButton">Удалить</button>
+        <div style="display:flex;">
+	        <div style="flex-grow:1;width:50%;margin-right:10px;" id="masterStoryDiv">
+	          <div class="panel panel-default">
+	            <div class="panel-body">
+	               <textarea id="masterStoryArea"></textarea>
+	            </div>
+	          </div>
+	        </div>
+	        <div id="storiesContent" style="flex-grow:1;width:50%;"></div>
         </div>
       </div>
 
 			<table>
+<!-- 				<tr> -->
+<!-- 					<th>Истории</th> -->
+<!-- 					<th>Мастерская история</th> -->
+<!-- 					<th ><div id="storiesNavigation"></div></th> -->
+<!-- 				</tr> -->
 				<tr>
-					<th>Истории</th>
-					<th>Мастерская история</th>
-					<th ><div id="storiesNavigation"></div></th>
-				</tr>
-				<tr>
-					<td>
-		      <div class="panel panel-default">
-		        <div class="panel-body">
-					    <select size=20 id="storySelector"></select>
-		        </div>
-		      </div>
+<!-- 					<td> -->
+<!-- 		      <div class="panel panel-default"> -->
+<!-- 		        <div class="panel-body"> -->
+<!-- 					    <select size=20 id="storySelector"></select> -->
+<!-- 		        </div> -->
+<!-- 		      </div> -->
 					
+<!-- 					</td> -->
+					<td>
+<!-- 		      <div class="panel panel-default"> -->
+<!-- 		        <div class="panel-body"> -->
+<!-- 					     <textarea id="masterStoryArea"></textarea> -->
+<!-- 		        </div> -->
+<!-- 		      </div> -->
 					</td>
 					<td>
-		      <div class="panel panel-default">
-		        <div class="panel-body">
-					     <textarea id="masterStoryArea"></textarea>
-		        </div>
-		      </div>
-					</td>
-					<td>
-				    <div id="storiesContent"></div>
+<!-- 				    <div id="storiesContent"></div> -->
 					</td>
 				</tr>
 			</table>
@@ -269,30 +311,42 @@
 
 		<div id="storyEventsDiv">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Управление событиями</h3>
-        </div>
+<!--         <div class="panel-heading"> -->
+<!--           <h3 class="panel-title">Управление событиями</h3> -->
+<!--         </div> -->
         <div class="panel-body">
-					Название<input id="eventNameInput"></input><br>
-					<textarea id="eventInput" class="eventText"></textarea>
-					<select id="positionSelector"></select>
-					<button id="createEventButton">Добавить</button>
-					<br> Поменять местами <select id="firstEvent"></select> и <select
-						id="secondEvent"></select>
-					<button id="swapEventsButton">OK</button>
-					<br> <select id="cloneEventSelector"></select>
-					<button id="cloneEventButton">Клонировать</button>
-					<br> <select id="mergeEventSelector"></select>
-					<button id="mergeEventButton">Объединить</button>
-					<br> <select id="removeEventSelector"></select>
-					<button id="removeEventButton">Удалить</button>
-					<br> <br> <br>
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
+	          <div style="flex-grow:1;margin-right:10px;">
+		          <h3 style="margin-top:8px;">Создание события</h3>
+							Название<input id="eventNameInput"></input><br>
+							Описание события<br>
+							<textarea id="eventInput" class="eventText"></textarea><br>
+							Позиция<select id="positionSelector"></select>
+							<button id="createEventButton">Добавить</button>
+	          </div>
+	          <div style="flex-grow:1;">
+							<h3 style="margin-top:8px;">Управление событиями</h3>
+							Поменять местами <select id="firstEvent"></select> и <br> <select
+								id="secondEvent"></select>
+							<button id="swapEventsButton">OK</button>
+							<br> <select id="cloneEventSelector"></select>
+							<button id="cloneEventButton">Клонировать</button>
+							<br> <select id="mergeEventSelector"></select>
+							<button id="mergeEventButton">Объединить со следующим</button>
+							<br> <select id="removeEventSelector"></select>
+							<button id="removeEventButton">Удалить</button>
+	          </div>
+          </div>
+					
         </div>
       </div>
 
       <div class="panel panel-default">
         <div class="panel-body">
-					<table id="eventBlock"></table>
+					<table class="table table-bordered">
+						<thead id="eventBlockHead"></thead>
+						<tbody id="eventBlock"></tbody>
+					</table>
         </div>
       </div>
 		</div>
@@ -302,6 +356,7 @@
 		<div id="storyCharactersDiv">
       <div class="panel panel-default">
         <div class="panel-body">
+          <h3>Управление персонажами</h3>
 					<select id="storyCharactersAddSelector"></select>
 					<button id="storyCharactersAddButton">Добавить</button>
 					<br> Заменить<select id="storyCharactersFromSelector"></select>
@@ -311,17 +366,34 @@
 					<button id="storyCharactersRemoveButton">Удалить</button>
 					<br> <br>
 		
-					<table id="storyCharactersTable"></table>
-					Контроль:<span id="inventoryCheck"></span>
-					<table id="story-characterActivityTable"></table>
+		      <div style="display:flex;flex-wrap: wrap; justify-content:space-around;">
+			      <div style="flex-grow:0;margin-right:10px;max-width: 450px;">
+				      <h3>Инвентарь</h3>
+							<table class="table table-bordered">
+								<thead id="storyCharactersTableHead"></thead>
+								<tbody id="storyCharactersTable"></tbody>
+							</table>
+							Контроль:<span id="inventoryCheck"></span>
+			      </div>
+			      <div style="flex-grow:1;max-width: 450px;">
+							<h3>Активность</h3>
+							<table class="table table-bordered table-striped">
+								<thead id="story-characterActivityTableHead"></thead>
+								<tbody id="story-characterActivityTable"></tbody>
+							</table>
+			      </div>
+		      </div>
         </div>
       </div>
 		</div>
 
 		<div id="eventPresenceDiv">
       <div class="panel panel-default">
-        <div class="panel-body">
-					<table id="eventPresenceTable" cellspacing=0 cellpadding=0></table>
+        <div class="panel-body" style="overflow-x:auto;">
+					<table  cellspacing=0 cellpadding=0 class="table table-bordered">
+						<thead id="eventPresenceTableHead"></thead>
+						<tbody id="eventPresenceTable"></tbody>
+					</table>
         </div>
       </div>
 		</div>
@@ -329,11 +401,17 @@
 
 
 		<div id="eventsDiv">
-			<input type="checkbox" id="finishedStoryCheckbox">Показывать
-			только незавершенные истории</input><br>
-			<table cellspacing=0 cellpadding=0>
-				<tr>
-					<td>
+		  <div class="panel panel-default">
+        <div class="panel-body">
+					<input type="checkbox" id="finishedStoryCheckbox">Показывать
+					только незавершенные истории</input>
+        </div>
+      </div>
+      <div style="display:flex;">
+        <div style="flex-grow:0;">
+<!-- 			<table cellspacing=0 cellpadding=0> -->
+<!-- 				<tr> -->
+<!-- 					<td> -->
 						<div id="personalStoriesCharacterContainer">
 				      <div class="panel panel-default">
 							  <div class="panel-heading">
@@ -352,24 +430,45 @@
 				        </div>
 				      </div>
 						</div>
-					</td>
-					<td>
-						<div class="panel panel-default">
+					</div>
+<!-- 					</td> -->
+<!-- 					<td> -->
+						<div class="panel panel-default" style="flex-grow:1;">
 			        <div class="panel-heading">
 			          <h3 class="panel-title">Адаптации</h3>
 			        </div>
 			        <div class="panel-body">
-								<table id="personalStories"></table>
+			           <div class="eventMainPanelRow" style="margin:0;">
+				           <div class="eventMainPanelRow-left">
+				             <h3>Оригинал</h3>
+				           </div>
+				           <div class="eventMainPanelRow-right">
+				             <h3>Адаптация</h3>
+				           </div>
+			           </div>
+			           <div id="personalStories">
+			           </div>
+<!-- 								<table class="table table-bordered"> -->
+<!-- 									<thead> -->
+<!-- 										<tr> -->
+<!-- 											<th>Оригинал</th> -->
+<!-- 											<th>Адаптация</th> -->
+<!-- 										</tr> -->
+<!-- 									</thead> -->
+<!-- 									<tbody id="personalStories"> -->
+<!-- 									</tbody> -->
+<!-- 								</table> -->
 			        </div>
 			      </div>
-					</td>
-				</tr>
-			</table>
+			</div>
+<!-- 					</td> -->
+<!-- 				</tr> -->
+<!-- 			</table> -->
 		</div>
 
 		<div id="briefingsDiv">
 			<div id="briefingsNavigation"></div>
-			<div id="briefingsContent" class="block"></div>
+			<div id="briefingsContent" ></div>
 		</div>
 
 		<div id="briefingPreviewDiv">
@@ -401,17 +500,36 @@
 		<div id="briefingExportDiv">
       <div class="panel panel-default">
         <div class="panel-body">
+        
+          <input type="checkbox" id="toSeparateFileCheckbox">Каждую вводную в отдельный файл</input> <br>
+          <h3>Простая выгрузка</h3>
+          <button>Сформировать вводные, события сгруппированны по времени (docx)</button><br>
+          <button>Сформировать вводные, события сгруппированны по историям (docx)</button><br>
+          <button>Сформировать список инвентаря (docx)</button><br>
+          <button id="makeBriefings">Сформировать вводные txt</button>
+          
+          <h3>Продвинутая выгрузка</h3>
 					<input type="radio" name="eventsGroupBy2" value="story"
 						id="eventGroupingByStoryRadio2">Группировать события по
 					историям</input> <br> <input type="radio" name="eventsGroupBy2"
 						value="time" id="eventGroupingByTimeRadio2">Сортировать
-					события по хронологии</input> <br> <input type="checkbox"
-						id="toSeparateFileCheckbox">Каждую в отдельный файл</input> <br>
-		
-		
-					Сформировать вводные docx<input type="file" id="docxBriefings"></input><br>
-					<button id="makeBriefings">Сформировать вводные txt</button>
-					<br>
+					события по хронологии</input> <br> 
+
+
+<!--   					<input type="file" id="docxBriefings"></input><br> -->
+<!--   					<button> -->
+							<div class="file-upload">
+							     <label>
+							          <input type="file" name="file" id="docxBriefings">
+							          <span>Загрузить шаблон и сформировать вводные</span>
+							     </label>
+							</div>
+<!--   					</button> -->
+<!-- 					Сформировать вводные docx -->
+<!-- 					<div> -->
+<!-- 					</div> -->
+					
+					
         </div>
       </div>
 		</div>

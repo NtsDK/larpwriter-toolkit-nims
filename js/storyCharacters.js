@@ -77,19 +77,23 @@ StoryCharacters.refresh = function () {
         fromSelector.appendChild(option);
     });
     
+    var tableHead = document.getElementById("story-characterActivityTableHead");
     var table = document.getElementById("story-characterActivityTable");
+    Utils.removeChildren(tableHead);
     Utils.removeChildren(table);
 
-    StoryCharacters.appendCharacterHeader(table, "th", StoryCharacters.characterActivityHeader);
+    StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.characterActivityHeader);
     
     removeArray.forEach(function (removeValue) {
         StoryCharacters.appendCharacterActivity(table, localCharacters[removeValue]);
     });
 
+    tableHead = document.getElementById("storyCharactersTableHead");
     table = document.getElementById("storyCharactersTable");
+    Utils.removeChildren(tableHead);
     Utils.removeChildren(table);
 
-    StoryCharacters.appendCharacterHeader(table, "th", StoryCharacters.inventoryHeader);
+    StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.inventoryHeader);
 
     removeArray.forEach(function (removeValue) {
         StoryCharacters.appendCharacterInput(table, localCharacters[removeValue]);

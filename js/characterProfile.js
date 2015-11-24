@@ -29,9 +29,14 @@ CharacterProfile.refresh = function () {
     var profileContentDiv = document.getElementById("profileContentDiv");
     Utils.removeChildren(profileContentDiv);
     profileContentDiv.inputItems = {};
+    var table = document.createElement("table");
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    addClass(table, "table");
+    profileContentDiv.appendChild(table);
 
     Database.ProfileSettings.forEach(function (profileSettings) {
-        CharacterProfile.appendInput(profileContentDiv, profileSettings);
+        CharacterProfile.appendInput(tbody, profileContentDiv.inputItems, profileSettings);
     });
     
 
@@ -51,10 +56,15 @@ CharacterProfile.refresh = function () {
     }
 };
 
-CharacterProfile.appendInput = function (root, profileItemConfig) {
+CharacterProfile.appendInput = function (root, inputItems, profileItemConfig) {
     "use strict";
-    root.appendChild(document.createTextNode(profileItemConfig.name));
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.appendChild(document.createTextNode(profileItemConfig.name));
+    tr.appendChild(td);
 
+    td = document.createElement("td");
+    
     var textarea, input, selector, values;
 
     switch (profileItemConfig.type) {
@@ -62,9 +72,9 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         textarea = document.createElement("textarea");
         textarea.className = "profileTextInput";
         textarea.selfName = profileItemConfig.name;
-        root.appendChild(document.createElement("br"));
-        root.appendChild(textarea);
-        root.inputItems[profileItemConfig.name] = textarea;
+//        root.appendChild(document.createElement("br"));
+        td.appendChild(textarea);
+        inputItems[profileItemConfig.name] = textarea;
 
         textarea.addEventListener("change", function (event) {
             var profileContentDiv = document.getElementById("profileContentDiv");
@@ -76,8 +86,8 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         input = document.createElement("input");
         input.className = "profileStringInput";
         input.selfName = profileItemConfig.name;
-        root.appendChild(input);
-        root.inputItems[profileItemConfig.name] = input;
+        td.appendChild(input);
+        inputItems[profileItemConfig.name] = input;
 
         input.addEventListener("change", function (event) {
             var profileContentDiv = document.getElementById("profileContentDiv");
@@ -96,8 +106,8 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
             option.appendChild(document.createTextNode(value));
             selector.appendChild(option);
         });
-        root.appendChild(selector);
-        root.inputItems[profileItemConfig.name] = selector;
+        td.appendChild(selector);
+        inputItems[profileItemConfig.name] = selector;
 
         selector.addEventListener("change", function (event) {
             var profileContentDiv = document.getElementById("profileContentDiv");
@@ -109,8 +119,8 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         input = document.createElement("input");
         input.selfName = profileItemConfig.name;
         input.type = "number";
-        root.appendChild(input);
-        root.inputItems[profileItemConfig.name] = input;
+        td.appendChild(input);
+        inputItems[profileItemConfig.name] = input;
 
         input.addEventListener("change", function (event) {
             var profileContentDiv = document.getElementById("profileContentDiv");
@@ -127,8 +137,8 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         input = document.createElement("input");
         input.selfName = profileItemConfig.name;
         input.type = "checkbox";
-        root.appendChild(input);
-        root.inputItems[profileItemConfig.name] = input;
+        td.appendChild(input);
+        inputItems[profileItemConfig.name] = input;
 
         input.addEventListener("change", function (event) {
             var profileContentDiv = document.getElementById("profileContentDiv");
@@ -138,7 +148,8 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         break;
     }
 
-    root.appendChild(document.createElement("br"));
+    tr.appendChild(td);
+    root.appendChild(tr);
 };
 
 CharacterProfile.showProfileInfoDelegate = function (event) {

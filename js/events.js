@@ -22,6 +22,10 @@ Events.init = function () {
 
     selector = document.getElementById("finishedStoryCheckbox");
     selector.addEventListener("change", Events.refresh);
+    
+    var button = document.getElementById("masterStoryNavButton");
+    button.addEventListener("click", Events.onMasterStoryNavButtonClick);
+    addClass(button, "active");
 
     Events.content = document.getElementById("eventsDiv");
 };
@@ -65,6 +69,12 @@ Events.refresh = function () {
             selector.appendChild(option);
         });
     }
+};
+
+Events.onMasterStoryNavButtonClick = function (event) {
+    "use strict";
+    toggleClass(event.target, "active");
+    toggleClass(document.getElementById("masterStoryDiv"), "hidden");
 };
 
 Events.updateCharacterSelectorDelegate = function (event) {
@@ -158,14 +168,14 @@ Events.showPersonalStories = function (storyName, characterNames) {
     var table = document.getElementById("personalStories");
     Utils.removeChildren(table);
 
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
+    var tr;
+//    table.appendChild(tr);
     
-    Events.headers.forEach(function (header) {
-        var th = document.createElement("th");
-        th.appendChild(document.createTextNode(header));
-        tr.appendChild(th);
-    });
+//    Events.headers.forEach(function (header) {
+//        var th = document.createElement("th");
+//        th.appendChild(document.createTextNode(header));
+//        tr.appendChild(th);
+//    });
     var td, span, input, i, div, divContainer;
     Database.Stories[storyName].events.filter(function (event) {
         for (i = 0; i < characterNames.length; i++) {
@@ -175,12 +185,17 @@ Events.showPersonalStories = function (storyName, characterNames) {
         }
         return false;
     }).forEach(function (event) {
-        tr = document.createElement("tr");
+        tr = document.createElement("div");
+        addClass(tr, "eventMainPanelRow");
+//        tr = document.createElement("tr");
         table.appendChild(tr);
 
-        td = document.createElement("td");
+        td = document.createElement("div");
+        addClass(td, "eventMainPanelRow-left");
+//        td = document.createElement("td");
         span = document.createElement("div");
-        span.appendChild(document.createTextNode(storyName + ":" + event.name));
+//        span.appendChild(document.createTextNode(storyName + ":" + event.name));
+        span.appendChild(document.createTextNode(event.name));
         td.appendChild(span);
 
         input = document.createElement("textarea");
@@ -192,7 +207,9 @@ Events.showPersonalStories = function (storyName, characterNames) {
         td.appendChild(input);
         tr.appendChild(td);
 
-        td = document.createElement("td");
+        td = document.createElement("div");
+        addClass(td, "eventMainPanelRow-right");
+//        td = document.createElement("td");
         
         divContainer = document.createElement("div");
         divContainer.className = "events-eventsContainer";

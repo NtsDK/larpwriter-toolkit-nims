@@ -39,6 +39,15 @@ CharacterFilter.refresh = function () {
         CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
     });
 
+    var filterHead = document.getElementById("filterHead");
+    Utils.removeChildren(filterHead);
+    
+    var profileSettings = Database.ProfileSettings.filter(function (value) {
+        return true;
+    });
+
+    CharacterFilter.appendContentHeader(filterHead, profileSettings);
+
     CharacterFilter.rebuildContent();
 
 };
@@ -55,19 +64,19 @@ CharacterFilter.rebuildContent = function () {
         return true;
     });
 
-    CharacterFilter.appendContentHeader(filterContent, profileSettings);
+//    CharacterFilter.appendContentHeader(filterContent, profileSettings);
 
     profileSettings.unshift({
         name : "name",
         type : "text"
     });
 
-    var tbody = document.createElement("tbody");
+//    var tbody = document.createElement("tbody");
     Object.keys(Database.Characters).filter(CharacterFilter.acceptDataRow).
         sort(CharacterFilter.sortDataRows).forEach(function (name) {
-            CharacterFilter.appendDataString(tbody, Database.Characters[name], profileSettings);
+            CharacterFilter.appendDataString(filterContent, Database.Characters[name], profileSettings);
     });
-    filterContent.appendChild(tbody);
+//    filterContent.appendChild(tbody);
 };
 
 CharacterFilter.acceptDataRow = function (element) {
@@ -208,13 +217,14 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
     table.appendChild(tr);
 };
 
-CharacterFilter.appendContentHeader = function (table, profileSettings) {
+CharacterFilter.appendContentHeader = function (thead, profileSettings) {
     "use strict";
-    var thead = document.createElement("thead");
+//    var thead = document.createElement("thead");
     var tr = document.createElement("tr");
 
     var td = document.createElement("th");
     td.appendChild(document.createTextNode("Персонаж"));
+    td.appendChild(document.createElement("span"));
     td.info = "name";
     td.addEventListener("click", CharacterFilter.onSortChange);
     tr.appendChild(td);
@@ -222,22 +232,49 @@ CharacterFilter.appendContentHeader = function (table, profileSettings) {
     profileSettings.forEach(function (element) {
         td = document.createElement("th");
         td.appendChild(document.createTextNode(element.name));
+        td.appendChild(document.createElement("span"));
         td.info = element.name;
         td.addEventListener("click", CharacterFilter.onSortChange);
         tr.appendChild(td);
     });
 
     thead.appendChild(tr);
-    table.appendChild(thead);
+//    table.appendChild(thead);
 };
 
 CharacterFilter.onSortChange = function (event) {
     "use strict";
-    if (CharacterFilter.sortKey === event.target.info) {
+    var target = event.target;
+    if(target.tagName.toLowerCase() === "span"){
+        target = target.parentElement;
+    }
+    
+    
+    if (CharacterFilter.sortKey === target.info) {
         CharacterFilter.sortDir = CharacterFilter.sortDir === "asc" ? "desc" : "asc";
+        if(CharacterFilter.sortDir === "desc"){
+            addClass(target, "sortDesc");
+            removeClass(target, "sortAsc");
+        } else {
+            addClass(target, "sortAsc");
+            removeClass(target, "sortDesc");
+        }
     } else {
-        CharacterFilter.sortKey = event.target.info;
+        var filterHead = document.getElementById("filterHead");
+        var elems = filterHead.getElementsByClassName("sortAsc");
+        var i;
+        for (i = 0; i < elems.length; i++) {
+            removeClass(elems[i], "sortAsc");
+        }
+        elems = filterHead.getElementsByClassName("sortDesc");
+        for (i = 0; i < elems.length; i++) {
+            removeClass(elems[i], "sortDesc");
+        }
+        
+        CharacterFilter.sortKey = target.info;
         CharacterFilter.sortDir = "asc";
+        addClass(target, "sortAsc");
+        
     }
     CharacterFilter.rebuildContent();
 };

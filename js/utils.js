@@ -169,10 +169,38 @@ Utils.clone = function (o) {
     return c;
 };
 
+//Utils.makeTextAreaAutoResizable = function(textarea){
+////    textarea.autoresize="true";
+//    addClass(textarea, "autoresizable");
+////    textarea.setAttribute('autoresize', 'autoresize');
+//    textarea.addEventListener('input', textAreaAutoresize, false);
+//    textAreaAutoresize.call(textarea);
+//};
+//
+//function textAreaAutoresize() {
+//    this.style.height = 'auto';
+//    this.style.height = this.scrollHeight+'px';
+//    this.scrollTop = this.scrollHeight;
+////    window.scrollTo(window.scrollLeft,(this.scrollTop+this.scrollHeight));
+//  }
+
 function addClass(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
-    if (re.test(o.className)) return
+    if (re.test(o.className)) return;
     o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "")
+};
+
+function toggleClass(o, c){
+    if(hasClass(o, c)){
+        removeClass(o, c);
+    } else {
+        addClass(o, c);
+    }
+};
+
+function hasClass(o, c){
+    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+    return (re.test(o.className));
 };
  
 function removeClass(o, c){

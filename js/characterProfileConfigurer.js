@@ -25,7 +25,7 @@ CharacterProfileConfigurer.mapping = {
         value : ""
     },
     enum : {
-        displayName : "Перечисление",
+        displayName : "Единственный выбор",
         value : "_"
     },
     number : {
@@ -63,7 +63,7 @@ CharacterProfileConfigurer.refresh = function () {
 
     Database.ProfileSettings.forEach(function (elem, i) {
         var option = document.createElement("option");
-        option.appendChild(document.createTextNode("Перед " + (i + 1)));
+        option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
         positionSelector.appendChild(option);
     });
 
@@ -76,7 +76,7 @@ CharacterProfileConfigurer.refresh = function () {
     var table = document.getElementById("profileConfigBlock");
     Utils.removeChildren(table);
 
-    CharacterProfileConfigurer.appendHeader(table);
+//    CharacterProfileConfigurer.appendHeader(table);
 
     Database.ProfileSettings.forEach(function (profileSettings, i) {
         CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
@@ -90,9 +90,10 @@ CharacterProfileConfigurer.refresh = function () {
 
     selectorArr.forEach(function (selector) {
         Utils.removeChildren(selector);
-        Database.ProfileSettings.forEach(function (profileSettings, i) {
+        Database.ProfileSettings.forEach(function (elem, i) {
             option = document.createElement("option");
-            option.appendChild(document.createTextNode(i + 1));
+            option.appendChild(document.createTextNode(elem.name));
+//            option.appendChild(document.createTextNode(i + 1));
             selector.appendChild(option);
         });
     });
@@ -211,9 +212,11 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     tr.appendChild(td);
 
     td = document.createElement("td");
-    var input = document.createElement("input");
+    var input; 
+    input = document.createElement("input");
     input.value = profileSettings.name;
     input.info = profileSettings;
+    addClass(input,"itemNameInput");
     input.addEventListener("change",
             CharacterProfileConfigurer.renameProfileItem);
     td.appendChild(input);
@@ -230,8 +233,13 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     tr.appendChild(td);
 
     td = document.createElement("td");
-    input = document.createElement("input");
+    if(profileSettings.type == "text" || profileSettings.type == "enum"){
+        input = document.createElement("textarea");
+    } else {
+        input = document.createElement("input");
+    }
     input.info = profileSettings;
+    addClass(input, "profile-configurer-" + profileSettings.type);
 
     switch (profileSettings.type) {
     case "text":
@@ -270,12 +278,16 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         break;
     case "enum":
         if (event.target.value === "") {
-            Utils.alert("Значение перечислимого поля не может быть пустым");
+            Utils.alert("Значение поля с единственным выбором не может быть пустым");
             event.target.value = event.target.info.value;
             return;
         }
         oldOptions = event.target.info.value.split(",");
         newOptions = event.target.value.split(",");
+        
+        newOptions = newOptions.map(function(elem){
+            return elem.trim();
+        });
 
         newOptionsMap = [{}].concat(newOptions).reduce(function (a, b) {
             a[b] = true;
@@ -287,7 +299,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         });
 
         if (missedValues.length !== 0) {
-            if (Utils.confirm("Новое значение перечисления удаляет предыдущие значения: "
+            if (Utils.confirm("Новое значение единственного выбора удаляет предыдущие значения: "
                             + missedValues.join(",")
                             + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
                 event.target.info.value = event.target.value;
@@ -307,7 +319,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
             }
         }
 
-        event.target.info.value = event.target.value;
+        event.target.info.value = event.target.value = newOptions.join(",");
         break;
     case "number":
         if (isNaN(event.target.value)) {

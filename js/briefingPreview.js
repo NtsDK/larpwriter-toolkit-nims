@@ -68,13 +68,18 @@ BriefingPreview.buildContent = function (characterName) {
     content.appendChild(document.createElement("br"));
 
     var character = Database.Characters[characterName];
+    
+    var span;
 
     Database.ProfileSettings.forEach(function (element) {
         content.appendChild(document.createTextNode(element.name + ": "));
         switch (element.type) {
         case "text":
             content.appendChild(document.createElement("br"));
-            content.appendChild(document.createTextNode(character[element.name]));
+            span = document.createElement("span");
+            addClass(span, "briefingTextSpan");
+            span.appendChild(document.createTextNode(character[element.name]));
+            content.appendChild(span);
             content.appendChild(document.createElement("br"));
             break;
         case "enum":
@@ -156,7 +161,7 @@ BriefingPreview.showEventsByTime = function (content, characterName) {
         content.appendChild(document.createElement("br"));
         
         input = document.createElement("textarea");
-        input.className = "eventPersonalStory";
+        input.className = "briefingPersonalStory";
         
         if (event.characters[characterName].text === "") {
             input.value = event.text;
@@ -198,7 +203,7 @@ BriefingPreview.showEventsByStory = function (content, characterName) {
             content.appendChild(document.createElement("br"));
             
             var input = document.createElement("textarea");
-            input.className = "eventPersonalStory";
+            input.className = "briefingPersonalStory";
             
             if (event.characters[characterName].text === "") {
                 input.value = event.text;

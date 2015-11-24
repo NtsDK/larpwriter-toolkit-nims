@@ -13,6 +13,8 @@ EventPresence.init = function () {
 
 EventPresence.refresh = function () {
     "use strict";
+    var tableHead = document.getElementById("eventPresenceTableHead");
+    Utils.removeChildren(tableHead);
     var table = document.getElementById("eventPresenceTable");
     Utils.removeChildren(table);
     
@@ -20,7 +22,7 @@ EventPresence.refresh = function () {
         return;
     }
 
-    EventPresence.appendTableHeader(table);
+    EventPresence.appendTableHeader(tableHead);
 
     var characterArray = DBMS.getStoryCharacterNamesArray();
 
