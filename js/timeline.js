@@ -40,6 +40,7 @@ Timeline.init = function () {
     var timeline = new vis.Timeline(container, null, options);
     timeline.setGroups(Timeline.TagDataset);
     timeline.setItems(Timeline.TimelineDataset);
+    Timeline.timelineComponent = timeline;
 
     Timeline.content = document.getElementById("timelineDiv");
 };
@@ -60,6 +61,17 @@ Timeline.refresh = function () {
         Timeline.onStorySelectorChange([ name ]);
         break;
     }
+    
+    var timeExtra = 24*60*60*30*12*1000;
+    var endDate = new Date(Database.Meta.date);
+    var startDate = new Date(Database.Meta.preGameDate);
+    endDate.setFullYear(endDate.getFullYear() + 1);
+    startDate.setFullYear(startDate.getFullYear() - 1)
+    
+    Timeline.timelineComponent.setOptions({
+        end : endDate,
+        start : startDate,
+    });
 };
 
 Timeline.onStorySelectorChangeDelegate = function (event) {

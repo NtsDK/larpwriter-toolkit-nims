@@ -4,28 +4,19 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SMTK story master toolkit</title>
+<title>НИМС набор инструментов мастера сюжетника</title>
 
 <link rel="stylesheet" href="style/bootstrap.min.css" >
 <link rel="stylesheet" type="text/css" href="style/style.css"
 	media="screen" />
-<!-- <script src="libs/vis.js"></script> -->
-<!-- <script src="libs/viz.js"></script> -->
 <!-- <script src="libs/dateFormat.js"></script> -->
-<!-- <link href="libs/vis.css" rel="stylesheet" type="text/css" /> -->
 
 <link rel="stylesheet" type="text/css" href="libs/vis.css"/ >
 <script src="libs/vis.js"></script>
 
-
 <link rel="stylesheet" type="text/css" href="libs/jquery.datetimepicker.css"/ >
 <script src="libs/jquery-2.1.4.js"></script>
 <script src="libs/jquery.datetimepicker.js"></script>
-
-
-<!-- <link rel="stylesheet" href="libs/docxtemplater.css"> -->
-<!-- <script type="text/javascript" src="libs/docxtemplater.js"></script> -->
-<!-- <script src="libs/angular-expressions.js"></script> -->
 
 <script src="libs/FileSaver.js"></script>
 <script src="libs/jszip-utils.js"></script>
@@ -40,11 +31,8 @@
 
 	<script src="js/utils.js"></script>
 	<script src="js/fileUtils.js"></script>
-	<!-- 	<script src="js/data.js"></script> -->
-	<script src="js/data2.js"></script>
-	<!-- 	<script src="js/data3.js"></script> -->
+	<script src="js/data.js"></script>
 	<script src="js/DBMS.js"></script>
-	<!-- 	<script src="js/core.js"></script> -->
 
 	<script src="js/pageManager.js"></script>
 	<script src="js/migrator.js"></script>
@@ -72,17 +60,6 @@
 
 	<script src="js/WorldCup2014.js"></script>
 
-
-	<!--   <script src="js/gameCommon.js"></script> -->
-
-	<!--   <script src="js/trialEditor.js"></script> -->
-	<!--   <script src="js/editor.js"></script> -->
-	<!--   <script src="js/gameTest.js"></script> -->
-	<!--   <script src="js/gameBody.js"></script> -->
-
-	<!--   <script src="js/ui.js"></script> -->
-
-	<!-- 	<div class="block" id="navigation"> -->
 	<div id="navigation">
 	
 	</div>
@@ -239,7 +216,7 @@
 	          <h3 class="panel-title">Истории</h3>
 	        </div>
 	        <div class="panel-body">
-	          <select size=4 id="storySelector"></select>
+	          <select id="storySelector"></select>
 	        </div>
 	      </div>
 			  <div class="panel panel-default">
@@ -277,33 +254,6 @@
         </div>
       </div>
 
-			<table>
-<!-- 				<tr> -->
-<!-- 					<th>Истории</th> -->
-<!-- 					<th>Мастерская история</th> -->
-<!-- 					<th ><div id="storiesNavigation"></div></th> -->
-<!-- 				</tr> -->
-				<tr>
-<!-- 					<td> -->
-<!-- 		      <div class="panel panel-default"> -->
-<!-- 		        <div class="panel-body"> -->
-<!-- 					    <select size=20 id="storySelector"></select> -->
-<!-- 		        </div> -->
-<!-- 		      </div> -->
-					
-<!-- 					</td> -->
-					<td>
-<!-- 		      <div class="panel panel-default"> -->
-<!-- 		        <div class="panel-body"> -->
-<!-- 					     <textarea id="masterStoryArea"></textarea> -->
-<!-- 		        </div> -->
-<!-- 		      </div> -->
-					</td>
-					<td>
-<!-- 				    <div id="storiesContent"></div> -->
-					</td>
-				</tr>
-			</table>
 		</div>
 
 
@@ -409,9 +359,6 @@
       </div>
       <div style="display:flex;">
         <div style="flex-grow:0;">
-<!-- 			<table cellspacing=0 cellpadding=0> -->
-<!-- 				<tr> -->
-<!-- 					<td> -->
 						<div id="personalStoriesCharacterContainer">
 				      <div class="panel panel-default">
 							  <div class="panel-heading">
@@ -431,8 +378,6 @@
 				      </div>
 						</div>
 					</div>
-<!-- 					</td> -->
-<!-- 					<td> -->
 						<div class="panel panel-default" style="flex-grow:1;">
 			        <div class="panel-heading">
 			          <h3 class="panel-title">Адаптации</h3>
@@ -448,22 +393,9 @@
 			           </div>
 			           <div id="personalStories">
 			           </div>
-<!-- 								<table class="table table-bordered"> -->
-<!-- 									<thead> -->
-<!-- 										<tr> -->
-<!-- 											<th>Оригинал</th> -->
-<!-- 											<th>Адаптация</th> -->
-<!-- 										</tr> -->
-<!-- 									</thead> -->
-<!-- 									<tbody id="personalStories"> -->
-<!-- 									</tbody> -->
-<!-- 								</table> -->
 			        </div>
 			      </div>
 			</div>
-<!-- 					</td> -->
-<!-- 				</tr> -->
-<!-- 			</table> -->
 		</div>
 
 		<div id="briefingsDiv">
@@ -515,21 +447,12 @@
 						value="time" id="eventGroupingByTimeRadio2">Сортировать
 					события по хронологии</input> <br> 
 
-
-<!--   					<input type="file" id="docxBriefings"></input><br> -->
-<!--   					<button> -->
 							<div class="file-upload">
 							     <label>
 							          <input type="file" name="file" id="docxBriefings">
 							          <span>Загрузить шаблон и сформировать вводные</span>
 							     </label>
 							</div>
-<!--   					</button> -->
-<!-- 					Сформировать вводные docx -->
-<!-- 					<div> -->
-<!-- 					</div> -->
-					
-					
         </div>
       </div>
 		</div>
@@ -549,7 +472,7 @@
 		        </div>
 		      </div>
 				</div>
-				<div class="visualObjectContainer" id="timelineContainer"></div>
+				<div class="visualObjectContainer full-screen-elem" id="timelineContainer"></div>
 			</div>
 
 		</div>
@@ -557,26 +480,28 @@
 
 
 		<div id="socialNetworkDiv">
-
+      <div id="socialNetworkWarning" class="alert alert-warning"></div>
 			<div class="flexRoot">
+			
+<!-- 			  <div style="flex-basis:150px;flex-grow:0; display:flex;flex-direction:column;flex-wrap:wrap;height:500px"> -->
 				<div class="storySelectorContainer" id="commonSettingsContainer">
 		      <div class="panel panel-default">
 		        <div class="panel-heading">
 		          <h3 class="panel-title">Общие настройки</h3>
 		        </div>
 		        <div class="panel-body">
-							Раскраска узлов <select
+							<h4>Раскраска узлов</h4> <select
 								id="networkNodeGroupSelector"></select> Легенда
 							<div id="colorLegend"></div>
 		
-							Выборка <select size=3 id="networkSubsetsSelector"></select>
+							<h4>Выборка</h4> <select size=3 id="networkSubsetsSelector"></select>
 							<div id="networkCharacterDiv" class="hidden">
-								Персонажи<br /> <select size=20 id="networkCharacterSelector"
+								<h4>Персонажи</h4> <select size=20 id="networkCharacterSelector"
 									multiple></select>
 							</div>
 		
 							<div id="networkStoryDiv" class="hidden">
-								Истории<br /> <select size=20 id="networkStorySelector" multiple></select>
+								<h4>Истории</h4> <select size=20 id="networkStorySelector" multiple></select>
 							</div>
 		        </div>
 		      </div>
@@ -588,11 +513,11 @@
 		          <h3 class="panel-title">Частные настройки</h3>
 		        </div>
 		        <div class="panel-body">
-							Социальная сеть <select size=4
+							<h4>Социальная сеть</h4> <select size=4
 								id="networkSelector"></select>
 		
 							<div id="activityBlock" class="hidden">
-								Активность <select size=4 id="activitySelector" multiple></select>
+								<h4>Активность</h4> <select size=4 id="activitySelector" multiple></select>
 							</div>
 		
 							<button id="drawNetworkButton">Нарисовать</button>
@@ -600,13 +525,18 @@
 		        </div>
 		      </div>
 				</div>
+<!-- 			  </div> -->
 
 				<div class="storySelectorContainer2 hidden"
 					id="showSettingsButtonContainer">
 					<button id="showNetworkSettingsButton">+</button>
 				</div>
 
-				<div class="visualObjectContainer" id="socialNetworkContainer"></div>
+				<div class="visualObjectContainer full-screen-elem" id="socialNetworkContainer"></div>
+<!-- 				<div class="visualObjectContainer" style="display:flex;flex-direction:column;"> -->
+<!--           <div id="socialNetworkContainer" style="flex-base:100px;flex-grow:1;"> -->
+<!-- 				</div> -->
+        </div>
 			</div>
 		</div>
 

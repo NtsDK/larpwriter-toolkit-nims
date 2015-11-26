@@ -204,6 +204,16 @@ SocialNetwork.init = function () {
     document.getElementById("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.hidePanel);
     document.getElementById("showNetworkSettingsButton").addEventListener("click", SocialNetwork.showPanel);
     
+    
+    var warning = document.getElementById("socialNetworkWarning");
+    warning.appendChild(document.createTextNode("Внимание! Отрисовка социальной сети требует большого количества ресурсов. Рекомендуем сохранить данные перед отрисовкой."));
+    button = document.createElement("button");
+    button.appendChild(document.createTextNode("Убрать предупреждение"));
+    warning.appendChild(button);
+    button.addEventListener("click", function(){
+        addClass(warning,"hidden");
+    });
+    
 
     SocialNetwork.content = document.getElementById("socialNetworkDiv");
 };

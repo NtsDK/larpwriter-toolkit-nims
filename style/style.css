@@ -1,3 +1,35 @@
+.full-screen{
+	position: absolute;
+	top:0;
+	left:0;
+	width: 100vw !important;
+  height: 100vh !important;
+}
+
+.fullScreenButton{
+	position: relative;
+	top:20px;
+  left:20px;
+}
+
+input:hover,
+textarea:hover,
+button:hover,
+.navigation-button:hover,
+.action-button:hover,
+select:hover
+ {
+/* 	background-color: red !important; */
+/* 	border: 3px solid green !important; */
+/* 	color: white !important; */
+/* 	font-size:20px !important; */
+/* 	font-weight: bold !important; */
+}
+
+.panel, .panel-body {
+/*   background-color: greenyellow !important; */
+}
+
 #navigation{
 	display: flex;
 	flex-wrap: wrap;
@@ -124,9 +156,6 @@
 #createStoryName{
   width: 240px;
 }
-/* story events **/
-
-/** story events */
 
 .story-events-div-main{
 	display:flex;
@@ -143,6 +172,10 @@
 }
 .story-events-div-right{
 	flex-grow:0;
+}
+
+#eventNameInput{
+	width:350px;
 }
 /* story events **/
 

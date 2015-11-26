@@ -164,17 +164,19 @@ BriefingExport.getBriefingData = function (groupingByStory) {
     var charArray = [];
 
     for ( var charName in Database.Characters) {
-        var inventory = "";
+        var inventory = [];
         for ( var storyName in Database.Stories) {
             var story = Database.Stories[storyName];
             if (story.characters[charName]
                     && story.characters[charName].inventory
                     && story.characters[charName].inventory !== "") {
-                inventory += story.characters[charName].inventory + ", ";
+                inventory = inventory.concat(story.characters[charName].inventory);
             }
         }
+        inventory = inventory.join(", ");
 
-        var profileInfo = BriefingExport.getProfileInfo(charName);
+        var profileInfo = BriefingExport.getProfileInfoObject(charName);
+        var profileInfoArray = BriefingExport.getProfileInfoArray(charName);
 
         if (groupingByStory) {
             var storiesInfo = BriefingExport.getStoriesInfo(charName);
@@ -185,7 +187,8 @@ BriefingExport.getBriefingData = function (groupingByStory) {
             "name" : charName,
             "inventory" : inventory,
             "storiesInfo" : storiesInfo,
-            "eventsInfo" : eventsInfo
+            "eventsInfo" : eventsInfo,
+            "profileInfoArray" : profileInfoArray
         };
 
         for ( var element in profileInfo) {
@@ -199,7 +202,7 @@ BriefingExport.getBriefingData = function (groupingByStory) {
     return data;
 };
 
-BriefingExport.getProfileInfo = function (charName) {
+BriefingExport.getProfileInfoObject = function (charName) {
     "use strict";
     var character = Database.Characters[charName];
     var profileInfo = {};
@@ -218,6 +221,32 @@ BriefingExport.getProfileInfo = function (charName) {
         }
     });
     return profileInfo;
+};
+
+BriefingExport.getProfileInfoArray = function (charName) {
+    "use strict";
+    var character = Database.Characters[charName];
+    var profileInfoArray = [];
+    
+    var value;
+    Database.ProfileSettings.forEach(function (element) {
+        switch (element.type) {
+        case "text":
+        case "string":
+        case "enum":
+        case "number":
+            value = character[element.name];
+            break;
+        case "checkbox":
+            value = character[element.name] ? "Да" : "Нет";
+            break;
+        }
+        profileInfoArray.push({
+            name: element.name,
+            value: value
+        });
+    });
+    return profileInfoArray;
 };
 
 BriefingExport.getEventsInfo = function (charName) {
