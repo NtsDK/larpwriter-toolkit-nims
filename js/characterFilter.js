@@ -56,27 +56,19 @@ CharacterFilter.rebuildContent = function () {
     "use strict";
     var filterContent = document.getElementById("filterContent");
     Utils.removeChildren(filterContent);
-    //
-    // var profileSettings = Database.ProfileSettings.filter(function(value) {
-    // return value.type !== "text";
-    // });
     var profileSettings = Database.ProfileSettings.filter(function (value) {
         return true;
     });
-
-//    CharacterFilter.appendContentHeader(filterContent, profileSettings);
 
     profileSettings.unshift({
         name : "name",
         type : "text"
     });
 
-//    var tbody = document.createElement("tbody");
     Object.keys(Database.Characters).filter(CharacterFilter.acceptDataRow).
         sort(CharacterFilter.sortDataRows).forEach(function (name) {
             CharacterFilter.appendDataString(filterContent, Database.Characters[name], profileSettings);
     });
-//    filterContent.appendChild(tbody);
 };
 
 CharacterFilter.acceptDataRow = function (element) {
@@ -198,8 +190,6 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
 
     var inputItems = document.getElementById("filterSettingsDiv").inputItems;
 
-    // result = element[inputItem.selfInfo.name].match(regex);
-
     profileSettings.forEach(function (profileItemInfo) {
         var td = document.createElement("td");
         if (profileItemInfo.type === "checkbox") {
@@ -219,7 +209,6 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
 
 CharacterFilter.appendContentHeader = function (thead, profileSettings) {
     "use strict";
-//    var thead = document.createElement("thead");
     var tr = document.createElement("tr");
 
     var td = document.createElement("th");
@@ -239,7 +228,6 @@ CharacterFilter.appendContentHeader = function (thead, profileSettings) {
     });
 
     thead.appendChild(tr);
-//    table.appendChild(thead);
 };
 
 CharacterFilter.onSortChange = function (event) {
@@ -248,7 +236,6 @@ CharacterFilter.onSortChange = function (event) {
     if(target.tagName.toLowerCase() === "span"){
         target = target.parentElement;
     }
-    
     
     if (CharacterFilter.sortKey === target.info) {
         CharacterFilter.sortDir = CharacterFilter.sortDir === "asc" ? "desc" : "asc";

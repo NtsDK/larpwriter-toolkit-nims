@@ -76,8 +76,6 @@ CharacterProfileConfigurer.refresh = function () {
     var table = document.getElementById("profileConfigBlock");
     Utils.removeChildren(table);
 
-//    CharacterProfileConfigurer.appendHeader(table);
-
     Database.ProfileSettings.forEach(function (profileSettings, i) {
         CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
     });
@@ -93,7 +91,6 @@ CharacterProfileConfigurer.refresh = function () {
         Database.ProfileSettings.forEach(function (elem, i) {
             option = document.createElement("option");
             option.appendChild(document.createTextNode(elem.name));
-//            option.appendChild(document.createTextNode(i + 1));
             selector.appendChild(option);
         });
     });

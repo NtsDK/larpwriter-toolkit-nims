@@ -36,7 +36,6 @@ Timeline.init = function () {
     };
 
     // Create a Timeline
-    // var timeline = new vis.Timeline(container, items, options);
     var timeline = new vis.Timeline(container, null, options);
     timeline.setGroups(Timeline.TagDataset);
     timeline.setItems(Timeline.TimelineDataset);

@@ -20,58 +20,6 @@ SocialNetwork.activityColors = {
 
 SocialNetwork.generatedColors = [];
 
-// used http://tools.medialab.sciences-po.fr/iwanthue/
-//SocialNetwork.generatedColors = ["#47CA9D",
-//                                 "#F7ABE7",
-//                                 "#D1CE4A",
-//                                 "#62D8FD",
-//                                 "#E1A07B",
-//                                 "#DADDEC",
-//                                 "#8CCB64",
-//                                 "#F5DE8F",
-//                                 "#FFB3C2",
-//                                 "#9FC3F7",
-//                                 "#C1A5C3",
-//                                 "#37DAE2",
-//                                 "#BBE65C",
-//                                 "#98B6BD",
-//                                 "#BDA7E4",
-//                                 "#E4A197",
-//                                 "#CBF1F2",
-//                                 "#E89A6C",
-//                                 "#F0A9BA",
-//                                 "#F1ABA2"];
-
-// the Colour Alphabet Project suggested by Paul Green-Armytage 
-//SocialNetwork.generatedColors = [
-//"rgb(240,163,255)",
-//"rgb(0,117,220)",
-//"rgb(153,63,0)",
-//"rgb(76,0,92)",
-//"rgb(25,25,25)",
-//"rgb(0,92,49)",
-//"rgb(43,206,72)",
-//"rgb(255,204,153)",
-//"rgb(128,128,128)",
-//"rgb(148,255,181)",
-//"rgb(143,124,0)",
-//"rgb(157,204,0)",
-//"rgb(194,0,136)",
-//"rgb(0,51,128)",
-//"rgb(255,164,5)",
-//"rgb(255,168,187)",
-//"rgb(66,102,0)",
-//"rgb(255,0,16)",
-//"rgb(94,241,242)",
-//"rgb(0,153,143)",
-//"rgb(224,255,102)",
-//"rgb(116,10,255)",
-//"rgb(153,0,0)",
-//"rgb(255,255,128)",
-//"rgb(255,255,0)",
-//"rgb(255,80,5)"
-//];
-
 SocialNetwork.colorPalette = [
 //  {color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"}, hover: {border: "#2B7CE9", background: "#D2E5FF"}}}, // 0: blue
 //  {color: {border: "#FFA500", background: "#FFFF00", highlight: {border: "#FFA500", background: "#FFFFA3"}, hover: {border: "#FFA500", background: "#FFFFA3"}}}, // 1: yellow
@@ -97,26 +45,6 @@ SocialNetwork.colorPalette = [
 
   {color: {border: "#EE0000", background: "#990000", highlight: {border: "#FF3333", background: "#BB0000"}, hover: {border: "#FF3333", background: "#BB0000"}}} // 20:bright red
 ];
-
-//SocialNetwork.colorPalette = [ 
-////                               {
-////    color : { // aquamarine-blue
-////        background : 'rgb(151,194,252)',
-////        border : 'rgb(43,124,233)'
-////    }
-////}, { // rose-red
-////    color : {
-////        background : 'rgb(251,126,129)',
-////        border : 'rgb(250,10,16)'
-////    }
-////}, { // green-deep green
-////    color : { 
-////        background : 'rgb(123,225,65)',
-////        border : 'rgb(65,169,6)'
-////    }
-////} 
-//
-//];
 
 SocialNetwork.fixedColors = {
     "storyColor" : {
@@ -164,8 +92,6 @@ SocialNetwork.init = function () {
     selector.addEventListener("change", function (event) {
         SocialNetwork.updateNodes(event.target.value);
     });
-
-
     
     selector = document.getElementById("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
@@ -189,7 +115,6 @@ SocialNetwork.init = function () {
         option.appendChild(document.createTextNode(StoryCharacters.characterActivityDisplayNames[i]));
         st = option.style;
         st.color = SocialNetwork.activityColors[StoryCharacters.characterActivityTypes[i] ];
-        //option.style = "color:" + SocialNetwork.activityColors[StoryCharacters.characterActivityTypes[i] ] + ";";
         option.activity = activity;
         selector.appendChild(option);
     });
@@ -197,13 +122,10 @@ SocialNetwork.init = function () {
     SocialNetwork.selectedActivities = {};
 
     SocialNetwork.network;
-//    SocialNetwork.allNodes;
     SocialNetwork.highlightActive = false;
-    
     
     document.getElementById("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.hidePanel);
     document.getElementById("showNetworkSettingsButton").addEventListener("click", SocialNetwork.showPanel);
-    
     
     var warning = document.getElementById("socialNetworkWarning");
     warning.appendChild(document.createTextNode("Внимание! Отрисовка социальной сети требует большого количества ресурсов. Рекомендуем сохранить данные перед отрисовкой."));
@@ -276,8 +198,6 @@ SocialNetwork.refresh = function () {
     });
     
     NetworkSubsetsSelector.refresh();
-//    SocialNetwork.onNetworkSelectorChange(SocialNetwork.networks[0]);
-//    SocialNetwork.updateNodes("Без групп");
 };
 
 SocialNetwork.refreshLegend = function (groupName) {
@@ -309,23 +229,13 @@ SocialNetwork.updateNodes = function (groupName) {
     "use strict";
     SocialNetwork.refreshLegend(groupName);
     
-//    Object.keys(Database.Characters).forEach(function (characterName) {
     var group;
     NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
         var character = Database.Characters[characterName];
         group = groupName === "Без групп" ? groupName : groupName + "." + character[groupName];
         SocialNetwork.nodesDataset.update({
             id : character.name,
-            // label : name,
-//            label : character.name.split(" ").join("\n"),
-//            color: SocialNetwork.groupColors[group],
-            // group: character[groupName]+""
-            // color: SocialNetwork.colorMap[groupName + "." +
-            // character[groupName]]
-            // group: groupName + "." + character[groupName]
             group : group
-        // group: character[groupName]+""
-        // group: 0
         });
     });
 };
@@ -391,8 +301,6 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     
     SocialNetwork.refreshLegend(document.getElementById("networkNodeGroupSelector").value);
 
-//    SocialNetwork.refresh();
-    
     SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
     SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);
     SocialNetwork.redrawAll();
@@ -403,48 +311,29 @@ SocialNetwork.getCharacterNodes = function () {
     var groupName = document.getElementById("networkNodeGroupSelector").value;
 
     var nodes = [];
-//    Object.keys(Database.Characters).forEach(
     NetworkSubsetsSelector.getCharacterNames().forEach(
             function (characterName) {
                 var character = Database.Characters[characterName];
                 nodes.push({
                     id : character.name,
-                    // label : name,
                     label : character.name.split(" ").join("\n"),
-                    // group: character[groupName]+""
                     group : groupName === "Без групп" ? groupName : groupName
                             + "." + character[groupName]
-                // color: SocialNetwork.colorMap[groupName + "." +
-                // character[groupName]]
-                // group: 0
                 });
             });
 
-    // for ( var name in Database.Characters) {
-    // nodes.push({
-    // id : name,
-    // // label : name,
-    // label : name.split(" ").join("\n"),
-    // group: 0
-    // });
-    // }
     return nodes;
 };
 
 SocialNetwork.getStoryNodes = function () {
     "use strict";
-//    var nodes = Object.keys(Database.Stories).map(function (name) {
     var nodes = NetworkSubsetsSelector.getStoryNames().map(function (name) {
         return {
             id : "St:" + name,
-            // label : name,
             label : name.split(" ").join("\n"),
             value : Object.keys(Database.Stories[name].characters).length,
             title : Object.keys(Database.Stories[name].characters).length,
-            // color : SocialNetwork.colorMap["storyColor"]
             group : "storyColor"
-        // color : SocialNetwork.colorMap["storyColor"]
-        // group: 1
         };
     });
     return nodes;
@@ -640,36 +529,11 @@ SocialNetwork.redrawAll = function () {
 
     SocialNetwork.network = new vis.Network(container, data, options);
     
-//    var options = {
-//            manipulation: {
-//              enabled: false,
-//              initiallyActive: false,
-//              addNode: true,
-//              addEdge: true,
-//              editNode: undefined,
-//              editEdge: true,
-//              deleteNode: true,
-//              deleteEdge: true,
-//              controlNodeStyle:{
-//                // all node options are valid.
-//              }
-//            }
-//          }
-//    
-//    SocialNetwork.network.setOptions(options);
-
-//    // get a JSON object
-//    SocialNetwork.allNodes = SocialNetwork.nodesDataset.get({
-//        returnType : "Object"
-//    });
-
     SocialNetwork.network.on("click", SocialNetwork.neighbourhoodHighlight);
 };
 
 SocialNetwork.neighbourhoodHighlight = function (params) {
     "use strict";
-    // if something is selected:
-    
 
     // get a JSON object
     var allNodes = SocialNetwork.nodesDataset.get({
@@ -684,15 +548,6 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
         var selectedNode = params.nodes[0];
         var degrees = 2;
         
-//        Object.keys(Database.Characters).forEach(function (characterName) {
-//            var character = Database.Characters[characterName];
-//            SocialNetwork.nodesDataset.update({
-//                id : character.name,
-//                label : "",
-//                group : "thirdDegreeNode"
-//            });
-//        });
-
         // mark all nodes as hard to read.
         for ( var nodeId in allNodes) {
             allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
@@ -703,8 +558,6 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
         }
         var firstDegreeNodes = network.getConnectedNodes(selectedNode);
         var secondDegreeNodes = [];
-//        var connectedNodes = network.getConnectedNodes(selectedEdge);
-//        var allConnectedNodes = [];
 
         // get the second degree nodes
         for (i = 1; i < degrees; i++) {
@@ -714,28 +567,6 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
             }
         }
 
-//        secondDegreeNodes.forEach(function (node) {
-//            SocialNetwork.nodesDataset.update({
-//                id : node,
-//                label : node.split(" ").join("\n"),
-//                group : "secondDegreeNode"
-//            });
-//        });
-//        
-//        firstDegreeNodes.forEach(function (node) {
-//            SocialNetwork.nodesDataset.update({
-//                id : node,
-//                label : node.split(" ").join("\n"),
-//                group : "firstDegreeNode"
-//            });
-//        });
-//        
-//        SocialNetwork.nodesDataset.update({
-//            id : selectedNode,
-//            label : selectedNode.split(" ").join("\n"),
-//            group : "firstDegreeNode"
-//        });
-        
         // all second degree nodes get a different color and their label back
         for (i = 0; i < secondDegreeNodes.length; i++) {
             allNodes[secondDegreeNodes[i]].color = 'rgba(150,150,150,0.75)';
@@ -804,13 +635,6 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
                 allNodes[connectedNodes[i]].hiddenLabel = undefined;
             }
         }
-
-        // // the main node gets its own color and its label back.
-        // allNodes[selectedNode].color = undefined;
-        // if (allNodes[selectedNode].hiddenLabel !== undefined) {
-        // allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
-        // allNodes[selectedNode].hiddenLabel = undefined;
-        // }
 
     } else if (SocialNetwork.highlightActive === true) {
         // reset all nodes

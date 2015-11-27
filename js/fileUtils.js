@@ -63,15 +63,9 @@ FileUtils.readSingleFile = function (evt) {
         var r = new FileReader();
         r.onload = function (e) {
             var contents = e.target.result;
-            // Utils.alert("Got the file.n" + "name: " + f.name + "n" + "type: "
-            // + f.type + "n" + "size: " + f.size + " bytesn"
-            // + JSON.parse(contents)
-            // // + "starts with: " + contents.substr(1, contents.indexOf("n"))
-            // );
             Database = JSON.parse(contents);
             Database = Migrator.migrate(Database);
             PageManager.currentView.refresh();
-            // onLoad();
         };
         r.readAsText(f);
     } else {
@@ -85,7 +79,4 @@ FileUtils.saveFile = function () {
         type : "text/plain;charset=utf-8"
     });
     saveAs(blob, "nims-base.json");
-    // window.open("data:application/json;charset=utf-8," +
-    // encodeURIComponent(JSON.stringify(Database, null, ' ')) );
-    //window.open(document.getElementById("testst").toDataURL("image/png"))
 };

@@ -6,7 +6,6 @@ Utils.addView = function (rootObject, name, view, displayName, navigationId, con
     "use strict";
     view.init();
     var buttonClass = "navigation-button";
-    // var viewContent = initializer();
     rootObject.views[name] = view;
     var navigation = document.getElementById(navigationId);
     var button = document.createElement("div");

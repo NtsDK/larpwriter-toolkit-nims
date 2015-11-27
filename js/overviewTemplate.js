@@ -13,7 +13,6 @@ Overview.init = function() {
     overviewDiv.appendChild(document.createTextNode("Overview"));
 
     Overview.content = overviewDiv;
-    // Overview.content = document.getElementById("overviewDiv");
 };
 
 Overview.refresh = function() {

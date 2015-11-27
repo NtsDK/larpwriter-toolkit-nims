@@ -45,14 +45,12 @@ StoryEvents.refresh = function () {
     }
 
     Stories.CurrentStory.events.forEach(function (event, i) {
-//        StoryEvents.appendEventInput(table, event, event.name);
         StoryEvents.appendEventInput(table, event, i + 1);
     });
 
     Stories.CurrentStory.events.forEach(function (event, i) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode("Перед '" + event.name + "'"));
-//        option.appendChild(document.createTextNode("Перед " + (i + 1)));
         positionSelector.appendChild(option);
     });
 
@@ -79,7 +77,6 @@ StoryEvents.refresh = function () {
         selectorArr.forEach(function (selector) {
             option = document.createElement("option");
             option.appendChild(document.createTextNode(event.name));
-//            option.appendChild(document.createTextNode(i + 1));
             selector.appendChild(option);
         });
     });
@@ -193,9 +190,6 @@ StoryEvents.appendEventHeader = function (table) {
         td.appendChild(document.createTextNode("Событие"));
         tr.appendChild(td);
 
-//        td = document.createElement("th");
-//        td.appendChild(document.createTextNode("Время"));
-//        tr.appendChild(td);
     table.appendChild(tr);
 };
 
@@ -232,7 +226,6 @@ StoryEvents.appendEventInput = function (table, event, index) {
     input.value = event.name;
     input.eventInfo = event;
     input.addEventListener("change", StoryEvents.updateEventName);
-//    td.appendChild(input);
     divLeft.appendChild(input);
 
     // event datetime picker
@@ -259,11 +252,8 @@ StoryEvents.appendEventInput = function (table, event, index) {
     
     jQuery(input).datetimepicker(opts);
     
-//    td.appendChild(input);
     divRight.appendChild(input);
-//    td.appendChild(document.createElement("br"));
 
-    // event text
     input = document.createElement("textarea");
     input.className = "eventText";
     input.value = event.text;
@@ -271,8 +261,6 @@ StoryEvents.appendEventInput = function (table, event, index) {
     input.addEventListener("change", StoryEvents.updateEventText);
     td.appendChild(input);
 
-//    td = document.createElement("td");
-//    tr.appendChild(td);
 };
 
 StoryEvents.onChangeDateTimeCreator = function (myInput) {

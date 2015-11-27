@@ -169,13 +169,6 @@ Events.showPersonalStories = function (storyName, characterNames) {
     Utils.removeChildren(table);
 
     var tr;
-//    table.appendChild(tr);
-    
-//    Events.headers.forEach(function (header) {
-//        var th = document.createElement("th");
-//        th.appendChild(document.createTextNode(header));
-//        tr.appendChild(th);
-//    });
     var td, span, input, i, div, divContainer;
     Database.Stories[storyName].events.filter(function (event) {
         for (i = 0; i < characterNames.length; i++) {
@@ -187,14 +180,11 @@ Events.showPersonalStories = function (storyName, characterNames) {
     }).forEach(function (event) {
         tr = document.createElement("div");
         addClass(tr, "eventMainPanelRow");
-//        tr = document.createElement("tr");
         table.appendChild(tr);
 
         td = document.createElement("div");
         addClass(td, "eventMainPanelRow-left");
-//        td = document.createElement("td");
         span = document.createElement("div");
-//        span.appendChild(document.createTextNode(storyName + ":" + event.name));
         span.appendChild(document.createTextNode(event.name));
         td.appendChild(span);
 
@@ -209,7 +199,6 @@ Events.showPersonalStories = function (storyName, characterNames) {
 
         td = document.createElement("div");
         addClass(td, "eventMainPanelRow-right");
-//        td = document.createElement("td");
         
         divContainer = document.createElement("div");
         divContainer.className = "events-eventsContainer";

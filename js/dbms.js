@@ -3,7 +3,6 @@
  */
 // БД зависит от Stories - это нехорошо
 
-
 "use strict";
 
 var DBMS = {};

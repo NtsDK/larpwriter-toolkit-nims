@@ -72,7 +72,6 @@ CharacterProfile.appendInput = function (root, inputItems, profileItemConfig) {
         textarea = document.createElement("textarea");
         textarea.className = "profileTextInput";
         textarea.selfName = profileItemConfig.name;
-//        root.appendChild(document.createElement("br"));
         td.appendChild(textarea);
         inputItems[profileItemConfig.name] = textarea;
 

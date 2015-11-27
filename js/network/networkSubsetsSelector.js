@@ -140,7 +140,6 @@ NetworkSubsetsSelector.getCharacterNames = function () {
         });
         
         var result = Object.keys(primaryCharacters).concat(Object.keys(secondaryCharacters));
-//        alert(JSON.stringify(result));
         return result;
     } else { //"Избранные истории"
         selector = document.getElementById("networkStorySelector");
@@ -161,7 +160,6 @@ NetworkSubsetsSelector.getCharacterNames = function () {
             }
         });
         
-//        alert(JSON.stringify(Object.keys(characters)));
         return Object.keys(characters);
     }
 };

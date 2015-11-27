@@ -106,8 +106,6 @@ BriefingPreview.buildContent = function (characterName) {
         if (story.characters[characterName]
                 && story.characters[characterName].inventory
                 && story.characters[characterName].inventory !== "") {
-            // content.appendChild(document.createTextNode(storyName + ":" +
-            // story.characters[characterName].inventory));
             content.appendChild(document.createTextNode(storyName + ":"));
             var input = document.createElement("input");
             input.value = story.characters[characterName].inventory;
@@ -193,7 +191,6 @@ BriefingPreview.showEvent = function(event, content, characterName){
     }
     
     content.appendChild(document.createElement("br"));
-    
     
     if (event.characters[characterName].text === "") {
         input.value = event.text;
