@@ -44,17 +44,17 @@ var Database = {
     } ],
     "Settings" : {
         "Events" : {
-            "storyName" : "Репка",
-            "characterNames" : [ "внучка", "Жучка" ]
+            "storyName" : "Колобок",
+            "characterNames" : [ "бабка", "дед" ]
         },
         "BriefingPreview" : {
-            "characterName" : "Мышка-норушка"
+            "characterName" : "бабка"
         },
         "Stories" : {
-            "storyName" : "Теремок"
+            "storyName" : "Колобок"
         },
         "CharacterProfile" : {
-            "characterName" : "кошка"
+            "characterName" : "бабка"
         }
     },
     "Characters" : {

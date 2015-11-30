@@ -231,7 +231,7 @@ See the License for the specific language governing permissions and
 }
 
 .storySelectorContainer {
-	flex-basis: 150px;
+/* 	flex-basis: 150px; */
 	flex-grow: 0;
 }
 
