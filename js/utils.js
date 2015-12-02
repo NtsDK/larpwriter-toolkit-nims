@@ -23,7 +23,8 @@ Utils.addView = function (rootObject, name, view, displayName, navigationId, con
     rootObject.views[name] = view;
     var navigation = document.getElementById(navigationId);
     var button = document.createElement("div");
-    button.className = buttonClass;
+    addClass(button, buttonClass);
+    addClass(button, "-test-" + name);
     button.appendChild(document.createTextNode(displayName));
     navigation.appendChild(button);
     
