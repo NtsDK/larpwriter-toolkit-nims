@@ -21,6 +21,16 @@ See the License for the specific language governing permissions and
 
 var DBMS = {};
 
+DBMS.getMetaInfo = function(callback){
+    "use strict";
+    callback(Database.Meta);
+};
+
+DBMS.setMetaInfo = function(name, value){
+    "use strict";
+    Database.Meta[name] = value;
+};
+
 DBMS.createCharacter = function (name) {
     "use strict";
     var newCharacter = {

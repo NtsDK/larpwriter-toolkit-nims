@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- jQuery, Database
+ jQuery, DBMS
  */
 
 "use strict";
@@ -54,32 +54,31 @@ Overview.init = function () {
 Overview.refresh = function () {
     "use strict";
     var name = document.getElementById("gameNameInput");
-    name.value = Database.Meta.name;
-
-    var date = document.getElementById("gameDatePicker");
-    date.value = Database.Meta.date;
-
-    date = document.getElementById("preGameDatePicker");
-    date.value = Database.Meta.preGameDate;
-
+    var date1 = document.getElementById("gameDatePicker");
+    var date2 = document.getElementById("preGameDatePicker");
     var descr = document.getElementById("gameDescription");
-    descr.value = Database.Meta.description;
 
+    DBMS.getMetaInfo(function(info){
+        name.value = info.name;
+        date1.value = info.date;
+        date2.value = info.preGameDate;
+        descr.value = info.description;
+    });
 };
 
 Overview.updateName = function (event) {
     "use strict";
-    Database.Meta.name = event.target.value;
+    DBMS.setMetaInfo("name", event.target.value);
 };
 Overview.updateTime = function (dp, input) {
     "use strict";
-    Database.Meta.date = input.val();
+    DBMS.setMetaInfo("date", input.val());
 };
 Overview.updatePreGameDate = function (dp, input) {
     "use strict";
-    Database.Meta.preGameDate = input.val();
+    DBMS.setMetaInfo("preGameDate", input.val());
 };
 Overview.updateDescr = function (event) {
     "use strict";
-    Database.Meta.description = event.target.value;
+    DBMS.setMetaInfo("description", event.target.value);
 };
