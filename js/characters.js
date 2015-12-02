@@ -72,12 +72,12 @@ Characters.createCharacter = function () {
     var name = characterNameInput.value.trim();
 
     if (name === "") {
-        Utils.Utils.alert("Имя персонажа не указано");
+        Utils.alert("Имя персонажа не указано");
         return;
     }
 
     if (Database.Characters[name]) {
-        Utils.Utils.alert("Такой персонаж уже существует");
+        Utils.alert("Такой персонаж уже существует");
         return;
     }
 
@@ -91,17 +91,17 @@ Characters.renameCharacter = function () {
     var toName = document.getElementById("toName").value.trim();
 
     if (toName === "") {
-        Utils.Utils.alert("Новое имя не указано.");
+        Utils.alert("Новое имя не указано.");
         return;
     }
 
     if (fromName === toName) {
-        Utils.Utils.alert("Имена совпадают.");
+        Utils.alert("Имена совпадают.");
         return;
     }
 
     if (Database.Characters[toName]) {
-        Utils.Utils.alert("Имя " + toName + " уже используется.");
+        Utils.alert("Имя " + toName + " уже используется.");
         return;
     }
 
