@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, CharacterProfile, CharacterFilter, CharacterProfileConfigurer, Database, DBMS
+ Utils, CharacterProfile, CharacterFilter, CharacterProfileConfigurer, DBMS
  */
 
 "use strict";
@@ -75,14 +75,16 @@ Characters.createCharacter = function () {
         Utils.alert("Имя персонажа не указано");
         return;
     }
+    
+    DBMS.isCharacterNameUsed(name, function(isCharacterNameUsed){
+        if (isCharacterNameUsed) {
+            Utils.alert("Такой персонаж уже существует");
+        } else {
+            DBMS.createCharacter(name);
+            Characters.refresh();
+        }
+    });
 
-    if (Database.Characters[name]) {
-        Utils.alert("Такой персонаж уже существует");
-        return;
-    }
-
-    DBMS.createCharacter(name);
-    Characters.refresh();
 };
 
 Characters.renameCharacter = function () {
@@ -100,14 +102,14 @@ Characters.renameCharacter = function () {
         return;
     }
 
-    if (Database.Characters[toName]) {
-        Utils.alert("Имя " + toName + " уже используется.");
-        return;
-    }
-
-    DBMS.renameCharacter(fromName, toName);
-
-    Characters.refresh();
+    DBMS.isCharacterNameUsed(toName, function(isCharacterNameUsed){
+        if (isCharacterNameUsed) {
+            Utils.alert("Имя " + toName + " уже используется.");
+        } else {
+            DBMS.renameCharacter(fromName, toName);
+            Characters.refresh();
+        }
+    });
 };
 
 Characters.removeCharacter = function () {

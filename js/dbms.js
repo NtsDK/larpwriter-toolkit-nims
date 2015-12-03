@@ -31,6 +31,11 @@ DBMS.setMetaInfo = function(name, value){
     Database.Meta[name] = value;
 };
 
+DBMS.isCharacterNameUsed = function(name, callback){
+    "use strict";
+    callback(Database.Characters[name]);
+};
+
 DBMS.createCharacter = function (name) {
     "use strict";
     var newCharacter = {
