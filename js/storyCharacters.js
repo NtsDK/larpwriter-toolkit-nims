@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, Database, DBMS
+ Utils, DBMS
  */
 
 "use strict";
@@ -36,130 +36,131 @@ StoryCharacters.init = function () {
     button = document.getElementById("storyCharactersRemoveButton");
     button.addEventListener("click", StoryCharacters.removeCharacter);
 
+    StoryCharacters.addSelector = document.getElementById("storyCharactersAddSelector");
+    StoryCharacters.removeSelector = document.getElementById("storyCharactersRemoveSelector");
+    StoryCharacters.fromSelector = document.getElementById("storyCharactersFromSelector");
+    StoryCharacters.toSelector = document.getElementById("storyCharactersToSelector");
+
     StoryCharacters.content = document.getElementById("storyCharactersDiv");
 };
 
 StoryCharacters.refresh = function () {
     "use strict";
-    var addSelector = document.getElementById("storyCharactersAddSelector");
-    var removeSelector = document.getElementById("storyCharactersRemoveSelector");
-    var fromSelector = document.getElementById("storyCharactersFromSelector");
-    var toSelector = document.getElementById("storyCharactersToSelector");
 
-    Utils.removeChildren(addSelector);
-    Utils.removeChildren(removeSelector);
-    Utils.removeChildren(fromSelector);
-    Utils.removeChildren(toSelector);
+    Utils.removeChildren(StoryCharacters.addSelector);
+    Utils.removeChildren(StoryCharacters.removeSelector);
+    Utils.removeChildren(StoryCharacters.fromSelector);
+    Utils.removeChildren(StoryCharacters.toSelector);
+    
+    if(!Stories.CurrentStoryName){
+        return;
+    }
+    
+    DBMS.getCharacterNamesArray2(function(allCharacters){
+        DBMS.getStoryCharacters(Stories.CurrentStoryName, function(localCharacters){
+            StoryCharacters.rebuildInterface(allCharacters, localCharacters);
+        });
+    });
+};
 
+StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
+    "use strict";
     var addArray = [];
     var removeArray = [];
-
-    var localCharacters = {};
-    if(Stories.CurrentStory){
-        localCharacters =  Stories.CurrentStory.characters;
-    }
     
     for ( var name in localCharacters) {
         removeArray.push(name);
     }
-
-    for ( var name in Database.Characters) {
-        if (!localCharacters[name]) {
-            addArray.push(name);
-        }
-    }
-
+    
+    allCharacters.filter(function(name){
+        return !localCharacters[name];
+    }).forEach(function(name){
+        addArray.push(name);
+    });
+    
     addArray.sort(Utils.charOrdA);
     removeArray.sort(Utils.charOrdA);
-
+    
     var option;
-
+    
     addArray.forEach(function (addValue) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(addValue));
-        addSelector.appendChild(option);
+        StoryCharacters.addSelector.appendChild(option);
         option = document.createElement("option");
         option.appendChild(document.createTextNode(addValue));
-        toSelector.appendChild(option);
+        StoryCharacters.toSelector.appendChild(option);
     });
     removeArray.forEach(function (removeValue) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(removeValue));
-        removeSelector.appendChild(option);
+        StoryCharacters.removeSelector.appendChild(option);
         option = document.createElement("option");
         option.appendChild(document.createTextNode(removeValue));
-        fromSelector.appendChild(option);
+        StoryCharacters.fromSelector.appendChild(option);
     });
     
     var tableHead = document.getElementById("story-characterActivityTableHead");
     var table = document.getElementById("story-characterActivityTable");
     Utils.removeChildren(tableHead);
     Utils.removeChildren(table);
-
+    
     StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.characterActivityHeader);
     
     removeArray.forEach(function (removeValue) {
         StoryCharacters.appendCharacterActivity(table, localCharacters[removeValue]);
     });
-
+    
     tableHead = document.getElementById("storyCharactersTableHead");
     table = document.getElementById("storyCharactersTable");
     Utils.removeChildren(tableHead);
     Utils.removeChildren(table);
-
+    
     StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.inventoryHeader);
-
+    
     removeArray.forEach(function (removeValue) {
         StoryCharacters.appendCharacterInput(table, localCharacters[removeValue]);
     });
-
 };
 
 StoryCharacters.addCharacter = function () {
     "use strict";
     var characterName = document.getElementById("storyCharactersAddSelector").value.trim();
-
-    Stories.CurrentStory.characters[characterName] = {
-        name : characterName,
-        inventory : "",
-        activity: {}
-    };
-
-    StoryCharacters.refresh();
+    
+    if(characterName === ""){
+        Utils.alert("Имя персонажа не указано.");
+        return;
+    }
+    
+    DBMS.addStoryCharacter(Stories.CurrentStoryName, characterName, StoryCharacters.refresh);
 };
 
 StoryCharacters.switchCharacters = function () {
     "use strict";
     var fromName = document.getElementById("storyCharactersFromSelector").value.trim();
     var toName = document.getElementById("storyCharactersToSelector").value.trim();
-
-    Stories.CurrentStory.characters[toName] = Stories.CurrentStory.characters[fromName];
-    Stories.CurrentStory.characters[toName].name = toName;
-    delete Stories.CurrentStory.characters[fromName];
-    Stories.CurrentStory.events.forEach(function (event) {
-        if (event.characters[fromName]) {
-            event.characters[fromName].name = toName;
-            event.characters[toName] = event.characters[fromName];
-            delete event.characters[fromName];
-        }
-    });
-
-    StoryCharacters.refresh();
+    
+    if(fromName === "" || toName == ""){
+        Utils.alert("Имя одного из персонажей не указано.");
+        return;
+    }
+    
+    DBMS.switchStoryCharacters(Stories.CurrentStoryName, fromName, toName, StoryCharacters.refresh);
 };
 
 StoryCharacters.removeCharacter = function () {
     "use strict";
     var characterName = document.getElementById("storyCharactersRemoveSelector").value.trim();
+    
+    if(characterName === ""){
+        Utils.alert("Имя персонажа не указано.");
+        return;
+    }
 
     if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
-            + name
+            + characterName
             + " из истории? Все данные связанные с персонажем будут удалены безвозвратно.")) {
-        delete Stories.CurrentStory.characters[characterName];
-        Stories.CurrentStory.events.forEach(function (event) {
-            delete event.characters[characterName];
-        });
-
-        StoryCharacters.refresh();
+        DBMS.removeStoryCharacter(Stories.CurrentStoryName, characterName, StoryCharacters.refresh);
     }
 };
 
@@ -186,7 +187,7 @@ StoryCharacters.appendCharacterInput = function (table, character) {
     td = document.createElement("td");
     var input = document.createElement("input");
     input.value = character.inventory;
-    input.characterInfo = character;
+    input.characterName = character.name;
     input.className = "inventoryInput";
     input.addEventListener("change", StoryCharacters.updateCharacterInventory);
     td.appendChild(input);
@@ -194,13 +195,9 @@ StoryCharacters.appendCharacterInput = function (table, character) {
     table.appendChild(tr);
 };
 
-StoryCharacters.onChangeCharacterActivity = function (event) {
+StoryCharacters.updateCharacterInventory = function (event) {
     "use strict";
-    if (event.target.checked) {
-        event.target.activities[event.target.activityType] = true;
-    } else {
-        delete event.target.activities[event.target.activityType];
-    }
+    DBMS.updateCharacterInventory(Stories.CurrentStoryName, event.target.characterName, event.target.value);
 };
 
 StoryCharacters.appendCharacterActivity = function (table, character) {
@@ -218,7 +215,7 @@ StoryCharacters.appendCharacterActivity = function (table, character) {
         if (character.activity[activityType]) {
             input.checked = true;
         }
-        input.activities = character.activity;
+        input.characterName = character.name;
         input.activityType = activityType;
         input.addEventListener("change", StoryCharacters.onChangeCharacterActivity);
         td.appendChild(input);
@@ -228,14 +225,8 @@ StoryCharacters.appendCharacterActivity = function (table, character) {
     table.appendChild(tr);
 };
 
-StoryCharacters.updateCharacterInventory = function (event) {
+StoryCharacters.onChangeCharacterActivity = function (event) {
     "use strict";
-    event.target.characterInfo.inventory = event.target.value;
-    var inventoryCheck = document.getElementById("inventoryCheck");
-    Utils.removeChildren(inventoryCheck);
-    var arr = event.target.characterInfo.inventory.split(",");
-    arr = arr.map(function(value){
-        return value.trim();
-    });
-    inventoryCheck.appendChild(document.createTextNode(JSON.stringify(arr)));
+    DBMS.onChangeCharacterActivity(Stories.CurrentStoryName, event.target.characterName, 
+            event.target.activityType, event.target.checked);
 };

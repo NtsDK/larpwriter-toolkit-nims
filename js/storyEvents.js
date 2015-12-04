@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, Database, DBMS
+ Utils, DBMS
  */
 
 "use strict";
@@ -42,6 +42,19 @@ StoryEvents.init = function () {
 
 StoryEvents.refresh = function () {
     "use strict";
+    if(Stories.CurrentStoryName === undefined){
+        return;
+    }
+    
+    DBMS.getMetaInfo(function(metaInfo){
+        DBMS.getStoryEvents(Stories.CurrentStoryName, function(events){
+            StoryEvents.rebuildInterface(events, metaInfo);
+        });
+    });
+};
+
+StoryEvents.rebuildInterface = function(events, metaInfo){
+    "use strict";
     // event part
     var tableHead = document.getElementById("eventBlockHead");
     Utils.removeChildren(tableHead);
@@ -54,47 +67,44 @@ StoryEvents.refresh = function () {
     var positionSelector = document.getElementById("positionSelector");
     Utils.removeChildren(positionSelector);
     
-    if(Stories.CurrentStory === undefined){
-        return;
-    }
-
-    Stories.CurrentStory.events.forEach(function (event, i) {
-        StoryEvents.appendEventInput(table, event, i + 1);
+    events.forEach(function (event, i) {
+        StoryEvents.appendEventInput(table, event, i, metaInfo.date, metaInfo.preGameDate);
     });
-
-    Stories.CurrentStory.events.forEach(function (event, i) {
+    
+    events.forEach(function (event, i) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode("Перед '" + event.name + "'"));
         positionSelector.appendChild(option);
     });
-
+    
     var option = document.createElement("option");
     option.appendChild(document.createTextNode("В конец"));
     positionSelector.appendChild(option);
-
-    positionSelector.selectedIndex = Stories.CurrentStory.events.length;
-
+    
+    positionSelector.selectedIndex = events.length;
+    
+    StoryEvents.eventsLength = events.length;
+    
     // refresh swap selector
     var selectorArr = [];
-
+    
     selectorArr.push(document.getElementById("firstEvent"));
     selectorArr.push(document.getElementById("secondEvent"));
     selectorArr.push(document.getElementById("removeEventSelector"));
     selectorArr.push(document.getElementById("cloneEventSelector"));
     selectorArr.push(document.getElementById("mergeEventSelector"));
-
+    
     selectorArr.forEach(function (selector) {
         Utils.removeChildren(selector);
     });
-
-    Stories.CurrentStory.events.forEach(function (event, i) {
+    
+    events.forEach(function (event, i) {
         selectorArr.forEach(function (selector) {
             option = document.createElement("option");
             option.appendChild(document.createTextNode(event.name));
             selector.appendChild(option);
         });
     });
-
 };
 
 StoryEvents.createEvent = function () {
@@ -111,24 +121,9 @@ StoryEvents.createEvent = function () {
         Utils.alert("Событие пусто");
         return;
     }
-
-    var event = {
-        name : eventName,
-        text : eventText,
-        time : "",
-        characters : {}
-    };
-
-    var positionSelector = document.getElementById("positionSelector");
-
-    var position = positionSelector.value;
-    if (position === "В конец") {
-        Stories.CurrentStory.events.push(event);
-    } else {
-        Stories.CurrentStory.events.splice(positionSelector.selectedIndex, 0, event);
-    }
-
-    StoryEvents.refresh();
+    
+    DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, 
+            positionSelector.value === "В конец", positionSelector.selectedIndex, StoryEvents.refresh);
 };
 
 StoryEvents.swapEvents = function () {
@@ -139,47 +134,26 @@ StoryEvents.swapEvents = function () {
         Utils.alert("Позиции событий совпадают");
         return;
     }
-
-    var tmp = Stories.CurrentStory.events[index1];
-    Stories.CurrentStory.events[index1] = Stories.CurrentStory.events[index2];
-    Stories.CurrentStory.events[index2] = tmp;
-
-    StoryEvents.refresh();
+    
+    DBMS.swapEvents(Stories.CurrentStoryName, index1, index2, StoryEvents.refresh);
 };
 
 StoryEvents.cloneEvent = function () {
     "use strict";
     var index = document.getElementById("cloneEventSelector").selectedIndex;
-    var event = Stories.CurrentStory.events[index];
-    var copy = Utils.clone(event);
-
-    Stories.CurrentStory.events.splice(index, 0, event);
-    StoryEvents.refresh();
+    
+    DBMS.cloneEvent(Stories.CurrentStoryName, index, StoryEvents.refresh);
 };
 
 StoryEvents.mergeEvents = function () {
     "use strict";
     var index = document.getElementById("mergeEventSelector").selectedIndex;
-    if (!Stories.CurrentStory.events[index + 1]) {
-        Utils.alert("Событие объединяется со следующим событием. Последнее событие не с кем объединять.");
+    if (StoryEvents.eventsLength == index + 1) {
+        Utils.alert("Выбранное событие объединяется со следующим событием. Последнее событие не с кем объединять.");
         return;
     }
-
-    var event1 = Stories.CurrentStory.events[index];
-    var event2 = Stories.CurrentStory.events[index + 1];
-
-    event1.name += event2.name;
-    event1.text += event2.text;
-    for ( var characterName in event2.characters) {
-        if (event1.characters[characterName]) {
-            event1.characters[characterName].text += event2.characters[characterName].text;
-            event1.characters[characterName].ready = false;
-        } else {
-            event1.characters[characterName] = event2.characters[characterName];
-        }
-    }
-    Stories.CurrentStory.events.remove(index + 1);
-    StoryEvents.refresh();
+    
+    DBMS.mergeEvents(Stories.CurrentStoryName, index, StoryEvents.refresh);
 };
 
 StoryEvents.removeEvent = function () {
@@ -188,8 +162,8 @@ StoryEvents.removeEvent = function () {
 
     if (Utils.confirm("Вы уверены, что хотите удалить событие " + name
             + "? Все данные связанные с событием будут удалены безвозвратно.")) {
-        Stories.CurrentStory.events.remove(index);
-        StoryEvents.refresh();
+        
+        DBMS.removeEvent(Stories.CurrentStoryName, index, StoryEvents.refresh);
     }
 };
 
@@ -207,7 +181,7 @@ StoryEvents.appendEventHeader = function (table) {
     table.appendChild(tr);
 };
 
-StoryEvents.appendEventInput = function (table, event, index) {
+StoryEvents.appendEventInput = function (table, event, index, date, preGameDate) {
     "use strict";
     var tr, td, span, input;
     
@@ -218,7 +192,7 @@ StoryEvents.appendEventInput = function (table, event, index) {
     td = document.createElement("td");
     tr.appendChild(td);
     span = document.createElement("span");
-    span.appendChild(document.createTextNode(index));
+    span.appendChild(document.createTextNode(index+1));
     td.appendChild(span);
     
     // event name
@@ -238,7 +212,7 @@ StoryEvents.appendEventInput = function (table, event, index) {
     
     input = document.createElement("input");
     input.value = event.name;
-    input.eventInfo = event;
+    input.eventIndex = index;
     input.addEventListener("change", StoryEvents.updateEventName);
     divLeft.appendChild(input);
 
@@ -247,20 +221,20 @@ StoryEvents.appendEventInput = function (table, event, index) {
     input.value = event.time;
     input.className = "eventTime";
     
-    input.eventInfo = event;
+    input.eventIndex = index;
     
     var opts = {
             lang : "ru",
             mask : true,
-            startDate : new Date(Database.Meta.preGameDate),
-            endDate : new Date(Database.Meta.date),
+            startDate : new Date(preGameDate),
+            endDate : new Date(date),
             onChangeDateTime : StoryEvents.onChangeDateTimeCreator(input),
     };
     
     if (event.time !== "") {
         opts.value = event.time;
     } else {
-        opts.value = Database.Meta.date;
+        opts.value = date;
         input.className = "eventTime defaultDate";
     }
     
@@ -271,7 +245,7 @@ StoryEvents.appendEventInput = function (table, event, index) {
     input = document.createElement("textarea");
     input.className = "eventText";
     input.value = event.text;
-    input.eventInfo = event;
+    input.eventIndex = index;
     input.addEventListener("change", StoryEvents.updateEventText);
     td.appendChild(input);
 
@@ -280,7 +254,7 @@ StoryEvents.appendEventInput = function (table, event, index) {
 StoryEvents.onChangeDateTimeCreator = function (myInput) {
     "use strict";
     return function (dp, input) {
-        myInput.eventInfo.time = input.val();
+        DBMS.updateEventProperty(Stories.CurrentStoryName, myInput.eventIndex, "time", input.val());
         StoryEvents.lastDate = input.val();
         myInput.className = "eventTime";
     }
@@ -288,15 +262,11 @@ StoryEvents.onChangeDateTimeCreator = function (myInput) {
 
 StoryEvents.updateEventName = function (event) {
     "use strict";
-    event.target.eventInfo.name = event.target.value;
+    DBMS.updateEventProperty(Stories.CurrentStoryName, event.target.eventIndex, "name", event.target.value, StoryEvents.refresh);
 };
 
 StoryEvents.updateEventText = function (event) {
     "use strict";
-    event.target.eventInfo.text = event.target.value;
+    DBMS.updateEventProperty(Stories.CurrentStoryName, event.target.eventIndex, "text", event.target.value);
 };
 
-StoryEvents.updateTime = function (event) {
-    "use strict";
-    event.target.eventInfo.time = event.target.value;
-};

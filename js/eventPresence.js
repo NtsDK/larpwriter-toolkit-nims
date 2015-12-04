@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, Database, DBMS, Stories
+ Utils, DBMS, Stories
  */
 
 "use strict";
@@ -32,16 +32,18 @@ EventPresence.refresh = function () {
     var table = document.getElementById("eventPresenceTable");
     Utils.removeChildren(table);
     
-    if(Stories.CurrentStory == undefined){
+    if(Stories.CurrentStoryName == undefined){
         return;
     }
 
     EventPresence.appendTableHeader(tableHead);
 
-    var characterArray = DBMS.getStoryCharacterNamesArray();
+    var characterArray = DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName);
 
-    Stories.CurrentStory.events.forEach(function (event) {
-        EventPresence.appendTableInput(table, event, characterArray);
+    DBMS.getStoryEvents(Stories.CurrentStoryName, function(events){
+        events.forEach(function (event, i) {
+            EventPresence.appendTableInput(table, event, i, characterArray);
+        });
     });
 };
 
@@ -51,7 +53,7 @@ EventPresence.appendTableHeader = function (table) {
     var td = document.createElement("th");
     td.appendChild(document.createTextNode("Событие"));
     tr.appendChild(td);
-    var characterArray = DBMS.getStoryCharacterNamesArray();
+    var characterArray = DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName);
 
     characterArray.forEach(function (characterName) {
         td = document.createElement("th");
@@ -61,7 +63,7 @@ EventPresence.appendTableHeader = function (table) {
     table.appendChild(tr);
 };
 
-EventPresence.appendTableInput = function (table, event, characterArray) {
+EventPresence.appendTableInput = function (table, event, i, characterArray) {
     "use strict";
     var tr = document.createElement("tr");
     var td = document.createElement("td");
@@ -75,8 +77,10 @@ EventPresence.appendTableInput = function (table, event, characterArray) {
         if (event.characters[character]) {
             input.checked = true;
         }
-        input.eventInfo = event;
-        input.nameInfo = character;
+        input.eventIndex = i;
+        input.eventName = event.name;
+        input.characterName = character;
+        input.hasText = event.characters[character] != null && event.characters[character].text != "";
         input.addEventListener("change", EventPresence.onChangeCharacterCheckbox);
         td.appendChild(input);
         tr.appendChild(td);
@@ -88,16 +92,16 @@ EventPresence.appendTableInput = function (table, event, characterArray) {
 EventPresence.onChangeCharacterCheckbox = function (event) {
     "use strict";
     if (event.target.checked) {
-        event.target.eventInfo.characters[event.target.nameInfo] = {
-            text : ""
-        };
+        DBMS.addCharacterToEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName);
+    } else if (!event.target.hasText){
+        DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName);
     } else {
         if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
-                + event.target.nameInfo
+                + event.target.characterName
                 + " из события '"
-                + event.target.eventInfo.name
-                + "'? Все данные связанные с персонажем будут удалены безвозвратно.")) {
-            delete event.target.eventInfo.characters[event.target.nameInfo];
+                + event.target.eventName
+                + "'? У этого песонажа есть адаптация события, которая будет удалена безвозвратно.")) {
+            DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName);
         } else {
             event.target.checked = true;
         }

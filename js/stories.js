@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, Database, DBMS, StoryEvents, StoryCharacters, EventPresence
+ Utils, DBMS, StoryEvents, StoryCharacters, EventPresence
  */
 
 "use strict";
@@ -57,44 +57,51 @@ Stories.refresh = function () {
     var selector3 = document.getElementById("storyRemoveSelector");
     Utils.removeChildren(selector3);
 
-    var storyNames = DBMS.getStoryNamesArray();
+    DBMS.getStoryNamesArray2(function(storyNames){
+        if (storyNames.length > 0) {
+            var storyName = Stories.getSelectedStoryName(storyNames);
+            
+            var first = true;
+            storyNames.forEach(function (name) {
+                var option = document.createElement("option");
+                option.appendChild(document.createTextNode(name));
+                selector1.appendChild(option);
+                if(name === storyName){
+                    option.selected = true;
+                    first = false;
+                }
+                option = document.createElement("option");
+                option.appendChild(document.createTextNode(name));
+                selector2.appendChild(option);
+                option = document.createElement("option");
+                option.appendChild(document.createTextNode(name));
+                selector3.appendChild(option);
+            });
+            
+            Stories.onStorySelectorChange(storyName);
+        } else {
+            Stories.onStorySelectorChange();
+        }
+        
+        Stories.currentView.refresh();
+    });
     
-    if (storyNames.length > 0) {
-        if(!Database.Settings["Stories"]){
-            Database.Settings["Stories"] = {
-                storyName : storyNames[0]
-            };
-        }
-        var storyName = Database.Settings["Stories"].storyName;
-        if(storyNames.indexOf(storyName) === -1){
-            Database.Settings["Stories"].storyName = storyNames[0];
-            storyName = storyNames[0];
-        }
-        
-        var first = true;
-        storyNames.forEach(function (name) {
-            var option = document.createElement("option");
-            option.appendChild(document.createTextNode(name));
-            selector1.appendChild(option);
-            if(name === storyName){
-                option.selected = true;
-                first = false;
-            }
-            option = document.createElement("option");
-            option.appendChild(document.createTextNode(name));
-            selector2.appendChild(option);
-            option = document.createElement("option");
-            option.appendChild(document.createTextNode(name));
-            selector3.appendChild(option);
-        });
-        
-        Stories.onStorySelectorChange(storyName);
-    } else {
-        Stories.onStorySelectorChange();
+};
+
+Stories.getSelectedStoryName = function(storyNames){
+    "use strict";
+    var settings = DBMS.getSettings();
+    if(!settings["Stories"]){
+        settings["Stories"] = {
+            storyName : storyNames[0]
+        };
     }
-
-
-    Stories.currentView.refresh();
+    var storyName = settings["Stories"].storyName;
+    if(storyNames.indexOf(storyName) === -1){
+        settings["Stories"].storyName = storyNames[0];
+        storyName = storyNames[0];
+    }
+    return storyName;
 };
 
 Stories.createStory = function () {
@@ -104,22 +111,15 @@ Stories.createStory = function () {
         Utils.alert("Название истории пусто.");
         return;
     }
-
-    if (Database.Stories[storyName]) {
+    
+    DBMS.isStoryExist(storyName, function(){
         Utils.alert("История с таким именем уже существует.");
-        return;
-    }
-
-    Database.Stories[storyName] = {
-        name : storyName,
-        story : "",
-        characters : {},
-        events : []
-    };
-
-    Stories.CurrentStory = Database.Stories[storyName];
-    Stories.refresh();
-
+    }, function(){
+        DBMS.createStory(storyName, function(){
+            Stories.updateSettings(storyName);
+            Stories.refresh();
+        });
+    });
 };
 
 Stories.renameStory = function () {
@@ -137,17 +137,15 @@ Stories.renameStory = function () {
         return;
     }
 
-    if (Database.Stories[toName]) {
+    DBMS.isStoryExist(toName, function(){
         Utils.alert("Имя " + toName + " уже используется.");
-        return;
-    }
-
-    var data = Database.Stories[fromName];
-    data.name = toName;
-    Database.Stories[toName] = data;
-    delete Database.Stories[fromName];
-    Stories.refresh();
-
+    }, function(){
+        DBMS.renameStory(fromName, toName, function(){
+            Stories.updateSettings(toName);
+            Stories.refresh();
+        });
+    });
+    
 };
 
 Stories.removeStory = function () {
@@ -156,8 +154,7 @@ Stories.removeStory = function () {
 
     if (Utils.confirm("Вы уверены, что хотите удалить историю " + name
             + "? Все данные связанные с историей будут удалены безвозвратно.")) {
-        delete Database.Stories[name];
-        Stories.refresh();
+        DBMS.removeStory(name, Stories.refresh);
     }
 };
 
@@ -169,22 +166,30 @@ Stories.onStorySelectorChangeDelegate = function (event) {
 
 Stories.onStorySelectorChange = function (storyName) {
     "use strict";
-    Stories.CurrentStory = Database.Stories[storyName];
+    Stories.CurrentStoryName = storyName;
     var storyArea = document.getElementById("masterStoryArea");
     
-    if(Stories.CurrentStory){
-        Database.Settings["Stories"].storyName = storyName;
-        storyArea.value = Stories.CurrentStory.story;
-    } else {
-        Database.Settings["Stories"].storyName = null;
+    if(storyName){
+        Stories.updateSettings(storyName);
+        DBMS.getMasterStory(storyName, function(story){
+            storyArea.value = story;
+            Stories.currentView.refresh();
+        });
+    } else { // when there are no stories at all
+        Stories.updateSettings(null);
         storyArea.value = "";
+        Stories.currentView.refresh();
     }
+};
 
-    Stories.currentView.refresh();
+Stories.updateSettings = function (storyName) {
+    "use strict";
+    var settings = DBMS.getSettings();
+    settings["Stories"].storyName = storyName;
 };
 
 Stories.updateMasterStory = function () {
     "use strict";
     var storyArea = document.getElementById("masterStoryArea");
-    Stories.CurrentStory.story = storyArea.value;
+    DBMS.updateMasterStory(Stories.CurrentStoryName, storyArea.value);
 };

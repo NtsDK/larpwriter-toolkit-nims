@@ -33,7 +33,7 @@ DBMS.setMetaInfo = function(name, value){
 
 DBMS.isCharacterNameUsed = function(name, callback){
     "use strict";
-    callback(Database.Characters[name]);
+    callback(Database.Characters[name] !== undefined);
 };
 
 DBMS.createCharacter = function (name, callback) {
@@ -106,25 +106,7 @@ DBMS.removeCharacter = function (name, callback) {
     callback();
 };
 
-DBMS.getCharacterNamesArray = function () {
-    "use strict";
-    return Object.keys(Database.Characters).sort(Utils.charOrdA);
-};
 
-DBMS.getCharacterNamesArray2 = function (callback) {
-    "use strict";
-    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
-};
-
-DBMS.getCharacterNamesArray3 = function () {
-    "use strict";
-    return new Promise(function(resolve, reject) {
-        var names = Object.keys(Database.Characters).sort(Utils.charOrdA);
-        resolve(names);
-    });
-    
-//    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
-};
 
 DBMS.getProfile = function(name, callback){
     "use strict";
@@ -157,11 +139,6 @@ DBMS.updateProfileField = function(characterName, fieldName, type, event){
         profileInfo[fieldName] = event.target.checked;
         break;
     }
-};
-
-DBMS.getSettings = function(){
-    "use strict";
-    return Database.Settings;
 };
 
 DBMS.createProfileItem= function(name, type, value, toEnd, selectedIndex, callback){
@@ -321,21 +298,247 @@ DBMS.updateDefaultValue = function(name, value, callback){
 
 
 
+DBMS.getMasterStory = function(storyName, callback){
+    "use strict";
+    callback(Database.Stories[storyName].story);
+};
+
+DBMS.updateMasterStory = function(storyName, value){
+    "use strict";
+    Database.Stories[storyName].story = value;
+}
+
+DBMS.addCharacterToEvent = function(storyName, eventIndex, characterName){
+    "use strict";
+    Database.Stories[storyName].events[eventIndex].characters[characterName] = {
+        text : ""
+    };
+};
+
+DBMS.removeCharacterFromEvent = function(storyName, eventIndex, characterName){
+    "use strict";
+    delete Database.Stories[storyName].events[eventIndex].characters[characterName];
+};
+
+DBMS.getStoryEvents = function(storyName, callback){
+    "use strict";
+    callback(Database.Stories[storyName].events);
+};
+
+DBMS.getStoryCharacters = function(storyName, callback){
+    "use strict";
+    callback(Database.Stories[storyName].characters);
+};
+
+
+DBMS.addStoryCharacter = function(storyName, characterName, callback){
+    "use strict";
+    
+    Database.Stories[storyName].characters[characterName] = {
+            name : characterName,
+            inventory : "",
+            activity: {}
+    };
+    
+    callback();
+};
+
+DBMS.switchStoryCharacters = function(storyName, fromName, toName, callback){
+    "use strict";
+    
+    var story = Database.Stories[storyName];
+    story.characters[toName] = story.characters[fromName];
+    story.characters[toName].name = toName;
+    delete story.characters[fromName];
+    story.events.forEach(function (event) {
+        if (event.characters[fromName]) {
+            event.characters[fromName].name = toName;
+            event.characters[toName] = event.characters[fromName];
+            delete event.characters[fromName];
+        }
+    });
+    
+    callback();
+};
+
+DBMS.removeStoryCharacter = function(storyName, characterName, callback){
+    "use strict";
+    
+    var story = Database.Stories[storyName];
+    delete story.characters[characterName];
+    story.events.forEach(function (event) {
+        delete event.characters[characterName];
+    });
+    
+    callback();
+};
+
+DBMS.updateCharacterInventory = function(storyName, characterName, inventory){
+    "use strict";
+    Database.Stories[storyName].characters[characterName].inventory = inventory;
+};
+
+DBMS.onChangeCharacterActivity = function(storyName, characterName, activityType, checked){
+    "use strict";
+    var character = Database.Stories[storyName].characters[characterName];
+    if (checked) {
+        character.activity[activityType] = true;
+    } else {
+        delete character.activity[activityType];
+    }
+};
+
+
+DBMS.createEvent = function(storyName, eventName, eventText, toEnd, selectedIndex, callback){
+    "use strict";
+    var event = {
+        name : eventName,
+        text : eventText,
+        time : "",
+        characters : {}
+    };
+    if (toEnd) {
+        Database.Stories[storyName].events.push(event);
+    } else {
+        Database.Stories[storyName].events.splice(selectedIndex, 0, event);
+    }
+    callback();
+};
+
+DBMS.swapEvents = function(storyName, index1, index2, callback){
+    "use strict";
+    var story = Database.Stories[storyName];
+    var tmp = story.events[index1];
+    story.events[index1] = story.events[index2];
+    story.events[index2] = tmp;
+    
+    callback();
+};
+
+DBMS.cloneEvent = function(storyName, index, callback){
+    "use strict";
+    var story = Database.Stories[storyName];
+    var event = story.events[index];
+    var copy = Utils.clone(event);
+    
+    story.events.splice(index, 0, copy);
+    
+    callback();
+};
+
+DBMS.mergeEvents = function(storyName, index, callback){
+    "use strict";
+    var story = Database.Stories[storyName];
+
+    var event1 = story.events[index];
+    var event2 = story.events[index + 1];
+    
+    event1.name += event2.name;
+    event1.text += event2.text;
+    for ( var characterName in event2.characters) {
+        if (event1.characters[characterName]) {
+            event1.characters[characterName].text += event2.characters[characterName].text;
+            event1.characters[characterName].ready = false;
+        } else {
+            event1.characters[characterName] = event2.characters[characterName];
+        }
+    }
+    story.events.remove(index + 1);
+    
+    callback();
+};
+
+DBMS.removeEvent = function(storyName, index, callback){
+    "use strict";
+    var story = Database.Stories[storyName];
+    story.events.remove(index);
+    callback();
+};
+
+DBMS.updateEventProperty = function(storyName, index, property, value, callback){
+    "use strict";
+    var story = Database.Stories[storyName].events[index][property] = value;
+    if(callback)callback();
+};
+
+DBMS.isStoryExist = function(storyName, onTrue, onFalse){
+    "use strict";
+    if(Database.Stories[storyName]){
+        if(onTrue)onTrue();
+    } else {
+        if(onFalse)onFalse();
+    }
+};
+DBMS.createStory = function(storyName, callback){
+    "use strict";
+    Database.Stories[storyName] = {
+            name : storyName,
+            story : "",
+            characters : {},
+            events : []
+    };
+    callback();
+};
+DBMS.renameStory = function(fromName, toName, callback){
+    "use strict";
+    var data = Database.Stories[fromName];
+    data.name = toName;
+    Database.Stories[toName] = data;
+    delete Database.Stories[fromName];
+    callback();
+};
+DBMS.removeStory = function(name, callback){
+    "use strict";
+    delete Database.Stories[name];
+    callback();
+};
+
+
+
+
+
+DBMS.getSettings = function(){
+    "use strict";
+    return Database.Settings;
+};
+
+
+DBMS.getCharacterNamesArray = function () {
+    "use strict";
+    return Object.keys(Database.Characters).sort(Utils.charOrdA);
+};
+
+DBMS.getCharacterNamesArray2 = function (callback) {
+    "use strict";
+    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
+};
+
+DBMS.getCharacterNamesArray3 = function () {
+    "use strict";
+    return new Promise(function(resolve, reject) {
+        var names = Object.keys(Database.Characters).sort(Utils.charOrdA);
+        resolve(names);
+    });
+    
+//    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
+};
+
 
 DBMS.getStoryCharacterNamesArray = function (storyName) {
     "use strict";
-
+    
     var localCharacters;
-    if (storyName === undefined) {
-        localCharacters = Stories.CurrentStory.characters;
-    } else {
-        localCharacters = Database.Stories[storyName].characters;
-    }
-
+    localCharacters = Database.Stories[storyName].characters;
+    
     return Object.keys(localCharacters).sort(Utils.charOrdA);
 };
 
 DBMS.getStoryNamesArray = function () {
     "use strict";
     return Object.keys(Database.Stories).sort(Utils.charOrdA);
+};
+
+DBMS.getStoryNamesArray2 = function (callback) {
+    "use strict";
+    callback(Object.keys(Database.Stories).sort(Utils.charOrdA));
 };
