@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, Database, DBMS
+ Utils, DBMS
  */
 
 "use strict";
@@ -75,37 +75,39 @@ CharacterProfileConfigurer.refresh = function () {
     var positionSelector = document.getElementById("profileItemPositionSelector");
     Utils.removeChildren(positionSelector);
 
-    Database.ProfileSettings.forEach(function (elem, i) {
+    DBMS.getAllProfileSettings(function(allProfileSettings){
+        allProfileSettings.forEach(function (elem, i) {
+            var option = document.createElement("option");
+            option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
+            positionSelector.appendChild(option);
+        });
+        
         var option = document.createElement("option");
-        option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
+        option.appendChild(document.createTextNode("В конец"));
         positionSelector.appendChild(option);
-    });
-
-    var option = document.createElement("option");
-    option.appendChild(document.createTextNode("В конец"));
-    positionSelector.appendChild(option);
-
-    positionSelector.selectedIndex = Database.ProfileSettings.length;
-
-    var table = document.getElementById("profileConfigBlock");
-    Utils.removeChildren(table);
-
-    Database.ProfileSettings.forEach(function (profileSettings, i) {
-        CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
-    });
-
-    var selectorArr = [];
-
-    selectorArr.push(document.getElementById("firstProfileField"));
-    selectorArr.push(document.getElementById("secondProfileField"));
-    selectorArr.push(document.getElementById("removeProfileItemSelector"));
-
-    selectorArr.forEach(function (selector) {
-        Utils.removeChildren(selector);
-        Database.ProfileSettings.forEach(function (elem, i) {
-            option = document.createElement("option");
-            option.appendChild(document.createTextNode(elem.name));
-            selector.appendChild(option);
+        
+        positionSelector.selectedIndex = allProfileSettings.length;
+        
+        var table = document.getElementById("profileConfigBlock");
+        Utils.removeChildren(table);
+        
+        allProfileSettings.forEach(function (profileSettings, i) {
+            CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
+        });
+        
+        var selectorArr = [];
+        
+        selectorArr.push(document.getElementById("firstProfileField"));
+        selectorArr.push(document.getElementById("secondProfileField"));
+        selectorArr.push(document.getElementById("removeProfileItemSelector"));
+        
+        selectorArr.forEach(function (selector) {
+            Utils.removeChildren(selector);
+            allProfileSettings.forEach(function (elem, i) {
+                option = document.createElement("option");
+                option.appendChild(document.createTextNode(elem.name));
+                selector.appendChild(option);
+            });
         });
     });
 };
@@ -114,38 +116,22 @@ CharacterProfileConfigurer.createProfileItem = function () {
     'use strict';
     var name = document.getElementById("profileItemNameInput").value.trim();
 
-    if (!CharacterProfileConfigurer.validateProfileItemName(name)) {
-        return;
-    }
-
-    var type = document.getElementById("profileItemTypeSelector").value.trim();
-
-    if (!CharacterProfileConfigurer.mapping[type]) {
-        Utils.alert("Неизвестный тип поля: " + type);
-        return;
-    }
-
-    var profileItem = {
-        name : name,
-        type : type,
-        value : CharacterProfileConfigurer.mapping[type].value
-    };
-
-    Object.keys(Database.Characters).forEach(function (characterName) {
-        Database.Characters[characterName][name] = CharacterProfileConfigurer.mapping[type].value;
+    CharacterProfileConfigurer.validateProfileItemName(name, function(){
+        var type = document.getElementById("profileItemTypeSelector").value.trim();
+        
+        if (!CharacterProfileConfigurer.mapping[type]) {
+            Utils.alert("Неизвестный тип поля: " + type);
+            return;
+        }
+        var value = CharacterProfileConfigurer.mapping[type].value;
+        
+        var positionSelector = document.getElementById("profileItemPositionSelector");
+        
+        var position = positionSelector.value;
+        
+        DBMS.createProfileItem(name, type, value, position === "В конец", 
+                positionSelector.selectedIndex, CharacterProfileConfigurer.refresh);
     });
-
-    var positionSelector = document.getElementById("profileItemPositionSelector");
-
-    var position = positionSelector.value;
-    if (position === "В конец") {
-        Database.ProfileSettings.push(profileItem);
-    } else {
-        Database.ProfileSettings.splice(positionSelector.selectedIndex, 0,
-                profileItem);
-    }
-
-    CharacterProfileConfigurer.refresh();
 };
 
 CharacterProfileConfigurer.swapProfileItems = function () {
@@ -157,26 +143,19 @@ CharacterProfileConfigurer.swapProfileItems = function () {
         return;
     }
 
-    var tmp = Database.ProfileSettings[index1];
-    Database.ProfileSettings[index1] = Database.ProfileSettings[index2];
-    Database.ProfileSettings[index2] = tmp;
-
-    CharacterProfileConfigurer.refresh();
+    DBMS.swapProfileItems(index1,index2, CharacterProfileConfigurer.refresh);
 };
 
 CharacterProfileConfigurer.removeProfileItem = function () {
     'use strict';
     var index = document.getElementById("removeProfileItemSelector").selectedIndex;
+    var name = document.getElementById("removeProfileItemSelector").value;
 
     if (Utils.confirm("Вы уверены, что хотите удалить поле профиля "
-                    + Database.ProfileSettings[index].name
+                    + name
                     + "? Все данные связанные с этим полем будут удалены безвозвратно.")) {
-        var name = Database.ProfileSettings[index].name;
-        Object.keys(Database.Characters).forEach(function (characterName) {
-            delete Database.Characters[characterName][name];
-        });
-        Database.ProfileSettings.remove(index);
-        CharacterProfileConfigurer.refresh();
+        
+        DBMS.removeProfileItem(index, name, CharacterProfileConfigurer.refresh);
     }
 };
 
@@ -226,10 +205,9 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     var input; 
     input = document.createElement("input");
     input.value = profileSettings.name;
-    input.info = profileSettings;
+    input.info = profileSettings.name;
     addClass(input,"itemNameInput");
-    input.addEventListener("change",
-            CharacterProfileConfigurer.renameProfileItem);
+    input.addEventListener("change", CharacterProfileConfigurer.renameProfileItem);
     td.appendChild(input);
     tr.appendChild(td);
 
@@ -237,10 +215,10 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     var selector = document.createElement("select");
     CharacterProfileConfigurer.fillSelector(selector);
     selector.value = profileSettings.type;
-    selector.info = profileSettings;
+    selector.info = profileSettings.name;
+    selector.oldType = profileSettings.type;
     td.appendChild(selector);
-    selector.addEventListener("change",
-            CharacterProfileConfigurer.changeProfileItemType);
+    selector.addEventListener("change", CharacterProfileConfigurer.changeProfileItemType);
     tr.appendChild(td);
 
     td = document.createElement("td");
@@ -249,7 +227,8 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     } else {
         input = document.createElement("input");
     }
-    input.info = profileSettings;
+    input.info = profileSettings.name;
+    input.infoType = profileSettings.type;
     addClass(input, "profile-configurer-" + profileSettings.type);
 
     switch (profileSettings.type) {
@@ -276,133 +255,75 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
 
 CharacterProfileConfigurer.updateDefaultValue = function (event) {
     'use strict';
-    var type = event.target.info.type;
-
-    var oldOptions, newOptions, newOptionsMap, missedValues, name;
-
+    var name = event.target.info;
+    var type = event.target.infoType;
+    
+    var value ;
+    
     switch (type) {
     case "text":
-        event.target.info.value = event.target.value;
-        break;
     case "string":
-        event.target.info.value = event.target.value;
-        break;
-    case "enum":
-        if (event.target.value === "") {
-            Utils.alert("Значение поля с единственным выбором не может быть пустым");
-            event.target.value = event.target.info.value;
-            return;
-        }
-        oldOptions = event.target.info.value.split(",");
-        newOptions = event.target.value.split(",");
-        
-        newOptions = newOptions.map(function(elem){
-            return elem.trim();
-        });
-
-        newOptionsMap = [{}].concat(newOptions).reduce(function (a, b) {
-            a[b] = true;
-            return a;
-        });
-
-        missedValues = oldOptions.filter(function (oldOption) {
-            return !newOptionsMap[oldOption];
-        });
-
-        if (missedValues.length !== 0) {
-            if (Utils.confirm("Новое значение единственного выбора удаляет предыдущие значения: "
-                            + missedValues.join(",")
-                            + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
-                event.target.info.value = event.target.value;
-                name = event.target.info.name;
-
-                Object.keys(Database.Characters).forEach(function (characterName) {
-                    var enumValue = Database.Characters[characterName][name];
-                    if (!newOptionsMap[enumValue]) {
-                        Database.Characters[characterName][name] = newOptions[0];
-                    }
-                });
-
-                return;
-            } else {
-                event.target.value = event.target.info.value;
-                return;
-            }
-        }
-
-        event.target.info.value = event.target.value = newOptions.join(",");
-        break;
     case "number":
-        if (isNaN(event.target.value)) {
-            Utils.alert("Введено не число");
-            event.target.value = event.target.info.value;
-            return;
-        }
-        event.target.info.value = Number(event.target.value);
+    case "enum":
+        value = event.target.value;
         break;
     case "checkbox":
-        event.target.info.value = event.target.checked;
+        value = event.target.checked;
         break;
     }
-
+    
+    var callback = function(oldValue){
+        event.target.value = oldValue;
+    }
+    
+    DBMS.updateDefaultValue(name, value, callback);
 };
 
 CharacterProfileConfigurer.renameProfileItem = function (event) {
     'use strict';
     var newName = event.target.value.trim();
-    var oldName = event.target.info.name;
+    var oldName = event.target.info;
 
-    if (!CharacterProfileConfigurer.validateProfileItemName(newName)) {
-        event.target.value = event.target.info.name;
-        return;
-    }
-
-    Object.keys(Database.Characters).forEach(function (characterName) {
-        var tmp = Database.Characters[characterName][oldName];
-        delete Database.Characters[characterName][oldName];
-        Database.Characters[characterName][newName] = tmp;
+    CharacterProfileConfigurer.validateProfileItemName(newName, function(){
+        DBMS.renameProfileItem(newName, oldName, CharacterProfileConfigurer.refresh);
+    }, function(){
+        event.target.value = event.target.info;
     });
-
-    event.target.info.name = newName;
 };
 
-CharacterProfileConfigurer.validateProfileItemName = function (name) {
+CharacterProfileConfigurer.validateProfileItemName = function (name, success, failure) {
     'use strict';
     if (name === "") {
         Utils.alert("Название поля не указано");
-        return false;
+        if(failure) failure();
+        return;
     }
-
+    
     if (name === "name") {
         Utils.alert("Название поля не может быть name");
-        return false;
+        if(failure) failure();
+        return;
     }
-
-    var nameUsedTest = function (profile) {
-        return name === profile.name;
-    };
-
-    if (Database.ProfileSettings.some(nameUsedTest)) {
+    
+    DBMS.isProfileItemNameUsed(name, function(){
         Utils.alert("Такое имя уже используется.");
-        return false;
-    }
-
-    return true;
+        if(failure) failure();
+    }, success);
+    
 };
 
 CharacterProfileConfigurer.changeProfileItemType = function (event) {
     'use strict';
     if (Utils.confirm("Вы уверены, что хотите изменить тип поля профиля "
-            + event.target.info.name
+            + event.target.info
             + "? Все заполнение данного поле в досье будет потеряно.")) {
-        event.target.info.type = event.target.value;
-        event.target.info.value = CharacterProfileConfigurer.mapping[event.target.value].value;
-
-        Object.keys(Database.Characters).forEach(function (characterName) {
-            Database.Characters[characterName][event.target.info.name] = CharacterProfileConfigurer.mapping[event.target.value].value;
-        });
+        
+        var newType = event.target.value;
+        var name = event.target.info;
+        
+        DBMS.changeProfileItemType(name, newType, CharacterProfileConfigurer.refresh);
+        
     } else {
-        event.target.value = event.target.info.type;
+        event.target.value = event.target.oldType;
     }
-    CharacterProfileConfigurer.refresh();
 };
