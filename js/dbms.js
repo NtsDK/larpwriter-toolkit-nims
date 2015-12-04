@@ -36,7 +36,7 @@ DBMS.isCharacterNameUsed = function(name, callback){
     callback(Database.Characters[name]);
 };
 
-DBMS.createCharacter = function (name) {
+DBMS.createCharacter = function (name, callback) {
     "use strict";
     var newCharacter = {
         name : name
@@ -51,9 +51,10 @@ DBMS.createCharacter = function (name) {
     });
 
     Database.Characters[name] = newCharacter;
+    callback();
 };
 
-DBMS.renameCharacter = function (fromName, toName) {
+DBMS.renameCharacter = function (fromName, toName, callback) {
     "use strict";
     var data = Database.Characters[fromName];
     data.name = toName;
@@ -81,9 +82,10 @@ DBMS.renameCharacter = function (fromName, toName) {
             story.events.forEach(renameEventCharacter);
         }
     }
+    callback();
 };
 
-DBMS.removeCharacter = function (name) {
+DBMS.removeCharacter = function (name, callback) {
     "use strict";
     delete Database.Characters[name];
     var storyName, story;
@@ -101,11 +103,65 @@ DBMS.removeCharacter = function (name) {
             story.events.forEach(cleanEvent);
         }
     }
+    callback();
 };
 
 DBMS.getCharacterNamesArray = function () {
     "use strict";
     return Object.keys(Database.Characters).sort(Utils.charOrdA);
+};
+
+DBMS.getCharacterNamesArray2 = function (callback) {
+    "use strict";
+    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
+};
+
+DBMS.getCharacterNamesArray3 = function () {
+    "use strict";
+    return new Promise(function(resolve, reject) {
+        var names = Object.keys(Database.Characters).sort(Utils.charOrdA);
+        resolve(names);
+    });
+    
+//    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
+};
+
+DBMS.getProfile = function(name, callback){
+    "use strict";
+    callback(name, Database.Characters[name]);
+};
+
+DBMS.getAllProfileSettings = function(callback){
+    "use strict";
+    callback(Database.ProfileSettings);
+};
+
+DBMS.updateProfileField = function(characterName, fieldName, type, event){
+    "use strict";
+    var profileInfo = Database.Characters[characterName];
+    switch(type){
+    case "text":
+    case "string":
+    case "enum":
+        profileInfo[fieldName] = event.target.value;
+        break;
+    case "number":
+        if (isNaN(event.target.value)) {
+            Utils.alert("Введенное значение не является числом.");
+            event.target.value = profileInfo[fieldName];
+            return;
+        }
+        profileInfo[fieldName] = Number(event.target.value);
+        break;
+    case "checkbox":
+        profileInfo[fieldName] = event.target.checked;
+        break;
+    }
+};
+
+DBMS.getSettings = function(){
+    "use strict";
+    return Database.Settings;
 };
 
 DBMS.getStoryCharacterNamesArray = function (storyName) {

@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, Database, DBMS
+ Utils, DBMS
  */
 
 "use strict";
@@ -30,47 +30,57 @@ CharacterProfile.init = function () {
 
 CharacterProfile.refresh = function () {
     "use strict";
-    var names = DBMS.getCharacterNamesArray();
-
-    var selector = document.getElementById("bioEditorSelector");
-    Utils.removeChildren(selector);
-    names.forEach(function (name) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
-        selector.appendChild(option);
-    });
-
-    var profileContentDiv = document.getElementById("profileContentDiv");
-    Utils.removeChildren(profileContentDiv);
-    profileContentDiv.inputItems = {};
-    var table = document.createElement("table");
-    var tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-    addClass(table, "table");
-    profileContentDiv.appendChild(table);
-
-    Database.ProfileSettings.forEach(function (profileSettings) {
-        CharacterProfile.appendInput(tbody, profileContentDiv.inputItems, profileSettings);
-    });
     
+    DBMS.getCharacterNamesArray2(function(names){
+        var selector = document.getElementById("bioEditorSelector");
+        Utils.removeChildren(selector);
+        names.forEach(function (name) {
+            var option = document.createElement("option");
+            option.appendChild(document.createTextNode(name));
+            selector.appendChild(option);
+        });
+        
+        var profileContentDiv = document.getElementById("profileContentDiv");
+        Utils.removeChildren(profileContentDiv);
+        var table = document.createElement("table");
+        var tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+        addClass(table, "table");
+        profileContentDiv.appendChild(table);
+        
+        CharacterProfile.inputItems = {};
+        
+        DBMS.getAllProfileSettings(function(allProfileSettings){
+            allProfileSettings.forEach(function (profileSettings) {
+                CharacterProfile.appendInput(tbody, profileSettings);
+            });
+            
+            CharacterProfile.applySettings(names, selector);
+        });
+    });
+};
 
+CharacterProfile.applySettings = function (names, selector) {
+    "use strict";
     if (names.length > 0) {
-        if(!Database.Settings["CharacterProfile"]){
-            Database.Settings["CharacterProfile"] = {
-                characterName : names[0]
+        var name = names[0];
+        var settings = DBMS.getSettings();
+        if(!settings["CharacterProfile"]){
+            settings["CharacterProfile"] = {
+                characterName : name
             };
         }
-        var characterName = Database.Settings["CharacterProfile"].characterName;
+        var characterName = settings["CharacterProfile"].characterName;
         if(names.indexOf(characterName) === -1){
-            Database.Settings["CharacterProfile"].characterName = names[0];
-            characterName = names[0];
+            settings["CharacterProfile"].characterName = name;
+            characterName = name;
         }
-        CharacterProfile.showProfileInfo(characterName);
+        DBMS.getProfile(characterName, CharacterProfile.showProfileInfoCallback);
         selector.value = characterName;
     }
 };
 
-CharacterProfile.appendInput = function (root, inputItems, profileItemConfig) {
+CharacterProfile.appendInput = function (root, profileItemConfig) {
     "use strict";
     var tr = document.createElement("tr");
     var td = document.createElement("td");
@@ -79,111 +89,76 @@ CharacterProfile.appendInput = function (root, inputItems, profileItemConfig) {
 
     td = document.createElement("td");
     
-    var textarea, input, selector, values;
+    var input, values;
 
     switch (profileItemConfig.type) {
     case "text":
-        textarea = document.createElement("textarea");
-        textarea.className = "profileTextInput";
-        textarea.selfName = profileItemConfig.name;
-        td.appendChild(textarea);
-        inputItems[profileItemConfig.name] = textarea;
-
-        textarea.addEventListener("change", function (event) {
-            var profileContentDiv = document.getElementById("profileContentDiv");
-            profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
-        });
-
+        input = document.createElement("textarea");
+        addClass(input, "profileTextInput");
         break;
     case "string":
         input = document.createElement("input");
-        input.className = "profileStringInput";
-        input.selfName = profileItemConfig.name;
-        td.appendChild(input);
-        inputItems[profileItemConfig.name] = input;
-
-        input.addEventListener("change", function (event) {
-            var profileContentDiv = document.getElementById("profileContentDiv");
-            profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
-        });
-
+        addClass(input, "profileStringInput");
         break;
     case "enum":
-        selector = document.createElement("select");
-        selector.selfName = profileItemConfig.name;
+        input = document.createElement("select");
 
         values = profileItemConfig.value.split(",");
-
         values.forEach(function (value) {
             var option = document.createElement("option");
             option.appendChild(document.createTextNode(value));
-            selector.appendChild(option);
+            input.appendChild(option);
         });
-        td.appendChild(selector);
-        inputItems[profileItemConfig.name] = selector;
-
-        selector.addEventListener("change", function (event) {
-            var profileContentDiv = document.getElementById("profileContentDiv");
-            profileContentDiv.profileInfo[event.target.selfName] = event.target.value;
-        });
-
         break;
     case "number":
         input = document.createElement("input");
-        input.selfName = profileItemConfig.name;
         input.type = "number";
-        td.appendChild(input);
-        inputItems[profileItemConfig.name] = input;
-
-        input.addEventListener("change", function (event) {
-            var profileContentDiv = document.getElementById("profileContentDiv");
-            if (isNaN(event.target.value)) {
-                Utils.alert("Введенное значение не является числом.");
-                event.target.value = profileContentDiv.profileInfo[event.target.selfName];
-                return;
-            }
-            profileContentDiv.profileInfo[event.target.selfName] = Number(event.target.value);
-        });
-
         break;
     case "checkbox":
         input = document.createElement("input");
-        input.selfName = profileItemConfig.name;
         input.type = "checkbox";
-        td.appendChild(input);
-        inputItems[profileItemConfig.name] = input;
-
-        input.addEventListener("change", function (event) {
-            var profileContentDiv = document.getElementById("profileContentDiv");
-            profileContentDiv.profileInfo[event.target.selfName] = event.target.checked;
-        });
-
         break;
     }
+    input.addEventListener("change", CharacterProfile.updateFieldValue(profileItemConfig.type));
+    input.selfName = profileItemConfig.name;
+    td.appendChild(input);
+    CharacterProfile.inputItems[profileItemConfig.name] = input;
 
     tr.appendChild(td);
     root.appendChild(tr);
 };
 
+CharacterProfile.updateFieldValue = function(type){
+    "use strict";
+    return function(event){
+        var fieldName = event.target.selfName;
+        DBMS.updateProfileField(CharacterProfile.name, fieldName, type, event);
+    }
+}
+
 CharacterProfile.showProfileInfoDelegate = function (event) {
     "use strict";
     var name = event.target.value.trim();
-    CharacterProfile.showProfileInfo(name);
+    DBMS.getProfile(name, CharacterProfile.showProfileInfoCallback);
 };
 
-CharacterProfile.showProfileInfo = function (name) {
+CharacterProfile.showProfileInfoCallback = function (name, profile) {
     "use strict";
-    var profileContentDiv = document.getElementById("profileContentDiv");
-    Database.Settings["CharacterProfile"].characterName = name;
+    CharacterProfile.updateSettings(name);
     
-    var profile = Database.Characters[name];
-    profileContentDiv.profileInfo = profile;
-    var inputNames = profileContentDiv.inputItems;
-    Object.keys(inputNames).forEach(function (inputName) {
-        if (inputNames[inputName].type === "checkbox") {
-            inputNames[inputName].checked = profile[inputName];
+    CharacterProfile.name = name;
+    var inputItems = CharacterProfile.inputItems;
+    Object.keys(inputItems).forEach(function (inputName) {
+        if (inputItems[inputName].type === "checkbox") {
+            inputItems[inputName].checked = profile[inputName];
         } else {
-            inputNames[inputName].value = profile[inputName];
+            inputItems[inputName].value = profile[inputName];
         }
     });
+};
+
+CharacterProfile.updateSettings = function (name) {
+    "use strict";
+    var settings = DBMS.getSettings();
+    settings["CharacterProfile"].characterName = name;
 };

@@ -45,8 +45,11 @@ Characters.init = function () {
 
 Characters.refresh = function () {
     "use strict";
-    var names = DBMS.getCharacterNamesArray();
+    DBMS.getCharacterNamesArray2(Characters.rebuildInterface);
+};
 
+Characters.rebuildInterface = function (names) {
+    "use strict";
     var selector = document.getElementById("fromName");
     Utils.removeChildren(selector);
     names.forEach(function (name) {
@@ -80,8 +83,7 @@ Characters.createCharacter = function () {
         if (isCharacterNameUsed) {
             Utils.alert("Такой персонаж уже существует");
         } else {
-            DBMS.createCharacter(name);
-            Characters.refresh();
+            DBMS.createCharacter(name, Characters.refresh);
         }
     });
 
@@ -106,8 +108,7 @@ Characters.renameCharacter = function () {
         if (isCharacterNameUsed) {
             Utils.alert("Имя " + toName + " уже используется.");
         } else {
-            DBMS.renameCharacter(fromName, toName);
-            Characters.refresh();
+            DBMS.renameCharacter(fromName, toName, Characters.refresh);
         }
     });
 };
@@ -118,7 +119,6 @@ Characters.removeCharacter = function () {
 
     if (Utils.confirm("Вы уверены, что хотите удалить " + name
             + "? Все данные связанные с персонажем будут удалены безвозвратно.")) {
-        DBMS.removeCharacter(name);
-        Characters.refresh();
+        DBMS.removeCharacter(name, Characters.refresh);
     }
 };
