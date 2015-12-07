@@ -44,8 +44,18 @@ Stories.init = function () {
 
     button = document.getElementById("masterStoryArea");
     button.addEventListener("change", Stories.updateMasterStory);
+    
+    button = document.getElementById("masterStoryNavButton");
+    button.addEventListener("click", Stories.onMasterStoryNavButtonClick);
+    addClass(button, "active");
 
     Stories.content = document.getElementById("storiesDiv");
+};
+
+Stories.onMasterStoryNavButtonClick = function (event) {
+    "use strict";
+    toggleClass(event.target, "active");
+    toggleClass(document.getElementById("masterStoryDiv"), "hidden");
 };
 
 Stories.refresh = function () {

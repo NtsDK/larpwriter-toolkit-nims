@@ -494,6 +494,76 @@ DBMS.removeStory = function(name, callback){
 };
 
 
+DBMS.getAllInventoryLists = function(characterName, callback){
+    "use strict";
+    var array = [];
+    
+    for ( var storyName in Database.Stories) {
+        var story = Database.Stories[storyName];
+        if (story.characters[characterName]
+                && story.characters[characterName].inventory
+                && story.characters[characterName].inventory !== "") {
+            array.push({
+                storyName: storyName,
+                inventory:story.characters[characterName].inventory
+            });
+        }
+    }
+    callback(array);
+};
+
+DBMS.getCharacterEventGroupsByStory = function(characterName, callback){
+    "use strict";
+    var eventGroups = [];
+    
+    var events;
+    
+    Object.keys(Database.Stories).filter(function(storyName){
+        return Database.Stories[storyName].characters[characterName];
+    }).forEach(function (storyName) {
+        events = [];
+        
+        var tmpEvents = Database.Stories[storyName].events;
+        tmpEvents.map(function(elem, i){
+            elem.index = i;
+            elem.storyName = storyName;
+            return elem;
+        }).filter(function (event) {
+            return event.characters[characterName];
+        }).forEach(function (event) {
+            events.push(event);
+        });
+        
+        eventGroups.push({
+            storyName: storyName,
+            events: events
+        })
+    });
+    callback(eventGroups);
+};
+
+DBMS.getCharacterEventsByTime = function(characterName, callback){
+    "use strict";
+    var allEvents = [];
+    
+    Object.keys(Database.Stories).filter(function(storyName){
+        return Database.Stories[storyName].characters[characterName];
+    }).forEach(function (storyName) {
+        var events = Database.Stories[storyName].events;
+        allEvents = allEvents.concat(events.map(function(elem, i){
+            elem.index = i;
+            elem.storyName = storyName;
+            return elem;
+        }).filter(function (event) {
+            return event.characters[characterName];
+        }));
+    });
+    
+    allEvents.sort(eventsByTime);
+    callback(allEvents);
+};
+
+
 
 
 
@@ -541,4 +611,112 @@ DBMS.getStoryNamesArray = function () {
 DBMS.getStoryNamesArray2 = function (callback) {
     "use strict";
     callback(Object.keys(Database.Stories).sort(Utils.charOrdA));
+};
+DBMS.getStoryNamesArray2 = function (callback) {
+    "use strict";
+    callback(Object.keys(Database.Stories).sort(Utils.charOrdA));
+};
+
+DBMS.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
+    "use strict";
+    var storyArray = Object.keys(Database.Stories).sort(Utils.charOrdA);
+    storyArray = storyArray.map(function(elem){
+        return {
+            storyName: elem,
+            isFinished: DBMS._isStoryFinished(elem)
+        }
+    });
+    
+    if(showOnlyUnfinishedStories){
+        storyArray = storyArray.filter(function(elem){
+            return !elem.isFinished;
+        })
+        callback(storyArray);
+    } else {
+        callback(storyArray);
+    }
+};
+
+DBMS._isStoryFinished = function (storyName) {
+    "use strict";
+    return Database.Stories[storyName].events.every(function(event){
+        for(var characterName in event.characters){
+            if(event.characters[characterName]){
+                return event.characters[characterName].ready;
+            } else {
+                return true;
+            }
+        }
+    });
+};
+
+DBMS.getFilteredCharacterNames = function (storyName, showOnlyUnfinishedStories, callback){
+    "use strict";
+    
+    var localCharacters;
+    localCharacters = Database.Stories[storyName].characters;
+    
+    localCharacters = Object.keys(localCharacters).sort(Utils.charOrdA);
+    
+    localCharacters = localCharacters.map(function(elem){
+        return {
+            characterName: elem,
+            isFinished: DBMS._isStoryFinishedForCharacter(storyName, elem)
+        }
+    });
+    
+    if(showOnlyUnfinishedStories){
+        localCharacters = localCharacters.filter(function(elem){
+            return !elem.isFinished;
+        })
+        callback(localCharacters);
+    } else {
+        callback(localCharacters);
+    }
+};
+
+DBMS._isStoryFinishedForCharacter = function (storyName, characterName) {
+    "use strict";
+    return Database.Stories[storyName].events.every(function(event){
+        if(event.characters[characterName]){
+            return event.characters[characterName].ready;
+        } else {
+            return true;
+        }
+    });
+};
+
+DBMS.getEvents = function(storyName, characterNames, callback){
+    "use strict";
+    
+    var i;
+    var events = Database.Stories[storyName].events.map(function(item, i){
+        item.index = i;
+        return item;
+    }).filter(function (event) {
+        for (i = 0; i < characterNames.length; i++) {
+            if(event.characters[characterNames[i]]){
+                return true;
+            }
+        }
+        return false;
+    });
+    callback(events);
+};
+
+DBMS.setEventText = function(storyName, eventIndex, characterName, text){
+    "use strict";
+    
+    var event = Database.Stories[storyName].events[eventIndex];
+    if(characterName !== undefined){
+        event.characters[characterName].text = text;
+    } else {
+        event.text = text;
+    }
+};
+
+DBMS.changeAdaptationReadyStatus = function(storyName, eventIndex, characterName, value){
+    "use strict";
+    var event = Database.Stories[storyName].events[eventIndex];
+    event.characters[characterName].ready = value;
 };
