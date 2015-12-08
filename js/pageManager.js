@@ -21,7 +21,26 @@ PageManager, Utils, Overview, Characters, Stories, Events, Briefings, Timeline, 
 var PageManager = {};
 
 PageManager.onLoad = function () {
-//    PageManager.enableFullScreenElements();
+    var request = $.ajax({
+        url : "js/baseExample.json",
+        dataType : "text",
+        method : "GET",
+        contentType : "text/plain;charset=utf-8"
+    });
+    
+    request.done(function(data) {
+        DBMS.setDatabase(JSON.parse(data), PageManager.onDatabaseLoad)
+    });
+    
+    request.fail(function(errorInfo, textStatus, errorThrown) {
+        alert("Ошибка при загрузке примера базы: " + errorInfo.responseText + ". Загружаю чистую базу.");
+        DBMS.newDatabase(PageManager.onDatabaseLoad)
+    });
+};
+
+PageManager.onDatabaseLoad = function () {
+    "use strict";
+//  PageManager.enableFullScreenElements();
     
     var root = PageManager;
     root.views = {};

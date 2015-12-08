@@ -18,6 +18,7 @@ See the License for the specific language governing permissions and
 "use strict";
 
 var DBMS = {};
+var Database;
 
 DBMS.getDatabase = function(callback){
     "use strict";
