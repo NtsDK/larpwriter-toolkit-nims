@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, DBMS, Database, StoryCharacters
+ Utils, DBMS, StoryCharacters
  */
 
 "use strict";
@@ -175,43 +175,58 @@ SocialNetwork.refresh = function () {
     selector = document.getElementById("networkNodeGroupSelector");
     Utils.removeChildren(selector);
     
-    var groups = Database.ProfileSettings.filter(function (element) {
-        return element.type === "enum" || element.type === "checkbox";
-    });
-    
-    var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
-        return elem.name;
-    }));
-
-    groupNames.forEach(function (group) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(group));
-        selector.appendChild(option);
-    });
-    
-    SocialNetwork.groupColors = {};
-    
-    for ( var groupName in SocialNetwork.fixedColors) {
-        SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
-    }
-    
-    groups.forEach(function (group) {
-        if(group.type === "enum"){
-            group.value.split(",").forEach(function (subGroupName, i){
-                SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = SocialNetwork.colorPalette[i];
+    DBMS.getAllProfiles(function(profiles){
+        SocialNetwork.Characters = profiles;
+        
+        DBMS.getAllStories(function(stories){
+            SocialNetwork.Stories = stories;
+            
+            DBMS.getAllProfileSettings(function(profileSettings){
+                
+                var groups = profileSettings.filter(function (element) {
+                    return element.type === "enum" || element.type === "checkbox";
+                });
+                
+                var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
+                    return elem.name;
+                }));
+                
+                groupNames.forEach(function (group) {
+                    var option = document.createElement("option");
+                    option.appendChild(document.createTextNode(group));
+                    selector.appendChild(option);
+                });
+                
+                SocialNetwork.groupColors = {};
+                
+                for ( var groupName in SocialNetwork.fixedColors) {
+                    SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
+                }
+                
+                groups.forEach(function (group) {
+                    if(group.type === "enum"){
+                        group.value.split(",").forEach(function (subGroupName, i){
+                            SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = SocialNetwork.colorPalette[i];
+                        });
+                    } else if( group.type === "checkbox"){
+                        if(group.value){
+                            SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[0];
+                            SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[1];
+                        } else {
+                            SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[1];
+                            SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[0];
+                        }
+                    }
+                });
+                
+                NetworkSubsetsSelector.refresh(SocialNetwork);
             });
-        } else if( group.type === "checkbox"){
-            if(group.value){
-                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[0];
-                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[1];
-            } else {
-                SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[1];
-                SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[0];
-            }
-        }
+        });
+        
+        
     });
     
-    NetworkSubsetsSelector.refresh();
+    
 };
 
 SocialNetwork.refreshLegend = function (groupName) {
@@ -245,7 +260,7 @@ SocialNetwork.updateNodes = function (groupName) {
     
     var group;
     NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
-        var character = Database.Characters[characterName];
+        var character = SocialNetwork.Characters[characterName];
         group = groupName === "Без групп" ? groupName : groupName + "." + character[groupName];
         SocialNetwork.nodesDataset.update({
             id : character.name,
@@ -327,7 +342,7 @@ SocialNetwork.getCharacterNodes = function () {
     var nodes = [];
     NetworkSubsetsSelector.getCharacterNames().forEach(
             function (characterName) {
-                var character = Database.Characters[characterName];
+                var character = SocialNetwork.Characters[characterName];
                 nodes.push({
                     id : character.name,
                     label : character.name.split(" ").join("\n"),
@@ -345,8 +360,8 @@ SocialNetwork.getStoryNodes = function () {
         return {
             id : "St:" + name,
             label : name.split(" ").join("\n"),
-            value : Object.keys(Database.Stories[name].characters).length,
-            title : Object.keys(Database.Stories[name].characters).length,
+            value : Object.keys(SocialNetwork.Stories[name].characters).length,
+            title : Object.keys(SocialNetwork.Stories[name].characters).length,
             group : "storyColor"
         };
     });
@@ -359,8 +374,8 @@ SocialNetwork.getActivityEdges = function () {
     "use strict";
     var edges = [];
     var edgesCheck = {};
-    for ( var name in Database.Stories) {
-        var story = Database.Stories[name];
+    for ( var name in SocialNetwork.Stories) {
+        var story = SocialNetwork.Stories[name];
         for ( var char1 in story.characters) {
             for(var activity in story.characters[char1].activity){
                 if(SocialNetwork.selectedActivities[activity]){
@@ -383,8 +398,8 @@ SocialNetwork.getStoryEdges = function () {
     "use strict";
     var edges = [];
     var edgesCheck = {};
-    for ( var name in Database.Stories) {
-        var story = Database.Stories[name];
+    for ( var name in SocialNetwork.Stories) {
+        var story = SocialNetwork.Stories[name];
         for ( var char1 in story.characters) {
             edges.push({
                 from : "St:" + name,
@@ -400,8 +415,8 @@ SocialNetwork.getSimpleEdges = function () {
     "use strict";
     var edges = [];
     var edgesCheck = {};
-    for ( var name in Database.Stories) {
-        var story = Database.Stories[name];
+    for ( var name in SocialNetwork.Stories) {
+        var story = SocialNetwork.Stories[name];
         
         story.events.forEach(function (event) {
             for ( var char1 in event.characters) {
@@ -425,8 +440,8 @@ SocialNetwork.getDetailedEdges = function () {
     "use strict";
     
     var edgesCheck = {};
-    for ( var name in Database.Stories) {
-        var story = Database.Stories[name];
+    for ( var name in SocialNetwork.Stories) {
+        var story = SocialNetwork.Stories[name];
         story.events.forEach(function (event) {
             for ( var char1 in event.characters) {
                 for ( var char2 in event.characters) {

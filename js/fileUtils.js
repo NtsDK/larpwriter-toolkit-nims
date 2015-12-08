@@ -13,54 +13,23 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, PageManager, Database, saveAs, FileReader, Blob, Migrator
+ Utils, saveAs, FileReader, Blob
  */
 
 "use strict";
 
 var FileUtils = {};
 
-FileUtils.init = function () {
+FileUtils.init = function (callback) {
     "use strict";
-    document.getElementById('dataLoadButton').addEventListener('change', FileUtils.readSingleFile, false);
-
-    var button = document.getElementById('dataSaveButton');
-    button.addEventListener('click', FileUtils.saveFile);
-    
-    button = document.getElementById('newBaseButton');
-    button.addEventListener('click', FileUtils.makeNewBase);
-
-    button = document.getElementById('mainHelpButton');
-    button.addEventListener('click', FileUtils.openHelp);
+    FileUtils.callback = callback;
 };
 
 FileUtils.makeNewBase = function () {
     "use strict";
     if(Utils.confirm("Вы уверены, что хотите создать новую базу? Все несохраненные изменения будут потеряны.")) {
-        Database = {
-            "Meta": {
-                "name" : "",
-                "date" : "",
-                "preGameDate" : "",
-                "description" : ""
-            },
-            "Characters": {},
-            "ProfileSettings" : [],
-            "Stories": {},
-            "Settings" : {
-                "Events" : {
-                },
-                "BriefingPreview" : {
-                },
-                "Stories" : {
-                },
-                "CharacterProfile" : {
-                }
-            },
-        };
-        PageManager.currentView.refresh();
+        DBMS.newDatabase(FileUtils.callback);
     }
-    
 };
 
 FileUtils.openHelp = function () {
@@ -77,9 +46,8 @@ FileUtils.readSingleFile = function (evt) {
         var r = new FileReader();
         r.onload = function (e) {
             var contents = e.target.result;
-            Database = JSON.parse(contents);
-            Database = Migrator.migrate(Database);
-            PageManager.currentView.refresh();
+            var database = JSON.parse(contents);
+            DBMS.setDatabase(database, FileUtils.callback);
         };
         r.readAsText(f);
     } else {
@@ -89,8 +57,10 @@ FileUtils.readSingleFile = function (evt) {
 
 FileUtils.saveFile = function () {
     "use strict";
-    var blob = new Blob([ JSON.stringify(Database, null, '  ') ], {
-        type : "text/plain;charset=utf-8"
+    DBMS.getDatabase(function(database){
+        var blob = new Blob([ JSON.stringify(database, null, '  ') ], {
+            type : "text/plain;charset=utf-8"
+        });
+        saveAs(blob, "nims-base.json");
     });
-    saveAs(blob, "nims-base.json");
 };

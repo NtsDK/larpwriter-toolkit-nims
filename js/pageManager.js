@@ -56,25 +56,27 @@ PageManager.onLoad = function () {
         input.type = "file";
         button.appendChild(input);
     navigation.appendChild(button);
+    button.addEventListener('change', FileUtils.readSingleFile, false);
 
     button = document.createElement("div");
     addClass(button, "action-button");
     button.id = "dataSaveButton";
     navigation.appendChild(button);
+    button.addEventListener('click', FileUtils.saveFile);
     
     button = document.createElement("div");
     button.id = "newBaseButton";
     addClass(button, "action-button");
     navigation.appendChild(button);
+    button.addEventListener('click', FileUtils.makeNewBase);
 
     button = document.createElement("div");
     button.id = "mainHelpButton";
     addClass(button, "action-button");
     navigation.appendChild(button);
+    button.addEventListener('click', FileUtils.openHelp);
 
-    FileUtils.init();
-    
-
+    FileUtils.init(PageManager.currentView.refresh);
 
     PageManager.currentView.refresh();
 };

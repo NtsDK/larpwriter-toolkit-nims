@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, Database, DBMS
+ Utils, DBMS
  */
 
 "use strict";
@@ -46,48 +46,54 @@ CharacterFilter.refresh = function () {
     filterSettingsDiv.appendChild(input);
     filterSettingsDiv.inputItems.name = input;
     input.addEventListener("change", CharacterFilter.rebuildContent);
-
-    filterSettingsDiv.appendChild(document.createElement("br"));
-
-    Database.ProfileSettings.forEach(function (profileSettings) {
-        CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
-    });
-
-    var filterHead = document.getElementById("filterHead");
-    Utils.removeChildren(filterHead);
     
-    var profileSettings = Database.ProfileSettings.filter(function (value) {
-        return true;
+    filterSettingsDiv.appendChild(document.createElement("br"));
+    
+    DBMS.getAllProfiles(function(profiles){
+        CharacterFilter.Characters = profiles;
+        
+        DBMS.getAllProfileSettings(function(allProfileSettings){
+            CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
+                return true;
+            });
+            
+            CharacterFilter.unshiftedProfileSettings = CharacterFilter.allProfileSettings.filter(function (value) {
+                return true;
+            });
+            CharacterFilter.unshiftedProfileSettings.unshift({
+                name : "name",
+                type : "text"
+            });
+            
+            CharacterFilter.allProfileSettings.forEach(function (profileSettings) {
+                CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
+            });
+            
+            var filterHead = document.getElementById("filterHead");
+            Utils.removeChildren(filterHead);
+            
+            CharacterFilter.appendContentHeader(filterHead, CharacterFilter.allProfileSettings);
+            
+            CharacterFilter.rebuildContent();
+        });
     });
-
-    CharacterFilter.appendContentHeader(filterHead, profileSettings);
-
-    CharacterFilter.rebuildContent();
-
 };
 
-CharacterFilter.rebuildContent = function () {
+CharacterFilter.rebuildContent = function (allProfileSettings) {
     "use strict";
     var filterContent = document.getElementById("filterContent");
     Utils.removeChildren(filterContent);
-    var profileSettings = Database.ProfileSettings.filter(function (value) {
-        return true;
-    });
 
-    profileSettings.unshift({
-        name : "name",
-        type : "text"
-    });
-
-    Object.keys(Database.Characters).filter(CharacterFilter.acceptDataRow).
+    Object.keys(CharacterFilter.Characters).filter(CharacterFilter.acceptDataRow).
         sort(CharacterFilter.sortDataRows).forEach(function (name) {
-            CharacterFilter.appendDataString(filterContent, Database.Characters[name], profileSettings);
+            CharacterFilter.appendDataString(filterContent, CharacterFilter.Characters[name], 
+                    CharacterFilter.unshiftedProfileSettings);
     });
 };
 
 CharacterFilter.acceptDataRow = function (element) {
     "use strict";
-    element = Database.Characters[element];
+    element = CharacterFilter.Characters[element];
     var filterSettingsDiv = document.getElementById("filterSettingsDiv");
     var result = true;
 
@@ -165,11 +171,11 @@ CharacterFilter.acceptDataRow = function (element) {
 
 CharacterFilter.sortDataRows = function (a, b) {
     "use strict";
-    a = Database.Characters[a];
-    b = Database.Characters[b];
+    a = CharacterFilter.Characters[a];
+    b = CharacterFilter.Characters[b];
 
     var type = CharacterFilter.sortKey === "name" ? "text"
-            : Database.ProfileSettings.filter(function (element) {
+            : CharacterFilter.allProfileSettings.filter(function (element) {
                 return element.name === CharacterFilter.sortKey;
             })[0].type;
 

@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, DBMS, Database
+ Utils, DBMS
  */
 
 "use strict";
@@ -35,15 +35,14 @@ Timeline.init = function () {
     var options = {
         orientation : 'top',
         showCurrentTime : false,
-        end : new Date(Database.Meta.date),
-        start : new Date(Database.Meta.preGameDate),
         editable : {
             updateTime : true
         },
         onMove : function (item, callback) {
-            if (item.extra) {
-                item.extra.time = dateFormat(item.start, "yyyy/mm/dd h:MM");
-                callback(item);
+            if (item.storyName) {
+                DBMS.setEventTime(item.storyName, item.eventIndex, item.start, function(){
+                    callback(item);
+                });
             }
         },
         multiselect : true
@@ -64,26 +63,34 @@ Timeline.refresh = function () {
     Utils.removeChildren(selector);
 
     var option;
-    for ( name in Database.Stories) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
-        selector.appendChild(option);
-    }
-
-    for ( name in Database.Stories) {
-        Timeline.onStorySelectorChange([ name ]);
-        break;
-    }
-    
-    var timeExtra = 24*60*60*30*12*1000;
-    var endDate = new Date(Database.Meta.date);
-    var startDate = new Date(Database.Meta.preGameDate);
-    endDate.setFullYear(endDate.getFullYear() + 1);
-    startDate.setFullYear(startDate.getFullYear() - 1)
-    
-    Timeline.timelineComponent.setOptions({
-        end : endDate,
-        start : startDate,
+        
+    DBMS.getMetaInfo(function(metaInfo){
+        
+        Timeline.postDate = metaInfo.date;
+        Timeline.preDate = metaInfo.preGameDate;
+        
+        var timeExtra = 24*60*60*30*12*1000;
+        var endDate = new Date(Timeline.postDate);
+        var startDate = new Date(Timeline.preDate);
+        endDate.setFullYear(endDate.getFullYear() + 1);
+        startDate.setFullYear(startDate.getFullYear() - 1)
+        
+        Timeline.timelineComponent.setOptions({
+            end : endDate,
+            start : startDate,
+        });
+        
+        DBMS.getStoryNamesArray2(function(storyNames){
+            storyNames.forEach(function(name){
+                option = document.createElement("option");
+                option.appendChild(document.createTextNode(name));
+                selector.appendChild(option);
+            });
+            
+            if(storyNames.length != 0){
+                Timeline.onStorySelectorChange([ storyNames[0] ]);
+            }
+        });
     });
 };
 
@@ -101,43 +108,50 @@ Timeline.onStorySelectorChange = function (storyNames) {
     "use strict";
     Timeline.TagDataset.clear();
     Timeline.TimelineDataset.clear();
-
-    storyNames.forEach(function (storyName) {
-        Timeline.TagDataset.add({
-            id : storyName,
-            content : storyName
-        });
-        var events = Database.Stories[storyName].events;
+    
+    var storyName;
+    DBMS.getEventGroupsForStories(storyNames, function(eventGroups){
         
-        events.forEach(function (event) {
-            var date = Database.Meta.date;
-            if (event.time) {
-                date = event.time;
-            }
+        eventGroups.forEach(function (elem) {
+            storyName = elem.storyName;
+            Timeline.TagDataset.add({
+                id : storyName,
+                content : storyName
+            });
+            var events = elem.events;
             
-            Timeline.TimelineDataset.add({
-                content : event.name,
-                start : date,
-                group : storyName,
-                extra : event
+            events.forEach(function (event) {
+                var date = Timeline.postDate;
+                if (event.time) {
+                    date = event.time;
+                }
+                
+                Timeline.TimelineDataset.add({
+                    content : event.name,
+                    start : date,
+                    group : storyName,
+                    storyName : storyName,
+                    eventIndex : event.index
+                });
             });
         });
+        
+        if(storyNames[0]){
+            Timeline.TimelineDataset.add({
+                content : "Начало игры",
+                start : new Date(Timeline.postDate),
+                group : storyNames[0],
+                className : "importantItem",
+                editable : false
+            });
+            Timeline.TimelineDataset.add({
+                content : "Начало доигровых событий",
+                start : new Date(Timeline.preDate),
+                group : storyNames[0],
+                className : "importantItem",
+                editable : false
+            });
+        }
     });
 
-    if(storyNames[0]){
-        Timeline.TimelineDataset.add({
-            content : "Начало игры",
-            start : new Date(Database.Meta.date),
-            group : storyNames[0],
-            className : "importantItem",
-            editable : false
-        });
-        Timeline.TimelineDataset.add({
-            content : "Начало доигровых событий",
-            start : new Date(Database.Meta.preGameDate),
-            group : storyNames[0],
-            className : "importantItem",
-            editable : false
-        });
-    }
 };

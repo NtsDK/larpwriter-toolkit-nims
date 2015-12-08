@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, DBMS, Database
+ Utils, DBMS
  */
 
 "use strict";
@@ -77,13 +77,15 @@ BriefingExport.exportByDefaultTemplate = function(type){
     var briefingData;
     switch(type){
     case "templateByTime"   : 
-        briefingData = BriefingExport.getBriefingData(false);
-        BriefingExport.generateDocxBriefings(template, briefingData);
+        briefingData = DBMS.getBriefingData(false, function(briefingData){
+            BriefingExport.generateDocxBriefings(template, briefingData);
+        });
         break;
     case "templateByStory"  : 
     case "inventoryTemplate": 
-        briefingData = BriefingExport.getBriefingData(true);
-        BriefingExport.generateDocxBriefings(template, briefingData);
+        briefingData = DBMS.getBriefingData(true, function(briefingData){
+            BriefingExport.generateDocxBriefings(template, briefingData);
+        });
         break;
     }
 };
@@ -92,78 +94,77 @@ BriefingExport.exportByDefaultTemplate = function(type){
 BriefingExport.makeTextBriefings = function () {
     "use strict";
 
-    var data = BriefingExport.getBriefingData(BriefingExport.isGroupingByStory());
-
-    var characterList = {};
-
-    data.briefings.forEach(function (briefingData) {
-        var briefing = "";
+    DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(data){
+        var characterList = {};
         
-        briefing += briefingData.name + "\n\n";
-        
-        var regex = new RegExp('^profileInfo');
-        
-        Object.keys(briefingData).filter(function (element) {
-            return regex.test(element);
-        }).forEach(
-                function (element) {
+        data.briefings.forEach(function (briefingData) {
+            var briefing = "";
+            
+            briefing += briefingData.name + "\n\n";
+            
+            var regex = new RegExp('^profileInfo');
+            
+            Object.keys(briefingData).filter(function (element) {
+                return regex.test(element);
+            }).forEach(
+                    function (element) {
+                        briefing += "----------------------------------\n";
+                        briefing += element.substring("profileInfo.".length, element.length) + "\n";
+                        briefing += briefingData[element] + "\n";
+                        briefing += "----------------------------------\n\n";
+                    });
+            
+            briefing += "----------------------------------\n";
+            briefing += "Инвентарь\n";
+            briefing += briefingData.inventory + "\n";
+            briefing += "----------------------------------\n\n";
+            
+            if (briefingData.storiesInfo) {
+                briefingData.storiesInfo.forEach(function (storyInfo) {
                     briefing += "----------------------------------\n";
-                    briefing += element.substring("profileInfo.".length, element.length) + "\n";
-                    briefing += briefingData[element] + "\n";
+                    briefing += storyInfo.name + "\n\n";
+                    
+                    storyInfo.eventsInfo.forEach(function (event) {
+                        briefing += event.time + ": " + event.text + "\n\n";
+                    });
+                    
                     briefing += "----------------------------------\n\n";
                 });
-        
-        briefing += "----------------------------------\n";
-        briefing += "Инвентарь\n";
-        briefing += briefingData.inventory + "\n";
-        briefing += "----------------------------------\n\n";
-        
-        if (briefingData.storiesInfo) {
-            briefingData.storiesInfo.forEach(function (storyInfo) {
+            }
+            
+            if (briefingData.eventsInfo) {
                 briefing += "----------------------------------\n";
-                briefing += storyInfo.name + "\n\n";
                 
-                storyInfo.eventsInfo.forEach(function (event) {
+                briefingData.eventsInfo.forEach(function (event) {
                     briefing += event.time + ": " + event.text + "\n\n";
                 });
                 
                 briefing += "----------------------------------\n\n";
-            });
-        }
-        
-        if (briefingData.eventsInfo) {
-            briefing += "----------------------------------\n";
+            }
             
-            briefingData.eventsInfo.forEach(function (event) {
-                briefing += event.time + ": " + event.text + "\n\n";
-            });
-            
-            briefing += "----------------------------------\n\n";
-        }
+            characterList[briefingData.name] = briefing;
+        });
         
-        characterList[briefingData.name] = briefing;
-    });
-
-    var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
-
-    if (toSeparateFiles) {
-        for ( var charName in characterList) {
-            var blob = new Blob([ characterList[charName] ], {
+        var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
+        
+        if (toSeparateFiles) {
+            for ( var charName in characterList) {
+                var blob = new Blob([ characterList[charName] ], {
+                    type : "text/plain;charset=utf-8"
+                });
+                saveAs(blob, charName + ".txt");
+            }
+        } else {
+            var result = "";
+            for ( var charName in characterList) {
+                result += characterList[charName];
+            }
+            var blob = new Blob([ result ], {
                 type : "text/plain;charset=utf-8"
             });
-            saveAs(blob, charName + ".txt");
+            saveAs(blob, "briefings.txt");
         }
-    } else {
-        var result = "";
-        for ( var charName in characterList) {
-            result += characterList[charName];
-        }
-        var blob = new Blob([ result ], {
-            type : "text/plain;charset=utf-8"
-        });
-        saveAs(blob, "briefings.txt");
-    }
-
+    });
 };
 
 BriefingExport.isGroupingByStory = function () {
@@ -171,161 +172,7 @@ BriefingExport.isGroupingByStory = function () {
     return document.getElementById("eventGroupingByStoryRadio2").checked;
 };
 
-BriefingExport.getBriefingData = function (groupingByStory) {
-    "use strict";
-    var data = {};
 
-    var charArray = [];
-
-    for ( var charName in Database.Characters) {
-        var inventory = [];
-        for ( var storyName in Database.Stories) {
-            var story = Database.Stories[storyName];
-            if (story.characters[charName]
-                    && story.characters[charName].inventory
-                    && story.characters[charName].inventory !== "") {
-                inventory = inventory.concat(story.characters[charName].inventory);
-            }
-        }
-        inventory = inventory.join(", ");
-
-        var profileInfo = BriefingExport.getProfileInfoObject(charName);
-        var profileInfoArray = BriefingExport.getProfileInfoArray(charName);
-
-        if (groupingByStory) {
-            var storiesInfo = BriefingExport.getStoriesInfo(charName);
-        } else {
-            var eventsInfo = BriefingExport.getEventsInfo(charName);
-        }
-        var dataObject = {
-            "name" : charName,
-            "inventory" : inventory,
-            "storiesInfo" : storiesInfo,
-            "eventsInfo" : eventsInfo,
-            "profileInfoArray" : profileInfoArray
-        };
-
-        for ( var element in profileInfo) {
-            dataObject["profileInfo." + element] = profileInfo[element];
-        }
-
-        charArray.push(dataObject);
-    }
-
-    data["briefings"] = charArray;
-    return data;
-};
-
-BriefingExport.getProfileInfoObject = function (charName) {
-    "use strict";
-    var character = Database.Characters[charName];
-    var profileInfo = {};
-
-    Database.ProfileSettings.forEach(function (element) {
-        switch (element.type) {
-        case "text":
-        case "string":
-        case "enum":
-        case "number":
-            profileInfo[element.name] = character[element.name];
-            break;
-        case "checkbox":
-            profileInfo[element.name] = character[element.name] ? "Да" : "Нет";
-            break;
-        }
-    });
-    return profileInfo;
-};
-
-BriefingExport.getProfileInfoArray = function (charName) {
-    "use strict";
-    var character = Database.Characters[charName];
-    var profileInfoArray = [];
-    
-    var value;
-    Database.ProfileSettings.forEach(function (element) {
-        switch (element.type) {
-        case "text":
-        case "string":
-        case "enum":
-        case "number":
-            value = character[element.name];
-            break;
-        case "checkbox":
-            value = character[element.name] ? "Да" : "Нет";
-            break;
-        }
-        profileInfoArray.push({
-            name: element.name,
-            value: value
-        });
-    });
-    return profileInfoArray;
-};
-
-BriefingExport.getEventsInfo = function (charName) {
-    "use strict";
-    var eventsInfo = [];
-    for ( var storyName in Database.Stories) {
-        var storyInfo = {};
-
-        var story = Database.Stories[storyName];
-        if (!story.characters[charName]) {
-            continue;
-        }
-
-        storyInfo.name = storyName;
-
-        story.events.filter(function (event) {
-            return event.characters[charName];
-        }).forEach(function (event) {
-            var eventInfo = {};
-            if (event.characters[charName].text !== "") {
-                eventInfo.text = event.characters[charName].text;
-            } else {
-                eventInfo.text = event.text;
-            }
-            eventInfo.time = event.time;
-            eventsInfo.push(eventInfo);
-        });
-    }
-    eventsInfo.sort(eventsByTime);
-
-    return eventsInfo;
-};
-
-BriefingExport.getStoriesInfo = function (charName) {
-    "use strict";
-    var storiesInfo = [];
-    for ( var storyName in Database.Stories) {
-        var storyInfo = {};
-
-        var story = Database.Stories[storyName];
-        if (!story.characters[charName]) {
-            continue;
-        }
-
-        storyInfo.name = storyName;
-        var eventsInfo = [];
-
-        story.events.filter(function (event) {
-            return event.characters[charName];
-        }).forEach(function (event) {
-            var eventInfo = {};
-            if (event.characters[charName].text !== "") {
-                eventInfo.text = event.characters[charName].text;
-            } else {
-                eventInfo.text = event.text;
-            }
-            eventInfo.time = event.time;
-            eventsInfo.push(eventInfo);
-        });
-        storyInfo.eventsInfo = eventsInfo;
-
-        storiesInfo.push(storyInfo);
-    }
-    return storiesInfo;
-};
 
 BriefingExport.readTemplateFile = function (evt) {
     "use strict";
@@ -336,8 +183,9 @@ BriefingExport.readTemplateFile = function (evt) {
         var r = new FileReader();
         r.onload = function (e) {
             var contents = e.target.result;
-            var briefingData = BriefingExport.getBriefingData(BriefingExport.isGroupingByStory());
-            BriefingExport.generateDocxBriefings(contents, briefingData);
+            var briefingData = DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(briefingData){
+                BriefingExport.generateDocxBriefings(contents, briefingData);
+            });
         }
         r.readAsBinaryString(f);
     } else {

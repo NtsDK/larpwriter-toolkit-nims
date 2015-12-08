@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, DBMS, Database, StoryCharacters
+ Utils, DBMS, StoryCharacters
  */
 
 "use strict";
@@ -30,7 +30,9 @@ NetworkSubsetsSelector.init = function () {
     selector.addEventListener("change", NetworkSubsetsSelector.onNetworkSubsetsChange);
 };
 
-NetworkSubsetsSelector.refresh = function () {
+NetworkSubsetsSelector.refresh = function (parent) {
+    NetworkSubsetsSelector.parent = parent;
+    
     var selector = document.getElementById("networkSubsetsSelector");
     Utils.removeChildren(selector);
     
@@ -50,7 +52,7 @@ NetworkSubsetsSelector.refresh = function () {
     selector = document.getElementById("networkCharacterSelector");
     Utils.removeChildren(selector);
     
-    DBMS.getCharacterNamesArray().forEach(function (name) {
+    Object.keys(NetworkSubsetsSelector.parent.Characters).sort(Utils.charOrdA).forEach(function (name) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(name));
         selector.appendChild(option);
@@ -59,7 +61,7 @@ NetworkSubsetsSelector.refresh = function () {
     selector = document.getElementById("networkStorySelector");
     Utils.removeChildren(selector);
     
-    DBMS.getStoryNamesArray().forEach(function (story) {
+    Object.keys(NetworkSubsetsSelector.parent.Stories).sort(Utils.charOrdA).forEach(function (story) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(story));
         selector.appendChild(option);
@@ -71,7 +73,7 @@ NetworkSubsetsSelector.getStoryNames = function () {
     
     var selector;
     if(NetworkSubsetsSelector.objectSubsets[0] === value){ // все объекты
-        return Object.keys(Database.Stories);
+        return Object.keys(NetworkSubsetsSelector.parent.Stories);
     } else if (NetworkSubsetsSelector.objectSubsets[1] === value) { // "Избранные персонажи"
         selector = document.getElementById("networkCharacterSelector");
         
@@ -88,8 +90,8 @@ NetworkSubsetsSelector.getStoryNames = function () {
             return primaryCharacters[name];
         }
         
-        Object.keys(Database.Stories).forEach(function(storyName){
-            story = Database.Stories[storyName];
+        Object.keys(NetworkSubsetsSelector.parent.Stories).forEach(function(storyName){
+            story = NetworkSubsetsSelector.parent.Stories[storyName];
             storyCharacters = Object.keys(story.characters);
             
             if(storyCharacters.some(isPrimaryCharacter)){
@@ -115,7 +117,7 @@ NetworkSubsetsSelector.getCharacterNames = function () {
     
     var selector;
     if(NetworkSubsetsSelector.objectSubsets[0] === value){ // все объекты
-        return Object.keys(Database.Characters);
+        return Object.keys(NetworkSubsetsSelector.parent.Characters);
     } else if (NetworkSubsetsSelector.objectSubsets[1] === value) { // "Избранные персонажи"
         // возвращает персонажа и его окружение из историй
         selector = document.getElementById("networkCharacterSelector");
@@ -134,8 +136,8 @@ NetworkSubsetsSelector.getCharacterNames = function () {
         }
         
         var event;
-        Object.keys(Database.Stories).forEach(function(storyName){
-            story = Database.Stories[storyName];
+        Object.keys(NetworkSubsetsSelector.parent.Stories).forEach(function(storyName){
+            story = NetworkSubsetsSelector.parent.Stories[storyName];
             storyCharacters = Object.keys(story.characters);
             
             
@@ -168,7 +170,7 @@ NetworkSubsetsSelector.getCharacterNames = function () {
         
         var story;
         stories.forEach(function(storyName){
-            story = Database.Stories[storyName];
+            story = NetworkSubsetsSelector.parent.Stories[storyName];
             for(character in story.characters){
                 characters[character] = true;
             }
