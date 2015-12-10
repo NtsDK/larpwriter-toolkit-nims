@@ -20,7 +20,11 @@ PageManager, Utils, Overview, Characters, Stories, Events, Briefings, Timeline, 
 
 var PageManager = {};
 
+var DBMS;
+
 PageManager.onLoad = function () {
+    DBMS = new LocalDBMS();
+    
     var request = $.ajax({
         url : "js/baseExample.json",
         dataType : "text",
@@ -40,6 +44,7 @@ PageManager.onLoad = function () {
 
 PageManager.onDatabaseLoad = function () {
     "use strict";
+    
 //  PageManager.enableFullScreenElements();
     
     var root = PageManager;

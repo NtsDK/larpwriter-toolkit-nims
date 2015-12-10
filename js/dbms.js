@@ -17,22 +17,24 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-var DBMS = {};
-var Database;
 
-DBMS.getDatabase = function(callback){
+function LocalDBMS(){
+    
+}
+
+LocalDBMS.prototype.getDatabase = function(callback){
     "use strict";
-    callback(Database);
+    callback(this.database);
 };
 
-DBMS.setDatabase = function(database, callback){
+LocalDBMS.prototype.setDatabase = function(database, callback){
     "use strict";
-    Database = Migrator.migrate(database);
+    this.database = Migrator.migrate(database);
     callback();
 };
-DBMS.newDatabase = function(callback){
+LocalDBMS.prototype.newDatabase = function(callback){
     "use strict";
-    Database = {
+    this.database = {
             "Meta": {
                 "name" : "",
                 "date" : "",
@@ -56,28 +58,28 @@ DBMS.newDatabase = function(callback){
     callback();
 };
 
-DBMS.getMetaInfo = function(callback){
+LocalDBMS.prototype.getMetaInfo = function(callback){
     "use strict";
-    callback(Database.Meta);
+    callback(this.database.Meta);
 };
 
-DBMS.setMetaInfo = function(name, value){
+LocalDBMS.prototype.setMetaInfo = function(name, value){
     "use strict";
-    Database.Meta[name] = value;
+    this.database.Meta[name] = value;
 };
 
-DBMS.isCharacterNameUsed = function(name, callback){
+LocalDBMS.prototype.isCharacterNameUsed = function(name, callback){
     "use strict";
-    callback(Database.Characters[name] !== undefined);
+    callback(this.database.Characters[name] !== undefined);
 };
 
-DBMS.createCharacter = function (name, callback) {
+LocalDBMS.prototype.createCharacter = function (name, callback) {
     "use strict";
     var newCharacter = {
         name : name
     };
 
-    Database.ProfileSettings.forEach(function (profileSettings) {
+    this.database.ProfileSettings.forEach(function (profileSettings) {
         if (profileSettings.type === "enum") {
             newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
         } else {
@@ -85,16 +87,16 @@ DBMS.createCharacter = function (name, callback) {
         }
     });
 
-    Database.Characters[name] = newCharacter;
+    this.database.Characters[name] = newCharacter;
     callback();
 };
 
-DBMS.renameCharacter = function (fromName, toName, callback) {
+LocalDBMS.prototype.renameCharacter = function (fromName, toName, callback) {
     "use strict";
-    var data = Database.Characters[fromName];
+    var data = this.database.Characters[fromName];
     data.name = toName;
-    Database.Characters[toName] = data;
-    delete Database.Characters[fromName];
+    this.database.Characters[toName] = data;
+    delete this.database.Characters[fromName];
 
     var storyName, story;
 
@@ -106,8 +108,8 @@ DBMS.renameCharacter = function (fromName, toName, callback) {
         }
     };
 
-    for (storyName in Database.Stories) {
-        story = Database.Stories[storyName];
+    for (storyName in this.database.Stories) {
+        story = this.database.Stories[storyName];
         if (story.characters[fromName]) {
             data = story.characters[fromName];
             data.name = toName;
@@ -120,9 +122,9 @@ DBMS.renameCharacter = function (fromName, toName, callback) {
     callback();
 };
 
-DBMS.removeCharacter = function (name, callback) {
+LocalDBMS.prototype.removeCharacter = function (name, callback) {
     "use strict";
-    delete Database.Characters[name];
+    delete this.database.Characters[name];
     var storyName, story;
 
     var cleanEvent = function (event) {
@@ -131,8 +133,8 @@ DBMS.removeCharacter = function (name, callback) {
         }
     };
 
-    for (storyName in Database.Stories) {
-        story = Database.Stories[storyName];
+    for (storyName in this.database.Stories) {
+        story = this.database.Stories[storyName];
         if (story.characters[name]) {
             delete story.characters[name];
             story.events.forEach(cleanEvent);
@@ -143,29 +145,29 @@ DBMS.removeCharacter = function (name, callback) {
 
 
 
-DBMS.getProfile = function(name, callback){
+LocalDBMS.prototype.getProfile = function(name, callback){
     "use strict";
-    callback(name, Database.Characters[name]);
+    callback(name, this.database.Characters[name]);
 };
 
-DBMS.getAllProfiles = function(callback){
+LocalDBMS.prototype.getAllProfiles = function(callback){
     "use strict";
-    callback(Database.Characters);
+    callback(this.database.Characters);
 };
 
-DBMS.getAllStories = function(callback){
+LocalDBMS.prototype.getAllStories = function(callback){
     "use strict";
-    callback(Database.Stories);
+    callback(this.database.Stories);
 };
 
-DBMS.getAllProfileSettings = function(callback){
+LocalDBMS.prototype.getAllProfileSettings = function(callback){
     "use strict";
-    callback(Database.ProfileSettings);
+    callback(this.database.ProfileSettings);
 };
 
-DBMS.updateProfileField = function(characterName, fieldName, type, event){
+LocalDBMS.prototype.updateProfileField = function(characterName, fieldName, type, event){
     "use strict";
-    var profileInfo = Database.Characters[characterName];
+    var profileInfo = this.database.Characters[characterName];
     switch(type){
     case "text":
     case "string":
@@ -186,7 +188,7 @@ DBMS.updateProfileField = function(characterName, fieldName, type, event){
     }
 };
 
-DBMS.createProfileItem= function(name, type, value, toEnd, selectedIndex, callback){
+LocalDBMS.prototype.createProfileItem= function(name, type, value, toEnd, selectedIndex, callback){
     "use strict";
     var profileItem = {
         name : name,
@@ -194,60 +196,63 @@ DBMS.createProfileItem= function(name, type, value, toEnd, selectedIndex, callba
         value : value
     };
     
-    Object.keys(Database.Characters).forEach(function (characterName) {
-        Database.Characters[characterName][name] = value;
+    var that = this;
+    Object.keys(this.database.Characters).forEach(function (characterName) {
+        that.database.Characters[characterName][name] = value;
     });
     
     if (toEnd) {
-        Database.ProfileSettings.push(profileItem);
+        this.database.ProfileSettings.push(profileItem);
     } else {
-        Database.ProfileSettings.splice(selectedIndex, 0, profileItem);
+        this.database.ProfileSettings.splice(selectedIndex, 0, profileItem);
     }
     callback();
 };
 
 
-DBMS.swapProfileItems = function(index1,index2, callback){
+LocalDBMS.prototype.swapProfileItems = function(index1,index2, callback){
     "use strict";
-    var tmp = Database.ProfileSettings[index1];
-    Database.ProfileSettings[index1] = Database.ProfileSettings[index2];
-    Database.ProfileSettings[index2] = tmp;
+    var tmp = this.database.ProfileSettings[index1];
+    this.database.ProfileSettings[index1] = this.database.ProfileSettings[index2];
+    this.database.ProfileSettings[index2] = tmp;
     callback();
 };
 
-DBMS.removeProfileItem = function(index, name, callback){
+LocalDBMS.prototype.removeProfileItem = function(index, name, callback){
     "use strict";
-    Object.keys(Database.Characters).forEach(function (characterName) {
-        delete Database.Characters[characterName][name];
+    var that = this;
+    Object.keys(this.database.Characters).forEach(function (characterName) {
+        delete that.database.Characters[characterName][name];
     });
-    Database.ProfileSettings.remove(index);
+    this.database.ProfileSettings.remove(index);
     callback();
 };
 
-DBMS.changeProfileItemType = function(name, newType, callback){
+LocalDBMS.prototype.changeProfileItemType = function(name, newType, callback){
     "use strict";
     
-    var profileItem = Database.ProfileSettings.filter(function(elem){
+    var profileItem = this.database.ProfileSettings.filter(function(elem){
         return elem.name === name;
     })[0];
     
     profileItem.type = newType;
     profileItem.value = CharacterProfileConfigurer.mapping[newType].value;
     
-    Object.keys(Database.Characters).forEach(function (characterName) {
-        Database.Characters[characterName][name] = CharacterProfileConfigurer.mapping[newType].value;
+    var that = this;
+    Object.keys(this.database.Characters).forEach(function (characterName) {
+        that.database.Characters[characterName][name] = CharacterProfileConfigurer.mapping[newType].value;
     });
     callback();
 };
 
 
-DBMS.isProfileItemNameUsed = function(name, onUsed, onUnused){
+LocalDBMS.prototype.isProfileItemNameUsed = function(name, onUsed, onUnused){
     "use strict";
     var nameUsedTest = function (profile) {
       return name === profile.name;
     };
     
-    if (Database.ProfileSettings.some(nameUsedTest)) {
+    if (this.database.ProfileSettings.some(nameUsedTest)) {
         if(onUsed) onUsed();
         return;
     } else {
@@ -255,24 +260,25 @@ DBMS.isProfileItemNameUsed = function(name, onUsed, onUnused){
     }
 };
 
-DBMS.renameProfileItem = function(newName, oldName, callback){
+LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback){
     "use strict";
-    Object.keys(Database.Characters).forEach(function (characterName) {
-        var tmp = Database.Characters[characterName][oldName];
-        delete Database.Characters[characterName][oldName];
-        Database.Characters[characterName][newName] = tmp;
+    var that = this;
+    Object.keys(this.database.Characters).forEach(function (characterName) {
+        var tmp = that.database.Characters[characterName][oldName];
+        delete that.database.Characters[characterName][oldName];
+        that.database.Characters[characterName][newName] = tmp;
     });
     
-    Database.ProfileSettings.filter(function(elem){
+    this.database.ProfileSettings.filter(function(elem){
         return elem.name === oldName;
     })[0].name = newName;
     callback();
 };
 
-DBMS.updateDefaultValue = function(name, value, callback){
+LocalDBMS.prototype.updateDefaultValue = function(name, value, callback){
     "use strict";
     
-    var info = Database.ProfileSettings.filter(function(elem){
+    var info = this.database.ProfileSettings.filter(function(elem){
         return elem.name === name;
     })[0];
     
@@ -321,10 +327,11 @@ DBMS.updateDefaultValue = function(name, value, callback){
                 callback(newOptions.join(","));
                 info.value = newOptions.join(",");
                 
-                Object.keys(Database.Characters).forEach(function (characterName) {
-                    var enumValue = Database.Characters[characterName][name];
+                var that = this;
+                Object.keys(this.database.Characters).forEach(function (characterName) {
+                    var enumValue = that.database.Characters[characterName][name];
                     if (!newOptionsMap[enumValue]) {
-                        Database.Characters[characterName][name] = newOptions[0];
+                        that.database.Characters[characterName][name] = newOptions[0];
                     }
                 });
                 
@@ -343,43 +350,43 @@ DBMS.updateDefaultValue = function(name, value, callback){
 
 
 
-DBMS.getMasterStory = function(storyName, callback){
+LocalDBMS.prototype.getMasterStory = function(storyName, callback){
     "use strict";
-    callback(Database.Stories[storyName].story);
+    callback(this.database.Stories[storyName].story);
 };
 
-DBMS.updateMasterStory = function(storyName, value){
+LocalDBMS.prototype.updateMasterStory = function(storyName, value){
     "use strict";
-    Database.Stories[storyName].story = value;
+    this.database.Stories[storyName].story = value;
 }
 
-DBMS.addCharacterToEvent = function(storyName, eventIndex, characterName){
+LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName){
     "use strict";
-    Database.Stories[storyName].events[eventIndex].characters[characterName] = {
+    this.database.Stories[storyName].events[eventIndex].characters[characterName] = {
         text : ""
     };
 };
 
-DBMS.removeCharacterFromEvent = function(storyName, eventIndex, characterName){
+LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName){
     "use strict";
-    delete Database.Stories[storyName].events[eventIndex].characters[characterName];
+    delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
 };
 
-DBMS.getStoryEvents = function(storyName, callback){
+LocalDBMS.prototype.getStoryEvents = function(storyName, callback){
     "use strict";
-    callback(Database.Stories[storyName].events);
+    callback(this.database.Stories[storyName].events);
 };
 
-DBMS.getStoryCharacters = function(storyName, callback){
+LocalDBMS.prototype.getStoryCharacters = function(storyName, callback){
     "use strict";
-    callback(Database.Stories[storyName].characters);
+    callback(this.database.Stories[storyName].characters);
 };
 
 
-DBMS.addStoryCharacter = function(storyName, characterName, callback){
+LocalDBMS.prototype.addStoryCharacter = function(storyName, characterName, callback){
     "use strict";
     
-    Database.Stories[storyName].characters[characterName] = {
+    this.database.Stories[storyName].characters[characterName] = {
             name : characterName,
             inventory : "",
             activity: {}
@@ -388,10 +395,10 @@ DBMS.addStoryCharacter = function(storyName, characterName, callback){
     callback();
 };
 
-DBMS.switchStoryCharacters = function(storyName, fromName, toName, callback){
+LocalDBMS.prototype.switchStoryCharacters = function(storyName, fromName, toName, callback){
     "use strict";
     
-    var story = Database.Stories[storyName];
+    var story = this.database.Stories[storyName];
     story.characters[toName] = story.characters[fromName];
     story.characters[toName].name = toName;
     delete story.characters[fromName];
@@ -406,10 +413,10 @@ DBMS.switchStoryCharacters = function(storyName, fromName, toName, callback){
     callback();
 };
 
-DBMS.removeStoryCharacter = function(storyName, characterName, callback){
+LocalDBMS.prototype.removeStoryCharacter = function(storyName, characterName, callback){
     "use strict";
     
-    var story = Database.Stories[storyName];
+    var story = this.database.Stories[storyName];
     delete story.characters[characterName];
     story.events.forEach(function (event) {
         delete event.characters[characterName];
@@ -418,14 +425,14 @@ DBMS.removeStoryCharacter = function(storyName, characterName, callback){
     callback();
 };
 
-DBMS.updateCharacterInventory = function(storyName, characterName, inventory){
+LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory){
     "use strict";
-    Database.Stories[storyName].characters[characterName].inventory = inventory;
+    this.database.Stories[storyName].characters[characterName].inventory = inventory;
 };
 
-DBMS.onChangeCharacterActivity = function(storyName, characterName, activityType, checked){
+LocalDBMS.prototype.onChangeCharacterActivity = function(storyName, characterName, activityType, checked){
     "use strict";
-    var character = Database.Stories[storyName].characters[characterName];
+    var character = this.database.Stories[storyName].characters[characterName];
     if (checked) {
         character.activity[activityType] = true;
     } else {
@@ -434,7 +441,7 @@ DBMS.onChangeCharacterActivity = function(storyName, characterName, activityType
 };
 
 
-DBMS.createEvent = function(storyName, eventName, eventText, toEnd, selectedIndex, callback){
+LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, toEnd, selectedIndex, callback){
     "use strict";
     var event = {
         name : eventName,
@@ -443,16 +450,16 @@ DBMS.createEvent = function(storyName, eventName, eventText, toEnd, selectedInde
         characters : {}
     };
     if (toEnd) {
-        Database.Stories[storyName].events.push(event);
+        this.database.Stories[storyName].events.push(event);
     } else {
-        Database.Stories[storyName].events.splice(selectedIndex, 0, event);
+        this.database.Stories[storyName].events.splice(selectedIndex, 0, event);
     }
     callback();
 };
 
-DBMS.swapEvents = function(storyName, index1, index2, callback){
+LocalDBMS.prototype.swapEvents = function(storyName, index1, index2, callback){
     "use strict";
-    var story = Database.Stories[storyName];
+    var story = this.database.Stories[storyName];
     var tmp = story.events[index1];
     story.events[index1] = story.events[index2];
     story.events[index2] = tmp;
@@ -460,9 +467,9 @@ DBMS.swapEvents = function(storyName, index1, index2, callback){
     callback();
 };
 
-DBMS.cloneEvent = function(storyName, index, callback){
+LocalDBMS.prototype.cloneEvent = function(storyName, index, callback){
     "use strict";
-    var story = Database.Stories[storyName];
+    var story = this.database.Stories[storyName];
     var event = story.events[index];
     var copy = Utils.clone(event);
     
@@ -471,9 +478,9 @@ DBMS.cloneEvent = function(storyName, index, callback){
     callback();
 };
 
-DBMS.mergeEvents = function(storyName, index, callback){
+LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
     "use strict";
-    var story = Database.Stories[storyName];
+    var story = this.database.Stories[storyName];
 
     var event1 = story.events[index];
     var event2 = story.events[index + 1];
@@ -493,30 +500,30 @@ DBMS.mergeEvents = function(storyName, index, callback){
     callback();
 };
 
-DBMS.removeEvent = function(storyName, index, callback){
+LocalDBMS.prototype.removeEvent = function(storyName, index, callback){
     "use strict";
-    var story = Database.Stories[storyName];
+    var story = this.database.Stories[storyName];
     story.events.remove(index);
     callback();
 };
 
-DBMS.updateEventProperty = function(storyName, index, property, value, callback){
+LocalDBMS.prototype.updateEventProperty = function(storyName, index, property, value, callback){
     "use strict";
-    var story = Database.Stories[storyName].events[index][property] = value;
+    var story = this.database.Stories[storyName].events[index][property] = value;
     if(callback)callback();
 };
 
-DBMS.isStoryExist = function(storyName, onTrue, onFalse){
+LocalDBMS.prototype.isStoryExist = function(storyName, onTrue, onFalse){
     "use strict";
-    if(Database.Stories[storyName]){
+    if(this.database.Stories[storyName]){
         if(onTrue)onTrue();
     } else {
         if(onFalse)onFalse();
     }
 };
-DBMS.createStory = function(storyName, callback){
+LocalDBMS.prototype.createStory = function(storyName, callback){
     "use strict";
-    Database.Stories[storyName] = {
+    this.database.Stories[storyName] = {
             name : storyName,
             story : "",
             characters : {},
@@ -524,27 +531,27 @@ DBMS.createStory = function(storyName, callback){
     };
     callback();
 };
-DBMS.renameStory = function(fromName, toName, callback){
+LocalDBMS.prototype.renameStory = function(fromName, toName, callback){
     "use strict";
-    var data = Database.Stories[fromName];
+    var data = this.database.Stories[fromName];
     data.name = toName;
-    Database.Stories[toName] = data;
-    delete Database.Stories[fromName];
+    this.database.Stories[toName] = data;
+    delete this.database.Stories[fromName];
     callback();
 };
-DBMS.removeStory = function(name, callback){
+LocalDBMS.prototype.removeStory = function(name, callback){
     "use strict";
-    delete Database.Stories[name];
+    delete this.database.Stories[name];
     callback();
 };
 
 
-DBMS.getAllInventoryLists = function(characterName, callback){
+LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback){
     "use strict";
     var array = [];
     
-    for ( var storyName in Database.Stories) {
-        var story = Database.Stories[storyName];
+    for ( var storyName in this.database.Stories) {
+        var story = this.database.Stories[storyName];
         if (story.characters[characterName]
                 && story.characters[characterName].inventory
                 && story.characters[characterName].inventory !== "") {
@@ -557,18 +564,19 @@ DBMS.getAllInventoryLists = function(characterName, callback){
     callback(array);
 };
 
-DBMS.getCharacterEventGroupsByStory = function(characterName, callback){
+LocalDBMS.prototype.getCharacterEventGroupsByStory = function(characterName, callback){
     "use strict";
     var eventGroups = [];
     
     var events;
     
-    Object.keys(Database.Stories).filter(function(storyName){
-        return Database.Stories[storyName].characters[characterName];
+    var that = this;
+    Object.keys(this.database.Stories).filter(function(storyName){
+        return that.database.Stories[storyName].characters[characterName];
     }).forEach(function (storyName) {
         events = [];
         
-        var tmpEvents = Database.Stories[storyName].events;
+        var tmpEvents = that.database.Stories[storyName].events;
         tmpEvents.map(function(elem, i){
             elem.index = i;
             elem.storyName = storyName;
@@ -587,18 +595,19 @@ DBMS.getCharacterEventGroupsByStory = function(characterName, callback){
     callback(eventGroups);
 };
 
-DBMS.getEventGroupsForStories = function(storyNames, callback){
+LocalDBMS.prototype.getEventGroupsForStories = function(storyNames, callback){
     "use strict";
     var eventGroups = [];
     
     var events;
     
-    Object.keys(Database.Stories).filter(function(storyName){
+    var that = this;
+    Object.keys(this.database.Stories).filter(function(storyName){
         return storyNames.indexOf(storyName) !== -1;
     }).forEach(function (storyName) {
         events = [];
         
-        var tmpEvents = Database.Stories[storyName].events;
+        var tmpEvents = that.database.Stories[storyName].events;
         tmpEvents.map(function(elem, i){
             elem.index = i;
             elem.storyName = storyName;
@@ -615,14 +624,15 @@ DBMS.getEventGroupsForStories = function(storyNames, callback){
     callback(eventGroups);
 };
 
-DBMS.getCharacterEventsByTime = function(characterName, callback){
+LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback){
     "use strict";
     var allEvents = [];
     
-    Object.keys(Database.Stories).filter(function(storyName){
-        return Database.Stories[storyName].characters[characterName];
+    var that = this;
+    Object.keys(this.database.Stories).filter(function(storyName){
+        return that.database.Stories[storyName].characters[characterName];
     }).forEach(function (storyName) {
-        var events = Database.Stories[storyName].events;
+        var events = that.database.Stories[storyName].events;
         allEvents = allEvents.concat(events.map(function(elem, i){
             elem.index = i;
             elem.storyName = storyName;
@@ -640,50 +650,51 @@ DBMS.getCharacterEventsByTime = function(characterName, callback){
 
 
 
-DBMS.getSettings = function(){
+LocalDBMS.prototype.getSettings = function(){
     "use strict";
-    return Database.Settings;
+    return this.database.Settings;
 };
 
 
-DBMS.getCharacterNamesArray2 = function (callback) {
+LocalDBMS.prototype.getCharacterNamesArray2 = function (callback) {
     "use strict";
-    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
+    callback(Object.keys(this.database.Characters).sort(Utils.charOrdA));
 };
 
-DBMS.getCharacterNamesArray3 = function () {
+LocalDBMS.prototype.getCharacterNamesArray3 = function () {
     "use strict";
     return new Promise(function(resolve, reject) {
-        var names = Object.keys(Database.Characters).sort(Utils.charOrdA);
+        var names = Object.keys(this.database.Characters).sort(Utils.charOrdA);
         resolve(names);
     });
     
-//    callback(Object.keys(Database.Characters).sort(Utils.charOrdA));
+//    callback(Object.keys(this.database.Characters).sort(Utils.charOrdA));
 };
 
 
-DBMS.getStoryCharacterNamesArray = function (storyName) {
+LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName) {
     "use strict";
     
     var localCharacters;
-    localCharacters = Database.Stories[storyName].characters;
+    localCharacters = this.database.Stories[storyName].characters;
     
     return Object.keys(localCharacters).sort(Utils.charOrdA);
 };
 
 
-DBMS.getStoryNamesArray2 = function (callback) {
+LocalDBMS.prototype.getStoryNamesArray2 = function (callback) {
     "use strict";
-    callback(Object.keys(Database.Stories).sort(Utils.charOrdA));
+    callback(Object.keys(this.database.Stories).sort(Utils.charOrdA));
 };
 
-DBMS.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
+LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
     "use strict";
-    var storyArray = Object.keys(Database.Stories).sort(Utils.charOrdA);
+    var storyArray = Object.keys(this.database.Stories).sort(Utils.charOrdA);
+    var that = this;
     storyArray = storyArray.map(function(elem){
         return {
             storyName: elem,
-            isFinished: DBMS._isStoryFinished(elem)
+            isFinished: that._isStoryFinished(elem)
         }
     });
     
@@ -697,9 +708,9 @@ DBMS.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
     }
 };
 
-DBMS._isStoryFinished = function (storyName) {
+LocalDBMS.prototype._isStoryFinished = function (storyName) {
     "use strict";
-    return Database.Stories[storyName].events.every(function(event){
+    return this.database.Stories[storyName].events.every(function(event){
         for(var characterName in event.characters){
             if(event.characters[characterName]){
                 return event.characters[characterName].ready;
@@ -710,18 +721,19 @@ DBMS._isStoryFinished = function (storyName) {
     });
 };
 
-DBMS.getFilteredCharacterNames = function (storyName, showOnlyUnfinishedStories, callback){
+LocalDBMS.prototype.getFilteredCharacterNames = function (storyName, showOnlyUnfinishedStories, callback){
     "use strict";
     
     var localCharacters;
-    localCharacters = Database.Stories[storyName].characters;
+    localCharacters = this.database.Stories[storyName].characters;
     
     localCharacters = Object.keys(localCharacters).sort(Utils.charOrdA);
     
+    var that = this;
     localCharacters = localCharacters.map(function(elem){
         return {
             characterName: elem,
-            isFinished: DBMS._isStoryFinishedForCharacter(storyName, elem)
+            isFinished: that._isStoryFinishedForCharacter(storyName, elem)
         }
     });
     
@@ -735,9 +747,9 @@ DBMS.getFilteredCharacterNames = function (storyName, showOnlyUnfinishedStories,
     }
 };
 
-DBMS._isStoryFinishedForCharacter = function (storyName, characterName) {
+LocalDBMS.prototype._isStoryFinishedForCharacter = function (storyName, characterName) {
     "use strict";
-    return Database.Stories[storyName].events.every(function(event){
+    return this.database.Stories[storyName].events.every(function(event){
         if(event.characters[characterName]){
             return event.characters[characterName].ready;
         } else {
@@ -746,11 +758,11 @@ DBMS._isStoryFinishedForCharacter = function (storyName, characterName) {
     });
 };
 
-DBMS.getEvents = function(storyName, characterNames, callback){
+LocalDBMS.prototype.getEvents = function(storyName, characterNames, callback){
     "use strict";
     
     var i;
-    var events = Database.Stories[storyName].events.map(function(item, i){
+    var events = this.database.Stories[storyName].events.map(function(item, i){
         item.index = i;
         return item;
     }).filter(function (event) {
@@ -764,10 +776,10 @@ DBMS.getEvents = function(storyName, characterNames, callback){
     callback(events);
 };
 
-DBMS.setEventText = function(storyName, eventIndex, characterName, text){
+LocalDBMS.prototype.setEventText = function(storyName, eventIndex, characterName, text){
     "use strict";
     
-    var event = Database.Stories[storyName].events[eventIndex];
+    var event = this.database.Stories[storyName].events[eventIndex];
     if(characterName !== undefined){
         event.characters[characterName].text = text;
     } else {
@@ -775,31 +787,31 @@ DBMS.setEventText = function(storyName, eventIndex, characterName, text){
     }
 };
 
-DBMS.setEventTime = function(storyName, eventIndex, time){
+LocalDBMS.prototype.setEventTime = function(storyName, eventIndex, time){
     "use strict";
     
-    var event = Database.Stories[storyName].events[eventIndex];
+    var event = this.database.Stories[storyName].events[eventIndex];
     event.time = dateFormat(time, "yyyy/mm/dd h:MM");
 };
 
-DBMS.changeAdaptationReadyStatus = function(storyName, eventIndex, characterName, value){
+LocalDBMS.prototype.changeAdaptationReadyStatus = function(storyName, eventIndex, characterName, value){
     "use strict";
-    var event = Database.Stories[storyName].events[eventIndex];
+    var event = this.database.Stories[storyName].events[eventIndex];
     event.characters[characterName].ready = value;
 };
 
 
 
-DBMS.getBriefingData = function (groupingByStory, callback) {
+LocalDBMS.prototype.getBriefingData = function (groupingByStory, callback) {
     "use strict";
     var data = {};
 
     var charArray = [];
 
-    for ( var charName in Database.Characters) {
+    for ( var charName in this.database.Characters) {
         var inventory = [];
-        for ( var storyName in Database.Stories) {
-            var story = Database.Stories[storyName];
+        for ( var storyName in this.database.Stories) {
+            var story = this.database.Stories[storyName];
             if (story.characters[charName]
                     && story.characters[charName].inventory
                     && story.characters[charName].inventory !== "") {
@@ -808,13 +820,13 @@ DBMS.getBriefingData = function (groupingByStory, callback) {
         }
         inventory = inventory.join(", ");
 
-        var profileInfo = DBMS._getProfileInfoObject(charName);
-        var profileInfoArray = DBMS._getProfileInfoArray(charName);
+        var profileInfo = this._getProfileInfoObject(charName);
+        var profileInfoArray = this._getProfileInfoArray(charName);
 
         if (groupingByStory) {
-            var storiesInfo = DBMS._getStoriesInfo(charName);
+            var storiesInfo = this._getStoriesInfo(charName);
         } else {
-            var eventsInfo = DBMS._getEventsInfo(charName);
+            var eventsInfo = this._getEventsInfo(charName);
         }
         var dataObject = {
             "name" : charName,
@@ -835,12 +847,12 @@ DBMS.getBriefingData = function (groupingByStory, callback) {
     callback(data);
 };
 
-DBMS._getProfileInfoObject = function (charName) {
+LocalDBMS.prototype._getProfileInfoObject = function (charName) {
     "use strict";
-    var character = Database.Characters[charName];
+    var character = this.database.Characters[charName];
     var profileInfo = {};
 
-    Database.ProfileSettings.forEach(function (element) {
+    this.database.ProfileSettings.forEach(function (element) {
         switch (element.type) {
         case "text":
         case "string":
@@ -856,13 +868,13 @@ DBMS._getProfileInfoObject = function (charName) {
     return profileInfo;
 };
 
-DBMS._getProfileInfoArray = function (charName) {
+LocalDBMS.prototype._getProfileInfoArray = function (charName) {
     "use strict";
-    var character = Database.Characters[charName];
+    var character = this.database.Characters[charName];
     var profileInfoArray = [];
     
     var value;
-    Database.ProfileSettings.forEach(function (element) {
+    this.database.ProfileSettings.forEach(function (element) {
         switch (element.type) {
         case "text":
         case "string":
@@ -882,13 +894,13 @@ DBMS._getProfileInfoArray = function (charName) {
     return profileInfoArray;
 };
 
-DBMS._getEventsInfo = function (charName) {
+LocalDBMS.prototype._getEventsInfo = function (charName) {
     "use strict";
     var eventsInfo = [];
-    for ( var storyName in Database.Stories) {
+    for ( var storyName in this.database.Stories) {
         var storyInfo = {};
 
-        var story = Database.Stories[storyName];
+        var story = this.database.Stories[storyName];
         if (!story.characters[charName]) {
             continue;
         }
@@ -913,13 +925,13 @@ DBMS._getEventsInfo = function (charName) {
     return eventsInfo;
 };
 
-DBMS._getStoriesInfo = function (charName) {
+LocalDBMS.prototype._getStoriesInfo = function (charName) {
     "use strict";
     var storiesInfo = [];
-    for ( var storyName in Database.Stories) {
+    for ( var storyName in this.database.Stories) {
         var storyInfo = {};
 
-        var story = Database.Stories[storyName];
+        var story = this.database.Stories[storyName];
         if (!story.characters[charName]) {
             continue;
         }
@@ -945,3 +957,5 @@ DBMS._getStoriesInfo = function (charName) {
     }
     return storiesInfo;
 };
+
+
