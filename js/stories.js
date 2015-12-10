@@ -67,7 +67,7 @@ Stories.refresh = function () {
     var selector3 = document.getElementById("storyRemoveSelector");
     Utils.removeChildren(selector3);
 
-    DBMS.getStoryNamesArray2(function(storyNames){
+    DBMS.getStoryNamesArray(function(storyNames){
         if (storyNames.length > 0) {
             var storyName = Stories.getSelectedStoryName(storyNames);
             

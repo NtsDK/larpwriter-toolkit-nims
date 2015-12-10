@@ -80,7 +80,7 @@ Timeline.refresh = function () {
             start : startDate,
         });
         
-        DBMS.getStoryNamesArray2(function(storyNames){
+        DBMS.getStoryNamesArray(function(storyNames){
             storyNames.forEach(function(name){
                 option = document.createElement("option");
                 option.appendChild(document.createTextNode(name));

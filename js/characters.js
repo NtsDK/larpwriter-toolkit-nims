@@ -45,7 +45,7 @@ Characters.init = function () {
 
 Characters.refresh = function () {
     "use strict";
-    DBMS.getCharacterNamesArray2(Characters.rebuildInterface);
+    DBMS.getCharacterNamesArray(Characters.rebuildInterface);
 };
 
 Characters.rebuildInterface = function (names) {

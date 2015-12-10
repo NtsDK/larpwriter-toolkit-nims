@@ -44,7 +44,7 @@ BriefingPreview.refresh = function () {
     var selector = document.getElementById("briefingCharacter");
     Utils.removeChildren(selector);
     
-    DBMS.getCharacterNamesArray2(function(names){
+    DBMS.getCharacterNamesArray(function(names){
         if (names.length > 0) {
             var settings = DBMS.getSettings();
             if(!settings["BriefingPreview"]){

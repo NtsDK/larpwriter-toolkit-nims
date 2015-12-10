@@ -56,7 +56,7 @@ StoryCharacters.refresh = function () {
         return;
     }
     
-    DBMS.getCharacterNamesArray2(function(allCharacters){
+    DBMS.getCharacterNamesArray(function(allCharacters){
         DBMS.getStoryCharacters(Stories.CurrentStoryName, function(localCharacters){
             StoryCharacters.rebuildInterface(allCharacters, localCharacters);
         });

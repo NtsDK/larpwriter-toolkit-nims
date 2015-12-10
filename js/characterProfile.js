@@ -31,7 +31,7 @@ CharacterProfile.init = function () {
 CharacterProfile.refresh = function () {
     "use strict";
     
-    DBMS.getCharacterNamesArray2(function(names){
+    DBMS.getCharacterNamesArray(function(names){
         var selector = document.getElementById("bioEditorSelector");
         Utils.removeChildren(selector);
         names.forEach(function (name) {
