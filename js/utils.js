@@ -85,11 +85,18 @@ String.prototype.endsWith = function (suffix) {
 };
 
 // Array Remove - By John Resig (MIT Licensed)
-Array.prototype.remove = function (from, to) {
+//Array.prototype.remove = function (from, to) {
+//    "use strict";
+//    var rest = this.slice((to || from) + 1 || this.length);
+//    this.length = from < 0 ? this.length + from : from;
+//    return this.push.apply(this, rest);
+//};
+
+Utils.removeFromArrayByIndex = function (array, from, to) {
     "use strict";
-    var rest = this.slice((to || from) + 1 || this.length);
-    this.length = from < 0 ? this.length + from : from;
-    return this.push.apply(this, rest);
+    var rest = array.slice((to || from) + 1 || array.length);
+    array.length = from < 0 ? array.length + from : from;
+    return array.push.apply(array, rest);
 };
 
 if (document.getElementsByClassName) {

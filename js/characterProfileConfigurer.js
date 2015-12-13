@@ -29,29 +29,6 @@ See the License for the specific language governing permissions and
 
 var CharacterProfileConfigurer = {};
 
-CharacterProfileConfigurer.mapping = {
-    text : {
-        displayName : "Текст",
-        value : ""
-    },
-    string : {
-        displayName : "Строка",
-        value : ""
-    },
-    enum : {
-        displayName : "Единственный выбор",
-        value : "_"
-    },
-    number : {
-        displayName : "Число",
-        value : 0
-    },
-    checkbox : {
-        displayName : "Галочка",
-        value : false
-    }
-};
-
 CharacterProfileConfigurer.init = function () {
     'use strict';
     var selector = document.getElementById("profileItemTypeSelector");
@@ -119,11 +96,11 @@ CharacterProfileConfigurer.createProfileItem = function () {
     CharacterProfileConfigurer.validateProfileItemName(name, function(){
         var type = document.getElementById("profileItemTypeSelector").value.trim();
         
-        if (!CharacterProfileConfigurer.mapping[type]) {
+        if (!Constants.profileFieldTypes[type]) {
             Utils.alert("Неизвестный тип поля: " + type);
             return;
         }
-        var value = CharacterProfileConfigurer.mapping[type].value;
+        var value = Constants.profileFieldTypes[type].value;
         
         var positionSelector = document.getElementById("profileItemPositionSelector");
         
@@ -183,9 +160,9 @@ CharacterProfileConfigurer.appendHeader = function (table) {
 
 CharacterProfileConfigurer.fillSelector = function (selector) {
     'use strict';
-    Object.keys(CharacterProfileConfigurer.mapping).forEach(function (name) {
+    Object.keys(Constants.profileFieldTypes).forEach(function (name) {
         var option = document.createElement("option");
-        option.appendChild(document.createTextNode(CharacterProfileConfigurer.mapping[name].displayName));
+        option.appendChild(document.createTextNode(Constants.profileFieldTypes[name].displayName));
         option.value = name;
         selector.appendChild(option);
     });
@@ -246,6 +223,7 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
         input.checked = profileSettings.value;
         break;
     }
+    input.oldValue = profileSettings.value;
 
     input.addEventListener("change", CharacterProfileConfigurer.updateDefaultValue);
     td.appendChild(input);
@@ -257,6 +235,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
     'use strict';
     var name = event.target.info;
     var type = event.target.infoType;
+    var oldValue = event.target.oldValue;
     
     var value ;
     
@@ -272,11 +251,63 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         break;
     }
     
-    var callback = function(oldValue){
-        event.target.value = oldValue;
-    }
+    var oldOptions, newOptions, newOptionsMap, missedValues, newValue;
     
-    DBMS.updateDefaultValue(name, value, callback);
+    switch (type) {
+    case "text":
+    case "string":
+    case "checkbox":
+        DBMS.updateDefaultValue(name, value);
+        break;
+    case "number":
+        if (isNaN(value)) {
+            Utils.alert("Введено не число");
+            event.target.value = oldValue;
+            return;
+        }
+        DBMS.updateDefaultValue(name, Number(value));
+        break;
+    case "enum":
+        if (value === "") {
+            Utils.alert("Значение поля с единственным выбором не может быть пустым");
+            event.target.value = oldValue;
+            return;
+        }
+        oldOptions = oldValue.split(",");
+        newOptions = value.split(",");
+        
+        newOptions = newOptions.map(function(elem){
+            return elem.trim();
+        });
+        
+        newOptionsMap = [{}].concat(newOptions).reduce(function (a, b) {
+            a[b] = true;
+            return a;
+        });
+        
+        missedValues = oldOptions.filter(function (oldOption) {
+            return !newOptionsMap[oldOption];
+        });
+        
+        if (missedValues.length !== 0) {
+            if (Utils.confirm("Новое значение единственного выбора удаляет предыдущие значения: "
+                    + missedValues.join(",")
+                    + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
+                newValue = newOptions.join(",");
+                event.target.value = newValue;
+                DBMS.updateDefaultValue(name, newValue);
+                
+                return;
+            } else {
+                event.target.value = oldValue;
+                return;
+            }
+        }
+        newValue = newOptions.join(",");
+        event.target.value = newValue;
+        DBMS.updateDefaultValue(name, newValue);
+        break;
+    }
 };
 
 CharacterProfileConfigurer.renameProfileItem = function (event) {
@@ -305,10 +336,18 @@ CharacterProfileConfigurer.validateProfileItemName = function (name, success, fa
         return;
     }
     
-    DBMS.isProfileItemNameUsed(name, function(){
+    var tmpFailure = function(){
         Utils.alert("Такое имя уже используется.");
         if(failure) failure();
-    }, success);
+    };
+    
+    DBMS.isProfileItemNameUsed(name, function(isUsed){
+        if(isUsed){
+            tmpFailure();
+        } else {
+            success();
+        }
+    });
     
 };
 

@@ -51,7 +51,9 @@ LocalDBMS.prototype.removeProfileItem = function(index, name, callback){
     Object.keys(this.database.Characters).forEach(function (characterName) {
         delete that.database.Characters[characterName][name];
     });
-    this.database.ProfileSettings.remove(index);
+//    this.database.ProfileSettings.remove(index);
+    Utils.removeFromArrayByIndex(this.database.ProfileSettings, index);
+//    this.database.ProfileSettings.remove(index);
     callback();
 };
 //profile configurer
@@ -63,29 +65,25 @@ LocalDBMS.prototype.changeProfileItemType = function(name, newType, callback){
     })[0];
     
     profileItem.type = newType;
-    profileItem.value = CharacterProfileConfigurer.mapping[newType].value;
+    profileItem.value = Constants.profileFieldTypes[newType].value;
     
     var that = this;
     Object.keys(this.database.Characters).forEach(function (characterName) {
-        that.database.Characters[characterName][name] = CharacterProfileConfigurer.mapping[newType].value;
+        that.database.Characters[characterName][name] = Constants.profileFieldTypes[newType].value;
     });
     callback();
 };
 
 //profile configurer
-LocalDBMS.prototype.isProfileItemNameUsed = function(name, onUsed, onUnused){
+LocalDBMS.prototype.isProfileItemNameUsed = function(name, callback){
     "use strict";
     var nameUsedTest = function (profile) {
       return name === profile.name;
     };
     
-    if (this.database.ProfileSettings.some(nameUsedTest)) {
-        if(onUsed) onUsed();
-        return;
-    } else {
-        onUnused();
-    }
+    callback(this.database.ProfileSettings.some(nameUsedTest));
 };
+
 //profile configurer
 LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback){
     "use strict";
@@ -103,7 +101,7 @@ LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback){
 };
 
 //profile configurer
-LocalDBMS.prototype.updateDefaultValue = function(name, value, callback){
+LocalDBMS.prototype.updateDefaultValue = function(name, value){
     "use strict";
     
     var info = this.database.ProfileSettings.filter(function(elem){
@@ -119,19 +117,19 @@ LocalDBMS.prototype.updateDefaultValue = function(name, value, callback){
         info.value = value;
         break;
     case "number":
-        if (isNaN(value)) {
-            Utils.alert("Введено не число");
-            callback(info.value);
-            return;
-        }
+//        if (isNaN(value)) {
+//            Utils.alert("Введено не число");
+//            callback(info.value);
+//            return;
+//        }
         info.value = Number(value);
         break;
     case "enum":
-        if (value === "") {
-            Utils.alert("Значение поля с единственным выбором не может быть пустым");
-            callback(info.value);
-            return;
-        }
+//        if (value === "") {
+//            Utils.alert("Значение поля с единственным выбором не может быть пустым");
+//            callback(info.value);
+//            return;
+//        }
         oldOptions = info.value.split(",");
         newOptions = value.split(",");
         
@@ -149,28 +147,19 @@ LocalDBMS.prototype.updateDefaultValue = function(name, value, callback){
         });
         
         if (missedValues.length !== 0) {
-            if (Utils.confirm("Новое значение единственного выбора удаляет предыдущие значения: "
-                    + missedValues.join(",")
-                    + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
-                callback(newOptions.join(","));
-                info.value = newOptions.join(",");
-                
-                var that = this;
-                Object.keys(this.database.Characters).forEach(function (characterName) {
-                    var enumValue = that.database.Characters[characterName][name];
-                    if (!newOptionsMap[enumValue]) {
-                        that.database.Characters[characterName][name] = newOptions[0];
-                    }
-                });
-                
-                return;
-            } else {
-                callback(info.value);
-                return;
-            }
+            info.value = newOptions.join(",");
+            
+            var that = this;
+            Object.keys(this.database.Characters).forEach(function (characterName) {
+                var enumValue = that.database.Characters[characterName][name];
+                if (!newOptionsMap[enumValue]) {
+                    that.database.Characters[characterName][name] = newOptions[0];
+                }
+            });
+            
+            return;
         }
         
-        callback(newOptions.join(","));
         info.value = newOptions.join(",");
         break;
     }

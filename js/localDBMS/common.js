@@ -18,9 +18,10 @@ See the License for the specific language governing permissions and
 "use strict";
 
 
+
 function LocalDBMS(){
     
-}
+};
 
 LocalDBMS.prototype.getDatabase = function(callback){
     "use strict";

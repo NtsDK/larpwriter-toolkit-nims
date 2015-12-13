@@ -219,7 +219,8 @@ LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
             event1.characters[characterName] = event2.characters[characterName];
         }
     }
-    story.events.remove(index + 1);
+//    story.events.remove(index + 1);
+    Utils.removeFromArrayByIndex(story.events, index + 1);
     
     callback();
 };
@@ -228,7 +229,8 @@ LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
 LocalDBMS.prototype.removeEvent = function(storyName, index, callback){
     "use strict";
     var story = this.database.Stories[storyName];
-    story.events.remove(index);
+//    story.events.remove(index);
+    Utils.removeFromArrayByIndex(story.events, index);
     callback();
 };
 

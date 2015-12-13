@@ -34,9 +34,8 @@ BriefingPreview.init = function () {
     
     DBMS.getAllProfileSettings(function(profileSettings){
         BriefingPreview.profileSettings = profileSettings;
-        BriefingPreview.content = document.getElementById("briefingPreviewDiv");
     });
-
+    BriefingPreview.content = document.getElementById("briefingPreviewDiv");
 };
 
 BriefingPreview.refresh = function () {
