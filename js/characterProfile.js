@@ -132,7 +132,28 @@ CharacterProfile.updateFieldValue = function(type){
     "use strict";
     return function(event){
         var fieldName = event.target.selfName;
-        DBMS.updateProfileField(CharacterProfile.name, fieldName, type, event);
+        var characterName = CharacterProfile.name;
+        
+        var value;
+        switch(type){
+        case "text":
+        case "string":
+        case "enum":
+            value = event.target.value;
+            break;
+        case "number":
+            if (isNaN(event.target.value)) {
+                Utils.alert("Введенное значение не является числом.");
+                event.target.value = event.target.oldValue;
+                return;
+            }
+            value = Number(event.target.value);
+            break;
+        case "checkbox":
+            value = event.target.checked;
+            break;
+        }
+        DBMS.updateProfileField(characterName, fieldName, type, value);
     }
 }
 
@@ -155,6 +176,7 @@ CharacterProfile.showProfileInfoCallback = function (profile) {
         } else {
             inputItems[inputName].value = profile[inputName];
         }
+        inputItems[inputName].oldValue = profile[inputName];
     });
 };
 

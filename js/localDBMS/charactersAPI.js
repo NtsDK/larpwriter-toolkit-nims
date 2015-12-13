@@ -93,25 +93,25 @@ LocalDBMS.prototype.removeCharacter = function (name, callback) {
 
 
 // profile
-LocalDBMS.prototype.updateProfileField = function(characterName, fieldName, type, event){
+LocalDBMS.prototype.updateProfileField = function(characterName, fieldName, type, value){
     "use strict";
     var profileInfo = this.database.Characters[characterName];
     switch(type){
     case "text":
     case "string":
     case "enum":
-        profileInfo[fieldName] = event.target.value;
+        profileInfo[fieldName] = value;
         break;
     case "number":
-        if (isNaN(event.target.value)) {
-            Utils.alert("Введенное значение не является числом.");
-            event.target.value = profileInfo[fieldName];
-            return;
-        }
-        profileInfo[fieldName] = Number(event.target.value);
+//        if (isNaN(event.target.value)) {
+//            Utils.alert("Введенное значение не является числом.");
+//            event.target.value = profileInfo[fieldName];
+//            return;
+//        }
+        profileInfo[fieldName] = Number(value);
         break;
     case "checkbox":
-        profileInfo[fieldName] = event.target.checked;
+        profileInfo[fieldName] = value;
         break;
     }
 };
