@@ -26,13 +26,9 @@ LocalDBMS.prototype.updateMasterStory = function(storyName, value){
 };
 
 //stories
-LocalDBMS.prototype.isStoryExist = function(storyName, onTrue, onFalse){
+LocalDBMS.prototype.isStoryExist = function(storyName, callback){
     "use strict";
-    if(this.database.Stories[storyName]){
-        if(onTrue)onTrue();
-    } else {
-        if(onFalse)onFalse();
-    }
+    callback(this.database.Stories[storyName] !== undefined);
 };
 // stories
 LocalDBMS.prototype.createStory = function(storyName, callback){
@@ -77,13 +73,13 @@ LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, c
 };
 
 //event presence
-LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName) {
+LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
     "use strict";
     
     var localCharacters;
     localCharacters = this.database.Stories[storyName].characters;
     
-    return Object.keys(localCharacters).sort(Utils.charOrdA);
+    callback(Object.keys(localCharacters).sort(Utils.charOrdA));
 };
 
 //story events, event presence

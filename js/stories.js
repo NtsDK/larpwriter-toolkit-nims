@@ -122,13 +122,15 @@ Stories.createStory = function () {
         return;
     }
     
-    DBMS.isStoryExist(storyName, function(){
-        Utils.alert("История с таким именем уже существует.");
-    }, function(){
-        DBMS.createStory(storyName, function(){
-            Stories.updateSettings(storyName);
-            Stories.refresh();
-        });
+    DBMS.isStoryExist(storyName, function(isExist){
+        if(isExist){
+            Utils.alert("История с таким именем уже существует.");
+        } else {
+            DBMS.createStory(storyName, function(){
+                Stories.updateSettings(storyName);
+                Stories.refresh();
+            });
+        }
     });
 };
 
@@ -146,16 +148,17 @@ Stories.renameStory = function () {
         Utils.alert("Имена совпадают.");
         return;
     }
-
-    DBMS.isStoryExist(toName, function(){
-        Utils.alert("Имя " + toName + " уже используется.");
-    }, function(){
-        DBMS.renameStory(fromName, toName, function(){
-            Stories.updateSettings(toName);
-            Stories.refresh();
-        });
-    });
     
+    DBMS.isStoryExist(toName, function(isExist){
+        if(isExist){
+            Utils.alert("Имя " + toName + " уже используется.");
+        } else {
+            DBMS.renameStory(fromName, toName, function(){
+                Stories.updateSettings(toName);
+                Stories.refresh();
+            });
+        }
+    });
 };
 
 Stories.removeStory = function () {

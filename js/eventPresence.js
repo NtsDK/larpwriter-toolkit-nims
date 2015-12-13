@@ -36,24 +36,22 @@ EventPresence.refresh = function () {
         return;
     }
 
-    EventPresence.appendTableHeader(tableHead);
-
-    var characterArray = DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName);
-
-    DBMS.getStoryEvents(Stories.CurrentStoryName, function(events){
-        events.forEach(function (event, i) {
-            EventPresence.appendTableInput(table, event, i, characterArray);
+    DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(characterArray){
+        EventPresence.appendTableHeader(tableHead, characterArray);
+        DBMS.getStoryEvents(Stories.CurrentStoryName, function(events){
+            events.forEach(function (event, i) {
+                EventPresence.appendTableInput(table, event, i, characterArray);
+            });
         });
     });
 };
 
-EventPresence.appendTableHeader = function (table) {
+EventPresence.appendTableHeader = function (table, characterArray) {
     "use strict";
     var tr = document.createElement("tr");
     var td = document.createElement("th");
     td.appendChild(document.createTextNode("Событие"));
     tr.appendChild(td);
-    var characterArray = DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName);
 
     characterArray.forEach(function (characterName) {
         td = document.createElement("th");

@@ -54,7 +54,7 @@ RemoteDBMS.prototype.getAllStories = function(callback){
 // timeline
 RemoteDBMS.prototype.getEventGroupsForStories = function(storyNames, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getEventGroupsForStories", {storyNames:storyNames},  callback);
+    RemoteDBMS._simpleGet("getEventGroupsForStories", {storyNames:JSON.stringify(storyNames)},  callback);
 };
 
 // timeline
@@ -64,7 +64,7 @@ RemoteDBMS.prototype.setEventTime = function(storyName, eventIndex, time){
         storyName: storyName, 
         eventIndex:eventIndex,
         time:time
-    }, callback);
+    });
 //    var event = this.database.Stories[storyName].events[eventIndex];
 //    event.time = dateFormat(time, "yyyy/mm/dd h:MM");
 };
