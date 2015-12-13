@@ -93,7 +93,7 @@ BriefingPreview.buildContent = function (characterName) {
     content.appendChild(document.createElement("br"));
     content.appendChild(document.createElement("br"));
 
-    DBMS.getProfile(characterName, function(name, profile){
+    DBMS.getProfile(characterName, function(profile){
         BriefingPreview.showProfile(content, profile);
         content.appendChild(document.createElement("br"));
         content.appendChild(document.createElement("br"));

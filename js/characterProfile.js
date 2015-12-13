@@ -142,8 +142,9 @@ CharacterProfile.showProfileInfoDelegate = function (event) {
     DBMS.getProfile(name, CharacterProfile.showProfileInfoCallback);
 };
 
-CharacterProfile.showProfileInfoCallback = function (name, profile) {
+CharacterProfile.showProfileInfoCallback = function (profile) {
     "use strict";
+    var name = profile.name;
     CharacterProfile.updateSettings(name);
     
     CharacterProfile.name = name;

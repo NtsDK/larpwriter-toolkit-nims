@@ -22,10 +22,10 @@ var Overview = {};
 
 Overview.init = function () {
     "use strict";
-    var name = document.getElementById("gameNameInput");
-    name.addEventListener("change", Overview.updateName);
+    Overview.name = document.getElementById("gameNameInput");
+    Overview.name.addEventListener("change", Overview.updateName);
 
-    var date = document.getElementById("gameDatePicker");
+    Overview.date = document.getElementById("gameDatePicker");
 
     var opts = {
         lang : "ru",
@@ -33,9 +33,9 @@ Overview.init = function () {
         onChangeDateTime : Overview.updateTime
     };
 
-    jQuery(date).datetimepicker(opts);
+    jQuery(Overview.date).datetimepicker(opts);
 
-    date = document.getElementById("preGameDatePicker");
+    Overview.preDate = document.getElementById("preGameDatePicker");
 
     opts = {
         lang : "ru",
@@ -43,26 +43,22 @@ Overview.init = function () {
         onChangeDateTime : Overview.updatePreGameDate
     };
 
-    jQuery(date).datetimepicker(opts);
+    jQuery(Overview.preDate).datetimepicker(opts);
 
-    var descr = document.getElementById("gameDescription");
-    descr.addEventListener("change", Overview.updateDescr);
+    Overview.descr = document.getElementById("gameDescription");
+    Overview.descr.addEventListener("change", Overview.updateDescr);
 
     Overview.content = document.getElementById("overviewDiv");
 };
 
 Overview.refresh = function () {
     "use strict";
-    var name = document.getElementById("gameNameInput");
-    var date1 = document.getElementById("gameDatePicker");
-    var date2 = document.getElementById("preGameDatePicker");
-    var descr = document.getElementById("gameDescription");
 
     DBMS.getMetaInfo(function(info){
-        name.value = info.name;
-        date1.value = info.date;
-        date2.value = info.preGameDate;
-        descr.value = info.description;
+        Overview.name.value = info.name;
+        Overview.date.value = info.date;
+        Overview.preDate.value = info.preGameDate;
+        Overview.descr.value = info.description;
     });
 };
 

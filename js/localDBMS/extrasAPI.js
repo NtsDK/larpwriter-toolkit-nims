@@ -91,7 +91,7 @@ LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback)
 //profile, preview
 LocalDBMS.prototype.getProfile = function(name, callback){
     "use strict";
-    callback(name, this.database.Characters[name]);
+    callback(this.database.Characters[name]);
 };
 // social network, character filter
 LocalDBMS.prototype.getAllProfiles = function(callback){
