@@ -16,27 +16,30 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-var Constants = {};
+(function(exports){
 
-Constants.profileFieldTypes = {
-    text : {
-        displayName : "Текст",
-        value : ""
-    },
-    string : {
-        displayName : "Строка",
-        value : ""
-    },
-    enum : {
-        displayName : "Единственный выбор",
-        value : "_"
-    },
-    number : {
-        displayName : "Число",
-        value : 0
-    },
-    checkbox : {
-        displayName : "Галочка",
-        value : false
-    }
-};
+    exports.profileFieldTypes = {
+    		text : {
+    			displayName : "Текст",
+    			value : ""
+    		},
+    		string : {
+    			displayName : "Строка",
+    			value : ""
+    		},
+    		enum : {
+    			displayName : "Единственный выбор",
+    			value : "_"
+    		},
+    		number : {
+    			displayName : "Число",
+    			value : 0
+    		},
+    		checkbox : {
+    			displayName : "Галочка",
+    			value : false
+    		}
+    };
+    
+})(typeof exports === 'undefined'? this['Constants']={}: exports);
+

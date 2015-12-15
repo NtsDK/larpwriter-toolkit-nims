@@ -24,6 +24,7 @@ var DBMS;
 
 PageManager.onLoad = function () {
     DBMS = new LocalDBMS();
+//    DBMS = new RemoteDBMS();
     
     var request = $.ajax({
         url : "js/baseExample.json",
