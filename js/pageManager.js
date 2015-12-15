@@ -23,8 +23,11 @@ var PageManager = {};
 var DBMS;
 
 PageManager.onLoad = function () {
-    DBMS = new LocalDBMS();
-//    DBMS = new RemoteDBMS();
+	if(MODE === "Standalone"){
+		DBMS = new LocalDBMS();
+	} else if(MODE === "NIMS_Server") {
+		DBMS = new RemoteDBMS();
+	}
     
     var request = $.ajax({
         url : "js/baseExample.json",

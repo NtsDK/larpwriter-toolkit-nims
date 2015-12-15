@@ -17,7 +17,8 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-var url = "http://127.0.0.1:1337/"
+//var url = "http://127.0.0.1:1337/"
+	var url = "/"
 
 function RemoteDBMS(){
     this.clearSettings();
