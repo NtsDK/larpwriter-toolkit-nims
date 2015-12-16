@@ -30,7 +30,7 @@ PageManager.onLoad = function () {
 	}
     
     var request = $.ajax({
-        url : "js/baseExample.json",
+        url : "js/common/baseExample.json",
         dataType : "text",
         method : "GET",
         contentType : "text/plain;charset=utf-8"

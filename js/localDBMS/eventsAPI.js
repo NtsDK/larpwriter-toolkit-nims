@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 //events
 LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
     "use strict";
-    var storyArray = Object.keys(this.database.Stories).sort(Utils.charOrdA);
+    var storyArray = Object.keys(this.database.Stories).sort(CommonUtils.charOrdA);
     var that = this;
     storyArray = storyArray.map(function(elem){
         return {
@@ -57,7 +57,7 @@ LocalDBMS.prototype.getFilteredCharacterNames = function (storyName, showOnlyUnf
     var localCharacters;
     localCharacters = this.database.Stories[storyName].characters;
     
-    localCharacters = Object.keys(localCharacters).sort(Utils.charOrdA);
+    localCharacters = Object.keys(localCharacters).sort(CommonUtils.charOrdA);
     
     var that = this;
     localCharacters = localCharacters.map(function(elem){

@@ -10360,6 +10360,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
     // create the graph canvas (HTML canvas element)
     this.frame.canvas = document.createElement('canvas');
+    
     this.frame.canvas.style.position = 'relative';
     this.frame.appendChild(this.frame.canvas);
     //if (!this.frame.canvas.getContext) {
@@ -35164,6 +35165,7 @@ return /******/ (function(modules) { // webpackBootstrap
         //////////////////////////////////////////////////////////////////
 
         this.frame.canvas = document.createElement('canvas');
+        this.frame.canvas.id = "testst";
         this.frame.canvas.style.position = 'relative';
         this.frame.appendChild(this.frame.canvas);
 

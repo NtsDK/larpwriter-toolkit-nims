@@ -109,6 +109,7 @@ RemoteDBMS.prototype.newDatabase = function(callback){
         dataType : "text",
         method : "POST",
         contentType : "application/json;charset=utf-8",
+        data: "{}"
     });
     
     var that = this;

@@ -52,7 +52,7 @@ NetworkSubsetsSelector.refresh = function (parent) {
     selector = document.getElementById("networkCharacterSelector");
     Utils.removeChildren(selector);
     
-    Object.keys(NetworkSubsetsSelector.parent.Characters).sort(Utils.charOrdA).forEach(function (name) {
+    Object.keys(NetworkSubsetsSelector.parent.Characters).sort(CommonUtils.charOrdA).forEach(function (name) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(name));
         selector.appendChild(option);
@@ -61,7 +61,7 @@ NetworkSubsetsSelector.refresh = function (parent) {
     selector = document.getElementById("networkStorySelector");
     Utils.removeChildren(selector);
     
-    Object.keys(NetworkSubsetsSelector.parent.Stories).sort(Utils.charOrdA).forEach(function (story) {
+    Object.keys(NetworkSubsetsSelector.parent.Stories).sort(CommonUtils.charOrdA).forEach(function (story) {
         option = document.createElement("option");
         option.appendChild(document.createTextNode(story));
         selector.appendChild(option);

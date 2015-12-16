@@ -1,0 +1,22 @@
+{
+    "Meta": {
+        "name" : "",
+        "date" : "",
+        "preGameDate" : "",
+        "description" : ""
+    },
+    "Characters": {},
+    "ProfileSettings" : [],
+    "Stories": {},
+    "Settings" : {
+        "Events" : {
+        },
+        "BriefingPreview" : {
+        },
+        "Stories" : {
+        },
+        "CharacterProfile" : {
+        }
+    },
+    "Version": "0.4.1"
+}

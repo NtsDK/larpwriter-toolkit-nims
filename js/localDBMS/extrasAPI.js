@@ -84,7 +84,7 @@ LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback)
         }));
     });
     
-    allEvents.sort(eventsByTime);
+    allEvents.sort(CommonUtils.eventsByTime);
     callback(allEvents);
 };
 

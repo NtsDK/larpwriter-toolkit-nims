@@ -79,7 +79,7 @@ LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback)
     var localCharacters;
     localCharacters = this.database.Stories[storyName].characters;
     
-    callback(Object.keys(localCharacters).sort(Utils.charOrdA));
+    callback(Object.keys(localCharacters).sort(CommonUtils.charOrdA));
 };
 
 //story events, event presence
@@ -190,7 +190,7 @@ LocalDBMS.prototype.cloneEvent = function(storyName, index, callback){
     "use strict";
     var story = this.database.Stories[storyName];
     var event = story.events[index];
-    var copy = Utils.clone(event);
+    var copy = CommonUtils.clone(event);
     
     story.events.splice(index, 0, copy);
     
@@ -216,7 +216,7 @@ LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
         }
     }
 //    story.events.remove(index + 1);
-    Utils.removeFromArrayByIndex(story.events, index + 1);
+    CommonUtils.removeFromArrayByIndex(story.events, index + 1);
     
     callback();
 };
@@ -226,7 +226,7 @@ LocalDBMS.prototype.removeEvent = function(storyName, index, callback){
     "use strict";
     var story = this.database.Stories[storyName];
 //    story.events.remove(index);
-    Utils.removeFromArrayByIndex(story.events, index);
+    CommonUtils.removeFromArrayByIndex(story.events, index);
     callback();
 };
 

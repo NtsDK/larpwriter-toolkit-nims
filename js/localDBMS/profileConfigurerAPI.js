@@ -52,7 +52,7 @@ LocalDBMS.prototype.removeProfileItem = function(index, name, callback){
         delete that.database.Characters[characterName][name];
     });
 //    this.database.ProfileSettings.remove(index);
-    Utils.removeFromArrayByIndex(this.database.ProfileSettings, index);
+    CommonUtils.removeFromArrayByIndex(this.database.ProfileSettings, index);
 //    this.database.ProfileSettings.remove(index);
     callback();
 };

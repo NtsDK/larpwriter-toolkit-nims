@@ -132,7 +132,7 @@ LocalDBMS.prototype._getEventsInfo = function (charName) {
             eventsInfo.push(eventInfo);
         });
     }
-    eventsInfo.sort(eventsByTime);
+    eventsInfo.sort(CommonUtils.eventsByTime);
 
     return eventsInfo;
 };

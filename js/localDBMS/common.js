@@ -33,30 +33,26 @@ LocalDBMS.prototype.setDatabase = function(database, callback){
     this.database = Migrator.migrate(database);
     callback();
 };
+
 LocalDBMS.prototype.newDatabase = function(callback){
     "use strict";
-    this.database = {
-            "Meta": {
-                "name" : "",
-                "date" : "",
-                "preGameDate" : "",
-                "description" : ""
-            },
-            "Characters": {},
-            "ProfileSettings" : [],
-            "Stories": {},
-            "Settings" : {
-                "Events" : {
-                },
-                "BriefingPreview" : {
-                },
-                "Stories" : {
-                },
-                "CharacterProfile" : {
-                }
-            },
-        };
-    callback();
+    
+    var request = $.ajax({
+        url : "js/common/emptyBase.json",
+        dataType : "text",
+        method : "GET",
+        contentType : "text/plain;charset=utf-8"
+    });
+    
+    var that = this;
+    request.done(function(data) {
+    	that.setDatabase(JSON.parse(data), callback);
+    });
+    
+    request.fail(function(errorInfo, textStatus, errorThrown) {
+        alert("Ошибка при загрузке чистой базы.");
+    });
+    
 };
 
 LocalDBMS.prototype.getMetaInfo = function(callback){
@@ -76,13 +72,13 @@ LocalDBMS.prototype.getSettings = function(){
 
 LocalDBMS.prototype.getCharacterNamesArray = function (callback) {
     "use strict";
-    callback(Object.keys(this.database.Characters).sort(Utils.charOrdA));
+    callback(Object.keys(this.database.Characters).sort(CommonUtils.charOrdA));
 };
 
 // stories, timeline
 LocalDBMS.prototype.getStoryNamesArray = function (callback) {
     "use strict";
-    callback(Object.keys(this.database.Stories).sort(Utils.charOrdA));
+    callback(Object.keys(this.database.Stories).sort(CommonUtils.charOrdA));
 };
 
 LocalDBMS.prototype.getAllProfileSettings = function(callback){

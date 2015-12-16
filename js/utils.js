@@ -79,72 +79,6 @@ Utils.preg_quote = function (str, delimiter) {
             + (delimiter || '') + '-]', 'g'), '\\$&');
 };
 
-String.prototype.endsWith = function (suffix) {
-    "use strict";
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-
-// Array Remove - By John Resig (MIT Licensed)
-//Array.prototype.remove = function (from, to) {
-//    "use strict";
-//    var rest = this.slice((to || from) + 1 || this.length);
-//    this.length = from < 0 ? this.length + from : from;
-//    return this.push.apply(this, rest);
-//};
-
-Utils.removeFromArrayByIndex = function (array, from, to) {
-    "use strict";
-    var rest = array.slice((to || from) + 1 || array.length);
-    array.length = from < 0 ? array.length + from : from;
-    return array.push.apply(array, rest);
-};
-
-if (document.getElementsByClassName) {
-
-    var getElementsByClass = function (classList, node) {
-        return (node || document).getElementsByClassName(classList);
-    };
-
-} else {
-
-    var getElementsByClass = function (classList, node) {
-        var node = node || document, list = node.getElementsByTagName('*'), length = list.length, classArray = classList
-                .split(/\s+/), classes = classArray.length, result = [], i, j
-        for (i = 0; i < length; i++) {
-            for (j = 0; j < classes; j++) {
-                if (list[i].className.search('\\b' + classArray[j] + '\\b') !== -1) {
-                    result.push(list[i]);
-                    break;
-                }
-            }
-        }
-
-        return result;
-    };
-};
-
-Utils.charOrdA = function (a, b) {
-    "use strict";
-    a = a.toLowerCase();
-    b = b.toLowerCase();
-    if (a > b)
-        return 1;
-    if (a < b)
-        return -1;
-    return 0;
-};
-
-function eventsByTime (a, b) {
-    "use strict";
-    a = new Date(a.time);
-    b = new Date(b.time);
-    if (a > b)
-        return 1;
-    if (a < b)
-        return -1;
-    return 0;
-};
-
 Utils.alert = function (message) {
     "use strict";
     window.alert(message);
@@ -165,45 +99,17 @@ Utils.removeChildren = function (myNode) {
     }
 };
 
+
+
+String.prototype.endsWith = function (suffix) {
+    "use strict";
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
 function isEmpty (obj) {
     "use strict";
     return (Object.getOwnPropertyNames(obj).length === 0);
 };
-
-Utils.clone = function (o) {
-    "use strict";
-    if (!o || 'object' !== typeof o) {
-        return o;
-    }
-    var c = 'function' === typeof o.pop ? [] : {};
-    var p, v;
-    for (p in o) {
-        if (o.hasOwnProperty(p)) {
-            v = o[p];
-            if (v && 'object' === typeof v) {
-                c[p] = Utils.clone(v);
-            } else {
-                c[p] = v;
-            }
-        }
-    }
-    return c;
-};
-
-//Utils.makeTextAreaAutoResizable = function(textarea){
-////    textarea.autoresize="true";
-//    addClass(textarea, "autoresizable");
-////    textarea.setAttribute('autoresize', 'autoresize');
-//    textarea.addEventListener('input', textAreaAutoresize, false);
-//    textAreaAutoresize.call(textarea);
-//};
-//
-//function textAreaAutoresize() {
-//    this.style.height = 'auto';
-//    this.style.height = this.scrollHeight+'px';
-//    this.scrollTop = this.scrollHeight;
-////    window.scrollTo(window.scrollLeft,(this.scrollTop+this.scrollHeight));
-//  }
 
 function addClass(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
@@ -227,4 +133,10 @@ function hasClass(o, c){
 function removeClass(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "")
+};
+
+// from date format utils
+//For convenience...
+Date.prototype.format = function (mask, utc) {
+	return dateFormat(this, mask, utc);
 };
