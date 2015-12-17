@@ -25,6 +25,7 @@ var DBMS;
 PageManager.onLoad = function () {
 	if(MODE === "Standalone"){
 		DBMS = new LocalDBMS();
+//		DBMS = new AsyncWrapper(new LocalDBMS());
 	} else if(MODE === "NIMS_Server") {
 		DBMS = new RemoteDBMS();
 	}
@@ -57,21 +58,25 @@ PageManager.onDatabaseLoad = function () {
     var content = "contentArea";
     var button;
     var navigation = document.getElementById(nav);
-    Utils.addView(root, "Overview", Overview, "Обзор", nav, content, true);
-    Utils.addView(root, "Characters", Characters, "Персонажи", nav, content);
-    Utils.addView(root, "Stories", Stories, "Истории", nav, content);
-    Utils.addView(root, "Events", Events, "Адаптации", nav, content);
-    Utils.addView(root, "Briefings", Briefings, "Вводные", nav, content);
+    var containers = {
+		root: root,
+		navigation: navigation,
+		content: document.getElementById(content)
+    };
+    Utils.addView(containers, "Overview", Overview, "Обзор", {mainPage:true});
+    Utils.addView(containers, "Characters", Characters, "Персонажи");
+    Utils.addView(containers, "Stories", Stories, "Истории");
+    Utils.addView(containers, "Events", Events, "Адаптации");
+    Utils.addView(containers, "Briefings", Briefings, "Вводные");
     
     button = document.createElement("div");
     addClass(button, "nav-separator");
     navigation.appendChild(button);
     
-    Utils.addView(root, "Timeline", Timeline, "Хронология", nav, content);
-    Utils.addView(root, "SocialNetwork", SocialNetwork, "Социальная сеть", nav,
-            content);
-    Utils.addView(root, "CharacterFilter", CharacterFilter, "Фильтр", nav,
-            content);
+    Utils.addView(containers, "Timeline", Timeline, "Хронология");
+    Utils.addView(containers, "SocialNetwork", SocialNetwork, "Социальная сеть");
+    Utils.addView(containers, "CharacterFilter", CharacterFilter, "Фильтр");
+    
 
     button = document.createElement("div");
     addClass(button, "nav-separator");
@@ -86,27 +91,23 @@ PageManager.onDatabaseLoad = function () {
     navigation.appendChild(button);
     button.addEventListener('change', FileUtils.readSingleFile, false);
 
-    button = document.createElement("div");
-    addClass(button, "action-button");
-    button.id = "dataSaveButton";
-    navigation.appendChild(button);
-    button.addEventListener('click', FileUtils.saveFile);
-    
-    button = document.createElement("div");
-    button.id = "newBaseButton";
-    addClass(button, "action-button");
-    navigation.appendChild(button);
-    button.addEventListener('click', FileUtils.makeNewBase);
-
-    button = document.createElement("div");
-    button.id = "mainHelpButton";
-    addClass(button, "action-button");
-    navigation.appendChild(button);
-    button.addEventListener('click', FileUtils.openHelp);
+    PageManager.addButton("dataSaveButton", navigation, FileUtils.saveFile);
+    PageManager.addButton("newBaseButton", navigation, FileUtils.makeNewBase);
+    PageManager.addButton("mainHelpButton", navigation, FileUtils.openHelp);
+    Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton"});
 
     FileUtils.init(PageManager.currentView.refresh);
 
     PageManager.currentView.refresh();
+};
+
+PageManager.addButton = function(id, navigation, callback){
+	"use strict";
+    var button = document.createElement("div");
+    button.id = id;
+    addClass(button, "action-button");
+    navigation.appendChild(button);
+    button.addEventListener('click', callback);
 };
 
 //PageManager.enableFullScreenElements = function(){

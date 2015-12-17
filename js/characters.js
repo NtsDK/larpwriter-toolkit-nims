@@ -26,10 +26,13 @@ Characters.init = function () {
     root.views = {};
     var nav = "charactersNavigation";
     var content = "charactersContent";
-    Utils.addView(root, "CharacterProfile", CharacterProfile, "Досье", nav,
-            content, true);
-    Utils.addView(root, "CharacterProfileConfigurer",
-            CharacterProfileConfigurer, "Редактор досье", nav, content);
+    var containers = {
+		root: root,
+		navigation: document.getElementById(nav),
+		content: document.getElementById(content)
+    };
+    Utils.addView(containers, "CharacterProfile", CharacterProfile, "Досье",{mainPage:true});
+    Utils.addView(containers, "CharacterProfileConfigurer", CharacterProfileConfigurer, "Редактор досье");
 
     var button = document.getElementById("createCharacterButton");
     button.addEventListener("click", Characters.createCharacter);

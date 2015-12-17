@@ -16,43 +16,43 @@ See the License for the specific language governing permissions and
 
 var Utils = {};
 
-Utils.addView = function (rootObject, name, view, displayName, navigationId, contentAreaId, mainPage) {
+Utils.addView = function (containers, name, view, displayName, opts) {
     "use strict";
+    var opts = opts || {};
     view.init();
     var buttonClass = "navigation-button";
-    rootObject.views[name] = view;
-    var navigation = document.getElementById(navigationId);
+    containers.root.views[name] = view;
     var button = document.createElement("div");
     addClass(button, buttonClass);
     addClass(button, "-test-" + name);
+    if(opts.id){
+    	button.id = opts.id;
+    }
     button.appendChild(document.createTextNode(displayName));
-    navigation.appendChild(button);
+    containers.navigation.appendChild(button);
     
 
-    var contentArea, elems, i;
+    var elems, i;
     var onClickDelegate = function (view) {
         return function (evt) {
-            elems = navigation.getElementsByClassName(buttonClass);
+            elems = containers.navigation.getElementsByClassName(buttonClass);
             for (i = 0; i < elems.length; i++) {
                 removeClass(elems[i], "active");
             }
             addClass(evt.target, "active");
             
-            contentArea = document.getElementById(contentAreaId);
-            Utils.removeChildren(contentArea);
-            contentArea.appendChild(view.content);
-            rootObject.currentView = view;
+            Utils.removeChildren(containers.content);
+            containers.content.appendChild(view.content);
+            containers.root.currentView = view;
             view.refresh();
         };
     };
 
     button.addEventListener("click", onClickDelegate(view));
-    if (mainPage) {
+    if (opts.mainPage) {
         addClass(button, "active");
-        var contentArea = document.getElementById(contentAreaId);
-        contentArea.appendChild(view.content);
-        rootObject.currentView = view;
-        // view.refresh();
+        containers.content.appendChild(view.content);
+        containers.root.currentView = view;
     }
 };
 

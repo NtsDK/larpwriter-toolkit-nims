@@ -26,8 +26,13 @@ Briefings.init = function () {
     root.views = {};
     var nav = "briefingsNavigation";
     var content = "briefingsContent";
-    Utils.addView(root, "BriefingPreview", BriefingPreview, "Предварительный просмотр", nav, content, true);
-    Utils.addView(root, "BriefingExport", BriefingExport, "Экспорт", nav,content);
+    var containers = {
+		root: root,
+		navigation: document.getElementById(nav),
+		content: document.getElementById(content)
+    };
+    Utils.addView(containers, "BriefingPreview", BriefingPreview, "Предварительный просмотр", {mainPage:true});
+    Utils.addView(containers, "BriefingExport", BriefingExport, "Экспорт");
 
     Briefings.content = document.getElementById("briefingsDiv");
 };
