@@ -17,41 +17,28 @@ See the License for the specific language governing permissions and
 //characters
 RemoteDBMS.prototype.isCharacterNameUsed = function(name, callback){
     "use strict";
-    RemoteDBMS._simpleGet("isCharacterNameUsed", {name:name},  callback);
-//    callback(this.database.Characters[name] !== undefined);
+    RemoteDBMS._simpleGet("isCharacterNameUsed", [name],  callback);
 };
 //characters
 RemoteDBMS.prototype.createCharacter = function (name, callback) {
     "use strict";
-    RemoteDBMS._simplePut("createCharacter", {
-        name: name
-    }, callback);
+    RemoteDBMS._simplePut("createCharacter", [name], callback);
 };
 //characters
 RemoteDBMS.prototype.renameCharacter = function (fromName, toName, callback) {
     "use strict";
-    RemoteDBMS._simplePut("renameCharacter", {
-        fromName: fromName,
-        toName: toName
-    }, callback);
+    RemoteDBMS._simplePut("renameCharacter", [fromName, toName], callback);
 };
 
 //characters
 RemoteDBMS.prototype.removeCharacter = function (name, callback) {
     "use strict";
-    RemoteDBMS._simplePut("removeCharacter", {
-        name: name
-    }, callback);
+    RemoteDBMS._simplePut("removeCharacter", [name], callback);
 };
 
 
 // profile
 RemoteDBMS.prototype.updateProfileField = function(characterName, fieldName, type, value){
     "use strict";
-    RemoteDBMS._simplePut("updateProfileField", {
-        characterName: characterName,
-        fieldName: fieldName,
-        type: type,
-        value: value
-    });
+    RemoteDBMS._simplePut("updateProfileField", [characterName, fieldName, type, value]);
 };

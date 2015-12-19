@@ -42,11 +42,7 @@ RemoteDBMS._simpleGet = function(name, params, callback){
     "use strict";
     var paramStr = "";
     if(params){
-        var arr = [];
-        for(var key in params){
-            arr.push(key + "=" + encodeURIComponent(params[key]));
-        }
-        paramStr = "?" + arr.join("&"); 
+    	paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ; 
     }
     
     var request = $.ajax({
@@ -88,18 +84,15 @@ RemoteDBMS._simplePut = function(name, data, callback){
 RemoteDBMS.prototype.getDatabase = function(callback){
     "use strict";
     RemoteDBMS._simpleGet("getDatabase", null, callback);
-//    callback(this.database);
 };
 
 RemoteDBMS.prototype.setDatabase = function(database, callback){
     "use strict";
     var that = this;
-    RemoteDBMS._simplePut("setDatabase", database, function(){
+    RemoteDBMS._simplePut("setDatabase", [database], function(){
         that.clearSettings();
         callback();
     });
-//    this.database = Migrator.migrate(database);
-//    callback();
 };
 
 RemoteDBMS.prototype.newDatabase = function(callback){
@@ -125,14 +118,12 @@ RemoteDBMS.prototype.newDatabase = function(callback){
 
 RemoteDBMS.prototype.getMetaInfo = function(callback){
     "use strict";
-//    callback(this.database.Meta);
     RemoteDBMS._simpleGet("getMetaInfo", null,  callback);
 };
 // overview
 RemoteDBMS.prototype.setMetaInfo = function(name, value){
     "use strict";
-    RemoteDBMS._simplePut("setMetaInfo", {name: name, value:value});
-//    this.database.Meta[name] = value;
+    RemoteDBMS._simplePut("setMetaInfo", [name, value]);
 };
 
 RemoteDBMS.prototype.getSettings = function(){
@@ -142,20 +133,17 @@ RemoteDBMS.prototype.getSettings = function(){
 
 RemoteDBMS.prototype.getCharacterNamesArray = function (callback) {
     "use strict";
-//    callback(Object.keys(this.database.Characters).sort(Utils.charOrdA));
     RemoteDBMS._simpleGet("getCharacterNamesArray", null,  callback);
 };
 
 // stories, timeline
 RemoteDBMS.prototype.getStoryNamesArray = function (callback) {
     "use strict";
-//    callback(Object.keys(this.database.Stories).sort(Utils.charOrdA));
     RemoteDBMS._simpleGet("getStoryNamesArray", null,  callback);
 };
 
 RemoteDBMS.prototype.getAllProfileSettings = function(callback){
     "use strict";
-//    callback(this.database.ProfileSettings);
     RemoteDBMS._simpleGet("getAllProfileSettings", null,  callback);
 };
 

@@ -17,54 +17,45 @@ See the License for the specific language governing permissions and
 // preview
 RemoteDBMS.prototype.getAllInventoryLists = function(characterName, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getAllInventoryLists", {characterName:characterName},  callback);
+    RemoteDBMS._simpleGet("getAllInventoryLists", [characterName],  callback);
 };
 
 // preview
 RemoteDBMS.prototype.getCharacterEventGroupsByStory = function(characterName, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getCharacterEventGroupsByStory", {characterName:characterName},  callback);
+    RemoteDBMS._simpleGet("getCharacterEventGroupsByStory", [characterName],  callback);
 };
 
 // preview
 RemoteDBMS.prototype.getCharacterEventsByTime = function(characterName, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getCharacterEventsByTime", {characterName:characterName},  callback);
+    RemoteDBMS._simpleGet("getCharacterEventsByTime", [characterName],  callback);
 };
 
 //profile, preview
 RemoteDBMS.prototype.getProfile = function(name, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getProfile", {name:name},  callback);
-//    callback(this.database.Characters[name]);
+    RemoteDBMS._simpleGet("getProfile", [name],  callback);
 };
 // social network, character filter
 RemoteDBMS.prototype.getAllProfiles = function(callback){
     "use strict";
     RemoteDBMS._simpleGet("getAllProfiles", null,  callback);
-//    callback(this.database.Characters);
 };
 // social network
 RemoteDBMS.prototype.getAllStories = function(callback){
     "use strict";
     RemoteDBMS._simpleGet("getAllStories", null,  callback);
-//    callback(this.database.Stories);
 };
 
 // timeline
 RemoteDBMS.prototype.getEventGroupsForStories = function(storyNames, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getEventGroupsForStories", {storyNames:JSON.stringify(storyNames)},  callback);
+    RemoteDBMS._simpleGet("getEventGroupsForStories", [storyNames],  callback);
 };
 
 // timeline
 RemoteDBMS.prototype.setEventTime = function(storyName, eventIndex, time){
     "use strict";
-    RemoteDBMS._simplePut("setEventTime", {
-        storyName: storyName, 
-        eventIndex:eventIndex,
-        time:time
-    });
-//    var event = this.database.Stories[storyName].events[eventIndex];
-//    event.time = dateFormat(time, "yyyy/mm/dd h:MM");
+    RemoteDBMS._simplePut("setEventTime", [storyName, eventIndex, time]);
 };

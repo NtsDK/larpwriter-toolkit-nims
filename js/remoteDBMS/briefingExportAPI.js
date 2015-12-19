@@ -16,8 +16,6 @@ See the License for the specific language governing permissions and
 
 RemoteDBMS.prototype.getBriefingData = function (groupingByStory, callback) {
     "use strict";
-    RemoteDBMS._simpleGet("getBriefingData", {
-        groupingByStory:JSON.stringify(groupingByStory)
-    },  callback);
+    RemoteDBMS._simpleGet("getBriefingData", [groupingByStory],  callback);
 };
 

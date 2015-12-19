@@ -18,49 +18,29 @@ See the License for the specific language governing permissions and
 //events
 RemoteDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getFilteredStoryNames", {
-        showOnlyUnfinishedStories:JSON.stringify(showOnlyUnfinishedStories)
-    },  callback);
+    RemoteDBMS._simpleGet("getFilteredStoryNames", [showOnlyUnfinishedStories],  callback);
 };
 
 //events
 RemoteDBMS.prototype.getFilteredCharacterNames = function (storyName, showOnlyUnfinishedStories, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getFilteredCharacterNames", {
-        storyName:storyName,
-        showOnlyUnfinishedStories:JSON.stringify(showOnlyUnfinishedStories)
-    },  callback);
+    RemoteDBMS._simpleGet("getFilteredCharacterNames", [storyName, showOnlyUnfinishedStories],  callback);
 };
 
 //events
 RemoteDBMS.prototype.getEvents = function(storyName, characterNames, callback){
     "use strict";
-    RemoteDBMS._simpleGet("getEvents", {
-        storyName:storyName,
-        characterNames:JSON.stringify(characterNames)
-    },  callback);
+    RemoteDBMS._simpleGet("getEvents", [storyName, characterNames], callback);
 };
 
 // preview, events
 RemoteDBMS.prototype.setEventText = function(storyName, eventIndex, characterName, text){
     "use strict";
-    RemoteDBMS._simplePut("setEventText", {
-        storyName: storyName, 
-        eventIndex:eventIndex,
-        characterName:characterName,
-        text:text
-    });
+    RemoteDBMS._simplePut("setEventText", [storyName, eventIndex, characterName, text]);
 };
 
 // events
 RemoteDBMS.prototype.changeAdaptationReadyStatus = function(storyName, eventIndex, characterName, value){
     "use strict";
-    RemoteDBMS._simplePut("changeAdaptationReadyStatus", {
-        storyName: storyName, 
-        eventIndex:eventIndex,
-        characterName:characterName,
-        value:value
-    });
-//    var event = this.database.Stories[storyName].events[eventIndex];
-//    event.characters[characterName].ready = value;
+    RemoteDBMS._simplePut("changeAdaptationReadyStatus", [storyName, eventIndex, characterName, value]);
 };
