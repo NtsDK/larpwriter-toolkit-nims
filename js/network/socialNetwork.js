@@ -175,13 +175,13 @@ SocialNetwork.refresh = function () {
     selector = document.getElementById("networkNodeGroupSelector");
     Utils.removeChildren(selector);
     
-    DBMS.getAllProfiles(function(profiles){
+    DBMS.getAllProfiles(function(err, profiles){
         SocialNetwork.Characters = profiles;
         
-        DBMS.getAllStories(function(stories){
+        DBMS.getAllStories(function(err, stories){
             SocialNetwork.Stories = stories;
             
-            DBMS.getAllProfileSettings(function(profileSettings){
+            DBMS.getAllProfileSettings(function(err, profileSettings){
                 
                 var groups = profileSettings.filter(function (element) {
                     return element.type === "enum" || element.type === "checkbox";

@@ -13,6 +13,10 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 (function(exports) {
+	
+	exports.startsWith = function(str1, str2){
+		return str1.substring(0, str2.length) === str2;
+	};
 
 	exports.removeFromArrayByIndex = function(array, from, to) {
 		"use strict";

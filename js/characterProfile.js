@@ -31,7 +31,7 @@ CharacterProfile.init = function () {
 CharacterProfile.refresh = function () {
     "use strict";
     
-    DBMS.getCharacterNamesArray(function(names){
+    DBMS.getCharacterNamesArray(function(err, names){
         var selector = document.getElementById("bioEditorSelector");
         Utils.removeChildren(selector);
         names.forEach(function (name) {
@@ -50,7 +50,7 @@ CharacterProfile.refresh = function () {
         
         CharacterProfile.inputItems = {};
         
-        DBMS.getAllProfileSettings(function(allProfileSettings){
+        DBMS.getAllProfileSettings(function(err, allProfileSettings){
             allProfileSettings.forEach(function (profileSettings) {
                 CharacterProfile.appendInput(tbody, profileSettings);
             });
@@ -153,7 +153,7 @@ CharacterProfile.updateFieldValue = function(type){
             value = event.target.checked;
             break;
         }
-        DBMS.updateProfileField(characterName, fieldName, type, value);
+        DBMS.updateProfileField(characterName, fieldName, type, value, Utils.processError());
     }
 }
 
@@ -163,7 +163,7 @@ CharacterProfile.showProfileInfoDelegate = function (event) {
     DBMS.getProfile(name, CharacterProfile.showProfileInfoCallback);
 };
 
-CharacterProfile.showProfileInfoCallback = function (profile) {
+CharacterProfile.showProfileInfoCallback = function (err, profile) {
     "use strict";
     var name = profile.name;
     CharacterProfile.updateSettings(name);

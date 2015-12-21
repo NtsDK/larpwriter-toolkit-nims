@@ -40,7 +40,7 @@ Timeline.init = function () {
         },
         onMove : function (item, callback) {
             if (item.storyName) {
-                DBMS.setEventTime(item.storyName, item.eventIndex, item.start, function(){
+                DBMS.setEventTime(item.storyName, item.eventIndex, item.start, function(err){
                     callback(item);
                 });
             }
@@ -64,7 +64,7 @@ Timeline.refresh = function () {
 
     var option;
         
-    DBMS.getMetaInfo(function(metaInfo){
+    DBMS.getMetaInfo(function(err, metaInfo){
         
         Timeline.postDate = metaInfo.date;
         Timeline.preDate = metaInfo.preGameDate;
@@ -80,7 +80,7 @@ Timeline.refresh = function () {
             start : startDate,
         });
         
-        DBMS.getStoryNamesArray(function(storyNames){
+        DBMS.getStoryNamesArray(function(err, storyNames){
             storyNames.forEach(function(name){
                 option = document.createElement("option");
                 option.appendChild(document.createTextNode(name));
@@ -110,7 +110,7 @@ Timeline.onStorySelectorChange = function (storyNames) {
     Timeline.TimelineDataset.clear();
     
     var storyName;
-    DBMS.getEventGroupsForStories(storyNames, function(eventGroups){
+    DBMS.getEventGroupsForStories(storyNames, function(err, eventGroups){
         
         eventGroups.forEach(function (elem) {
             storyName = elem.storyName;

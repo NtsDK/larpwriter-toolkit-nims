@@ -28,7 +28,23 @@ FileUtils.init = function (callback) {
 FileUtils.makeNewBase = function () {
     "use strict";
     if(Utils.confirm("Вы уверены, что хотите создать новую базу? Все несохраненные изменения будут потеряны.")) {
-        DBMS.newDatabase(FileUtils.callback);
+        "use strict";
+        
+        var request = $.ajax({
+            url : "js/common/emptyBase.json",
+            dataType : "text",
+            method : "GET",
+            contentType : "text/plain;charset=utf-8"
+        });
+        
+        var that = this;
+        request.done(function(data) {
+        	that.setDatabase(JSON.parse(data), FileUtils.callback);
+        });
+        
+        request.fail(function(errorInfo, textStatus, errorThrown) {
+            alert("Ошибка при загрузке чистой базы.");
+        });
     }
 };
 
@@ -57,7 +73,7 @@ FileUtils.readSingleFile = function (evt) {
 
 FileUtils.saveFile = function () {
     "use strict";
-    DBMS.getDatabase(function(database){
+    DBMS.getDatabase(function(err, database){
         var blob = new Blob([ JSON.stringify(database, null, '  ') ], {
             type : "text/plain;charset=utf-8"
         });

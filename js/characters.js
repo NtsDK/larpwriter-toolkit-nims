@@ -51,7 +51,7 @@ Characters.refresh = function () {
     DBMS.getCharacterNamesArray(Characters.rebuildInterface);
 };
 
-Characters.rebuildInterface = function (names) {
+Characters.rebuildInterface = function (err, names) {
     "use strict";
     var selector = document.getElementById("fromName");
     Utils.removeChildren(selector);
@@ -82,11 +82,11 @@ Characters.createCharacter = function () {
         return;
     }
     
-    DBMS.isCharacterNameUsed(name, function(isCharacterNameUsed){
+    DBMS.isCharacterNameUsed(name, function(err, isCharacterNameUsed){
         if (isCharacterNameUsed) {
             Utils.alert("Такой персонаж уже существует");
         } else {
-            DBMS.createCharacter(name, Characters.refresh);
+            DBMS.createCharacter(name, Utils.processError(Characters.refresh));
         }
     });
 
@@ -107,11 +107,13 @@ Characters.renameCharacter = function () {
         return;
     }
 
-    DBMS.isCharacterNameUsed(toName, function(isCharacterNameUsed){
+    DBMS.isCharacterNameUsed(toName, function(err, isCharacterNameUsed){
         if (isCharacterNameUsed) {
             Utils.alert("Имя " + toName + " уже используется.");
         } else {
-            DBMS.renameCharacter(fromName, toName, Characters.refresh);
+            DBMS.renameCharacter(fromName, toName, function(err){
+            	Characters.refresh()
+            });
         }
     });
 };
@@ -122,6 +124,6 @@ Characters.removeCharacter = function () {
 
     if (Utils.confirm("Вы уверены, что хотите удалить " + name
             + "? Все данные связанные с персонажем будут удалены безвозвратно.")) {
-        DBMS.removeCharacter(name, Characters.refresh);
+        DBMS.removeCharacter(name, Utils.processError(Characters.refresh));
     }
 };

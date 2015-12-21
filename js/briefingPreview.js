@@ -32,9 +32,7 @@ BriefingPreview.init = function () {
     button = document.getElementById("eventGroupingByTimeRadio");
     button.addEventListener("change", BriefingPreview.refresh);
     
-    DBMS.getAllProfileSettings(function(profileSettings){
-        BriefingPreview.profileSettings = profileSettings;
-    });
+
     BriefingPreview.content = document.getElementById("briefingPreviewDiv");
 };
 
@@ -43,31 +41,34 @@ BriefingPreview.refresh = function () {
     var selector = document.getElementById("briefingCharacter");
     Utils.removeChildren(selector);
     
-    DBMS.getCharacterNamesArray(function(names){
-        if (names.length > 0) {
-            var settings = DBMS.getSettings();
-            if(!settings["BriefingPreview"]){
-                settings["BriefingPreview"] = {
-                        characterName : names[0]
-                };
-            }
-            var characterName = settings["BriefingPreview"].characterName;
-            if(names.indexOf(characterName) === -1){
-                settings["BriefingPreview"].characterName = names[0];
-                characterName = names[0];
-            }
-            
-            names.forEach(function (name) {
-                var option = document.createElement("option");
-                option.appendChild(document.createTextNode(name));
-                if(name === characterName){
-                    option.selected = true;
-                }
-                selector.appendChild(option);
-            });
-            
-            BriefingPreview.buildContent(characterName);
-        }
+    DBMS.getAllProfileSettings(function(err, profileSettings){
+    	BriefingPreview.profileSettings = profileSettings;
+	    DBMS.getCharacterNamesArray(function(err, names){
+	        if (names.length > 0) {
+	            var settings = DBMS.getSettings();
+	            if(!settings["BriefingPreview"]){
+	                settings["BriefingPreview"] = {
+	                        characterName : names[0]
+	                };
+	            }
+	            var characterName = settings["BriefingPreview"].characterName;
+	            if(names.indexOf(characterName) === -1){
+	                settings["BriefingPreview"].characterName = names[0];
+	                characterName = names[0];
+	            }
+	            
+	            names.forEach(function (name) {
+	                var option = document.createElement("option");
+	                option.appendChild(document.createTextNode(name));
+	                if(name === characterName){
+	                    option.selected = true;
+	                }
+	                selector.appendChild(option);
+	            });
+	            
+	            BriefingPreview.buildContent(characterName);
+	        }
+	    });
     });
     
 };
@@ -93,7 +94,7 @@ BriefingPreview.buildContent = function (characterName) {
     content.appendChild(document.createElement("br"));
     content.appendChild(document.createElement("br"));
 
-    DBMS.getProfile(characterName, function(profile){
+    DBMS.getProfile(characterName, function(err, profile){
         BriefingPreview.showProfile(content, profile);
         content.appendChild(document.createElement("br"));
         content.appendChild(document.createElement("br"));
@@ -101,7 +102,7 @@ BriefingPreview.buildContent = function (characterName) {
         content.appendChild(document.createTextNode("Инвентарь"));
         content.appendChild(document.createElement("br"));
         
-        DBMS.getAllInventoryLists(characterName, function(allInventoryLists){
+        DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
             allInventoryLists.forEach(function(elem){
                 content.appendChild(document.createTextNode(elem.storyName + ":"));
                 var input = document.createElement("input");
@@ -163,7 +164,7 @@ BriefingPreview.showProfile = function(content, profile){
 BriefingPreview.showEventsByTime = function (content, characterName) {
     "use strict";
     
-    DBMS.getCharacterEventsByTime(characterName, function(allEvents){
+    DBMS.getCharacterEventsByTime(characterName, function(err, allEvents){
         allEvents.forEach(function (event) {
             BriefingPreview.showEvent(event, content, characterName);
         });
@@ -173,7 +174,7 @@ BriefingPreview.showEventsByTime = function (content, characterName) {
 BriefingPreview.showEventsByStory = function (content, characterName) {
     "use strict";
     
-    DBMS.getCharacterEventGroupsByStory(characterName, function(eventGroups){
+    DBMS.getCharacterEventGroupsByStory(characterName, function(err, eventGroups){
         eventGroups.forEach(function(elem){
             content.appendChild(document.createTextNode(elem.storyName));
             content.appendChild(document.createElement("br"));
@@ -225,7 +226,7 @@ BriefingPreview.showEvent = function(event, content, characterName){
 BriefingPreview.updateCharacterInventory = function (event) {
     "use strict";
     var input = event.target;
-    DBMS.updateCharacterInventory(input.storyName, input.characterName, input.value);
+    DBMS.updateCharacterInventory(input.storyName, input.characterName, input.value, Utils.processError());
 };
 
 BriefingPreview.onChangePersonalStory = function (event) {
@@ -234,5 +235,5 @@ BriefingPreview.onChangePersonalStory = function (event) {
     var eventIndex = event.target.eventIndex;
     var characterName = event.target.characterName;
     var text = event.target.value;
-    DBMS.setEventText(storyName, eventIndex, characterName, text);
+    DBMS.setEventText(storyName, eventIndex, characterName, text, Utils.processError());
 };

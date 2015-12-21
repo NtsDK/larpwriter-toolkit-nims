@@ -56,8 +56,8 @@ StoryCharacters.refresh = function () {
         return;
     }
     
-    DBMS.getCharacterNamesArray(function(allCharacters){
-        DBMS.getStoryCharacters(Stories.CurrentStoryName, function(localCharacters){
+    DBMS.getCharacterNamesArray(function(err, allCharacters){
+        DBMS.getStoryCharacters(Stories.CurrentStoryName, function(err, localCharacters){
             StoryCharacters.rebuildInterface(allCharacters, localCharacters);
         });
     });
@@ -132,7 +132,7 @@ StoryCharacters.addCharacter = function () {
         return;
     }
     
-    DBMS.addStoryCharacter(Stories.CurrentStoryName, characterName, StoryCharacters.refresh);
+    DBMS.addStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
 };
 
 StoryCharacters.switchCharacters = function () {
@@ -145,7 +145,7 @@ StoryCharacters.switchCharacters = function () {
         return;
     }
     
-    DBMS.switchStoryCharacters(Stories.CurrentStoryName, fromName, toName, StoryCharacters.refresh);
+    DBMS.switchStoryCharacters(Stories.CurrentStoryName, fromName, toName, Utils.processError(StoryCharacters.refresh));
 };
 
 StoryCharacters.removeCharacter = function () {
@@ -160,7 +160,7 @@ StoryCharacters.removeCharacter = function () {
     if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
             + characterName
             + " из истории? Все данные связанные с персонажем будут удалены безвозвратно.")) {
-        DBMS.removeStoryCharacter(Stories.CurrentStoryName, characterName, StoryCharacters.refresh);
+        DBMS.removeStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
     }
 };
 
@@ -197,7 +197,7 @@ StoryCharacters.appendCharacterInput = function (table, character) {
 
 StoryCharacters.updateCharacterInventory = function (event) {
     "use strict";
-    DBMS.updateCharacterInventory(Stories.CurrentStoryName, event.target.characterName, event.target.value);
+    DBMS.updateCharacterInventory(Stories.CurrentStoryName, event.target.characterName, event.target.value, Utils.processError());
 };
 
 StoryCharacters.appendCharacterActivity = function (table, character) {
@@ -228,5 +228,5 @@ StoryCharacters.appendCharacterActivity = function (table, character) {
 StoryCharacters.onChangeCharacterActivity = function (event) {
     "use strict";
     DBMS.onChangeCharacterActivity(Stories.CurrentStoryName, event.target.characterName, 
-            event.target.activityType, event.target.checked);
+            event.target.activityType, event.target.checked, Utils.processError());
 };

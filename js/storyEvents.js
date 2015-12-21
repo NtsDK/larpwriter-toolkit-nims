@@ -46,8 +46,8 @@ StoryEvents.refresh = function () {
         return;
     }
     
-    DBMS.getMetaInfo(function(metaInfo){
-        DBMS.getStoryEvents(Stories.CurrentStoryName, function(events){
+    DBMS.getMetaInfo(function(err, metaInfo){
+        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
             StoryEvents.rebuildInterface(events, metaInfo);
         });
     });
@@ -123,7 +123,7 @@ StoryEvents.createEvent = function () {
     }
     
     DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, 
-            positionSelector.value === "В конец", positionSelector.selectedIndex, StoryEvents.refresh);
+            positionSelector.value === "В конец", positionSelector.selectedIndex, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.swapEvents = function () {
@@ -135,14 +135,14 @@ StoryEvents.swapEvents = function () {
         return;
     }
     
-    DBMS.swapEvents(Stories.CurrentStoryName, index1, index2, StoryEvents.refresh);
+    DBMS.swapEvents(Stories.CurrentStoryName, index1, index2, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.cloneEvent = function () {
     "use strict";
     var index = document.getElementById("cloneEventSelector").selectedIndex;
     
-    DBMS.cloneEvent(Stories.CurrentStoryName, index, StoryEvents.refresh);
+    DBMS.cloneEvent(Stories.CurrentStoryName, index, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.mergeEvents = function () {
@@ -153,7 +153,7 @@ StoryEvents.mergeEvents = function () {
         return;
     }
     
-    DBMS.mergeEvents(Stories.CurrentStoryName, index, StoryEvents.refresh);
+    DBMS.mergeEvents(Stories.CurrentStoryName, index, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.removeEvent = function () {
@@ -163,7 +163,7 @@ StoryEvents.removeEvent = function () {
     if (Utils.confirm("Вы уверены, что хотите удалить событие " + name
             + "? Все данные связанные с событием будут удалены безвозвратно.")) {
         
-        DBMS.removeEvent(Stories.CurrentStoryName, index, StoryEvents.refresh);
+        DBMS.removeEvent(Stories.CurrentStoryName, index, Utils.processError(StoryEvents.refresh));
     }
 };
 
@@ -254,7 +254,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
 StoryEvents.onChangeDateTimeCreator = function (myInput) {
     "use strict";
     return function (dp, input) {
-        DBMS.updateEventProperty(Stories.CurrentStoryName, myInput.eventIndex, "time", input.val());
+        DBMS.updateEventProperty(Stories.CurrentStoryName, myInput.eventIndex, "time", input.val(), Utils.processError());
         StoryEvents.lastDate = input.val();
         myInput.className = "eventTime";
     }
@@ -262,11 +262,13 @@ StoryEvents.onChangeDateTimeCreator = function (myInput) {
 
 StoryEvents.updateEventName = function (event) {
     "use strict";
-    DBMS.updateEventProperty(Stories.CurrentStoryName, event.target.eventIndex, "name", event.target.value, StoryEvents.refresh);
+    var input = event.target;
+    DBMS.updateEventProperty(Stories.CurrentStoryName, input.eventIndex, "name", input.value, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.updateEventText = function (event) {
     "use strict";
-    DBMS.updateEventProperty(Stories.CurrentStoryName, event.target.eventIndex, "text", event.target.value);
+    var input = event.target;
+    DBMS.updateEventProperty(Stories.CurrentStoryName, input.eventIndex, "text", input.value, Utils.processError());
 };
 

@@ -52,7 +52,7 @@ CharacterProfileConfigurer.refresh = function () {
     var positionSelector = document.getElementById("profileItemPositionSelector");
     Utils.removeChildren(positionSelector);
 
-    DBMS.getAllProfileSettings(function(allProfileSettings){
+    DBMS.getAllProfileSettings(function(err, allProfileSettings){
         allProfileSettings.forEach(function (elem, i) {
             var option = document.createElement("option");
             option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
@@ -107,7 +107,7 @@ CharacterProfileConfigurer.createProfileItem = function () {
         var position = positionSelector.value;
         
         DBMS.createProfileItem(name, type, value, position === "В конец", 
-                positionSelector.selectedIndex, CharacterProfileConfigurer.refresh);
+                positionSelector.selectedIndex, Utils.processError(CharacterProfileConfigurer.refresh));
     });
 };
 
@@ -120,7 +120,7 @@ CharacterProfileConfigurer.swapProfileItems = function () {
         return;
     }
 
-    DBMS.swapProfileItems(index1,index2, CharacterProfileConfigurer.refresh);
+    DBMS.swapProfileItems(index1,index2, Utils.processError(CharacterProfileConfigurer.refresh));
 };
 
 CharacterProfileConfigurer.removeProfileItem = function () {
@@ -132,7 +132,7 @@ CharacterProfileConfigurer.removeProfileItem = function () {
                     + name
                     + "? Все данные связанные с этим полем будут удалены безвозвратно.")) {
         
-        DBMS.removeProfileItem(index, name, CharacterProfileConfigurer.refresh);
+        DBMS.removeProfileItem(index, name, Utils.processError(CharacterProfileConfigurer.refresh));
     }
 };
 
@@ -257,7 +257,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
     case "text":
     case "string":
     case "checkbox":
-        DBMS.updateDefaultValue(name, value);
+        DBMS.updateDefaultValue(name, value, Utils.processError());
         break;
     case "number":
         if (isNaN(value)) {
@@ -265,7 +265,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
             event.target.value = oldValue;
             return;
         }
-        DBMS.updateDefaultValue(name, Number(value));
+        DBMS.updateDefaultValue(name, Number(value), Utils.processError());
         break;
     case "enum":
         if (value === "") {
@@ -295,7 +295,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
                     + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
                 newValue = newOptions.join(",");
                 event.target.value = newValue;
-                DBMS.updateDefaultValue(name, newValue);
+                DBMS.updateDefaultValue(name, newValue, Utils.processError());
                 
                 return;
             } else {
@@ -305,7 +305,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         }
         newValue = newOptions.join(",");
         event.target.value = newValue;
-        DBMS.updateDefaultValue(name, newValue);
+        DBMS.updateDefaultValue(name, newValue, Utils.processError());
         break;
     }
 };
@@ -316,7 +316,7 @@ CharacterProfileConfigurer.renameProfileItem = function (event) {
     var oldName = event.target.info;
 
     CharacterProfileConfigurer.validateProfileItemName(newName, function(){
-        DBMS.renameProfileItem(newName, oldName, CharacterProfileConfigurer.refresh);
+        DBMS.renameProfileItem(newName, oldName, Utils.processError(CharacterProfileConfigurer.refresh));
     }, function(){
         event.target.value = event.target.info;
     });
@@ -341,7 +341,7 @@ CharacterProfileConfigurer.validateProfileItemName = function (name, success, fa
         if(failure) failure();
     };
     
-    DBMS.isProfileItemNameUsed(name, function(isUsed){
+    DBMS.isProfileItemNameUsed(name, function(err, isUsed){
         if(isUsed){
             tmpFailure();
         } else {
@@ -360,7 +360,7 @@ CharacterProfileConfigurer.changeProfileItemType = function (event) {
         var newType = event.target.value;
         var name = event.target.info;
         
-        DBMS.changeProfileItemType(name, newType, CharacterProfileConfigurer.refresh);
+        DBMS.changeProfileItemType(name, newType, Utils.processError(CharacterProfileConfigurer.refresh));
         
     } else {
         event.target.value = event.target.oldType;

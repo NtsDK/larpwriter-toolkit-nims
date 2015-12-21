@@ -25,26 +25,26 @@ var DBMS;
 PageManager.onLoad = function () {
 	if(MODE === "Standalone"){
 		DBMS = new LocalDBMS();
-//		DBMS = new AsyncWrapper(new LocalDBMS());
+		var request = $.ajax({
+			url : "js/common/baseExample.json",
+			dataType : "text",
+			method : "GET",
+			contentType : "text/plain;charset=utf-8"
+		});
+		
+		request.done(function(data) {
+			DBMS.setDatabase(JSON.parse(data), PageManager.onDatabaseLoad)
+		});
+		
+		request.fail(function(errorInfo, textStatus, errorThrown) {
+			alert("Ошибка при загрузке примера базы: " + errorInfo.responseText + ". Загружаю чистую базу.");
+			DBMS.newDatabase(PageManager.onDatabaseLoad)
+		});
 	} else if(MODE === "NIMS_Server") {
 		DBMS = new RemoteDBMS();
+		PageManager.onDatabaseLoad();
 	}
     
-    var request = $.ajax({
-        url : "js/common/baseExample.json",
-        dataType : "text",
-        method : "GET",
-        contentType : "text/plain;charset=utf-8"
-    });
-    
-    request.done(function(data) {
-        DBMS.setDatabase(JSON.parse(data), PageManager.onDatabaseLoad)
-    });
-    
-    request.fail(function(errorInfo, textStatus, errorThrown) {
-        alert("Ошибка при загрузке примера базы: " + errorInfo.responseText + ". Загружаю чистую базу.");
-        DBMS.newDatabase(PageManager.onDatabaseLoad)
-    });
 };
 
 PageManager.onDatabaseLoad = function () {
@@ -96,7 +96,9 @@ PageManager.onDatabaseLoad = function () {
     PageManager.addButton("mainHelpButton", navigation, FileUtils.openHelp);
     Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton"});
 
-    FileUtils.init(PageManager.currentView.refresh);
+    FileUtils.init(function(err){
+    	PageManager.currentView.refresh();
+    });
 
     PageManager.currentView.refresh();
 };

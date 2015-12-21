@@ -54,7 +54,7 @@ Overview.init = function () {
 Overview.refresh = function () {
     "use strict";
 
-    DBMS.getMetaInfo(function(info){
+    DBMS.getMetaInfo(function(err, info){
         Overview.name.value = info.name;
         Overview.date.value = info.date;
         Overview.preDate.value = info.preGameDate;
@@ -64,17 +64,17 @@ Overview.refresh = function () {
 
 Overview.updateName = function (event) {
     "use strict";
-    DBMS.setMetaInfo("name", event.target.value);
+    DBMS.setMetaInfo("name", event.target.value, Utils.processError());
 };
 Overview.updateTime = function (dp, input) {
     "use strict";
-    DBMS.setMetaInfo("date", input.val());
+    DBMS.setMetaInfo("date", input.val(), Utils.processError());
 };
 Overview.updatePreGameDate = function (dp, input) {
     "use strict";
-    DBMS.setMetaInfo("preGameDate", input.val());
+    DBMS.setMetaInfo("preGameDate", input.val(), Utils.processError());
 };
 Overview.updateDescr = function (event) {
     "use strict";
-    DBMS.setMetaInfo("description", event.target.value);
+    DBMS.setMetaInfo("description", event.target.value, Utils.processError());
 };

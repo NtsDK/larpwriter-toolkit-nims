@@ -36,9 +36,9 @@ EventPresence.refresh = function () {
         return;
     }
 
-    DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(characterArray){
+    DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(err, characterArray){
         EventPresence.appendTableHeader(tableHead, characterArray);
-        DBMS.getStoryEvents(Stories.CurrentStoryName, function(events){
+        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
             events.forEach(function (event, i) {
                 EventPresence.appendTableInput(table, event, i, characterArray);
             });
@@ -90,16 +90,16 @@ EventPresence.appendTableInput = function (table, event, i, characterArray) {
 EventPresence.onChangeCharacterCheckbox = function (event) {
     "use strict";
     if (event.target.checked) {
-        DBMS.addCharacterToEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName);
+        DBMS.addCharacterToEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName, Utils.processError());
     } else if (!event.target.hasText){
-        DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName);
+        DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName, Utils.processError());
     } else {
         if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
                 + event.target.characterName
                 + " из события '"
                 + event.target.eventName
                 + "'? У этого песонажа есть адаптация события, которая будет удалена безвозвратно.")) {
-            DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName);
+            DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName, Utils.processError());
         } else {
             event.target.checked = true;
         }

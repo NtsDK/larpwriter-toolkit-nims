@@ -77,13 +77,13 @@ BriefingExport.exportByDefaultTemplate = function(type){
     var briefingData;
     switch(type){
     case "templateByTime"   : 
-        briefingData = DBMS.getBriefingData(false, function(briefingData){
+        briefingData = DBMS.getBriefingData(false, function(err, briefingData){
             BriefingExport.generateDocxBriefings(template, briefingData);
         });
         break;
     case "templateByStory"  : 
     case "inventoryTemplate": 
-        briefingData = DBMS.getBriefingData(true, function(briefingData){
+        briefingData = DBMS.getBriefingData(true, function(err, briefingData){
             BriefingExport.generateDocxBriefings(template, briefingData);
         });
         break;
@@ -94,7 +94,7 @@ BriefingExport.exportByDefaultTemplate = function(type){
 BriefingExport.makeTextBriefings = function () {
     "use strict";
 
-    DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(data){
+    DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(err, data){
         var characterList = {};
         
         data.briefings.forEach(function (briefingData) {
@@ -183,7 +183,7 @@ BriefingExport.readTemplateFile = function (evt) {
         var r = new FileReader();
         r.onload = function (e) {
             var contents = e.target.result;
-            var briefingData = DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(briefingData){
+            var briefingData = DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(err, briefingData){
                 BriefingExport.generateDocxBriefings(contents, briefingData);
             });
         }

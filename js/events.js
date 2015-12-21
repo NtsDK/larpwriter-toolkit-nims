@@ -53,7 +53,7 @@ Events.refresh = function () {
     
     var showOnlyUnfinishedStories = document.getElementById("finishedStoryCheckbox").checked;
 
-    DBMS.getFilteredStoryNames(showOnlyUnfinishedStories, function(storyNames){
+    DBMS.getFilteredStoryNames(showOnlyUnfinishedStories, function(err, storyNames){
         if (storyNames.length > 0) {
             var storyNamesOnly = storyNames.map(function(elem){
                 return elem.storyName;
@@ -105,7 +105,7 @@ Events.updateCharacterSelector = function (storyName) {
 
     var isFirst = true;
     
-    DBMS.getFilteredCharacterNames(storyName, showOnlyUnfinishedStories, function(characterArray){
+    DBMS.getFilteredCharacterNames(storyName, showOnlyUnfinishedStories, function(err, characterArray){
         if (characterArray.length > 0) {
             var settings = DBMS.getSettings();
             if(!settings["Events"].characterNames){
@@ -134,7 +134,7 @@ Events.updateCharacterSelector = function (storyName) {
                 selector.appendChild(option);
             });
             
-            DBMS.getEvents(storyName, characterNames, function(events){
+            DBMS.getEvents(storyName, characterNames, function(err, events){
                 Events.showPersonalStories(storyName, characterNames, events);
             });
         }
@@ -160,7 +160,7 @@ Events.showPersonalStoriesDelegate = function (event) {
     
     Events.updateSettings("characterNames", characterNames);
     
-    DBMS.getEvents(storyName, characterNames, function(events){
+    DBMS.getEvents(storyName, characterNames, function(err, events){
         Events.showPersonalStories(storyName, characterNames, events);
     });
 };
@@ -249,7 +249,7 @@ Events.onChangeReadyStatus = function (event) {
     var eventIndex = event.target.eventIndex;
     var characterName = event.target.characterName;
     var value = event.target.checked;
-    DBMS.changeAdaptationReadyStatus(storyName, eventIndex, characterName, value);
+    DBMS.changeAdaptationReadyStatus(storyName, eventIndex, characterName, value, Utils.processError());
 };
 
 Events.onChangePersonalStoryDelegate = function (event) {
@@ -258,7 +258,7 @@ Events.onChangePersonalStoryDelegate = function (event) {
     var eventIndex = event.target.eventIndex;
     var characterName = event.target.characterName;
     var text = event.target.value;
-    DBMS.setEventText(storyName, eventIndex, characterName, text);
+    DBMS.setEventText(storyName, eventIndex, characterName, text, Utils.processError());
 };
 
 

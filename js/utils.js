@@ -99,6 +99,16 @@ Utils.removeChildren = function (myNode) {
     }
 };
 
+Utils.processError = function(callback){
+	return function(err){
+		if(err) {
+			Utils.alert(err);
+			return;
+		}
+		if(callback)callback();
+	}
+}
+
 
 
 String.prototype.endsWith = function (suffix) {

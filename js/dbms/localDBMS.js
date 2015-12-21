@@ -12,10 +12,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+/*global
+ Utils, Database, Migrator
+ */
 "use strict";
 
-RemoteDBMS.prototype.getBriefingData = function (groupingByStory, callback) {
-    "use strict";
-    RemoteDBMS._simpleGet("getBriefingData", [groupingByStory],  callback);
+function LocalDBMS(){
+    
 };
+
+LocalDBMS.prototype.getSettings = function(){
+    "use strict";
+    return this.database.Settings;
+};
+
+commonAPI(LocalDBMS, Migrator, CommonUtils);
+charactersAPI(LocalDBMS);
+extrasAPI(LocalDBMS, CommonUtils, dateFormat);
+briefingExportAPI(LocalDBMS, CommonUtils);
+profileConfigurerAPI(LocalDBMS, Constants, CommonUtils);
+storiesAPI(LocalDBMS, CommonUtils);
+eventsAPI(LocalDBMS, CommonUtils);
 
