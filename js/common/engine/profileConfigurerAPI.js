@@ -18,6 +18,7 @@ See the License for the specific language governing permissions and
 		// profile configurer
 		LocalDBMS.prototype.createProfileItem = function(name, type, value, toEnd, selectedIndex, callback) {
 			"use strict";
+			var that = this;
 		    this.isProfileItemNameUsed(name, function(err, value){
 		    	if(err) {callback(err);return;}
 		    	
@@ -32,15 +33,15 @@ See the License for the specific language governing permissions and
 		    			value : value
 		    	};
 		    	
-		    	var that = this;
-		    	Object.keys(this.database.Characters).forEach(function(characterName) {
+		    	
+		    	Object.keys(that.database.Characters).forEach(function(characterName) {
 		    		that.database.Characters[characterName][name] = value;
 		    	});
 		    	
 		    	if (toEnd) {
-		    		this.database.ProfileSettings.push(profileItem);
+		    		that.database.ProfileSettings.push(profileItem);
 		    	} else {
-		    		this.database.ProfileSettings.splice(selectedIndex, 0, profileItem);
+		    		that.database.ProfileSettings.splice(selectedIndex, 0, profileItem);
 		    	}
 		    	callback();
 		    });
@@ -56,21 +57,21 @@ See the License for the specific language governing permissions and
 			callback();
 		};
 		// profile configurer
-		LocalDBMS.prototype.removeProfileItem = function(index, name, callback) {
+		LocalDBMS.prototype.removeProfileItem = function(index, profileItemName, callback) {
 			"use strict";
 			var that = this;
 			Object.keys(this.database.Characters).forEach(function(characterName) {
-				delete that.database.Characters[characterName][name];
+				delete that.database.Characters[characterName][profileItemName];
 			});
 			CommonUtils.removeFromArrayByIndex(this.database.ProfileSettings, index);
 			callback();
 		};
 		// profile configurer
-		LocalDBMS.prototype.changeProfileItemType = function(name, newType, callback) {
+		LocalDBMS.prototype.changeProfileItemType = function(profileItemName, newType, callback) {
 			"use strict";
 	
 			var profileItem = this.database.ProfileSettings.filter(function(elem) {
-				return elem.name === name;
+				return elem.name === profileItemName;
 			})[0];
 	
 			profileItem.type = newType;
@@ -79,27 +80,27 @@ See the License for the specific language governing permissions and
 	
 			var that = this;
 			Object.keys(this.database.Characters).forEach(function(characterName) {
-				that.database.Characters[characterName][name] = Constants.profileFieldTypes[newType].value;
+				that.database.Characters[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
 			});
 			callback();
 		};
 	
 		// profile configurer
-		LocalDBMS.prototype.isProfileItemNameUsed = function(name, callback) {
+		LocalDBMS.prototype.isProfileItemNameUsed = function(profileItemName, callback) {
 			"use strict";
 			
-		    if (name === "") {
+		    if (profileItemName === "") {
 		    	callback(new Errors.ValidationError("Название поля не указано"));
 		        return;
 		    }
 		    
-		    if (name === "name") {
+		    if (profileItemName === "name") {
 		    	callback(new Errors.ValidationError("Название поля не может быть name"));
 		        return;
 		    }
 		    
 			var nameUsedTest = function(profile) {
-				return name === profile.name;
+				return profileItemName === profile.name;
 			};
 	
 			callback(null, this.database.ProfileSettings.some(nameUsedTest));
@@ -107,7 +108,7 @@ See the License for the specific language governing permissions and
 		// profile configurer
 		LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback) {
 			"use strict";
-			
+			var that = this;
 		    this.isProfileItemNameUsed(newName, function(err, value){
 		    	if(err) {callback(err);return;}
 		    	
@@ -116,14 +117,13 @@ See the License for the specific language governing permissions and
 		    		return;
 		    	}
 		    	
-		    	var that = this;
-		    	Object.keys(this.database.Characters).forEach(function(characterName) {
+		    	Object.keys(that.database.Characters).forEach(function(characterName) {
 		    		var tmp = that.database.Characters[characterName][oldName];
 		    		delete that.database.Characters[characterName][oldName];
 		    		that.database.Characters[characterName][newName] = tmp;
 		    	});
 		    	
-		    	this.database.ProfileSettings.filter(function(elem) {
+		    	that.database.ProfileSettings.filter(function(elem) {
 		    		return elem.name === oldName;
 		    	})[0].name = newName;
 		    	callback();
@@ -132,11 +132,11 @@ See the License for the specific language governing permissions and
 		};
 	
 		// profile configurer
-		LocalDBMS.prototype.updateDefaultValue = function(name, value, callback) {
+		LocalDBMS.prototype.updateDefaultValue = function(profileItemName, value, callback) {
 			"use strict";
 	
 			var info = this.database.ProfileSettings.filter(function(elem) {
-				return elem.name === name;
+				return elem.name === profileItemName;
 			})[0];
 	
 			var oldOptions, newOptions, newOptionsMap, missedValues;
@@ -181,9 +181,9 @@ See the License for the specific language governing permissions and
 	
 					var that = this;
 					Object.keys(this.database.Characters).forEach(function(characterName) {
-						var enumValue = that.database.Characters[characterName][name];
+						var enumValue = that.database.Characters[characterName][profileItemName];
 						if (!newOptionsMap[enumValue]) {
-							that.database.Characters[characterName][name] = newOptions[0];
+							that.database.Characters[characterName][profileItemName] = newOptions[0];
 						}
 					});
 	

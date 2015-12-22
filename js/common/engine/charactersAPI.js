@@ -16,25 +16,25 @@ See the License for the specific language governing permissions and
 
 	function charactersAPI(LocalDBMS, Errors) {
 		// characters
-		LocalDBMS.prototype.isCharacterNameUsed = function(name, callback) {
+		LocalDBMS.prototype.isCharacterNameUsed = function(characterName, callback) {
 			"use strict";
-			callback(null, this.database.Characters[name] !== undefined);
+			callback(null, this.database.Characters[characterName] !== undefined);
 		};
 		// characters
-		LocalDBMS.prototype.createCharacter = function(name, callback) {
+		LocalDBMS.prototype.createCharacter = function(characterName, callback) {
 			"use strict";
-			if(name === ""){
+			if(characterName === ""){
 				callback(new Errors.ValidationError("Имя персонажа не указано"));
 				return;
 			}
 			
-			if(this.database.Characters[name]){
+			if(this.database.Characters[characterName]){
 				callback(new Errors.ValidationError("Такой персонаж уже существует"));
 				return;
 			}
 			
 			var newCharacter = {
-				name : name
+				name : characterName
 			};
 	
 			this.database.ProfileSettings.forEach(function(profileSettings) {
@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
 				}
 			});
 	
-			this.database.Characters[name] = newCharacter;
+			this.database.Characters[characterName] = newCharacter;
 			if(callback) callback();
 		};
 		// characters
@@ -96,21 +96,21 @@ See the License for the specific language governing permissions and
 		};
 	
 		// characters
-		LocalDBMS.prototype.removeCharacter = function(name, callback) {
+		LocalDBMS.prototype.removeCharacter = function(characterName, callback) {
 			"use strict";
-			delete this.database.Characters[name];
+			delete this.database.Characters[characterName];
 			var storyName, story;
 	
 			var cleanEvent = function(event) {
-				if (event.characters[name]) {
-					delete event.characters[name];
+				if (event.characters[characterName]) {
+					delete event.characters[characterName];
 				}
 			};
 	
 			for (storyName in this.database.Stories) {
 				story = this.database.Stories[storyName];
-				if (story.characters[name]) {
-					delete story.characters[name];
+				if (story.characters[characterName]) {
+					delete story.characters[characterName];
 					story.events.forEach(cleanEvent);
 				}
 			}

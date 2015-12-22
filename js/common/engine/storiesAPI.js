@@ -79,9 +79,9 @@ See the License for the specific language governing permissions and
 		};
 	
 		// stories
-		LocalDBMS.prototype.removeStory = function(name, callback){
+		LocalDBMS.prototype.removeStory = function(storyName, callback){
 		    "use strict";
-		    delete this.database.Stories[name];
+		    delete this.database.Stories[storyName];
 		    callback();
 		};
 	
