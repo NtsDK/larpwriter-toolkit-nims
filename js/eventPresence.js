@@ -37,8 +37,10 @@ EventPresence.refresh = function () {
     }
 
     DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(err, characterArray){
+    	if(err) {Utils.handleError(err); return;}
         EventPresence.appendTableHeader(tableHead, characterArray);
         DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
+        	if(err) {Utils.handleError(err); return;}
             events.forEach(function (event, i) {
                 EventPresence.appendTableInput(table, event, i, characterArray);
             });

@@ -53,6 +53,7 @@ CharacterProfileConfigurer.refresh = function () {
     Utils.removeChildren(positionSelector);
 
     DBMS.getAllProfileSettings(function(err, allProfileSettings){
+    	if(err) {Utils.handleError(err); return;}
         allProfileSettings.forEach(function (elem, i) {
             var option = document.createElement("option");
             option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
@@ -337,11 +338,12 @@ CharacterProfileConfigurer.validateProfileItemName = function (name, success, fa
     }
     
     var tmpFailure = function(){
-        Utils.alert("Такое имя уже используется.");
+        Utils.alert("Такое имя уже используется");
         if(failure) failure();
     };
     
     DBMS.isProfileItemNameUsed(name, function(err, isUsed){
+    	if(err) {Utils.handleError(err); return;}
         if(isUsed){
             tmpFailure();
         } else {

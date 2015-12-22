@@ -176,12 +176,15 @@ SocialNetwork.refresh = function () {
     Utils.removeChildren(selector);
     
     DBMS.getAllProfiles(function(err, profiles){
+    	if(err) {Utils.handleError(err); return;}
         SocialNetwork.Characters = profiles;
         
         DBMS.getAllStories(function(err, stories){
+        	if(err) {Utils.handleError(err); return;}
             SocialNetwork.Stories = stories;
             
             DBMS.getAllProfileSettings(function(err, profileSettings){
+            	if(err) {Utils.handleError(err); return;}
                 
                 var groups = profileSettings.filter(function (element) {
                     return element.type === "enum" || element.type === "checkbox";

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-	function charactersAPI(LocalDBMS) {
+	function charactersAPI(LocalDBMS, Errors) {
 		// characters
 		LocalDBMS.prototype.isCharacterNameUsed = function(name, callback) {
 			"use strict";
@@ -23,14 +23,23 @@ See the License for the specific language governing permissions and
 		// characters
 		LocalDBMS.prototype.createCharacter = function(name, callback) {
 			"use strict";
+			if(name === ""){
+				callback(new Errors.ValidationError("Имя персонажа не указано"));
+				return;
+			}
+			
+			if(this.database.Characters[name]){
+				callback(new Errors.ValidationError("Такой персонаж уже существует"));
+				return;
+			}
+			
 			var newCharacter = {
 				name : name
 			};
 	
 			this.database.ProfileSettings.forEach(function(profileSettings) {
 				if (profileSettings.type === "enum") {
-					newCharacter[profileSettings.name] = profileSettings.value
-							.split(",")[0];
+					newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
 				} else {
 					newCharacter[profileSettings.name] = profileSettings.value;
 				}
@@ -42,6 +51,21 @@ See the License for the specific language governing permissions and
 		// characters
 		LocalDBMS.prototype.renameCharacter = function(fromName, toName, callback) {
 			"use strict";
+		    if (toName === "") {
+		    	callback(new Errors.ValidationError("Новое имя не указано."));
+		        return;
+		    }
+
+		    if (fromName === toName) {
+		    	callback(new Errors.ValidationError("Имена совпадают."));
+		        return;
+		    }
+		    
+			if(this.database.Characters[toName]){
+				callback(new Errors.ValidationError("Имя " + toName + " уже используется."));
+				return;
+			}
+			
 			var data = this.database.Characters[fromName];
 			data.name = toName;
 			this.database.Characters[toName] = data;

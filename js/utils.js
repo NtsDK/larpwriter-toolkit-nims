@@ -102,13 +102,28 @@ Utils.removeChildren = function (myNode) {
 Utils.processError = function(callback){
 	return function(err){
 		if(err) {
-			Utils.alert(err);
+			Utils.handleError(err);
 			return;
 		}
-		if(callback)callback();
+		
+		if(callback){
+			var arr = [];
+			for (var i = 1; i < arguments.length; i++) {
+				arr.push(arguments[i]);
+			}
+			callback.apply(null, arr);
+		}
 	}
 }
 
+Utils.handleError = function(err){
+	"use strict";
+	if (err instanceof Errors.ValidationError) {
+		Utils.alert(err.message);
+	} else {
+		Utils.alert(err);
+	}
+};
 
 
 String.prototype.endsWith = function (suffix) {

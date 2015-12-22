@@ -14,27 +14,37 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-	function profileConfigurerAPI(LocalDBMS, Constants, CommonUtils) {
+	function profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors) {
 		// profile configurer
 		LocalDBMS.prototype.createProfileItem = function(name, type, value, toEnd, selectedIndex, callback) {
 			"use strict";
-			var profileItem = {
-				name : name,
-				type : type,
-				value : value
-			};
-	
-			var that = this;
-			Object.keys(this.database.Characters).forEach(function(characterName) {
-				that.database.Characters[characterName][name] = value;
-			});
-	
-			if (toEnd) {
-				this.database.ProfileSettings.push(profileItem);
-			} else {
-				this.database.ProfileSettings.splice(selectedIndex, 0, profileItem);
-			}
-			callback();
+		    this.isProfileItemNameUsed(name, function(err, value){
+		    	if(err) {callback(err);return;}
+		    	
+		    	if(value){
+		    		callback(new Errors.ValidationError("Такое имя уже используется"));
+		    		return;
+		    	}
+		    	
+		    	var profileItem = {
+		    			name : name,
+		    			type : type,
+		    			value : value
+		    	};
+		    	
+		    	var that = this;
+		    	Object.keys(this.database.Characters).forEach(function(characterName) {
+		    		that.database.Characters[characterName][name] = value;
+		    	});
+		    	
+		    	if (toEnd) {
+		    		this.database.ProfileSettings.push(profileItem);
+		    	} else {
+		    		this.database.ProfileSettings.splice(selectedIndex, 0, profileItem);
+		    	}
+		    	callback();
+		    });
+			
 		};
 	
 		// profile configurer
@@ -77,6 +87,17 @@ See the License for the specific language governing permissions and
 		// profile configurer
 		LocalDBMS.prototype.isProfileItemNameUsed = function(name, callback) {
 			"use strict";
+			
+		    if (name === "") {
+		    	callback(new Errors.ValidationError("Название поля не указано"));
+		        return;
+		    }
+		    
+		    if (name === "name") {
+		    	callback(new Errors.ValidationError("Название поля не может быть name"));
+		        return;
+		    }
+		    
 			var nameUsedTest = function(profile) {
 				return name === profile.name;
 			};
@@ -86,17 +107,28 @@ See the License for the specific language governing permissions and
 		// profile configurer
 		LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback) {
 			"use strict";
-			var that = this;
-			Object.keys(this.database.Characters).forEach(function(characterName) {
-				var tmp = that.database.Characters[characterName][oldName];
-				delete that.database.Characters[characterName][oldName];
-				that.database.Characters[characterName][newName] = tmp;
-			});
-	
-			this.database.ProfileSettings.filter(function(elem) {
-				return elem.name === oldName;
-			})[0].name = newName;
-			callback();
+			
+		    this.isProfileItemNameUsed(newName, function(err, value){
+		    	if(err) {callback(err);return;}
+		    	
+		    	if(value){
+		    		callback(new Errors.ValidationError("Такое имя уже используется"));
+		    		return;
+		    	}
+		    	
+		    	var that = this;
+		    	Object.keys(this.database.Characters).forEach(function(characterName) {
+		    		var tmp = that.database.Characters[characterName][oldName];
+		    		delete that.database.Characters[characterName][oldName];
+		    		that.database.Characters[characterName][newName] = tmp;
+		    	});
+		    	
+		    	this.database.ProfileSettings.filter(function(elem) {
+		    		return elem.name === oldName;
+		    	})[0].name = newName;
+		    	callback();
+		    });
+			
 		};
 	
 		// profile configurer
@@ -124,12 +156,10 @@ See the License for the specific language governing permissions and
 				info.value = Number(value);
 				break;
 			case "enum":
-				// if (value === "") {
-				// Utils.alert("Значение поля с единственным выбором не может быть
-				// пустым");
-				// callback(info.value);
-				// return;
-				// }
+				if (value === "") {
+					callback(new Errors.ValidationError("Значение поля с единственным выбором не может быть пустым"));
+					return;
+				}
 				oldOptions = info.value.split(",");
 				newOptions = value.split(",");
 	

@@ -37,9 +37,8 @@ FileUtils.makeNewBase = function () {
             contentType : "text/plain;charset=utf-8"
         });
         
-        var that = this;
         request.done(function(data) {
-        	that.setDatabase(JSON.parse(data), FileUtils.callback);
+        	DBMS.setDatabase(JSON.parse(data), FileUtils.callback);
         });
         
         request.fail(function(errorInfo, textStatus, errorThrown) {
@@ -67,13 +66,14 @@ FileUtils.readSingleFile = function (evt) {
         };
         r.readAsText(f);
     } else {
-        Utils.alert("Failed to load file");
+        Utils.alert("Ошибка при загрузке файла");
     }
 };
 
 FileUtils.saveFile = function () {
     "use strict";
     DBMS.getDatabase(function(err, database){
+    	if(err) {Utils.handleError(err); return;}
         var blob = new Blob([ JSON.stringify(database, null, '  ') ], {
             type : "text/plain;charset=utf-8"
         });

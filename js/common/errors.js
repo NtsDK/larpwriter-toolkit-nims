@@ -12,25 +12,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
-/*global
- Utils, Database, Migrator
+/*
  */
 "use strict";
 
-function LocalDBMS(){
-    
-};
+(function(exports){
 
-LocalDBMS.prototype.getSettings = function(){
-    "use strict";
-    return this.database.Settings;
-};
+	function ValidationError(message) {
+	  Error.call(this, arguments) ;
+	  this.name = "ValidationError";
+	
+	  this.message = message;
+	
+	  if (Error.captureStackTrace) {
+	    Error.captureStackTrace(this, ValidationError);
+	  } else {
+	    this.stack = (new Error()).stack;
+	  }
+	};
+	
+	ValidationError.prototype = Object.create(Error.prototype);
+	
+	exports.ValidationError = ValidationError;
 
-commonAPI(LocalDBMS, Migrator, CommonUtils);
-charactersAPI(LocalDBMS, Errors);
-extrasAPI(LocalDBMS, CommonUtils, dateFormat);
-briefingExportAPI(LocalDBMS, CommonUtils);
-profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
-storiesAPI(LocalDBMS, CommonUtils, Errors);
-eventsAPI(LocalDBMS, CommonUtils);
-
+})(typeof exports === 'undefined'? this['Errors']={}: exports);

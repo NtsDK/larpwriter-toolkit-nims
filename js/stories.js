@@ -73,6 +73,7 @@ Stories.refresh = function () {
     Utils.removeChildren(selector3);
 
     DBMS.getStoryNamesArray(function(err, storyNames){
+    	if(err) {Utils.handleError(err); return;}
         if (storyNames.length > 0) {
             var storyName = Stories.getSelectedStoryName(storyNames);
             
@@ -128,10 +129,12 @@ Stories.createStory = function () {
     }
     
     DBMS.isStoryExist(storyName, function(err, isExist){
+    	if(err) {Utils.handleError(err); return;}
         if(isExist){
             Utils.alert("История с таким именем уже существует.");
         } else {
             DBMS.createStory(storyName, function(err){
+            	if(err) {Utils.handleError(err); return;}
                 Stories.updateSettings(storyName);
                 Stories.refresh();
             });
@@ -155,10 +158,12 @@ Stories.renameStory = function () {
     }
     
     DBMS.isStoryExist(toName, function(err, isExist){
+    	if(err) {Utils.handleError(err); return;}
         if(isExist){
             Utils.alert("Имя " + toName + " уже используется.");
         } else {
             DBMS.renameStory(fromName, toName, function(err){
+            	if(err) {Utils.handleError(err); return;}
                 Stories.updateSettings(toName);
                 Stories.refresh();
             });
@@ -190,6 +195,7 @@ Stories.onStorySelectorChange = function (storyName) {
     if(storyName){
         Stories.updateSettings(storyName);
         DBMS.getMasterStory(storyName, function(err, story){
+        	if(err) {Utils.handleError(err); return;}
             storyArea.value = story;
             Stories.currentView.refresh();
         });

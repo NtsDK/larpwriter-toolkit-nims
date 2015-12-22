@@ -48,10 +48,10 @@ Characters.init = function () {
 
 Characters.refresh = function () {
     "use strict";
-    DBMS.getCharacterNamesArray(Characters.rebuildInterface);
+    DBMS.getCharacterNamesArray(Utils.processError(Characters.rebuildInterface));
 };
 
-Characters.rebuildInterface = function (err, names) {
+Characters.rebuildInterface = function (names) {
     "use strict";
     var selector = document.getElementById("fromName");
     Utils.removeChildren(selector);
@@ -83,6 +83,7 @@ Characters.createCharacter = function () {
     }
     
     DBMS.isCharacterNameUsed(name, function(err, isCharacterNameUsed){
+    	if(err) {Utils.handleError(err); return;}
         if (isCharacterNameUsed) {
             Utils.alert("Такой персонаж уже существует");
         } else {
@@ -108,12 +109,11 @@ Characters.renameCharacter = function () {
     }
 
     DBMS.isCharacterNameUsed(toName, function(err, isCharacterNameUsed){
+    	if(err) {Utils.handleError(err); return;}
         if (isCharacterNameUsed) {
             Utils.alert("Имя " + toName + " уже используется.");
         } else {
-            DBMS.renameCharacter(fromName, toName, function(err){
-            	Characters.refresh()
-            });
+            DBMS.renameCharacter(fromName, toName, Utils.processError(Characters.refresh));
         }
     });
 };

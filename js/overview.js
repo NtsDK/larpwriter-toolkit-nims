@@ -55,6 +55,7 @@ Overview.refresh = function () {
     "use strict";
 
     DBMS.getMetaInfo(function(err, info){
+    	if(err) {Utils.handleError(err); return;}
         Overview.name.value = info.name;
         Overview.date.value = info.date;
         Overview.preDate.value = info.preGameDate;

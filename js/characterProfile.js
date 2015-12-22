@@ -32,6 +32,7 @@ CharacterProfile.refresh = function () {
     "use strict";
     
     DBMS.getCharacterNamesArray(function(err, names){
+    	if(err) {Utils.handleError(err); return;}
         var selector = document.getElementById("bioEditorSelector");
         Utils.removeChildren(selector);
         names.forEach(function (name) {
@@ -51,6 +52,7 @@ CharacterProfile.refresh = function () {
         CharacterProfile.inputItems = {};
         
         DBMS.getAllProfileSettings(function(err, allProfileSettings){
+        	if(err) {Utils.handleError(err); return;}
             allProfileSettings.forEach(function (profileSettings) {
                 CharacterProfile.appendInput(tbody, profileSettings);
             });
@@ -165,6 +167,7 @@ CharacterProfile.showProfileInfoDelegate = function (event) {
 
 CharacterProfile.showProfileInfoCallback = function (err, profile) {
     "use strict";
+    if(err) {Utils.handleError(err); return;}
     var name = profile.name;
     CharacterProfile.updateSettings(name);
     

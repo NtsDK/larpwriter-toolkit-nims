@@ -47,7 +47,9 @@ StoryEvents.refresh = function () {
     }
     
     DBMS.getMetaInfo(function(err, metaInfo){
+    	if(err) {Utils.handleError(err); return;}
         DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
+        	if(err) {Utils.handleError(err); return;}
             StoryEvents.rebuildInterface(events, metaInfo);
         });
     });

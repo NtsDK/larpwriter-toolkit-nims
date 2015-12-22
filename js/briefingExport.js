@@ -78,12 +78,14 @@ BriefingExport.exportByDefaultTemplate = function(type){
     switch(type){
     case "templateByTime"   : 
         briefingData = DBMS.getBriefingData(false, function(err, briefingData){
+        	if(err) {Utils.handleError(err); return;}
             BriefingExport.generateDocxBriefings(template, briefingData);
         });
         break;
     case "templateByStory"  : 
     case "inventoryTemplate": 
         briefingData = DBMS.getBriefingData(true, function(err, briefingData){
+        	if(err) {Utils.handleError(err); return;}
             BriefingExport.generateDocxBriefings(template, briefingData);
         });
         break;
@@ -95,6 +97,7 @@ BriefingExport.makeTextBriefings = function () {
     "use strict";
 
     DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(err, data){
+    	if(err) {Utils.handleError(err); return;}
         var characterList = {};
         
         data.briefings.forEach(function (briefingData) {
@@ -184,12 +187,13 @@ BriefingExport.readTemplateFile = function (evt) {
         r.onload = function (e) {
             var contents = e.target.result;
             var briefingData = DBMS.getBriefingData(BriefingExport.isGroupingByStory(), function(err, briefingData){
-                BriefingExport.generateDocxBriefings(contents, briefingData);
+            	if(err) {Utils.handleError(err); return;}
+            	BriefingExport.generateDocxBriefings(contents, briefingData);
             });
         }
         r.readAsBinaryString(f);
     } else {
-        Utils.alert("Failed to load file");
+        Utils.alert("Ошибка при загрузке файла");
     }
 };
 

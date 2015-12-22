@@ -42,8 +42,10 @@ BriefingPreview.refresh = function () {
     Utils.removeChildren(selector);
     
     DBMS.getAllProfileSettings(function(err, profileSettings){
+    	if(err) {Utils.handleError(err); return;}
     	BriefingPreview.profileSettings = profileSettings;
 	    DBMS.getCharacterNamesArray(function(err, names){
+	    	if(err) {Utils.handleError(err); return;}
 	        if (names.length > 0) {
 	            var settings = DBMS.getSettings();
 	            if(!settings["BriefingPreview"]){
@@ -95,6 +97,7 @@ BriefingPreview.buildContent = function (characterName) {
     content.appendChild(document.createElement("br"));
 
     DBMS.getProfile(characterName, function(err, profile){
+    	if(err) {Utils.handleError(err); return;}
         BriefingPreview.showProfile(content, profile);
         content.appendChild(document.createElement("br"));
         content.appendChild(document.createElement("br"));
@@ -103,6 +106,7 @@ BriefingPreview.buildContent = function (characterName) {
         content.appendChild(document.createElement("br"));
         
         DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
+        	if(err) {Utils.handleError(err); return;}
             allInventoryLists.forEach(function(elem){
                 content.appendChild(document.createTextNode(elem.storyName + ":"));
                 var input = document.createElement("input");
@@ -165,6 +169,7 @@ BriefingPreview.showEventsByTime = function (content, characterName) {
     "use strict";
     
     DBMS.getCharacterEventsByTime(characterName, function(err, allEvents){
+    	if(err) {Utils.handleError(err); return;}
         allEvents.forEach(function (event) {
             BriefingPreview.showEvent(event, content, characterName);
         });
@@ -175,6 +180,7 @@ BriefingPreview.showEventsByStory = function (content, characterName) {
     "use strict";
     
     DBMS.getCharacterEventGroupsByStory(characterName, function(err, eventGroups){
+    	if(err) {Utils.handleError(err); return;}
         eventGroups.forEach(function(elem){
             content.appendChild(document.createTextNode(elem.storyName));
             content.appendChild(document.createElement("br"));

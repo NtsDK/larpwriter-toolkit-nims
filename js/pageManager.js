@@ -33,12 +33,12 @@ PageManager.onLoad = function () {
 		});
 		
 		request.done(function(data) {
-			DBMS.setDatabase(JSON.parse(data), PageManager.onDatabaseLoad)
+			DBMS.setDatabase(JSON.parse(data), Utils.processError(PageManager.onDatabaseLoad));
 		});
 		
 		request.fail(function(errorInfo, textStatus, errorThrown) {
 			alert("Ошибка при загрузке примера базы: " + errorInfo.responseText + ". Загружаю чистую базу.");
-			DBMS.newDatabase(PageManager.onDatabaseLoad)
+			DBMS.newDatabase(Utils.processError(PageManager.onDatabaseLoad));
 		});
 	} else if(MODE === "NIMS_Server") {
 		DBMS = new RemoteDBMS();
@@ -97,6 +97,7 @@ PageManager.onDatabaseLoad = function () {
     Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton"});
 
     FileUtils.init(function(err){
+    	if(err) {Utils.handleError(err); return;}
     	PageManager.currentView.refresh();
     });
 

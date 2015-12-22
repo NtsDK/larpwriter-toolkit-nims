@@ -50,9 +50,11 @@ CharacterFilter.refresh = function () {
     filterSettingsDiv.appendChild(document.createElement("br"));
     
     DBMS.getAllProfiles(function(err, profiles){
+    	if(err) {Utils.handleError(err); return;}
         CharacterFilter.Characters = profiles;
         
         DBMS.getAllProfileSettings(function(err, allProfileSettings){
+        	if(err) {Utils.handleError(err); return;}
             CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
                 return true;
             });

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-	function storiesAPI(LocalDBMS, CommonUtils) {
+	function storiesAPI(LocalDBMS, CommonUtils, Errors) {
 		//stories
 		LocalDBMS.prototype.getMasterStory = function(storyName, callback){
 		    "use strict";
@@ -35,6 +35,16 @@ See the License for the specific language governing permissions and
 		// stories
 		LocalDBMS.prototype.createStory = function(storyName, callback){
 		    "use strict";
+		    if (storyName === "") {
+		    	callback(new Errors.ValidationError("Название истории пусто"));
+		        return;
+		    }
+		    
+		    if(this.database.Stories[storyName]){
+			    callback(new Errors.ValidationError("История с таким именем уже существует"));
+			    return;
+		    }
+		    
 		    this.database.Stories[storyName] = {
 		            name : storyName,
 		            story : "",
@@ -46,6 +56,21 @@ See the License for the specific language governing permissions and
 		// stories
 		LocalDBMS.prototype.renameStory = function(fromName, toName, callback){
 		    "use strict";
+		    if (toName === "") {
+		        callback(new Errors.ValidationError("Новое имя не указано."));
+		        return;
+		    }
+
+		    if (fromName === toName) {
+		        callback(new Errors.ValidationError("Имена совпадают."));
+		        return;
+		    }
+		    
+		    if(this.database.Stories[toName]){
+			    callback(new Errors.ValidationError("История с таким именем уже существует"));
+			    return;
+		    }
+		    
 		    var data = this.database.Stories[fromName];
 		    data.name = toName;
 		    this.database.Stories[toName] = data;
@@ -166,6 +191,15 @@ See the License for the specific language governing permissions and
 		//story events
 		LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, toEnd, selectedIndex, callback){
 		    "use strict";
+		    if (eventName === "") {
+		    	callback(new Errors.ValidationError("Название события не указано"));
+		        return;
+		    }
+		    if (eventText === "") {
+		    	callback(new Errors.ValidationError("Событие пусто"));
+		        return;
+		    }
+		    
 		    var event = {
 		        name : eventName,
 		        text : eventText,
@@ -207,6 +241,10 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
 		    "use strict";
 		    var story = this.database.Stories[storyName];
+		    if (story.events.length === index + 1) {
+		    	callback(new Errors.ValidationError("Выбранное событие объединяется со следующим событием. Последнее событие не с кем объединять."));
+		    	return;
+		    }
 	
 		    var event1 = story.events[index];
 		    var event2 = story.events[index + 1];

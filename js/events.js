@@ -54,6 +54,7 @@ Events.refresh = function () {
     var showOnlyUnfinishedStories = document.getElementById("finishedStoryCheckbox").checked;
 
     DBMS.getFilteredStoryNames(showOnlyUnfinishedStories, function(err, storyNames){
+    	if(err) {Utils.handleError(err); return;}
         if (storyNames.length > 0) {
             var storyNamesOnly = storyNames.map(function(elem){
                 return elem.storyName;
@@ -106,6 +107,7 @@ Events.updateCharacterSelector = function (storyName) {
     var isFirst = true;
     
     DBMS.getFilteredCharacterNames(storyName, showOnlyUnfinishedStories, function(err, characterArray){
+    	if(err) {Utils.handleError(err); return;}
         if (characterArray.length > 0) {
             var settings = DBMS.getSettings();
             if(!settings["Events"].characterNames){
@@ -135,6 +137,7 @@ Events.updateCharacterSelector = function (storyName) {
             });
             
             DBMS.getEvents(storyName, characterNames, function(err, events){
+            	if(err) {Utils.handleError(err); return;}
                 Events.showPersonalStories(storyName, characterNames, events);
             });
         }
@@ -161,6 +164,7 @@ Events.showPersonalStoriesDelegate = function (event) {
     Events.updateSettings("characterNames", characterNames);
     
     DBMS.getEvents(storyName, characterNames, function(err, events){
+    	if(err) {Utils.handleError(err); return;}
         Events.showPersonalStories(storyName, characterNames, events);
     });
 };

@@ -57,7 +57,9 @@ StoryCharacters.refresh = function () {
     }
     
     DBMS.getCharacterNamesArray(function(err, allCharacters){
+    	if(err) {Utils.handleError(err); return;}
         DBMS.getStoryCharacters(Stories.CurrentStoryName, function(err, localCharacters){
+        	if(err) {Utils.handleError(err); return;}
             StoryCharacters.rebuildInterface(allCharacters, localCharacters);
         });
     });
@@ -127,11 +129,6 @@ StoryCharacters.addCharacter = function () {
     "use strict";
     var characterName = document.getElementById("storyCharactersAddSelector").value.trim();
     
-    if(characterName === ""){
-        Utils.alert("Имя персонажа не указано.");
-        return;
-    }
-    
     DBMS.addStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
 };
 
@@ -140,22 +137,12 @@ StoryCharacters.switchCharacters = function () {
     var fromName = document.getElementById("storyCharactersFromSelector").value.trim();
     var toName = document.getElementById("storyCharactersToSelector").value.trim();
     
-    if(fromName === "" || toName == ""){
-        Utils.alert("Имя одного из персонажей не указано.");
-        return;
-    }
-    
     DBMS.switchStoryCharacters(Stories.CurrentStoryName, fromName, toName, Utils.processError(StoryCharacters.refresh));
 };
 
 StoryCharacters.removeCharacter = function () {
     "use strict";
     var characterName = document.getElementById("storyCharactersRemoveSelector").value.trim();
-    
-    if(characterName === ""){
-        Utils.alert("Имя персонажа не указано.");
-        return;
-    }
 
     if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
             + characterName
