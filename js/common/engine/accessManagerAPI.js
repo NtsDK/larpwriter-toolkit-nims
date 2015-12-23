@@ -167,50 +167,6 @@ See the License for the specific language governing permissions and
 			callback();
 		};
 		
-		if(typeof exports !== 'undefined' || MODE === "NIMS_SERVER"){
-			function isAdmin(db, username){
-				return db.ManagementInfo.admin === username;
-			};
-			
-			function isEditor(db, username){
-				return db.ManagementInfo.editor === username;
-			};
-
-			function existsEditor(db){
-				return db.ManagementInfo.editor !== null;
-			};
-			
-			LocalDBMS.prototype.hasPermission = function(command, args, user){
-				if(!user){
-					return false;
-				}
-				
-				switch(command){
-				case "setDatabase": // resetting database
-				case "assignAdmin": // access management
-				case "assignEditor":
-				case "changeAdaptationRightsMode":
-				case "createUser":
-				case "changePassword":
-				case "removeUser":
-				case "setMetaInfo": // meta data
-				case "createProfileItem": // profile configuring
-				case "swapProfileItems":
-				case "removeProfileItem":
-				case "changeProfileItemType":
-				case "renameProfileItem":
-				case "updateDefaultValue":
-					return isAdmin(this.database, user.name);
-				case "removeEditor":
-					return isAdmin(this.database, user.name) || isEditor(this.database, user.name);
-				}
-				return true;
-			};
-		} else {
-			LocalDBMS.prototype.hasPermission = function(command, args, user){
-				return true;
-			};
-		}
 	};
 	
 
