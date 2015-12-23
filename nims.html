@@ -59,6 +59,7 @@ See the License for the specific language governing permissions and
   <script src="js/common/engine/profileConfigurerAPI.js"></script>
   <script src="js/common/engine/storiesAPI.js"></script>
   <script src="js/common/engine/eventsAPI.js"></script>
+  <script src="js/common/engine/accessManagerAPI.js"></script>
   
   <script src="js/dbms/localDBMS.js"></script>
   <script src="js/dbms/remoteDBMS.js"></script>
@@ -87,6 +88,7 @@ See the License for the specific language governing permissions and
   <script src="js/network/socialNetwork.js"></script>
   <script src="js/network/networkSubsetsSelector.js"></script>
 
+<!--   <script src="js/TMP.js"></script> -->
   <script src="js/accessManager.js"></script>
 
   <div id="navigation">
@@ -443,6 +445,20 @@ See the License for the specific language governing permissions and
           <button id="removeUserButton">Удалить</button>
         </div>
       </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Специальные действия</h3>
+        </div>
+        <div class="panel-body">
+        	Администратор:<span id="currentAdministrator"></span><br>
+        	<select id="newAdminSelector"></select><button id="newAdminButton">Назначить администратором</button><br>
+        	Редактор:<span id="currentEditor"></span><button id="removeEditorButton">Удалить редактора</button><br>
+        	<select id="newEditorSelector"></select><button id="newEditorButton">Назначить редактора</button><br>
+        	Назначение прав на адаптации<br>
+        	<input type="radio" name="adaptationRights" class="adaptationRights" value="ByStory" id="adaptationRightsByStory">По историям</input><br>
+		    <input type="radio" name="adaptationRights" class="adaptationRights" value="ByCharacter" id="adaptationRightsByCharacter">По персонажам</input><br>
+        </div>
+      </div>
 <!--       <div id="briefingsNavigation"></div> -->
       <div id="accessManagerContent" >
         <div class="panel panel-default">
@@ -457,10 +473,10 @@ See the License for the specific language governing permissions and
                  <th>Истории</th>
                </tr>
                <tr>
-                 <td><div id="permissionTable"></div></td>
+                 <td><div id="permissionTable" style="width:400px;word-wrap: break-word;"></div></td>
                  <td><select size=10 id="characterPermissionSelector" multiple></select></td>
                  <td><select size=10 id="storyPermissionSelector" multiple></select></td>
-                 <td><select id="userPermissionSelector"></select>
+                 <td><select size=5 id="userPermissionSelector"></select>
                  <button id="assignPermissionButton">Назначить права</button>
                  <button id="removePermissionButton">Забрать права</button>
                  </td>

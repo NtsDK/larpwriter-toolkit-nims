@@ -33,4 +33,4 @@ briefingExportAPI(LocalDBMS, CommonUtils);
 profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
 storiesAPI(LocalDBMS, CommonUtils, Errors);
 eventsAPI(LocalDBMS, CommonUtils);
-
+accessManagerAPI(LocalDBMS, CommonUtils);
