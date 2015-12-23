@@ -62,21 +62,25 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.assignAdmin = function(name, callback){
 			"use strict";
 			this.database.ManagementInfo.admin = name;
+			this.publishPermissionsUpdate();
 			callback();
 		};
 		LocalDBMS.prototype.assignEditor = function(name, callback){
 			"use strict";
 			this.database.ManagementInfo.editor = name;
+			this.publishPermissionsUpdate();
 			callback();
 		};
 		LocalDBMS.prototype.removeEditor = function(callback){
 			"use strict";
 			this.database.ManagementInfo.editor = null;
+			this.publishPermissionsUpdate();
 			callback();
 		};
 		LocalDBMS.prototype.changeAdaptationRightsMode = function(mode, callback){
 			"use strict";
 			this.database.ManagementInfo.adaptationRights = mode;
+			this.publishPermissionsUpdate();
 			callback();
 		};
 		
@@ -103,6 +107,7 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.removeUser = function(name, callback){
 			"use strict";
 			delete this.database.ManagementInfo.UsersInfo[name];
+			this.publishPermissionsUpdate();
 			callback();
 		};
 		
@@ -120,7 +125,7 @@ See the License for the specific language governing permissions and
 					return storyNames.indexOf(storyName) === -1;
 				});
 			}
-			
+			this.publishPermissionsUpdate();
 			callback();
 		};
 		
@@ -163,10 +168,13 @@ See the License for the specific language governing permissions and
 					});
 				});
 			}
-			
+			this.publishPermissionsUpdate();
 			callback();
 		};
 		
+		LocalDBMS.prototype.publishPermissionsUpdate = function() {
+			// overrided by server
+		};
 	};
 	
 

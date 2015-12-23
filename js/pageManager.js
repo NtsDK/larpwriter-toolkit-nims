@@ -63,7 +63,7 @@ PageManager.onDatabaseLoad = function () {
 		navigation: navigation,
 		content: document.getElementById(content)
     };
-    Utils.addView(containers, "Overview", Overview, "Обзор", {mainPage:true});
+    Utils.addView(containers, "Overview", Overview, "Обзор", {mainPage:false});
     Utils.addView(containers, "Characters", Characters, "Персонажи");
     Utils.addView(containers, "Stories", Stories, "Истории");
     Utils.addView(containers, "Events", Events, "Адаптации");
@@ -94,7 +94,8 @@ PageManager.onDatabaseLoad = function () {
     PageManager.addButton("dataSaveButton", navigation, FileUtils.saveFile);
     PageManager.addButton("newBaseButton", navigation, FileUtils.makeNewBase);
     PageManager.addButton("mainHelpButton", navigation, FileUtils.openHelp);
-    Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton"});
+    Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton",mainPage:false});
+    Utils.addView(containers, "Chat", Chat, "Чат", {mainPage:true});
 
     FileUtils.init(function(err){
     	if(err) {Utils.handleError(err); return;}

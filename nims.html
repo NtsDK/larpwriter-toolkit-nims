@@ -26,11 +26,11 @@ See the License for the specific language governing permissions and
 <link rel="stylesheet" type="text/css" href="style/style.css"  media="screen" />
 <link rel="stylesheet" type="text/css" href="style/experimental.css"  media="screen" />
 
-<link rel="stylesheet" type="text/css" href="libs/vis.css"/ >
+<link rel="stylesheet" type="text/css" href="libs/vis.css"/>
 <script src="mode.js"></script>
 <script src="libs/vis.js"></script>
 
-<link rel="stylesheet" type="text/css" href="libs/jquery.datetimepicker.css"/ >
+<link rel="stylesheet" type="text/css" href="libs/jquery.datetimepicker.css"/>
 <script src="libs/jquery-2.1.4.js"></script>
 <script src="libs/jquery.datetimepicker.js"></script>
 
@@ -88,8 +88,9 @@ See the License for the specific language governing permissions and
   <script src="js/network/socialNetwork.js"></script>
   <script src="js/network/networkSubsetsSelector.js"></script>
 
-<!--   <script src="js/TMP.js"></script> -->
   <script src="js/accessManager.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/permissionInformer.js"></script>
 
   <div id="navigation">
   
@@ -379,8 +380,8 @@ See the License for the specific language governing permissions and
     <div id="eventsDiv">
       <div class="panel panel-default">
         <div class="panel-body">
-          <input type="checkbox" id="finishedStoryCheckbox">Показывать
-          только незавершенные истории</input>
+          <input type="checkbox" id="finishedStoryCheckbox"/>Показывать
+          только незавершенные истории
         </div>
       </div>
       <div style="display:flex;">
@@ -500,9 +501,9 @@ See the License for the specific language governing permissions and
         </div>
         <div class="panel-body">
           <input type="radio" name="eventsGroupBy" value="story" 
-          id="eventGroupingByStoryRadio">Группировать события по историям</input> <br> 
+          id="eventGroupingByStoryRadio"/>Группировать события по историям <br> 
           <input type="radio" name="eventsGroupBy" value="time" 
-          id="eventGroupingByTimeRadio">Сортировать события по хронологии</input> <br> 
+          id="eventGroupingByTimeRadio"/>Сортировать события по хронологии <br> 
         </div>
       </div>
       
@@ -523,7 +524,7 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-body">
         
-          <input type="checkbox" id="toSeparateFileCheckbox">Каждую вводную в отдельный файл</input> <br>
+          <input type="checkbox" id="toSeparateFileCheckbox"/>Каждую вводную в отдельный файл <br>
           <h3>Простая выгрузка</h3>
           <button id="makeBriefingsByTime">Сформировать вводные, события сгруппированны по времени (docx)</button><br>
           <button id="makeBriefingsByStory">Сформировать вводные, события сгруппированны по историям (docx)</button><br>
@@ -532,10 +533,10 @@ See the License for the specific language governing permissions and
           <button id="makeInventoryList">Сформировать список инвентаря (docx)</button><br>
           <h3>Продвинутая выгрузка</h3>
           <input type="radio" name="eventsGroupBy2" value="story"
-            id="eventGroupingByStoryRadio2">Группировать события по
-          историям</input> <br> <input type="radio" name="eventsGroupBy2"
-            value="time" id="eventGroupingByTimeRadio2">Сортировать
-          события по хронологии</input> <br> 
+            id="eventGroupingByStoryRadio2"/>Группировать события по
+          историям <br> <input type="radio" name="eventsGroupBy2"
+            value="time" id="eventGroupingByTimeRadio2"/>Сортировать
+          события по хронологии <br> 
 
               <div class="file-upload">
                    <label>
@@ -630,7 +631,11 @@ See the License for the specific language governing permissions and
       </div>
     </div>
 
-
+  <div id="chatDiv">
+    <p class="lead">Добро пожаловать в чат!</p>
+    <input type="text" name="message" id="chatMessage" />
+    <button id="sendMessageButton">Отправить</button>
+    <ul id="messages"></ul>
   </div>
 
 </body>

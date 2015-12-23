@@ -81,6 +81,24 @@ body {
   background-color:  rgb(221, 221, 221);
 }
 
+#accessManagerButton{
+  background: transparent url("../images/scheme6.svg") no-repeat scroll 50% 50%;
+  background-color:  rgb(221, 221, 221);
+  width: 50px;
+  background-size: 35px;
+}
+
+#accessManagerButton:hover{
+  background-color:  #ccc;
+}
+
+#accessManagerButton.active {
+  color: #FFF;
+/*   background-color: #337AB7; */
+  background-color: rgb(204,133,72);
+  filter: invert(100%);
+}
+
 #dataLoadButton input {
   filter: alpha(opacity = 0);
   opacity: 0;
