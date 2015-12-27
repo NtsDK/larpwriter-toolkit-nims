@@ -25,7 +25,7 @@ Chat.init = function() {
     var button = document.getElementById("sendMessageButton");
     button.addEventListener("click", Chat.onSubmit);
     
-//    Chat.subscribe();
+    Chat.subscribe();
 
     Chat.content = document.getElementById("chatDiv");;
 };

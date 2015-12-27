@@ -49,6 +49,7 @@ CharacterProfileConfigurer.init = function () {
 
 CharacterProfileConfigurer.refresh = function () {
     'use strict';
+    
     var positionSelector = document.getElementById("profileItemPositionSelector");
     Utils.removeChildren(positionSelector);
 
@@ -71,6 +72,11 @@ CharacterProfileConfigurer.refresh = function () {
         
         allProfileSettings.forEach(function (profileSettings, i) {
             CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
+        });
+        
+        PermissionInformer.isAdmin(function(err, isAdmin){
+        	if(err) {Utils.handleError(err); return;}
+        	Utils.enable(CharacterProfileConfigurer.content, "adminOnly", isAdmin);
         });
         
         var selectorArr = [];
@@ -186,6 +192,7 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     input.info = profileSettings.name;
     addClass(input,"itemNameInput");
     input.addEventListener("change", CharacterProfileConfigurer.renameProfileItem);
+    addClass(input, "adminOnly");
     td.appendChild(input);
     tr.appendChild(td);
 
@@ -197,6 +204,7 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     selector.oldType = profileSettings.type;
     td.appendChild(selector);
     selector.addEventListener("change", CharacterProfileConfigurer.changeProfileItemType);
+    addClass(selector, "adminOnly");
     tr.appendChild(td);
 
     td = document.createElement("td");
@@ -207,6 +215,7 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     }
     input.info = profileSettings.name;
     input.infoType = profileSettings.type;
+    addClass(input, "adminOnly");
     addClass(input, "profile-configurer-" + profileSettings.type);
 
     switch (profileSettings.type) {

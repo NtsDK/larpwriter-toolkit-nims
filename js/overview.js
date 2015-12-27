@@ -47,12 +47,17 @@ Overview.init = function () {
 
     Overview.descr = document.getElementById("gameDescription");
     Overview.descr.addEventListener("change", Overview.updateDescr);
-
+    
     Overview.content = document.getElementById("overviewDiv");
 };
 
 Overview.refresh = function () {
     "use strict";
+    
+    PermissionInformer.isAdmin(function(err, isAdmin){
+    	if(err) {Utils.handleError(err); return;}
+    	Utils.enable(Overview.content, "adminOnly", isAdmin);
+    });
 
     DBMS.getMetaInfo(function(err, info){
     	if(err) {Utils.handleError(err); return;}

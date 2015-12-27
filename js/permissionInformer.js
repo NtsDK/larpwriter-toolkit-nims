@@ -19,7 +19,9 @@ See the License for the specific language governing permissions and
 
 var PermissionInformer = {};
 
-PermissionInformer.summary = null;
+PermissionInformer.summary = {
+		isAdmin: true
+};
 
 PermissionInformer.init = function() {
 	var request = $.ajax({
@@ -31,7 +33,7 @@ PermissionInformer.init = function() {
 
 	request.done(function(data) {
 		PermissionInformer.summary = JSON.parse(data);
-		alert(data);
+//		alert(data);
 //		alert(PermissionInformer.summary);
 		PermissionInformer.subscribe();
 	});
@@ -52,7 +54,7 @@ PermissionInformer.subscribe = function() {
 
 	request.done(function(data) {
 		PermissionInformer.summary = JSON.parse(data);
-		alert(data);
+//		alert(data);
 //		alert(PermissionInformer.summary);
 		PermissionInformer.subscribe();
 	});
@@ -62,4 +64,89 @@ PermissionInformer.subscribe = function() {
 	});
 };
 
-PermissionInformer.init();
+if(MODE === "NIMS_Server"){
+	PermissionInformer.init();
+
+	PermissionInformer.isAdmin = function(callback){
+		callback(null, PermissionInformer.summary.isAdmin);
+	};
+	
+	PermissionInformer.isCharacterEditable = function(characterName, callback){
+		var isEditor = PermissionInformer.summary.isEditor;
+		var userCharacters = PermissionInformer.summary.userCharacters;
+		callback(null, isEditor || userCharacters.indexOf(characterName) !== -1);
+	};
+	
+	PermissionInformer.getCharacterNamesArray = function(editableOnly, callback){
+		var newNames = [];
+		var userCharacters = PermissionInformer.summary.userCharacters;
+		var isEditor = PermissionInformer.summary.isEditor;
+		var allCharacters = PermissionInformer.summary.allCharacters;
+		var ownerMap = PermissionInformer.summary.characterOwnerMap;
+		allCharacters.filter(function(name){
+			if(editableOnly){
+				return isEditor || userCharacters.indexOf(name) !== -1;
+			} else {
+				return true;
+			}
+		}).forEach(function(name){
+			newNames.push({
+				displayName:ownerMap[name] + ". " + name,
+				value:name,
+				editable: isEditor || userCharacters.indexOf(name) !== -1
+			});
+		});
+		
+		newNames.sort(Utils.charOrdAObject);
+		
+		callback(null, newNames);
+	};
+	
+//	PermissionInformer.getCharacterOwnerMap = function(callback){
+//		callback(null, PermissionInformer.summary.characterOwnerMap);
+//	};
+	
+//	PermissionInformer.getUserStories = function(callback){
+//		callback(null, PermissionInformer.summary.userStories);
+//	};
+} else {
+	
+	PermissionInformer.isAdmin = function(callback){
+		callback(null, true);
+	};
+	
+	PermissionInformer.getCharacterNamesArray = function(editableOnly, callback){
+		DBMS.getCharacterNamesArray(function(err, names){
+			if(err) {Utils.handleError(err); return;}
+			var newNames = [];
+			names.forEach(function(name){
+				newNames.push({
+					displayName:name,
+					value:name,
+					editable: true
+				});
+			});
+			callback(null, newNames);
+		});
+	};
+	
+	PermissionInformer.isCharacterEditable = function(characterName, callback){
+		callback(null, true);
+	};
+	
+//	PermissionInformer.getCharacterOwnerMap = function(callback){
+//		DBMS.getCharacterNamesArray(function(err, characterNames){
+//			if(err) {Utils.handleError(err); return;}
+//			var ownerMap = {};
+//			characterNames.forEach(function(elem){
+//				ownerMap[elem] = "";
+//			});
+//			callback(null, ownerMap);
+//		});
+//	};
+	
+//	PermissionInformer.getUserStories = function(callback){
+//		callback(null, PermissionInformer.summary.userStories);
+//	};
+}
+

@@ -48,24 +48,26 @@ Characters.init = function () {
 
 Characters.refresh = function () {
     "use strict";
-    DBMS.getCharacterNamesArray(Utils.processError(Characters.rebuildInterface));
+    PermissionInformer.getCharacterNamesArray(true, Utils.processError(Characters.rebuildInterface));
 };
 
 Characters.rebuildInterface = function (names) {
     "use strict";
     var selector = document.getElementById("fromName");
     Utils.removeChildren(selector);
-    names.forEach(function (name) {
+    names.forEach(function (nameInfo) {
         var option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
+        option.appendChild(document.createTextNode(nameInfo.displayName));
+        option.value = nameInfo.value;
         selector.appendChild(option);
     });
 
     selector = document.getElementById("characterRemoveSelector");
     Utils.removeChildren(selector);
-    names.forEach(function (name) {
+    names.forEach(function (nameInfo) {
         var option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
+        option.appendChild(document.createTextNode(nameInfo.displayName));
+        option.value = nameInfo.value;
         selector.appendChild(option);
     });
 

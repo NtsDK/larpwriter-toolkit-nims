@@ -125,6 +125,31 @@ Utils.handleError = function(err){
 	}
 };
 
+Utils.enable = function(root, className, condition){
+	"use strict";
+    var arr = root.getElementsByClassName(className);
+    var i, elem;
+    for (i = 0; i < arr.length; i++) {
+		elem = arr[i];
+		if(condition){
+			elem.removeAttribute("disabled");
+		} else {
+			elem.setAttribute("disabled","disabled");
+		}
+	}
+};
+
+Utils.charOrdAObject = function(a, b) {
+	"use strict";
+	a = a.displayName.toLowerCase();
+	b = b.displayName.toLowerCase();
+	if (a > b)
+		return 1;
+	if (a < b)
+		return -1;
+	return 0;
+};
+
 
 String.prototype.endsWith = function (suffix) {
     "use strict";
@@ -158,6 +183,14 @@ function hasClass(o, c){
 function removeClass(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "")
+};
+
+function setClassByCondition(o,c,condition){
+	if(condition){
+		addClass(o,c);
+	} else {
+		removeClass(o,c);
+	}
 };
 
 // from date format utils

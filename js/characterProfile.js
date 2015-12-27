@@ -31,13 +31,14 @@ CharacterProfile.init = function () {
 CharacterProfile.refresh = function () {
     "use strict";
     
-    DBMS.getCharacterNamesArray(function(err, names){
+    PermissionInformer.getCharacterNamesArray(false, function(err, names){
     	if(err) {Utils.handleError(err); return;}
         var selector = document.getElementById("bioEditorSelector");
         Utils.removeChildren(selector);
-        names.forEach(function (name) {
+        names.forEach(function (nameInfo) {
             var option = document.createElement("option");
-            option.appendChild(document.createTextNode(name));
+            option.appendChild(document.createTextNode(nameInfo.displayName));
+            option.value = nameInfo.value;
             selector.appendChild(option);
         });
         
@@ -65,7 +66,7 @@ CharacterProfile.refresh = function () {
 CharacterProfile.applySettings = function (names, selector) {
     "use strict";
     if (names.length > 0) {
-        var name = names[0];
+        var name = names[0].value;
         var settings = DBMS.getSettings();
         if(!settings["CharacterProfile"]){
             settings["CharacterProfile"] = {
@@ -73,7 +74,7 @@ CharacterProfile.applySettings = function (names, selector) {
             };
         }
         var characterName = settings["CharacterProfile"].characterName;
-        if(names.indexOf(characterName) === -1){
+        if(names.map(function(nameInfo){return nameInfo.value;}).indexOf(characterName) === -1){
             settings["CharacterProfile"].characterName = name;
             characterName = name;
         }
@@ -123,6 +124,7 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
     }
     input.addEventListener("change", CharacterProfile.updateFieldValue(profileItemConfig.type));
     input.selfName = profileItemConfig.name;
+    addClass(input,"isEditable");
     td.appendChild(input);
     CharacterProfile.inputItems[profileItemConfig.name] = input;
 
@@ -169,17 +171,21 @@ CharacterProfile.showProfileInfoCallback = function (err, profile) {
     "use strict";
     if(err) {Utils.handleError(err); return;}
     var name = profile.name;
-    CharacterProfile.updateSettings(name);
-    
-    CharacterProfile.name = name;
-    var inputItems = CharacterProfile.inputItems;
-    Object.keys(inputItems).forEach(function (inputName) {
-        if (inputItems[inputName].type === "checkbox") {
-            inputItems[inputName].checked = profile[inputName];
-        } else {
-            inputItems[inputName].value = profile[inputName];
-        }
-        inputItems[inputName].oldValue = profile[inputName];
+    PermissionInformer.isCharacterEditable(name, function(err, isEditable){
+    	if(err) {Utils.handleError(err); return;}
+    	CharacterProfile.updateSettings(name);
+    	
+    	CharacterProfile.name = name;
+    	var inputItems = CharacterProfile.inputItems;
+    	Object.keys(inputItems).forEach(function (inputName) {
+    		if (inputItems[inputName].type === "checkbox") {
+    			inputItems[inputName].checked = profile[inputName];
+    		} else {
+    			inputItems[inputName].value = profile[inputName];
+    		}
+    		inputItems[inputName].oldValue = profile[inputName];
+    		Utils.enable(CharacterProfile.content, "isEditable", isEditable);
+    	});
     });
 };
 

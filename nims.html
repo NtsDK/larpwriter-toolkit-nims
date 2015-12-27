@@ -105,15 +105,15 @@ See the License for the specific language governing permissions and
           <table>
             <tr>
               <td><span>Название</span></td>
-              <td><input id="gameNameInput"></input></td>
+              <td><input id="gameNameInput" class="adminOnly"></input></td>
             </tr>
             <tr>
               <td><span>Дата начала доигровых событий</span></td>
-              <td><input id="preGameDatePicker"></input></td>
+              <td><input id="preGameDatePicker" class="adminOnly"></input></td>
             </tr>
             <tr>
               <td><span>Дата окончания доигровых событий</span></td>
-              <td><input id="gameDatePicker"></input></td>
+              <td><input id="gameDatePicker" class="adminOnly"></input></td>
             </tr>
           </table>
         </div>
@@ -124,7 +124,7 @@ See the License for the specific language governing permissions and
           <div class="panel-heading">
             <h3 class="panel-title">Описание</h3>
           </div>
-          <div class="panel-body"><textarea id="gameDescription"></textarea></div>
+          <div class="panel-body"><textarea id="gameDescription" class="adminOnly"></textarea></div>
         </div>
         <div class="panel panel-default" style="flex-grow:0;flex-basis: 300px;">
           <div class="panel-heading">
@@ -132,7 +132,6 @@ See the License for the specific language governing permissions and
           </div>
           <div class="panel-body"></div>
         </div>
-      
       </div>
     </div>
 
@@ -182,16 +181,15 @@ See the License for the specific language governing permissions and
     <div id="characterProfileConfigurer">
       <div class="panel panel-default">
         <div class="panel-body">
-          Название<input id="profileItemNameInput" class="itemNameInput"></input> Тип<select
-            id="profileItemTypeSelector">
-          </select> Позиция <select id="profileItemPositionSelector">
-          </select>
-          <button id="createProfileItemButton">Добавить</button>
-          <br> Поменять местами <select id="firstProfileField"></select> и
-          <select id="secondProfileField"></select>
-          <button id="swapProfileFieldsButton">OK</button>
-          <br> <select id="removeProfileItemSelector"></select>
-          <button id="removeProfileItemButton">Удалить</button>
+          Название<input id="profileItemNameInput" class="itemNameInput adminOnly"></input> 
+          Тип<select id="profileItemTypeSelector" class="adminOnly"></select> 
+          Позиция <select id="profileItemPositionSelector" class="adminOnly"></select>
+          <button id="createProfileItemButton" class="adminOnly">Добавить</button>
+          <br> Поменять местами <select id="firstProfileField" class="adminOnly"></select> и
+          <select id="secondProfileField" class="adminOnly"></select>
+          <button id="swapProfileFieldsButton" class="adminOnly">OK</button>
+          <br> <select id="removeProfileItemSelector" class="adminOnly"></select>
+          <button id="removeProfileItemButton" class="adminOnly">Удалить</button>
           <br>
     
           <table class="table table-bordered" style="width: auto;">
@@ -629,14 +627,15 @@ See the License for the specific language governing permissions and
 <!--         </div> -->
         </div>
       </div>
+      
+      <div id="chatDiv">
+        <p class="lead">Добро пожаловать в чат!</p>
+        <input type="text" name="message" id="chatMessage" />
+        <button id="sendMessageButton">Отправить</button>
+        <ul id="messages"></ul>
+      </div>
     </div>
 
-  <div id="chatDiv">
-    <p class="lead">Добро пожаловать в чат!</p>
-    <input type="text" name="message" id="chatMessage" />
-    <button id="sendMessageButton">Отправить</button>
-    <ul id="messages"></ul>
-  </div>
 
 </body>
 </html>
