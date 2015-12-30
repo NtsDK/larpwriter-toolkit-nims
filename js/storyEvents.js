@@ -46,67 +46,72 @@ StoryEvents.refresh = function () {
         return;
     }
     
-    DBMS.getMetaInfo(function(err, metaInfo){
+    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isEditable){
     	if(err) {Utils.handleError(err); return;}
-        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
-        	if(err) {Utils.handleError(err); return;}
-            StoryEvents.rebuildInterface(events, metaInfo);
-        });
+	    DBMS.getMetaInfo(function(err, metaInfo){
+	    	if(err) {Utils.handleError(err); return;}
+	        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
+	        	if(err) {Utils.handleError(err); return;}
+	            StoryEvents.rebuildInterface(events, metaInfo);
+	            Utils.enable(StoryEvents.content, "isEditable", isEditable);
+	        });
+	    });
     });
 };
 
 StoryEvents.rebuildInterface = function(events, metaInfo){
     "use strict";
-    // event part
-    var tableHead = document.getElementById("eventBlockHead");
-    Utils.removeChildren(tableHead);
-    var table = document.getElementById("eventBlock");
-    Utils.removeChildren(table);
-
-    StoryEvents.appendEventHeader(tableHead);
-
-    // refresh position selector
-    var positionSelector = document.getElementById("positionSelector");
-    Utils.removeChildren(positionSelector);
-    
-    events.forEach(function (event, i) {
-        StoryEvents.appendEventInput(table, event, i, metaInfo.date, metaInfo.preGameDate);
-    });
-    
-    events.forEach(function (event, i) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode("Перед '" + event.name + "'"));
-        positionSelector.appendChild(option);
-    });
-    
-    var option = document.createElement("option");
-    option.appendChild(document.createTextNode("В конец"));
-    positionSelector.appendChild(option);
-    
-    positionSelector.selectedIndex = events.length;
-    
-    StoryEvents.eventsLength = events.length;
-    
-    // refresh swap selector
-    var selectorArr = [];
-    
-    selectorArr.push(document.getElementById("firstEvent"));
-    selectorArr.push(document.getElementById("secondEvent"));
-    selectorArr.push(document.getElementById("removeEventSelector"));
-    selectorArr.push(document.getElementById("cloneEventSelector"));
-    selectorArr.push(document.getElementById("mergeEventSelector"));
-    
-    selectorArr.forEach(function (selector) {
-        Utils.removeChildren(selector);
-    });
-    
-    events.forEach(function (event, i) {
-        selectorArr.forEach(function (selector) {
-            option = document.createElement("option");
-            option.appendChild(document.createTextNode(event.name));
-            selector.appendChild(option);
-        });
-    });
+    	
+	// event part
+	var tableHead = document.getElementById("eventBlockHead");
+	Utils.removeChildren(tableHead);
+	var table = document.getElementById("eventBlock");
+	Utils.removeChildren(table);
+	
+	StoryEvents.appendEventHeader(tableHead);
+	
+	// refresh position selector
+	var positionSelector = document.getElementById("positionSelector");
+	Utils.removeChildren(positionSelector);
+	
+	events.forEach(function (event, i) {
+		StoryEvents.appendEventInput(table, event, i, metaInfo.date, metaInfo.preGameDate);
+	});
+	
+	events.forEach(function (event, i) {
+		var option = document.createElement("option");
+		option.appendChild(document.createTextNode("Перед '" + event.name + "'"));
+		positionSelector.appendChild(option);
+	});
+	
+	var option = document.createElement("option");
+	option.appendChild(document.createTextNode("В конец"));
+	positionSelector.appendChild(option);
+	
+	positionSelector.selectedIndex = events.length;
+	
+	StoryEvents.eventsLength = events.length;
+	
+	// refresh swap selector
+	var selectorArr = [];
+	
+	selectorArr.push(document.getElementById("firstEvent"));
+	selectorArr.push(document.getElementById("secondEvent"));
+	selectorArr.push(document.getElementById("removeEventSelector"));
+	selectorArr.push(document.getElementById("cloneEventSelector"));
+	selectorArr.push(document.getElementById("mergeEventSelector"));
+	
+	selectorArr.forEach(function (selector) {
+		Utils.removeChildren(selector);
+	});
+	
+	events.forEach(function (event, i) {
+		selectorArr.forEach(function (selector) {
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(event.name));
+			selector.appendChild(option);
+		});
+	});
 };
 
 StoryEvents.createEvent = function () {
@@ -213,6 +218,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     td.appendChild(divMain);
     
     input = document.createElement("input");
+    addClass(input, "isEditable");
     input.value = event.name;
     input.eventIndex = index;
     input.addEventListener("change", StoryEvents.updateEventName);
@@ -220,8 +226,9 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
 
     // event datetime picker
     input = document.createElement("input");
+    addClass(input, "isEditable");
+    addClass(input, "eventTime");
     input.value = event.time;
-    input.className = "eventTime";
     
     input.eventIndex = index;
     
@@ -245,7 +252,8 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     divRight.appendChild(input);
 
     input = document.createElement("textarea");
-    input.className = "eventText";
+    addClass(input, "isEditable");
+    addClass(input, "eventText");
     input.value = event.text;
     input.eventIndex = index;
     input.addEventListener("change", StoryEvents.updateEventText);

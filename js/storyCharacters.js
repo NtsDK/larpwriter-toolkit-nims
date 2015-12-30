@@ -56,73 +56,84 @@ StoryCharacters.refresh = function () {
         return;
     }
     
-    DBMS.getCharacterNamesArray(function(err, allCharacters){
+    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isEditable){
     	if(err) {Utils.handleError(err); return;}
-        DBMS.getStoryCharacters(Stories.CurrentStoryName, function(err, localCharacters){
-        	if(err) {Utils.handleError(err); return;}
-            StoryCharacters.rebuildInterface(allCharacters, localCharacters);
-        });
+    	PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
+	    	if(err) {Utils.handleError(err); return;}
+	        DBMS.getStoryCharacters(Stories.CurrentStoryName, function(err, localCharacters){
+	        	if(err) {Utils.handleError(err); return;}
+	            StoryCharacters.rebuildInterface(allCharacters, localCharacters);
+	            Utils.enable(StoryCharacters.content, "isEditable", isEditable);
+	        });
+	    });
     });
 };
 
 StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
     "use strict";
-    var addArray = [];
-    var removeArray = [];
-    
-    for ( var name in localCharacters) {
-        removeArray.push(name);
-    }
-    
-    allCharacters.filter(function(name){
-        return !localCharacters[name];
-    }).forEach(function(name){
-        addArray.push(name);
-    });
-    
-    addArray.sort(CommonUtils.charOrdA);
-    removeArray.sort(CommonUtils.charOrdA);
-    
-    var option;
-    
-    addArray.forEach(function (addValue) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(addValue));
-        StoryCharacters.addSelector.appendChild(option);
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(addValue));
-        StoryCharacters.toSelector.appendChild(option);
-    });
-    removeArray.forEach(function (removeValue) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(removeValue));
-        StoryCharacters.removeSelector.appendChild(option);
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(removeValue));
-        StoryCharacters.fromSelector.appendChild(option);
-    });
-    
-    var tableHead = document.getElementById("story-characterActivityTableHead");
-    var table = document.getElementById("story-characterActivityTable");
-    Utils.removeChildren(tableHead);
-    Utils.removeChildren(table);
-    
-    StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.characterActivityHeader);
-    
-    removeArray.forEach(function (removeValue) {
-        StoryCharacters.appendCharacterActivity(table, localCharacters[removeValue]);
-    });
-    
-    tableHead = document.getElementById("storyCharactersTableHead");
-    table = document.getElementById("storyCharactersTable");
-    Utils.removeChildren(tableHead);
-    Utils.removeChildren(table);
-    
-    StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.inventoryHeader);
-    
-    removeArray.forEach(function (removeValue) {
-        StoryCharacters.appendCharacterInput(table, localCharacters[removeValue]);
-    });
+    	
+	var addArray = [];
+	var removeArray = [];
+	
+	allCharacters.filter(function(nameInfo){
+		return !localCharacters[nameInfo.value];
+	}).forEach(function(nameInfo){
+		addArray.push(nameInfo);
+	});
+	
+	allCharacters.filter(function(nameInfo){
+		return localCharacters[nameInfo.value];
+	}).forEach(function(nameInfo){
+		removeArray.push(nameInfo);
+	});
+	
+	addArray.sort(CommonUtils.charOrdAObject);
+	removeArray.sort(CommonUtils.charOrdAObject);
+	
+	var option;
+	
+	addArray.forEach(function (addValue) {
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode(addValue.displayName));
+		option.value = addValue.value;
+		StoryCharacters.addSelector.appendChild(option);
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode(addValue.displayName));
+		option.value = addValue.value;
+		StoryCharacters.toSelector.appendChild(option);
+	});
+	removeArray.forEach(function (removeValue) {
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode(removeValue.displayName));
+		option.value = removeValue.value;
+		StoryCharacters.removeSelector.appendChild(option);
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode(removeValue.displayName));
+		option.value = removeValue.value;
+		StoryCharacters.fromSelector.appendChild(option);
+	});
+	
+	var tableHead = document.getElementById("story-characterActivityTableHead");
+	var table = document.getElementById("story-characterActivityTable");
+	Utils.removeChildren(tableHead);
+	Utils.removeChildren(table);
+	
+	StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.characterActivityHeader);
+	
+	removeArray.forEach(function (removeValue) {
+		StoryCharacters.appendCharacterActivity(table, removeValue, localCharacters[removeValue.value]);
+	});
+	
+	tableHead = document.getElementById("storyCharactersTableHead");
+	table = document.getElementById("storyCharactersTable");
+	Utils.removeChildren(tableHead);
+	Utils.removeChildren(table);
+	
+	StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.inventoryHeader);
+	
+	removeArray.forEach(function (removeValue) {
+		StoryCharacters.appendCharacterInput(table, removeValue, localCharacters[removeValue.value]);
+	});
 };
 
 StoryCharacters.addCharacter = function () {
@@ -164,18 +175,19 @@ StoryCharacters.appendCharacterHeader = function (table, tag, values) {
     table.appendChild(tr);
 };
 
-StoryCharacters.appendCharacterInput = function (table, character) {
+StoryCharacters.appendCharacterInput = function (table, characterMeta, character) {
     "use strict";
     var tr = document.createElement("tr");
     var td = document.createElement("td");
-    td.appendChild(document.createTextNode(character.name));
+    td.appendChild(document.createTextNode(characterMeta.displayName));
     tr.appendChild(td);
 
     td = document.createElement("td");
     var input = document.createElement("input");
     input.value = character.inventory;
     input.characterName = character.name;
-    input.className = "inventoryInput";
+    addClass(input, "inventoryInput");
+    addClass(input, "isEditable");
     input.addEventListener("change", StoryCharacters.updateCharacterInventory);
     td.appendChild(input);
     tr.appendChild(td);
@@ -187,17 +199,18 @@ StoryCharacters.updateCharacterInventory = function (event) {
     DBMS.updateCharacterInventory(Stories.CurrentStoryName, event.target.characterName, event.target.value, Utils.processError());
 };
 
-StoryCharacters.appendCharacterActivity = function (table, character) {
+StoryCharacters.appendCharacterActivity = function (table, characterMeta, character) {
     "use strict";
     var tr = document.createElement("tr");
     var td = document.createElement("td");
-    td.appendChild(document.createTextNode(character.name));
+    td.appendChild(document.createTextNode(characterMeta.displayName));
     tr.appendChild(td);
     
     var input;
     StoryCharacters.characterActivityTypes.forEach(function (activityType) {
         td = document.createElement("td");
         input = document.createElement("input");
+        addClass(input, "isEditable");
         input.type = "checkbox";
         if (character.activity[activityType]) {
             input.checked = true;

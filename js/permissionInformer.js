@@ -20,52 +20,61 @@ See the License for the specific language governing permissions and
 var PermissionInformer = {};
 
 PermissionInformer.summary = {
-		isAdmin: true
+//		isAdmin: true
 };
 
-PermissionInformer.init = function() {
-	var request = $.ajax({
-		url : "/getPermissionsSummary",
-		dataType : "text",
-		method : "GET",
-		contentType : "application/json;charset=utf-8",
-	});
-
-	request.done(function(data) {
-		PermissionInformer.summary = JSON.parse(data);
-//		alert(data);
-//		alert(PermissionInformer.summary);
-		PermissionInformer.subscribe();
-	});
-
-	request.fail(function(errorInfo, textStatus, errorThrown) {
-		setTimeout(PermissionInformer.subscribe, 500);
-	});
-};
-
-PermissionInformer.subscribe = function() {
-
-	var request = $.ajax({
-		url : "/subscribeOnPermissionsUpdate",
-		dataType : "text",
-		method : "GET",
-		contentType : "application/json;charset=utf-8",
-	});
-
-	request.done(function(data) {
-		PermissionInformer.summary = JSON.parse(data);
-//		alert(data);
-//		alert(PermissionInformer.summary);
-		PermissionInformer.subscribe();
-	});
-
-	request.fail(function(errorInfo, textStatus, errorThrown) {
-		setTimeout(PermissionInformer.subscribe, 500);
-	});
-};
 
 if(MODE === "NIMS_Server"){
-	PermissionInformer.init();
+	PermissionInformer.refresh = function(callback) {
+		var request = $.ajax({
+			url : "/getPermissionsSummary",
+			dataType : "text",
+			method : "GET",
+			contentType : "application/json;charset=utf-8",
+		});
+		
+		request.done(function(data) {
+			PermissionInformer.summary = JSON.parse(data);
+			if(callback){
+				callback();
+			} else {
+				PermissionInformer.subscribe();
+			}
+//		alert(data);
+//		alert(PermissionInformer.summary);
+		});
+		
+		request.fail(function(errorInfo, textStatus, errorThrown) {
+			if(callback){
+				callback(errorInfo.responseText);
+			} else {
+				setTimeout(PermissionInformer.subscribe, 500);
+			}
+		});
+	};
+	
+	PermissionInformer.subscribe = function() {
+		
+		var request = $.ajax({
+			url : "/subscribeOnPermissionsUpdate",
+			dataType : "text",
+			method : "GET",
+			contentType : "application/json;charset=utf-8",
+		});
+		
+		request.done(function(data) {
+			PermissionInformer.summary = JSON.parse(data);
+//		alert(data);
+//		alert(PermissionInformer.summary);
+			PermissionInformer.subscribe();
+		});
+		
+		request.fail(function(errorInfo, textStatus, errorThrown) {
+			setTimeout(PermissionInformer.subscribe, 500);
+		});
+	};
+	
+	PermissionInformer.refresh();
 
 	PermissionInformer.isAdmin = function(callback){
 		callback(null, PermissionInformer.summary.isAdmin);
@@ -75,6 +84,12 @@ if(MODE === "NIMS_Server"){
 		var isEditor = PermissionInformer.summary.isEditor;
 		var userCharacters = PermissionInformer.summary.userCharacters;
 		callback(null, isEditor || userCharacters.indexOf(characterName) !== -1);
+	};
+	
+	PermissionInformer.isStoryEditable = function(storyName, callback){
+		var isEditor = PermissionInformer.summary.isEditor;
+		var userStories = PermissionInformer.summary.userStories;
+		callback(null, isEditor || userStories.indexOf(storyName) !== -1);
 	};
 	
 	PermissionInformer.getCharacterNamesArray = function(editableOnly, callback){
@@ -102,6 +117,31 @@ if(MODE === "NIMS_Server"){
 		callback(null, newNames);
 	};
 	
+	PermissionInformer.getStoryNamesArray = function(editableOnly, callback){
+		var newNames = [];
+		var userStories = PermissionInformer.summary.userStories;
+		var isEditor = PermissionInformer.summary.isEditor;
+		var allStories = PermissionInformer.summary.allStories;
+		var ownerMap = PermissionInformer.summary.storiesOwnerMap;
+		allStories.filter(function(name){
+			if(editableOnly){
+				return isEditor || userStories.indexOf(name) !== -1;
+			} else {
+				return true;
+			}
+		}).forEach(function(name){
+			newNames.push({
+				displayName:ownerMap[name] + ". " + name,
+				value:name,
+				editable: isEditor || userStories.indexOf(name) !== -1
+			});
+		});
+		
+		newNames.sort(Utils.charOrdAObject);
+		
+		callback(null, newNames);
+	};
+	
 //	PermissionInformer.getCharacterOwnerMap = function(callback){
 //		callback(null, PermissionInformer.summary.characterOwnerMap);
 //	};
@@ -110,6 +150,10 @@ if(MODE === "NIMS_Server"){
 //		callback(null, PermissionInformer.summary.userStories);
 //	};
 } else {
+	
+	PermissionInformer.refresh = function(callback) {
+		callback();
+	};
 	
 	PermissionInformer.isAdmin = function(callback){
 		callback(null, true);
@@ -130,7 +174,25 @@ if(MODE === "NIMS_Server"){
 		});
 	};
 	
+	PermissionInformer.getStoryNamesArray = function(editableOnly, callback){
+		DBMS.getStoryNamesArray(function(err, names){
+			if(err) {Utils.handleError(err); return;}
+			var newNames = [];
+			names.forEach(function(name){
+				newNames.push({
+					displayName:name,
+					value:name,
+					editable: true
+				});
+			});
+			callback(null, newNames);
+		});
+	};
+	
 	PermissionInformer.isCharacterEditable = function(characterName, callback){
+		callback(null, true);
+	};
+	PermissionInformer.isStoryEditable = function(storyName, callback){
 		callback(null, true);
 	};
 	

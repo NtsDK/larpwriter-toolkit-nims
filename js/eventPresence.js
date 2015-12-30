@@ -35,16 +35,31 @@ EventPresence.refresh = function () {
     if(Stories.CurrentStoryName == undefined){
         return;
     }
-
-    DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(err, characterArray){
+    
+    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isEditable){
     	if(err) {Utils.handleError(err); return;}
-        EventPresence.appendTableHeader(tableHead, characterArray);
-        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
-        	if(err) {Utils.handleError(err); return;}
-            events.forEach(function (event, i) {
-                EventPresence.appendTableInput(table, event, i, characterArray);
-            });
-        });
+    	PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
+	    	if(err) {Utils.handleError(err); return;}
+		    DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(err, characterArray){
+		    	if(err) {Utils.handleError(err); return;}
+		    	var map = {};
+		    	allCharacters.forEach(function(elem){
+		    		map[elem.value] = elem;
+		    	});
+		    	var displayArray = characterArray.map(function(elem){
+		    		return map[elem].displayName;
+		    	});
+		    	
+		        EventPresence.appendTableHeader(tableHead, displayArray);
+		        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
+		        	if(err) {Utils.handleError(err); return;}
+		            events.forEach(function (event, i) {
+		                EventPresence.appendTableInput(table, event, i, characterArray);
+		                Utils.enable(EventPresence.content, "isEditable", isEditable);
+		            });
+		        });
+		    });
+    	});
     });
 };
 
@@ -73,6 +88,7 @@ EventPresence.appendTableInput = function (table, event, i, characterArray) {
     characterArray.forEach(function (character) {
         td = document.createElement("td");
         var input = document.createElement("input");
+        addClass(input, "isEditable");
         input.type = "checkbox";
         if (event.characters[character]) {
             input.checked = true;

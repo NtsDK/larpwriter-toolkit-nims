@@ -65,41 +65,52 @@ Stories.onMasterStoryNavButtonClick = function (event) {
 
 Stories.refresh = function () {
     "use strict";
-    var selector1 = document.getElementById("storySelector");
-    Utils.removeChildren(selector1);
-    var selector2 = document.getElementById("fromStory");
-    Utils.removeChildren(selector2);
-    var selector3 = document.getElementById("storyRemoveSelector");
-    Utils.removeChildren(selector3);
-
-    DBMS.getStoryNamesArray(function(err, storyNames){
+    var selectors = [];
+    selectors.push(document.getElementById("fromStory"));
+    selectors.push(document.getElementById("storyRemoveSelector"));
+    var storySelector = document.getElementById("storySelector");
+    Utils.removeChildren(storySelector);
+    selectors.forEach(function(selector){
+    	Utils.removeChildren(selector);
+    });
+    PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
     	if(err) {Utils.handleError(err); return;}
-        if (storyNames.length > 0) {
-            var storyName = Stories.getSelectedStoryName(storyNames);
-            
-            var first = true;
-            storyNames.forEach(function (name) {
-                var option = document.createElement("option");
-                option.appendChild(document.createTextNode(name));
-                selector1.appendChild(option);
-                if(name === storyName){
-                    option.selected = true;
-                    first = false;
-                }
-                option = document.createElement("option");
-                option.appendChild(document.createTextNode(name));
-                selector2.appendChild(option);
-                option = document.createElement("option");
-                option.appendChild(document.createTextNode(name));
-                selector3.appendChild(option);
-            });
-            
-            Stories.onStorySelectorChange(storyName);
-        } else {
-            Stories.onStorySelectorChange();
-        }
-        
-        Stories.currentView.refresh();
+    	PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+    		if(err) {Utils.handleError(err); return;}
+    		if(userStoryNames.length > 0){
+	            userStoryNames.forEach(function (nameInfo) {
+	            	selectors.forEach(function(selector, i){
+	            		option = document.createElement("option");
+	            		option.appendChild(document.createTextNode(nameInfo.displayName));
+	            		option.value = nameInfo.value;
+	            		selector.appendChild(option);
+	            	});
+	            });
+    		}
+    		
+	        if (allStoryNames.length > 0) {
+	            var storyName = Stories.getSelectedStoryName(allStoryNames);
+	            
+	            var first = true;
+	            var option;
+	            allStoryNames.forEach(function (nameInfo) {
+                    option = document.createElement("option");
+                    option.appendChild(document.createTextNode(nameInfo.displayName));
+                    option.value = nameInfo.value;
+                    storySelector.appendChild(option);
+                    if(storyName === nameInfo.value){
+                    	option.selected = true;
+                    	first = false;
+                    }
+	            });
+	            
+	            Stories.onStorySelectorChange(storyName);
+	        } else {
+	            Stories.onStorySelectorChange();
+	        }
+	        
+	        Stories.currentView.refresh();
+    	});
     });
     
 };
@@ -109,13 +120,13 @@ Stories.getSelectedStoryName = function(storyNames){
     var settings = DBMS.getSettings();
     if(!settings["Stories"]){
         settings["Stories"] = {
-            storyName : storyNames[0]
+            storyName : storyNames[0].value
         };
     }
     var storyName = settings["Stories"].storyName;
-    if(storyNames.indexOf(storyName) === -1){
-        settings["Stories"].storyName = storyNames[0];
-        storyName = storyNames[0];
+    if(storyNames.map(function(nameInfo){return nameInfo.value;}).indexOf(storyName) === -1){
+        settings["Stories"].storyName = storyNames[0].value;
+        storyName = storyNames[0].value;
     }
     return storyName;
 };
@@ -136,7 +147,10 @@ Stories.createStory = function () {
             DBMS.createStory(storyName, function(err){
             	if(err) {Utils.handleError(err); return;}
                 Stories.updateSettings(storyName);
-                Stories.refresh();
+                PermissionInformer.refresh(function(err){
+                	if(err) {Utils.handleError(err); return;}
+                	Stories.refresh();
+                });
             });
         }
     });
@@ -165,7 +179,10 @@ Stories.renameStory = function () {
             DBMS.renameStory(fromName, toName, function(err){
             	if(err) {Utils.handleError(err); return;}
                 Stories.updateSettings(toName);
-                Stories.refresh();
+                PermissionInformer.refresh(function(err){
+                	if(err) {Utils.handleError(err); return;}
+                	Stories.refresh();
+                });
             });
         }
     });
@@ -177,7 +194,13 @@ Stories.removeStory = function () {
 
     if (Utils.confirm("Вы уверены, что хотите удалить историю " + name
             + "? Все данные связанные с историей будут удалены безвозвратно.")) {
-        DBMS.removeStory(name, Utils.processError(Stories.refresh));
+        DBMS.removeStory(name, function(err){
+        	if(err) {Utils.handleError(err); return;}
+        	PermissionInformer.refresh(function(err){
+            	if(err) {Utils.handleError(err); return;}
+            	Stories.refresh();
+            });
+        });
     }
 };
 
@@ -194,10 +217,14 @@ Stories.onStorySelectorChange = function (storyName) {
     
     if(storyName){
         Stories.updateSettings(storyName);
-        DBMS.getMasterStory(storyName, function(err, story){
+        PermissionInformer.isStoryEditable(storyName, function(err, isEditable){
         	if(err) {Utils.handleError(err); return;}
-            storyArea.value = story;
-            Stories.currentView.refresh();
+	        DBMS.getMasterStory(storyName, function(err, story){
+	        	if(err) {Utils.handleError(err); return;}
+	            storyArea.value = story;
+	            Stories.currentView.refresh();
+	            Utils.enable(Stories.content, "isEditable", isEditable);
+	        });
         });
     } else { // when there are no stories at all
         Stories.updateSettings(null);

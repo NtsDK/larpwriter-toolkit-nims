@@ -275,7 +275,7 @@ See the License for the specific language governing permissions and
           <div style="flex-grow:1;width:50%;margin-right:10px;" id="masterStoryDiv">
             <div class="panel panel-default">
               <div class="panel-body">
-                 <textarea id="masterStoryArea"></textarea>
+                 <textarea id="masterStoryArea" class="isEditable"></textarea>
               </div>
             </div>
           </div>
@@ -294,23 +294,23 @@ See the License for the specific language governing permissions and
           <div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
             <div style="flex-grow:1;margin-right:10px;">
               <h3 style="margin-top:8px;">Создание события</h3>
-              Название<input id="eventNameInput"></input><br>
+              Название<input id="eventNameInput" class="isEditable"></input><br>
               Описание события<br>
-              <textarea id="eventInput" class="eventText"></textarea><br>
-              Позиция<select id="positionSelector"></select>
-              <button id="createEventButton">Добавить</button>
+              <textarea id="eventInput" class="eventText isEditable"></textarea><br>
+              Позиция<select id="positionSelector" class="isEditable"></select>
+              <button id="createEventButton" class="isEditable">Добавить</button>
             </div>
             <div style="flex-grow:1;">
               <h3 style="margin-top:8px;">Управление событиями</h3>
-              Поменять местами <select id="firstEvent"></select> и <br> <select
-                id="secondEvent"></select>
-              <button id="swapEventsButton">OK</button>
-              <br> <select id="cloneEventSelector"></select>
-              <button id="cloneEventButton">Клонировать</button>
-              <br> <select id="mergeEventSelector"></select>
-              <button id="mergeEventButton">Объединить со следующим</button>
-              <br> <select id="removeEventSelector"></select>
-              <button id="removeEventButton">Удалить</button>
+              Поменять местами <select id="firstEvent" class="isEditable"></select> и <br> <select
+                id="secondEvent" class="isEditable"></select>
+              <button id="swapEventsButton" class="isEditable">OK</button>
+              <br> <select id="cloneEventSelector" class="isEditable"></select>
+              <button id="cloneEventButton" class="isEditable">Клонировать</button>
+              <br> <select id="mergeEventSelector" class="isEditable"></select>
+              <button id="mergeEventButton" class="isEditable">Объединить со следующим</button>
+              <br> <select id="removeEventSelector" class="isEditable"></select>
+              <button id="removeEventButton" class="isEditable">Удалить</button>
             </div>
           </div>
           
@@ -333,13 +333,13 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-body">
           <h3>Управление персонажами</h3>
-          <select id="storyCharactersAddSelector"></select>
-          <button id="storyCharactersAddButton">Добавить</button>
-          <br> Заменить<select id="storyCharactersFromSelector"></select>
-          на <select id="storyCharactersToSelector"></select>
-          <button id="storyCharactersSwitchButton">ОК</button>
-          <br> <select id="storyCharactersRemoveSelector"></select>
-          <button id="storyCharactersRemoveButton">Удалить</button>
+          <select id="storyCharactersAddSelector" class="isEditable"></select>
+          <button id="storyCharactersAddButton" class="isEditable">Добавить</button>
+          <br> Заменить<select id="storyCharactersFromSelector" class="isEditable"></select>
+          на <select id="storyCharactersToSelector" class="isEditable"></select>
+          <button id="storyCharactersSwitchButton" class="isEditable">ОК</button>
+          <br> <select id="storyCharactersRemoveSelector" class="isEditable"></select>
+          <button id="storyCharactersRemoveButton" class="isEditable">Удалить</button>
           <br> <br>
     
           <div style="display:flex;flex-wrap: wrap; justify-content:space-around;">

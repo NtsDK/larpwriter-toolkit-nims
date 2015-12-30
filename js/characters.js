@@ -89,7 +89,13 @@ Characters.createCharacter = function () {
         if (isCharacterNameUsed) {
             Utils.alert("Такой персонаж уже существует");
         } else {
-            DBMS.createCharacter(name, Utils.processError(Characters.refresh));
+            DBMS.createCharacter(name, function(err){
+            	if(err) {Utils.handleError(err); return;}
+            	PermissionInformer.refresh(function(err){
+                	if(err) {Utils.handleError(err); return;}
+                	Characters.refresh();
+                });
+            });
         }
     });
 
@@ -115,7 +121,13 @@ Characters.renameCharacter = function () {
         if (isCharacterNameUsed) {
             Utils.alert("Имя " + toName + " уже используется.");
         } else {
-            DBMS.renameCharacter(fromName, toName, Utils.processError(Characters.refresh));
+            DBMS.renameCharacter(fromName, toName, function(err){
+            	if(err) {Utils.handleError(err); return;}
+            	PermissionInformer.refresh(function(err){
+                	if(err) {Utils.handleError(err); return;}
+                	Characters.refresh();
+                });
+            });
         }
     });
 };
@@ -126,6 +138,12 @@ Characters.removeCharacter = function () {
 
     if (Utils.confirm("Вы уверены, что хотите удалить " + name
             + "? Все данные связанные с персонажем будут удалены безвозвратно.")) {
-        DBMS.removeCharacter(name, Utils.processError(Characters.refresh));
+        DBMS.removeCharacter(name, function(err){
+        	if(err) {Utils.handleError(err); return;}
+        	PermissionInformer.refresh(function(err){
+            	if(err) {Utils.handleError(err); return;}
+            	Characters.refresh();
+            });
+        });
     }
 };
