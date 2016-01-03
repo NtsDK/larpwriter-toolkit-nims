@@ -22,8 +22,16 @@ var SocialNetwork = {};
 
 SocialNetwork.colorMap = {};
 
-//SocialNetwork.networks = [ "Простая сеть", "Детальная сеть", "Человек-история", "Человек-история 2" ];
-SocialNetwork.networks = [ "Детальная сеть", "Человек-история", "Человек-история 2" ];
+SocialNetwork.networks = [ {
+	displayName: "Социальные связи",
+	value : "socialRelations"
+},{
+	displayName: "Персонаж-участие-история",
+	value: "characterPresenceInStory"
+},{
+	displayName: "Персонаж-активность-история" ,
+	value: "characterActivityInStory"
+}];
 
 SocialNetwork.activityColors = {
         "active": "red", 
@@ -116,7 +124,8 @@ SocialNetwork.init = function () {
     var option;
     SocialNetwork.networks.forEach(function (network) {
         option = document.createElement("option");
-        option.appendChild(document.createTextNode(network));
+        option.appendChild(document.createTextNode(network.displayName));
+        option.value = network.value;
         selector.appendChild(option);
     });
     
@@ -170,63 +179,76 @@ SocialNetwork.refresh = function () {
     "use strict";
     
     var selector = document.getElementById("networkSelector");
-    selector.value = SocialNetwork.networks[0];
+    selector.value = SocialNetwork.networks[0].value;
     
     selector = document.getElementById("networkNodeGroupSelector");
     Utils.removeChildren(selector);
     
-    DBMS.getAllProfiles(function(err, profiles){
+    PermissionInformer.getCharacterNamesArray(false, function(err, characterNames){
     	if(err) {Utils.handleError(err); return;}
-        SocialNetwork.Characters = profiles;
-        
-        DBMS.getAllStories(function(err, stories){
-        	if(err) {Utils.handleError(err); return;}
-            SocialNetwork.Stories = stories;
-            
-            DBMS.getAllProfileSettings(function(err, profileSettings){
-            	if(err) {Utils.handleError(err); return;}
-                
-                var groups = profileSettings.filter(function (element) {
-                    return element.type === "enum" || element.type === "checkbox";
-                });
-                
-                var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
-                    return elem.name;
-                }));
-                
-                groupNames.forEach(function (group) {
-                    var option = document.createElement("option");
-                    option.appendChild(document.createTextNode(group));
-                    selector.appendChild(option);
-                });
-                
-                SocialNetwork.groupColors = {};
-                
-                for ( var groupName in SocialNetwork.fixedColors) {
-                    SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
-                }
-                
-                groups.forEach(function (group) {
-                    if(group.type === "enum"){
-                        group.value.split(",").forEach(function (subGroupName, i){
-                            SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = SocialNetwork.colorPalette[i];
-                        });
-                    } else if( group.type === "checkbox"){
-                        if(group.value){
-                            SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[0];
-                            SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[1];
-                        } else {
-                            SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[1];
-                            SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[0];
-                        }
-                    }
-                });
-                
-                NetworkSubsetsSelector.refresh(SocialNetwork);
-            });
-        });
-        
-        
+    	PermissionInformer.getStoryNamesArray(false, function(err, storyNames){
+    		if(err) {Utils.handleError(err); return;}
+    	
+		    DBMS.getAllProfiles(function(err, profiles){
+		    	if(err) {Utils.handleError(err); return;}
+		        SocialNetwork.Characters = profiles;
+		        
+		        characterNames.forEach(function(elem){
+		        	profiles[elem.value].displayName = elem.displayName;
+		        });
+		        
+		        DBMS.getAllStories(function(err, stories){
+		        	if(err) {Utils.handleError(err); return;}
+		            SocialNetwork.Stories = stories;
+		            
+		            storyNames.forEach(function(elem){
+		            	stories[elem.value].displayName = elem.displayName;
+			        });
+		            
+		            DBMS.getAllProfileSettings(function(err, profileSettings){
+		            	if(err) {Utils.handleError(err); return;}
+		                
+		                var groups = profileSettings.filter(function (element) {
+		                    return element.type === "enum" || element.type === "checkbox";
+		                });
+		                
+		                var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
+		                    return elem.name;
+		                }));
+		                
+		                groupNames.forEach(function (group) {
+		                    var option = document.createElement("option");
+		                    option.appendChild(document.createTextNode(group));
+		                    selector.appendChild(option);
+		                });
+		                
+		                SocialNetwork.groupColors = {};
+		                
+		                for ( var groupName in SocialNetwork.fixedColors) {
+		                    SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
+		                }
+		                
+		                groups.forEach(function (group) {
+		                    if(group.type === "enum"){
+		                        group.value.split(",").forEach(function (subGroupName, i){
+		                            SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = SocialNetwork.colorPalette[i];
+		                        });
+		                    } else if( group.type === "checkbox"){
+		                        if(group.value){
+		                            SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[0];
+		                            SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[1];
+		                        } else {
+		                            SocialNetwork.groupColors[group.name + ".true"] = SocialNetwork.colorPalette[1];
+		                            SocialNetwork.groupColors[group.name + ".false"] = SocialNetwork.colorPalette[0];
+		                        }
+		                    }
+		                });
+		                
+		                NetworkSubsetsSelector.refresh(SocialNetwork);
+		            });
+		        });
+		    });
+	    });
     });
     
     
@@ -296,7 +318,7 @@ SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
     "use strict";
     var selectedNetwork = event.target.value;
     var activityBlock = document.getElementById("activityBlock");
-    activityBlock.className = selectedNetwork === "Человек-история 2" ? "" : "hidden";
+    activityBlock.className = selectedNetwork === "characterActivityInStory" ? "" : "hidden";
 };
 
 SocialNetwork.onDrawNetwork = function () {
@@ -311,21 +333,21 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     SocialNetwork.selectedNetwork = selectedNetwork;
     SocialNetwork.nodes = [];
     SocialNetwork.edges = [];
-
+    
     switch (selectedNetwork) {
     case "Простая сеть":
         SocialNetwork.nodes = SocialNetwork.getCharacterNodes();
         SocialNetwork.edges = SocialNetwork.getSimpleEdges();
         break;
-    case "Детальная сеть":
+    case "socialRelations":
         SocialNetwork.nodes = SocialNetwork.getCharacterNodes();
         SocialNetwork.edges = SocialNetwork.getDetailedEdges();
         break;
-    case "Человек-история":
+    case "characterPresenceInStory":
         SocialNetwork.nodes = SocialNetwork.getCharacterNodes().concat(SocialNetwork.getStoryNodes());
         SocialNetwork.edges = SocialNetwork.getStoryEdges();
         break;
-    case "Человек-история 2":
+    case "characterActivityInStory":
         SocialNetwork.nodes = SocialNetwork.getCharacterNodes().concat(SocialNetwork.getStoryNodes());
         SocialNetwork.edges = SocialNetwork.getActivityEdges();
         break;

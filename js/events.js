@@ -53,41 +53,57 @@ Events.refresh = function () {
     
     var showOnlyUnfinishedStories = document.getElementById("finishedStoryCheckbox").checked;
 
-    DBMS.getFilteredStoryNames(showOnlyUnfinishedStories, function(err, storyNames){
+    PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
     	if(err) {Utils.handleError(err); return;}
-        if (storyNames.length > 0) {
-            var storyNamesOnly = storyNames.map(function(elem){
-                return elem.storyName;
-            })
-            var settings = DBMS.getSettings();
-            if(!settings["Events"]){
-                settings["Events"] = {
-                        storyName : storyNamesOnly[0]
-                };
-            }
-            var storyName = settings["Events"].storyName;
-            if(storyNamesOnly.indexOf(storyName) === -1){
-                settings["Events"].storyName = storyNamesOnly[0];
-                storyName = storyNamesOnly[0];
-            }
-            
-            var isFirst = true;
-            storyNames.forEach(function (tmpStoryName) {
-                var option = document.createElement("option");
-                option.appendChild(document.createTextNode(tmpStoryName.storyName + 
-                        (tmpStoryName.isFinished ? Events.finishedSuffix : "")));
-                if (tmpStoryName.storyName === storyName) {
-                    Events.updateCharacterSelector(tmpStoryName.storyName);
-                    option.selected = true;
-                    isFirst = false;
-                }
-                
-                option.storyInfo = tmpStoryName.storyName;
-                selector.appendChild(option);
-            });
-        }
+    	
+    	DBMS.getFilteredStoryNames(showOnlyUnfinishedStories, function(err, storyNames){
+    		if(err) {Utils.handleError(err); return;}
+    		if (storyNames.length > 0) {
+    			var storyNamesOnly = storyNames.map(function(elem){
+    				return elem.storyName;
+    			})
+    			var settings = DBMS.getSettings();
+    			if(!settings["Events"]){
+    				settings["Events"] = {
+    						storyName : storyNamesOnly[0]
+    				};
+    			}
+    			var storyName = settings["Events"].storyName;
+    			if(storyNamesOnly.indexOf(storyName) === -1){
+    				settings["Events"].storyName = storyNamesOnly[0];
+    				storyName = storyNamesOnly[0];
+    			}
+    			
+		    	var map = {};
+		    	allStoryNames.forEach(function(elem){
+		    		map[elem.value] = elem;
+		    	});
+		    	
+		    	storyNames = storyNames.map(function(elem){
+		    		var info = map[elem.storyName];
+		    		info.isFinished = elem.isFinished;
+		    		return info;
+		    	});
+		    	
+		    	storyNames.sort(Utils.charOrdAObject);
+    			
+    			var isFirst = true;
+    			storyNames.forEach(function (tmpStoryName) {
+    				var option = document.createElement("option");
+    				option.appendChild(document.createTextNode(tmpStoryName.displayName + 
+    						(tmpStoryName.isFinished ? Events.finishedSuffix : "")));
+    				if (tmpStoryName.value === storyName) {
+    					Events.updateCharacterSelector(tmpStoryName.value);
+    					option.selected = true;
+    					isFirst = false;
+    				}
+    				
+    				option.storyInfo = tmpStoryName.value;
+    				selector.appendChild(option);
+    			});
+    		}
+    	});
     });
-    
 };
 
 Events.updateCharacterSelectorDelegate = function (event) {
@@ -106,42 +122,56 @@ Events.updateCharacterSelector = function (storyName) {
 
     var isFirst = true;
     
-    DBMS.getFilteredCharacterNames(storyName, showOnlyUnfinishedStories, function(err, characterArray){
+	PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
     	if(err) {Utils.handleError(err); return;}
-        if (characterArray.length > 0) {
-            var settings = DBMS.getSettings();
-            if(!settings["Events"].characterNames){
-                settings["Events"].characterNames = [];
-            }
-            
-            var characterNames = settings["Events"].characterNames;
-            var existingCharacterNames = characterNames.filter(function(name){
-                return characterArray.indexOf(name) !== -1;
-            });
-            
-            Events.updateSettings("characterNames", existingCharacterNames);
-            characterNames = existingCharacterNames;
-            
-            characterArray.forEach(function (elem) {
-                var suffix = elem.isFinished ? Events.finishedSuffix : "";
-                var option = document.createElement("option");
-                option.appendChild(document.createTextNode(elem.characterName + " " + suffix));
-                if (characterNames.indexOf(elem.characterName) !== -1) {
-                    option.selected = true;
-                    isFirst = false;
-                }
-                
-                option.storyInfo = storyName;
-                option.characterInfo = elem.characterName;
-                selector.appendChild(option);
-            });
-            
-            DBMS.getEvents(storyName, characterNames, function(err, events){
-            	if(err) {Utils.handleError(err); return;}
-                Events.showPersonalStories(storyName, characterNames, events);
-            });
-        }
-    });
+    	DBMS.getFilteredCharacterNames(storyName, showOnlyUnfinishedStories, function(err, characterArray){
+    		if(err) {Utils.handleError(err); return;}
+    		if (characterArray.length > 0) {
+    			var settings = DBMS.getSettings();
+    			if(!settings["Events"].characterNames){
+    				settings["Events"].characterNames = [];
+    			}
+    			
+    			var characterNames = settings["Events"].characterNames;
+    			var existingCharacterNames = characterNames.filter(function(name){
+    				return characterArray.indexOf(name) !== -1;
+    			});
+    			
+    			Events.updateSettings("characterNames", existingCharacterNames);
+    			characterNames = existingCharacterNames;
+    			
+		    	var map = {};
+		    	allCharacters.forEach(function(elem){
+		    		map[elem.value] = elem;
+		    	});
+		    	
+		    	characterArray = characterArray.map(function(elem){
+		    		var info = map[elem.characterName];
+		    		info.isFinished = elem.isFinished;
+		    		return info;
+		    	});
+		    	
+		    	characterArray.sort(Utils.charOrdAObject);
+    			
+    			characterArray.forEach(function (elem) {
+    				var suffix = elem.isFinished ? Events.finishedSuffix : "";
+    				var option = document.createElement("option");
+    				option.appendChild(document.createTextNode(elem.displayName + " " + suffix));
+    				if (characterNames.indexOf(elem.value) !== -1) {
+    					option.selected = true;
+    					isFirst = false;
+    				}
+    				
+    				option.storyInfo = storyName;
+    				option.characterInfo = elem.value;
+    				selector.appendChild(option);
+    			});
+    			
+
+    			Events.showPersonalStories(storyName, characterNames);
+    		}
+    	});
+	});
     
 };
 
@@ -163,15 +193,35 @@ Events.showPersonalStoriesDelegate = function (event) {
     
     Events.updateSettings("characterNames", characterNames);
     
-    DBMS.getEvents(storyName, characterNames, function(err, events){
-    	if(err) {Utils.handleError(err); return;}
-        Events.showPersonalStories(storyName, characterNames, events);
-    });
+    Events.showPersonalStories(storyName, characterNames);
 };
 
 
 
-Events.showPersonalStories = function (storyName, characterNames, events) {
+Events.showPersonalStories = function (storyName, characterNames) {
+    "use strict";
+    
+	DBMS.getEvents(storyName, characterNames, function(err, events){
+		if(err) {Utils.handleError(err); return;}
+	    PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
+	    	if(err) {Utils.handleError(err); return;}
+	    	var adaptations = characterNames.map(function(characterName){
+	    		return {
+	    			characterName: characterName,
+	    			storyName: storyName
+	    		};
+	    	});
+	    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+	    		if(err) {Utils.handleError(err); return;}
+	    		Events.buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable);
+	    		Utils.enable(Events.content, "isStoryEditable", isStoryEditable);
+	    		Utils.enable(Events.content, "notEditable", false);
+	    	});
+	    });
+	});
+};
+	
+Events.buildAdaptationInterface = function (storyName, characterNames, events, areAdaptationsEditable) {
     "use strict";
     
     var table = document.getElementById("personalStories");
@@ -192,7 +242,8 @@ Events.showPersonalStories = function (storyName, characterNames, events) {
         td.appendChild(span);
         
         input = document.createElement("textarea");
-        input.className = "eventPersonalStory";
+        addClass(input,"isStoryEditable");
+        addClass(input,"eventPersonalStory");
         input.value = event.text;
         input.eventIndex = event.index;
         input.storyName = storyName;
@@ -218,7 +269,10 @@ Events.showPersonalStories = function (storyName, characterNames, events) {
             div.appendChild(document.createTextNode(characterName));
             
             input = document.createElement("textarea");
-            input.className = "eventPersonalStory";
+            if(!areAdaptationsEditable[storyName + "-" + characterName]){
+            	addClass(input,"notEditable");
+            }
+            addClass(input,"eventPersonalStory");
             input.value = event.characters[characterName].text;
             input.eventIndex = event.index;
             input.storyName = storyName;
@@ -228,6 +282,9 @@ Events.showPersonalStories = function (storyName, characterNames, events) {
             div.appendChild(input);
             
             input = document.createElement("input");
+            if(!areAdaptationsEditable[storyName + "-" + characterName]){
+            	addClass(input,"notEditable");
+            }
             input.type = "checkbox";
             input.checked = event.characters[characterName].ready;
             input.eventIndex = event.index;

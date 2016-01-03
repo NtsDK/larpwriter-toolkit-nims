@@ -52,18 +52,24 @@ NetworkSubsetsSelector.refresh = function (parent) {
     selector = document.getElementById("networkCharacterSelector");
     Utils.removeChildren(selector);
     
-    Object.keys(NetworkSubsetsSelector.parent.Characters).sort(CommonUtils.charOrdA).forEach(function (name) {
+    Object.keys(NetworkSubsetsSelector.parent.Characters).map(function(name){
+    	return NetworkSubsetsSelector.parent.Characters[name];
+    }).sort(Utils.charOrdAObject).forEach(function (nameInfo) {
         option = document.createElement("option");
-        option.appendChild(document.createTextNode(name));
+        option.appendChild(document.createTextNode(nameInfo.displayName));
+        option.value = nameInfo.name;
         selector.appendChild(option);
     });
     
     selector = document.getElementById("networkStorySelector");
     Utils.removeChildren(selector);
     
-    Object.keys(NetworkSubsetsSelector.parent.Stories).sort(CommonUtils.charOrdA).forEach(function (story) {
+    Object.keys(NetworkSubsetsSelector.parent.Stories).map(function(name){
+    	return NetworkSubsetsSelector.parent.Stories[name];
+    }).sort(Utils.charOrdAObject).forEach(function (nameInfo) {
         option = document.createElement("option");
-        option.appendChild(document.createTextNode(story));
+        option.appendChild(document.createTextNode(nameInfo.displayName));
+        option.value = nameInfo.name;
         selector.appendChild(option);
     });
 };

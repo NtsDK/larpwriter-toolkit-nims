@@ -56,14 +56,14 @@ StoryCharacters.refresh = function () {
         return;
     }
     
-    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isEditable){
+    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
     	if(err) {Utils.handleError(err); return;}
     	PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
 	    	if(err) {Utils.handleError(err); return;}
 	        DBMS.getStoryCharacters(Stories.CurrentStoryName, function(err, localCharacters){
 	        	if(err) {Utils.handleError(err); return;}
 	            StoryCharacters.rebuildInterface(allCharacters, localCharacters);
-	            Utils.enable(StoryCharacters.content, "isEditable", isEditable);
+	            Utils.enable(StoryCharacters.content, "isStoryEditable", isStoryEditable);
 	        });
 	    });
     });
@@ -187,7 +187,7 @@ StoryCharacters.appendCharacterInput = function (table, characterMeta, character
     input.value = character.inventory;
     input.characterName = character.name;
     addClass(input, "inventoryInput");
-    addClass(input, "isEditable");
+    addClass(input, "isStoryEditable");
     input.addEventListener("change", StoryCharacters.updateCharacterInventory);
     td.appendChild(input);
     tr.appendChild(td);
@@ -210,7 +210,7 @@ StoryCharacters.appendCharacterActivity = function (table, characterMeta, charac
     StoryCharacters.characterActivityTypes.forEach(function (activityType) {
         td = document.createElement("td");
         input = document.createElement("input");
-        addClass(input, "isEditable");
+        addClass(input, "isStoryEditable");
         input.type = "checkbox";
         if (character.activity[activityType]) {
             input.checked = true;

@@ -46,14 +46,14 @@ StoryEvents.refresh = function () {
         return;
     }
     
-    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isEditable){
+    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
     	if(err) {Utils.handleError(err); return;}
 	    DBMS.getMetaInfo(function(err, metaInfo){
 	    	if(err) {Utils.handleError(err); return;}
 	        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
 	        	if(err) {Utils.handleError(err); return;}
 	            StoryEvents.rebuildInterface(events, metaInfo);
-	            Utils.enable(StoryEvents.content, "isEditable", isEditable);
+	            Utils.enable(StoryEvents.content, "isStoryEditable", isStoryEditable);
 	        });
 	    });
     });
@@ -218,7 +218,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     td.appendChild(divMain);
     
     input = document.createElement("input");
-    addClass(input, "isEditable");
+    addClass(input, "isStoryEditable");
     input.value = event.name;
     input.eventIndex = index;
     input.addEventListener("change", StoryEvents.updateEventName);
@@ -226,7 +226,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
 
     // event datetime picker
     input = document.createElement("input");
-    addClass(input, "isEditable");
+    addClass(input, "isStoryEditable");
     addClass(input, "eventTime");
     input.value = event.time;
     
@@ -252,7 +252,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     divRight.appendChild(input);
 
     input = document.createElement("textarea");
-    addClass(input, "isEditable");
+    addClass(input, "isStoryEditable");
     addClass(input, "eventText");
     input.value = event.text;
     input.eventIndex = index;

@@ -80,16 +80,28 @@ if(MODE === "NIMS_Server"){
 		callback(null, PermissionInformer.summary.isAdmin);
 	};
 	
-	PermissionInformer.isCharacterEditable = function(characterName, callback){
+	PermissionInformer.isEditor = function(callback){
+		callback(null, PermissionInformer.summary.isEditor);
+	};
+	
+	PermissionInformer.isCharacterEditableSync = function(characterName){
 		var isEditor = PermissionInformer.summary.isEditor;
 		var userCharacters = PermissionInformer.summary.userCharacters;
-		callback(null, isEditor || userCharacters.indexOf(characterName) !== -1);
+		return isEditor || userCharacters.indexOf(characterName) !== -1;
+	};
+	
+	PermissionInformer.isCharacterEditable = function(characterName, callback){
+		callback(null, PermissionInformer.isCharacterEditableSync(characterName));
+	};
+	
+	PermissionInformer.isStoryEditableSync = function(storyName){
+		var isEditor = PermissionInformer.summary.isEditor;
+		var userStories = PermissionInformer.summary.userStories;
+		return isEditor || userStories.indexOf(storyName) !== -1;
 	};
 	
 	PermissionInformer.isStoryEditable = function(storyName, callback){
-		var isEditor = PermissionInformer.summary.isEditor;
-		var userStories = PermissionInformer.summary.userStories;
-		callback(null, isEditor || userStories.indexOf(storyName) !== -1);
+		callback(null, PermissionInformer.isStoryEditableSync(storyName));
 	};
 	
 	PermissionInformer.getCharacterNamesArray = function(editableOnly, callback){
@@ -142,13 +154,22 @@ if(MODE === "NIMS_Server"){
 		callback(null, newNames);
 	};
 	
-//	PermissionInformer.getCharacterOwnerMap = function(callback){
-//		callback(null, PermissionInformer.summary.characterOwnerMap);
-//	};
+	PermissionInformer.areAdaptationsEditable = function(adaptations, callback){
+		var map = {};
+		var isAdaptationRightsByStory = PermissionInformer.summary.isAdaptationRightsByStory;
+		
+		adaptations.forEach(function(elem){
+			var key = elem.storyName + "-" + elem.characterName;
+			if(isAdaptationRightsByStory){
+				map[key] = PermissionInformer.isStoryEditableSync(elem.storyName);
+			} else {
+				map[key] = PermissionInformer.isCharacterEditableSync(elem.characterName);
+			}
+		});
+		
+		callback(null, map);
+	};
 	
-//	PermissionInformer.getUserStories = function(callback){
-//		callback(null, PermissionInformer.summary.userStories);
-//	};
 } else {
 	
 	PermissionInformer.refresh = function(callback) {
@@ -156,6 +177,10 @@ if(MODE === "NIMS_Server"){
 	};
 	
 	PermissionInformer.isAdmin = function(callback){
+		callback(null, true);
+	};
+	
+	PermissionInformer.isEditor = function(callback){
 		callback(null, true);
 	};
 	
@@ -192,23 +217,18 @@ if(MODE === "NIMS_Server"){
 	PermissionInformer.isCharacterEditable = function(characterName, callback){
 		callback(null, true);
 	};
+	
 	PermissionInformer.isStoryEditable = function(storyName, callback){
 		callback(null, true);
 	};
 	
-//	PermissionInformer.getCharacterOwnerMap = function(callback){
-//		DBMS.getCharacterNamesArray(function(err, characterNames){
-//			if(err) {Utils.handleError(err); return;}
-//			var ownerMap = {};
-//			characterNames.forEach(function(elem){
-//				ownerMap[elem] = "";
-//			});
-//			callback(null, ownerMap);
-//		});
-//	};
-	
-//	PermissionInformer.getUserStories = function(callback){
-//		callback(null, PermissionInformer.summary.userStories);
-//	};
+	PermissionInformer.areAdaptationsEditable = function(adaptations, callback){
+		var map = {};
+		adaptations.forEach(function(elem){
+			map[elem.storyName + "-" + elem.characterName] = true;
+		});
+		
+		callback(null, map);
+	};
 }
 

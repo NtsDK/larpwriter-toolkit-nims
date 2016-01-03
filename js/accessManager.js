@@ -64,7 +64,15 @@ AccessManager.refresh = function() {
     		if(err) {Utils.handleError(err); return;}
     		DBMS.getUsersInfo(function(err, info){
     			if(err) {Utils.handleError(err); return;}
-    			AccessManager.rebuildInterface(characterNames, storyNames, info);
+    	        PermissionInformer.isAdmin(function(err, isAdmin){
+    	        	if(err) {Utils.handleError(err); return;}
+    	        	PermissionInformer.isEditor(function(err, isEditor){
+    	        		if(err) {Utils.handleError(err); return;}
+	    	        	AccessManager.rebuildInterface(characterNames, storyNames, info);
+	    	        	Utils.enable(AccessManager.content, "adminOnly", isAdmin);
+	    	        	Utils.enable(AccessManager.content, "editorOrAdmin", isAdmin || isEditor);
+    	        	});
+    	        });
     		});
     	});
     });

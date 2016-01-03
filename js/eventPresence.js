@@ -36,7 +36,7 @@ EventPresence.refresh = function () {
         return;
     }
     
-    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isEditable){
+    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
     	if(err) {Utils.handleError(err); return;}
     	PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
 	    	if(err) {Utils.handleError(err); return;}
@@ -46,8 +46,17 @@ EventPresence.refresh = function () {
 		    	allCharacters.forEach(function(elem){
 		    		map[elem.value] = elem;
 		    	});
-		    	var displayArray = characterArray.map(function(elem){
-		    		return map[elem].displayName;
+		    	var dataArray = characterArray.map(function(elem){
+		    		return map[elem];
+		    	});
+		    	
+		    	dataArray.sort(Utils.charOrdAObject);
+		    	
+		    	var displayArray = dataArray.map(function(elem){
+		    		return elem.displayName;
+		    	});
+		    	var characterArray = dataArray.map(function(elem){
+		    		return elem.value;
 		    	});
 		    	
 		        EventPresence.appendTableHeader(tableHead, displayArray);
@@ -55,7 +64,7 @@ EventPresence.refresh = function () {
 		        	if(err) {Utils.handleError(err); return;}
 		            events.forEach(function (event, i) {
 		                EventPresence.appendTableInput(table, event, i, characterArray);
-		                Utils.enable(EventPresence.content, "isEditable", isEditable);
+		                Utils.enable(EventPresence.content, "isStoryEditable", isStoryEditable);
 		            });
 		        });
 		    });
@@ -88,7 +97,7 @@ EventPresence.appendTableInput = function (table, event, i, characterArray) {
     characterArray.forEach(function (character) {
         td = document.createElement("td");
         var input = document.createElement("input");
-        addClass(input, "isEditable");
+        addClass(input, "isStoryEditable");
         input.type = "checkbox";
         if (event.characters[character]) {
             input.checked = true;

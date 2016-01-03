@@ -49,35 +49,43 @@ CharacterFilter.refresh = function () {
     
     filterSettingsDiv.appendChild(document.createElement("br"));
     
-    DBMS.getAllProfiles(function(err, profiles){
+    PermissionInformer.getCharacterNamesArray(false, function(err, names){
     	if(err) {Utils.handleError(err); return;}
-        CharacterFilter.Characters = profiles;
-        
-        DBMS.getAllProfileSettings(function(err, allProfileSettings){
-        	if(err) {Utils.handleError(err); return;}
-            CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
-                return true;
-            });
-            
-            CharacterFilter.unshiftedProfileSettings = CharacterFilter.allProfileSettings.filter(function (value) {
-                return true;
-            });
-            CharacterFilter.unshiftedProfileSettings.unshift({
-                name : "name",
-                type : "text"
-            });
-            
-            CharacterFilter.allProfileSettings.forEach(function (profileSettings) {
-                CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
-            });
-            
-            var filterHead = document.getElementById("filterHead");
-            Utils.removeChildren(filterHead);
-            
-            CharacterFilter.appendContentHeader(filterHead, CharacterFilter.allProfileSettings);
-            
-            CharacterFilter.rebuildContent();
-        });
+	    DBMS.getAllProfiles(function(err, profiles){
+	    	if(err) {Utils.handleError(err); return;}
+	        CharacterFilter.Characters = profiles;
+	        
+	        names.forEach(function(elem){
+	        	profiles[elem.value].name = elem.displayName;
+	        });
+	        
+	        
+	        DBMS.getAllProfileSettings(function(err, allProfileSettings){
+	        	if(err) {Utils.handleError(err); return;}
+	            CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
+	                return true;
+	            });
+	            
+	            CharacterFilter.unshiftedProfileSettings = CharacterFilter.allProfileSettings.filter(function (value) {
+	                return true;
+	            });
+	            CharacterFilter.unshiftedProfileSettings.unshift({
+	                name : "name",
+	                type : "text"
+	            });
+	            
+	            CharacterFilter.allProfileSettings.forEach(function (profileSettings) {
+	                CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
+	            });
+	            
+	            var filterHead = document.getElementById("filterHead");
+	            Utils.removeChildren(filterHead);
+	            
+	            CharacterFilter.appendContentHeader(filterHead, CharacterFilter.allProfileSettings);
+	            
+	            CharacterFilter.rebuildContent();
+	        });
+	    });
     });
 };
 

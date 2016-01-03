@@ -275,7 +275,7 @@ See the License for the specific language governing permissions and
           <div style="flex-grow:1;width:50%;margin-right:10px;" id="masterStoryDiv">
             <div class="panel panel-default">
               <div class="panel-body">
-                 <textarea id="masterStoryArea" class="isEditable"></textarea>
+                 <textarea id="masterStoryArea" class="isStoryEditable"></textarea>
               </div>
             </div>
           </div>
@@ -294,23 +294,23 @@ See the License for the specific language governing permissions and
           <div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
             <div style="flex-grow:1;margin-right:10px;">
               <h3 style="margin-top:8px;">Создание события</h3>
-              Название<input id="eventNameInput" class="isEditable"></input><br>
+              Название<input id="eventNameInput" class="isStoryEditable"></input><br>
               Описание события<br>
-              <textarea id="eventInput" class="eventText isEditable"></textarea><br>
-              Позиция<select id="positionSelector" class="isEditable"></select>
-              <button id="createEventButton" class="isEditable">Добавить</button>
+              <textarea id="eventInput" class="eventText isStoryEditable"></textarea><br>
+              Позиция<select id="positionSelector" class="isStoryEditable"></select>
+              <button id="createEventButton" class="isStoryEditable">Добавить</button>
             </div>
             <div style="flex-grow:1;">
               <h3 style="margin-top:8px;">Управление событиями</h3>
-              Поменять местами <select id="firstEvent" class="isEditable"></select> и <br> <select
-                id="secondEvent" class="isEditable"></select>
-              <button id="swapEventsButton" class="isEditable">OK</button>
-              <br> <select id="cloneEventSelector" class="isEditable"></select>
-              <button id="cloneEventButton" class="isEditable">Клонировать</button>
-              <br> <select id="mergeEventSelector" class="isEditable"></select>
-              <button id="mergeEventButton" class="isEditable">Объединить со следующим</button>
-              <br> <select id="removeEventSelector" class="isEditable"></select>
-              <button id="removeEventButton" class="isEditable">Удалить</button>
+              Поменять местами <select id="firstEvent" class="isStoryEditable"></select> и <br> <select
+                id="secondEvent" class="isStoryEditable"></select>
+              <button id="swapEventsButton" class="isStoryEditable">OK</button>
+              <br> <select id="cloneEventSelector" class="isStoryEditable"></select>
+              <button id="cloneEventButton" class="isStoryEditable">Клонировать</button>
+              <br> <select id="mergeEventSelector" class="isStoryEditable"></select>
+              <button id="mergeEventButton" class="isStoryEditable">Объединить со следующим</button>
+              <br> <select id="removeEventSelector" class="isStoryEditable"></select>
+              <button id="removeEventButton" class="isStoryEditable">Удалить</button>
             </div>
           </div>
           
@@ -333,13 +333,13 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-body">
           <h3>Управление персонажами</h3>
-          <select id="storyCharactersAddSelector" class="isEditable"></select>
-          <button id="storyCharactersAddButton" class="isEditable">Добавить</button>
-          <br> Заменить<select id="storyCharactersFromSelector" class="isEditable"></select>
-          на <select id="storyCharactersToSelector" class="isEditable"></select>
-          <button id="storyCharactersSwitchButton" class="isEditable">ОК</button>
-          <br> <select id="storyCharactersRemoveSelector" class="isEditable"></select>
-          <button id="storyCharactersRemoveButton" class="isEditable">Удалить</button>
+          <select id="storyCharactersAddSelector" class="isStoryEditable"></select>
+          <button id="storyCharactersAddButton" class="isStoryEditable">Добавить</button>
+          <br> Заменить<select id="storyCharactersFromSelector" class="isStoryEditable"></select>
+          на <select id="storyCharactersToSelector" class="isStoryEditable"></select>
+          <button id="storyCharactersSwitchButton" class="isStoryEditable">ОК</button>
+          <br> <select id="storyCharactersRemoveSelector" class="isStoryEditable"></select>
+          <button id="storyCharactersRemoveButton" class="isStoryEditable">Удалить</button>
           <br> <br>
     
           <div style="display:flex;flex-wrap: wrap; justify-content:space-around;">
@@ -434,14 +434,14 @@ See the License for the specific language governing permissions and
           <h3 class="panel-title">Управление пользователями</h3>
         </div>
         <div class="panel-body">
-          Имя<input id="userNameInput"></input>
-          Пароль<input id="userPasswordInput"></input>
-          <button id="createUserButton">Добавить</button>
-          <br> Сменить пароль <select id="passwordUserName"></select> на <input
-            id="newPassword"></input>
-          <button id="changePasswordButton">OK</button>
-          <br> <select id="userRemoveSelector"></select>
-          <button id="removeUserButton">Удалить</button>
+          Имя<input id="userNameInput" class="adminOnly"></input>
+          Пароль<input id="userPasswordInput" class="adminOnly"></input>
+          <button id="createUserButton" class="adminOnly">Добавить</button>
+          <br> Сменить пароль <select id="passwordUserName" class="adminOnly"></select> на <input
+            id="newPassword" class="adminOnly"></input>
+          <button id="changePasswordButton" class="adminOnly">OK</button>
+          <br> <select id="userRemoveSelector" class="adminOnly"></select>
+          <button id="removeUserButton" class="adminOnly">Удалить</button>
         </div>
       </div>
       <div class="panel panel-default">
@@ -450,15 +450,17 @@ See the License for the specific language governing permissions and
         </div>
         <div class="panel-body">
         	Администратор:<span id="currentAdministrator"></span><br>
-        	<select id="newAdminSelector"></select><button id="newAdminButton">Назначить администратором</button><br>
-        	Редактор:<span id="currentEditor"></span><button id="removeEditorButton">Удалить редактора</button><br>
-        	<select id="newEditorSelector"></select><button id="newEditorButton">Назначить редактора</button><br>
+        	<select id="newAdminSelector" class="adminOnly"></select>
+            <button id="newAdminButton" class="adminOnly">Назначить администратором</button><br>
+        	Редактор:<span id="currentEditor"></span>
+            <button id="removeEditorButton" class="editorOrAdmin">Удалить редактора</button><br>
+        	<select id="newEditorSelector" class="adminOnly"></select>
+            <button id="newEditorButton" class="adminOnly">Назначить редактора</button><br>
         	Назначение прав на адаптации<br>
-        	<input type="radio" name="adaptationRights" class="adaptationRights" value="ByStory" id="adaptationRightsByStory">По историям</input><br>
-		    <input type="radio" name="adaptationRights" class="adaptationRights" value="ByCharacter" id="adaptationRightsByCharacter">По персонажам</input><br>
+        	<input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory" id="adaptationRightsByStory">По историям</input><br>
+		    <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter" id="adaptationRightsByCharacter">По персонажам</input><br>
         </div>
       </div>
-<!--       <div id="briefingsNavigation"></div> -->
       <div id="accessManagerContent" >
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -477,16 +479,10 @@ See the License for the specific language governing permissions and
                  <td><select size=10 id="storyPermissionSelector" multiple></select></td>
                  <td><select size=5 id="userPermissionSelector"></select>
                  <button id="assignPermissionButton">Назначить права</button>
-                 <button id="removePermissionButton">Забрать права</button>
+                 <button id="removePermissionButton" class="adminOnly">Забрать права</button>
                  </td>
                </tr>
              </table>
-          
-            
-<!--             <input type="radio" name="eventsGroupBy" value="story"  -->
-<!--             id="eventGroupingByStoryRadio">Группировать события по историям</input> <br>  -->
-<!--             <input type="radio" name="eventsGroupBy" value="time"  -->
-<!--             id="eventGroupingByTimeRadio">Сортировать события по хронологии</input> <br>  -->
           </div>
         </div>
       </div>
@@ -566,8 +562,12 @@ See the License for the specific language governing permissions and
 
     </div>
 
-
-
+    <div id="logoutForm">
+      <form class="form-horizontal login-form" name="login-form" method="POST" action="/logout">
+        <button type="submit" class="654btn 654btn-primary" data-loading-text="Отправляю...">Выйти</button>
+      </form> 
+    </div>
+    
     <div id="socialNetworkDiv">
       <div id="socialNetworkWarning" class="alert alert-warning"></div>
       <div class="flexRoot">

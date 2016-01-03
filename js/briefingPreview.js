@@ -44,25 +44,27 @@ BriefingPreview.refresh = function () {
     DBMS.getAllProfileSettings(function(err, profileSettings){
     	if(err) {Utils.handleError(err); return;}
     	BriefingPreview.profileSettings = profileSettings;
-	    DBMS.getCharacterNamesArray(function(err, names){
+	    PermissionInformer.getCharacterNamesArray(false, function(err, names){
 	    	if(err) {Utils.handleError(err); return;}
 	        if (names.length > 0) {
 	            var settings = DBMS.getSettings();
 	            if(!settings["BriefingPreview"]){
 	                settings["BriefingPreview"] = {
-	                        characterName : names[0]
+	                        characterName : names[0].value
 	                };
 	            }
 	            var characterName = settings["BriefingPreview"].characterName;
-	            if(names.indexOf(characterName) === -1){
-	                settings["BriefingPreview"].characterName = names[0];
-	                characterName = names[0];
+	            var rawNames = names.map(function(name){return name.value;});
+	            if(rawNames.indexOf(characterName) === -1){
+	                settings["BriefingPreview"].characterName = names[0].value;
+	                characterName = names[0].value;
 	            }
 	            
-	            names.forEach(function (name) {
+	            names.forEach(function (nameInfo) {
 	                var option = document.createElement("option");
-	                option.appendChild(document.createTextNode(name));
-	                if(name === characterName){
+	                option.appendChild(document.createTextNode(nameInfo.displayName));
+	                option.value = nameInfo.value; 
+	                if(nameInfo.value === characterName){
 	                    option.selected = true;
 	                }
 	                selector.appendChild(option);
@@ -107,31 +109,43 @@ BriefingPreview.buildContent = function (characterName) {
         
         DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
         	if(err) {Utils.handleError(err); return;}
-            allInventoryLists.forEach(function(elem){
-                content.appendChild(document.createTextNode(elem.storyName + ":"));
-                var input = document.createElement("input");
-                input.value = elem.inventory;
-                input.storyName = elem.storyName;
-                input.characterName = characterName;
-                input.className = "inventoryInput";
-                input.addEventListener("change", BriefingPreview.updateCharacterInventory);
-                content.appendChild(input);
-                
-                content.appendChild(document.createElement("br"));
-            });
-            
-            content.appendChild(document.createElement("br"));
-            content.appendChild(document.createElement("br"));
-            
-            content.appendChild(document.createTextNode("События"));
-            content.appendChild(document.createElement("br"));
-            
-            var groupingByStory = document.getElementById("eventGroupingByStoryRadio").checked;
-            if (groupingByStory) {
-                BriefingPreview.showEventsByStory(content, characterName);
-            } else {
-                BriefingPreview.showEventsByTime(content, characterName);
-            }
+        	PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+        		if(err) {Utils.handleError(err); return;}
+        		var userStoryNamesMap = {};
+        		userStoryNames.forEach(function(story){
+        			userStoryNamesMap[story.value] = story;
+        		});
+        		
+        		allInventoryLists.forEach(function(elem){
+        			content.appendChild(document.createTextNode(elem.storyName + ":"));
+        			var input = document.createElement("input");
+        			input.value = elem.inventory;
+        			input.storyName = elem.storyName;
+        			input.characterName = characterName;
+        			addClass(input, "inventoryInput");
+        			if(!userStoryNamesMap[elem.storyName]){
+        				addClass(input, "notEditable");
+        			}
+        			input.addEventListener("change", BriefingPreview.updateCharacterInventory);
+        			content.appendChild(input);
+        			
+        			content.appendChild(document.createElement("br"));
+        		});
+        		
+        		content.appendChild(document.createElement("br"));
+        		content.appendChild(document.createElement("br"));
+        		
+        		content.appendChild(document.createTextNode("События"));
+        		content.appendChild(document.createElement("br"));
+        		
+        		var groupingByStory = document.getElementById("eventGroupingByStoryRadio").checked;
+        		if (groupingByStory) {
+        			BriefingPreview.showEventsByStory(content, characterName, userStoryNamesMap);
+        		} else {
+        			BriefingPreview.showEventsByTime(content, characterName, userStoryNamesMap);
+        		}
+        		Utils.enable(BriefingPreview.content, "notEditable", false);
+        	});
         });
     });
 };
@@ -165,44 +179,77 @@ BriefingPreview.showProfile = function(content, profile){
     });
 };
 
-BriefingPreview.showEventsByTime = function (content, characterName) {
+BriefingPreview.showEventsByTime = function (content, characterName, userStoryNamesMap) {
     "use strict";
     
     DBMS.getCharacterEventsByTime(characterName, function(err, allEvents){
     	if(err) {Utils.handleError(err); return;}
-        allEvents.forEach(function (event) {
-            BriefingPreview.showEvent(event, content, characterName);
-        });
+    	var adaptations = allEvents.map(function (event) {
+    		return {
+    			characterName: characterName,
+    			storyName: event.storyName
+    		};
+    	});
+    	
+    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+    		if(err) {Utils.handleError(err); return;}
+    		allEvents.forEach(function (event) {
+    			BriefingPreview.showEvent(event, content, characterName, userStoryNamesMap, areAdaptationsEditable);
+    		});
+    		Utils.enable(BriefingPreview.content, "notEditable", false);
+    	});
     });
 };
 
-BriefingPreview.showEventsByStory = function (content, characterName) {
+BriefingPreview.showEventsByStory = function (content, characterName, userStoryNamesMap) {
     "use strict";
     
     DBMS.getCharacterEventGroupsByStory(characterName, function(err, eventGroups){
     	if(err) {Utils.handleError(err); return;}
-        eventGroups.forEach(function(elem){
-            content.appendChild(document.createTextNode(elem.storyName));
-            content.appendChild(document.createElement("br"));
-            
-            elem.events.forEach(function(event){
-                BriefingPreview.showEvent(event, content, characterName);
-            });
-        });
+    	var adaptations = eventGroups.map(function (elem) {
+    		return {
+    			characterName: characterName,
+    			storyName: elem.storyName
+    		};
+    	});
+    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+    		if(err) {Utils.handleError(err); return;}
+	        eventGroups.forEach(function(elem){
+	            content.appendChild(document.createTextNode(elem.storyName));
+	            content.appendChild(document.createElement("br"));
+	            
+	            elem.events.forEach(function(event){
+	                BriefingPreview.showEvent(event, content, characterName, userStoryNamesMap, areAdaptationsEditable);
+	            });
+	            Utils.enable(BriefingPreview.content, "notEditable", false);
+	        });
+    	});
     });
 };
 
-BriefingPreview.showEvent = function(event, content, characterName){
+BriefingPreview.showEvent = function(event, content, characterName, userStoryNamesMap, areAdaptationsEditable){
     var isOriginal = event.characters[characterName].text === "";
     var type = isOriginal ? "Оригинал события" : "Адаптация";
+    var isEditable;
+    if(isOriginal){
+    	isEditable = !!userStoryNamesMap[event.storyName];
+    } else {
+    	isEditable = areAdaptationsEditable[event.storyName + "-" + characterName];
+    }
     
     content.appendChild(document.createTextNode(event.time + " " + event.name + ": " + type));
     var input = document.createElement("textarea");
-    input.className = "briefingPersonalStory";
+    addClass(input, "briefingPersonalStory");
+    if(!isEditable){
+    	addClass(input, "notEditable");
+    }
 
     if(isOriginal){
         input.setAttribute("disabled","disabled");
         var button = document.createElement("button");
+        if(!isEditable){
+        	addClass(button, "notEditable");
+        }
         content.appendChild(document.createElement("br"));
         button.appendChild(document.createTextNode("Разблокировать редактирование оригинала события"));
         content.appendChild(button);
@@ -213,7 +260,7 @@ BriefingPreview.showEvent = function(event, content, characterName){
     
     content.appendChild(document.createElement("br"));
     
-    if (event.characters[characterName].text === "") {
+    if (isOriginal) {
         input.value = event.text;
     } else {
         input.value = event.characters[characterName].text;

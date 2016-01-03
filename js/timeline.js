@@ -35,18 +35,18 @@ Timeline.init = function () {
     var options = {
         orientation : 'top',
         showCurrentTime : false,
-        editable : {
-            updateTime : true
-        },
-        onMove : function (item, callback) {
-            if (item.storyName) {
-                DBMS.setEventTime(item.storyName, item.eventIndex, item.start, function(err){
-                	if(err) {Utils.handleError(err); return;}
-                    callback(item);
-                });
-            }
-        },
-        multiselect : true
+//        editable : {
+//            updateTime : true
+//        },
+//        onMove : function (item, callback) {
+//            if (item.storyName) {
+//                DBMS.setEventTime(item.storyName, item.eventIndex, item.start, function(err){
+//                	if(err) {Utils.handleError(err); return;}
+//                    callback(item);
+//                });
+//            }
+//        },
+//        multiselect : true
     };
 
     // Create a Timeline
@@ -82,16 +82,17 @@ Timeline.refresh = function () {
             start : startDate,
         });
         
-        DBMS.getStoryNamesArray(function(err, storyNames){
+        PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
         	if(err) {Utils.handleError(err); return;}
-            storyNames.forEach(function(name){
+        	allStoryNames.forEach(function(nameInfo){
                 option = document.createElement("option");
-                option.appendChild(document.createTextNode(name));
+                option.appendChild(document.createTextNode(nameInfo.displayName));
+                option.value = nameInfo.value;
                 selector.appendChild(option);
             });
             
-            if(storyNames.length != 0){
-                Timeline.onStorySelectorChange([ storyNames[0] ]);
+            if(allStoryNames.length != 0){
+                Timeline.onStorySelectorChange([ allStoryNames[0].value ]);
             }
         });
     });
@@ -102,7 +103,7 @@ Timeline.onStorySelectorChangeDelegate = function (event) {
     var selOptions = event.target.selectedOptions;
     var storyNames = [];
     for (var i = 0; i < selOptions.length; i++) {
-        storyNames.push(selOptions[i].text);
+        storyNames.push(selOptions[i].value);
     }
     Timeline.onStorySelectorChange(storyNames);
 };

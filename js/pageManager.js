@@ -94,8 +94,15 @@ PageManager.onDatabaseLoad = function () {
     PageManager.addButton("dataSaveButton", navigation, FileUtils.saveFile);
     PageManager.addButton("newBaseButton", navigation, FileUtils.makeNewBase);
     PageManager.addButton("mainHelpButton", navigation, FileUtils.openHelp);
-    Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton",mainPage:false});
-    Utils.addView(containers, "Chat", Chat, "Чат", {mainPage:true});
+    
+//    var button = document.createElement("div");
+//    button.id = "logoutButton";
+//    addClass(button, "action-button");
+//    button.appendChild(document.getElementById("logoutForm"));
+//    navigation.appendChild(button);
+    
+    Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton",mainPage:true});
+    Utils.addView(containers, "Chat", Chat, "Чат", {mainPage:false});
 
     FileUtils.init(function(err){
     	if(err) {Utils.handleError(err); return;}

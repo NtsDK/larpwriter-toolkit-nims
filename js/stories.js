@@ -217,13 +217,13 @@ Stories.onStorySelectorChange = function (storyName) {
     
     if(storyName){
         Stories.updateSettings(storyName);
-        PermissionInformer.isStoryEditable(storyName, function(err, isEditable){
+        PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
         	if(err) {Utils.handleError(err); return;}
 	        DBMS.getMasterStory(storyName, function(err, story){
 	        	if(err) {Utils.handleError(err); return;}
 	            storyArea.value = story;
 	            Stories.currentView.refresh();
-	            Utils.enable(Stories.content, "isEditable", isEditable);
+	            Utils.enable(Stories.content, "isStoryEditable", isStoryEditable);
 	        });
         });
     } else { // when there are no stories at all

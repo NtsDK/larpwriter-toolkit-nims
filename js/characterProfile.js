@@ -124,7 +124,7 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
     }
     input.addEventListener("change", CharacterProfile.updateFieldValue(profileItemConfig.type));
     input.selfName = profileItemConfig.name;
-    addClass(input,"isEditable");
+    addClass(input,"isCharacterEditable");
     td.appendChild(input);
     CharacterProfile.inputItems[profileItemConfig.name] = input;
 
@@ -171,7 +171,7 @@ CharacterProfile.showProfileInfoCallback = function (err, profile) {
     "use strict";
     if(err) {Utils.handleError(err); return;}
     var name = profile.name;
-    PermissionInformer.isCharacterEditable(name, function(err, isEditable){
+    PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
     	if(err) {Utils.handleError(err); return;}
     	CharacterProfile.updateSettings(name);
     	
@@ -184,7 +184,7 @@ CharacterProfile.showProfileInfoCallback = function (err, profile) {
     			inputItems[inputName].value = profile[inputName];
     		}
     		inputItems[inputName].oldValue = profile[inputName];
-    		Utils.enable(CharacterProfile.content, "isEditable", isEditable);
+    		Utils.enable(CharacterProfile.content, "isCharacterEditable", isCharacterEditable);
     	});
     });
 };
