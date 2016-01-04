@@ -51,71 +51,94 @@ PageManager.onDatabaseLoad = function () {
     "use strict";
     
 //  PageManager.enableFullScreenElements();
-    
-    var root = PageManager;
-    root.views = {};
-    var nav = "navigation";
-    var content = "contentArea";
-    var button;
-    var navigation = document.getElementById(nav);
-    var containers = {
-		root: root,
-		navigation: navigation,
-		content: document.getElementById(content)
-    };
-    Utils.addView(containers, "Overview", Overview, "Обзор", {mainPage:false});
-    Utils.addView(containers, "Characters", Characters, "Персонажи");
-    Utils.addView(containers, "Stories", Stories, "Истории");
-    Utils.addView(containers, "Events", Events, "Адаптации");
-    Utils.addView(containers, "Briefings", Briefings, "Вводные");
-    
-    button = document.createElement("div");
-    addClass(button, "nav-separator");
-    navigation.appendChild(button);
-    
-    Utils.addView(containers, "Timeline", Timeline, "Хронология");
-    Utils.addView(containers, "SocialNetwork", SocialNetwork, "Социальная сеть");
-    Utils.addView(containers, "CharacterFilter", CharacterFilter, "Фильтр");
-    
-
-    button = document.createElement("div");
-    addClass(button, "nav-separator");
-    navigation.appendChild(button);
-    
-    button = document.createElement("div");
-    button.id = "dataLoadButton";
-    addClass(button, "action-button");
-        var input = document.createElement("input");
-        input.type = "file";
-        button.appendChild(input);
-    navigation.appendChild(button);
-    button.addEventListener('change', FileUtils.readSingleFile, false);
-
-    PageManager.addButton("dataSaveButton", navigation, FileUtils.saveFile);
-    PageManager.addButton("newBaseButton", navigation, FileUtils.makeNewBase);
-    PageManager.addButton("mainHelpButton", navigation, FileUtils.openHelp);
-    
+	PermissionInformer.refresh(function(err){
+    	if(err) {Utils.handleError(err); return;}
+    	
+    	PermissionInformer.isAdmin(function(err, isAdmin){
+    		if(err) {Utils.handleError(err); return;}
+    		
+    		var root = PageManager;
+    		root.views = {};
+    		var nav = "navigation";
+    		var content = "contentArea";
+    		var button;
+    		var navigation = document.getElementById(nav);
+    		var containers = {
+    				root: root,
+    				navigation: navigation,
+    				content: document.getElementById(content)
+    		};
+    		Utils.addView(containers, "Overview", Overview, "Обзор", {mainPage:true});
+    		Utils.addView(containers, "Characters", Characters, "Персонажи");
+    		Utils.addView(containers, "Stories", Stories, "Истории");
+    		Utils.addView(containers, "Events", Events, "Адаптации");
+    		Utils.addView(containers, "Briefings", Briefings, "Вводные");
+    		
+    		button = document.createElement("div");
+    		addClass(button, "nav-separator");
+    		navigation.appendChild(button);
+    		
+    		Utils.addView(containers, "Timeline", Timeline, "", {id:"timelineButton", tooltip:"Хронология"});
+    		Utils.addView(containers, "SocialNetwork", SocialNetwork, "", {id:"socialNetworkButton", tooltip:"Социальная сеть"});
+    		Utils.addView(containers, "CharacterFilter", CharacterFilter, "", {id:"filterButton", tooltip:"Фильтр"});
+    		
+    		
+    		button = document.createElement("div");
+    		addClass(button, "nav-separator");
+    		navigation.appendChild(button);
+    		
+    		if(isAdmin){
+    			button = document.createElement("div");
+    			button.id = "dataLoadButton";
+    			$(button).tooltip({
+    				title : "Загрузить базу из файла",
+    				placement : "bottom"
+    			});
+    			addClass(button, "action-button");
+    			var input = document.createElement("input");
+    			input.type = "file";
+    			button.appendChild(input);
+    			navigation.appendChild(button);
+    			button.addEventListener('change', FileUtils.readSingleFile, false);
+    		}
+    		PageManager.addButton("dataSaveButton", navigation, FileUtils.saveFile, {tooltip:"Сохранить базу на диск"});
+    		if(MODE === "Standalone"){
+    			PageManager.addButton("newBaseButton", navigation, FileUtils.makeNewBase, {tooltip:"Создать новую базу"});
+    		}
+    		PageManager.addButton("mainHelpButton", navigation, FileUtils.openHelp, {tooltip:"Документация"});
+    		
 //    var button = document.createElement("div");
 //    button.id = "logoutButton";
 //    addClass(button, "action-button");
 //    button.appendChild(document.getElementById("logoutForm"));
 //    navigation.appendChild(button);
+    		
+    		if(MODE === "NIMS_Server"){
+    			Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton", tooltip:"Администрирование"});
+    			Utils.addView(containers, "Chat", Chat, "", {id:"chatButton", tooltip:"Чат"});
+    		}
+    		
+    		FileUtils.init(function(err){
+    			if(err) {Utils.handleError(err); return;}
+    			PageManager.currentView.refresh();
+    		});
+    		
+    		PageManager.currentView.refresh();
+    	});
+	});
     
-    Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton",mainPage:true});
-    Utils.addView(containers, "Chat", Chat, "Чат", {mainPage:false});
-
-    FileUtils.init(function(err){
-    	if(err) {Utils.handleError(err); return;}
-    	PageManager.currentView.refresh();
-    });
-
-    PageManager.currentView.refresh();
 };
 
-PageManager.addButton = function(id, navigation, callback){
+PageManager.addButton = function(id, navigation, callback, opts){
 	"use strict";
     var button = document.createElement("div");
     button.id = id;
+    if(opts.tooltip){
+		$(button).tooltip({
+			title : opts.tooltip,
+			placement : "bottom"
+		});
+    }
     addClass(button, "action-button");
     navigation.appendChild(button);
     button.addEventListener('click', callback);

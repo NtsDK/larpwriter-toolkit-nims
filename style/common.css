@@ -65,34 +65,54 @@ body {
 }
 
 #dataLoadButton{
-  background: transparent url("../images/folder265.svg") no-repeat scroll 50% 0%;
+  background: transparent url("../images/folder29.svg") no-repeat scroll 50% 0%;
   background-color:  rgb(221, 221, 221);
 }
 #dataSaveButton{
-  background: transparent url("../images/save31.svg") no-repeat scroll 50% 0%;
+  background: transparent url("../images/download149.svg") no-repeat scroll 50% 0%;
   background-color:  rgb(221, 221, 221);
+  background-size: 40px;
 }
 #newBaseButton{
-  background: transparent url("../images/add204.svg") no-repeat scroll 50% 0%;
+  background: transparent url("../images/file11.svg") no-repeat scroll 50% 0%;
   background-color:  rgb(221, 221, 221);
 }
 #mainHelpButton{
-  background: transparent url("../images/question58.svg") no-repeat scroll 50% 0%;
+  background: transparent url("../images/question5.svg") no-repeat scroll 50% 0%;
   background-color:  rgb(221, 221, 221);
 }
 
+#chatButton{
+  background: transparent url("../images/chat55.svg") no-repeat scroll 50% 0%;
+}
+
 #accessManagerButton{
-  background: transparent url("../images/scheme6.svg") no-repeat scroll 50% 50%;
+  background: transparent url("../images/business20.svg") no-repeat scroll 50% 50%;
+}
+#timelineButton{
+  background: transparent url("../images/time39.svg") no-repeat scroll 50% 50%;
+}
+#socialNetworkButton{
+  background: transparent url("../images/share41.svg") no-repeat scroll 50% 50%;
+}
+#filterButton{
+  background: transparent url("../images/rightarrow7.svg") no-repeat scroll 50% 50%;
+}
+
+#accessManagerButton, #chatButton, #timelineButton, #socialNetworkButton, #filterButton{
   background-color:  rgb(221, 221, 221);
   width: 50px;
   background-size: 35px;
 }
 
-#accessManagerButton:hover{
+#accessManagerButton:hover, #chatButton:hover,
+#timelineButton:hover, #socialNetworkButton:hover, #filterButton:hover
+{
   background-color:  #ccc;
 }
 
-#accessManagerButton.active {
+#accessManagerButton.active, #chatButton.active, 
+#timelineButton.active, #socialNetworkButton.active, #filterButton.active{
   color: #FFF;
 /*   background-color: #337AB7; */
   background-color: rgb(204,133,72);

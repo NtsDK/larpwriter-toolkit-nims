@@ -120,7 +120,8 @@ if(MODE === "NIMS_Server"){
 			newNames.push({
 				displayName:ownerMap[name] + ". " + name,
 				value:name,
-				editable: isEditor || userCharacters.indexOf(name) !== -1
+				editable: isEditor || userCharacters.indexOf(name) !== -1,
+				isOwner: userCharacters.indexOf(name) !== -1
 			});
 		});
 		
@@ -145,7 +146,8 @@ if(MODE === "NIMS_Server"){
 			newNames.push({
 				displayName:ownerMap[name] + ". " + name,
 				value:name,
-				editable: isEditor || userStories.indexOf(name) !== -1
+				editable: isEditor || userStories.indexOf(name) !== -1,
+				isOwner: userStories.indexOf(name) !== -1
 			});
 		});
 		

@@ -49,16 +49,6 @@ See the License for the specific language governing permissions and
 			});
 		};
 		
-		LocalDBMS.prototype.getUserCharacterNamesArray = function(callback) {
-		    "use strict";
-		    callback(null, Object.keys(this.database.Characters).sort(CommonUtils.charOrdA));
-		};
-	
-		LocalDBMS.prototype.getUserStoryNamesArray = function (callback) {
-		    "use strict";
-		    callback(null, Object.keys(this.database.Stories).sort(CommonUtils.charOrdA));
-		};
-		
 		LocalDBMS.prototype.assignAdmin = function(name, callback){
 			"use strict";
 			this.database.ManagementInfo.admin = name;

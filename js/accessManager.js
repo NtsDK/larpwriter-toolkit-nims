@@ -58,16 +58,24 @@ AccessManager.init = function() {
 
 AccessManager.refresh = function() {
     "use strict";
-    DBMS.getUserCharacterNamesArray(function(err, characterNames){
-    	if(err) {Utils.handleError(err); return;}
-    	DBMS.getUserStoryNamesArray(function(err, storyNames){
-    		if(err) {Utils.handleError(err); return;}
-    		DBMS.getUsersInfo(function(err, info){
-    			if(err) {Utils.handleError(err); return;}
-    	        PermissionInformer.isAdmin(function(err, isAdmin){
-    	        	if(err) {Utils.handleError(err); return;}
-    	        	PermissionInformer.isEditor(function(err, isEditor){
-    	        		if(err) {Utils.handleError(err); return;}
+	DBMS.getUsersInfo(function(err, info){
+		if(err) {Utils.handleError(err); return;}
+        PermissionInformer.isAdmin(function(err, isAdmin){
+        	if(err) {Utils.handleError(err); return;}
+        	PermissionInformer.isEditor(function(err, isEditor){
+        		if(err) {Utils.handleError(err); return;}
+        		PermissionInformer.getCharacterNamesArray(!isAdmin, function(err, characterNames){
+        			if(err) {Utils.handleError(err); return;}
+        			PermissionInformer.getStoryNamesArray(!isAdmin, function(err, storyNames){
+        				if(err) {Utils.handleError(err); return;}
+        				if(!isAdmin && isEditor){
+        					characterNames = characterNames.filter(function(elem){
+        						return elem.isOwner;
+        					});
+        					storyNames = storyNames.filter(function(elem){
+        						return elem.isOwner;
+        					});
+        				}
 	    	        	AccessManager.rebuildInterface(characterNames, storyNames, info);
 	    	        	Utils.enable(AccessManager.content, "adminOnly", isAdmin);
 	    	        	Utils.enable(AccessManager.content, "editorOrAdmin", isAdmin || isEditor);
@@ -79,6 +87,17 @@ AccessManager.refresh = function() {
 };
 
 Utils.rebuildSelector = function(selector, names){
+	"use strict";
+	Utils.removeChildren(selector);
+	names.forEach(function (nameInfo) {
+		var option = document.createElement("option");
+		option.appendChild(document.createTextNode(nameInfo.displayName));
+		option.value = nameInfo.value;
+		selector.appendChild(option);
+	});
+};
+
+Utils.rebuildSelectorArr = function(selector, names){
 	"use strict";
 	Utils.removeChildren(selector);
 	names.forEach(function (name) {
@@ -102,16 +121,16 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
     selectors.push(document.getElementById("newEditorSelector"));
     
     selectors.forEach(function(selector){
-    	Utils.rebuildSelector(selector, names);
+    	Utils.rebuildSelectorArr(selector, names);
     });
     
     var clone = names.slice(0);
-    clone.splice(clone.indexOf(allInfo.admin), 1);
+    clone.splice(names.indexOf(allInfo.admin), 1);
     var selector = document.getElementById("newAdminSelector");
-    Utils.rebuildSelector(selector, clone);
+    Utils.rebuildSelectorArr(selector, clone);
     
     selector = document.getElementById("userRemoveSelector");
-    Utils.rebuildSelector(selector, clone);
+    Utils.rebuildSelectorArr(selector, clone);
     
     selector = document.getElementById("storyPermissionSelector");
     Utils.rebuildSelector(selector, storyNames);
@@ -166,8 +185,12 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
 		return !used;
 	};
 	
-	storyNames = storyNames.filter(isUnused);
-	characterNames = characterNames.filter(isUnused2);
+	storyNames = storyNames.map(function(elem){
+		return elem.value;
+	}).filter(isUnused);
+	characterNames = characterNames.map(function(elem){
+		return elem.value;
+	}).filter(isUnused2);
 	permissionTable.appendChild(document.createTextNode("Персонажи: " + characterNames.join(",")));
 	permissionTable.appendChild(document.createElement("br"));
 	permissionTable.appendChild(document.createTextNode("Истории: " + storyNames.join(",")));
@@ -242,13 +265,13 @@ AccessManager.removePermission = function(){
     var selOptions =  document.getElementById("storyPermissionSelector").selectedOptions;
     var storyNames = [];
     for (var i = 0; i < selOptions.length; i++) {
-        storyNames.push(selOptions[i].text);
+        storyNames.push(selOptions[i].value);
     }
     
     selOptions =  document.getElementById("characterPermissionSelector").selectedOptions;
     var characterNames = [];
     for (var i = 0; i < selOptions.length; i++) {
-    	characterNames.push(selOptions[i].text);
+    	characterNames.push(selOptions[i].value);
     }
     DBMS.removePermission(userName, storyNames, characterNames, Utils.processError(AccessManager.refresh));
 };
@@ -266,13 +289,13 @@ AccessManager.assignPermission = function(){
     var selOptions =  document.getElementById("storyPermissionSelector").selectedOptions;
     var storyNames = [];
     for (var i = 0; i < selOptions.length; i++) {
-        storyNames.push(selOptions[i].text);
+        storyNames.push(selOptions[i].value);
     }
     
     selOptions =  document.getElementById("characterPermissionSelector").selectedOptions;
     var characterNames = [];
     for (var i = 0; i < selOptions.length; i++) {
-    	characterNames.push(selOptions[i].text);
+    	characterNames.push(selOptions[i].value);
     }
     
     DBMS.assignPermission(userName, storyNames, characterNames, Utils.processError(AccessManager.refresh));

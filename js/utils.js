@@ -23,6 +23,12 @@ Utils.addView = function (containers, name, view, displayName, opts) {
     var buttonClass = "navigation-button";
     containers.root.views[name] = view;
     var button = document.createElement("div");
+    if(opts.tooltip){
+		$(button).tooltip({
+			title : opts.tooltip,
+			placement : "bottom"
+		});
+    }
     addClass(button, buttonClass);
     addClass(button, "-test-" + name);
     if(opts.id){
