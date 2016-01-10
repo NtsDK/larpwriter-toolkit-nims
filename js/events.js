@@ -24,6 +24,7 @@ var Events = {};
 Events.headers = [ "Оригинал", "Адаптация"];
 Events.finishedText = "Описание завершено";
 Events.finishedSuffix = "(завершено)";
+Events.emptySuffix = "(пусто)";
 
 
 Events.init = function () {
@@ -82,16 +83,18 @@ Events.refresh = function () {
 		    	storyNames = storyNames.map(function(elem){
 		    		var info = map[elem.storyName];
 		    		info.isFinished = elem.isFinished;
+		    		info.isEmpty = elem.isEmpty;
 		    		return info;
 		    	});
 		    	
 		    	storyNames.sort(Utils.charOrdAObject);
     			
     			var isFirst = true;
+    			var option;
+
     			storyNames.forEach(function (tmpStoryName) {
-    				var option = document.createElement("option");
-    				option.appendChild(document.createTextNode(tmpStoryName.displayName + 
-    						(tmpStoryName.isFinished ? Events.finishedSuffix : "")));
+    				option = document.createElement("option");
+    				option.appendChild(document.createTextNode(tmpStoryName.displayName + Events.getSuffix(tmpStoryName)));
     				if (tmpStoryName.value === storyName) {
     					Events.updateCharacterSelector(tmpStoryName.value);
     					option.selected = true;
@@ -105,6 +108,13 @@ Events.refresh = function () {
     	});
     });
 };
+
+Events.getSuffix = function(object){
+	"use strict";
+	if(object.isEmpty) return Events.emptySuffix;
+	if(object.isFinished) return Events.finishedSuffix;
+	return "";
+}
 
 Events.updateCharacterSelectorDelegate = function (event) {
     "use strict";
@@ -148,15 +158,16 @@ Events.updateCharacterSelector = function (storyName) {
 		    	characterArray = characterArray.map(function(elem){
 		    		var info = map[elem.characterName];
 		    		info.isFinished = elem.isFinished;
+		    		info.isEmpty = elem.isEmpty;
 		    		return info;
 		    	});
 		    	
 		    	characterArray.sort(Utils.charOrdAObject);
     			
     			characterArray.forEach(function (elem) {
-    				var suffix = elem.isFinished ? Events.finishedSuffix : "";
+//    				var suffix = elem.isFinished ? Events.finishedSuffix : "";
     				var option = document.createElement("option");
-    				option.appendChild(document.createTextNode(elem.displayName + " " + suffix));
+    				option.appendChild(document.createTextNode(elem.displayName + Events.getSuffix(elem)));
     				if (characterNames.indexOf(elem.value) !== -1) {
     					option.selected = true;
     					isFirst = false;

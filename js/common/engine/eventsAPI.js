@@ -23,28 +23,35 @@ See the License for the specific language governing permissions and
 		    storyArray = storyArray.map(function(elem){
 		        return {
 		            storyName: elem,
-		            isFinished: _isStoryFinished(that.database, elem)
+		            isFinished: _isStoryFinished(that.database, elem),
+		            isEmpty: _isStoryEmpty(that.database, elem)
 		        }
 		    });
 		    
 		    if(showOnlyUnfinishedStories){
 		        storyArray = storyArray.filter(function(elem){
-		            return !elem.isFinished;
+		            return !elem.isFinished || elem.isEmpty;
 		        })
 		    }
 		    callback(null, storyArray);
 		};
 	
+		var _isStoryEmpty = function (database, storyName) {
+			"use strict";
+			return database.Stories[storyName].events.length == 0;
+		};
+		
 		var _isStoryFinished = function (database, storyName) {
 		    "use strict";
 		    return database.Stories[storyName].events.every(function(event){
+		    	var isReady = true;
 		        for(var characterName in event.characters){
-		            if(event.characters[characterName]){
-		                return event.characters[characterName].ready;
-		            } else {
-		                return true;
-		            }
+		            if(event.characters[characterName] && !event.characters[characterName].ready){
+		            	isReady = false;
+		            	break;
+		            } 
 		        }
+		        return isReady;
 		    });
 		};
 	
@@ -61,18 +68,26 @@ See the License for the specific language governing permissions and
 		    localCharacters = localCharacters.map(function(elem){
 		        return {
 		            characterName: elem,
-		            isFinished: _isStoryFinishedForCharacter(that.database, storyName, elem)
+		            isFinished: _isStoryFinishedForCharacter(that.database, storyName, elem),
+		            isEmpty: _isStoryEmptyForCharacter(that.database, storyName, elem)
 		        }
 		    });
 		    
 		    if(showOnlyUnfinishedStories){
 		        localCharacters = localCharacters.filter(function(elem){
-		            return !elem.isFinished;
+		            return !elem.isFinished || elem.isEmpty;
 		        });
 		    }
 		    callback(null, localCharacters);
 		};
 	
+		var _isStoryEmptyForCharacter = function (database, storyName, characterName) {
+			"use strict";
+			return database.Stories[storyName].events.every(function(event){
+				return !event.characters[characterName];
+			});
+		};
+		
 		var _isStoryFinishedForCharacter = function (database, storyName, characterName) {
 		    "use strict";
 		    return database.Stories[storyName].events.every(function(event){

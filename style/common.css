@@ -117,6 +117,7 @@ body {
 /*   background-color: #337AB7; */
   background-color: rgb(204,133,72);
   filter: invert(100%);
+  -webkit-filter: invert(100%);
 }
 
 #dataLoadButton input {

@@ -93,6 +93,9 @@ Characters.createCharacter = function () {
             	if(err) {Utils.handleError(err); return;}
             	PermissionInformer.refresh(function(err){
                 	if(err) {Utils.handleError(err); return;}
+                	if(Characters.currentView.updateSettings){
+                		Characters.currentView.updateSettings(name);
+                	}
                 	Characters.refresh();
                 });
             });
@@ -125,6 +128,9 @@ Characters.renameCharacter = function () {
             	if(err) {Utils.handleError(err); return;}
             	PermissionInformer.refresh(function(err){
                 	if(err) {Utils.handleError(err); return;}
+                	if(Characters.currentView.updateSettings){
+                		Characters.currentView.updateSettings(toName);
+                	}
                 	Characters.refresh();
                 });
             });

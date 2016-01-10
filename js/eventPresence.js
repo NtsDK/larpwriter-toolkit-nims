@@ -28,11 +28,11 @@ EventPresence.init = function () {
 EventPresence.refresh = function () {
     "use strict";
     var tableHead = document.getElementById("eventPresenceTableHead");
-    Utils.removeChildren(tableHead);
     var table = document.getElementById("eventPresenceTable");
-    Utils.removeChildren(table);
     
     if(Stories.CurrentStoryName == undefined){
+    	Utils.removeChildren(tableHead);
+    	Utils.removeChildren(table);
         return;
     }
     
@@ -59,9 +59,13 @@ EventPresence.refresh = function () {
 		    		return elem.value;
 		    	});
 		    	
-		        EventPresence.appendTableHeader(tableHead, displayArray);
 		        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
 		        	if(err) {Utils.handleError(err); return;}
+		        	
+		        	Utils.removeChildren(tableHead);
+		        	Utils.removeChildren(table);
+		        	
+		        	EventPresence.appendTableHeader(tableHead, displayArray);
 		            events.forEach(function (event, i) {
 		                EventPresence.appendTableInput(table, event, i, characterArray);
 		                Utils.enable(EventPresence.content, "isStoryEditable", isStoryEditable);
