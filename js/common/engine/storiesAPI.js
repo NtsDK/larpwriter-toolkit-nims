@@ -215,12 +215,15 @@ See the License for the specific language governing permissions and
 		};
 	
 		//story events
-		LocalDBMS.prototype.swapEvents = function(storyName, index1, index2, callback){
+		LocalDBMS.prototype.moveEvent = function(storyName, index, newIndex, callback){
 		    "use strict";
-		    var story = this.database.Stories[storyName];
-		    var tmp = story.events[index1];
-		    story.events[index1] = story.events[index2];
-		    story.events[index2] = tmp;
+		    if(newIndex > index){
+		    	newIndex--;
+		    }
+		    var events = this.database.Stories[storyName].events;
+		    var tmp = events[index];
+		    events.splice(index, 1);
+		    events.splice(newIndex, 0, tmp);
 		    
 		    callback();
 		};

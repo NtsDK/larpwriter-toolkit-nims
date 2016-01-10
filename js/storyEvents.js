@@ -25,8 +25,8 @@ StoryEvents.init = function () {
     var button = document.getElementById("createEventButton");
     button.addEventListener("click", StoryEvents.createEvent);
 
-    button = document.getElementById("swapEventsButton");
-    button.addEventListener("click", StoryEvents.swapEvents);
+    button = document.getElementById("moveEventButton");
+    button.addEventListener("click", StoryEvents.moveEvent);
 
     button = document.getElementById("cloneEventButton");
     button.addEventListener("click", StoryEvents.cloneEvent);
@@ -71,32 +71,40 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
 	StoryEvents.appendEventHeader(tableHead);
 	
 	// refresh position selector
-	var positionSelector = document.getElementById("positionSelector");
-	Utils.removeChildren(positionSelector);
+	var positionSelectors = [];
+	
+	positionSelectors.push(document.getElementById("positionSelector"));
+	positionSelectors.push(document.getElementById("movePositionSelector"));
+	
+	positionSelectors.forEach(function (selector) {
+		Utils.removeChildren(selector);
+	});
+	
+	var option;
+	positionSelectors.forEach(function (positionSelector) {
+		events.forEach(function (event, i) {
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode("Перед '" + event.name + "'"));
+			positionSelector.appendChild(option);
+		});
+		
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("В конец"));
+		positionSelector.appendChild(option);
+		
+		positionSelector.selectedIndex = events.length;
+	});
 	
 	events.forEach(function (event, i) {
 		StoryEvents.appendEventInput(table, event, i, metaInfo.date, metaInfo.preGameDate);
 	});
-	
-	events.forEach(function (event, i) {
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode("Перед '" + event.name + "'"));
-		positionSelector.appendChild(option);
-	});
-	
-	var option = document.createElement("option");
-	option.appendChild(document.createTextNode("В конец"));
-	positionSelector.appendChild(option);
-	
-	positionSelector.selectedIndex = events.length;
 	
 	StoryEvents.eventsLength = events.length;
 	
 	// refresh swap selector
 	var selectorArr = [];
 	
-	selectorArr.push(document.getElementById("firstEvent"));
-	selectorArr.push(document.getElementById("secondEvent"));
+	selectorArr.push(document.getElementById("moveEventSelector"));
 	selectorArr.push(document.getElementById("removeEventSelector"));
 	selectorArr.push(document.getElementById("cloneEventSelector"));
 	selectorArr.push(document.getElementById("mergeEventSelector"));
@@ -109,6 +117,7 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
 		selectorArr.forEach(function (selector) {
 			option = document.createElement("option");
 			option.appendChild(document.createTextNode(event.name));
+			option.eventIndex = i;
 			selector.appendChild(option);
 		});
 	});
@@ -118,6 +127,7 @@ StoryEvents.createEvent = function () {
     "use strict";
     var eventName = document.getElementById("eventNameInput").value.trim();
     var input = document.getElementById("eventInput");
+    var positionSelector = document.getElementById("positionSelector");
     var eventText = input.value.trim();
 
     if (eventName === "") {
@@ -133,16 +143,16 @@ StoryEvents.createEvent = function () {
             positionSelector.value === "В конец", positionSelector.selectedIndex, Utils.processError(StoryEvents.refresh));
 };
 
-StoryEvents.swapEvents = function () {
-    "use strict";
-    var index1 = document.getElementById("firstEvent").selectedIndex;
-    var index2 = document.getElementById("secondEvent").selectedIndex;
-    if (index1 === index2) {
-        Utils.alert("Позиции событий совпадают");
-        return;
-    }
-    
-    DBMS.swapEvents(Stories.CurrentStoryName, index1, index2, Utils.processError(StoryEvents.refresh));
+StoryEvents.moveEvent = function () {
+	var index = document.getElementById("moveEventSelector").selectedOptions[0].eventIndex;
+	var newIndex = document.getElementById("movePositionSelector").selectedIndex;
+	
+	if (index === newIndex) {
+	  Utils.alert("Позиции событий совпадают");
+	  return;
+	}
+	
+	DBMS.moveEvent(Stories.CurrentStoryName, index, newIndex, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.cloneEvent = function () {

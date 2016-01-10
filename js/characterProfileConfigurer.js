@@ -38,8 +38,8 @@ CharacterProfileConfigurer.init = function () {
     var button = document.getElementById("createProfileItemButton");
     button.addEventListener("click", CharacterProfileConfigurer.createProfileItem);
 
-    button = document.getElementById("swapProfileFieldsButton");
-    button.addEventListener("click", CharacterProfileConfigurer.swapProfileItems);
+    button = document.getElementById("moveProfileItemButton");
+    button.addEventListener("click", CharacterProfileConfigurer.moveProfileItem);
 
     button = document.getElementById("removeProfileItemButton");
     button.addEventListener("click", CharacterProfileConfigurer.removeProfileItem);
@@ -50,22 +50,31 @@ CharacterProfileConfigurer.init = function () {
 CharacterProfileConfigurer.refresh = function () {
     'use strict';
     
-    var positionSelector = document.getElementById("profileItemPositionSelector");
-    Utils.removeChildren(positionSelector);
+    var positionSelectors = [];
+    
+    positionSelectors.push(document.getElementById("profileItemPositionSelector"));
+    positionSelectors.push(document.getElementById("moveProfileItemPositionSelector"));
 
     DBMS.getAllProfileSettings(function(err, allProfileSettings){
     	if(err) {Utils.handleError(err); return;}
-        allProfileSettings.forEach(function (elem, i) {
-            var option = document.createElement("option");
-            option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
-            positionSelector.appendChild(option);
-        });
-        
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode("В конец"));
-        positionSelector.appendChild(option);
-        
-        positionSelector.selectedIndex = allProfileSettings.length;
+    	
+    	var option;
+    	positionSelectors.forEach(function(positionSelector){
+    		Utils.removeChildren(positionSelector);
+    		
+    		allProfileSettings.forEach(function (elem, i) {
+    			option = document.createElement("option");
+    			option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
+    			positionSelector.appendChild(option);
+    		});
+    		
+    		option = document.createElement("option");
+    		option.appendChild(document.createTextNode("В конец"));
+    		positionSelector.appendChild(option);
+    		
+    		positionSelector.selectedIndex = allProfileSettings.length;
+    	});
+    	
         
         var table = document.getElementById("profileConfigBlock");
         Utils.removeChildren(table);
@@ -81,8 +90,7 @@ CharacterProfileConfigurer.refresh = function () {
         
         var selectorArr = [];
         
-        selectorArr.push(document.getElementById("firstProfileField"));
-        selectorArr.push(document.getElementById("secondProfileField"));
+        selectorArr.push(document.getElementById("moveProfileItemSelector"));
         selectorArr.push(document.getElementById("removeProfileItemSelector"));
         
         selectorArr.forEach(function (selector) {
@@ -90,6 +98,7 @@ CharacterProfileConfigurer.refresh = function () {
             allProfileSettings.forEach(function (elem, i) {
                 option = document.createElement("option");
                 option.appendChild(document.createTextNode(elem.name));
+                option.profileItemIndex = i;
                 selector.appendChild(option);
             });
         });
@@ -118,16 +127,17 @@ CharacterProfileConfigurer.createProfileItem = function () {
     });
 };
 
-CharacterProfileConfigurer.swapProfileItems = function () {
-    'use strict';
-    var index1 = document.getElementById("firstProfileField").selectedIndex;
-    var index2 = document.getElementById("secondProfileField").selectedIndex;
-    if (index1 === index2) {
-        Utils.alert("Позиции совпадают");
-        return;
-    }
-
-    DBMS.swapProfileItems(index1,index2, Utils.processError(CharacterProfileConfigurer.refresh));
+CharacterProfileConfigurer.moveProfileItem = function () {
+	'use strict';
+	var index = document.getElementById("moveProfileItemSelector").selectedOptions[0].profileItemIndex;
+	var newIndex = document.getElementById("moveProfileItemPositionSelector").selectedIndex;
+	
+	if (index === newIndex) {
+	  Utils.alert("Позиции полей совпадают");
+	  return;
+	}
+	
+	DBMS.moveProfileItem(index, newIndex, Utils.processError(CharacterProfileConfigurer.refresh));
 };
 
 CharacterProfileConfigurer.removeProfileItem = function () {

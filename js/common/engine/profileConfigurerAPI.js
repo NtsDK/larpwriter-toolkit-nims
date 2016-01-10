@@ -47,13 +47,18 @@ See the License for the specific language governing permissions and
 		    });
 			
 		};
-	
-		// profile configurer
-		LocalDBMS.prototype.swapProfileItems = function(index1, index2, callback) {
+		
+		//profile configurer
+		LocalDBMS.prototype.moveProfileItem = function(index, newIndex, callback){
 			"use strict";
-			var tmp = this.database.ProfileSettings[index1];
-			this.database.ProfileSettings[index1] = this.database.ProfileSettings[index2];
-			this.database.ProfileSettings[index2] = tmp;
+			if(newIndex > index){
+				newIndex--;
+			}
+			var profileSettings = this.database.ProfileSettings;
+			var tmp = profileSettings[index];
+			profileSettings.splice(index, 1);
+			profileSettings.splice(newIndex, 0, tmp);
+			
 			callback();
 		};
 		// profile configurer

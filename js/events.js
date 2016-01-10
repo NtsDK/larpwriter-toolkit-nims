@@ -165,7 +165,6 @@ Events.updateCharacterSelector = function (storyName) {
 		    	characterArray.sort(Utils.charOrdAObject);
     			
     			characterArray.forEach(function (elem) {
-//    				var suffix = elem.isFinished ? Events.finishedSuffix : "";
     				var option = document.createElement("option");
     				option.appendChild(document.createTextNode(elem.displayName + Events.getSuffix(elem)));
     				if (characterNames.indexOf(elem.value) !== -1) {
