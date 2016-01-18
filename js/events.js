@@ -266,7 +266,7 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
         addClass(td, "eventMainPanelRow-right");
         
         divContainer = document.createElement("div");
-        divContainer.className = "events-eventsContainer";
+        addClass(divContainer, "events-eventsContainer");
         
         for (var i = 0; i < characterNames.length; i++) {
             var characterName = characterNames[i];
@@ -275,7 +275,7 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
                 continue;
             }
             div = document.createElement("div");
-            div.className = "events-singleEventAdaptation";
+            addClass(div, "events-singleEventAdaptation");
             div.appendChild(document.createTextNode(characterName));
             
             input = document.createElement("textarea");

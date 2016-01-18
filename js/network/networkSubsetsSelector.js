@@ -191,7 +191,6 @@ NetworkSubsetsSelector.onNetworkSubsetsChange = function (event) {
     
     var selector1 = document.getElementById("networkCharacterDiv");
     var selector2 = document.getElementById("networkStoryDiv");
-    selector1.className = selectedSubset === NetworkSubsetsSelector.objectSubsets[1] ? "" : "hidden";
-    selector2.className = selectedSubset === NetworkSubsetsSelector.objectSubsets[2] ? "" : "hidden";
-    
+    setClassByCondition(selector1, "hidden", selectedSubset !== NetworkSubsetsSelector.objectSubsets[1]);
+    setClassByCondition(selector2, "hidden", selectedSubset !== NetworkSubsetsSelector.objectSubsets[2]);
 };

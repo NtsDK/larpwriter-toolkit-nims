@@ -20,7 +20,6 @@ See the License for the specific language governing permissions and
 var PermissionInformer = {};
 
 PermissionInformer.summary = {
-//		isAdmin: true
 };
 
 
@@ -84,35 +83,41 @@ if(MODE === "NIMS_Server"){
 		callback(null, PermissionInformer.summary.isEditor);
 	};
 	
-	PermissionInformer.isCharacterEditableSync = function(characterName){
-		var isEditor = PermissionInformer.summary.isEditor;
-		var userCharacters = PermissionInformer.summary.userCharacters;
-		return isEditor || userCharacters.indexOf(characterName) !== -1;
-	};
-	
 	PermissionInformer.isCharacterEditable = function(characterName, callback){
-		callback(null, PermissionInformer.isCharacterEditableSync(characterName));
+		callback(null, PermissionInformer.isObjectEditableSync('character', characterName));
 	};
 	
-	PermissionInformer.isStoryEditableSync = function(storyName){
-		var isEditor = PermissionInformer.summary.isEditor;
-		var userStories = PermissionInformer.summary.userStories;
-		return isEditor || userStories.indexOf(storyName) !== -1;
+	PermissionInformer.isObjectEditableSync = function(type, name){
+		if(PermissionInformer.summary.isEditor){
+			return true;
+		}
+		if(PermissionInformer.summary.existEditor){
+			return false;
+		}
+		var arr;
+		switch(type){
+		case 'story':
+			arr = PermissionInformer.summary.userStories;
+			break;
+		case 'character':
+			arr = PermissionInformer.summary.userCharacters;
+			break;
+		}
+		return arr.indexOf(name) !== -1;
 	};
 	
 	PermissionInformer.isStoryEditable = function(storyName, callback){
-		callback(null, PermissionInformer.isStoryEditableSync(storyName));
+		callback(null, PermissionInformer.isObjectEditableSync('story', storyName));
 	};
 	
 	PermissionInformer.getCharacterNamesArray = function(editableOnly, callback){
 		var newNames = [];
 		var userCharacters = PermissionInformer.summary.userCharacters;
-		var isEditor = PermissionInformer.summary.isEditor;
 		var allCharacters = PermissionInformer.summary.allCharacters;
 		var ownerMap = PermissionInformer.summary.characterOwnerMap;
 		allCharacters.filter(function(name){
 			if(editableOnly){
-				return isEditor || userCharacters.indexOf(name) !== -1;
+				return PermissionInformer.isObjectEditableSync('character', name);
 			} else {
 				return true;
 			}
@@ -120,7 +125,7 @@ if(MODE === "NIMS_Server"){
 			newNames.push({
 				displayName:ownerMap[name] + ". " + name,
 				value:name,
-				editable: isEditor || userCharacters.indexOf(name) !== -1,
+				editable: PermissionInformer.isObjectEditableSync('character', name),
 				isOwner: userCharacters.indexOf(name) !== -1
 			});
 		});
@@ -133,12 +138,11 @@ if(MODE === "NIMS_Server"){
 	PermissionInformer.getStoryNamesArray = function(editableOnly, callback){
 		var newNames = [];
 		var userStories = PermissionInformer.summary.userStories;
-		var isEditor = PermissionInformer.summary.isEditor;
 		var allStories = PermissionInformer.summary.allStories;
 		var ownerMap = PermissionInformer.summary.storiesOwnerMap;
 		allStories.filter(function(name){
 			if(editableOnly){
-				return isEditor || userStories.indexOf(name) !== -1;
+				return PermissionInformer.isObjectEditableSync('story', name);
 			} else {
 				return true;
 			}
@@ -146,7 +150,7 @@ if(MODE === "NIMS_Server"){
 			newNames.push({
 				displayName:ownerMap[name] + ". " + name,
 				value:name,
-				editable: isEditor || userStories.indexOf(name) !== -1,
+				editable: PermissionInformer.isObjectEditableSync('story', name),
 				isOwner: userStories.indexOf(name) !== -1
 			});
 		});
@@ -163,9 +167,9 @@ if(MODE === "NIMS_Server"){
 		adaptations.forEach(function(elem){
 			var key = elem.storyName + "-" + elem.characterName;
 			if(isAdaptationRightsByStory){
-				map[key] = PermissionInformer.isStoryEditableSync(elem.storyName);
+				map[key] = PermissionInformer.isObjectEditableSync('story', elem.storyName);
 			} else {
-				map[key] = PermissionInformer.isCharacterEditableSync(elem.characterName);
+				map[key] = PermissionInformer.isObjectEditableSync('character', elem.characterName);
 			}
 		});
 		

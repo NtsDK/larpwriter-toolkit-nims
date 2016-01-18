@@ -147,8 +147,8 @@ SocialNetwork.init = function () {
     SocialNetwork.network;
     SocialNetwork.highlightActive = false;
     
-    document.getElementById("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.hidePanel);
-    document.getElementById("showNetworkSettingsButton").addEventListener("click", SocialNetwork.showPanel);
+    document.getElementById("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
+    document.getElementById("showNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
     
     var warning = document.getElementById("socialNetworkWarning");
     warning.appendChild(document.createTextNode("Внимание! Отрисовка социальной сети требует большого количества ресурсов. Рекомендуем сохранить данные перед отрисовкой."));
@@ -304,21 +304,11 @@ SocialNetwork.onActivitySelectorChangeDelegate = function (event) {
     }
 };
 
-SocialNetwork.onNetworkSubsetsChange = function (event) {
-    var selectedSubset = event.target.value;
-    
-    var selector1 = document.getElementById("networkCharacterDiv");
-    var selector2 = document.getElementById("networkStoryDiv");
-    selector1.className = selectedSubset === SocialNetwork.objectSubsets[1] ? "" : "hidden";
-    selector2.className = selectedSubset === SocialNetwork.objectSubsets[2] ? "" : "hidden";
-    
-};
-
 SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
     "use strict";
     var selectedNetwork = event.target.value;
     var activityBlock = document.getElementById("activityBlock");
-    activityBlock.className = selectedNetwork === "characterActivityInStory" ? "" : "hidden";
+    setClassByCondition(activityBlock, "hidden", selectedNetwork !== "characterActivityInStory");
 };
 
 SocialNetwork.onDrawNetwork = function () {
@@ -712,14 +702,8 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
     nodesDataset.update(updateArray);
 };
 
-SocialNetwork.hidePanel = function () {
-    document.getElementById("commonSettingsContainer").className = "storySelectorContainer hidden";
-    document.getElementById("privateSettingsContainer").className = "storySelectorContainer hidden";
-    document.getElementById("showSettingsButtonContainer").className = "storySelectorContainer2";
-};
-
-SocialNetwork.showPanel = function () {
-    document.getElementById("commonSettingsContainer").className = "storySelectorContainer";
-    document.getElementById("privateSettingsContainer").className = "storySelectorContainer";
-    document.getElementById("showSettingsButtonContainer").className = "storySelectorContainer2 hidden";
+SocialNetwork.togglePanel = function () {
+    toggleClass(document.getElementById("commonSettingsContainer"), "hidden");
+    toggleClass(document.getElementById("privateSettingsContainer"), "hidden");
+    toggleClass(document.getElementById("showSettingsButtonContainer"), "hidden");
 };

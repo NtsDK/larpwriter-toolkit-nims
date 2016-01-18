@@ -125,10 +125,11 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
 
 StoryEvents.createEvent = function () {
     "use strict";
-    var eventName = document.getElementById("eventNameInput").value.trim();
-    var input = document.getElementById("eventInput");
+    var eventNameInput = document.getElementById("eventNameInput");
+    var eventName = eventNameInput.value.trim();
+    var eventTextInput = document.getElementById("eventTextInput");
     var positionSelector = document.getElementById("positionSelector");
-    var eventText = input.value.trim();
+    var eventText = eventTextInput.value.trim();
 
     if (eventName === "") {
         Utils.alert("Название события не указано");
@@ -139,8 +140,13 @@ StoryEvents.createEvent = function () {
         return;
     }
     
-    DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, 
-            positionSelector.value === "В конец", positionSelector.selectedIndex, Utils.processError(StoryEvents.refresh));
+    DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, positionSelector.value === "В конец", 
+		positionSelector.selectedIndex, function(err){
+        	if(err) {Utils.handleError(err); return;}
+        	eventNameInput.value = "";
+        	eventTextInput.value = "";
+        	StoryEvents.refresh();
+    	});
 };
 
 StoryEvents.moveEvent = function () {
@@ -243,18 +249,18 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     input.eventIndex = index;
     
     var opts = {
-            lang : "ru",
-            mask : true,
-            startDate : new Date(preGameDate),
-            endDate : new Date(date),
-            onChangeDateTime : StoryEvents.onChangeDateTimeCreator(input),
+        lang : "ru",
+        mask : true,
+        startDate : new Date(preGameDate),
+        endDate : new Date(date),
+        onChangeDateTime : StoryEvents.onChangeDateTimeCreator(input),
     };
     
     if (event.time !== "") {
         opts.value = event.time;
     } else {
         opts.value = date;
-        input.className = "eventTime defaultDate";
+        addClass(input, "defaultDate");
     }
     
     jQuery(input).datetimepicker(opts);
@@ -276,7 +282,7 @@ StoryEvents.onChangeDateTimeCreator = function (myInput) {
     return function (dp, input) {
         DBMS.updateEventProperty(Stories.CurrentStoryName, myInput.eventIndex, "time", input.val(), Utils.processError());
         StoryEvents.lastDate = input.val();
-        myInput.className = "eventTime";
+        removeClass(myInput, "defaultDate");
     }
 };
 

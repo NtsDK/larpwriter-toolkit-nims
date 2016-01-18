@@ -144,10 +144,10 @@ See the License for the specific language governing permissions and
           <h3 class="panel-title">Управление персонажами</h3>
         </div>
         <div class="panel-body">
-          <input id="characterNameInput"></input>
+          <input id="characterNameInput"  placeholder="Имя персонажа"></input>
           <button id="createCharacterButton">Добавить</button>
           <br> Переименовать из <select id="fromName"></select> в <input
-            id="toName"></input>
+            id="toName" placeholder="Новое имя персонажа"></input>
           <button id="renameCharacter">OK</button>
           <br> <select id="characterRemoveSelector"></select>
           <button id="removeCharacterButton">Удалить</button>
@@ -254,10 +254,10 @@ See the License for the specific language governing permissions and
             <h3 class="panel-title">Управление историями</h3>
           </div>
           <div class="panel-body">
-            <input id="createStoryName"></input>
+            <input id="createStoryName"  placeholder="Название истории"></input>
             <button id="createStoryButton">Добавить</button>
             <br> Переименовать из <select id="fromStory"></select> в <input
-              id="toStory"></input>
+              id="toStory" placeholder="Новое название истории"></input>
             <button id="renameStoryButton">OK</button>
             <br> <select id="storyRemoveSelector"></select>
             <button id="removeStoryButton">Удалить</button>
@@ -297,7 +297,7 @@ See the License for the specific language governing permissions and
               <h3 style="margin-top:8px;">Создание события</h3>
               Название<input id="eventNameInput" class="isStoryEditable"></input><br>
               Описание события<br>
-              <textarea id="eventInput" class="eventText isStoryEditable"></textarea><br>
+              <textarea id="eventTextInput" class="eventText isStoryEditable"></textarea><br>
               Позиция<select id="positionSelector" class="isStoryEditable"></select>
               <button id="createEventButton" class="isStoryEditable">Добавить</button>
             </div>
