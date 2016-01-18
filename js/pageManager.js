@@ -25,26 +25,11 @@ var DBMS;
 PageManager.onLoad = function () {
 	if(MODE === "Standalone"){
 		DBMS = new LocalDBMS();
-		var request = $.ajax({
-			url : "js/common/baseExample.json",
-			dataType : "text",
-			method : "GET",
-			contentType : "text/plain;charset=utf-8"
-		});
-		
-		request.done(function(data) {
-			DBMS.setDatabase(JSON.parse(data), Utils.processError(PageManager.onDatabaseLoad));
-		});
-		
-		request.fail(function(errorInfo, textStatus, errorThrown) {
-			alert("Ошибка при загрузке примера базы: " + errorInfo.responseText + ". Загружаю чистую базу.");
-			DBMS.newDatabase(Utils.processError(PageManager.onDatabaseLoad));
-		});
+		DBMS.setDatabase(BaseExample.data, Utils.processError(PageManager.onDatabaseLoad));
 	} else if(MODE === "NIMS_Server") {
 		DBMS = new RemoteDBMS();
 		PageManager.onDatabaseLoad();
 	}
-    
 };
 
 PageManager.onDatabaseLoad = function () {

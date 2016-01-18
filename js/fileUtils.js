@@ -29,21 +29,7 @@ FileUtils.makeNewBase = function () {
     "use strict";
     if(Utils.confirm("Вы уверены, что хотите создать новую базу? Все несохраненные изменения будут потеряны.")) {
         "use strict";
-        
-        var request = $.ajax({
-            url : "js/common/emptyBase.json",
-            dataType : "text",
-            method : "GET",
-            contentType : "text/plain;charset=utf-8"
-        });
-        
-        request.done(function(data) {
-        	DBMS.setDatabase(JSON.parse(data), FileUtils.callback);
-        });
-        
-        request.fail(function(errorInfo, textStatus, errorThrown) {
-            alert("Ошибка при загрузке чистой базы.");
-        });
+        DBMS.setDatabase(EmptyBase.data, FileUtils.callback);
     }
 };
 
