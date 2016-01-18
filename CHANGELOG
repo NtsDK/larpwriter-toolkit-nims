@@ -1,3 +1,19 @@
+version 0.4.2 (18 Jan 2016)
+
+  NIMS was deeply reworked for server version without significant interface changes.
+  
+  Big changes:
+  - implemented Data API
+  
+  Other changes:
+  - new icons
+  - added placeholders
+  - swapping of events and profile fields was replaced by move operation
+  - character profile is showed automatically on character creation
+  - event creation information is cleaned on event creation
+  - improved adaptations annotation: fixed bugs and added new annotation "empty"
+  - fixed minor bugs
+
 version 0.4.1 (27 Nov 2015)
 
   Initial release. 
