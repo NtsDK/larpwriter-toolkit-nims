@@ -19,20 +19,19 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.createProfileItem = function(name, type, value, toEnd, selectedIndex, callback) {
 			"use strict";
 			var that = this;
-		    this.isProfileItemNameUsed(name, function(err, value){
+		    this.isProfileItemNameUsed(name, function(err, isUsed){
 		    	if(err) {callback(err);return;}
 		    	
-		    	if(value){
+		    	if(isUsed){
 		    		callback(new Errors.ValidationError("Такое имя уже используется"));
 		    		return;
 		    	}
 		    	
 		    	var profileItem = {
-		    			name : name,
-		    			type : type,
-		    			value : value
+	    			name : name,
+	    			type : type,
+	    			value : value
 		    	};
-		    	
 		    	
 		    	Object.keys(that.database.Characters).forEach(function(characterName) {
 		    		that.database.Characters[characterName][name] = value;
@@ -114,10 +113,10 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback) {
 			"use strict";
 			var that = this;
-		    this.isProfileItemNameUsed(newName, function(err, value){
+		    this.isProfileItemNameUsed(newName, function(err, isUsed){
 		    	if(err) {callback(err);return;}
 		    	
-		    	if(value){
+		    	if(isUsed){
 		    		callback(new Errors.ValidationError("Такое имя уже используется"));
 		    		return;
 		    	}
