@@ -36,6 +36,7 @@ RemoteDBMS._simpleGet = function(name, params, callback){
         dataType : "text",
         method : "GET",
         contentType : "application/json;charset=utf-8",
+        cache: false,
     });
     
     request.done(function(data) {
