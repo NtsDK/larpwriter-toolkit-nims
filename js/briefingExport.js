@@ -48,25 +48,9 @@ BriefingExport.makeExport = function (type) {
     "use strict";
     return function(){
         if(!BriefingExport.templates[type]){
-          // base64 encoded docx
-          var request = $.ajax({
-              url : type + ".txt",
-              dataType : "text",
-              method : "GET",
-              contentType : "text/plain;charset=utf-8"
-          });
-          
-          request.done(function(data) {
-              BriefingExport.templates[type] = atob(data);
-              BriefingExport.exportByDefaultTemplate(type);
-          });
-          
-          request.fail(function(errorInfo, textStatus, errorThrown) {
-              alert(errorInfo.responseText);
-          });
-        } else {
-            BriefingExport.exportByDefaultTemplate(type);
+            BriefingExport.templates[type] = atob(templatesArr[type]);
         }
+        BriefingExport.exportByDefaultTemplate(type);
     };
 };
 
@@ -199,19 +183,28 @@ BriefingExport.readTemplateFile = function (evt) {
 
 BriefingExport.generateDocxBriefings = function (contents, briefingData, fileName) {
     "use strict";
-
+    
     var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
+    var exportStatus = document.getElementById("exportStatus");
+//    Utils.removeChildren(exportStatus);
+    
+    var updateStatus = function(text){
+      Utils.removeChildren(exportStatus);
+      exportStatus.appendChild(document.createTextNode(text));
+    };
     
     if(!fileName){
         fileName = "briefings";
     }
 
-    var out;
+    var out, archive;
+    updateStatus("Подготовка к выгрузке.");
     if (toSeparateFiles) {
         var zip = new JSZip();
         content = zip.generate();
+        updateStatus("Данные подготовлены. Начинаю выгрузку.");
 
-        briefingData.briefings.forEach(function (briefing) {
+        briefingData.briefings.forEach(function (briefing, i) {
             var doc = new window.Docxgen(contents);
             var tmpData = {
                     briefings : [ briefing ]
@@ -223,11 +216,16 @@ BriefingExport.generateDocxBriefings = function (contents, briefingData, fileNam
                 type : "Uint8Array"
             });
             zip.file(briefing.name + ".docx", out);
+            updateStatus("Выгружено " + (i+1) + " из " + briefingData.briefings.length + ".");
         });
-        saveAs(zip.generate({
-            type : "blob"
-        }), fileName + ".zip");
+        updateStatus("Данные выгружены. Архивирую.");
+        archive = zip.generate({type : "blob"});
+        updateStatus("Архив готов.");
+        if(Utils.confirm("Архив сформирован. Сохраняем?")){
+          saveAs(archive, fileName + ".zip");
+        }
     } else {
+        updateStatus("Данные подготовлены. Начинаю выгрузку.");
         var doc = new window.Docxgen(contents);
         doc.setData(briefingData);
         doc.render() // apply them (replace all occurences of {first_name} by
@@ -235,6 +233,9 @@ BriefingExport.generateDocxBriefings = function (contents, briefingData, fileNam
         out = doc.getZip().generate({
             type : "blob"
         });
-        saveAs(out, fileName + ".docx");
+        updateStatus("Файл выгружен.");
+        if(Utils.confirm("Документ сформирован. Сохраняем?")){
+          saveAs(out, fileName + ".docx");
+        }
     }
 };
