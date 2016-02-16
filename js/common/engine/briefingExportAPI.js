@@ -16,13 +16,17 @@ See the License for the specific language governing permissions and
 
 	function briefingExportAPI(LocalDBMS, CommonUtils) {
 	
-		LocalDBMS.prototype.getBriefingData = function(groupingByStory, callback) {
+		LocalDBMS.prototype.getBriefingData = function(groupingByStory, selectedCharacters, callback) {
 			"use strict";
 			var data = {};
 	
 			var charArray = [];
 	
 			for ( var charName in this.database.Characters) {
+			  if(selectedCharacters && !selectedCharacters[charName]){
+			    continue;
+			  }
+			  
 				var inventory = [];
 				for ( var storyName in this.database.Stories) {
 					var story = this.database.Stories[storyName];

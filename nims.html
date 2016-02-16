@@ -502,10 +502,10 @@ See the License for the specific language governing permissions and
           <h3 class="panel-title">Настройки</h3>
         </div>
         <div class="panel-body">
-          <input type="radio" name="eventsGroupBy" value="story" 
-          id="eventGroupingByStoryRadio"/>Группировать события по историям <br> 
-          <input type="radio" name="eventsGroupBy" value="time" 
-          id="eventGroupingByTimeRadio"/>Сортировать события по хронологии <br> 
+          <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio"/>
+          <label for="eventGroupingByStoryRadio">Группировать события по историям</label> <br> 
+          <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio"/>
+          <label for="eventGroupingByTimeRadio">Сортировать события по хронологии</label> <br> 
         </div>
       </div>
       
@@ -527,6 +527,18 @@ See the License for the specific language governing permissions and
         <div class="panel-body">
         
           <input type="checkbox" id="toSeparateFileCheckbox"/>Каждую вводную в отдельный файл <br>
+          <input type="radio" name="exportSelection" value="all" id="exportSelectionAll"/>
+          <label for="exportSelectionAll">Выгрузить все вводные</label> <br> 
+          <input type="radio" name="exportSelection" value="specific" id="exportSelectionSpecific"/>
+          <label for="exportSelectionSpecific">Выгрузить часть вводных</label> <br> 
+          
+          <div id="briefingSelector" class="hidden">
+            Количество выгружаемых вводных 
+            <select id="briefingNumberSelector"></select><br>
+            Диапазон выгружаемых вводных
+            <select id="briefingIntervalSelector"></select>
+          </div>
+          
           <h3>Простая выгрузка</h3>
           <button id="makeBriefingsByTime">Сформировать вводные, события сгруппированны по времени (docx)</button><br>
           <button id="makeBriefingsByStory">Сформировать вводные, события сгруппированны по историям (docx)</button><br>
@@ -534,11 +546,10 @@ See the License for the specific language governing permissions and
           
           <button id="makeInventoryList">Сформировать список инвентаря (docx)</button><br>
           <h3>Продвинутая выгрузка</h3>
-          <input type="radio" name="eventsGroupBy2" value="story"
-            id="eventGroupingByStoryRadio2"/>Группировать события по
-          историям <br> <input type="radio" name="eventsGroupBy2"
-            value="time" id="eventGroupingByTimeRadio2"/>Сортировать
-          события по хронологии <br> 
+          <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2"/> 
+          <label for="eventGroupingByStoryRadio2">Группировать события по историям</label> <br> 
+          <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2"/> 
+          <label for="eventGroupingByTimeRadio2">Сортировать события по хронологии</label> <br> 
 
               <div class="file-upload">
                    <label>

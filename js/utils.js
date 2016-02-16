@@ -199,6 +199,30 @@ function setClassByCondition(o,c,condition){
 	}
 };
 
+function getEl(id){
+  return document.getElementById(id);
+};
+
+function makeEl(el){
+  return document.createElement(el);
+};
+
+function makeText(text){
+  return document.createTextNode(text);
+};
+
+function listen(el, event, listener){
+  el.addEventListener(event, listener);
+}
+
+function arr2Chunks(array, chunkSize) {
+  var i, j, chunks = [], chunk = 10;
+  for (i = 0, j = array.length; i < j; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
 // from date format utils
 //For convenience...
 Date.prototype.format = function (mask, utc) {
