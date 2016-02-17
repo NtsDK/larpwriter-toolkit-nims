@@ -87,8 +87,8 @@ StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
 		removeArray.push(nameInfo);
 	});
 	
-	addArray.sort(CommonUtils.charOrdAObject);
-	removeArray.sort(CommonUtils.charOrdAObject);
+	addArray.sort(Utils.charOrdAObject);
+	removeArray.sort(Utils.charOrdAObject);
 	
 	var option;
 	
