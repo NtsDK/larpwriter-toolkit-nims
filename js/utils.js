@@ -203,6 +203,10 @@ function getEl(id){
   return document.getElementById(id);
 };
 
+function getEls(clazz){
+  return document.getElementsByClassName(clazz);
+};
+
 function makeEl(el){
   return document.createElement(el);
 };

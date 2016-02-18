@@ -38,6 +38,7 @@ See the License for the specific language governing permissions and
 <script src="libs/FileSaver.js"></script>
 <script src="libs/jszip-utils.js"></script>
 <script src="libs/jszip.js"></script>
+<script src="libs/mustache.min.js"></script>
 
 
 <!-- <script src="libs/docxgen.js"></script> -->
@@ -524,42 +525,106 @@ See the License for the specific language governing permissions and
 
     <div id="briefingExportDiv">
       <div class="panel panel-default">
-        <div class="panel-body">
-        
-          <input type="checkbox" id="toSeparateFileCheckbox"/>Каждую вводную в отдельный файл <br>
-          <input type="radio" name="exportSelection" value="all" id="exportSelectionAll"/>
-          <label for="exportSelectionAll">Выгрузить все вводные</label> <br> 
-          <input type="radio" name="exportSelection" value="specific" id="exportSelectionSpecific"/>
-          <label for="exportSelectionSpecific">Выгрузить часть вводных</label> <br> 
+        <div class="panel-body" style="display:flex;justify-content:space-around;">
           
-          <div id="briefingSelector" class="hidden">
-            Количество выгружаемых вводных 
-            <select id="briefingNumberSelector"></select><br>
-            Диапазон выгружаемых вводных
-            <select id="briefingIntervalSelector"></select>
+          <fieldset>
+            <legend>Режим выгрузки</legend>
+            <input type="checkbox" id="toSeparateFileCheckbox"/> 
+            <label for="toSeparateFileCheckbox">Каждую вводную в отдельный файл</label><br>
+          </fieldset>
+        
+          <fieldset>
+            <legend>Выбор вводных</legend>
+            <input type="radio" name="exportSelection" value="all" id="exportSelectionAll"/>
+            <label for="exportSelectionAll">Выгрузить все вводные</label> <br> 
+            <input type="radio" name="exportSelection" value="specific" id="exportSelectionSpecific"/>
+            <label for="exportSelectionSpecific">Выгрузить часть вводных</label> <br> 
+            
+            <div id="briefingSelector" class="hidden">
+              Количество выгружаемых вводных 
+              <select id="briefingNumberSelector"></select><br>
+              Диапазон выгружаемых вводных
+              <select id="briefingIntervalSelector"></select>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Режим группировки событий</legend>
+            <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2"/> 
+            <label for="eventGroupingByStoryRadio2">Группировать события по историям</label> <br> 
+            <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2"/> 
+            <label for="eventGroupingByTimeRadio2">Сортировать события по хронологии</label> <br>
+          </fieldset>
+        
+        </div>
+      </div>
+          
+      <div style="display:flex;margin-right:10px;">
+        <div class="navigation-button exportModeButton" id="simpleExport">Простая выгрузка</div>
+        <div class="navigation-button exportModeButton" id="advancedWordExport">Продвинутая выгрузка docx</div>
+        <div class="navigation-button exportModeButton" id="advancedTextExport">Продвинутая текстовая выгрузка</div>
+      </div>
+          
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div id="simpleExportContainer" class="exportContainer">
+            <button id="makeBriefingsByTime">Сформировать вводные, события сгруппированны по времени (docx)</button><br>
+            <button id="makeBriefingsByStory">Сформировать вводные, события сгруппированны по историям (docx)</button><br>
+            <button id="makeBriefings">Сформировать вводные txt</button><br><br>
+            
+            <button id="makeInventoryList">Сформировать список инвентаря (docx)</button><br>
           </div>
           
-          <h3>Простая выгрузка</h3>
-          <button id="makeBriefingsByTime">Сформировать вводные, события сгруппированны по времени (docx)</button><br>
-          <button id="makeBriefingsByStory">Сформировать вводные, события сгруппированны по историям (docx)</button><br>
-          <button id="makeBriefings">Сформировать вводные txt</button><br><br>
+          <div id="advancedWordExportContainer" class="exportContainer">
+            <div class="file-upload">
+              <label> <input type="file" name="file"
+                id="docxBriefings"> <span>Загрузить шаблон и сформировать вводные</span>
+              </label>
+            </div>
+          </div>
           
-          <button id="makeInventoryList">Сформировать список инвентаря (docx)</button><br>
-          <h3>Продвинутая выгрузка</h3>
-          <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2"/> 
-          <label for="eventGroupingByStoryRadio2">Группировать события по историям</label> <br> 
-          <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2"/> 
-          <label for="eventGroupingByTimeRadio2">Сортировать события по хронологии</label> <br> 
+          <div id="advancedTextExportContainer" class="exportContainer">
+            <div >
+              <h3>Шаблон</h3>
+              <textarea id="templateArea">
+{{#briefings}}
+-------------------
+{{name}}
 
-              <div class="file-upload">
-                   <label>
-                        <input type="file" name="file" id="docxBriefings">
-                        <span>Загрузить шаблон и сформировать вводные</span>
-                   </label>
-              </div>
+Инвентарь: {{inventory}}
+
+{{#profileInfoArray}}
+{{name}}:{{value}}
+{{/profileInfoArray}}
+
+{{#eventsInfo}}
+{{text}}
+{{{time}}}
+{{/eventsInfo}}
+
+{{#storiesInfo}}
+{{name}}
+{{#eventsInfo}}
+
+{{{time}}}
+{{text}}
+{{/eventsInfo}}
+{{/storiesInfo}}
+
+{{/briefings}}
               
-              <h3>Статус выгрузки</h3>
-              <div id="exportStatus"></div>
+              </textarea><br>
+              <button id="previewTextOutput">Предварительный просмотр</button><br>
+              <button id="makeTextOutput">Выгрузить</button>
+            </div>
+            <div >
+              <h3>Выгруженный текст</h3>
+              <textarea id="textBriefingPreviewArea"></textarea>
+            </div>
+          </div>
+              
+          <h3>Статус выгрузки</h3>
+          <div id="exportStatus"></div>
         </div>
       </div>
     </div>

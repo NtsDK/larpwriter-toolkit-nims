@@ -28,7 +28,7 @@ BriefingExport.init = function () {
     "use strict";
     var el = document.getElementById("makeBriefings");
     el.addEventListener("click", BriefingExport.makeTextBriefings);
-
+    
     el = document.getElementById("docxBriefings");
     el.addEventListener("change", BriefingExport.readTemplateFile);
 
@@ -59,9 +59,47 @@ BriefingExport.init = function () {
     document.getElementById("makeBriefingsByTime ".trim()).addEventListener("click", BriefingExport.makeExport("templateByTime")); 
     document.getElementById("makeBriefingsByStory".trim()).addEventListener("click", BriefingExport.makeExport("templateByStory")); 
     document.getElementById("makeInventoryList   ".trim()).addEventListener("click", BriefingExport.makeExport("inventoryTemplate")); 
+    
+    var containers = getEls("exportContainer");
+    
+    for (var i = 1; i < containers.length; i++) { // don't hide 1st element
+      addClass(containers[i], "hidden");
+    }
+    var exportModeButtons = getEls("exportModeButton");
+    
+    addClass(exportModeButtons[0], "active");
+    
+    for (var i = 0; i < exportModeButtons.length; i++) {
+      listen(exportModeButtons[i], "click", BriefingExport.exportModeButtonClick(exportModeButtons, containers));
+    }
+    
+    listen(getEl("previewTextOutput"), "click", BriefingExport.previewTextOutput);
+    getEl("textBriefingPreviewArea").value = "";
 
     BriefingExport.briefingSelector = document.getElementById("briefingSelector");
     BriefingExport.content = document.getElementById("briefingExportDiv");
+};
+
+BriefingExport.previewTextOutput = function (buttons, containers) {
+  "use strict";
+  
+  DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, briefingData){
+    if(err) {Utils.handleError(err); return;}
+    getEl("textBriefingPreviewArea").value = Mustache.render(getEl("templateArea").value, briefingData);
+  });
+  
+};
+
+BriefingExport.exportModeButtonClick = function (buttons, containers) {
+  "use strict";
+  return function(event){
+    for (var i = 0; i < buttons.length; i++) { 
+      setClassByCondition(buttons[i], "active", event.target.id === buttons[i].id);
+    }
+    for (var i = 0; i < containers.length; i++) {
+      setClassByCondition(containers[i], "hidden", event.target.id + "Container" !== containers[i].id);
+    }
+  };
 };
 
 BriefingExport.refresh = function () {
@@ -129,22 +167,20 @@ BriefingExport.exportByDefaultTemplate = function(type){
     "use strict";
     
     var template = BriefingExport.templates[type];
-    var briefingData;
+    var groupingByStory;
     switch(type){
     case "templateByTime"   : 
-        briefingData = DBMS.getBriefingData(false, BriefingExport.getSelectedUsers(), function(err, briefingData){
-        	if(err) {Utils.handleError(err); return;}
-            BriefingExport.generateDocxBriefings(template, briefingData);
-        });
-        break;
+      groupingByStory = false;
+      break;
     case "templateByStory"  : 
     case "inventoryTemplate": 
-        briefingData = DBMS.getBriefingData(true, BriefingExport.getSelectedUsers(), function(err, briefingData){
-        	if(err) {Utils.handleError(err); return;}
-            BriefingExport.generateDocxBriefings(template, briefingData);
-        });
-        break;
+      groupingByStory = true;
+      break;
     }
+    DBMS.getBriefingData(groupingByStory, BriefingExport.getSelectedUsers(), function(err, briefingData){
+      if(err) {Utils.handleError(err); return;}
+      BriefingExport.generateDocxBriefings(template, briefingData);
+    });
 };
 
 
@@ -255,9 +291,10 @@ BriefingExport.readTemplateFile = function (evt) {
 BriefingExport.generateDocxBriefings = function (contents, briefingData, fileName) {
     "use strict";
     
+    getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, "  ");
+    
     var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
     var exportStatus = document.getElementById("exportStatus");
-//    Utils.removeChildren(exportStatus);
     
     var updateStatus = function(text){
       Utils.removeChildren(exportStatus);

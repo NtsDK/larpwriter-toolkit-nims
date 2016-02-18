@@ -271,3 +271,18 @@ See the License for the specific language governing permissions and
 	border: 1px solid lightgray;
 	background-color: #EDEDED;
 }
+
+/* briefing export */
+#advancedTextExportContainer {
+	display: flex;
+}
+
+#advancedTextExportContainer div {
+	flex-basis: 0px;
+	flex-grow: 1;
+}
+
+#advancedTextExportContainer div textarea {
+	width: 100%;
+	height: 400px;
+}

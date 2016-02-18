@@ -41,11 +41,11 @@ See the License for the specific language governing permissions and
 				var profileInfo = _getProfileInfoObject(this.database, charName);
 				var profileInfoArray = _getProfileInfoArray(this.database, charName);
 	
-				if (groupingByStory) {
+//				if (groupingByStory) {
 					var storiesInfo = _getStoriesInfo(this.database, charName);
-				} else {
+//				} else {
 					var eventsInfo = _getEventsInfo(this.database, charName);
-				}
+//				}
 				var dataObject = {
 					"name" : charName,
 					"inventory" : inventory,
