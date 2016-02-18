@@ -51,6 +51,7 @@ See the License for the specific language governing permissions and
   <script src="templates/inventoryTemplate.js"></script>
   <script src="templates/templateByTime.js"></script>
   <script src="templates/templateByStory.js"></script>
+  <script src="templates/textTemplate.js"></script>
   
   <script src="js/utils.js"></script>
   <script src="js/fileUtils.js"></script>
@@ -548,13 +549,13 @@ See the License for the specific language governing permissions and
             </div>
           </fieldset>
 
-          <fieldset>
-            <legend>Режим группировки событий</legend>
-            <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2"/> 
-            <label for="eventGroupingByStoryRadio2">Группировать события по историям</label> <br> 
-            <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2"/> 
-            <label for="eventGroupingByTimeRadio2">Сортировать события по хронологии</label> <br>
-          </fieldset>
+<!--           <fieldset> -->
+<!--             <legend>Режим вывода событий</legend> -->
+<!--             <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2"/>  -->
+<!--             <label for="eventGroupingByStoryRadio2">Группировать события по историям</label> <br>  -->
+<!--             <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2"/>  -->
+<!--             <label for="eventGroupingByTimeRadio2">Сортировать события по хронологии</label> <br> -->
+<!--           </fieldset> -->
         
         </div>
       </div>
@@ -570,7 +571,7 @@ See the License for the specific language governing permissions and
           <div id="simpleExportContainer" class="exportContainer">
             <button id="makeBriefingsByTime">Сформировать вводные, события сгруппированны по времени (docx)</button><br>
             <button id="makeBriefingsByStory">Сформировать вводные, события сгруппированны по историям (docx)</button><br>
-            <button id="makeBriefings">Сформировать вводные txt</button><br><br>
+            <button id="makeDefaultTextBriefings">Сформировать вводные txt</button><br><br>
             
             <button id="makeInventoryList">Сформировать список инвентаря (docx)</button><br>
           </div>
@@ -587,35 +588,14 @@ See the License for the specific language governing permissions and
             <div >
               <h3>Шаблон</h3>
               <textarea id="templateArea">
-{{#briefings}}
--------------------
-{{name}}
 
-Инвентарь: {{inventory}}
-
-{{#profileInfoArray}}
-{{name}}:{{value}}
-{{/profileInfoArray}}
-
-{{#eventsInfo}}
-{{text}}
-{{{time}}}
-{{/eventsInfo}}
-
-{{#storiesInfo}}
-{{name}}
-{{#eventsInfo}}
-
-{{{time}}}
-{{text}}
-{{/eventsInfo}}
-{{/storiesInfo}}
-
-{{/briefings}}
               
               </textarea><br>
+              <label>Введите тип сохраняемого текста (txt, html, rst и др.)</label>
+              <input id="textTypeSelector" value="txt"/>
               <button id="previewTextOutput">Предварительный просмотр</button><br>
-              <button id="makeTextOutput">Выгрузить</button>
+              <button id="showRawData" class="hidden">Исходные данные</button>
+              <button id="makeCustomTextBriefings">Выгрузить</button>
             </div>
             <div >
               <h3>Выгруженный текст</h3>

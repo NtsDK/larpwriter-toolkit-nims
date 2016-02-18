@@ -26,14 +26,19 @@ BriefingExport.briefingNumber = [1,5,10,20];
 
 BriefingExport.init = function () {
     "use strict";
-    var el = document.getElementById("makeBriefings");
-    el.addEventListener("click", BriefingExport.makeTextBriefings);
+    listen(getEl("makeDefaultTextBriefings"), "click", function(){
+      BriefingExport.makeTextBriefings("txt",TEXT_TEMPLATE);
+    });
+
+    listen(getEl("makeCustomTextBriefings"), "click", function(){
+      BriefingExport.makeTextBriefings(getEl("textTypeSelector").value, getEl("templateArea").value);
+    });
     
-    el = document.getElementById("docxBriefings");
+    var el = document.getElementById("docxBriefings");
     el.addEventListener("change", BriefingExport.readTemplateFile);
 
-    el = document.getElementById("eventGroupingByStoryRadio2");
-    el.checked = true;
+//    el = document.getElementById("eventGroupingByStoryRadio2");
+//    el.checked = true;
 
     el = document.getElementById("exportSelectionAll");
     el.checked = true;
@@ -76,18 +81,10 @@ BriefingExport.init = function () {
     listen(getEl("previewTextOutput"), "click", BriefingExport.previewTextOutput);
     getEl("textBriefingPreviewArea").value = "";
 
+    listen(getEl("showRawData"), "click", BriefingExport.previewTextDataAsIs);
+
     BriefingExport.briefingSelector = document.getElementById("briefingSelector");
     BriefingExport.content = document.getElementById("briefingExportDiv");
-};
-
-BriefingExport.previewTextOutput = function (buttons, containers) {
-  "use strict";
-  
-  DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, briefingData){
-    if(err) {Utils.handleError(err); return;}
-    getEl("textBriefingPreviewArea").value = Mustache.render(getEl("templateArea").value, briefingData);
-  });
-  
 };
 
 BriefingExport.exportModeButtonClick = function (buttons, containers) {
@@ -104,6 +101,8 @@ BriefingExport.exportModeButtonClick = function (buttons, containers) {
 
 BriefingExport.refresh = function () {
   "use strict";
+  
+  getEl("templateArea").value = TEXT_TEMPLATE;
   BriefingExport.onNumberSelectorChange();
 };
 
@@ -152,7 +151,6 @@ BriefingExport.onNumberSelectorChange = function () {
   });
 };
 
-
 BriefingExport.makeExport = function (type) {
     "use strict";
     return function(){
@@ -183,90 +181,75 @@ BriefingExport.exportByDefaultTemplate = function(type){
     });
 };
 
+BriefingExport.previewTextDataAsIs = function () {
+  "use strict";
+  
+  DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, briefingData){
+    if(err) {Utils.handleError(err); return;}
+    getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, "  ");
+  });
+};
 
-BriefingExport.makeTextBriefings = function () {
-    "use strict";
-
-    DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, data){
-    	if(err) {Utils.handleError(err); return;}
-        var characterList = {};
-        
-        data.briefings.forEach(function (briefingData) {
-            var briefing = "";
-            
-            briefing += briefingData.name + "\n\n";
-            
-            var regex = new RegExp('^profileInfo');
-            
-            Object.keys(briefingData).filter(function (element) {
-                return regex.test(element);
-            }).forEach(
-                    function (element) {
-                        briefing += "----------------------------------\n";
-                        briefing += element.substring("profileInfo.".length, element.length) + "\n";
-                        briefing += briefingData[element] + "\n";
-                        briefing += "----------------------------------\n\n";
-                    });
-            
-            briefing += "----------------------------------\n";
-            briefing += "Инвентарь\n";
-            briefing += briefingData.inventory + "\n";
-            briefing += "----------------------------------\n\n";
-            
-            if (briefingData.storiesInfo) {
-                briefingData.storiesInfo.forEach(function (storyInfo) {
-                    briefing += "----------------------------------\n";
-                    briefing += storyInfo.name + "\n\n";
-                    
-                    storyInfo.eventsInfo.forEach(function (event) {
-                        briefing += event.time + ": " + event.text + "\n\n";
-                    });
-                    
-                    briefing += "----------------------------------\n\n";
-                });
-            }
-            
-            if (briefingData.eventsInfo) {
-                briefing += "----------------------------------\n";
-                
-                briefingData.eventsInfo.forEach(function (event) {
-                    briefing += event.time + ": " + event.text + "\n\n";
-                });
-                
-                briefing += "----------------------------------\n\n";
-            }
-            
-            characterList[briefingData.name] = briefing;
-        });
-        
-        var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
-        
-        if (toSeparateFiles) {
-            for ( var charName in characterList) {
-                var blob = new Blob([ characterList[charName] ], {
-                    type : "text/plain;charset=utf-8"
-                });
-                saveAs(blob, charName + ".txt");
-            }
-        } else {
-            var result = "";
-            for ( var charName in characterList) {
-                result += characterList[charName];
-            }
-            var blob = new Blob([ result ], {
-                type : "text/plain;charset=utf-8"
-            });
-            saveAs(blob, "briefings.txt");
-        }
+BriefingExport.renderText = function(textTemplate, delegate){
+  "use strict";
+  DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, data){
+    if(err) {Utils.handleError(err); return;}
+    var characterList = {};
+    data.briefings.forEach(function (briefingData) {
+      characterList[briefingData.name] = Mustache.render(textTemplate, briefingData);
     });
+    
+    delegate(characterList);
+  });
+}
+
+BriefingExport.previewTextOutput = function () {
+  "use strict";
+  
+  BriefingExport.renderText(getEl("templateArea").value, function(characterList){
+    var str = "";
+    for(var name in characterList){
+      str += characterList[name];
+    }
+    
+    getEl("textBriefingPreviewArea").value = str;
+  });
+};
+
+BriefingExport.makeTextBriefings = function (fileType, textTemplate) {
+    "use strict";
+    
+  BriefingExport.renderText(textTemplate, function(characterList){
+    var toSeparateFiles = getEl("toSeparateFileCheckbox").checked;
+    
+    if (toSeparateFiles) {
+      var zip = new JSZip();
+      
+      var blob;
+      for ( var charName in characterList) {
+        zip.file(charName + "." + fileType, characterList[charName]);
+      }
+      
+      var archive = zip.generate({type : "blob"});
+      saveAs(archive, "briefings.zip");
+    } else {
+      var result = "";
+      for ( var charName in characterList) {
+          result += characterList[charName];
+      }
+      var blob = new Blob([ result ], {
+          type : "text/plain;charset=utf-8"
+      });
+      saveAs(blob, "briefings." + fileType);
+    }
+  });
 };
 
 BriefingExport.isGroupingByStory = function () {
     "use strict";
-    return document.getElementById("eventGroupingByStoryRadio2").checked;
+    return true;
+//    return document.getElementById("eventGroupingByStoryRadio2").checked;
 };
-
-
 
 BriefingExport.readTemplateFile = function (evt) {
     "use strict";
@@ -290,8 +273,6 @@ BriefingExport.readTemplateFile = function (evt) {
 
 BriefingExport.generateDocxBriefings = function (contents, briefingData, fileName) {
     "use strict";
-    
-    getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, "  ");
     
     var toSeparateFiles = document.getElementById("toSeparateFileCheckbox").checked;
     var exportStatus = document.getElementById("exportStatus");
