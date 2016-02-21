@@ -42,6 +42,9 @@ Characters.init = function () {
 
     button = document.getElementById("removeCharacterButton");
     button.addEventListener("click", Characters.removeCharacter);
+    
+    $( "#fromName" ).combobox();
+    $( "#characterRemoveSelector" ).combobox();
 
     Characters.content = document.getElementById("charactersDiv");
 };

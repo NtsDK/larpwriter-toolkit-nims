@@ -40,6 +40,11 @@ StoryCharacters.init = function () {
     StoryCharacters.removeSelector = document.getElementById("storyCharactersRemoveSelector");
     StoryCharacters.fromSelector = document.getElementById("storyCharactersFromSelector");
     StoryCharacters.toSelector = document.getElementById("storyCharactersToSelector");
+    
+    $( "#storyCharactersAddSelector" ).combobox();
+    $( "#storyCharactersRemoveSelector" ).combobox();
+    $( "#storyCharactersFromSelector" ).combobox();
+    $( "#storyCharactersToSelector" ).combobox();
 
     StoryCharacters.content = document.getElementById("storyCharactersDiv");
 };
