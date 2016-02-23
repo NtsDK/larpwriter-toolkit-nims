@@ -18,6 +18,18 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
+var statisticKeys = [
+  'storyNumber',
+  'characterNumber',
+  'eventsNumber',
+  'userNumber',
+  'textCharacterNumber',
+  'lastEvent',
+  'firstEvent',
+  'generalCompleteness',
+  'storyCompleteness',
+]; 
+  
 var Overview = {};
 
 Overview.init = function () {
@@ -48,24 +60,99 @@ Overview.init = function () {
     Overview.descr = document.getElementById("gameDescription");
     Overview.descr.addEventListener("change", Overview.updateDescr);
     
+    UI.initTabPanel("overviewInfoButton", "overviewContainer");
+    
     Overview.content = document.getElementById("overviewDiv");
 };
+
+Overview.makeChart = function(id, data){
+  "use strict";
+  if(Overview[id]){
+    Overview[id].destroy();
+  }
+  
+  data.forEach(function(value, i){
+    value.color = Constants.colorPalette[i].color.background;
+    value.highlight = Constants.colorPalette[i].color.hover.background;
+  });
+  
+  var canvas = getEl(id);
+  var ctx = canvas.getContext("2d");
+//  Overview[id] = new Chart(ctx).Pie(data,{});
+  Overview[id] = new Chart(ctx).Doughnut(data,{animateRotate : false});
+};
+
+Overview.makeHistogram = function(id, data){
+  "use strict";
+
+  var place = clearEl(getEl(id));
+  
+  var min = null, max = null;
+  data.forEach(function(barData){
+    if(barData){
+      if(max === null || barData.value > max){
+        max = barData.value;
+      }
+    }
+  });
+  data.forEach(function(barData){
+    if(barData){
+//      barData.normValue = (barData.value - min)/(max-min);
+//      barData.normValue = (barData.value - 0)/(max-0);
+      barData.normValue = (barData.value - 0)/(max-0)*0.9+0.1;
+    }
+  });
+  
+  var div;
+  data.forEach(function(barData){
+    div = barData === null ? makeEl('div') : addEl(makeEl('div'), makeText(barData.value));
+    addClass(div, "bar");
+    if(barData){
+      div.style.height = (barData.normValue*100) + '%';
+      $(div).tooltip({
+        title : barData.tip,
+      });
+    }
+    
+    addEl(place, div);
+  });
+};
+
 
 Overview.refresh = function () {
     "use strict";
     
     PermissionInformer.isAdmin(function(err, isAdmin){
-    	if(err) {Utils.handleError(err); return;}
-    	Utils.enable(Overview.content, "adminOnly", isAdmin);
+      if(err) {Utils.handleError(err); return;}
+      Utils.enable(Overview.content, "adminOnly", isAdmin);
     });
 
     DBMS.getMetaInfo(function(err, info){
-    	if(err) {Utils.handleError(err); return;}
+      if(err) {Utils.handleError(err); return;}
+      DBMS.getStatistics(function(err, statistics){
+        if(err) {Utils.handleError(err); return;}
         Overview.name.value = info.name;
         Overview.date.value = info.date;
         Overview.preDate.value = info.preGameDate;
         Overview.descr.value = info.description;
+        statistics['lastEvent'] = statistics['lastEvent'] !== "" ? new Date(statistics['lastEvent']).format("yyyy/mm/dd h:MM") : "";
+        statistics['firstEvent'] = statistics['firstEvent'] !== "" ? new Date(statistics['firstEvent']).format("yyyy/mm/dd h:MM") : "";
+        
+        statisticKeys.forEach(function(key){
+          Overview.updateStatisticValue(statistics, key);
+        });
+        Overview.makeHistogram("storyEventsHist", statistics.storyEventsHist);
+        Overview.makeHistogram("storyCharactersHist", statistics.storyCharactersHist);
+        Overview.makeHistogram("eventCompletenessHist", statistics.eventCompletenessHist);
+        Overview.makeChart("characterChart", statistics.characterChartData);
+        Overview.makeChart("storyChart", statistics.storyChartData);
+      });
     });
+};
+
+Overview.updateStatisticValue = function (statistics, key) {
+  "use strict";
+  addEl(clearEl(getEl(key)), makeText(statistics[key]))
 };
 
 Overview.updateName = function (event) {

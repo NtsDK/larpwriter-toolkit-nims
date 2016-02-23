@@ -65,18 +65,7 @@ BriefingExport.init = function () {
     document.getElementById("makeBriefingsByStory".trim()).addEventListener("click", BriefingExport.makeExport("templateByStory")); 
     document.getElementById("makeInventoryList   ".trim()).addEventListener("click", BriefingExport.makeExport("inventoryTemplate")); 
     
-    var containers = getEls("exportContainer");
-    
-    for (var i = 1; i < containers.length; i++) { // don't hide 1st element
-      addClass(containers[i], "hidden");
-    }
-    var exportModeButtons = getEls("exportModeButton");
-    
-    addClass(exportModeButtons[0], "active");
-    
-    for (var i = 0; i < exportModeButtons.length; i++) {
-      listen(exportModeButtons[i], "click", BriefingExport.exportModeButtonClick(exportModeButtons, containers));
-    }
+    UI.initTabPanel("exportModeButton", "exportContainer");
     
     listen(getEl("previewTextOutput"), "click", BriefingExport.previewTextOutput);
     getEl("textBriefingPreviewArea").value = "";
@@ -85,18 +74,6 @@ BriefingExport.init = function () {
 
     BriefingExport.briefingSelector = document.getElementById("briefingSelector");
     BriefingExport.content = document.getElementById("briefingExportDiv");
-};
-
-BriefingExport.exportModeButtonClick = function (buttons, containers) {
-  "use strict";
-  return function(event){
-    for (var i = 0; i < buttons.length; i++) { 
-      setClassByCondition(buttons[i], "active", event.target.id === buttons[i].id);
-    }
-    for (var i = 0; i < containers.length; i++) {
-      setClassByCondition(containers[i], "hidden", event.target.id + "Container" !== containers[i].id);
-    }
-  };
 };
 
 BriefingExport.refresh = function () {

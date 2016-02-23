@@ -257,7 +257,7 @@ See the License for the specific language governing permissions and
 }
 
 #gameDescription {
-	width: 500px;
+  width: 100%;
   height: 400px;
 }
 
@@ -282,4 +282,38 @@ See the License for the specific language governing permissions and
 #advancedTextExportContainer div textarea {
 	width: 100%;
 	height: 400px;
+}
+
+
+/* histogram */
+
+.overviewHist{
+  display: flex;
+  height:130px;
+  widht: 100%;
+  background-color: white;
+  align-items: flex-end;
+  padding: 8px;
+}
+
+.overviewHist > .bar{
+  flex-basis: 0;
+  flex-grow: 1;
+}
+
+.overviewHist > .bar{
+  background-color: #7BE141;
+  border: 1px solid #41A906;
+  margin: 0 2px;
+  max-width: 30px;
+  text-align: center;
+}
+
+.overviewHist > .bar:hover{
+  background-color: #A1EC76;
+  border: 1px solid #41A906;
+}
+
+.statisticsLabel{
+  text-align: right;
 }

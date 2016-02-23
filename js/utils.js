@@ -215,9 +215,24 @@ function makeText(text){
   return document.createTextNode(text);
 };
 
+function addEl(parent, child){
+  parent.appendChild(child);
+  return parent;
+};
+
+function setAttr(el, name, value){
+  el.setAttribute(name, value);
+  return el;
+};
+
+function clearEl(el){
+  Utils.removeChildren(el);
+  return el;
+};
+
 function listen(el, event, listener){
   el.addEventListener(event, listener);
-}
+};
 
 function arr2Chunks(array, chunkSize) {
   var i, j, chunks = [], chunk = 10;
@@ -225,7 +240,7 @@ function arr2Chunks(array, chunkSize) {
     chunks.push(array.slice(i, i + chunkSize));
   }
   return chunks;
-}
+};
 
 // from date format utils
 //For convenience...

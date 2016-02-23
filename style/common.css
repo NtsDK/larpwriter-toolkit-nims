@@ -135,10 +135,12 @@ body {
   background-color: #ededed;
 }
 
-#overviewDiv span{
-  width: 240px;
+#commonInfoDiv span{
+  width: 100%;
   display: inline-block;
   text-align: right;
-  margin-right: 8px;
 }
 
+#commonInfoDiv table{
+  margin: 0;
+}

@@ -300,10 +300,11 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
             input.eventIndex = event.index;
             input.storyName = storyName;
             input.characterName = characterName;
+            input.id = event.index + "-" + storyName + "-" + characterName;
             
             input.addEventListener("change", Events.onChangeReadyStatus);
             div.appendChild(input);
-            div.appendChild(document.createTextNode(Events.finishedText));
+            addEl(div, setAttr(addEl(makeEl("label"), makeText(Events.finishedText)), "for", input.id));
             
             divContainer.appendChild(div);
         }

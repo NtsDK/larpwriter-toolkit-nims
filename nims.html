@@ -39,6 +39,7 @@ See the License for the specific language governing permissions and
 <script src="libs/jszip-utils.js"></script>
 <script src="libs/jszip.js"></script>
 <script src="libs/mustache.min.js"></script>
+<script src="libs/Chart.min.js"></script>
 
 
 <!-- <script src="libs/docxgen.js"></script> -->
@@ -54,6 +55,7 @@ See the License for the specific language governing permissions and
   <script src="templates/textTemplate.js"></script>
   
   <script src="js/utils.js"></script>
+  <script src="js/uiUtils.js"></script>
   <script src="js/fileUtils.js"></script>
   <script src="js/common/baseExample.js"></script>
   <script src="js/common/emptyBase.js"></script>
@@ -110,37 +112,94 @@ See the License for the specific language governing permissions and
 
   <div class="hidden">
     <div id="overviewDiv">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <table>
-            <tr>
-              <td><span>Название</span></td>
-              <td><input id="gameNameInput" class="adminOnly"></input></td>
-            </tr>
-            <tr>
-              <td><span>Дата начала доигровых событий</span></td>
-              <td><input id="preGameDatePicker" class="adminOnly"></input></td>
-            </tr>
-            <tr>
-              <td><span>Дата окончания доигровых событий</span></td>
-              <td><input id="gameDatePicker" class="adminOnly"></input></td>
-            </tr>
-          </table>
-        </div>
-      </div>
     
       <div style="display:flex;justify-content: space-around;">
-        <div class="panel panel-default" style="flex-grow:0;">
-          <div class="panel-heading">
-            <h3 class="panel-title">Описание</h3>
+        <div style="flex-grow:1;margin-right: 10px;">
+          <div id="commonInfoDiv" class="panel panel-default">
+            <div class="panel-body">
+              <table class="table table-bordered" style="width: auto;">
+                <tr>
+                  <td><span>Название</span></td>
+                  <td><input id="gameNameInput" class="adminOnly"></input></td>
+                </tr>
+                <tr>
+                  <td><span>Дата начала доигровых событий</span></td>
+                  <td><input id="preGameDatePicker" class="adminOnly"></input></td>
+                </tr>
+                <tr>
+                  <td><span>Дата окончания доигровых событий</span></td>
+                  <td><input id="gameDatePicker" class="adminOnly"></input></td>
+                </tr>
+              </table>
+            </div>
           </div>
-          <div class="panel-body"><textarea id="gameDescription" class="adminOnly"></textarea></div>
+          
+          <div style="display:flex;margin-right:10px;">
+            <div class="navigation-button overviewInfoButton" id="descriptionPanel">Описание</div>
+            <div class="navigation-button overviewInfoButton" id="diagramsPanel">Диаграммы</div>
+          </div>
+        
+          <div class="panel panel-default" >
+            <div class="panel-body">
+              <div id="descriptionPanelContainer" class="overviewContainer">
+                <textarea id="gameDescription" class="adminOnly"></textarea>
+              </div>
+              <div id="diagramsPanelContainer" class="overviewContainer">
+                <table class="table table-bordered" style="width: 100%;">
+                  <tr>
+                    <td>
+                      <h4>Количество событий в историях</h4>
+                      <div id="storyEventsHist" class="overviewHist"></div>
+                    </td>
+                    <td>
+                      <h4>Количество персонажей в историях</h4>
+                      <div id="storyCharactersHist" class="overviewHist"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h4>Детальная завершенность историй</h4>
+                      <div id="eventCompletenessHist" class="overviewHist"></div>
+                    </td>
+                    <td>
+                      <h4>Принадлежность объектов</h4>
+                      <div style="display:flex;justify-content:center;">
+                        <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                          <canvas id="characterChart" width="100" height="100"></canvas><br>
+                          Персонажи
+                        </div>
+                        <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                          <canvas id="storyChart" width="100" height="100"></canvas><br>
+                          Истории
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="panel panel-default" style="flex-grow:0;flex-basis: 300px;">
+        
+        <div class="panel panel-default" style="flex-grow:0;flex-basis: 400px;">
           <div class="panel-heading">
             <h3 class="panel-title">Статистика</h3>
           </div>
-          <div class="panel-body"></div>
+          <div class="panel-body">
+            <table class="table table-bordered" style="width: auto;">
+            <tbody id="profileConfigBlock">
+              <tr><td><span class="statisticsLabel">Количество историй                         </span></td><td><span class="statisticsValue" id="storyNumber"></span>        </td></tr>
+              <tr><td><span class="statisticsLabel">Количество персонажей                      </span></td><td><span class="statisticsValue" id="characterNumber"></span>    </td></tr>
+              <tr><td><span class="statisticsLabel">Количество событий                         </span></td><td><span class="statisticsValue" id="eventsNumber"></span>       </td></tr>
+              <tr><td><span class="statisticsLabel">Количество пользователей                   </span></td><td><span class="statisticsValue" id="userNumber"></span>         </td></tr>
+              <tr><td><span class="statisticsLabel">Первое событие                             </span></td><td><span class="statisticsValue" id="firstEvent"></span>         </td></tr>
+              <tr><td><span class="statisticsLabel">Последнее событие                          </span></td><td><span class="statisticsValue" id="lastEvent"></span>          </td></tr>
+              <tr><td><span class="statisticsLabel">Количество знаков в текстах (без пробелов) </span></td><td><span class="statisticsValue" id="textCharacterNumber"></span></td></tr>
+              <tr><td><span class="statisticsLabel">Завершенность историй                      </span></td><td><span class="statisticsValue" id="storyCompleteness"></span>  </td></tr>
+              <tr><td><span class="statisticsLabel">Общая завершенность                        </span></td><td><span class="statisticsValue" id="generalCompleteness"></span></td></tr>
+            </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

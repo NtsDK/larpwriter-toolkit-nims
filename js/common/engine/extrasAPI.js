@@ -136,6 +136,7 @@ See the License for the specific language governing permissions and
 		};
 	
 		// timeline
+		// disabled for this moment
 		LocalDBMS.prototype.setEventTime = function(storyName, eventIndex, time, callback) {
 			"use strict";
 	
