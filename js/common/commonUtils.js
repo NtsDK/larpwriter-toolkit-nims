@@ -24,28 +24,23 @@ See the License for the specific language governing permissions and
 		array.length = from < 0 ? array.length + from : from;
 		return array.push.apply(array, rest);
 	};
+	
+    exports.charOrdAFactory = function(prepare){
+        "use strict";
+        return function(a, b) {
+            a = prepare(a);
+            b = prepare(b);
+            if (a > b)
+                return 1;
+            if (a < b)
+                return -1;
+            return 0;
+        };
+    };
 
-	exports.charOrdA = function(a, b) {
-		"use strict";
-		a = a.toLowerCase();
-		b = b.toLowerCase();
-		if (a > b)
-			return 1;
-		if (a < b)
-			return -1;
-		return 0;
-	};
-
-	exports.eventsByTime = function(a, b) {
-		"use strict";
-		a = new Date(a.time);
-		b = new Date(b.time);
-		if (a > b)
-			return 1;
-		if (a < b)
-			return -1;
-		return 0;
-	};
+    exports.charOrdA = exports.charOrdAFactory(function(a){return a.toLowerCase();});
+    
+    exports.eventsByTime = exports.charOrdAFactory(function(a){return new Date(a.time);});
 
 	exports.clone = function(o) {
 		"use strict";

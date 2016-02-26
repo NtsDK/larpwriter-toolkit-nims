@@ -145,17 +145,9 @@ Utils.enable = function(root, className, condition){
 	}
 };
 
-Utils.charOrdAObject = function(a, b) {
-	"use strict";
-	a = a.displayName.toLowerCase();
-	b = b.displayName.toLowerCase();
-	if (a > b)
-		return 1;
-	if (a < b)
-		return -1;
-	return 0;
-};
-
+Utils.charOrdAObject = CommonUtils.charOrdAFactory(function(a){
+    return a.displayName.toLowerCase();
+});
 
 String.prototype.endsWith = function (suffix) {
     "use strict";

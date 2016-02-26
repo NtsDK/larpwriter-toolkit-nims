@@ -55,9 +55,6 @@ See the License for the specific language governing permissions and
   <script src="templates/templateByStory.js"></script>
   <script src="templates/textTemplate.js"></script>
   
-  <script src="js/utils.js"></script>
-  <script src="js/uiUtils.js"></script>
-  <script src="js/fileUtils.js"></script>
   <script src="js/common/baseExample.js"></script>
   <script src="js/common/emptyBase.js"></script>
   <script src="js/common/constants.js"></script>
@@ -73,6 +70,9 @@ See the License for the specific language governing permissions and
   <script src="js/common/engine/storiesAPI.js"></script>
   <script src="js/common/engine/eventsAPI.js"></script>
   <script src="js/common/engine/accessManagerAPI.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/uiUtils.js"></script>
+  <script src="js/fileUtils.js"></script>
   
   <script src="js/dbms/localDBMS.js"></script>
   <script src="js/dbms/remoteDBMS.js"></script>
@@ -720,6 +720,13 @@ See the License for the specific language governing permissions and
       
 <!--         <div style="flex-basis:150px;flex-grow:0; display:flex;flex-direction:column;flex-wrap:wrap;height:500px"> -->
         <div class="storySelectorContainer" id="commonSettingsContainer">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              Показать узел:<br>
+              <select id="nodeFocusSelector"></select>
+            </div>
+          </div>
+          
           <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">Общие настройки</h3>

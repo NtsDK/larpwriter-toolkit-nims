@@ -42,6 +42,17 @@ SocialNetwork.activityColors = {
 
 SocialNetwork.generatedColors = [];
 
+SocialNetwork.focusOptions = {
+    scale : 1.2,
+    offset : {
+        x : 0,
+        y : 0
+    },
+    animation : {
+        duration : 1000,
+        easingFunction : "easeInOutQuad"
+    }
+};
 
 SocialNetwork.fixedColors = {
     "storyColor" : {
@@ -83,19 +94,16 @@ SocialNetwork.init = function () {
     
     NetworkSubsetsSelector.init();
     
-//    SocialNetwork.fillColorPalette();
-    
-    var selector = document.getElementById("networkNodeGroupSelector");
-    selector.addEventListener("change", function (event) {
+    listen(getEl("networkNodeGroupSelector"), "change", function (event) {
         SocialNetwork.updateNodes(event.target.value);
     });
     
-    selector = document.getElementById("networkSelector");
+    listen(getEl("drawNetworkButton"), "click", SocialNetwork.onDrawNetwork);
+    listen(getEl("nodeFocusSelector"), "change", SocialNetwork.onNodeFocus);
+
+    var selector = document.getElementById("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
     
-    var button = document.getElementById("drawNetworkButton");
-    button.addEventListener("click", SocialNetwork.onDrawNetwork);
-
     var option;
     SocialNetwork.networks.forEach(function (network) {
         option = document.createElement("option");
@@ -127,13 +135,16 @@ SocialNetwork.init = function () {
     
     var warning = document.getElementById("socialNetworkWarning");
     warning.appendChild(document.createTextNode("Внимание! Отрисовка социальной сети требует большого количества ресурсов. Рекомендуем сохранить данные перед отрисовкой."));
-    button = document.createElement("button");
+    var button = document.createElement("button");
     button.appendChild(document.createTextNode("Убрать предупреждение"));
     warning.appendChild(button);
     button.addEventListener("click", function(){
         addClass(warning,"hidden");
     });
     
+    SocialNetwork.nodeSort = CommonUtils.charOrdAFactory(function(a){
+        return a.label.toLowerCase();
+    });
 
     SocialNetwork.content = document.getElementById("socialNetworkDiv");
 };
@@ -286,11 +297,14 @@ SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
     setClassByCondition(activityBlock, "hidden", selectedNetwork !== "characterActivityInStory");
 };
 
+SocialNetwork.onNodeFocus = function (event) {
+    "use strict";
+    SocialNetwork.network.focus(event.target.value, SocialNetwork.focusOptions);
+};
+
 SocialNetwork.onDrawNetwork = function () {
     "use strict";
-    var selector = document.getElementById("networkSelector");
-    
-    SocialNetwork.onNetworkSelectorChange(selector.value);
+    SocialNetwork.onNetworkSelectorChange(getEl("networkSelector").value);
 };
 
 SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
@@ -319,6 +333,15 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     }
     
     SocialNetwork.refreshLegend(document.getElementById("networkNodeGroupSelector").value);
+    
+    var focusSelector = clearEl(getEl('nodeFocusSelector'));
+    var opt;
+    SocialNetwork.nodes.sort(SocialNetwork.nodeSort);
+    SocialNetwork.nodes.forEach(function(node){
+        opt = makeEl('option')
+        setProp(addEl(opt, makeText(node.label)), 'value', node.id)
+        addEl(focusSelector, opt);
+    });
 
     SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
     SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);
