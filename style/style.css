@@ -290,7 +290,7 @@ See the License for the specific language governing permissions and
 .overviewHist{
   display: flex;
   height:130px;
-  widht: 100%;
+  width: 100%;
   background-color: white;
   align-items: flex-end;
   padding: 8px;
@@ -317,3 +317,16 @@ See the License for the specific language governing permissions and
 .statisticsLabel{
   text-align: right;
 }
+
+#profileDiagrams{
+  display: flex;
+  flex-wrap: wrap;
+}
+#profileDiagrams > div{
+  flex-basis: 0;
+  flex-grow: 1;
+  min-width: 250px;
+  text-align: center;
+}
+
+

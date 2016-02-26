@@ -32,6 +32,8 @@ var statisticKeys = [
   
 var Overview = {};
 
+Overview.Charts = {};
+
 Overview.init = function () {
     "use strict";
     Overview.name = document.getElementById("gameNameInput");
@@ -65,28 +67,27 @@ Overview.init = function () {
     Overview.content = document.getElementById("overviewDiv");
 };
 
-Overview.makeChart = function(id, data){
+Overview.makeChart = function(id, canvas, data){
   "use strict";
-  if(Overview[id]){
-    Overview[id].destroy();
+  if(Overview.Charts[id]){
+    Overview.Charts[id].destroy();
   }
   
   data.forEach(function(value, i){
-    value.color = Constants.colorPalette[i].color.background;
-    value.highlight = Constants.colorPalette[i].color.hover.background;
+    if(Constants.colorPalette[i]){
+        value.color = Constants.colorPalette[i].color.background;
+        value.highlight = Constants.colorPalette[i].color.hover.background;
+    }
   });
   
-  var canvas = getEl(id);
   var ctx = canvas.getContext("2d");
 //  Overview[id] = new Chart(ctx).Pie(data,{});
-  Overview[id] = new Chart(ctx).Doughnut(data,{animateRotate : false});
+  Overview.Charts[id] = new Chart(ctx).Doughnut(data,{animateRotate : false, tooltipTemplate: "<%if (label){%><%=label%><%}%>",});
 };
 
-Overview.makeHistogram = function(id, data){
+Overview.makeHistogram = function(place, data){
   "use strict";
 
-  var place = clearEl(getEl(id));
-  
   var min = null, max = null;
   data.forEach(function(barData){
     if(barData){
@@ -141,11 +142,28 @@ Overview.refresh = function () {
         statisticKeys.forEach(function(key){
           Overview.updateStatisticValue(statistics, key);
         });
-        Overview.makeHistogram("storyEventsHist", statistics.storyEventsHist);
-        Overview.makeHistogram("storyCharactersHist", statistics.storyCharactersHist);
-        Overview.makeHistogram("eventCompletenessHist", statistics.eventCompletenessHist);
-        Overview.makeChart("characterChart", statistics.characterChartData);
-        Overview.makeChart("storyChart", statistics.storyChartData);
+        Overview.makeHistogram(clearEl(getEl("storyEventsHist")), statistics.storyEventsHist);
+        Overview.makeHistogram(clearEl(getEl("storyCharactersHist")), statistics.storyCharactersHist);
+        Overview.makeHistogram(clearEl(getEl("eventCompletenessHist")), statistics.eventCompletenessHist);
+        Overview.makeChart("characterChart", getEl("characterChart"), statistics.characterChartData);
+        Overview.makeChart("storyChart", getEl("storyChart"), statistics.storyChartData);
+        var barData;
+        var profileDiagrams = clearEl(getEl('profileDiagrams')), barDiv, bar;
+        for ( var name in statistics.profileCharts) {
+            barData = statistics.profileCharts[name];
+            barDiv = makeEl('div');
+            addEl(barDiv, addEl(makeEl('h4'),makeText(name)));
+            if(barData.chart){
+                bar = setAttr(setAttr(makeEl('canvas'), "width", "300"), "height", "100");
+                Overview.makeChart(name, bar, barData.chart);
+            } else {
+                bar = makeEl('div');
+                addClass(bar,"overviewHist");
+                Overview.makeHistogram(bar, barData.hist);
+            }
+            addEl(profileDiagrams, addEl(barDiv, bar));
+        }
+        
       });
     });
 };
