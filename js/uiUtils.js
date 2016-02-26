@@ -16,30 +16,58 @@ See the License for the specific language governing permissions and
 
 var UI = {};
 
-UI.initTabPanel = function(tabClazz, containerClazz){
-  var containers = getEls(containerClazz);
-  
-  for (var i = 1; i < containers.length; i++) { // don't hide 1st element
-    addClass(containers[i], "hidden");
-  }
-  
-  var tabButtons = getEls(tabClazz);
-  
-  addClass(tabButtons[0], "active");
-  
-  for (var i = 0; i < tabButtons.length; i++) {
-    listen(tabButtons[i], "click", UI.tabButtonClick(tabButtons, containers));
-  }
+UI.initTabPanel = function(tabClazz, containerClazz) {
+    "use strict";
+    var containers = getEls(containerClazz);
+
+    var i;
+    for (i = 1; i < containers.length; i++) { // don't hide 1st element
+        addClass(containers[i], "hidden");
+    }
+
+    var tabButtons = getEls(tabClazz);
+
+    addClass(tabButtons[0], "active");
+
+    for (i = 0; i < tabButtons.length; i++) {
+        listen(tabButtons[i], "click", UI.tabButtonClick(tabButtons, containers));
+    }
 };
 
-UI.tabButtonClick = function (buttons, containers) {
-  "use strict";
-  return function(event){
-    for (var i = 0; i < buttons.length; i++) { 
-      setClassByCondition(buttons[i], "active", event.target.id === buttons[i].id);
+UI.tabButtonClick = function(buttons, containers) {
+    "use strict";
+    return function(event) {
+        for (var i = 0; i < buttons.length; i++) {
+            setClassByCondition(buttons[i], "active", event.target.id === buttons[i].id);
+        }
+        for (var i = 0; i < containers.length; i++) {
+            setClassByCondition(containers[i], "hidden", event.target.id + "Container" !== containers[i].id);
+        }
+    };
+};
+
+UI.fillShowItemSelector = function (selector, displayArray) {
+    "use strict";
+    var el;
+    setAttr(selector, "size", displayArray.length);
+    displayArray.forEach(function(value, i) {
+        el = setProps(makeEl("option"), {
+            "selected" : true,
+        });
+        addEl(selector, addEl(el, makeText(value)));
+    });
+};
+
+UI.showSelectedEls = function(classKey){
+    "use strict";
+    return function(event){
+        var el = event.target;
+        var els, i, j;
+        for (i = 0; i < el.options.length; i += 1) {
+            els = getEls(i + classKey);
+            for (j = 0; j < els.length; j++) {
+                setClassByCondition(els[j], "hidden", !el.options[i].selected);
+            }
+        }
     }
-    for (var i = 0; i < containers.length; i++) {
-      setClassByCondition(containers[i], "hidden", event.target.id + "Container" !== containers[i].id);
-    }
-  };
 };

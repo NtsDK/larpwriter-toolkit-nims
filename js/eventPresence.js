@@ -22,6 +22,8 @@ var EventPresence = {};
 
 EventPresence.init = function () {
     "use strict";
+    listen(getEl('eventPresenceSelector'), "change", UI.showSelectedEls("-dependent"));
+
     EventPresence.content = document.getElementById("eventPresenceDiv");
 };
 
@@ -29,64 +31,63 @@ EventPresence.refresh = function () {
     "use strict";
     var tableHead = document.getElementById("eventPresenceTableHead");
     var table = document.getElementById("eventPresenceTable");
+    var characterSelector = getEl('eventPresenceSelector');
     
     if(Stories.CurrentStoryName == undefined){
-    	Utils.removeChildren(tableHead);
-    	Utils.removeChildren(table);
+        Utils.removeChildren(tableHead);
+        Utils.removeChildren(table);
+        clearEl(characterSelector);
         return;
     }
     
     PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
-    	if(err) {Utils.handleError(err); return;}
-    	PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
-	    	if(err) {Utils.handleError(err); return;}
-		    DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(err, characterArray){
-		    	if(err) {Utils.handleError(err); return;}
-		    	var map = {};
-		    	allCharacters.forEach(function(elem){
-		    		map[elem.value] = elem;
-		    	});
-		    	var dataArray = characterArray.map(function(elem){
-		    		return map[elem];
-		    	});
-		    	
-		    	dataArray.sort(Utils.charOrdAObject);
-		    	
-		    	var displayArray = dataArray.map(function(elem){
-		    		return elem.displayName;
-		    	});
-		    	var characterArray = dataArray.map(function(elem){
-		    		return elem.value;
-		    	});
-		    	
-		        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
-		        	if(err) {Utils.handleError(err); return;}
-		        	
-		        	Utils.removeChildren(tableHead);
-		        	Utils.removeChildren(table);
-		        	
-		        	EventPresence.appendTableHeader(tableHead, displayArray);
-		            events.forEach(function (event, i) {
-		                EventPresence.appendTableInput(table, event, i, characterArray);
-		                Utils.enable(EventPresence.content, "isStoryEditable", isStoryEditable);
-		            });
-		        });
-		    });
-    	});
+        if(err) {Utils.handleError(err); return;}
+        PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
+            if(err) {Utils.handleError(err); return;}
+            DBMS.getStoryCharacterNamesArray(Stories.CurrentStoryName, function(err, characterArray){
+                if(err) {Utils.handleError(err); return;}
+                var map = {};
+                allCharacters.forEach(function(elem){
+                    map[elem.value] = elem;
+                });
+                var dataArray = characterArray.map(function(elem){
+                    return map[elem];
+                });
+                
+                dataArray.sort(Utils.charOrdAObject);
+                
+                var displayArray = dataArray.map(function(elem){
+                    return elem.displayName;
+                });
+                var characterArray = dataArray.map(function(elem){
+                    return elem.value;
+                });
+                
+                DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
+                    if(err) {Utils.handleError(err); return;}
+                    
+                    Utils.removeChildren(tableHead);
+                    Utils.removeChildren(table);
+                    UI.fillShowItemSelector(clearEl(characterSelector), displayArray, characterArray);
+                    
+                    EventPresence.appendTableHeader(tableHead, displayArray);
+                    events.forEach(function (event, i) {
+                        EventPresence.appendTableInput(table, event, i, characterArray);
+                        Utils.enable(EventPresence.content, "isStoryEditable", isStoryEditable);
+                    });
+                });
+            });
+        });
     });
 };
 
 EventPresence.appendTableHeader = function (table, characterArray) {
     "use strict";
-    var tr = document.createElement("tr");
-    var td = document.createElement("th");
-    td.appendChild(document.createTextNode("Событие"));
-    tr.appendChild(td);
+    var tr = makeEl("tr");
 
-    characterArray.forEach(function (characterName) {
-        td = document.createElement("th");
-        td.appendChild(document.createTextNode(characterName));
-        tr.appendChild(td);
+    rAddEl(rAddEl(makeText("Событие"), makeEl("th")), tr);
+    characterArray.forEach(function(characterName, i) {
+        rAddEl(rAddEl(makeText(characterName), rAddClass(i + "-dependent", makeEl("th"))), tr);
     });
     table.appendChild(tr);
 };
@@ -98,8 +99,9 @@ EventPresence.appendTableInput = function (table, event, i, characterArray) {
     td.appendChild(document.createTextNode(event.name));
     tr.appendChild(td);
 
-    characterArray.forEach(function (character) {
+    characterArray.forEach(function(character, j) {
         td = document.createElement("td");
+        addClass(td, j + "-dependent");
         var input = document.createElement("input");
         addClass(input, "isStoryEditable");
         input.type = "checkbox";

@@ -40,6 +40,7 @@ See the License for the specific language governing permissions and
 <script src="libs/jszip.js"></script>
 <script src="libs/mustache.min.js"></script>
 <script src="libs/Chart.min.js"></script>
+<script src="libs/ramda.min.js"></script>
 
 
 <!-- <script src="libs/docxgen.js"></script> -->
@@ -284,9 +285,18 @@ See the License for the specific language governing permissions and
           <td>
             <div class="panel panel-default">
               <div class="panel-heading">
+                <h3 class="panel-title">Отобразить поле</h3>
+              </div>
+              <div class="panel-body">
+                <select multiple id="profileItemSelector"></select>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
                 <h3 class="panel-title">Фильтр</h3>
               </div>
               <div class="panel-body">
+                Результатов: <span id="filterResultSize"></span><br><br>
                 <div id="filterSettingsDiv"></div>
               </div>
             </div>
@@ -434,9 +444,19 @@ See the License for the specific language governing permissions and
     <div id="eventPresenceDiv">
       <div class="panel panel-default">
         <div class="panel-body" style="overflow-x:auto;">
-          <table  cellspacing=0 cellpadding=0 class="table table-bordered">
-            <thead id="eventPresenceTableHead"></thead>
-            <tbody id="eventPresenceTable"></tbody>
+          <table cellspacing=0 cellpadding=0 style="width: 100%;">
+            <tr>
+              <td>
+                Отобразить персонажей<br>
+                <select multiple id="eventPresenceSelector"></select>
+              </td>
+              <td>
+                <table  cellspacing=0 cellpadding=0 class="table table-bordered">
+                  <thead id="eventPresenceTableHead"></thead>
+                  <tbody id="eventPresenceTable"></tbody>
+                </table>
+              </td>
+            </tr>
           </table>
         </div>
       </div>

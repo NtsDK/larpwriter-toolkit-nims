@@ -22,6 +22,8 @@ var CharacterFilter = {};
 
 CharacterFilter.init = function () {
     "use strict";
+    listen(getEl('profileItemSelector'), "change", UI.showSelectedEls("-dependent"));
+    
     CharacterFilter.content = document.getElementById("characterFilterDiv");
 };
 
@@ -78,10 +80,10 @@ CharacterFilter.refresh = function () {
 	                CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
 	            });
 	            
-	            var filterHead = document.getElementById("filterHead");
-	            Utils.removeChildren(filterHead);
-	            
-	            CharacterFilter.appendContentHeader(filterHead, CharacterFilter.allProfileSettings);
+	            var profileItemNames = R.map(R.prop('name'), CharacterFilter.allProfileSettings);
+	            UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), profileItemNames);
+
+	            CharacterFilter.appendContentHeader(clearEl(getEl('filterHead')), profileItemNames);
 	            
 	            CharacterFilter.rebuildContent();
 	        });
@@ -89,16 +91,19 @@ CharacterFilter.refresh = function () {
     });
 };
 
-CharacterFilter.rebuildContent = function (allProfileSettings) {
+CharacterFilter.rebuildContent = function () {
     "use strict";
-    var filterContent = document.getElementById("filterContent");
-    Utils.removeChildren(filterContent);
+    var filterContent = clearEl(getEl("filterContent"));
 
-    Object.keys(CharacterFilter.Characters).filter(CharacterFilter.acceptDataRow).
-        sort(CharacterFilter.sortDataRows).forEach(function (name) {
+    var data = Object.keys(CharacterFilter.Characters).filter(CharacterFilter.acceptDataRow);
+    
+    addEl(clearEl(getEl("filterResultSize")), makeText(data.length));
+    
+    data.sort(CharacterFilter.sortDataRows).forEach(function (name) {
             CharacterFilter.appendDataString(filterContent, CharacterFilter.Characters[name], 
                     CharacterFilter.unshiftedProfileSettings);
     });
+    UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
 };
 
 CharacterFilter.acceptDataRow = function (element) {
@@ -220,24 +225,26 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
 
     var inputItems = document.getElementById("filterSettingsDiv").inputItems;
 
-    profileSettings.forEach(function (profileItemInfo) {
-        var td = document.createElement("td");
+    var td, regex, pos;
+    profileSettings.forEach(function (profileItemInfo, i) {
+        td = document.createElement("td");
         if (profileItemInfo.type === "checkbox") {
             td.appendChild(document.createTextNode(character[profileItemInfo.name] ? "Да" : "Нет"));
         } else if (profileItemInfo.type === "text" && profileItemInfo.name !== "name") {
-            var regex = Utils.globStringToRegex(inputItems[profileItemInfo.name].value);
-            var pos = character[profileItemInfo.name].search(regex);
+            regex = Utils.globStringToRegex(inputItems[profileItemInfo.name].value);
+            pos = character[profileItemInfo.name].search(regex);
             td.appendChild(document.createTextNode(character[profileItemInfo.name].substring(pos - 5, pos + 15)));
         } else {
             td.appendChild(document.createTextNode(character[profileItemInfo.name]));
         }
+        addClass(td, (i-1) +"-dependent");
         tr.appendChild(td);
     });
 
-    table.appendChild(tr);
+    addEl(table, tr);
 };
 
-CharacterFilter.appendContentHeader = function (thead, profileSettings) {
+CharacterFilter.appendContentHeader = function (thead, profileItemNames) {
     "use strict";
     var tr = document.createElement("tr");
 
@@ -248,11 +255,12 @@ CharacterFilter.appendContentHeader = function (thead, profileSettings) {
     td.addEventListener("click", CharacterFilter.onSortChange);
     tr.appendChild(td);
 
-    profileSettings.forEach(function (element) {
+    profileItemNames.forEach(function (name, i) {
         td = document.createElement("th");
-        td.appendChild(document.createTextNode(element.name));
+        td.appendChild(document.createTextNode(name));
         td.appendChild(document.createElement("span"));
-        td.info = element.name;
+        td.info = name;
+        addClass(td, i +"-dependent");
         td.addEventListener("click", CharacterFilter.onSortChange);
         tr.appendChild(td);
     });

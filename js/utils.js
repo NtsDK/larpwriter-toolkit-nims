@@ -170,8 +170,15 @@ function isEmpty (obj) {
 function addClass(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     if (re.test(o.className)) return;
-    o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "")
+    o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 };
+
+var rAddClass = R.curry(function(c, o){
+  var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+  if (re.test(o.className)) return;
+  o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+  return o;
+});
 
 function toggleClass(o, c){
     if(hasClass(o, c)){
@@ -207,8 +214,8 @@ function getEls(clazz){
   return document.getElementsByClassName(clazz);
 };
 
-function makeEl(el){
-  return document.createElement(el);
+function makeEl(elTag){
+  return document.createElement(elTag);
 };
 
 function makeText(text){
@@ -220,10 +227,27 @@ function addEl(parent, child){
   return parent;
 };
 
+var rAddEl = R.curry(function(child, parent){
+  parent.appendChild(child);
+  return parent;
+});
+
 function setAttr(el, name, value){
   el.setAttribute(name, value);
   return el;
 };
+
+function setProp(el, key, value){
+  el[key] = value;
+  return el;
+};
+
+function setProps(el, map){
+  for(var key in map){
+    setProp(el, key, map[key]);
+  }
+  return el;
+}
 
 function clearEl(el){
   Utils.removeChildren(el);
