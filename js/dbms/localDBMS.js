@@ -27,6 +27,7 @@ LocalDBMS.prototype.getSettings = function(){
 };
 
 commonAPI(LocalDBMS, Migrator, CommonUtils);
+statisticsAPI(LocalDBMS, R);
 charactersAPI(LocalDBMS, Errors);
 extrasAPI(LocalDBMS, CommonUtils, dateFormat);
 briefingExportAPI(LocalDBMS, CommonUtils);
