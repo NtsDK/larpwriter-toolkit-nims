@@ -31,7 +31,7 @@ See the License for the specific language governing permissions and
 		    if(showOnlyUnfinishedStories){
 		        storyArray = storyArray.filter(function(elem){
 		            return !elem.isFinished || elem.isEmpty;
-		        })
+		        });
 		    }
 		    callback(null, storyArray);
 		};
@@ -80,6 +80,36 @@ See the License for the specific language governing permissions and
 		    }
 		    callback(null, localCharacters);
 		};
+		
+        LocalDBMS.prototype.getFilteredEventNames = function (storyName, showOnlyUnfinishedStories, callback){
+            "use strict";
+            
+            var filteredEvents = this.database.Stories[storyName].events.map(function(event,i){
+                return {
+                    name: event.name,
+                    index: i,
+                    isFinished: _isEventReady(event),
+                    isEmpty: Object.keys(event.characters).length === 0
+                };
+            });
+            
+            if(showOnlyUnfinishedStories){
+                filteredEvents = filteredEvents.filter(function(elem){
+                    return !elem.isFinished || elem.isEmpty;
+                });
+            }
+            
+            callback(null, filteredEvents);
+        };
+
+        var _isEventReady = function(event){
+            for(var character in event.characters){
+                if(!event.characters[character].ready){
+                    return false;
+                }
+            }
+            return true;
+        }
 	
 		var _isStoryEmptyForCharacter = function (database, storyName, characterName) {
 			"use strict";

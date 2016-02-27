@@ -88,7 +88,6 @@ Object.keys(LocalDBMS.prototype).forEach(function(name){
 RemoteDBMS.prototype.clearSettings = function() {
 	"use strict";
 	this.Settings = {
-		"Events" : {},
 		"BriefingPreview" : {},
 		"Stories" : {},
 		"CharacterProfile" : {}

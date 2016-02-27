@@ -29,160 +29,177 @@ Events.emptySuffix = "(пусто)";
 
 Events.init = function () {
     "use strict";
-    var selector = document.getElementById("events-storySelector");
-    selector.addEventListener("change", Events.updateCharacterSelectorDelegate);
-    
-    selector = document.getElementById("events-characterSelector");
-    selector.addEventListener("change", Events.showPersonalStoriesDelegate);
-
-    selector = document.getElementById("finishedStoryCheckbox");
-    selector.addEventListener("change", Events.refresh);
-    
+    listen(getEl('events-storySelector'), "change", Events.updateAdaptationSelectorDelegate);
+    listen(getEl('events-characterSelector'), "change", Events.showPersonalStoriesDelegate);
+    listen(getEl('events-eventSelector'), "change", Events.showPersonalStoriesDelegate2);
+    listen(getEl('finishedStoryCheckbox'), "change", Events.refresh);
+    listen(getEl("adaptationFilterByCharacter"), "change", Events.updateFilter);
+    listen(getEl("adaptationFilterByEvent"), "change", Events.updateFilter);
     Events.content = document.getElementById("eventsDiv");
 };
 
-Events.refresh = function () {
+Events.getSelectedStoryName = function(storyNames){
     "use strict";
-    var selector = document.getElementById("events-storySelector");
-    Utils.removeChildren(selector);
+    var storyNamesOnly = storyNames.map(R.prop('storyName'));
     
-    var selector2 = document.getElementById("events-characterSelector");
-    Utils.removeChildren(selector2);
+    var settings = DBMS.getSettings();
+    if(!settings["Events"]){
+        settings["Events"] = {
+            storyName : storyNamesOnly[0],
+            characterNames : [],
+            eventIndexes : [],
+            selectedFilter : "adaptationFilterByCharacter"
+        };
+    }
+    var storyName = settings["Events"].storyName;
+    if(storyNamesOnly.indexOf(storyName) === -1){
+        settings["Events"].storyName = storyNamesOnly[0];
+        storyName = storyNamesOnly[0];
+    }
+    return storyName;
+};
     
-    var table = document.getElementById("personalStories");
-    Utils.removeChildren(table);
+Events.getNames = function(nameObjectArray, nameObjectProperty, settingsProperty){
+    "use strict";
+    var namesOnly = nameObjectArray.map(R.prop(nameObjectProperty));
+    var names = DBMS.getSettings()["Events"][settingsProperty];
+    var existingNames = names.filter(function(name){
+        return namesOnly.indexOf(name) !== -1;
+    });
     
-    var showOnlyUnfinishedStories = document.getElementById("finishedStoryCheckbox").checked;
+    Events.updateSettings(settingsProperty, existingNames);
+    return existingNames;
+};
 
-    PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
-    	if(err) {Utils.handleError(err); return;}
-    	
-    	DBMS.getFilteredStoryNames(showOnlyUnfinishedStories, function(err, storyNames){
-    		if(err) {Utils.handleError(err); return;}
-    		if (storyNames.length > 0) {
-    			var storyNamesOnly = storyNames.map(function(elem){
-    				return elem.storyName;
-    			})
-    			var settings = DBMS.getSettings();
-    			if(!settings["Events"]){
-    				settings["Events"] = {
-    						storyName : storyNamesOnly[0]
-    				};
-    			}
-    			var storyName = settings["Events"].storyName;
-    			if(storyNamesOnly.indexOf(storyName) === -1){
-    				settings["Events"].storyName = storyNamesOnly[0];
-    				storyName = storyNamesOnly[0];
-    			}
-    			
-		    	var map = {};
-		    	allStoryNames.forEach(function(elem){
-		    		map[elem.value] = elem;
-		    	});
-		    	
-		    	storyNames = storyNames.map(function(elem){
-		    		var info = map[elem.storyName];
-		    		info.isFinished = elem.isFinished;
-		    		info.isEmpty = elem.isEmpty;
-		    		return info;
-		    	});
-		    	
-		    	storyNames.sort(Utils.charOrdAObject);
-    			
-    			var isFirst = true;
-    			var option;
+Events.getCharacterNames = function(characterArray){
+    "use strict";
+    return Events.getNames(characterArray, 'characterName', "characterNames");
+};
 
-    			storyNames.forEach(function (tmpStoryName) {
-    				option = document.createElement("option");
-    				option.appendChild(document.createTextNode(tmpStoryName.displayName + Events.getSuffix(tmpStoryName)));
-    				if (tmpStoryName.value === storyName) {
-    					Events.updateCharacterSelector(tmpStoryName.value);
-    					option.selected = true;
-    					isFirst = false;
-    				}
-    				
-    				option.storyInfo = tmpStoryName.value;
-    				selector.appendChild(option);
-    			});
-    		}
-    	});
+Events.getEventIndexes = function(eventArray){
+    "use strict";
+    return Events.getNames(eventArray, 'index', "eventIndexes");
+};
+
+Events.refresh = function() {
+    "use strict";
+    var selector = clearEl(getEl("events-storySelector"));
+    clearEl(getEl("events-characterSelector"));
+    clearEl(getEl("events-eventSelector"));
+    clearEl(getEl("personalStories"));
+
+    PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames) {
+        if (err) {Utils.handleError(err);return;}
+        DBMS.getFilteredStoryNames(getEl("finishedStoryCheckbox").checked, function(err, storyNames) {
+            if (err) {Utils.handleError(err);return;}
+            if (storyNames.length <= 0) {return;}
+
+            var selectedStoryName = Events.getSelectedStoryName(storyNames);
+
+            var map = arr2map(allStoryNames, 'value');
+
+            storyNames.forEach(function(elem) {
+                elem.displayName = map[elem.storyName].displayName;
+                elem.value = map[elem.storyName].value;
+            });
+
+            storyNames.sort(Utils.charOrdAObject);
+
+            var option;
+            storyNames.forEach(function(storyName) {
+                option = addEl(makeEl("option"), (makeText(storyName.displayName + Events.getSuffix(storyName))));
+                setProp(option, 'selected', storyName.value === selectedStoryName);
+                setProp(option, 'storyInfo', storyName.value);
+                addEl(selector, option);
+            });
+            Events.updateAdaptationSelector(selectedStoryName);
+        });
     });
 };
 
-Events.getSuffix = function(object){
-	"use strict";
-	if(object.isEmpty) return Events.emptySuffix;
-	if(object.isFinished) return Events.finishedSuffix;
-	return "";
-}
-
-Events.updateCharacterSelectorDelegate = function (event) {
+Events.updateAdaptationSelectorDelegate = function (event) {
     "use strict";
-    Events.updateCharacterSelector(event.target.selectedOptions[0].storyInfo);
+    var storyName = event.target.selectedOptions[0].storyInfo;
+    Events.updateSettings("storyName", storyName);
+    Events.updateSettings("characterNames", []);
+    Events.updateAdaptationSelector(storyName);
 };
 
-Events.updateCharacterSelector = function (storyName) {
+Events.updateAdaptationSelector = function (storyName) {
     "use strict";
     
-    Events.updateSettings("storyName", storyName);
-    var selector = document.getElementById("events-characterSelector");
-    Utils.removeChildren(selector);
+    var characterSelector = clearEl(getEl("events-characterSelector"));
+    var eventSelector = clearEl(getEl("events-eventSelector"));
     
-    var showOnlyUnfinishedStories = document.getElementById("finishedStoryCheckbox").checked;
+    PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
+        if(err) {Utils.handleError(err); return;}
+        DBMS.getFilteredCharacterNames(storyName, getEl("finishedStoryCheckbox").checked, function(err, characterArray){
+            if(err) {Utils.handleError(err); return;}
+            DBMS.getFilteredEventNames(storyName, getEl("finishedStoryCheckbox").checked, function(err, eventArray){
+                if(err) {Utils.handleError(err); return;}
+                
+                var characterNames = Events.getCharacterNames(characterArray);
+                var eventIndexes = Events.getEventIndexes(eventArray);
+                
+                var map = arr2map(allCharacters, 'value');
+    
+                characterArray.forEach(function(elem) {
+                    elem.displayName = map[elem.characterName].displayName;
+                    elem.value = map[elem.characterName].value;
+                });
+    
+                characterArray.sort(Utils.charOrdAObject);
+                
+                var option;
+                characterArray.forEach(function (elem) {
+                    option = addEl(makeEl("option"), (makeText(elem.displayName + Events.getSuffix(elem))));
+                    setProp(option, 'selected', characterNames.indexOf(elem.value) !== -1);
+                    setProp(option, 'storyInfo', storyName);
+                    setProp(option, 'characterName', elem.value);
+                    addEl(characterSelector, option);
+                });
+                setAttr(characterSelector, "size", characterArray.length);
+                
+                eventArray.forEach(function (elem) {
+                    option = addEl(makeEl("option"), (makeText(elem.name + Events.getSuffix(elem))));
+                    setProp(option, 'selected', eventIndexes.indexOf(elem.index) !== -1);
+                    setProp(option, 'storyInfo', storyName);
+                    setProp(option, 'eventIndex222', elem.index);
+                    addEl(eventSelector, option);
+                });
+                setAttr(eventSelector, "size", eventArray.length);
+                
+                var selectedFilter = DBMS.getSettings()["Events"].selectedFilter;
+                getEl(selectedFilter).checked = true;
+                Events.updateFilter({
+                    target : {
+                        id : selectedFilter
+                    }
+                });
+            });
+        });
+    });
+};
 
-    var isFirst = true;
-    
-	PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
-    	if(err) {Utils.handleError(err); return;}
-    	DBMS.getFilteredCharacterNames(storyName, showOnlyUnfinishedStories, function(err, characterArray){
-    		if(err) {Utils.handleError(err); return;}
-    		if (characterArray.length > 0) {
-    			var settings = DBMS.getSettings();
-    			if(!settings["Events"].characterNames){
-    				settings["Events"].characterNames = [];
-    			}
-    			
-    			var characterNames = settings["Events"].characterNames;
-    			var existingCharacterNames = characterNames.filter(function(name){
-    				return characterArray.indexOf(name) !== -1;
-    			});
-    			
-    			Events.updateSettings("characterNames", existingCharacterNames);
-    			characterNames = existingCharacterNames;
-    			
-		    	var map = {};
-		    	allCharacters.forEach(function(elem){
-		    		map[elem.value] = elem;
-		    	});
-		    	
-		    	characterArray = characterArray.map(function(elem){
-		    		var info = map[elem.characterName];
-		    		info.isFinished = elem.isFinished;
-		    		info.isEmpty = elem.isEmpty;
-		    		return info;
-		    	});
-		    	
-		    	characterArray.sort(Utils.charOrdAObject);
-    			
-    			characterArray.forEach(function (elem) {
-    				var option = document.createElement("option");
-    				option.appendChild(document.createTextNode(elem.displayName + Events.getSuffix(elem)));
-    				if (characterNames.indexOf(elem.value) !== -1) {
-    					option.selected = true;
-    					isFirst = false;
-    				}
-    				
-    				option.storyInfo = storyName;
-    				option.characterInfo = elem.value;
-    				selector.appendChild(option);
-    			});
-    			
-
-    			Events.showPersonalStories(storyName, characterNames);
-    		}
-    	});
-	});
-    
+Events.updateFilter = function (event) {
+    "use strict";
+    Events.updateSettings('selectedFilter', event.target.id);
+    var byCharacter = event.target.id === 'adaptationFilterByCharacter';
+    setClassByCondition(getEl("events-characterSelectorDiv"), "hidden", !byCharacter);
+    setClassByCondition(getEl("events-eventSelectorDiv"), "hidden", byCharacter);
+    if(!byCharacter){
+        var i, charSelector = getEl('events-characterSelector');
+        if(charSelector.options.length === 0) return;
+        var characterNames = [];
+        for (i = 0; i < charSelector.options.length; i +=1) {
+            characterNames.push(charSelector.options[i].characterName);
+        }
+        Events.showPersonalStories(charSelector.options[0].storyInfo, characterNames, function(){
+            Events.showPersonalStoriesDelegate2({target:getEl('events-eventSelector')});
+        });
+    } else {
+        Events.showPersonalStoriesDelegate({target:getEl('events-characterSelector')});
+    }
 };
 
 Events.showPersonalStoriesDelegate = function (event) {
@@ -196,19 +213,33 @@ Events.showPersonalStoriesDelegate = function (event) {
     var storyName = option.storyInfo;
     var characterNames = [];
     
-    var i;
-    for (i = 0; i < event.target.selectedOptions.length; i +=1) {
-        characterNames.push(event.target.selectedOptions[i].characterInfo);
+    var i, charSelector = event.target;
+    for (i = 0; i < charSelector.selectedOptions.length; i +=1) {
+        characterNames.push(charSelector.selectedOptions[i].characterName);
     }
     
     Events.updateSettings("characterNames", characterNames);
-    
     Events.showPersonalStories(storyName, characterNames);
 };
 
+Events.showPersonalStoriesDelegate2 = function (event) {
+    "use strict";
+    var eventIndexes = [];
+    
+    var i, eventSelector = getEl('events-eventSelector'), eventIndex;
+    var eventRows = getEls('eventRow-dependent');
+    for (i = 0; i < eventRows.length; i +=1) {
+        addClass(eventRows[i],"hidden");
+    }
+    for (i = 0; i < eventSelector.selectedOptions.length; i +=1) {
+        eventIndex = eventSelector.selectedOptions[i].eventIndex222;
+        removeClass(getEls(eventIndex+"-dependent")[0],"hidden");
+        eventIndexes.push(eventIndex);
+    }
+    Events.updateSettings("eventIndexes", eventIndexes);
+};
 
-
-Events.showPersonalStories = function (storyName, characterNames) {
+Events.showPersonalStories = function (storyName, characterNames, delegate) {
     "use strict";
     
 	DBMS.getEvents(storyName, characterNames, function(err, events){
@@ -226,6 +257,7 @@ Events.showPersonalStories = function (storyName, characterNames) {
 	    		Events.buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable);
 	    		Utils.enable(Events.content, "isStoryEditable", isStoryEditable);
 	    		Utils.enable(Events.content, "notEditable", false);
+	    		if(delegate)delegate();
 	    	});
 	    });
 	});
@@ -243,6 +275,8 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
     events.forEach(function (event, i) {
         tr = document.createElement("div");
         addClass(tr, "eventMainPanelRow");
+        addClass(tr, event.index + "-dependent");
+        addClass(tr, "eventRow-dependent");
         table.appendChild(tr);
         
         td = document.createElement("div");
@@ -333,6 +367,12 @@ Events.onChangePersonalStoryDelegate = function (event) {
     DBMS.setEventText(storyName, eventIndex, characterName, text, Utils.processError());
 };
 
+Events.getSuffix = function(object){
+    "use strict";
+    if(object.isEmpty) return Events.emptySuffix;
+    if(object.isFinished) return Events.finishedSuffix;
+    return "";
+};
 
 Events.updateSettings = function (name, value) {
     "use strict";

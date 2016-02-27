@@ -27,8 +27,6 @@ See the License for the specific language governing permissions and
 	    "ProfileSettings" : [],
 	    "Stories": {},
 	    "Settings" : {
-	        "Events" : {
-	        },
 	        "BriefingPreview" : {
 	        },
 	        "Stories" : {

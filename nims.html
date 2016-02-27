@@ -468,8 +468,8 @@ See the License for the specific language governing permissions and
     <div id="eventsDiv">
       <div class="panel panel-default">
         <div class="panel-body">
-          <input type="checkbox" id="finishedStoryCheckbox"/>Показывать
-          только незавершенные истории
+          <input type="checkbox" id="finishedStoryCheckbox"/><label for="finishedStoryCheckbox">Показывать
+          только незавершенные истории</label>
         </div>
       </div>
       <div style="display:flex;">
@@ -485,10 +485,23 @@ See the License for the specific language governing permissions and
               </div>
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Персонажи</h3>
+                  <h3 class="panel-title">Фильтр</h3>
                 </div>
                 <div class="panel-body">
-                  <select id="events-characterSelector" multiple size=15></select>
+                  
+                  <input type="radio" name="adaptationFilter" value="ByCharacter" id="adaptationFilterByCharacter">
+                  <label for="adaptationFilterByCharacter">По персонажам</label><br>
+                  <input type="radio" name="adaptationFilter" value="ByEvent" id="adaptationFilterByEvent">
+                  <label for="adaptationFilterByEvent">По событиям</label><br>
+                  
+                  <div id="events-characterSelectorDiv">
+                    <h4>Персонажи</h4>
+                    <select id="events-characterSelector" multiple></select>
+                  </div>
+                  <div id="events-eventSelectorDiv" class="hidden">
+                    <h4>События</h4>
+                    <select id="events-eventSelector" multiple size=15></select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -547,8 +560,10 @@ See the License for the specific language governing permissions and
         	<select id="newEditorSelector" class="adminOnly"></select>
             <button id="newEditorButton" class="adminOnly">Назначить редактора</button><br>
         	Назначение прав на адаптации<br>
-        	<input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory" id="adaptationRightsByStory">По историям</input><br>
-		    <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter" id="adaptationRightsByCharacter">По персонажам</input><br>
+        	<input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory" id="adaptationRightsByStory">
+          <label for="adaptationRightsByStory">По историям</label><br>
+		      <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter" id="adaptationRightsByCharacter">
+          <label for="adaptationRightsByCharacter">По персонажам</label><br>
         </div>
       </div>
       <div id="accessManagerContent" >

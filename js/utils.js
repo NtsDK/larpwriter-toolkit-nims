@@ -250,8 +250,15 @@ function listen(el, event, listener){
   el.addEventListener(event, listener);
 };
 
+function arr2map(array, key){
+    return R.reduce(function(a, b) {
+        a[b[key]] = b;
+        return a;
+    }, {}, array);
+}
+
 function arr2Chunks(array, chunkSize) {
-  var i, j, chunks = [], chunk = 10;
+  var i, j, chunks = [];
   for (i = 0, j = array.length; i < j; i += chunkSize) {
     chunks.push(array.slice(i, i + chunkSize));
   }

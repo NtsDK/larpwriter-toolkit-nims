@@ -51,13 +51,6 @@ See the License for the specific language governing permissions and
 	    }
 	  ],
 	  "Settings": {
-	    "Events": {
-	      "storyName": "Колобок",
-	      "characterNames": [
-	        "бабка",
-	        "дед"
-	      ]
-	    },
 	    "BriefingPreview": {
 	      "characterName": "бабка"
 	    },
