@@ -54,6 +54,7 @@ StoryEvents.refresh = function () {
 	        	if(err) {Utils.handleError(err); return;}
 	            StoryEvents.rebuildInterface(events, metaInfo);
 	            Utils.enable(StoryEvents.content, "isStoryEditable", isStoryEditable);
+	            Stories.chainRefresh();
 	        });
 	    });
     });
@@ -289,12 +290,23 @@ StoryEvents.onChangeDateTimeCreator = function (myInput) {
 StoryEvents.updateEventName = function (event) {
     "use strict";
     var input = event.target;
+    if (input.value.trim() === "") {
+        Utils.alert("Название события не указано");
+        StoryEvents.refresh();
+        return;
+    }
+
     DBMS.updateEventProperty(Stories.CurrentStoryName, input.eventIndex, "name", input.value, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.updateEventText = function (event) {
     "use strict";
     var input = event.target;
+    if (input.value.trim() === "") {
+        Utils.alert("Событие пусто");
+        StoryEvents.refresh();
+        return;
+    }
     DBMS.updateEventProperty(Stories.CurrentStoryName, input.eventIndex, "text", input.value, Utils.processError());
 };
 

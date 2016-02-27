@@ -127,6 +127,11 @@ See the License for the specific language governing permissions and
 		//story characters
 		LocalDBMS.prototype.addStoryCharacter = function(storyName, characterName, callback){
 		    "use strict";
+
+		    if (characterName === "") {
+                callback(new Errors.ValidationError("Имя персонажа не указано"));
+                return;
+            }
 		    
 		    this.database.Stories[storyName].characters[characterName] = {
 		            name : characterName,
@@ -140,6 +145,11 @@ See the License for the specific language governing permissions and
 		//story characters
 		LocalDBMS.prototype.switchStoryCharacters = function(storyName, fromName, toName, callback){
 		    "use strict";
+		    
+            if (fromName === "" || toName === "") {
+                callback(new Errors.ValidationError("Имя одного из персонажей не указано"));
+                return;
+            }
 		    
 		    var story = this.database.Stories[storyName];
 		    story.characters[toName] = story.characters[fromName];
@@ -159,6 +169,11 @@ See the License for the specific language governing permissions and
 		//story characters
 		LocalDBMS.prototype.removeStoryCharacter = function(storyName, characterName, callback){
 		    "use strict";
+		    
+            if (characterName === "") {
+                callback(new Errors.ValidationError("Имя персонажа не указано"));
+                return;
+            }
 		    
 		    var story = this.database.Stories[storyName];
 		    delete story.characters[characterName];
@@ -278,6 +293,10 @@ See the License for the specific language governing permissions and
 		// story events
 		LocalDBMS.prototype.updateEventProperty = function(storyName, index, property, value, callback){
 		    "use strict";
+		    if((property === "name" || property === "text")  && value.trim() === ""){
+		        callback(new Errors.ValidationError("Название или текст события не указаны."));
+		        return;
+		    }
 		    var story = this.database.Stories[storyName].events[index][property] = value;
 		    callback();
 		};

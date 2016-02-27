@@ -16,6 +16,12 @@ See the License for the specific language governing permissions and
 
 var Utils = {};
 
+/** opts
+ *      tooltip - add tooltip to button, used for iconic buttons
+ *      id - set button id
+ *      mainPage - enable view as first page
+ *      toggle - toggle content, associated with button
+ */
 Utils.addView = function (containers, name, view, displayName, opts) {
     "use strict";
     var opts = opts || {};
@@ -31,6 +37,7 @@ Utils.addView = function (containers, name, view, displayName, opts) {
     }
     addClass(button, buttonClass);
     addClass(button, "-test-" + name);
+    addClass(button, "-toggle-class-" + name);
     if(opts.id){
     	button.id = opts.id;
     }
@@ -42,15 +49,36 @@ Utils.addView = function (containers, name, view, displayName, opts) {
     var onClickDelegate = function (view) {
         return function (evt) {
             elems = containers.navigation.getElementsByClassName(buttonClass);
+            if(opts.toggle){
+                var els = getEls("-toggle-class-" + name);
+                for (var i = 0; i < els.length; i++) {
+                    if(evt.target.isEqualNode(els[i])){
+                        continue;
+                    }
+                    if(hasClass(els[i], "active")){
+                        els[i].click();
+                    }
+                }
+            }
+            
+            var isActive = hasClass(evt.target, "active");
             for (i = 0; i < elems.length; i++) {
                 removeClass(elems[i], "active");
             }
-            addClass(evt.target, "active");
-            
-            Utils.removeChildren(containers.content);
-            containers.content.appendChild(view.content);
-            containers.root.currentView = view;
-            view.refresh();
+            if(!opts.toggle || (opts.toggle && !isActive)){
+                addClass(evt.target, "active");
+                
+                Utils.removeChildren(containers.content);
+                containers.content.appendChild(view.content);
+                removeClass(containers.content, "hidden");
+                containers.root.currentView = view;
+                view.refresh();
+            } else {
+                removeClass(evt.target, "active");
+                Utils.removeChildren(containers.content);
+                containers.root.currentView = null;
+                addClass(containers.content, "hidden");
+            }
         };
     };
 

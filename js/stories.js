@@ -22,45 +22,41 @@ var Stories = {};
 
 Stories.init = function () {
     "use strict";
-    var root = Stories;
-    root.views = {};
-    var nav = "storiesNavigation";
-    var content = "storiesContent";
+    Stories.left = {views:{}};
+    Stories.right = {views:{}};
     var containers = {
-		root: root,
-		navigation: document.getElementById(nav),
-		content: document.getElementById(content)
+        root: Stories.left,
+        navigation: getEl("storiesNavigationLeft"),
+        content: getEl("storiesContentLeft")
     };
-    Utils.addView(containers, "StoryEvents", StoryEvents, "События", {mainPage:true});
-    Utils.addView(containers, "StoryCharacters", StoryCharacters, "Персонажи");
-    Utils.addView(containers, "EventPresence", EventPresence, "Присутствие");
+    Utils.addView(containers, "MasterStory", MasterStory, "Мастерская история", {mainPage:true, toggle:true});
+    Utils.addView(containers, "StoryEvents", StoryEvents, "События", {toggle:true});
+    Utils.addView(containers, "StoryCharacters", StoryCharacters, "Персонажи", {toggle:true});
+    Utils.addView(containers, "EventPresence", EventPresence, "Присутствие", {toggle:true});
+    containers = {
+        root: Stories.right,
+        navigation: getEl("storiesNavigationRight"),
+        content: getEl("storiesContentRight")
+    };
+    Utils.addView(containers, "MasterStory", MasterStory, "Мастерская история", {toggle:true});
+    Utils.addView(containers, "StoryEvents", StoryEvents, "События", {mainPage:true, toggle:true});
+    Utils.addView(containers, "StoryCharacters", StoryCharacters, "Персонажи", {toggle:true});
+    Utils.addView(containers, "EventPresence", EventPresence, "Присутствие", {toggle:true});
 
-    var selector = document.getElementById("storySelector");
-    selector.addEventListener("change", Stories.onStorySelectorChangeDelegate);
-
-    var button = document.getElementById("createStoryButton");
-    button.addEventListener("click", Stories.createStory);
-
-    button = document.getElementById("renameStoryButton");
-    button.addEventListener("click", Stories.renameStory);
-
-    button = document.getElementById("removeStoryButton");
-    button.addEventListener("click", Stories.removeStory);
-
-    button = document.getElementById("masterStoryArea");
-    button.addEventListener("change", Stories.updateMasterStory);
-    
-    button = document.getElementById("masterStoryNavButton");
-    button.addEventListener("click", Stories.onMasterStoryNavButtonClick);
-    addClass(button, "active");
+    listen(getEl('storySelector'), "change", Stories.onStorySelectorChangeDelegate);
+    listen(getEl('createStoryButton'), "click", Stories.createStory);
+    listen(getEl('renameStoryButton'), "click", Stories.renameStory);
+    listen(getEl('removeStoryButton'), "click", Stories.removeStory);
 
     Stories.content = document.getElementById("storiesDiv");
 };
 
-Stories.onMasterStoryNavButtonClick = function (event) {
+Stories.chainRefresh = function(){
     "use strict";
-    toggleClass(event.target, "active");
-    toggleClass(document.getElementById("masterStoryDiv"), "hidden");
+    if((Stories.left.currentView && Stories.left.currentView.name === "EventPresence") || 
+       (Stories.right.currentView && Stories.right.currentView.name === "EventPresence")){
+        EventPresence.refresh();
+    }
 };
 
 Stories.refresh = function () {
@@ -109,7 +105,8 @@ Stories.refresh = function () {
 	            Stories.onStorySelectorChange();
 	        }
 	        
-	        Stories.currentView.refresh();
+	        if(Stories.left.currentView)Stories.left.currentView.refresh();
+	        if(Stories.right.currentView)Stories.right.currentView.refresh();
     	});
     });
     
@@ -213,23 +210,19 @@ Stories.onStorySelectorChangeDelegate = function (event) {
 Stories.onStorySelectorChange = function (storyName) {
     "use strict";
     Stories.CurrentStoryName = storyName;
-    var storyArea = document.getElementById("masterStoryArea");
     
     if(storyName){
         Stories.updateSettings(storyName);
         PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
-        	if(err) {Utils.handleError(err); return;}
-	        DBMS.getMasterStory(storyName, function(err, story){
-	        	if(err) {Utils.handleError(err); return;}
-	            storyArea.value = story;
-	            Stories.currentView.refresh();
-	            Utils.enable(Stories.content, "isStoryEditable", isStoryEditable);
-	        });
+            if (err) {Utils.handleError(err);return;}
+            if(Stories.left.currentView)Stories.left.currentView.refresh();
+            if(Stories.right.currentView)Stories.right.currentView.refresh();
+            Utils.enable(Stories.content, "isStoryEditable", isStoryEditable);
         });
     } else { // when there are no stories at all
         Stories.updateSettings(null);
-        storyArea.value = "";
-        Stories.currentView.refresh();
+        if(Stories.left.currentView)Stories.left.currentView.refresh();
+        if(Stories.right.currentView)Stories.right.currentView.refresh();
     }
 };
 
@@ -237,10 +230,4 @@ Stories.updateSettings = function (storyName) {
     "use strict";
     var settings = DBMS.getSettings();
     settings["Stories"].storyName = storyName;
-};
-
-Stories.updateMasterStory = function () {
-    "use strict";
-    var storyArea = document.getElementById("masterStoryArea");
-    DBMS.updateMasterStory(Stories.CurrentStoryName, storyArea.value, Utils.processError());
 };

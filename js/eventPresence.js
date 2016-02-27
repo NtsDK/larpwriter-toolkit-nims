@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var EventPresence = {};
+var EventPresence = {name:"EventPresence"};
 
 EventPresence.init = function () {
     "use strict";

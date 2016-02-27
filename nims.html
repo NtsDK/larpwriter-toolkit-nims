@@ -88,6 +88,7 @@ See the License for the specific language governing permissions and
   <script src="js/characterProfileConfigurer.js"></script>
 
   <script src="js/stories.js"></script>
+  <script src="js/masterStory.js"></script>
   <script src="js/storyEvents.js"></script>
   <script src="js/storyCharacters.js"></script>
   <script src="js/eventPresence.js"></script>
@@ -347,26 +348,24 @@ See the License for the specific language governing permissions and
 
       <div>
         <div style="display:flex;">
-          <div style="width:50%;display:flex;margin-right:10px;">
-            <div class="navigation-button" id="masterStoryNavButton">Мастерская история</div>
-          </div>
-          <div id="storiesNavigation"></div>
+          <div id="storiesNavigationLeft" style="flex-grow:1;width:50%;margin-right:10px;" ></div>
+          <div id="storiesNavigationRight" style="flex-grow:1;width:50%;justify-content: flex-end;" ></div>
         </div>
         <div style="display:flex;">
-          <div style="flex-grow:1;width:50%;margin-right:10px;" id="masterStoryDiv">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                 <textarea id="masterStoryArea" class="isStoryEditable"></textarea>
-              </div>
-            </div>
-          </div>
-          <div id="storiesContent" style="flex-grow:1;width:50%;"></div>
+          <div style="flex-grow:1;width:50%;margin-right:10px;" id="storiesContentLeft"></div>
+          <div id="storiesContentRight" style="flex-grow:1;width:50%;"></div>
         </div>
       </div>
 
     </div>
 
-
+    <div id="masterStoryDiv2">
+      <div class="panel panel-default">
+        <div class="panel-body">
+           <textarea id="masterStoryArea" class="isStoryEditable"></textarea>
+        </div>
+      </div>
+    </div>
 
 
     <div id="storyEventsDiv">
