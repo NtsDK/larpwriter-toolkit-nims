@@ -40,6 +40,10 @@ See the License for the specific language governing permissions and
 		if (data.Version === "0.0.4") { // new versioning rule
 			data.Version = "0.4.1";
 		}
+		if(data.Version === "0.4.1"){ // new 
+		    delete data.Settings["Events"];
+		    data.Version = "0.4.3";
+		}
 		return data;
 	};
 })(typeof exports === 'undefined' ? this['Migrator'] = {} : exports);
