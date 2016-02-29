@@ -29,7 +29,7 @@
 		
 ### Ссылки ###
 
-Мой сайт: trechkalov.com
+Мой сайт: http://trechkalov.com
 
 Группа VK: http://vk.com/larp_nims
 
@@ -67,7 +67,7 @@ www.flaticon.com authors: Anton Saputro, Pavel Kozlov, Budi Tanrim, Catalin Fert
 SMTK NIMS license is Apache 2.0. 		
 ### Links ###
 
-My site: trechkalov.com
+My site: http://trechkalov.com
 
 VK: http://vk.com/larp_nims
 
