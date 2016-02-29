@@ -1,4 +1,4 @@
-# Набор инструментов мастера сюжетника (НИМС) ([English](https://bitbucket.org/NtsDK/story-master-toolkit-smtk-nims-english-intro))
+# Набор инструментов мастера сюжетника (НИМС) ([English](https://bitbucket.org/NtsDK/story-master-toolkit-smtk-nims#markdown-header-english-intro))
 
 ### НИМС - что это? ###
 
