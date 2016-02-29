@@ -22,7 +22,7 @@ var MasterStory = {};
 
 MasterStory.init = function() {
     "use strict";
-    listen(getEl('masterStoryArea'), "click", MasterStory.updateMasterStory);
+    listen(getEl('masterStoryArea'), "change", MasterStory.updateMasterStory);
 
     MasterStory.content = getEl('masterStoryDiv2');
 };
