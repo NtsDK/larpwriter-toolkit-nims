@@ -345,6 +345,11 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
 
     SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
     SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);
+    
+//    FileUtils.json2File({
+//        nodes: SocialNetwork.nodesDataset.get(),
+//        edges: SocialNetwork.edgesDataset.get(),
+//    }, "network.json");
     SocialNetwork.redrawAll();
 };
 

@@ -60,9 +60,20 @@ FileUtils.saveFile = function () {
     "use strict";
     DBMS.getDatabase(function(err, database){
     	if(err) {Utils.handleError(err); return;}
-        var blob = new Blob([ JSON.stringify(database, null, '  ') ], {
-            type : "text/plain;charset=utf-8"
-        });
-        saveAs(blob, "nims-base.json");
+    	FileUtils.json2File(database, "nims-base.json");
     });
 };
+
+FileUtils.json2File = function (str, fileName) {
+    "use strict";
+    FileUtils.str2File(JSON.stringify(str, null, '  '), fileName);
+};
+
+FileUtils.str2File = function (str, fileName) {
+    "use strict";
+    var blob = new Blob([ str ], {
+        type : "text/plain;charset=utf-8"
+    });
+    saveAs(blob, fileName);
+};
+
