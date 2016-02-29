@@ -12,6 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+//var text = "";
+
 (function(callback){
 	
 	function commonAPI(LocalDBMS, Migrator, CommonUtils) {
@@ -24,6 +26,20 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.setDatabase = function(database, callback){
 		    "use strict";
 		    this.database = Migrator.migrate(database);
+//		    database.Meta.description = text;
+//		    R.values(database.Characters).forEach(function(character){
+//		        character['Биография'] = text;
+//		    });
+//		    R.values(database.Stories).forEach(function(story){
+//		        story.story = text;
+//		        story.events.forEach(function(event){
+//		            event.text = text;
+//		            R.values(event.characters).forEach(function(character){
+//		                character.text = text;
+//		            })
+//		        });
+//		    });
+		    
 		    if(callback) callback();
 		};
 	
