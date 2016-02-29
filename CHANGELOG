@@ -1,3 +1,18 @@
+version 0.4.3 (29 Feb 2016)
+
+  This update include statistics page and extended text export. Also there are many usability changes.
+  
+  Big changes:
+  - statistics and diagrams
+  - text export templates
+  
+  Other changes:
+  - added story-presence character selector
+  - added character filter column selector and size of filtered data
+  - added two panel mode in story page
+  - added adaptation filter by event
+  - added search selector for social network
+
 version 0.4.2 (18 Jan 2016)
 
   NIMS was deeply reworked for server version without significant interface changes.
