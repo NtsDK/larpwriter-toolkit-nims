@@ -31,8 +31,8 @@ Characters.init = function () {
 		navigation: document.getElementById(nav),
 		content: document.getElementById(content)
     };
-    Utils.addView(containers, "CharacterProfile", CharacterProfile, "Досье",{mainPage:true});
-    Utils.addView(containers, "CharacterProfileConfigurer", CharacterProfileConfigurer, "Редактор досье");
+    Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
+    Utils.addView(containers, "character-profile-configurer", CharacterProfileConfigurer);
 
     var button = document.getElementById("createCharacterButton");
     button.addEventListener("click", Characters.createCharacter);

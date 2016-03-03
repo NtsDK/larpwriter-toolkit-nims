@@ -29,19 +29,19 @@ Stories.init = function () {
         navigation: getEl("storiesNavigationLeft"),
         content: getEl("storiesContentLeft")
     };
-    Utils.addView(containers, "MasterStory", MasterStory, "Мастерская история", {mainPage:true, toggle:true});
-    Utils.addView(containers, "StoryEvents", StoryEvents, "События", {toggle:true});
-    Utils.addView(containers, "StoryCharacters", StoryCharacters, "Персонажи", {toggle:true});
-    Utils.addView(containers, "EventPresence", EventPresence, "Присутствие", {toggle:true});
+    Utils.addView(containers, "master-story", MasterStory, {mainPage:true, toggle:true});
+    Utils.addView(containers, "story-events", StoryEvents, {toggle:true});
+    Utils.addView(containers, "story-characters", StoryCharacters, {toggle:true});
+    Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
     containers = {
         root: Stories.right,
         navigation: getEl("storiesNavigationRight"),
         content: getEl("storiesContentRight")
     };
-    Utils.addView(containers, "MasterStory", MasterStory, "Мастерская история", {toggle:true});
-    Utils.addView(containers, "StoryEvents", StoryEvents, "События", {mainPage:true, toggle:true});
-    Utils.addView(containers, "StoryCharacters", StoryCharacters, "Персонажи", {toggle:true});
-    Utils.addView(containers, "EventPresence", EventPresence, "Присутствие", {toggle:true});
+    Utils.addView(containers, "master-story", MasterStory, {toggle:true});
+    Utils.addView(containers, "story-events", StoryEvents, {mainPage:true, toggle:true});
+    Utils.addView(containers, "story-characters", StoryCharacters, {toggle:true});
+    Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
 
     listen(getEl('storySelector'), "change", Stories.onStorySelectorChangeDelegate);
     listen(getEl('createStoryButton'), "click", Stories.createStory);

@@ -42,6 +42,9 @@ See the License for the specific language governing permissions and
 <script src="libs/Chart.min.js"></script>
 <script src="libs/ramda.min.js"></script>
 
+<script src="l10n/l10n.ru.js"></script>
+<script src="js/l10n.js"></script>
+
 
 <!-- <script src="libs/docxgen.js"></script> -->
 <script src="libs/docxgen-121.min.js"></script>
@@ -122,15 +125,15 @@ See the License for the specific language governing permissions and
             <div class="panel-body">
               <table class="table table-bordered" style="width: auto;">
                 <tr>
-                  <td><span>Название</span></td>
+                  <td><span l10n-id="overview-name"></span></td>
                   <td><input id="gameNameInput" class="adminOnly"></input></td>
                 </tr>
                 <tr>
-                  <td><span>Дата начала доигровых событий</span></td>
+                  <td><span l10n-id="overview-pre-game-start-date"></span></td>
                   <td><input id="preGameDatePicker" class="adminOnly"></input></td>
                 </tr>
                 <tr>
-                  <td><span>Дата окончания доигровых событий</span></td>
+                  <td><span l10n-id="overview-pre-game-end-date"></span></td>
                   <td><input id="gameDatePicker" class="adminOnly"></input></td>
                 </tr>
               </table>
@@ -138,8 +141,8 @@ See the License for the specific language governing permissions and
           </div>
           
           <div style="display:flex;margin-right:10px;">
-            <div class="navigation-button overviewInfoButton" id="descriptionPanel">Описание</div>
-            <div class="navigation-button overviewInfoButton" id="diagramsPanel">Диаграммы</div>
+            <div class="navigation-button overviewInfoButton" id="descriptionPanel" l10n-id="overview-descr"></div>
+            <div class="navigation-button overviewInfoButton" id="diagramsPanel" l10n-id="overview-diagrams"></div>
           </div>
         
           <div class="panel panel-default" >
@@ -151,29 +154,29 @@ See the License for the specific language governing permissions and
                 <table class="table table-bordered" style="width: 100%;">
                   <tr>
                     <td>
-                      <h4>Количество событий в историях</h4>
+                      <h4 l10n-id="overview-event-count-diagram"></h4>
                       <div id="storyEventsHist" class="overviewHist"></div>
                     </td>
                     <td>
-                      <h4>Количество персонажей в историях</h4>
+                      <h4 l10n-id="overview-character-count-diagram"></h4>
                       <div id="storyCharactersHist" class="overviewHist"></div>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <h4>Детальная завершенность историй</h4>
+                      <h4 l10n-id="overview-story-completeness-diagram"></h4>
                       <div id="eventCompletenessHist" class="overviewHist"></div>
                     </td>
                     <td>
-                      <h4>Принадлежность объектов</h4>
+                      <h4 l10n-id="overview-object-belonging-diagrams"></h4>
                       <div style="display:flex;justify-content:center;">
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
                           <canvas id="characterChart" width="200" height="100"></canvas><br>
-                          Персонажи
+                          <span l10n-id="overview-characters-diagram"></span>
                         </div>
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
                           <canvas id="storyChart" width="200" height="100"></canvas><br>
-                          Истории
+                          <span l10n-id="overview-stories-diagram"></span>
                         </div>
                       </div>
                     </td>
@@ -187,20 +190,20 @@ See the License for the specific language governing permissions and
         
         <div class="panel panel-default" style="flex-grow:0;flex-basis: 400px;">
           <div class="panel-heading">
-            <h3 class="panel-title">Статистика</h3>
+            <h3 class="panel-title" l10n-id="overview-stats"></h3>
           </div>
           <div class="panel-body">
             <table class="table table-bordered" style="width: auto;">
             <tbody id="profileConfigBlock">
-              <tr><td><span class="statisticsLabel">Количество историй                         </span></td><td><span class="statisticsValue" id="storyNumber"></span>        </td></tr>
-              <tr><td><span class="statisticsLabel">Количество персонажей                      </span></td><td><span class="statisticsValue" id="characterNumber"></span>    </td></tr>
-              <tr><td><span class="statisticsLabel">Количество событий                         </span></td><td><span class="statisticsValue" id="eventsNumber"></span>       </td></tr>
-              <tr><td><span class="statisticsLabel">Количество пользователей                   </span></td><td><span class="statisticsValue" id="userNumber"></span>         </td></tr>
-              <tr><td><span class="statisticsLabel">Первое событие                             </span></td><td><span class="statisticsValue" id="firstEvent"></span>         </td></tr>
-              <tr><td><span class="statisticsLabel">Последнее событие                          </span></td><td><span class="statisticsValue" id="lastEvent"></span>          </td></tr>
-              <tr><td><span class="statisticsLabel">Количество знаков в текстах (без пробелов) </span></td><td><span class="statisticsValue" id="textCharacterNumber"></span></td></tr>
-              <tr><td><span class="statisticsLabel">Завершенность историй                      </span></td><td><span class="statisticsValue" id="storyCompleteness"></span>  </td></tr>
-              <tr><td><span class="statisticsLabel">Общая завершенность                        </span></td><td><span class="statisticsValue" id="generalCompleteness"></span></td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-story-count"></span></td><td><span class="statisticsValue" id="storyNumber"></span>        </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-character-count"></span></td><td><span class="statisticsValue" id="characterNumber"></span>    </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-event-count"></span></td><td><span class="statisticsValue" id="eventsNumber"></span>       </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-user-count"></span></td><td><span class="statisticsValue" id="userNumber"></span>         </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-first-event"></span></td><td><span class="statisticsValue" id="firstEvent"></span>         </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-last-event"></span></td><td><span class="statisticsValue" id="lastEvent"></span>          </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-symbol-count"></span></td><td><span class="statisticsValue" id="textCharacterNumber"></span></td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-story-completeness"></span></td><td><span class="statisticsValue" id="storyCompleteness"></span>  </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-general-completeness"></span></td><td><span class="statisticsValue" id="generalCompleteness"></span></td></tr>
             </tbody>
             </table>
           </div>
@@ -213,16 +216,17 @@ See the License for the specific language governing permissions and
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Управление персонажами</h3>
+          <h3 class="panel-title" l10n-id="characters-character-managing"></h3>
         </div>
         <div class="panel-body">
-          <input id="characterNameInput"  placeholder="Имя персонажа"></input>
-          <button id="createCharacterButton">Добавить</button>
-          <br> Переименовать из <select id="fromName"></select> в <input
-            id="toName" placeholder="Новое имя персонажа"></input>
-          <button id="renameCharacter">OK</button>
+          <input id="characterNameInput" l10n-placeholder-id="characters-character-name"></input>
+          <button id="createCharacterButton" l10n-id="common-add"></button>
+          <br> <span l10n-id="common-rename-from"></span> <select id="fromName"></select> 
+          <span l10n-id="common-to"></span> <input
+            id="toName" l10n-placeholder-id="characters-new-character-name"></input>
+          <button id="renameCharacter" l10n-id="common-ok"></button>
           <br> <select id="characterRemoveSelector"></select>
-          <button id="removeCharacterButton">Удалить</button>
+          <button id="removeCharacterButton" l10n-id="common-remove"></button>
         </div>
       </div>
     
@@ -237,7 +241,7 @@ See the License for the specific language governing permissions and
         <div class="panel-body">
           <table>
             <tr>
-              <th>Персонажи</th>
+              <th l10n-id="characters-characters"></th>
             </tr>
             <tr>
               <td><select size=20 id="bioEditorSelector"></select></td>
@@ -254,24 +258,28 @@ See the License for the specific language governing permissions and
     <div id="characterProfileConfigurer">
       <div class="panel panel-default">
         <div class="panel-body">
-          Название<input id="profileItemNameInput" class="itemNameInput adminOnly"></input> 
-          Тип<select id="profileItemTypeSelector" class="adminOnly"></select> 
-          Позиция <select id="profileItemPositionSelector" class="adminOnly"></select>
-          <button id="createProfileItemButton" class="adminOnly">Добавить</button>
-          <br> <select id="moveProfileItemSelector" class="adminOnly"></select> Позиция
+          <span l10n-id="characters-profile-item-name"></span>
+          <input id="profileItemNameInput" class="itemNameInput adminOnly"></input> 
+          <span l10n-id="characters-profile-item-type"></span>
+          <select id="profileItemTypeSelector" class="adminOnly"></select> 
+          <span l10n-id="characters-profile-item-position"></span>
+          <select id="profileItemPositionSelector" class="adminOnly"></select>
+          <button id="createProfileItemButton" class="adminOnly" l10n-id="common-add"></button><br> 
+          <select id="moveProfileItemSelector" class="adminOnly"></select> 
+          <span l10n-id="characters-profile-item-position"></span>
           <select id="moveProfileItemPositionSelector" class="adminOnly"></select>
-          <button id="moveProfileItemButton" class="adminOnly">Переместить</button>
-          <br> <select id="removeProfileItemSelector" class="adminOnly"></select>
-          <button id="removeProfileItemButton" class="adminOnly">Удалить</button>
+          <button id="moveProfileItemButton" class="adminOnly" l10n-id="characters-move-item"></button><br>
+          <select id="removeProfileItemSelector" class="adminOnly"></select>
+          <button id="removeProfileItemButton" class="adminOnly" l10n-id="common-remove"></button>
           <br>
     
           <table class="table table-bordered" style="width: auto;">
           <thead>
             <tr>
               <th>№</th>
-              <th>Название поля</th>
-              <th>Тип</th>
-              <th>Значения</th>
+              <th l10n-id="characters-table-profile-item-name"></th>
+              <th l10n-id="characters-profile-item-type"></th>
+              <th l10n-id="characters-profile-item-default-value"></th>
             </tr>
           </thead>
           <tbody id="profileConfigBlock"></tbody>
@@ -288,7 +296,7 @@ See the License for the specific language governing permissions and
           <td>
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title">Отобразить поле</h3>
+                <h3 class="panel-title" l10n-id="character-filter-show-profile-item"></h3>
               </div>
               <div class="panel-body">
                 <select multiple id="profileItemSelector"></select>
@@ -296,10 +304,10 @@ See the License for the specific language governing permissions and
             </div>
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title">Фильтр</h3>
+                <h3 class="panel-title" l10n-id="character-filter-filter"></h3>
               </div>
               <div class="panel-body">
-                Результатов: <span id="filterResultSize"></span><br><br>
+                <span l10n-id="character-filter-results"></span> <span id="filterResultSize"></span><br><br>
                 <div id="filterSettingsDiv"></div>
               </div>
             </div>
@@ -324,7 +332,7 @@ See the License for the specific language governing permissions and
       <div style="display: flex;justify-content:space-around;">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Истории</h3>
+            <h3 class="panel-title" l10n-id="stories-stories"></h3>
           </div>
           <div class="panel-body">
             <select id="storySelector"></select>
@@ -332,16 +340,16 @@ See the License for the specific language governing permissions and
         </div>
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Управление историями</h3>
+            <h3 class="panel-title" l10n-id="stories-story-management"></h3>
           </div>
           <div class="panel-body">
-            <input id="createStoryName"  placeholder="Название истории"></input>
-            <button id="createStoryButton">Добавить</button>
-            <br> Переименовать из <select id="fromStory"></select> в <input
-              id="toStory" placeholder="Новое название истории"></input>
-            <button id="renameStoryButton">OK</button>
+            <input id="createStoryName" l10n-placeholder-id="stories-story-name"></input>
+            <button id="createStoryButton"  l10n-id="common-add"></button>
+            <br> <span l10n-id="common-rename-from"></span> <select id="fromStory"></select> <span l10n-id="common-to"></span> <input
+              id="toStory" l10n-placeholder-id="stories-new-story-name"></input>
+            <button id="renameStoryButton" l10n-id="common-ok"></button>
             <br> <select id="storyRemoveSelector"></select>
-            <button id="removeStoryButton">Удалить</button>
+            <button id="removeStoryButton" l10n-id="common-remove"></button>
           </div>
         </div>
       </div>
@@ -373,24 +381,24 @@ See the License for the specific language governing permissions and
         <div class="panel-body">
           <div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
             <div style="flex-grow:1;margin-right:10px;">
-              <h3 style="margin-top:8px;">Создание события</h3>
-              Название<input id="eventNameInput" class="isStoryEditable"></input><br>
-              Описание события<br>
+              <h3 style="margin-top:8px;"  l10n-id="stories-event-creation"></h3>
+              <span l10n-id="stories-event-name"></span><input id="eventNameInput" class="isStoryEditable"></input><br>
+              <span l10n-id="stories-event-descr"></span><br>
               <textarea id="eventTextInput" class="eventText isStoryEditable"></textarea><br>
-              Позиция<select id="positionSelector" class="isStoryEditable"></select>
-              <button id="createEventButton" class="isStoryEditable">Добавить</button>
+              <span l10n-id="stories-event-position"></span><select id="positionSelector" class="isStoryEditable"></select>
+              <button id="createEventButton" class="isStoryEditable" l10n-id="common-add"></button>
             </div>
             <div style="flex-grow:1;">
-              <h3 style="margin-top:8px;">Управление событиями</h3>
+              <h3 style="margin-top:8px;" l10n-id="stories-event-management"></h3>
               <select id="moveEventSelector" class="isStoryEditable"></select> 
-              Позиция<select id="movePositionSelector" class="isStoryEditable"></select>
-              <button id="moveEventButton" class="isStoryEditable">Переместить</button>
+              <span l10n-id="stories-event-position"></span><select id="movePositionSelector" class="isStoryEditable"></select>
+              <button id="moveEventButton" class="isStoryEditable" l10n-id="stories-move-event"></button>
               <br> <select id="cloneEventSelector" class="isStoryEditable"></select>
-              <button id="cloneEventButton" class="isStoryEditable">Клонировать</button>
+              <button id="cloneEventButton" class="isStoryEditable" l10n-id="stories-clone-event"></button>
               <br> <select id="mergeEventSelector" class="isStoryEditable"></select>
-              <button id="mergeEventButton" class="isStoryEditable">Объединить со следующим</button>
+              <button id="mergeEventButton" class="isStoryEditable" l10n-id="stories-merge-events"></button>
               <br> <select id="removeEventSelector" class="isStoryEditable"></select>
-              <button id="removeEventButton" class="isStoryEditable">Удалить</button>
+              <button id="removeEventButton" class="isStoryEditable" l10n-id="common-remove"></button>
             </div>
           </div>
           
@@ -412,26 +420,26 @@ See the License for the specific language governing permissions and
     <div id="storyCharactersDiv">
       <div class="panel panel-default">
         <div class="panel-body">
-          <h3>Управление персонажами</h3>
+          <h3 l10n-id="stories-story-character-management"></h3>
           <select id="storyCharactersAddSelector" class="isStoryEditable"></select>
-          <button id="storyCharactersAddButton" class="isStoryEditable">Добавить</button>
-          <br> Заменить<select id="storyCharactersFromSelector" class="isStoryEditable"></select>
-          на <select id="storyCharactersToSelector" class="isStoryEditable"></select>
-          <button id="storyCharactersSwitchButton" class="isStoryEditable">ОК</button>
+          <button id="storyCharactersAddButton" class="isStoryEditable" l10n-id="common-add"></button>
+          <br> <span l10n-id="stories-replace-character"></span><select id="storyCharactersFromSelector" class="isStoryEditable"></select>
+          <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select>
+          <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-ok"></button>
           <br> <select id="storyCharactersRemoveSelector" class="isStoryEditable"></select>
-          <button id="storyCharactersRemoveButton" class="isStoryEditable">Удалить</button>
+          <button id="storyCharactersRemoveButton" class="isStoryEditable" l10n-id="common-remove"></button>
           <br> <br>
     
           <div style="display:flex;flex-wrap: wrap; justify-content:space-around;">
             <div style="flex-grow:0;margin-right:10px;max-width: 450px;">
-              <h3>Инвентарь</h3>
+              <h3 l10n-id="stories-inventory"></h3>
               <table class="table table-bordered">
                 <thead id="storyCharactersTableHead"></thead>
                 <tbody id="storyCharactersTable"></tbody>
               </table>
             </div>
             <div style="flex-grow:1;max-width: 450px;">
-              <h3>Активность</h3>
+              <h3 l10n-id="stories-activity"></h3>
               <table class="table table-bordered table-striped">
                 <thead id="story-characterActivityTableHead"></thead>
                 <tbody id="story-characterActivityTable"></tbody>
@@ -448,7 +456,7 @@ See the License for the specific language governing permissions and
           <table cellspacing=0 cellpadding=0 style="width: 100%;">
             <tr>
               <td>
-                Отобразить персонажей<br>
+                <span l10n-id="stories-show-characters"></span><br>
                 <select multiple id="eventPresenceSelector"></select>
               </td>
               <td>
@@ -468,8 +476,7 @@ See the License for the specific language governing permissions and
     <div id="eventsDiv">
       <div class="panel panel-default">
         <div class="panel-body">
-          <input type="checkbox" id="finishedStoryCheckbox"/><label for="finishedStoryCheckbox">Показывать
-          только незавершенные истории</label>
+          <input type="checkbox" id="finishedStoryCheckbox"/><label for="finishedStoryCheckbox" l10n-id="adaptations-show-only-unfinished-stories"></label>
         </div>
       </div>
       <div style="display:flex;">
@@ -477,7 +484,7 @@ See the License for the specific language governing permissions and
             <div id="personalStoriesCharacterContainer">
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title">История</h3>
+                  <h3 class="panel-title" l10n-id="adaptations-story"></h3>
                 </div>
                 <div class="panel-body">
                   <select id="events-storySelector" size=10></select>
@@ -485,21 +492,21 @@ See the License for the specific language governing permissions and
               </div>
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Фильтр</h3>
+                  <h3 class="panel-title" l10n-id="adaptations-filter"></h3>
                 </div>
                 <div class="panel-body">
                   
                   <input type="radio" name="adaptationFilter" value="ByCharacter" id="adaptationFilterByCharacter">
-                  <label for="adaptationFilterByCharacter">По персонажам</label><br>
+                  <label for="adaptationFilterByCharacter" l10n-id="adaptations-by-characters"></label><br>
                   <input type="radio" name="adaptationFilter" value="ByEvent" id="adaptationFilterByEvent">
-                  <label for="adaptationFilterByEvent">По событиям</label><br>
+                  <label for="adaptationFilterByEvent" l10n-id="adaptations-by-events"></label><br>
                   
                   <div id="events-characterSelectorDiv">
-                    <h4>Персонажи</h4>
+                    <h4 l10n-id="adaptations-characters"></h4>
                     <select id="events-characterSelector" multiple></select>
                   </div>
                   <div id="events-eventSelectorDiv" class="hidden">
-                    <h4>События</h4>
+                    <h4 l10n-id="adaptations-events"></h4>
                     <select id="events-eventSelector" multiple size=15></select>
                   </div>
                 </div>
@@ -508,15 +515,15 @@ See the License for the specific language governing permissions and
           </div>
             <div class="panel panel-default" style="flex-grow:1;">
               <div class="panel-heading">
-                <h3 class="panel-title">Адаптации</h3>
+                <h3 class="panel-title" l10n-id="adaptations-adaptations"></h3>
               </div>
               <div class="panel-body">
                  <div class="eventMainPanelRow" style="margin:0;">
                    <div class="eventMainPanelRow-left">
-                     <h3>Оригинал</h3>
+                     <h3 l10n-id="adaptations-origin"></h3>
                    </div>
                    <div class="eventMainPanelRow-right">
-                     <h3>Адаптация</h3>
+                     <h3 l10n-id="adaptations-adaptation"></h3>
                    </div>
                  </div>
                  <div id="personalStories">
@@ -534,57 +541,58 @@ See the License for the specific language governing permissions and
     <div id="accessManagerDiv">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Управление пользователями</h3>
+          <h3 class="panel-title" l10n-id="admins-user-management"></h3>
         </div>
         <div class="panel-body">
-          Имя<input id="userNameInput" class="adminOnly"></input>
-          Пароль<input id="userPasswordInput" class="adminOnly"></input>
-          <button id="createUserButton" class="adminOnly">Добавить</button>
-          <br> Сменить пароль <select id="passwordUserName" class="adminOnly"></select> на <input
+          <span l10n-id="admins-user-name"></span><input id="userNameInput" class="adminOnly"></input>
+          <span l10n-id="admins-user-password"></span><input id="userPasswordInput" class="adminOnly"></input>
+          <button id="createUserButton" class="adminOnly" l10n-id="common-add"></button>
+          <br> <span l10n-id="admins-change-password"></span> <select id="passwordUserName" class="adminOnly"></select> 
+          <span l10n-id="common-on"></span> <input
             id="newPassword" class="adminOnly"></input>
-          <button id="changePasswordButton" class="adminOnly">OK</button>
+          <button id="changePasswordButton" class="adminOnly" l10n-id="common-ok"></button>
           <br> <select id="userRemoveSelector" class="adminOnly"></select>
-          <button id="removeUserButton" class="adminOnly">Удалить</button>
+          <button id="removeUserButton" class="adminOnly" l10n-id="common-remove"></button>
         </div>
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Специальные действия</h3>
+          <h3 class="panel-title" l10n-id="admins-special-actions"></h3>
         </div>
         <div class="panel-body">
-        	Администратор:<span id="currentAdministrator"></span><br>
+        	<span l10n-id="admins-admin"></span><span id="currentAdministrator"></span><br>
         	<select id="newAdminSelector" class="adminOnly"></select>
-            <button id="newAdminButton" class="adminOnly">Назначить администратором</button><br>
-        	Редактор:<span id="currentEditor"></span>
-            <button id="removeEditorButton" class="editorOrAdmin">Удалить редактора</button><br>
+            <button id="newAdminButton" class="adminOnly" l10n-id="admins-assign-admin"></button><br>
+        	<span l10n-id="admins-editor"></span><span id="currentEditor"></span>
+            <button id="removeEditorButton" class="editorOrAdmin" l10n-id="admins-remove-editor"></button><br>
         	<select id="newEditorSelector" class="adminOnly"></select>
-            <button id="newEditorButton" class="adminOnly">Назначить редактора</button><br>
-        	Назначение прав на адаптации<br>
+            <button id="newEditorButton" class="adminOnly" l10n-id="admins-assign-editor"></button><br>
+        	<span l10n-id="admins-assign-adaptation-rights"></span><br>
         	<input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory" id="adaptationRightsByStory">
-          <label for="adaptationRightsByStory">По историям</label><br>
+          <label for="adaptationRightsByStory" l10n-id="admins-by-stories"></label><br>
 		      <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter" id="adaptationRightsByCharacter">
-          <label for="adaptationRightsByCharacter">По персонажам</label><br>
+          <label for="adaptationRightsByCharacter" l10n-id="admins-by-characters"></label><br>
         </div>
       </div>
       <div id="accessManagerContent" >
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Права на редактирование</h3>
+            <h3 class="panel-title" l10n-id="admins-editing-rights"></h3>
           </div>
           <div class="panel-body">
              <table>
                <tr>
-                 <th>Права</th>
-                 <th>Персонажи</th>
-                 <th>Истории</th>
+                 <th l10n-id="admins-rights"></th>
+                 <th l10n-id="admins-characters"></th>
+                 <th l10n-id="admins-stories"></th>
                </tr>
                <tr>
                  <td><div id="permissionTable" style="width:400px;word-wrap: break-word;"></div></td>
                  <td><select size=10 id="characterPermissionSelector" multiple></select></td>
                  <td><select size=10 id="storyPermissionSelector" multiple></select></td>
                  <td><select size=5 id="userPermissionSelector"></select>
-                 <button id="assignPermissionButton">Назначить права</button>
-                 <button id="removePermissionButton" class="adminOnly">Забрать права</button>
+                 <button id="assignPermissionButton" l10n-id="admins-assign-rights"></button>
+                 <button id="removePermissionButton" class="adminOnly" l10n-id="admins-take-away-rights"></button>
                  </td>
                </tr>
              </table>
@@ -596,13 +604,13 @@ See the License for the specific language governing permissions and
     <div id="briefingPreviewDiv">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Настройки</h3>
+          <h3 class="panel-title" l10n-id="briefings-settings"></h3>
         </div>
         <div class="panel-body">
           <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio"/>
-          <label for="eventGroupingByStoryRadio">Группировать события по историям</label> <br> 
+          <label for="eventGroupingByStoryRadio" l10n-id="briefings-group-by-story"></label> <br> 
           <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio"/>
-          <label for="eventGroupingByTimeRadio">Сортировать события по хронологии</label> <br> 
+          <label for="eventGroupingByTimeRadio" l10n-id="briefings-sort-by-timeline"></label> <br> 
         </div>
       </div>
       
@@ -615,8 +623,6 @@ See the License for the specific language governing permissions and
         </div>
       </div>
       
-      
-
     </div>
 
     <div id="briefingExportDiv">
@@ -624,81 +630,72 @@ See the License for the specific language governing permissions and
         <div class="panel-body" style="display:flex;justify-content:space-around;">
           
           <fieldset>
-            <legend>Режим выгрузки</legend>
+            <legend l10n-id="briefings-export-mode"></legend>
             <input type="checkbox" id="toSeparateFileCheckbox"/> 
-            <label for="toSeparateFileCheckbox">Каждую вводную в отдельный файл</label><br>
+            <label for="toSeparateFileCheckbox" l10n-id="briefings-each-briefing-to-own-file"></label><br>
           </fieldset>
         
           <fieldset>
-            <legend>Выбор вводных</legend>
+            <legend l10n-id="briefings-briefing-selection"></legend>
             <input type="radio" name="exportSelection" value="all" id="exportSelectionAll"/>
-            <label for="exportSelectionAll">Выгрузить все вводные</label> <br> 
+            <label for="exportSelectionAll" l10n-id="briefings-print-all"></label> <br> 
             <input type="radio" name="exportSelection" value="specific" id="exportSelectionSpecific"/>
-            <label for="exportSelectionSpecific">Выгрузить часть вводных</label> <br> 
+            <label for="exportSelectionSpecific" l10n-id="briefings-print-partly"></label> <br> 
             
             <div id="briefingSelector" class="hidden">
-              Количество выгружаемых вводных 
+              <span l10n-id="briefings-briefings-amount"></span> 
               <select id="briefingNumberSelector"></select><br>
-              Диапазон выгружаемых вводных
+              <span l10n-id="briefings-briefings-range"></span>
               <select id="briefingIntervalSelector"></select>
             </div>
           </fieldset>
-
-<!--           <fieldset> -->
-<!--             <legend>Режим вывода событий</legend> -->
-<!--             <input type="radio" name="eventsGroupBy2" value="story" id="eventGroupingByStoryRadio2"/>  -->
-<!--             <label for="eventGroupingByStoryRadio2">Группировать события по историям</label> <br>  -->
-<!--             <input type="radio" name="eventsGroupBy2" value="time" id="eventGroupingByTimeRadio2"/>  -->
-<!--             <label for="eventGroupingByTimeRadio2">Сортировать события по хронологии</label> <br> -->
-<!--           </fieldset> -->
-        
         </div>
       </div>
           
       <div style="display:flex;margin-right:10px;">
-        <div class="navigation-button exportModeButton" id="simpleExport">Простая выгрузка</div>
-        <div class="navigation-button exportModeButton" id="advancedWordExport">Продвинутая выгрузка docx</div>
-        <div class="navigation-button exportModeButton" id="advancedTextExport">Продвинутая текстовая выгрузка</div>
+        <div class="navigation-button exportModeButton" id="simpleExport" l10n-id="briefings-simple-export"></div>
+        <div class="navigation-button exportModeButton" id="advancedWordExport" l10n-id="briefings-advanced-docx-export"></div>
+        <div class="navigation-button exportModeButton" id="advancedTextExport" l10n-id="briefings-advanced-txt-export"></div>
       </div>
           
       <div class="panel panel-default">
         <div class="panel-body">
           <div id="simpleExportContainer" class="exportContainer">
-            <button id="makeBriefingsByTime">Сформировать вводные, события сгруппированны по времени (docx)</button><br>
-            <button id="makeBriefingsByStory">Сформировать вводные, события сгруппированны по историям (docx)</button><br>
-            <button id="makeDefaultTextBriefings">Сформировать вводные txt</button><br><br>
+            <button id="makeBriefingsByTime" l10n-id="briefings-make-docx-by-time"></button><br>
+            <button id="makeBriefingsByStory" l10n-id="briefings-make-docx-by-stories"></button><br>
+            <button id="makeDefaultTextBriefings" l10n-id="briefings-make-txt"></button><br><br>
             
-            <button id="makeInventoryList">Сформировать список инвентаря (docx)</button><br>
+            <button id="makeInventoryList" l10n-id="briefings-make-inventory"></button><br>
           </div>
           
           <div id="advancedWordExportContainer" class="exportContainer">
             <div class="file-upload">
               <label> <input type="file" name="file"
-                id="docxBriefings"> <span>Загрузить шаблон и сформировать вводные</span>
+                id="docxBriefings"> <span l10n-id="briefings-upload-template-and-make-export"></span>
               </label>
             </div>
           </div>
           
           <div id="advancedTextExportContainer" class="exportContainer">
             <div >
-              <h3>Шаблон</h3>
+              <h3 l10n-id="briefings-template"></h3>
               <textarea id="templateArea">
 
               
               </textarea><br>
-              <label>Введите тип сохраняемого текста (txt, html, rst и др.)</label>
+              <label l10n-id="briefings-enter-text-fyle-type"></label>
               <input id="textTypeSelector" value="txt"/>
-              <button id="previewTextOutput">Предварительный просмотр</button><br>
-              <button id="showRawData" class="hidden">Исходные данные</button>
-              <button id="makeCustomTextBriefings">Выгрузить</button>
+              <button id="previewTextOutput" l10n-id="briefings-preview"></button><br>
+              <button id="showRawData" class="hidden" l10n-id="briefings-raw-data"></button>
+              <button id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
             </div>
             <div >
-              <h3>Выгруженный текст</h3>
+              <h3 l10n-id="briefings-exported-text"></h3>
               <textarea id="textBriefingPreviewArea"></textarea>
             </div>
           </div>
               
-          <h3>Статус выгрузки</h3>
+          <h3 l10n-id="briefings-export-status"></h3>
           <div id="exportStatus"></div>
         </div>
       </div>
@@ -712,7 +709,7 @@ See the License for the specific language governing permissions and
         <div class="storySelectorContainer">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Истории</h3>
+              <h3 class="panel-title" l10n-id="timeline-stories"></h3>
             </div>
             <div class="panel-body">
               <select size=20 id="timelineStorySelector" multiple></select>
@@ -726,7 +723,7 @@ See the License for the specific language governing permissions and
 
     <div id="logoutForm">
       <form class="form-horizontal login-form" name="login-form" method="POST" action="/logout">
-        <button type="submit" class="654btn 654btn-primary" data-loading-text="Отправляю...">Выйти</button>
+        <button type="submit" class="654btn 654btn-primary" data-loading-text="Sending...">Exit</button>
       </form> 
     </div>
     
@@ -738,28 +735,28 @@ See the License for the specific language governing permissions and
         <div class="storySelectorContainer" id="commonSettingsContainer">
           <div class="panel panel-default">
             <div class="panel-body">
-              Показать узел:<br>
+              <span l10n-id="social-network-show-node"></span><br>
               <select id="nodeFocusSelector"></select>
             </div>
           </div>
           
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Общие настройки</h3>
+              <h3 class="panel-title" l10n-id="social-network-common-settings"></h3>
             </div>
             <div class="panel-body">
-              <h4>Раскраска узлов</h4> <select
-                id="networkNodeGroupSelector"></select> Легенда
+              <h4 l10n-id="social-network-color-nodes"></h4> <select
+                id="networkNodeGroupSelector"></select> <span l10n-id="social-network-legend"></span>
               <div id="colorLegend"></div>
     
-              <h4>Выборка</h4> <select size=3 id="networkSubsetsSelector"></select>
+              <h4 l10n-id="social-network-selection"></h4> <select size=3 id="networkSubsetsSelector"></select>
               <div id="networkCharacterDiv" class="hidden">
-                <h4>Персонажи</h4> <select size=20 id="networkCharacterSelector"
+                <h4 l10n-id="social-network-characters"></h4> <select size=20 id="networkCharacterSelector"
                   multiple></select>
               </div>
     
               <div id="networkStoryDiv" class="hidden">
-                <h4>Истории</h4> <select size=20 id="networkStorySelector" multiple></select>
+                <h4 l10n-id="social-network-stories"></h4> <select size=20 id="networkStorySelector" multiple></select>
               </div>
             </div>
           </div>
@@ -768,18 +765,18 @@ See the License for the specific language governing permissions and
         <div class="storySelectorContainer" id="privateSettingsContainer">
           <div class="panel panel-default" style="width: 200px;">
             <div class="panel-heading">
-              <h3 class="panel-title">Частные настройки</h3>
+              <h3 class="panel-title" l10n-id="social-network-private-settings"></h3>
             </div>
             <div class="panel-body">
-              <h4>Социальная сеть</h4> <select size=4
+              <h4 l10n-id="social-network-social-network"></h4> <select size=4
                 id="networkSelector"></select>
     
               <div id="activityBlock" class="hidden">
-                <h4>Активность</h4> <select size=4 id="activitySelector" multiple></select>
+                <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple></select>
               </div>
     
-              <button id="drawNetworkButton">Нарисовать</button><br>
-              <button id="hideNetworkSettingsButton">Спрятать панель</button>
+              <button id="drawNetworkButton" l10n-id="social-network-draw"></button><br>
+              <button id="hideNetworkSettingsButton" l10n-id="social-network-hide-panel"></button>
             </div>
           </div>
         </div>
@@ -798,9 +795,9 @@ See the License for the specific language governing permissions and
       </div>
       
       <div id="chatDiv">
-        <p class="lead">Добро пожаловать в чат!</p>
+        <p class="lead">Welcome to chat!</p>
         <input type="text" name="message" id="chatMessage" />
-        <button id="sendMessageButton">Отправить</button>
+        <button id="sendMessageButton">Send</button>
         <ul id="messages"></ul>
       </div>
     </div>

@@ -22,7 +22,7 @@ var Utils = {};
  *      mainPage - enable view as first page
  *      toggle - toggle content, associated with button
  */
-Utils.addView = function (containers, name, view, displayName, opts) {
+Utils.addView = function (containers, name, view, opts) {
     "use strict";
     var opts = opts || {};
     view.init();
@@ -31,9 +31,12 @@ Utils.addView = function (containers, name, view, displayName, opts) {
     var button = document.createElement("div");
     if(opts.tooltip){
 		$(button).tooltip({
-			title : opts.tooltip,
+			title : L10n.getValue("header-" + name),
 			placement : "bottom"
 		});
+    } else {
+        addEl(button, makeText(L10n.getValue("header-" + name)));
+        setAttr(button, "l10n-id", "header-" + name);
     }
     addClass(button, buttonClass);
     addClass(button, "-test-" + name);
@@ -41,7 +44,6 @@ Utils.addView = function (containers, name, view, displayName, opts) {
     if(opts.id){
     	button.id = opts.id;
     }
-    button.appendChild(document.createTextNode(displayName));
     containers.navigation.appendChild(button);
     
 
@@ -255,6 +257,10 @@ var rAddEl = R.curry(function(child, parent){
 function setAttr(el, name, value){
   el.setAttribute(name, value);
   return el;
+};
+
+function getAttr(el, name){
+    return el.getAttribute(name);
 };
 
 function setProp(el, key, value){

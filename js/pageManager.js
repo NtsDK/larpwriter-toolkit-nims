@@ -23,6 +23,7 @@ var PageManager = {};
 var DBMS;
 
 PageManager.onLoad = function () {
+    L10n.localizeStatic();
 	if(MODE === "Standalone"){
 		DBMS = new LocalDBMS();
 		DBMS.setDatabase(BaseExample.data, Utils.processError(PageManager.onDatabaseLoad));
@@ -53,19 +54,19 @@ PageManager.onDatabaseLoad = function () {
     				navigation: navigation,
     				content: document.getElementById(content)
     		};
-    		Utils.addView(containers, "Overview", Overview, "Обзор", {mainPage:true});
-    		Utils.addView(containers, "Characters", Characters, "Персонажи");
-    		Utils.addView(containers, "Stories", Stories, "Истории");
-    		Utils.addView(containers, "Events", Events, "Адаптации");
-    		Utils.addView(containers, "Briefings", Briefings, "Вводные");
+    		Utils.addView(containers, "overview", Overview, {mainPage:true});
+    		Utils.addView(containers, "characters", Characters);
+    		Utils.addView(containers, "stories", Stories);
+    		Utils.addView(containers, "adaptations", Events);
+    		Utils.addView(containers, "briefings", Briefings);
     		
     		button = document.createElement("div");
     		addClass(button, "nav-separator");
     		navigation.appendChild(button);
     		
-    		Utils.addView(containers, "Timeline", Timeline, "", {id:"timelineButton", tooltip:"Хронология"});
-    		Utils.addView(containers, "SocialNetwork", SocialNetwork, "", {id:"socialNetworkButton", tooltip:"Социальная сеть"});
-    		Utils.addView(containers, "CharacterFilter", CharacterFilter, "", {id:"filterButton", tooltip:"Фильтр"});
+    		Utils.addView(containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
+    		Utils.addView(containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
+    		Utils.addView(containers, "character-filter", CharacterFilter, {id:"filterButton", tooltip:true});
     		
     		
     		button = document.createElement("div");
@@ -76,21 +77,23 @@ PageManager.onDatabaseLoad = function () {
     			button = document.createElement("div");
     			button.id = "dataLoadButton";
     			$(button).tooltip({
-    				title : "Загрузить базу из файла",
+    				title : L10n.getValue("header-open-database"),
     				placement : "bottom"
     			});
     			addClass(button, "action-button");
+//    			setAttr(button, "l10n-id", "header-open-database");
     			var input = document.createElement("input");
     			input.type = "file";
     			button.appendChild(input);
     			navigation.appendChild(button);
     			button.addEventListener('change', FileUtils.readSingleFile, false);
     		}
-    		PageManager.addButton("dataSaveButton", navigation, FileUtils.saveFile, {tooltip:"Сохранить базу на диск"});
+    		PageManager.addButton("dataSaveButton", "save-database", navigation, FileUtils.saveFile, {tooltip:true});
     		if(MODE === "Standalone"){
-    			PageManager.addButton("newBaseButton", navigation, FileUtils.makeNewBase, {tooltip:"Создать новую базу"});
+    			PageManager.addButton("newBaseButton", "create-database", navigation, FileUtils.makeNewBase, {tooltip:true});
     		}
-    		PageManager.addButton("mainHelpButton", navigation, FileUtils.openHelp, {tooltip:"Документация"});
+    		PageManager.addButton("mainHelpButton", "docs", navigation, FileUtils.openHelp, {tooltip:true});
+    		PageManager.addButton("toggleL10nButton", "l10n", navigation, L10n.toggleL10n, {tooltip:true});
     		
 //    var button = document.createElement("div");
 //    button.id = "logoutButton";
@@ -99,8 +102,8 @@ PageManager.onDatabaseLoad = function () {
 //    navigation.appendChild(button);
     		
     		if(MODE === "NIMS_Server"){
-    			Utils.addView(containers, "AccessManager", AccessManager, "", {id:"accessManagerButton", tooltip:"Администрирование"});
-    			Utils.addView(containers, "Chat", Chat, "", {id:"chatButton", tooltip:"Чат"});
+    			Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
+    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
     		}
     		
     		FileUtils.init(function(err){
@@ -114,16 +117,17 @@ PageManager.onDatabaseLoad = function () {
     
 };
 
-PageManager.addButton = function(id, navigation, callback, opts){
+PageManager.addButton = function(id, name, navigation, callback, opts){
 	"use strict";
     var button = document.createElement("div");
     button.id = id;
     if(opts.tooltip){
 		$(button).tooltip({
-			title : opts.tooltip,
+			title : L10n.getValue("header-" + name),
 			placement : "bottom"
 		});
     }
+//    setAttr(button, "l10n-id", "header-" + name);
     addClass(button, "action-button");
     navigation.appendChild(button);
     button.addEventListener('click', callback);

@@ -31,8 +31,8 @@ Briefings.init = function () {
 		navigation: document.getElementById(nav),
 		content: document.getElementById(content)
     };
-    Utils.addView(containers, "BriefingPreview", BriefingPreview, "Предварительный просмотр", {mainPage:true});
-    Utils.addView(containers, "BriefingExport", BriefingExport, "Экспорт");
+    Utils.addView(containers, "briefing-preview", BriefingPreview, {mainPage:true});
+    Utils.addView(containers, "briefing-export", BriefingExport);
 
     Briefings.content = document.getElementById("briefingsDiv");
 };
