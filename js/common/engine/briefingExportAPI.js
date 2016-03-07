@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-	function briefingExportAPI(LocalDBMS, CommonUtils) {
+	function briefingExportAPI(LocalDBMS, CommonUtils, R) {
 	
 		LocalDBMS.prototype.getBriefingData = function(groupingByStory, selectedCharacters, callback) {
 			"use strict";
@@ -47,6 +47,7 @@ See the License for the specific language governing permissions and
 					var eventsInfo = _getEventsInfo(this.database, charName);
 //				}
 				var dataObject = {
+				    "gameName" : this.database.Meta.name,
 					"name" : charName,
 					"inventory" : inventory,
 					"storiesInfo" : storiesInfo,
@@ -79,7 +80,7 @@ See the License for the specific language governing permissions and
 					profileInfo[element.name] = character[element.name];
 					break;
 				case "checkbox":
-					profileInfo[element.name] = character[element.name] ? "Да" : "Нет";
+					profileInfo[element.name] = Constants[character[element.name]].displayName();
 					break;
 				}
 			});
@@ -89,56 +90,70 @@ See the License for the specific language governing permissions and
 		var _getProfileInfoArray = function(database, charName) {
 			"use strict";
 			var character = database.Characters[charName];
-			var profileInfoArray = [];
-	
-			var value;
-			database.ProfileSettings.forEach(function(element) {
+			var value, splittedText;
+			var profileInfoArray = database.ProfileSettings.map(function(element) {
 				switch (element.type) {
 				case "text":
-				case "string":
+				    value = character[element.name];
+				    splittedText = _splitText(value);
+				    break;
 				case "enum":
+				case "string":
 				case "number":
-					value = character[element.name];
+				    splittedText = value = character[element.name];
 					break;
 				case "checkbox":
-					value = character[element.name] ? "Да" : "Нет";
+				    splittedText= value = Constants[character[element.name]].displayName();
 					break;
 				}
-				profileInfoArray.push({
+				return {
 					name : element.name,
-					value : value
-				});
+					value : value,
+					splittedText : splittedText
+				};
 			});
 			return profileInfoArray;
 		};
+		
+		var _splitText = function(text){
+		    return text.split("\n").map(function(string){
+		        return {string:string}
+		    });
+		};
+		
+		var _makeEventInfo = R.curry(function(charName, event) {
+		    "use strict";
+		    var eventInfo = {};
+            if (event.characters[charName].text !== "") {
+                eventInfo.text = event.characters[charName].text;
+            } else {
+                eventInfo.text = event.text;
+            }
+            eventInfo.splittedText = _splitText(eventInfo.text);
+            eventInfo.time = event.time;
+            eventInfo.name = event.name;
+            return eventInfo;
+		});
+		
+		var _getStoryEventsInfo = function(story, charName){
+		    "use strict";
+		    return story.events.filter(function(event) {
+                return event.characters[charName];
+            }).map(_makeEventInfo(charName));
+		}
 	
 		var _getEventsInfo = function(database, charName) {
 			"use strict";
-			var eventsInfo = [];
-			for ( var storyName in database.Stories) {
-				var storyInfo = {};
-	
-				var story = database.Stories[storyName];
-				if (!story.characters[charName]) {
-					continue;
-				}
-	
-				storyInfo.name = storyName;
-	
-				var eventInfo;
-				story.events.filter(function(event) {
-					return event.characters[charName];
-				}).forEach(function(event) {
-					eventInfo = {};
-					if (event.characters[charName].text !== "") {
-						eventInfo.text = event.characters[charName].text;
-					} else {
-						eventInfo.text = event.text;
-					}
-					eventInfo.time = event.time;
-					eventsInfo.push(eventInfo);
-				});
-			}
+			var eventsInfo = R.values(database.Stories).filter(function(story){
+                return story.characters[charName];
+            }).map(function(story){
+                return _getStoryEventsInfo(story, charName);
+            });
+			    
+			eventsInfo = eventsInfo.reduce(function(result, array){
+			    return result.concat(array);
+			}, []);
+
 			eventsInfo.sort(CommonUtils.eventsByTime);
 	
 			return eventsInfo;
@@ -146,35 +161,16 @@ See the License for the specific language governing permissions and
 	
 		var _getStoriesInfo = function(database, charName) {
 			"use strict";
-			var storiesInfo = [];
-			for ( var storyName in database.Stories) {
-				var storyInfo = {};
-	
-				var story = database.Stories[storyName];
-				if (!story.characters[charName]) {
-					continue;
-				}
-	
-				storyInfo.name = storyName;
-				var eventsInfo = [];
-	
-				story.events.filter(function(event) {
-					return event.characters[charName];
-				}).forEach(function(event) {
-					var eventInfo = {};
-					if (event.characters[charName].text !== "") {
-						eventInfo.text = event.characters[charName].text;
-					} else {
-						eventInfo.text = event.text;
-					}
-					eventInfo.time = event.time;
-					eventsInfo.push(eventInfo);
-				});
-				storyInfo.eventsInfo = eventsInfo;
-	
-				storiesInfo.push(storyInfo);
-			}
-			return storiesInfo;
+			return R.values(database.Stories).filter(function(story){
+                return story.characters[charName];
+            }).map(function(story){
+                return {
+                    name: story.name,
+                    eventsInfo: _getStoryEventsInfo(story, charName)
+                };
+            }).sort(CommonUtils.charOrdAFactory(function(a){
+                return a.name.toLowerCase();
+            }));
 		};
 	};
 	callback(briefingExportAPI);

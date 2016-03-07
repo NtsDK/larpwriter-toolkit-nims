@@ -7,15 +7,15 @@ var TEXT_TEMPLATE = "{{name}}\n" +
   "{{/profileInfoArray}}\n" +
   "\n" +
   "{{#eventsInfo}}\n" +
+  "{{{time}}} {{name}}\n" +
   "{{text}}\n" +
-  "{{{time}}}\n" +
   "{{/eventsInfo}}\n" +
   "\n" +
   "{{#storiesInfo}}\n" +
   "{{name}}\n" +
   "{{#eventsInfo}}\n" +
   "\n" +
-  "{{{time}}}\n" +
+  "{{{time}}} {{name}}\n" +
   "{{text}}\n" +
   "{{/eventsInfo}}\n" +
   "{{/storiesInfo}}\n";
