@@ -79,10 +79,9 @@ See the License for the specific language governing permissions and
 
 /** file uploader style*/
 .file-upload {
-     position: relative; /* Даем возможность делать позиционирование, внутри данного элемента */
-     overflow: hidden; /* Все что выходит за пределы - скрываем */
-/*      width: 20%; Задаем ширину кнопки выбора файла */
-     height: 36px; /* Задаем высоту кнопки выбора файла */ 
+     position: relative; 
+     overflow: hidden; 
+     height: 36px; 
 /*      background: #6da047; */
      background: grey;
      border-radius: 3px;
@@ -95,10 +94,9 @@ See the License for the specific language governing permissions and
 /*      background: #7aad55; */
 }
 .file-upload input[type="file"]{
-    display: none; /* Обязательно скрываем настоящий Input File */
+    display: none; 
 }
 .file-upload label {
-     /* Растягиваем label на всю возможную площадь блока .file-upload */
      display: block;
      position: absolute;
      top: 0;
@@ -108,7 +106,7 @@ See the License for the specific language governing permissions and
      cursor: pointer;
 }
 .file-upload span {
-     line-height: 36px; /* Делаем вертикальное выравнивание текста, который написан на кнопке */
+     line-height: 36px; 
 }
 /* file uploader style**/
 
@@ -328,5 +326,4 @@ See the License for the specific language governing permissions and
   min-width: 250px;
   text-align: center;
 }
-
 

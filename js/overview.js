@@ -36,10 +36,10 @@ Overview.Charts = {};
 
 Overview.init = function () {
     "use strict";
-    Overview.name = document.getElementById("gameNameInput");
+    Overview.name = getEl("gameNameInput");
     Overview.name.addEventListener("change", Overview.updateName);
 
-    Overview.date = document.getElementById("gameDatePicker");
+    Overview.date = getEl("gameDatePicker");
 
     var opts = {
         lang : "ru",
@@ -49,7 +49,7 @@ Overview.init = function () {
 
     jQuery(Overview.date).datetimepicker(opts);
 
-    Overview.preDate = document.getElementById("preGameDatePicker");
+    Overview.preDate = getEl("preGameDatePicker");
 
     opts = {
         lang : "ru",
@@ -59,12 +59,12 @@ Overview.init = function () {
 
     jQuery(Overview.preDate).datetimepicker(opts);
 
-    Overview.descr = document.getElementById("gameDescription");
+    Overview.descr = getEl("gameDescription");
     Overview.descr.addEventListener("change", Overview.updateDescr);
     
     UI.initTabPanel("overviewInfoButton", "overviewContainer");
     
-    Overview.content = document.getElementById("overviewDiv");
+    Overview.content = getEl("overviewDiv");
 };
 
 Overview.makeChart = function(id, canvas, data){

@@ -42,6 +42,15 @@ See the License for the specific language governing permissions and
     
     exports.eventsByTime = exports.charOrdAFactory(function(a){return new Date(a.time);});
 
+    exports.strFormat = function(str, vals){
+        "use strict";
+        return str.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+            if (m == "{{") { return "{"; }
+            if (m == "}}") { return "}"; }
+            return vals[n];
+        });
+    };
+    
 	exports.clone = function(o) {
 		"use strict";
 		if (!o || 'object' !== typeof o) {

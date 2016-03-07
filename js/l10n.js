@@ -21,6 +21,7 @@ PageManager, Utils, Overview, Characters, Stories, Events, Briefings, Timeline, 
 var L10n = {};
 
 L10n.initialized = false;
+L10n.l10nDelegates = [];
 
 L10n.init = function(){
     "use strict";
@@ -51,12 +52,28 @@ L10n.toggleL10n = function(){
         lang = "RU";
     }
     L10n.localizeStatic();
+    L10n.l10nDelegates.forEach(function(delegate){
+        delegate();
+    });
+    PageManager.currentView.refresh();
 };
 
 L10n.getValue = function(name){
     "use strict";
     var value = Dictionary[name];
     return value ? value : "RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA";
+};
+
+L10n.getFixedValue = function(name){
+    "use strict";
+    return function(){
+        return L10n.getValue(name);
+    };
+};
+
+L10n.onL10nChange = function(delegate){
+    "use strict";
+    L10n.l10nDelegates.push(delegate);
 };
 
 L10n.localizeStatic = function(){

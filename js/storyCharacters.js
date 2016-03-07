@@ -20,37 +20,32 @@ See the License for the specific language governing permissions and
 
 var StoryCharacters = {};
 
-StoryCharacters.inventoryHeader = ["Имя", "Инвентарь"];
-StoryCharacters.characterActivityHeader = ["Имя", "Актив", "Спутник", "Защита", "Пассив"];
-StoryCharacters.characterActivityDisplayNames = ["Актив", "Спутник", "Защита", "Пассив"];
-StoryCharacters.characterActivityTypes = ["active", "follower", "defensive", "passive"];
-
 StoryCharacters.init = function () {
     "use strict";
-    var button = document.getElementById("storyCharactersAddButton");
+    var button = getEl("storyCharactersAddButton");
     button.addEventListener("click", StoryCharacters.addCharacter);
 
-    button = document.getElementById("storyCharactersSwitchButton");
+    button = getEl("storyCharactersSwitchButton");
     button.addEventListener("click", StoryCharacters.switchCharacters);
 
-    button = document.getElementById("storyCharactersRemoveButton");
+    button = getEl("storyCharactersRemoveButton");
     button.addEventListener("click", StoryCharacters.removeCharacter);
 
-    StoryCharacters.addSelector = document.getElementById("storyCharactersAddSelector");
-    StoryCharacters.removeSelector = document.getElementById("storyCharactersRemoveSelector");
-    StoryCharacters.fromSelector = document.getElementById("storyCharactersFromSelector");
-    StoryCharacters.toSelector = document.getElementById("storyCharactersToSelector");
+    StoryCharacters.addSelector = getEl("storyCharactersAddSelector");
+    StoryCharacters.removeSelector = getEl("storyCharactersRemoveSelector");
+    StoryCharacters.fromSelector = getEl("storyCharactersFromSelector");
+    StoryCharacters.toSelector = getEl("storyCharactersToSelector");
 
-    StoryCharacters.content = document.getElementById("storyCharactersDiv");
+    StoryCharacters.content = getEl("storyCharactersDiv");
 };
 
 StoryCharacters.refresh = function () {
     "use strict";
 
-    Utils.removeChildren(StoryCharacters.addSelector);
-    Utils.removeChildren(StoryCharacters.removeSelector);
-    Utils.removeChildren(StoryCharacters.fromSelector);
-    Utils.removeChildren(StoryCharacters.toSelector);
+    clearEl(StoryCharacters.addSelector);
+    clearEl(StoryCharacters.removeSelector);
+    clearEl(StoryCharacters.fromSelector);
+    clearEl(StoryCharacters.toSelector);
     
     if(!Stories.CurrentStoryName){
         return;
@@ -94,44 +89,36 @@ StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
 	var option;
 	
 	addArray.forEach(function (addValue) {
-		option = document.createElement("option");
-		option.appendChild(document.createTextNode(addValue.displayName));
+		option = makeEl("option");
+		option.appendChild(makeText(addValue.displayName));
 		option.value = addValue.value;
 		StoryCharacters.addSelector.appendChild(option);
-		option = document.createElement("option");
-		option.appendChild(document.createTextNode(addValue.displayName));
+		option = makeEl("option");
+		option.appendChild(makeText(addValue.displayName));
 		option.value = addValue.value;
 		StoryCharacters.toSelector.appendChild(option);
 	});
 	removeArray.forEach(function (removeValue) {
-		option = document.createElement("option");
-		option.appendChild(document.createTextNode(removeValue.displayName));
+		option = makeEl("option");
+		option.appendChild(makeText(removeValue.displayName));
 		option.value = removeValue.value;
 		StoryCharacters.removeSelector.appendChild(option);
-		option = document.createElement("option");
-		option.appendChild(document.createTextNode(removeValue.displayName));
+		option = makeEl("option");
+		option.appendChild(makeText(removeValue.displayName));
 		option.value = removeValue.value;
 		StoryCharacters.fromSelector.appendChild(option);
 	});
 	
-	var tableHead = document.getElementById("story-characterActivityTableHead");
-	var table = document.getElementById("story-characterActivityTable");
-	Utils.removeChildren(tableHead);
-	Utils.removeChildren(table);
-	
-	StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.characterActivityHeader);
-	
+	var tableHead = clearEl(getEl("story-characterActivityTableHead"));
+	var table = clearEl(getEl("story-characterActivityTable"));
+	addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name")].concat(Constants.characterActivityTypes.map(R.prop('displayName')))));
 	removeArray.forEach(function (removeValue) {
 		StoryCharacters.appendCharacterActivity(table, removeValue, localCharacters[removeValue.value]);
 	});
 	
-	tableHead = document.getElementById("storyCharactersTableHead");
-	table = document.getElementById("storyCharactersTable");
-	Utils.removeChildren(tableHead);
-	Utils.removeChildren(table);
-	
-	StoryCharacters.appendCharacterHeader(tableHead, "th", StoryCharacters.inventoryHeader);
-	
+	tableHead = clearEl(getEl("storyCharactersTableHead"));
+	table = clearEl(getEl("storyCharactersTable"));
+	addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name"), getL10n("stories-inventory")]));
 	removeArray.forEach(function (removeValue) {
 		StoryCharacters.appendCharacterInput(table, removeValue, localCharacters[removeValue.value]);
 	});
@@ -139,10 +126,10 @@ StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
 
 StoryCharacters.addCharacter = function () {
     "use strict";
-    var characterName = document.getElementById("storyCharactersAddSelector").value.trim();
+    var characterName = getEl("storyCharactersAddSelector").value.trim();
     
     if (characterName === "") {
-        Utils.alert("Имя персонажа не указано");
+        Utils.alert(getL10n("stories-character-name-is-not-specified"));
         return;
     }
     
@@ -151,11 +138,11 @@ StoryCharacters.addCharacter = function () {
 
 StoryCharacters.switchCharacters = function () {
     "use strict";
-    var fromName = document.getElementById("storyCharactersFromSelector").value.trim();
-    var toName = document.getElementById("storyCharactersToSelector").value.trim();
+    var fromName = getEl("storyCharactersFromSelector").value.trim();
+    var toName = getEl("storyCharactersToSelector").value.trim();
     
     if (fromName === "" || toName === "") {
-        Utils.alert("Имя одного из персонажей не указано");
+        Utils.alert(getL10n("stories-one-of-switch-characters-is-not-specified"));
         return;
     }
     
@@ -164,42 +151,36 @@ StoryCharacters.switchCharacters = function () {
 
 StoryCharacters.removeCharacter = function () {
     "use strict";
-    var characterName = document.getElementById("storyCharactersRemoveSelector").value.trim();
+    var characterName = getEl("storyCharactersRemoveSelector").value.trim();
     
     if (characterName === "") {
-        Utils.alert("Имя персонажа не указано");
+        Utils.alert(getL10n("stories-character-name-is-not-specified"));
         return;
     }
 
-    if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
-            + characterName
-            + " из истории? Все данные связанные с персонажем будут удалены безвозвратно.")) {
+    if (Utils.confirm(strFormat(getL10n("stories-remove-character-from-story-warning"),[characterName]))) {
         DBMS.removeStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
     }
 };
 
-StoryCharacters.appendCharacterHeader = function (table, tag, values) {
+StoryCharacters.getCharacterHeader = function (values) {
     "use strict";
-    var td;
-    var tr = document.createElement("tr");
+    var tr = makeEl("tr");
     values.forEach(function(value){
-        td = document.createElement(tag);
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode(value));
+        addEl(tr, addEl(makeEl('th'), makeText(value)));
     });
-    
-    table.appendChild(tr);
+    return tr;
 };
 
 StoryCharacters.appendCharacterInput = function (table, characterMeta, character) {
     "use strict";
-    var tr = document.createElement("tr");
-    var td = document.createElement("td");
-    td.appendChild(document.createTextNode(characterMeta.displayName));
+    var tr = makeEl("tr");
+    var td = makeEl("td");
+    td.appendChild(makeText(characterMeta.displayName));
     tr.appendChild(td);
 
-    td = document.createElement("td");
-    var input = document.createElement("input");
+    td = makeEl("td");
+    var input = makeEl("input");
     input.value = character.inventory;
     input.characterName = character.name;
     addClass(input, "inventoryInput");
@@ -217,22 +198,22 @@ StoryCharacters.updateCharacterInventory = function (event) {
 
 StoryCharacters.appendCharacterActivity = function (table, characterMeta, character) {
     "use strict";
-    var tr = document.createElement("tr");
-    var td = document.createElement("td");
-    td.appendChild(document.createTextNode(characterMeta.displayName));
+    var tr = makeEl("tr");
+    var td = makeEl("td");
+    td.appendChild(makeText(characterMeta.displayName));
     tr.appendChild(td);
     
     var input;
-    StoryCharacters.characterActivityTypes.forEach(function (activityType) {
-        td = document.createElement("td");
-        input = document.createElement("input");
+    Constants.characterActivityTypes.forEach(function (activityType) {
+        td = makeEl("td");
+        input = makeEl("input");
         addClass(input, "isStoryEditable");
         input.type = "checkbox";
-        if (character.activity[activityType]) {
+        if (character.activity[activityType.name]) {
             input.checked = true;
         }
         input.characterName = character.name;
-        input.activityType = activityType;
+        input.activityType = activityType.name;
         input.addEventListener("change", StoryCharacters.onChangeCharacterActivity);
         td.appendChild(input);
         tr.appendChild(td);

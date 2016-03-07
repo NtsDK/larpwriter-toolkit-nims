@@ -22,28 +22,28 @@ var AccessManager = {};
 AccessManager.init = function() {
     "use strict";
     
-    var button = document.getElementById("createUserButton");
+    var button = getEl("createUserButton");
     button.addEventListener("click", AccessManager.createUser);
 
-    button = document.getElementById("changePasswordButton");
+    button = getEl("changePasswordButton");
     button.addEventListener("click", AccessManager.changePassword);
 
-    button = document.getElementById("removeUserButton");
+    button = getEl("removeUserButton");
     button.addEventListener("click", AccessManager.removeUser);
     
-    button = document.getElementById("assignPermissionButton");
+    button = getEl("assignPermissionButton");
     button.addEventListener("click", AccessManager.assignPermission);
     
-    button = document.getElementById("removePermissionButton");
+    button = getEl("removePermissionButton");
     button.addEventListener("click", AccessManager.removePermission);
 
-    button = document.getElementById("newAdminButton");
+    button = getEl("newAdminButton");
     button.addEventListener("click", AccessManager.assignNewAdmin);
     
-    button = document.getElementById("removeEditorButton");
+    button = getEl("removeEditorButton");
     button.addEventListener("click", AccessManager.removeEditor);
     
-    button = document.getElementById("newEditorButton");
+    button = getEl("newEditorButton");
     button.addEventListener("click", AccessManager.assignEditor);
     
     var inputs = document.getElementsByClassName("adaptationRights");
@@ -53,7 +53,7 @@ AccessManager.init = function() {
 		elem.addEventListener("click", AccessManager.changeAdaptationRightsMode);
 	}
     
-    AccessManager.content = document.getElementById("accessManagerDiv");
+    AccessManager.content = getEl("accessManagerDiv");
 };
 
 AccessManager.refresh = function() {
@@ -88,10 +88,10 @@ AccessManager.refresh = function() {
 
 Utils.rebuildSelector = function(selector, names){
 	"use strict";
-	Utils.removeChildren(selector);
+	clearEl(selector);
 	names.forEach(function (nameInfo) {
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode(nameInfo.displayName));
+		var option = makeEl("option");
+		option.appendChild(makeText(nameInfo.displayName));
 		option.value = nameInfo.value;
 		selector.appendChild(option);
 	});
@@ -99,10 +99,10 @@ Utils.rebuildSelector = function(selector, names){
 
 Utils.rebuildSelectorArr = function(selector, names){
 	"use strict";
-	Utils.removeChildren(selector);
+	clearEl(selector);
 	names.forEach(function (name) {
-		var option = document.createElement("option");
-		option.appendChild(document.createTextNode(name));
+		var option = makeEl("option");
+		option.appendChild(makeText(name));
 		selector.appendChild(option);
 	});
 };
@@ -115,10 +115,10 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
     var names = Object.keys(info).sort(CommonUtils.charOrdA);
     
     var selectors = [];
-    selectors.push(document.getElementById("passwordUserName"));
+    selectors.push(getEl("passwordUserName"));
     
-    selectors.push(document.getElementById("userPermissionSelector"));
-    selectors.push(document.getElementById("newEditorSelector"));
+    selectors.push(getEl("userPermissionSelector"));
+    selectors.push(getEl("newEditorSelector"));
     
     selectors.forEach(function(selector){
     	Utils.rebuildSelectorArr(selector, names);
@@ -126,45 +126,45 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
     
     var clone = names.slice(0);
     clone.splice(names.indexOf(allInfo.admin), 1);
-    var selector = document.getElementById("newAdminSelector");
+    var selector = getEl("newAdminSelector");
     Utils.rebuildSelectorArr(selector, clone);
     
-    selector = document.getElementById("userRemoveSelector");
+    selector = getEl("userRemoveSelector");
     Utils.rebuildSelectorArr(selector, clone);
     
-    selector = document.getElementById("storyPermissionSelector");
+    selector = getEl("storyPermissionSelector");
     Utils.rebuildSelector(selector, storyNames);
     
-    selector = document.getElementById("characterPermissionSelector");
+    selector = getEl("characterPermissionSelector");
     Utils.rebuildSelector(selector, characterNames);
     
-    var span = document.getElementById("currentAdministrator");
-    Utils.removeChildren(span);
-    span.appendChild(document.createTextNode(allInfo.admin));
+    var span = getEl("currentAdministrator");
+    clearEl(span);
+    span.appendChild(makeText(allInfo.admin));
 
-    span = document.getElementById("currentEditor");
-    Utils.removeChildren(span);
+    span = getEl("currentEditor");
+    clearEl(span);
     if(allInfo.editor){
-    	span.appendChild(document.createTextNode(allInfo.editor));
+    	span.appendChild(makeText(allInfo.editor));
     }
     
-    document.getElementById("adaptationRights" + allInfo.adaptationRights).checked = true;
+    getEl("adaptationRights" + allInfo.adaptationRights).checked = true;
     
-    var permissionTable = document.getElementById("permissionTable");
-    Utils.removeChildren(permissionTable);
+    var permissionTable = getEl("permissionTable");
+    clearEl(permissionTable);
     
     names.forEach(function(name){
-    	permissionTable.appendChild(document.createTextNode(name));
-    	permissionTable.appendChild(document.createElement("br"));
-    	permissionTable.appendChild(document.createTextNode("Персонажи: " + info[name].characters.join(",")));
-    	permissionTable.appendChild(document.createElement("br"));
-    	permissionTable.appendChild(document.createTextNode("Истории: " + info[name].stories.join(",")));
-    	permissionTable.appendChild(document.createElement("br"));
-    	permissionTable.appendChild(document.createElement("br"));
+    	permissionTable.appendChild(makeText(name));
+    	permissionTable.appendChild(makeEl("br"));
+    	permissionTable.appendChild(makeText("Персонажи: " + info[name].characters.join(",")));
+    	permissionTable.appendChild(makeEl("br"));
+    	permissionTable.appendChild(makeText("Истории: " + info[name].stories.join(",")));
+    	permissionTable.appendChild(makeEl("br"));
+    	permissionTable.appendChild(makeEl("br"));
     });
     
-    permissionTable.appendChild(document.createTextNode("Не привязаны"));
-	permissionTable.appendChild(document.createElement("br"));
+    permissionTable.appendChild(makeText("Не привязаны"));
+	permissionTable.appendChild(makeEl("br"));
 	
 	var isUnused = function(storyName){
 		var used = false;
@@ -191,18 +191,18 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
 	characterNames = characterNames.map(function(elem){
 		return elem.value;
 	}).filter(isUnused2);
-	permissionTable.appendChild(document.createTextNode("Персонажи: " + characterNames.join(",")));
-	permissionTable.appendChild(document.createElement("br"));
-	permissionTable.appendChild(document.createTextNode("Истории: " + storyNames.join(",")));
-	permissionTable.appendChild(document.createElement("br"));
-	permissionTable.appendChild(document.createElement("br"));
+	permissionTable.appendChild(makeText("Персонажи: " + characterNames.join(",")));
+	permissionTable.appendChild(makeEl("br"));
+	permissionTable.appendChild(makeText("Истории: " + storyNames.join(",")));
+	permissionTable.appendChild(makeEl("br"));
+	permissionTable.appendChild(makeEl("br"));
 };
 
 
 
 AccessManager.createUser = function () {
     "use strict";
-    var userNameInput = document.getElementById("userNameInput");
+    var userNameInput = getEl("userNameInput");
     var name = userNameInput.value.trim();
 
     if (name === "") {
@@ -210,7 +210,7 @@ AccessManager.createUser = function () {
         return;
     }
     
-    var userPasswordInput = document.getElementById("userPasswordInput");
+    var userPasswordInput = getEl("userPasswordInput");
     var password = userPasswordInput.value.trim();
     
     if (password === "") {
@@ -231,8 +231,8 @@ AccessManager.createUser = function () {
 
 AccessManager.changePassword = function () {
     "use strict";
-    var userName = document.getElementById("passwordUserName").value.trim();
-    var newPassword = document.getElementById("newPassword").value.trim();
+    var userName = getEl("passwordUserName").value.trim();
+    var newPassword = getEl("newPassword").value.trim();
 
     if (newPassword === "") {
         Utils.alert("Новый пароль не указан.");
@@ -245,7 +245,7 @@ AccessManager.changePassword = function () {
 
 AccessManager.removeUser = function () {
     "use strict";
-    var name = document.getElementById("userRemoveSelector").value.trim();
+    var name = getEl("userRemoveSelector").value.trim();
 
     if (Utils.confirm("Вы уверены, что хотите удалить " + name + "?")) {
     	DBMS.removeUser(name, Utils.processError(AccessManager.refresh));
@@ -255,20 +255,20 @@ AccessManager.removeUser = function () {
 AccessManager.removePermission = function(){
 	"use strict";
 	
-	var userName = document.getElementById("userPermissionSelector").value.trim();
+	var userName = getEl("userPermissionSelector").value.trim();
 	
 	if(userName === ""){
 		Utils.alert("Пользователь не выбран");
 		return;
 	}
 	
-    var selOptions =  document.getElementById("storyPermissionSelector").selectedOptions;
+    var selOptions =  getEl("storyPermissionSelector").selectedOptions;
     var storyNames = [];
     for (var i = 0; i < selOptions.length; i++) {
         storyNames.push(selOptions[i].value);
     }
     
-    selOptions =  document.getElementById("characterPermissionSelector").selectedOptions;
+    selOptions =  getEl("characterPermissionSelector").selectedOptions;
     var characterNames = [];
     for (var i = 0; i < selOptions.length; i++) {
     	characterNames.push(selOptions[i].value);
@@ -279,20 +279,20 @@ AccessManager.removePermission = function(){
 AccessManager.assignPermission = function(){
 	"use strict";
 	
-	var userName = document.getElementById("userPermissionSelector").value.trim();
+	var userName = getEl("userPermissionSelector").value.trim();
 	
 	if(userName === ""){
 		Utils.alert("Пользователь не выбран");
 		return;
 	}
 	
-    var selOptions =  document.getElementById("storyPermissionSelector").selectedOptions;
+    var selOptions =  getEl("storyPermissionSelector").selectedOptions;
     var storyNames = [];
     for (var i = 0; i < selOptions.length; i++) {
         storyNames.push(selOptions[i].value);
     }
     
-    selOptions =  document.getElementById("characterPermissionSelector").selectedOptions;
+    selOptions =  getEl("characterPermissionSelector").selectedOptions;
     var characterNames = [];
     for (var i = 0; i < selOptions.length; i++) {
     	characterNames.push(selOptions[i].value);
@@ -303,7 +303,7 @@ AccessManager.assignPermission = function(){
 
 AccessManager.assignNewAdmin = function() {
 	"use strict";
-	var userName = document.getElementById("newAdminSelector").value.trim();
+	var userName = getEl("newAdminSelector").value.trim();
 	if(Utils.confirm("Вы уверены, что хотите назначить пользователя " + userName + 
 			" администратором? Отменить это действие вы не сможете.")){
 		DBMS.assignAdmin(userName, Utils.processError(AccessManager.refresh));
@@ -315,7 +315,7 @@ AccessManager.removeEditor = function() {
 };
 AccessManager.assignEditor = function() {
 	"use strict";
-	var userName = document.getElementById("newEditorSelector").value.trim();
+	var userName = getEl("newEditorSelector").value.trim();
 	if(Utils.confirm("Вы уверены, что хотите назначить пользователя " + userName + 
 			" редактором? Пока назначен редактор все другие пользователи не смогут редактировать свои объекты.")){
 		DBMS.assignEditor(userName, Utils.processError(AccessManager.refresh));

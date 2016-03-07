@@ -44,8 +44,7 @@ RemoteDBMS._simpleGet = function(name, params, callback){
     });
     
     request.fail(function(errorInfo, textStatus, errorThrown) {
-    	callback(errorInfo.responseText);
-//        alert("Ошибка : " + errorInfo.responseText);
+    	callback(JSON.parse(errorInfo.responseText));
     });
 };
 
@@ -64,8 +63,7 @@ RemoteDBMS._simplePut = function(name, data, callback){
     });
     
     request.fail(function(errorInfo, textStatus, errorThrown) {
-    	callback(errorInfo.responseText);
-//        alert("Ошибка : " + errorInfo.responseText);
+    	callback(JSON.parse(errorInfo.responseText));
     });
 };
 

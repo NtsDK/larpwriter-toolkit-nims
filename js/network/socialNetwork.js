@@ -22,17 +22,6 @@ var SocialNetwork = {};
 
 SocialNetwork.colorMap = {};
 
-SocialNetwork.networks = [ {
-	displayName: "Социальные связи",
-	value : "socialRelations"
-},{
-	displayName: "Персонаж-участие-история",
-	value: "characterPresenceInStory"
-},{
-	displayName: "Персонаж-активность-история" ,
-	value: "characterActivityInStory"
-}];
-
 SocialNetwork.activityColors = {
         "active": "red", 
         "follower": "blue", 
@@ -61,7 +50,7 @@ SocialNetwork.fixedColors = {
             border : 'rgb(255,168,3)'
         }
     },
-    "Без групп" : {
+    "noGroup" : {
         color : {
             background : 'rgb(151,194,252)',
             border : 'rgb(43,124,233)'
@@ -101,27 +90,27 @@ SocialNetwork.init = function () {
     listen(getEl("drawNetworkButton"), "click", SocialNetwork.onDrawNetwork);
     listen(getEl("nodeFocusSelector"), "change", SocialNetwork.onNodeFocus);
 
-    var selector = document.getElementById("networkSelector");
+    var selector = getEl("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
     
     var option;
-    SocialNetwork.networks.forEach(function (network) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(network.displayName));
-        option.value = network.value;
+    Constants.networks.forEach(function (network) {
+        option = makeEl("option");
+        option.appendChild(makeText(network.displayName));
+        option.value = network.name;
         selector.appendChild(option);
     });
     
-    selector = document.getElementById("activitySelector");
+    selector = getEl("activitySelector");
     selector.addEventListener("change", SocialNetwork.onActivitySelectorChangeDelegate);
     
     var st;
-    StoryCharacters.characterActivityTypes.forEach(function (activity, i) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(StoryCharacters.characterActivityDisplayNames[i]));
+    Constants.characterActivityTypes.forEach(function (activity) {
+        option = makeEl("option");
+        option.appendChild(makeText(activity.displayName));
         st = option.style;
-        st.color = SocialNetwork.activityColors[StoryCharacters.characterActivityTypes[i] ];
-        option.activity = activity;
+        st.color = SocialNetwork.activityColors[activity.name];
+        option.activity = activity.name;
         selector.appendChild(option);
     });
     
@@ -130,13 +119,13 @@ SocialNetwork.init = function () {
     SocialNetwork.network;
     SocialNetwork.highlightActive = false;
     
-    document.getElementById("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
-    document.getElementById("showNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
+    getEl("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
+    getEl("showNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
     
-    var warning = document.getElementById("socialNetworkWarning");
-    warning.appendChild(document.createTextNode("Внимание! Отрисовка социальной сети требует большого количества ресурсов. Рекомендуем сохранить данные перед отрисовкой."));
-    var button = document.createElement("button");
-    button.appendChild(document.createTextNode("Убрать предупреждение"));
+    var warning = getEl("socialNetworkWarning");
+    warning.appendChild(makeText(getL10n("social-network-require-resources-warning")));
+    var button = makeEl("button");
+    button.appendChild(makeText(getL10n("social-network-remove-resources-warning")));
     warning.appendChild(button);
     button.addEventListener("click", function(){
         addClass(warning,"hidden");
@@ -146,7 +135,7 @@ SocialNetwork.init = function () {
         return a.label.toLowerCase();
     });
 
-    SocialNetwork.content = document.getElementById("socialNetworkDiv");
+    SocialNetwork.content = getEl("socialNetworkDiv");
 };
 
 //SocialNetwork.fillColorPalette = function(){
@@ -164,11 +153,10 @@ SocialNetwork.init = function () {
 SocialNetwork.refresh = function () {
     "use strict";
     
-    var selector = document.getElementById("networkSelector");
-    selector.value = SocialNetwork.networks[0].value;
+    var selector = getEl("networkSelector");
+    selector.value = Constants.networks[0].name;
     
-    selector = document.getElementById("networkNodeGroupSelector");
-    Utils.removeChildren(selector);
+    selector = clearEl(getEl("networkNodeGroupSelector"));
     
     PermissionInformer.getCharacterNamesArray(false, function(err, characterNames){
     	if(err) {Utils.handleError(err); return;}
@@ -198,13 +186,17 @@ SocialNetwork.refresh = function () {
 		                    return element.type === "enum" || element.type === "checkbox";
 		                });
 		                
-		                var groupNames = [ "Без групп" ].concat(groups.map(function (elem) {
-		                    return elem.name;
+		                var groupNames = [ Constants.noGroup ].concat(groups.map(function (elem) {
+		                    return {
+		                        name: elem.name,
+		                        displayName: elem.name,
+		                    }
 		                }));
 		                
 		                groupNames.forEach(function (group) {
-		                    var option = document.createElement("option");
-		                    option.appendChild(document.createTextNode(group));
+		                    var option = makeEl("option");
+		                    option.appendChild(makeText(group.displayName));
+		                    option.value = group.name;
 		                    selector.appendChild(option);
 		                });
 		                
@@ -242,23 +234,23 @@ SocialNetwork.refresh = function () {
 
 SocialNetwork.refreshLegend = function (groupName) {
     "use strict";
-    var colorLegend = document.getElementById("colorLegend");
-    Utils.removeChildren(colorLegend);
+    var colorLegend = getEl("colorLegend");
+    clearEl(colorLegend);
     var colorDiv;
     
     Object.keys(SocialNetwork.groupColors).filter(function (value){
         return value.substring(0, groupName.length) === groupName;
     }).forEach(function (value) {
-        colorDiv = document.createElement("div");
-        colorDiv.appendChild(document.createTextNode(value));
+        colorDiv = makeEl("div");
+        colorDiv.appendChild(makeText(value === "noGroup" ? Constants.noGroup.displayName : value));
         colorDiv.style.backgroundColor = SocialNetwork.groupColors[value].color.background;
         colorDiv.style.border = "solid 2px " + SocialNetwork.groupColors[value].color.border;
         colorLegend.appendChild(colorDiv);
     });
     
-    if(SocialNetwork.selectedNetwork === "Человек-история"){
-        colorDiv = document.createElement("div");
-        colorDiv.appendChild(document.createTextNode("История"));
+    if(["characterPresenceInStory", "characterActivityInStory"].indexOf(SocialNetwork.selectedNetwork) !== -1){
+        colorDiv = makeEl("div");
+        colorDiv.appendChild(makeText(getL10n("social-network-story")));
         colorDiv.style.backgroundColor = SocialNetwork.fixedColors["storyColor"].color.background;
         colorDiv.style.border = "solid 2px " + SocialNetwork.fixedColors["storyColor"].color.border;
         colorLegend.appendChild(colorDiv);
@@ -272,7 +264,7 @@ SocialNetwork.updateNodes = function (groupName) {
     var group;
     NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
         var character = SocialNetwork.Characters[characterName];
-        group = groupName === "Без групп" ? groupName : groupName + "." + character[groupName];
+        group = groupName === "noGroup" ? groupName : groupName + "." + character[groupName];
         SocialNetwork.nodesDataset.update({
             id : character.name,
             group : group
@@ -293,7 +285,7 @@ SocialNetwork.onActivitySelectorChangeDelegate = function (event) {
 SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
     "use strict";
     var selectedNetwork = event.target.value;
-    var activityBlock = document.getElementById("activityBlock");
+    var activityBlock = getEl("activityBlock");
     setClassByCondition(activityBlock, "hidden", selectedNetwork !== "characterActivityInStory");
 };
 
@@ -314,7 +306,7 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     SocialNetwork.edges = [];
     
     switch (selectedNetwork) {
-    case "Простая сеть":
+    case "simpleNetwork":
         SocialNetwork.nodes = SocialNetwork.getCharacterNodes();
         SocialNetwork.edges = SocialNetwork.getSimpleEdges();
         break;
@@ -332,7 +324,7 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
         break;
     }
     
-    SocialNetwork.refreshLegend(document.getElementById("networkNodeGroupSelector").value);
+    SocialNetwork.refreshLegend(getEl("networkNodeGroupSelector").value);
     
     var focusSelector = clearEl(getEl('nodeFocusSelector'));
     var opt;
@@ -355,7 +347,7 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
 
 SocialNetwork.getCharacterNodes = function () {
     "use strict";
-    var groupName = document.getElementById("networkNodeGroupSelector").value;
+    var groupName = getEl("networkNodeGroupSelector").value;
 
     var nodes = [];
     NetworkSubsetsSelector.getCharacterNames().forEach(
@@ -364,7 +356,7 @@ SocialNetwork.getCharacterNodes = function () {
                 nodes.push({
                     id : character.name,
                     label : character.name.split(" ").join("\n"),
-                    group : groupName === "Без групп" ? groupName : groupName
+                    group : groupName === "noGroup" ? Constants.noGroup.displayName : groupName
                             + "." + character[groupName]
                 });
             });
@@ -511,7 +503,7 @@ SocialNetwork.getDetailedEdges = function () {
 
 SocialNetwork.redrawAll = function () {
     "use strict";
-    var container = document.getElementById('socialNetworkContainer');
+    var container = getEl('socialNetworkContainer');
     var options = {
         nodes : {
             shape : 'dot',
@@ -706,7 +698,7 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
 };
 
 SocialNetwork.togglePanel = function () {
-    toggleClass(document.getElementById("commonSettingsContainer"), "hidden");
-    toggleClass(document.getElementById("privateSettingsContainer"), "hidden");
-    toggleClass(document.getElementById("showSettingsButtonContainer"), "hidden");
+    toggleClass(getEl("commonSettingsContainer"), "hidden");
+    toggleClass(getEl("privateSettingsContainer"), "hidden");
+    toggleClass(getEl("showSettingsButtonContainer"), "hidden");
 };

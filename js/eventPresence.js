@@ -24,18 +24,18 @@ EventPresence.init = function () {
     "use strict";
     listen(getEl('eventPresenceSelector'), "change", UI.showSelectedEls("-dependent"));
 
-    EventPresence.content = document.getElementById("eventPresenceDiv");
+    EventPresence.content = getEl("eventPresenceDiv");
 };
 
 EventPresence.refresh = function () {
     "use strict";
-    var tableHead = document.getElementById("eventPresenceTableHead");
-    var table = document.getElementById("eventPresenceTable");
+    var tableHead = getEl("eventPresenceTableHead");
+    var table = getEl("eventPresenceTable");
     var characterSelector = getEl('eventPresenceSelector');
     
     if(Stories.CurrentStoryName == undefined){
-        Utils.removeChildren(tableHead);
-        Utils.removeChildren(table);
+        clearEl(tableHead);
+        clearEl(table);
         clearEl(characterSelector);
         return;
     }
@@ -66,8 +66,8 @@ EventPresence.refresh = function () {
                 DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
                     if(err) {Utils.handleError(err); return;}
                     
-                    Utils.removeChildren(tableHead);
-                    Utils.removeChildren(table);
+                    clearEl(tableHead);
+                    clearEl(table);
                     UI.fillShowItemSelector(clearEl(characterSelector), displayArray, characterArray);
                     
                     EventPresence.appendTableHeader(tableHead, displayArray);
@@ -85,7 +85,7 @@ EventPresence.appendTableHeader = function (table, characterArray) {
     "use strict";
     var tr = makeEl("tr");
 
-    rAddEl(rAddEl(makeText("Событие"), makeEl("th")), tr);
+    rAddEl(rAddEl(makeText(getL10n("stories-event")), makeEl("th")), tr);
     characterArray.forEach(function(characterName, i) {
         rAddEl(rAddEl(makeText(characterName), rAddClass(i + "-dependent", makeEl("th"))), tr);
     });
@@ -94,15 +94,15 @@ EventPresence.appendTableHeader = function (table, characterArray) {
 
 EventPresence.appendTableInput = function (table, event, i, characterArray) {
     "use strict";
-    var tr = document.createElement("tr");
-    var td = document.createElement("td");
-    td.appendChild(document.createTextNode(event.name));
+    var tr = makeEl("tr");
+    var td = makeEl("td");
+    td.appendChild(makeText(event.name));
     tr.appendChild(td);
 
     characterArray.forEach(function(character, j) {
-        td = document.createElement("td");
+        td = makeEl("td");
         addClass(td, j + "-dependent");
-        var input = document.createElement("input");
+        var input = makeEl("input");
         addClass(input, "isStoryEditable");
         input.type = "checkbox";
         if (event.characters[character]) {
@@ -127,11 +127,7 @@ EventPresence.onChangeCharacterCheckbox = function (event) {
     } else if (!event.target.hasText){
         DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName, Utils.processError());
     } else {
-        if (Utils.confirm("Вы уверены, что хотите удалить персонажа "
-                + event.target.characterName
-                + " из события '"
-                + event.target.eventName
-                + "'? У этого песонажа есть адаптация события, которая будет удалена безвозвратно.")) {
+        if (Utils.confirm(strFormat(getL10n("stories-remove-character-from-event-warning"),[event.target.characterName, event.target.eventName]))) {
             DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName, Utils.processError());
         } else {
             event.target.checked = true;

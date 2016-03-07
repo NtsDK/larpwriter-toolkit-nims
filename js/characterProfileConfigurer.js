@@ -18,33 +18,38 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-// Профиль игрока уже содержит поле name.
-// У меня был выбор:
-// 1. убрать это поле в принципе,
-// 2. добавить уровень вложенности для данных профиля,
-// 3. запретить называть так поля профиля.
-// 1 уже используется в ряде мест
-// 2 - на мой взгляд усложнит формат данных
-// 3 просто и без усложнений, выбран 3 вариант
+
+// Character profile already ha field 'name'
+// I had some choices:
+// 1. remove this field at all
+// 2. Add one more object to divide special values (name) and user defined values
+// 3. Prohibit to make field - name
+// 1. This field is used in many places
+// 2. - too complex way
+// 3. simple and lesser complexity, I choose this way
 
 var CharacterProfileConfigurer = {};
 
 CharacterProfileConfigurer.init = function () {
     'use strict';
-    var selector = document.getElementById("profileItemTypeSelector");
-    Utils.removeChildren(selector);
-    CharacterProfileConfigurer.fillSelector(selector);
 
-    var button = document.getElementById("createProfileItemButton");
+    var sel = clearEl(getEl("profileItemTypeSelector"));
+    var fillMainSel = function(){
+        CharacterProfileConfigurer.fillSelector(clearEl(sel));
+    };
+    fillMainSel();
+    L10n.onL10nChange(fillMainSel);
+
+    var button = getEl("createProfileItemButton");
     button.addEventListener("click", CharacterProfileConfigurer.createProfileItem);
 
-    button = document.getElementById("moveProfileItemButton");
+    button = getEl("moveProfileItemButton");
     button.addEventListener("click", CharacterProfileConfigurer.moveProfileItem);
 
-    button = document.getElementById("removeProfileItemButton");
+    button = getEl("removeProfileItemButton");
     button.addEventListener("click", CharacterProfileConfigurer.removeProfileItem);
 
-    CharacterProfileConfigurer.content = document.getElementById("characterProfileConfigurer");
+    CharacterProfileConfigurer.content = getEl("characterProfileConfigurer");
 };
 
 CharacterProfileConfigurer.refresh = function () {
@@ -52,32 +57,32 @@ CharacterProfileConfigurer.refresh = function () {
     
     var positionSelectors = [];
     
-    positionSelectors.push(document.getElementById("profileItemPositionSelector"));
-    positionSelectors.push(document.getElementById("moveProfileItemPositionSelector"));
+    positionSelectors.push(getEl("profileItemPositionSelector"));
+    positionSelectors.push(getEl("moveProfileItemPositionSelector"));
 
     DBMS.getAllProfileSettings(function(err, allProfileSettings){
     	if(err) {Utils.handleError(err); return;}
     	
     	var option;
-    	positionSelectors.forEach(function(positionSelector){
-    		Utils.removeChildren(positionSelector);
+    	positionSelectors.forEach(function(sel){
+    		clearEl(sel);
     		
-    		allProfileSettings.forEach(function (elem, i) {
-    			option = document.createElement("option");
-    			option.appendChild(document.createTextNode("Перед '" + elem.name + "'"));
-    			positionSelector.appendChild(option);
+    		var addOpt = function(text){
+    		    addEl(sel, addEl(makeEl('option'), makeText(text)));
+    		};
+    		
+    		allProfileSettings.forEach(function (elem) {
+    		    addOpt(strFormat(getL10n("common-set-item-before"), [elem.name]));
     		});
     		
-    		option = document.createElement("option");
-    		option.appendChild(document.createTextNode("В конец"));
-    		positionSelector.appendChild(option);
+    		addOpt(getL10n("common-set-item-as-last"));
     		
-    		positionSelector.selectedIndex = allProfileSettings.length;
+    		sel.selectedIndex = allProfileSettings.length;
     	});
     	
         
-        var table = document.getElementById("profileConfigBlock");
-        Utils.removeChildren(table);
+        var table = getEl("profileConfigBlock");
+        clearEl(table);
         
         allProfileSettings.forEach(function (profileSettings, i) {
             CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
@@ -90,14 +95,14 @@ CharacterProfileConfigurer.refresh = function () {
         
         var selectorArr = [];
         
-        selectorArr.push(document.getElementById("moveProfileItemSelector"));
-        selectorArr.push(document.getElementById("removeProfileItemSelector"));
+        selectorArr.push(getEl("moveProfileItemSelector"));
+        selectorArr.push(getEl("removeProfileItemSelector"));
         
         selectorArr.forEach(function (selector) {
-            Utils.removeChildren(selector);
+            clearEl(selector);
             allProfileSettings.forEach(function (elem, i) {
-                option = document.createElement("option");
-                option.appendChild(document.createTextNode(elem.name));
+                option = makeEl("option");
+                option.appendChild(makeText(elem.name));
                 option.profileItemIndex = i;
                 selector.appendChild(option);
             });
@@ -107,97 +112,74 @@ CharacterProfileConfigurer.refresh = function () {
 
 CharacterProfileConfigurer.createProfileItem = function () {
     'use strict';
-    var name = document.getElementById("profileItemNameInput").value.trim();
+    var name = getEl("profileItemNameInput").value.trim();
 
     CharacterProfileConfigurer.validateProfileItemName(name, function(){
-        var type = document.getElementById("profileItemTypeSelector").value.trim();
+        var type = getEl("profileItemTypeSelector").value.trim();
         
         if (!Constants.profileFieldTypes[type]) {
-            Utils.alert("Неизвестный тип поля: " + type);
+            Utils.alert(strFormat(getL10n("characters-unknown-profile-item-type"), [type]));
             return;
         }
         var value = Constants.profileFieldTypes[type].value;
         
-        var positionSelector = document.getElementById("profileItemPositionSelector");
+        var positionSelector = getEl("profileItemPositionSelector");
         
         var position = positionSelector.value;
         
-        DBMS.createProfileItem(name, type, value, position === "В конец", 
+        DBMS.createProfileItem(name, type, value, position === getL10n("common-set-item-as-last"), 
                 positionSelector.selectedIndex, Utils.processError(CharacterProfileConfigurer.refresh));
     });
 };
 
 CharacterProfileConfigurer.moveProfileItem = function () {
 	'use strict';
-	var index = document.getElementById("moveProfileItemSelector").selectedOptions[0].profileItemIndex;
-	var newIndex = document.getElementById("moveProfileItemPositionSelector").selectedIndex;
+	var index = getEl("moveProfileItemSelector").selectedOptions[0].profileItemIndex;
+	var newIndex = getEl("moveProfileItemPositionSelector").selectedIndex;
 	
 	if (index === newIndex) {
-	  Utils.alert("Позиции полей совпадают");
+	  Utils.alert(getL10n("characters-profile-item-positions-are-equal"));
 	  return;
 	}
 	
 	DBMS.moveProfileItem(index, newIndex, Utils.processError(CharacterProfileConfigurer.refresh));
 };
 
+
+
 CharacterProfileConfigurer.removeProfileItem = function () {
     'use strict';
-    var index = document.getElementById("removeProfileItemSelector").selectedIndex;
-    var name = document.getElementById("removeProfileItemSelector").value;
+    var index = getEl("removeProfileItemSelector").selectedIndex;
+    var name = getEl("removeProfileItemSelector").value;
 
-    if (Utils.confirm("Вы уверены, что хотите удалить поле профиля "
-                    + name
-                    + "? Все данные связанные с этим полем будут удалены безвозвратно.")) {
-        
+    if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-removing-profile-item"), [name]))) {
         DBMS.removeProfileItem(index, name, Utils.processError(CharacterProfileConfigurer.refresh));
     }
 };
 
-CharacterProfileConfigurer.appendHeader = function (table) {
+CharacterProfileConfigurer.fillSelector = function (sel) {
     'use strict';
-    var tr = document.createElement("tr");
-
-    var td = document.createElement("th");
-    td.appendChild(document.createTextNode("№"));
-    tr.appendChild(td);
-
-    td = document.createElement("th");
-    td.appendChild(document.createTextNode("Название поля"));
-    tr.appendChild(td);
-
-    td = document.createElement("th");
-    td.appendChild(document.createTextNode("Тип"));
-    tr.appendChild(td);
-
-    td = document.createElement("th");
-    td.appendChild(document.createTextNode("Значения"));
-    tr.appendChild(td);
-    table.appendChild(tr);
-};
-
-CharacterProfileConfigurer.fillSelector = function (selector) {
-    'use strict';
-    Object.keys(Constants.profileFieldTypes).forEach(function (name) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(Constants.profileFieldTypes[name].displayName));
-        option.value = name;
-        selector.appendChild(option);
+    var makeOption = function(value, displayName){
+        return setProp(addEl(makeEl("option"), makeText(displayName)),'value', value);
+    };
+    R.values(Constants.profileFieldTypes).forEach(function (value) {
+        addEl(sel, makeOption(value.name, value.displayName()))
     });
 };
 
 CharacterProfileConfigurer.appendInput = function (table, profileSettings, index) {
     'use strict';
-    var tr = document.createElement("tr");
+    var tr = makeEl("tr");
 
-    var td = document.createElement("td");
-    var span = document.createElement("span");
-    span.appendChild(document.createTextNode(index));
+    var td = makeEl("td");
+    var span = makeEl("span");
+    span.appendChild(makeText(index));
     td.appendChild(span);
     tr.appendChild(td);
 
-    td = document.createElement("td");
+    td = makeEl("td");
     var input; 
-    input = document.createElement("input");
+    input = makeEl("input");
     input.value = profileSettings.name;
     input.info = profileSettings.name;
     addClass(input,"itemNameInput");
@@ -206,8 +188,8 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     td.appendChild(input);
     tr.appendChild(td);
 
-    td = document.createElement("td");
-    var selector = document.createElement("select");
+    td = makeEl("td");
+    var selector = makeEl("select");
     CharacterProfileConfigurer.fillSelector(selector);
     selector.value = profileSettings.type;
     selector.info = profileSettings.name;
@@ -217,11 +199,11 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
     addClass(selector, "adminOnly");
     tr.appendChild(td);
 
-    td = document.createElement("td");
+    td = makeEl("td");
     if(profileSettings.type == "text" || profileSettings.type == "enum"){
-        input = document.createElement("textarea");
+        input = makeEl("textarea");
     } else {
-        input = document.createElement("input");
+        input = makeEl("input");
     }
     input.info = profileSettings.name;
     input.infoType = profileSettings.type;
@@ -281,7 +263,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         break;
     case "number":
         if (isNaN(value)) {
-            Utils.alert("Введено не число");
+            Utils.alert(getL10n("characters-not-a-number"));
             event.target.value = oldValue;
             return;
         }
@@ -289,7 +271,7 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         break;
     case "enum":
         if (value === "") {
-            Utils.alert("Значение поля с единственным выбором не может быть пустым");
+            Utils.alert(getL10n("characters-enum-item-cant-be-empty"));
             event.target.value = oldValue;
             return;
         }
@@ -310,13 +292,10 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         });
         
         if (missedValues.length !== 0) {
-            if (Utils.confirm("Новое значение единственного выбора удаляет предыдущие значения: "
-                    + missedValues.join(",")
-                    + ". Это приведет к обновлению существующих профилей. Вы уверены?")) {
+            if (Utils.confirm(strFormat(getL10n("characters-new-enum-values-remove-some-old-values"),[missedValues.join(",")]))) {
                 newValue = newOptions.join(",");
                 event.target.value = newValue;
                 DBMS.updateDefaultValue(name, newValue, Utils.processError());
-                
                 return;
             } else {
                 event.target.value = oldValue;
@@ -345,19 +324,19 @@ CharacterProfileConfigurer.renameProfileItem = function (event) {
 CharacterProfileConfigurer.validateProfileItemName = function (name, success, failure) {
     'use strict';
     if (name === "") {
-        Utils.alert("Название поля не указано");
+        Utils.alert(getL10n("characters-profile-item-name-is-not-specified"));
         if(failure) failure();
         return;
     }
     
     if (name === "name") {
-        Utils.alert("Название поля не может быть name");
+        Utils.alert(getL10n("characters-profile-item-name-cant-be-name"));
         if(failure) failure();
         return;
     }
     
     var tmpFailure = function(){
-        Utils.alert("Такое имя уже используется");
+        Utils.alert(getL10n("characters-such-name-already-used"));
         if(failure) failure();
     };
     
@@ -369,14 +348,11 @@ CharacterProfileConfigurer.validateProfileItemName = function (name, success, fa
             success();
         }
     });
-    
 };
 
 CharacterProfileConfigurer.changeProfileItemType = function (event) {
     'use strict';
-    if (Utils.confirm("Вы уверены, что хотите изменить тип поля профиля "
-            + event.target.info
-            + "? Все заполнение данного поле в досье будет потеряно.")) {
+    if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-changing-profile-item-type"), [event.target.info]))) {
         
         var newType = event.target.value;
         var name = event.target.info;

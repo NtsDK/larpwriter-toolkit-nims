@@ -22,22 +22,22 @@ var StoryEvents = {};
 
 StoryEvents.init = function () {
     "use strict";
-    var button = document.getElementById("createEventButton");
+    var button = getEl("createEventButton");
     button.addEventListener("click", StoryEvents.createEvent);
 
-    button = document.getElementById("moveEventButton");
+    button = getEl("moveEventButton");
     button.addEventListener("click", StoryEvents.moveEvent);
 
-    button = document.getElementById("cloneEventButton");
+    button = getEl("cloneEventButton");
     button.addEventListener("click", StoryEvents.cloneEvent);
 
-    button = document.getElementById("mergeEventButton");
+    button = getEl("mergeEventButton");
     button.addEventListener("click", StoryEvents.mergeEvents);
 
-    button = document.getElementById("removeEventButton");
+    button = getEl("removeEventButton");
     button.addEventListener("click", StoryEvents.removeEvent);
 
-    StoryEvents.content = document.getElementById("storyEventsDiv");
+    StoryEvents.content = getEl("storyEventsDiv");
 };
 
 StoryEvents.refresh = function () {
@@ -64,34 +64,37 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
     "use strict";
     	
 	// event part
-	var tableHead = document.getElementById("eventBlockHead");
-	Utils.removeChildren(tableHead);
-	var table = document.getElementById("eventBlock");
-	Utils.removeChildren(table);
+	var tableHead = getEl("eventBlockHead");
+	clearEl(tableHead);
+	var table = getEl("eventBlock");
+	clearEl(table);
 	
-	StoryEvents.appendEventHeader(tableHead);
+	addEl(tableHead, StoryEvents.getEventHeader());
 	
 	// refresh position selector
 	var positionSelectors = [];
 	
-	positionSelectors.push(document.getElementById("positionSelector"));
-	positionSelectors.push(document.getElementById("movePositionSelector"));
+	positionSelectors.push(getEl("positionSelector"));
+	positionSelectors.push(getEl("movePositionSelector"));
 	
 	positionSelectors.forEach(function (selector) {
-		Utils.removeChildren(selector);
+		clearEl(selector);
 	});
 	
-	var option;
+    var addOpt = R.curry(function(sel, text){
+        addEl(sel, addEl(makeEl('option'), makeText(text)));
+    });
+	
+	var option, addOptLoc;
 	positionSelectors.forEach(function (positionSelector) {
-		events.forEach(function (event, i) {
-			option = document.createElement("option");
-			option.appendChild(document.createTextNode("Перед '" + event.name + "'"));
-			positionSelector.appendChild(option);
+	    
+	    addOptLoc = addOpt(positionSelector);
+        
+		events.forEach(function (event) {
+		    addOptLoc(strFormat(getL10n("common-set-item-before"), [event.name]));
 		});
 		
-		option = document.createElement("option");
-		option.appendChild(document.createTextNode("В конец"));
-		positionSelector.appendChild(option);
+        addOptLoc(getL10n("common-set-item-as-last"));
 		
 		positionSelector.selectedIndex = events.length;
 	});
@@ -105,19 +108,19 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
 	// refresh swap selector
 	var selectorArr = [];
 	
-	selectorArr.push(document.getElementById("moveEventSelector"));
-	selectorArr.push(document.getElementById("removeEventSelector"));
-	selectorArr.push(document.getElementById("cloneEventSelector"));
-	selectorArr.push(document.getElementById("mergeEventSelector"));
+	selectorArr.push(getEl("moveEventSelector"));
+	selectorArr.push(getEl("removeEventSelector"));
+	selectorArr.push(getEl("cloneEventSelector"));
+	selectorArr.push(getEl("mergeEventSelector"));
 	
 	selectorArr.forEach(function (selector) {
-		Utils.removeChildren(selector);
+		clearEl(selector);
 	});
 	
 	events.forEach(function (event, i) {
 		selectorArr.forEach(function (selector) {
-			option = document.createElement("option");
-			option.appendChild(document.createTextNode(event.name));
+			option = makeEl("option");
+			option.appendChild(makeText(event.name));
 			option.eventIndex = i;
 			selector.appendChild(option);
 		});
@@ -126,22 +129,22 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
 
 StoryEvents.createEvent = function () {
     "use strict";
-    var eventNameInput = document.getElementById("eventNameInput");
+    var eventNameInput = getEl("eventNameInput");
     var eventName = eventNameInput.value.trim();
-    var eventTextInput = document.getElementById("eventTextInput");
-    var positionSelector = document.getElementById("positionSelector");
+    var eventTextInput = getEl("eventTextInput");
+    var positionSelector = getEl("positionSelector");
     var eventText = eventTextInput.value.trim();
 
     if (eventName === "") {
-        Utils.alert("Название события не указано");
+        Utils.alert(getL10n("stories-event-name-is-not-specified"));
         return;
     }
     if (eventText === "") {
-        Utils.alert("Событие пусто");
+        Utils.alert(getL10n("stories-event-text-is-empty"));
         return;
     }
     
-    DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, positionSelector.value === "В конец", 
+    DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, positionSelector.value === getL10n("common-set-item-as-last"), 
 		positionSelector.selectedIndex, function(err){
         	if(err) {Utils.handleError(err); return;}
         	eventNameInput.value = "";
@@ -151,11 +154,11 @@ StoryEvents.createEvent = function () {
 };
 
 StoryEvents.moveEvent = function () {
-	var index = document.getElementById("moveEventSelector").selectedOptions[0].eventIndex;
-	var newIndex = document.getElementById("movePositionSelector").selectedIndex;
+	var index = getEl("moveEventSelector").selectedOptions[0].eventIndex;
+	var newIndex = getEl("movePositionSelector").selectedIndex;
 	
 	if (index === newIndex) {
-	  Utils.alert("Позиции событий совпадают");
+	  Utils.alert(getL10n("stories-event-positions-are-the-same"));
 	  return;
 	}
 	
@@ -164,16 +167,16 @@ StoryEvents.moveEvent = function () {
 
 StoryEvents.cloneEvent = function () {
     "use strict";
-    var index = document.getElementById("cloneEventSelector").selectedIndex;
+    var index = getEl("cloneEventSelector").selectedIndex;
     
     DBMS.cloneEvent(Stories.CurrentStoryName, index, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.mergeEvents = function () {
     "use strict";
-    var index = document.getElementById("mergeEventSelector").selectedIndex;
+    var index = getEl("mergeEventSelector").selectedIndex;
     if (StoryEvents.eventsLength == index + 1) {
-        Utils.alert("Выбранное событие объединяется со следующим событием. Последнее событие не с кем объединять.");
+        Utils.alert(getL10n("stories-cant-merge-last-event"));
         return;
     }
     
@@ -182,51 +185,42 @@ StoryEvents.mergeEvents = function () {
 
 StoryEvents.removeEvent = function () {
     "use strict";
-    var index = document.getElementById("removeEventSelector").selectedIndex;
-
-    if (Utils.confirm("Вы уверены, что хотите удалить событие " + name
-            + "? Все данные связанные с событием будут удалены безвозвратно.")) {
-        
-        DBMS.removeEvent(Stories.CurrentStoryName, index, Utils.processError(StoryEvents.refresh));
+    var sel = getEl("removeEventSelector")
+    if (Utils.confirm(strFormat(getL10n("stories-remove-event-warning"), [sel.value]))) {
+        DBMS.removeEvent(Stories.CurrentStoryName, sel.selectedIndex, Utils.processError(StoryEvents.refresh));
     }
 };
 
-StoryEvents.appendEventHeader = function (table) {
+StoryEvents.getEventHeader = function () {
     "use strict";
-    var tr = document.createElement("tr");
-        var td = document.createElement("th");
-        td.appendChild(document.createTextNode("№"));
-        tr.appendChild(td);
-
-        td = document.createElement("th");
-        td.appendChild(document.createTextNode("Событие"));
-        tr.appendChild(td);
-
-    table.appendChild(tr);
+    var tr = makeEl("tr");
+    addEl(tr, addEl(makeEl('th'), makeText("№")));
+    addEl(tr, addEl(makeEl('th'), makeText(getL10n("stories-event"))));
+    return tr;
 };
 
 StoryEvents.appendEventInput = function (table, event, index, date, preGameDate) {
     "use strict";
     var tr, td, span, input;
     
-    tr = document.createElement("tr");
+    tr = makeEl("tr");
     table.appendChild(tr);
     
     // event number
-    td = document.createElement("td");
+    td = makeEl("td");
     tr.appendChild(td);
-    span = document.createElement("span");
-    span.appendChild(document.createTextNode(index+1));
+    span = makeEl("span");
+    span.appendChild(makeText(index+1));
     td.appendChild(span);
     
     // event name
-    td = document.createElement("td");
+    td = makeEl("td");
     tr.appendChild(td);
     
     var divMain, divLeft, divRight;
-    divMain = document.createElement("div");
-    divLeft = document.createElement("div");
-    divRight = document.createElement("div");
+    divMain = makeEl("div");
+    divLeft = makeEl("div");
+    divRight = makeEl("div");
     addClass(divMain ,"story-events-div-main");
     addClass(divLeft ,"story-events-div-left");
     addClass(divRight,"story-events-div-right");
@@ -234,7 +228,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     divMain.appendChild(divRight);
     td.appendChild(divMain);
     
-    input = document.createElement("input");
+    input = makeEl("input");
     addClass(input, "isStoryEditable");
     input.value = event.name;
     input.eventIndex = index;
@@ -242,7 +236,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     divLeft.appendChild(input);
 
     // event datetime picker
-    input = document.createElement("input");
+    input = makeEl("input");
     addClass(input, "isStoryEditable");
     addClass(input, "eventTime");
     input.value = event.time;
@@ -268,7 +262,7 @@ StoryEvents.appendEventInput = function (table, event, index, date, preGameDate)
     
     divRight.appendChild(input);
 
-    input = document.createElement("textarea");
+    input = makeEl("textarea");
     addClass(input, "isStoryEditable");
     addClass(input, "eventText");
     input.value = event.text;
@@ -291,7 +285,7 @@ StoryEvents.updateEventName = function (event) {
     "use strict";
     var input = event.target;
     if (input.value.trim() === "") {
-        Utils.alert("Название события не указано");
+        Utils.alert(getL10n("stories-event-name-is-not-specified"));
         StoryEvents.refresh();
         return;
     }
@@ -303,10 +297,9 @@ StoryEvents.updateEventText = function (event) {
     "use strict";
     var input = event.target;
     if (input.value.trim() === "") {
-        Utils.alert("Событие пусто");
+        Utils.alert(getL10n("stories-event-text-is-empty"));
         StoryEvents.refresh();
         return;
     }
     DBMS.updateEventProperty(Stories.CurrentStoryName, input.eventIndex, "text", input.value, Utils.processError());
 };
-

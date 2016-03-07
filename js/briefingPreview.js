@@ -22,24 +22,24 @@ var BriefingPreview = {};
 
 BriefingPreview.init = function () {
     "use strict";
-    var button = document.getElementById("briefingCharacter");
+    var button = getEl("briefingCharacter");
     button.addEventListener("change", BriefingPreview.buildContentDelegate);
 
-    button = document.getElementById("eventGroupingByStoryRadio");
+    button = getEl("eventGroupingByStoryRadio");
     button.addEventListener("change", BriefingPreview.refresh);
     button.checked = true;
 
-    button = document.getElementById("eventGroupingByTimeRadio");
+    button = getEl("eventGroupingByTimeRadio");
     button.addEventListener("change", BriefingPreview.refresh);
     
 
-    BriefingPreview.content = document.getElementById("briefingPreviewDiv");
+    BriefingPreview.content = getEl("briefingPreviewDiv");
 };
 
 BriefingPreview.refresh = function () {
     "use strict";
-    var selector = document.getElementById("briefingCharacter");
-    Utils.removeChildren(selector);
+    var selector = getEl("briefingCharacter");
+    clearEl(selector);
     
     DBMS.getAllProfileSettings(function(err, profileSettings){
     	if(err) {Utils.handleError(err); return;}
@@ -61,8 +61,8 @@ BriefingPreview.refresh = function () {
 	            }
 	            
 	            names.forEach(function (nameInfo) {
-	                var option = document.createElement("option");
-	                option.appendChild(document.createTextNode(nameInfo.displayName));
+	                var option = makeEl("option");
+	                option.appendChild(makeText(nameInfo.displayName));
 	                option.value = nameInfo.value; 
 	                if(nameInfo.value === characterName){
 	                    option.selected = true;
@@ -91,21 +91,18 @@ BriefingPreview.updateSettings = function (characterName) {
 BriefingPreview.buildContent = function (characterName) {
     "use strict";
     BriefingPreview.updateSettings(characterName);
-    var content = document.getElementById("briefingContent");
-    Utils.removeChildren(content);
+    var content = clearEl(getEl("briefingContent"));
 
-    content.appendChild(document.createTextNode("Персонаж: " + characterName));
-    content.appendChild(document.createElement("br"));
-    content.appendChild(document.createElement("br"));
+    addEl(content, makeText(strFormat(getL10n("briefings-character-label"), [characterName])));
+    var addNodes = function(arr){
+        arr.forEach(addEl(content));
+    };
+    addNodes([makeEl('br'), makeEl('br')]);
 
     DBMS.getProfile(characterName, function(err, profile){
     	if(err) {Utils.handleError(err); return;}
         BriefingPreview.showProfile(content, profile);
-        content.appendChild(document.createElement("br"));
-        content.appendChild(document.createElement("br"));
-        
-        content.appendChild(document.createTextNode("Инвентарь"));
-        content.appendChild(document.createElement("br"));
+        addNodes([makeEl('br'), makeEl('br'), makeText(getL10n("briefings-inventory")), makeEl('br')]);
         
         DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
         	if(err) {Utils.handleError(err); return;}
@@ -117,8 +114,7 @@ BriefingPreview.buildContent = function (characterName) {
         		});
         		
         		allInventoryLists.forEach(function(elem){
-        			content.appendChild(document.createTextNode(elem.storyName + ":"));
-        			var input = document.createElement("input");
+        			var input = makeEl("input");
         			input.value = elem.inventory;
         			input.storyName = elem.storyName;
         			input.characterName = characterName;
@@ -127,18 +123,13 @@ BriefingPreview.buildContent = function (characterName) {
         				addClass(input, "notEditable");
         			}
         			input.addEventListener("change", BriefingPreview.updateCharacterInventory);
-        			content.appendChild(input);
         			
-        			content.appendChild(document.createElement("br"));
+        			addNodes([makeText(elem.storyName + ":"), input, makeEl('br')]);
         		});
         		
-        		content.appendChild(document.createElement("br"));
-        		content.appendChild(document.createElement("br"));
+        		addNodes([makeEl('br'), makeEl('br'), makeText(getL10n("briefings-events")), makeEl('br')]);
         		
-        		content.appendChild(document.createTextNode("События"));
-        		content.appendChild(document.createElement("br"));
-        		
-        		var groupingByStory = document.getElementById("eventGroupingByStoryRadio").checked;
+        		var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
         		if (groupingByStory) {
         			BriefingPreview.showEventsByStory(content, characterName, userStoryNamesMap);
         		} else {
@@ -155,25 +146,25 @@ BriefingPreview.showProfile = function(content, profile){
     var span;
     
     BriefingPreview.profileSettings.forEach(function (element) {
-        content.appendChild(document.createTextNode(element.name + ": "));
+        content.appendChild(makeText(element.name + ": "));
         switch (element.type) {
         case "text":
-            content.appendChild(document.createElement("br"));
-            span = document.createElement("span");
+            content.appendChild(makeEl("br"));
+            span = makeEl("span");
             addClass(span, "briefingTextSpan");
-            span.appendChild(document.createTextNode(profile[element.name]));
+            span.appendChild(makeText(profile[element.name]));
             content.appendChild(span);
-            content.appendChild(document.createElement("br"));
+            content.appendChild(makeEl("br"));
             break;
         case "enum":
         case "number":
         case "string":
-            content.appendChild(document.createTextNode(profile[element.name]));
-            content.appendChild(document.createElement("br"));
+            content.appendChild(makeText(profile[element.name]));
+            content.appendChild(makeEl("br"));
             break;
         case "checkbox":
-            content.appendChild(document.createTextNode(profile[element.name] ? "Да" : "Нет"));
-            content.appendChild(document.createElement("br"));
+            content.appendChild(makeText(Constants[profile[element.name]].displayName()));
+            content.appendChild(makeEl("br"));
             break;
         }
     });
@@ -215,8 +206,8 @@ BriefingPreview.showEventsByStory = function (content, characterName, userStoryN
     	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
     		if(err) {Utils.handleError(err); return;}
 	        eventGroups.forEach(function(elem){
-	            content.appendChild(document.createTextNode(elem.storyName));
-	            content.appendChild(document.createElement("br"));
+	            content.appendChild(makeText(elem.storyName));
+	            content.appendChild(makeEl("br"));
 	            
 	            elem.events.forEach(function(event){
 	                BriefingPreview.showEvent(event, content, characterName, userStoryNamesMap, areAdaptationsEditable);
@@ -229,7 +220,7 @@ BriefingPreview.showEventsByStory = function (content, characterName, userStoryN
 
 BriefingPreview.showEvent = function(event, content, characterName, userStoryNamesMap, areAdaptationsEditable){
     var isOriginal = event.characters[characterName].text === "";
-    var type = isOriginal ? "Оригинал события" : "Адаптация";
+    var type = isOriginal ? getL10n("briefings-event-source") : getL10n("briefings-adaptation");
     var isEditable;
     if(isOriginal){
     	isEditable = !!userStoryNamesMap[event.storyName];
@@ -237,8 +228,8 @@ BriefingPreview.showEvent = function(event, content, characterName, userStoryNam
     	isEditable = areAdaptationsEditable[event.storyName + "-" + characterName];
     }
     
-    content.appendChild(document.createTextNode(event.time + " " + event.name + ": " + type));
-    var input = document.createElement("textarea");
+    content.appendChild(makeText(event.time + " " + event.name + ": " + type));
+    var input = makeEl("textarea");
     addClass(input, "briefingPersonalStory");
     if(!isEditable){
     	addClass(input, "notEditable");
@@ -246,19 +237,19 @@ BriefingPreview.showEvent = function(event, content, characterName, userStoryNam
 
     if(isOriginal){
         input.setAttribute("disabled","disabled");
-        var button = document.createElement("button");
+        var button = makeEl("button");
         if(!isEditable){
         	addClass(button, "notEditable");
         }
-        content.appendChild(document.createElement("br"));
-        button.appendChild(document.createTextNode("Разблокировать редактирование оригинала события"));
+        content.appendChild(makeEl("br"));
+        button.appendChild(makeText(getL10n("briefings-unlock-event-source")));
         content.appendChild(button);
         button.addEventListener("click", function(){
             input.removeAttribute("disabled");
         });
     }
     
-    content.appendChild(document.createElement("br"));
+    content.appendChild(makeEl("br"));
     
     if (isOriginal) {
         input.value = event.text;
@@ -272,8 +263,8 @@ BriefingPreview.showEvent = function(event, content, characterName, userStoryNam
     input.addEventListener("change", BriefingPreview.onChangePersonalStory);
     content.appendChild(input);
     
-    content.appendChild(document.createElement("br"));
-    content.appendChild(document.createElement("br"));  
+    content.appendChild(makeEl("br"));
+    content.appendChild(makeEl("br"));  
 };
 
 BriefingPreview.updateCharacterInventory = function (event) {

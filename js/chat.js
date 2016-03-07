@@ -22,12 +22,12 @@ var Chat = {};
 Chat.init = function() {
     "use strict";
     
-    var button = document.getElementById("sendMessageButton");
+    var button = getEl("sendMessageButton");
     button.addEventListener("click", Chat.onSubmit);
     
     Chat.subscribe();
 
-    Chat.content = document.getElementById("chatDiv");;
+    Chat.content = getEl("chatDiv");;
 };
 
 Chat.refresh = function() {
@@ -36,7 +36,7 @@ Chat.refresh = function() {
 };
 
 Chat.onSubmit = function() {
-	var chatMessage = document.getElementById("chatMessage");
+	var chatMessage = getEl("chatMessage");
 	
 	var request = $.ajax({
 		url : "/publish",
@@ -70,8 +70,8 @@ Chat.subscribe = function() {
 	});
 
 	request.done(function(data) {
-		var li = document.createElement('li');
-		li.appendChild(document.createTextNode(data));
+		var li = makeEl('li');
+		li.appendChild(makeText(data));
 		messages.appendChild(li);
 		Chat.subscribe();
 	});

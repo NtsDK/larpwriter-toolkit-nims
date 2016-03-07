@@ -20,28 +20,23 @@ See the License for the specific language governing permissions and
 
 var NetworkSubsetsSelector = {};
 
-NetworkSubsetsSelector.objectSubsets = ["Все объекты", "Избранные персонажи", "Избранные истории"];
-
-
 NetworkSubsetsSelector.init = function () {
     "use strict";
-    
-    var selector = document.getElementById("networkSubsetsSelector");
-    selector.addEventListener("change", NetworkSubsetsSelector.onNetworkSubsetsChange);
+    listen(getEl("networkSubsetsSelector"), "change", NetworkSubsetsSelector.onNetworkSubsetsChange);
 };
 
 NetworkSubsetsSelector.refresh = function (parent) {
     NetworkSubsetsSelector.parent = parent;
     
-    var selector = document.getElementById("networkSubsetsSelector");
-    Utils.removeChildren(selector);
+    var selector = clearEl(getEl("networkSubsetsSelector"));
     
     var firstEl = true;
     
     var option;
-    NetworkSubsetsSelector.objectSubsets.forEach(function (objectSubset) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(objectSubset));
+    Constants.objectSubsets.forEach(function (objectSubset) {
+        option = makeEl("option");
+        option.appendChild(makeText(objectSubset.displayName));
+        option.value = objectSubset.name;
         if(firstEl){
             option.selected = true;
             firstEl = false;
@@ -49,39 +44,37 @@ NetworkSubsetsSelector.refresh = function (parent) {
         selector.appendChild(option);
     });
     
-    selector = document.getElementById("networkCharacterSelector");
-    Utils.removeChildren(selector);
+    selector = clearEl(getEl("networkCharacterSelector"));
     
     Object.keys(NetworkSubsetsSelector.parent.Characters).map(function(name){
     	return NetworkSubsetsSelector.parent.Characters[name];
     }).sort(Utils.charOrdAObject).forEach(function (nameInfo) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(nameInfo.displayName));
+        option = makeEl("option");
+        option.appendChild(makeText(nameInfo.displayName));
         option.value = nameInfo.name;
         selector.appendChild(option);
     });
     
-    selector = document.getElementById("networkStorySelector");
-    Utils.removeChildren(selector);
+    selector = clearEl(getEl("networkStorySelector"));
     
     Object.keys(NetworkSubsetsSelector.parent.Stories).map(function(name){
     	return NetworkSubsetsSelector.parent.Stories[name];
     }).sort(Utils.charOrdAObject).forEach(function (nameInfo) {
-        option = document.createElement("option");
-        option.appendChild(document.createTextNode(nameInfo.displayName));
+        option = makeEl("option");
+        option.appendChild(makeText(nameInfo.displayName));
         option.value = nameInfo.name;
         selector.appendChild(option);
     });
 };
 
 NetworkSubsetsSelector.getStoryNames = function () {
-    var value = document.getElementById("networkSubsetsSelector").value;
+    var value = getEl("networkSubsetsSelector").value;
     
     var selector;
-    if(NetworkSubsetsSelector.objectSubsets[0] === value){ // все объекты
+    if(Constants.objectSubsets[0].name === value){ // all objects
         return Object.keys(NetworkSubsetsSelector.parent.Stories);
-    } else if (NetworkSubsetsSelector.objectSubsets[1] === value) { // "Избранные персонажи"
-        selector = document.getElementById("networkCharacterSelector");
+    } else if (Constants.objectSubsets[1].name === value) { // "selected characters"
+        selector = getEl("networkCharacterSelector");
         
         var primaryCharacters = {};
         var i;
@@ -106,8 +99,8 @@ NetworkSubsetsSelector.getStoryNames = function () {
         });
         
         return stories;
-    } else { //"Избранные истории"
-        selector = document.getElementById("networkStorySelector");
+    } else { //"selected stories"
+        selector = getEl("networkStorySelector");
         var stories = [];
         
         var i;
@@ -119,14 +112,14 @@ NetworkSubsetsSelector.getStoryNames = function () {
 };
 
 NetworkSubsetsSelector.getCharacterNames = function () {
-    var value = document.getElementById("networkSubsetsSelector").value;
+    var value = getEl("networkSubsetsSelector").value;
     
     var selector;
-    if(NetworkSubsetsSelector.objectSubsets[0] === value){ // все объекты
+    if(Constants.objectSubsets[0].name === value){ // all objects
         return Object.keys(NetworkSubsetsSelector.parent.Characters);
-    } else if (NetworkSubsetsSelector.objectSubsets[1] === value) { // "Избранные персонажи"
-        // возвращает персонажа и его окружение из историй
-        selector = document.getElementById("networkCharacterSelector");
+    } else if (Constants.objectSubsets[1].name === value) { // "selected characters"
+        // returns character and his neighbours
+        selector = getEl("networkCharacterSelector");
         
         var primaryCharacters = {};
         var secondaryCharacters = {};
@@ -163,8 +156,8 @@ NetworkSubsetsSelector.getCharacterNames = function () {
         
         var result = Object.keys(primaryCharacters).concat(Object.keys(secondaryCharacters));
         return result;
-    } else { //"Избранные истории"
-        selector = document.getElementById("networkStorySelector");
+    } else { //"selected stories"
+        selector = getEl("networkStorySelector");
         
         var stories = [];
         var characters = {};
@@ -189,8 +182,8 @@ NetworkSubsetsSelector.getCharacterNames = function () {
 NetworkSubsetsSelector.onNetworkSubsetsChange = function (event) {
     var selectedSubset = event.target.value;
     
-    var selector1 = document.getElementById("networkCharacterDiv");
-    var selector2 = document.getElementById("networkStoryDiv");
-    setClassByCondition(selector1, "hidden", selectedSubset !== NetworkSubsetsSelector.objectSubsets[1]);
-    setClassByCondition(selector2, "hidden", selectedSubset !== NetworkSubsetsSelector.objectSubsets[2]);
+    var selector1 = getEl("networkCharacterDiv");
+    var selector2 = getEl("networkStoryDiv");
+    setClassByCondition(selector1, "hidden", selectedSubset !== Constants.objectSubsets[1].name);
+    setClassByCondition(selector2, "hidden", selectedSubset !== Constants.objectSubsets[2].name);
 };

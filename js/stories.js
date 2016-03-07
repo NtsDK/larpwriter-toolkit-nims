@@ -48,7 +48,7 @@ Stories.init = function () {
     listen(getEl('renameStoryButton'), "click", Stories.renameStory);
     listen(getEl('removeStoryButton'), "click", Stories.removeStory);
 
-    Stories.content = document.getElementById("storiesDiv");
+    Stories.content = getEl("storiesDiv");
 };
 
 Stories.chainRefresh = function(){
@@ -62,12 +62,12 @@ Stories.chainRefresh = function(){
 Stories.refresh = function () {
     "use strict";
     var selectors = [];
-    selectors.push(document.getElementById("fromStory"));
-    selectors.push(document.getElementById("storyRemoveSelector"));
-    var storySelector = document.getElementById("storySelector");
-    Utils.removeChildren(storySelector);
+    selectors.push(getEl("fromStory"));
+    selectors.push(getEl("storyRemoveSelector"));
+    var storySelector = getEl("storySelector");
+    clearEl(storySelector);
     selectors.forEach(function(selector){
-    	Utils.removeChildren(selector);
+    	clearEl(selector);
     });
     PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
     	if(err) {Utils.handleError(err); return;}
@@ -76,8 +76,8 @@ Stories.refresh = function () {
     		if(userStoryNames.length > 0){
 	            userStoryNames.forEach(function (nameInfo) {
 	            	selectors.forEach(function(selector, i){
-	            		option = document.createElement("option");
-	            		option.appendChild(document.createTextNode(nameInfo.displayName));
+	            		option = makeEl("option");
+	            		option.appendChild(makeText(nameInfo.displayName));
 	            		option.value = nameInfo.value;
 	            		selector.appendChild(option);
 	            	});
@@ -90,8 +90,8 @@ Stories.refresh = function () {
 	            var first = true;
 	            var option;
 	            allStoryNames.forEach(function (nameInfo) {
-                    option = document.createElement("option");
-                    option.appendChild(document.createTextNode(nameInfo.displayName));
+                    option = makeEl("option");
+                    option.appendChild(makeText(nameInfo.displayName));
                     option.value = nameInfo.value;
                     storySelector.appendChild(option);
                     if(storyName === nameInfo.value){
@@ -130,16 +130,16 @@ Stories.getSelectedStoryName = function(storyNames){
 
 Stories.createStory = function () {
     "use strict";
-    var storyName = document.getElementById("createStoryName").value.trim();
+    var storyName = getEl("createStoryName").value.trim();
     if (storyName === "") {
-        Utils.alert("Название истории пусто.");
+        Utils.alert(getL10n("stories-story-name-is-not-specified"));
         return;
     }
     
     DBMS.isStoryExist(storyName, function(err, isExist){
     	if(err) {Utils.handleError(err); return;}
         if(isExist){
-            Utils.alert("История с таким именем уже существует.");
+            Utils.alert(strFormat(getL10n("stories-story-name-already-used"), [storyName]));
         } else {
             DBMS.createStory(storyName, function(err){
             	if(err) {Utils.handleError(err); return;}
@@ -155,23 +155,23 @@ Stories.createStory = function () {
 
 Stories.renameStory = function () {
     "use strict";
-    var fromName = document.getElementById("fromStory").value.trim();
-    var toName = document.getElementById("toStory").value.trim();
+    var fromName = getEl("fromStory").value.trim();
+    var toName = getEl("toStory").value.trim();
 
     if (toName === "") {
-        Utils.alert("Новое имя не указано.");
+        Utils.alert(getL10n("stories-new-story-name-is-not-specified"));
         return;
     }
 
     if (fromName === toName) {
-        Utils.alert("Имена совпадают.");
+        Utils.alert(getL10n("stories-names-are-the-same"));
         return;
     }
     
     DBMS.isStoryExist(toName, function(err, isExist){
     	if(err) {Utils.handleError(err); return;}
         if(isExist){
-            Utils.alert("Имя " + toName + " уже используется.");
+            Utils.alert(strFormat(getL10n("stories-story-name-already-used"), [toName]));
         } else {
             DBMS.renameStory(fromName, toName, function(err){
             	if(err) {Utils.handleError(err); return;}
@@ -187,10 +187,9 @@ Stories.renameStory = function () {
 
 Stories.removeStory = function () {
     "use strict";
-    var name = document.getElementById("storyRemoveSelector").value.trim();
+    var name = getEl("storyRemoveSelector").value.trim();
 
-    if (Utils.confirm("Вы уверены, что хотите удалить историю " + name
-            + "? Все данные связанные с историей будут удалены безвозвратно.")) {
+    if (Utils.confirm(strFormat(getL10n("stories-are-you-sure-about-story-removing"), [name]))) {
         DBMS.removeStory(name, function(err){
         	if(err) {Utils.handleError(err); return;}
         	PermissionInformer.refresh(function(err){

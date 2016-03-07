@@ -18,11 +18,12 @@ See the License for the specific language governing permissions and
 
 (function(exports){
 
-	function ValidationError(message) {
+	function ValidationError(messageId, parameters) {
 	  Error.call(this, arguments) ;
 	  this.name = "ValidationError";
 	
-	  this.message = message;
+	  this.messageId = messageId;
+	  this.parameters = parameters;
 	
 	  if (Error.captureStackTrace) {
 	    Error.captureStackTrace(this, ValidationError);

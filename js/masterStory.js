@@ -29,7 +29,7 @@ MasterStory.init = function() {
 
 MasterStory.refresh = function() {
     "use strict";
-    var storyArea = document.getElementById("masterStoryArea");
+    var storyArea = getEl("masterStoryArea");
     var storyName = Stories.CurrentStoryName;
 
     if(storyName){
@@ -44,6 +44,6 @@ MasterStory.refresh = function() {
 
 MasterStory.updateMasterStory = function () {
     "use strict";
-    var storyArea = document.getElementById("masterStoryArea");
+    var storyArea = getEl("masterStoryArea");
     DBMS.updateMasterStory(Stories.CurrentStoryName, storyArea.value, Utils.processError());
 };

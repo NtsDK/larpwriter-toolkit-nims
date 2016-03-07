@@ -30,7 +30,11 @@
 		"ok":"ОК",
 		"add":"Добавить",
 		"remove":"Удалить",
-		"on": "на"
+		"on": "на",
+	    "yes":"Да",
+	    "no": "Нет",
+        "set-item-before" : "Перед '{0}'",
+        "set-item-as-last" : "В конец",
 	},
 	"overview": {
 		"descr":"Описание",
@@ -71,15 +75,37 @@
 		"item-type-number":"Число",
 		"item-type-checkbox":"Галочка",
 		"move-item":"Переместить",
-		"item-in-front-of":"Перед",
-		"item-to-end":"В конец",
 		"table-profile-item-name":"Название поля",
 		"profile-item-default-value":"Значения",
+		
+		// character management errors
+        "character-name-is-not-specified" : "Имя персонажа не указано",
+        "new-character-name-is-not-specified" : "Новое имя не указано.",
+        "names-are-the-same" : "Имена совпадают.",
+        "character-name-already-used" : "Имя {0} уже используется.",
+        "are-you-sure-about-character-removing" : "Вы уверены, что хотите удалить {0}? Все данные связанные с персонажем будут удалены безвозвратно.",
+
+		// profile configurer errors
+		"unknown-profile-item-type" : "Неизвестный тип поля: {0}",
+		"profile-item-positions-are-equal": "Позиции полей совпадают",
+		"are-you-sure-about-removing-profile-item": "Вы уверены, что хотите удалить поле профиля {0}? Все данные связанные с этим полем будут удалены безвозвратно.",
+		"not-a-number":"Введено не число",
+		"enum-item-cant-be-empty":"Значение поля с единственным выбором не может быть пустым",
+		"new-enum-values-remove-some-old-values": "Новое значение единственного выбора удаляет предыдущие значения: {0}. Это приведет к обновлению существующих профилей. Вы уверены?",
+		"profile-item-name-is-not-specified": "Название поля не указано",
+		"profile-item-name-cant-be-name": "Название поля не может быть name",
+		"such-name-already-used": "Такое имя уже используется",
+		"are-you-sure-about-changing-profile-item-type":"Вы уверены, что хотите изменить тип поля профиля {0}? Все заполнение данного поле в досье будет потеряно.",
 	},
 	"character-filter": {
 	    "show-profile-item":"Отобразить поле",
 	    "filter":"Фильтр",
 	    "results":"Результатов:",
+	    "character":"Персонаж",
+        "ignore" : "Не важно",
+        "greater" : "Больше",
+        "equal" : "Равно",
+        "lesser" : "Меньше",
 	},
 	"stories":{
 	    "stories":"Истории",
@@ -98,8 +124,27 @@
         "story-character-management": "Управление персонажами",
         "replace-character": "Заменить",
         "inventory": "Инвентарь",
+        "name": "Имя",
         "activity": "Активность",
         "show-characters": "Отобразить персонажей",
+        "event":"Событие",
+        "remove-character-from-event-warning":"Вы уверены, что хотите удалить персонажа {0} из события '{1}'? У этого песонажа есть адаптация события, которая будет удалена безвозвратно.",
+        //story management errors
+        "story-name-is-not-specified" : "Название истории не указано.",
+        "new-story-name-is-not-specified" : "Новое имя не указано.",
+        "names-are-the-same" : "Имена совпадают.",
+        "story-name-already-used" : "Имя {0} уже используется.",
+        "are-you-sure-about-story-removing" : "Вы уверены, что хотите удалить историю {0}? Все данные связанные с историей будут удалены безвозвратно.",
+        // story characters errors
+        "character-name-is-not-specified":"Имя персонажа не указано",
+        "one-of-switch-characters-is-not-specified":"Имя одного из персонажей не указано",
+        "remove-character-from-story-warning":"Вы уверены, что хотите удалить персонажа {0} из истории? Все данные связанные с персонажем будут удалены безвозвратно.",
+        // story event management
+        "event-name-is-not-specified" : "Название события не указано",
+        "event-text-is-empty" : "Событие пусто",
+        "event-positions-are-the-same" : "Позиции событий совпадают",
+        "cant-merge-last-event" : "Выбранное событие объединяется со следующим событием. Последнее событие не с кем объединять.",
+        "remove-event-warning" : "Вы уверены, что хотите удалить событие {0}? Все данные связанные с событием будут удалены безвозвратно.",
 	},
 	"adaptations":{
 	    "show-only-unfinished-stories": "Показывать\n только незавершенные истории",
@@ -160,6 +205,24 @@
 	    "export": "Выгрузить",
 	    "exported-text": "Выгруженный текст",
 	    "export-status": "Статус выгрузки",
+	    "error-on-template-uploading": "Ошибка при загрузке файла",
+	    "error-on-generating-briefings": "Ошибка во время генерации вводных",
+	    // breifings preview
+	    "character-label": "Персонаж: {0}",
+	    "inventory":'Инвентарь',
+	    "events":'События',
+	    "event-source":"Оригинал события",
+	    "adaptation":"Адаптация",
+	    "unlock-event-source":"Разблокировать редактирование оригинала события",
+	    // export status
+	    "save-preparing" : "Подготовка к выгрузке.",
+	    "start-saving": "Данные подготовлены. Начинаю выгрузку.",
+	    "save-status": "Выгружено {0} из {1}.",
+	    "archiving": "Данные выгружены. Архивирую.",
+	    "archive-is-ready": "Архив готов.",
+	    "save-archive": "Архив сформирован. Сохраняем?",
+	    "file-is-ready": "Файл выгружен.",
+	    "save-file": "Документ сформирован. Сохраняем?",
 	},
 	"timeline":{
 	    "stories": "Истории",
@@ -172,11 +235,19 @@
 	    "selection": "Выборка",
 	    "characters": "Персонажи",
 	    "stories": "Истории",
+	    "story":"История",
 	    "private-settings": "Частные настройки",
 	    "social-network": "Социальная сеть",
 	    "activity": "Активность",
 	    "draw": "Нарисовать",
-	    "hide-panel": "Спрятать панель"
+	    "hide-panel": "Спрятать панель",
+	    "require-resources-warning":"Внимание! Отрисовка социальной сети требует большого количества ресурсов. Рекомендуем сохранить данные перед отрисовкой.",
+	    "remove-resources-warning":"Убрать предупреждение",
+	},
+	"utils":{
+	    "close-page-warning": "Убедитесь, что сохранили данные. После закрытия страницы все несохраненные изменения будут потеряны.",
+	    "new-base-warning": "Вы уверены, что хотите создать новую базу? Все несохраненные изменения будут потеряны.",
+	    "base-file-loading-error": "Ошибка при загрузке файла"
 	}
 };
 

@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.createCharacter = function(characterName, callback) {
 			"use strict";
 			if(characterName === ""){
-				callback(new Errors.ValidationError("Имя персонажа не указано"));
+				callback(new Errors.ValidationError("characters-character-name-is-not-specified"));
 				return;
 			}
 			
@@ -128,11 +128,10 @@ See the License for the specific language governing permissions and
 				profileInfo[fieldName] = value;
 				break;
 			case "number":
-				// if (isNaN(event.target.value)) {
-				// Utils.alert("Введенное значение не является числом.");
-				// event.target.value = profileInfo[fieldName];
-				// return;
-				// }
+				if (isNaN(value)) {
+				    callback(new Errors.ValidationError("Введенное значение не является числом."));
+				    return;
+				}
 				profileInfo[fieldName] = Number(value);
 				break;
 			case "checkbox":

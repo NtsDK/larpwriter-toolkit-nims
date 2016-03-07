@@ -22,9 +22,9 @@ var Overview = {};
 
 Overview.init = function() {
     "use strict";
-    var overviewDiv = document.createElement("div");
+    var overviewDiv = makeEl("div");
     overviewDiv.id = overviewDiv;
-    overviewDiv.appendChild(document.createTextNode("Overview"));
+    overviewDiv.appendChild(makeText("Overview"));
 
     Overview.content = overviewDiv;
 };

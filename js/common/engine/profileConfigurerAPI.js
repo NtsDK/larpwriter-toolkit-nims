@@ -152,11 +152,10 @@ See the License for the specific language governing permissions and
 				info.value = value;
 				break;
 			case "number":
-				// if (isNaN(value)) {
-				// Utils.alert("Введено не число");
-				// callback(info.value);
-				// return;
-				// }
+			    if (isNaN(value)) {
+                    callback(new Errors.ValidationError("Введено не число"));
+                    return;
+                }
 				info.value = Number(value);
 				break;
 			case "enum":

@@ -27,7 +27,7 @@ FileUtils.init = function (callback) {
 
 FileUtils.makeNewBase = function () {
     "use strict";
-    if(Utils.confirm("Вы уверены, что хотите создать новую базу? Все несохраненные изменения будут потеряны.")) {
+    if(Utils.confirm(getL10n("utils-new-base-warning"))) {
         "use strict";
         DBMS.setDatabase(EmptyBase.data, FileUtils.callback);
     }
@@ -52,7 +52,7 @@ FileUtils.readSingleFile = function (evt) {
         };
         r.readAsText(f);
     } else {
-        Utils.alert("Ошибка при загрузке файла");
+        Utils.alert(getL10n("utils-base-file-loading-error"));
     }
 };
 

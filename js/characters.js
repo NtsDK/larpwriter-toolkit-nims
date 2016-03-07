@@ -28,22 +28,22 @@ Characters.init = function () {
     var content = "charactersContent";
     var containers = {
 		root: root,
-		navigation: document.getElementById(nav),
-		content: document.getElementById(content)
+		navigation: getEl(nav),
+		content: getEl(content)
     };
     Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
     Utils.addView(containers, "character-profile-configurer", CharacterProfileConfigurer);
 
-    var button = document.getElementById("createCharacterButton");
+    var button = getEl("createCharacterButton");
     button.addEventListener("click", Characters.createCharacter);
 
-    button = document.getElementById("renameCharacter");
+    button = getEl("renameCharacter");
     button.addEventListener("click", Characters.renameCharacter);
 
-    button = document.getElementById("removeCharacterButton");
+    button = getEl("removeCharacterButton");
     button.addEventListener("click", Characters.removeCharacter);
 
-    Characters.content = document.getElementById("charactersDiv");
+    Characters.content = getEl("charactersDiv");
 };
 
 Characters.refresh = function () {
@@ -53,20 +53,20 @@ Characters.refresh = function () {
 
 Characters.rebuildInterface = function (names) {
     "use strict";
-    var selector = document.getElementById("fromName");
-    Utils.removeChildren(selector);
+    var selector = getEl("fromName");
+    clearEl(selector);
     names.forEach(function (nameInfo) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(nameInfo.displayName));
+        var option = makeEl("option");
+        option.appendChild(makeText(nameInfo.displayName));
         option.value = nameInfo.value;
         selector.appendChild(option);
     });
 
-    selector = document.getElementById("characterRemoveSelector");
-    Utils.removeChildren(selector);
+    selector = getEl("characterRemoveSelector");
+    clearEl(selector);
     names.forEach(function (nameInfo) {
-        var option = document.createElement("option");
-        option.appendChild(document.createTextNode(nameInfo.displayName));
+        var option = makeEl("option");
+        option.appendChild(makeText(nameInfo.displayName));
         option.value = nameInfo.value;
         selector.appendChild(option);
     });
@@ -76,18 +76,18 @@ Characters.rebuildInterface = function (names) {
 
 Characters.createCharacter = function () {
     "use strict";
-    var characterNameInput = document.getElementById("characterNameInput");
+    var characterNameInput = getEl("characterNameInput");
     var name = characterNameInput.value.trim();
 
     if (name === "") {
-        Utils.alert("Имя персонажа не указано");
+        Utils.alert(getL10n("characters-character-name-is-not-specified"));
         return;
     }
     
     DBMS.isCharacterNameUsed(name, function(err, isCharacterNameUsed){
     	if(err) {Utils.handleError(err); return;}
         if (isCharacterNameUsed) {
-            Utils.alert("Такой персонаж уже существует");
+            Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [name]));
         } else {
             DBMS.createCharacter(name, function(err){
             	if(err) {Utils.handleError(err); return;}
@@ -101,28 +101,27 @@ Characters.createCharacter = function () {
             });
         }
     });
-
 };
 
 Characters.renameCharacter = function () {
     "use strict";
-    var fromName = document.getElementById("fromName").value.trim();
-    var toName = document.getElementById("toName").value.trim();
+    var fromName = getEl("fromName").value.trim();
+    var toName = getEl("toName").value.trim();
 
     if (toName === "") {
-        Utils.alert("Новое имя не указано.");
+        Utils.alert(getL10n("characters-new-character-name-is-not-specified"));
         return;
     }
 
     if (fromName === toName) {
-        Utils.alert("Имена совпадают.");
+        Utils.alert(getL10n("characters-names-are-the-same"));
         return;
     }
 
     DBMS.isCharacterNameUsed(toName, function(err, isCharacterNameUsed){
     	if(err) {Utils.handleError(err); return;}
         if (isCharacterNameUsed) {
-            Utils.alert("Имя " + toName + " уже используется.");
+            Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [toName]));
         } else {
             DBMS.renameCharacter(fromName, toName, function(err){
             	if(err) {Utils.handleError(err); return;}
@@ -140,10 +139,9 @@ Characters.renameCharacter = function () {
 
 Characters.removeCharacter = function () {
     "use strict";
-    var name = document.getElementById("characterRemoveSelector").value.trim();
+    var name = getEl("characterRemoveSelector").value.trim();
 
-    if (Utils.confirm("Вы уверены, что хотите удалить " + name
-            + "? Все данные связанные с персонажем будут удалены безвозвратно.")) {
+    if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-character-removing"),[name]))) {
         DBMS.removeCharacter(name, function(err){
         	if(err) {Utils.handleError(err); return;}
         	PermissionInformer.refresh(function(err){

@@ -21,12 +21,6 @@ See the License for the specific language governing permissions and
 
 var Events = {};
 
-Events.headers = [ "Оригинал", "Адаптация"];
-Events.finishedText = "Описание завершено";
-Events.finishedSuffix = "(завершено)";
-Events.emptySuffix = "(пусто)";
-
-
 Events.init = function () {
     "use strict";
     listen(getEl('events-storySelector'), "change", Events.updateAdaptationSelectorDelegate);
@@ -35,7 +29,7 @@ Events.init = function () {
     listen(getEl('finishedStoryCheckbox'), "change", Events.refresh);
     listen(getEl("adaptationFilterByCharacter"), "change", Events.updateFilter);
     listen(getEl("adaptationFilterByEvent"), "change", Events.updateFilter);
-    Events.content = document.getElementById("eventsDiv");
+    Events.content = getEl("eventsDiv");
 };
 
 Events.getSelectedStoryName = function(storyNames){
@@ -266,26 +260,26 @@ Events.showPersonalStories = function (storyName, characterNames, delegate) {
 Events.buildAdaptationInterface = function (storyName, characterNames, events, areAdaptationsEditable) {
     "use strict";
     
-    var table = document.getElementById("personalStories");
-    Utils.removeChildren(table);
+    var table = getEl("personalStories");
+    clearEl(table);
 
     var tr;
     var td, span, input, i, div, divContainer;
     
     events.forEach(function (event, i) {
-        tr = document.createElement("div");
+        tr = makeEl("div");
         addClass(tr, "eventMainPanelRow");
         addClass(tr, event.index + "-dependent");
         addClass(tr, "eventRow-dependent");
         table.appendChild(tr);
         
-        td = document.createElement("div");
+        td = makeEl("div");
         addClass(td, "eventMainPanelRow-left");
-        span = document.createElement("div");
-        span.appendChild(document.createTextNode(event.name));
+        span = makeEl("div");
+        span.appendChild(makeText(event.name));
         td.appendChild(span);
         
-        input = document.createElement("textarea");
+        input = makeEl("textarea");
         addClass(input,"isStoryEditable");
         addClass(input,"eventPersonalStory");
         input.value = event.text;
@@ -296,10 +290,10 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
         td.appendChild(input);
         tr.appendChild(td);
         
-        td = document.createElement("div");
+        td = makeEl("div");
         addClass(td, "eventMainPanelRow-right");
         
-        divContainer = document.createElement("div");
+        divContainer = makeEl("div");
         addClass(divContainer, "events-eventsContainer");
         
         for (var i = 0; i < characterNames.length; i++) {
@@ -308,11 +302,11 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
             if(!event.characters[characterName]){
                 continue;
             }
-            div = document.createElement("div");
+            div = makeEl("div");
             addClass(div, "events-singleEventAdaptation");
-            div.appendChild(document.createTextNode(characterName));
+            div.appendChild(makeText(characterName));
             
-            input = document.createElement("textarea");
+            input = makeEl("textarea");
             if(!areAdaptationsEditable[storyName + "-" + characterName]){
             	addClass(input,"notEditable");
             }
@@ -325,7 +319,7 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
             input.addEventListener("change", Events.onChangePersonalStoryDelegate);
             div.appendChild(input);
             
-            input = document.createElement("input");
+            input = makeEl("input");
             if(!areAdaptationsEditable[storyName + "-" + characterName]){
             	addClass(input,"notEditable");
             }
@@ -338,7 +332,7 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
             
             input.addEventListener("change", Events.onChangeReadyStatus);
             div.appendChild(input);
-            addEl(div, setAttr(addEl(makeEl("label"), makeText(Events.finishedText)), "for", input.id));
+            addEl(div, setAttr(addEl(makeEl("label"), makeText(Constants.events.finishedText)), "for", input.id));
             
             divContainer.appendChild(div);
         }
@@ -369,8 +363,8 @@ Events.onChangePersonalStoryDelegate = function (event) {
 
 Events.getSuffix = function(object){
     "use strict";
-    if(object.isEmpty) return Events.emptySuffix;
-    if(object.isFinished) return Events.finishedSuffix;
+    if(object.isEmpty) return Constants.events.emptySuffix;
+    if(object.isFinished) return Constants.events.finishedSuffix;
     return "";
 };
 

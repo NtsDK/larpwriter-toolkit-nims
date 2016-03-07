@@ -24,7 +24,7 @@ CharacterFilter.init = function () {
     "use strict";
     listen(getEl('profileItemSelector'), "change", UI.showSelectedEls("-dependent"));
     
-    CharacterFilter.content = document.getElementById("characterFilterDiv");
+    CharacterFilter.content = getEl("characterFilterDiv");
 };
 
 CharacterFilter.refresh = function () {
@@ -32,14 +32,14 @@ CharacterFilter.refresh = function () {
     CharacterFilter.sortKey = "name";
     CharacterFilter.sortDir = "asc";
 
-    var filterSettingsDiv = document.getElementById("filterSettingsDiv");
-    Utils.removeChildren(filterSettingsDiv);
+    var filterSettingsDiv = getEl("filterSettingsDiv");
+    clearEl(filterSettingsDiv);
     filterSettingsDiv.inputItems = {};
 
-    filterSettingsDiv.appendChild(document.createTextNode("Персонаж"));
-    filterSettingsDiv.appendChild(document.createElement("br"));
+    filterSettingsDiv.appendChild(makeText(getL10n("character-filter-character")));
+    filterSettingsDiv.appendChild(makeEl("br"));
 
-    var input = document.createElement("input");
+    var input = makeEl("input");
     input.selfInfo = {
         name : "name",
         type : "text"
@@ -49,7 +49,7 @@ CharacterFilter.refresh = function () {
     filterSettingsDiv.inputItems.name = input;
     input.addEventListener("change", CharacterFilter.rebuildContent);
     
-    filterSettingsDiv.appendChild(document.createElement("br"));
+    filterSettingsDiv.appendChild(makeEl("br"));
     
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
     	if(err) {Utils.handleError(err); return;}
@@ -109,7 +109,7 @@ CharacterFilter.rebuildContent = function () {
 CharacterFilter.acceptDataRow = function (element) {
     "use strict";
     element = CharacterFilter.Characters[element];
-    var filterSettingsDiv = document.getElementById("filterSettingsDiv");
+    var filterSettingsDiv = getEl("filterSettingsDiv");
     var result = true;
 
     var filterValues = function (inputItemName) {
@@ -141,10 +141,10 @@ CharacterFilter.acceptDataRow = function (element) {
             selectedOptions = {};
 
             if (inputItem.options[0].selected) {
-                selectedOptions[inputItem.options[0].value === "Да" ? "true" : "false"] = true;
+                selectedOptions["true"] = true;
             }
             if (inputItem.options[1].selected) {
-                selectedOptions[inputItem.options[1].value === "Да" ? "true" : "false"] = true;
+                selectedOptions["false"] = true;
             }
 
             if (!selectedOptions[element[inputItem.selfInfo.name]]) {
@@ -156,15 +156,15 @@ CharacterFilter.acceptDataRow = function (element) {
             num = Number(filterSettingsDiv.inputItems[inputItem.selfInfo.name + ":numberInput"].value);
 
             switch (inputItem.value) {
-            case "Не важно":
+            case "ignore":
                 break;
-            case "Больше":
+            case "greater":
                 result = element[inputItem.selfInfo.name] > num;
                 break;
-            case "Равно":
+            case "equal":
                 result = element[inputItem.selfInfo.name] === num;
                 break;
-            case "Меньше":
+            case "lesser":
                 result = element[inputItem.selfInfo.name] < num;
                 break;
             }
@@ -221,21 +221,21 @@ CharacterFilter.sortDataRows = function (a, b) {
 
 CharacterFilter.appendDataString = function (table, character, profileSettings) {
     "use strict";
-    var tr = document.createElement("tr");
+    var tr = makeEl("tr");
 
-    var inputItems = document.getElementById("filterSettingsDiv").inputItems;
+    var inputItems = getEl("filterSettingsDiv").inputItems;
 
     var td, regex, pos;
     profileSettings.forEach(function (profileItemInfo, i) {
-        td = document.createElement("td");
+        td = makeEl("td");
         if (profileItemInfo.type === "checkbox") {
-            td.appendChild(document.createTextNode(character[profileItemInfo.name] ? "Да" : "Нет"));
+            td.appendChild(makeText(Constants[character[profileItemInfo.name]].displayName()));
         } else if (profileItemInfo.type === "text" && profileItemInfo.name !== "name") {
             regex = Utils.globStringToRegex(inputItems[profileItemInfo.name].value);
             pos = character[profileItemInfo.name].search(regex);
-            td.appendChild(document.createTextNode(character[profileItemInfo.name].substring(pos - 5, pos + 15)));
+            td.appendChild(makeText(character[profileItemInfo.name].substring(pos - 5, pos + 15)));
         } else {
-            td.appendChild(document.createTextNode(character[profileItemInfo.name]));
+            td.appendChild(makeText(character[profileItemInfo.name]));
         }
         addClass(td, (i-1) +"-dependent");
         tr.appendChild(td);
@@ -246,19 +246,19 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
 
 CharacterFilter.appendContentHeader = function (thead, profileItemNames) {
     "use strict";
-    var tr = document.createElement("tr");
+    var tr = makeEl("tr");
 
-    var td = document.createElement("th");
-    td.appendChild(document.createTextNode("Персонаж"));
-    td.appendChild(document.createElement("span"));
+    var td = makeEl("th");
+    td.appendChild(makeText(getL10n("character-filter-character")));
+    td.appendChild(makeEl("span"));
     td.info = "name";
     td.addEventListener("click", CharacterFilter.onSortChange);
     tr.appendChild(td);
 
     profileItemNames.forEach(function (name, i) {
-        td = document.createElement("th");
-        td.appendChild(document.createTextNode(name));
-        td.appendChild(document.createElement("span"));
+        td = makeEl("th");
+        td.appendChild(makeText(name));
+        td.appendChild(makeEl("span"));
         td.info = name;
         addClass(td, i +"-dependent");
         td.addEventListener("click", CharacterFilter.onSortChange);
@@ -285,7 +285,7 @@ CharacterFilter.onSortChange = function (event) {
             removeClass(target, "sortDesc");
         }
     } else {
-        var filterHead = document.getElementById("filterHead");
+        var filterHead = getEl("filterHead");
         var elems = filterHead.getElementsByClassName("sortAsc");
         var i;
         for (i = 0; i < elems.length; i++) {
@@ -306,15 +306,15 @@ CharacterFilter.onSortChange = function (event) {
 
 CharacterFilter.appendInput = function (root, profileItemConfig) {
     "use strict";
-    root.appendChild(document.createTextNode(profileItemConfig.name));
-    root.appendChild(document.createElement("br"));
+    root.appendChild(makeText(profileItemConfig.name));
+    root.appendChild(makeEl("br"));
 
     var input, selector, values
 
     switch (profileItemConfig.type) {
     case "text":
     case "string":
-        input = document.createElement("input");
+        input = makeEl("input");
         input.selfInfo = profileItemConfig;
         input.value = "";
         root.appendChild(input);
@@ -324,7 +324,7 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
 
         break;
     case "enum":
-        selector = document.createElement("select");
+        selector = makeEl("select");
         selector.selfInfo = profileItemConfig;
         selector.multiple = "multiple";
         
@@ -332,9 +332,9 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         selector.size = values.length;
 
         values.forEach(function (value) {
-            var option = document.createElement("option");
+            var option = makeEl("option");
             option.selected = true;
-            option.appendChild(document.createTextNode(value));
+            option.appendChild(makeText(value));
             selector.appendChild(option);
         });
         root.appendChild(selector);
@@ -344,13 +344,13 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
 
         break;
     case "number":
-        selector = document.createElement("select");
+        selector = makeEl("select");
         selector.selfInfo = profileItemConfig;
 
-        values = [ "Не важно", "Больше", "Равно", "Меньше" ];
-        values.forEach(function (value) {
-            var option = document.createElement("option");
-            option.appendChild(document.createTextNode(value));
+        R.values(Constants.numberFilter).forEach(function (value) {
+            var option = makeEl("option");
+            option.appendChild(makeText(value.displayName()));
+            option.value = value.name;
             selector.appendChild(option);
         });
         selector.selectedIndex = 0;
@@ -358,7 +358,7 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         root.inputItems[profileItemConfig.name] = selector;
         selector.addEventListener("change", CharacterFilter.rebuildContent);
 
-        input = document.createElement("input");
+        input = makeEl("input");
         input.value = 0;
         input.type = "number";
         root.appendChild(input);
@@ -367,16 +367,16 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
 
         break;
     case "checkbox":
-        selector = document.createElement("select");
+        selector = makeEl("select");
         selector.selfInfo = profileItemConfig;
         selector.multiple = "multiple";
         selector.size = 2;
 
-        values = [ "Да", "Нет" ];
-        values.forEach(function (value) {
-            var option = document.createElement("option");
+        Constants.yesNo.forEach(function(value){
+            var option = makeEl("option");
             option.selected = true;
-            option.appendChild(document.createTextNode(value));
+            option.value = value.name;
+            option.appendChild(makeText(value.displayName()));
             selector.appendChild(option);
         });
         root.appendChild(selector);
@@ -386,5 +386,5 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         break;
     }
 
-    root.appendChild(document.createElement("br"));
+    root.appendChild(makeEl("br"));
 };

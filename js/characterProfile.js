@@ -22,10 +22,10 @@ var CharacterProfile = {};
 
 CharacterProfile.init = function () {
     "use strict";
-    var button = document.getElementById("bioEditorSelector");
+    var button = getEl("bioEditorSelector");
     button.addEventListener("change", CharacterProfile.showProfileInfoDelegate);
 
-    CharacterProfile.content = document.getElementById("characterProfile");
+    CharacterProfile.content = getEl("characterProfile");
 };
 
 CharacterProfile.refresh = function () {
@@ -33,19 +33,19 @@ CharacterProfile.refresh = function () {
     
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
     	if(err) {Utils.handleError(err); return;}
-        var selector = document.getElementById("bioEditorSelector");
-        Utils.removeChildren(selector);
+        var selector = getEl("bioEditorSelector");
+        clearEl(selector);
         names.forEach(function (nameInfo) {
-            var option = document.createElement("option");
-            option.appendChild(document.createTextNode(nameInfo.displayName));
+            var option = makeEl("option");
+            option.appendChild(makeText(nameInfo.displayName));
             option.value = nameInfo.value;
             selector.appendChild(option);
         });
         
-        var profileContentDiv = document.getElementById("profileContentDiv");
-        Utils.removeChildren(profileContentDiv);
-        var table = document.createElement("table");
-        var tbody = document.createElement("tbody");
+        var profileContentDiv = getEl("profileContentDiv");
+        clearEl(profileContentDiv);
+        var table = makeEl("table");
+        var tbody = makeEl("tbody");
         table.appendChild(tbody);
         addClass(table, "table");
         profileContentDiv.appendChild(table);
@@ -85,40 +85,40 @@ CharacterProfile.applySettings = function (names, selector) {
 
 CharacterProfile.appendInput = function (root, profileItemConfig) {
     "use strict";
-    var tr = document.createElement("tr");
-    var td = document.createElement("td");
-    td.appendChild(document.createTextNode(profileItemConfig.name));
+    var tr = makeEl("tr");
+    var td = makeEl("td");
+    td.appendChild(makeText(profileItemConfig.name));
     tr.appendChild(td);
 
-    td = document.createElement("td");
+    td = makeEl("td");
     
     var input, values;
 
     switch (profileItemConfig.type) {
     case "text":
-        input = document.createElement("textarea");
+        input = makeEl("textarea");
         addClass(input, "profileTextInput");
         break;
     case "string":
-        input = document.createElement("input");
+        input = makeEl("input");
         addClass(input, "profileStringInput");
         break;
     case "enum":
-        input = document.createElement("select");
+        input = makeEl("select");
 
         values = profileItemConfig.value.split(",");
         values.forEach(function (value) {
-            var option = document.createElement("option");
-            option.appendChild(document.createTextNode(value));
+            var option = makeEl("option");
+            option.appendChild(makeText(value));
             input.appendChild(option);
         });
         break;
     case "number":
-        input = document.createElement("input");
+        input = makeEl("input");
         input.type = "number";
         break;
     case "checkbox":
-        input = document.createElement("input");
+        input = makeEl("input");
         input.type = "checkbox";
         break;
     }
@@ -147,7 +147,7 @@ CharacterProfile.updateFieldValue = function(type){
             break;
         case "number":
             if (isNaN(event.target.value)) {
-                Utils.alert("Введенное значение не является числом.");
+                Utils.alert(getL10n("characters-not-a-number"));
                 event.target.value = event.target.oldValue;
                 return;
             }

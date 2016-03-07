@@ -22,10 +22,10 @@ var Timeline = {};
 
 Timeline.init = function () {
     "use strict";
-    var selector = document.getElementById("timelineStorySelector");
+    var selector = getEl("timelineStorySelector");
     selector.addEventListener("change", Timeline.onStorySelectorChangeDelegate);
 
-    var container = document.getElementById('timelineContainer');
+    var container = getEl('timelineContainer');
 
     Timeline.TimelineDataset = new vis.DataSet();
 
@@ -55,13 +55,13 @@ Timeline.init = function () {
     timeline.setItems(Timeline.TimelineDataset);
     Timeline.timelineComponent = timeline;
 
-    Timeline.content = document.getElementById("timelineDiv");
+    Timeline.content = getEl("timelineDiv");
 };
 
 Timeline.refresh = function () {
     "use strict";
-    var selector = document.getElementById("timelineStorySelector");
-    Utils.removeChildren(selector);
+    var selector = getEl("timelineStorySelector");
+    clearEl(selector);
 
     var option;
         
@@ -85,8 +85,8 @@ Timeline.refresh = function () {
         PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
         	if(err) {Utils.handleError(err); return;}
         	allStoryNames.forEach(function(nameInfo){
-                option = document.createElement("option");
-                option.appendChild(document.createTextNode(nameInfo.displayName));
+                option = makeEl("option");
+                option.appendChild(makeText(nameInfo.displayName));
                 option.value = nameInfo.value;
                 selector.appendChild(option);
             });
@@ -143,14 +143,14 @@ Timeline.onStorySelectorChange = function (storyNames) {
         
         if(storyNames[0]){
             Timeline.TimelineDataset.add({
-                content : "Начало игры",
+                content : L10n.getValue("overview-pre-game-end-date"),
                 start : new Date(Timeline.postDate),
                 group : storyNames[0],
                 className : "importantItem",
                 editable : false
             });
             Timeline.TimelineDataset.add({
-                content : "Начало доигровых событий",
+                content : L10n.getValue("overview-pre-game-start-date"),
                 start : new Date(Timeline.preDate),
                 group : storyNames[0],
                 className : "importantItem",
@@ -158,5 +158,4 @@ Timeline.onStorySelectorChange = function (storyNames) {
             });
         }
     });
-
 };

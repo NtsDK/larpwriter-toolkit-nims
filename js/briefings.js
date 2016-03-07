@@ -28,13 +28,13 @@ Briefings.init = function () {
     var content = "briefingsContent";
     var containers = {
 		root: root,
-		navigation: document.getElementById(nav),
-		content: document.getElementById(content)
+		navigation: getEl(nav),
+		content: getEl(content)
     };
     Utils.addView(containers, "briefing-preview", BriefingPreview, {mainPage:true});
     Utils.addView(containers, "briefing-export", BriefingExport);
 
-    Briefings.content = document.getElementById("briefingsDiv");
+    Briefings.content = getEl("briefingsDiv");
 };
 
 Briefings.refresh = function () {

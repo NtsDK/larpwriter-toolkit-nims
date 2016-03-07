@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function statisticsAPI(LocalDBMS, R) {
+    function statisticsAPI(LocalDBMS, R, Constants) {
         
         LocalDBMS.prototype.getStatistics = function(callback) {
             "use strict";
@@ -80,11 +80,11 @@ See the License for the specific language governing permissions and
                     });
                 }
                 if (value.type === "checkbox") {
+                    var obj = {};
+//                    obj[L10n.getValue("common-yes")] = obj[L10n.getValue("common-no")] = 0;
+                    obj[Constants[true].displayName()] = obj[Constants[false].displayName()] = 0;
                     data[value.name] = {
-                            chart : {
-                                "Да" : 0,
-                                "Нет" : 0
-                            }
+                            chart : obj
                     };
                 }
                 if (value.type === "number") {
@@ -101,7 +101,8 @@ See the License for the specific language governing permissions and
                         dataObj.chart[character[profileItem.name]]++;
                     }
                     if (profileItem.type === "checkbox") {
-                        dataObj.chart[character[profileItem.name] ? "Да" : "Нет"]++;
+                        var type = Constants[character[profileItem.name]].displayName();
+                        dataObj.chart[type]++;
                     }
                     if (profileItem.type === "number") {
                         var pos = Math.floor(character[profileItem.name] / 5);

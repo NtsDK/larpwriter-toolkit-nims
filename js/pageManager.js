@@ -48,11 +48,11 @@ PageManager.onDatabaseLoad = function () {
     		var nav = "navigation";
     		var content = "contentArea";
     		var button;
-    		var navigation = document.getElementById(nav);
+    		var navigation = getEl(nav);
     		var containers = {
     				root: root,
     				navigation: navigation,
-    				content: document.getElementById(content)
+    				content: getEl(content)
     		};
     		Utils.addView(containers, "overview", Overview, {mainPage:true});
     		Utils.addView(containers, "characters", Characters);
@@ -60,7 +60,7 @@ PageManager.onDatabaseLoad = function () {
     		Utils.addView(containers, "adaptations", Events);
     		Utils.addView(containers, "briefings", Briefings);
     		
-    		button = document.createElement("div");
+    		button = makeEl("div");
     		addClass(button, "nav-separator");
     		navigation.appendChild(button);
     		
@@ -69,12 +69,12 @@ PageManager.onDatabaseLoad = function () {
     		Utils.addView(containers, "character-filter", CharacterFilter, {id:"filterButton", tooltip:true});
     		
     		
-    		button = document.createElement("div");
+    		button = makeEl("div");
     		addClass(button, "nav-separator");
     		navigation.appendChild(button);
     		
     		if(isAdmin){
-    			button = document.createElement("div");
+    			button = makeEl("div");
     			button.id = "dataLoadButton";
     			$(button).tooltip({
     				title : L10n.getValue("header-open-database"),
@@ -82,7 +82,7 @@ PageManager.onDatabaseLoad = function () {
     			});
     			addClass(button, "action-button");
 //    			setAttr(button, "l10n-id", "header-open-database");
-    			var input = document.createElement("input");
+    			var input = makeEl("input");
     			input.type = "file";
     			button.appendChild(input);
     			navigation.appendChild(button);
@@ -95,10 +95,10 @@ PageManager.onDatabaseLoad = function () {
     		PageManager.addButton("mainHelpButton", "docs", navigation, FileUtils.openHelp, {tooltip:true});
     		PageManager.addButton("toggleL10nButton", "l10n", navigation, L10n.toggleL10n, {tooltip:true});
     		
-//    var button = document.createElement("div");
+//    var button = makeEl("div");
 //    button.id = "logoutButton";
 //    addClass(button, "action-button");
-//    button.appendChild(document.getElementById("logoutForm"));
+//    button.appendChild(getEl("logoutForm"));
 //    navigation.appendChild(button);
     		
     		if(MODE === "NIMS_Server"){
@@ -119,7 +119,7 @@ PageManager.onDatabaseLoad = function () {
 
 PageManager.addButton = function(id, name, navigation, callback, opts){
 	"use strict";
-    var button = document.createElement("div");
+    var button = makeEl("div");
     button.id = id;
     if(opts.tooltip){
 		$(button).tooltip({
@@ -139,8 +139,8 @@ PageManager.addButton = function(id, name, navigation, callback, opts){
 //    var i, elem, button;
 //    for (i = 0; i < elems.length; i++) {
 //        elem = elems[i];
-//        button = document.createElement("button");
-//        button.appendChild(document.createTextNode("%"));
+//        button = makeEl("button");
+//        button.appendChild(makeText("%"));
 //        addClass(button, "fullScreenButton");
 //        button.addEventListener("click", PageManager.fullScreenToggler(elem));
 //        elem.appendChild(button);
@@ -155,7 +155,7 @@ PageManager.addButton = function(id, name, navigation, callback, opts){
 //};
 
 window.onbeforeunload = function (evt) {
-    var message = "Убедитесь, что сохранили данные. После закрытия страницы все несохраненные изменения будут потеряны.";
+    var message = getL10n("utils-close-page-warning");
     if (typeof evt == "undefined") {
         evt = window.event;
     }

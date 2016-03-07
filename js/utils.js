@@ -28,7 +28,7 @@ Utils.addView = function (containers, name, view, opts) {
     view.init();
     var buttonClass = "navigation-button";
     containers.root.views[name] = view;
-    var button = document.createElement("div");
+    var button = makeEl("div");
     if(opts.tooltip){
 		$(button).tooltip({
 			title : L10n.getValue("header-" + name),
@@ -70,14 +70,14 @@ Utils.addView = function (containers, name, view, opts) {
             if(!opts.toggle || (opts.toggle && !isActive)){
                 addClass(evt.target, "active");
                 
-                Utils.removeChildren(containers.content);
+                clearEl(containers.content);
                 containers.content.appendChild(view.content);
                 removeClass(containers.content, "hidden");
                 containers.root.currentView = view;
                 view.refresh();
             } else {
                 removeClass(evt.target, "active");
-                Utils.removeChildren(containers.content);
+                clearEl(containers.content);
                 containers.root.currentView = null;
                 addClass(containers.content, "hidden");
             }
@@ -150,12 +150,13 @@ Utils.processError = function(callback){
 			callback.apply(null, arr);
 		}
 	}
-}
+};
 
 Utils.handleError = function(err){
 	"use strict";
-	if (err instanceof Errors.ValidationError) {
-		Utils.alert(err.message);
+	if (err instanceof Errors.ValidationError || typeof err === 'object') {
+//		Utils.alert(err.messageId);
+	    Utils.alert(strFormat(getL10n(err.messageId), err.params));
 	} else {
 		Utils.alert(err);
 	}
@@ -182,6 +183,16 @@ Utils.charOrdAObject = CommonUtils.charOrdAFactory(function(a){
 String.prototype.endsWith = function (suffix) {
     "use strict";
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
+function strFormat(str, vals){
+    "use strict";
+    return CommonUtils.strFormat(str, vals);
+};
+
+function getL10n(key){
+    "use strict";
+    return L10n.getValue(key);
 };
 
 function isEmpty (obj) {
@@ -244,10 +255,14 @@ function makeText(text){
   return document.createTextNode(text);
 };
 
-function addEl(parent, child){
-  parent.appendChild(child);
-  return parent;
-};
+//function addEl(parent, child){
+//  parent.appendChild(child);
+//  return parent;
+//};
+var addEl = R.curry(function(parent, child){
+    parent.appendChild(child);
+    return parent;
+});
 
 var rAddEl = R.curry(function(child, parent){
   parent.appendChild(child);

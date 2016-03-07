@@ -19,27 +19,124 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     exports.profileFieldTypes = {
-    		text : {
-    			displayName : "Текст",
-    			value : ""
-    		},
-    		string : {
-    			displayName : "Строка",
-    			value : ""
-    		},
-    		enum : {
-    			displayName : "Единственный выбор",
-    			value : "_"
-    		},
-    		number : {
-    			displayName : "Число",
-    			value : 0
-    		},
-    		checkbox : {
-    			displayName : "Галочка",
-    			value : false
-    		}
+		"text" : {
+		    name : "text",
+//			displayName : L10n.getFixedValue("characters-item-type-text"),
+			displayName : function(){return "Текст"},
+			value : ""
+		},
+		"string" : {
+		    name : "string",
+//			displayName : L10n.getFixedValue("characters-item-type-string"),
+			displayName : function(){return "Строка"},
+			value : ""
+		},
+		"enum" : {
+		    name : "enum",
+//			displayName : L10n.getFixedValue("characters-item-type-single-choice"),
+			displayName : function(){return "Единственный выбор"},
+			value : "_"
+		},
+		"number" : {
+		    name : "number",
+//			displayName : L10n.getFixedValue("characters-item-type-number"),
+			displayName : function(){return "Число"},
+			value : 0
+		},
+		"checkbox" : {
+		    name : "checkbox",
+//			displayName : L10n.getFixedValue("characters-item-type-checkbox"),
+			displayName : function(){return "Галочка"},
+			value : false
+		}
     };
+    
+    exports.objectSubsets = [ {
+        name : "allObjects",
+        displayName : "Все объекты"
+    }, {
+        name : "selectedCharacters",
+        displayName : "Избранные персонажи"
+    }, {
+        name : "selectedStories",
+        displayName : "Избранные истории"
+    } ];
+    
+    exports.networks = [ {
+//        displayName: "Простая сеть",
+//        name : "simpleNetwork"
+//    },{
+        displayName: "Социальные связи",
+        name : "socialRelations"
+    },{
+        displayName: "Персонаж-участие-история",
+        name: "characterPresenceInStory"
+    },{
+        displayName: "Персонаж-активность-история" ,
+        name: "characterActivityInStory"
+    }];
+    
+    exports.noGroup = {
+        displayName: "Без групп" ,
+        name: "noGroup"
+    };
+    
+    exports.characterActivityTypes = [{
+        name:"active",
+        displayName:"Актив"
+    },{
+        name:"follower",
+        displayName:"Спутник"
+    },{
+        name:"defensive",
+        displayName:"Защита"
+    },{
+        name:"passive",
+        displayName:"Пассив"
+    }];
+
+    exports.numberFilter = {
+        "ignore" : {
+            name : "ignore",
+//            displayName : L10n.getFixedValue("character-filter-ignore"),
+            displayName : function(){return "Не важно"},
+        },
+        "greater" : {
+            name : "greater",
+//            displayName : L10n.getFixedValue("character-filter-greater"),
+            displayName : function(){return "Больше"},
+        },
+        "equal" : {
+            name : "equal",
+//            displayName : L10n.getFixedValue("character-filter-equal"),
+            displayName : function(){return "Равно"},
+        },
+        "lesser" : {
+            name : "lesser",
+//            displayName : L10n.getFixedValue("character-filter-lesser"),
+            displayName : function(){return "Меньше"},
+        }
+    };
+    
+    exports.events = {
+        finishedText : "Описание завершено",
+        finishedSuffix : "(завершено)",
+        emptySuffix : "(пусто)"
+    };
+    
+    exports[true] = {
+        name : "yes",
+//        displayName : L10n.getFixedValue("common-yes")
+        displayName : function(){return "Да"}
+    };
+    
+    exports[false] = {
+        name : "no",
+//        displayName : L10n.getFixedValue("common-no"),
+        displayName : function(){return "Нет"}
+    };
+    
+    exports.yesNo = [exports[true], exports[false]];
     
     exports.colorPalette = [
       //{color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"}, hover: {border: "#2B7CE9", background: "#D2E5FF"}}}, // 0: blue
