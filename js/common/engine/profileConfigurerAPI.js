@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
 		    	if(err) {callback(err);return;}
 		    	
 		    	if(isUsed){
-		    		callback(new Errors.ValidationError("Такое имя уже используется"));
+		    		callback(new Errors.ValidationError("characters-such-name-already-used"));
 		    		return;
 		    	}
 		    	
@@ -94,12 +94,12 @@ See the License for the specific language governing permissions and
 			"use strict";
 			
 		    if (profileItemName === "") {
-		    	callback(new Errors.ValidationError("Название поля не указано"));
+		    	callback(new Errors.ValidationError("characters-profile-item-name-is-not-specified"));
 		        return;
 		    }
 		    
 		    if (profileItemName === "name") {
-		    	callback(new Errors.ValidationError("Название поля не может быть name"));
+		    	callback(new Errors.ValidationError("characters-profile-item-name-cant-be-name"));
 		        return;
 		    }
 		    
@@ -117,7 +117,7 @@ See the License for the specific language governing permissions and
 		    	if(err) {callback(err);return;}
 		    	
 		    	if(isUsed){
-		    		callback(new Errors.ValidationError("Такое имя уже используется"));
+		    		callback(new Errors.ValidationError("characters-such-name-already-used"));
 		    		return;
 		    	}
 		    	
@@ -153,14 +153,14 @@ See the License for the specific language governing permissions and
 				break;
 			case "number":
 			    if (isNaN(value)) {
-                    callback(new Errors.ValidationError("Введено не число"));
+                    callback(new Errors.ValidationError("characters-not-a-number"));
                     return;
                 }
 				info.value = Number(value);
 				break;
 			case "enum":
 				if (value === "") {
-					callback(new Errors.ValidationError("Значение поля с единственным выбором не может быть пустым"));
+					callback(new Errors.ValidationError("characters-enum-item-cant-be-empty"));
 					return;
 				}
 				oldOptions = info.value.split(",");

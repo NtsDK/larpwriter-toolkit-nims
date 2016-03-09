@@ -1,5 +1,6 @@
 ﻿var Dictionary = {
 	"header": {
+	    "page-title": "НИМС набор инструментов мастера сюжетника",
 		"overview":"Обзор",
 		"characters":"Персонажи",
 		"stories":"Истории",
@@ -178,6 +179,17 @@
 	    "stories": "Истории",
 	    "assign-rights": "Назначить права",
 	    "take-away-rights": "Забрать права",
+        "characters-header" : "Персонажи: {0}",
+        'stories-header' : "Истории: {0}",
+        'have-not-owner' : "Не привязаны",
+        'user-name-is-not-specified' : "Имя пользователя не указано",
+        'password-is-not-specified' : "Пароль не указан",
+        'user-already-exists' : "Такой пользователь уже существует",
+        'confirm-user-remove' : "Вы уверены, что хотите удалить {0}?",
+        'user-is-not-selected' : "Пользователь не выбран",
+        'confirm-admin-assigment' : "Вы уверены, что хотите назначить пользователя {0} администратором? Отменить это действие вы не сможете.",
+        'confirm-editor-assigment' : "Вы уверены, что хотите назначить пользователя {0} редактором? Пока назначен редактор все другие пользователи не смогут редактировать свои объекты.",
+        'function-must-be-overriden-on-server': "Функция {0} должна быть определена на сервере.",
 	},
 	"briefings":{
 	    "settings": "Настройки",

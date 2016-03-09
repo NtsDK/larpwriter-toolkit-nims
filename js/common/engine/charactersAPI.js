@@ -29,7 +29,7 @@ See the License for the specific language governing permissions and
 			}
 			
 			if(this.database.Characters[characterName]){
-				callback(new Errors.ValidationError("Такой персонаж уже существует"));
+				callback(new Errors.ValidationError("characters-character-name-already-used", [characterName]));
 				return;
 			}
 			
@@ -52,17 +52,17 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.renameCharacter = function(fromName, toName, callback) {
 			"use strict";
 		    if (toName === "") {
-		    	callback(new Errors.ValidationError("Новое имя не указано."));
+		    	callback(new Errors.ValidationError("characters-new-character-name-is-not-specified"));
 		        return;
 		    }
 
 		    if (fromName === toName) {
-		    	callback(new Errors.ValidationError("Имена совпадают."));
+		    	callback(new Errors.ValidationError("characters-names-are-the-same"));
 		        return;
 		    }
 		    
 			if(this.database.Characters[toName]){
-				callback(new Errors.ValidationError("Имя " + toName + " уже используется."));
+				callback(new Errors.ValidationError("characters-character-name-already-used", [toName]));
 				return;
 			}
 			
@@ -129,7 +129,7 @@ See the License for the specific language governing permissions and
 				break;
 			case "number":
 				if (isNaN(value)) {
-				    callback(new Errors.ValidationError("Введенное значение не является числом."));
+				    callback(new Errors.ValidationError("characters-not-a-number"));
 				    return;
 				}
 				profileInfo[fieldName] = Number(value);

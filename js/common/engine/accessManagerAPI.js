@@ -91,7 +91,7 @@ See the License for the specific language governing permissions and
 		
 		LocalDBMS.prototype.changePassword = function(userName, newPassword, callback){
 			"use strict";
-			Utils.alert("Функция changePassword должна быть определена на сервере.");
+			Utils.alert(strFormat(getL10n('function-must-be-overriden-on-server'), ['changePassword']));
 			callback();
 		};
 		
@@ -165,7 +165,7 @@ See the License for the specific language governing permissions and
 		
 		LocalDBMS.prototype.publishPermissionsUpdate = function() {
 			// overrided by server
-			Utils.alert("Функция publishPermissionsUpdate должна быть определена на сервере.");
+			Utils.alert(strFormat(getL10n('function-must-be-overriden-on-server'), ['publishPermissionsUpdate']));
 		};
 	};
 	

@@ -61,7 +61,7 @@ L10n.toggleL10n = function(){
 L10n.getValue = function(name){
     "use strict";
     var value = Dictionary[name];
-    return value ? value : "RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA";
+    return value ? value : name + ":RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA";
 };
 
 L10n.getFixedValue = function(name){

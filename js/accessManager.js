@@ -116,7 +116,6 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
     
     var selectors = [];
     selectors.push(getEl("passwordUserName"));
-    
     selectors.push(getEl("userPermissionSelector"));
     selectors.push(getEl("newEditorSelector"));
     
@@ -138,67 +137,44 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
     selector = getEl("characterPermissionSelector");
     Utils.rebuildSelector(selector, characterNames);
     
-    var span = getEl("currentAdministrator");
-    clearEl(span);
-    span.appendChild(makeText(allInfo.admin));
+    addEl(clearEl(getEl("currentAdministrator")), makeText(allInfo.admin));
 
-    span = getEl("currentEditor");
-    clearEl(span);
+    var span = clearEl(getEl("currentEditor"));
     if(allInfo.editor){
-    	span.appendChild(makeText(allInfo.editor));
+    	addEl(span,makeText(allInfo.editor));
     }
     
     getEl("adaptationRights" + allInfo.adaptationRights).checked = true;
     
-    var permissionTable = getEl("permissionTable");
-    clearEl(permissionTable);
+    var permissionTable = clearEl(getEl("permissionTable"));
+    
+    var addChild = addEl(permissionTable);
+    
+    var addInfo = function(name, characters, stories){
+        addChild(makeText(name));
+        addChild(makeEl("br"));
+        addChild(makeText(strFormat(getL10n("admins-characters-header"),  [characters.join(",")])));
+        addChild(makeEl("br"));
+        addChild(makeText(strFormat(getL10n('admins-stories-header'), [stories.join(",")])));
+        addChild(makeEl("br"));
+        addChild(makeEl("br"));
+    }
     
     names.forEach(function(name){
-    	permissionTable.appendChild(makeText(name));
-    	permissionTable.appendChild(makeEl("br"));
-    	permissionTable.appendChild(makeText("Персонажи: " + info[name].characters.join(",")));
-    	permissionTable.appendChild(makeEl("br"));
-    	permissionTable.appendChild(makeText("Истории: " + info[name].stories.join(",")));
-    	permissionTable.appendChild(makeEl("br"));
-    	permissionTable.appendChild(makeEl("br"));
+        addInfo(name, info[name].characters, info[name].stories);
     });
     
-    permissionTable.appendChild(makeText("Не привязаны"));
-	permissionTable.appendChild(makeEl("br"));
-	
-	var isUnused = function(storyName){
-		var used = false;
-		names.forEach(function(name){
-			if(info[name].stories.indexOf(storyName)!==-1){
-				used = true;
-			}
+	var isUnused = R.curry(function(objName, storyName){
+		return !names.every(function(name){
+		    return info[name][objName].indexOf(storyName)!==-1;
 		});
-		return !used;
-	};
-	var isUnused2 = function(characterName){
-		var used = false;
-		names.forEach(function(name){
-			if(info[name].characters.indexOf(characterName)!==-1){
-				used = true;
-			}
-		});
-		return !used;
-	};
+	});
 	
-	storyNames = storyNames.map(function(elem){
-		return elem.value;
-	}).filter(isUnused);
-	characterNames = characterNames.map(function(elem){
-		return elem.value;
-	}).filter(isUnused2);
-	permissionTable.appendChild(makeText("Персонажи: " + characterNames.join(",")));
-	permissionTable.appendChild(makeEl("br"));
-	permissionTable.appendChild(makeText("Истории: " + storyNames.join(",")));
-	permissionTable.appendChild(makeEl("br"));
-	permissionTable.appendChild(makeEl("br"));
+	storyNames = storyNames.map(R.prop('value')).filter(isUnused('stories'));
+	characterNames = characterNames.map(R.prop('value')).filter(isUnused('characters'));
+	
+	addInfo(getL10n('admins-have-not-owner'), characterNames, storyNames);
 };
-
-
 
 AccessManager.createUser = function () {
     "use strict";
@@ -206,7 +182,7 @@ AccessManager.createUser = function () {
     var name = userNameInput.value.trim();
 
     if (name === "") {
-        Utils.alert("Имя пользователя не указано");
+        Utils.alert(getL10n('admins-user-name-is-not-specified'));
         return;
     }
     
@@ -214,14 +190,14 @@ AccessManager.createUser = function () {
     var password = userPasswordInput.value.trim();
     
     if (password === "") {
-    	Utils.alert("Пароль не указан");
+    	Utils.alert(getL10n('admins-password-is-not-specified'));
     	return;
     }
     
     DBMS.isUserNameUsed(name, function(err, isUserNameUsed){
     	if(err) {Utils.handleError(err); return;}
         if (isUserNameUsed) {
-            Utils.alert("Такой пользователь уже существует");
+            Utils.alert(getL10n('admins-user-already-exists'));
         } else {
         	DBMS.createUser(name, password, Utils.processError(AccessManager.refresh));
         }
@@ -235,7 +211,7 @@ AccessManager.changePassword = function () {
     var newPassword = getEl("newPassword").value.trim();
 
     if (newPassword === "") {
-        Utils.alert("Новый пароль не указан.");
+        Utils.alert(getL10n('admins-password-is-not-specified'));
         return;
     }
     
@@ -247,7 +223,7 @@ AccessManager.removeUser = function () {
     "use strict";
     var name = getEl("userRemoveSelector").value.trim();
 
-    if (Utils.confirm("Вы уверены, что хотите удалить " + name + "?")) {
+    if (Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]))) {
     	DBMS.removeUser(name, Utils.processError(AccessManager.refresh));
     }
 };
@@ -258,7 +234,7 @@ AccessManager.removePermission = function(){
 	var userName = getEl("userPermissionSelector").value.trim();
 	
 	if(userName === ""){
-		Utils.alert("Пользователь не выбран");
+		Utils.alert(getL10n('admins-user-is-not-selected'));
 		return;
 	}
 	
@@ -282,7 +258,7 @@ AccessManager.assignPermission = function(){
 	var userName = getEl("userPermissionSelector").value.trim();
 	
 	if(userName === ""){
-		Utils.alert("Пользователь не выбран");
+		Utils.alert(getL10n('admins-user-is-not-selected'));
 		return;
 	}
 	
@@ -304,8 +280,7 @@ AccessManager.assignPermission = function(){
 AccessManager.assignNewAdmin = function() {
 	"use strict";
 	var userName = getEl("newAdminSelector").value.trim();
-	if(Utils.confirm("Вы уверены, что хотите назначить пользователя " + userName + 
-			" администратором? Отменить это действие вы не сможете.")){
+	if(Utils.confirm(strFormat(getL10n('admins-confirm-admin-assigment'), [userName]))){
 		DBMS.assignAdmin(userName, Utils.processError(AccessManager.refresh));
 	}
 };
@@ -316,8 +291,7 @@ AccessManager.removeEditor = function() {
 AccessManager.assignEditor = function() {
 	"use strict";
 	var userName = getEl("newEditorSelector").value.trim();
-	if(Utils.confirm("Вы уверены, что хотите назначить пользователя " + userName + 
-			" редактором? Пока назначен редактор все другие пользователи не смогут редактировать свои объекты.")){
+	if(Utils.confirm(strFormat(getL10n('admins-confirm-editor-assigment'), [userName]))){
 		DBMS.assignEditor(userName, Utils.processError(AccessManager.refresh));
 	}
 };

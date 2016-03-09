@@ -50,6 +50,7 @@ Utils.addView = function (containers, name, view, opts) {
     var elems, i;
     var onClickDelegate = function (view) {
         return function (evt) {
+//            Tests.run();
             elems = containers.navigation.getElementsByClassName(buttonClass);
             if(opts.toggle){
                 var els = getEls("-toggle-class-" + name);
@@ -70,14 +71,14 @@ Utils.addView = function (containers, name, view, opts) {
             if(!opts.toggle || (opts.toggle && !isActive)){
                 addClass(evt.target, "active");
                 
-                clearEl(containers.content);
+                passEls(containers.content, getEl('warehouse'));
                 containers.content.appendChild(view.content);
                 removeClass(containers.content, "hidden");
                 containers.root.currentView = view;
                 view.refresh();
             } else {
                 removeClass(evt.target, "active");
-                clearEl(containers.content);
+                passEls(containers.content, getEl('warehouse'));
                 containers.root.currentView = null;
                 addClass(containers.content, "hidden");
             }
@@ -156,7 +157,7 @@ Utils.handleError = function(err){
 	"use strict";
 	if (err instanceof Errors.ValidationError || typeof err === 'object') {
 //		Utils.alert(err.messageId);
-	    Utils.alert(strFormat(getL10n(err.messageId), err.params));
+	    Utils.alert(strFormat(getL10n(err.messageId), err.parameters));
 	} else {
 		Utils.alert(err);
 	}
@@ -293,6 +294,12 @@ function setProps(el, map){
 function clearEl(el){
   Utils.removeChildren(el);
   return el;
+};
+
+function passEls(src, dst){
+    for (var i = 0; i < src.children.length; i++) {
+        addEl(dst, src.children[i]);
+    }
 };
 
 function listen(el, event, listener){
