@@ -80,7 +80,6 @@ See the License for the specific language governing permissions and
 					profileInfo[element.name] = character[element.name];
 					break;
 				case "checkbox":
-//					profileInfo[element.name] = Constants[character[element.name]].displayName();
 					profileInfo[element.name] = Constants[character[element.name]].name;
 					break;
 				}
@@ -104,7 +103,6 @@ See the License for the specific language governing permissions and
 				    splittedText = value = character[element.name];
 					break;
 				case "checkbox":
-//				    splittedText= value = Constants[character[element.name]].displayName();
 				    splittedText= value = Constants[character[element.name]].name;
 					break;
 				}

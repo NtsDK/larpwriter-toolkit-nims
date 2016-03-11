@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function statisticsAPI(LocalDBMS, R, Constants, CommonUtils) {
+    function statisticsAPI(LocalDBMS, R, CommonUtils) {
         
         LocalDBMS.prototype.getStatistics = function(callback) {
             "use strict";
