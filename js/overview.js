@@ -190,39 +190,12 @@ Overview.refresh = function () {
         var makeCheckboxChart = R.compose(makeChart,localizeCheckboxes);
         
         var fn = R.cond([
-//                         [R.compose(R.equals('enum'), R.prop('type')),   Overview.prepareChart],
-                         [R.compose(R.equals('enum'), R.prop('type')),   makeChart],
-//                         [R.compose(R.equals('checkbox'), R.prop('type')),   R.compose(msg, R.prop('type'))],
-                         [R.compose(R.equals('checkbox'), R.prop('type')),   makeCheckboxChart],
-//                         [R.T,   R.compose(msg, R.prop('type'))],
-                         [R.T,   makeHist],
-                     ]);
-//                     var fn = R.cond([
-//                                      [R.compose(R.equals('enum'), R.prop('type')),   R.compose(msg, R.prop('type'))],
-//                                      [R.compose(R.equals('checkbox'), R.prop('type')),   R.compose(msg, R.prop('type'))],
-//                                      [R.T,   R.compose(msg, R.prop('type'))],
-//                                      ]);
+            [R.compose(R.equals('enum'), R.prop('type')),   makeChart],
+            [R.compose(R.equals('checkbox'), R.prop('type')),   makeCheckboxChart],
+            [R.T,   makeHist],
+        ]);
                      
-        var resss = statistics.profileCharts.map(fn);
-        
-
-        
-//        var makeBar
-        
-//        for ( var name in statistics.profileCharts) {
-//            barData = statistics.profileCharts[name];
-//            barDiv = makeEl('div');
-//            addEl(barDiv, addEl(makeEl('h4'),makeText(name)));
-//            if(barData.chart){
-//                bar = setAttr(setAttr(makeEl('canvas'), "width", "300"), "height", "100");
-//                Overview.makeChart(name, bar, barData.chart);
-//            } else {
-//                bar = makeEl('div');
-//                addClass(bar,"overviewHist");
-//                Overview.makeHistogram(bar, barData.hist);
-//            }
-//            addEl(profileDiagrams, addEl(barDiv, bar));
-//        }
+        statistics.profileCharts.forEach(fn);
         
       });
     });
@@ -240,19 +213,11 @@ Overview.prepareChart = function(info){
 
 Overview.prepareHist = function(info){
     "use strict";
-//    var skipNulls = true;
     info.prepared = [];
     var min = R.apply(Math.min, R.keys(info.data));
     var max = R.apply(Math.max, R.keys(info.data));
         
-//        var nums = [1, 2, 3, -99, 42, 6, 7];
-//    R.apply(Math.max, nums); //=> 42
-//    var hist = [];
     for (var i = min; i < max+1; i++) {
-//        if (array[i] === null && skipNulls) {
-//            continue;
-//        }
-//        skipNulls = false;
         if (info.data[i]) {
             info.prepared.push({
                 value : info.data[i],
@@ -263,20 +228,12 @@ Overview.prepareHist = function(info){
             info.prepared.push(null);
         }
     }
-//    return hist;
     return info;
-//    return 1;
 };
 
 Overview.makeChartLabel = R.curry(function(total, key, value) {
     return [ key, ": ", (value / total * 100).toFixed(0), "% (", value, "/", total, ")" ].join("");
 });
-
-//Overview.prepareCheckboxChart = function(info){
-//    "use strict";
-//};
-
-
 
 Overview.updateStatisticValue = function (statistics, key) {
     "use strict";

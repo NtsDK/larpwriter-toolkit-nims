@@ -29,11 +29,6 @@ Tests.list = [];
 
 Tests.run = function() {
     "use strict";
-    
-//    R.aperture(Tests.list).forEach(function(arr) {
-//        arr[0](arr[0].name, arr[1]);
-//    });
-    
     Tests.startNext();
     
 //    Tests.list.forEach(function(test, i) {
@@ -69,9 +64,6 @@ var errorMsgCheck = R.curry(function(name, predicate, err) {
     console.log(name + " OK");
     Tests.startNext(name);
 });
-
-//var messageIdEq = R.flip(R.propEq('messageId'))(R.prop('messageId'));
-//var messageIdEq = R.prop('messageId');
 
 Tests.list.push(function emptyProfileItem(name) {
     var type = "text";

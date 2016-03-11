@@ -67,31 +67,6 @@ See the License for the specific language governing permissions and
                 return value.type !== 'string' && value.type !== 'text';
             }).map(R.pick(['name', 'type']));
             
-//            var data = {};
-            
-            
-//            var initBarData = R.cond([
-//                [R.compose(R.equals('enum'), R.prop('type')), function(profileItem){
-//                    var values = profileItem.value.split(",");
-//                    return {
-//                        chart : R.zipObj(values, R.repeat(0, values.length))
-//                    };
-//                }],
-//                [R.compose(R.equals('checkbox'), R.prop('type')), R.always({
-//                    chart : R.zipObj([Constants[true].name, Constants[false].name], [0,0])
-//                })],
-//                [R.T, R.always({
-//                    "hist" : []
-//                })],
-//            ]);
-//            
-//            var data = R.zipObj(profileItems.map(R.prop('name')), profileItems.map(initBarData));
-            
-//            profileItems.forEach(function(profileItem) {
-//                R.values(database.Characters).map(R.prop(profileItem.name))
-//            }
-            
-//            var characters = R.values(database.Characters);
             var groupCharacters = R.groupBy(R.__, R.values(database.Characters));
             var groupedValues = profileItems.map(function(profileItem) {
                 if (profileItem.type === "enum" || profileItem.type === "checkbox") {
@@ -110,45 +85,11 @@ See the License for the specific language governing permissions and
                 }));
             });
                     
-//            var baseInfo = profileItems.map(R.pick(['name', 'type']));
-            
-            var res = R.transpose([profileItems, groupedValues]).map(function(arr){
+            return R.transpose([profileItems, groupedValues]).map(function(arr){
                 return R.assoc('data', arr[1], arr[0])
             });
-            
-//            R.values(database.Characters).forEach(function(character) {
-//                profileItems.forEach(function(profileItem) {
-//                    var dataObj = data[profileItem.name];
-//                    if (profileItem.type === "enum") {
-//                        dataObj.chart[character[profileItem.name]]++;
-//                    }
-//                    if (profileItem.type === "checkbox") {
-////                        var type = Constants[character[profileItem.name]].displayName();
-//                        var type = Constants[character[profileItem.name]].name;
-//                        dataObj.chart[type]++;
-//                    }
-//                    if (profileItem.type === "number") {
-//                        var pos = Math.floor(character[profileItem.name] / 5);
-//                        dataObj.hist[pos] = dataObj.hist[pos] ? (dataObj.hist[pos] + 1) : 1;
-//                    }
-//                });
-//            });
-//            
-//            profileItems.forEach(function(value) {
-//                if (value.type === "number") {
-//                    data[value.name].hist = _toHist(data[value.name].hist);
-//                } else {
-//                    data[value.name].chart = _toChart(data[value.name].chart);
-//                }
-//            });
-//            return data;
-            return res;
         };
         
-
-//        var _toHist = function(array) {
-//
-//        };
         var _makeChartLabel = function(key, value, total) {
             return [ key, ": ", (value / total * 100).toFixed(0), "% (", value, "/", total, ")" ].join("");
         };
