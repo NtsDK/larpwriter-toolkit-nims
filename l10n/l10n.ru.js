@@ -59,6 +59,8 @@
 		"object-belonging-diagrams":"Принадлежность объектов",
 		"characters-diagram":"Персонажи",
 		"stories-diagram":"Истории",
+		"story-completeness-value":'{0}% ({1} из {2} историй)',
+		"general-completeness-value": '{0}% ({1} из {2} адаптаций)',
 	},
 	"characters": {
 		"character-managing":"Управление персонажами",

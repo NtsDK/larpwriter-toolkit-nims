@@ -27,10 +27,10 @@ LocalDBMS.prototype.getSettings = function(){
 };
 
 commonAPI(LocalDBMS, Migrator, CommonUtils);
-statisticsAPI(LocalDBMS, R, Constants);
+statisticsAPI(LocalDBMS, R, Constants, CommonUtils);
 charactersAPI(LocalDBMS, Errors);
 extrasAPI(LocalDBMS, CommonUtils, dateFormat);
-briefingExportAPI(LocalDBMS, CommonUtils, R);
+briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
 profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
 storiesAPI(LocalDBMS, CommonUtils, Errors);
 eventsAPI(LocalDBMS, CommonUtils);

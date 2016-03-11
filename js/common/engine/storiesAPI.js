@@ -36,12 +36,12 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.createStory = function(storyName, callback){
 		    "use strict";
 		    if (storyName === "") {
-		    	callback(new Errors.ValidationError("Название истории пусто"));
+		    	callback(new Errors.ValidationError("stories-story-name-is-not-specified"));
 		        return;
 		    }
 		    
 		    if(this.database.Stories[storyName]){
-			    callback(new Errors.ValidationError("История с таким именем уже существует"));
+			    callback(new Errors.ValidationError("stories-story-name-already-used", [storyName]));
 			    return;
 		    }
 		    
@@ -57,17 +57,17 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.renameStory = function(fromName, toName, callback){
 		    "use strict";
 		    if (toName === "") {
-		        callback(new Errors.ValidationError("Новое имя не указано."));
+		        callback(new Errors.ValidationError("stories-story-name-is-not-specified"));
 		        return;
 		    }
 
 		    if (fromName === toName) {
-		        callback(new Errors.ValidationError("Имена совпадают."));
+		        callback(new Errors.ValidationError("stories-names-are-the-same"));
 		        return;
 		    }
 		    
 		    if(this.database.Stories[toName]){
-			    callback(new Errors.ValidationError("История с таким именем уже существует"));
+			    callback(new Errors.ValidationError("stories-story-name-already-used", [toName]));
 			    return;
 		    }
 		    
@@ -129,7 +129,7 @@ See the License for the specific language governing permissions and
 		    "use strict";
 
 		    if (characterName === "") {
-                callback(new Errors.ValidationError("Имя персонажа не указано"));
+                callback(new Errors.ValidationError("stories-character-name-is-not-specified"));
                 return;
             }
 		    
@@ -147,7 +147,7 @@ See the License for the specific language governing permissions and
 		    "use strict";
 		    
             if (fromName === "" || toName === "") {
-                callback(new Errors.ValidationError("Имя одного из персонажей не указано"));
+                callback(new Errors.ValidationError("stories-one-of-switch-characters-is-not-specified"));
                 return;
             }
 		    
@@ -171,7 +171,7 @@ See the License for the specific language governing permissions and
 		    "use strict";
 		    
             if (characterName === "") {
-                callback(new Errors.ValidationError("Имя персонажа не указано"));
+                callback(new Errors.ValidationError("stories-character-name-is-not-specified"));
                 return;
             }
 		    
@@ -207,11 +207,11 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, toEnd, selectedIndex, callback){
 		    "use strict";
 		    if (eventName === "") {
-		    	callback(new Errors.ValidationError("Название события не указано"));
+		    	callback(new Errors.ValidationError("stories-event-name-is-not-specified"));
 		        return;
 		    }
 		    if (eventText === "") {
-		    	callback(new Errors.ValidationError("Событие пусто"));
+		    	callback(new Errors.ValidationError("stories-event-text-is-empty"));
 		        return;
 		    }
 		    
@@ -260,7 +260,7 @@ See the License for the specific language governing permissions and
 		    "use strict";
 		    var story = this.database.Stories[storyName];
 		    if (story.events.length === index + 1) {
-		    	callback(new Errors.ValidationError("Выбранное событие объединяется со следующим событием. Последнее событие не с кем объединять."));
+		    	callback(new Errors.ValidationError("stories-cant-merge-last-event"));
 		    	return;
 		    }
 	
@@ -293,8 +293,12 @@ See the License for the specific language governing permissions and
 		// story events
 		LocalDBMS.prototype.updateEventProperty = function(storyName, index, property, value, callback){
 		    "use strict";
-		    if((property === "name" || property === "text")  && value.trim() === ""){
-		        callback(new Errors.ValidationError("Название или текст события не указаны."));
+		    if(property === "name" && value.trim() === ""){
+		        callback(new Errors.ValidationError("stories-event-name-is-not-specified"));
+		        return;
+		    }
+		    if(property === "text" && value.trim() === ""){
+		        callback(new Errors.ValidationError("stories-event-text-is-empty"));
 		        return;
 		    }
 		    var story = this.database.Stories[storyName].events[index][property] = value;

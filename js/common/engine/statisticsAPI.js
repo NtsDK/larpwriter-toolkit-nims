@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function statisticsAPI(LocalDBMS, R, Constants) {
+    function statisticsAPI(LocalDBMS, R, Constants, CommonUtils) {
         
         LocalDBMS.prototype.getStatistics = function(callback) {
             "use strict";
@@ -65,98 +65,90 @@ See the License for the specific language governing permissions and
             
             var profileItems = database.ProfileSettings.filter(function(value) {
                 return value.type !== 'string' && value.type !== 'text';
-            });
+            }).map(R.pick(['name', 'type']));
             
-            var data = {};
+//            var data = {};
             
-            profileItems.forEach(function(value) {
-                data[value.name] = {};
-                if (value.type === "enum") {
-                    data[value.name] = {
-                            chart : {}
-                    };
-                    value.value.split(",").forEach(function(enumItem) {
-                        data[value.name].chart[enumItem.trim()] = 0;
+            
+//            var initBarData = R.cond([
+//                [R.compose(R.equals('enum'), R.prop('type')), function(profileItem){
+//                    var values = profileItem.value.split(",");
+//                    return {
+//                        chart : R.zipObj(values, R.repeat(0, values.length))
+//                    };
+//                }],
+//                [R.compose(R.equals('checkbox'), R.prop('type')), R.always({
+//                    chart : R.zipObj([Constants[true].name, Constants[false].name], [0,0])
+//                })],
+//                [R.T, R.always({
+//                    "hist" : []
+//                })],
+//            ]);
+//            
+//            var data = R.zipObj(profileItems.map(R.prop('name')), profileItems.map(initBarData));
+            
+//            profileItems.forEach(function(profileItem) {
+//                R.values(database.Characters).map(R.prop(profileItem.name))
+//            }
+            
+//            var characters = R.values(database.Characters);
+            var groupCharacters = R.groupBy(R.__, R.values(database.Characters));
+            var groupedValues = profileItems.map(function(profileItem) {
+                if (profileItem.type === "enum" || profileItem.type === "checkbox") {
+                    return groupCharacters(R.prop(profileItem.name));
+                } else {
+                    return groupCharacters(function(character){
+                        return Math.floor(character[profileItem.name] / 5)
                     });
                 }
-                if (value.type === "checkbox") {
-                    var obj = {};
-//                    obj[L10n.getValue("common-yes")] = obj[L10n.getValue("common-no")] = 0;
-                    obj[Constants[true].displayName()] = obj[Constants[false].displayName()] = 0;
-                    data[value.name] = {
-                            chart : obj
-                    };
-                }
-                if (value.type === "number") {
-                    data[value.name] = {
-                            "hist" : []
-                    };
-                }
             });
             
-            R.values(database.Characters).forEach(function(character) {
-                profileItems.forEach(function(profileItem) {
-                    var dataObj = data[profileItem.name];
-                    if (profileItem.type === "enum") {
-                        dataObj.chart[character[profileItem.name]]++;
-                    }
-                    if (profileItem.type === "checkbox") {
-                        var type = Constants[character[profileItem.name]].displayName();
-                        dataObj.chart[type]++;
-                    }
-                    if (profileItem.type === "number") {
-                        var pos = Math.floor(character[profileItem.name] / 5);
-                        dataObj.hist[pos] = dataObj.hist[pos] ? (dataObj.hist[pos] + 1) : 1;
-                    }
-                });
+            groupedValues = groupedValues.map(function(group){
+                return R.fromPairs(R.toPairs(group).map(function(elem){
+                    elem[1] = elem[1].length;
+                    return elem;
+                }));
+            });
+                    
+//            var baseInfo = profileItems.map(R.pick(['name', 'type']));
+            
+            var res = R.transpose([profileItems, groupedValues]).map(function(arr){
+                return R.assoc('data', arr[1], arr[0])
             });
             
-            profileItems.forEach(function(value) {
-                if (value.type === "number") {
-                    data[value.name].hist = _toHist(data[value.name].hist);
-                } else {
-                    data[value.name].chart = _toChart(data[value.name].chart);
-                }
-            });
-            return data;
+//            R.values(database.Characters).forEach(function(character) {
+//                profileItems.forEach(function(profileItem) {
+//                    var dataObj = data[profileItem.name];
+//                    if (profileItem.type === "enum") {
+//                        dataObj.chart[character[profileItem.name]]++;
+//                    }
+//                    if (profileItem.type === "checkbox") {
+////                        var type = Constants[character[profileItem.name]].displayName();
+//                        var type = Constants[character[profileItem.name]].name;
+//                        dataObj.chart[type]++;
+//                    }
+//                    if (profileItem.type === "number") {
+//                        var pos = Math.floor(character[profileItem.name] / 5);
+//                        dataObj.hist[pos] = dataObj.hist[pos] ? (dataObj.hist[pos] + 1) : 1;
+//                    }
+//                });
+//            });
+//            
+//            profileItems.forEach(function(value) {
+//                if (value.type === "number") {
+//                    data[value.name].hist = _toHist(data[value.name].hist);
+//                } else {
+//                    data[value.name].chart = _toChart(data[value.name].chart);
+//                }
+//            });
+//            return data;
+            return res;
         };
         
-        var _toChart = function(obj) {
-            "use strict";
-            var total = 0;
-            var chart = [];
-            R.values(obj).forEach(function(value) {
-                total += value;
-            });
-            for ( var key in obj) {
-                chart.push({
-                    value : obj[key],
-                    label : _makeChartLabel(key, obj[key], total)
-                })
-            }
-            return chart;
-        };
-        var _toHist = function(array) {
-            "use strict";
-            var skipNulls = true;
-            var hist = [];
-            for (var i = 0; i < array.length; i++) {
-                if (array[i] === null && skipNulls) {
-                    continue;
-                }
-                skipNulls = false;
-                if (array[i]) {
-                    hist.push({
-                        value : array[i],
-                        label : i * 5 + "-" + (i * 5 + 4),
-                        tip : i * 5 + "-" + (i * 5 + 4)
-                    });
-                } else {
-                    hist.push(null);
-                }
-            }
-            return hist;
-        };
+
+//        var _toHist = function(array) {
+//
+//        };
         var _makeChartLabel = function(key, value, total) {
             return [ key, ": ", (value / total * 100).toFixed(0), "% (", value, "/", total, ")" ].join("");
         };
@@ -254,7 +246,7 @@ See the License for the specific language governing permissions and
                     finishedStories++;
                 }
             }
-            return (finishedStories / (allStories === 0 ? 1 : allStories) * 100).toFixed(1) + '% (' + finishedStories + " из " + allStories + ' историй)';
+            return [(finishedStories / (allStories === 0 ? 1 : allStories) * 100).toFixed(1), finishedStories, allStories];
         };
         
         var _getGeneralCompleteness = function(database) {
@@ -271,7 +263,7 @@ See the License for the specific language governing permissions and
                     }
                 });
             }
-            return (finishedAdaptations / (allAdaptations === 0 ? 1 : allAdaptations) * 100).toFixed(1) + '% (' + finishedAdaptations + " из " + allAdaptations + ' адаптаций)';
+            return [(finishedAdaptations / (allAdaptations === 0 ? 1 : allAdaptations) * 100).toFixed(1), finishedAdaptations, allAdaptations];
         };
         
         var _countTextCharacters = function(database) {
