@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 
 	function briefingExportAPI(LocalDBMS, CommonUtils, R, Constants) {
 	
-		LocalDBMS.prototype.getBriefingData = function(groupingByStory, selectedCharacters, callback) {
+		LocalDBMS.prototype.getBriefingData = function(selectedCharacters, callback) {
 			"use strict";
 			var data = {};
 	
@@ -41,11 +41,8 @@ See the License for the specific language governing permissions and
 				var profileInfo = _getProfileInfoObject(this.database, charName);
 				var profileInfoArray = _getProfileInfoArray(this.database, charName);
 	
-//				if (groupingByStory) {
-					var storiesInfo = _getStoriesInfo(this.database, charName);
-//				} else {
-					var eventsInfo = _getEventsInfo(this.database, charName);
-//				}
+				var storiesInfo = _getStoriesInfo(this.database, charName);
+				var eventsInfo = _getEventsInfo(this.database, charName);
 				var dataObject = {
 				    "gameName" : this.database.Meta.name,
 					"name" : charName,
@@ -80,7 +77,7 @@ See the License for the specific language governing permissions and
 					profileInfo[element.name] = character[element.name];
 					break;
 				case "checkbox":
-					profileInfo[element.name] = Constants[character[element.name]].name;
+					profileInfo[element.name] = character[element.name];
 					break;
 				}
 			});
@@ -103,7 +100,7 @@ See the License for the specific language governing permissions and
 				    splittedText = value = character[element.name];
 					break;
 				case "checkbox":
-				    splittedText= value = Constants[character[element.name]].name;
+				    splittedText= value = character[element.name];
 					break;
 				}
 				return {

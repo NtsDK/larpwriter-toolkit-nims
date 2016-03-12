@@ -180,7 +180,7 @@ Tests.list.push(function eventTextUpdateIsEmpty(name) {
 });
 
 Tests.list.push(function callGetBriefingData(name) {
-    DBMS.getBriefingData(null, {'Колобок': true}, function(err){
+    DBMS.getBriefingData({'Колобок': true}, function(err){
         if (err) {
 //            if (!predicate(err)) {
             console.log(name + " assertion failed: " + JSON.stringify(err));

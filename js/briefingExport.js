@@ -138,30 +138,49 @@ BriefingExport.makeExport = function (type) {
     };
 };
 
+BriefingExport.getBriefingData = function(callback){
+    "use strict";
+    DBMS.getBriefingData(BriefingExport.getSelectedUsers(), function(err, briefingData){
+        if(err) {Utils.handleError(err); return;}
+        // some postprocessing
+        DBMS.getAllProfileSettings(function(err, profileSettings){
+            if(err) {Utils.handleError(err); return;}
+            
+            var checkboxIndexes = [];
+            var checkboxNames = [];
+            profileSettings.forEach(function(profileItem, i){
+                if(profileItem.type === 'checkbox'){
+                    checkboxIndexes.push(i);
+                    checkboxNames.push(profileItem.name);
+                }
+            });
+            
+            briefingData.briefings.forEach(function(charData){
+                checkboxIndexes.forEach(function(index){
+                    var obj = charData.profileInfoArray[index];
+                    obj.value = obj.splittedText = getL10n('common-' + Constants[obj.value].name);
+                });
+                checkboxNames.forEach(function(name){
+                    charData['profileInfo.' + name] = getL10n('common-' + Constants[charData['profileInfo.' + name]].name);
+                });
+            });
+            callback(null, briefingData);
+        });
+    });
+};
+
 BriefingExport.exportByDefaultTemplate = function(type){
     "use strict";
-    
-    var template = BriefingExport.templates[type];
-    var groupingByStory;
-    switch(type){
-    case "templateByTime"   : 
-      groupingByStory = false;
-      break;
-    case "templateByStory"  : 
-    case "inventoryTemplate": 
-      groupingByStory = true;
-      break;
-    }
-    DBMS.getBriefingData(groupingByStory, BriefingExport.getSelectedUsers(), function(err, briefingData){
+    BriefingExport.getBriefingData(function(err, briefingData){
       if(err) {Utils.handleError(err); return;}
-      BriefingExport.generateDocxBriefings(template, briefingData);
+      BriefingExport.generateDocxBriefings(BriefingExport.templates[type], briefingData);
     });
 };
 
 BriefingExport.previewTextDataAsIs = function () {
   "use strict";
   
-  DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, briefingData){
+  BriefingExport.getBriefingData(function(err, briefingData){
     if(err) {Utils.handleError(err); return;}
     getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, "  ");
   });
@@ -169,7 +188,7 @@ BriefingExport.previewTextDataAsIs = function () {
 
 BriefingExport.renderText = function(textTemplate, delegate){
   "use strict";
-  DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, data){
+  BriefingExport.getBriefingData(function(err, data){
     if(err) {Utils.handleError(err); return;}
     var characterList = {};
     data.briefings.forEach(function (briefingData) {
@@ -237,7 +256,7 @@ BriefingExport.readTemplateFile = function (evt) {
         var r = new FileReader();
         r.onload = function (e) {
             var contents = e.target.result;
-            var briefingData = DBMS.getBriefingData(BriefingExport.isGroupingByStory(), BriefingExport.getSelectedUsers(), function(err, briefingData){
+            BriefingExport.getBriefingData(function(err, briefingData){
             	if(err) {Utils.handleError(err); return;}
             	BriefingExport.generateDocxBriefings(contents, briefingData);
             });
