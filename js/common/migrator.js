@@ -19,8 +19,31 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports) {
+    
+    var exists = function(data, prefix, key){
+        console.log(prefix + '.' + key + ': ' + (data[key] !== undefined ? "OK" : "undefined"));
+    };
+    
+    var checkCharacterProfileConsistency = function(data){
+        var profileItems = data.ProfileSettings.map(R.prop('name'));
+        
+        R.values(data.Characters).forEach(function(character){
+            var charItems = R.keys(character).filter(R.compose(R.not, R.equals('name')));
+            if(charItems.length !== profileItems.length){
+                console.log("Character profile inconsistent, lengths are different: char " + character.name + ", charItems [" + charItems + "], profileItems [" + profileItems + "]");
+                return;
+            }
+            
+            if(!charItems.every(R.contains(R.__, profileItems))){
+                console.log("Character profile inconsistent, item name inconsistency: char " + character.name + ", charItems [" + charItems + "], profileItems [" + profileItems + "]");
+                return;
+            }
+        });
+    };
 
 	exports.migrate = function(data) {
+	    exists(data, 'base', 'Stories');
+	    
 		if (!data.Version) {
 
 			data.Settings = {};
@@ -44,6 +67,17 @@ See the License for the specific language governing permissions and
 		    delete data.Settings["Events"];
 		    data.Version = "0.4.3";
 		}
+		
+		exists(data, 'base', 'Characters');
+		exists(data, 'base', 'ProfileSettings');
+		exists(data, 'base', 'Meta');
+		exists(data.Meta, 'base.Meta', 'name');
+		exists(data.Meta, 'base.Meta', 'date');
+		exists(data.Meta, 'base.Meta', 'preGameDate');
+		exists(data.Meta, 'base.Meta', 'description');
+		
+		checkCharacterProfileConsistency(data);
+		
 		return data;
 	};
 })(typeof exports === 'undefined' ? this['Migrator'] = {} : exports);
