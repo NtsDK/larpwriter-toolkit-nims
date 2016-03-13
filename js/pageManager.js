@@ -26,11 +26,26 @@ PageManager.onLoad = function () {
     L10n.localizeStatic();
 	if(MODE === "Standalone"){
 		DBMS = new LocalDBMS();
-		DBMS.setDatabase(BaseExample.data, Utils.processError(PageManager.onDatabaseLoad));
+		DBMS.setDatabase(BaseExample.data, function(err){
+	        if(err) {Utils.handleError(err); return;}
+	        PageManager.consistencyCheck(PageManager.onDatabaseLoad);
+		});
 	} else if(MODE === "NIMS_Server") {
 		DBMS = new RemoteDBMS();
-		PageManager.onDatabaseLoad();
+		PageManager.consistencyCheck(PageManager.onDatabaseLoad);
 	}
+};
+
+PageManager.consistencyCheck = function(callback){
+    "use strict";
+    DBMS.getConsistencyCheckResult(function(err, consistencyErrors){
+        if(err) {Utils.handleError(err); return;}
+        consistencyErrors.forEach(CommonUtils.consoleLog);
+        if(consistencyErrors.length > 0){
+            Utils.alert(getL10n('overview-consistency-problem-detected'));
+        }
+        callback();
+    });
 };
 
 PageManager.onDatabaseLoad = function () {
@@ -108,7 +123,7 @@ PageManager.onDatabaseLoad = function () {
     		
     		FileUtils.init(function(err){
     			if(err) {Utils.handleError(err); return;}
-    			PageManager.currentView.refresh();
+    			PageManager.consistencyCheck(PageManager.currentView.refresh);
     		});
     		
     		PageManager.currentView.refresh();

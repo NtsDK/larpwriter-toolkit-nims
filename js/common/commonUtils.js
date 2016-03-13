@@ -51,6 +51,11 @@ See the License for the specific language governing permissions and
         });
     };
     
+    exports.consoleLog = function(str){
+        "use strict";
+        console.log(str);
+    };
+    
 	exports.clone = function(o) {
 		"use strict";
 		if (!o || 'object' !== typeof o) {

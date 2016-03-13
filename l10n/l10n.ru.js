@@ -94,6 +94,7 @@
 		"stories-diagram":"Истории",
 		"story-completeness-value":'{0}% ({1} из {2} историй)',
 		"general-completeness-value": '{0}% ({1} из {2} адаптаций)',
+		'consistency-problem-detected': "Проверка данных выявила нарушение целостности базы, пожалуйста свяжитесь с разработчиками для устранения проблемы.",
 	},
 	"characters": {
 		"character-managing":"Управление персонажами",

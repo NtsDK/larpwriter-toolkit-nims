@@ -24,23 +24,6 @@ See the License for the specific language governing permissions and
         console.log(prefix + '.' + key + ': ' + (data[key] !== undefined ? "OK" : "undefined"));
     };
     
-    var checkCharacterProfileConsistency = function(data){
-        var profileItems = data.ProfileSettings.map(R.prop('name'));
-        
-        R.values(data.Characters).forEach(function(character){
-            var charItems = R.keys(character).filter(R.compose(R.not, R.equals('name')));
-            if(charItems.length !== profileItems.length){
-                console.log("Character profile inconsistent, lengths are different: char " + character.name + ", charItems [" + charItems + "], profileItems [" + profileItems + "]");
-                return;
-            }
-            
-            if(!charItems.every(R.contains(R.__, profileItems))){
-                console.log("Character profile inconsistent, item name inconsistency: char " + character.name + ", charItems [" + charItems + "], profileItems [" + profileItems + "]");
-                return;
-            }
-        });
-    };
-
 	exports.migrate = function(data) {
 	    exists(data, 'base', 'Stories');
 	    
@@ -76,8 +59,7 @@ See the License for the specific language governing permissions and
 		exists(data.Meta, 'base.Meta', 'preGameDate');
 		exists(data.Meta, 'base.Meta', 'description');
 		
-		checkCharacterProfileConsistency(data);
-		
 		return data;
 	};
+	
 })(typeof exports === 'undefined' ? this['Migrator'] = {} : exports);
