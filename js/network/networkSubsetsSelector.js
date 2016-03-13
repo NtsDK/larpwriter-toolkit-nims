@@ -35,8 +35,8 @@ NetworkSubsetsSelector.refresh = function (parent) {
     var option;
     Constants.objectSubsets.forEach(function (objectSubset) {
         option = makeEl("option");
-        option.appendChild(makeText(objectSubset.displayName));
-        option.value = objectSubset.name;
+        option.appendChild(makeText(constL10n(objectSubset)));
+        option.value = objectSubset;
         if(firstEl){
             option.selected = true;
             firstEl = false;
@@ -71,9 +71,9 @@ NetworkSubsetsSelector.getStoryNames = function () {
     var value = getEl("networkSubsetsSelector").value;
     
     var selector;
-    if(Constants.objectSubsets[0].name === value){ // all objects
+    if(Constants.objectSubsets[0] === value){ // all objects
         return Object.keys(NetworkSubsetsSelector.parent.Stories);
-    } else if (Constants.objectSubsets[1].name === value) { // "selected characters"
+    } else if (Constants.objectSubsets[1] === value) { // "selected characters"
         selector = getEl("networkCharacterSelector");
         
         var primaryCharacters = {};
@@ -115,9 +115,9 @@ NetworkSubsetsSelector.getCharacterNames = function () {
     var value = getEl("networkSubsetsSelector").value;
     
     var selector;
-    if(Constants.objectSubsets[0].name === value){ // all objects
+    if(Constants.objectSubsets[0] === value){ // all objects
         return Object.keys(NetworkSubsetsSelector.parent.Characters);
-    } else if (Constants.objectSubsets[1].name === value) { // "selected characters"
+    } else if (Constants.objectSubsets[1] === value) { // "selected characters"
         // returns character and his neighbours
         selector = getEl("networkCharacterSelector");
         
@@ -184,6 +184,6 @@ NetworkSubsetsSelector.onNetworkSubsetsChange = function (event) {
     
     var selector1 = getEl("networkCharacterDiv");
     var selector2 = getEl("networkStoryDiv");
-    setClassByCondition(selector1, "hidden", selectedSubset !== Constants.objectSubsets[1].name);
-    setClassByCondition(selector2, "hidden", selectedSubset !== Constants.objectSubsets[2].name);
+    setClassByCondition(selector1, "hidden", selectedSubset !== Constants.objectSubsets[1]);
+    setClassByCondition(selector2, "hidden", selectedSubset !== Constants.objectSubsets[2]);
 };

@@ -163,7 +163,7 @@ BriefingPreview.showProfile = function(content, profile){
             content.appendChild(makeEl("br"));
             break;
         case "checkbox":
-            content.appendChild(makeText(Constants[profile[element.name]].displayName()));
+            content.appendChild(makeText(constL10n(Constants[profile[element.name]])));
             content.appendChild(makeEl("br"));
             break;
         }

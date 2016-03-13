@@ -332,7 +332,7 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
             
             input.addEventListener("change", Events.onChangeReadyStatus);
             div.appendChild(input);
-            addEl(div, setAttr(addEl(makeEl("label"), makeText(Constants.events.finishedText)), "for", input.id));
+            addEl(div, setAttr(addEl(makeEl("label"), makeText(constL10n(Constants.finishedText))), "for", input.id));
             
             divContainer.appendChild(div);
         }
@@ -363,8 +363,8 @@ Events.onChangePersonalStoryDelegate = function (event) {
 
 Events.getSuffix = function(object){
     "use strict";
-    if(object.isEmpty) return Constants.events.emptySuffix;
-    if(object.isFinished) return Constants.events.finishedSuffix;
+    if(object.isEmpty) return constL10n(Constants.emptySuffix);
+    if(object.isFinished) return constL10n(Constants.finishedSuffix);
     return "";
 };
 

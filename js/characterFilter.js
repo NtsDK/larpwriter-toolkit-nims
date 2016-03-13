@@ -229,7 +229,7 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
     profileSettings.forEach(function (profileItemInfo, i) {
         td = makeEl("td");
         if (profileItemInfo.type === "checkbox") {
-            td.appendChild(makeText(Constants[character[profileItemInfo.name]].displayName()));
+            td.appendChild(makeText(constL10n(Constants[character[profileItemInfo.name]])));
         } else if (profileItemInfo.type === "text" && profileItemInfo.name !== "name") {
             regex = Utils.globStringToRegex(inputItems[profileItemInfo.name].value);
             pos = character[profileItemInfo.name].search(regex);
@@ -347,10 +347,10 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         selector = makeEl("select");
         selector.selfInfo = profileItemConfig;
 
-        R.values(Constants.numberFilter).forEach(function (value) {
+        Constants.numberFilter.forEach(function (value) {
             var option = makeEl("option");
-            option.appendChild(makeText(value.displayName()));
-            option.value = value.name;
+            option.appendChild(makeText(constL10n(value)));
+            option.value = value;
             selector.appendChild(option);
         });
         selector.selectedIndex = 0;
@@ -375,8 +375,8 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         Constants.yesNo.forEach(function(value){
             var option = makeEl("option");
             option.selected = true;
-            option.value = value.name;
-            option.appendChild(makeText(value.displayName()));
+            option.value = value;
+            option.appendChild(makeText(constL10n(value)));
             selector.appendChild(option);
         });
         root.appendChild(selector);

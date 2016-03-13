@@ -93,24 +93,18 @@ SocialNetwork.init = function () {
     var selector = getEl("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
     
-    var option;
-    Constants.networks.forEach(function (network) {
-        option = makeEl("option");
-        option.appendChild(makeText(network.displayName));
-        option.value = network.name;
-        selector.appendChild(option);
-    });
+
     
     selector = getEl("activitySelector");
     selector.addEventListener("change", SocialNetwork.onActivitySelectorChangeDelegate);
     
-    var st;
+    var st, option;
     Constants.characterActivityTypes.forEach(function (activity) {
         option = makeEl("option");
-        option.appendChild(makeText(activity.displayName));
+        option.appendChild(makeText(constL10n(activity)));
         st = option.style;
-        st.color = SocialNetwork.activityColors[activity.name];
-        option.activity = activity.name;
+        st.color = SocialNetwork.activityColors[activity];
+        option.activity = activity;
         selector.appendChild(option);
     });
     
@@ -153,8 +147,16 @@ SocialNetwork.init = function () {
 SocialNetwork.refresh = function () {
     "use strict";
     
-    var selector = getEl("networkSelector");
-    selector.value = Constants.networks[0].name;
+    var selector = clearEl(getEl("networkSelector"));
+
+    var option;
+    Constants.networks.forEach(function (network) {
+        option = makeEl("option");
+        option.appendChild(makeText(constL10n(network)));
+        option.value = network;
+        selector.appendChild(option);
+    });
+    selector.value = Constants.networks[0];
     
     selector = clearEl(getEl("networkNodeGroupSelector"));
     
@@ -186,7 +188,7 @@ SocialNetwork.refresh = function () {
 		                    return element.type === "enum" || element.type === "checkbox";
 		                });
 		                
-		                var groupNames = [ Constants.noGroup ].concat(groups.map(function (elem) {
+		                var groupNames = [ {name: Constants.noGroup, displayName: constL10n(Constants.noGroup)} ].concat(groups.map(function (elem) {
 		                    return {
 		                        name: elem.name,
 		                        displayName: elem.name,
@@ -242,7 +244,7 @@ SocialNetwork.refreshLegend = function (groupName) {
         return value.substring(0, groupName.length) === groupName;
     }).forEach(function (value) {
         colorDiv = makeEl("div");
-        colorDiv.appendChild(makeText(value === "noGroup" ? Constants.noGroup.displayName : value));
+        colorDiv.appendChild(makeText(value === "noGroup" ? constL10n('noGroup') : value));
         colorDiv.style.backgroundColor = SocialNetwork.groupColors[value].color.background;
         colorDiv.style.border = "solid 2px " + SocialNetwork.groupColors[value].color.border;
         colorLegend.appendChild(colorDiv);
@@ -356,7 +358,7 @@ SocialNetwork.getCharacterNodes = function () {
                 nodes.push({
                     id : character.name,
                     label : character.name.split(" ").join("\n"),
-                    group : groupName === "noGroup" ? Constants.noGroup.displayName : groupName
+                    group : groupName === "noGroup" ? constL10n('noGroup'): groupName
                             + "." + character[groupName]
                 });
             });

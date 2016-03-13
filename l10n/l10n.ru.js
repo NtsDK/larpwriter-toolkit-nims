@@ -32,10 +32,43 @@
 		"add":"Добавить",
 		"remove":"Удалить",
 		"on": "на",
-	    "yes":"Да",
-	    "no": "Нет",
         "set-item-before" : "Перед '{0}'",
         "set-item-as-last" : "В конец",
+	},
+	"constant": {
+	    "yes":"Да",
+	    "no": "Нет",
+        // social network subsets
+	    "allObjects" : "Все объекты",
+        "selectedCharacters": "Избранные персонажи",
+        "selectedStories": "Избранные истории",
+        // social network types
+        //"simpleNetwork"            : "Простая сеть",
+        "socialRelations"          : "Социальные связи",
+        "characterPresenceInStory" : "Персонаж-участие-история",
+        "characterActivityInStory" : "Персонаж-активность-история",
+        // no group
+        "noGroup": "Без групп" ,
+        // activities
+        "active"    : "Актив" ,
+        "follower"  : "Спутник" ,
+        "defensive" : "Защита" ,
+        "passive"   : "Пассив" ,
+        // number filter
+        "ignore" : "Не важно",
+        "greater" : "Больше",
+        "equal" : "Равно",
+        "lesser" : "Меньше",
+        // adaptations labels
+        "finishedText" : "Описание завершено",
+        "finishedSuffix" : "(завершено)",
+        "emptySuffix" : "(пусто)",
+        // profile item types
+        "text":"Текст",
+        "string":"Строка",
+        "enum":"Единственный выбор", // single choice
+        "number":"Число",
+        "checkbox":"Галочка",
 	},
 	"overview": {
 		"descr":"Описание",
@@ -72,11 +105,7 @@
 		"profile-item-name":"Название",
 		"profile-item-type":"Тип",
 		"profile-item-position":"Позиция",
-		"item-type-text":"Текст",
-		"item-type-string":"Строка",
-		"item-type-single-choice":"Единственный выбор",
-		"item-type-number":"Число",
-		"item-type-checkbox":"Галочка",
+
 		"move-item":"Переместить",
 		"table-profile-item-name":"Название поля",
 		"profile-item-default-value":"Значения",
@@ -105,10 +134,7 @@
 	    "filter":"Фильтр",
 	    "results":"Результатов:",
 	    "character":"Персонаж",
-        "ignore" : "Не важно",
-        "greater" : "Больше",
-        "equal" : "Равно",
-        "lesser" : "Меньше",
+
 	},
 	"stories":{
 	    "stories":"Истории",

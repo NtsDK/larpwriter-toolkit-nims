@@ -158,10 +158,10 @@ BriefingExport.getBriefingData = function(callback){
             briefingData.briefings.forEach(function(charData){
                 checkboxIndexes.forEach(function(index){
                     var obj = charData.profileInfoArray[index];
-                    obj.value = obj.splittedText = getL10n('common-' + Constants[obj.value].name);
+                    obj.value = obj.splittedText = constL10n(Constants[obj.value]);
                 });
                 checkboxNames.forEach(function(name){
-                    charData['profileInfo.' + name] = getL10n('common-' + Constants[charData['profileInfo.' + name]].name);
+                    charData['profileInfo.' + name] = constL10n(Constants[charData['profileInfo.' + name]]);
                 });
             });
             callback(null, briefingData);

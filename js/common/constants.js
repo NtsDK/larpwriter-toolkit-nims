@@ -21,120 +21,61 @@ See the License for the specific language governing permissions and
     exports.profileFieldTypes = {
 		"text" : {
 		    name : "text",
-//			displayName : L10n.getFixedValue("characters-item-type-text"),
-			displayName : function(){return "Текст"},
 			value : ""
 		},
 		"string" : {
 		    name : "string",
-//			displayName : L10n.getFixedValue("characters-item-type-string"),
-			displayName : function(){return "Строка"},
 			value : ""
 		},
 		"enum" : {
 		    name : "enum",
-//			displayName : L10n.getFixedValue("characters-item-type-single-choice"),
-			displayName : function(){return "Единственный выбор"},
 			value : "_"
 		},
 		"number" : {
 		    name : "number",
-//			displayName : L10n.getFixedValue("characters-item-type-number"),
-			displayName : function(){return "Число"},
 			value : 0
 		},
 		"checkbox" : {
 		    name : "checkbox",
-//			displayName : L10n.getFixedValue("characters-item-type-checkbox"),
-			displayName : function(){return "Галочка"},
 			value : false
 		}
     };
     
-    exports.objectSubsets = [ {
-        name : "allObjects",
-        displayName : "Все объекты"
-    }, {
-        name : "selectedCharacters",
-        displayName : "Избранные персонажи"
-    }, {
-        name : "selectedStories",
-        displayName : "Избранные истории"
-    } ];
+    exports.objectSubsets = [
+        "allObjects",
+        "selectedCharacters",
+        "selectedStories",
+    ];
     
-    exports.networks = [ {
-//        displayName: "Простая сеть",
-//        name : "simpleNetwork"
-//    },{
-        displayName: "Социальные связи",
-        name : "socialRelations"
-    },{
-        displayName: "Персонаж-участие-история",
-        name: "characterPresenceInStory"
-    },{
-        displayName: "Персонаж-активность-история" ,
-        name: "characterActivityInStory"
-    }];
+    exports.networks = [
+//        "simpleNetwork"            ,
+        "socialRelations"          ,
+        "characterPresenceInStory" ,
+        "characterActivityInStory" ,
+    ];
     
-    exports.noGroup = {
-        displayName: "Без групп" ,
-        name: "noGroup"
-    };
+    exports.noGroup = "noGroup";
     
-    exports.characterActivityTypes = [{
-        name:"active",
-        displayName:"Актив"
-    },{
-        name:"follower",
-        displayName:"Спутник"
-    },{
-        name:"defensive",
-        displayName:"Защита"
-    },{
-        name:"passive",
-        displayName:"Пассив"
-    }];
+    exports.characterActivityTypes = [
+        "active",
+        "follower",
+        "defensive",
+        "passive",
+    ];
 
-    exports.numberFilter = {
-        "ignore" : {
-            name : "ignore",
-//            displayName : L10n.getFixedValue("character-filter-ignore"),
-            displayName : function(){return "Не важно"},
-        },
-        "greater" : {
-            name : "greater",
-//            displayName : L10n.getFixedValue("character-filter-greater"),
-            displayName : function(){return "Больше"},
-        },
-        "equal" : {
-            name : "equal",
-//            displayName : L10n.getFixedValue("character-filter-equal"),
-            displayName : function(){return "Равно"},
-        },
-        "lesser" : {
-            name : "lesser",
-//            displayName : L10n.getFixedValue("character-filter-lesser"),
-            displayName : function(){return "Меньше"},
-        }
-    };
+    exports.numberFilter = [
+        "ignore" ,
+        "greater",
+        "equal"  ,
+        "lesser" ,
+    ];
     
-    exports.events = {
-        finishedText : "Описание завершено",
-        finishedSuffix : "(завершено)",
-        emptySuffix : "(пусто)"
-    };
+    exports.finishedText   = "finishedText"  ;
+    exports.finishedSuffix = "finishedSuffix";
+    exports.emptySuffix    = "emptySuffix"   ;
     
-    exports[true] = {
-        name : "yes",
-//        displayName : L10n.getFixedValue("common-yes")
-        displayName : function(){return "Да"}
-    };
-    
-    exports[false] = {
-        name : "no",
-//        displayName : L10n.getFixedValue("common-no"),
-        displayName : function(){return "Нет"}
-    };
+    exports[true] = "yes";
+    exports[false] = "no";
     
     exports.yesNo = [exports[true], exports[false]];
     

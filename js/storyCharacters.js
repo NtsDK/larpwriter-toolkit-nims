@@ -111,7 +111,7 @@ StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
 	
 	var tableHead = clearEl(getEl("story-characterActivityTableHead"));
 	var table = clearEl(getEl("story-characterActivityTable"));
-	addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name")].concat(Constants.characterActivityTypes.map(R.prop('displayName')))));
+	addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name")].concat(Constants.characterActivityTypes.map(constL10n))));
 	removeArray.forEach(function (removeValue) {
 		StoryCharacters.appendCharacterActivity(table, removeValue, localCharacters[removeValue.value]);
 	});
@@ -209,11 +209,11 @@ StoryCharacters.appendCharacterActivity = function (table, characterMeta, charac
         input = makeEl("input");
         addClass(input, "isStoryEditable");
         input.type = "checkbox";
-        if (character.activity[activityType.name]) {
+        if (character.activity[activityType]) {
             input.checked = true;
         }
         input.characterName = character.name;
-        input.activityType = activityType.name;
+        input.activityType = activityType;
         input.addEventListener("change", StoryCharacters.onChangeCharacterActivity);
         td.appendChild(input);
         tr.appendChild(td);

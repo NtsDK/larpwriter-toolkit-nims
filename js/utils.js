@@ -50,7 +50,7 @@ Utils.addView = function (containers, name, view, opts) {
     var elems, i;
     var onClickDelegate = function (view) {
         return function (evt) {
-//            Tests.run();
+            Tests.run();
             elems = containers.navigation.getElementsByClassName(buttonClass);
             if(opts.toggle){
                 var els = getEls("-toggle-class-" + name);
@@ -196,6 +196,11 @@ function getL10n(key){
     return L10n.getValue(key);
 };
 
+function constL10n(key){
+    "use strict";
+    return L10n.getValue('constant-' + key);
+}
+
 function isEmpty (obj) {
     "use strict";
     return (Object.getOwnPropertyNames(obj).length === 0);
@@ -264,6 +269,12 @@ var addEl = R.curry(function(parent, child){
     parent.appendChild(child);
     return parent;
 });
+
+var makeOpt = function(label){
+    var option = makeEl("option");
+    addEl(option, (makeText(label)));
+    return option;
+};
 
 var rAddEl = R.curry(function(child, parent){
   parent.appendChild(child);

@@ -181,7 +181,7 @@ Overview.refresh = function () {
         
         var localizeCheckboxes = function(info){
             info.data = R.fromPairs(R.toPairs(info.data).map(function(val){
-                val[0] = Constants[val[0]].displayName();
+                val[0] = constL10n(Constants[val[0]]);
                 return val;
             }));
             return info;

@@ -163,7 +163,7 @@ CharacterProfileConfigurer.fillSelector = function (sel) {
         return setProp(addEl(makeEl("option"), makeText(displayName)),'value', value);
     };
     R.values(Constants.profileFieldTypes).forEach(function (value) {
-        addEl(sel, makeOption(value.name, value.displayName()))
+        addEl(sel, makeOption(value.name, constL10n(value.name)))
     });
 };
 
