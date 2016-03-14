@@ -50,7 +50,7 @@ Utils.addView = function (containers, name, view, opts) {
     var elems, i;
     var onClickDelegate = function (view) {
         return function (evt) {
-            Tests.run();
+            //Tests.run();
             elems = containers.navigation.getElementsByClassName(buttonClass);
             if(opts.toggle){
                 var els = getEls("-toggle-class-" + name);
@@ -186,10 +186,7 @@ String.prototype.endsWith = function (suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
-function strFormat(str, vals){
-    "use strict";
-    return CommonUtils.strFormat(str, vals);
-};
+var strFormat = R.curry(CommonUtils.strFormat);
 
 function getL10n(key){
     "use strict";

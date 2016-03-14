@@ -54,6 +54,7 @@ See the License for the specific language governing permissions and
 
   <script src="templates/templatesArr.js"></script>
   <script src="templates/inventoryTemplate.js"></script>
+  <script src="templates/genericTemplate.js"></script>
   <script src="templates/templateByTime.js"></script>
   <script src="templates/templateByStory.js"></script>
   <script src="templates/textTemplate.js"></script>
@@ -685,10 +686,12 @@ See the License for the specific language governing permissions and
 
               
               </textarea><br>
-              <label l10n-id="briefings-enter-text-fyle-type"></label>
+              <label l10n-id="briefings-enter-text-file-type"></label>
               <input id="textTypeSelector" value="txt"/>
               <button id="previewTextOutput" l10n-id="briefings-preview"></button><br>
               <button id="showRawData" class="hidden" l10n-id="briefings-raw-data"></button>
+              <button id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template">Конвертировать в docx шаблон</button>
+              <button id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template">Сгенерировать в docx по текущему шаблону</button>
               <button id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
             </div>
             <div >

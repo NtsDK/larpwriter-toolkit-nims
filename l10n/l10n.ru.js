@@ -240,7 +240,7 @@
 	    "make-inventory": "Сформировать список инвентаря (docx)",
 	    "upload-template-and-make-export": "Загрузить шаблон и сформировать вводные",
 	    "template": "Шаблон",
-	    "enter-text-fyle-type": "Введите тип сохраняемого текста (txt, html, rst и др.)",
+	    "enter-text-file-type": "Введите тип сохраняемого текста (txt, html, rst и др.)",
 	    "preview": "Предварительный просмотр",
 	    "raw-data": "Исходные данные",
 	    "export": "Выгрузить",
@@ -248,6 +248,8 @@
 	    "export-status": "Статус выгрузки",
 	    "error-on-template-uploading": "Ошибка при загрузке файла",
 	    "error-on-generating-briefings": "Ошибка во время генерации вводных",
+        "convert-to-docx-template":"Конвертировать в docx шаблон",
+        "generate-by-docx-template":"Сгенерировать в docx по текущему шаблону",
 	    // breifings preview
 	    "character-label": "Персонаж: {0}",
 	    "inventory":'Инвентарь',

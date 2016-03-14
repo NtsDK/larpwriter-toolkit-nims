@@ -79,6 +79,8 @@ See the License for the specific language governing permissions and
     
     exports.yesNo = [exports[true], exports[false]];
     
+    exports.briefingNumber = [1,5,10,20];
+    
     exports.colorPalette = [
       //{color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"}, hover: {border: "#2B7CE9", background: "#D2E5FF"}}}, // 0: blue
       //{color: {border: "#FFA500", background: "#FFFF00", highlight: {border: "#FFA500", background: "#FFFFA3"}, hover: {border: "#FFA500", background: "#FFFFA3"}}}, // 1: yellow

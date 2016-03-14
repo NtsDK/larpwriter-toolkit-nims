@@ -1,4 +1,5 @@
-var TEXT_TEMPLATE = "{{name}}\n" +
+var TEXT_TEMPLATE = "{{#briefings}}\n" + 
+  "{{name}}\n" +
   "\n" +
   "Инвентарь: {{inventory}}\n" +
   "\n" +
@@ -18,4 +19,5 @@ var TEXT_TEMPLATE = "{{name}}\n" +
   "{{{time}}} {{name}}\n" +
   "{{text}}\n" +
   "{{/eventsInfo}}\n" +
-  "{{/storiesInfo}}\n";
+  "{{/storiesInfo}}\n" +
+  "{{/briefings}}\n";

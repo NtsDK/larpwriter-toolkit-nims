@@ -22,8 +22,6 @@ var BriefingExport = {};
 
 BriefingExport.templates = {};
 
-BriefingExport.briefingNumber = [1,5,10,20];
-
 BriefingExport.init = function () {
     "use strict";
     listen(getEl("makeDefaultTextBriefings"), "click", function(){
@@ -37,9 +35,6 @@ BriefingExport.init = function () {
     var el = getEl("docxBriefings");
     el.addEventListener("change", BriefingExport.readTemplateFile);
 
-//    el = getEl("eventGroupingByStoryRadio2");
-//    el.checked = true;
-
     el = getEl("exportSelectionAll");
     el.checked = true;
     el.addEventListener("change", BriefingExport.onExportSelectionChange);
@@ -50,11 +45,7 @@ BriefingExport.init = function () {
 
     el = getEl("briefingNumberSelector");
     var option;
-    BriefingExport.briefingNumber.forEach(function(number){
-      option = makeEl("option");
-      option.appendChild(makeText(number));
-      el.appendChild(option);
-    });
+    Constants.briefingNumber.forEach(R.compose(addEl(el), makeOpt));
     
     listen(el, "change", BriefingExport.onNumberSelectorChange);
     
@@ -71,6 +62,9 @@ BriefingExport.init = function () {
     getEl("textBriefingPreviewArea").value = "";
 
     listen(getEl("showRawData"), "click", BriefingExport.previewTextDataAsIs);
+    
+    listen(getEl("convertToDocxTemplate"), "click", BriefingExport.convertToDocxTemplate);
+    listen(getEl("generateByDocxTemplate"), "click", BriefingExport.generateByDocxTemplate);
 
     BriefingExport.briefingSelector = getEl("briefingSelector");
     BriefingExport.content = getEl("briefingExportDiv");
@@ -134,7 +128,7 @@ BriefingExport.makeExport = function (type) {
         if(!BriefingExport.templates[type]){
             BriefingExport.templates[type] = atob(templatesArr[type]);
         }
-        BriefingExport.exportByDefaultTemplate(type);
+        BriefingExport.exportDocxByTemplate(BriefingExport.templates[type]);
     };
 };
 
@@ -169,14 +163,49 @@ BriefingExport.getBriefingData = function(callback){
     });
 };
 
-BriefingExport.exportByDefaultTemplate = function(type){
+BriefingExport.exportDocxByTemplate = function(template){
     "use strict";
     BriefingExport.getBriefingData(function(err, briefingData){
-      if(err) {Utils.handleError(err); return;}
-      BriefingExport.generateDocxBriefings(BriefingExport.templates[type], briefingData);
+        if(err) {Utils.handleError(err); return;}
+        BriefingExport.generateBriefings(briefingData, "docx", BriefingExport.generateSingleDocx("blob", template), BriefingExport.generateSingleDocx("Uint8Array", template));
     });
 };
 
+BriefingExport.convertToDocxTemplate = function () {
+    "use strict";
+    var docxTemplate = BriefingExport.makeDocxTemplate("blob");
+    if(Utils.confirm(getL10n("briefings-save-file"))){
+        saveAs(docxTemplate, "template.docx");
+    }
+};
+
+BriefingExport.generateByDocxTemplate = function () {
+    "use strict";
+    BriefingExport.exportDocxByTemplate(BriefingExport.makeDocxTemplate("Uint8Array"));
+};
+
+BriefingExport.makeDocxTemplate = function (type) {
+    "use strict";
+    var template = getEl('templateArea').value;
+    
+    var replaceBrackets = R.pipe(R.replace(/{{{/g, '{'),R.replace(/}}}/g, '}'),R.replace(/{{/g, '{'),R.replace(/}}/g, '}'));
+    template = replaceBrackets(template).split('\n').map(function(string){
+        return {string:string}
+    });
+    
+    if(!BriefingExport.templates['genericTemplate']){
+        BriefingExport.templates['genericTemplate'] = atob(templatesArr['genericTemplate']);
+    }
+    
+    var doc = new window.Docxgen(BriefingExport.templates['genericTemplate']);
+    doc.setData({
+        splittedText: template
+    });
+    doc.render();
+    return doc.getZip().generate({
+            type : type
+    });
+};
 BriefingExport.previewTextDataAsIs = function () {
   "use strict";
   
@@ -186,65 +215,28 @@ BriefingExport.previewTextDataAsIs = function () {
   });
 };
 
-BriefingExport.renderText = function(textTemplate, delegate){
-  "use strict";
-  BriefingExport.getBriefingData(function(err, data){
-    if(err) {Utils.handleError(err); return;}
-    var characterList = {};
-    data.briefings.forEach(function (briefingData) {
-      characterList[briefingData.name] = Mustache.render(textTemplate, briefingData);
-    });
-    
-    delegate(characterList);
-  });
-}
-
 BriefingExport.previewTextOutput = function () {
-  "use strict";
-  
-  BriefingExport.renderText(getEl("templateArea").value, function(characterList){
-    var str = "";
-    for(var name in characterList){
-      str += characterList[name];
-    }
-    
-    getEl("textBriefingPreviewArea").value = str;
-  });
+    "use strict";
+    BriefingExport.getBriefingData(function(err, data){
+        if(err) {Utils.handleError(err); return;}
+        getEl("textBriefingPreviewArea").value = BriefingExport.generateSingleTxt(getEl("templateArea").value, data);
+    });
 };
 
-BriefingExport.makeTextBriefings = function (fileType, textTemplate) {
+BriefingExport.makeTextBriefings = function (fileType, template) {
     "use strict";
     
-  BriefingExport.renderText(textTemplate, function(characterList){
-    var toSeparateFiles = getEl("toSeparateFileCheckbox").checked;
+    var delegate = BriefingExport.generateSingleTxt(template);
     
-    if (toSeparateFiles) {
-      var zip = new JSZip();
-      
-      var blob;
-      for ( var charName in characterList) {
-        zip.file(charName + "." + fileType, characterList[charName]);
-      }
-      
-      var archive = zip.generate({type : "blob"});
-      saveAs(archive, "briefings.zip");
-    } else {
-      var result = "";
-      for ( var charName in characterList) {
-          result += characterList[charName];
-      }
-      var blob = new Blob([ result ], {
-          type : "text/plain;charset=utf-8"
-      });
-      saveAs(blob, "briefings." + fileType);
-    }
-  });
-};
-
-BriefingExport.isGroupingByStory = function () {
-    "use strict";
-    return true;
-//    return getEl("eventGroupingByStoryRadio2").checked;
+    BriefingExport.getBriefingData(function(err, briefingData){
+        if(err) {Utils.handleError(err); return;}
+        BriefingExport.generateBriefings(briefingData, fileType, function(data){
+            var result = delegate(data);
+            return new Blob([ result ], {
+                type : "text/plain;charset=utf-8"
+            });
+        }, delegate);
+    });
 };
 
 BriefingExport.readTemplateFile = function (evt) {
@@ -255,10 +247,10 @@ BriefingExport.readTemplateFile = function (evt) {
     if (f) {
         var r = new FileReader();
         r.onload = function (e) {
-            var contents = e.target.result;
+            var template = e.target.result;
             BriefingExport.getBriefingData(function(err, briefingData){
             	if(err) {Utils.handleError(err); return;}
-            	BriefingExport.generateDocxBriefings(contents, briefingData);
+            	BriefingExport.generateBriefings(briefingData, "docx", BriefingExport.generateSingleDocx("blob", template), BriefingExport.generateSingleDocx("Uint8Array", template));
             });
         }
         r.readAsBinaryString(f);
@@ -267,65 +259,80 @@ BriefingExport.readTemplateFile = function (evt) {
     }
 };
 
-BriefingExport.generateDocxBriefings = function (contents, briefingData, fileName) {
+var updateStatus = function(text){
+    var exportStatus = getEl("exportStatus");
+    clearEl(exportStatus);
+    exportStatus.appendChild(makeText(text));
+};
+
+BriefingExport.generateBriefings = function (briefingData, fileType, oneFileDelegate, separateFileDelegate) {
     "use strict";
     
     var toSeparateFiles = getEl("toSeparateFileCheckbox").checked;
-    var exportStatus = getEl("exportStatus");
     
-    var updateStatus = function(text){
-      clearEl(exportStatus);
-      exportStatus.appendChild(makeText(text));
-    };
-    
-    if(!fileName){
-        fileName = "briefings";
-    }
+    var fileName = "briefings";
 
     var out, archive;
     updateStatus(getL10n("briefings-save-preparing"));
     try{
         if (toSeparateFiles) {
             var zip = new JSZip();
-            content = zip.generate();
+            var content = zip.generate();
             updateStatus(getL10n("briefings-start-saving"));
     
-            briefingData.briefings.forEach(function (briefing, i) {
-                    var doc = new window.Docxgen(contents);
-    
-                var tmpData = {
-                        briefings : [ briefing ]
-                };
-                doc.setData(tmpData);
-                doc.render() // apply them (replace all occurences of
-                // {first_name} by Hipp, ...)
-                out = doc.getZip().generate({
-                    type : "Uint8Array"
-                });
-                zip.file(briefing.name + ".docx", out);
-                updateStatus(strFormat(getL10n("briefings-save-status"),[i+1, briefingData.briefings.length]));
-            });
+            var res = BriefingExport.makeArchiveData(briefingData, separateFileDelegate);
+            for ( var key in res) {
+                zip.file(key + "." + fileType, res[key]);
+            }
+            
             updateStatus(getL10n("briefings-archiving"));
             archive = zip.generate({type : "blob"});
             updateStatus(getL10n("briefings-archive-is-ready"));
-            if(Utils.confirm(getL10n("briefings-save-archive"))){
-              saveAs(archive, fileName + ".zip");
-            }
+            BriefingExport.saveFile("briefings-save-archive", archive, fileName + ".zip");
         } else {
             updateStatus(getL10n("briefings-start-saving"));
-            var doc = new window.Docxgen(contents);
-            doc.setData(briefingData);
-            doc.render() // apply them (replace all occurences of {first_name} by
-            // Hipp, ...)
-            out = doc.getZip().generate({
-                type : "blob"
-            });
+            out = oneFileDelegate(briefingData);
             updateStatus(getL10n("briefings-file-is-ready"));
-            if(Utils.confirm(getL10n("briefings-save-file"))){
-              saveAs(out, fileName + ".docx");
-            }
+            BriefingExport.saveFile("briefings-save-file", out, fileName + "." + fileType);
         }
     } catch (err){
         Utils.alert(getL10n("briefings-error-on-generating-briefings"));
+        console.log(err);
     }
 };
+
+BriefingExport.saveFile = function(msgKey, out, fileName){
+    "use strict";
+    if(Utils.confirm(getL10n(msgKey))){
+      saveAs(out, fileName);
+    }
+};
+
+BriefingExport.makeArchiveData = function(briefingData, generateSingleDelegate){
+    "use strict";
+    var res = {};
+    briefingData.briefings.forEach(function (briefing, i) {
+        res[briefing.name] = generateSingleDelegate( {
+            briefings : [ briefing ]
+        });
+        updateStatus(strFormat(getL10n("briefings-save-status"),[i+1, briefingData.briefings.length]));
+    });
+    return res;
+};
+    
+BriefingExport.generateSingleDocx = R.curry(function (type, template, data) {
+    "use strict";
+    var doc = new window.Docxgen(template);
+    doc.setData(data);
+    doc.render() // apply them (replace all occurences of {first_name} by
+    // Hipp, ...)
+    var out = doc.getZip().generate({
+        type : type
+    });
+    return out;
+});
+
+BriefingExport.generateSingleTxt = R.curry(function (template, data) {
+    "use strict";
+    return Mustache.render(template, data);
+});
