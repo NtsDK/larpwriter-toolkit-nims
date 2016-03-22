@@ -53,13 +53,16 @@ See the License for the specific language governing permissions and
 				};
 	
 				for ( var element in profileInfo) {
-					dataObject["profileInfo." + element] = profileInfo[element];
+					dataObject["profileInfo-" + element] = profileInfo[element];
 				}
 	
 				charArray.push(dataObject);
 			}
+			
+			charArray.sort(CommonUtils.charOrdAFactory(R.prop('name')));
 	
 			data.briefings = charArray;
+			data.gameName = this.database.Meta.name;
 			callback(null, data);
 		};
 	
