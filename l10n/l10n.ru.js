@@ -1,4 +1,4 @@
-﻿var Dictionary = {
+﻿Dictionaries['ru'] = {
 	"header": {
 	    "page-title": "НИМС набор инструментов мастера сюжетника",
 		"overview":"Обзор",
@@ -15,7 +15,8 @@
 		"docs":"Документация",
 		"admins":"Администрирование",
 		"chat":"Чат",
-		"l10n":"_",
+		"l10n":"Русский",
+		"dictionary-icon":"ru",
         "briefing-preview" : "Предварительный просмотр",
         "briefing-export" : "Экспорт",
         "character-profile" : "Досье",
@@ -142,7 +143,6 @@
 	    "story-management":"Управление историями",
 	    "story-name":"Название истории",
 	    "new-story-name":"Новое название истории",
-//        "stories": "Истории",
         "event-creation": "Создание события",
         "event-name": "Название",
         "event-descr": "Описание события",

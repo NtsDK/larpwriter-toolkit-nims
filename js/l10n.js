@@ -28,16 +28,31 @@ L10n.init = function(){
     if(L10n.initialized){
         return;
     }
+    L10n.dictionaries = {};
+    console.log(navigator.language);
     
-    var processedDictionary = {};
-    for(var sectionName in Dictionary){
-        for(var name in Dictionary[sectionName]){
-            processedDictionary[sectionName+"-"+name] = Dictionary[sectionName][name];
-        }
-    } 
-    L10n.RU = processedDictionary;
-    L10n.EN = {};
-    Dictionary = processedDictionary;
+    var processDictionary = function(dictionary){
+        var processedDictionary = {};
+        for(var sectionName in dictionary){
+            for(var name in dictionary[sectionName]){
+                processedDictionary[sectionName+"-"+name] = dictionary[sectionName][name];
+            }
+        } 
+        return processedDictionary;
+    };
+    
+    for(var name in Dictionaries){
+        L10n.dictionaries[name] = processDictionary(Dictionaries[name]);
+    }
+    
+    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
+    console.log(lang);
+    
+    if(L10n.dictionaries[lang]){
+        L10n.dict = L10n.dictionaries[lang];
+    } else {
+        L10n.dict = L10n.dictionaries['en'];
+    }
     L10n.initialized = true;
 };
 
@@ -45,10 +60,10 @@ var lang = "RU";
 L10n.toggleL10n = function(){
     "use strict";
     if(lang === "RU"){
-        Dictionary = L10n.EN;
+        L10n.dict = L10n.dictionaries['en'];
         lang = "EN";
     } else {
-        Dictionary = L10n.RU;
+        L10n.dict = L10n.dictionaries['ru'];
         lang = "RU";
     }
     L10n.localizeStatic();
@@ -60,7 +75,7 @@ L10n.toggleL10n = function(){
 
 L10n.getValue = function(name){
     "use strict";
-    var value = Dictionary[name];
+    var value = L10n.dict[name];
     return value ? value : name + ":RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA";
 };
 

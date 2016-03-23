@@ -116,14 +116,20 @@ SocialNetwork.init = function () {
     getEl("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
     getEl("showNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
     
-    var warning = getEl("socialNetworkWarning");
-    warning.appendChild(makeText(getL10n("social-network-require-resources-warning")));
-    var button = makeEl("button");
-    button.appendChild(makeText(getL10n("social-network-remove-resources-warning")));
-    warning.appendChild(button);
-    button.addEventListener("click", function(){
-        addClass(warning,"hidden");
-    });
+    var initWarning = function(){
+        var warning = clearEl(getEl("socialNetworkWarning"));
+        addEl(warning, makeText(getL10n("social-network-require-resources-warning")));
+        var button = makeEl("button");
+        addEl(button, makeText(getL10n("social-network-remove-resources-warning")));
+        addEl(warning, button);
+        
+        button.addEventListener("click", function(){
+            addClass(warning,"hidden");
+        });
+    };
+    initWarning();
+    
+    L10n.onL10nChange(initWarning);
     
     SocialNetwork.nodeSort = CommonUtils.charOrdAFactory(function(a){
         return a.label.toLowerCase();

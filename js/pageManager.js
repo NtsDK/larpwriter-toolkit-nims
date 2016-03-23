@@ -75,40 +75,41 @@ PageManager.onDatabaseLoad = function () {
     		Utils.addView(containers, "adaptations", Events);
     		Utils.addView(containers, "briefings", Briefings);
     		
-    		button = makeEl("div");
-    		addClass(button, "nav-separator");
-    		navigation.appendChild(button);
+    		addEl(navigation, addClass(makeEl("div"), "nav-separator"));
     		
     		Utils.addView(containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
     		Utils.addView(containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
     		Utils.addView(containers, "character-filter", CharacterFilter, {id:"filterButton", tooltip:true});
     		
+    		addEl(navigation, addClass(makeEl("div"), "nav-separator"));
     		
-    		button = makeEl("div");
-    		addClass(button, "nav-separator");
-    		navigation.appendChild(button);
+            var btnOpts = {
+                tooltip : true,
+                className : 'mainNavButton'
+            }
     		
     		if(isAdmin){
-    			button = makeEl("div");
-    			button.id = "dataLoadButton";
-    			$(button).tooltip({
-    				title : L10n.getValue("header-open-database"),
-    				placement : "bottom"
-    			});
-    			addClass(button, "action-button");
-//    			setAttr(button, "l10n-id", "header-open-database");
+    		    var button = PageManager.makeButton("dataLoadButton", "open-database", null, btnOpts);
+    			button.addEventListener('change', FileUtils.readSingleFile, false);
+    			
     			var input = makeEl("input");
     			input.type = "file";
     			button.appendChild(input);
-    			navigation.appendChild(button);
-    			button.addEventListener('change', FileUtils.readSingleFile, false);
+    			addEl(navigation, button);
     		}
-    		PageManager.addButton("dataSaveButton", "save-database", navigation, FileUtils.saveFile, {tooltip:true});
+    		
+    	    addEl(navigation, PageManager.makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
     		if(MODE === "Standalone"){
-    			PageManager.addButton("newBaseButton", "create-database", navigation, FileUtils.makeNewBase, {tooltip:true});
+    		    addEl(navigation, PageManager.makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
     		}
-    		PageManager.addButton("mainHelpButton", "docs", navigation, FileUtils.openHelp, {tooltip:true});
-    		PageManager.addButton("toggleL10nButton", "l10n", navigation, L10n.toggleL10n, {tooltip:true});
+    		addEl(navigation, PageManager.makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
+    		var l10nBtn = PageManager.makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
+    		var setIcon = function(){
+    		    l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
+    		}
+    		L10n.onL10nChange(setIcon);
+    		setIcon();
+    		addEl(navigation, l10nBtn);
     		
 //    var button = makeEl("div");
 //    button.id = "logoutButton";
@@ -132,20 +133,28 @@ PageManager.onDatabaseLoad = function () {
     
 };
 
-PageManager.addButton = function(id, name, navigation, callback, opts){
+PageManager.makeButton = function(id, name, callback, opts){
 	"use strict";
     var button = makeEl("div");
     button.id = id;
     if(opts.tooltip){
-		$(button).tooltip({
-			title : L10n.getValue("header-" + name),
-			placement : "bottom"
-		});
+        var delegate = function(){
+            $(button).attr('data-original-title', L10n.getValue("header-" + name));
+        };
+        L10n.onL10nChange(delegate);
+        $(button).tooltip({
+            title : L10n.getValue("header-" + name),
+            placement : "bottom"
+        });
     }
-//    setAttr(button, "l10n-id", "header-" + name);
     addClass(button, "action-button");
-    navigation.appendChild(button);
-    button.addEventListener('click', callback);
+    if(opts.className){
+        addClass(button, opts.className);
+    }
+    if(callback){
+        listen(button, 'click', callback);
+    }
+    return button;
 };
 
 //PageManager.enableFullScreenElements = function(){

@@ -30,10 +30,14 @@ Utils.addView = function (containers, name, view, opts) {
     containers.root.views[name] = view;
     var button = makeEl("div");
     if(opts.tooltip){
-		$(button).tooltip({
-			title : L10n.getValue("header-" + name),
-			placement : "bottom"
-		});
+        var delegate = function(){
+            $(button).attr('data-original-title', L10n.getValue("header-" + name));
+        };
+        L10n.onL10nChange(delegate);
+        $(button).tooltip({
+            title : L10n.getValue("header-" + name),
+            placement : "bottom"
+        });
     } else {
         addEl(button, makeText(L10n.getValue("header-" + name)));
         setAttr(button, "l10n-id", "header-" + name);
@@ -207,6 +211,7 @@ function addClass(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     if (re.test(o.className)) return;
     o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+    return o;
 };
 
 var rAddClass = R.curry(function(c, o){

@@ -60,26 +60,28 @@ body {
   flex-grow: 1;
 }
 
-#dataLoadButton:hover, #dataSaveButton:hover, #mainHelpButton:hover, #newBaseButton:hover{
-  background-color:  #ccc;
-}
-
-#dataLoadButton{
-  background: transparent url("../images/folder29.svg") no-repeat scroll 50% 0%;
-  background-color:  rgb(221, 221, 221);
-}
-#dataSaveButton{
-  background: transparent url("../images/download149.svg") no-repeat scroll 50% 0%;
-  background-color:  rgb(221, 221, 221);
+.mainNavButton{
+  background-color:  rgb(221, 221, 221) !important;
+  background: transparent url("../images/folder29.svg") no-repeat scroll 50% 50%;
   background-size: 40px;
 }
+
+.mainNavButton:hover{
+  background-color:  #ccc  !important;
+}
+
+#dataLoadButton, #toggleL10nButton{
+  background-image: url("../images/folder29.svg");
+}
+#dataSaveButton{
+  background-image: url("../images/download149.svg");
+  
+}
 #newBaseButton{
-  background: transparent url("../images/file11.svg") no-repeat scroll 50% 0%;
-  background-color:  rgb(221, 221, 221);
+  background-image: url("../images/file11.svg");
 }
 #mainHelpButton{
-  background: transparent url("../images/question5.svg") no-repeat scroll 50% 0%;
-  background-color:  rgb(221, 221, 221);
+  background-image: url("../images/question5.svg");
 }
 
 #chatButton{
