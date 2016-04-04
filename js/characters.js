@@ -34,14 +34,9 @@ Characters.init = function () {
     Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
     Utils.addView(containers, "character-profile-configurer", CharacterProfileConfigurer);
 
-    var button = getEl("createCharacterButton");
-    button.addEventListener("click", Characters.createCharacter);
-
-    button = getEl("renameCharacter");
-    button.addEventListener("click", Characters.renameCharacter);
-
-    button = getEl("removeCharacterButton");
-    button.addEventListener("click", Characters.removeCharacter);
+    listen(getEl("createCharacterButton"), "click", Characters.createCharacter);
+    listen(getEl("renameCharacter"), "click", Characters.renameCharacter);
+    listen(getEl("removeCharacterButton"), "click", Characters.removeCharacter);
 
     Characters.content = getEl("charactersDiv");
 };
@@ -53,23 +48,14 @@ Characters.refresh = function () {
 
 Characters.rebuildInterface = function (names) {
     "use strict";
-    var selector = getEl("fromName");
-    clearEl(selector);
-    names.forEach(function (nameInfo) {
-        var option = makeEl("option");
-        option.appendChild(makeText(nameInfo.displayName));
-        option.value = nameInfo.value;
-        selector.appendChild(option);
-    });
-
-    selector = getEl("characterRemoveSelector");
-    clearEl(selector);
-    names.forEach(function (nameInfo) {
-        var option = makeEl("option");
-        option.appendChild(makeText(nameInfo.displayName));
-        option.value = nameInfo.value;
-        selector.appendChild(option);
-    });
+    
+    var data = getSelect2Data(names);
+    
+    clearEl(getEl("fromName"));
+    $("#fromName").select2(data);
+    
+    clearEl(getEl("characterRemoveSelector"));
+    $("#characterRemoveSelector").select2(data);
 
     Characters.currentView.refresh();
 };

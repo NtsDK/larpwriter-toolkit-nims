@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title  l10n-id="header-page-title"></title>
+<title l10n-id="header-page-title"></title>
 
 <link rel="stylesheet" href="style/bootstrap.min.css" >
 <link rel="stylesheet" type="text/css" href="style/common.css"  media="screen" />
@@ -34,6 +34,8 @@ See the License for the specific language governing permissions and
 <script src="libs/jquery-2.1.4.js"></script>
 <script src="libs/bootstrap.min.js"></script>
 <script src="libs/jquery.datetimepicker.js"></script>
+<script src="libs/select2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="libs/select2.min.css"/>
 
 <script src="libs/FileSaver.js"></script>
 <script src="libs/jszip-utils.js"></script>
@@ -225,11 +227,11 @@ See the License for the specific language governing permissions and
         <div class="panel-body">
           <input id="characterNameInput" l10n-placeholder-id="characters-character-name"></input>
           <button id="createCharacterButton" l10n-id="common-add"></button>
-          <br> <span l10n-id="common-rename-from"></span> <select id="fromName"></select> 
+          <br> <span l10n-id="common-rename-from"></span> <select id="fromName" class="select2-mono-selector"></select> 
           <span l10n-id="common-to"></span> <input
             id="toName" l10n-placeholder-id="characters-new-character-name"></input>
           <button id="renameCharacter" l10n-id="common-ok"></button>
-          <br> <select id="characterRemoveSelector"></select>
+          <br> <select id="characterRemoveSelector" class="select2-mono-selector" ></select>
           <button id="removeCharacterButton" l10n-id="common-remove"></button>
         </div>
       </div>

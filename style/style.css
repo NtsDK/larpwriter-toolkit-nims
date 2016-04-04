@@ -327,3 +327,7 @@ See the License for the specific language governing permissions and
   text-align: center;
 }
 
+.select2-mono-selector{
+  width: 200px;
+}
+

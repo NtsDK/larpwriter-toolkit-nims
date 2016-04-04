@@ -334,6 +334,10 @@ function arr2Chunks(array, chunkSize) {
   return chunks;
 };
 
+var prepareSelect2Data = R.compose(R.zipObj(['id','text']), R.values, R.pick(['value', 'displayName']));
+
+var getSelect2Data = R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(prepareSelect2Data));
+
 // from date format utils
 //For convenience...
 Date.prototype.format = function (mask, utc) {

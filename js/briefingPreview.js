@@ -22,24 +22,21 @@ var BriefingPreview = {};
 
 BriefingPreview.init = function () {
     "use strict";
-    var button = getEl("briefingCharacter");
-    button.addEventListener("change", BriefingPreview.buildContentDelegate);
+    
+    $("#briefingCharacter").select2().on("change", BriefingPreview.buildContentDelegate);
 
-    button = getEl("eventGroupingByStoryRadio");
+    var button = getEl("eventGroupingByStoryRadio");
     button.addEventListener("change", BriefingPreview.refresh);
     button.checked = true;
 
-    button = getEl("eventGroupingByTimeRadio");
-    button.addEventListener("change", BriefingPreview.refresh);
+    listen(getEl("eventGroupingByTimeRadio"), "change", BriefingPreview.refresh);
     
-
     BriefingPreview.content = getEl("briefingPreviewDiv");
 };
 
 BriefingPreview.refresh = function () {
     "use strict";
-    var selector = getEl("briefingCharacter");
-    clearEl(selector);
+    clearEl(getEl("briefingCharacter"));
     
     DBMS.getAllProfileSettings(function(err, profileSettings){
     	if(err) {Utils.handleError(err); return;}
@@ -54,21 +51,14 @@ BriefingPreview.refresh = function () {
 	                };
 	            }
 	            var characterName = settings["BriefingPreview"].characterName;
-	            var rawNames = names.map(function(name){return name.value;});
+	            var rawNames = names.map(R.prop('value'));
 	            if(rawNames.indexOf(characterName) === -1){
 	                settings["BriefingPreview"].characterName = names[0].value;
 	                characterName = names[0].value;
 	            }
 	            
-	            names.forEach(function (nameInfo) {
-	                var option = makeEl("option");
-	                option.appendChild(makeText(nameInfo.displayName));
-	                option.value = nameInfo.value; 
-	                if(nameInfo.value === characterName){
-	                    option.selected = true;
-	                }
-	                selector.appendChild(option);
-	            });
+                var data = getSelect2Data(names);
+                $("#briefingCharacter").select2(data).val(characterName).trigger('change');
 	            
 	            BriefingPreview.buildContent(characterName);
 	        }

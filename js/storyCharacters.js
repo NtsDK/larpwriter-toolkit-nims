@@ -31,25 +31,19 @@ StoryCharacters.init = function () {
     button = getEl("storyCharactersRemoveButton");
     button.addEventListener("click", StoryCharacters.removeCharacter);
 
-    StoryCharacters.addSelector = getEl("storyCharactersAddSelector");
-    StoryCharacters.removeSelector = getEl("storyCharactersRemoveSelector");
-    StoryCharacters.fromSelector = getEl("storyCharactersFromSelector");
-    StoryCharacters.toSelector = getEl("storyCharactersToSelector");
-
+    StoryCharacters.ExternalCharacterSelectors = [getEl("storyCharactersAddSelector"), getEl("storyCharactersToSelector")];
+    StoryCharacters.InternalCharacterSelectors = [getEl("storyCharactersRemoveSelector"), getEl("storyCharactersFromSelector")];
+    
     StoryCharacters.content = getEl("storyCharactersDiv");
 };
 
 StoryCharacters.refresh = function () {
     "use strict";
 
-    clearEl(StoryCharacters.addSelector);
-    clearEl(StoryCharacters.removeSelector);
-    clearEl(StoryCharacters.fromSelector);
-    clearEl(StoryCharacters.toSelector);
+    StoryCharacters.ExternalCharacterSelectors.forEach(clearEl);
+    StoryCharacters.InternalCharacterSelectors.forEach(clearEl);
     
-    if(!Stories.CurrentStoryName){
-        return;
-    }
+    if(!Stories.CurrentStoryName){return;}
     
     PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
     	if(err) {Utils.handleError(err); return;}
@@ -86,41 +80,28 @@ StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
 	addArray.sort(Utils.charOrdAObject);
 	removeArray.sort(Utils.charOrdAObject);
 	
-	var option;
+	var addData = getSelect2Data(addArray);
+	var removeData = getSelect2Data(removeArray);
 	
-	addArray.forEach(function (addValue) {
-		option = makeEl("option");
-		option.appendChild(makeText(addValue.displayName));
-		option.value = addValue.value;
-		StoryCharacters.addSelector.appendChild(option);
-		option = makeEl("option");
-		option.appendChild(makeText(addValue.displayName));
-		option.value = addValue.value;
-		StoryCharacters.toSelector.appendChild(option);
-	});
-	removeArray.forEach(function (removeValue) {
-		option = makeEl("option");
-		option.appendChild(makeText(removeValue.displayName));
-		option.value = removeValue.value;
-		StoryCharacters.removeSelector.appendChild(option);
-		option = makeEl("option");
-		option.appendChild(makeText(removeValue.displayName));
-		option.value = removeValue.value;
-		StoryCharacters.fromSelector.appendChild(option);
+	StoryCharacters.ExternalCharacterSelectors.forEach(function(selector){
+        $("#" + selector.id).select2(addData);
+    });
+	StoryCharacters.InternalCharacterSelectors.forEach(function(selector){
+	    $("#" + selector.id).select2(removeData);
 	});
 	
 	var tableHead = clearEl(getEl("story-characterActivityTableHead"));
 	var table = clearEl(getEl("story-characterActivityTable"));
 	addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name")].concat(Constants.characterActivityTypes.map(constL10n))));
 	removeArray.forEach(function (removeValue) {
-		StoryCharacters.appendCharacterActivity(table, removeValue, localCharacters[removeValue.value]);
+		addEl(table, StoryCharacters.getCharacterActivity(removeValue, localCharacters[removeValue.value]));
 	});
 	
 	tableHead = clearEl(getEl("storyCharactersTableHead"));
 	table = clearEl(getEl("storyCharactersTable"));
 	addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name"), getL10n("stories-inventory")]));
 	removeArray.forEach(function (removeValue) {
-		StoryCharacters.appendCharacterInput(table, removeValue, localCharacters[removeValue.value]);
+	    addEl(table, StoryCharacters.getCharacterInput(removeValue, localCharacters[removeValue.value]));
 	});
 };
 
@@ -172,7 +153,7 @@ StoryCharacters.getCharacterHeader = function (values) {
     return tr;
 };
 
-StoryCharacters.appendCharacterInput = function (table, characterMeta, character) {
+StoryCharacters.getCharacterInput = function (characterMeta, character) {
     "use strict";
     var tr = makeEl("tr");
     var td = makeEl("td");
@@ -188,7 +169,7 @@ StoryCharacters.appendCharacterInput = function (table, characterMeta, character
     input.addEventListener("change", StoryCharacters.updateCharacterInventory);
     td.appendChild(input);
     tr.appendChild(td);
-    table.appendChild(tr);
+    return tr;
 };
 
 StoryCharacters.updateCharacterInventory = function (event) {
@@ -196,7 +177,7 @@ StoryCharacters.updateCharacterInventory = function (event) {
     DBMS.updateCharacterInventory(Stories.CurrentStoryName, event.target.characterName, event.target.value, Utils.processError());
 };
 
-StoryCharacters.appendCharacterActivity = function (table, characterMeta, character) {
+StoryCharacters.getCharacterActivity = function (characterMeta, character) {
     "use strict";
     var tr = makeEl("tr");
     var td = makeEl("td");
@@ -218,8 +199,7 @@ StoryCharacters.appendCharacterActivity = function (table, characterMeta, charac
         td.appendChild(input);
         tr.appendChild(td);
     });
-    
-    table.appendChild(tr);
+    return tr;
 };
 
 StoryCharacters.onChangeCharacterActivity = function (event) {

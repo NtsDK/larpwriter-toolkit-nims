@@ -43,10 +43,11 @@ Stories.init = function () {
     Utils.addView(containers, "story-characters", StoryCharacters, {toggle:true});
     Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
 
-    listen(getEl('storySelector'), "change", Stories.onStorySelectorChangeDelegate);
     listen(getEl('createStoryButton'), "click", Stories.createStory);
     listen(getEl('renameStoryButton'), "click", Stories.renameStory);
     listen(getEl('removeStoryButton'), "click", Stories.removeStory);
+    
+    $("#storySelector").select2().on("change", Stories.onStorySelectorChangeDelegate);
 
     Stories.content = getEl("storiesDiv");
 };
@@ -61,44 +62,27 @@ Stories.chainRefresh = function(){
 
 Stories.refresh = function () {
     "use strict";
-    var selectors = [];
-    selectors.push(getEl("fromStory"));
-    selectors.push(getEl("storyRemoveSelector"));
-    var storySelector = getEl("storySelector");
-    clearEl(storySelector);
-    selectors.forEach(function(selector){
-    	clearEl(selector);
-    });
+    var selectors = ["fromStory", "storyRemoveSelector"];
+    
+    var storySelector = clearEl(getEl("storySelector"));
+    selectors.forEach(R.compose(clearEl, getEl));
+    
     PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
     	if(err) {Utils.handleError(err); return;}
     	PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
     		if(err) {Utils.handleError(err); return;}
     		if(userStoryNames.length > 0){
-	            userStoryNames.forEach(function (nameInfo) {
-	            	selectors.forEach(function(selector, i){
-	            		option = makeEl("option");
-	            		option.appendChild(makeText(nameInfo.displayName));
-	            		option.value = nameInfo.value;
-	            		selector.appendChild(option);
-	            	});
-	            });
+    		    var data = getSelect2Data(userStoryNames);
+    		    selectors.forEach(function(selector){
+    		        $("#" + selector).select2(data);
+    		    });
     		}
     		
 	        if (allStoryNames.length > 0) {
 	            var storyName = Stories.getSelectedStoryName(allStoryNames);
 	            
-	            var first = true;
-	            var option;
-	            allStoryNames.forEach(function (nameInfo) {
-                    option = makeEl("option");
-                    option.appendChild(makeText(nameInfo.displayName));
-                    option.value = nameInfo.value;
-                    storySelector.appendChild(option);
-                    if(storyName === nameInfo.value){
-                    	option.selected = true;
-                    	first = false;
-                    }
-	            });
+	            var data = getSelect2Data(allStoryNames);
+	            $("#storySelector").select2(data).val(storyName).trigger('change');
 	            
 	            Stories.onStorySelectorChange(storyName);
 	        } else {
