@@ -334,9 +334,17 @@ function arr2Chunks(array, chunkSize) {
   return chunks;
 };
 
-var prepareSelect2Data = R.compose(R.zipObj(['id','text']), R.values, R.pick(['value', 'displayName']));
+var prepareSelect2DataCommon = R.curry(function(keys, obj){
+    return R.compose(R.zipObj(['id','text']), R.values, R.pick(keys))(obj);
+});
 
-var getSelect2Data = R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(prepareSelect2Data));
+var prepareSelect2Data = prepareSelect2DataCommon(['value', 'displayName']);
+
+var getSelect2DataCommon = R.curry(function(preparator, obj){ 
+    return R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj);
+});
+
+var getSelect2Data = getSelect2DataCommon(prepareSelect2Data);
 
 // from date format utils
 //For convenience...

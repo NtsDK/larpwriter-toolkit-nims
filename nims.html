@@ -43,6 +43,7 @@ See the License for the specific language governing permissions and
 <script src="libs/mustache.min.js"></script>
 <script src="libs/Chart.min.js"></script>
 <script src="libs/ramda.min.js"></script>
+<!-- <script src="libs/ramda.js"></script> -->
 
 <script src="l10n/l10n.en.js"></script>
 <script src="l10n/l10n.ru.js"></script>
@@ -250,7 +251,8 @@ See the License for the specific language governing permissions and
               <th l10n-id="characters-characters"></th>
             </tr>
             <tr>
-              <td><select size=20 id="bioEditorSelector"></select></td>
+              <td><input selector-filter="bioEditorSelector"><br>
+              <select size=20 id="bioEditorSelector"></select></td>
               <td>
                 <div id="profileContentDiv"></div>
               </td>
@@ -493,6 +495,7 @@ See the License for the specific language governing permissions and
                   <h3 class="panel-title" l10n-id="adaptations-story"></h3>
                 </div>
                 <div class="panel-body">
+                  <input selector-filter="events-storySelector"><br>
                   <select id="events-storySelector" size=10></select>
                 </div>
               </div>
@@ -720,6 +723,7 @@ See the License for the specific language governing permissions and
               <h3 class="panel-title" l10n-id="timeline-stories"></h3>
             </div>
             <div class="panel-body">
+              <input selector-filter="timelineStorySelector"><br>
               <select size=20 id="timelineStorySelector" multiple></select>
             </div>
           </div>
@@ -753,18 +757,23 @@ See the License for the specific language governing permissions and
               <h3 class="panel-title" l10n-id="social-network-common-settings"></h3>
             </div>
             <div class="panel-body">
-              <h4 l10n-id="social-network-color-nodes"></h4> <select
-                id="networkNodeGroupSelector"></select> <span l10n-id="social-network-legend"></span>
+              <h4 l10n-id="social-network-color-nodes"></h4> 
+              <select id="networkNodeGroupSelector"></select> <br>
+              <span l10n-id="social-network-legend"></span>
               <div id="colorLegend"></div>
     
               <h4 l10n-id="social-network-selection"></h4> <select size=3 id="networkSubsetsSelector"></select>
               <div id="networkCharacterDiv" class="hidden">
-                <h4 l10n-id="social-network-characters"></h4> <select size=20 id="networkCharacterSelector"
+                <h4 l10n-id="social-network-characters"></h4> 
+                <input selector-filter="networkCharacterSelector"><br>
+                <select size=20 id="networkCharacterSelector"
                   multiple></select>
               </div>
     
               <div id="networkStoryDiv" class="hidden">
-                <h4 l10n-id="social-network-stories"></h4> <select size=20 id="networkStorySelector" multiple></select>
+                <h4 l10n-id="social-network-stories"></h4> 
+                <input selector-filter="networkStorySelector"><br>
+                <select size=20 id="networkStorySelector" multiple></select>
               </div>
             </div>
           </div>

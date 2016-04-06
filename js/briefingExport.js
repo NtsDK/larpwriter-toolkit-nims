@@ -85,7 +85,7 @@ BriefingExport.onExportSelectionChange = function () {
 BriefingExport.getSelectedUsers = function () {
   "use strict";
   if(!BriefingExport.exportSelectionAll.checked){
-    return BriefingExport.briefingIntervalSelector.selectedOptions[0].valueObject;
+    return JSON.parse(BriefingExport.briefingIntervalSelector.selectedOptions[0].value);
   }
   return null;
 };
@@ -96,28 +96,31 @@ BriefingExport.onNumberSelectorChange = function () {
   clearEl(selector);
   var num = Number(BriefingExport.briefingNumberSelector.value);
   
-  var option, chunks, displayText;
+  var option, chunks, displayText, value;
   PermissionInformer.getCharacterNamesArray(false, function(err, names){
     if(err) {Utils.handleError(err); return;}
     if (names.length > 0) {
       chunks = arr2Chunks(names, num);
       
-      chunks.forEach(function (chunk) {
+      var data = chunks.map(function (chunk) {
         if(chunk.length === 1){
           displayText = chunk[0].displayName;
         } else {
           displayText = chunk[0].displayName + " - " + chunk[chunk.length-1].displayName;
         }
         
-        option = makeEl("option");
-        option.appendChild(makeText(displayText));
-        
-        option.valueObject = chunk.reduce(function(map, nameInfo){
+        value = JSON.stringify(chunk.reduce(function(map, nameInfo){
           map[nameInfo.value] = true;
           return map;
-        }, {}); 
-        selector.appendChild(option);
+        }, {})); 
+        
+        return {
+            "id":  value,
+            "text": displayText
+        };
       });
+      
+      $("#" + BriefingExport.briefingIntervalSelector.id).select2({data:data});
     }
   });
 };

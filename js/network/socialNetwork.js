@@ -88,12 +88,11 @@ SocialNetwork.init = function () {
     });
     
     listen(getEl("drawNetworkButton"), "click", SocialNetwork.onDrawNetwork);
-    listen(getEl("nodeFocusSelector"), "change", SocialNetwork.onNodeFocus);
+    
+    $("#nodeFocusSelector").select2().on("change", SocialNetwork.onNodeFocus);
 
     var selector = getEl("networkSelector");
     selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
-    
-
     
     selector = getEl("activitySelector");
     selector.addEventListener("change", SocialNetwork.onActivitySelectorChangeDelegate);
@@ -334,14 +333,11 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     
     SocialNetwork.refreshLegend(getEl("networkNodeGroupSelector").value);
     
-    var focusSelector = clearEl(getEl('nodeFocusSelector'));
-    var opt;
+    clearEl(getEl('nodeFocusSelector'));
     SocialNetwork.nodes.sort(SocialNetwork.nodeSort);
-    SocialNetwork.nodes.forEach(function(node){
-        opt = makeEl('option')
-        setProp(addEl(opt, makeText(node.label)), 'value', node.id)
-        addEl(focusSelector, opt);
-    });
+    
+    var data = getSelect2DataCommon(prepareSelect2DataCommon(['id', 'label']), SocialNetwork.nodes);
+    $("#nodeFocusSelector").select2(data);
 
     SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
     SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);

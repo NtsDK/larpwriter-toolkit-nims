@@ -22,9 +22,8 @@ var CharacterProfile = {};
 
 CharacterProfile.init = function () {
     "use strict";
-    var button = getEl("bioEditorSelector");
-    button.addEventListener("change", CharacterProfile.showProfileInfoDelegate);
-
+    var el = getEl("bioEditorSelector");
+    listen(el, "change", CharacterProfile.showProfileInfoDelegate);
     CharacterProfile.content = getEl("characterProfile");
 };
 
@@ -33,8 +32,7 @@ CharacterProfile.refresh = function () {
     
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
     	if(err) {Utils.handleError(err); return;}
-        var selector = getEl("bioEditorSelector");
-        clearEl(selector);
+        var selector = clearEl(getEl("bioEditorSelector"));
         names.forEach(function (nameInfo) {
             var option = makeEl("option");
             option.appendChild(makeText(nameInfo.displayName));
@@ -42,8 +40,7 @@ CharacterProfile.refresh = function () {
             selector.appendChild(option);
         });
         
-        var profileContentDiv = getEl("profileContentDiv");
-        clearEl(profileContentDiv);
+        var profileContentDiv = clearEl(getEl("profileContentDiv"));
         var table = makeEl("table");
         var tbody = makeEl("tbody");
         table.appendChild(tbody);
@@ -60,6 +57,7 @@ CharacterProfile.refresh = function () {
             
             CharacterProfile.applySettings(names, selector);
         });
+        
     });
 };
 

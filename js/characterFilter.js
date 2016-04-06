@@ -47,7 +47,7 @@ CharacterFilter.refresh = function () {
     input.value = "";
     filterSettingsDiv.appendChild(input);
     filterSettingsDiv.inputItems.name = input;
-    input.addEventListener("change", CharacterFilter.rebuildContent);
+    input.addEventListener("input", CharacterFilter.rebuildContent);
     
     filterSettingsDiv.appendChild(makeEl("br"));
     
@@ -309,7 +309,7 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
     root.appendChild(makeText(profileItemConfig.name));
     root.appendChild(makeEl("br"));
 
-    var input, selector, values
+    var input, selector, values;
 
     switch (profileItemConfig.type) {
     case "text":
@@ -320,7 +320,7 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         root.appendChild(input);
         root.inputItems[profileItemConfig.name] = input;
 
-        input.addEventListener("change", CharacterFilter.rebuildContent);
+        input.addEventListener("input", CharacterFilter.rebuildContent);
 
         break;
     case "enum":

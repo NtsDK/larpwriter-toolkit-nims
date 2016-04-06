@@ -71,3 +71,27 @@ UI.showSelectedEls = function(classKey){
         }
     }
 };
+
+UI.initSelectorFilters = function(){
+    "use strict";
+    var elems = document.querySelectorAll("[selector-filter]");
+    var el, sel;
+    for (var i = 0; i < elems.length; i++) {
+        el = elems[i];
+        sel = getEl(getAttr(el,"selector-filter"));
+        listen(el, "input", UI.filterOptions(sel))
+    }
+};
+
+UI.filterOptions = function(sel){
+    "use strict";
+    return function(event){
+        var val = event.target.value;
+        var i, opt;
+        val = Utils.globStringToRegex(val.trim().toLowerCase());
+        for (i = 0; i < sel.options.length; i += 1) {
+            opt = sel.options[i];
+            setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
+        }
+    }
+};

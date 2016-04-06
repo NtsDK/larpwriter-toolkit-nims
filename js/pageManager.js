@@ -24,6 +24,7 @@ var DBMS;
 
 PageManager.onLoad = function () {
     L10n.localizeStatic();
+    UI.initSelectorFilters();
 	if(MODE === "Standalone"){
 		DBMS = new LocalDBMS();
 		DBMS.setDatabase(BaseExample.data, function(err){
