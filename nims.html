@@ -223,7 +223,7 @@ See the License for the specific language governing permissions and
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title" l10n-id="characters-character-managing"></h3>
+          <a href="#" panel-toggler="#charactersDiv div.panel-body"> <h3 class="panel-title" l10n-id="characters-character-managing"></h3></a>
         </div>
         <div class="panel-body">
           <input id="characterNameInput" l10n-placeholder-id="characters-character-name"></input>
@@ -304,17 +304,21 @@ See the License for the specific language governing permissions and
           <td>
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title" l10n-id="character-filter-show-profile-item"></h3>
+                <a href="#" panel-toggler="#characterFilterDiv div.column-select-area">
+                  <h3 class="panel-title" l10n-id="character-filter-show-profile-item"></h3>
+                </a>
               </div>
-              <div class="panel-body">
+              <div class="panel-body column-select-area">
                 <select multiple id="profileItemSelector"></select>
               </div>
             </div>
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title" l10n-id="character-filter-filter"></h3>
+                <a href="#" panel-toggler="#characterFilterDiv div.filter-settings-area">
+                  <h3 class="panel-title" l10n-id="character-filter-filter"></h3>
+                </a>
               </div>
-              <div class="panel-body">
+              <div class="panel-body filter-settings-area">
                 <span l10n-id="character-filter-results"></span> <span id="filterResultSize"></span><br><br>
                 <div id="filterSettingsDiv"></div>
               </div>
@@ -340,17 +344,21 @@ See the License for the specific language governing permissions and
       <div style="display: flex;justify-content:space-around;">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title" l10n-id="stories-stories"></h3>
+            <a href="#" panel-toggler="#storiesDiv div.first-panel">
+              <h3 class="panel-title" l10n-id="stories-stories"></h3>
+            </a>
           </div>
-          <div class="panel-body">
+          <div class="panel-body first-panel">
             <select id="storySelector"></select>
           </div>
         </div>
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title" l10n-id="stories-story-management"></h3>
+            <a href="#" panel-toggler="#storiesDiv div.second-panel">
+              <h3 class="panel-title" l10n-id="stories-story-management"></h3>
+            </a>
           </div>
-          <div class="panel-body">
+          <div class="panel-body second-panel">
             <input id="createStoryName" l10n-placeholder-id="stories-story-name"></input>
             <button id="createStoryButton"  l10n-id="common-add"></button>
             <br> <span l10n-id="common-rename-from"></span> <select id="fromStory"></select> <span l10n-id="common-to"></span> <input
@@ -389,24 +397,32 @@ See the License for the specific language governing permissions and
         <div class="panel-body">
           <div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
             <div style="flex-grow:1;margin-right:10px;">
-              <h3 style="margin-top:8px;"  l10n-id="stories-event-creation"></h3>
-              <span l10n-id="stories-event-name"></span><input id="eventNameInput" class="isStoryEditable"></input><br>
-              <span l10n-id="stories-event-descr"></span><br>
-              <textarea id="eventTextInput" class="eventText isStoryEditable"></textarea><br>
-              <span l10n-id="stories-event-position"></span><select id="positionSelector" class="isStoryEditable"></select>
-              <button id="createEventButton" class="isStoryEditable" l10n-id="common-add"></button>
+              <a href="#" panel-toggler="#storyEventsDiv div.event-creation-area">
+                <h3 style="margin-top:8px;"  l10n-id="stories-event-creation"></h3>
+              </a>
+              <div class="event-creation-area">
+                <span l10n-id="stories-event-name"></span><input id="eventNameInput" class="isStoryEditable"></input><br>
+                <span l10n-id="stories-event-descr"></span><br>
+                <textarea id="eventTextInput" class="eventText isStoryEditable"></textarea><br>
+                <span l10n-id="stories-event-position"></span><select id="positionSelector" class="isStoryEditable"></select>
+                <button id="createEventButton" class="isStoryEditable" l10n-id="common-add"></button>
+              </div>
             </div>
             <div style="flex-grow:1;">
-              <h3 style="margin-top:8px;" l10n-id="stories-event-management"></h3>
-              <select id="moveEventSelector" class="isStoryEditable"></select> 
-              <span l10n-id="stories-event-position"></span><select id="movePositionSelector" class="isStoryEditable"></select>
-              <button id="moveEventButton" class="isStoryEditable" l10n-id="stories-move-event"></button>
-              <br> <select id="cloneEventSelector" class="isStoryEditable"></select>
-              <button id="cloneEventButton" class="isStoryEditable" l10n-id="stories-clone-event"></button>
-              <br> <select id="mergeEventSelector" class="isStoryEditable"></select>
-              <button id="mergeEventButton" class="isStoryEditable" l10n-id="stories-merge-events"></button>
-              <br> <select id="removeEventSelector" class="isStoryEditable"></select>
-              <button id="removeEventButton" class="isStoryEditable" l10n-id="common-remove"></button>
+              <a href="#" panel-toggler="#storyEventsDiv div.event-management-area">
+                <h3 style="margin-top:8px;" l10n-id="stories-event-management"></h3>
+              </a>
+              <div class="event-management-area">
+                <select id="moveEventSelector" class="isStoryEditable"></select> 
+                <span l10n-id="stories-event-position"></span><select id="movePositionSelector" class="isStoryEditable"></select>
+                <button id="moveEventButton" class="isStoryEditable" l10n-id="stories-move-event"></button>
+                <br> <select id="cloneEventSelector" class="isStoryEditable"></select>
+                <button id="cloneEventButton" class="isStoryEditable" l10n-id="stories-clone-event"></button>
+                <br> <select id="mergeEventSelector" class="isStoryEditable"></select>
+                <button id="mergeEventButton" class="isStoryEditable" l10n-id="stories-merge-events"></button>
+                <br> <select id="removeEventSelector" class="isStoryEditable"></select>
+                <button id="removeEventButton" class="isStoryEditable" l10n-id="common-remove"></button>
+              </div>
             </div>
           </div>
           
@@ -428,27 +444,35 @@ See the License for the specific language governing permissions and
     <div id="storyCharactersDiv">
       <div class="panel panel-default">
         <div class="panel-body">
-          <h3 l10n-id="stories-story-character-management"></h3>
-          <select id="storyCharactersAddSelector" class="isStoryEditable"></select>
-          <button id="storyCharactersAddButton" class="isStoryEditable" l10n-id="common-add"></button>
-          <br> <span l10n-id="stories-replace-character"></span><select id="storyCharactersFromSelector" class="isStoryEditable"></select>
-          <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select>
-          <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-ok"></button>
-          <br> <select id="storyCharactersRemoveSelector" class="isStoryEditable"></select>
-          <button id="storyCharactersRemoveButton" class="isStoryEditable" l10n-id="common-remove"></button>
-          <br> <br>
+          <a href="#" panel-toggler="#storyCharactersDiv div.character-management-area">
+            <h3 l10n-id="stories-story-character-management"></h3>
+          </a>
+          <div class="character-management-area">
+            <select id="storyCharactersAddSelector" class="isStoryEditable"></select>
+            <button id="storyCharactersAddButton" class="isStoryEditable" l10n-id="common-add"></button>
+            <br> <span l10n-id="stories-replace-character"></span><select id="storyCharactersFromSelector" class="isStoryEditable"></select>
+            <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select>
+            <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-ok"></button>
+            <br> <select id="storyCharactersRemoveSelector" class="isStoryEditable"></select>
+            <button id="storyCharactersRemoveButton" class="isStoryEditable" l10n-id="common-remove"></button>
+          </div>
+          <br>
     
           <div style="display:flex;flex-wrap: wrap; justify-content:space-around;">
             <div style="flex-grow:0;margin-right:10px;max-width: 450px;">
-              <h3 l10n-id="stories-inventory"></h3>
-              <table class="table table-bordered">
+              <a href="#" panel-toggler="#storyCharactersDiv table.character-inventory-area">
+                <h3 l10n-id="stories-inventory"></h3>
+              </a>
+              <table class="table table-bordered character-inventory-area">
                 <thead id="storyCharactersTableHead"></thead>
                 <tbody id="storyCharactersTable"></tbody>
               </table>
             </div>
             <div style="flex-grow:1;max-width: 450px;">
-              <h3 l10n-id="stories-activity"></h3>
-              <table class="table table-bordered table-striped">
+              <a href="#" panel-toggler="#storyCharactersDiv table.character-activity-area">
+                <h3 l10n-id="stories-activity"></h3>
+              </a>
+              <table class="table table-bordered table-striped character-activity-area">
                 <thead id="story-characterActivityTableHead"></thead>
                 <tbody id="story-characterActivityTable"></tbody>
               </table>
@@ -757,39 +781,53 @@ See the License for the specific language governing permissions and
               <h3 class="panel-title" l10n-id="social-network-common-settings"></h3>
             </div>
             <div class="panel-body">
-              <h4 l10n-id="social-network-color-nodes"></h4> 
-              <select id="networkNodeGroupSelector"></select> <br>
-              <span l10n-id="social-network-legend"></span>
-              <div id="colorLegend"></div>
-    
-              <h4 l10n-id="social-network-selection"></h4> <select size=3 id="networkSubsetsSelector"></select>
-              <div id="networkCharacterDiv" class="hidden">
-                <h4 l10n-id="social-network-characters"></h4> 
-                <input selector-filter="networkCharacterSelector"><br>
-                <select size=20 id="networkCharacterSelector"
-                  multiple></select>
+              <a href="#" panel-toggler="#socialNetworkDiv div.network-coloring-area">
+                <h4 l10n-id="social-network-color-nodes"></h4>
+              </a> 
+              <div class="network-coloring-area">
+                <select id="networkNodeGroupSelector"></select> <br>
+                <span l10n-id="social-network-legend"></span>
+                <div id="colorLegend"></div>
               </div>
     
-              <div id="networkStoryDiv" class="hidden">
-                <h4 l10n-id="social-network-stories"></h4> 
-                <input selector-filter="networkStorySelector"><br>
-                <select size=20 id="networkStorySelector" multiple></select>
+              <a href="#" panel-toggler="#socialNetworkDiv div.network-filter-area">
+                <h4 l10n-id="social-network-selection"></h4> 
+              </a>
+              
+              <div class="network-filter-area">
+                <select size=3 id="networkSubsetsSelector"></select>
+                
+                <div id="networkCharacterDiv" class="hidden">
+                  <h4 l10n-id="social-network-characters"></h4> 
+                  <input selector-filter="networkCharacterSelector"><br>
+                  <select size=20 id="networkCharacterSelector"
+                    multiple></select>
+                </div>
+      
+                <div id="networkStoryDiv" class="hidden">
+                  <h4 l10n-id="social-network-stories"></h4> 
+                  <input selector-filter="networkStorySelector"><br>
+                  <select size=20 id="networkStorySelector" multiple></select>
+                </div>
               </div>
             </div>
           </div>
 
-        </div>
-        <div class="storySelectorContainer" id="privateSettingsContainer">
-          <div class="panel panel-default" style="width: 200px;">
+          <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title" l10n-id="social-network-private-settings"></h3>
             </div>
             <div class="panel-body">
-              <h4 l10n-id="social-network-social-network"></h4> <select size=4
-                id="networkSelector"></select>
-    
-              <div id="activityBlock" class="hidden">
-                <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple></select>
+              <a href="#" panel-toggler="#socialNetworkDiv div.network-type-area">
+                <h4 l10n-id="social-network-social-network"></h4> 
+              </a>
+              
+              <div class="network-type-area">
+                <select size=4 id="networkSelector"></select>
+      
+                <div id="activityBlock" class="hidden">
+                  <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple></select>
+                </div>
               </div>
     
               <button id="drawNetworkButton" l10n-id="social-network-draw"></button><br>

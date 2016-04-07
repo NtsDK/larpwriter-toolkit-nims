@@ -95,3 +95,21 @@ UI.filterOptions = function(sel){
         }
     }
 };
+
+UI.initPanelTogglers = function(){
+    "use strict";
+    var elems = document.querySelectorAll("[panel-toggler]");
+    var el, sel;
+    for (var i = 0; i < elems.length; i++) {
+        el = elems[i];
+        sel = document.querySelector(getAttr(el,"panel-toggler"));
+        listen(el, "click", UI.togglePanel(sel))
+    }
+};
+
+UI.togglePanel = function(sel){
+    "use strict";
+    return function(event){
+        toggleClass(sel, "hidden");
+    }
+};
