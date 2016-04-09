@@ -113,15 +113,10 @@ PageManager.onDatabaseLoad = function () {
     		setIcon();
     		addEl(navigation, l10nBtn);
     		
-//    var button = makeEl("div");
-//    button.id = "logoutButton";
-//    addClass(button, "action-button");
-//    button.appendChild(getEl("logoutForm"));
-//    navigation.appendChild(button);
-    		
     		if(MODE === "NIMS_Server"){
     			Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
 //    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
+    			addEl(navigation, PageManager.makeButton("logoutButton", "logout", PageManager.postLogout, btnOpts));
     		}
     		
     		FileUtils.init(function(err){
@@ -133,6 +128,11 @@ PageManager.onDatabaseLoad = function () {
     	});
 	});
     
+};
+
+PageManager.postLogout = function(){
+    "use strict";
+    document.querySelector('#logoutForm button').click();
 };
 
 PageManager.makeButton = function(id, name, callback, opts){

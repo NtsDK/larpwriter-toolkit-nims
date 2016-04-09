@@ -83,6 +83,9 @@ body {
 #mainHelpButton{
   background-image: url("../images/question5.svg");
 }
+#logoutButton{
+  background-image: url("../images/exit22.svg");
+}
 
 #chatButton{
   background: transparent url("../images/chat55.svg") no-repeat scroll 50% 0%;
