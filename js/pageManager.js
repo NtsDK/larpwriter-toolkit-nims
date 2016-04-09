@@ -121,7 +121,7 @@ PageManager.onDatabaseLoad = function () {
     		
     		if(MODE === "NIMS_Server"){
     			Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
-    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
+//    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
     		}
     		
     		FileUtils.init(function(err){
