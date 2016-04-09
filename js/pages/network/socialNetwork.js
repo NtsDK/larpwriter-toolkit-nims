@@ -339,13 +339,48 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     var data = getSelect2DataCommon(prepareSelect2DataCommon(['id', 'label']), SocialNetwork.nodes);
     $("#nodeFocusSelector").select2(data);
 
+    if(SocialNetwork.network){
+        SocialNetwork.network.storePositions();
+        
+        var str = SocialNetwork.nodesDataset.get().map(function(node){
+//            return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
+            return strFormat('"{0}";', [node.id]);
+        }).join("\n");
+        
+        str += SocialNetwork.edgesDataset.get().map(function(edge){
+//          return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
+          return strFormat('"{0}" -- "{1}";', [edge.from, edge.to]);
+      }).join("\n");
+        
+        str = "graph {" + str + "}";
+        
+        window.open(str);
+        
+//        FileUtils.json2File(str, "network.json");
+        
+//        FileUtils.json2File({
+//            nodes: SocialNetwork.nodesDataset.get(),
+//            edges: SocialNetwork.edgesDataset.get(),
+//        }, "network.json");
+    }
+    
+//      if(SocialNetwork.network){
+////          alert(SocialNetwork.network.getSVG());
+//          SocialNetwork.network.storePositions();
+//          SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodesDataset.get());
+//          SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edgesDataset.get());
+//          
+//          SocialNetwork.redrawAll(false);
+//          setTimeout(function(){
+////              window.open("data:image/svg+xml;base64," + btoa(SocialNetwork.network.getSVG()));
+//              window.open("data:image/svg+xml;utf8," + SocialNetwork.network.getSVG());
+//          }, 500);
+//      }
+    
+    //window.open(document.querySelector('#socialNetworkContainer canvas').toDataURL())
     SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
     SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);
     
-//    FileUtils.json2File({
-//        nodes: SocialNetwork.nodesDataset.get(),
-//        edges: SocialNetwork.edgesDataset.get(),
-//    }, "network.json");
     SocialNetwork.redrawAll();
 };
 
@@ -570,6 +605,10 @@ SocialNetwork.redrawAll = function () {
         edges : SocialNetwork.edgesDataset
     } // Note: data is coming from ./datasources/WorldCup2014.js
 
+    if(SocialNetwork.network){
+        SocialNetwork.network.destroy();
+    }
+    
     SocialNetwork.network = new vis.Network(container, data, options);
     
     SocialNetwork.network.on("click", SocialNetwork.neighbourhoodHighlight);
