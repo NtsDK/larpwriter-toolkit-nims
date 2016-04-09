@@ -50,10 +50,15 @@ See the License for the specific language governing permissions and
 		    delete data.Settings["Events"];
 		    data.Version = "0.4.3";
 		}
+		if(data.Version === "0.4.3"){
+		    data.Log = [];
+		    data.Version = "0.4.4";
+		}
 		
 		exists(data, 'base', 'Characters');
 		exists(data, 'base', 'ProfileSettings');
 		exists(data, 'base', 'Meta');
+		exists(data, 'base', 'Log');
 		exists(data.Meta, 'base.Meta', 'name');
 		exists(data.Meta, 'base.Meta', 'date');
 		exists(data.Meta, 'base.Meta', 'preGameDate');
