@@ -22,10 +22,7 @@ See the License for the specific language governing permissions and
             statistics.storyNumber = Object.keys(this.database.Stories).length;
             statistics.characterNumber = Object.keys(this.database.Characters).length;
 
-            statistics.eventsNumber = 0;
-            for ( var storyName in this.database.Stories) {
-                statistics.eventsNumber += this.database.Stories[storyName].events.length;
-            }
+            statistics.eventsNumber = R.sum(R.values(this.database.Stories).map(R.compose(R.length, R.prop('events'))));
 
             statistics.userNumber = 1;
             if (this.database.ManagementInfo && this.database.ManagementInfo.UsersInfo) {
@@ -125,21 +122,6 @@ See the License for the specific language governing permissions and
             return characterChartData;
         };
         
-        var _calcStoryCompleteness = function(story) {
-            "use strict";
-            var finishedAdaptations = 0;
-            var allAdaptations = 0;
-            story.events.forEach(function(event) {
-                allAdaptations += Object.keys(event.characters).length;
-                for ( var character in event.characters) {
-                    if (event.characters[character].ready) {
-                        finishedAdaptations++;
-                    }
-                }
-            });
-            return finishedAdaptations / allAdaptations;
-        }
-        
         var _getEventCompletenessHist = function(database) {
             "use strict";
             var story, hist = [], storyCompleteness;
@@ -167,43 +149,50 @@ See the License for the specific language governing permissions and
             return hist;
         };
         
+        var _getStoryAdaptationStats = function(story) {
+            "use strict";
+            var finishedAdaptations = 0;
+            var allAdaptations = 0;
+            story.events.forEach(function(event) {
+                allAdaptations += Object.keys(event.characters).length;
+                for ( var character in event.characters) {
+                    if (event.characters[character].ready) {
+                        finishedAdaptations++;
+                    }
+                }
+            });
+            return {
+                finishedAdaptations : finishedAdaptations, 
+                allAdaptations : allAdaptations
+            };
+        }
+        
+        var _calcStoryCompleteness = function(story) {
+            "use strict";
+            var stats = _getStoryAdaptationStats(story);
+            return stats.allAdaptations !== 0 ? stats.finishedAdaptations / stats.allAdaptations : 0;
+        }
+        
         var _getStoryCompleteness = function(database) {
             "use strict";
-            var story, generalCompletness, finishedAdaptations, allAdaptations, finishedStories = 0, allStories = Object.keys(database.Stories).length;
+            var finishedStories = 0, allStories = Object.keys(database.Stories).length;
             
-            for ( var storyName in database.Stories) {
-                story = database.Stories[storyName];
-                finishedAdaptations = 0;
-                allAdaptations = 0;
-                story.events.forEach(function(event) {
-                    allAdaptations += Object.keys(event.characters).length;
-                    for ( var character in event.characters) {
-                        if (event.characters[character].ready) {
-                            finishedAdaptations++;
-                        }
-                    }
-                });
-                if (allAdaptations === finishedAdaptations) {
+            R.values(database.Stories).map(_getStoryAdaptationStats).forEach(function(stats){
+                if (stats.allAdaptations === stats.finishedAdaptations && stats.allAdaptations != 0) {
                     finishedStories++;
                 }
-            }
+            });
             return [(finishedStories / (allStories === 0 ? 1 : allStories) * 100).toFixed(1), finishedStories, allStories];
         };
         
         var _getGeneralCompleteness = function(database) {
             "use strict";
-            var story, generalCompletness, finishedAdaptations = 0, allAdaptations = 0;
-            for ( var storyName in database.Stories) {
-                story = database.Stories[storyName];
-                story.events.forEach(function(event) {
-                    allAdaptations += Object.keys(event.characters).length;
-                    for ( var character in event.characters) {
-                        if (event.characters[character].ready) {
-                            finishedAdaptations++;
-                        }
-                    }
-                });
-            }
+            var finishedAdaptations = 0, allAdaptations = 0;
+            
+            R.values(database.Stories).map(_getStoryAdaptationStats).forEach(function(stats){
+                finishedAdaptations += stats.finishedAdaptations;
+                allAdaptations += stats.allAdaptations;
+            });
             return [(finishedAdaptations / (allAdaptations === 0 ? 1 : allAdaptations) * 100).toFixed(1), finishedAdaptations, allAdaptations];
         };
         
@@ -248,27 +237,27 @@ See the License for the specific language governing permissions and
         
         var _getHistogram = function(database, keyParamDelegate) {
             "use strict";
-            var story, storyCharactersHist = [];
+            var story, hist = [];
             for ( var storyName in database.Stories) {
                 story = database.Stories[storyName];
                 var keyParam = keyParamDelegate(story);
-                if (storyCharactersHist[keyParam]) {
-                    storyCharactersHist[keyParam].value++;
-                    storyCharactersHist[keyParam].tip = storyCharactersHist[keyParam].tip + ", " + story.name;
+                if (hist[keyParam]) {
+                    hist[keyParam].value++;
+                    hist[keyParam].tip = hist[keyParam].tip + ", " + story.name;
                 } else {
-                    storyCharactersHist[keyParam] = {
+                    hist[keyParam] = {
                             value : 1,
                             label : keyParam,
                             tip : keyParam + ": " + story.name
                     }
                 }
             }
-            for (var i = 0; i < storyCharactersHist.length; i++) {
-                if (!storyCharactersHist[i]) {
-                    storyCharactersHist[i] = null;
+            for (var i = 0; i < hist.length; i++) {
+                if (!hist[i]) {
+                    hist[i] = null;
                 }
             }
-            return storyCharactersHist;
+            return hist;
         };
     };
     
