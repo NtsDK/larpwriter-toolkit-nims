@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function logAPI(LocalDBMS, R, CommonUtils, isServer, extras) {
+    function logAPI(LocalDBMS, R, CommonUtils, isServer, environment, extras) {
         
         var includeList = {
             "getDatabase": {},
@@ -98,17 +98,34 @@ See the License for the specific language governing permissions and
             }
         });
         
-        LocalDBMS.prototype.log = function(userName, funcName, params) {
-            "use strict";
-            var info = [userName, new Date(), funcName, JSON.stringify(params)];
-            if(this.database){
-                this.database.Log.push(info);
-                if(this.database.Log.length > 2000){
-                    this.database.Log.splice(0, 1000);
-                }
+        if(environment === "Standalone"){
+            LocalDBMS.prototype.log = function(userName, funcName, params) {
+                "use strict";
+                var info = [userName, new Date(), funcName, JSON.stringify(params)];
+                if(this.database){
+                    this.database.Log.push(info);
+                    if(this.database.Log.length > 2000){
+                        this.database.Log.splice(0, 1000);
+                    }
 //                console.log(this.database.Log.length);
+                }
+                console.log(CommonUtils.strFormat("{0},{1},{2},{3}", info));
+            };
+        }
+        
+        LocalDBMS.prototype.getLog = function(pageNumber, callback) {
+            "use strict";
+            var requestedLog = [];
+            for (var i = pageNumber*100; i < (pageNumber+1)*100; i++) {
+                if(this.database.Log[i]){
+                    requestedLog.push([i+1].concat(this.database.Log[i]));
+                }
             }
-            console.log(CommonUtils.strFormat("{0},{1},{2},{3}", info));
+            
+            callback(null, {
+                requestedLog: requestedLog,
+                logSize: Math.ceil(this.database.Log.length/100)
+            });
         };
     };
     

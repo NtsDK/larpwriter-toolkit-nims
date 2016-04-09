@@ -116,6 +116,7 @@ See the License for the specific language governing permissions and
   <script src="js/pages/network/networkSubsetsSelector.js"></script>
 
   <script src="js/pages/accessManager.js"></script>
+  <script src="js/pages/logViewer.js"></script>
   <script src="js/pages/chat.js"></script>
   
 
@@ -722,8 +723,8 @@ See the License for the specific language governing permissions and
               <input id="textTypeSelector" value="txt"/>
               <button id="previewTextOutput" l10n-id="briefings-preview"></button><br>
               <button id="showRawData" class="hidden" l10n-id="briefings-raw-data"></button>
-              <button id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template">Конвертировать в docx шаблон</button>
-              <button id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template">Сгенерировать в docx по текущему шаблону</button>
+              <button id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template"></button>
+              <button id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template"></button>
               <button id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
             </div>
             <div >
@@ -763,6 +764,24 @@ See the License for the specific language governing permissions and
       <form class="form-horizontal login-form" name="login-form" method="POST" action="/logout">
         <button type="submit" class="654btn 654btn-primary" data-loading-text="Sending...">Exit</button>
       </form> 
+    </div>
+
+    <div id="logViewerDiv">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <label l10n-id="log-viewer-page"></label><select id="logPageSelector"></select>
+          <table class="table table-bordered table-striped character-activity-area">
+            <thead>
+              <th>№</th>
+              <th l10n-id="log-viewer-date"></th>
+              <th l10n-id="log-viewer-user"></th>
+              <th l10n-id="log-viewer-action"></th>
+              <th l10n-id="log-viewer-params"></th>
+            </thead>
+            <tbody id="logData"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
     
     <div id="socialNetworkDiv">

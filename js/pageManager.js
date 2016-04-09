@@ -113,6 +113,7 @@ PageManager.onDatabaseLoad = function () {
     		setIcon();
     		addEl(navigation, l10nBtn);
     		
+    		Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
     		if(MODE === "NIMS_Server"){
     			Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
 //    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});

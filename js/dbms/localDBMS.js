@@ -36,7 +36,4 @@ profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
 storiesAPI(LocalDBMS, CommonUtils, Errors);
 eventsAPI(LocalDBMS, CommonUtils);
 accessManagerAPI(LocalDBMS, CommonUtils);
-
-if(MODE === "Standalone"){
-    logAPI(LocalDBMS, R, CommonUtils, false);
-}
+logAPI(LocalDBMS, R, CommonUtils, false, MODE); // log function enabled in standalone mode

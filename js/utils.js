@@ -334,6 +334,16 @@ function arr2Chunks(array, chunkSize) {
   return chunks;
 };
 
+function fillSelector(sel, data){
+    data.forEach(function (item) {
+        var opt = makeEl("option");
+        addEl(opt, makeText(item.name));
+        if(item.value){opt.value = item.value;}
+        if(item.selected){opt.selected = true;}
+        addEl(sel, opt);
+    });
+}
+
 var prepareSelect2DataCommon = R.curry(function(keys, obj){
     return R.compose(R.zipObj(['id','text']), R.values, R.pick(keys))(obj);
 });
