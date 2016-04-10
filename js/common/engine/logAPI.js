@@ -14,10 +14,20 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
+    // argument description
+    // add function name to log it
+    // ignoreParams - make true if you don't need params. 
+    //     Example - createUser params include password.
+    // filter - add this function to filter out unnecessary calls. 
+    //     Example - we need all meta info calls except description.
+    // rewrite - make true if you don't want to flood log with some repeated call. 
+    //     For example auto call of getDatabase will flood everything.
     function logAPI(LocalDBMS, R, CommonUtils, isServer, environment, extras) {
         
         var includeList = {
-            "getDatabase": {},
+            "getDatabase": {
+                "rewrite" : true
+            },
             "setDatabase": {
                 "ignoreParams": true
             },
@@ -103,9 +113,13 @@ See the License for the specific language governing permissions and
                 "use strict";
                 var info = [userName, new Date(), funcName, JSON.stringify(params)];
                 if(this.database){
-                    this.database.Log.push(info);
-                    if(this.database.Log.length > 2000){
-                        this.database.Log.splice(0, 1000);
+                    if(includeList[funcName].rewrite && this.database.Log[this.database.Log.length-1][2] === funcName){
+                        this.database.Log[this.database.Log.length-1] = info;
+                    } else {
+                        this.database.Log.push(info);
+                        if(this.database.Log.length > 2000){
+                            this.database.Log.splice(0, 1000);
+                        }
                     }
 //                console.log(this.database.Log.length);
                 }
