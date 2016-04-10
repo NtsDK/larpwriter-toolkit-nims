@@ -99,6 +99,7 @@ Dictionaries['en'] = {
 		"story-completeness-value":'{0}% ({1} from {2} stories)',
 		"general-completeness-value": '{0}% ({1} from {2} adaptations)',
 		'consistency-problem-detected': "Detected base corruption during consistency check. Please contact developer to fix problems.",
+		'last-save-time': 'Last save time',
 	},
 	"characters": {
 		"character-managing":"Character managing",

@@ -53,6 +53,7 @@ See the License for the specific language governing permissions and
 		if(data.Version === "0.4.3"){
 		    data.Log = [];
 		    data.Version = "0.4.4";
+		    data.Meta.saveTime = new Date();
 		}
 		
 		exists(data, 'base', 'Characters');
@@ -63,6 +64,7 @@ See the License for the specific language governing permissions and
 		exists(data.Meta, 'base.Meta', 'date');
 		exists(data.Meta, 'base.Meta', 'preGameDate');
 		exists(data.Meta, 'base.Meta', 'description');
+		exists(data.Meta, 'base.Meta', 'saveTime');
 		
 		return data;
 	};

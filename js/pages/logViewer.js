@@ -61,7 +61,7 @@ LogViewer.makeRow = function(rowData){
         addEl(tr, addEl(makeEl('td'), makeText(text)));
     }
     addText(rowData[0]);
-    addText(new Date(rowData[2]).format("yyyy/mm/dd h:MM:ss"));
+    addText(new Date(rowData[2]).format("yyyy/mm/dd HH:MM:ss"));
     addText(rowData[1]);
     addText(rowData[3]);
     addText(rowData[4]);

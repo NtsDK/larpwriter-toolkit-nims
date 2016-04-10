@@ -37,6 +37,8 @@ Overview.init = function () {
     Overview.name = getEl("gameNameInput");
     Overview.name.addEventListener("change", Overview.updateName);
 
+    Overview.lastSaveTime = getEl("lastSaveTime");
+    
     Overview.date = getEl("gameDatePicker");
 
     var opts = {
@@ -134,6 +136,8 @@ Overview.refresh = function () {
         Overview.date.value = info.date;
         Overview.preDate.value = info.preGameDate;
         Overview.descr.value = info.description;
+        addEl(clearEl(Overview.lastSaveTime), makeText(new Date(info.saveTime).format("yyyy/mm/dd HH:MM:ss")));
+        
         statistics['lastEvent'] = statistics['lastEvent'] !== "" ? new Date(statistics['lastEvent']).format("yyyy/mm/dd h:MM") : "";
         statistics['firstEvent'] = statistics['firstEvent'] !== "" ? new Date(statistics['firstEvent']).format("yyyy/mm/dd h:MM") : "";
         
