@@ -25,7 +25,9 @@ BriefingExport.templates = {};
 BriefingExport.init = function () {
     "use strict";
     listen(getEl("makeDefaultTextBriefings"), "click", function(){
-      BriefingExport.makeTextBriefings("txt",TEXT_TEMPLATE);
+        BriefingExport.resolveTextTemplate(function(textTemplate){
+            BriefingExport.makeTextBriefings("txt",textTemplate);
+        });
     });
 
     listen(getEl("makeCustomTextBriefings"), "click", function(){
@@ -71,10 +73,23 @@ BriefingExport.init = function () {
 
 BriefingExport.refresh = function () {
   "use strict";
-  
-  getEl("templateArea").value = TEXT_TEMPLATE;
-  BriefingExport.onNumberSelectorChange();
+  BriefingExport.resolveTextTemplate(function(textTemplate){
+      getEl("templateArea").value = textTemplate;
+      BriefingExport.onNumberSelectorChange();
+  });
 };
+
+BriefingExport.resolveTextTemplate = function (callback) {
+    "use strict";
+    DBMS.getAllProfileSettings(function(err, profileSettings){
+        if(err) {Utils.handleError(err); return;}
+        var func = R.compose(R.join(''), R.insert(1, R.__, ["{{profileInfo-","}}\n"]), R.prop('name'));
+        var value = profileSettings.map(func).join("");
+        
+        callback(R.replace(/\{0\}/g, value, TEXT_TEMPLATE));
+    });
+};
+
 
 BriefingExport.onExportSelectionChange = function (event) {
   "use strict";
@@ -174,7 +189,7 @@ BriefingExport.getBriefingData = function(callback){
                     obj.value = obj.splittedText = constL10n(Constants[obj.value]);
                 });
                 checkboxNames.forEach(function(name){
-                    charData['profileInfo.' + name] = constL10n(Constants[charData['profileInfo.' + name]]);
+                    charData['profileInfo-' + name] = constL10n(Constants[charData['profileInfo-' + name]]);
                 });
             });
             callback(null, briefingData);
@@ -332,6 +347,7 @@ BriefingExport.makeArchiveData = function(briefingData, generateSingleDelegate){
     var res = {};
     briefingData.briefings.forEach(function (briefing, i) {
         res[briefing.name] = generateSingleDelegate( {
+            gameName: briefingData.gameName,
             briefings : [ briefing ]
         });
         updateStatus(strFormat(getL10n("briefings-save-status"),[i+1, briefingData.briefings.length]));
