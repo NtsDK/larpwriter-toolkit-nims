@@ -254,6 +254,8 @@ Dictionaries['en'] = {
 	    "error-on-generating-briefings": "Error on making handouts",
         "convert-to-docx-template":"Convert to docx template",
         "generate-by-docx-template":"Generate to docx by current template",
+        "exact-multiselect": "Exact multiselect",
+        "export-settings": "Export settings",
 	    // breifings preview
 	    "character-label": "Character: {0}",
 	    "inventory":'Inventory',

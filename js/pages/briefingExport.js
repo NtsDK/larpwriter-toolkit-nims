@@ -35,22 +35,20 @@ BriefingExport.init = function () {
     var el = getEl("docxBriefings");
     el.addEventListener("change", BriefingExport.readTemplateFile);
 
-    el = getEl("exportSelectionAll");
-    el.checked = true;
-    el.addEventListener("change", BriefingExport.onExportSelectionChange);
-    BriefingExport.exportSelectionAll = el;
-
-    el = getEl("exportSelectionSpecific");
-    el.addEventListener("change", BriefingExport.onExportSelectionChange);
+    var els = document.querySelectorAll("#briefingExportDiv input[name=exportSelection]");
+    for (var i = 0; i < els.length; i++) {
+        listen(els[i], "change", BriefingExport.onExportSelectionChange);
+    }
+    getEl("exportSelectionAll").checked = true;
 
     el = getEl("briefingNumberSelector");
-    var option;
     Constants.briefingNumber.forEach(R.compose(addEl(el), makeOpt));
     
     listen(el, "change", BriefingExport.onNumberSelectorChange);
     
     BriefingExport.briefingNumberSelector = el;
     BriefingExport.briefingIntervalSelector = getEl("briefingIntervalSelector");
+    BriefingExport.briefingMultiSelector = getEl("briefingMultiSelector");
     
     getEl("makeBriefingsByTime ".trim()).addEventListener("click", BriefingExport.makeExport("templateByTime")); 
     getEl("makeBriefingsByStory".trim()).addEventListener("click", BriefingExport.makeExport("templateByStory")); 
@@ -67,6 +65,7 @@ BriefingExport.init = function () {
     listen(getEl("generateByDocxTemplate"), "click", BriefingExport.generateByDocxTemplate);
 
     BriefingExport.briefingSelector = getEl("briefingSelector");
+    BriefingExport.briefingMultiSelect = getEl("briefingMultiSelect");
     BriefingExport.content = getEl("briefingExportDiv");
 };
 
@@ -77,23 +76,39 @@ BriefingExport.refresh = function () {
   BriefingExport.onNumberSelectorChange();
 };
 
-BriefingExport.onExportSelectionChange = function () {
+BriefingExport.onExportSelectionChange = function (event) {
   "use strict";
-  toggleClass(BriefingExport.briefingSelector, "hidden");
+  var showBriefingSelector = event.target.id === 'exportSelectionSpecific';
+  var showBriefingMultiSelect = event.target.id === 'exportSelectionMultiple';
+  setClassByCondition(BriefingExport.briefingSelector, "hidden", !showBriefingSelector);
+  setClassByCondition(BriefingExport.briefingMultiSelect, "hidden", !showBriefingMultiSelect);
 };
 
 BriefingExport.getSelectedUsers = function () {
   "use strict";
-  if(!BriefingExport.exportSelectionAll.checked){
-    return JSON.parse(BriefingExport.briefingIntervalSelector.selectedOptions[0].value);
+  var id = getSelectedRadio("#briefingExportDiv input[name=exportSelection]").id;
+  switch(id){
+  case 'exportSelectionAll':
+      return null;
+  case 'exportSelectionSpecific':
+      return JSON.parse(BriefingExport.briefingIntervalSelector.selectedOptions[0].value);
+  case 'exportSelectionMultiple':
+      var opts = BriefingExport.briefingMultiSelector.selectedOptions;
+      var vals = {};
+      for (var i = 0; i < opts.length; i++) {
+          vals[opts[i].value] = true;
+      }
+      return vals;
+  default:
+      Utils.alert("unexpected id: " + id);
   }
   return null;
 };
 
 BriefingExport.onNumberSelectorChange = function () {
   "use strict";
-  var selector = BriefingExport.briefingIntervalSelector;
-  clearEl(selector);
+  var selector = clearEl(BriefingExport.briefingIntervalSelector);
+  var multiSel = clearEl(BriefingExport.briefingMultiSelector);
   var num = Number(BriefingExport.briefingNumberSelector.value);
   
   var option, chunks, displayText, value;
@@ -121,6 +136,7 @@ BriefingExport.onNumberSelectorChange = function () {
       });
       
       $("#" + BriefingExport.briefingIntervalSelector.id).select2({data:data});
+      fillSelector(multiSel, names.map(remapProps4Select));
     }
   });
 };

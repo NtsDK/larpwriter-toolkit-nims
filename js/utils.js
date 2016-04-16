@@ -344,17 +344,29 @@ function fillSelector(sel, data){
     });
 }
 
-var prepareSelect2DataCommon = R.curry(function(keys, obj){
-    return R.compose(R.zipObj(['id','text']), R.values, R.pick(keys))(obj);
+var remapProps = R.curry(function(outKeys, pickKeys, obj){
+    return R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj);
 });
 
-var prepareSelect2Data = prepareSelect2DataCommon(['value', 'displayName']);
+var remapProps4Select2 = remapProps(['id','text'], ['value', 'displayName']);
+var remapProps4Select = remapProps(['value','name'], ['value', 'displayName']);
 
 var getSelect2DataCommon = R.curry(function(preparator, obj){ 
     return R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj);
 });
 
-var getSelect2Data = getSelect2DataCommon(prepareSelect2Data);
+var getSelect2Data = getSelect2DataCommon(remapProps4Select2);
+
+var getSelectedRadio = function(query){
+    "use strict";
+    var els = document.querySelectorAll(query);
+    for (var i = 0; i < els.length; i++) {
+        if(els[i].checked === true){
+            return els[i];
+        }
+    }
+    return null;
+};
 
 // from date format utils
 //For convenience...

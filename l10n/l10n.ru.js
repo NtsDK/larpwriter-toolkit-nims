@@ -253,6 +253,8 @@
 	    "error-on-generating-briefings": "Ошибка во время генерации вводных",
         "convert-to-docx-template":"Конвертировать в docx шаблон",
         "generate-by-docx-template":"Сгенерировать в docx по текущему шаблону",
+        "exact-multiselect": "Точный мультивыбор",
+        "export-settings": "Настройки экспорта",
 	    // breifings preview
 	    "character-label": "Персонаж: {0}",
 	    "inventory":'Инвентарь',

@@ -674,7 +674,12 @@ See the License for the specific language governing permissions and
 
     <div id="briefingExportDiv">
       <div class="panel panel-default">
-        <div class="panel-body" style="display:flex;justify-content:space-around;">
+        <div class="panel-heading">
+          <a href="#" panel-toggler="#briefingExportDiv div.export-panel-body">
+            <h3 class="panel-title" l10n-id="briefings-export-settings">Настройки экспорта</h3>
+          </a>
+        </div>
+        <div class="panel-body export-panel-body" style="display:flex;justify-content:space-around;">
           
           <fieldset>
             <legend l10n-id="briefings-export-mode"></legend>
@@ -688,12 +693,19 @@ See the License for the specific language governing permissions and
             <label for="exportSelectionAll" l10n-id="briefings-print-all"></label> <br> 
             <input type="radio" name="exportSelection" value="specific" id="exportSelectionSpecific"/>
             <label for="exportSelectionSpecific" l10n-id="briefings-print-partly"></label> <br> 
+            <input type="radio" name="exportSelection" value="multiple" id="exportSelectionMultiple"/>
+            <label for="exportSelectionMultiple" l10n-id="briefings-exact-multiselect"></label> <br> 
             
             <div id="briefingSelector" class="hidden">
               <span l10n-id="briefings-briefings-amount"></span> 
               <select id="briefingNumberSelector"></select><br>
               <span l10n-id="briefings-briefings-range"></span>
               <select id="briefingIntervalSelector"></select>
+            </div>
+            
+            <div id="briefingMultiSelect" class="hidden">
+              <input selector-filter="briefingMultiSelector"><br>
+              <select id="briefingMultiSelector" multiple size=15 ></select>
             </div>
           </fieldset>
         </div>

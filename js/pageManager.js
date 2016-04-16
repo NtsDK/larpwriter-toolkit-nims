@@ -114,6 +114,7 @@ PageManager.onDatabaseLoad = function () {
     		addEl(navigation, l10nBtn);
     		
     		Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
+//    		addEl(navigation, PageManager.makeButton("logoutButton", "logout", PageManager.runTests, btnOpts));
     		if(MODE === "NIMS_Server"){
     			Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
 //    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
@@ -129,6 +130,11 @@ PageManager.onDatabaseLoad = function () {
     	});
 	});
     
+};
+
+PageManager.runTests = function(){
+    "use strict";
+    window.RunTests();
 };
 
 PageManager.postLogout = function(){

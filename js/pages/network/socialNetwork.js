@@ -336,7 +336,7 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     clearEl(getEl('nodeFocusSelector'));
     SocialNetwork.nodes.sort(SocialNetwork.nodeSort);
     
-    var data = getSelect2DataCommon(prepareSelect2DataCommon(['id', 'label']), SocialNetwork.nodes);
+    var data = getSelect2DataCommon(remapProps(['id','text'], ['id', 'label']), SocialNetwork.nodes);
     $("#nodeFocusSelector").select2(data);
 
     if(SocialNetwork.network){
