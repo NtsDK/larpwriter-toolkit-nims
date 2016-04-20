@@ -45,7 +45,8 @@ L10n.init = function(){
         L10n.dictionaries[name] = processDictionary(Dictionaries[name]);
     }
     
-    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
+    //var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
+    var lang = 'ru';
     console.log(lang);
     
     if(L10n.dictionaries[lang]){

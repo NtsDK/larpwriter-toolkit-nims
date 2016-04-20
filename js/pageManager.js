@@ -111,7 +111,7 @@ PageManager.onDatabaseLoad = function () {
     		}
     		L10n.onL10nChange(setIcon);
     		setIcon();
-    		addEl(navigation, l10nBtn);
+//    		addEl(navigation, l10nBtn);
     		
     		Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
 //    		addEl(navigation, PageManager.makeButton("logoutButton", "logout", PageManager.runTests, btnOpts));
