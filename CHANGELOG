@@ -1,3 +1,31 @@
+version 0.4.4 (21 Apr 2016)
+
+  This version include many defensive tools, export and UI improvements.
+  
+  Defensive tools:
+  - simple base check on base load
+  - references check on base load
+  - some Jasmine tests
+  - user actions log
+  
+  Briefing export changes:
+  - saving Mustache template as docx template
+  - added game name to export template
+  - added texts splitted by strings to export template
+  - added profile item by name to export template
+  - reworked export process to make it similar in text and docx modes
+  - exact multiselect of characters for export
+  
+  UI changes:
+  - replaced character/story selectors with type filter
+  - added filters to character/story multiselect lists
+  - added showing/hiding of panel content by header click
+  
+  Other changes:
+  - added last saving date storing
+  - implemented localization support
+  - added English translation
+
 version 0.4.3 (29 Feb 2016)
 
   This update include statistics page and extended text export. Also there are many usability changes.
