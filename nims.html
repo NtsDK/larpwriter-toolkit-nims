@@ -588,9 +588,11 @@ See the License for the specific language governing permissions and
     <div id="accessManagerDiv">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title" l10n-id="admins-user-management"></h3>
+          <a href="#" panel-toggler="#accessManagerDiv div.user-management-area">
+            <h3 class="panel-title" l10n-id="admins-user-management"></h3>
+          </a>
         </div>
-        <div class="panel-body">
+        <div class="panel-body user-management-area">
           <span l10n-id="admins-user-name"></span><input id="userNameInput" class="adminOnly"></input>
           <span l10n-id="admins-user-password"></span><input id="userPasswordInput" class="adminOnly"></input>
           <button id="createUserButton" class="adminOnly" l10n-id="common-add"></button>
@@ -604,9 +606,11 @@ See the License for the specific language governing permissions and
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title" l10n-id="admins-special-actions"></h3>
+          <a href="#" panel-toggler="#accessManagerDiv div.special-actions-area">
+            <h3 class="panel-title" l10n-id="admins-special-actions"></h3>
+          </a>
         </div>
-        <div class="panel-body">
+        <div class="panel-body special-actions-area">
         	<span l10n-id="admins-admin"></span><span id="currentAdministrator"></span><br>
         	<select id="newAdminSelector" class="adminOnly"></select>
             <button id="newAdminButton" class="adminOnly" l10n-id="admins-assign-admin"></button><br>
@@ -632,12 +636,22 @@ See the License for the specific language governing permissions and
                  <th l10n-id="admins-rights"></th>
                  <th l10n-id="admins-characters"></th>
                  <th l10n-id="admins-stories"></th>
+                 <th l10n-id="admins-users"></th>
                </tr>
                <tr>
-                 <td><div id="permissionTable" style="width:400px;word-wrap: break-word;"></div></td>
-                 <td><select size=10 id="characterPermissionSelector" multiple></select></td>
-                 <td><select size=10 id="storyPermissionSelector" multiple></select></td>
-                 <td><select size=5 id="userPermissionSelector"></select>
+                 <td>
+                   <div id="permissionTable"></div>
+                 </td>
+                 <td>
+                   <input selector-filter="characterPermissionSelector"><br>
+                   <select size=15 id="characterPermissionSelector" multiple></select>
+                 </td>
+                 <td>
+                   <input selector-filter="storyPermissionSelector"><br>
+                   <select size=15 id="storyPermissionSelector" multiple></select>
+                 </td>
+                 <td><select size=10 id="userPermissionSelector" style="min-width: 100px;"></select></td>
+                 <td>
                  <button id="assignPermissionButton" l10n-id="admins-assign-rights"></button>
                  <button id="removePermissionButton" class="adminOnly" l10n-id="admins-take-away-rights"></button>
                  </td>
@@ -676,7 +690,7 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-heading">
           <a href="#" panel-toggler="#briefingExportDiv div.export-panel-body">
-            <h3 class="panel-title" l10n-id="briefings-export-settings">Настройки экспорта</h3>
+            <h3 class="panel-title" l10n-id="briefings-export-settings"></h3>
           </a>
         </div>
         <div class="panel-body export-panel-body" style="display:flex;justify-content:space-around;">

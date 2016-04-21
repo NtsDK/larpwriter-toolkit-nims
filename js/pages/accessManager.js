@@ -146,34 +146,69 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
     
     getEl("adaptationRights" + allInfo.adaptationRights).checked = true;
     
+    var makeList = function(obj){
+        if(R.isArrayLike(obj)){
+            return obj.map(function(value){
+                return makeList(value);
+            });
+        } else if(R.is(Object, obj)){
+            var li = addEl(makeEl('li'), makeText(obj.name));
+            var ol = makeEl("ol");
+            makeList(obj.values).forEach(function(arr){
+                arr.forEach(addEl(ol));
+            });
+            return [li, ol];
+        } else {
+            return [addEl(makeEl('li'), makeText(obj))];
+        }
+    };
+    
     var permissionTable = clearEl(getEl("permissionTable"));
+    var ol = makeEl('ul');
     
-    var addChild = addEl(permissionTable);
+    addEl(permissionTable, ol);
+    var addChild = addEl(ol);
     
-    var addInfo = function(name, characters, stories){
-        addChild(makeText(name));
-        addChild(makeEl("br"));
-        addChild(makeText(strFormat(getL10n("admins-characters-header"),  [characters.join(",")])));
-        addChild(makeEl("br"));
-        addChild(makeText(strFormat(getL10n('admins-stories-header'), [stories.join(",")])));
-        addChild(makeEl("br"));
-        addChild(makeEl("br"));
-    }
+    var charHeader = getL10n("admins-characters-header");
+    var storiesHeader = getL10n("admins-stories-header");
     
-    names.forEach(function(name){
-        addInfo(name, info[name].characters, info[name].stories);
+    var listData = names.map(function(name){
+        return {
+            name: name,
+            values: [{
+                name: charHeader,
+                values: info[name].characters,
+            }, {
+                name: storiesHeader,
+                values: info[name].stories,
+            }]
+        }
     });
     
 	var isUnused = R.curry(function(objName, storyName){
-		return !names.every(function(name){
-		    return info[name][objName].indexOf(storyName)!==-1;
+		return names.every(function(name){
+		    return info[name][objName].indexOf(storyName) === -1;
 		});
 	});
 	
 	storyNames = storyNames.map(R.prop('value')).filter(isUnused('stories'));
 	characterNames = characterNames.map(R.prop('value')).filter(isUnused('characters'));
 	
-	addInfo(getL10n('admins-have-not-owner'), characterNames, storyNames);
+    listData.push({
+        name : getL10n('admins-have-not-owner'),
+        values : [ {
+            name : charHeader,
+            values : characterNames,
+        }, {
+            name : storiesHeader,
+            values : storyNames,
+        } ]
+    });
+    
+
+    makeList(listData).forEach(function(arr) {
+        arr.forEach(addChild);
+    });
 };
 
 AccessManager.createUser = function () {

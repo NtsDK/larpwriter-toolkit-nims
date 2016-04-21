@@ -331,3 +331,12 @@ See the License for the specific language governing permissions and
   width: 200px;
 }
 
+/* access manager */
+#permissionTable {
+  width: 300px;
+  word-wrap: break-word;
+}
+
+#permissionTable ol, #permissionTable ul{
+  padding-left: 20px;
+} 
