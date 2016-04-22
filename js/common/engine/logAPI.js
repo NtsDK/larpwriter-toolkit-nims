@@ -113,8 +113,10 @@ See the License for the specific language governing permissions and
                 "use strict";
                 var info = [userName, new Date(), funcName, JSON.stringify(params)];
                 if(this.database){
-                    if(includeList[funcName].rewrite && this.database.Log[this.database.Log.length-1][2] === funcName){
-                        this.database.Log[this.database.Log.length-1] = info;
+                    if(includeList[funcName].rewrite && this.database.Log[this.database.Log.length-1] != undefined){
+                        if(this.database.Log[this.database.Log.length-1][2] === funcName){
+                            this.database.Log[this.database.Log.length-1] = info;
+                        }
                     } else {
                         this.database.Log.push(info);
                         if(this.database.Log.length > 2000){
