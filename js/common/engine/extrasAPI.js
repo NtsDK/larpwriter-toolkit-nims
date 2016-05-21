@@ -92,17 +92,17 @@ See the License for the specific language governing permissions and
 		// profile, preview
 		LocalDBMS.prototype.getProfile = function(name, callback) {
 			"use strict";
-			callback(null, this.database.Characters[name]);
+			callback(null, CommonUtils.clone(this.database.Characters[name]));
 		};
 		// social network, character filter
 		LocalDBMS.prototype.getAllProfiles = function(callback) {
 			"use strict";
-			callback(null, this.database.Characters);
+			callback(null, CommonUtils.clone(this.database.Characters));
 		};
 		// social network
 		LocalDBMS.prototype.getAllStories = function(callback) {
 			"use strict";
-			callback(null, this.database.Stories);
+			callback(null, CommonUtils.clone(this.database.Stories));
 		};
 	
 		// timeline

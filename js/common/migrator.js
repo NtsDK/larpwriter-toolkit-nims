@@ -55,6 +55,18 @@ See the License for the specific language governing permissions and
 		    data.Version = "0.4.4";
 		    data.Meta.saveTime = new Date();
 		}
+		if(data.Version === "0.4.4"){
+		    var char, story;
+		    Object.keys(data.Characters).forEach(function(charName) {
+		        char = data.Characters[charName];
+		        delete char.displayName;
+		    });
+		    Object.keys(data.Stories).forEach(function(storyName) {
+                story = data.Stories[storyName];
+                delete story.displayName;
+		    });
+		    data.Version = "0.4.4u1";
+		}
 		
 		exists(data, 'base', 'Characters');
 		exists(data, 'base', 'ProfileSettings');
