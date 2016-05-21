@@ -29,7 +29,7 @@ FileUtils.makeNewBase = function () {
     "use strict";
     if(Utils.confirm(getL10n("utils-new-base-warning"))) {
         "use strict";
-        DBMS.setDatabase(EmptyBase.data, FileUtils.callback);
+        DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), FileUtils.callback);
     }
 };
 
