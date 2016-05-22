@@ -344,6 +344,10 @@ function fillSelector(sel, data){
     });
 }
 
+function nl2array(nodeList){
+    return Array.prototype.slice.call(nodeList);
+};
+
 var remapProps = R.curry(function(outKeys, pickKeys, obj){
     return R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj);
 });

@@ -419,7 +419,7 @@ See the License for the specific language governing permissions and
                 <span l10n-id="stories-event-name"></span><input id="eventNameInput" class="isStoryEditable"></input><br>
                 <span l10n-id="stories-event-descr"></span><br>
                 <textarea id="eventTextInput" class="eventText isStoryEditable"></textarea><br>
-                <span l10n-id="stories-event-position"></span><select id="positionSelector" class="isStoryEditable"></select>
+                <span l10n-id="stories-event-position"></span><select id="positionSelector" class="isStoryEditable eventPositionSelector"></select>
                 <button id="createEventButton" class="isStoryEditable" l10n-id="common-add"></button>
               </div>
             </div>
@@ -428,14 +428,14 @@ See the License for the specific language governing permissions and
                 <h3 style="margin-top:8px;" l10n-id="stories-event-management"></h3>
               </a>
               <div class="event-management-area">
-                <select id="moveEventSelector" class="isStoryEditable"></select> 
-                <span l10n-id="stories-event-position"></span><select id="movePositionSelector" class="isStoryEditable"></select>
+                <select id="moveEventSelector" class="isStoryEditable eventEditSelector"></select> 
+                <span l10n-id="stories-event-position"></span><select id="movePositionSelector" class="isStoryEditable eventPositionSelector"></select>
                 <button id="moveEventButton" class="isStoryEditable" l10n-id="stories-move-event"></button>
-                <br> <select id="cloneEventSelector" class="isStoryEditable"></select>
+                <br> <select id="cloneEventSelector" class="isStoryEditable eventEditSelector"></select>
                 <button id="cloneEventButton" class="isStoryEditable" l10n-id="stories-clone-event"></button>
-                <br> <select id="mergeEventSelector" class="isStoryEditable"></select>
+                <br> <select id="mergeEventSelector" class="isStoryEditable eventEditSelector"></select>
                 <button id="mergeEventButton" class="isStoryEditable" l10n-id="stories-merge-events"></button>
-                <br> <select id="removeEventSelector" class="isStoryEditable"></select>
+                <br> <select id="removeEventSelector" class="isStoryEditable eventEditSelector"></select>
                 <button id="removeEventButton" class="isStoryEditable" l10n-id="common-remove"></button>
               </div>
             </div>

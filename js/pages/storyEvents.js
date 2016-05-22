@@ -42,6 +42,7 @@ StoryEvents.init = function () {
 
 StoryEvents.refresh = function () {
     "use strict";
+    StoryEvents.clearInterface();
     if(Stories.CurrentStoryName === undefined){
         return;
     }
@@ -60,34 +61,33 @@ StoryEvents.refresh = function () {
     });
 };
 
+StoryEvents.clearInterface = function(){
+    clearEl(getEl("eventBlockHead"));
+    clearEl(getEl("eventBlock"));
+    var positionSelectors = nl2array(document.querySelectorAll(".eventPositionSelector"));
+    R.ap([clearEl], positionSelectors);
+    var selectorArr = nl2array(document.querySelectorAll(".eventEditSelector"));
+    R.ap([clearEl], selectorArr);
+};
+
 StoryEvents.rebuildInterface = function(events, metaInfo){
     "use strict";
     	
 	// event part
-	var tableHead = getEl("eventBlockHead");
-	clearEl(tableHead);
-	var table = getEl("eventBlock");
-	clearEl(table);
+	var tableHead = clearEl(getEl("eventBlockHead"));
+	var table = clearEl(getEl("eventBlock"));
 	
 	addEl(tableHead, StoryEvents.getEventHeader());
 	
 	// refresh position selector
-	var positionSelectors = [];
-	
-	positionSelectors.push(getEl("positionSelector"));
-	positionSelectors.push(getEl("movePositionSelector"));
-	
-	positionSelectors.forEach(function (selector) {
-		clearEl(selector);
-	});
-	
     var addOpt = R.curry(function(sel, text){
         addEl(sel, addEl(makeEl('option'), makeText(text)));
     });
 	
 	var option, addOptLoc;
+	var positionSelectors = nl2array(document.querySelectorAll(".eventPositionSelector"));
+	R.ap([clearEl], positionSelectors);
 	positionSelectors.forEach(function (positionSelector) {
-	    
 	    addOptLoc = addOpt(positionSelector);
         
 		events.forEach(function (event) {
@@ -106,16 +106,8 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
 	StoryEvents.eventsLength = events.length;
 	
 	// refresh swap selector
-	var selectorArr = [];
-	
-	selectorArr.push(getEl("moveEventSelector"));
-	selectorArr.push(getEl("removeEventSelector"));
-	selectorArr.push(getEl("cloneEventSelector"));
-	selectorArr.push(getEl("mergeEventSelector"));
-	
-	selectorArr.forEach(function (selector) {
-		clearEl(selector);
-	});
+	var selectorArr = nl2array(document.querySelectorAll(".eventEditSelector"));
+	R.ap([clearEl], selectorArr);
 	
 	events.forEach(function (event, i) {
 		selectorArr.forEach(function (selector) {

@@ -43,6 +43,11 @@ StoryCharacters.refresh = function () {
     StoryCharacters.ExternalCharacterSelectors.forEach(clearEl);
     StoryCharacters.InternalCharacterSelectors.forEach(clearEl);
     
+    clearEl(getEl("story-characterActivityTableHead"));
+    clearEl(getEl("story-characterActivityTable"));
+    clearEl(getEl("storyCharactersTableHead"));
+    clearEl(getEl("storyCharactersTable"));
+    
     if(!Stories.CurrentStoryName){return;}
     
     PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
