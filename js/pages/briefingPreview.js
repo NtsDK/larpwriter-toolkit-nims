@@ -37,6 +37,7 @@ BriefingPreview.init = function () {
 BriefingPreview.refresh = function () {
     "use strict";
     clearEl(getEl("briefingCharacter"));
+    clearEl(getEl("briefingContent"));
     
     DBMS.getAllProfileSettings(function(err, profileSettings){
     	if(err) {Utils.handleError(err); return;}
