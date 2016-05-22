@@ -339,30 +339,30 @@ SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
     var data = getSelect2DataCommon(remapProps(['id','text'], ['id', 'label']), SocialNetwork.nodes);
     $("#nodeFocusSelector").select2(data);
 
-    if(SocialNetwork.network){
-        SocialNetwork.network.storePositions();
-        
-        var str = SocialNetwork.nodesDataset.get().map(function(node){
-//            return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
-            return strFormat('"{0}";', [node.id]);
-        }).join("\n");
-        
-        str += SocialNetwork.edgesDataset.get().map(function(edge){
-//          return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
-          return strFormat('"{0}" -- "{1}";', [edge.from, edge.to]);
-      }).join("\n");
-        
-        str = "graph {" + str + "}";
-        
-        window.open(str);
-        
-//        FileUtils.json2File(str, "network.json");
-        
-//        FileUtils.json2File({
-//            nodes: SocialNetwork.nodesDataset.get(),
-//            edges: SocialNetwork.edgesDataset.get(),
-//        }, "network.json");
-    }
+//    if(SocialNetwork.network){
+//        SocialNetwork.network.storePositions();
+//        
+//        var str = SocialNetwork.nodesDataset.get().map(function(node){
+////            return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
+//            return strFormat('"{0}";', [node.id]);
+//        }).join("\n");
+//        
+//        str += SocialNetwork.edgesDataset.get().map(function(edge){
+////          return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
+//          return strFormat('"{0}" -- "{1}";', [edge.from, edge.to]);
+//      }).join("\n");
+//        
+//        str = "graph {" + str + "}";
+//        
+//        window.open(str);
+//        
+////        FileUtils.json2File(str, "network.json");
+//        
+////        FileUtils.json2File({
+////            nodes: SocialNetwork.nodesDataset.get(),
+////            edges: SocialNetwork.edgesDataset.get(),
+////        }, "network.json");
+//    }
     
 //      if(SocialNetwork.network){
 ////          alert(SocialNetwork.network.getSVG());
