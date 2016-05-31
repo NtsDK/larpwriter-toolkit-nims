@@ -84,6 +84,18 @@ See the License for the specific language governing permissions and
                     }, array[0]);
                     var step = Math.ceil((max - min) / 20);
                     step = step === 0 ? 1 : step;
+                    var base = 1;
+                    while(step > base*10){
+                        base = base*10;
+                    }
+                    var arr = [1, 2, 5, 10, 12];
+                    for (var i = 0; i < arr.length-1; i++) {
+                        if(base*arr[i] < step && step < base*arr[i+1]){
+                            step = base*arr[i];
+                            break;
+                        }
+                    }
+                    
                     return {
                         groups: groupReduce(groupCharacters(function(character){
                             return Math.floor(character[profileItem.name] / step)
