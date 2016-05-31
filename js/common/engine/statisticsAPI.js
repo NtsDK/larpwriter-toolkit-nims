@@ -65,21 +65,31 @@ See the License for the specific language governing permissions and
             }).map(R.pick(['name', 'type']));
             
             var groupCharacters = R.groupBy(R.__, R.values(database.Characters));
-            var groupedValues = profileItems.map(function(profileItem) {
-                if (profileItem.type === "enum" || profileItem.type === "checkbox") {
-                    return groupCharacters(R.prop(profileItem.name));
-                } else {
-                    return groupCharacters(function(character){
-                        return Math.floor(character[profileItem.name] / 5)
-                    });
-                }
-            });
-            
-            groupedValues = groupedValues.map(function(group){
+            var groupReduce = function(group){
                 return R.fromPairs(R.toPairs(group).map(function(elem){
                     elem[1] = elem[1].length;
                     return elem;
                 }));
+            };
+            var groupedValues = profileItems.map(function(profileItem) {
+                if (profileItem.type === "enum" || profileItem.type === "checkbox") {
+                    return groupReduce(groupCharacters(R.prop(profileItem.name)));
+                } else {
+                    var array = R.ap([R.prop(profileItem.name)],R.values(database.Characters));
+                    var max = array.reduce(function(max, cur){
+                        return cur > max ? cur : max;
+                    }, array[0]);
+                    var min = array.reduce(function(min, cur){
+                        return cur < min ? cur : min;
+                    }, array[0]);
+                    var step = Math.ceil((max - min) / 20);
+                    return {
+                        groups: groupReduce(groupCharacters(function(character){
+                            return Math.floor(character[profileItem.name] / step)
+                        })),
+                        step: step
+                    }
+                }
             });
                     
             return R.transpose([profileItems, groupedValues]).map(function(arr){

@@ -218,6 +218,8 @@ Overview.prepareChart = function(info){
 Overview.prepareHist = function(info){
     "use strict";
     info.prepared = [];
+    var step = info.data.step;
+    info.data = info.data.groups;
     var min = R.apply(Math.min, R.keys(info.data));
     var max = R.apply(Math.max, R.keys(info.data));
         
@@ -225,8 +227,8 @@ Overview.prepareHist = function(info){
         if (info.data[i]) {
             info.prepared.push({
                 value : info.data[i],
-                label : i * 5 + "-" + (i * 5 + 4),
-                tip : i * 5 + "-" + (i * 5 + 4)
+                label : i * step + "-" + (i * step + (step-1)),
+                tip : i * step + "-" + (i *step + (step-1))
             });
         } else {
             info.prepared.push(null);
