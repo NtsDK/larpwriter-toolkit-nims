@@ -83,6 +83,7 @@ See the License for the specific language governing permissions and
                         return cur < min ? cur : min;
                     }, array[0]);
                     var step = Math.ceil((max - min) / 20);
+                    step = step === 0 ? 1 : step;
                     return {
                         groups: groupReduce(groupCharacters(function(character){
                             return Math.floor(character[profileItem.name] / step)
