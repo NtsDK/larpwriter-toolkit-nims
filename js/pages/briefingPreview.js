@@ -137,6 +137,9 @@ BriefingPreview.showProfile = function(content, profile){
     var span;
     
     BriefingPreview.profileSettings.forEach(function (element) {
+        if(!element.doExport){
+            return;
+        }
         content.appendChild(makeText(element.name + ": "));
         switch (element.type) {
         case "text":

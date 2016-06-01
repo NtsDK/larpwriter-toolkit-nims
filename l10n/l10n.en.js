@@ -115,6 +115,7 @@ Dictionaries['en'] = {
 		"move-item":"Move",
 		"table-profile-item-name":"Profile item name",
 		"profile-item-default-value":"Value(s)",
+	    "profile-item-do-export":"Do export",
 		
 		// character management errors
         "character-name-is-not-specified" : "Character name is empty",

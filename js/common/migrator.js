@@ -67,6 +67,11 @@ See the License for the specific language governing permissions and
 		    });
 		    data.Version = "0.4.4u1";
 		}
+		if(data.Version === "0.4.4u1"){
+		    var doExportLens = R.lensProp('doExport');
+		    data.ProfileSettings = data.ProfileSettings.map(R.set(doExportLens, true));
+		    data.Version = "0.4.4u2";
+		}
 		
 		exists(data, 'base', 'Characters');
 		exists(data, 'base', 'ProfileSettings');

@@ -134,6 +134,16 @@ See the License for the specific language governing permissions and
 		    });
 			
 		};
+		
+        LocalDBMS.prototype.doExportProfileItemChange = function(profileItemName, checked, callback) {
+            'use strict';
+            var profileItem = this.database.ProfileSettings.filter(function(elem) {
+                return elem.name === profileItemName;
+            })[0];
+            
+            profileItem.doExport = checked;
+            callback();
+        };
 	
 		// profile configurer
 		LocalDBMS.prototype.updateDefaultValue = function(profileItemName, value, callback) {

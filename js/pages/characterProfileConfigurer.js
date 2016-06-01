@@ -40,14 +40,9 @@ CharacterProfileConfigurer.init = function () {
     fillMainSel();
     L10n.onL10nChange(fillMainSel);
 
-    var button = getEl("createProfileItemButton");
-    button.addEventListener("click", CharacterProfileConfigurer.createProfileItem);
-
-    button = getEl("moveProfileItemButton");
-    button.addEventListener("click", CharacterProfileConfigurer.moveProfileItem);
-
-    button = getEl("removeProfileItemButton");
-    button.addEventListener("click", CharacterProfileConfigurer.removeProfileItem);
+    listen(getEl("createProfileItemButton"), "click", CharacterProfileConfigurer.createProfileItem);
+    listen(getEl("moveProfileItemButton"), "click", CharacterProfileConfigurer.moveProfileItem);
+    listen(getEl("removeProfileItemButton"), "click", CharacterProfileConfigurer.removeProfileItem);
 
     CharacterProfileConfigurer.content = getEl("characterProfileConfigurer");
 };
@@ -81,11 +76,10 @@ CharacterProfileConfigurer.refresh = function () {
     	});
     	
         
-        var table = getEl("profileConfigBlock");
-        clearEl(table);
+        var table = clearEl(getEl("profileConfigBlock"));
         
         allProfileSettings.forEach(function (profileSettings, i) {
-            CharacterProfileConfigurer.appendInput(table, profileSettings, i + 1);
+            addEl(table, CharacterProfileConfigurer.getInput(profileSettings, i + 1));
         });
         
         PermissionInformer.isAdmin(function(err, isAdmin){
@@ -167,46 +161,42 @@ CharacterProfileConfigurer.fillSelector = function (sel) {
     });
 };
 
-CharacterProfileConfigurer.appendInput = function (table, profileSettings, index) {
+CharacterProfileConfigurer.getInput = function (profileSettings, index) {
     'use strict';
     var tr = makeEl("tr");
+    
+    var addColumn = R.compose(addEl(tr), function(el){
+        return addEl(makeEl("td"), el);
+    });
+    addColumn(addEl(makeEl("span"),makeText(index)));
 
-    var td = makeEl("td");
-    var span = makeEl("span");
-    span.appendChild(makeText(index));
-    td.appendChild(span);
-    tr.appendChild(td);
-
-    td = makeEl("td");
-    var input; 
-    input = makeEl("input");
-    input.value = profileSettings.name;
-    input.info = profileSettings.name;
+    var input = setProps(makeEl("input"), {
+        value: profileSettings.name,
+        info: profileSettings.name
+    });
+    listen(input, "change", CharacterProfileConfigurer.renameProfileItem);
     addClass(input,"itemNameInput");
-    input.addEventListener("change", CharacterProfileConfigurer.renameProfileItem);
     addClass(input, "adminOnly");
-    td.appendChild(input);
-    tr.appendChild(td);
+    addColumn(input);
 
-    td = makeEl("td");
-    var selector = makeEl("select");
-    CharacterProfileConfigurer.fillSelector(selector);
-    selector.value = profileSettings.type;
-    selector.info = profileSettings.name;
-    selector.oldType = profileSettings.type;
-    td.appendChild(selector);
-    selector.addEventListener("change", CharacterProfileConfigurer.changeProfileItemType);
-    addClass(selector, "adminOnly");
-    tr.appendChild(td);
+    var sel = makeEl("select"); 
+    CharacterProfileConfigurer.fillSelector(sel);
+    setProps(sel, {
+        value: profileSettings.type,
+        info: profileSettings.name,
+        oldType: profileSettings.type
+    });
+    listen(sel, "change", CharacterProfileConfigurer.changeProfileItemType);
+    addClass(sel, "adminOnly");
+    addColumn(sel);
 
-    td = makeEl("td");
-    if(profileSettings.type == "text" || profileSettings.type == "enum"){
-        input = makeEl("textarea");
-    } else {
-        input = makeEl("input");
-    }
-    input.info = profileSettings.name;
-    input.infoType = profileSettings.type;
+    var isTextarea = profileSettings.type == "text" || profileSettings.type == "enum";
+    input = isTextarea ? makeEl("textarea") : makeEl("input");
+    setProps(input, {
+        info: profileSettings.name,
+        infoType: profileSettings.type,
+        oldValue: profileSettings.value
+    });
     addClass(input, "adminOnly");
     addClass(input, "profile-configurer-" + profileSettings.type);
 
@@ -225,12 +215,20 @@ CharacterProfileConfigurer.appendInput = function (table, profileSettings, index
         input.checked = profileSettings.value;
         break;
     }
-    input.oldValue = profileSettings.value;
 
-    input.addEventListener("change", CharacterProfileConfigurer.updateDefaultValue);
-    td.appendChild(input);
-    tr.appendChild(td);
-    table.appendChild(tr);
+    listen(input, "change", CharacterProfileConfigurer.updateDefaultValue);
+    addColumn(input);
+    
+    var input = setProps(makeEl("input"), {
+        checked: profileSettings.doExport,
+        info: profileSettings.name,
+        type: "checkbox"
+    });
+    listen(input, "change", CharacterProfileConfigurer.doExportChange);
+    addClass(input, "adminOnly");
+    addColumn(input);
+    
+    return tr;
 };
 
 CharacterProfileConfigurer.updateDefaultValue = function (event) {
@@ -307,6 +305,11 @@ CharacterProfileConfigurer.updateDefaultValue = function (event) {
         DBMS.updateDefaultValue(name, newValue, Utils.processError());
         break;
     }
+};
+
+CharacterProfileConfigurer.doExportChange = function (event) {
+    'use strict';
+    DBMS.doExportProfileItemChange(event.target.info, event.target.checked, Utils.processError());
 };
 
 CharacterProfileConfigurer.renameProfileItem = function (event) {

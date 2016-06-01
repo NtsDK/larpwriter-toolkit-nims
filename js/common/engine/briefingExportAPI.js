@@ -91,7 +91,8 @@ See the License for the specific language governing permissions and
 			"use strict";
 			var character = database.Characters[charName];
 			var value, splittedText;
-			var profileInfoArray = database.ProfileSettings.map(function(element) {
+			var filter = R.compose(R.equals(true), R.prop('doExport'));
+			var profileInfoArray = database.ProfileSettings.filter(filter).map(function(element) {
 				switch (element.type) {
 				case "text":
 				    value = character[element.name];

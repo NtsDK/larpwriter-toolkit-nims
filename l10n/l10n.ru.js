@@ -114,6 +114,7 @@
 		"move-item":"Переместить",
 		"table-profile-item-name":"Название поля",
 		"profile-item-default-value":"Значения",
+	    "profile-item-do-export":"Печатать во вводных",
 		
 		// character management errors
         "character-name-is-not-specified" : "Имя персонажа не указано",

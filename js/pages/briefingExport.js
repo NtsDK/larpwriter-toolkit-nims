@@ -84,7 +84,8 @@ BriefingExport.resolveTextTemplate = function (callback) {
     DBMS.getAllProfileSettings(function(err, profileSettings){
         if(err) {Utils.handleError(err); return;}
         var func = R.compose(R.join(''), R.insert(1, R.__, ["{{profileInfo-","}}\n"]), R.prop('name'));
-        var value = profileSettings.map(func).join("");
+        var filter = R.compose(R.equals(true), R.prop('doExport'));
+        var value = profileSettings.filter(filter).map(func).join("");
         
         callback(R.replace(/\{0\}/g, value, TEXT_TEMPLATE));
     });
@@ -186,7 +187,9 @@ BriefingExport.getBriefingData = function(callback){
             briefingData.briefings.forEach(function(charData){
                 checkboxIndexes.forEach(function(index){
                     var obj = charData.profileInfoArray[index];
-                    obj.value = obj.splittedText = constL10n(Constants[obj.value]);
+                    if(obj){
+                        obj.value = obj.splittedText = constL10n(Constants[obj.value]);
+                    }
                 });
                 checkboxNames.forEach(function(name){
                     charData['profileInfo-' + name] = constL10n(Constants[charData['profileInfo-' + name]]);
