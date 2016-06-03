@@ -68,8 +68,9 @@ See the License for the specific language governing permissions and
 		    data.Version = "0.4.4u1";
 		}
 		if(data.Version === "0.4.4u1"){
-		    var doExportLens = R.lensProp('doExport');
-		    data.ProfileSettings = data.ProfileSettings.map(R.set(doExportLens, true));
+		    data.ProfileSettings.forEach(function(item){
+		        item.doExport = true;
+		    })
 		    data.Version = "0.4.4u2";
 		}
 		

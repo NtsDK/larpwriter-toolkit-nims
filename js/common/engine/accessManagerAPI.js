@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
 //			}
 			var ManagementInfo = this.database.ManagementInfo;
 			callback(null, {
-				usersInfo : ManagementInfo.UsersInfo,
+				usersInfo : CommonUtils.clone(ManagementInfo.UsersInfo),
 				admin : ManagementInfo.admin,
 				editor : ManagementInfo.editor,
 				adaptationRights : ManagementInfo.adaptationRights

@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
 			}).forEach(function(storyName) {
 				events = [];
 	
-				var tmpEvents = that.database.Stories[storyName].events;
+				var tmpEvents = CommonUtils.clone(that.database.Stories[storyName].events);
 				tmpEvents.map(function(elem, i) {
 					elem.index = i;
 					elem.storyName = storyName;
@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
 			Object.keys(this.database.Stories).filter(function(storyName) {
 				return that.database.Stories[storyName].characters[characterName];
 			}).forEach(function(storyName) {
-				var events = that.database.Stories[storyName].events;
+				var events = CommonUtils.clone(that.database.Stories[storyName].events);
 				allEvents = allEvents.concat(events.map(function(elem, i) {
 					elem.index = i;
 					elem.storyName = storyName;
@@ -118,7 +118,7 @@ See the License for the specific language governing permissions and
 			}).forEach(function(storyName) {
 				events = [];
 	
-				var tmpEvents = that.database.Stories[storyName].events;
+				var tmpEvents = CommonUtils.clone(that.database.Stories[storyName].events);
 				tmpEvents.map(function(elem, i) {
 					elem.index = i;
 					elem.storyName = storyName;

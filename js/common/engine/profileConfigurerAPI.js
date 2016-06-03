@@ -30,7 +30,8 @@ See the License for the specific language governing permissions and
 		    	var profileItem = {
 	    			name : name,
 	    			type : type,
-	    			value : value
+	    			value : value,
+	    			doExport : true
 		    	};
 		    	
 		    	Object.keys(that.database.Characters).forEach(function(characterName) {

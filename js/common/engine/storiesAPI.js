@@ -114,13 +114,13 @@ See the License for the specific language governing permissions and
 		//story events, event presence
 		LocalDBMS.prototype.getStoryEvents = function(storyName, callback){
 		    "use strict";
-		    callback(null,  this.database.Stories[storyName].events);
+		    callback(null,  CommonUtils.clone(this.database.Stories[storyName].events));
 		};
 	
 		//story characters
 		LocalDBMS.prototype.getStoryCharacters = function(storyName, callback){
 		    "use strict";
-		    callback(null,  this.database.Stories[storyName].characters);
+		    callback(null,  CommonUtils.clone(this.database.Stories[storyName].characters));
 		};
 	
 	

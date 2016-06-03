@@ -134,7 +134,7 @@ See the License for the specific language governing permissions and
 		    "use strict";
 		    
 		    var i;
-		    var events = this.database.Stories[storyName].events.map(function(item, i){
+		    var events = CommonUtils.clone(this.database.Stories[storyName].events).map(function(item, i){
 		        item.index = i;
 		        return item;
 		    }).filter(function (event) {

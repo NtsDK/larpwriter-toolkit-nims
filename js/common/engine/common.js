@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.getDatabase = function(callback){
 		    "use strict";
 		    this.database.Meta.saveTime = new Date();
-		    callback(null, this.database);
+		    callback(null, CommonUtils.clone(this.database));
 		};
 	
 		LocalDBMS.prototype.setDatabase = function(database, callback){
@@ -30,7 +30,7 @@ See the License for the specific language governing permissions and
 	
 		LocalDBMS.prototype.getMetaInfo = function(callback){
 		    "use strict";
-		    callback(null, this.database.Meta);
+		    callback(null, CommonUtils.clone(this.database.Meta));
 		};
 	
 		// overview
@@ -53,7 +53,7 @@ See the License for the specific language governing permissions and
 	
 		LocalDBMS.prototype.getAllProfileSettings = function(callback){
 		    "use strict";
-		    callback(null, this.database.ProfileSettings);
+		    callback(null, CommonUtils.clone(this.database.ProfileSettings));
 		};
 	};
   
