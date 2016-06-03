@@ -111,7 +111,7 @@ See the License for the specific language governing permissions and
         if(environment === "Standalone"){
             LocalDBMS.prototype.log = function(userName, funcName, params) {
                 "use strict";
-                var info = [userName, new Date(), funcName, JSON.stringify(params)];
+                var info = [userName, new Date().toJSON(), funcName, JSON.stringify(params)];
                 if(this.database){
                     if(includeList[funcName].rewrite && this.database.Log[this.database.Log.length-1] != undefined){
                         if(this.database.Log[this.database.Log.length-1][2] === funcName){
