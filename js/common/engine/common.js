@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 	
 		LocalDBMS.prototype.getDatabase = function(callback){
 		    "use strict";
-		    this.database.Meta.saveTime = new Date().toJSON();
+		    this.database.Meta.saveTime = new Date().toString();
 		    callback(null, CommonUtils.clone(this.database));
 		};
 	
