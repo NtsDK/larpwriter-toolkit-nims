@@ -334,7 +334,7 @@ See the License for the specific language governing permissions and
                   <h3 class="panel-title" l10n-id="character-filter-filter"></h3>
                 </a>
               </div>
-              <div class="panel-body filter-settings-area">
+              <div class="panel-body filter-settings-area panel-resizable">
                 <span l10n-id="character-filter-results"></span> <span id="filterResultSize"></span><br><br>
                 <div id="filterSettingsDiv"></div>
               </div>
@@ -528,13 +528,13 @@ See the License for the specific language governing permissions and
         </div>
       </div>
       <div style="display:flex;">
-        <div style="flex-grow:0;">
+        <div style="flex-grow:0;flex-basis: 210px;">
             <div id="personalStoriesCharacterContainer">
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title" l10n-id="adaptations-story"></h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body panel-resizable">
                   <input selector-filter="events-storySelector"><br>
                   <select id="events-storySelector" size=10></select>
                 </div>
@@ -788,7 +788,7 @@ See the License for the specific language governing permissions and
             <div class="panel-heading">
               <h3 class="panel-title" l10n-id="timeline-stories"></h3>
             </div>
-            <div class="panel-body">
+            <div class="panel-body panel-resizable">
               <input selector-filter="timelineStorySelector"><br>
               <select size=20 id="timelineStorySelector" multiple></select>
             </div>

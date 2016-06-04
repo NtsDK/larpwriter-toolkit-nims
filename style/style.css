@@ -184,13 +184,13 @@ See the License for the specific language governing permissions and
 }
 
 #personalStoriesCharacterContainer{
-	width: 210px;
 	overflow: auto;
 }
 
 #events-storySelector, #events-characterSelector {
 	display: block;
 	width:100%;
+	height: calc(100% - 30px);
 }
 
 .events-eventsContainer{
@@ -219,6 +219,11 @@ See the License for the specific language governing permissions and
 
 #timelineContainer {
 	background-color: #fff;
+}
+
+#timelineStorySelector {
+  width: 100%;
+  height: calc(100% - 30px);
 }
 
 .flexRoot {
@@ -262,7 +267,7 @@ See the License for the specific language governing permissions and
 /* social network */
 #socialNetworkContainer {
 	width: 800px;
-	height: 600px;
+	height: calc(100vh - 60px);
 	border: 1px solid lightgray;
 	background-color: #EDEDED;
 }
@@ -340,3 +345,9 @@ See the License for the specific language governing permissions and
 #permissionTable ol, #permissionTable ul{
   padding-left: 20px;
 } 
+
+
+.panel-resizable{
+  resize: both;
+  overflow: auto;
+}
