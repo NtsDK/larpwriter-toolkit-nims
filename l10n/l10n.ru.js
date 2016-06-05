@@ -16,6 +16,8 @@
 		"admins":"Администрирование",
 		"chat":"Чат",
 		"logout":"Выход",
+		"test":"Тест",
+		"about":"О нас",
 		"logViewer":"Логи",
 		"l10n":"Русский",
 		"dictionary-icon":"ru",

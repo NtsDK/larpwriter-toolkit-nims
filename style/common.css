@@ -86,6 +86,12 @@ body {
 #logoutButton{
   background-image: url("../images/exit22.svg");
 }
+#testButton{
+  background-image: url("../images/long-checklist.svg");
+}
+#aboutButton{
+  background-image: url("../images/copyright.svg");
+}
 
 #chatButton{
   background: transparent url("../images/chat55.svg") no-repeat scroll 50% 0%;

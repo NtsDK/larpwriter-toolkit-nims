@@ -17,6 +17,8 @@ Dictionaries['en'] = {
 		"admins":"Administrative tools",
 		"chat":"Chat",
 		"logout":"Exit",
+		"test":"Test",
+		"about":"About",
 		"logViewer":"Logs",
 		"l10n":"English",
 		"dictionary-icon":"gb",

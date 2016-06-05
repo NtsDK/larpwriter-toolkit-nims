@@ -114,7 +114,8 @@ PageManager.onDatabaseLoad = function () {
 //    		addEl(navigation, l10nBtn);
     		
     		Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
-//    		addEl(navigation, PageManager.makeButton("logoutButton", "logout", PageManager.runTests, btnOpts));
+//    		addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
+//    		addEl(navigation, PageManager.makeButton("aboutButton", "about", null, btnOpts));
     		if(MODE === "NIMS_Server"){
     			Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
 //    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
