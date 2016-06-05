@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function consistencyCheckAPI(LocalDBMS, R, CommonUtils) {
+    function consistencyCheckAPI(LocalDBMS, R, CommonUtils, validatorLib, schemaBuilder) {
         
         LocalDBMS.prototype.getConsistencyCheckResult = function(callback) {
             "use strict";
@@ -30,6 +30,14 @@ See the License for the specific language governing permissions and
             checkEventsCharactersConsistency(this.database, pushError);
             if(this.database.ManagementInfo){
                 checkObjectRightsConsistency(this.database, pushError);
+            }
+            
+            var schema = schemaBuilder.getSchema(this.database);
+            var validator = validatorLib({allErrors: true}); // options can be passed, e.g. {allErrors: true}
+            var validate = validator.compile(schema);
+            var valid = validate(this.database);
+            if (!valid) {
+                errors = errors.concat(validate.errors);
             }
             
             callback(null, errors);
