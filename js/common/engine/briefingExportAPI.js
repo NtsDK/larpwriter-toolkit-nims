@@ -131,7 +131,11 @@ See the License for the specific language governing permissions and
                 eventInfo.text = event.text;
             }
             eventInfo.splittedText = _splitText(eventInfo.text);
-            eventInfo.time = event.time;
+            if (event.characters[charName].time !== "") {
+                eventInfo.time = event.characters[charName].time;
+            } else {
+                eventInfo.time = event.time;
+            }
             eventInfo.name = event.name;
             return eventInfo;
 		});

@@ -147,6 +147,13 @@ See the License for the specific language governing permissions and
 		    });
 		    callback(null, events);
 		};
+		
+		LocalDBMS.prototype.setEventAdaptationTime = function(storyName, eventIndex, characterName, time, callback){
+		    "use strict";
+		    var event = this.database.Stories[storyName].events[eventIndex];
+            event.characters[characterName].time = time;
+            callback();
+		};
 	
 		// preview, events
 		LocalDBMS.prototype.setEventText = function(storyName, eventIndex, characterName, text, callback){

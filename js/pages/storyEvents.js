@@ -99,9 +99,9 @@ StoryEvents.rebuildInterface = function(events, metaInfo){
 		positionSelector.selectedIndex = events.length;
 	});
 	
-	events.forEach(function (event, i) {
-		StoryEvents.appendEventInput(table, event, i, metaInfo.date, metaInfo.preGameDate);
-	});
+	R.ap([addEl(table)], events.map(function (event, i) {
+		return StoryEvents.appendEventInput(event, i, metaInfo.date, metaInfo.preGameDate);
+	}));
 	
 	StoryEvents.eventsLength = events.length;
 	
@@ -191,78 +191,59 @@ StoryEvents.getEventHeader = function () {
     return tr;
 };
 
-StoryEvents.appendEventInput = function (table, event, index, date, preGameDate) {
+StoryEvents.appendEventInput = function (event, index, date, preGameDate) {
     "use strict";
-    var tr, td, span, input;
+    var tr = makeEl("tr");
     
-    tr = makeEl("tr");
-    table.appendChild(tr);
+    // first col - event number
+    addEl(tr, addEl(makeEl("td"), addEl(makeEl("span"), makeText(index+1))));
     
-    // event number
-    td = makeEl("td");
-    tr.appendChild(td);
-    span = makeEl("span");
-    span.appendChild(makeText(index+1));
-    td.appendChild(span);
+    // second col
+    var td = makeEl("td");
     
-    // event name
-    td = makeEl("td");
-    tr.appendChild(td);
+    var divMain =  addClass(makeEl("div") ,"story-events-div-main");
+    var divLeft =  addClass(makeEl("div") ,"story-events-div-left");
+    var divRight = addClass(makeEl("div"),"story-events-div-right");
+    addEl(divMain, divLeft);
+    addEl(divMain, divRight);
+    addEl(td, divMain);
     
-    var divMain, divLeft, divRight;
-    divMain = makeEl("div");
-    divLeft = makeEl("div");
-    divRight = makeEl("div");
-    addClass(divMain ,"story-events-div-main");
-    addClass(divLeft ,"story-events-div-left");
-    addClass(divRight,"story-events-div-right");
-    divMain.appendChild(divLeft);
-    divMain.appendChild(divRight);
-    td.appendChild(divMain);
-    
-    input = makeEl("input");
+    addEl(divLeft, StoryEvents.makeEventNameInput(event, index));
+    addEl(divRight, UI.makeEventTimePicker({
+        eventTime : event.time,
+        index : index,
+        preGameDate : preGameDate,
+        date : date,
+        extraClasses : ["isStoryEditable"],
+        onChangeDateTimeCreator : StoryEvents.onChangeDateTimeCreator
+    }));
+    addEl(td, StoryEvents.makeEventTextInput(event, index));
+    addEl(tr, td);
+
+    return tr;
+};
+
+StoryEvents.makeEventNameInput = function (event, index) {
+    "use strict";
+    var input = makeEl("input");
     addClass(input, "isStoryEditable");
     input.value = event.name;
     input.eventIndex = index;
     input.addEventListener("change", StoryEvents.updateEventName);
-    divLeft.appendChild(input);
+    return input;
+};
 
-    // event datetime picker
-    input = makeEl("input");
-    addClass(input, "isStoryEditable");
-    addClass(input, "eventTime");
-    input.value = event.time;
-    
-    input.eventIndex = index;
-    
-    var opts = {
-        lang : "ru",
-        mask : true,
-        startDate : new Date(preGameDate),
-        endDate : new Date(date),
-        onChangeDateTime : StoryEvents.onChangeDateTimeCreator(input),
-    };
-    
-    if (event.time !== "") {
-        opts.value = event.time;
-    } else {
-        opts.value = date;
-        addClass(input, "defaultDate");
-    }
-    
-    jQuery(input).datetimepicker(opts);
-    
-    divRight.appendChild(input);
-
-    input = makeEl("textarea");
+StoryEvents.makeEventTextInput = function (event, index) {
+    "use strict";
+    var input = makeEl("textarea");
     addClass(input, "isStoryEditable");
     addClass(input, "eventText");
     input.value = event.text;
     input.eventIndex = index;
     input.addEventListener("change", StoryEvents.updateEventText);
-    td.appendChild(input);
-
+    return input;
 };
+
 
 StoryEvents.onChangeDateTimeCreator = function (myInput) {
     "use strict";

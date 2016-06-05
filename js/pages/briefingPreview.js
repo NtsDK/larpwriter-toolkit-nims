@@ -222,7 +222,8 @@ BriefingPreview.showEvent = function(event, content, characterName, userStoryNam
     	isEditable = areAdaptationsEditable[event.storyName + "-" + characterName];
     }
     
-    content.appendChild(makeText(event.time + " " + event.name + ": " + type));
+    var time = event.characters[characterName].time === "" ? event.time : event.characters[characterName].time;
+    content.appendChild(makeText(time + " " + event.name + ": " + type));
     var input = makeEl("textarea");
     addClass(input, "briefingPersonalStory");
     if(!isEditable){

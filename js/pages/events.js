@@ -235,130 +235,167 @@ Events.showPersonalStoriesDelegate2 = function (event) {
 
 Events.showPersonalStories = function (storyName, characterNames, delegate) {
     "use strict";
-    
-	DBMS.getEvents(storyName, characterNames, function(err, events){
-		if(err) {Utils.handleError(err); return;}
-	    PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
-	    	if(err) {Utils.handleError(err); return;}
-	    	var adaptations = characterNames.map(function(characterName){
-	    		return {
-	    			characterName: characterName,
-	    			storyName: storyName
-	    		};
-	    	});
-	    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
-	    		if(err) {Utils.handleError(err); return;}
-	    		Events.buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable);
-	    		Utils.enable(Events.content, "isStoryEditable", isStoryEditable);
-	    		Utils.enable(Events.content, "notEditable", false);
-	    		if(delegate)delegate();
-	    	});
-	    });
-	});
+    DBMS.getMetaInfo(function(err, metaInfo){
+        if(err) {Utils.handleError(err); return;}
+    	DBMS.getEvents(storyName, characterNames, function(err, events){
+    		if(err) {Utils.handleError(err); return;}
+    	    PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
+    	    	if(err) {Utils.handleError(err); return;}
+    	    	var adaptations = characterNames.map(function(characterName){
+    	    		return {
+    	    			characterName: characterName,
+    	    			storyName: storyName
+    	    		};
+    	    	});
+    	    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+    	    		if(err) {Utils.handleError(err); return;}
+    	    		Events.buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo);
+    	    		Utils.enable(Events.content, "isStoryEditable", isStoryEditable);
+    	    		Utils.enable(Events.content, "notEditable", false);
+    	    		if(delegate)delegate();
+    	    	});
+    	    });
+    	});
+    });
 };
-	
-Events.buildAdaptationInterface = function (storyName, characterNames, events, areAdaptationsEditable) {
+
+Events.buildAdaptationInterface = function (storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
     "use strict";
     
-    var table = getEl("personalStories");
-    clearEl(table);
+    var table = clearEl(getEl("personalStories"));
 
-    var tr;
-    var td, span, input, i, div, divContainer;
+    var tr, td, div, divContainer, isEditable;
+    var divMain, divLeft, divRight;
     
-    events.forEach(function (event, i) {
+    R.ap([addEl(table)], events.map(function (event) {
         tr = makeEl("div");
-        addClass(tr, "eventMainPanelRow");
-        addClass(tr, event.index + "-dependent");
-        addClass(tr, "eventRow-dependent");
-        table.appendChild(tr);
+        R.ap([addClass(tr)], ["eventMainPanelRow", event.index + "-dependent", "eventRow-dependent"]);
         
-        td = makeEl("div");
-        addClass(td, "eventMainPanelRow-left");
-        span = makeEl("div");
-        span.appendChild(makeText(event.name));
-        td.appendChild(span);
+        td = addClass(makeEl("div"), "eventMainPanelRow-left");
         
-        input = makeEl("textarea");
-        addClass(input,"isStoryEditable");
-        addClass(input,"eventPersonalStory");
-        input.value = event.text;
-        input.eventIndex = event.index;
-        input.storyName = storyName;
+        divMain =  addClass(makeEl("div") ,"story-events-div-main");
+        divLeft =  addClass(makeEl("div") ,"story-events-div-left");
+        divRight = addClass(makeEl("div"),"story-events-div-right");
+        addEl(divMain, divLeft);
+        addEl(divMain, divRight);
+        addEl(td, divMain);
         
-        input.addEventListener("change", Events.onChangePersonalStoryDelegate);
-        td.appendChild(input);
-        tr.appendChild(td);
+        addEl(divLeft, addEl(makeEl("div"), makeText(event.name)));
+        addEl(divRight, UI.makeEventTimePicker({
+            eventTime : event.time,
+            index : event.index,
+            preGameDate : metaInfo.preGameDate,
+            date : metaInfo.date,
+            extraClasses : ["isStoryEditable"],
+            onChangeDateTimeCreator : Events.onChangeDateTimeCreator(storyName)
+        }));
+        addEl(td, Events.makeOriginTextInput(storyName, event));
+        addEl(tr, td);
         
-        td = makeEl("div");
-        addClass(td, "eventMainPanelRow-right");
+        td = addClass(makeEl("div"), "eventMainPanelRow-right");
+        divContainer = addClass(makeEl("div"), "events-eventsContainer");
         
-        divContainer = makeEl("div");
-        addClass(divContainer, "events-eventsContainer");
-        
-        for (var i = 0; i < characterNames.length; i++) {
-            var characterName = characterNames[i];
+        R.ap([addEl(divContainer)], characterNames.filter(function(characterName){
+            return event.characters[characterName];
+        }).map(function(characterName){
+            div = addClass(makeEl("div"), "events-singleEventAdaptation");
+            divMain =  addClass(makeEl("div") ,"story-events-div-main");
+            divLeft =  addClass(makeEl("div") ,"story-events-div-left");
+            divRight = addClass(makeEl("div"),"story-events-div-right");
+            addEl(divMain, divLeft);
+            addEl(divMain, divRight);
+            addEl(div, divMain);
+            isEditable = areAdaptationsEditable[storyName + "-" + characterName];
             
-            if(!event.characters[characterName]){
-                continue;
-            }
-            div = makeEl("div");
-            addClass(div, "events-singleEventAdaptation");
-            div.appendChild(makeText(characterName));
-            
-            input = makeEl("textarea");
-            if(!areAdaptationsEditable[storyName + "-" + characterName]){
-            	addClass(input,"notEditable");
-            }
-            addClass(input,"eventPersonalStory");
-            input.value = event.characters[characterName].text;
-            input.eventIndex = event.index;
-            input.storyName = storyName;
-            input.characterName = characterName;
-            
-            input.addEventListener("change", Events.onChangePersonalStoryDelegate);
-            div.appendChild(input);
-            
-            input = makeEl("input");
-            if(!areAdaptationsEditable[storyName + "-" + characterName]){
-            	addClass(input,"notEditable");
-            }
-            input.type = "checkbox";
-            input.checked = event.characters[characterName].ready;
-            input.eventIndex = event.index;
-            input.storyName = storyName;
-            input.characterName = characterName;
-            input.id = event.index + "-" + storyName + "-" + characterName;
-            
-            input.addEventListener("change", Events.onChangeReadyStatus);
-            div.appendChild(input);
-            addEl(div, setAttr(addEl(makeEl("label"), makeText(constL10n(Constants.finishedText))), "for", input.id));
-            
-            divContainer.appendChild(div);
-        }
+            addEl(divLeft, makeText(characterName));
+            addEl(divRight, Events.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
+            addEl(div, Events.makeAdaptationTextInput(storyName, event, characterName, isEditable));
+            addEl(div, Events.makeAdaptationReadyInput(storyName, event, characterName, isEditable));
+            return div;
+        }));
         
-        td.appendChild(divContainer);
-        
-        tr.appendChild(td);
-    });
+        addEl(tr, addEl(td, divContainer));
+        return tr;
+    }));
+};
+
+Events.onChangeDateTimeCreator = R.curry(function (storyName, myInput) {
+    "use strict";
+    return function (dp, input) {
+        DBMS.updateEventProperty(storyName, myInput.eventIndex, "time", input.val(), Utils.processError());
+        StoryEvents.lastDate = input.val();
+        removeClass(myInput, "defaultDate");
+    }
+});
+
+Events.makeOriginTextInput = function(storyName, event){
+    "use strict";
+    var input = makeEl("textarea");
+    addClass(input,"isStoryEditable");
+    addClass(input,"eventPersonalStory");
+    input.value = event.text;
+    input.dataKey = JSON.stringify([storyName, event.index]);
+    listen(input, "change", Events.onChangePersonalStoryDelegate);
+    return input;
+};
+
+Events.makeAdaptationTimeInput = function(storyName, event, characterName, isEditable){
+    "use strict";
+    var input = makeEl("input");
+    setClassByCondition(input, "notEditable", !isEditable);
+    addClass(input,"adaptationTimeInput");
+    input.value = event.characters[characterName].time;
+    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+    listen(input, "change", Events.onChangePersonalTimeDelegate);
+    return input;
+};
+
+Events.makeAdaptationTextInput = function(storyName, event, characterName, isEditable){
+    "use strict";
+    var input = makeEl("textarea");
+    setClassByCondition(input, "notEditable", !isEditable);
+    addClass(input,"eventPersonalStory");
+    input.value = event.characters[characterName].text;
+    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+    listen(input, "change", Events.onChangePersonalStoryDelegate);
+    return input;
+};
+
+Events.makeAdaptationReadyInput = function(storyName, event, characterName, isEditable){
+    "use strict";
+    var div = makeEl("div");
+    var input = makeEl("input");
+    setClassByCondition(input, "notEditable", !isEditable);
+    input.type = "checkbox";
+    input.checked = event.characters[characterName].ready;
+    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+    input.id = event.index + "-" + storyName + "-" + characterName;
+    listen(input, "change", Events.onChangeReadyStatus);
+    addEl(div, input);
+    
+    addEl(div, setAttr(addEl(makeEl("label"), makeText(constL10n(Constants.finishedText))), "for", input.id));
+    return div;
 };
 
 Events.onChangeReadyStatus = function (event) {
     "use strict";
-    var storyName = event.target.storyName;
-    var eventIndex = event.target.eventIndex;
-    var characterName = event.target.characterName;
+    var dataKey = JSON.parse(event.target.dataKey);
     var value = event.target.checked;
-    DBMS.changeAdaptationReadyStatus(storyName, eventIndex, characterName, value, Utils.processError());
+    DBMS.changeAdaptationReadyStatus(dataKey[0], dataKey[1], dataKey[2], value, Utils.processError());
+};
+
+Events.onChangePersonalTimeDelegate = function (event) {
+    "use strict";
+    var dataKey = JSON.parse(event.target.dataKey);
+    var time = event.target.value;
+    DBMS.setEventAdaptationTime(dataKey[0], dataKey[1], dataKey[2], time, Utils.processError());
 };
 
 Events.onChangePersonalStoryDelegate = function (event) {
     "use strict";
-    var storyName = event.target.storyName;
-    var eventIndex = event.target.eventIndex;
-    var characterName = event.target.characterName;
+    var dataKey = JSON.parse(event.target.dataKey);
     var text = event.target.value;
-    DBMS.setEventText(storyName, eventIndex, characterName, text, Utils.processError());
+    DBMS.setEventText(dataKey[0], dataKey[1], dataKey[2], text, Utils.processError());
 };
 
 Events.getSuffix = function(object){

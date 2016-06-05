@@ -113,3 +113,31 @@ UI.togglePanel = function(sel){
         toggleClass(sel, "hidden");
     }
 };
+
+UI.makeEventTimePicker = function (opts) {
+    "use strict";
+    var input = makeEl("input");
+    R.ap([addClass(input)], opts.extraClasses);
+    addClass(input, "eventTime");
+    input.value = opts.eventTime;
+    
+    input.eventIndex = opts.index;
+    
+    var pickerOpts = {
+        lang : "ru",
+        mask : true,
+        startDate : new Date(opts.preGameDate),
+        endDate : new Date(opts.date),
+        onChangeDateTime : opts.onChangeDateTimeCreator(input),
+    };
+    
+    if (opts.eventTime !== "") {
+        pickerOpts.value = opts.eventTime;
+    } else {
+        pickerOpts.value = opts.date;
+        addClass(input, "defaultDate");
+    }
+    
+    jQuery(input).datetimepicker(pickerOpts);
+    return input;
+};

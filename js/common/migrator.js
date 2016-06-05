@@ -87,6 +87,7 @@ See the License for the specific language governing permissions and
                 story.events.forEach(function(event){
                     for(var character in event.characters){
                         delete event.characters[character].name;
+                        event.characters[character].time = "";
                     }
                 });
             }

@@ -207,12 +207,12 @@ function isEmpty (obj) {
     return (Object.getOwnPropertyNames(obj).length === 0);
 };
 
-function addClass(o, c){
+var addClass = R.curry(function(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     if (re.test(o.className)) return;
     o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
     return o;
-};
+});
 
 var rAddClass = R.curry(function(c, o){
   var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")

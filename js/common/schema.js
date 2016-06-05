@@ -191,11 +191,14 @@ See the License for the specific language governing permissions and
                     "text":{
                         "type":"string"
                     },
+                    "time":{
+                        "type":"string"
+                    },
                     "ready":{
                         "type":"boolean"
                     }
                 },
-                "required":["text"],
+                "required":["text", "time"],
                 "additionalProperties" : false
         };
         
