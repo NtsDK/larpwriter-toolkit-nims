@@ -89,7 +89,8 @@ See the License for the specific language governing permissions and
 		LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
 		    "use strict";
 		    this.database.Stories[storyName].events[eventIndex].characters[characterName] = {
-		        text : ""
+		        text : "",
+		        time : ""
 		    };
 		    callback();
 		};
@@ -272,6 +273,7 @@ See the License for the specific language governing permissions and
 		    for ( var characterName in event2.characters) {
 		        if (event1.characters[characterName]) {
 		            event1.characters[characterName].text += event2.characters[characterName].text;
+		            event1.characters[characterName].time += event2.characters[characterName].time;
 		            event1.characters[characterName].ready = false;
 		        } else {
 		            event1.characters[characterName] = event2.characters[characterName];
