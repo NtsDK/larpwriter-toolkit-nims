@@ -212,6 +212,9 @@ See the License for the specific language governing permissions and
 .inventoryInput {
 	width: 300px;
 }
+#briefingPreviewDiv .inventoryInput {
+	width: 500px;
+}
 
 .defaultDate {
 	background-color: rgba(255, 0, 0, 0.1);
@@ -350,4 +353,13 @@ See the License for the specific language governing permissions and
 .panel-resizable{
   resize: both;
   overflow: auto;
+}
+
+.previewEventName{
+  width: 600px;
+  display: inline-block;
+}
+
+.adaptationTimeInput{
+  
 }

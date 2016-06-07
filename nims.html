@@ -669,24 +669,28 @@ See the License for the specific language governing permissions and
     <div id="briefingPreviewDiv">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title" l10n-id="briefings-settings"></h3>
+<!--           <h3 class="panel-title" l10n-id="briefings-settings"></h3> -->
+          <select id="briefingCharacter"></select><br> 
         </div>
         <div class="panel-body">
           <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio"/>
           <label for="eventGroupingByStoryRadio" l10n-id="briefings-group-by-story"></label> <br> 
           <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio"/>
           <label for="eventGroupingByTimeRadio" l10n-id="briefings-sort-by-timeline"></label> <br> 
+          <input type="checkbox" id="hideAllPanelsCheckbox"/>
+          <label for="hideAllPanelsCheckbox">Свернуть все панели</label> <br> 
         </div>
       </div>
       
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title"><select id="briefingCharacter"></select></h3>
-        </div>
-        <div class="panel-body">
+<!--       <div class="panel panel-default"> -->
+<!--         <div class="panel-heading"> -->
+<!--           <h3 class="panel-title"><select id="briefingCharacter"></select></h3> -->
+<!--         </div> -->
+<!--         <div class="panel-body" style="background-color:rgb(86, 86, 86)"> -->
+<!--            <div id="briefingContent"></div> --> 
+<!--         </div> -->
+<!--       </div> -->
           <div id="briefingContent"></div>
-        </div>
-      </div>
       
     </div>
 

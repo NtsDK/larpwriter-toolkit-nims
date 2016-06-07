@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-	function extrasAPI(LocalDBMS, CommonUtils, dateFormat) {
+	function extrasAPI(LocalDBMS, R, CommonUtils, dateFormat) {
 		// preview
 		LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
 			"use strict";
@@ -51,6 +51,8 @@ See the License for the specific language governing permissions and
 				tmpEvents.map(function(elem, i) {
 					elem.index = i;
 					elem.storyName = storyName;
+					elem.isTimeEmpty = elem.time === ''; 
+                    elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
 					return elem;
 				}).filter(function(event) {
 					return event.characters[characterName];
@@ -61,8 +63,9 @@ See the License for the specific language governing permissions and
 				eventGroups.push({
 					storyName : storyName,
 					events : events
-				})
+				});
 			});
+			eventGroups.sort(CommonUtils.charOrdAFactory(R.prop('storyName')));
 			callback(null, eventGroups);
 		};
 	
@@ -79,6 +82,8 @@ See the License for the specific language governing permissions and
 				allEvents = allEvents.concat(events.map(function(elem, i) {
 					elem.index = i;
 					elem.storyName = storyName;
+					elem.isTimeEmpty = elem.time === ''; 
+					elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
 					return elem;
 				}).filter(function(event) {
 					return event.characters[characterName];

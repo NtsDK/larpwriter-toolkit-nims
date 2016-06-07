@@ -30,7 +30,7 @@ commonAPI(LocalDBMS, Migrator, CommonUtils);
 statisticsAPI(LocalDBMS, R, CommonUtils);
 consistencyCheckAPI(LocalDBMS, R, CommonUtils, Ajv, Schema);
 charactersAPI(LocalDBMS, Errors);
-extrasAPI(LocalDBMS, CommonUtils, dateFormat);
+extrasAPI(LocalDBMS, R, CommonUtils, dateFormat);
 briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
 profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
 storiesAPI(LocalDBMS, CommonUtils, Errors);

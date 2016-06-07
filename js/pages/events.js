@@ -308,7 +308,7 @@ Events.buildAdaptationInterface = function (storyName, characterNames, events, a
             isEditable = areAdaptationsEditable[storyName + "-" + characterName];
             
             addEl(divLeft, makeText(characterName));
-            addEl(divRight, Events.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
+            addEl(divRight, UI.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
             addEl(div, Events.makeAdaptationTextInput(storyName, event, characterName, isEditable));
             addEl(div, Events.makeAdaptationReadyInput(storyName, event, characterName, isEditable));
             return div;
@@ -336,17 +336,6 @@ Events.makeOriginTextInput = function(storyName, event){
     input.value = event.text;
     input.dataKey = JSON.stringify([storyName, event.index]);
     listen(input, "change", Events.onChangePersonalStoryDelegate);
-    return input;
-};
-
-Events.makeAdaptationTimeInput = function(storyName, event, characterName, isEditable){
-    "use strict";
-    var input = makeEl("input");
-    setClassByCondition(input, "notEditable", !isEditable);
-    addClass(input,"adaptationTimeInput");
-    input.value = event.characters[characterName].time;
-    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-    listen(input, "change", Events.onChangePersonalTimeDelegate);
     return input;
 };
 
@@ -382,13 +371,6 @@ Events.onChangeReadyStatus = function (event) {
     var dataKey = JSON.parse(event.target.dataKey);
     var value = event.target.checked;
     DBMS.changeAdaptationReadyStatus(dataKey[0], dataKey[1], dataKey[2], value, Utils.processError());
-};
-
-Events.onChangePersonalTimeDelegate = function (event) {
-    "use strict";
-    var dataKey = JSON.parse(event.target.dataKey);
-    var time = event.target.value;
-    DBMS.setEventAdaptationTime(dataKey[0], dataKey[1], dataKey[2], time, Utils.processError());
 };
 
 Events.onChangePersonalStoryDelegate = function (event) {

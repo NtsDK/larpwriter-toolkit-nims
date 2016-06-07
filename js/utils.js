@@ -214,6 +214,11 @@ var addClass = R.curry(function(o, c){
     return o;
 });
 
+var addClasses = R.curry(function(o, c){
+    R.ap([addClass(o)], c);
+    return o;
+});
+
 var rAddClass = R.curry(function(c, o){
   var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
   if (re.test(o.className)) return;
@@ -269,6 +274,10 @@ function makeText(text){
 //};
 var addEl = R.curry(function(parent, child){
     parent.appendChild(child);
+    return parent;
+});
+var addEls = R.curry(function(parent, children){
+    R.ap([addEl(parent)], children);
     return parent;
 });
 

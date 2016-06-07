@@ -141,3 +141,29 @@ UI.makeEventTimePicker = function (opts) {
     jQuery(input).datetimepicker(pickerOpts);
     return input;
 };
+
+UI.resizeTextarea = function (ev) {
+    "use strict";
+    var that = ev.target;
+    that.style.height = '24px';
+    that.style.height = that.scrollHeight + 12 + 'px';
+};
+
+
+UI.makeAdaptationTimeInput = function(storyName, event, characterName, isEditable){
+    "use strict";
+    var input = makeEl("input");
+    setClassByCondition(input, "notEditable", !isEditable);
+    addClass(input,"adaptationTimeInput");
+    input.value = event.characters[characterName].time;
+    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+    listen(input, "change", UI.onChangePersonalTimeDelegate);
+    return input;
+};
+
+UI.onChangePersonalTimeDelegate = function (event) {
+    "use strict";
+    var dataKey = JSON.parse(event.target.dataKey);
+    var time = event.target.value;
+    DBMS.setEventAdaptationTime(dataKey[0], dataKey[1], dataKey[2], time, Utils.processError());
+};
