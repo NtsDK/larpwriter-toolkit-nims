@@ -355,11 +355,11 @@ See the License for the specific language governing permissions and
   overflow: auto;
 }
 
-.previewEventName{
-  width: 600px;
+.previewEventTime{
+  width: 170px;
   display: inline-block;
 }
 
-.adaptationTimeInput{
-  
+#briefingPreviewDiv .adaptationTimeInput{
+  width: 300px;
 }

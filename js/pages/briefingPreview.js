@@ -31,6 +31,7 @@ BriefingPreview.init = function () {
 
     listen(getEl("eventGroupingByTimeRadio"), "change", BriefingPreview.refresh);
     listen(getEl("hideAllPanelsCheckbox"), "change", BriefingPreview.refresh);
+    listen(getEl("disableHeadersCheckbox"), "change", BriefingPreview.refresh);
     
     BriefingPreview.content = getEl("briefingPreviewDiv");
 };
@@ -41,29 +42,29 @@ BriefingPreview.refresh = function () {
     clearEl(getEl("briefingContent"));
     
     DBMS.getAllProfileSettings(function(err, profileSettings){
-    	if(err) {Utils.handleError(err); return;}
-    	BriefingPreview.profileSettings = profileSettings;
-	    PermissionInformer.getCharacterNamesArray(false, function(err, names){
-	    	if(err) {Utils.handleError(err); return;}
-	        if (names.length > 0) {
-	            var settings = DBMS.getSettings();
-	            if(!settings["BriefingPreview"]){
-	                settings["BriefingPreview"] = {
-	                        characterName : names[0].value
-	                };
-	            }
-	            var characterName = settings["BriefingPreview"].characterName;
-	            var rawNames = names.map(R.prop('value'));
-	            if(rawNames.indexOf(characterName) === -1){
-	                settings["BriefingPreview"].characterName = names[0].value;
-	                characterName = names[0].value;
-	            }
-	            
+        if(err) {Utils.handleError(err); return;}
+        BriefingPreview.profileSettings = profileSettings;
+        PermissionInformer.getCharacterNamesArray(false, function(err, names){
+            if(err) {Utils.handleError(err); return;}
+            if (names.length > 0) {
+                var settings = DBMS.getSettings();
+                if(!settings["BriefingPreview"]){
+                    settings["BriefingPreview"] = {
+                            characterName : names[0].value
+                    };
+                }
+                var characterName = settings["BriefingPreview"].characterName;
+                var rawNames = names.map(R.prop('value'));
+                if(rawNames.indexOf(characterName) === -1){
+                    settings["BriefingPreview"].characterName = names[0].value;
+                    characterName = names[0].value;
+                }
+                
                 var data = getSelect2Data(names);
                 // this call trigger BriefingPreview.buildContent
                 $("#briefingCharacter").select2(data).val(characterName).trigger('change');
-	        }
-	    });
+            }
+        });
     });
     
 };
@@ -84,51 +85,46 @@ BriefingPreview.buildContent = function (characterName) {
     BriefingPreview.updateSettings(characterName);
     var content = clearEl(getEl("briefingContent"));
 
-//    addEl(content, makeText(strFormat(getL10n("briefings-character-label"), [characterName])));
-//    addEl(content, addEl(makeEl('h2'),makeText(strFormat(getL10n("briefings-character-label"), [characterName]))));
     var addNodes = function(arr){
         arr.forEach(addEl(content));
     };
-//    addNodes([makeEl('br'), makeEl('br')]);
 
     DBMS.getProfile(characterName, function(err, profile){
         if(err) {Utils.handleError(err); return;}
-//        addEl(content, BriefingPreview.makeProfile(profile));
         addEl(content, BriefingPreview.makePanel(makeText('Досье'), BriefingPreview.makeProfileContent(profile)));
-//        addNodes([makeEl('br'), makeEl('br'), makeText(getL10n("briefings-inventory")), makeEl('br')]);
         
         DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
-        	if(err) {Utils.handleError(err); return;}
-        	PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
-        		if(err) {Utils.handleError(err); return;}
-        		var userStoryNamesMap = {};
-        		userStoryNames.forEach(function(story){
-        			userStoryNamesMap[story.value] = story;
-        		});
-        		
-        		addEl(content, BriefingPreview.makePanel(makeText(getL10n("briefings-inventory")), 
-        		        BriefingPreview.makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap)));
-        		
-//        		addNodes([makeEl('br'), makeEl('br'), makeText(getL10n("briefings-events")), makeEl('br')]);
-        		
-        		var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
-        		if (groupingByStory) {
-        			BriefingPreview.showEventsByStory(content, characterName, userStoryNamesMap);
-        		} else {
-        			BriefingPreview.showEventsByTime(content, characterName, userStoryNamesMap);
-        		}
-//        		R.ap([UI.resizeTextarea], nl2array(content.getElementsByTagName('textarea')).map(function(el){
-//        		    return {target:el};
-//        		}));
-        		BriefingPreview.refreshTextAreas();
-//        		UI.resizeTextarea({target:input});
-        		Utils.enable(BriefingPreview.content, "notEditable", false);
-        	});
+            if(err) {Utils.handleError(err); return;}
+            PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+                if(err) {Utils.handleError(err); return;}
+                
+                var userStoryNamesMap = {};
+                userStoryNames.forEach(function(story){
+                    userStoryNamesMap[story.value] = story;
+                });
+
+                addEl(content, BriefingPreview.makePanel(makeText(getL10n("briefings-inventory") + ' (' + allInventoryLists.length + ')'), 
+                        BriefingPreview.makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap)));
+                
+                var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
+                if (groupingByStory) {
+                    BriefingPreview.showEventsByStory(content, characterName, userStoryNamesMap);
+                } else {
+                    BriefingPreview.showEventsByTime(content, characterName, userStoryNamesMap);
+                }
+            });
         });
     });
 };
 
+BriefingPreview.onBuildContentFinish = function(){
+    "use strict";
+    BriefingPreview.refreshTextAreas();
+    Utils.enable(BriefingPreview.content, "notEditable", false);
+};
+    
 BriefingPreview.refreshTextAreas = function(){
+    "use strict";
     R.ap([UI.resizeTextarea], nl2array(getEl("briefingContent").getElementsByTagName('textarea')).map(function(el){
         return {target:el};
     }));
@@ -156,7 +152,6 @@ BriefingPreview.makePanel = function(title, content){
 BriefingPreview.makeInventoryContent = function(allInventoryLists, characterName, userStoryNamesMap){
     "use strict";
     var inventoryDiv;
-//    inventoryDiv = makeEl('div');
     inventoryDiv = makeEl('tbody');
     
     allInventoryLists.forEach(function(elem){
@@ -170,11 +165,9 @@ BriefingPreview.makeInventoryContent = function(allInventoryLists, characterName
         }
         input.addEventListener("change", BriefingPreview.updateCharacterInventory);
         
-//        addEls(inventoryDiv, [makeText(elem.storyName + ":"), input, makeEl('br')]);
         addEl(inventoryDiv,BriefingPreview.makeTableRow(makeText(elem.storyName), input));
     });
     return addEl(addClasses(makeEl('table'), ['table','table-striped']), inventoryDiv);
-//    return inventoryDiv;
 };
 
 BriefingPreview.makeTableRow = function(col1, col2){
@@ -210,168 +203,135 @@ BriefingPreview.makeProfileContent = function(profile){
     });
     return addEl(addClasses(makeEl('table'), ['table','table-striped']), profileDiv);
 };
-//BriefingPreview.makeProfileContent = function(profile){
-//    "use strict";
-//    var span, profileDiv;
-//    profileDiv = makeEl('div');
-//    
-//    BriefingPreview.profileSettings.forEach(function (element) {
-//        if(!element.doExport){
-//            return;
-//        }
-//        addEl(profileDiv,makeText(element.name + ": "));
-//        switch (element.type) {
-//        case "text":
-//            addEl(profileDiv,makeEl("br"));
-//            span = makeEl("span");
-//            addClass(span, "briefingTextSpan");
-//            span.appendChild(makeText(profile[element.name]));
-//            addEl(profileDiv,span);
-//            break;
-//        case "enum":
-//        case "number":
-//        case "string":
-//            addEl(profileDiv,makeText(profile[element.name]));
-//            break;
-//        case "checkbox":
-//            addEl(profileDiv,makeText(constL10n(Constants[profile[element.name]])));
-//            break;
-//        }
-//        addEl(profileDiv,makeEl("br"));
-//    });
-//    return profileDiv;
-//};
 
 BriefingPreview.showEventsByTime = function (content, characterName, userStoryNamesMap) {
     "use strict";
     
     DBMS.getCharacterEventsByTime(characterName, function(err, allEvents){
-    	if(err) {Utils.handleError(err); return;}
-    	var adaptations = allEvents.map(function (event) {
-    		return {
-    			characterName: characterName,
-    			storyName: event.storyName
-    		};
-    	});
-    	
-    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
-    		if(err) {Utils.handleError(err); return;}
-    		
-    		addEls(content, R.splitEvery(5, allEvents).map(function(subPart){
-    		    var eventContent = addEls(makeEl('div'), subPart.map(function (event) {
-                  return BriefingPreview.showEvent(event, characterName, userStoryNamesMap, areAdaptationsEditable,true);
-    		    }));
-    		    
-    		    var name = addEls(makeEl('div'), subPart.map(function(event){
-//    		        return addEl(makeEl('div'), makeText(BriefingPreview.getEventLabel(event, true)));
-    		        return BriefingPreview.getEventLabelDiv(event, true);
-    		    }));
-//    		    var eventLabel = BriefingPreview.getEventLabel(event, showStoryName);
-    		    return BriefingPreview.makePanel(name, eventContent)
-//    		    return BriefingPreview.makePanel(makeText(getL10n("briefings-events")), eventContent)
-    		}));
-    		
-//    		var eventContent = addEls(makeEl('div'), allEvents.map(function (event) {
-//    			return BriefingPreview.showEvent(event, characterName, userStoryNamesMap, areAdaptationsEditable,true);
-//    		}));
-//    		
-//          addEl(content, BriefingPreview.makePanel(makeText(getL10n("briefings-events")), eventContent));
-    		Utils.enable(BriefingPreview.content, "notEditable", false);
-    	});
+        if(err) {Utils.handleError(err); return;}
+        var adaptations = allEvents.map(function (event) {
+            return {
+                characterName: characterName,
+                storyName: event.storyName
+            };
+        });
+        
+        PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+            if(err) {Utils.handleError(err); return;}
+            
+            var opts = {
+                userStoryNamesMap : userStoryNamesMap,
+                areAdaptationsEditable : areAdaptationsEditable,
+                showStoryName : true
+            };
+            
+            var splitConstant = 5;
+            
+            addEls(content, R.splitEvery(splitConstant, allEvents).map(function(subPart, i){
+                var eventContent = addEls(makeEl('div'), subPart.map(function (event,j) {
+                    opts.index = i*splitConstant+1 + j;
+                    return BriefingPreview.showEvent(event, characterName, opts);
+                }));
+                
+                var name;
+                if(getEl('disableHeadersCheckbox').checked){
+                    name = makeText(strFormat('Событие {0}-{1}', [i*splitConstant+1, i*splitConstant+subPart.length]));
+                } else {
+                    name = addEls(makeEl('div'), subPart.map(function(event){
+                        return BriefingPreview.getEventHeaderDiv(event, true);
+                    }));
+                }
+                return BriefingPreview.makePanel(name, eventContent)
+            }));
+            BriefingPreview.onBuildContentFinish();
+        });
     });
+};
+
+BriefingPreview.getStoryHeader = function(elem, i){
+    "use strict";
+    var name;
+    if(getEl('disableHeadersCheckbox').checked){
+        name = strFormat('История {0}', [i+1]);
+    } else {
+        name = elem.storyName;
+    }
+    return makeText(name + ' ('+elem.events.length+')');
 };
 
 BriefingPreview.showEventsByStory = function (content, characterName, userStoryNamesMap) {
     "use strict";
     
     DBMS.getCharacterEventGroupsByStory(characterName, function(err, eventGroups){
-    	if(err) {Utils.handleError(err); return;}
-    	var adaptations = eventGroups.map(function (elem) {
-    		return {
-    			characterName: characterName,
-    			storyName: elem.storyName
-    		};
-    	});
-    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
-    		if(err) {Utils.handleError(err); return;}
-    		
-	        addEls(content, eventGroups.map(function(elem){
-	            var storyContent = addEls(makeEl('div'), elem.events.map(function(event){
-	                return BriefingPreview.showEvent(event, characterName, userStoryNamesMap, areAdaptationsEditable,false);
-	            }));
-	            return BriefingPreview.makePanel(makeText(elem.storyName +' ('+elem.events.length+')'), storyContent);
-	        }));
-	        Utils.enable(BriefingPreview.content, "notEditable", false);
-    	});
+        if(err) {Utils.handleError(err); return;}
+        var adaptations = eventGroups.map(function (elem) {
+            return {
+                characterName: characterName,
+                storyName: elem.storyName
+            };
+        });
+        PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+            if(err) {Utils.handleError(err); return;}
+            var opts = {
+                userStoryNamesMap : userStoryNamesMap,
+                areAdaptationsEditable : areAdaptationsEditable,
+                showStoryName : false
+            };
+            
+            addEls(content, eventGroups.map(function(elem, i){
+                var storyContent = addEls(makeEl('div'), elem.events.map(function(event, j){
+                    opts.index = j+1;
+                    return BriefingPreview.showEvent(event, characterName, opts);
+                }));
+                return BriefingPreview.makePanel(BriefingPreview.getStoryHeader(elem, i), storyContent);
+            }));
+            BriefingPreview.onBuildContentFinish();
+        });
     });
 };
 
-BriefingPreview.getEventLabelDiv = function(event, showStoryName){
+BriefingPreview.getEventHeaderDiv = function(event, showStoryName){
     "use strict";
     var eventName = addEl(makeEl('span'), makeText(strFormat("{0} {1}", [showStoryName?event.storyName+":":"",event.name])));
-    addClass(eventName, 'previewEventName');
-    var eventTime = makeText("'" + event.time + "'");
-    return addEls(makeEl('div'), [eventName, eventTime]);
-//    return strFormat("{0} {1} '{2}'", [showStoryName?event.storyName+":":"",event.name, event.time]);
+    var eventTime = addClass(addEl(makeEl('span'), makeText(event.time)), 'previewEventTime');
+    return addEls(makeEl('div'), [eventTime, eventName]);
 };
 
-BriefingPreview.getEventLabelText = function(event, showStoryName){
+BriefingPreview.getEventLabelText = function(event, showStoryName, index){
     "use strict";
-    return strFormat("{0} {1} '{2}'", [showStoryName?event.storyName+":":"",event.name, event.time]);
+    if(getEl('disableHeadersCheckbox').checked){
+        return addEl(makeEl('h4'), makeText(strFormat('Событие {0}', [index])));
+    } else {
+        return addEl(makeEl('h4'), BriefingPreview.getEventHeaderDiv(event, showStoryName));
+    }
 };
 
-BriefingPreview.showEvent = function(event, characterName, userStoryNamesMap, areAdaptationsEditable, showStoryName){
+BriefingPreview.showEvent = function(event, characterName, opts){
     "use strict";
     var eventDiv = makeEl('div');
-    var isOriginal = event.characters[characterName].text === "";
-    var type = isOriginal ? getL10n("briefings-event-source") : getL10n("briefings-adaptation");
+    var isOriginText = event.characters[characterName].text === "";
     var isEditable;
-    if(isOriginal){
-    	isEditable = !!userStoryNamesMap[event.storyName];
+    if(isOriginText){
+        isEditable = !!opts.userStoryNamesMap[event.storyName];
     } else {
-    	isEditable = areAdaptationsEditable[event.storyName + "-" + characterName];
+        isEditable = opts.areAdaptationsEditable[event.storyName + "-" + characterName];
     }
     
-//    var time = event.isTimeEmpty ? event.time : event.characters[characterName].time;
-//    var eventLabel = strFormat("{0} // {1} {2}", [event.time, showStoryName?event.storyName+":":"",event.name]);
-//    var eventLabel = strFormat("{0} {1} '{2}'", [showStoryName?event.storyName+":":"",event.name, event.time]);
-    var eventLabel = BriefingPreview.getEventLabelText(event, showStoryName);
-    addEl(eventDiv,addEl(makeEl('h4'), makeText(eventLabel)));
-//    addEl(eventDiv,makeEl("br"));
-//    addEl(eventDiv,makeText("Видимое время: " + time));
-//    addEl(eventDiv,makeText("Выводимое персонажу время: " + time));
+    addEl(eventDiv, BriefingPreview.getEventLabelText(event, opts.showStoryName, opts.index));
     
-//    addEl(eventDiv,makeText("Выводимое персонажу время: " + event.characters[characterName].time));
-    addEl(eventDiv,makeText("Выводимое персонажу время: "));
-    addEl(eventDiv, UI.makeAdaptationTimeInput(event.storyName, event, characterName, areAdaptationsEditable[event.storyName + "-" + characterName]));
-//    addEl(eventDiv,makeEl("br"));
-//    addEl(eventDiv,makeText("Текст события: " + type));
+    addEl(eventDiv,makeText("Субъективное время: "));
+    addEl(eventDiv, UI.makeAdaptationTimeInput(event.storyName, event, characterName, opts.areAdaptationsEditable[event.storyName + "-" + characterName]));
     var input = makeEl("textarea");
     
-//    var input = makeEl("div");
     addClass(input, "briefingPersonalStory");
-//    setAttr(input, 'contentEditable', true);
-    if(!isEditable){
-    	addClass(input, "notEditable");
-    }
+    setClassByCondition(input, "notEditable", !isEditable);
 
-    if(isOriginal){
-        input.setAttribute("disabled","disabled");
-        var button = makeEl("button");
-        if(!isEditable){
-        	addClass(button, "notEditable");
-        }
-        addEl(eventDiv,makeEl("br"));
-        button.appendChild(makeText(getL10n("briefings-unlock-event-source")));
-        addEl(eventDiv,button);
-        button.addEventListener("click", function(){
-            input.removeAttribute("disabled");
-        });
+    if(isOriginText){
+        addEls(eventDiv, BriefingPreview.makeUnlockEventSourceButton(input, isEditable));
     }
-    
     addEl(eventDiv,makeEl("br"));
     
-    if (isOriginal) {
+    if (isOriginText) {
         input.value = event.text;
     } else {
         input.value = event.characters[characterName].text;
@@ -380,21 +340,28 @@ BriefingPreview.showEvent = function(event, characterName, userStoryNamesMap, ar
     input.eventIndex = event.index;
     input.storyName = event.storyName;
     
-    input.addEventListener("change", BriefingPreview.onChangePersonalStory);
+    listen(input, "change", BriefingPreview.onChangePersonalStory);
     listen(input, 'keydown', UI.resizeTextarea);
     listen(input, 'paste', UI.resizeTextarea);
     listen(input, 'cut', UI.resizeTextarea);
     listen(input, 'change', UI.resizeTextarea);
     listen(input, 'drop', UI.resizeTextarea);
     
-//    listen(input, 'click', UI.resizeTextarea);
-//    input.click();
-//    UI.triggerEvent(input, 'keydown');
     addEl(eventDiv,input);
     
     addEl(eventDiv,makeEl("br"));
-//    addEl(eventDiv,makeEl("br"));  
     return eventDiv;
+};
+
+BriefingPreview.makeUnlockEventSourceButton = function (input, isEditable) {
+    "use strict";
+    input.setAttribute("disabled","disabled");
+    var button = addEl(makeEl("button"), makeText(getL10n("briefings-unlock-event-source")));
+    setClassByCondition(button, "notEditable", !isEditable);
+    listen(button, "click", function(){
+        input.removeAttribute("disabled");
+    });
+    return [makeEl("br"), button];
 };
 
 BriefingPreview.updateCharacterInventory = function (event) {
