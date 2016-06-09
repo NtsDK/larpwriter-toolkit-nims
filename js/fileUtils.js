@@ -59,8 +59,8 @@ FileUtils.readSingleFile = function (evt) {
 FileUtils.saveFile = function () {
     "use strict";
     DBMS.getDatabase(function(err, database){
-    	if(err) {Utils.handleError(err); return;}
-    	FileUtils.json2File(database, "nims-base.json");
+        if(err) {Utils.handleError(err); return;}
+        FileUtils.json2File(database, "nims-base.json");
     });
 };
 

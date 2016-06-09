@@ -26,16 +26,16 @@ PageManager.onLoad = function () {
     L10n.localizeStatic();
     UI.initSelectorFilters();
     UI.initPanelTogglers();
-	if(MODE === "Standalone"){
-		DBMS = new LocalDBMS();
-		DBMS.setDatabase(BaseExample.data, function(err){
-	        if(err) {Utils.handleError(err); return;}
-	        PageManager.consistencyCheck(PageManager.onDatabaseLoad);
-		});
-	} else if(MODE === "NIMS_Server") {
-		DBMS = new RemoteDBMS();
-		PageManager.consistencyCheck(PageManager.onDatabaseLoad);
-	}
+    if(MODE === "Standalone"){
+        DBMS = new LocalDBMS();
+        DBMS.setDatabase(BaseExample.data, function(err){
+            if(err) {Utils.handleError(err); return;}
+            PageManager.consistencyCheck(PageManager.onDatabaseLoad);
+        });
+    } else if(MODE === "NIMS_Server") {
+        DBMS = new RemoteDBMS();
+        PageManager.consistencyCheck(PageManager.onDatabaseLoad);
+    }
 };
 
 PageManager.consistencyCheck = function(callback){
@@ -54,88 +54,89 @@ PageManager.onDatabaseLoad = function () {
     "use strict";
     
 //  PageManager.enableFullScreenElements();
-	PermissionInformer.refresh(function(err){
-    	if(err) {Utils.handleError(err); return;}
-    	
-    	PermissionInformer.isAdmin(function(err, isAdmin){
-    		if(err) {Utils.handleError(err); return;}
-    		
-    		var root = PageManager;
-    		root.views = {};
-    		var nav = "navigation";
-    		var content = "contentArea";
-    		var button;
-    		var navigation = getEl(nav);
-    		var containers = {
-    				root: root,
-    				navigation: navigation,
-    				content: getEl(content)
-    		};
-    		Utils.addView(containers, "overview", Overview, {mainPage:true});
-    		Utils.addView(containers, "characters", Characters);
-    		Utils.addView(containers, "stories", Stories);
-    		Utils.addView(containers, "adaptations", Events);
-    		Utils.addView(containers, "briefings", Briefings);
-    		
-    		addEl(navigation, addClass(makeEl("div"), "nav-separator"));
-    		
-    		Utils.addView(containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
-    		Utils.addView(containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
-    		Utils.addView(containers, "character-filter", CharacterFilter, {id:"filterButton", tooltip:true});
-    		
-    		addEl(navigation, addClass(makeEl("div"), "nav-separator"));
-    		
+    PermissionInformer.refresh(function(err){
+        if(err) {Utils.handleError(err); return;}
+        
+        PermissionInformer.isAdmin(function(err, isAdmin){
+            if(err) {Utils.handleError(err); return;}
+            
+            var root = PageManager;
+            root.views = {};
+            var nav = "navigation";
+            var content = "contentArea";
+            var button;
+            var navigation = getEl(nav);
+            var containers = {
+                    root: root,
+                    navigation: navigation,
+                    content: getEl(content)
+            };
+            Utils.addView(containers, "overview", Overview, {mainPage:true});
+            Utils.addView(containers, "characters", Characters);
+            Utils.addView(containers, "stories", Stories);
+            Utils.addView(containers, "adaptations", Events);
+            Utils.addView(containers, "briefings", Briefings);
+            
+            addEl(navigation, addClass(makeEl("div"), "nav-separator"));
+            
+            Utils.addView(containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
+            Utils.addView(containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
+            Utils.addView(containers, "character-filter", CharacterFilter, {id:"filterButton", tooltip:true});
+            
+            addEl(navigation, addClass(makeEl("div"), "nav-separator"));
+            
             var btnOpts = {
                 tooltip : true,
                 className : 'mainNavButton'
             }
-    		
-    		if(isAdmin){
-    		    var button = PageManager.makeButton("dataLoadButton", "open-database", null, btnOpts);
-    			button.addEventListener('change', FileUtils.readSingleFile, false);
-    			
-    			var input = makeEl("input");
-    			input.type = "file";
-    			button.appendChild(input);
-    			addEl(navigation, button);
-    		}
-    		
-    	    addEl(navigation, PageManager.makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
-    		if(MODE === "Standalone"){
-    		    addEl(navigation, PageManager.makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
-    		}
-    		addEl(navigation, PageManager.makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
-    		var l10nBtn = PageManager.makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
-    		var setIcon = function(){
-    		    l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
-    		}
-    		L10n.onL10nChange(setIcon);
-    		setIcon();
-//    		addEl(navigation, l10nBtn);
-    		
-    		Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
-//    		addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
-//    		addEl(navigation, PageManager.makeButton("aboutButton", "about", null, btnOpts));
-    		if(MODE === "NIMS_Server"){
-    			Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
-//    			Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
-    			addEl(navigation, PageManager.makeButton("logoutButton", "logout", PageManager.postLogout, btnOpts));
-    		}
-    		
-    		FileUtils.init(function(err){
-    			if(err) {Utils.handleError(err); return;}
-    			PageManager.consistencyCheck(PageManager.currentView.refresh);
-    		});
-    		
-    		PageManager.currentView.refresh();
-    	});
-	});
+            
+            if(isAdmin){
+                var button = PageManager.makeButton("dataLoadButton", "open-database", null, btnOpts);
+                button.addEventListener('change', FileUtils.readSingleFile, false);
+                
+                var input = makeEl("input");
+                input.type = "file";
+                button.appendChild(input);
+                addEl(navigation, button);
+            }
+            
+            addEl(navigation, PageManager.makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
+            if(MODE === "Standalone"){
+                addEl(navigation, PageManager.makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
+            }
+            addEl(navigation, PageManager.makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
+            var l10nBtn = PageManager.makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
+            var setIcon = function(){
+                l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
+            }
+            L10n.onL10nChange(setIcon);
+            setIcon();
+//            addEl(navigation, l10nBtn);
+            
+            Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
+//            addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
+//            addEl(navigation, PageManager.makeButton("aboutButton", "about", null, btnOpts));
+            if(MODE === "NIMS_Server"){
+                Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
+//                Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
+                addEl(navigation, PageManager.makeButton("logoutButton", "logout", PageManager.postLogout, btnOpts));
+            }
+            
+            FileUtils.init(function(err){
+                if(err) {Utils.handleError(err); return;}
+                PageManager.consistencyCheck(PageManager.currentView.refresh);
+            });
+            
+            PageManager.currentView.refresh();
+        });
+    });
     
 };
 
 PageManager.runTests = function(){
     "use strict";
-    window.RunTests();
+//    window.RunTests();
+    PageManager.consistencyCheck(function(){});
 };
 
 PageManager.postLogout = function(){
@@ -144,7 +145,7 @@ PageManager.postLogout = function(){
 };
 
 PageManager.makeButton = function(id, name, callback, opts){
-	"use strict";
+    "use strict";
     var button = makeEl("div");
     button.id = id;
     if(opts.tooltip){

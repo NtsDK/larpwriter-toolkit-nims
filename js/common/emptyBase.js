@@ -16,25 +16,25 @@ See the License for the specific language governing permissions and
 
 (function(exports){
 
-	exports.data = {
-	    "Meta": {
-	        "name" : "",
-	        "date" : "",
-	        "preGameDate" : "",
-	        "description" : ""
-	    },
-	    "Characters": {},
-	    "ProfileSettings" : [],
-	    "Stories": {},
-	    "Settings" : {
-	        "BriefingPreview" : {
-	        },
-	        "Stories" : {
-	        },
-	        "CharacterProfile" : {
-	        }
-	    },
-	    "Version": "0.4.1"
-	};
+    exports.data = {
+        "Meta": {
+            "name" : "",
+            "date" : "",
+            "preGameDate" : "",
+            "description" : ""
+        },
+        "Characters": {},
+        "ProfileSettings" : [],
+        "Stories": {},
+        "Settings" : {
+            "BriefingPreview" : {
+            },
+            "Stories" : {
+            },
+            "CharacterProfile" : {
+            }
+        },
+        "Version": "0.4.1"
+    };
 
 })(typeof exports === 'undefined'? this['EmptyBase']={}: exports);

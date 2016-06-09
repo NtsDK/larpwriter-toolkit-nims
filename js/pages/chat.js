@@ -36,47 +36,47 @@ Chat.refresh = function() {
 };
 
 Chat.onSubmit = function() {
-	var chatMessage = getEl("chatMessage");
-	
-	var request = $.ajax({
-		url : "/publish",
-		dataType : "text",
-		method : "PUT",
-		contentType : "application/json;charset=utf-8",
-		data : JSON.stringify({
-			message : chatMessage.value
-		})
-	});
+    var chatMessage = getEl("chatMessage");
+    
+    var request = $.ajax({
+        url : "/publish",
+        dataType : "text",
+        method : "PUT",
+        contentType : "application/json;charset=utf-8",
+        data : JSON.stringify({
+            message : chatMessage.value
+        })
+    });
 
-	request.done(function(data) {
-	});
+    request.done(function(data) {
+    });
 
-	request.fail(function(errorInfo, textStatus, errorThrown) {
-		alert(errorInfo.responseText);
-	});
+    request.fail(function(errorInfo, textStatus, errorThrown) {
+        alert(errorInfo.responseText);
+    });
 
-	chatMessage.value = '';
+    chatMessage.value = '';
 
-	return false;
+    return false;
 };
 
 Chat.subscribe = function() {
 
-	var request = $.ajax({
-		url : "/subscribe",
-		dataType : "text",
-		method : "GET",
-		contentType : "application/json;charset=utf-8",
-	});
+    var request = $.ajax({
+        url : "/subscribe",
+        dataType : "text",
+        method : "GET",
+        contentType : "application/json;charset=utf-8",
+    });
 
-	request.done(function(data) {
-		var li = makeEl('li');
-		li.appendChild(makeText(data));
-		messages.appendChild(li);
-		Chat.subscribe();
-	});
+    request.done(function(data) {
+        var li = makeEl('li');
+        li.appendChild(makeText(data));
+        messages.appendChild(li);
+        Chat.subscribe();
+    });
 
-	request.fail(function(errorInfo, textStatus, errorThrown) {
-		setTimeout(Chat.subscribe, 500);
-	});
+    request.fail(function(errorInfo, textStatus, errorThrown) {
+        setTimeout(Chat.subscribe, 500);
+    });
 }

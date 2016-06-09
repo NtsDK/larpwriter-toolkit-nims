@@ -56,25 +56,25 @@ CharacterProfileConfigurer.refresh = function () {
     positionSelectors.push(getEl("moveProfileItemPositionSelector"));
 
     DBMS.getAllProfileSettings(function(err, allProfileSettings){
-    	if(err) {Utils.handleError(err); return;}
-    	
-    	var option;
-    	positionSelectors.forEach(function(sel){
-    		clearEl(sel);
-    		
-    		var addOpt = function(text){
-    		    addEl(sel, addEl(makeEl('option'), makeText(text)));
-    		};
-    		
-    		allProfileSettings.forEach(function (elem) {
-    		    addOpt(strFormat(getL10n("common-set-item-before"), [elem.name]));
-    		});
-    		
-    		addOpt(getL10n("common-set-item-as-last"));
-    		
-    		sel.selectedIndex = allProfileSettings.length;
-    	});
-    	
+        if(err) {Utils.handleError(err); return;}
+        
+        var option;
+        positionSelectors.forEach(function(sel){
+            clearEl(sel);
+            
+            var addOpt = function(text){
+                addEl(sel, addEl(makeEl('option'), makeText(text)));
+            };
+            
+            allProfileSettings.forEach(function (elem) {
+                addOpt(strFormat(getL10n("common-set-item-before"), [elem.name]));
+            });
+            
+            addOpt(getL10n("common-set-item-as-last"));
+            
+            sel.selectedIndex = allProfileSettings.length;
+        });
+        
         
         var table = clearEl(getEl("profileConfigBlock"));
         
@@ -83,8 +83,8 @@ CharacterProfileConfigurer.refresh = function () {
         });
         
         PermissionInformer.isAdmin(function(err, isAdmin){
-        	if(err) {Utils.handleError(err); return;}
-        	Utils.enable(CharacterProfileConfigurer.content, "adminOnly", isAdmin);
+            if(err) {Utils.handleError(err); return;}
+            Utils.enable(CharacterProfileConfigurer.content, "adminOnly", isAdmin);
         });
         
         var selectorArr = [];
@@ -127,16 +127,16 @@ CharacterProfileConfigurer.createProfileItem = function () {
 };
 
 CharacterProfileConfigurer.moveProfileItem = function () {
-	'use strict';
-	var index = getEl("moveProfileItemSelector").selectedOptions[0].profileItemIndex;
-	var newIndex = getEl("moveProfileItemPositionSelector").selectedIndex;
-	
-	if (index === newIndex) {
-	  Utils.alert(getL10n("characters-profile-item-positions-are-equal"));
-	  return;
-	}
-	
-	DBMS.moveProfileItem(index, newIndex, Utils.processError(CharacterProfileConfigurer.refresh));
+    'use strict';
+    var index = getEl("moveProfileItemSelector").selectedOptions[0].profileItemIndex;
+    var newIndex = getEl("moveProfileItemPositionSelector").selectedIndex;
+    
+    if (index === newIndex) {
+      Utils.alert(getL10n("characters-profile-item-positions-are-equal"));
+      return;
+    }
+    
+    DBMS.moveProfileItem(index, newIndex, Utils.processError(CharacterProfileConfigurer.refresh));
 };
 
 
@@ -344,7 +344,7 @@ CharacterProfileConfigurer.validateProfileItemName = function (name, success, fa
     };
     
     DBMS.isProfileItemNameUsed(name, function(err, isUsed){
-    	if(err) {Utils.handleError(err); return;}
+        if(err) {Utils.handleError(err); return;}
         if(isUsed){
             tmpFailure();
         } else {

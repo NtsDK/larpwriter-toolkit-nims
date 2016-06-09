@@ -18,22 +18,22 @@ See the License for the specific language governing permissions and
 
 (function(exports){
 
-	function ValidationError(messageId, parameters) {
-	  Error.call(this, arguments) ;
-	  this.name = "ValidationError";
-	
-	  this.messageId = messageId;
-	  this.parameters = parameters;
-	
-	  if (Error.captureStackTrace) {
-	    Error.captureStackTrace(this, ValidationError);
-	  } else {
-	    this.stack = (new Error()).stack;
-	  }
-	};
-	
-	ValidationError.prototype = Object.create(Error.prototype);
-	
-	exports.ValidationError = ValidationError;
+    function ValidationError(messageId, parameters) {
+      Error.call(this, arguments) ;
+      this.name = "ValidationError";
+    
+      this.messageId = messageId;
+      this.parameters = parameters;
+    
+      if (Error.captureStackTrace) {
+        Error.captureStackTrace(this, ValidationError);
+      } else {
+        this.stack = (new Error()).stack;
+      }
+    };
+    
+    ValidationError.prototype = Object.create(Error.prototype);
+    
+    exports.ValidationError = ValidationError;
 
 })(typeof exports === 'undefined'? this['Errors']={}: exports);

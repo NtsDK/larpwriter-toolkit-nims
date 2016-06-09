@@ -13,52 +13,52 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 (function(callback){
-	
-	function commonAPI(LocalDBMS, Migrator, CommonUtils) {
-	
-		LocalDBMS.prototype.getDatabase = function(callback){
-		    "use strict";
-		    this.database.Meta.saveTime = new Date().toString();
-		    callback(null, CommonUtils.clone(this.database));
-		};
-	
-		LocalDBMS.prototype.setDatabase = function(database, callback){
-		    "use strict";
-		    this.database = Migrator.migrate(database);
-		    if(callback) callback();
-		};
-	
-		LocalDBMS.prototype.getMetaInfo = function(callback){
-		    "use strict";
-		    callback(null, CommonUtils.clone(this.database.Meta));
-		};
-	
-		// overview
-		LocalDBMS.prototype.setMetaInfo = function(name, value, callback){
-		    "use strict";
-		    this.database.Meta[name] = value;
-		    if(callback) callback();
-		};
-	
-		LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
-		    "use strict";
-		    callback(null, Object.keys(this.database.Characters).sort(CommonUtils.charOrdA));
-		};
-	
-		// stories, timeline
-		LocalDBMS.prototype.getStoryNamesArray = function (callback) {
-		    "use strict";
-		    callback(null, Object.keys(this.database.Stories).sort(CommonUtils.charOrdA));
-		};
-	
-		LocalDBMS.prototype.getAllProfileSettings = function(callback){
-		    "use strict";
-		    callback(null, CommonUtils.clone(this.database.ProfileSettings));
-		};
-	};
+    
+    function commonAPI(LocalDBMS, Migrator, CommonUtils) {
+    
+        LocalDBMS.prototype.getDatabase = function(callback){
+            "use strict";
+            this.database.Meta.saveTime = new Date().toString();
+            callback(null, CommonUtils.clone(this.database));
+        };
+    
+        LocalDBMS.prototype.setDatabase = function(database, callback){
+            "use strict";
+            this.database = Migrator.migrate(database);
+            if(callback) callback();
+        };
+    
+        LocalDBMS.prototype.getMetaInfo = function(callback){
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.Meta));
+        };
+    
+        // overview
+        LocalDBMS.prototype.setMetaInfo = function(name, value, callback){
+            "use strict";
+            this.database.Meta[name] = value;
+            if(callback) callback();
+        };
+    
+        LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
+            "use strict";
+            callback(null, Object.keys(this.database.Characters).sort(CommonUtils.charOrdA));
+        };
+    
+        // stories, timeline
+        LocalDBMS.prototype.getStoryNamesArray = function (callback) {
+            "use strict";
+            callback(null, Object.keys(this.database.Stories).sort(CommonUtils.charOrdA));
+        };
+    
+        LocalDBMS.prototype.getAllProfileSettings = function(callback){
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.ProfileSettings));
+        };
+    };
   
-	callback(commonAPI);
+    callback(commonAPI);
 
 })(function(api){
-	typeof exports === 'undefined'? this['commonAPI'] = api: module.exports = api;
+    typeof exports === 'undefined'? this['commonAPI'] = api: module.exports = api;
 });

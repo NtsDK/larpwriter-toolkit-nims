@@ -48,16 +48,16 @@ StoryEvents.refresh = function () {
     }
     
     PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
-    	if(err) {Utils.handleError(err); return;}
-	    DBMS.getMetaInfo(function(err, metaInfo){
-	    	if(err) {Utils.handleError(err); return;}
-	        DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
-	        	if(err) {Utils.handleError(err); return;}
-	            StoryEvents.rebuildInterface(events, metaInfo);
-	            Utils.enable(StoryEvents.content, "isStoryEditable", isStoryEditable);
-	            Stories.chainRefresh();
-	        });
-	    });
+        if(err) {Utils.handleError(err); return;}
+        DBMS.getMetaInfo(function(err, metaInfo){
+            if(err) {Utils.handleError(err); return;}
+            DBMS.getStoryEvents(Stories.CurrentStoryName, function(err, events){
+                if(err) {Utils.handleError(err); return;}
+                StoryEvents.rebuildInterface(events, metaInfo);
+                Utils.enable(StoryEvents.content, "isStoryEditable", isStoryEditable);
+                Stories.chainRefresh();
+            });
+        });
     });
 };
 
@@ -72,51 +72,51 @@ StoryEvents.clearInterface = function(){
 
 StoryEvents.rebuildInterface = function(events, metaInfo){
     "use strict";
-    	
-	// event part
-	var tableHead = clearEl(getEl("eventBlockHead"));
-	var table = clearEl(getEl("eventBlock"));
-	
-	addEl(tableHead, StoryEvents.getEventHeader());
-	
-	// refresh position selector
+        
+    // event part
+    var tableHead = clearEl(getEl("eventBlockHead"));
+    var table = clearEl(getEl("eventBlock"));
+    
+    addEl(tableHead, StoryEvents.getEventHeader());
+    
+    // refresh position selector
     var addOpt = R.curry(function(sel, text){
         addEl(sel, addEl(makeEl('option'), makeText(text)));
     });
-	
-	var option, addOptLoc;
-	var positionSelectors = nl2array(document.querySelectorAll(".eventPositionSelector"));
-	R.ap([clearEl], positionSelectors);
-	positionSelectors.forEach(function (positionSelector) {
-	    addOptLoc = addOpt(positionSelector);
+    
+    var option, addOptLoc;
+    var positionSelectors = nl2array(document.querySelectorAll(".eventPositionSelector"));
+    R.ap([clearEl], positionSelectors);
+    positionSelectors.forEach(function (positionSelector) {
+        addOptLoc = addOpt(positionSelector);
         
-		events.forEach(function (event) {
-		    addOptLoc(strFormat(getL10n("common-set-item-before"), [event.name]));
-		});
-		
+        events.forEach(function (event) {
+            addOptLoc(strFormat(getL10n("common-set-item-before"), [event.name]));
+        });
+        
         addOptLoc(getL10n("common-set-item-as-last"));
-		
-		positionSelector.selectedIndex = events.length;
-	});
-	
-	R.ap([addEl(table)], events.map(function (event, i) {
-		return StoryEvents.appendEventInput(event, i, metaInfo.date, metaInfo.preGameDate);
-	}));
-	
-	StoryEvents.eventsLength = events.length;
-	
-	// refresh swap selector
-	var selectorArr = nl2array(document.querySelectorAll(".eventEditSelector"));
-	R.ap([clearEl], selectorArr);
-	
-	events.forEach(function (event, i) {
-		selectorArr.forEach(function (selector) {
-			option = makeEl("option");
-			option.appendChild(makeText(event.name));
-			option.eventIndex = i;
-			selector.appendChild(option);
-		});
-	});
+        
+        positionSelector.selectedIndex = events.length;
+    });
+    
+    R.ap([addEl(table)], events.map(function (event, i) {
+        return StoryEvents.appendEventInput(event, i, metaInfo.date, metaInfo.preGameDate);
+    }));
+    
+    StoryEvents.eventsLength = events.length;
+    
+    // refresh swap selector
+    var selectorArr = nl2array(document.querySelectorAll(".eventEditSelector"));
+    R.ap([clearEl], selectorArr);
+    
+    events.forEach(function (event, i) {
+        selectorArr.forEach(function (selector) {
+            option = makeEl("option");
+            option.appendChild(makeText(event.name));
+            option.eventIndex = i;
+            selector.appendChild(option);
+        });
+    });
 };
 
 StoryEvents.createEvent = function () {
@@ -137,24 +137,24 @@ StoryEvents.createEvent = function () {
     }
     
     DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, positionSelector.value === getL10n("common-set-item-as-last"), 
-		positionSelector.selectedIndex, function(err){
-        	if(err) {Utils.handleError(err); return;}
-        	eventNameInput.value = "";
-        	eventTextInput.value = "";
-        	StoryEvents.refresh();
-    	});
+        positionSelector.selectedIndex, function(err){
+            if(err) {Utils.handleError(err); return;}
+            eventNameInput.value = "";
+            eventTextInput.value = "";
+            StoryEvents.refresh();
+        });
 };
 
 StoryEvents.moveEvent = function () {
-	var index = getEl("moveEventSelector").selectedOptions[0].eventIndex;
-	var newIndex = getEl("movePositionSelector").selectedIndex;
-	
-	if (index === newIndex) {
-	  Utils.alert(getL10n("stories-event-positions-are-the-same"));
-	  return;
-	}
-	
-	DBMS.moveEvent(Stories.CurrentStoryName, index, newIndex, Utils.processError(StoryEvents.refresh));
+    var index = getEl("moveEventSelector").selectedOptions[0].eventIndex;
+    var newIndex = getEl("movePositionSelector").selectedIndex;
+    
+    if (index === newIndex) {
+      Utils.alert(getL10n("stories-event-positions-are-the-same"));
+      return;
+    }
+    
+    DBMS.moveEvent(Stories.CurrentStoryName, index, newIndex, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.cloneEvent = function () {

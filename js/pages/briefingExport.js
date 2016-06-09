@@ -286,8 +286,8 @@ BriefingExport.readTemplateFile = function (evt) {
         r.onload = function (e) {
             var template = e.target.result;
             BriefingExport.getBriefingData(function(err, briefingData){
-            	if(err) {Utils.handleError(err); return;}
-            	BriefingExport.generateBriefings(briefingData, "docx", BriefingExport.generateSingleDocx("blob", template), BriefingExport.generateSingleDocx("Uint8Array", template));
+                if(err) {Utils.handleError(err); return;}
+                BriefingExport.generateBriefings(briefingData, "docx", BriefingExport.generateSingleDocx("blob", template), BriefingExport.generateSingleDocx("Uint8Array", template));
             });
         }
         r.readAsBinaryString(f);

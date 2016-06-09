@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 "use strict";
 
 //var url = "http://127.0.0.1:1337/"
-	var url = "/"
+var url = "/"
 
 function RemoteDBMS(){
     this.clearSettings();
@@ -28,7 +28,7 @@ RemoteDBMS._simpleGet = function(name, params, callback){
     "use strict";
     var paramStr = "";
     if(params){
-    	paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ; 
+        paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ; 
     }
     
     var request = $.ajax({
@@ -77,27 +77,27 @@ RemoteDBMS._simplePut = function(name, data, callback){
 
 
 Object.keys(LocalDBMS.prototype).forEach(function(name){
-	RemoteDBMS.prototype[name] = function(){
-		var arr = [];
-		for (var i = 0; i < arguments.length-1; i++) {
-			arr.push(arguments[i]);
-		}
-		if(CommonUtils.startsWith(name, "get") || CommonUtils.startsWith(name, "is")){
-			RemoteDBMS._simpleGet(name, arr, arguments[arguments.length-1]);
-		} else {
-			RemoteDBMS._simplePut(name, arr, arguments[arguments.length-1]);
-		}
-	}
+    RemoteDBMS.prototype[name] = function(){
+        var arr = [];
+        for (var i = 0; i < arguments.length-1; i++) {
+            arr.push(arguments[i]);
+        }
+        if(CommonUtils.startsWith(name, "get") || CommonUtils.startsWith(name, "is")){
+            RemoteDBMS._simpleGet(name, arr, arguments[arguments.length-1]);
+        } else {
+            RemoteDBMS._simplePut(name, arr, arguments[arguments.length-1]);
+        }
+    }
 });
 
 
 RemoteDBMS.prototype.clearSettings = function() {
-	"use strict";
-	this.Settings = {
-		"BriefingPreview" : {},
-		"Stories" : {},
-		"CharacterProfile" : {}
-	};
+    "use strict";
+    this.Settings = {
+        "BriefingPreview" : {},
+        "Stories" : {},
+        "CharacterProfile" : {}
+    };
 };
 
 RemoteDBMS.prototype.getSettings = function(){

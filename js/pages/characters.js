@@ -27,9 +27,9 @@ Characters.init = function () {
     var nav = "charactersNavigation";
     var content = "charactersContent";
     var containers = {
-		root: root,
-		navigation: getEl(nav),
-		content: getEl(content)
+        root: root,
+        navigation: getEl(nav),
+        content: getEl(content)
     };
     Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
     Utils.addView(containers, "character-profile-configurer", CharacterProfileConfigurer);
@@ -71,18 +71,18 @@ Characters.createCharacter = function () {
     }
     
     DBMS.isCharacterNameUsed(name, function(err, isCharacterNameUsed){
-    	if(err) {Utils.handleError(err); return;}
+        if(err) {Utils.handleError(err); return;}
         if (isCharacterNameUsed) {
             Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [name]));
         } else {
             DBMS.createCharacter(name, function(err){
-            	if(err) {Utils.handleError(err); return;}
-            	PermissionInformer.refresh(function(err){
-                	if(err) {Utils.handleError(err); return;}
-                	if(Characters.currentView.updateSettings){
-                		Characters.currentView.updateSettings(name);
-                	}
-                	Characters.refresh();
+                if(err) {Utils.handleError(err); return;}
+                PermissionInformer.refresh(function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    if(Characters.currentView.updateSettings){
+                        Characters.currentView.updateSettings(name);
+                    }
+                    Characters.refresh();
                 });
             });
         }
@@ -105,18 +105,18 @@ Characters.renameCharacter = function () {
     }
 
     DBMS.isCharacterNameUsed(toName, function(err, isCharacterNameUsed){
-    	if(err) {Utils.handleError(err); return;}
+        if(err) {Utils.handleError(err); return;}
         if (isCharacterNameUsed) {
             Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [toName]));
         } else {
             DBMS.renameCharacter(fromName, toName, function(err){
-            	if(err) {Utils.handleError(err); return;}
-            	PermissionInformer.refresh(function(err){
-                	if(err) {Utils.handleError(err); return;}
-                	if(Characters.currentView.updateSettings){
-                		Characters.currentView.updateSettings(toName);
-                	}
-                	Characters.refresh();
+                if(err) {Utils.handleError(err); return;}
+                PermissionInformer.refresh(function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    if(Characters.currentView.updateSettings){
+                        Characters.currentView.updateSettings(toName);
+                    }
+                    Characters.refresh();
                 });
             });
         }
@@ -129,10 +129,10 @@ Characters.removeCharacter = function () {
 
     if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-character-removing"),[name]))) {
         DBMS.removeCharacter(name, function(err){
-        	if(err) {Utils.handleError(err); return;}
-        	PermissionInformer.refresh(function(err){
-            	if(err) {Utils.handleError(err); return;}
-            	Characters.refresh();
+            if(err) {Utils.handleError(err); return;}
+            PermissionInformer.refresh(function(err){
+                if(err) {Utils.handleError(err); return;}
+                Characters.refresh();
             });
         });
     }

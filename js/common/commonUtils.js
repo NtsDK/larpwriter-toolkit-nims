@@ -13,18 +13,18 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 (function(exports) {
-	
-	exports.startsWith = function(str1, str2){
-		return str1.substring(0, str2.length) === str2;
-	};
+    
+    exports.startsWith = function(str1, str2){
+        return str1.substring(0, str2.length) === str2;
+    };
 
-	exports.removeFromArrayByIndex = function(array, from, to) {
-		"use strict";
-		var rest = array.slice((to || from) + 1 || array.length);
-		array.length = from < 0 ? array.length + from : from;
-		return array.push.apply(array, rest);
-	};
-	
+    exports.removeFromArrayByIndex = function(array, from, to) {
+        "use strict";
+        var rest = array.slice((to || from) + 1 || array.length);
+        array.length = from < 0 ? array.length + from : from;
+        return array.push.apply(array, rest);
+    };
+    
     exports.charOrdAFactory = function(prepare){
         "use strict";
         return function(a, b) {
@@ -56,23 +56,23 @@ See the License for the specific language governing permissions and
         console.log(str);
     };
     
-	exports.clone = function(o) {
-		"use strict";
-		if (!o || 'object' !== typeof o) {
-			return o;
-		}
-		var c = 'function' === typeof o.pop ? [] : {};
-		var p, v;
-		for (p in o) {
-			if (o.hasOwnProperty(p)) {
-				v = o[p];
-				if (v && 'object' === typeof v) {
-					c[p] = exports.clone(v);
-				} else {
-					c[p] = v;
-				}
-			}
-		}
-		return c;
-	};
+    exports.clone = function(o) {
+        "use strict";
+        if (!o || 'object' !== typeof o) {
+            return o;
+        }
+        var c = 'function' === typeof o.pop ? [] : {};
+        var p, v;
+        for (p in o) {
+            if (o.hasOwnProperty(p)) {
+                v = o[p];
+                if (v && 'object' === typeof v) {
+                    c[p] = exports.clone(v);
+                } else {
+                    c[p] = v;
+                }
+            }
+        }
+        return c;
+    };
 })(typeof exports === 'undefined' ? this['CommonUtils'] = {} : exports);

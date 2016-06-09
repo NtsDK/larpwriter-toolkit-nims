@@ -52,42 +52,42 @@ CharacterFilter.refresh = function () {
     filterSettingsDiv.appendChild(makeEl("br"));
     
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
-    	if(err) {Utils.handleError(err); return;}
-	    DBMS.getAllProfiles(function(err, profiles){
-	    	if(err) {Utils.handleError(err); return;}
-	        CharacterFilter.Characters = profiles;
-	        
-	        names.forEach(function(elem){
-	        	profiles[elem.value].name = elem.displayName;
-	        });
-	        
-	        
-	        DBMS.getAllProfileSettings(function(err, allProfileSettings){
-	        	if(err) {Utils.handleError(err); return;}
-	            CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
-	                return true;
-	            });
-	            
-	            CharacterFilter.unshiftedProfileSettings = CharacterFilter.allProfileSettings.filter(function (value) {
-	                return true;
-	            });
-	            CharacterFilter.unshiftedProfileSettings.unshift({
-	                name : "name",
-	                type : "text"
-	            });
-	            
-	            CharacterFilter.allProfileSettings.forEach(function (profileSettings) {
-	                CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
-	            });
-	            
-	            var profileItemNames = R.map(R.prop('name'), CharacterFilter.allProfileSettings);
-	            UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), profileItemNames);
+        if(err) {Utils.handleError(err); return;}
+        DBMS.getAllProfiles(function(err, profiles){
+            if(err) {Utils.handleError(err); return;}
+            CharacterFilter.Characters = profiles;
+            
+            names.forEach(function(elem){
+                profiles[elem.value].name = elem.displayName;
+            });
+            
+            
+            DBMS.getAllProfileSettings(function(err, allProfileSettings){
+                if(err) {Utils.handleError(err); return;}
+                CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
+                    return true;
+                });
+                
+                CharacterFilter.unshiftedProfileSettings = CharacterFilter.allProfileSettings.filter(function (value) {
+                    return true;
+                });
+                CharacterFilter.unshiftedProfileSettings.unshift({
+                    name : "name",
+                    type : "text"
+                });
+                
+                CharacterFilter.allProfileSettings.forEach(function (profileSettings) {
+                    CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
+                });
+                
+                var profileItemNames = R.map(R.prop('name'), CharacterFilter.allProfileSettings);
+                UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), profileItemNames);
 
-	            CharacterFilter.appendContentHeader(clearEl(getEl('filterHead')), profileItemNames);
-	            
-	            CharacterFilter.rebuildContent();
-	        });
-	    });
+                CharacterFilter.appendContentHeader(clearEl(getEl('filterHead')), profileItemNames);
+                
+                CharacterFilter.rebuildContent();
+            });
+        });
     });
 };
 

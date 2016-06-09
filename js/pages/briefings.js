@@ -27,9 +27,9 @@ Briefings.init = function () {
     var nav = "briefingsNavigation";
     var content = "briefingsContent";
     var containers = {
-		root: root,
-		navigation: getEl(nav),
-		content: getEl(content)
+        root: root,
+        navigation: getEl(nav),
+        content: getEl(content)
     };
     Utils.addView(containers, "briefing-preview", BriefingPreview, {mainPage:true});
     Utils.addView(containers, "briefing-export", BriefingExport);

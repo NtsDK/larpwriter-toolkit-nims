@@ -166,74 +166,74 @@ SocialNetwork.refresh = function () {
     selector = clearEl(getEl("networkNodeGroupSelector"));
     
     PermissionInformer.getCharacterNamesArray(false, function(err, characterNames){
-    	if(err) {Utils.handleError(err); return;}
-    	PermissionInformer.getStoryNamesArray(false, function(err, storyNames){
-    		if(err) {Utils.handleError(err); return;}
-    	
-		    DBMS.getAllProfiles(function(err, profiles){
-		    	if(err) {Utils.handleError(err); return;}
-		        SocialNetwork.Characters = profiles;
-		        
-		        characterNames.forEach(function(elem){
-		        	profiles[elem.value].displayName = elem.displayName;
-		        });
-		        
-		        DBMS.getAllStories(function(err, stories){
-		        	if(err) {Utils.handleError(err); return;}
-		            SocialNetwork.Stories = stories;
-		            
-		            storyNames.forEach(function(elem){
-		            	stories[elem.value].displayName = elem.displayName;
-			        });
-		            
-		            DBMS.getAllProfileSettings(function(err, profileSettings){
-		            	if(err) {Utils.handleError(err); return;}
-		                
-		                var groups = profileSettings.filter(function (element) {
-		                    return element.type === "enum" || element.type === "checkbox";
-		                });
-		                
-		                var groupNames = [ {name: Constants.noGroup, displayName: constL10n(Constants.noGroup)} ].concat(groups.map(function (elem) {
-		                    return {
-		                        name: elem.name,
-		                        displayName: elem.name,
-		                    }
-		                }));
-		                
-		                groupNames.forEach(function (group) {
-		                    var option = makeEl("option");
-		                    option.appendChild(makeText(group.displayName));
-		                    option.value = group.name;
-		                    selector.appendChild(option);
-		                });
-		                
-		                SocialNetwork.groupColors = {};
-		                
-		                for ( var groupName in SocialNetwork.fixedColors) {
-		                    SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
-		                }
-		                
-		                groups.forEach(function (group) {
-		                    if(group.type === "enum"){
-		                        group.value.split(",").forEach(function (subGroupName, i){
-		                            SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
-		                        });
-		                    } else if( group.type === "checkbox"){
-		                        if(group.value){
-		                            SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[0];
-		                            SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[1];
-		                        } else {
-		                            SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[1];
-		                            SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[0];
-		                        }
-		                    }
-		                });
-		                
-		                NetworkSubsetsSelector.refresh(SocialNetwork);
-		            });
-		        });
-		    });
-	    });
+        if(err) {Utils.handleError(err); return;}
+        PermissionInformer.getStoryNamesArray(false, function(err, storyNames){
+            if(err) {Utils.handleError(err); return;}
+        
+            DBMS.getAllProfiles(function(err, profiles){
+                if(err) {Utils.handleError(err); return;}
+                SocialNetwork.Characters = profiles;
+                
+                characterNames.forEach(function(elem){
+                    profiles[elem.value].displayName = elem.displayName;
+                });
+                
+                DBMS.getAllStories(function(err, stories){
+                    if(err) {Utils.handleError(err); return;}
+                    SocialNetwork.Stories = stories;
+                    
+                    storyNames.forEach(function(elem){
+                        stories[elem.value].displayName = elem.displayName;
+                    });
+                    
+                    DBMS.getAllProfileSettings(function(err, profileSettings){
+                        if(err) {Utils.handleError(err); return;}
+                        
+                        var groups = profileSettings.filter(function (element) {
+                            return element.type === "enum" || element.type === "checkbox";
+                        });
+                        
+                        var groupNames = [ {name: Constants.noGroup, displayName: constL10n(Constants.noGroup)} ].concat(groups.map(function (elem) {
+                            return {
+                                name: elem.name,
+                                displayName: elem.name,
+                            }
+                        }));
+                        
+                        groupNames.forEach(function (group) {
+                            var option = makeEl("option");
+                            option.appendChild(makeText(group.displayName));
+                            option.value = group.name;
+                            selector.appendChild(option);
+                        });
+                        
+                        SocialNetwork.groupColors = {};
+                        
+                        for ( var groupName in SocialNetwork.fixedColors) {
+                            SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
+                        }
+                        
+                        groups.forEach(function (group) {
+                            if(group.type === "enum"){
+                                group.value.split(",").forEach(function (subGroupName, i){
+                                    SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
+                                });
+                            } else if( group.type === "checkbox"){
+                                if(group.value){
+                                    SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[0];
+                                    SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[1];
+                                } else {
+                                    SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[1];
+                                    SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[0];
+                                }
+                            }
+                        });
+                        
+                        NetworkSubsetsSelector.refresh(SocialNetwork);
+                    });
+                });
+            });
+        });
     });
     
     

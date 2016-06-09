@@ -19,26 +19,26 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     exports.profileFieldTypes = {
-		"text" : {
-		    name : "text",
-			value : ""
-		},
-		"string" : {
-		    name : "string",
-			value : ""
-		},
-		"enum" : {
-		    name : "enum",
-			value : "_"
-		},
-		"number" : {
-		    name : "number",
-			value : 0
-		},
-		"checkbox" : {
-		    name : "checkbox",
-			value : false
-		}
+        "text" : {
+            name : "text",
+            value : ""
+        },
+        "string" : {
+            name : "string",
+            value : ""
+        },
+        "enum" : {
+            name : "enum",
+            value : "_"
+        },
+        "number" : {
+            name : "number",
+            value : 0
+        },
+        "checkbox" : {
+            name : "checkbox",
+            value : false
+        }
     };
     
     exports.objectSubsets = [

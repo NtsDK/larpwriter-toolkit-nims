@@ -68,30 +68,30 @@ Stories.refresh = function () {
     selectors.forEach(R.compose(clearEl, getEl));
     
     PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
-    	if(err) {Utils.handleError(err); return;}
-    	PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
-    		if(err) {Utils.handleError(err); return;}
-    		if(userStoryNames.length > 0){
-    		    var data = getSelect2Data(userStoryNames);
-    		    selectors.forEach(function(selector){
-    		        $("#" + selector).select2(data);
-    		    });
-    		}
-    		
-	        if (allStoryNames.length > 0) {
-	            var storyName = Stories.getSelectedStoryName(allStoryNames);
-	            
-	            var data = getSelect2Data(allStoryNames);
-	            $("#storySelector").select2(data).val(storyName).trigger('change');
-	            
-	            Stories.onStorySelectorChange(storyName);
-	        } else {
-	            Stories.onStorySelectorChange();
-	        }
-	        
-	        if(Stories.left.currentView)Stories.left.currentView.refresh();
-	        if(Stories.right.currentView)Stories.right.currentView.refresh();
-    	});
+        if(err) {Utils.handleError(err); return;}
+        PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+            if(err) {Utils.handleError(err); return;}
+            if(userStoryNames.length > 0){
+                var data = getSelect2Data(userStoryNames);
+                selectors.forEach(function(selector){
+                    $("#" + selector).select2(data);
+                });
+            }
+            
+            if (allStoryNames.length > 0) {
+                var storyName = Stories.getSelectedStoryName(allStoryNames);
+                
+                var data = getSelect2Data(allStoryNames);
+                $("#storySelector").select2(data).val(storyName).trigger('change');
+                
+                Stories.onStorySelectorChange(storyName);
+            } else {
+                Stories.onStorySelectorChange();
+            }
+            
+            if(Stories.left.currentView)Stories.left.currentView.refresh();
+            if(Stories.right.currentView)Stories.right.currentView.refresh();
+        });
     });
     
 };
@@ -121,16 +121,16 @@ Stories.createStory = function () {
     }
     
     DBMS.isStoryExist(storyName, function(err, isExist){
-    	if(err) {Utils.handleError(err); return;}
+        if(err) {Utils.handleError(err); return;}
         if(isExist){
             Utils.alert(strFormat(getL10n("stories-story-name-already-used"), [storyName]));
         } else {
             DBMS.createStory(storyName, function(err){
-            	if(err) {Utils.handleError(err); return;}
+                if(err) {Utils.handleError(err); return;}
                 Stories.updateSettings(storyName);
                 PermissionInformer.refresh(function(err){
-                	if(err) {Utils.handleError(err); return;}
-                	Stories.refresh();
+                    if(err) {Utils.handleError(err); return;}
+                    Stories.refresh();
                 });
             });
         }
@@ -153,16 +153,16 @@ Stories.renameStory = function () {
     }
     
     DBMS.isStoryExist(toName, function(err, isExist){
-    	if(err) {Utils.handleError(err); return;}
+        if(err) {Utils.handleError(err); return;}
         if(isExist){
             Utils.alert(strFormat(getL10n("stories-story-name-already-used"), [toName]));
         } else {
             DBMS.renameStory(fromName, toName, function(err){
-            	if(err) {Utils.handleError(err); return;}
+                if(err) {Utils.handleError(err); return;}
                 Stories.updateSettings(toName);
                 PermissionInformer.refresh(function(err){
-                	if(err) {Utils.handleError(err); return;}
-                	Stories.refresh();
+                    if(err) {Utils.handleError(err); return;}
+                    Stories.refresh();
                 });
             });
         }
@@ -175,10 +175,10 @@ Stories.removeStory = function () {
 
     if (Utils.confirm(strFormat(getL10n("stories-are-you-sure-about-story-removing"), [name]))) {
         DBMS.removeStory(name, function(err){
-        	if(err) {Utils.handleError(err); return;}
-        	PermissionInformer.refresh(function(err){
-            	if(err) {Utils.handleError(err); return;}
-            	Stories.refresh();
+            if(err) {Utils.handleError(err); return;}
+            PermissionInformer.refresh(function(err){
+                if(err) {Utils.handleError(err); return;}
+                Stories.refresh();
             });
         });
     }

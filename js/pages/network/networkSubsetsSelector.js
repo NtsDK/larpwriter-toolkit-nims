@@ -47,7 +47,7 @@ NetworkSubsetsSelector.refresh = function (parent) {
     selector = clearEl(getEl("networkCharacterSelector"));
     
     Object.keys(NetworkSubsetsSelector.parent.Characters).map(function(name){
-    	return NetworkSubsetsSelector.parent.Characters[name];
+        return NetworkSubsetsSelector.parent.Characters[name];
     }).sort(Utils.charOrdAObject).forEach(function (nameInfo) {
         option = makeEl("option");
         option.appendChild(makeText(nameInfo.displayName));
@@ -58,7 +58,7 @@ NetworkSubsetsSelector.refresh = function (parent) {
     selector = clearEl(getEl("networkStorySelector"));
     
     Object.keys(NetworkSubsetsSelector.parent.Stories).map(function(name){
-    	return NetworkSubsetsSelector.parent.Stories[name];
+        return NetworkSubsetsSelector.parent.Stories[name];
     }).sort(Utils.charOrdAObject).forEach(function (nameInfo) {
         option = makeEl("option");
         option.appendChild(makeText(nameInfo.displayName));

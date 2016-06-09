@@ -14,145 +14,145 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-	function extrasAPI(LocalDBMS, R, CommonUtils, dateFormat) {
-		// preview
-		LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
-			"use strict";
-			var array = [];
-	
-			for ( var storyName in this.database.Stories) {
-				var story = this.database.Stories[storyName];
-				if (story.characters[characterName]
-						&& story.characters[characterName].inventory
-						&& story.characters[characterName].inventory !== "") {
-					array.push({
-						storyName : storyName,
-						inventory : story.characters[characterName].inventory
-					});
-				}
-			}
-			callback(null, array);
-		};
-	
-		// preview
-		LocalDBMS.prototype.getCharacterEventGroupsByStory = function(characterName, callback) {
-			"use strict";
-			var eventGroups = [];
-	
-			var events;
-	
-			var that = this;
-			Object.keys(this.database.Stories).filter(function(storyName) {
-				return that.database.Stories[storyName].characters[characterName];
-			}).forEach(function(storyName) {
-				events = [];
-	
-				var tmpEvents = CommonUtils.clone(that.database.Stories[storyName].events);
-				tmpEvents.map(function(elem, i) {
-					elem.index = i;
-					elem.storyName = storyName;
-					elem.isTimeEmpty = elem.time === ''; 
+    function extrasAPI(LocalDBMS, R, CommonUtils, dateFormat) {
+        // preview
+        LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
+            "use strict";
+            var array = [];
+    
+            for ( var storyName in this.database.Stories) {
+                var story = this.database.Stories[storyName];
+                if (story.characters[characterName]
+                        && story.characters[characterName].inventory
+                        && story.characters[characterName].inventory !== "") {
+                    array.push({
+                        storyName : storyName,
+                        inventory : story.characters[characterName].inventory
+                    });
+                }
+            }
+            callback(null, array);
+        };
+    
+        // preview
+        LocalDBMS.prototype.getCharacterEventGroupsByStory = function(characterName, callback) {
+            "use strict";
+            var eventGroups = [];
+    
+            var events;
+    
+            var that = this;
+            Object.keys(this.database.Stories).filter(function(storyName) {
+                return that.database.Stories[storyName].characters[characterName];
+            }).forEach(function(storyName) {
+                events = [];
+    
+                var tmpEvents = CommonUtils.clone(that.database.Stories[storyName].events);
+                tmpEvents.map(function(elem, i) {
+                    elem.index = i;
+                    elem.storyName = storyName;
+                    elem.isTimeEmpty = elem.time === ''; 
                     elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
-					return elem;
-				}).filter(function(event) {
-					return event.characters[characterName];
-				}).forEach(function(event) {
-					events.push(event);
-				});
-	
-				eventGroups.push({
-					storyName : storyName,
-					events : events
-				});
-			});
-			eventGroups.sort(CommonUtils.charOrdAFactory(R.prop('storyName')));
-			callback(null, eventGroups);
-		};
-	
-		// preview
-		LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback) {
-			"use strict";
-			var allEvents = [];
-	
-			var that = this;
-			Object.keys(this.database.Stories).filter(function(storyName) {
-				return that.database.Stories[storyName].characters[characterName];
-			}).forEach(function(storyName) {
-				var events = CommonUtils.clone(that.database.Stories[storyName].events);
-				allEvents = allEvents.concat(events.map(function(elem, i) {
-					elem.index = i;
-					elem.storyName = storyName;
-					elem.isTimeEmpty = elem.time === ''; 
-					elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
-					return elem;
-				}).filter(function(event) {
-					return event.characters[characterName];
-				}));
-			});
-	
-			allEvents.sort(CommonUtils.eventsByTime);
-			callback(null, allEvents);
-		};
-	
-		// profile, preview
-		LocalDBMS.prototype.getProfile = function(name, callback) {
-			"use strict";
-			callback(null, CommonUtils.clone(this.database.Characters[name]));
-		};
-		// social network, character filter
-		LocalDBMS.prototype.getAllProfiles = function(callback) {
-			"use strict";
-			callback(null, CommonUtils.clone(this.database.Characters));
-		};
-		// social network
-		LocalDBMS.prototype.getAllStories = function(callback) {
-			"use strict";
-			callback(null, CommonUtils.clone(this.database.Stories));
-		};
-	
-		// timeline
-		LocalDBMS.prototype.getEventGroupsForStories = function(storyNames, callback) {
-			"use strict";
-			var eventGroups = [];
-	
-			var events;
-	
-			var that = this;
-			Object.keys(this.database.Stories).filter(function(storyName) {
-				return storyNames.indexOf(storyName) !== -1;
-			}).forEach(function(storyName) {
-				events = [];
-	
-				var tmpEvents = CommonUtils.clone(that.database.Stories[storyName].events);
-				tmpEvents.map(function(elem, i) {
-					elem.index = i;
-					elem.storyName = storyName;
-					return elem;
-				}).forEach(function(event) {
-					events.push(event);
-				});
-	
-				eventGroups.push({
-					storyName : storyName,
-					events : events
-				})
-			});
-			callback(null, eventGroups);
-		};
-	
-		// timeline
-		// disabled for this moment
-		LocalDBMS.prototype.setEventTime = function(storyName, eventIndex, time, callback) {
-			"use strict";
-	
-			var event = this.database.Stories[storyName].events[eventIndex];
-			event.time = dateFormat(time, "yyyy/mm/dd h:MM");
-			callback();
-		};
-	
-	};
-	callback(extrasAPI);
+                    return elem;
+                }).filter(function(event) {
+                    return event.characters[characterName];
+                }).forEach(function(event) {
+                    events.push(event);
+                });
+    
+                eventGroups.push({
+                    storyName : storyName,
+                    events : events
+                });
+            });
+            eventGroups.sort(CommonUtils.charOrdAFactory(R.prop('storyName')));
+            callback(null, eventGroups);
+        };
+    
+        // preview
+        LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback) {
+            "use strict";
+            var allEvents = [];
+    
+            var that = this;
+            Object.keys(this.database.Stories).filter(function(storyName) {
+                return that.database.Stories[storyName].characters[characterName];
+            }).forEach(function(storyName) {
+                var events = CommonUtils.clone(that.database.Stories[storyName].events);
+                allEvents = allEvents.concat(events.map(function(elem, i) {
+                    elem.index = i;
+                    elem.storyName = storyName;
+                    elem.isTimeEmpty = elem.time === ''; 
+                    elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
+                    return elem;
+                }).filter(function(event) {
+                    return event.characters[characterName];
+                }));
+            });
+    
+            allEvents.sort(CommonUtils.eventsByTime);
+            callback(null, allEvents);
+        };
+    
+        // profile, preview
+        LocalDBMS.prototype.getProfile = function(name, callback) {
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.Characters[name]));
+        };
+        // social network, character filter
+        LocalDBMS.prototype.getAllProfiles = function(callback) {
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.Characters));
+        };
+        // social network
+        LocalDBMS.prototype.getAllStories = function(callback) {
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.Stories));
+        };
+    
+        // timeline
+        LocalDBMS.prototype.getEventGroupsForStories = function(storyNames, callback) {
+            "use strict";
+            var eventGroups = [];
+    
+            var events;
+    
+            var that = this;
+            Object.keys(this.database.Stories).filter(function(storyName) {
+                return storyNames.indexOf(storyName) !== -1;
+            }).forEach(function(storyName) {
+                events = [];
+    
+                var tmpEvents = CommonUtils.clone(that.database.Stories[storyName].events);
+                tmpEvents.map(function(elem, i) {
+                    elem.index = i;
+                    elem.storyName = storyName;
+                    return elem;
+                }).forEach(function(event) {
+                    events.push(event);
+                });
+    
+                eventGroups.push({
+                    storyName : storyName,
+                    events : events
+                })
+            });
+            callback(null, eventGroups);
+        };
+    
+        // timeline
+        // disabled for this moment
+        LocalDBMS.prototype.setEventTime = function(storyName, eventIndex, time, callback) {
+            "use strict";
+    
+            var event = this.database.Stories[storyName].events[eventIndex];
+            event.time = dateFormat(time, "yyyy/mm/dd h:MM");
+            callback();
+        };
+    
+    };
+    callback(extrasAPI);
 
 })(function(api){
-	typeof exports === 'undefined'? this['extrasAPI'] = api: module.exports = api;
+    typeof exports === 'undefined'? this['extrasAPI'] = api: module.exports = api;
 });

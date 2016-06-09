@@ -46,7 +46,7 @@ Utils.addView = function (containers, name, view, opts) {
     addClass(button, "-test-" + name);
     addClass(button, "-toggle-class-" + name);
     if(opts.id){
-    	button.id = opts.id;
+        button.id = opts.id;
     }
     containers.navigation.appendChild(button);
     
@@ -141,44 +141,44 @@ Utils.removeChildren = function (myNode) {
 };
 
 Utils.processError = function(callback){
-	return function(err){
-		if(err) {
-			Utils.handleError(err);
-			return;
-		}
-		
-		if(callback){
-			var arr = [];
-			for (var i = 1; i < arguments.length; i++) {
-				arr.push(arguments[i]);
-			}
-			callback.apply(null, arr);
-		}
-	}
+    return function(err){
+        if(err) {
+            Utils.handleError(err);
+            return;
+        }
+        
+        if(callback){
+            var arr = [];
+            for (var i = 1; i < arguments.length; i++) {
+                arr.push(arguments[i]);
+            }
+            callback.apply(null, arr);
+        }
+    }
 };
 
 Utils.handleError = function(err){
-	"use strict";
-	if (err instanceof Errors.ValidationError || typeof err === 'object') {
-//		Utils.alert(err.messageId);
-	    Utils.alert(strFormat(getL10n(err.messageId), err.parameters));
-	} else {
-		Utils.alert(err);
-	}
+    "use strict";
+    if (err instanceof Errors.ValidationError || typeof err === 'object') {
+//        Utils.alert(err.messageId);
+        Utils.alert(strFormat(getL10n(err.messageId), err.parameters));
+    } else {
+        Utils.alert(err);
+    }
 };
 
 Utils.enable = function(root, className, condition){
-	"use strict";
+    "use strict";
     var arr = root.getElementsByClassName(className);
     var i, elem;
     for (i = 0; i < arr.length; i++) {
-		elem = arr[i];
-		if(condition){
-			elem.removeAttribute("disabled");
-		} else {
-			elem.setAttribute("disabled","disabled");
-		}
-	}
+        elem = arr[i];
+        if(condition){
+            elem.removeAttribute("disabled");
+        } else {
+            elem.setAttribute("disabled","disabled");
+        }
+    }
 };
 
 Utils.charOrdAObject = CommonUtils.charOrdAFactory(function(a){
@@ -245,11 +245,11 @@ function removeClass(o, c){
 };
 
 function setClassByCondition(o,c,condition){
-	if(condition){
-		addClass(o,c);
-	} else {
-		removeClass(o,c);
-	}
+    if(condition){
+        addClass(o,c);
+    } else {
+        removeClass(o,c);
+    }
 };
 
 function getEl(id){
@@ -384,5 +384,5 @@ var getSelectedRadio = function(query){
 // from date format utils
 //For convenience...
 Date.prototype.format = function (mask, utc) {
-	return dateFormat(this, mask, utc);
+    return dateFormat(this, mask, utc);
 };

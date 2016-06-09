@@ -237,25 +237,25 @@ Events.showPersonalStories = function (storyName, characterNames, delegate) {
     "use strict";
     DBMS.getMetaInfo(function(err, metaInfo){
         if(err) {Utils.handleError(err); return;}
-    	DBMS.getEvents(storyName, characterNames, function(err, events){
-    		if(err) {Utils.handleError(err); return;}
-    	    PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
-    	    	if(err) {Utils.handleError(err); return;}
-    	    	var adaptations = characterNames.map(function(characterName){
-    	    		return {
-    	    			characterName: characterName,
-    	    			storyName: storyName
-    	    		};
-    	    	});
-    	    	PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
-    	    		if(err) {Utils.handleError(err); return;}
-    	    		Events.buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo);
-    	    		Utils.enable(Events.content, "isStoryEditable", isStoryEditable);
-    	    		Utils.enable(Events.content, "notEditable", false);
-    	    		if(delegate)delegate();
-    	    	});
-    	    });
-    	});
+        DBMS.getEvents(storyName, characterNames, function(err, events){
+            if(err) {Utils.handleError(err); return;}
+            PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
+                if(err) {Utils.handleError(err); return;}
+                var adaptations = characterNames.map(function(characterName){
+                    return {
+                        characterName: characterName,
+                        storyName: storyName
+                    };
+                });
+                PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+                    if(err) {Utils.handleError(err); return;}
+                    Events.buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo);
+                    Utils.enable(Events.content, "isStoryEditable", isStoryEditable);
+                    Utils.enable(Events.content, "notEditable", false);
+                    if(delegate)delegate();
+                });
+            });
+        });
     });
 };
 

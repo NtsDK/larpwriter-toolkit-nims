@@ -31,7 +31,7 @@ CharacterProfile.refresh = function () {
     "use strict";
     
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
-    	if(err) {Utils.handleError(err); return;}
+        if(err) {Utils.handleError(err); return;}
         var selector = clearEl(getEl("bioEditorSelector"));
         names.forEach(function (nameInfo) {
             var option = makeEl("option");
@@ -50,7 +50,7 @@ CharacterProfile.refresh = function () {
         CharacterProfile.inputItems = {};
         
         DBMS.getAllProfileSettings(function(err, allProfileSettings){
-        	if(err) {Utils.handleError(err); return;}
+            if(err) {Utils.handleError(err); return;}
             allProfileSettings.forEach(function (profileSettings) {
                 CharacterProfile.appendInput(tbody, profileSettings);
             });
@@ -170,20 +170,20 @@ CharacterProfile.showProfileInfoCallback = function (err, profile) {
     if(err) {Utils.handleError(err); return;}
     var name = profile.name;
     PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
-    	if(err) {Utils.handleError(err); return;}
-    	CharacterProfile.updateSettings(name);
-    	
-    	CharacterProfile.name = name;
-    	var inputItems = CharacterProfile.inputItems;
-    	Object.keys(inputItems).forEach(function (inputName) {
-    		if (inputItems[inputName].type === "checkbox") {
-    			inputItems[inputName].checked = profile[inputName];
-    		} else {
-    			inputItems[inputName].value = profile[inputName];
-    		}
-    		inputItems[inputName].oldValue = profile[inputName];
-    		Utils.enable(CharacterProfile.content, "isCharacterEditable", isCharacterEditable);
-    	});
+        if(err) {Utils.handleError(err); return;}
+        CharacterProfile.updateSettings(name);
+        
+        CharacterProfile.name = name;
+        var inputItems = CharacterProfile.inputItems;
+        Object.keys(inputItems).forEach(function (inputName) {
+            if (inputItems[inputName].type === "checkbox") {
+                inputItems[inputName].checked = profile[inputName];
+            } else {
+                inputItems[inputName].value = profile[inputName];
+            }
+            inputItems[inputName].oldValue = profile[inputName];
+            Utils.enable(CharacterProfile.content, "isCharacterEditable", isCharacterEditable);
+        });
     });
 };
 
