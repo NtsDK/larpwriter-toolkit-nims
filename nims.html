@@ -157,7 +157,7 @@ See the License for the specific language governing permissions and
                   <td><input id="gameDatePicker" class="adminOnly"></input></td>
                 </tr>
                 <tr>
-                  <td><span l10n-id="overview-last-save-time">Время последнего сохранения базы</span></td>
+                  <td><span l10n-id="overview-last-save-time"></span></td>
                   <td id="lastSaveTime"></td>
                 </tr>
               </table>
@@ -674,21 +674,20 @@ See the License for the specific language governing permissions and
         <div class="panel-body">
           <table>
             <tr>
-              <td style="padding: 0px 30px 0px 0px;"><input type="radio" name="eventsGroupBy"
-                value="story" id="eventGroupingByStoryRadio"
-              /> <label for="eventGroupingByStoryRadio"
-                l10n-id="briefings-group-by-story"
-              ></label> <br> <input type="radio" name="eventsGroupBy"
-                value="time" id="eventGroupingByTimeRadio"
-              /> <label for="eventGroupingByTimeRadio"
-                l10n-id="briefings-sort-by-timeline"
-              ></label></td>
-              <td><input type="checkbox" id="hideAllPanelsCheckbox" />
-                <label for="hideAllPanelsCheckbox">Свернуть все
-                  панели</label> <br> <input type="checkbox"
-                id="disableHeadersCheckbox"
-              /> <label for="disableHeadersCheckbox">Отключить
-                  заголовки</label></td>
+              <td style="padding: 0px 30px 0px 0px;">
+                <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio" />
+                <label for="eventGroupingByStoryRadio" l10n-id="briefings-group-by-story"></label>
+                <br>
+                <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio" />
+                <label for="eventGroupingByTimeRadio" l10n-id="briefings-sort-by-timeline"></label>
+              </td>
+              <td>
+                <input type="checkbox" id="hideAllPanelsCheckbox" />
+                <label for="hideAllPanelsCheckbox" l10n-id="briefings-hide-all-panels"></label>
+                <br>
+                <input type="checkbox" id="disableHeadersCheckbox" />
+                <label for="disableHeadersCheckbox" l10n-id="briefings-disable-headers"></label>
+              </td>
             </tr>
           </table>
         </div>

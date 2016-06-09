@@ -91,7 +91,7 @@ BriefingPreview.buildContent = function (characterName) {
 
     DBMS.getProfile(characterName, function(err, profile){
         if(err) {Utils.handleError(err); return;}
-        addEl(content, BriefingPreview.makePanel(makeText('Досье'), BriefingPreview.makeProfileContent(profile)));
+        addEl(content, BriefingPreview.makePanel(makeText(getL10n('briefings-profile')), BriefingPreview.makeProfileContent(profile)));
         
         DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
             if(err) {Utils.handleError(err); return;}
@@ -235,7 +235,7 @@ BriefingPreview.showEventsByTime = function (content, characterName, userStoryNa
                 
                 var name;
                 if(getEl('disableHeadersCheckbox').checked){
-                    name = makeText(strFormat('Событие {0}-{1}', [i*splitConstant+1, i*splitConstant+subPart.length]));
+                    name = makeText(strFormat(getL10n('briefings-events-header'), [i*splitConstant+1, i*splitConstant+subPart.length]));
                 } else {
                     name = addEls(makeEl('div'), subPart.map(function(event){
                         return BriefingPreview.getEventHeaderDiv(event, true);
@@ -252,7 +252,7 @@ BriefingPreview.getStoryHeader = function(elem, i){
     "use strict";
     var name;
     if(getEl('disableHeadersCheckbox').checked){
-        name = strFormat('История {0}', [i+1]);
+        name = strFormat(getL10n('briefings-story-header'), [i+1]);
     } else {
         name = elem.storyName;
     }
@@ -300,7 +300,7 @@ BriefingPreview.getEventHeaderDiv = function(event, showStoryName){
 BriefingPreview.getEventLabelText = function(event, showStoryName, index){
     "use strict";
     if(getEl('disableHeadersCheckbox').checked){
-        return addEl(makeEl('h4'), makeText(strFormat('Событие {0}', [index])));
+        return addEl(makeEl('h4'), makeText(strFormat(getL10n('briefings-event-header'), [index])));
     } else {
         return addEl(makeEl('h4'), BriefingPreview.getEventHeaderDiv(event, showStoryName));
     }
@@ -319,7 +319,7 @@ BriefingPreview.showEvent = function(event, characterName, opts){
     
     addEl(eventDiv, BriefingPreview.getEventLabelText(event, opts.showStoryName, opts.index));
     
-    addEl(eventDiv,makeText("Субъективное время: "));
+    addEl(eventDiv,makeText(getL10n('briefings-subjective-time')));
     addEl(eventDiv, UI.makeAdaptationTimeInput(event.storyName, event, characterName, opts.areAdaptationsEditable[event.storyName + "-" + characterName]));
     var input = makeEl("textarea");
     
