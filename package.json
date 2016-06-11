@@ -1,12 +1,12 @@
 {
-  "name": "SMTK NIMS",
+  "name": "smtk-nims",
   "version": "0.4.4u1",
   "description": "Story master toolkit NIMS",
   "main": "",
   "scripts": {
   },
-  "author": "Timofey Rechkalov NtsDK",
-  "license": "Apache License 2.0",
+  "author": "Timofey Rechkalov (NtsDK)",
+  "license": "Apache-2.0",
   "devDependencies": {
     "del": "^2.2.0",
     "gulp": "gulpjs/gulp#4.0",
