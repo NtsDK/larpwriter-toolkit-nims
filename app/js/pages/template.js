@@ -18,18 +18,13 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var Overview = {};
+var Template = {};
 
-Overview.init = function() {
+Template.init = function() {
     "use strict";
-    var overviewDiv = makeEl("div");
-    overviewDiv.id = overviewDiv;
-    overviewDiv.appendChild(makeText("Overview"));
-
-    Overview.content = overviewDiv;
+//    Template.content = getEl("overviewDiv");
 };
 
-Overview.refresh = function() {
+Template.refresh = function() {
     "use strict";
-
 };

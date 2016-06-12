@@ -1,3 +1,6 @@
 doc/
 .tern-project
 node_modules/
+dist/
+.settings/
+.project
