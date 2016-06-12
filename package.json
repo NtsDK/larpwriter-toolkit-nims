@@ -3,8 +3,7 @@
   "version": "0.4.4u1",
   "description": "Story master toolkit NIMS",
   "main": "",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Timofey Rechkalov (NtsDK)",
   "license": "Apache-2.0",
   "devDependencies": {
@@ -19,6 +18,11 @@
     "gulp-newer": "^1.2.0",
     "gulp-remember": "^0.3.1",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglifyjs": "^0.6.2"
+    "gulp-uglifyjs": "^0.6.2",
+    "ramda": "^0.21.0"
+  },
+  "repository" : { 
+    "type" : "git", 
+    "url" : "https://bitbucket.org/NtsDK/story-master-toolkit-smtk-nims"
   }
 }
