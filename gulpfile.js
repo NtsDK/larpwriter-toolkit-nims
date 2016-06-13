@@ -5,7 +5,14 @@
 // Make server build
 // gulp server
 // make prod build
-// set NODE_ENV=production && gulp dist
+// set NODE_ENV=prod && gulp dist
+// set NODE_ENV=dev && gulp dist
+
+//set NODE_ENV=dev && gulp dev
+
+//set NODE_ENV=dev && set MODE=server && gulp dev
+//set NODE_ENV=dev && set MODE=standalone && gulp dev
+//set NODE_ENV=prop && set MODE=standalone && gulp dist
 
 process.chdir("../NIMS");
 var gulp = require('gulp');
@@ -21,49 +28,45 @@ var remember = require('gulp-remember');
 var cssnano = require('gulp-cssnano');
 var uglify = require('gulp-uglifyjs');
 var R = require('ramda');
+var htmlmin = require('gulp-htmlmin');
 
-var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
+var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV.trim() == 'dev';
+var isServer = !process.env.MODE || process.env.MODE.trim() == 'server';
 
-//gulp.task('hello', function(callback) {
-//    console.log('hello');
-//    callback();
-//});
-//
-//gulp.task('default', function() {
-//    return gulp.src('app/**/*').pipe(gulp.dest('dist'));
-//});
+//console.log('=' + process.env.NODE_ENV + '=');
+//console.log(isServer);
+//console.log(process.env.NODE_ENV == 'dev');
 
 var addPrefix = function(path, files){
     return R.ap([R.concat(path)], files)
 };
 
-var root = "C:\\workspaces\\nodeclipse\\NIMS\\"
+var styles = addPrefix("app/style/", ["common.css", "style.css", "experimental.css"]);
+var libStyles = ["app/libs/*.css"];
 
-// css: libs, my, tests
-var styles = [];
-styles = styles.concat(addPrefix("app/style/", ["bootstrap.min.css", "common.css", "style.css", "experimental.css"]));
-styles = styles.concat("app/libs/*.css");
-//styles = styles.concat("app/tests/**/*.css");
+var processStyles = function(styles, fileName, taskName, addSourcemaps) {
+    return function(){
+        return gulp.src(styles, {base: 'app', since: gulp.lastRun(taskName)}) // can't use since here because we need all data
+        .pipe(debug({title:'app'}))
+        .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.init()))
+        .pipe(autoprefixer())
+        .pipe(remember(taskName))
+        .pipe(concat(fileName + '.min.css'))
+        .pipe(debug({title:'concat'}))
+        .pipe(cssnano())
+        .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.write()))
+        .pipe(gulp.dest('dist/styles'));
+    }
+};
 
-gulp.task('styles', function() {
-//    return gulp.src('app/style/*', {base: 'app'})
-    return gulp.src(styles, {base: 'app', since: gulp.lastRun('styles')}) // can't use since here because we need all data
-//    return gulp.src(styles, {base: 'app'})
-    .pipe(debug({title:'app'}))
-//    .pipe(gulpIf(isDevelopment, sourcemaps.init()))
-    .pipe(autoprefixer())
-    .pipe(remember('styles'))
-    .pipe(concat('nims.min.css'))
-    .pipe(debug({title:'concat'}))
-    .pipe(cssnano())
-//    .pipe(gulpIf(isDevelopment, sourcemaps.write()))
-    .pipe(gulp.dest('dist/styles'));
-});
+gulp.task('styles:nims', processStyles(styles, "nims", 'styles:nims', true));
+gulp.task('styles:libs', processStyles(libStyles, "libs", 'styles:libs', false));
 
-// js: libs, l10n, templates, common, dbms, js root, pages, tests
-var jses = [];
+gulp.task('styles', gulp.parallel('styles:libs','styles:nims'));
 
-jses = jses.concat(addPrefix("app/libs/",[
+// js: libs, resources (l10n, templates), common, scripts (dbms, js root), pages, tests
+
+var libs = addPrefix("app/libs/",[
 'jquery-2.1.4.js',
 'ajv-4.1.1.js',
 'bootstrap.min.js',
@@ -76,33 +79,46 @@ jses = jses.concat(addPrefix("app/libs/",[
 'mustache.min.js',
 'ramda.min.js',
 'select2.min.js',
-'vis-custom.min.js']));
+'vis-custom.min.js']);
 
-//jses = jses.concat("app/libs/*.js");
-jses = jses.concat("app/l10n/*.js");
-jses = jses.concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js","inventoryTemplate.js",
-                                               "templateByStory.js","templateByTime.js","textTemplate.js"]));
-jses = jses.concat("app/js/common/**/*.js");
-jses = jses.concat("app/js/dbms/*.js");
-jses = jses.concat("app/js/*.js");
-jses = jses.concat("app/js/pages/**/*.js");
-jses = jses.concat(addPrefix("app/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]));
-//jses = jses.concat("app/tests/spec/*.js");
+var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
+    "inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]));
 
-gulp.task('scripts', function() {
-    return gulp.src(jses, {base: 'app'})
-        .pipe(gulpIf(isDevelopment, sourcemaps.init()))
-        .pipe(remember('scripts'))
-        .pipe(concat('nims.min.js'))
-        .pipe(gulpIf(!isDevelopment, uglify()))
-        .pipe(gulpIf(isDevelopment, sourcemaps.write()))
-        .pipe(gulp.dest('dist'));
+var common = ["app/js/common/**/*.js"];
+
+var scripts = ["app/js/dbms/*.js"].concat("app/js/*.js");
+
+var pages = ["app/js/pages/**/*.js"];
+
+var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
+    return function() {
+        return gulp.src(scripts, {base: 'app'})
+            .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.init()))
+            .pipe(remember(taskName))
+            .pipe(concat(fileName + '.min.js'))
+            .pipe(gulpIf(!isDevelopment, uglify()))
+            .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.write()))
+            .pipe(gulp.dest('dist/js'));
+    }
+};
+
+gulp.task('scripts:libs', processScripts(libs, "libs", 'scripts:libs', false));
+gulp.task('scripts:resources', processScripts(resources, "resources", 'scripts:resources', false));
+gulp.task('scripts:common', processScripts(common, "common", 'scripts:common', true));
+gulp.task('scripts:scripts', processScripts(scripts, "scripts", 'scripts:scripts', true));
+gulp.task('scripts:pages', processScripts(pages, "pages", 'scripts:pages', true));
+
+gulp.task('scripts', gulp.parallel('scripts:libs','scripts:resources','scripts:common','scripts:scripts','scripts:pages'));
+
+gulp.task('html', function() {
+    return gulp.src('app/nims.html', {base : 'app'})
+    .pipe(htmlmin({collapseWhitespace : true}))
+    .pipe(gulp.dest('dist'))
 });
 
 // plain copy
 var plains = [];
-plains = plains.concat(addPrefix("app/",['CHANGELOG','LICENSE','LICENSE_RUS','mode.js','nims.html','NOTICE',
-                        'NOTICE_RUS']));
+plains = plains.concat(addPrefix("app/",['CHANGELOG','LICENSE','LICENSE_RUS','mode.js','NOTICE','NOTICE_RUS']));
 plains = plains.concat(['app/templates/*.docx']);
 
 gulp.task('plains', function() {
@@ -113,7 +129,7 @@ gulp.task('plains', function() {
 gulp.task('assets', function() {
     return gulp.src('app/images/*', {base: 'app', since: gulp.lastRun('assets')})
     .pipe(newer('dist')) // used for single tasks when many files already copied, like first launch
-    .pipe(gulpIf(!isDevelopment, imagemin()))
+//    .pipe(gulpIf(!isDevelopment, imagemin())) // enable on adding new images
     .pipe(debug({title:'assets copy'}))
     .pipe(gulp.dest('dist'));
 });
@@ -122,24 +138,55 @@ gulp.task('clean', function() {
     return del('dist');
 });
 
-//gulp.task('js:libs', function() {
-//    return gulp.src('app/libs/*.js', {base: 'app'})
-//        .pipe(concat('libs.min.js'))
-//        .pipe(uglify())
-//        .pipe(gulp.dest('dist/libs'));
-//});
-//gulp.task('css:libs', function() {
-//    return gulp.src('app/libs/*.css', {base: 'app'})
-//    .pipe(concat('libs.min.css'))
-//    .pipe(cssnano())
-//    .pipe(gulp.dest('dist/libs'));
-//});
+var tests = addPrefix("app/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]);
+var specs = addPrefix("app/tests/spec/",[
+                                        "DBMSSpec.js",
+//                                                "tickets.js"
+                                        ]);
+if(!isDevelopment){
+    specs = tests = ["app/tests/empty.js"];
+}
 
+gulp.task('tests', function() {
+    gulp.src(isDevelopment ? ["app/tests/jasmine/jasmine.css"] : ["app/tests/empty.js"], {base: 'app'})
+    .pipe(concat('tests.min.css'))
+    .pipe(cssnano())
+    .pipe(gulp.dest('dist/tests'));
+    
+    gulp.src(specs, {base: 'app'})
+    .pipe(gulpIf(false && isDevelopment, sourcemaps.init()))
+//    .pipe(remember('tests'))
+    .pipe(concat('specs.min.js'))
+    .pipe(gulpIf(!isDevelopment, uglify()))
+    .pipe(gulpIf(false && isDevelopment, sourcemaps.write()))
+    .pipe(gulp.dest('dist/tests'));
+    
+    return gulp.src(tests, {base: 'app'})
+    .pipe(gulpIf(false && isDevelopment, sourcemaps.init()))
+//    .pipe(remember('tests'))
+    .pipe(concat('tests.min.js'))
+    .pipe(gulpIf(!isDevelopment, uglify()))
+    .pipe(gulpIf(false && isDevelopment, sourcemaps.write()))
+    .pipe(gulp.dest('dist/tests'));
+});
 
-gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','plains')));
+gulp.task('server', function(callback) {
+    if(isServer){
+        gulp.src('app/js/common/**/*.js', {base: 'app'})
+        .pipe(gulp.dest('dist'));
+    }
+    callback();
+});
+
+gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','plains','tests','server')));
 
 gulp.task('watch', function() {
-    gulp.watch('app/style/*', gulp.series('styles'));
-    gulp.watch('app/images/*', gulp.series('assets'));
+    
+    gulp.watch(scripts, gulp.series('scripts:scripts'));
+    gulp.watch(common, gulp.series('scripts:common'));
+    gulp.watch(pages, gulp.series('scripts:pages'));
+    gulp.watch(styles, gulp.series('styles:nims'));
+    gulp.watch('app/nims.html', gulp.series('html'));
+    
 });
 gulp.task('dev', gulp.series('dist', 'watch'));
