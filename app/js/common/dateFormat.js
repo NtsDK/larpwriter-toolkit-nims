@@ -128,5 +128,5 @@ callback(dateFormat);
 
 })(function(dateFormat){
     typeof exports === 'undefined'? this['dateFormat'] = dateFormat: module.exports = dateFormat;
-});
+}.bind(this));
 

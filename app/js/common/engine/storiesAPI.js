@@ -312,5 +312,5 @@ See the License for the specific language governing permissions and
 
 })(function(api){
     typeof exports === 'undefined'? this['storiesAPI'] = api: module.exports = api;
-});
+}.bind(this));
 
