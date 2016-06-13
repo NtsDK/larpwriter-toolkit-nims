@@ -21,113 +21,22 @@ See the License for the specific language governing permissions and
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title l10n-id="header-page-title"></title>
 
-<link rel="stylesheet" href="style/bootstrap.min.css" >
-<link rel="stylesheet" type="text/css" href="style/common.css"  media="screen" />
-<link rel="stylesheet" type="text/css" href="style/style.css"  media="screen" />
-<link rel="stylesheet" type="text/css" href="style/experimental.css"  media="screen" />
+<link rel="stylesheet" type="text/css" href="styles/libs.min.css"  media="screen" />
+<link rel="stylesheet" type="text/css" href="styles/nims.min.css"  media="screen" />
+<link rel="stylesheet" type="text/css" href="tests/tests.min.css"  media="screen" />
 
-<!-- <link rel="stylesheet" type="text/css" href="libs/vis.css"/> -->
-<link rel="stylesheet" type="text/css" href="libs/vis.min.css"/>
 <script src="mode.js"></script>
-<script src="libs/vis-custom.min.js"></script>
-<!-- <script src="libs/vis.js"></script> -->
-
-<link rel="stylesheet" type="text/css" href="libs/jquery.datetimepicker.css"/>
-<script src="libs/jquery-2.1.4.js"></script>
-<script src="libs/bootstrap.min.js"></script>
-<script src="libs/jquery.datetimepicker.js"></script>
-<script src="libs/select2.min.js"></script>
-<link rel="stylesheet" type="text/css" href="libs/select2.min.css"/>
-
-<script src="libs/FileSaver.js"></script>
-<script src="libs/jszip-utils.js"></script>
-<script src="libs/jszip.js"></script>
-<script src="libs/mustache.min.js"></script>
-<script src="libs/Chart.min.js"></script>
-<script src="libs/ramda.min.js"></script>
-<script src="libs/ajv-4.1.1.js"></script>
-
-<link rel="stylesheet" href="tests/jasmine/jasmine.css">
-
-<script src="tests/jasmine/jasmine.js"></script>
-<script src="tests/jasmine/jasmine-html.js"></script>
-<script src="tests/jasmine/boot.js"></script>
-
-<!-- <script src="tests/spec/DBMSSpec.js"></script> -->
-<script src="tests/spec/tickets.js"></script>
-
-<script src="l10n/l10n.en.js"></script>
-<script src="l10n/l10n.ru.js"></script>
-<script src="js/l10n.js"></script>
-
-<script src="libs/docxgen-121.min.js"></script>
+<script src="js/libs.min.js"></script>
 
 </head>
 <body onload="PageManager.onLoad()">
-
-  <script src="templates/templatesArr.js"></script>
-  <script src="templates/inventoryTemplate.js"></script>
-  <script src="templates/genericTemplate.js"></script>
-  <script src="templates/templateByTime.js"></script>
-  <script src="templates/templateByStory.js"></script>
-  <script src="templates/textTemplate.js"></script>
+  <script src="js/common.min.js"></script>
+  <script src="js/scripts.min.js"></script>
+  <script src="js/pages.min.js"></script>
+  <script src="js/resources.min.js"></script>
   
-  <script src="js/common/baseExample.js"></script>
-  <script src="js/common/emptyBase.js"></script>
-  <script src="js/common/constants.js"></script>
-  <script src="js/common/migrator.js"></script>
-  <script src="js/common/schema.js"></script>
-  <script src="js/common/commonUtils.js"></script>
-  <script src="js/common/dateFormat.js"></script>
-  <script src="js/common/errors.js"></script>
-  <script src="js/common/engine/common.js"></script>
-  <script src="js/common/engine/statisticsAPI.js"></script>
-  <script src="js/common/engine/consistencyCheckAPI.js"></script>
-  <script src="js/common/engine/charactersAPI.js"></script>
-  <script src="js/common/engine/extrasAPI.js"></script>
-  <script src="js/common/engine/briefingExportAPI.js"></script>
-  <script src="js/common/engine/profileConfigurerAPI.js"></script>
-  <script src="js/common/engine/storiesAPI.js"></script>
-  <script src="js/common/engine/eventsAPI.js"></script>
-  <script src="js/common/engine/accessManagerAPI.js"></script>
-  <script src="js/common/engine/logAPI.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/uiUtils.js"></script>
-  <script src="js/fileUtils.js"></script>
-  
-  <script src="js/dbms/localDBMS.js"></script>
-  <script src="js/dbms/remoteDBMS.js"></script>
-  <script src="js/permissionInformer.js"></script>
-
-  <script src="js/pageManager.js"></script>
-  
-  <script src="js/pages/overview.js"></script>
-
-  <script src="js/pages/characters.js"></script>
-  <script src="js/pages/characterProfile.js"></script>
-  <script src="js/pages/characterFilter.js"></script>
-  <script src="js/pages/characterProfileConfigurer.js"></script>
-
-  <script src="js/pages/stories.js"></script>
-  <script src="js/pages/masterStory.js"></script>
-  <script src="js/pages/storyEvents.js"></script>
-  <script src="js/pages/storyCharacters.js"></script>
-  <script src="js/pages/eventPresence.js"></script>
-
-  <script src="js/pages/events.js"></script>
-
-  <script src="js/pages/briefings.js"></script>
-  <script src="js/pages/briefingExport.js"></script>
-  <script src="js/pages/briefingPreview.js"></script>
-
-  <script src="js/pages/timeline.js"></script>
-  <script src="js/pages/network/socialNetwork.js"></script>
-  <script src="js/pages/network/networkSubsetsSelector.js"></script>
-
-  <script src="js/pages/accessManager.js"></script>
-  <script src="js/pages/logViewer.js"></script>
-  <script src="js/pages/chat.js"></script>
-  
+  <script src="tests/tests.min.js"></script>
+  <script src="tests/specs.min.js"></script>
 
   <div id="navigation">
   
@@ -137,7 +46,6 @@ See the License for the specific language governing permissions and
 
   <div class="hidden">
     <div id="overviewDiv">
-    
       <div style="display:flex;justify-content: space-around;">
         <div style="flex-grow:1;margin-right: 10px;">
           <div id="commonInfoDiv" class="panel panel-default">
@@ -762,10 +670,7 @@ See the License for the specific language governing permissions and
           <div id="advancedTextExportContainer" class="exportContainer">
             <div >
               <h3 l10n-id="briefings-template"></h3>
-              <textarea id="templateArea">
-
-              
-              </textarea><br>
+              <textarea id="templateArea"></textarea><br>
               <label l10n-id="briefings-enter-text-file-type"></label>
               <input id="textTypeSelector" value="txt"/>
               <button id="previewTextOutput" l10n-id="briefings-preview"></button><br>
