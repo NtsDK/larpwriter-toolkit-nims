@@ -29,6 +29,8 @@ var cssnano = require('gulp-cssnano');
 var uglify = require('gulp-uglifyjs');
 var R = require('ramda');
 var htmlmin = require('gulp-htmlmin');
+var config = require('./config');
+const zip = require('gulp-zip');
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV.trim() == 'dev';
 var isServer = !process.env.MODE || process.env.MODE.trim() == 'server';
@@ -178,7 +180,19 @@ gulp.task('server', function(callback) {
     callback();
 });
 
+gulp.task('copyDocs', function() {
+    return gulp.src(config.get('docPath') + '/**/*')
+    .pipe(gulp.dest('dist/doc'));
+});
+
+gulp.task('zip', function() {
+    return gulp.src('dist/**/*')
+        .pipe(zip('dist.zip'))
+        .pipe(gulp.dest('./'));
+});
+
 gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','plains','tests','server')));
+gulp.task('dist:final', gulp.series('dist', 'copyDocs', 'zip'));
 
 gulp.task('watch', function() {
     
