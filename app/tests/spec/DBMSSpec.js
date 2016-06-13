@@ -1,6 +1,6 @@
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 
 describe("LocalDBMS", function(){
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     it("обновит мета информацию об игре", function(done){
         DBMS.setMetaInfo("name", "Разные сказки3", function(){
             DBMS.getMetaInfo(function(err, info){
