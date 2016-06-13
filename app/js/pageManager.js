@@ -45,6 +45,8 @@ PageManager.consistencyCheck = function(callback){
         consistencyErrors.forEach(CommonUtils.consoleLog);
         if(consistencyErrors.length > 0){
             Utils.alert(getL10n('overview-consistency-problem-detected'));
+        } else {
+            console.log('Consistency check didn\'t find errors');
         }
         callback();
     });
