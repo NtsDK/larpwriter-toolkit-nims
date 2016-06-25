@@ -42,7 +42,7 @@ Overview.init = function () {
     Overview.date = getEl("gameDatePicker");
 
     var opts = {
-        lang : "ru",
+        lang : L10n.getLang(),
         mask : true,
         onChangeDateTime : Overview.updateTime
     };
@@ -58,6 +58,15 @@ Overview.init = function () {
     };
 
     jQuery(Overview.preDate).datetimepicker(opts);
+    
+    L10n.onL10nChange(function(){
+        jQuery(Overview.date).datetimepicker({
+            lang : L10n.getLang()
+        });
+        jQuery(Overview.preDate).datetimepicker({
+            lang : L10n.getLang()
+        });
+    });
 
     Overview.descr = getEl("gameDescription");
     Overview.descr.addEventListener("change", Overview.updateDescr);
