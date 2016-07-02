@@ -12,7 +12,8 @@
 
 //set NODE_ENV=dev && set MODE=server && gulp dev
 //set NODE_ENV=dev && set MODE=standalone && gulp dev
-//set NODE_ENV=prop && set MODE=standalone && gulp dist
+//set NODE_ENV=prod && set MODE=standalone && gulp dist
+//set NODE_ENV=prod && set MODE=standalone && gulp dist:final
 
 process.chdir("../NIMS");
 var gulp = require('gulp');
