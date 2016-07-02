@@ -74,6 +74,10 @@ L10n.toggleL10n = function(){
     PageManager.currentView.refresh();
 };
 
+L10n.getLang = function(){
+    return lang.toLowerCase();
+};
+
 L10n.getValue = function(name){
     "use strict";
     var value = L10n.dict[name];

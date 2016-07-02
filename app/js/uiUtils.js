@@ -124,7 +124,7 @@ UI.makeEventTimePicker = function (opts) {
     input.eventIndex = opts.index;
     
     var pickerOpts = {
-        lang : "ru",
+        lang : L10n.getLang(),
         mask : true,
         startDate : new Date(opts.preGameDate),
         endDate : new Date(opts.date),
