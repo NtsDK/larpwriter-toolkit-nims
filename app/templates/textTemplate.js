@@ -12,7 +12,7 @@ var TEXT_TEMPLATE = "{{gameName}}\n" +
   "{{/profileInfoArray}}\n" +
   "\n" +
   "{{#eventsInfo}}\n" +
-  "{{{time}}} {{storyName}}: {{name}}\n" +
+  "{{{time}}} {{{displayTime}}} {{storyName}}: {{name}}\n" +
   "{{text}}\n" +
   "{{/eventsInfo}}\n" +
   "\n" +
@@ -20,7 +20,7 @@ var TEXT_TEMPLATE = "{{gameName}}\n" +
   "{{name}}\n" +
   "{{#eventsInfo}}\n" +
   "\n" +
-  "{{{time}}} {{name}}\n" +
+  "{{{time}}} {{{displayTime}}} {{name}}\n" +
   "{{text}}\n" +
   "{{#splittedText}}\n" +
   "{{string}}\n" +

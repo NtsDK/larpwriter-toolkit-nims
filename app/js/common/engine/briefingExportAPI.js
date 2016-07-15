@@ -123,7 +123,7 @@ See the License for the specific language governing permissions and
             }).map(function(story){
                 return {
                     name: story.name,
-                    eventsInfo: _getStoryEventsInfo(story, charName)
+                    eventsInfo: _getStoryEventsInfo(story, charName, database.Meta.date)
                 };
             }).sort(CommonUtils.charOrdAFactory(function(a){
                 return a.name.toLowerCase();
@@ -135,7 +135,7 @@ See the License for the specific language governing permissions and
             var eventsInfo = R.values(database.Stories).filter(function(story){
                 return story.characters[charName];
             }).map(function(story){
-                return _getStoryEventsInfo(story, charName);
+                return _getStoryEventsInfo(story, charName, database.Meta.date);
             });
                 
             eventsInfo = eventsInfo.reduce(function(result, array){
@@ -147,14 +147,14 @@ See the License for the specific language governing permissions and
             return eventsInfo;
         };
         
-        var _getStoryEventsInfo = function(story, charName){
+        var _getStoryEventsInfo = function(story, charName, defaultTime){
             "use strict";
             return story.events.filter(function(event) {
                 return event.characters[charName];
-            }).map(_makeEventInfo(charName, story.name));
+            }).map(_makeEventInfo(charName, story.name, defaultTime));
         }
         
-        var _makeEventInfo = R.curry(function(charName, storyName, event) {
+        var _makeEventInfo = R.curry(function(charName, storyName, defaultTime, event) {
             "use strict";
             var eventInfo = {};
             if (event.characters[charName].text !== "") {
@@ -163,10 +163,11 @@ See the License for the specific language governing permissions and
                 eventInfo.text = event.text;
             }
             eventInfo.splittedText = _splitText(eventInfo.text);
+            eventInfo.time = event.time === '' ? defaultTime : event.time;
             if (event.characters[charName].time !== "") {
-                eventInfo.time = event.characters[charName].time;
+                eventInfo.displayTime = event.characters[charName].time;
             } else {
-                eventInfo.time = event.time;
+                eventInfo.displayTime = eventInfo.time;
             }
             eventInfo.name = event.name;
             eventInfo.storyName = storyName;
