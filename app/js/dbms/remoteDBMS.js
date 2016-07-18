@@ -17,8 +17,8 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-//var url = "http://127.0.0.1:1337/"
-var url = "/"
+var url = "/";
+var showNotification = false;
 
 function RemoteDBMS(){
     this.clearSettings();
@@ -62,11 +62,31 @@ RemoteDBMS._simplePut = function(name, data, callback){
         data: JSON.stringify(data)
     });
     
+    if(showNotification){
+        var notificationBox = clearEl(getEl('debugNotification'));
+        removeClass(notificationBox, 'hidden');
+        removeClass(notificationBox, 'operationOK');
+        removeClass(notificationBox, 'operationFail');
+        addEl(notificationBox, makeText(name + ' ' + JSON.stringify(data)));
+    }
+    
     request.done(function(data) {
+        if(showNotification){
+            addClass(notificationBox, 'operationOK');
+            setTimeout(function(){
+                addClass(notificationBox, 'hidden');
+            }, 1000);
+        }
         if(callback) callback();
     });
     
     request.fail(function(errorInfo, textStatus, errorThrown) {
+        if(showNotification){
+            addClass(notificationBox, 'operationFail');
+            setTimeout(function(){
+                addClass(notificationBox, 'hidden');
+            }, 1000);
+        }
         try {
             callback(JSON.parse(errorInfo.responseText));
         } catch(err){

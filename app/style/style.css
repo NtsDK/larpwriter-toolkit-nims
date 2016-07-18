@@ -363,3 +363,18 @@ See the License for the specific language governing permissions and
 #briefingPreviewDiv .adaptationTimeInput{
   width: 300px;
 }
+
+#debugNotification{
+  position: fixed;
+  bottom: 0px;
+  background-color: #dedede;
+  padding: 2px;
+}
+
+#debugNotification.operationOK {
+  background-color: #00ff40;
+}
+
+#debugNotification.operationFail{
+  background-color: #ff8080;
+}
