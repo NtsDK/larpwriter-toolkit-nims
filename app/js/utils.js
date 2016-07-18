@@ -170,13 +170,14 @@ Utils.handleError = function(err){
 Utils.enable = function(root, className, condition){
     "use strict";
     var arr = root.getElementsByClassName(className);
-    var i, elem;
+    var i, elem, key;
     for (i = 0; i < arr.length; i++) {
         elem = arr[i];
+        key = elem.tagName.toLowerCase() === "textarea" ? "readonly" : "disabled";
         if(condition){
-            elem.removeAttribute("disabled");
+            elem.removeAttribute(key);
         } else {
-            elem.setAttribute("disabled","disabled");
+            elem.setAttribute(key,key);
         }
     }
 };
@@ -386,3 +387,4 @@ var getSelectedRadio = function(query){
 Date.prototype.format = function (mask, utc) {
     return dateFormat(this, mask, utc);
 };
+
