@@ -38,7 +38,8 @@ See the License for the specific language governing permissions and
                 }
                 inventory = inventory.join(", ");
     
-                var profileInfo = _getProfileInfoObject(this.database, charName);
+                var profileInfo = _getProfileInfoObject(this.database, charName, false);
+                var profileInfoSplitted = _getProfileInfoObject(this.database, charName, true);
                 var profileInfoArray = _getProfileInfoArray(this.database, charName);
     
                 var storiesInfo = _getStoriesInfo(this.database, charName);
@@ -55,6 +56,9 @@ See the License for the specific language governing permissions and
                 for ( var element in profileInfo) {
                     dataObject["profileInfo-" + element] = profileInfo[element];
                 }
+                for ( var element in profileInfoSplitted) {
+                    dataObject["profileInfo-splitted-" + element] = profileInfoSplitted[element];
+                }
     
                 charArray.push(dataObject);
             }
@@ -66,23 +70,13 @@ See the License for the specific language governing permissions and
             callback(null, data);
         };
     
-        var _getProfileInfoObject = function(database, charName) {
+        var _getProfileInfoObject = function(database, charName, returnSplitted) {
             "use strict";
             var character = database.Characters[charName];
             var profileInfo = {};
     
             database.ProfileSettings.forEach(function(element) {
-                switch (element.type) {
-                case "text":
-                case "string":
-                case "enum":
-                case "number":
-                    profileInfo[element.name] = character[element.name];
-                    break;
-                case "checkbox":
-                    profileInfo[element.name] = character[element.name];
-                    break;
-                }
+                profileInfo[element.name] = returnSplitted ? _splitText(String(character[element.name])) : character[element.name];
             });
             return profileInfo;
         };
@@ -93,20 +87,8 @@ See the License for the specific language governing permissions and
             var value, splittedText;
             var filter = R.compose(R.equals(true), R.prop('doExport'));
             var profileInfoArray = database.ProfileSettings.filter(filter).map(function(element) {
-                switch (element.type) {
-                case "text":
-                    value = character[element.name];
-                    splittedText = _splitText(value);
-                    break;
-                case "enum":
-                case "string":
-                case "number":
-                    splittedText = value = character[element.name];
-                    break;
-                case "checkbox":
-                    splittedText= value = character[element.name];
-                    break;
-                }
+                value = character[element.name];
+                splittedText = _splitText(String(value));
                 return {
                     name : element.name,
                     value : value,
