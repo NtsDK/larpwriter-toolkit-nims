@@ -61,7 +61,6 @@ CharacterFilter.refresh = function () {
                 profiles[elem.value].name = elem.displayName;
             });
             
-            
             DBMS.getAllProfileSettings(function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
                 CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
@@ -77,13 +76,13 @@ CharacterFilter.refresh = function () {
                 });
                 
                 CharacterFilter.allProfileSettings.forEach(function (profileSettings) {
-                    CharacterFilter.appendInput(filterSettingsDiv, profileSettings);
+                    addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, filterSettingsDiv.inputItems));
                 });
                 
                 var profileItemNames = R.map(R.prop('name'), CharacterFilter.allProfileSettings);
                 UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), profileItemNames);
 
-                CharacterFilter.appendContentHeader(clearEl(getEl('filterHead')), profileItemNames);
+                addEl(clearEl(getEl('filterHead')), CharacterFilter.makeContentHeader(profileItemNames));
                 
                 CharacterFilter.rebuildContent();
             });
@@ -99,10 +98,9 @@ CharacterFilter.rebuildContent = function () {
     
     addEl(clearEl(getEl("filterResultSize")), makeText(data.length));
     
-    data.sort(CharacterFilter.sortDataRows).forEach(function (name) {
-            CharacterFilter.appendDataString(filterContent, CharacterFilter.Characters[name], 
-                    CharacterFilter.unshiftedProfileSettings);
-    });
+    addEls(filterContent, data.sort(CharacterFilter.sortDataRows).map(function (name) {
+        return CharacterFilter.makeDataString(CharacterFilter.Characters[name], CharacterFilter.unshiftedProfileSettings);
+    }));
     UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
 };
 
@@ -219,7 +217,7 @@ CharacterFilter.sortDataRows = function (a, b) {
     return 0;
 };
 
-CharacterFilter.appendDataString = function (table, character, profileSettings) {
+CharacterFilter.makeDataString = function (character, profileSettings) {
     "use strict";
     var tr = makeEl("tr");
 
@@ -241,10 +239,10 @@ CharacterFilter.appendDataString = function (table, character, profileSettings) 
         tr.appendChild(td);
     });
 
-    addEl(table, tr);
+    return tr;
 };
 
-CharacterFilter.appendContentHeader = function (thead, profileItemNames) {
+CharacterFilter.makeContentHeader = function (profileItemNames) {
     "use strict";
     var tr = makeEl("tr");
 
@@ -265,7 +263,7 @@ CharacterFilter.appendContentHeader = function (thead, profileItemNames) {
         tr.appendChild(td);
     });
 
-    thead.appendChild(tr);
+    return tr;
 };
 
 CharacterFilter.onSortChange = function (event) {
@@ -304,10 +302,11 @@ CharacterFilter.onSortChange = function (event) {
     CharacterFilter.rebuildContent();
 };
 
-CharacterFilter.appendInput = function (root, profileItemConfig) {
+CharacterFilter.makeInput = function (profileItemConfig, inputItems) {
     "use strict";
-    root.appendChild(makeText(profileItemConfig.name));
-    root.appendChild(makeEl("br"));
+    var div = makeEl('div');
+    div.appendChild(makeText(profileItemConfig.name));
+    div.appendChild(makeEl("br"));
 
     var input, selector, values;
 
@@ -317,8 +316,8 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
         input = makeEl("input");
         input.selfInfo = profileItemConfig;
         input.value = "";
-        root.appendChild(input);
-        root.inputItems[profileItemConfig.name] = input;
+        div.appendChild(input);
+        inputItems[profileItemConfig.name] = input;
 
         input.addEventListener("input", CharacterFilter.rebuildContent);
 
@@ -337,8 +336,8 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
             option.appendChild(makeText(value));
             selector.appendChild(option);
         });
-        root.appendChild(selector);
-        root.inputItems[profileItemConfig.name] = selector;
+        div.appendChild(selector);
+        inputItems[profileItemConfig.name] = selector;
 
         selector.addEventListener("change", CharacterFilter.rebuildContent);
 
@@ -354,15 +353,15 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
             selector.appendChild(option);
         });
         selector.selectedIndex = 0;
-        root.appendChild(selector);
-        root.inputItems[profileItemConfig.name] = selector;
+        div.appendChild(selector);
+        inputItems[profileItemConfig.name] = selector;
         selector.addEventListener("change", CharacterFilter.rebuildContent);
 
         input = makeEl("input");
         input.value = 0;
         input.type = "number";
-        root.appendChild(input);
-        root.inputItems[profileItemConfig.name + ":numberInput"] = input;
+        div.appendChild(input);
+        inputItems[profileItemConfig.name + ":numberInput"] = input;
         input.addEventListener("change", CharacterFilter.rebuildContent);
 
         break;
@@ -379,12 +378,13 @@ CharacterFilter.appendInput = function (root, profileItemConfig) {
             option.appendChild(makeText(constL10n(value)));
             selector.appendChild(option);
         });
-        root.appendChild(selector);
-        root.inputItems[profileItemConfig.name] = selector;
+        div.appendChild(selector);
+        inputItems[profileItemConfig.name] = selector;
         selector.addEventListener("change", CharacterFilter.rebuildContent);
 
         break;
     }
 
-    root.appendChild(makeEl("br"));
+    div.appendChild(makeEl("br"));
+    return div;
 };
