@@ -175,20 +175,15 @@ BriefingExport.getBriefingData = function(callback){
         DBMS.getAllProfileSettings(function(err, profileSettings){
             if(err) {Utils.handleError(err); return;}
             
-            var checkboxIndexes = [];
-            var checkboxNames = [];
-            profileSettings.forEach(function(profileItem, i){
-                if(profileItem.type === 'checkbox'){
-                    checkboxIndexes.push(i);
-                    checkboxNames.push(profileItem.name);
-                }
-            });
+            var checkboxNames = profileSettings.filter(function(profileItem, i){
+                return profileItem.type === 'checkbox';
+            }).map(R.prop('name'));
             
             briefingData.briefings.forEach(function(charData){
-                checkboxIndexes.forEach(function(index){
-                    var obj = charData.profileInfoArray[index];
-                    if(obj){
-                        obj.value = obj.splittedText = constL10n(Constants[obj.value]);
+                charData.profileInfoArray.forEach(function(element){
+                    if(checkboxNames.indexOf(element.name) != -1){
+                        element.value = constL10n(Constants[element.value]);
+                        element.splittedText = [{'string':constL10n(Constants[element.value])}]
                     }
                 });
                 checkboxNames.forEach(function(name){
