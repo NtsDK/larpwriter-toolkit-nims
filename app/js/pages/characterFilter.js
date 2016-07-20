@@ -18,6 +18,55 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
+function FilterData(characterNames, profiles){
+    this.profiles = profiles;
+    
+    characterNames.forEach(function(elem){
+        profiles[elem.value].name = elem.displayName;
+    });
+};
+
+FilterData.prototype.getCharacterData = function(characterName){
+    return this.profiles[characterName];
+};
+
+FilterData.prototype.getCharactersList = function(){
+    return Object.keys(this.profiles);
+};
+
+function FilterConfiguration(profileSettings){
+    this.profileSettings = profileSettings.filter(function (value) {
+        return true;
+    });
+    
+    this.unshiftedProfileSettings = this.profileSettings.filter(function (value) {
+        return true;
+    });
+    this.unshiftedProfileSettings.unshift({
+        name : "name",
+        type : "text"
+    });
+};
+
+FilterConfiguration.prototype.getAllProfileSettings = function(){
+    return this.profileSettings;
+};
+
+FilterConfiguration.prototype.getUnshiftedProfileSettings = function(){
+    return this.unshiftedProfileSettings;
+};
+
+FilterConfiguration.prototype.getShowProfileItemNames = function(){
+    return R.map(R.prop('name'), this.profileSettings);
+};
+
+FilterConfiguration.prototype.getProfileItemType = function(itemName){
+    return itemName === "name" ? "text"
+            : this.profileSettings.filter(function (element) {
+                return element.name === itemName;
+            })[0].type;;
+};
+
 var CharacterFilter = {};
 
 CharacterFilter.init = function () {
@@ -31,55 +80,29 @@ CharacterFilter.refresh = function () {
     "use strict";
     CharacterFilter.sortKey = "name";
     CharacterFilter.sortDir = "asc";
-
-    var filterSettingsDiv = getEl("filterSettingsDiv");
-    clearEl(filterSettingsDiv);
-    filterSettingsDiv.inputItems = {};
-
-    filterSettingsDiv.appendChild(makeText(getL10n("character-filter-character")));
-    filterSettingsDiv.appendChild(makeEl("br"));
-
-    var input = makeEl("input");
-    input.selfInfo = {
-        name : "name",
-        type : "text"
-    };
-    input.value = "";
-    filterSettingsDiv.appendChild(input);
-    filterSettingsDiv.inputItems.name = input;
-    input.addEventListener("input", CharacterFilter.rebuildContent);
+    CharacterFilter.inputItems = {};
     
-    filterSettingsDiv.appendChild(makeEl("br"));
-    
+    var filterSettingsDiv = clearEl(getEl("filterSettingsDiv"));
+
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
         if(err) {Utils.handleError(err); return;}
         DBMS.getAllProfiles(function(err, profiles){
             if(err) {Utils.handleError(err); return;}
-            CharacterFilter.Characters = profiles;
             
-            names.forEach(function(elem){
-                profiles[elem.value].name = elem.displayName;
-            });
+            CharacterFilter.filterData = new FilterData(names, profiles);
             
             DBMS.getAllProfileSettings(function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
-                CharacterFilter.allProfileSettings = allProfileSettings.filter(function (value) {
-                    return true;
+                
+                CharacterFilter.filterConfiguration = new FilterConfiguration(allProfileSettings);
+                
+                addEl(filterSettingsDiv, CharacterFilter.makeNameInput(CharacterFilter.inputItems));
+                
+                CharacterFilter.filterConfiguration.getAllProfileSettings().forEach(function (profileSettings) {
+                    addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, CharacterFilter.inputItems));
                 });
                 
-                CharacterFilter.unshiftedProfileSettings = CharacterFilter.allProfileSettings.filter(function (value) {
-                    return true;
-                });
-                CharacterFilter.unshiftedProfileSettings.unshift({
-                    name : "name",
-                    type : "text"
-                });
-                
-                CharacterFilter.allProfileSettings.forEach(function (profileSettings) {
-                    addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, filterSettingsDiv.inputItems));
-                });
-                
-                var profileItemNames = R.map(R.prop('name'), CharacterFilter.allProfileSettings);
+                var profileItemNames = CharacterFilter.filterConfiguration.getShowProfileItemNames();
                 UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), profileItemNames);
 
                 addEl(clearEl(getEl('filterHead')), CharacterFilter.makeContentHeader(profileItemNames));
@@ -94,19 +117,19 @@ CharacterFilter.rebuildContent = function () {
     "use strict";
     var filterContent = clearEl(getEl("filterContent"));
 
-    var data = Object.keys(CharacterFilter.Characters).filter(CharacterFilter.acceptDataRow);
+    var data = CharacterFilter.filterData.getCharactersList().filter(CharacterFilter.acceptDataRow);
     
     addEl(clearEl(getEl("filterResultSize")), makeText(data.length));
     
     addEls(filterContent, data.sort(CharacterFilter.sortDataRows).map(function (name) {
-        return CharacterFilter.makeDataString(CharacterFilter.Characters[name], CharacterFilter.unshiftedProfileSettings);
+        return CharacterFilter.makeDataString(CharacterFilter.filterData.getCharacterData(name));
     }));
     UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
 };
 
 CharacterFilter.acceptDataRow = function (element) {
     "use strict";
-    element = CharacterFilter.Characters[element];
+    element = CharacterFilter.filterData.getCharacterData(element);
     var filterSettingsDiv = getEl("filterSettingsDiv");
     var result = true;
 
@@ -117,7 +140,7 @@ CharacterFilter.acceptDataRow = function (element) {
         if (!result) {
             return;
         }
-        var inputItem = filterSettingsDiv.inputItems[inputItemName];
+        var inputItem = CharacterFilter.inputItems[inputItemName];
         var selectedOptions, regex, num, i;
 
         switch (inputItem.selfInfo.type) {
@@ -151,7 +174,7 @@ CharacterFilter.acceptDataRow = function (element) {
 
             break;
         case "number":
-            num = Number(filterSettingsDiv.inputItems[inputItem.selfInfo.name + ":numberInput"].value);
+            num = Number(CharacterFilter.inputItems[inputItem.selfInfo.name + ":numberInput"].value);
 
             switch (inputItem.value) {
             case "ignore":
@@ -177,20 +200,17 @@ CharacterFilter.acceptDataRow = function (element) {
 
     };
 
-    Object.keys(filterSettingsDiv.inputItems).forEach(filterValues);
+    Object.keys(CharacterFilter.inputItems).forEach(filterValues);
 
     return result;
 };
 
 CharacterFilter.sortDataRows = function (a, b) {
     "use strict";
-    a = CharacterFilter.Characters[a];
-    b = CharacterFilter.Characters[b];
+    a = CharacterFilter.filterData.getCharacterData(a);
+    b = CharacterFilter.filterData.getCharacterData(b);
 
-    var type = CharacterFilter.sortKey === "name" ? "text"
-            : CharacterFilter.allProfileSettings.filter(function (element) {
-                return element.name === CharacterFilter.sortKey;
-            })[0].type;
+    var type = CharacterFilter.filterConfiguration.getProfileItemType(CharacterFilter.sortKey);
 
     switch (type) {
     case "text":
@@ -220,8 +240,10 @@ CharacterFilter.sortDataRows = function (a, b) {
 CharacterFilter.makeDataString = function (character, profileSettings) {
     "use strict";
     var tr = makeEl("tr");
+    
+    var profileSettings = CharacterFilter.filterConfiguration.getUnshiftedProfileSettings();
 
-    var inputItems = getEl("filterSettingsDiv").inputItems;
+    var inputItems = CharacterFilter.inputItems;
 
     var td, regex, pos;
     profileSettings.forEach(function (profileItemInfo, i) {
@@ -300,6 +322,24 @@ CharacterFilter.onSortChange = function (event) {
         
     }
     CharacterFilter.rebuildContent();
+};
+
+CharacterFilter.makeNameInput = function (inputItems) {
+    var div = makeEl('div');
+    
+    div.appendChild(makeText(getL10n("character-filter-character")));
+    div.appendChild(makeEl("br"));
+    
+    var input = makeEl("input");
+    input.selfInfo = {
+        name : "name",
+        type : "text"
+    };
+    input.value = "";
+    div.appendChild(input);
+    inputItems.name = input;
+    input.addEventListener("input", CharacterFilter.rebuildContent);
+    return div;
 };
 
 CharacterFilter.makeInput = function (profileItemConfig, inputItems) {
