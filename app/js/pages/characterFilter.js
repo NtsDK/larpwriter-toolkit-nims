@@ -18,53 +18,60 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-function FilterData(characterNames, profiles){
+var CHAR_NAME = 'char-name';
+
+function FilterConfiguration(profileSettings, characterNames, profiles){
     this.profiles = profiles;
     
+    this.characterNames = {};
+    var that = this;
     characterNames.forEach(function(elem){
-        profiles[elem.value].name = elem.displayName;
-    });
-};
-
-FilterData.prototype.getCharacterData = function(characterName){
-    return this.profiles[characterName];
-};
-
-FilterData.prototype.getCharactersList = function(){
-    return Object.keys(this.profiles);
-};
-
-function FilterConfiguration(profileSettings){
-    this.profileSettings = profileSettings.filter(function (value) {
-        return true;
+        that.characterNames[elem.value] = elem.displayName;
     });
     
-    this.unshiftedProfileSettings = this.profileSettings.filter(function (value) {
-        return true;
-    });
-    this.unshiftedProfileSettings.unshift({
-        name : "name",
-        type : "text"
-    });
+    this.innerProfileSettings = [ {
+        name : CHAR_NAME,
+        type : "text",
+        canHide : false,
+        displayName : getL10n("character-filter-character"),
+        value: ""
+    } ];
+    
+    this.innerProfileSettings = this.innerProfileSettings.concat(profileSettings.map(function(element){
+        return {
+            name: element.name,
+            type: element.type,
+            canHide: true,
+            displayName: element.name,
+            value: element.value
+        }
+    }));
 };
 
 FilterConfiguration.prototype.getAllProfileSettings = function(){
-    return this.profileSettings;
-};
-
-FilterConfiguration.prototype.getUnshiftedProfileSettings = function(){
-    return this.unshiftedProfileSettings;
+    return this.innerProfileSettings;
 };
 
 FilterConfiguration.prototype.getShowProfileItemNames = function(){
-    return R.map(R.prop('name'), this.profileSettings);
+    return R.map(R.prop('name'), this.innerProfileSettings.filter(R.prop('canHide')));
+};
+
+FilterConfiguration.prototype.getHeaderProfileItemNames = function(){
+    return R.map(R.pick(['name', 'displayName']), this.innerProfileSettings);
 };
 
 FilterConfiguration.prototype.getProfileItemType = function(itemName){
-    return itemName === "name" ? "text"
-            : this.profileSettings.filter(function (element) {
-                return element.name === itemName;
-            })[0].type;;
+    return this.innerProfileSettings.filter(function (element) {
+        return element.name === itemName;
+      })[0].type;
+};
+
+FilterConfiguration.prototype.getValue = function(characterName, profileItemName){
+    if(profileItemName == CHAR_NAME){
+        return this.characterNames[characterName];
+    } else {
+        return this.profiles[characterName][profileItemName];
+    }
 };
 
 var CharacterFilter = {};
@@ -78,7 +85,7 @@ CharacterFilter.init = function () {
 
 CharacterFilter.refresh = function () {
     "use strict";
-    CharacterFilter.sortKey = "name";
+    CharacterFilter.sortKey = CHAR_NAME;
     CharacterFilter.sortDir = "asc";
     CharacterFilter.inputItems = {};
     
@@ -89,23 +96,22 @@ CharacterFilter.refresh = function () {
         DBMS.getAllProfiles(function(err, profiles){
             if(err) {Utils.handleError(err); return;}
             
-            CharacterFilter.filterData = new FilterData(names, profiles);
+            CharacterFilter.characterList = Object.keys(profiles);
             
             DBMS.getAllProfileSettings(function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
                 
-                CharacterFilter.filterConfiguration = new FilterConfiguration(allProfileSettings);
-                
-                addEl(filterSettingsDiv, CharacterFilter.makeNameInput(CharacterFilter.inputItems));
+                CharacterFilter.filterConfiguration = new FilterConfiguration(allProfileSettings, names, profiles);
                 
                 CharacterFilter.filterConfiguration.getAllProfileSettings().forEach(function (profileSettings) {
                     addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, CharacterFilter.inputItems));
                 });
                 
-                var profileItemNames = CharacterFilter.filterConfiguration.getShowProfileItemNames();
-                UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), profileItemNames);
+                UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), 
+                        CharacterFilter.filterConfiguration.getShowProfileItemNames());
 
-                addEl(clearEl(getEl('filterHead')), CharacterFilter.makeContentHeader(profileItemNames));
+                addEl(clearEl(getEl('filterHead')), CharacterFilter.makeContentHeader(
+                        CharacterFilter.filterConfiguration.getHeaderProfileItemNames()));
                 
                 CharacterFilter.rebuildContent();
             });
@@ -117,115 +123,122 @@ CharacterFilter.rebuildContent = function () {
     "use strict";
     var filterContent = clearEl(getEl("filterContent"));
 
-    var data = CharacterFilter.filterData.getCharactersList().filter(CharacterFilter.acceptDataRow);
+    var data = CharacterFilter.characterList.filter(CharacterFilter.acceptDataRow(CharacterFilter.makeFilterModel()));
     
     addEl(clearEl(getEl("filterResultSize")), makeText(data.length));
     
-    addEls(filterContent, data.sort(CharacterFilter.sortDataRows).map(function (name) {
-        return CharacterFilter.makeDataString(CharacterFilter.filterData.getCharacterData(name));
-    }));
+    var type = CharacterFilter.filterConfiguration.getProfileItemType(CharacterFilter.sortKey);
+    addEls(filterContent, data.sort(CharacterFilter.sortDataRows(type)).map(CharacterFilter.makeDataString));
     UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
 };
 
-CharacterFilter.acceptDataRow = function (element) {
-    "use strict";
-    element = CharacterFilter.filterData.getCharacterData(element);
-    var filterSettingsDiv = getEl("filterSettingsDiv");
-    var result = true;
-
-    var filterValues = function (inputItemName) {
+CharacterFilter.makeFilterModel = function(){
+    var model = [];
+    Object.keys(CharacterFilter.inputItems).forEach(function(inputItemName){
         if (inputItemName.endsWith(":numberInput")) {
             return;
         }
-        if (!result) {
-            return;
-        }
         var inputItem = CharacterFilter.inputItems[inputItemName];
-        var selectedOptions, regex, num, i;
+        var selectedOptions, regex, num, i, counter;
 
         switch (inputItem.selfInfo.type) {
         case "enum":
             selectedOptions = {};
-
+            counter = 0;
             for (i = 0; i < inputItem.options.length; i +=1) {
                 if (inputItem.options[i].selected) {
                     selectedOptions[inputItem.options[i].value] = true;
+                    counter++;
                 }
             }
-
-            if (!selectedOptions[element[inputItem.selfInfo.name]]) {
-                result = false;
+            if(inputItem.options.length == counter){
+                return; // all selected, nothing to filter
+            } else {
+                model.push({type: 'enum',name: inputItemName,selectedOptions: selectedOptions});
             }
-
             break;
         case "checkbox":
             selectedOptions = {};
-
+            if(inputItem.options[0].selected && inputItem.options[1].selected){
+                return; // nothing to filter
+            }
             if (inputItem.options[0].selected) {
                 selectedOptions["true"] = true;
             }
             if (inputItem.options[1].selected) {
                 selectedOptions["false"] = true;
             }
-
-            if (!selectedOptions[element[inputItem.selfInfo.name]]) {
-                result = false;
-            }
-
+            model.push({type: 'checkbox',name: inputItemName,selectedOptions: selectedOptions});
             break;
         case "number":
-            num = Number(CharacterFilter.inputItems[inputItem.selfInfo.name + ":numberInput"].value);
-
-            switch (inputItem.value) {
-            case "ignore":
-                break;
-            case "greater":
-                result = element[inputItem.selfInfo.name] > num;
-                break;
-            case "equal":
-                result = element[inputItem.selfInfo.name] === num;
-                break;
-            case "lesser":
-                result = element[inputItem.selfInfo.name] < num;
-                break;
+            if(inputItem.value === 'ignore'){
+                return; // nothing to filter
             }
-
+            num = Number(CharacterFilter.inputItems[inputItem.selfInfo.name + ":numberInput"].value);
+            model.push({type: 'number',name: inputItemName,num: num,condition: inputItem.value});
             break;
         case "text":
         case "string":
-            regex = Utils.globStringToRegex(inputItem.value.toLowerCase());
-            result = element[inputItem.selfInfo.name].toLowerCase().match(regex);
+            if(inputItem.value == ''){
+                return; // nothing to filter
+            }
+            model.push({type: inputItem.selfInfo.type,name: inputItemName,regexString: inputItem.value.toLowerCase()});
             break;
         }
-
-    };
-
-    Object.keys(CharacterFilter.inputItems).forEach(filterValues);
-
-    return result;
+    });
+    return model;
 };
 
-CharacterFilter.sortDataRows = function (a, b) {
+CharacterFilter.acceptDataRow = R.curry(function (model, element) {
     "use strict";
-    a = CharacterFilter.filterData.getCharacterData(a);
-    b = CharacterFilter.filterData.getCharacterData(b);
+    var result = true;
+    var value, regex;
+    model.forEach(function(filterItem){
+        if (!result) {
+            return;
+        }
+        value = CharacterFilter.filterConfiguration.getValue(element, filterItem.name);
+        switch (filterItem.type) {
+        case "enum":
+        case "checkbox":
+            if (!filterItem.selectedOptions[value]) {
+                result = false;
+            }
+            break;
+        case "number":
+            switch (filterItem.condition) {
+            case "greater":
+                result = value > filterItem.num;
+                break;
+            case "equal":
+                result = value === filterItem.num;
+                break;
+            case "lesser":
+                result = value < filterItem.num;
+                break;
+            }
+            break;
+        case "text":
+        case "string":
+            regex = Utils.globStringToRegex(filterItem.regexString);
+            result = value.toLowerCase().match(regex);
+            break;
+        }
+    });
+    return result;
+});
 
-    var type = CharacterFilter.filterConfiguration.getProfileItemType(CharacterFilter.sortKey);
+CharacterFilter.sortDataRows = R.curry(function (type, a, b) {
+    "use strict";
+    a = CharacterFilter.filterConfiguration.getValue(a, CharacterFilter.sortKey);
+    b = CharacterFilter.filterConfiguration.getValue(b, CharacterFilter.sortKey);
 
     switch (type) {
     case "text":
     case "string":
     case "enum":
-        a = a[CharacterFilter.sortKey].toLowerCase();
-        b = b[CharacterFilter.sortKey].toLowerCase();
-        break;
-    case "checkbox":
-        a = a[CharacterFilter.sortKey];
-        b = b[CharacterFilter.sortKey];
-        break;
-    case "number":
-        a = a[CharacterFilter.sortKey];
-        b = b[CharacterFilter.sortKey];
+        a = a.toLowerCase();
+        b = b.toLowerCase();
         break;
     }
     if (a > b) {
@@ -235,27 +248,28 @@ CharacterFilter.sortDataRows = function (a, b) {
         return CharacterFilter.sortDir === "asc" ? -1 : 1;
     }
     return 0;
-};
+});
 
-CharacterFilter.makeDataString = function (character, profileSettings) {
+CharacterFilter.makeDataString = function (character) {
     "use strict";
     var tr = makeEl("tr");
     
-    var profileSettings = CharacterFilter.filterConfiguration.getUnshiftedProfileSettings();
+    var profileSettings = CharacterFilter.filterConfiguration.getAllProfileSettings();
 
     var inputItems = CharacterFilter.inputItems;
 
-    var td, regex, pos;
+    var td, regex, pos, value;
     profileSettings.forEach(function (profileItemInfo, i) {
         td = makeEl("td");
+        value = CharacterFilter.filterConfiguration.getValue(character, profileItemInfo.name);
         if (profileItemInfo.type === "checkbox") {
-            td.appendChild(makeText(constL10n(Constants[character[profileItemInfo.name]])));
-        } else if (profileItemInfo.type === "text" && profileItemInfo.name !== "name") {
+            td.appendChild(makeText(constL10n(Constants[value])));
+        } else if (profileItemInfo.type === "text" && profileItemInfo.name !== CHAR_NAME) {
             regex = Utils.globStringToRegex(inputItems[profileItemInfo.name].value);
-            pos = character[profileItemInfo.name].search(regex);
-            td.appendChild(makeText(character[profileItemInfo.name].substring(pos - 5, pos + 15)));
+            pos = value.search(regex);
+            td.appendChild(makeText(value.substring(pos - 5, pos + 15)));
         } else {
-            td.appendChild(makeText(character[profileItemInfo.name]));
+            td.appendChild(makeText(value));
         }
         addClass(td, (i-1) +"-dependent");
         tr.appendChild(td);
@@ -268,19 +282,13 @@ CharacterFilter.makeContentHeader = function (profileItemNames) {
     "use strict";
     var tr = makeEl("tr");
 
-    var td = makeEl("th");
-    td.appendChild(makeText(getL10n("character-filter-character")));
-    td.appendChild(makeEl("span"));
-    td.info = "name";
-    td.addEventListener("click", CharacterFilter.onSortChange);
-    tr.appendChild(td);
-
-    profileItemNames.forEach(function (name, i) {
+    var td;
+    profileItemNames.forEach(function (elem, i) {
         td = makeEl("th");
-        td.appendChild(makeText(name));
+        td.appendChild(makeText(elem.displayName));
         td.appendChild(makeEl("span"));
-        td.info = name;
-        addClass(td, i +"-dependent");
+        td.info = elem.name;
+        addClass(td, (i-1) +"-dependent");
         td.addEventListener("click", CharacterFilter.onSortChange);
         tr.appendChild(td);
     });
@@ -324,28 +332,10 @@ CharacterFilter.onSortChange = function (event) {
     CharacterFilter.rebuildContent();
 };
 
-CharacterFilter.makeNameInput = function (inputItems) {
-    var div = makeEl('div');
-    
-    div.appendChild(makeText(getL10n("character-filter-character")));
-    div.appendChild(makeEl("br"));
-    
-    var input = makeEl("input");
-    input.selfInfo = {
-        name : "name",
-        type : "text"
-    };
-    input.value = "";
-    div.appendChild(input);
-    inputItems.name = input;
-    input.addEventListener("input", CharacterFilter.rebuildContent);
-    return div;
-};
-
 CharacterFilter.makeInput = function (profileItemConfig, inputItems) {
     "use strict";
     var div = makeEl('div');
-    div.appendChild(makeText(profileItemConfig.name));
+    div.appendChild(makeText(profileItemConfig.displayName));
     div.appendChild(makeEl("br"));
 
     var input, selector, values;
@@ -402,7 +392,7 @@ CharacterFilter.makeInput = function (profileItemConfig, inputItems) {
         input.type = "number";
         div.appendChild(input);
         inputItems[profileItemConfig.name + ":numberInput"] = input;
-        input.addEventListener("change", CharacterFilter.rebuildContent);
+        input.addEventListener("input", CharacterFilter.rebuildContent);
 
         break;
     case "checkbox":
