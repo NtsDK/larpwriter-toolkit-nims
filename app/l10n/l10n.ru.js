@@ -142,7 +142,8 @@
         "filter":"Фильтр",
         "results":"Результатов:",
         "character":"Персонаж",
-
+        "completeness": "Завершённость адаптаций, %",
+        "totalStories": "Количество историй",
     },
     "stories":{
         "stories":"Истории",

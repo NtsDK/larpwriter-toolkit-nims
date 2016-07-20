@@ -12,9 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
+
 (function(callback){
 
-    function storiesAPI(LocalDBMS, CommonUtils, Errors) {
+    function storiesAPI(LocalDBMS, R, CommonUtils, Errors) {
         //stories
         LocalDBMS.prototype.getMasterStory = function(storyName, callback){
             "use strict";
@@ -305,6 +307,49 @@ See the License for the specific language governing permissions and
             }
             var story = this.database.Stories[storyName].events[index][property] = value;
             callback();
+        };
+        
+        LocalDBMS.prototype.getCharactersSummary = function(callback){
+            
+            var characters = R.keys(this.database.Characters);
+            var charactersInfo = {};
+            characters.forEach(function(character){
+                charactersInfo[character] = {
+                    'active':0,
+                    'follower':0,
+                    'defensive':0,
+                    'passive':0,
+                    'totalAdaptations':0,
+                    'finishedAdaptations':0,
+                    'totalStories':0
+                }
+            });
+            
+            R.values(this.database.Stories).forEach(function(story){
+                R.values(story.characters).forEach(function(storyCharacter){
+                    var characterInfo = charactersInfo[storyCharacter.name];
+                    characterInfo.totalStories++;
+                    R.toPairs(storyCharacter.activity).forEach(function(activity){
+                        if(activity[1] === true){
+                            characterInfo[activity[0]]++;
+                        }
+                    });
+                });
+                story.events.forEach(function(event){
+                    R.toPairs(event.characters).forEach(function(eventCharacter){
+                        var characterInfo = charactersInfo[eventCharacter[0]];
+                        characterInfo.totalAdaptations++;
+                        if(eventCharacter[1].ready){
+                            characterInfo.finishedAdaptations++;
+                        }
+                    });
+                });
+            });
+            R.values(charactersInfo).forEach(function(characterInfo){
+                characterInfo.completeness = Math.round(characterInfo.finishedAdaptations * 100 / 
+                    (characterInfo.totalAdaptations != 0 ? characterInfo.totalAdaptations : 1));
+            });
+            callback(null, charactersInfo);
         };
     
     };

@@ -33,7 +33,7 @@ charactersAPI(LocalDBMS, Errors);
 extrasAPI(LocalDBMS, R, CommonUtils, dateFormat);
 briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
 profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
-storiesAPI(LocalDBMS, CommonUtils, Errors);
+storiesAPI(LocalDBMS, R, CommonUtils, Errors);
 eventsAPI(LocalDBMS, CommonUtils);
 accessManagerAPI(LocalDBMS, CommonUtils);
 logAPI(LocalDBMS, R, CommonUtils, false, MODE); // log function enabled in standalone mode

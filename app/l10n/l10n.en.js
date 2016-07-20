@@ -143,7 +143,8 @@ Dictionaries['en'] = {
         "filter":"Filter",
         "results":"Results:",
         "character":"Character",
-
+        "completeness": "Adaptation completness, %",
+        "totalStories": "Story number",
     },
     "stories":{
         "stories":"Stories",

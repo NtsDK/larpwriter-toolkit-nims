@@ -20,8 +20,9 @@ See the License for the specific language governing permissions and
 
 var CHAR_NAME = 'char-name';
 
-function FilterConfiguration(profileSettings, characterNames, profiles){
+function FilterConfiguration(profileSettings, characterNames, profiles, charactersSummary){
     this.profiles = profiles;
+    this.charactersSummary = charactersSummary;
     
     this.characterNames = {};
     var that = this;
@@ -46,6 +47,26 @@ function FilterConfiguration(profileSettings, characterNames, profiles){
             value: element.value
         }
     }));
+    
+    var summaryStats = [
+        ['active'     ,getL10n("constant-active")],
+        ['follower'   ,getL10n("constant-follower") ],
+        ['defensive'  ,getL10n("constant-defensive")  ],
+        ['passive'    ,getL10n("constant-passive")  ],
+        ['completeness', getL10n("character-filter-completeness")],
+        ['totalStories', getL10n("character-filter-totalStories")]
+    ];
+    
+    var that = this;
+    summaryStats.forEach(function(stat){
+        that.innerProfileSettings.push({
+            name: 'summary-' + stat[0],
+            type: 'number',
+            canHide: true,
+            displayName: stat[1],
+            value: ""
+        });
+    });
 };
 
 FilterConfiguration.prototype.getAllProfileSettings = function(){
@@ -69,6 +90,8 @@ FilterConfiguration.prototype.getProfileItemType = function(itemName){
 FilterConfiguration.prototype.getValue = function(characterName, profileItemName){
     if(profileItemName == CHAR_NAME){
         return this.characterNames[characterName];
+    } else if(CommonUtils.startsWith(profileItemName, 'summary-') ){
+        return this.charactersSummary[characterName][profileItemName.substring('summary-'.length)];
     } else {
         return this.profiles[characterName][profileItemName.substring('profile-'.length)];
     }
@@ -95,25 +118,28 @@ CharacterFilter.refresh = function () {
         if(err) {Utils.handleError(err); return;}
         DBMS.getAllProfiles(function(err, profiles){
             if(err) {Utils.handleError(err); return;}
-            
             CharacterFilter.characterList = Object.keys(profiles);
             
-            DBMS.getAllProfileSettings(function(err, allProfileSettings){
+            DBMS.getCharactersSummary(function(err, charactersSummary){
                 if(err) {Utils.handleError(err); return;}
                 
-                CharacterFilter.filterConfiguration = new FilterConfiguration(allProfileSettings, names, profiles);
-                
-                CharacterFilter.filterConfiguration.getAllProfileSettings().forEach(function (profileSettings) {
-                    addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, CharacterFilter.inputItems));
+                DBMS.getAllProfileSettings(function(err, allProfileSettings){
+                    if(err) {Utils.handleError(err); return;}
+                    
+                    CharacterFilter.filterConfiguration = new FilterConfiguration(allProfileSettings, names, profiles, charactersSummary);
+                    
+                    CharacterFilter.filterConfiguration.getAllProfileSettings().forEach(function (profileSettings) {
+                        addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, CharacterFilter.inputItems));
+                    });
+                    
+                    UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), 
+                            CharacterFilter.filterConfiguration.getShowProfileItemNames());
+    
+                    addEl(clearEl(getEl('filterHead')), CharacterFilter.makeContentHeader(
+                            CharacterFilter.filterConfiguration.getHeaderProfileItemNames()));
+                    
+                    CharacterFilter.rebuildContent();
                 });
-                
-                UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), 
-                        CharacterFilter.filterConfiguration.getShowProfileItemNames());
-
-                addEl(clearEl(getEl('filterHead')), CharacterFilter.makeContentHeader(
-                        CharacterFilter.filterConfiguration.getHeaderProfileItemNames()));
-                
-                CharacterFilter.rebuildContent();
             });
         });
     });
