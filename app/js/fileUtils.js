@@ -35,7 +35,7 @@ FileUtils.makeNewBase = function () {
 
 FileUtils.openHelp = function () {
     "use strict";
-    window.open("doc/nims.html");
+    window.open("extras/doc/nims.html");
 };
 
 FileUtils.readSingleFile = function (evt) {
