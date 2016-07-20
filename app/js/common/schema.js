@@ -302,6 +302,14 @@ See the License for the specific language governing permissions and
         var charNames = Object.keys(characters);
         var storyNames = Object.keys(stories);
         var userNames = Object.keys(managementInfo.UsersInfo);
+        // enum can't be empty, ask about it here 
+        // http://stackoverflow.com/questions/37635675/how-to-validate-empty-array-of-strings-with-ajv
+        if(storyNames.length == 0){
+            storyNames = ['123'];
+        }
+        if(charNames.length == 0){
+            charNames = ['123'];
+        }
         
         var userSchema = {
             "type" : "object",
@@ -313,9 +321,7 @@ See the License for the specific language governing permissions and
                     "type" : "array",
                     "items" : {
                         "type" : "string",
-                        // enum can't be empty, ask about it here 
-                        // http://stackoverflow.com/questions/37635675/how-to-validate-empty-array-of-strings-with-ajv
-                        "enum" : storyNames.concat("123")
+                        "enum" : storyNames
                     },
                     "minItems" : 0
                 },
@@ -323,7 +329,7 @@ See the License for the specific language governing permissions and
                     "type" : "array",
                     "items" : {
                         "type" : "string",
-                        "enum" : charNames.concat("123")
+                        "enum" : charNames
                     }
                 },
                 "salt" : {
