@@ -182,13 +182,17 @@ gulp.task('server', function(callback) {
     callback();
 });
 
-gulp.task('copyExtras', function() {
-    gulp.src(config.get('translationsPath') + '\\doc\\_build\\html' + '/**/*')
+gulp.task('copyDoc', function() {
+    return gulp.src(config.get('translationsPath') + '\\doc\\_build\\html' + '/**/*')
     .pipe(gulp.dest('dist/extras/doc'));
+});
 
-    gulp.src(config.get('translationsPath') + '\\templates' + '/**/*')
+gulp.task('copyTemplates', function() {
+    return gulp.src(config.get('translationsPath') + '\\templates' + '/**/*')
     .pipe(gulp.dest('dist/extras/templates'));
-    
+});
+
+gulp.task('copyPresentation', function() {
     return gulp.src(config.get('translationsPath') + '\\presentation' + '/**/*')
     .pipe(gulp.dest('dist/extras/presentation'));
 });
@@ -200,7 +204,7 @@ gulp.task('zip', function() {
 });
 
 gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','plains','tests','server')));
-gulp.task('dist:final', gulp.series('dist', 'copyExtras', 'zip'));
+gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
 
 gulp.task('watch', function() {
     
