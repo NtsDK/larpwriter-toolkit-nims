@@ -14,6 +14,7 @@
 //set NODE_ENV=dev && set MODE=standalone && gulp dev
 //set NODE_ENV=prod && set MODE=standalone && gulp dist
 //set NODE_ENV=prod && set MODE=standalone && gulp dist:final
+//set NODE_ENV=prod && set MODE=server && gulp dist:final
 
 process.chdir("../NIMS");
 var gulp = require('gulp');
@@ -122,7 +123,7 @@ gulp.task('html', function() {
 // plain copy
 var plains = [];
 plains = plains.concat(addPrefix("app/",['CHANGELOG','LICENSE','LICENSE_RUS','mode.js','NOTICE','NOTICE_RUS']));
-plains = plains.concat(['app/templates/*.docx']);
+//plains = plains.concat(['app/templates/*.docx']);
 
 gulp.task('plains', function() {
     return gulp.src(plains, {base: 'app'})
@@ -181,9 +182,15 @@ gulp.task('server', function(callback) {
     callback();
 });
 
-gulp.task('copyDocs', function() {
-    return gulp.src(config.get('docPath') + '/**/*')
-    .pipe(gulp.dest('dist/doc'));
+gulp.task('copyExtras', function() {
+    gulp.src(config.get('translationsPath') + '\\doc\\_build\\html' + '/**/*')
+    .pipe(gulp.dest('dist/extras/doc'));
+
+    gulp.src(config.get('translationsPath') + '\\templates' + '/**/*')
+    .pipe(gulp.dest('dist/extras/templates'));
+    
+    return gulp.src(config.get('translationsPath') + '\\presentation' + '/**/*')
+    .pipe(gulp.dest('dist/extras/presentation'));
 });
 
 gulp.task('zip', function() {
@@ -193,7 +200,7 @@ gulp.task('zip', function() {
 });
 
 gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','plains','tests','server')));
-gulp.task('dist:final', gulp.series('dist', 'copyDocs', 'zip'));
+gulp.task('dist:final', gulp.series('dist', 'copyExtras', 'zip'));
 
 gulp.task('watch', function() {
     
