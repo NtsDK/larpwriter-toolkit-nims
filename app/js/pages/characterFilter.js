@@ -39,7 +39,7 @@ function FilterConfiguration(profileSettings, characterNames, profiles){
     
     this.innerProfileSettings = this.innerProfileSettings.concat(profileSettings.map(function(element){
         return {
-            name: element.name,
+            name: 'profile-' + element.name,
             type: element.type,
             canHide: true,
             displayName: element.name,
@@ -53,7 +53,7 @@ FilterConfiguration.prototype.getAllProfileSettings = function(){
 };
 
 FilterConfiguration.prototype.getShowProfileItemNames = function(){
-    return R.map(R.prop('name'), this.innerProfileSettings.filter(R.prop('canHide')));
+    return R.map(R.prop('displayName'), this.innerProfileSettings.filter(R.prop('canHide')));
 };
 
 FilterConfiguration.prototype.getHeaderProfileItemNames = function(){
@@ -70,7 +70,7 @@ FilterConfiguration.prototype.getValue = function(characterName, profileItemName
     if(profileItemName == CHAR_NAME){
         return this.characterNames[characterName];
     } else {
-        return this.profiles[characterName][profileItemName];
+        return this.profiles[characterName][profileItemName.substring('profile-'.length)];
     }
 };
 
