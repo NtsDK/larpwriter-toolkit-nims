@@ -1,3 +1,23 @@
+version 0.4.4u3 (21 Jul 2016)
+
+  Another one minor update. 
+  
+  General:
+  - fixes and updates of export process
+  - reworked character filter page
+  - added character statistics to character filter page
+  
+  Support:
+  - new example database - Lord of the Rings
+  - new embedded templated
+  - extended example template library
+  - added presentation to archive
+  - documentation improvement - new section about handout export
+  
+  Server:
+  - replaced disabled attribute with readonly for textareas
+  - added notification mechanism for PUT queries  
+
 version 0.4.4u2 (14 Jun 2016)
 
   This is a minor update. It includes some bug fixes and a bit improvements.
