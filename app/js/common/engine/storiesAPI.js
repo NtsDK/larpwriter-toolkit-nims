@@ -160,7 +160,6 @@ See the License for the specific language governing permissions and
             delete story.characters[fromName];
             story.events.forEach(function (event) {
                 if (event.characters[fromName]) {
-                    event.characters[fromName].name = toName;
                     event.characters[toName] = event.characters[fromName];
                     delete event.characters[fromName];
                 }

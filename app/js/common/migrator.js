@@ -93,6 +93,18 @@ See the License for the specific language governing permissions and
             }
             data.Version = "0.4.4u2";
         }
+        if(data.Version === "0.4.4u2"){
+            // see #17 - reopened
+            for(var storyName in data.Stories){
+                var story = data.Stories[storyName];
+                story.events.forEach(function(event){
+                    for(var character in event.characters){
+                        delete event.characters[character].name;
+                    }
+                });
+            }
+            data.Version = "0.4.4u3";
+        }
         
         exists(data, 'base', 'Characters');
         exists(data, 'base', 'ProfileSettings');
