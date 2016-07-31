@@ -12,6 +12,8 @@
 
 //set NODE_ENV=dev && set MODE=server && gulp dev
 //set NODE_ENV=dev && set MODE=standalone && gulp dev
+//set NODE_ENV=dev && set MODE=standalone && set LANG=en && gulp dev
+
 //set NODE_ENV=prod && set MODE=standalone && gulp dist
 //set NODE_ENV=prod && set MODE=standalone && gulp dist:final
 //set NODE_ENV=prod && set MODE=server && gulp dist:final
@@ -36,6 +38,11 @@ const zip = require('gulp-zip');
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV.trim() == 'dev';
 var isServer = !process.env.MODE || process.env.MODE.trim() == 'server';
+
+var lang = process.env.LANG ? process.env.LANG.trim() : 'ru';
+
+var translationsPath = config.get('translationsPath');
+var langPath = config.get('translationsPath') + '\\' + lang;
 
 //console.log('=' + process.env.NODE_ENV + '=');
 //console.log(isServer);
@@ -85,10 +92,11 @@ var libs = addPrefix("app/libs/",[
 'select2.min.js',
 'vis-custom.min.js']);
 
-var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
+//var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
+var resources = [translationsPath + "/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
     "inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]));
 
-var common = ["app/js/common/**/*.js"];
+var common = ["app/js/common/**/*.js"].concat([langPath + "/baseExample.js", langPath + "/defaultLang.js"]);
 
 var scripts = ["app/js/dbms/*.js"].concat("app/js/*.js");
 
@@ -183,17 +191,17 @@ gulp.task('server', function(callback) {
 });
 
 gulp.task('copyDoc', function() {
-    return gulp.src(config.get('translationsPath') + '\\doc\\_build\\html' + '/**/*')
+    return gulp.src(langPath + '\\doc\\_build\\html' + '/**/*')
     .pipe(gulp.dest('dist/extras/doc'));
 });
 
 gulp.task('copyTemplates', function() {
-    return gulp.src(config.get('translationsPath') + '\\templates' + '/**/*')
+    return gulp.src(langPath + '\\templates' + '/**/*')
     .pipe(gulp.dest('dist/extras/templates'));
 });
 
 gulp.task('copyPresentation', function() {
-    return gulp.src(config.get('translationsPath') + '\\presentation' + '/**/*')
+    return gulp.src(langPath + '\\presentation' + '/**/*')
     .pipe(gulp.dest('dist/extras/presentation'));
 });
 
