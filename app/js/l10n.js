@@ -46,7 +46,8 @@ L10n.init = function(){
     }
     
 //    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
-    var lang = 'ru';
+//    var lang = 'ru';
+    var lang = defaultLang;
     console.log(lang);
     
     if(L10n.dictionaries[lang]){
