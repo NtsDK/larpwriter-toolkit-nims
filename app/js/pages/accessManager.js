@@ -177,10 +177,10 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
             name: name,
             values: [{
                 name: charHeader,
-                values: info[name].characters,
+                values: info[name].characters.sort(),
             }, {
                 name: storiesHeader,
-                values: info[name].stories,
+                values: info[name].stories.sort(),
             }]
         }
     });
@@ -198,10 +198,10 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
         name : getL10n('admins-have-not-owner'),
         values : [ {
             name : charHeader,
-            values : characterNames,
+            values : characterNames.sort(),
         }, {
             name : storiesHeader,
-            values : storyNames,
+            values : storyNames.sort(),
         } ]
     });
     
