@@ -160,6 +160,8 @@ Overview.refresh = function () {
         Overview.makeHistogram(clearEl(getEl("storyEventsHist")), statistics.storyEventsHist);
         Overview.makeHistogram(clearEl(getEl("storyCharactersHist")), statistics.storyCharactersHist);
         Overview.makeHistogram(clearEl(getEl("eventCompletenessHist")), statistics.eventCompletenessHist);
+        Overview.makeHistogram(clearEl(getEl("characterSymbolsHist")), statistics.characterSymbolsHist);
+        Overview.makeHistogram(clearEl(getEl("characterStoriesHist")), statistics.characterStoriesHist);
         Overview.makeChart("characterChart", getEl("characterChart"), statistics.characterChartData);
         Overview.makeChart("storyChart", getEl("storyChart"), statistics.storyChartData);
         var barData;
