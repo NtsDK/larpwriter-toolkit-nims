@@ -40,6 +40,7 @@ See the License for the specific language governing permissions and
     
                 var profileInfo = _getProfileInfoObject(this.database, charName, false);
                 var profileInfoSplitted = _getProfileInfoObject(this.database, charName, true);
+                var profileInfoNotEmpty = _getProfileInfoNotEmpty(this.database, charName);
                 var profileInfoArray = _getProfileInfoArray(this.database, charName);
     
                 var storiesInfo = _getStoriesInfo(this.database, charName);
@@ -59,6 +60,9 @@ See the License for the specific language governing permissions and
                 for ( var element in profileInfoSplitted) {
                     dataObject["profileInfo-splitted-" + element] = profileInfoSplitted[element];
                 }
+                for ( var element in profileInfoNotEmpty) {
+                    dataObject["profileInfo-notEmpty-" + element] = profileInfoNotEmpty[element];
+                }
     
                 charArray.push(dataObject);
             }
@@ -70,6 +74,17 @@ See the License for the specific language governing permissions and
             callback(null, data);
         };
     
+        var _getProfileInfoNotEmpty = function(database, charName) {
+            "use strict";
+            var character = database.Characters[charName];
+            var profileInfo = {};
+            
+            database.ProfileSettings.forEach(function(element) {
+                profileInfo[element.name] = String(character[element.name]).length !== 0;
+            });
+            return profileInfo;
+        };
+        
         var _getProfileInfoObject = function(database, charName, returnSplitted) {
             "use strict";
             var character = database.Characters[charName];
@@ -92,7 +107,8 @@ See the License for the specific language governing permissions and
                 return {
                     name : element.name,
                     value : value,
-                    splittedText : splittedText
+                    splittedText : splittedText,
+                    notEmpty : String(value).length !== 0
                 };
             });
             return profileInfoArray;
