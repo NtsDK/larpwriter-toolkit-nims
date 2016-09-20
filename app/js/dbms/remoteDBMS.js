@@ -17,110 +17,116 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-var url = "/";
-var showNotification = false;
-
-function RemoteDBMS(){
-    this.clearSettings();
-};
-
-RemoteDBMS._simpleGet = function(name, params, callback){
-    "use strict";
-    var paramStr = "";
-    if(params){
-        paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ; 
-    }
+function makeRemoteDBMS(LocalDBMS){
     
-    var request = $.ajax({
-        url : url + name + paramStr,
-        dataType : "text",
-        method : "GET",
-        contentType : "application/json;charset=utf-8",
-        cache: false,
-    });
+    var url = "/";
+    var showNotification = false;
     
-    request.done(function(data) {
-        callback(null, JSON.parse(data));
-    });
-    
-    request.fail(function(errorInfo, textStatus, errorThrown) {
-        try {
-            callback(JSON.parse(errorInfo.responseText));
-        } catch(err){
-            callback(errorInfo.responseText);
-        }
-    });
-};
-
-RemoteDBMS._simplePut = function(name, data, callback){
-    "use strict";
-    var request = $.ajax({
-        url : url + name,
-        dataType : "text",
-        method : "PUT",
-        contentType : "application/json;charset=utf-8",
-        data: JSON.stringify(data)
-    });
-    
-    if(showNotification){
-        var notificationBox = clearEl(getEl('debugNotification'));
-        removeClass(notificationBox, 'hidden');
-        removeClass(notificationBox, 'operationOK');
-        removeClass(notificationBox, 'operationFail');
-        addEl(notificationBox, makeText(name + ' ' + JSON.stringify(data)));
-    }
-    
-    request.done(function(data) {
-        if(showNotification){
-            addClass(notificationBox, 'operationOK');
-            setTimeout(function(){
-                addClass(notificationBox, 'hidden');
-            }, 1000);
-        }
-        if(callback) callback();
-    });
-    
-    request.fail(function(errorInfo, textStatus, errorThrown) {
-        if(showNotification){
-            addClass(notificationBox, 'operationFail');
-            setTimeout(function(){
-                addClass(notificationBox, 'hidden');
-            }, 1000);
-        }
-        try {
-            callback(JSON.parse(errorInfo.responseText));
-        } catch(err){
-            callback(errorInfo.responseText);
-        }
-    });
-};
-
-
-Object.keys(LocalDBMS.prototype).forEach(function(name){
-    RemoteDBMS.prototype[name] = function(){
-        var arr = [];
-        for (var i = 0; i < arguments.length-1; i++) {
-            arr.push(arguments[i]);
-        }
-        if(CommonUtils.startsWith(name, "get") || CommonUtils.startsWith(name, "is")){
-            RemoteDBMS._simpleGet(name, arr, arguments[arguments.length-1]);
-        } else {
-            RemoteDBMS._simplePut(name, arr, arguments[arguments.length-1]);
-        }
-    }
-});
-
-
-RemoteDBMS.prototype.clearSettings = function() {
-    "use strict";
-    this.Settings = {
-        "BriefingPreview" : {},
-        "Stories" : {},
-        "CharacterProfile" : {}
+    function RemoteDBMS(){
+        this.clearSettings();
     };
+    
+    RemoteDBMS._simpleGet = function(name, params, callback){
+        "use strict";
+        var paramStr = "";
+        if(params){
+            paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ; 
+        }
+        
+        var request = $.ajax({
+            url : url + name + paramStr,
+            dataType : "text",
+            method : "GET",
+            contentType : "application/json;charset=utf-8",
+            cache: false,
+        });
+        
+        request.done(function(data) {
+            callback(null, JSON.parse(data));
+        });
+        
+        request.fail(function(errorInfo, textStatus, errorThrown) {
+            try {
+                callback(JSON.parse(errorInfo.responseText));
+            } catch(err){
+                callback(errorInfo.responseText);
+            }
+        });
+    };
+    
+    RemoteDBMS._simplePut = function(name, data, callback){
+        "use strict";
+        var request = $.ajax({
+            url : url + name,
+            dataType : "text",
+            method : "PUT",
+            contentType : "application/json;charset=utf-8",
+            data: JSON.stringify(data)
+        });
+        
+        if(showNotification){
+            var notificationBox = clearEl(getEl('debugNotification'));
+            removeClass(notificationBox, 'hidden');
+            removeClass(notificationBox, 'operationOK');
+            removeClass(notificationBox, 'operationFail');
+            addEl(notificationBox, makeText(name + ' ' + JSON.stringify(data)));
+        }
+        
+        request.done(function(data) {
+            if(showNotification){
+                addClass(notificationBox, 'operationOK');
+                setTimeout(function(){
+                    addClass(notificationBox, 'hidden');
+                }, 1000);
+            }
+            if(callback) callback();
+        });
+        
+        request.fail(function(errorInfo, textStatus, errorThrown) {
+            if(showNotification){
+                addClass(notificationBox, 'operationFail');
+                setTimeout(function(){
+                    addClass(notificationBox, 'hidden');
+                }, 1000);
+            }
+            try {
+                callback(JSON.parse(errorInfo.responseText));
+            } catch(err){
+                callback(errorInfo.responseText);
+            }
+        });
+    };
+    
+    
+    Object.keys(LocalDBMS.prototype).forEach(function(name){
+        RemoteDBMS.prototype[name] = function(){
+            var arr = [];
+            for (var i = 0; i < arguments.length-1; i++) {
+                arr.push(arguments[i]);
+            }
+            if(CommonUtils.startsWith(name, "get") || CommonUtils.startsWith(name, "is")){
+                RemoteDBMS._simpleGet(name, arr, arguments[arguments.length-1]);
+            } else {
+                RemoteDBMS._simplePut(name, arr, arguments[arguments.length-1]);
+            }
+        }
+    });
+    
+    
+    RemoteDBMS.prototype.clearSettings = function() {
+        "use strict";
+        this.Settings = {
+                "BriefingPreview" : {},
+                "Stories" : {},
+                "CharacterProfile" : {}
+        };
+    };
+    
+    RemoteDBMS.prototype.getSettings = function(){
+        "use strict";
+        return this.Settings;
+    };
+    return RemoteDBMS;
 };
 
-RemoteDBMS.prototype.getSettings = function(){
-    "use strict";
-    return this.Settings;
-};
+var RemoteDBMS = makeRemoteDBMS(LocalDBMS);
