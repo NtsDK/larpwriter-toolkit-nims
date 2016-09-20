@@ -39,15 +39,12 @@ See the License for the specific language governing permissions and
                     doExport : true
                 };
                 
-                Object.keys(that.database.Characters).forEach(function(characterName) {
-                    that.database.Characters[characterName][name] = value;
-                });
-                
                 if (toEnd) {
                     that.database.ProfileSettings.push(profileItem);
                 } else {
                     that.database.ProfileSettings.splice(selectedIndex, 0, profileItem);
                 }
+                that.ee.trigger("createProfileItem", [name, type, value]);
                 callback();
             });
             
@@ -63,17 +60,13 @@ See the License for the specific language governing permissions and
             var tmp = profileSettings[index];
             profileSettings.splice(index, 1);
             profileSettings.splice(newIndex, 0, tmp);
-            
             callback();
         };
         // profile configurer
         LocalDBMS.prototype.removeProfileItem = function(index, profileItemName, callback) {
             "use strict";
-            var that = this;
-            Object.keys(this.database.Characters).forEach(function(characterName) {
-                delete that.database.Characters[characterName][profileItemName];
-            });
             CommonUtils.removeFromArrayByIndex(this.database.ProfileSettings, index);
+            this.ee.trigger("removeProfileItem", arguments);
             callback();
         };
         // profile configurer
@@ -85,13 +78,8 @@ See the License for the specific language governing permissions and
             })[0];
     
             profileItem.type = newType;
-    
             profileItem.value = Constants.profileFieldTypes[newType].value;
-    
-            var that = this;
-            Object.keys(this.database.Characters).forEach(function(characterName) {
-                that.database.Characters[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
-            });
+            this.ee.trigger("changeProfileItemType", arguments);
             callback();
         };
     
@@ -127,12 +115,8 @@ See the License for the specific language governing permissions and
                     return;
                 }
                 
-                Object.keys(that.database.Characters).forEach(function(characterName) {
-                    var tmp = that.database.Characters[characterName][oldName];
-                    delete that.database.Characters[characterName][oldName];
-                    that.database.Characters[characterName][newName] = tmp;
-                });
-                
+                that.ee.trigger("renameProfileItem", [newName, oldName]);
+
                 that.database.ProfileSettings.filter(function(elem) {
                     return elem.name === oldName;
                 })[0].name = newName;
@@ -196,17 +180,7 @@ See the License for the specific language governing permissions and
                 });
     
                 if (missedValues.length !== 0) {
-                    info.value = newOptions.join(",");
-    
-                    var that = this;
-                    Object.keys(this.database.Characters).forEach(function(characterName) {
-                        var enumValue = that.database.Characters[characterName][profileItemName];
-                        if (!newOptionsMap[enumValue]) {
-                            that.database.Characters[characterName][profileItemName] = newOptions[0];
-                        }
-                    });
-    
-                    return;
+                    this.ee.trigger("replaceEnumValue", [profileItemName, newOptions[0], newOptionsMap]);
                 }
     
                 info.value = newOptions.join(",");

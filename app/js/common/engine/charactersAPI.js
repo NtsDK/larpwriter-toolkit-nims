@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function charactersAPI(LocalDBMS, CommonUtils, Errors) {
+    function charactersAPI(LocalDBMS, Constants, CommonUtils, Errors, listeners) {
         
         LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
             "use strict";
@@ -63,6 +63,7 @@ See the License for the specific language governing permissions and
             });
     
             this.database.Characters[characterName] = newCharacter;
+            this.ee.trigger("createCharacter", arguments);
             if(callback) callback();
         };
         // characters
@@ -87,28 +88,9 @@ See the License for the specific language governing permissions and
             data.name = toName;
             this.database.Characters[toName] = data;
             delete this.database.Characters[fromName];
+            
+            this.ee.trigger("renameCharacter", arguments);
     
-            var storyName, story;
-    
-            var renameEventCharacter = function(event) {
-                if (event.characters[fromName]) {
-                    data = event.characters[fromName];
-                    event.characters[toName] = data;
-                    delete event.characters[fromName];
-                }
-            };
-    
-            for (storyName in this.database.Stories) {
-                story = this.database.Stories[storyName];
-                if (story.characters[fromName]) {
-                    data = story.characters[fromName];
-                    data.name = toName;
-                    story.characters[toName] = data;
-                    delete story.characters[fromName];
-    
-                    story.events.forEach(renameEventCharacter);
-                }
-            }
             if(callback) callback();
         };
     
@@ -116,21 +98,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.removeCharacter = function(characterName, callback) {
             "use strict";
             delete this.database.Characters[characterName];
-            var storyName, story;
-    
-            var cleanEvent = function(event) {
-                if (event.characters[characterName]) {
-                    delete event.characters[characterName];
-                }
-            };
-    
-            for (storyName in this.database.Stories) {
-                story = this.database.Stories[storyName];
-                if (story.characters[characterName]) {
-                    delete story.characters[characterName];
-                    story.events.forEach(cleanEvent);
-                }
-            }
+            this.ee.trigger("removeCharacter", arguments);
             if(callback) callback();
         };
     
@@ -157,6 +125,66 @@ See the License for the specific language governing permissions and
             }
             if(callback) callback();
         };
+        
+        function _createProfileItem(name, type, value){
+            "use strict";
+            var that = this;
+            Object.keys(that.database.Characters).forEach(function(characterName) {
+                that.database.Characters[characterName][name] = value;
+            });
+        };
+        
+        listeners.createProfileItem = listeners.createProfileItem || [];
+        listeners.createProfileItem.push(_createProfileItem);
+
+        function _removeProfileItem(index, profileItemName){
+            "use strict";
+            var that = this;
+            Object.keys(this.database.Characters).forEach(function(characterName) {
+                delete that.database.Characters[characterName][profileItemName];
+            });
+        };
+        
+        listeners.removeProfileItem = listeners.removeProfileItem || [];
+        listeners.removeProfileItem.push(_removeProfileItem);
+
+        function _changeProfileItemType(profileItemName, newType){
+            "use strict";
+            var that = this;
+            Object.keys(this.database.Characters).forEach(function(characterName) {
+                that.database.Characters[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
+            });
+        };
+        
+        listeners.changeProfileItemType = listeners.changeProfileItemType || [];
+        listeners.changeProfileItemType.push(_changeProfileItemType);
+
+        function _renameProfileItem(newName, oldName){
+            "use strict";
+            var that = this;
+            Object.keys(this.database.Characters).forEach(function(characterName) {
+                var tmp = that.database.Characters[characterName][oldName];
+                delete that.database.Characters[characterName][oldName];
+                that.database.Characters[characterName][newName] = tmp;
+            });
+        };
+        
+        listeners.renameProfileItem = listeners.renameProfileItem || [];
+        listeners.renameProfileItem.push(_renameProfileItem);
+        
+        function _replaceEnumValue(profileItemName, defaultValue, newOptionsMap){
+            "use strict";
+            var that = this;
+            Object.keys(this.database.Characters).forEach(function(characterName) {
+                var enumValue = that.database.Characters[characterName][profileItemName];
+                if (!newOptionsMap[enumValue]) {
+                    that.database.Characters[characterName][profileItemName] = defaultValue;
+                }
+            });
+        };
+        
+        listeners.replaceEnumValue = listeners.replaceEnumValue || [];
+        listeners.replaceEnumValue.push(_replaceEnumValue);
     };
     
     callback(charactersAPI);

@@ -16,15 +16,12 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors) {
+    function storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners) {
         
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
             "use strict";
-            
-            var localCharacters;
-            localCharacters = this.database.Stories[storyName].characters;
-            
+            var localCharacters = this.database.Stories[storyName].characters;
             callback(null,  Object.keys(localCharacters).sort(CommonUtils.charOrdA));
         };
     
@@ -66,6 +63,7 @@ See the License for the specific language governing permissions and
             story.characters[toName] = story.characters[fromName];
             story.characters[toName].name = toName;
             delete story.characters[fromName];
+            
             story.events.forEach(function (event) {
                 if (event.characters[fromName]) {
                     event.characters[toName] = event.characters[fromName];
@@ -87,14 +85,65 @@ See the License for the specific language governing permissions and
             
             var story = this.database.Stories[storyName];
             delete story.characters[characterName];
+            
             story.events.forEach(function (event) {
                 delete event.characters[characterName];
             });
             
             callback();
         };
+        
+        var _renameCharacterInStories = function(fromName, toName){
+            "use strict";
+            var storyName, story, data;
+
+            var renameEventCharacter = function(event) {
+                if (event.characters[fromName]) {
+                    data = event.characters[fromName];
+                    event.characters[toName] = data;
+                    delete event.characters[fromName];
+                }
+            };
+
+            for (storyName in this.database.Stories) {
+                story = this.database.Stories[storyName];
+                if (story.characters[fromName]) {
+                    data = story.characters[fromName];
+                    data.name = toName;
+                    story.characters[toName] = data;
+                    delete story.characters[fromName];
+
+                    story.events.forEach(renameEventCharacter);
+                }
+            }
+        };
+        
+        listeners.renameCharacter = listeners.renameCharacter || [];
+        listeners.renameCharacter.push(_renameCharacterInStories);
+        
+        var _removeCharacterFromStories = function(characterName){
+            "use strict";
+            var storyName, story;
+
+            var cleanEvent = function(event) {
+                if (event.characters[characterName]) {
+                    delete event.characters[characterName];
+                }
+            };
+
+            for (storyName in this.database.Stories) {
+                story = this.database.Stories[storyName];
+                if (story.characters[characterName]) {
+                    delete story.characters[characterName];
+                    story.events.forEach(cleanEvent);
+                }
+            }
+        };
+        
+        listeners.removeCharacter = listeners.removeCharacter || [];
+        listeners.removeCharacter.push(_removeCharacterFromStories);
     
-        //story characters
+        // story characters
         LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory, callback){
             "use strict";
             this.database.Stories[storyName].characters[characterName].inventory = inventory;
@@ -110,6 +159,23 @@ See the License for the specific language governing permissions and
             } else {
                 delete character.activity[activityType];
             }
+            callback();
+        };
+        
+        //event presence
+        LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
+            "use strict";
+            this.database.Stories[storyName].events[eventIndex].characters[characterName] = {
+                text : "",
+                time : ""
+            };
+            callback();
+        };
+    
+        // event presence
+        LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName, callback){
+            "use strict";
+            delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
             callback();
         };
     };

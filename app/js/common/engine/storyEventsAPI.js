@@ -24,23 +24,6 @@ See the License for the specific language governing permissions and
             callback(null,  CommonUtils.clone(this.database.Stories[storyName].events));
         };
         
-        //event presence
-        LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
-            "use strict";
-            this.database.Stories[storyName].events[eventIndex].characters[characterName] = {
-                text : "",
-                time : ""
-            };
-            callback();
-        };
-    
-        // event presence
-        LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName, callback){
-            "use strict";
-            delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
-            callback();
-        };
-        
         //story events
         LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, toEnd, selectedIndex, callback){
             "use strict";

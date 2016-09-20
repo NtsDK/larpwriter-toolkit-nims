@@ -17,27 +17,34 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-function LocalDBMS(){
+function makeLocalDBMS(){
+    var listeners = {};
     
-};
+    function LocalDBMS(){
+        this._init(listeners);
+    };
+    
+    LocalDBMS.prototype.getSettings = function(){
+        "use strict";
+        return this.database.Settings;
+    };
+    
+    baseAPI(LocalDBMS, Migrator, CommonUtils, EventEmitter);
+    statisticsAPI(LocalDBMS, R, CommonUtils);
+    consistencyCheckAPI(LocalDBMS, R, CommonUtils, Ajv, Schema);
+    charactersAPI(LocalDBMS, Constants, CommonUtils, Errors, listeners);
+    briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
+    profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
+    storyBaseAPI(LocalDBMS, R, CommonUtils, Errors);
+    storyEventsAPI(LocalDBMS, R, CommonUtils, Errors);
+    storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners);
+    storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
+    storyAdaptationsAPI(LocalDBMS, CommonUtils);
+    accessManagerAPI(LocalDBMS, CommonUtils);
+    logAPI(LocalDBMS, R, CommonUtils);
+    
+    Logger.attachLogCalls(LocalDBMS, R, false);
+    return LocalDBMS;
+}
 
-LocalDBMS.prototype.getSettings = function(){
-    "use strict";
-    return this.database.Settings;
-};
-
-baseAPI(LocalDBMS, Migrator, CommonUtils);
-statisticsAPI(LocalDBMS, R, CommonUtils);
-consistencyCheckAPI(LocalDBMS, R, CommonUtils, Ajv, Schema);
-charactersAPI(LocalDBMS, CommonUtils, Errors);
-briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
-profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
-storyBaseAPI(LocalDBMS, R, CommonUtils, Errors);
-storyEventsAPI(LocalDBMS, R, CommonUtils, Errors);
-storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors);
-storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
-storyAdaptationsAPI(LocalDBMS, CommonUtils);
-accessManagerAPI(LocalDBMS, CommonUtils);
-logAPI(LocalDBMS, R, CommonUtils);
-
-Logger.attachLogCalls(LocalDBMS, R, false);
+var LocalDBMS = makeLocalDBMS();
