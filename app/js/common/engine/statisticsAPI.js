@@ -178,7 +178,7 @@ See the License for the specific language governing permissions and
         var _countCharacterSymbolsInStories = function(database, stats){
             R.values(database.Stories).forEach(function(story){
                 story.events.forEach(function(event) {
-                    for (characterName in event.characters) {
+                    for (var characterName in event.characters) {
                         if(event.characters[characterName].text.length != 0){
                             stats[characterName]+= _noWhiteSpaceLength(event.characters[characterName].text);
                         } else {

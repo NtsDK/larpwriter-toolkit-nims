@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function charactersAPI(LocalDBMS, Errors) {
+    function charactersAPI(LocalDBMS, CommonUtils, Errors) {
         
         LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
             "use strict";
