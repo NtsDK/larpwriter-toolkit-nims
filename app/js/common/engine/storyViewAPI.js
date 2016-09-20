@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function extrasAPI(LocalDBMS, R, CommonUtils, dateFormat) {
+    function storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat) {
         // preview
         LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
             "use strict";
@@ -94,22 +94,6 @@ See the License for the specific language governing permissions and
             callback(null, allEvents);
         };
     
-        // profile, preview
-        LocalDBMS.prototype.getProfile = function(name, callback) {
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.Characters[name]));
-        };
-        // social network, character filter
-        LocalDBMS.prototype.getAllProfiles = function(callback) {
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.Characters));
-        };
-        // social network
-        LocalDBMS.prototype.getAllStories = function(callback) {
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.Stories));
-        };
-    
         // timeline
         LocalDBMS.prototype.getEventGroupsForStories = function(storyNames, callback) {
             "use strict";
@@ -139,20 +123,54 @@ See the License for the specific language governing permissions and
             });
             callback(null, eventGroups);
         };
-    
-        // timeline
-        // disabled for this moment
-        LocalDBMS.prototype.setEventTime = function(storyName, eventIndex, time, callback) {
-            "use strict";
-    
-            var event = this.database.Stories[storyName].events[eventIndex];
-            event.time = dateFormat(time, "yyyy/mm/dd h:MM");
-            callback();
+        
+        // character filter
+        LocalDBMS.prototype.getCharactersSummary = function(callback){
+            
+            var characters = R.keys(this.database.Characters);
+            var charactersInfo = {};
+            characters.forEach(function(character){
+                charactersInfo[character] = {
+                    'active':0,
+                    'follower':0,
+                    'defensive':0,
+                    'passive':0,
+                    'totalAdaptations':0,
+                    'finishedAdaptations':0,
+                    'totalStories':0
+                }
+            });
+            
+            R.values(this.database.Stories).forEach(function(story){
+                R.values(story.characters).forEach(function(storyCharacter){
+                    var characterInfo = charactersInfo[storyCharacter.name];
+                    characterInfo.totalStories++;
+                    R.toPairs(storyCharacter.activity).forEach(function(activity){
+                        if(activity[1] === true){
+                            characterInfo[activity[0]]++;
+                        }
+                    });
+                });
+                story.events.forEach(function(event){
+                    R.toPairs(event.characters).forEach(function(eventCharacter){
+                        var characterInfo = charactersInfo[eventCharacter[0]];
+                        characterInfo.totalAdaptations++;
+                        if(eventCharacter[1].ready){
+                            characterInfo.finishedAdaptations++;
+                        }
+                    });
+                });
+            });
+            R.values(charactersInfo).forEach(function(characterInfo){
+                characterInfo.completeness = Math.round(characterInfo.finishedAdaptations * 100 / 
+                    (characterInfo.totalAdaptations != 0 ? characterInfo.totalAdaptations : 1));
+            });
+            callback(null, charactersInfo);
         };
     
     };
-    callback(extrasAPI);
+    callback(storyViewAPI);
 
 })(function(api){
-    typeof exports === 'undefined'? this['extrasAPI'] = api: module.exports = api;
+    typeof exports === 'undefined'? this['storyViewAPI'] = api: module.exports = api;
 }.bind(this));

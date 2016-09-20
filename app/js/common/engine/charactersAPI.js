@@ -15,6 +15,23 @@ See the License for the specific language governing permissions and
 (function(callback){
 
     function charactersAPI(LocalDBMS, Errors) {
+        
+        LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
+            "use strict";
+            callback(null, Object.keys(this.database.Characters).sort(CommonUtils.charOrdA));
+        };
+        
+        // profile, preview
+        LocalDBMS.prototype.getProfile = function(name, callback) {
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.Characters[name]));
+        };
+        // social network, character filter
+        LocalDBMS.prototype.getAllProfiles = function(callback) {
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.Characters));
+        };
+        
         // characters
         LocalDBMS.prototype.isCharacterNameUsed = function(characterName, callback) {
             "use strict";

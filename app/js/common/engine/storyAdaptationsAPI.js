@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function eventsAPI(LocalDBMS, CommonUtils) {
+    function storyAdaptationsAPI(LocalDBMS, CommonUtils) {
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
             "use strict";
@@ -176,8 +176,8 @@ See the License for the specific language governing permissions and
             callback();
         };
     };
-    callback(eventsAPI);
+    callback(storyAdaptationsAPI);
 
 })(function(api){
-    typeof exports === 'undefined'? this['eventsAPI'] = api: module.exports = api;
+    typeof exports === 'undefined'? this['storyAdaptationsAPI'] = api: module.exports = api;
 }.bind(this));

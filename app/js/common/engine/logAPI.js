@@ -14,16 +14,20 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    // argument description
-    // add function name to log it
-    // ignoreParams - make true if you don't need params. 
-    //     Example - createUser params include password.
-    // filter - add this function to filter out unnecessary calls. 
-    //     Example - we need all meta info calls except description.
-    // rewrite - make true if you don't want to flood log with some repeated call. 
-    //     For example auto call of getDatabase will flood everything.
+    // isServer - used in server mode. If false then user in logs will be named "user".
+    // environment - used to disable this.log function in thin client in server version.
+    //      I agree it is strange.
+    // extras - additions to include list. Used in server mode.
     function logAPI(LocalDBMS, R, CommonUtils, isServer, environment, extras) {
         
+        // argument description
+        // add function name to log it
+        // ignoreParams - make true if you don't need params in log. 
+        //     Example - createUser params include password.
+        // filter - add this function to filter out unnecessary calls. 
+        //     Example - we need all meta info calls except description.
+        // rewrite - make true if you don't want to flood log with some repeated call. 
+        //     For example auto call of getDatabase will flood everything.
         var includeList = {
             "getDatabase": {
                 "rewrite" : true

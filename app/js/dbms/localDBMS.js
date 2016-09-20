@@ -26,14 +26,16 @@ LocalDBMS.prototype.getSettings = function(){
     return this.database.Settings;
 };
 
-commonAPI(LocalDBMS, Migrator, CommonUtils);
+baseAPI(LocalDBMS, Migrator, CommonUtils);
 statisticsAPI(LocalDBMS, R, CommonUtils);
 consistencyCheckAPI(LocalDBMS, R, CommonUtils, Ajv, Schema);
 charactersAPI(LocalDBMS, Errors);
-extrasAPI(LocalDBMS, R, CommonUtils, dateFormat);
 briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
 profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
-storiesAPI(LocalDBMS, R, CommonUtils, Errors);
-eventsAPI(LocalDBMS, CommonUtils);
+storyBaseAPI(LocalDBMS, R, CommonUtils, Errors);
+storyEventsAPI(LocalDBMS, R, CommonUtils, Errors);
+storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors);
+storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
+storyAdaptationsAPI(LocalDBMS, CommonUtils);
 accessManagerAPI(LocalDBMS, CommonUtils);
 logAPI(LocalDBMS, R, CommonUtils, false, MODE); // log function enabled in standalone mode

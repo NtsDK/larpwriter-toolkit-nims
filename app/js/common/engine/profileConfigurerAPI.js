@@ -15,6 +15,11 @@ See the License for the specific language governing permissions and
 (function(callback){
 
     function profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors) {
+        
+        LocalDBMS.prototype.getAllProfileSettings = function(callback){
+            "use strict";
+            callback(null, CommonUtils.clone(this.database.ProfileSettings));
+        };
         // profile configurer
         LocalDBMS.prototype.createProfileItem = function(name, type, value, toEnd, selectedIndex, callback) {
             "use strict";

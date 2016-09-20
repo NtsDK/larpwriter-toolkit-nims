@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function commonAPI(LocalDBMS, Migrator, CommonUtils) {
+    function baseAPI(LocalDBMS, Migrator, CommonUtils) {
     
         LocalDBMS.prototype.getDatabase = function(callback){
             "use strict";
@@ -39,26 +39,10 @@ See the License for the specific language governing permissions and
             this.database.Meta[name] = value;
             if(callback) callback();
         };
-    
-        LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
-            "use strict";
-            callback(null, Object.keys(this.database.Characters).sort(CommonUtils.charOrdA));
-        };
-    
-        // stories, timeline
-        LocalDBMS.prototype.getStoryNamesArray = function (callback) {
-            "use strict";
-            callback(null, Object.keys(this.database.Stories).sort(CommonUtils.charOrdA));
-        };
-    
-        LocalDBMS.prototype.getAllProfileSettings = function(callback){
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.ProfileSettings));
-        };
     };
   
-    callback(commonAPI);
+    callback(baseAPI);
 
 })(function(api){
-    typeof exports === 'undefined'? this['commonAPI'] = api: module.exports = api;
+    typeof exports === 'undefined'? this['baseAPI'] = api: module.exports = api;
 }.bind(this));
