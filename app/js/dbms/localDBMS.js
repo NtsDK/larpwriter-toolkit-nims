@@ -38,4 +38,6 @@ storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors);
 storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
 storyAdaptationsAPI(LocalDBMS, CommonUtils);
 accessManagerAPI(LocalDBMS, CommonUtils);
-logAPI(LocalDBMS, R, CommonUtils, false, MODE); // log function enabled in standalone mode
+logAPI(LocalDBMS, R, CommonUtils);
+
+Logger.attachLogCalls(LocalDBMS, R, false);
