@@ -159,9 +159,10 @@ Utils.processError = function(callback){
 
 Utils.handleError = function(err){
     "use strict";
-    if (err instanceof Errors.ValidationError || typeof err === 'object') {
-//        Utils.alert(err.messageId);
+    if (err instanceof Errors.ValidationError) {
         Utils.alert(strFormat(getL10n(err.messageId), err.parameters));
+    } else if( typeof err === 'object'){
+        Utils.alert(err.message);
     } else {
         Utils.alert(err);
     }
