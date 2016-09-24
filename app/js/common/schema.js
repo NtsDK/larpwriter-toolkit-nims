@@ -134,7 +134,149 @@ See the License for the specific language governing permissions and
     };
     
     function getGroupsSchema(profileSettings) {
-        return {};
+        var filterItems = [];
+        filterItems.push({
+            "type" : "object",
+            "properties": {
+                "name" : {
+                    "type" : "string",
+                    "enum": ["char-name"]
+                }, 
+                "type" :{
+                    "type" : "string",
+                    "enum": ["text"]
+                },
+                "regexString" :{
+                    "type" : "string",
+                    "minLength": 1
+                }
+            }, 
+            "required" : [ "name", "type", "regexString"],
+            "additionalProperties" : false
+        });
+
+        filterItems = filterItems.concat(profileSettings.map(function(item) {
+            var data = {
+                "type" : "object",
+                "properties" : {
+                    "name" : {
+                        "type" : "string",
+                        "enum" : [ "profile-" + item.name ]
+                    },
+                    "type" : {
+                        "type" : "string",
+                        "enum" : [ item.type ]
+                    },
+                },
+                "required" : [ "name", "type" ],
+                "additionalProperties" : false
+            };
+
+            switch (item.type) {
+            case "text":
+            case "string":
+                data.properties.regexString = {
+                    "type" : "string",
+                    "minLength" : 1
+                };
+                data.required.push("regexString");
+                break;
+            case "number":
+                data.properties.num = {
+                    "type" : "number"
+                };
+                data.properties.condition = {
+                    "type" : "string",
+                    "enum" : [ "greater", "lesser", "equal" ]
+                };
+                data.required.push("num");
+                data.required.push("condition");
+                break;
+            case "checkbox":
+                data.properties.selectedOptions = {
+                    "type" : "object",
+                    "properties":{
+                        "false" :{},
+                        "true" :{}
+                    },
+                    "additionalProperties" : false
+                }
+                data.required.push("selectedOptions")
+                break;
+            case "enum":
+                var properties = item.value.split(",").reduce(function(result, item){
+                    result[item] = {};
+                    return result;
+                }, {});
+                data.properties.selectedOptions = {
+                    "type" : "object",
+                    "properties": properties,
+                    "additionalProperties" : false
+                }
+                data.required.push("selectedOptions")
+                break;
+            }
+            return data;
+        }));
+        
+        
+        var summaries = [ 'active', 'follower', 'defensive', 'passive', 'completeness', 'totalStories' ];
+        
+        summaries.forEach(function(item){
+            filterItems.push({
+                "type" : "object",
+                "properties" : {
+                    "name" : {
+                        "type" : "string",
+                        "enum" : [ "summary-" + item ]
+                    },
+                    "type" : {
+                        "type" : "string",
+                        "enum" : [ "number" ]
+                    },
+                    "num" :{
+                        "type" : "number"
+                    },
+                    "condition" : {
+                        "type" : "string",
+                        "enum" : [ "greater", "lesser", "equal" ]
+                    }
+                },
+                "required" : [ "name", "type", "num", "condition" ],
+                "additionalProperties" : false
+            });
+        });
+        
+        var groupProperties = {
+            "name" : {
+                "type" : "string"
+            }, 
+            "masterDescription" : {
+                "type" : "string"
+            }, 
+            "characterDescription" : {
+                "type" : "string"
+            }, 
+            "filterModel" : {
+                "type" : "array", 
+                "items": {
+                    "oneOf" : filterItems
+                }
+            }, 
+            "doExport" : {
+                "type":"boolean"
+            }
+        };
+        var schema = {
+            "type" : "object",
+            "additionalProperties": { 
+                "type": "object",
+                "properties": groupProperties,
+                "required": Object.keys(groupProperties),
+                "additionalProperties": false
+            }
+        };
+        return schema;
     }
     
     function getCharactersSchema(profileSettings) {
