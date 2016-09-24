@@ -208,13 +208,10 @@ if(MODE === "NIMS_Server"){
     PermissionInformer.getCharacterNamesArray = PermissionInformer.getEntityNamesArray("getCharacterNamesArray");
     PermissionInformer.getStoryNamesArray = PermissionInformer.getEntityNamesArray("getStoryNamesArray");
     PermissionInformer.getGroupNamesArray = PermissionInformer.getEntityNamesArray("getGroupNamesArray");
-    
-    
-    PermissionInformer.isCharacterEditable = function(characterName, callback){
-        callback(null, true);
-    };
-    
-    PermissionInformer.isStoryEditable = function(storyName, callback){
+
+    PermissionInformer.isStoryEditable = 
+    PermissionInformer.isGroupEditable = 
+    PermissionInformer.isCharacterEditable = function(entityName, callback) {
         callback(null, true);
     };
     

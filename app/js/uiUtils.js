@@ -78,7 +78,7 @@ UI.initSelectorFilters = function(){
     var el, sel;
     for (var i = 0; i < elems.length; i++) {
         el = elems[i];
-        sel = getEl(getAttr(el,"selector-filter"));
+        sel = queryEl(getAttr(el,"selector-filter"));
         listen(el, "input", UI.filterOptions(sel))
     }
 };

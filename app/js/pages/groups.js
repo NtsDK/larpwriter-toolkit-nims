@@ -24,14 +24,14 @@ Groups.init = function () {
     "use strict";
     var root = Groups;
     root.views = {};
-//    var nav = "charactersNavigation";
-//    var content = "charactersContent";
-//    var containers = {
-//        root: root,
-//        navigation: getEl(nav),
-//        content: getEl(content)
-//    };
-//    Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
+    var nav = ".groups-tab .sub-tab-navigation";
+    var content = ".groups-tab .sub-tab-content";
+    var containers = {
+        root: root,
+        navigation: queryEl(nav),
+        content: queryEl(content)
+    };
+    Utils.addView(containers, "group-profile", GroupProfile,{mainPage:true});
 //    Utils.addView(containers, "character-profile-configurer", CharacterProfileConfigurer);
 
     listen(queryEl(".groups-tab .create-entity-button"), "click", Groups.createGroup(".groups-tab", Groups.refresh));
@@ -45,7 +45,7 @@ Groups.refresh = function () {
     "use strict";
     PermissionInformer.getGroupNamesArray(true, Utils.processError(function(names){
         Groups.rebuildInterface(".groups-tab", names);
-//        Groups.currentView.refresh();
+        Groups.currentView.refresh();
     }));
 };
 

@@ -100,30 +100,12 @@ See the License for the specific language governing permissions and
             this.database.Groups[groupName].filterModel = filterModel;
             if(callback) callback();
         };
-//    
-//        // profile
-//        LocalDBMS.prototype.updateProfileField = function(characterName, fieldName, type, value, callback) {
-//            "use strict";
-//            var profileInfo = this.database.Characters[characterName];
-//            switch (type) {
-//            case "text":
-//            case "string":
-//            case "enum":
-//                profileInfo[fieldName] = value;
-//                break;
-//            case "number":
-//                if (isNaN(value)) {
-//                    callback(new Errors.ValidationError("characters-not-a-number"));
-//                    return;
-//                }
-//                profileInfo[fieldName] = Number(value);
-//                break;
-//            case "checkbox":
-//                profileInfo[fieldName] = value;
-//                break;
-//            }
-//            if(callback) callback();
-//        };
+    
+        LocalDBMS.prototype.updateGroupField = function(groupName, fieldName, value, callback) {
+            var profileInfo = this.database.Groups[groupName];
+            profileInfo[fieldName] = value;
+            if(callback) callback();
+        };
 //        
 //        function _createProfileItem(name, type, value){
 //            "use strict";

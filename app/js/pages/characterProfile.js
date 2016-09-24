@@ -22,8 +22,7 @@ var CharacterProfile = {};
 
 CharacterProfile.init = function () {
     "use strict";
-    var el = getEl("bioEditorSelector");
-    listen(el, "change", CharacterProfile.showProfileInfoDelegate);
+    listen(getEl("bioEditorSelector"), "change", CharacterProfile.showProfileInfoDelegate);
     CharacterProfile.content = getEl("characterProfile");
 };
 

@@ -185,7 +185,7 @@ See the License for the specific language governing permissions and
               <th l10n-id="characters-characters"></th>
             </tr>
             <tr>
-              <td><input selector-filter="bioEditorSelector"><br>
+              <td><input selector-filter="#bioEditorSelector"><br>
               <select size=20 id="bioEditorSelector"></select></td>
               <td>
                 <div id="profileContentDiv"></div>
@@ -267,38 +267,34 @@ See the License for the specific language governing permissions and
               </div>
             </div>
           </div>
-          
-<!--           <div class="group-editing-area"> -->
-<!--             <h3 class="panel-title" l10n-id2="">Просмотр</h3> -->
-<!--             <div class="entity-editing"> -->
-<!--               <select class="entity-editing__entity-select" class="select2-mono-selector"> -->
-<!--               </select><br> -->
-<!--               <button class="entity-editing__save-entity-button">Сохранить фильтр как группу</button> -->
-<!--             </div> -->
-<!--           </div> -->
-
         </div>
       </div>
     
-
-<!--       <div class="panel panel-default"> -->
-<!--         <div class="panel-heading"> -->
-<!--           <a href="#" panel-toggler="#charactersDiv div.panel-body"> <h3 class="panel-title" l10n-id="characters-character-managing"></h3></a> -->
-<!--         </div> -->
-<!--         <div class="panel-body"> -->
-<!--           <input id="characterNameInput" l10n-placeholder-id="characters-character-name"></input> -->
-<!--           <button id="createCharacterButton" l10n-id="common-add"></button> -->
-<!--           <br> <span l10n-id="common-rename-from"></span> <select id="fromName" class="select2-mono-selector"></select>  -->
-<!--           <span l10n-id="common-to"></span> <input -->
-<!--             id="toName" l10n-placeholder-id="characters-new-character-name"></input> -->
-<!--           <button id="renameCharacter" l10n-id="common-ok"></button> -->
-<!--           <br> <select id="characterRemoveSelector" class="select2-mono-selector" ></select> -->
-<!--           <button id="removeCharacterButton" l10n-id="common-remove"></button> -->
-<!--         </div> -->
-<!--       </div> -->
+      <div class="sub-tab-navigation"></div>
+      <div class="sub-tab-content"></div>
+    </div>
     
-      <div id="sub-tab-navigation"></div>
-      <div id="sub-tab-content"></div>
+    <div class="group-profile-tab">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <table>
+            <tr>
+              <th l10n-id="groups-groups"></th>
+            </tr>
+            <tr>
+              <td><input selector-filter=".group-profile-tab .entity-selector"><br>
+              <select size=20 class="entity-selector"></select></td>
+              <td>
+                <div>
+                  <table class="table">
+                    <tbody class="entity-profile"></tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </div>
 
     <div id="characterFilterDiv">
@@ -570,7 +566,7 @@ See the License for the specific language governing permissions and
                   <h3 class="panel-title" l10n-id="adaptations-story"></h3>
                 </div>
                 <div class="panel-body panel-resizable">
-                  <input selector-filter="events-storySelector"><br>
+                  <input selector-filter="#events-storySelector"><br>
                   <select id="events-storySelector" size=10></select>
                 </div>
               </div>
@@ -680,11 +676,11 @@ See the License for the specific language governing permissions and
                    <div id="permissionTable"></div>
                  </td>
                  <td>
-                   <input selector-filter="characterPermissionSelector"><br>
+                   <input selector-filter="#characterPermissionSelector"><br>
                    <select size=15 id="characterPermissionSelector" multiple></select>
                  </td>
                  <td>
-                   <input selector-filter="storyPermissionSelector"><br>
+                   <input selector-filter="#storyPermissionSelector"><br>
                    <select size=15 id="storyPermissionSelector" multiple></select>
                  </td>
                  <td><select size=10 id="userPermissionSelector" style="min-width: 100px;"></select></td>
@@ -762,7 +758,7 @@ See the License for the specific language governing permissions and
             </div>
             
             <div id="briefingMultiSelect" class="hidden">
-              <input selector-filter="briefingMultiSelector"><br>
+              <input selector-filter="#briefingMultiSelector"><br>
               <select id="briefingMultiSelector" multiple size=15 ></select>
             </div>
           </fieldset>
@@ -828,7 +824,7 @@ See the License for the specific language governing permissions and
               <h3 class="panel-title" l10n-id="timeline-stories"></h3>
             </div>
             <div class="panel-body panel-resizable">
-              <input selector-filter="timelineStorySelector"><br>
+              <input selector-filter="#timelineStorySelector"><br>
               <select size=20 id="timelineStorySelector" multiple></select>
             </div>
           </div>
@@ -898,14 +894,14 @@ See the License for the specific language governing permissions and
                 
                 <div id="networkCharacterDiv" class="hidden">
                   <h4 l10n-id="social-network-characters"></h4> 
-                  <input selector-filter="networkCharacterSelector"><br>
+                  <input selector-filter="#networkCharacterSelector"><br>
                   <select size=20 id="networkCharacterSelector"
                     multiple></select>
                 </div>
       
                 <div id="networkStoryDiv" class="hidden">
                   <h4 l10n-id="social-network-stories"></h4> 
-                  <input selector-filter="networkStorySelector"><br>
+                  <input selector-filter="#networkStorySelector"><br>
                   <select size=20 id="networkStorySelector" multiple></select>
                 </div>
               </div>
