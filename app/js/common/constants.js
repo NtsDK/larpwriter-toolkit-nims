@@ -106,6 +106,8 @@ See the License for the specific language governing permissions and
       
       {color: {border: "#EE0000", background: "#990000", highlight: {border: "#FF3333", background: "#BB0000"}, hover: {border: "#FF3333", background: "#BB0000"}}} // 20:bright red
     ];
+    
+    exports.CHAR_NAME = 'char-name';
 
     
 })(typeof exports === 'undefined'? this['Constants']={}: exports);

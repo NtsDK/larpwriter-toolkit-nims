@@ -24,6 +24,9 @@ GroupProfile.profileSettings = [{
     name: "filterModel",
     type: "container",
 },{
+    name: "characterList",
+    type: "container",
+},{
     name: "masterDescription",
     type: "text",
 },{
@@ -145,28 +148,76 @@ GroupProfile.showProfileInfoDelegate = function (event) {
 GroupProfile.showProfileInfoCallback = function (err, group) {
     if(err) {Utils.handleError(err); return;}
     var name = group.name;
-    PermissionInformer.isGroupEditable(name, function(err, isGroupEditable){
+    FilterConfiguration.makeFilterConfiguration(function(err, filterConfiguration){
         if(err) {Utils.handleError(err); return;}
-        CharacterProfile.updateSettings(name);
-        
-        GroupProfile.name = name;
-        var inputItems = GroupProfile.inputItems;
-        Object.keys(inputItems).forEach(function (inputName) {
-            if (inputItems[inputName].type === "checkbox") {
-                inputItems[inputName].checked = group[inputName];
-            } else if (inputItems[inputName].type === "container") {
-                addEl(clearEl(inputItems[inputName]), makeText(JSON.stringify(group.filterModel)));
-            } else {
-                inputItems[inputName].value = group[inputName];
-            }
-            inputItems[inputName].oldValue = group[inputName];
-            Utils.enable(GroupProfile.content, "isGroupEditable", isGroupEditable);
+
+        PermissionInformer.isGroupEditable(name, function(err, isGroupEditable){
+            if(err) {Utils.handleError(err); return;}
+            CharacterProfile.updateSettings(name);
+            
+            GroupProfile.name = name;
+            var inputItems = GroupProfile.inputItems;
+            Object.keys(inputItems).forEach(function (inputName) {
+                if (inputItems[inputName].type === "checkbox") {
+                    inputItems[inputName].checked = group[inputName];
+                } else if (inputItems[inputName].type === "container") {
+                    if(inputName === 'filterModel'){
+                        var inputItem = clearEl(inputItems[inputName]);
+                        var table = makeEl('table');
+                        addClass(table, 'table');
+                        var tbody = makeEl('tbody');
+                        addEls(tbody, group.filterModel.map(GroupProfile.makeFilterItemString(filterConfiguration)));
+                        addEl(table, tbody);
+                        addEl(inputItem, table);
+                    } else {
+                        var data = filterConfiguration.filter(group.filterModel).sort();
+                        var inputItem = clearEl(inputItems[inputName]);
+                        addEl(inputItem, makeText(data.join(', ')));
+                        addEl(inputItem, makeEl('br'));
+                        addEl(inputItem, makeText('Всего: ' + data.length));
+                    }
+                } else {
+                    inputItems[inputName].value = group[inputName];
+                }
+                inputItems[inputName].oldValue = group[inputName];
+                Utils.enable(GroupProfile.content, "isGroupEditable", isGroupEditable);
+            });
         });
     });
 };
 
+GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filterItem){
+    var tr = makeEl('tr');
+    var td = makeEl('td');
+    addEl(tr, td);
+    var displayName = filterConfiguration.getHeaderDisplayName(filterItem.name);
+    addEl(td, makeText(displayName));
+    var condition;
+    switch(filterItem.type){
+    case "enum":
+        condition = strFormat("{0}",[Object.keys(filterItem.selectedOptions).join(', ')]);
+        break;
+    case "checkbox":
+        var arr = [];
+        if(filterItem.selectedOptions["true"]){arr.push(getL10n('constant-yes'));}
+        if(filterItem.selectedOptions["false"]){arr.push(getL10n('constant-no'));}
+        condition = strFormat("{0}",[arr.join(', ')]);
+        break;
+    case "number":
+        condition = strFormat("{0} {1}", [getL10n('constant-' + filterItem.condition), filterItem.num]); 
+        break;
+    case "text":
+    case "string":
+        condition = strFormat(getL10n("groups-text-contains"), [filterItem.regexString]);
+        break;
+    }
+    td = makeEl('td');
+    addEl(tr, td);
+    addEl(td, makeText(condition));
+    return tr;
+});
+
 GroupProfile.updateSettings = function (name) {
-    "use strict";
     var settings = DBMS.getSettings();
     settings["GroupProfile"].groupName = name;
 };
