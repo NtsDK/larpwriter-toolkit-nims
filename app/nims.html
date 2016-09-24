@@ -95,11 +95,11 @@ See the License for the specific language governing permissions and
                   </tr>
                   <tr>
                     <td>
-                      <h4 l10n-id="overview-character-stories-diagram">Количество историй у персонажей</h4>
+                      <h4 l10n-id="overview-character-stories-diagram"></h4>
                       <div id="characterStoriesHist" class="overviewHist"></div>
                     </td>
                     <td>
-                      <h4 l10n-id="overview-character-symbols-diagram">Количество знаков у персонажей</h4>
+                      <h4 l10n-id="overview-character-symbols-diagram"></h4>
                       <div id="characterSymbolsHist" class="overviewHist"></div>
                     </td>
                   </tr>
@@ -237,16 +237,15 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-heading">
           <a href="#" panel-toggler=".groups-tab .group-control-area">
-            <h3 class="panel-title" l10n-id2="">Группы</h3>
+            <h3 class="panel-title" l10n-id="groups-groups"></h3>
           </a>
         </div>
         <div class="panel-body group-control-area">
 
           <div class="group-management-area">
-<!--             <h3 class="panel-title" l10n-id2="">Управление</h3> -->
             <div class="entity-management">
               <div>
-                <input class="create-entity-input" placeholder="Имя группы" l10n-placeholder-id2="characters-character-name"></input>
+                <input class="create-entity-input" l10n-placeholder-id2="groups-group-name"></input>
                 <button class="create-entity-button" l10n-id="common-add"></button>
               </div>
               <div>
@@ -255,8 +254,7 @@ See the License for the specific language governing permissions and
                 >
                 </select> <span l10n-id="common-to"></span>
                 <input class="rename-entity-input"
-                  placeholder="Новое имя группы" 
-                  l10n-placeholder-id2="characters-new-character-name"
+                  l10n-placeholder-id="groups-new-group-name"
                 ></input>
                 <button class="rename-entity-button" l10n-id="common-ok"></button>
               </div>
@@ -302,16 +300,27 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-heading">
           <a href="#" panel-toggler="#characterFilterDiv .group-control-area">
-            <h3 class="panel-title" l10n-id2="">Группы</h3>
+            <h3 class="panel-title" l10n-id="groups-groups"></h3>
           </a>
         </div>
         <div class="panel-body group-control-area">
 
+          <div class="group-editing-area">
+            <h3 class="panel-title" l10n-id="groups-show-groups"></h3>
+            <div class="entity-editing">
+              <select class="save-entity-select" class="select2-mono-selector">
+              </select><br>
+              <button class="show-entity-button" l10n-id="groups-show-group-filter"></button>
+              <br>
+              <button class="save-entity-button" l10n-id="groups-save-group-filter"></button>
+            </div>
+          </div>
+
           <div class="group-management-area">
-<!--             <h3 class="panel-title" l10n-id2="">Управление</h3> -->
+            <h3 class="panel-title" l10n-id="groups-manage-groups"></h3>
             <div class="entity-management">
               <div>
-                <input class="create-entity-input" placeholder="Имя группы" l10n-placeholder-id2="characters-character-name"></input>
+                <input class="create-entity-input" l10n-placeholder-id="groups-group-name"></input>
                 <button class="create-entity-button" l10n-id="common-add"></button>
               </div>
               <div>
@@ -320,8 +329,7 @@ See the License for the specific language governing permissions and
                 >
                 </select> <span l10n-id="common-to"></span>
                 <input class="rename-entity-input"
-                  placeholder="Новое имя группы" 
-                  l10n-placeholder-id2="characters-new-character-name"
+                  l10n-placeholder-id="groups-new-group-name"
                 ></input>
                 <button class="rename-entity-button" l10n-id="common-ok"></button>
               </div>
@@ -330,17 +338,6 @@ See the License for the specific language governing permissions and
                 </select>
                 <button class="remove-entity-button" l10n-id="common-remove"></button>
               </div>
-            </div>
-          </div>
-          
-          <div class="group-editing-area">
-            <h3 class="panel-title" l10n-id2="">Просмотр</h3>
-            <div class="entity-editing">
-              <select class="save-entity-select" class="select2-mono-selector">
-              </select><br>
-              <button class="show-entity-button">Показать фильтр группы</button>
-              <br>
-              <button class="save-entity-button">Сохранить фильтр в группу</button>
             </div>
           </div>
 

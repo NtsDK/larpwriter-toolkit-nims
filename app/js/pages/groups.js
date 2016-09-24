@@ -67,25 +67,23 @@ Groups.createGroup = function (selector, refresh) {
         var name = queryEl(selector + " .create-entity-input").value.trim();
         
         if (name === "") {
-//        Utils.alert(getL10n("characters-character-name-is-not-specified"));
-            Utils.alert("Имя группы не указано");
+            Utils.alert(getL10n("groups-group-name-is-not-specified"));
             return;
         }
         
         DBMS.isGroupNameUsed(name, function(err, isGroupNameUsed){
             if(err) {Utils.handleError(err); return;}
             if (isGroupNameUsed) {
-//            Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [name]));
-                Utils.alert(strFormat("Имя группы {0} уже использовано", [name]));
+                Utils.alert(strFormat(getL10n("groups-group-name-already-used"), [name]));
                 return;
             } 
             DBMS.createGroup(name, function(err){
                 if(err) {Utils.handleError(err); return;}
                 PermissionInformer.refresh(function(err){
                     if(err) {Utils.handleError(err); return;}
-//                if(Characters.currentView.updateSettings){
-//                    Characters.currentView.updateSettings(name);
-//                }
+//                    if(Groups.currentView.updateSettings){
+//                        Groups.currentView.updateSettings(name);
+//                    }
                     refresh();
                 });
             });
@@ -100,27 +98,27 @@ Groups.renameGroup = function (selector, refresh) {
         var toName = queryEl(selector + " .rename-entity-input").value.trim();
         
         if (toName === "") {
-            Utils.alert(getL10n("characters-new-character-name-is-not-specified"));
+            Utils.alert(getL10n("groups-new-group-name-is-not-specified"));
             return;
         }
         
         if (fromName === toName) {
-            Utils.alert(getL10n("characters-names-are-the-same"));
+            Utils.alert(getL10n("groups-names-are-the-same"));
             return;
         }
         
         DBMS.isGroupNameUsed(toName, function(err, isGroupNameUsed){
             if(err) {Utils.handleError(err); return;}
             if (isGroupNameUsed) {
-                Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [toName]));
+                Utils.alert(strFormat(getL10n("groups-group-name-already-used"), [toName]));
             } else {
                 DBMS.renameGroup(fromName, toName, function(err){
                     if(err) {Utils.handleError(err); return;}
                     PermissionInformer.refresh(function(err){
                         if(err) {Utils.handleError(err); return;}
-//                    if(Characters.currentView.updateSettings){
-//                        Characters.currentView.updateSettings(toName);
-//                    }
+//                        if(Groups.currentView.updateSettings){
+//                            Groups.currentView.updateSettings(toName);
+//                        }
                         refresh();
                     });
                 });
@@ -134,7 +132,7 @@ Groups.removeGroup = function (selector, refresh) {
     return function(){
         var name = queryEl(selector + " .remove-entity-select").value.trim();
         
-        if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-character-removing"),[name]))) {
+        if (Utils.confirm(strFormat(getL10n("groups-are-you-sure-about-group-removing"),[name]))) {
             DBMS.removeGroup(name, function(err){
                 if(err) {Utils.handleError(err); return;}
                 PermissionInformer.refresh(function(err){

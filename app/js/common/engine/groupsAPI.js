@@ -40,12 +40,12 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.createGroup = function(groupName, callback) {
             "use strict";
             if(groupName === ""){
-                callback(new Errors.ValidationError("characters-character-name-is-not-specified"));
+                callback(new Errors.ValidationError("groups-group-name-is-not-specified"));
                 return;
             }
             
             if(this.database.Characters[groupName]){
-                callback(new Errors.ValidationError("characters-character-name-already-used", [groupName]));
+                callback(new Errors.ValidationError("groups-group-name-already-used", [groupName]));
                 return;
             }
             
@@ -65,17 +65,17 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.renameGroup = function(fromName, toName, callback) {
             "use strict";
             if (toName === "") {
-                callback(new Errors.ValidationError("characters-new-character-name-is-not-specified"));
+                callback(new Errors.ValidationError("groups-new-group-name-is-not-specified"));
                 return;
             }
 
             if (fromName === toName) {
-                callback(new Errors.ValidationError("characters-names-are-the-same"));
+                callback(new Errors.ValidationError("groups-names-are-the-same"));
                 return;
             }
             
             if(this.database.Groups[toName]){
-                callback(new Errors.ValidationError("characters-character-name-already-used", [toName]));
+                callback(new Errors.ValidationError("groups-group-name-already-used", [toName]));
                 return;
             }
             

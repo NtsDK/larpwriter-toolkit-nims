@@ -43,7 +43,7 @@ GroupProfile.init = function () {
     GroupProfile.inputItems = {};
     
     GroupProfile.profileSettings.forEach(function (profileSettings) {
-        profileSettings.displayName = profileSettings.name;
+        profileSettings.displayName = getL10n("groups-" + profileSettings.name);
         addEl(tbody, GroupProfile.makeInput(profileSettings));
     });
     
@@ -86,7 +86,7 @@ GroupProfile.makeInput = function (profileItemConfig) {
     "use strict";
     var tr = makeEl("tr");
     var td = makeEl("td");
-    td.appendChild(makeText(profileItemConfig.name));
+    td.appendChild(makeText(profileItemConfig.displayName));
     tr.appendChild(td);
 
     td = makeEl("td");

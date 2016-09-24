@@ -383,3 +383,7 @@ See the License for the specific language governing permissions and
   display:flex;
   justify-content: space-between;
 }
+
+.rename-entity-select, .remove-entity-select, .save-entity-select{
+  width: 200px;
+}
