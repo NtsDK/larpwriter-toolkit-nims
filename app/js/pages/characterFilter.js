@@ -103,7 +103,22 @@ CharacterFilter.init = function () {
     "use strict";
     listen(getEl('profileItemSelector'), "change", UI.showSelectedEls("-dependent"));
     
+    listen(queryEl("#characterFilterDiv .create-entity-button"), "click", Groups.createGroup('#characterFilterDiv', CharacterFilter.groupAreaRefresh));
+    listen(queryEl("#characterFilterDiv .rename-entity-button"), "click", Groups.renameGroup('#characterFilterDiv', CharacterFilter.groupAreaRefresh));
+    listen(queryEl("#characterFilterDiv .remove-entity-button"), "click", Groups.removeGroup('#characterFilterDiv', CharacterFilter.groupAreaRefresh));
+    listen(queryEl("#characterFilterDiv .show-entity-button"), "click", CharacterFilter.loadFilterFromGroup);
+    listen(queryEl("#characterFilterDiv .save-entity-button"), "click", CharacterFilter.saveFilterToGroup);
+    
     CharacterFilter.content = getEl("characterFilterDiv");
+};
+
+CharacterFilter.groupAreaRefresh = function(){
+    PermissionInformer.getGroupNamesArray(true, Utils.processError(function(names){
+        Groups.rebuildInterface("#characterFilterDiv", names);
+        var data = getSelect2Data(names);
+        clearEl(queryEl("#characterFilterDiv .save-entity-select"));
+        $("#characterFilterDiv .save-entity-select").select2(data);
+    }));
 };
 
 CharacterFilter.refresh = function () {
@@ -113,6 +128,8 @@ CharacterFilter.refresh = function () {
     CharacterFilter.inputItems = {};
     
     var filterSettingsDiv = clearEl(getEl("filterSettingsDiv"));
+    
+    CharacterFilter.groupAreaRefresh();
 
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
         if(err) {Utils.handleError(err); return;}
@@ -156,6 +173,76 @@ CharacterFilter.rebuildContent = function () {
     var type = CharacterFilter.filterConfiguration.getProfileItemType(CharacterFilter.sortKey);
     addEls(filterContent, data.sort(CharacterFilter.sortDataRows(type)).map(CharacterFilter.makeDataString));
     UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
+};
+
+CharacterFilter.saveFilterToGroup = function(){
+    var groupName = queryEl("#characterFilterDiv .save-entity-select").value.trim();
+    DBMS.saveFilterToGroup(groupName, CharacterFilter.makeFilterModel(), Utils.processError());
+};
+
+CharacterFilter.loadFilterFromGroup = function(){
+    var groupName = queryEl("#characterFilterDiv .save-entity-select").value.trim();
+    DBMS.getGroup(groupName,  function(err, group){
+        if(err) {Utils.handleError(err); return;}
+        CharacterFilter.applyFilterModel(group.filterModel);
+        CharacterFilter.rebuildContent();
+    });
+};
+
+CharacterFilter.applyFilterModel = function(filterModel){
+    var filterModel = filterModel.reduce(function(result, elem){
+        result[elem.name] = elem; 
+        return result;
+    }, {});
+    Object.keys(CharacterFilter.inputItems).forEach(function(inputItemName){
+        if (inputItemName.endsWith(":numberInput")) {
+            return;
+        }
+        
+        var inputItem = CharacterFilter.inputItems[inputItemName];
+        var selectedOptions, regex, num, i, counter;
+        
+        if(!filterModel[inputItemName]){
+            switch (inputItem.selfInfo.type) {
+            case "enum":
+            case "checkbox":
+                for (i = 0; i < inputItem.options.length; i +=1) {
+                    inputItem.options[i].selected = true;
+                }
+                break;
+            case "number":
+                CharacterFilter.inputItems[inputItem.selfInfo.name + ":numberInput"].value = 0;
+                inputItem.value = 'ignore';
+                break;
+            case "text":
+            case "string":
+                inputItem.value = '';
+                break;
+            }
+        } else {
+            var modelItem = filterModel[inputItemName];
+            switch (inputItem.selfInfo.type) {
+            case "enum":
+                for (i = 0; i < inputItem.options.length; i +=1) {
+                    inputItem.options[i].selected = modelItem.selectedOptions[inputItem.options[i].value] ? true : false;
+                }
+                break;
+            case "checkbox":
+                inputItem.options[0].selected = modelItem.selectedOptions["true"];
+                inputItem.options[1].selected = modelItem.selectedOptions["false"];
+                break;
+            case "number":
+                inputItem.value = modelItem.condition;
+                CharacterFilter.inputItems[inputItem.selfInfo.name + ":numberInput"].value = modelItem.num;
+                break;
+            case "text":
+            case "string":
+                inputItem.value = modelItem.regexString;
+                break;
+            }
+        }
+    });
+    
 };
 
 CharacterFilter.makeFilterModel = function(){

@@ -190,8 +190,8 @@ if(MODE === "NIMS_Server"){
         callback(null, true);
     };
     
-    PermissionInformer.getCharacterNamesArray = function(editableOnly, callback){
-        DBMS.getCharacterNamesArray(function(err, names){
+    PermissionInformer.getEntityNamesArray = R.curry(function(entityNamesFunction, editableOnly, callback){
+        DBMS[entityNamesFunction](function(err, names){
             if(err) {Utils.handleError(err); return;}
             var newNames = [];
             names.forEach(function(name){
@@ -203,22 +203,12 @@ if(MODE === "NIMS_Server"){
             });
             callback(null, newNames);
         });
-    };
+    });
     
-    PermissionInformer.getStoryNamesArray = function(editableOnly, callback){
-        DBMS.getStoryNamesArray(function(err, names){
-            if(err) {Utils.handleError(err); return;}
-            var newNames = [];
-            names.forEach(function(name){
-                newNames.push({
-                    displayName:name,
-                    value:name,
-                    editable: true
-                });
-            });
-            callback(null, newNames);
-        });
-    };
+    PermissionInformer.getCharacterNamesArray = PermissionInformer.getEntityNamesArray("getCharacterNamesArray");
+    PermissionInformer.getStoryNamesArray = PermissionInformer.getEntityNamesArray("getStoryNamesArray");
+    PermissionInformer.getGroupNamesArray = PermissionInformer.getEntityNamesArray("getGroupNamesArray");
+    
     
     PermissionInformer.isCharacterEditable = function(characterName, callback){
         callback(null, true);

@@ -33,6 +33,7 @@ See the License for the specific language governing permissions and
         var Log =  getLogSchema();
         var Characters =  getCharactersSchema(base.ProfileSettings);
         var Stories =  getStoriesSchema(base.Characters);
+        var Groups =  getGroupsSchema(base.ProfileSettings);
         var ManagementInfo = {};
         if(base.ManagementInfo){
             ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories);
@@ -47,11 +48,12 @@ See the License for the specific language governing permissions and
                 "type" : "string"
             },
             Log : Log,
+            Groups : Groups,
             Settings: {},
             ManagementInfo: ManagementInfo
         };
 
-        schema.required = ["Meta", "ProfileSettings","Version", "Characters", "Stories", "Log"];
+        schema.required = ["Meta", "ProfileSettings","Version", "Characters", "Stories", "Log", 'Groups'];
         schema.additionalProperties = false;
         
         return schema;
@@ -130,6 +132,10 @@ See the License for the specific language governing permissions and
             }
         };
     };
+    
+    function getGroupsSchema(profileSettings) {
+        return {};
+    }
     
     function getCharactersSchema(profileSettings) {
         var characterProperties = {

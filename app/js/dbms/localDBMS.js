@@ -33,6 +33,7 @@ function makeLocalDBMS(){
     statisticsAPI(LocalDBMS, R, CommonUtils);
     consistencyCheckAPI(LocalDBMS, R, CommonUtils, Ajv, Schema);
     charactersAPI(LocalDBMS, Constants, CommonUtils, Errors, listeners);
+    groupsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
     profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors);
     storyBaseAPI(LocalDBMS, R, CommonUtils, Errors);

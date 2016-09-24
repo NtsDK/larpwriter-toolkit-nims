@@ -84,6 +84,7 @@ PageManager.onDatabaseLoad = function () {
             Utils.addView(containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
             Utils.addView(containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
             Utils.addView(containers, "character-filter", CharacterFilter, {id:"filterButton", tooltip:true});
+            Utils.addView(containers, "groups", Groups, {id:"groupsButton", tooltip:true});
             
             addEl(navigation, addClass(makeEl("div"), "nav-separator"));
             
@@ -116,7 +117,7 @@ PageManager.onDatabaseLoad = function () {
 //            addEl(navigation, l10nBtn);
             
             Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
-//            addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
+            addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
 //            addEl(navigation, PageManager.makeButton("aboutButton", "about", null, btnOpts));
             if(MODE === "NIMS_Server"){
                 Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});

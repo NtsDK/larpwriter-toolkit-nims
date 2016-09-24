@@ -232,8 +232,124 @@ See the License for the specific language governing permissions and
 
     </div>
     
+    <div class="groups-tab">
+    
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="#" panel-toggler=".groups-tab .group-control-area">
+            <h3 class="panel-title" l10n-id2="">Группы</h3>
+          </a>
+        </div>
+        <div class="panel-body group-control-area">
+
+          <div class="group-management-area">
+<!--             <h3 class="panel-title" l10n-id2="">Управление</h3> -->
+            <div class="entity-management">
+              <div>
+                <input class="create-entity-input" placeholder="Имя группы" l10n-placeholder-id2="characters-character-name"></input>
+                <button class="create-entity-button" l10n-id="common-add"></button>
+              </div>
+              <div>
+                <span l10n-id="common-rename-from"></span> <select
+                  class="rename-entity-select select2-mono-selector"
+                >
+                </select> <span l10n-id="common-to"></span>
+                <input class="rename-entity-input"
+                  placeholder="Новое имя группы" 
+                  l10n-placeholder-id2="characters-new-character-name"
+                ></input>
+                <button class="rename-entity-button" l10n-id="common-ok"></button>
+              </div>
+              <div>
+                <select class="remove-entity-select" class="select2-mono-selector">
+                </select>
+                <button class="remove-entity-button" l10n-id="common-remove"></button>
+              </div>
+            </div>
+          </div>
+          
+<!--           <div class="group-editing-area"> -->
+<!--             <h3 class="panel-title" l10n-id2="">Просмотр</h3> -->
+<!--             <div class="entity-editing"> -->
+<!--               <select class="entity-editing__entity-select" class="select2-mono-selector"> -->
+<!--               </select><br> -->
+<!--               <button class="entity-editing__save-entity-button">Сохранить фильтр как группу</button> -->
+<!--             </div> -->
+<!--           </div> -->
+
+        </div>
+      </div>
+    
+
+<!--       <div class="panel panel-default"> -->
+<!--         <div class="panel-heading"> -->
+<!--           <a href="#" panel-toggler="#charactersDiv div.panel-body"> <h3 class="panel-title" l10n-id="characters-character-managing"></h3></a> -->
+<!--         </div> -->
+<!--         <div class="panel-body"> -->
+<!--           <input id="characterNameInput" l10n-placeholder-id="characters-character-name"></input> -->
+<!--           <button id="createCharacterButton" l10n-id="common-add"></button> -->
+<!--           <br> <span l10n-id="common-rename-from"></span> <select id="fromName" class="select2-mono-selector"></select>  -->
+<!--           <span l10n-id="common-to"></span> <input -->
+<!--             id="toName" l10n-placeholder-id="characters-new-character-name"></input> -->
+<!--           <button id="renameCharacter" l10n-id="common-ok"></button> -->
+<!--           <br> <select id="characterRemoveSelector" class="select2-mono-selector" ></select> -->
+<!--           <button id="removeCharacterButton" l10n-id="common-remove"></button> -->
+<!--         </div> -->
+<!--       </div> -->
+    
+      <div id="sub-tab-navigation"></div>
+      <div id="sub-tab-content"></div>
+    </div>
 
     <div id="characterFilterDiv">
+    
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="#" panel-toggler="#characterFilterDiv .group-control-area">
+            <h3 class="panel-title" l10n-id2="">Группы</h3>
+          </a>
+        </div>
+        <div class="panel-body group-control-area">
+
+          <div class="group-management-area">
+<!--             <h3 class="panel-title" l10n-id2="">Управление</h3> -->
+            <div class="entity-management">
+              <div>
+                <input class="create-entity-input" placeholder="Имя группы" l10n-placeholder-id2="characters-character-name"></input>
+                <button class="create-entity-button" l10n-id="common-add"></button>
+              </div>
+              <div>
+                <span l10n-id="common-rename-from"></span> <select
+                  class="rename-entity-select select2-mono-selector"
+                >
+                </select> <span l10n-id="common-to"></span>
+                <input class="rename-entity-input"
+                  placeholder="Новое имя группы" 
+                  l10n-placeholder-id2="characters-new-character-name"
+                ></input>
+                <button class="rename-entity-button" l10n-id="common-ok"></button>
+              </div>
+              <div>
+                <select class="remove-entity-select" class="select2-mono-selector">
+                </select>
+                <button class="remove-entity-button" l10n-id="common-remove"></button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="group-editing-area">
+            <h3 class="panel-title" l10n-id2="">Просмотр</h3>
+            <div class="entity-editing">
+              <select class="save-entity-select" class="select2-mono-selector">
+              </select><br>
+              <button class="show-entity-button">Показать фильтр группы</button>
+              <br>
+              <button class="save-entity-button">Сохранить фильтр в группу</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
       <table>
         <tr>
           <td>

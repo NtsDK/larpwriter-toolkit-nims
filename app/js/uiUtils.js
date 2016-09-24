@@ -99,10 +99,14 @@ UI.filterOptions = function(sel){
 UI.initPanelTogglers = function(){
     "use strict";
     var elems = document.querySelectorAll("[panel-toggler]");
-    var el, sel;
+    var el, sel, attr;
     for (var i = 0; i < elems.length; i++) {
         el = elems[i];
-        sel = document.querySelector(getAttr(el,"panel-toggler"));
+        attr = getAttr(el,"panel-toggler");
+        sel = document.querySelector(attr);
+        if(sel == null){
+            Utils.alert("Panel toggler is broken: " + attr);
+        }
         listen(el, "click", UI.togglePanel(sel))
     }
 };

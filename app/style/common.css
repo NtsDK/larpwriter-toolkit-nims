@@ -112,21 +112,33 @@ body {
 #logViewerButton{
   background: transparent url("../images/monuments.svg") no-repeat scroll 50% 50%;
 }
+#groupsButton{
+  background: transparent url("../images/rightarrow7.svg") no-repeat scroll 50% 50%;
+}
 
-#accessManagerButton, #chatButton, #timelineButton, #socialNetworkButton, #filterButton, #logViewerButton{
+#accessManagerButton, #chatButton, 
+#timelineButton, #socialNetworkButton, 
+#filterButton, #logViewerButton, 
+#groupsButton
+{
   background-color:  rgb(221, 221, 221);
   width: 50px;
   background-size: 35px;
 }
 
 #accessManagerButton:hover, #chatButton:hover,
-#timelineButton:hover, #socialNetworkButton:hover, #filterButton:hover, #logViewerButton:hover
+#timelineButton:hover, #socialNetworkButton:hover, 
+#filterButton:hover, #logViewerButton:hover,
+#groupsButton:hover
 {
   background-color:  #ccc;
 }
 
 #accessManagerButton.active, #chatButton.active, 
-#timelineButton.active, #socialNetworkButton.active, #filterButton.active, #logViewerButton.active{
+#timelineButton.active, #socialNetworkButton.active, 
+#filterButton.active, #logViewerButton.active,
+#groupsButton.active
+{
   color: #FFF;
 /*   background-color: #337AB7; */
   background-color: rgb(204,133,72);

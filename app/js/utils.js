@@ -258,6 +258,10 @@ function getEl(id){
   return document.getElementById(id);
 };
 
+function queryEl(sel){
+    return document.querySelector(sel);
+};
+
 function getEls(clazz){
   return document.getElementsByClassName(clazz);
 };

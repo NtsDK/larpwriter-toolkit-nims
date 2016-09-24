@@ -105,6 +105,10 @@ See the License for the specific language governing permissions and
             }
             data.Version = "0.4.4u3";
         }
+        if(data.Version === "0.4.4u3"){
+            data.Groups = {};
+            data.Version = "0.5.0";
+        }
         
         exists(data, 'base', 'Characters');
         exists(data, 'base', 'ProfileSettings');
