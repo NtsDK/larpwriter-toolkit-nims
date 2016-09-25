@@ -190,13 +190,6 @@ See the License for the specific language governing permissions and
                     return Object.keys(filterItem.selectedOptions).length != 0;
                 });
             });
-//            var that = this;
-//            Object.keys(this.database.Characters).forEach(function(characterName) {
-//                var enumValue = that.database.Characters[characterName][profileItemName];
-//                if (!newOptionsMap[enumValue]) {
-//                    that.database.Characters[characterName][profileItemName] = defaultValue;
-//                }
-//            });
         };
         
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];

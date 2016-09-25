@@ -241,10 +241,10 @@ function hasClass(o, c){
     return (re.test(o.className));
 };
  
-function removeClass(o, c){
+var removeClass = R.curry(function(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "")
-};
+});
 
 function setClassByCondition(o,c,condition){
     if(condition){
@@ -301,6 +301,11 @@ var rAddEl = R.curry(function(child, parent){
 function setAttr(el, name, value){
   el.setAttribute(name, value);
   return el;
+};
+
+function delAttr(el, name){
+    el.removeAttribute(name);
+    return el;
 };
 
 function getAttr(el, name){

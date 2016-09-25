@@ -47,8 +47,10 @@ CharacterFilter.refresh = function () {
     CharacterFilter.sortKey = Constants.CHAR_NAME;
     CharacterFilter.sortDir = "asc";
     CharacterFilter.inputItems = {};
+    CharacterFilter.checkboxes = {};
     
-    var filterSettingsDiv = clearEl(getEl("filterSettingsDiv"));
+    var filterSettingsDiv = clearEl(queryEl("#characterFilterDiv .filter-settings-panel"));
+    addEl(filterSettingsDiv, addClass(makeEl('div'), 'separator'));
     
     CharacterFilter.groupAreaRefresh();
 
@@ -58,7 +60,7 @@ CharacterFilter.refresh = function () {
         CharacterFilter.filterConfiguration = filterConfiguration;
         
         CharacterFilter.filterConfiguration.getAllProfileSettings().forEach(function (profileSettings) {
-            addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, CharacterFilter.inputItems));
+            addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, CharacterFilter.inputItems, CharacterFilter.checkboxes));
         });
         
         UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), 
@@ -100,10 +102,8 @@ CharacterFilter.loadFilterFromGroup = function(){
 };
 
 CharacterFilter.applyFilterModel = function(filterModel){
-    var filterModel = filterModel.reduce(function(result, elem){
-        result[elem.name] = elem; 
-        return result;
-    }, {});
+    var filterModel = arr2map(filterModel, 'name'); 
+    
     Object.keys(CharacterFilter.inputItems).forEach(function(inputItemName){
         if (inputItemName.endsWith(":numberInput")) {
             return;
@@ -112,6 +112,9 @@ CharacterFilter.applyFilterModel = function(filterModel){
         var inputItem = CharacterFilter.inputItems[inputItemName];
         var selectedOptions, regex, num, i, counter;
         
+        if(CharacterFilter.checkboxes[inputItemName].checked != (filterModel[inputItemName] != null)){
+            CharacterFilter.checkboxes[inputItemName].click();
+        };
         if(!filterModel[inputItemName]){
             switch (inputItem.selfInfo.type) {
             case "enum":
@@ -159,6 +162,9 @@ CharacterFilter.makeFilterModel = function(){
     var model = [];
     Object.keys(CharacterFilter.inputItems).forEach(function(inputItemName){
         if (inputItemName.endsWith(":numberInput")) {
+            return;
+        }
+        if(CharacterFilter.checkboxes[inputItemName].checked === false){
             return;
         }
         var inputItem = CharacterFilter.inputItems[inputItemName];
@@ -267,116 +273,131 @@ CharacterFilter.onSortChange = function (event) {
     
     if (CharacterFilter.sortKey === target.info) {
         CharacterFilter.sortDir = CharacterFilter.sortDir === "asc" ? "desc" : "asc";
-        if(CharacterFilter.sortDir === "desc"){
-            addClass(target, "sortDesc");
-            removeClass(target, "sortAsc");
-        } else {
-            addClass(target, "sortAsc");
-            removeClass(target, "sortDesc");
-        }
+        setClassByCondition(target, 'sortDesc', CharacterFilter.sortDir === 'desc');
+        setClassByCondition(target, 'sortAsc', CharacterFilter.sortDir === 'asc');
     } else {
         var filterHead = getEl("filterHead");
-        var elems = filterHead.getElementsByClassName("sortAsc");
-        var i;
-        for (i = 0; i < elems.length; i++) {
-            removeClass(elems[i], "sortAsc");
-        }
-        elems = filterHead.getElementsByClassName("sortDesc");
-        for (i = 0; i < elems.length; i++) {
-            removeClass(elems[i], "sortDesc");
-        }
+        nl2array(filterHead.getElementsByClassName("sortAsc")).forEach(removeClass(R.__, "sortAsc"));
+        nl2array(filterHead.getElementsByClassName("sortDesc")).forEach(removeClass(R.__, "sortDesc"));
         
         CharacterFilter.sortKey = target.info;
         CharacterFilter.sortDir = "asc";
         addClass(target, "sortAsc");
-        
     }
     CharacterFilter.rebuildContent();
 };
 
-CharacterFilter.makeInput = function (profileItemConfig, inputItems) {
-    "use strict";
+CharacterFilter.makeInput = function (profileItemConfig, inputItems, checkboxes) {
     var div = makeEl('div');
-    div.appendChild(makeText(profileItemConfig.displayName));
-    div.appendChild(makeEl("br"));
+    var span = makeEl('label');
+    var checkbox = makeEl('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = false;
+    addEl(span, checkbox);
+    addEl(span, makeText(profileItemConfig.displayName));
+    var toggleContent = function(itemContainer, inputContainer){
+        return function(event){
+            setClassByCondition(inputContainer, 'hidden', !event.target.checked);
+            setClassByCondition(itemContainer, 'flex-front-element', event.target.checked);
+            CharacterFilter.rebuildContent();
+        };
+    };
+    
+    addEl(div, span);
+    var inputContainer = makeEl('div');
+    addClass(inputContainer, 'hidden');
+    addEl(div, inputContainer);
+    listen(checkbox, 'click', toggleContent(div, inputContainer));
+    checkboxes[profileItemConfig.name] = checkbox;
+    
+    addEl(inputContainer, CharacterFilter.makeFilter(profileItemConfig));
+    return div;
+};
 
-    var input, selector, values;
-
+CharacterFilter.makeFilter = function(profileItemConfig){
     switch (profileItemConfig.type) {
     case "text":
     case "string":
-        input = makeEl("input");
-        input.selfInfo = profileItemConfig;
-        input.value = "";
-        div.appendChild(input);
-        inputItems[profileItemConfig.name] = input;
-
-        input.addEventListener("input", CharacterFilter.rebuildContent);
-
-        break;
+        return CharacterFilter.makeTextFilter(profileItemConfig);
     case "enum":
-        selector = makeEl("select");
-        selector.selfInfo = profileItemConfig;
-        selector.multiple = "multiple";
-        
-        values = profileItemConfig.value.split(",");
-        selector.size = values.length;
-
-        values.forEach(function (value) {
-            var option = makeEl("option");
-            option.selected = true;
-            option.appendChild(makeText(value));
-            selector.appendChild(option);
-        });
-        div.appendChild(selector);
-        inputItems[profileItemConfig.name] = selector;
-
-        selector.addEventListener("change", CharacterFilter.rebuildContent);
-
-        break;
+        return CharacterFilter.makeEnumFilter(profileItemConfig);
     case "number":
-        selector = makeEl("select");
-        selector.selfInfo = profileItemConfig;
-
-        Constants.numberFilter.forEach(function (value) {
-            var option = makeEl("option");
-            option.appendChild(makeText(constL10n(value)));
-            option.value = value;
-            selector.appendChild(option);
-        });
-        selector.selectedIndex = 0;
-        div.appendChild(selector);
-        inputItems[profileItemConfig.name] = selector;
-        selector.addEventListener("change", CharacterFilter.rebuildContent);
-
-        input = makeEl("input");
-        input.value = 0;
-        input.type = "number";
-        div.appendChild(input);
-        inputItems[profileItemConfig.name + ":numberInput"] = input;
-        input.addEventListener("input", CharacterFilter.rebuildContent);
-
-        break;
+        return CharacterFilter.makeNumberFilter(profileItemConfig);
     case "checkbox":
-        selector = makeEl("select");
-        selector.selfInfo = profileItemConfig;
-        selector.multiple = "multiple";
-        selector.size = 2;
-
-        Constants.yesNo.forEach(function(value){
-            var option = makeEl("option");
-            option.selected = true;
-            option.value = value;
-            option.appendChild(makeText(constL10n(value)));
-            selector.appendChild(option);
-        });
-        div.appendChild(selector);
-        inputItems[profileItemConfig.name] = selector;
-        selector.addEventListener("change", CharacterFilter.rebuildContent);
-
-        break;
+        return CharacterFilter.makeCheckboxFilter(profileItemConfig);
     }
+};
 
-    div.appendChild(makeEl("br"));
+CharacterFilter.makeTextFilter = function(profileItemConfig){
+    var input = makeEl("input");
+    input.selfInfo = profileItemConfig;
+    input.value = "";
+    input.addEventListener("input", CharacterFilter.rebuildContent);
+    CharacterFilter.inputItems[profileItemConfig.name] = input;
+    return input;
+};
+
+CharacterFilter.makeCommonEnumFilter = function(profileItemConfig, values){
+    var selector = makeEl("select");
+    selector.selfInfo = profileItemConfig;
+    selector.multiple = "multiple";
+    selector.size = values.length;
+
+    values.forEach(function (value) {
+        var option = makeEl("option");
+        option.selected = true;
+        option.value = value.name;
+        option.appendChild(makeText(value.displayName));
+        selector.appendChild(option);
+    });
+    selector.addEventListener("change", CharacterFilter.rebuildContent);
+    CharacterFilter.inputItems[profileItemConfig.name] = selector;
+    return selector;
+};
+
+
+CharacterFilter.makeEnumFilter = function(profileItemConfig){
+    var values = profileItemConfig.value.split(",").map(function(value){
+        return {
+            name: value,
+            displayName: value
+        };
+    });
+    return CharacterFilter.makeCommonEnumFilter(profileItemConfig, values);
+};
+
+CharacterFilter.makeCheckboxFilter = function(profileItemConfig){
+    var values = [ {
+        name : Constants[true],
+        displayName : constL10n(Constants[true])
+    }, {
+        name : Constants[false],
+        displayName : constL10n(Constants[false])
+    } ];
+    return CharacterFilter.makeCommonEnumFilter(profileItemConfig, values);
+};
+
+CharacterFilter.makeNumberFilter = function(profileItemConfig){
+    var selector = makeEl("select");
+    selector.selfInfo = profileItemConfig;
+
+    Constants.numberFilter.forEach(function (value) {
+        var option = makeEl("option");
+        option.appendChild(makeText(constL10n(value)));
+        option.value = value;
+        selector.appendChild(option);
+    });
+    selector.selectedIndex = 0;
+    CharacterFilter.inputItems[profileItemConfig.name] = selector;
+    selector.addEventListener("change", CharacterFilter.rebuildContent);
+
+    var input = makeEl("input");
+    input.value = 0;
+    input.type = "number";
+    CharacterFilter.inputItems[profileItemConfig.name + ":numberInput"] = input;
+    input.addEventListener("input", CharacterFilter.rebuildContent);
+    var div = makeEl('div');
+    addEl(div, selector);
+    addEl(div, input);
     return div;
 };

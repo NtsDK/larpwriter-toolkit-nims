@@ -387,3 +387,16 @@ See the License for the specific language governing permissions and
 .rename-entity-select, .remove-entity-select, .save-entity-select{
   width: 200px;
 }
+
+.filter-settings-panel{
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-settings-panel .separator{
+  height: 30px;
+}
+
+.flex-front-element{
+  order: -1;
+}
