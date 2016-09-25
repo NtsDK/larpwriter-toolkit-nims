@@ -12,6 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
+
 (function(callback){
 
     function groupsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
@@ -24,6 +26,25 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getGroup = function(groupName, callback) {
             "use strict";
             callback(null, CommonUtils.clone(this.database.Groups[groupName]));
+        };
+        
+        // preview
+        LocalDBMS.prototype.getAllGroupTexts = function(characterName, callback) {
+            "use strict";
+            var array = [];
+    
+//            for ( var storyName in this.database.Stories) {
+//                var story = this.database.Stories[storyName];
+//                if (story.characters[characterName]
+//                        && story.characters[characterName].inventory
+//                        && story.characters[characterName].inventory !== "") {
+//                    array.push({
+//                        storyName : storyName,
+//                        inventory : story.characters[characterName].inventory
+//                    });
+//                }
+//            }
+            callback(null, array);
         };
         
 //        // social network, character filter
@@ -106,55 +127,69 @@ See the License for the specific language governing permissions and
             profileInfo[fieldName] = value;
             if(callback) callback();
         };
-//        
-//        function _createProfileItem(name, type, value){
-//            "use strict";
-//            var that = this;
-//            Object.keys(that.database.Characters).forEach(function(characterName) {
-//                that.database.Characters[characterName][name] = value;
-//            });
-//        };
-//        
-//        listeners.createProfileItem = listeners.createProfileItem || [];
-//        listeners.createProfileItem.push(_createProfileItem);
-//
-//        function _removeProfileItem(index, profileItemName){
-//            "use strict";
-//            var that = this;
-//            Object.keys(this.database.Characters).forEach(function(characterName) {
-//                delete that.database.Characters[characterName][profileItemName];
-//            });
-//        };
-//        
-//        listeners.removeProfileItem = listeners.removeProfileItem || [];
-//        listeners.removeProfileItem.push(_removeProfileItem);
-//
-//        function _changeProfileItemType(profileItemName, newType){
-//            "use strict";
-//            var that = this;
-//            Object.keys(this.database.Characters).forEach(function(characterName) {
-//                that.database.Characters[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
-//            });
-//        };
-//        
-//        listeners.changeProfileItemType = listeners.changeProfileItemType || [];
-//        listeners.changeProfileItemType.push(_changeProfileItemType);
-//
-//        function _renameProfileItem(newName, oldName){
-//            "use strict";
-//            var that = this;
-//            Object.keys(this.database.Characters).forEach(function(characterName) {
-//                var tmp = that.database.Characters[characterName][oldName];
-//                delete that.database.Characters[characterName][oldName];
-//                that.database.Characters[characterName][newName] = tmp;
-//            });
-//        };
-//        
-//        listeners.renameProfileItem = listeners.renameProfileItem || [];
-//        listeners.renameProfileItem.push(_renameProfileItem);
-//        
-//        function _replaceEnumValue(profileItemName, defaultValue, newOptionsMap){
-//            "use strict";
+
+        function _removeProfileItem(index, profileItemName){
+            var subFilterName = 'profile-' + profileItemName;
+            var that = this;
+            Object.keys(this.database.Groups).forEach(function(groupName) {
+                var group = that.database.Groups[groupName];
+                group.filterModel = group.filterModel.filter(function(filterItem){
+                    return filterItem.name !== subFilterName;
+                });
+            });
+        };
+        
+        listeners.removeProfileItem = listeners.removeProfileItem || [];
+        listeners.removeProfileItem.push(_removeProfileItem);
+
+        function _changeProfileItemType(profileItemName, newType){
+            _removeProfileItem.apply(this, [-1, profileItemName]);
+        };
+        
+        listeners.changeProfileItemType = listeners.changeProfileItemType || [];
+        listeners.changeProfileItemType.push(_changeProfileItemType);
+
+        function _renameProfileItem(newName, oldName){
+            var subFilterName = 'profile-' + oldName;
+            var that = this;
+            Object.keys(this.database.Groups).forEach(function(groupName) {
+                var group = that.database.Groups[groupName];
+                group.filterModel = group.filterModel.map(function(filterItem){
+                    if(filterItem.name === subFilterName){
+                        filterItem.name = 'profile-' + newName;
+                    }
+                    return filterItem;
+                });
+            });
+        };
+        
+        listeners.renameProfileItem = listeners.renameProfileItem || [];
+        listeners.renameProfileItem.push(_renameProfileItem);
+        
+        function _replaceEnumValue(profileItemName, defaultValue, newOptionsMap){
+            var subFilterName = 'profile-' + profileItemName;
+            var that = this;
+            Object.keys(this.database.Groups).forEach(function(groupName) {
+                var group = that.database.Groups[groupName];
+                group.filterModel.forEach(function(filterItem){
+                    if(filterItem.name === subFilterName){
+                        for(var selectedOption in filterItem.selectedOptions){
+                            if (!newOptionsMap[selectedOption]) {
+                                delete filterItem.selectedOptions[selectedOption];
+                            }
+                        }
+                    }
+                });
+            });
+            Object.keys(this.database.Groups).forEach(function(groupName) {
+                var group = that.database.Groups[groupName];
+                group.filterModel = group.filterModel.filter(function(filterItem){
+                    if(filterItem.name !== subFilterName){
+                        return true;
+                    }
+                    return Object.keys(filterItem.selectedOptions).length != 0;
+                });
+            });
 //            var that = this;
 //            Object.keys(this.database.Characters).forEach(function(characterName) {
 //                var enumValue = that.database.Characters[characterName][profileItemName];
@@ -162,10 +197,10 @@ See the License for the specific language governing permissions and
 //                    that.database.Characters[characterName][profileItemName] = defaultValue;
 //                }
 //            });
-//        };
-//        
-//        listeners.replaceEnumValue = listeners.replaceEnumValue || [];
-//        listeners.replaceEnumValue.push(_replaceEnumValue);
+        };
+        
+        listeners.replaceEnumValue = listeners.replaceEnumValue || [];
+        listeners.replaceEnumValue.push(_replaceEnumValue);
     };
     
     callback(groupsAPI);
