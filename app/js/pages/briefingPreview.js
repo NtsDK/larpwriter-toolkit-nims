@@ -95,23 +95,31 @@ BriefingPreview.buildContent = function (characterName) {
         
         DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
             if(err) {Utils.handleError(err); return;}
-            PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+            
+            DBMS.getAllGroupTexts(characterName, function(err, groupTexts){
                 if(err) {Utils.handleError(err); return;}
                 
-                var userStoryNamesMap = {};
-                userStoryNames.forEach(function(story){
-                    userStoryNamesMap[story.value] = story;
-                });
+                PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+                    if(err) {Utils.handleError(err); return;}
+                    
+                    var userStoryNamesMap = {};
+                    userStoryNames.forEach(function(story){
+                        userStoryNamesMap[story.value] = story;
+                    });
+    
+                    addEl(content, BriefingPreview.makePanel(makeText(getL10n("briefings-inventory") + ' (' + allInventoryLists.length + ')'), 
+                            BriefingPreview.makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap)));
 
-                addEl(content, BriefingPreview.makePanel(makeText(getL10n("briefings-inventory") + ' (' + allInventoryLists.length + ')'), 
-                        BriefingPreview.makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap)));
-                
-                var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
-                if (groupingByStory) {
-                    BriefingPreview.showEventsByStory(content, characterName, userStoryNamesMap);
-                } else {
-                    BriefingPreview.showEventsByTime(content, characterName, userStoryNamesMap);
-                }
+                    addEl(content, BriefingPreview.makePanel(makeText("Группы" + ' (' + groupTexts.length + ')'), 
+                            BriefingPreview.makeGroupContent(groupTexts)));
+                    
+                    var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
+                    if (groupingByStory) {
+                        BriefingPreview.showEventsByStory(content, characterName, userStoryNamesMap);
+                    } else {
+                        BriefingPreview.showEventsByTime(content, characterName, userStoryNamesMap);
+                    }
+                });
             });
         });
     });
@@ -147,6 +155,16 @@ BriefingPreview.makePanel = function(title, content){
     });
     
     return panel;
+};
+
+BriefingPreview.makeGroupContent = function(groupTexts){
+    return addEls(makeEl('div'), groupTexts.map(function(groupText){
+        var div = makeEl('div');
+        addEl(div,addEl(makeEl('h4'), makeText(groupText.groupName)));
+        var span = addEl(makeEl('span'), makeText(groupText.text));
+        addClass(span, 'briefingTextSpan');
+        return addEl(div, span);
+    }));
 };
 
 BriefingPreview.makeInventoryContent = function(allInventoryLists, characterName, userStoryNamesMap){

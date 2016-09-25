@@ -30,29 +30,23 @@ See the License for the specific language governing permissions and
         
         // preview
         LocalDBMS.prototype.getAllGroupTexts = function(characterName, callback) {
-            "use strict";
-            var array = [];
-    
-//            for ( var storyName in this.database.Stories) {
-//                var story = this.database.Stories[storyName];
-//                if (story.characters[characterName]
-//                        && story.characters[characterName].inventory
-//                        && story.characters[characterName].inventory !== "") {
-//                    array.push({
-//                        storyName : storyName,
-//                        inventory : story.characters[characterName].inventory
-//                    });
-//                }
-//            }
-            callback(null, array);
+            var that = this;
+            this.getCharacterFilterInfo(function(err, info){
+                if(err) {callback(err); return;}
+                var dataArray = CommonUtils.getDataArray(info, characterName);
+                var array = R.values(that.database.Groups).filter(function(group){
+                    return group.doExport && CommonUtils.acceptDataRow(group.filterModel, dataArray);
+                }).map(function(group){
+                    return {
+                        groupName: group.name,
+                        text: group.characterDescription
+                    }
+                });
+                
+                callback(null, array.sort(CommonUtils.charOrdAFactory(R.prop('groupName'))));
+            });
         };
         
-//        // social network, character filter
-//        LocalDBMS.prototype.getAllProfiles = function(callback) {
-//            "use strict";
-//            callback(null, CommonUtils.clone(this.database.Characters));
-//        };
-//        
         LocalDBMS.prototype.isGroupNameUsed = function(groupName, callback) {
             "use strict";
             callback(null, this.database.Groups[groupName] !== undefined);
