@@ -108,6 +108,16 @@ See the License for the specific language governing permissions and
     ];
     
     exports.CHAR_NAME = 'char-name';
+    exports.CHAR_OWNER = 'char-owner';
+    
+    exports.summaryStats = [
+        ['summary-active'      , "constant-active"   ],
+        ['summary-follower'    , "constant-follower" ],
+        ['summary-defensive'   , "constant-defensive"],
+        ['summary-passive'     , "constant-passive"  ],
+        ['summary-completeness', "character-filter-completeness"],
+        ['summary-totalStories', "character-filter-totalStories"]
+    ];
 
     
 })(typeof exports === 'undefined'? this['Constants']={}: exports);

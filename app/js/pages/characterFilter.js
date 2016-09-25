@@ -59,31 +59,50 @@ CharacterFilter.refresh = function () {
                     
         CharacterFilter.filterConfiguration = filterConfiguration;
         
-        CharacterFilter.filterConfiguration.getAllProfileSettings().forEach(function (profileSettings) {
-            addEl(filterSettingsDiv, CharacterFilter.makeInput(profileSettings, CharacterFilter.inputItems, CharacterFilter.checkboxes));
-        });
+        var profileSettings = filterConfiguration.getAllProfileSettings();
+        
+        addEls(filterSettingsDiv, profileSettings.map(CharacterFilter.makeInput));
         
         UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), 
-                CharacterFilter.filterConfiguration.getShowProfileItemNames());
+                CharacterFilter.getShowProfileItemNames(profileSettings));
 
         addEl(clearEl(getEl('filterHead')), CharacterFilter.makeContentHeader(
-                CharacterFilter.filterConfiguration.getHeaderProfileItemNames()));
+                CharacterFilter.getHeaderProfileItemNames(profileSettings)));
         
         CharacterFilter.rebuildContent();
     });
+};
+
+CharacterFilter.getShowProfileItemNames = function(profileSettings){
+    return R.map(R.prop('displayName'), profileSettings.filter(R.prop('canHide')));
+};
+
+CharacterFilter.getHeaderProfileItemNames = function(profileSettings){
+    return R.map(R.pick(['name', 'displayName']), profileSettings);
 };
 
 CharacterFilter.rebuildContent = function () {
     "use strict";
     var filterContent = clearEl(getEl("filterContent"));
 
-    var data = CharacterFilter.filterConfiguration.filter(CharacterFilter.makeFilterModel());
+    var dataArrays = CharacterFilter.filterConfiguration.getDataArrays(CharacterFilter.makeFilterModel());
     
-    addEl(clearEl(getEl("filterResultSize")), makeText(data.length));
+    addEl(clearEl(getEl("filterResultSize")), makeText(dataArrays.length));
     
-    var type = CharacterFilter.filterConfiguration.getProfileItemType(CharacterFilter.sortKey);
-    var sortFunc = FilterConfiguration.sortDataRows(CharacterFilter.filterConfiguration, type, CharacterFilter.sortKey, CharacterFilter.sortDir)
-    addEls(filterContent, data.sort(sortFunc).map(CharacterFilter.makeDataString));
+    var sortFunc = CommonUtils.charOrdAFactoryBase(CharacterFilter.sortDir, function(a){
+        var map = CommonUtils.arr2map(a, 'itemName');
+        var item = map[CharacterFilter.sortKey];
+        var value = item.value;
+        switch (item.type) {
+        case "text":
+        case "string":
+        case "enum":
+            value = value.toLowerCase();
+            break;
+        }
+        return value;
+    });
+    addEls(filterContent, dataArrays.sort(sortFunc).map(CharacterFilter.makeDataString));
     UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
 };
 
@@ -102,7 +121,7 @@ CharacterFilter.loadFilterFromGroup = function(){
 };
 
 CharacterFilter.applyFilterModel = function(filterModel){
-    var filterModel = arr2map(filterModel, 'name'); 
+    var filterModel = CommonUtils.arr2map(filterModel, 'name'); 
     
     Object.keys(CharacterFilter.inputItems).forEach(function(inputItemName){
         if (inputItemName.endsWith(":numberInput")) {
@@ -218,50 +237,35 @@ CharacterFilter.makeFilterModel = function(){
     return model;
 };
 
-CharacterFilter.makeDataString = function (character) {
+CharacterFilter.makeDataString = function (dataArray) {
     "use strict";
-    var tr = makeEl("tr");
-    
-    var profileSettings = CharacterFilter.filterConfiguration.getAllProfileSettings();
-
     var inputItems = CharacterFilter.inputItems;
 
     var td, regex, pos, value;
-    profileSettings.forEach(function (profileItemInfo, i) {
-        td = makeEl("td");
-        value = CharacterFilter.filterConfiguration.getValue(character, profileItemInfo.name);
-        if (profileItemInfo.type === "checkbox") {
-            td.appendChild(makeText(constL10n(Constants[value])));
-        } else if (profileItemInfo.type === "text" && profileItemInfo.name !== Constants.CHAR_NAME) {
-            regex = Utils.globStringToRegex(inputItems[profileItemInfo.name].value);
+    return addEls(makeEl("tr"), dataArray.map(function (valueInfo, i) {
+        value = valueInfo.value;
+        if (valueInfo.type === "checkbox") {
+            value = constL10n(Constants[value]);
+        } else if (valueInfo.type === "text") {
+            regex = CommonUtils.globStringToRegex(inputItems[valueInfo.itemName].value);
             pos = value.search(regex);
-            td.appendChild(makeText(value.substring(pos - 5, pos + 15)));
-        } else {
-            td.appendChild(makeText(value));
+            value = value.substring(pos - 5, pos + 15);
         }
+        td = addEl(makeEl("td"), makeText(value));
         addClass(td, (i-1) +"-dependent");
-        tr.appendChild(td);
-    });
-
-    return tr;
+        return td;
+    }));
 };
 
 CharacterFilter.makeContentHeader = function (profileItemNames) {
     "use strict";
-    var tr = makeEl("tr");
-
-    var td;
-    profileItemNames.forEach(function (elem, i) {
-        td = makeEl("th");
-        td.appendChild(makeText(elem.displayName));
-        td.appendChild(makeEl("span"));
+    return addEls(makeEl("tr"), profileItemNames.map(function (elem, i) {
+        var td = addEls(makeEl("th"), [makeText(elem.displayName), makeEl("span")]);
         td.info = elem.name;
         addClass(td, (i-1) +"-dependent");
-        td.addEventListener("click", CharacterFilter.onSortChange);
-        tr.appendChild(td);
-    });
-
-    return tr;
+        listen(td, "click", CharacterFilter.onSortChange);
+        return td;
+    }));
 };
 
 CharacterFilter.onSortChange = function (event) {
@@ -287,7 +291,7 @@ CharacterFilter.onSortChange = function (event) {
     CharacterFilter.rebuildContent();
 };
 
-CharacterFilter.makeInput = function (profileItemConfig, inputItems, checkboxes) {
+CharacterFilter.makeInput = function (profileItemConfig) {
     var div = makeEl('div');
     var span = makeEl('label');
     var checkbox = makeEl('input');
@@ -308,7 +312,7 @@ CharacterFilter.makeInput = function (profileItemConfig, inputItems, checkboxes)
     addClass(inputContainer, 'hidden');
     addEl(div, inputContainer);
     listen(checkbox, 'click', toggleContent(div, inputContainer));
-    checkboxes[profileItemConfig.name] = checkbox;
+    CharacterFilter.checkboxes[profileItemConfig.name] = checkbox;
     
     addEl(inputContainer, CharacterFilter.makeFilter(profileItemConfig));
     return div;

@@ -170,7 +170,9 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
                         addEl(table, tbody);
                         addEl(inputItem, table);
                     } else {
-                        var data = filterConfiguration.filter(group.filterModel).sort();
+                        var data = filterConfiguration.getDataArrays(group.filterModel).map(function(dataArray){
+                            return dataArray[0].value;
+                        }).sort();
                         var inputItem = clearEl(inputItems[inputName]);
                         addEl(inputItem, makeText(data.join(', ')));
                         addEl(inputItem, makeEl('br'));
@@ -186,11 +188,15 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
     });
 };
 
+GroupProfile.getHeaderDisplayName = function(filterConfiguration, name){
+    return CommonUtils.arr2map(filterConfiguration.getAllProfileSettings(), 'name')[name].displayName;
+};
+
 GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filterItem){
     var tr = makeEl('tr');
     var td = makeEl('td');
     addEl(tr, td);
-    var displayName = filterConfiguration.getHeaderDisplayName(filterItem.name);
+    var displayName = GroupProfile.getHeaderDisplayName(filterConfiguration, filterItem.name);
     addEl(td, makeText(displayName));
     var condition;
     switch(filterItem.type){

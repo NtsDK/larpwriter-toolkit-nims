@@ -90,7 +90,7 @@ Events.refresh = function() {
 
             var selectedStoryName = Events.getSelectedStoryName(storyNames);
 
-            var map = arr2map(allStoryNames, 'value');
+            var map = CommonUtils.arr2map(allStoryNames, 'value');
 
             storyNames.forEach(function(elem) {
                 elem.displayName = map[elem.storyName].displayName;
@@ -135,7 +135,7 @@ Events.updateAdaptationSelector = function (storyName) {
                 var characterNames = Events.getCharacterNames(characterArray);
                 var eventIndexes = Events.getEventIndexes(eventArray);
                 
-                var map = arr2map(allCharacters, 'value');
+                var map = CommonUtils.arr2map(allCharacters, 'value');
     
                 characterArray.forEach(function(elem) {
                     elem.displayName = map[elem.characterName].displayName;

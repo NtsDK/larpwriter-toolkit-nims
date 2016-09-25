@@ -88,7 +88,7 @@ UI.filterOptions = function(sel){
     return function(event){
         var val = event.target.value;
         var i, opt;
-        val = Utils.globStringToRegex(val.trim().toLowerCase());
+        val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
         for (i = 0; i < sel.options.length; i += 1) {
             opt = sel.options[i];
             setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
