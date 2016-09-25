@@ -127,6 +127,25 @@ See the License for the specific language governing permissions and
             profileInfo[fieldName] = value;
             if(callback) callback();
         };
+        
+        LocalDBMS.prototype.getCharacterFilterInfo = function(callback) {
+            var that = this;
+            that.getCharacterNamesArray(function(err, characterOwners){
+                if(err) {callback(err); return;}
+                characterOwners = R.zipObj(characterOwners, R.repeat('user', characterOwners.length));
+                that.getAllProfiles(function(err, profiles){
+                    if(err) {callback(err); return;}
+                    that.getCharactersSummary(function(err, charactersSummary){
+                        if(err) {callback(err); return;}
+                        that.getAllProfileSettings(function(err, allProfileSettings){
+                            if(err) {callback(err); return;}
+                            var info = CommonUtils.makeFilterInfo(allProfileSettings, characterOwners, profiles, charactersSummary, Constants);
+                            callback(null, info);
+                        });
+                    });
+                });
+            });
+        };
 
         function _removeProfileItem(index, profileItemName){
             var subFilterName = 'profile-' + profileItemName;

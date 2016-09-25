@@ -31,21 +31,26 @@ function FilterConfiguration(info){
 };
 
 FilterConfiguration.makeFilterConfiguration = function(callback){
-    PermissionInformer.getOwnerMap('characters', function(err, characterOwners){
+    DBMS.getCharacterFilterInfo(function(err, info){
         if(err) {Utils.handleError(err); return;}
-        DBMS.getAllProfiles(function(err, profiles){
-            if(err) {Utils.handleError(err); return;}
-            DBMS.getCharactersSummary(function(err, charactersSummary){
-                if(err) {Utils.handleError(err); return;}
-                DBMS.getAllProfileSettings(function(err, allProfileSettings){
-                    if(err) {Utils.handleError(err); return;}
-                    var info = CommonUtils.makeFilterInfo(allProfileSettings, characterOwners, profiles, charactersSummary, Constants);
-                    var filterConfiguration = new FilterConfiguration(info);
-                    callback(null, filterConfiguration);
-                });
-            });
-        });
+        var filterConfiguration = new FilterConfiguration(info);
+        callback(null, filterConfiguration);
     });
+//    PermissionInformer.getOwnerMap('characters', function(err, characterOwners){
+//        if(err) {Utils.handleError(err); return;}
+//        DBMS.getAllProfiles(function(err, profiles){
+//            if(err) {Utils.handleError(err); return;}
+//            DBMS.getCharactersSummary(function(err, charactersSummary){
+//                if(err) {Utils.handleError(err); return;}
+//                DBMS.getAllProfileSettings(function(err, allProfileSettings){
+//                    if(err) {Utils.handleError(err); return;}
+//                    var info = CommonUtils.makeFilterInfo(allProfileSettings, characterOwners, profiles, charactersSummary, Constants);
+//                    var filterConfiguration = new FilterConfiguration(info);
+//                    callback(null, filterConfiguration);
+//                });
+//            });
+//        });
+//    });
 };
 
 FilterConfiguration.prototype.getAllProfileSettings = function(){

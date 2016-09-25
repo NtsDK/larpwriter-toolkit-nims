@@ -190,20 +190,20 @@ if(MODE === "NIMS_Server"){
         callback(null, true);
     };
     
-    PermissionInformer.getOwnerMap = function(objectType, callback){
-        var func;
-        switch(objectType){
-        case 'characters': func = 'getCharacterNamesArray'; break;
-        case 'stories': func = 'getStoryNamesArray'; break;
-        case 'groups': func = 'getGroupNamesArray'; break;
-        default: callback("Unknown objectType: " + objectType);
-        }
-        DBMS[func](function(err, names){
-            if(err) {Utils.handleError(err); return;}
-            names = R.zipObj(names, R.repeat('user', names.length));
-            callback(null, names);
-        });
-    };
+//    PermissionInformer.getOwnerMap = function(objectType, callback){
+//        var func;
+//        switch(objectType){
+//        case 'characters': func = 'getCharacterNamesArray'; break;
+//        case 'stories': func = 'getStoryNamesArray'; break;
+//        case 'groups': func = 'getGroupNamesArray'; break;
+//        default: callback("Unknown objectType: " + objectType);
+//        }
+//        DBMS[func](function(err, names){
+//            if(err) {Utils.handleError(err); return;}
+//            names = R.zipObj(names, R.repeat('user', names.length));
+//            callback(null, names);
+//        });
+//    };
     
     PermissionInformer.getEntityNamesArray = R.curry(function(entityNamesFunction, editableOnly, callback){
         DBMS[entityNamesFunction](function(err, names){
