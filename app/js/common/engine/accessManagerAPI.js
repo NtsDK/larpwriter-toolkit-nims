@@ -15,9 +15,9 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function accessManagerAPI(LocalDBMS, CommonUtils) {
+    function accessManagerAPI(LocalDBMS, CommonUtils, R) {
         
-        LocalDBMS.prototype.getUsersInfo = function(callback){
+        LocalDBMS.prototype.getManagementInfo = function(callback){
             "use strict";
 //            if(!this.database.ManagementInfo){
 //                this.database.ManagementInfo = {};
@@ -41,8 +41,12 @@ See the License for the specific language governing permissions and
 //                });
 //            }
             var ManagementInfo = this.database.ManagementInfo;
+            var usersInfo = CommonUtils.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
+                result[user] = R.pick(['characters', 'groups','stories'], ManagementInfo.UsersInfo[user]);
+                return result;
+            }, {}));
             callback(null, {
-                usersInfo : CommonUtils.clone(ManagementInfo.UsersInfo),
+                usersInfo : usersInfo,
                 admin : ManagementInfo.admin,
                 editor : ManagementInfo.editor,
                 adaptationRights : ManagementInfo.adaptationRights
@@ -84,7 +88,8 @@ See the License for the specific language governing permissions and
             this.database.ManagementInfo.UsersInfo[name] = {
                 name : name,
                 stories : [],
-                characters : []
+                characters : [],
+                groups : []
             };
             callback();
         };
@@ -102,62 +107,41 @@ See the License for the specific language governing permissions and
             callback();
         };
         
-        LocalDBMS.prototype.removePermission = function(userName, storyNames, characterNames, callback){
+        LocalDBMS.prototype.removePermission = function(userName, names, callback){
             "use strict";
             var ManagementInfo = this.database.ManagementInfo;
-            if(characterNames.length != 0){
-                ManagementInfo.UsersInfo[userName].characters = ManagementInfo.UsersInfo[userName].characters.filter(function(charName){
-                    return characterNames.indexOf(charName) === -1;
-                });
-            }
-            
-            if(storyNames.length != 0){
-                ManagementInfo.UsersInfo[userName].stories = ManagementInfo.UsersInfo[userName].stories.filter(function(storyName){
-                    return storyNames.indexOf(storyName) === -1;
-                });
+            for(var entity in names){
+                if(names[entity].length != 0){
+                    ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity].filter(function(charName){
+                        return names[entity].indexOf(charName) === -1;
+                    });
+                }
             }
             this.publishPermissionsUpdate();
             callback();
         };
         
-        LocalDBMS.prototype.assignPermission = function(userName, storyNames, characterNames, callback){
+        LocalDBMS.prototype.assignPermission = function(userName, names, callback){
             "use strict";
             var ManagementInfo = this.database.ManagementInfo;
-            if(characterNames.length != 0){
-                characterNames.forEach(function(charName){
-                    if(ManagementInfo.UsersInfo[userName].characters.indexOf(charName) === -1){
-                        ManagementInfo.UsersInfo[userName].characters.push(charName);
-                    }
-                });
-                
-                Object.keys(ManagementInfo.UsersInfo).forEach(function(name){
-                    if(name === userName){
-                        return;
-                    }
-                    
-                    ManagementInfo.UsersInfo[name].characters = ManagementInfo.UsersInfo[name].characters.filter(function(charName){
-                        return characterNames.indexOf(charName) === -1;
+            for(var entity in names){
+                if(names[entity].length != 0){
+                    names[entity].forEach(function(charName){
+                        if(ManagementInfo.UsersInfo[userName][entity].indexOf(charName) === -1){
+                            ManagementInfo.UsersInfo[userName][entity].push(charName);
+                        }
                     });
-                });
-            }
-            
-            if(storyNames.length != 0){
-                
-                storyNames.forEach(function(storyName){
-                    if(ManagementInfo.UsersInfo[userName].stories.indexOf(storyName) === -1){
-                        ManagementInfo.UsersInfo[userName].stories.push(storyName);
-                    }
-                });
-                
-                Object.keys(ManagementInfo.UsersInfo).forEach(function(name){
-                    if(name === userName){
-                        return;
-                    }
                     
-                    ManagementInfo.UsersInfo[name].stories = ManagementInfo.UsersInfo[name].stories.filter(function(storyName){
-                        return storyNames.indexOf(storyName) === -1;
+                    Object.keys(ManagementInfo.UsersInfo).forEach(function(name){
+                        if(name === userName){
+                            return;
+                        }
+                        
+                        ManagementInfo.UsersInfo[name][entity] = ManagementInfo.UsersInfo[name][entity].filter(function(charName){
+                            return names[entity].indexOf(charName) === -1;
+                        });
                     });
-                });
+                }
             }
             this.publishPermissionsUpdate();
             callback();
@@ -175,8 +159,3 @@ See the License for the specific language governing permissions and
 })(function(api){
     typeof exports === 'undefined'? this['accessManagerAPI'] = api: module.exports = api;
 }.bind(this));
-
-        
-
-
-

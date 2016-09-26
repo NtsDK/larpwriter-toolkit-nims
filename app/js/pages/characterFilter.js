@@ -34,11 +34,13 @@ CharacterFilter.init = function () {
 };
 
 CharacterFilter.groupAreaRefresh = function(){
-    PermissionInformer.getGroupNamesArray(true, Utils.processError(function(names){
-        Groups.rebuildInterface("#characterFilterDiv", names);
-        var data = getSelect2Data(names);
-        clearEl(queryEl("#characterFilterDiv .save-entity-select"));
-        $("#characterFilterDiv .save-entity-select").select2(data);
+    PermissionInformer.getGroupNamesArray(true, Utils.processError(function(userGroupNames){
+        PermissionInformer.getGroupNamesArray(false, Utils.processError(function(allGroupNames){
+            Groups.rebuildInterface("#characterFilterDiv", userGroupNames);
+            var data = getSelect2Data(allGroupNames);
+            clearEl(queryEl("#characterFilterDiv .save-entity-select"));
+            $("#characterFilterDiv .save-entity-select").select2(data);
+        }));
     }));
 };
 

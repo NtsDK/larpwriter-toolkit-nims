@@ -28,7 +28,7 @@ See the License for the specific language governing permissions and
             callback(null, CommonUtils.clone(this.database.Groups[groupName]));
         };
         
-        _getCharacterGroupTexts = function(groups, info, characterName){
+        var _getCharacterGroupTexts = function(groups, info, characterName){
             var dataArray = CommonUtils.getDataArray(info, characterName);
             var array = R.values(groups).filter(function(group){
                 return group.doExport && CommonUtils.acceptDataRow(group.filterModel, dataArray);

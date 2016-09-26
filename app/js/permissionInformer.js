@@ -84,7 +84,15 @@ if(MODE === "NIMS_Server"){
     };
     
     PermissionInformer.isCharacterEditable = function(characterName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('character', characterName));
+        callback(null, PermissionInformer.isObjectEditableSync('characters', characterName));
+    };
+
+    PermissionInformer.isStoryEditable = function(storyName, callback){
+        callback(null, PermissionInformer.isObjectEditableSync('stories', storyName));
+    };
+
+    PermissionInformer.isGroupEditable = function(groupName, callback){
+        callback(null, PermissionInformer.isObjectEditableSync('groups', groupName));
     };
     
     PermissionInformer.isObjectEditableSync = function(type, name){
@@ -94,71 +102,36 @@ if(MODE === "NIMS_Server"){
         if(PermissionInformer.summary.existEditor){
             return false;
         }
-        var arr;
-        switch(type){
-        case 'story':
-            arr = PermissionInformer.summary.userStories;
-            break;
-        case 'character':
-            arr = PermissionInformer.summary.userCharacters;
-            break;
-        }
-        return arr.indexOf(name) !== -1;
+        return PermissionInformer.summary.user[type].indexOf(name) !== -1;
     };
     
-    PermissionInformer.isStoryEditable = function(storyName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('story', storyName));
-    };
-    
-    PermissionInformer.getCharacterNamesArray = function(editableOnly, callback){
-        var newNames = [];
-        var userCharacters = PermissionInformer.summary.userCharacters;
-        var allCharacters = PermissionInformer.summary.allCharacters;
-        var ownerMap = PermissionInformer.summary.characterOwnerMap;
-        allCharacters.filter(function(name){
+    PermissionInformer.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
+        var userEntities = PermissionInformer.summary.user[type];
+        var allEntities = PermissionInformer.summary.all[type];
+        var ownerMap = PermissionInformer.summary.ownerMaps[type];
+        var names = allEntities.filter(function(name){
             if(editableOnly){
-                return PermissionInformer.isObjectEditableSync('character', name);
+                return PermissionInformer.isObjectEditableSync(type, name);
             } else {
                 return true;
             }
-        }).forEach(function(name){
-            newNames.push({
-                displayName:ownerMap[name] + ". " + name,
-                value:name,
-                editable: PermissionInformer.isObjectEditableSync('character', name),
-                isOwner: userCharacters.indexOf(name) !== -1
-            });
+        }).map(function(name){
+            return {
+                displayName : ownerMap[name] + ". " + name,
+                value : name,
+                editable : PermissionInformer.isObjectEditableSync(type, name),
+                isOwner : userEntities.indexOf(name) !== -1
+            };
         });
         
-        newNames.sort(Utils.charOrdAObject);
+        names.sort(Utils.charOrdAObject);
         
-        callback(null, newNames);
-    };
+        callback(null, names);
+    });
     
-    PermissionInformer.getStoryNamesArray = function(editableOnly, callback){
-        var newNames = [];
-        var userStories = PermissionInformer.summary.userStories;
-        var allStories = PermissionInformer.summary.allStories;
-        var ownerMap = PermissionInformer.summary.storiesOwnerMap;
-        allStories.filter(function(name){
-            if(editableOnly){
-                return PermissionInformer.isObjectEditableSync('story', name);
-            } else {
-                return true;
-            }
-        }).forEach(function(name){
-            newNames.push({
-                displayName:ownerMap[name] + ". " + name,
-                value:name,
-                editable: PermissionInformer.isObjectEditableSync('story', name),
-                isOwner: userStories.indexOf(name) !== -1
-            });
-        });
-        
-        newNames.sort(Utils.charOrdAObject);
-        
-        callback(null, newNames);
-    };
+    PermissionInformer.getCharacterNamesArray = PermissionInformer.getEntityNamesArray('characters');
+    PermissionInformer.getStoryNamesArray = PermissionInformer.getEntityNamesArray('stories');
+    PermissionInformer.getGroupNamesArray = PermissionInformer.getEntityNamesArray('groups');
     
     PermissionInformer.areAdaptationsEditable = function(adaptations, callback){
         var map = {};
@@ -167,9 +140,9 @@ if(MODE === "NIMS_Server"){
         adaptations.forEach(function(elem){
             var key = elem.storyName + "-" + elem.characterName;
             if(isAdaptationRightsByStory){
-                map[key] = PermissionInformer.isObjectEditableSync('story', elem.storyName);
+                map[key] = PermissionInformer.isObjectEditableSync('stories', elem.storyName);
             } else {
-                map[key] = PermissionInformer.isObjectEditableSync('character', elem.characterName);
+                map[key] = PermissionInformer.isObjectEditableSync('characters', elem.characterName);
             }
         });
         

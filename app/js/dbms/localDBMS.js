@@ -41,7 +41,7 @@ function makeLocalDBMS(){
     storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners);
     storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
     storyAdaptationsAPI(LocalDBMS, CommonUtils);
-    accessManagerAPI(LocalDBMS, CommonUtils);
+    accessManagerAPI(LocalDBMS, CommonUtils, R);
     logAPI(LocalDBMS, R, CommonUtils);
     
     Logger.attachLogCalls(LocalDBMS, R, false);

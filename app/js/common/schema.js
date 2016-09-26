@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
         var Groups =  getGroupsSchema(base.ProfileSettings);
         var ManagementInfo = {};
         if(base.ManagementInfo){
-            ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories);
+            ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups);
         }
 
         schema.properties = {
@@ -446,9 +446,10 @@ See the License for the specific language governing permissions and
     };
     
     
-    function getManagementInfoSchema(managementInfo, characters, stories) {
+    function getManagementInfoSchema(managementInfo, characters, stories, groups) {
         var charNames = Object.keys(characters);
         var storyNames = Object.keys(stories);
+        var groupNames = Object.keys(groups);
         var userNames = Object.keys(managementInfo.UsersInfo);
         // enum can't be empty, ask about it here 
         // http://stackoverflow.com/questions/37635675/how-to-validate-empty-array-of-strings-with-ajv
@@ -457,6 +458,9 @@ See the License for the specific language governing permissions and
         }
         if(charNames.length == 0){
             charNames = ['123'];
+        }
+        if(groupNames.length == 0){
+            groupNames = ['123'];
         }
         
         var userSchema = {
@@ -480,6 +484,13 @@ See the License for the specific language governing permissions and
                         "enum" : charNames
                     }
                 },
+                "groups" : {
+                    "type" : "array",
+                    "items" : {
+                        "type" : "string",
+                        "enum" : groupNames
+                    }
+                },
                 "salt" : {
                     "type" : "string"
                 },
@@ -487,7 +498,7 @@ See the License for the specific language governing permissions and
                     "type" : "string"
                 },
             },
-            "required" : [ "name", "stories", "characters", "salt", "hashedPassword" ],
+            "required" : [ "name", "stories", "characters", "groups", "salt", "hashedPassword" ],
             "additionalProperties" : false
         };
         

@@ -164,6 +164,27 @@ Utils.charOrdAObject = CommonUtils.charOrdAFactory(function(a){
     return a.displayName.toLowerCase();
 });
 
+Utils.rebuildSelector = function(selector, names){
+    "use strict";
+    clearEl(selector);
+    names.forEach(function (nameInfo) {
+        var option = makeEl("option");
+        option.appendChild(makeText(nameInfo.displayName));
+        option.value = nameInfo.value;
+        selector.appendChild(option);
+    });
+};
+
+Utils.rebuildSelectorArr = function(selector, names){
+    "use strict";
+    clearEl(selector);
+    names.forEach(function (name) {
+        var option = makeEl("option");
+        option.appendChild(makeText(name));
+        selector.appendChild(option);
+    });
+};
+
 String.prototype.endsWith = function (suffix) {
     "use strict";
     return this.indexOf(suffix, this.length - suffix.length) !== -1;

@@ -616,43 +616,49 @@ See the License for the specific language governing permissions and
     </div>
 
     <div id="accessManagerDiv">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <a href="#" panel-toggler="#accessManagerDiv div.user-management-area">
-            <h3 class="panel-title" l10n-id="admins-user-management"></h3>
-          </a>
+      <div style="display: flex;justify-content: space-around;">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <a href="#" panel-toggler="#accessManagerDiv div.user-management-area">
+              <h3 class="panel-title" l10n-id="admins-user-management"></h3>
+            </a>
+          </div>
+          <div class="panel-body user-management-area">
+            <span l10n-id="admins-user-name"></span><input id="userNameInput" class="adminOnly"></input>
+            <span l10n-id="admins-user-password"></span><input id="userPasswordInput" class="adminOnly"></input>
+            <button id="createUserButton" class="adminOnly" l10n-id="common-add"></button>
+            <br> <span l10n-id="admins-change-password"></span> <select id="passwordUserName" class="adminOnly"></select> 
+            <span l10n-id="common-on"></span> <input
+              id="newPassword" class="adminOnly"></input>
+            <button id="changePasswordButton" class="adminOnly" l10n-id="common-ok"></button>
+            <br> <select id="userRemoveSelector" class="adminOnly"></select>
+            <button id="removeUserButton" class="adminOnly" l10n-id="common-remove"></button>
+          </div>
         </div>
-        <div class="panel-body user-management-area">
-          <span l10n-id="admins-user-name"></span><input id="userNameInput" class="adminOnly"></input>
-          <span l10n-id="admins-user-password"></span><input id="userPasswordInput" class="adminOnly"></input>
-          <button id="createUserButton" class="adminOnly" l10n-id="common-add"></button>
-          <br> <span l10n-id="admins-change-password"></span> <select id="passwordUserName" class="adminOnly"></select> 
-          <span l10n-id="common-on"></span> <input
-            id="newPassword" class="adminOnly"></input>
-          <button id="changePasswordButton" class="adminOnly" l10n-id="common-ok"></button>
-          <br> <select id="userRemoveSelector" class="adminOnly"></select>
-          <button id="removeUserButton" class="adminOnly" l10n-id="common-remove"></button>
-        </div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <a href="#" panel-toggler="#accessManagerDiv div.special-actions-area">
-            <h3 class="panel-title" l10n-id="admins-special-actions"></h3>
-          </a>
-        </div>
-        <div class="panel-body special-actions-area">
-        	<span l10n-id="admins-admin"></span><span id="currentAdministrator"></span><br>
-        	<select id="newAdminSelector" class="adminOnly"></select>
-            <button id="newAdminButton" class="adminOnly" l10n-id="admins-assign-admin"></button><br>
-        	<span l10n-id="admins-editor"></span><span id="currentEditor"></span>
-            <button id="removeEditorButton" class="editorOrAdmin" l10n-id="admins-remove-editor"></button><br>
-        	<select id="newEditorSelector" class="adminOnly"></select>
-            <button id="newEditorButton" class="adminOnly" l10n-id="admins-assign-editor"></button><br>
-        	<span l10n-id="admins-assign-adaptation-rights"></span><br>
-        	<input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory" id="adaptationRightsByStory">
-          <label for="adaptationRightsByStory" l10n-id="admins-by-stories"></label><br>
-		      <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter" id="adaptationRightsByCharacter">
-          <label for="adaptationRightsByCharacter" l10n-id="admins-by-characters"></label><br>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <a href="#" panel-toggler="#accessManagerDiv div.special-actions-area">
+              <h3 class="panel-title" l10n-id="admins-special-actions"></h3>
+            </a>
+          </div>
+          <div class="panel-body special-actions-area" style="display: flex;justify-content: space-between;">
+            <div>
+            	<span l10n-id="admins-admin"></span><span id="currentAdministrator"></span><br>
+            	<select id="newAdminSelector" class="adminOnly"></select>
+                <button id="newAdminButton" class="adminOnly" l10n-id="admins-assign-admin"></button><br>
+            	<span l10n-id="admins-editor"></span><span id="currentEditor"></span>
+                <button id="removeEditorButton" class="editorOrAdmin" l10n-id="admins-remove-editor"></button><br>
+            	<select id="newEditorSelector" class="adminOnly"></select>
+                <button id="newEditorButton" class="adminOnly" l10n-id="admins-assign-editor"></button><br>
+            </div>
+          	<div>
+              <span l10n-id="admins-assign-adaptation-rights"></span><br>
+            	<input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory" id="adaptationRightsByStory">
+              <label for="adaptationRightsByStory" l10n-id="admins-by-stories"></label><br>
+    		      <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter" id="adaptationRightsByCharacter">
+              <label for="adaptationRightsByCharacter" l10n-id="admins-by-characters"></label><br>
+            </div>
+          </div>
         </div>
       </div>
       <div id="accessManagerContent" >
@@ -660,33 +666,40 @@ See the License for the specific language governing permissions and
           <div class="panel-heading">
             <h3 class="panel-title" l10n-id="admins-editing-rights"></h3>
           </div>
-          <div class="panel-body">
-             <table>
-               <tr>
-                 <th l10n-id="admins-rights"></th>
-                 <th l10n-id="admins-characters"></th>
-                 <th l10n-id="admins-stories"></th>
-                 <th l10n-id="admins-users"></th>
-               </tr>
-               <tr>
-                 <td>
-                   <div id="permissionTable"></div>
-                 </td>
-                 <td>
-                   <input selector-filter="#characterPermissionSelector"><br>
-                   <select size=15 id="characterPermissionSelector" multiple></select>
-                 </td>
-                 <td>
-                   <input selector-filter="#storyPermissionSelector"><br>
-                   <select size=15 id="storyPermissionSelector" multiple></select>
-                 </td>
-                 <td><select size=10 id="userPermissionSelector" style="min-width: 100px;"></select></td>
-                 <td>
-                 <button id="assignPermissionButton" l10n-id="admins-assign-rights"></button>
-                 <button id="removePermissionButton" class="adminOnly" l10n-id="admins-take-away-rights"></button>
-                 </td>
-               </tr>
-             </table>
+          <div class="panel-body" style="display:flex;">
+            <div>
+              <span l10n-id="admins-rights"></span>
+              <div id="permissionTable"></div>
+            </div>
+            <div>
+              <table>
+                <tr>
+                  <th l10n-id="admins-characters"></th>
+                  <th l10n-id="admins-stories"></th>
+                  <th l10n-id="admins-groups"></th>
+                  <th l10n-id="admins-users"></th>
+                </tr>
+                <tr>
+                  <td>
+                    <input selector-filter="#permission-selector__characters"><br>
+                    <select size=15 id="permission-selector__characters" multiple></select>
+                  </td>
+                  <td>
+                    <input selector-filter="#permission-selector__stories"><br>
+                    <select size=15 id="permission-selector__stories" multiple></select>
+                  </td>
+                  <td>
+                    <input selector-filter="#permission-selector__groups"><br>
+                    <select size=15 id="permission-selector__groups" multiple></select>
+                  </td>
+                  <td>
+                    <select size=10 id="userPermissionSelector" style="min-width: 100px;"></select>
+                  </td>
+                </tr>
+              </table>
+              <button id="assignPermissionButton" l10n-id="admins-assign-rights"></button>
+              <button id="removePermissionButton" class="adminOnly" l10n-id="admins-take-away-rights"></button>
+            </div>
           </div>
         </div>
       </div>

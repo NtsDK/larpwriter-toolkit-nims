@@ -22,29 +22,16 @@ var AccessManager = {};
 AccessManager.init = function() {
     "use strict";
     
-    var button = getEl("createUserButton");
-    button.addEventListener("click", AccessManager.createUser);
-
-    button = getEl("changePasswordButton");
-    button.addEventListener("click", AccessManager.changePassword);
-
-    button = getEl("removeUserButton");
-    button.addEventListener("click", AccessManager.removeUser);
+    listen(getEl("createUserButton"),"click", AccessManager.createUser);
+    listen(getEl("changePasswordButton"),"click", AccessManager.changePassword);
+    listen(getEl("removeUserButton"),"click", AccessManager.removeUser);
+    listen(getEl("assignPermissionButton"),"click", AccessManager.assignPermission);
+    listen(getEl("removePermissionButton"),"click", AccessManager.removePermission);
+    listen(getEl("newAdminButton"),"click", AccessManager.assignNewAdmin);
+    listen(getEl("removeEditorButton"),"click", AccessManager.removeEditor);
+    listen(getEl("newEditorButton"),"click", AccessManager.assignEditor);
     
-    button = getEl("assignPermissionButton");
-    button.addEventListener("click", AccessManager.assignPermission);
-    
-    button = getEl("removePermissionButton");
-    button.addEventListener("click", AccessManager.removePermission);
-
-    button = getEl("newAdminButton");
-    button.addEventListener("click", AccessManager.assignNewAdmin);
-    
-    button = getEl("removeEditorButton");
-    button.addEventListener("click", AccessManager.removeEditor);
-    
-    button = getEl("newEditorButton");
-    button.addEventListener("click", AccessManager.assignEditor);
+    AccessManager.entities = ['characters','stories','groups'];
     
     var inputs = document.getElementsByClassName("adaptationRights");
     var i, elem;
@@ -58,7 +45,7 @@ AccessManager.init = function() {
 
 AccessManager.refresh = function() {
     "use strict";
-    DBMS.getUsersInfo(function(err, info){
+    DBMS.getManagementInfo(function(err, managementInfo){
         if(err) {Utils.handleError(err); return;}
         PermissionInformer.isAdmin(function(err, isAdmin){
             if(err) {Utils.handleError(err); return;}
@@ -68,17 +55,22 @@ AccessManager.refresh = function() {
                     if(err) {Utils.handleError(err); return;}
                     PermissionInformer.getStoryNamesArray(!isAdmin, function(err, storyNames){
                         if(err) {Utils.handleError(err); return;}
-                        if(!isAdmin && isEditor){
-                            characterNames = characterNames.filter(function(elem){
-                                return elem.isOwner;
-                            });
-                            storyNames = storyNames.filter(function(elem){
-                                return elem.isOwner;
-                            });
-                        }
-                        AccessManager.rebuildInterface(characterNames, storyNames, info);
-                        Utils.enable(AccessManager.content, "adminOnly", isAdmin);
-                        Utils.enable(AccessManager.content, "editorOrAdmin", isAdmin || isEditor);
+                        PermissionInformer.getGroupNamesArray(!isAdmin, function(err, groupNames){
+                            if(err) {Utils.handleError(err); return;}
+                            var names = {
+                                    characters: characterNames,
+                                    groups: groupNames,
+                                    stories: storyNames,
+                            };
+                            if(!isAdmin && isEditor){
+                                for(var entity in names){
+                                    names[entity] = names[entity].filter(R.prop('isOwner'));
+                                }
+                            }
+                            AccessManager.rebuildInterface(names, managementInfo);
+                            Utils.enable(AccessManager.content, "adminOnly", isAdmin);
+                            Utils.enable(AccessManager.content, "editorOrAdmin", isAdmin || isEditor);
+                        });
                     });
                 });
             });
@@ -86,33 +78,12 @@ AccessManager.refresh = function() {
     });
 };
 
-Utils.rebuildSelector = function(selector, names){
-    "use strict";
-    clearEl(selector);
-    names.forEach(function (nameInfo) {
-        var option = makeEl("option");
-        option.appendChild(makeText(nameInfo.displayName));
-        option.value = nameInfo.value;
-        selector.appendChild(option);
-    });
-};
-
-Utils.rebuildSelectorArr = function(selector, names){
-    "use strict";
-    clearEl(selector);
-    names.forEach(function (name) {
-        var option = makeEl("option");
-        option.appendChild(makeText(name));
-        selector.appendChild(option);
-    });
-};
-
-AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) {
+AccessManager.rebuildInterface = function (names, managementInfo) {
     "use strict";
     
-    var info = allInfo.usersInfo;
+    var usersInfo = managementInfo.usersInfo;
     
-    var names = Object.keys(info).sort(CommonUtils.charOrdA);
+    var userNames = Object.keys(usersInfo).sort(CommonUtils.charOrdA);
     
     var selectors = [];
     selectors.push(getEl("passwordUserName"));
@@ -120,95 +91,74 @@ AccessManager.rebuildInterface = function (characterNames, storyNames, allInfo) 
     selectors.push(getEl("newEditorSelector"));
     
     selectors.forEach(function(selector){
-        Utils.rebuildSelectorArr(selector, names);
+        Utils.rebuildSelectorArr(selector, userNames);
     });
     
-    var clone = names.slice(0);
-    clone.splice(names.indexOf(allInfo.admin), 1);
+    var clone = userNames.slice(0);
+    clone.splice(userNames.indexOf(managementInfo.admin), 1);
     var selector = getEl("newAdminSelector");
     Utils.rebuildSelectorArr(selector, clone);
     
     selector = getEl("userRemoveSelector");
     Utils.rebuildSelectorArr(selector, clone);
     
-    selector = getEl("storyPermissionSelector");
-    Utils.rebuildSelector(selector, storyNames);
-    
-    selector = getEl("characterPermissionSelector");
-    Utils.rebuildSelector(selector, characterNames);
-    
-    addEl(clearEl(getEl("currentAdministrator")), makeText(allInfo.admin));
-
-    var span = clearEl(getEl("currentEditor"));
-    if(allInfo.editor){
-        addEl(span,makeText(allInfo.editor));
-    }
-    
-    getEl("adaptationRights" + allInfo.adaptationRights).checked = true;
-    
-    var makeList = function(obj){
-        if(R.isArrayLike(obj)){
-            return obj.map(function(value){
-                return makeList(value);
-            });
-        } else if(R.is(Object, obj)){
-            var li = addEl(makeEl('li'), makeText(obj.name));
-            var ol = makeEl("ol");
-            makeList(obj.values).forEach(function(arr){
-                arr.forEach(addEl(ol));
-            });
-            return [li, ol];
-        } else {
-            return [addEl(makeEl('li'), makeText(obj))];
-        }
-    };
-    
-    var permissionTable = clearEl(getEl("permissionTable"));
-    var ol = makeEl('ul');
-    
-    addEl(permissionTable, ol);
-    var addChild = addEl(ol);
-    
-    var charHeader = getL10n("admins-characters-header");
-    var storiesHeader = getL10n("admins-stories-header");
-    
-    var listData = names.map(function(name){
-        return {
-            name: name,
-            values: [{
-                name: charHeader,
-                values: info[name].characters.sort(),
-            }, {
-                name: storiesHeader,
-                values: info[name].stories.sort(),
-            }]
-        }
+    AccessManager.entities.forEach(function(entity){
+        Utils.rebuildSelector(getEl("permission-selector__" + entity), names[entity]);
     });
     
-    var isUnused = R.curry(function(objName, storyName){
-        return names.every(function(name){
-            return info[name][objName].indexOf(storyName) === -1;
+    addEl(clearEl(getEl("currentAdministrator")), makeText(managementInfo.admin));
+
+    var span = clearEl(getEl("currentEditor"));
+    if(managementInfo.editor){
+        addEl(span,makeText(managementInfo.editor));
+    }
+    
+    getEl("adaptationRights" + managementInfo.adaptationRights).checked = true;
+    
+    AccessManager.buildPermissionList(names, usersInfo);
+};
+
+AccessManager.buildPermissionList = function (names, usersInfo) {
+    var permissionTable = clearEl(getEl("permissionTable"));
+    var treeRoot = makeEl('ul');
+    addEl(permissionTable, treeRoot);
+    
+    R.keys(names).forEach(function(entity){
+        names[entity] = names[entity].map(R.prop('value'));
+    });
+    
+    R.values(usersInfo).forEach(function(userInfo){
+        R.keys(userInfo).forEach(function(entity){
+            names[entity] = R.difference(names[entity], userInfo[entity]);
         });
     });
     
-    storyNames = storyNames.map(R.prop('value')).filter(isUnused('stories'));
-    characterNames = characterNames.map(R.prop('value')).filter(isUnused('characters'));
+    usersInfo[getL10n('admins-have-not-owner')] = names;
     
-    listData.push({
-        name : getL10n('admins-have-not-owner'),
-        values : [ {
-            name : charHeader,
-            values : characterNames.sort(),
-        }, {
-            name : storiesHeader,
-            values : storyNames.sort(),
-        } ]
-    });
+    var headers = {
+        characters : getL10n("admins-characters"),
+        stories : getL10n("admins-stories"),
+        groups : getL10n("admins-groups"),
+    };
     
-
-    makeList(listData).forEach(function(arr) {
-        arr.forEach(addChild);
-    });
+    function liMaker(text){
+        return addEl(makeEl('li'), makeText(text));
+    }
+    
+    function makeEntityLists(userInfo){
+        return AccessManager.entities.reduce(function(result, entity){
+            result.push(liMaker(headers[entity]));
+            result.push(addEls(makeEl('ol'), userInfo[entity].sort().map(liMaker)));
+            return result;
+        }, []);
+    }
+    
+    var userNames = Object.keys(usersInfo).sort(CommonUtils.charOrdA);
+    addEls(treeRoot, userNames.reduce(function(result, userName){
+        result.push(liMaker(userName));
+        result.push(addEls(makeEl('ol'), makeEntityLists(usersInfo[userName])));
+        return result;
+    }, []));
 };
 
 AccessManager.createUser = function () {
@@ -263,54 +213,36 @@ AccessManager.removeUser = function () {
     }
 };
 
-AccessManager.removePermission = function(){
-    "use strict";
-    
-    var userName = getEl("userPermissionSelector").value.trim();
-    
-    if(userName === ""){
-        Utils.alert(getL10n('admins-user-is-not-selected'));
-        return;
-    }
-    
-    var selOptions =  getEl("storyPermissionSelector").selectedOptions;
+AccessManager.getSelectedOptions = function(id){
+    var selOptions =  getEl(id).selectedOptions;
     var storyNames = [];
     for (var i = 0; i < selOptions.length; i++) {
         storyNames.push(selOptions[i].value);
     }
-    
-    selOptions =  getEl("characterPermissionSelector").selectedOptions;
-    var characterNames = [];
-    for (var i = 0; i < selOptions.length; i++) {
-        characterNames.push(selOptions[i].value);
-    }
-    DBMS.removePermission(userName, storyNames, characterNames, Utils.processError(AccessManager.refresh));
+    return storyNames;
 };
 
-AccessManager.assignPermission = function(){
+AccessManager.permissionAction = function(action){
     "use strict";
-    
-    var userName = getEl("userPermissionSelector").value.trim();
-    
-    if(userName === ""){
-        Utils.alert(getL10n('admins-user-is-not-selected'));
-        return;
+    return function(){
+        var userName = getEl("userPermissionSelector").value.trim();
+        
+        if(userName === ""){
+            Utils.alert(getL10n('admins-user-is-not-selected'));
+            return;
+        }
+        
+        var names = {};
+        AccessManager.entities.forEach(function(entity){
+            names[entity] = AccessManager.getSelectedOptions("permission-selector__" + entity);
+        });
+        
+        DBMS[action](userName, names, Utils.processError(AccessManager.refresh));
     }
-    
-    var selOptions =  getEl("storyPermissionSelector").selectedOptions;
-    var storyNames = [];
-    for (var i = 0; i < selOptions.length; i++) {
-        storyNames.push(selOptions[i].value);
-    }
-    
-    selOptions =  getEl("characterPermissionSelector").selectedOptions;
-    var characterNames = [];
-    for (var i = 0; i < selOptions.length; i++) {
-        characterNames.push(selOptions[i].value);
-    }
-    
-    DBMS.assignPermission(userName, storyNames, characterNames, Utils.processError(AccessManager.refresh));
 };
+
+AccessManager.removePermission = AccessManager.permissionAction('removePermission');
+AccessManager.assignPermission = AccessManager.permissionAction('assignPermission');
 
 AccessManager.assignNewAdmin = function() {
     "use strict";
