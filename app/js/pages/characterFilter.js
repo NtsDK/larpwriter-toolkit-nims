@@ -247,8 +247,7 @@ CharacterFilter.makeDataString = function (dataArray) {
         if (valueInfo.type === "checkbox") {
             value = constL10n(Constants[value]);
         } else if (valueInfo.type === "text") {
-            regex = CommonUtils.globStringToRegex(inputItems[valueInfo.itemName].value);
-            pos = value.search(regex);
+            pos = value.toLowerCase().indexOf(inputItems[valueInfo.itemName].value.toLowerCase());
             value = value.substring(pos - 5, pos + 15);
         }
         td = addEl(makeEl("td"), makeText(value));

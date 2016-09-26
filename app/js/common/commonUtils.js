@@ -143,8 +143,7 @@ See the License for the specific language governing permissions and
                     break;
                 case "text":
                 case "string":
-                    regex = exports.globStringToRegex(filterItem.regexString);
-                    result = value.toLowerCase().match(regex);
+                    result = value.toLowerCase().indexOf(filterItem.regexString.toLowerCase()) != -1;
                     break;
                 }
             });
