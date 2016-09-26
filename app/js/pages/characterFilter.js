@@ -110,7 +110,14 @@ CharacterFilter.rebuildContent = function () {
 
 CharacterFilter.saveFilterToGroup = function(){
     var groupName = queryEl("#characterFilterDiv .save-entity-select").value.trim();
-    DBMS.saveFilterToGroup(groupName, CharacterFilter.makeFilterModel(), Utils.processError());
+    PermissionInformer.isGroupEditable(groupName, function(err, isGroupEditable){
+        if(err) {Utils.handleError(err); return;}
+        if(!isGroupEditable){
+            Utils.alert(strFormat(getL10n("groups-group-editing-forbidden"), [groupName]));
+            return;
+        }
+        DBMS.saveFilterToGroup(groupName, CharacterFilter.makeFilterModel(), Utils.processError());
+    });
 };
 
 CharacterFilter.loadFilterFromGroup = function(){
