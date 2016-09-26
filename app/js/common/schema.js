@@ -144,7 +144,26 @@ See the License for the specific language governing permissions and
                 }, 
                 "type" :{
                     "type" : "string",
-                    "enum": ["text"]
+                    "enum": ["string"]
+                },
+                "regexString" :{
+                    "type" : "string",
+                    "minLength": 1
+                }
+            }, 
+            "required" : [ "name", "type", "regexString"],
+            "additionalProperties" : false
+        });
+        filterItems.push({
+            "type" : "object",
+            "properties": {
+                "name" : {
+                    "type" : "string",
+                    "enum": ["char-owner"]
+                }, 
+                "type" :{
+                    "type" : "string",
+                    "enum": ["string"]
                 },
                 "regexString" :{
                     "type" : "string",
