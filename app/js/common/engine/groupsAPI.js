@@ -28,22 +28,39 @@ See the License for the specific language governing permissions and
             callback(null, CommonUtils.clone(this.database.Groups[groupName]));
         };
         
+        _getCharacterGroupTexts = function(groups, info, characterName){
+            var dataArray = CommonUtils.getDataArray(info, characterName);
+            var array = R.values(groups).filter(function(group){
+                return group.doExport && CommonUtils.acceptDataRow(group.filterModel, dataArray);
+            }).map(function(group){
+                return {
+                    groupName: group.name,
+                    text: group.characterDescription
+                }
+            });
+            array.sort(CommonUtils.charOrdAFactory(R.prop('groupName')));
+            return array;
+        }
+        
         // preview
-        LocalDBMS.prototype.getAllGroupTexts = function(characterName, callback) {
+        LocalDBMS.prototype.getCharacterGroupTexts = function(characterName, callback) {
             var that = this;
             this.getCharacterFilterInfo(function(err, info){
                 if(err) {callback(err); return;}
-                var dataArray = CommonUtils.getDataArray(info, characterName);
-                var array = R.values(that.database.Groups).filter(function(group){
-                    return group.doExport && CommonUtils.acceptDataRow(group.filterModel, dataArray);
-                }).map(function(group){
-                    return {
-                        groupName: group.name,
-                        text: group.characterDescription
-                    }
-                });
-                
-                callback(null, array.sort(CommonUtils.charOrdAFactory(R.prop('groupName'))));
+                callback(null, _getCharacterGroupTexts(that.database.Groups, info, characterName));
+            });
+        };
+        
+        // export
+        LocalDBMS.prototype.getAllCharacterGroupTexts = function(callback) {
+            var that = this;
+            this.getCharacterFilterInfo(function(err, info){
+                if(err) {callback(err); return;}
+                var texts = Object.keys(that.database.Characters).reduce(function(result, characterName){
+                    result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, characterName);
+                    return result;
+                }, {});
+                callback(null, texts);
             });
         };
         

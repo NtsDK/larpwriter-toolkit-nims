@@ -11,6 +11,11 @@ var TEXT_TEMPLATE = "{{gameName}}\n" +
   "{{name}}:{{value}}\n" +
   "{{/profileInfoArray}}\n" +
   "\n" +
+  "{{#groupTexts}}\n"  +
+  "{{groupName}}\n"    +
+  "{{text}}\n"         +
+  "{{/groupTexts}}\n"  +
+  "\n" +
   "{{#eventsInfo}}\n" +
   "{{{time}}} {{{displayTime}}} {{storyName}}: {{name}}\n" +
   "{{text}}\n" +

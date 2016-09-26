@@ -11,47 +11,56 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
+"use strict";
 
 (function(callback){
 
     function briefingExportAPI(LocalDBMS, CommonUtils, R, Constants) {
     
         LocalDBMS.prototype.getBriefingData = function(selectedCharacters, callback) {
-            "use strict";
+            var that = this;
+            that.getAllCharacterGroupTexts(function(err, groupTexts){
+                if(err) {callback(err); return;}
+                _getBriefingData(that.database, selectedCharacters, groupTexts, callback);
+            });
+        };
+        
+        var _getBriefingData = function(database, selectedCharacters, groupTexts, callback) {
+            
             var data = {};
     
             var charArray = [];
     
-            for ( var charName in this.database.Characters) {
-              if(selectedCharacters && !selectedCharacters[charName]){
-                continue;
-              }
+            for ( var charName in database.Characters) {
+                if (selectedCharacters && !selectedCharacters[charName]) {
+                    continue;
+                }
               
                 var inventory = [];
-                for ( var storyName in this.database.Stories) {
-                    var story = this.database.Stories[storyName];
+                R.values(database.Stories).forEach(function(story){
                     if (story.characters[charName] && 
                             story.characters[charName].inventory && 
                             story.characters[charName].inventory !== "") {
                         inventory = inventory.concat(story.characters[charName].inventory);
                     }
-                }
+                });
                 inventory = inventory.join(", ");
     
-                var profileInfo = _getProfileInfoObject(this.database, charName, false);
-                var profileInfoSplitted = _getProfileInfoObject(this.database, charName, true);
-                var profileInfoNotEmpty = _getProfileInfoNotEmpty(this.database, charName);
-                var profileInfoArray = _getProfileInfoArray(this.database, charName);
+                var profileInfo = _getProfileInfoObject(database, charName, false);
+                var profileInfoSplitted = _getProfileInfoObject(database, charName, true);
+                var profileInfoNotEmpty = _getProfileInfoNotEmpty(database, charName);
+                var profileInfoArray = _getProfileInfoArray(database, charName);
     
-                var storiesInfo = _getStoriesInfo(this.database, charName);
-                var eventsInfo = _getEventsInfo(this.database, charName);
+                var storiesInfo = _getStoriesInfo(database, charName);
+                var eventsInfo = _getEventsInfo(database, charName);
                 var dataObject = {
-                    "gameName" : this.database.Meta.name,
+                    "gameName" : database.Meta.name,
                     "name" : charName,
                     "inventory" : inventory,
                     "storiesInfo" : storiesInfo,
                     "eventsInfo" : eventsInfo,
-                    "profileInfoArray" : profileInfoArray
+                    "profileInfoArray" : profileInfoArray,
+                    "groupTexts" : groupTexts[charName]
                 };
     
                 for ( var element in profileInfo) {
@@ -70,7 +79,7 @@ See the License for the specific language governing permissions and
             charArray.sort(CommonUtils.charOrdAFactory(R.prop('name')));
     
             data.briefings = charArray;
-            data.gameName = this.database.Meta.name;
+            data.gameName = database.Meta.name;
             callback(null, data);
         };
     

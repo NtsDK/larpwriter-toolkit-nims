@@ -96,7 +96,7 @@ BriefingPreview.buildContent = function (characterName) {
         DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
             if(err) {Utils.handleError(err); return;}
             
-            DBMS.getAllGroupTexts(characterName, function(err, groupTexts){
+            DBMS.getCharacterGroupTexts(characterName, function(err, groupTexts){
                 if(err) {Utils.handleError(err); return;}
                 
                 PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
