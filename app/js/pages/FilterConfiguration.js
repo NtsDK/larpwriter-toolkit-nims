@@ -36,25 +36,14 @@ FilterConfiguration.makeFilterConfiguration = function(callback){
         var filterConfiguration = new FilterConfiguration(info);
         callback(null, filterConfiguration);
     });
-//    PermissionInformer.getOwnerMap('characters', function(err, characterOwners){
-//        if(err) {Utils.handleError(err); return;}
-//        DBMS.getAllProfiles(function(err, profiles){
-//            if(err) {Utils.handleError(err); return;}
-//            DBMS.getCharactersSummary(function(err, charactersSummary){
-//                if(err) {Utils.handleError(err); return;}
-//                DBMS.getAllProfileSettings(function(err, allProfileSettings){
-//                    if(err) {Utils.handleError(err); return;}
-//                    var info = CommonUtils.makeFilterInfo(allProfileSettings, characterOwners, profiles, charactersSummary, Constants);
-//                    var filterConfiguration = new FilterConfiguration(info);
-//                    callback(null, filterConfiguration);
-//                });
-//            });
-//        });
-//    });
 };
 
 FilterConfiguration.prototype.getAllProfileSettings = function(){
     return this.innerProfileSettings;
+};
+
+FilterConfiguration.prototype.getBaseProfileSettings = function(){
+    return this.info.profileSettings;
 };
 
 FilterConfiguration.prototype.getDataArrays = function(filterModel) {

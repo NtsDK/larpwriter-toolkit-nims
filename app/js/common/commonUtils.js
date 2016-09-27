@@ -155,6 +155,7 @@ See the License for the specific language governing permissions and
             info.profiles = profiles;
             info.charactersSummary = charactersSummary;
             info.characterOwners = characterOwners;
+            info.profileSettings = profileSettings;
             var innerProfileSettings = [];
             innerProfileSettings.push({
                 name : Constants.CHAR_NAME,
@@ -210,6 +211,29 @@ See the License for the specific language governing permissions and
         
         exports.getDataArrays = function(info, filterModel) {
             return Object.keys(info.profiles).map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
+        };
+        
+        exports.isFilterModelCompatibleWithProfiles = function(profileSettings, filterModel){
+            var profilePart = filterModel.filter(R.compose(R.test(/^profile-/), R.prop('name')));
+            var profileSettingsMap = R.indexBy(R.prop('name'), profileSettings);
+            var conflictTypes = [];
+            profilePart.forEach(function(modelItem){
+                var itemName = modelItem.name.substring('profile-'.length);
+                var profileItem = profileSettingsMap[itemName];
+                if(!profileItem || profileItem.type !== modelItem.type){
+                    conflictTypes.push(itemName);
+                    return;
+                }
+                if(profileItem.type === 'enum'){
+                    var profileEnum = profileItem.value.split(',');
+                    var modelEnum = Object.keys(modelItem.selectedOptions);
+                    if(R.difference(modelEnum, profileEnum).length != 0){
+                        conflictTypes.push(itemName);
+                        return;
+                    }
+                }
+            });
+            return conflictTypes;
         };
 
 

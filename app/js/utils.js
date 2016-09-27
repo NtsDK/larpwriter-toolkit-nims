@@ -136,7 +136,7 @@ Utils.processError = function(callback){
 
 Utils.handleError = function(err){
     "use strict";
-    if (err instanceof Errors.ValidationError) {
+    if (err instanceof Errors.ValidationError || (err.name && err.name === 'ValidationError')) {
         Utils.alert(strFormat(getL10n(err.messageId), err.parameters));
     } else if( typeof err === 'object'){
         Utils.alert(err.message);

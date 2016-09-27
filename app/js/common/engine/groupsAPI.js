@@ -128,7 +128,11 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         LocalDBMS.prototype.saveFilterToGroup = function(groupName, filterModel, callback) {
-            "use strict";
+            var conflictTypes = CommonUtils.isFilterModelCompatibleWithProfiles(this.database.ProfileSettings, filterModel);
+            if(conflictTypes.length != 0){
+                callback(new Errors.ValidationError("groups-page-filter-is-incompatible-with-base-profiles", [conflictTypes.join(',')]));
+                return;
+            }
             this.database.Groups[groupName].filterModel = filterModel;
             if(callback) callback();
         };
