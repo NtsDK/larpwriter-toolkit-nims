@@ -176,7 +176,7 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
                         var inputItem = clearEl(inputItems[inputName]);
                         addEl(inputItem, makeText(data.join(', ')));
                         addEl(inputItem, makeEl('br'));
-                        addEl(inputItem, makeText('Всего: ' + data.length));
+                        addEl(inputItem, makeText(getL10n('groups-total') + data.length));
                     }
                 } else {
                     inputItems[inputName].value = group[inputName];

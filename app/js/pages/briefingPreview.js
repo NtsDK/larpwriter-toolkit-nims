@@ -110,7 +110,7 @@ BriefingPreview.buildContent = function (characterName) {
                     addEl(content, BriefingPreview.makePanel(makeText(getL10n("briefings-inventory") + ' (' + allInventoryLists.length + ')'), 
                             BriefingPreview.makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap)));
 
-                    addEl(content, BriefingPreview.makePanel(makeText("Группы" + ' (' + groupTexts.length + ')'), 
+                    addEl(content, BriefingPreview.makePanel(makeText(getL10n("header-groups") + ' (' + groupTexts.length + ')'), 
                             BriefingPreview.makeGroupContent(groupTexts)));
                     
                     var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
