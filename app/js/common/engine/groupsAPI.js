@@ -143,7 +143,12 @@ See the License for the specific language governing permissions and
             var that = this;
             that.getCharacterNamesArray(function(err, characterOwners){
                 if(err) {callback(err); return;}
-                characterOwners = R.zipObj(characterOwners, R.repeat('user', characterOwners.length));
+                // _getOwnerMap is part of permission summary API which is available on server 
+                if(that._getOwnerMap){
+                    characterOwners = that._getOwnerMap('Characters');
+                } else {
+                    characterOwners = R.zipObj(characterOwners, R.repeat('user', characterOwners.length));
+                }
                 that.getAllProfiles(function(err, profiles){
                     if(err) {callback(err); return;}
                     that.getCharactersSummary(function(err, charactersSummary){
