@@ -16,6 +16,7 @@
 
 //set NODE_ENV=prod && set MODE=standalone && gulp dist
 //set NODE_ENV=prod && set MODE=standalone && gulp dist:final
+//set NODE_ENV=prod && set MODE=standalone && set LANG=en && gulp dist:final
 //set NODE_ENV=prod && set MODE=server && gulp dist:final
 
 process.chdir("../NIMS");
@@ -96,7 +97,19 @@ var libs = addPrefix("app/libs/",[
 var resources = [translationsPath + "/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
     "inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]));
 
-var common = ["app/js/common/**/*.js"].concat([langPath + "/baseExample.js", langPath + "/defaultLang.js"]);
+var common = addPrefix("app/js/common/",
+['constants.js'   ,
+ 'commonUtils.js' ,
+ 'dateFormat.js'  ,
+ 'emptyBase.js'   ,
+ 'errors.js'      ,
+ 'EventEmitter.js',
+ 'logger.js'      ,
+ 'migrator.js'    ,
+ 'schema.js']);
+
+common = common.concat(["app/js/common/engine/*.js"]);
+common = common.concat([langPath + "/baseExample.js", langPath + "/defaultLang.js"]);
 
 var scripts = ["app/js/dbms/*.js"].concat("app/js/*.js");
 
