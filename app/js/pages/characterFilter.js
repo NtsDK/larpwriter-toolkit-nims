@@ -29,6 +29,7 @@ CharacterFilter.init = function () {
     listen(queryEl("#characterFilterDiv .remove-entity-button"), "click", Groups.removeGroup('#characterFilterDiv', CharacterFilter.groupAreaRefresh));
     listen(queryEl("#characterFilterDiv .show-entity-button"), "click", CharacterFilter.loadFilterFromGroup);
     listen(queryEl("#characterFilterDiv .save-entity-button"), "click", CharacterFilter.saveFilterToGroup);
+    listen(queryEl("#download-filter-table"), "click", CharacterFilter.downloadFilterTable);
     
     CharacterFilter.content = getEl("characterFilterDiv");
 };
@@ -83,13 +84,8 @@ CharacterFilter.getHeaderProfileItemNames = function(profileSettings){
     return R.map(R.pick(['name', 'displayName']), profileSettings);
 };
 
-CharacterFilter.rebuildContent = function () {
-    "use strict";
-    var filterContent = clearEl(getEl("filterContent"));
-
+CharacterFilter.makePrintData = function (){
     var dataArrays = CharacterFilter.filterConfiguration.getDataArrays(CharacterFilter.makeFilterModel());
-    
-    addEl(clearEl(getEl("filterResultSize")), makeText(dataArrays.length));
     
     var sortFunc = CommonUtils.charOrdAFactoryBase(CharacterFilter.sortDir, function(a){
         var map = CommonUtils.arr2map(a, 'itemName');
@@ -104,7 +100,13 @@ CharacterFilter.rebuildContent = function () {
         }
         return value;
     });
-    addEls(filterContent, dataArrays.sort(sortFunc).map(CharacterFilter.makeDataString));
+    return dataArrays.sort(sortFunc);
+}
+
+CharacterFilter.rebuildContent = function () {
+    var dataArrays = CharacterFilter.makePrintData();
+    addEl(clearEl(getEl("filterResultSize")), makeText(dataArrays.length));
+    addEls(clearEl(getEl("filterContent")), dataArrays.map(CharacterFilter.makeDataString));
     UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
 };
 
@@ -133,6 +135,37 @@ CharacterFilter.loadFilterFromGroup = function(){
         CharacterFilter.applyFilterModel(group.filterModel);
         CharacterFilter.rebuildContent();
     });
+};
+
+CharacterFilter.downloadFilterTable = function(){
+    var el = getEl('profileItemSelector');
+    var selected = [true];
+    for (var i = 0; i < el.options.length; i += 1) {
+        selected[i+1] = el.options[i].selected;
+    }
+    
+    function preprocess(str){
+        if(!(typeof str === 'string' || str instanceof String)){
+            return str;
+        }
+        var result = str.replace(/"/g, '""');
+        if (result.search(/("|,|\n)/g) >= 0){
+            result = '"' + result + '"';
+        }
+        return result;
+    }
+    
+    var dataArrays = CharacterFilter.makePrintData();
+    var csv = "\ufeff" + dataArrays.map(function(dataArray){
+        return dataArray.filter(function(item, index){
+            return selected[index];
+        }).map(R.pipe(R.prop('value'), preprocess)).join(';');
+    }).join('\n');
+    
+    var out = new Blob([csv], {
+        type : "text/csv;charset=utf-8;"
+    });
+    saveAs(out, "table.csv");
 };
 
 CharacterFilter.applyFilterModel = function(filterModel){
