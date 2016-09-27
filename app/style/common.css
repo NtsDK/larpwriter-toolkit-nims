@@ -173,3 +173,15 @@ body {
 #commonInfoDiv table{
   margin: 0;
 }
+
+.diagram-container{
+  display: flex; 
+  flex-direction: column;
+}
+
+.diagram-subcontainer{
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  text-align: center;
+}

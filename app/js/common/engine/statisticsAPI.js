@@ -19,44 +19,52 @@ See the License for the specific language governing permissions and
     function statisticsAPI(LocalDBMS, R, CommonUtils) {
         
         LocalDBMS.prototype.getStatistics = function(callback) {
-            "use strict";
+            var that = this;
+            this.getAllCharacterGroupTexts(function(err, groupTexts){
+                if(err) {callback(err); return;}
+                _getStatistics(that.database, groupTexts, callback);
+            });
+        };
+        
+        var _getStatistics = function(database, groupTexts, callback) {
             var statistics = {};
-            statistics.storyNumber = Object.keys(this.database.Stories).length;
-            statistics.characterNumber = Object.keys(this.database.Characters).length;
+            statistics.storyNumber = Object.keys(database.Stories).length;
+            statistics.characterNumber = Object.keys(database.Characters).length;
 
-            statistics.eventsNumber = R.sum(R.values(this.database.Stories).map(R.compose(R.length, R.prop('events'))));
+            statistics.eventsNumber = R.sum(R.values(database.Stories).map(R.compose(R.length, R.prop('events'))));
 
             statistics.userNumber = 1;
-            if (this.database.ManagementInfo && this.database.ManagementInfo.UsersInfo) {
-                statistics.userNumber = Object.keys(this.database.ManagementInfo.UsersInfo).length;
+            if (database.ManagementInfo && database.ManagementInfo.UsersInfo) {
+                statistics.userNumber = Object.keys(database.ManagementInfo.UsersInfo).length;
             }
 
-            statistics.textCharacterNumber = _countTextCharacters(this.database);
+            statistics.textCharacterNumber = _countTextCharacters(database);
 
-            var firstLastEventTime = _getFirstLastEventTime(this.database);
+            var firstLastEventTime = _getFirstLastEventTime(database);
 
             statistics.firstEvent = firstLastEventTime[0] ? firstLastEventTime[0] : "";
             statistics.lastEvent = firstLastEventTime[1] ? firstLastEventTime[1] : "";
 
-            statistics.storyEventsHist = _getHistogram(this.database, function(story) {
+            statistics.storyEventsHist = _getHistogram(database, function(story) {
                 return story.events.length;
             });
 
-            statistics.storyCharactersHist = _getHistogram(this.database, function(story) {
+            statistics.storyCharactersHist = _getHistogram(database, function(story) {
                 return Object.keys(story.characters).length;
             });
 
-            statistics.eventCompletenessHist = _getEventCompletenessHist(this.database);
-            statistics.characterStoriesHist = _getCharacterStoriesHist(this.database);
-            statistics.characterSymbolsHist = _getCharacterSymbolsHist(this.database);
+            statistics.eventCompletenessHist = _getEventCompletenessHist(database);
+            statistics.characterStoriesHist = _getCharacterHist(database, _countCharactersInStories);
+            statistics.characterSymbolsHist = _getCharacterHist(database, _countCharacterSymbols(groupTexts));
 
-            statistics.generalCompleteness = _getGeneralCompleteness(this.database);
-            statistics.storyCompleteness = _getStoryCompleteness(this.database);
+            statistics.generalCompleteness = _getGeneralCompleteness(database);
+            statistics.storyCompleteness = _getStoryCompleteness(database);
 
-            statistics.characterChartData = _getChartData(this.database, "characters", "Characters");
-            statistics.storyChartData = _getChartData(this.database, "stories", "Stories");
+            statistics.characterChartData = _getChartData(database, "characters", "Characters");
+            statistics.storyChartData = _getChartData(database, "stories", "Stories");
+            statistics.groupChartData = _getChartData(database, "groups", "Groups");
 
-            statistics.profileCharts = _getProfileChartData(this.database);
+            statistics.profileCharts = _getProfileChartData(database);
 
             callback(null, statistics);
         };
@@ -175,7 +183,7 @@ See the License for the specific language governing permissions and
             });
         };
         
-        var _countCharacterSymbolsInStories = function(database, stats){
+        var _countCharacterSymbols = R.curry(function(groupTexts, database, stats){
             R.values(database.Stories).forEach(function(story){
                 story.events.forEach(function(event) {
                     for (var characterName in event.characters) {
@@ -187,7 +195,10 @@ See the License for the specific language governing permissions and
                     }
                 });
             });
-        };
+            for(var characterName in groupTexts){
+                stats[characterName]+= R.sum(groupTexts[characterName].map(R.pipe(R.prop('text'), _noWhiteSpaceLength)));
+            }
+        });
 
         var _makeLabel = function(characterName, stat){
             return characterName + ' (' + stat + ')';
@@ -197,20 +208,9 @@ See the License for the specific language governing permissions and
             return (keyParam*step) + '-' + ((keyParam+1)*step-1) + ": " + tipData.join(", ");
         }
         
-        var _getCharacterStoriesHist = function(database){
-            return _getCharacterHist(database, _countCharactersInStories, _makeLabel, _makeTip);
-        };
-        
-        
-        var _getCharacterSymbolsHist = function(database){
-            return _getCharacterHist(database, _countCharacterSymbolsInStories, _makeLabel, _makeTip);
-        };
-        
-        var _getCharacterHist = function(database, statsCollector, makeLabel, makeTip){
-            var stats = R.keys(database.Characters).reduce(function(obj, character){
-                obj[character] = 0;
-                return obj;
-            }, {});
+        var _getCharacterHist = function(database, statsCollector){
+            var characterList = R.keys(database.Characters);
+            var stats = R.zipObj(characterList, R.repeat(0, characterList.length));
             
             statsCollector(database, stats);
             
@@ -219,7 +219,7 @@ See the License for the specific language governing permissions and
             
             var hist = R.keys(stats).reduce(function(hist, characterName){
                 var keyParam = Math.floor(stats[characterName] / step);
-                _addToHist(hist, 1, keyParam, makeLabel(characterName, stats[characterName]), R.always(1), R.add);
+                _addToHist(hist, 1, keyParam, _makeLabel(characterName, stats[characterName]), R.always(1), R.add);
                 return hist;
             }, []);
             
@@ -227,7 +227,7 @@ See the License for the specific language governing permissions and
                 if (!hist[i]) {
                     hist[i] = null;
                 } else {
-                    hist[i].tip = makeTip(i, step,  hist[i].tip);
+                    hist[i].tip = _makeTip(i, step,  hist[i].tip);
                 }
             }
             return hist;
@@ -318,6 +318,7 @@ See the License for the specific language governing permissions and
                     }
                 });
             }
+            textCharacterNumber += R.sum(R.values(database.Groups).map(R.compose(_noWhiteSpaceLength, R.prop('characterDescription'))));
             return textCharacterNumber;
         };
         

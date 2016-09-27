@@ -164,6 +164,7 @@ Overview.refresh = function () {
         Overview.makeHistogram(clearEl(getEl("characterStoriesHist")), statistics.characterStoriesHist);
         Overview.makeChart("characterChart", getEl("characterChart"), statistics.characterChartData);
         Overview.makeChart("storyChart", getEl("storyChart"), statistics.storyChartData);
+        Overview.makeChart("groupChart", getEl("groupChart"), statistics.groupChartData);
         var barData;
         var profileDiagrams = clearEl(getEl('profileDiagrams')), barDiv, bar;
         

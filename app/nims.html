@@ -82,47 +82,53 @@ See the License for the specific language governing permissions and
                 <textarea id="gameDescription" class="adminOnly"></textarea>
               </div>
               <div id="diagramsPanelContainer" class="overviewContainer">
-                <table class="table table-bordered" style="width: 100%;">
-                  <tr>
-                    <td>
+                <div class="diagram-container" style="">
+                  <div class="diagram-subcontainer">
+                    <div>
                       <h4 l10n-id="overview-event-count-diagram"></h4>
                       <div id="storyEventsHist" class="overviewHist"></div>
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                       <h4 l10n-id="overview-character-count-diagram"></h4>
                       <div id="storyCharactersHist" class="overviewHist"></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
+                    </div>
+                  </div>
+                  <div class="diagram-subcontainer">
+                    <div>
                       <h4 l10n-id="overview-character-stories-diagram"></h4>
                       <div id="characterStoriesHist" class="overviewHist"></div>
-                    </td>
-                    <td>
-                      <h4 l10n-id="overview-character-symbols-diagram"></h4>
-                      <div id="characterSymbolsHist" class="overviewHist"></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
+                    </div>
+                    <div>
                       <h4 l10n-id="overview-story-completeness-diagram"></h4>
                       <div id="eventCompletenessHist" class="overviewHist"></div>
-                    </td>
-                    <td>
+                    </div>
+                  </div>
+                  <div class="diagram-subcontainer">
+                    <div>
+                      <h4 l10n-id="overview-character-symbols-diagram"></h4>
+                      <div id="characterSymbolsHist" class="overviewHist"></div>
+                    </div>
+                  </div>
+                  <div class="diagram-subcontainer">
+                    <div>
                       <h4 l10n-id="overview-object-belonging-diagrams"></h4>
                       <div style="display:flex;justify-content:center;">
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
                           <canvas id="characterChart" width="200" height="100"></canvas><br>
-                          <span l10n-id="overview-characters-diagram"></span>
+                          <span l10n-id="header-characters"></span>
                         </div>
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
                           <canvas id="storyChart" width="200" height="100"></canvas><br>
-                          <span l10n-id="overview-stories-diagram"></span>
+                          <span l10n-id="header-stories"></span>
+                        </div>
+                        <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                          <canvas id="groupChart" width="200" height="100"></canvas><br>
+                          <span l10n-id="header-groups"></span>
                         </div>
                       </div>
-                    </td>
-                  </tr>
-                </table>
+                    </div>
+                  </div>
+                </div>
                 <div id="profileDiagrams"></div>
               </div>
             </div>
