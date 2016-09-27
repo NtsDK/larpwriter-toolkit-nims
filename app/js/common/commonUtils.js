@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
         
-    function CommonUtils(exports, R) {
+    function CommonUtils(exports, R, Constants) {
     
         exports.startsWith = function(str1, str2){
             return str1.substring(0, str2.length) === str2;
@@ -242,5 +242,5 @@ See the License for the specific language governing permissions and
     callback(CommonUtils);
 
 })(function(api){
-    typeof exports === 'undefined'? api(this['CommonUtils'] = {}, R) : module.exports = api;
+    typeof exports === 'undefined'? api(this['CommonUtils'] = {}, R, Constants) : module.exports = api;
 }.bind(this));
