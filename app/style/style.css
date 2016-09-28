@@ -275,6 +275,13 @@ See the License for the specific language governing permissions and
 	background-color: #EDEDED;
 }
 
+.schema-container{
+  width: 100%;
+  height: calc(100vh - 60px);
+  border: 1px solid lightgray;
+  background-color: #EDEDED;
+}
+
 /* briefing export */
 #advancedTextExportContainer {
 	display: flex;
