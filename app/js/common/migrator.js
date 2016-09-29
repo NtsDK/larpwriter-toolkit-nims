@@ -107,6 +107,11 @@ See the License for the specific language governing permissions and
         }
         if(data.Version === "0.4.4u3"){
             data.Groups = {};
+            data.InvestigationBoard = {
+                    groups : {},
+                    resources : {},
+                    relations : {}
+            };
             if(data.ManagementInfo){
                 for(var userName in data.ManagementInfo.UsersInfo){
                     data.ManagementInfo.UsersInfo[userName].groups = [];

@@ -34,6 +34,7 @@ See the License for the specific language governing permissions and
         var Characters =  getCharactersSchema(base.ProfileSettings);
         var Stories =  getStoriesSchema(base.Characters);
         var Groups =  getGroupsSchema(base.ProfileSettings);
+//        var InvestigationBoard = getInvestigationBoardSchema();
         var ManagementInfo = {};
         if(base.ManagementInfo){
             ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups);
@@ -49,11 +50,12 @@ See the License for the specific language governing permissions and
             },
             Log : Log,
             Groups : Groups,
+            InvestigationBoard: {},
             Settings: {},
             ManagementInfo: ManagementInfo
         };
 
-        schema.required = ["Meta", "ProfileSettings","Version", "Characters", "Stories", "Log", 'Groups'];
+        schema.required = ["Meta", "ProfileSettings","Version", "Characters", "Stories", "Log", 'Groups', 'InvestigationBoard'];
         schema.additionalProperties = false;
         
         return schema;

@@ -31,8 +31,9 @@ Groups.init = function () {
         navigation: queryEl(nav),
         content: queryEl(content)
     };
-    Utils.addView(containers, "group-profile", GroupProfile,{mainPage:true});
+    Utils.addView(containers, "group-profile", GroupProfile);
     Utils.addView(containers, "group-schema", GroupSchema);
+    Utils.addView(containers, "investigation-board", InvestigationBoard,{mainPage:true});
 
     listen(queryEl(".groups-tab .create-entity-button"), "click", Groups.createGroup(".groups-tab", Groups.refresh));
     listen(queryEl(".groups-tab .rename-entity-button"), "click", Groups.renameGroup(".groups-tab", Groups.refresh));
