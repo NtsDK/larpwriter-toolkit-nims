@@ -378,22 +378,19 @@ See the License for the specific language governing permissions and
       </div>
       
       <div class="board-edit-group-popup board-popup hidden">
-        <h3 class="panel-title">Редактировать группу</h3>
-        замена группы
-  <!--             <br> <span l10n-id="stories-replace-character"></span><select id="storyCharactersFromSelector" class="isStoryEditable"></select> -->
-  <!--             <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select> -->
-  <!--             <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-ok"></button> -->
-        
+        <h3 class="panel-title">Заменить группу</h3>
+        <select class="group-switch-select"></select>
+        <button class="group-switch-button" l10n-id="common-ok"></button>
         
         <h3 class="panel-title">Заметки</h3>
-        <textarea rows="3"></textarea>
+        <textarea class="group-notes-editor" rows="3"></textarea>
         
-        <button>ОК</button>
+        <button class="group-save-notes-button" l10n-id="common-ok"></button>
         <button class="cancel-group-editing-button">Отмена</button>
       </div>
       
       <div class="board-edit-resource-popup board-popup hidden">
-        <h3 class="panel-title">Редактировать ресурс</h3>
+        <h3 class="panel-title">Переименовать ресурс</h3>
         <div>
 <!--           <span l10n-id="common-rename-from"></span> <select -->
 <!--             class="rename-entity-select select2-mono-selector" -->

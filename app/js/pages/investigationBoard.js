@@ -23,60 +23,29 @@ var InvestigationBoard = {};
 InvestigationBoard.init = function () {
     
     listen(queryEl(".investigation-board-tab .group-add-button"), "click", InvestigationBoard.addGroup);
-//    listen(queryEl(".investigation-board-tab .group-remove-button"), "click", InvestigationBoard.removeGroup);
+    listen(queryEl(".investigation-board-tab .group-switch-button"), "click", InvestigationBoard.switchGroup);
+    listen(queryEl(".investigation-board-tab .group-save-notes-button"), "click", InvestigationBoard.setGroupNotes);
     
     listen(queryEl(".investigation-board-tab .create-entity-button"), "click", InvestigationBoard.createResource);
     listen(queryEl(".investigation-board-tab .rename-entity-button"), "click", InvestigationBoard.renameResource);
-//    listen(queryEl(".investigation-board-tab .remove-entity-button"), "click", InvestigationBoard.removeResource);
     
     listen(queryEl(".investigation-board-tab .cancel-node-adding-button"), "click", function(){
-        addClass(queryEl('.investigation-board-tab .board-add-node-popup'), 'hidden');
+        InvestigationBoard.showPopup('.board-add-node-popup', false);
         InvestigationBoard.newCallback();
     });
     listen(queryEl(".investigation-board-tab .cancel-resource-editing-button"), "click", function(){
-        addClass(queryEl('.investigation-board-tab .board-edit-resource-popup'), 'hidden');
+        InvestigationBoard.showPopup('.board-edit-resource-popup', false);
         InvestigationBoard.editCallback();
     });
     listen(queryEl(".investigation-board-tab .cancel-group-editing-button"), "click", function(){
-        addClass(queryEl('.investigation-board-tab .board-edit-group-popup'), 'hidden');
+        InvestigationBoard.showPopup('.board-edit-group-popup', false);
         InvestigationBoard.editCallback();
     });
     
     InvestigationBoard.content = queryEl(".investigation-board-tab");
 };
 
-InvestigationBoard.refresh = function () {
-    PermissionInformer.getGroupNamesArray(true, Utils.processError(function(groupNames){
-        DBMS.getInvestigationBoardData(function(err, ibData){
-            var allGroupNames = groupNames.map(R.prop('value'));
-            var ibGroupNames = R.keys(ibData.groups);
-            var freeGroupNames = R.difference(allGroupNames,ibGroupNames);
-            
-            clearEl(queryEl(".investigation-board-tab .group-add-select"));
-            $(".investigation-board-tab .group-add-select").select2(arr2Select2(freeGroupNames));
-
-//            clearEl(queryEl(".investigation-board-tab .group-remove-select"));
-//            $(".investigation-board-tab .group-remove-select").select2(arr2Select2(ibGroupNames));
-            
-//            var resourceNames = R.keys(ibData.resources);
-            
-//            clearEl(queryEl(".investigation-board-tab .rename-entity-select"));
-//            $(".investigation-board-tab .rename-entity-select").select2(arr2Select2(resourceNames));
-
-//            clearEl(queryEl(".investigation-board-tab .remove-entity-select"));
-//            $(".investigation-board-tab .remove-entity-select").select2(arr2Select2(resourceNames));
-            
-            InvestigationBoard.redrawBoard(ibData);
-        });
-    }));
-    
-    
-//    DBMS.getGroupSchemas(function(err, schemas){
-//        InvestigationBoard.redrawSchema(schemas.theory);
-//    });
-};
-
-InvestigationBoard.softRefresh = function () {
+InvestigationBoard.refresh = function (softRefresh) {
     PermissionInformer.getGroupNamesArray(true, Utils.processError(function(groupNames){
         DBMS.getInvestigationBoardData(function(err, ibData){
             var allGroupNames = groupNames.map(R.prop('value'));
@@ -86,90 +55,24 @@ InvestigationBoard.softRefresh = function () {
             clearEl(queryEl(".investigation-board-tab .group-add-select"));
             $(".investigation-board-tab .group-add-select").select2(arr2Select2(freeGroupNames));
             
-//            clearEl(queryEl(".investigation-board-tab .group-remove-select"));
-//            $(".investigation-board-tab .group-remove-select").select2(arr2Select2(ibGroupNames));
+            clearEl(queryEl(".investigation-board-tab .group-switch-select"));
+            $(".investigation-board-tab .group-switch-select").select2(arr2Select2(freeGroupNames));
             
-            var resourceNames = R.keys(ibData.resources);
-            
-            clearEl(queryEl(".investigation-board-tab .rename-entity-select"));
-            $(".investigation-board-tab .rename-entity-select").select2(arr2Select2(resourceNames));
-            
-//            clearEl(queryEl(".investigation-board-tab .remove-entity-select"));
-//            $(".investigation-board-tab .remove-entity-select").select2(arr2Select2(resourceNames));
-            
-//            InvestigationBoard.redrawBoard(ibData);
+            if(!softRefresh){
+                InvestigationBoard.redrawBoard(ibData);
+            }
         });
     }));
-    
-    
-//    DBMS.getGroupSchemas(function(err, schemas){
-//        InvestigationBoard.redrawSchema(schemas.theory);
-//    });
 };
-
-
-
-//InvestigationBoard.removeGroup = function () {
-//    var name = queryEl(".investigation-board-tab .group-remove-select").value.trim();
-//    
-//    if (Utils.confirm('Вы уверены, что хотите удалить группу со схемы...?')) {
-//        DBMS.removeBoardGroup(name, function(err){
-//            if(err) {Utils.handleError(err); return;}
-//            InvestigationBoard.refresh();
-//        });
-//    }
-//};
-
-
-
-
-
-//InvestigationBoard.removeResource = function () {
-//    var name = queryEl(".investigation-board-tab .remove-entity-select").value.trim();
-//    
-//    if (Utils.confirm(strFormat(getL10n("groups-are-you-sure-about-group-removing"),[name]))) {
-//        DBMS.removeResource(name, function(err){
-//            if(err) {Utils.handleError(err); return;}
-//            InvestigationBoard.refresh();
-//        });
-//    }
-//};
 
 InvestigationBoard.addNode = function(node, callback){
-    removeClass(queryEl('.investigation-board-tab .board-add-node-popup'), 'hidden');
+    InvestigationBoard.showPopup('.board-add-node-popup', true);
     InvestigationBoard.newNode = node;
     InvestigationBoard.newCallback = callback;
 };
 
-InvestigationBoard.setNode = function(nodeName, group){
-   var node = InvestigationBoard.newNode;
-//   node.id = 
-       node.label = nodeName;
-   node.group = group;
-   addClass(queryEl('.investigation-board-tab .board-add-node-popup'), 'hidden');
-   InvestigationBoard.softRefresh();
-   InvestigationBoard.newCallback(node);
-};
-
-InvestigationBoard.renameResource = function () {
-    var node = InvestigationBoard.editNode;
-    var fromName = node.label;
-//    var fromName = queryEl(".investigation-board-tab .rename-entity-select").value.trim();
-    var toName = queryEl(".investigation-board-tab .rename-entity-input").value.trim();
-    
-    DBMS.renameResource(fromName, toName, function(err){
-        if(err) {Utils.handleError(err); return;}
-        
-        node.label = toName;
-        addClass(queryEl('.investigation-board-tab .board-edit-resource-popup'), 'hidden');
-        InvestigationBoard.editCallback(node);
-//        InvestigationBoard.refresh();
-    });
-};
-
 InvestigationBoard.addGroup = function () {
     var name = queryEl(".investigation-board-tab .group-add-select").value.trim();
-    
     DBMS.addBoardGroup(name, function(err){
         if(err) {Utils.handleError(err); return;}
         InvestigationBoard.setNode(name, 'groups');
@@ -177,17 +80,29 @@ InvestigationBoard.addGroup = function () {
 };
 
 InvestigationBoard.createResource = function () {
-    "use strict";
     var name = queryEl(".investigation-board-tab .create-entity-input").value.trim();
-    
     DBMS.createResource(name, function(err){
         if(err) {Utils.handleError(err); return;}
         InvestigationBoard.setNode(name, 'resources');
     });
 };
 
+InvestigationBoard.setNode = function(nodeName, group){
+    var node = InvestigationBoard.newNode;
+    if(group === 'groups'){
+        node.originalLabel = nodeName;
+        node.originalNotes = '';
+        node.label = InvestigationBoard.makeDisplayLabel(node.originalLabel, node.originalNotes);
+    } else {
+        node.label = nodeName;
+    }
+    node.group = group;
+    InvestigationBoard.showPopup('.board-add-node-popup', false);
+    InvestigationBoard.refresh(true);
+    InvestigationBoard.newCallback(node);
+};
+
 InvestigationBoard.editNodeFun = function(node, callback){
-//    var node = InvestigationBoard.nodesDataset.get(data.nodes[0]);
     InvestigationBoard.editNode = node;
     InvestigationBoard.editCallback = callback;
     
@@ -199,13 +114,56 @@ InvestigationBoard.editNodeFun = function(node, callback){
 };
 
 InvestigationBoard.editGroup = function () {
-    removeClass(queryEl('.investigation-board-tab .board-edit-group-popup'), 'hidden');
+    InvestigationBoard.showPopup('.board-edit-group-popup', true);
+    queryEl(".investigation-board-tab .group-notes-editor").value = InvestigationBoard.editNode.originalNotes;
+};
+
+InvestigationBoard.switchGroup = function () {
+    var node = InvestigationBoard.editNode;
+    var fromName = node.originalLabel;
+    var toName = queryEl(".investigation-board-tab .group-switch-select").value.trim();
+    
+    DBMS.switchGroups(fromName, toName, function(err){
+        if(err) {Utils.handleError(err); return;}
+        node.originalLabel = toName;
+        node.label = InvestigationBoard.makeDisplayLabel(node.originalLabel, node.originalNotes);
+        InvestigationBoard.showPopup('.board-edit-group-popup', false);
+        InvestigationBoard.editCallback(node);
+        InvestigationBoard.refresh(true);
+    });
+};
+
+InvestigationBoard.setGroupNotes = function () {
+    var node = InvestigationBoard.editNode;
+    var notes = queryEl(".investigation-board-tab .group-notes-editor").value.trim();
+    
+    DBMS.setGroupNotes(node.originalLabel, notes, function(err){
+        if(err) {Utils.handleError(err); return;}
+        node.originalNotes = notes;
+        node.label = InvestigationBoard.makeDisplayLabel(node.originalLabel, node.originalNotes);
+        InvestigationBoard.showPopup('.board-edit-group-popup', false);
+        InvestigationBoard.editCallback(node);
+        InvestigationBoard.refresh(true);
+    });
 };
 
 InvestigationBoard.editResource = function () {
-    removeClass(queryEl('.investigation-board-tab .board-edit-resource-popup'), 'hidden');
+    InvestigationBoard.showPopup('.board-edit-resource-popup', true);
 };
 
+InvestigationBoard.renameResource = function () {
+    var node = InvestigationBoard.editNode;
+    var fromName = node.label;
+    var toName = queryEl(".investigation-board-tab .rename-entity-input").value.trim();
+    
+    DBMS.renameResource(fromName, toName, function(err){
+        if(err) {Utils.handleError(err); return;}
+        
+        node.label = toName;
+        InvestigationBoard.showPopup('.board-edit-resource-popup', false);
+        InvestigationBoard.editCallback(node);
+    });
+};
 
 
 InvestigationBoard.deleteNode = function(data, callback){
@@ -213,14 +171,23 @@ InvestigationBoard.deleteNode = function(data, callback){
 //    Utils.alert(JSON.stringify(node));
     var funcName = node.group === 'groups' ? 'removeBoardGroup' : 'removeResource';
     var msg = node.group === 'groups' ? 'Вы уверены, что хотите удалить группу со схемы...?' : 'Про ресурс';
+    var label = node.group === 'groups' ? node.originalLabel : node.label;
     if (Utils.confirm(msg)) {
-        DBMS[funcName](node.label, function(err){
+        DBMS[funcName](label, function(err){
             if(err) {Utils.handleError(err); callback(); return;}
+            InvestigationBoard.refresh(true);
             callback(data); 
         });
     } else {
         callback();
     }
+};
+
+InvestigationBoard.makeDisplayLabel = function(label, notes){
+    function prepareStr(str){
+        return str.split('\n').map(R.splitEvery(20)).map(R.join('\n')).join('\n');
+    }
+    return prepareStr(label) + (notes.trim() === '' ? '' : ("\n\n" + prepareStr(notes)));
 };
 
 InvestigationBoard.redrawBoard = function (ibData) {
@@ -237,10 +204,17 @@ InvestigationBoard.redrawBoard = function (ibData) {
     
     var nodes = [];
 //    var makeNode = R.compose(R.zipObj(['id', 'label']),R.repeat(R.__, 2));
-    var makeNode = R.compose(R.zipObj(['label']),R.repeat(R.__, 1));
+    var makeResourceNode = R.compose(R.zipObj(['label']),R.repeat(R.__, 1));
+    function makeGroupNode(node){
+        return {
+            originalLabel: node.name,
+            originalNotes: node.notes,
+            label: InvestigationBoard.makeDisplayLabel(node.name, node.notes)
+        };
+    };
     
-    nodes = nodes.concat(R.keys(ibData.groups).map(makeNode).map(R.merge({group: 'groups'})));
-    nodes = nodes.concat(R.keys(ibData.resources).map(makeNode).map(R.merge({group: 'resources'})));
+    nodes = nodes.concat(R.values(ibData.groups).map(makeGroupNode).map(R.merge({group: 'groups'})));
+    nodes = nodes.concat(R.keys(ibData.resources).map(makeResourceNode).map(R.merge({group: 'resources'})));
             
     InvestigationBoard.nodesDataset = new vis.DataSet(nodes);
     InvestigationBoard.edgesDataset = new vis.DataSet([]);
@@ -263,3 +237,7 @@ InvestigationBoard.redrawBoard = function (ibData) {
     
     InvestigationBoard.network = new vis.Network(container, data, opts);
 };
+
+InvestigationBoard.showPopup = R.curry(function(selector, show){
+    setClassByCondition(queryEl('.investigation-board-tab ' + selector), 'hidden', !show);
+});

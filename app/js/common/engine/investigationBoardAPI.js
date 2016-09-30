@@ -18,6 +18,10 @@ See the License for the specific language governing permissions and
 
     function investigationBoardAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
         
+        var resourcesPath = ['InvestigationBoard', 'resources'];
+        var groupsPath = ['InvestigationBoard', 'groups'];
+        var context = 'investigation-board';
+        
         LocalDBMS.prototype.isResourceNameUsed = function(resourceName, callback) {
             "use strict";
             callback(null, this.database.InvestigationBoard.resources[resourceName] !== undefined);
@@ -41,9 +45,31 @@ See the License for the specific language governing permissions and
             }
             
             ibData.groups[groupName] = {
-                    name:groupName
+                    name:groupName,
+                    notes: ""
             };
             if(callback) callback();
+        };
+        
+        LocalDBMS.prototype.switchGroups = function(fromName, toName, callback) {
+            var err = this._renameEntityPrecondition(fromName, toName, groupsPath, context);
+            if (err) {
+                callback(err);
+            } else {
+                var container = R.path(groupsPath, this.database);
+                var data = container[fromName];
+                data.name = toName;
+                container[toName] = data;
+                delete container[fromName];
+                if (callback) callback();
+            }
+        };
+
+        LocalDBMS.prototype.setGroupNotes = function(groupName, notes, callback) {
+            var container = R.path(groupsPath, this.database);
+            var data = container[groupName];
+            data.notes = notes;
+            if (callback) callback();
         };
         
         LocalDBMS.prototype.removeBoardGroup = function(groupName, callback) {
@@ -83,15 +109,12 @@ See the License for the specific language governing permissions and
             }
         };
         
-        var resourcePath = ['InvestigationBoard', 'resources'];
-        var context = 'investigation-board';
-        
         LocalDBMS.prototype.createResource = function(resourceName, callback) {
-            var err = this._createEntityPrecondition(resourceName, resourcePath, context);
+            var err = this._createEntityPrecondition(resourceName, resourcesPath, context);
             if(err){
                 callback(err);
             } else {
-                R.path(resourcePath, this.database)[resourceName] = {
+                R.path(resourcesPath, this.database)[resourceName] = {
                     name : resourceName
                 };
                 if (callback) callback();
@@ -99,11 +122,11 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.renameResource = function(fromName, toName, callback) {
-            var err = this._renameEntityPrecondition(fromName, toName, resourcePath, context);
+            var err = this._renameEntityPrecondition(fromName, toName, resourcesPath, context);
             if(err){
                 callback(err);
             } else {
-                var container = R.path(resourcePath, this.database);
+                var container = R.path(resourcesPath, this.database);
                 var data = container[fromName];
                 data.name = toName;
                 container[toName] = data;
@@ -112,8 +135,10 @@ See the License for the specific language governing permissions and
             }
         };
         
+
+        
         LocalDBMS.prototype.removeResource = function(resourceName, callback) {
-            delete R.path(resourcePath, this.database)[resourceName];
+            delete R.path(resourcesPath, this.database)[resourceName];
             if (callback) callback();
         };
         

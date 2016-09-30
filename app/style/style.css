@@ -391,7 +391,7 @@ See the License for the specific language governing permissions and
   justify-content: space-between;
 }
 
-.rename-entity-select, .remove-entity-select, .save-entity-select, .group-add-select {
+.rename-entity-select, .remove-entity-select, .save-entity-select, .group-add-select, .group-replace-select {
   width: 200px;
 }
 

@@ -130,9 +130,14 @@ See the License for the specific language governing permissions and
                     type : 'dynamic'
                 }
             },
-            physics : {
-                enabled: false
+            groups : {
+                groups: {color:{background:'#ffcc00', border: '#a78912'}, borderWidth:1, shape: 'box'},
+                resources: {color:{background:'#99cc00', border: '#839159'}, borderWidth:1, shape: 'ellipse'}
+//                33cccc - edge label back
             }
+//            physics : {
+//                enabled: false
+//            }
     };
     
 
