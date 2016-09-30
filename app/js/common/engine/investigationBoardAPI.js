@@ -18,10 +18,105 @@ See the License for the specific language governing permissions and
 
     function investigationBoardAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
         
-        LocalDBMS.prototype.getInvestigationBoardData = function(callback) {
+        LocalDBMS.prototype.isResourceNameUsed = function(resourceName, callback) {
             "use strict";
-            callback(null, CommonUtils.clone(Object.keys(this.database.InvestigationBoard)));
+            callback(null, this.database.InvestigationBoard.resources[resourceName] !== undefined);
         };
+        
+        LocalDBMS.prototype.getInvestigationBoardData = function(callback) {
+            callback(null, CommonUtils.clone(this.database.InvestigationBoard));
+        };
+        
+        LocalDBMS.prototype.addBoardGroup = function(groupName, callback) {
+            if(groupName === ""){
+//                callback(new Errors.ValidationError("groups-group-name-is-not-specified"));
+                callback({message: "Имя группы не может быть пустым"});
+                return;
+            }
+            var ibData = this.database.InvestigationBoard;
+                
+            if(ibData.groups[groupName]){
+                callback({message: 'Эта группа уже добавлена на схему'});
+                return;
+            }
+            
+            ibData.groups[groupName] = {
+                    name:groupName
+            };
+            if(callback) callback();
+        };
+        
+        LocalDBMS.prototype.removeBoardGroup = function(groupName, callback) {
+            if(groupName === ""){
+                callback({message: "Имя группы не может быть пустым"});
+                return;
+            }
+            var ibData = this.database.InvestigationBoard;
+            
+            if(!ibData.groups[groupName]){
+                callback({message: 'Этой группы нет на схеме'});
+                return;
+            }
+            
+            delete ibData.groups[groupName];
+            if(callback) callback();
+        };
+        
+        LocalDBMS.prototype._createEntityPrecondition = function(entityName, containerPath, context){
+            if(entityName === ""){
+                return new Errors.ValidationError(context + "-new-name-is-not-specified");
+            }
+            if(R.path(containerPath, this.database)[entityName] !== undefined){
+                return new Errors.ValidationError(context + "-name-already-used", [entityName])
+            }
+        };
+        
+        LocalDBMS.prototype._renameEntityPrecondition = function(fromEntityName, toEntityName, containerPath, context){
+            if(toEntityName === ""){
+                return new Errors.ValidationError(context + "-rename-name-is-not-specified");
+            }
+            if(toEntityName === fromEntityName){
+                return new Errors.ValidationError(context + "-names-are-the-same");
+            }
+            if(R.path(containerPath, this.database)[toEntityName]){
+                return new Errors.ValidationError(context + "-name-already-used", [toEntityName])
+            }
+        };
+        
+        var resourcePath = ['InvestigationBoard', 'resources'];
+        var context = 'investigation-board';
+        
+        LocalDBMS.prototype.createResource = function(resourceName, callback) {
+            var err = this._createEntityPrecondition(resourceName, resourcePath, context);
+            if(err){
+                callback(err);
+            } else {
+                R.path(resourcePath, this.database)[resourceName] = {
+                    name : resourceName
+                };
+                if (callback) callback();
+            }
+        };
+
+        LocalDBMS.prototype.renameResource = function(fromName, toName, callback) {
+            var err = this._renameEntityPrecondition(fromName, toName, resourcePath, context);
+            if(err){
+                callback(err);
+            } else {
+                var container = R.path(resourcePath, this.database);
+                var data = container[fromName];
+                data.name = toName;
+                container[toName] = data;
+                delete container[fromName];
+                if (callback) callback();
+            }
+        };
+        
+        LocalDBMS.prototype.removeResource = function(resourceName, callback) {
+            delete R.path(resourcePath, this.database)[resourceName];
+            if (callback) callback();
+        };
+        
     };
     
     callback(investigationBoardAPI);

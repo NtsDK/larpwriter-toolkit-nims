@@ -76,7 +76,7 @@ See the License for the specific language governing permissions and
                 return;
             }
             
-            if(this.database.Characters[groupName]){
+            if(this.database.Groups[groupName]){
                 callback(new Errors.ValidationError("groups-group-name-already-used", [groupName]));
                 return;
             }

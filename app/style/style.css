@@ -391,7 +391,7 @@ See the License for the specific language governing permissions and
   justify-content: space-between;
 }
 
-.rename-entity-select, .remove-entity-select, .save-entity-select{
+.rename-entity-select, .remove-entity-select, .save-entity-select, .group-add-select {
   width: 200px;
 }
 
@@ -406,4 +406,19 @@ See the License for the specific language governing permissions and
 
 .flex-front-element{
   order: -1;
+}
+
+.board-popup {
+  position:absolute;
+  top:350px;
+  left:170px;
+  z-index:299;
+/*   width:250px; */
+/*   height:120px; */
+  background-color: #f9f9f9;
+  border-style:solid;
+  border-width:3px;
+  border-color: #5394ed;
+  padding:10px;
+/*   text-align: center; */
 }

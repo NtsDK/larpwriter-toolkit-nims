@@ -315,45 +315,40 @@ See the License for the specific language governing permissions and
           <div style="display: flex;justify-content: space-around;">
           
             <div class="investigation-board__group-management">
-              <h3 class="panel-title" l10n-id="header-groups"></h3>
-              <select class="group-add-select"></select>
-              <button class="group-add-button" l10n-id="common-add"></button>
-  <!--             <br> <span l10n-id="stories-replace-character"></span><select id="storyCharactersFromSelector" class="isStoryEditable"></select> -->
-  <!--             <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select> -->
-  <!--             <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-ok"></button> -->
-              <br> <select id="group-remove-select"></select>
-              <button id="group-remove-button" l10n-id="common-remove"></button>
+              
+<!--               <br> <select class="group-remove-select"></select> -->
+<!--               <button class="group-remove-button" l10n-id="common-remove"></button> -->
             </div>
             <div class="investigation-board__resource-management">
-              <h3 class="panel-title">Ресурсы</h3>
+<!--               <h3 class="panel-title">Ресурсы</h3> -->
               <div class="entity-management">
-                <div>
-                  <input class="create-entity-input" l10n-placeholder-id2="groups-group-name"></input>
-                  <button class="create-entity-button" l10n-id="common-add"></button>
-                </div>
-                <div>
-                  <span l10n-id="common-rename-from"></span> <select
-                    class="rename-entity-select select2-mono-selector"
-                  >
-                  </select> <span l10n-id="common-to"></span>
-                  <input class="rename-entity-input"
-                    l10n-placeholder-id="groups-new-group-name"
-                  ></input>
-                  <button class="rename-entity-button" l10n-id="common-ok"></button>
-                </div>
-                <div>
-                  <select class="remove-entity-select select2-mono-selector">
-                  </select>
-                  <button class="remove-entity-button" l10n-id="common-remove"></button>
-                </div>
+<!--                 <div> -->
+<!--                   <input class="create-entity-input" l10n-placeholder-id2="groups-group-name"></input> -->
+<!--                   <button class="create-entity-button" l10n-id="common-add"></button> -->
+<!--                 </div> -->
+<!--                 <div> -->
+<!--                   <span l10n-id="common-rename-from"></span> <select -->
+<!--                     class="rename-entity-select select2-mono-selector" -->
+<!--                   > -->
+<!--                   </select> <span l10n-id="common-to"></span> -->
+<!--                   <input class="rename-entity-input" -->
+<!--                     l10n-placeholder-id="groups-new-group-name" -->
+<!--                   ></input> -->
+<!--                   <button class="rename-entity-button" l10n-id="common-ok"></button> -->
+<!--                 </div> -->
+<!--                 <div> -->
+<!--                   <select class="remove-entity-select select2-mono-selector"> -->
+<!--                   </select> -->
+<!--                   <button class="remove-entity-button" l10n-id="common-remove"></button> -->
+<!--                 </div> -->
               </div>
             </div>
           </div>
           <div style="display: flex;justify-content: space-around;">
             <div class="investigation-board__notes-management">
-              <h3 class="panel-title">Заметки</h3>
-              <select></select><br>
-              <textarea rows="3"></textarea>
+<!--               <h3 class="panel-title">Заметки</h3> -->
+<!--               <select></select><br> -->
+<!--               <textarea rows="3"></textarea> -->
             </div>
             <div class="investigation-board__relation-management">
               <h3 class="panel-title">Отношения</h3>
@@ -368,6 +363,48 @@ See the License for the specific language governing permissions and
           </div>
           <div class="schema-container"></div>
         </div>
+      </div>
+      <div class="board-add-node-popup board-popup hidden">
+        <h3 class="panel-title">Добавить группу</h3>
+        <select class="group-add-select"></select>
+        <button class="group-add-button" l10n-id="common-add"></button>
+        <br>
+        <h3 class="panel-title">Создать ресурс</h3>
+        <div>
+          <input class="create-entity-input" l10n-placeholder-id2="groups-group-name"></input>
+          <button class="create-entity-button" l10n-id="common-add"></button>
+        </div>
+        <button class="cancel-node-adding-button">Отмена</button>
+      </div>
+      
+      <div class="board-edit-group-popup board-popup hidden">
+        <h3 class="panel-title">Редактировать группу</h3>
+        замена группы
+  <!--             <br> <span l10n-id="stories-replace-character"></span><select id="storyCharactersFromSelector" class="isStoryEditable"></select> -->
+  <!--             <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select> -->
+  <!--             <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-ok"></button> -->
+        
+        
+        <h3 class="panel-title">Заметки</h3>
+        <textarea rows="3"></textarea>
+        
+        <button>ОК</button>
+        <button class="cancel-group-editing-button">Отмена</button>
+      </div>
+      
+      <div class="board-edit-resource-popup board-popup hidden">
+        <h3 class="panel-title">Редактировать ресурс</h3>
+        <div>
+<!--           <span l10n-id="common-rename-from"></span> <select -->
+<!--             class="rename-entity-select select2-mono-selector" -->
+<!--           > -->
+<!--           </select> <span l10n-id="common-to"></span> -->
+          <input class="rename-entity-input"
+            l10n-placeholder-id="groups-new-group-name"
+          ></input>
+          <button class="rename-entity-button" l10n-id="common-ok"></button>
+        </div>
+        <button class="cancel-resource-editing-button">Отмена</button>
       </div>
     </div>
 

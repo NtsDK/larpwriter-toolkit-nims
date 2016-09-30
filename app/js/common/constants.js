@@ -118,6 +118,43 @@ See the License for the specific language governing permissions and
         ['summary-completeness', "character-filter-completeness"],
         ['summary-totalStories', "character-filter-totalStories"]
     ];
+    
+    exports.investigationBoardOpts = {
+            edges : {
+                width : 0.15,
+                color : {
+                    inherit : 'from'
+                },
+                smooth : {
+//                    type : 'continuous'
+                    type : 'dynamic'
+                }
+            },
+            physics : {
+                enabled: false
+            }
+    };
+    
+
+    exports.visLocales = {
+        'ru' : {
+            edit : 'Редактировать',
+            del : 'Удалить выбранное',
+            back : 'Назад',
+            addNode : 'Добавить узел',
+            addEdge : 'Добавить ребро',
+            editNode : 'Редактировать узел',
+            editEdge : 'Редактировать ребро',
+            addDescription : 'Кликните в свободное место, чтобы добавить новый узел.',
+            edgeDescription : 'Кликните на узел и протяните ребро к другому узлу, чтобы соединить их.',
+            editEdgeDescription : 'Кликните на контрольные точки и перетащите их к другому узлу, чтобы соединить узлы.',
+            createEdgeError : 'Невозможно соединить ребра в кластер.',
+            deleteClusterError : 'Кластеры не могут быть удалены',
+            editClusterError : 'Кластеры недоступны для редактирования.'
+        }
+    };
+    
+    exports.visLocales['ru_RU'] = exports.visLocales['ru'];
 
     
 })(typeof exports === 'undefined'? this['Constants']={}: exports);

@@ -107,11 +107,6 @@ See the License for the specific language governing permissions and
         }
         if(data.Version === "0.4.4u3"){
             data.Groups = {};
-            data.InvestigationBoard = {
-                    groups : {},
-                    resources : {},
-                    relations : {}
-            };
             if(data.ManagementInfo){
                 for(var userName in data.ManagementInfo.UsersInfo){
                     data.ManagementInfo.UsersInfo[userName].groups = [];
@@ -119,7 +114,14 @@ See the License for the specific language governing permissions and
             }
             
             data.Version = "0.5.0";
-            
+        }
+        if(data.Version === "0.5.0"){
+            data.InvestigationBoard = {
+                groups : {},
+                resources : {},
+                relations : {}
+            };
+            data.Version = "0.5.1";
         }
         
         exists(data, 'base', 'Characters');
