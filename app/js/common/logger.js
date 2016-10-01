@@ -88,6 +88,17 @@ See the License for the specific language governing permissions and
             
             "changeAdaptationReadyStatus" : {},
             "getBriefingData" : {},
+            
+            "addBoardGroup" : {},
+            "switchGroups" : {},
+            "setGroupNotes" : {},
+            "removeBoardGroup" : {},
+            "createResource" : {},
+            "renameResource" : {},
+            "removeResource" : {},
+            "addEdge" : {},
+            "setEdgeLabel" : {},
+            "removeEdge" : {},
         };
         
         if(extras){

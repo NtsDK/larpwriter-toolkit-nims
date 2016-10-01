@@ -236,8 +236,9 @@ See the License for the specific language governing permissions and
 //                     gravitationalConstant : -60000,
 //                        springLength: 20,
 //                    springConstant: 0.1,
-                    avoidOverlap: 0.3,
-                    springLength: 250,
+                    avoidOverlap: 0.4,
+//                    avoidOverlap: 0.6,
+                    springLength: 300,
                     centralGravity: 0.8,
                 },
                 stabilization : {

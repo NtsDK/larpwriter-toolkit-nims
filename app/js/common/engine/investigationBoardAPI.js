@@ -171,7 +171,7 @@ See the License for the specific language governing permissions and
             if(CommonUtils.startsWith(fromId , 'resource-')){
                 return new Errors.ValidationError(context + "-resource-node-cant-be-first");
             }
-            if(!R.path(relationsPath, this.database)[fromId][toId]){
+            if(R.path(relationsPath, this.database)[fromId][toId] === undefined){
                 return new Errors.ValidationError(context + "-relation-is-not-exist");
             }
         };

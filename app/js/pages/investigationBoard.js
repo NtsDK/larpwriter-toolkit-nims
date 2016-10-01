@@ -36,11 +36,24 @@ InvestigationBoard.init = function () {
     listen(queryEl(".investigation-board-tab .cancel-group-editing-button"), "click", InvestigationBoard.cancel('.board-edit-group-popup'));
     listen(queryEl(".investigation-board-tab .cancel-add-edge-button"), "click", InvestigationBoard.cancel('.board-add-edge-popup'));
     
+    InvestigationBoard.nodesDataset = new vis.DataSet();
+    InvestigationBoard.edgesDataset = new vis.DataSet();
+    
+    var data = {
+        nodes : InvestigationBoard.nodesDataset,
+        edges : InvestigationBoard.edgesDataset
+    };
+    
+    var container = queryEl('.investigation-board-tab .schema-container');
+    InvestigationBoard.network = new vis.Network(container, data, Constants.investigationBoardOpts);
+    InvestigationBoard.network.on("selectEdge", InvestigationBoard.showEdgeLabelEditor);
+    InvestigationBoard.network.on("deselectEdge", InvestigationBoard.hideEdgeLabelEditor);
+    
     InvestigationBoard.content = queryEl(".investigation-board-tab");
 };
 
 InvestigationBoard.refresh = function (softRefresh) {
-    PermissionInformer.getGroupNamesArray(true, Utils.processError(function(groupNames){
+    PermissionInformer.getGroupNamesArray(false, Utils.processError(function(groupNames){
         DBMS.getInvestigationBoardData(function(err, ibData){
             var allGroupNames = groupNames.map(R.prop('value'));
             var ibGroupNames = R.keys(ibData.groups);
@@ -197,11 +210,6 @@ InvestigationBoard._makeRelNodeId = function(name, type){
 };
 
 InvestigationBoard.redrawBoard = function (ibData) {
-    var container = queryEl('.investigation-board-tab .schema-container');
-    
-    if(InvestigationBoard.network){
-        InvestigationBoard.network.destroy();
-    }
     
     var nodes = [];
     function makeResourceNode(name){
@@ -222,7 +230,8 @@ InvestigationBoard.redrawBoard = function (ibData) {
     nodes = nodes.concat(R.values(ibData.groups).map(makeGroupNode).map(R.merge({group: 'groups'})));
     nodes = nodes.concat(R.keys(ibData.resources).map(makeResourceNode).map(R.merge({group: 'resources'})));
             
-    InvestigationBoard.nodesDataset = new vis.DataSet(nodes);
+    InvestigationBoard.nodesDataset.clear();
+    InvestigationBoard.nodesDataset.add(nodes);
     
     var edges = [];
     
@@ -237,12 +246,8 @@ InvestigationBoard.redrawBoard = function (ibData) {
         });
     }));
     
-    InvestigationBoard.edgesDataset = new vis.DataSet(edges);
-    
-    var data = {
-        nodes : InvestigationBoard.nodesDataset,
-        edges : InvestigationBoard.edgesDataset
-    };
+    InvestigationBoard.edgesDataset.clear();
+    InvestigationBoard.edgesDataset.add(edges);
     
     var opts = CommonUtils.clone(Constants.investigationBoardOpts);
     opts = R.merge(opts,{
@@ -258,10 +263,7 @@ InvestigationBoard.redrawBoard = function (ibData) {
         }
     });
     
-    InvestigationBoard.network = new vis.Network(container, data, opts);
-    
-    InvestigationBoard.network.on("selectEdge", InvestigationBoard.showEdgeLabelEditor);
-    InvestigationBoard.network.on("deselectEdge", InvestigationBoard.hideEdgeLabelEditor);
+    InvestigationBoard.network.setOptions(opts);
 };
 
 InvestigationBoard.showEdgeLabelEditor = function(params){
