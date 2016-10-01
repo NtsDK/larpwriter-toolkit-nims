@@ -171,9 +171,10 @@ InvestigationBoard.renameResource = function () {
 
 InvestigationBoard.deleteNode = function(data, callback){
     var node = InvestigationBoard.nodesDataset.get(data.nodes[0]);
-//    Utils.alert(JSON.stringify(node));
     var funcName = node.group === 'groups' ? 'removeBoardGroup' : 'removeResource';
-    var msg = node.group === 'groups' ? 'Вы уверены, что хотите удалить группу со схемы...?' : 'Про ресурс';
+    var msg = node.group === 'groups' ? getL10n('investigation-board-confirm-group-node-removing') :
+        getL10n('investigation-board-confirm-resource-node-removing');
+    
     var label = node.group === 'groups' ? node.originalLabel : node.label;
     if (Utils.confirm(msg)) {
         DBMS[funcName](label, function(err){
@@ -267,7 +268,7 @@ InvestigationBoard.redrawBoard = function (ibData) {
 InvestigationBoard.addEdge = function(data, callback){
     var fromNode = InvestigationBoard.nodesDataset.get(data.from);
     if(fromNode.group === 'resources'){
-        Utils.alert('Ресурс не может быть началом ребра.');
+        Utils.alert(getL10n('investigation-board-resource-node-cant-be-first'));
         callback();
         return;
     }
@@ -278,19 +279,8 @@ InvestigationBoard.addEdge = function(data, callback){
         callback : callback
     };
     InvestigationBoard.showPopup('.board-add-edge-popup', true);
-//    Utils.alert(JSON.stringify(data));
-//    data.label = '123123';
-//    callback(data);
-//    var callback = InvestigationBoard.modifyArgs.callback;
-    
-//    DBMS.renameResource(fromName, toName, function(err){
-//        if(err) {Utils.handleError(err); return;}
-//        
-//        node.label = toName;
-//        InvestigationBoard.showPopup('.board-edit-resource-popup', false);
-//        InvestigationBoard.modifyArgs.callback(node);
-//    });
 };
+
 InvestigationBoard.createEdge = function(){
     var fromNode = InvestigationBoard.modifyArgs.fromNode;
     var toNode = InvestigationBoard.modifyArgs.toNode;
@@ -314,10 +304,8 @@ InvestigationBoard.editEdge = function(data, callback){
 };
 InvestigationBoard.deleteEdge = function(data, callback){
     var edge = InvestigationBoard.edgesDataset.get(data.edges[0]);
-//    Utils.alert(JSON.stringify(edge));
     DBMS.removeEdge(edge.from, edge.to, function(err) {
         if (err) { Utils.handleError(err); callback(); return; }
-//        InvestigationBoard.refresh(true);
         callback(data);
     });
 };

@@ -34,14 +34,13 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.addBoardGroup = function(groupName, callback) {
             if(groupName === ""){
-//                callback(new Errors.ValidationError("groups-group-name-is-not-specified"));
-                callback({message: "Имя группы не может быть пустым"});
+                callback(new Errors.ValidationError(context + "-group-name-is-not-specified"));
                 return;
             }
             var ibData = this.database.InvestigationBoard;
                 
             if(ibData.groups[groupName]){
-                callback({message: 'Эта группа уже добавлена на схему'});
+                callback(new Errors.ValidationError(context + "-group-already-used-on-board"));
                 return;
             }
             
@@ -77,13 +76,13 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.removeBoardGroup = function(groupName, callback) {
             if(groupName === ""){
-                callback({message: "Имя группы не может быть пустым"});
+                callback(new Errors.ValidationError(context + "-group-name-is-not-specified"));
                 return;
             }
             var ibData = this.database.InvestigationBoard;
             
             if(!ibData.groups[groupName]){
-                callback({message: 'Этой группы нет на схеме'});
+                callback(new Errors.ValidationError(context + "-group-is-not-used-on-board"));
                 return;
             }
             
@@ -185,7 +184,6 @@ See the License for the specific language governing permissions and
         listeners.nodeAdded = listeners.nodeAdded || [];
         listeners.nodeAdded.push(_nodeAdded);
 
-        
         function _nodeRemoved(nodeName, type){
             var relNodeName = _makeRelNodeId(nodeName, type);
             var data = R.path(relationsPath, this.database);
