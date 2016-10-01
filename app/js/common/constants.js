@@ -119,22 +119,133 @@ See the License for the specific language governing permissions and
         ['summary-totalStories', "character-filter-totalStories"]
     ];
     
+    exports.socialNetworkOpts = {
+        nodes : {
+            shape : 'dot',
+            scaling : {
+                min : 10,
+                max : 30,
+                label : {
+                    min : 8,
+                    // min : 4,
+                    max : 30,
+                    // max : 50,
+                    // drawThreshold : 12,
+                    drawThreshold : 5,
+                    maxVisible : 30
+                // maxVisible : 20
+                }
+            },
+            font : {
+                // size : 12,
+                size : 20,
+                face : 'Tahoma'
+            }
+        },
+        edges : {
+            width : 0.15,
+            color : {
+                inherit : 'from'
+            },
+            smooth : {
+//                    type : 'continuous'
+                type : 'dynamic'
+            }
+        },
+        physics : {
+            barnesHut : {
+//                    gravitationalConstant : -15000
+                gravitationalConstant : -30000,
+//                 gravitationalConstant : -60000
+//                    springLength: 20,
+                springConstant: 0.1
+            },
+            stabilization : {
+//                    iterations : 2500
+                iterations : 50
+            }
+        },
+        // physics : false,
+        // layout : true,
+        layout : {
+            randomSeed : 1200
+        },
+        interaction : {
+            tooltipDelay : 200,
+        // hideEdgesOnDrag : true
+        },
+    };
+    
+    exports.groupSchemaOpts = {
+        nodes : {
+            scaling : {
+                min : 10,
+                max : 30,
+                label : {
+                    min : 8,
+                    max : 30,
+                    drawThreshold : 5,
+                    maxVisible : 30
+                }
+            },
+            font : {
+                size : 20,
+                face : 'Tahoma'
+            }
+        },
+        manipulation : false,
+        height : '90%',
+        layout : {
+            hierarchical : {
+                enabled : true,
+                levelSeparation : 200
+            }
+        },
+        physics : {
+            hierarchicalRepulsion : {
+                nodeDistance : 140
+            }
+        }
+    };
+    
     exports.investigationBoardOpts = {
             edges : {
-                width : 0.15,
-                color : {
-                    inherit : 'from'
-                },
+                arrows:'to',
+                width : 0.7,
+//                width : 0.15,
+//                color : {
+//                    inherit : 'from'
+//                },
+                color: 'black',
                 smooth : {
 //                    type : 'continuous'
                     type : 'dynamic'
-                }
+                },
+                font: {background: '#33cccc', strokeWidth: 0}
             },
             groups : {
                 groups: {color:{background:'#ffcc00', border: '#a78912'}, borderWidth:1, shape: 'box'},
                 resources: {color:{background:'#99cc00', border: '#839159'}, borderWidth:1, shape: 'ellipse'}
-//                33cccc - edge label back
-            }
+//                 - edge label back
+            },
+            physics : {
+                barnesHut : {
+                    gravitationalConstant : -2000,
+//                        gravitationalConstant : -15000,
+//                    gravitationalConstant : -30000,
+//                     gravitationalConstant : -60000,
+//                        springLength: 20,
+//                    springConstant: 0.1,
+                    avoidOverlap: 0.3,
+                    springLength: 200,
+                    centralGravity: 0.8,
+                },
+                stabilization : {
+//                        iterations : 2500
+                    iterations : 50
+                },
+                timestep: 0.3
+            },
 //            physics : {
 //                enabled: false
 //            }

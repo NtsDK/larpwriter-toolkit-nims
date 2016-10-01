@@ -543,63 +543,7 @@ SocialNetwork.getDetailedEdges = function () {
 SocialNetwork.redrawAll = function () {
     "use strict";
     var container = getEl('socialNetworkContainer');
-    var options = {
-        nodes : {
-            shape : 'dot',
-            scaling : {
-                min : 10,
-                max : 30,
-                label : {
-                    min : 8,
-                    // min : 4,
-                    max : 30,
-                    // max : 50,
-                    // drawThreshold : 12,
-                    drawThreshold : 5,
-                    maxVisible : 30
-                // maxVisible : 20
-                }
-            },
-            font : {
-                // size : 12,
-                size : 20,
-                face : 'Tahoma'
-            }
-        },
-        edges : {
-            width : 0.15,
-            color : {
-                inherit : 'from'
-            },
-            smooth : {
-//                type : 'continuous'
-                type : 'dynamic'
-            }
-        },
-        physics : {
-            barnesHut : {
-//                gravitationalConstant : -15000
-                gravitationalConstant : -30000,
-//             gravitationalConstant : -60000
-//                springLength: 20,
-                springConstant: 0.1
-            },
-            stabilization : {
-//                iterations : 2500
-                iterations : 50
-            }
-        },
-        // physics : false,
-        // layout : true,
-        layout : {
-            randomSeed : 1200
-        },
-        interaction : {
-            tooltipDelay : 200,
-        // hideEdgesOnDrag : true
-        },
-        groups : SocialNetwork.groupColors
-    };
+
     var data = {
         nodes : SocialNetwork.nodesDataset,
         edges : SocialNetwork.edgesDataset
@@ -609,7 +553,10 @@ SocialNetwork.redrawAll = function () {
         SocialNetwork.network.destroy();
     }
     
-    SocialNetwork.network = new vis.Network(container, data, options);
+    var opts = CommonUtils.clone(Constants.socialNetworkOpts);
+    opts.groups = SocialNetwork.groupColors;
+    
+    SocialNetwork.network = new vis.Network(container, data, opts);
     
     SocialNetwork.network.on("click", SocialNetwork.neighbourhoodHighlight);
 };

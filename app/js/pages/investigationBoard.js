@@ -232,11 +232,30 @@ InvestigationBoard.redrawBoard = function (ibData) {
             addNode : InvestigationBoard.addNode,
             deleteNode : InvestigationBoard.deleteNode,
             editNode: InvestigationBoard.editNodeFun,
+            addEdge: InvestigationBoard.addEdge,
+//            editEdge: InvestigationBoard.editEdge,
+            editEdge: false,
+            deleteEdge: InvestigationBoard.deleteEdge,
         }
     });
     
     InvestigationBoard.network = new vis.Network(container, data, opts);
 };
+
+InvestigationBoard.addEdge = function(data, callback){
+    Utils.alert(JSON.stringify(data));
+    data.label = '123123';
+    callback(data);
+};
+//InvestigationBoard.editEdge = function(data, callback){
+//    Utils.alert(JSON.stringify(data));
+//    callback(data);
+//};
+InvestigationBoard.deleteEdge = function(data, callback){
+    Utils.alert(JSON.stringify(data));
+    callback(data);
+};
+
 
 InvestigationBoard.showPopup = R.curry(function(selector, show){
     setClassByCondition(queryEl('.investigation-board-tab ' + selector), 'hidden', !show);

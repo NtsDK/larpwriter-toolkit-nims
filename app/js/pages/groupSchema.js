@@ -33,38 +33,6 @@ GroupSchema.refresh = function () {
 GroupSchema.redrawSchema = function (graph) {
     var container = queryEl('.group-schema-tab .schema-container');
     
-    var options = {
-        nodes : {
-            scaling : {
-                min : 10,
-                max : 30,
-                label : {
-                    min : 8,
-                    max : 30,
-                    drawThreshold : 5,
-                    maxVisible : 30
-                }
-            },
-            font : {
-                size : 20,
-                face : 'Tahoma'
-            }
-        },
-        manipulation : false,
-        height : '90%',
-        layout : {
-            hierarchical : {
-                enabled : true,
-                levelSeparation : 200
-            }
-        },
-        physics : {
-            hierarchicalRepulsion : {
-                nodeDistance : 140
-            }
-        }
-    };
-    
     if(GroupSchema.network){
         GroupSchema.network.destroy();
     }
@@ -74,5 +42,5 @@ GroupSchema.redrawSchema = function (graph) {
         });
     });
     
-    GroupSchema.network = new vis.Network(container, graph, options);
+    GroupSchema.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
 };
