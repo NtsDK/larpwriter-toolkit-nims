@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
         var Characters =  getCharactersSchema(base.ProfileSettings);
         var Stories =  getStoriesSchema(base.Characters);
         var Groups =  getGroupsSchema(base.ProfileSettings);
-//        var InvestigationBoard = getInvestigationBoardSchema();
+        var InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
         var ManagementInfo = {};
         if(base.ManagementInfo){
             ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups);
@@ -50,7 +50,7 @@ See the License for the specific language governing permissions and
             },
             Log : Log,
             Groups : Groups,
-            InvestigationBoard: {},
+            InvestigationBoard: InvestigationBoard,
             Settings: {},
             ManagementInfo: ManagementInfo
         };
@@ -133,6 +133,101 @@ See the License for the specific language governing permissions and
                 "maxItems": 4
             }
         };
+    };
+    
+    function getInvestigationBoardSchema(groups, investigationBoard){
+        
+        var ibGroupNames = Object.keys(investigationBoard.groups);
+        var relGroupNames = ibGroupNames.map(function(groupName){
+            return 'group-' + groupName;
+        });
+        var resourceNames = Object.keys(investigationBoard.resources);
+        var relResourceNames = resourceNames.map(function(resourceName){
+            return 'resource-' + resourceName;
+        });
+        
+        var relationSetSchema = {
+            "type" : "object",
+            "properties" : {},
+            "additionalProperties" : false
+        };
+        relGroupNames.forEach(function(relGroupName){
+            relationSetSchema.properties[relGroupName] = {
+                "type" : "string"
+            };
+        });
+        relResourceNames.forEach(function(relResourceName){
+            relationSetSchema.properties[relResourceName] = {
+                "type" : "string"
+            };
+        });
+        
+        var relationsSchema = {
+            "type" : "object",
+            "properties" : {},
+            "additionalProperties" : false
+        };
+        if(relGroupNames.length != 0){
+            relationsSchema.required = relGroupNames;
+        }
+        
+        relGroupNames.forEach(function(relGroupNames){
+            relationsSchema.properties[relGroupNames] = relationSetSchema;
+        });
+        
+        var resourcesSchema = {
+            "type" : "object",
+            "properties" : {},
+            "additionalProperties" : false
+        };
+        
+        resourceNames.forEach(function(resourceName){
+            resourcesSchema.properties[resourceName] = {
+                "type" : "object",
+                "properties": {
+                    "name" : {
+                        'type' : 'string',
+                        'enum': [resourceName]
+                    }
+                },
+                "required" : ["name"],
+                "additionalProperties" : false
+            }
+        });
+        
+        var groupsSchema = {
+            "type" : "object",
+            "properties" : {},
+            "additionalProperties" : false
+        };
+        var groupNames = Object.keys(groups);
+        groupNames.forEach(function(groupName){
+            groupsSchema.properties[groupName] = {
+                "type" : "object",
+                "properties": {
+                    "name" : {
+                        'type' : 'string',
+                        'enum': [groupName]
+                    },
+                    'notes' : {
+                        'type' : 'string'
+                    }
+                },
+                "required" : [ "name", "notes"],
+                "additionalProperties" : false
+            }
+        });
+        var schema = {
+            "type" : "object",
+            "properties": {
+                "groups" : groupsSchema, 
+                "resources" : resourcesSchema,
+                "relations" : relationsSchema
+            }, 
+            "required" : [ "groups", "resources", "relations"],
+            "additionalProperties" : false
+        };
+        return schema;
     };
     
     function getGroupsSchema(profileSettings) {

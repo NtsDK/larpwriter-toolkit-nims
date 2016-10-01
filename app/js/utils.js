@@ -386,6 +386,13 @@ var getSelectedRadio = function(query){
     return null;
 };
 
+var debugInterceptor = function(callback){
+    return function(){
+        console.log(JSON.stringify(arguments[0]));
+        callback.apply(null, arguments);
+    }
+};
+
 // from date format utils
 //For convenience...
 Date.prototype.format = function (mask, utc) {

@@ -350,16 +350,16 @@ See the License for the specific language governing permissions and
 <!--               <select></select><br> -->
 <!--               <textarea rows="3"></textarea> -->
             </div>
-            <div class="investigation-board__relation-management">
-              <h3 class="panel-title">Отношения</h3>
-              <div>
-                <select class="from-entity-select select2-mono-selector"></select> к 
-                <select class="to-entity-select select2-mono-selector"></select> 
-                <button class="create-relation-button" l10n-id="common-add"></button>
-              </div>
-              <select class="label-relation-select select2-mono-selector"></select>
-              <input placeholder="Введите подпись">
-            </div>
+<!--             <div class="investigation-board__relation-management"> -->
+<!--               <h3 class="panel-title">Отношения</h3> -->
+<!--               <div> -->
+<!--                 <select class="from-entity-select select2-mono-selector"></select> к  -->
+<!--                 <select class="to-entity-select select2-mono-selector"></select>  -->
+<!--                 <button class="create-relation-button" l10n-id="common-add"></button> -->
+<!--               </div> -->
+<!--               <select class="label-relation-select select2-mono-selector"></select> -->
+<!--               <input placeholder="Введите подпись"> -->
+<!--             </div> -->
           </div>
           <div class="schema-container"></div>
         </div>
@@ -374,7 +374,7 @@ See the License for the specific language governing permissions and
           <input class="create-entity-input" l10n-placeholder-id2="groups-group-name"></input>
           <button class="create-entity-button" l10n-id="common-add"></button>
         </div>
-        <button class="cancel-node-adding-button">Отмена</button>
+        <button class="cancel-node-adding-button" l10n-id="common-cancel"></button>
       </div>
       
       <div class="board-edit-group-popup board-popup hidden">
@@ -386,22 +386,24 @@ See the License for the specific language governing permissions and
         <textarea class="group-notes-editor" rows="3"></textarea>
         
         <button class="group-save-notes-button" l10n-id="common-ok"></button>
-        <button class="cancel-group-editing-button">Отмена</button>
+        <button class="cancel-group-editing-button" l10n-id="common-cancel"></button>
       </div>
       
       <div class="board-edit-resource-popup board-popup hidden">
         <h3 class="panel-title">Переименовать ресурс</h3>
         <div>
-<!--           <span l10n-id="common-rename-from"></span> <select -->
-<!--             class="rename-entity-select select2-mono-selector" -->
-<!--           > -->
-<!--           </select> <span l10n-id="common-to"></span> -->
           <input class="rename-entity-input"
             l10n-placeholder-id="groups-new-group-name"
           ></input>
           <button class="rename-entity-button" l10n-id="common-ok"></button>
         </div>
-        <button class="cancel-resource-editing-button">Отмена</button>
+        <button class="cancel-resource-editing-button" l10n-id="common-cancel"></button>
+      </div>
+
+      <div class="board-add-edge-popup board-popup hidden">
+        <input class="add-edge-label-input" placeholder="Введите подпись">
+        <button class="create-edge-button" l10n-id="common-ok"></button>
+        <button class="cancel-add-edge-button" l10n-id="common-cancel"></button>
       </div>
     </div>
 
