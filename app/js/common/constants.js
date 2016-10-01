@@ -237,7 +237,7 @@ See the License for the specific language governing permissions and
 //                        springLength: 20,
 //                    springConstant: 0.1,
                     avoidOverlap: 0.3,
-                    springLength: 200,
+                    springLength: 250,
                     centralGravity: 0.8,
                 },
                 stabilization : {

@@ -29,7 +29,7 @@ InvestigationBoard.init = function () {
     listen(queryEl(".investigation-board-tab .create-entity-button"), "click", InvestigationBoard.createResource);
     listen(queryEl(".investigation-board-tab .rename-entity-button"), "click", InvestigationBoard.renameResource);
     
-    listen(queryEl(".investigation-board-tab .create-edge-button"), "click", InvestigationBoard.createEdge);
+    listen(queryEl(".investigation-board-tab .save-edge-button"), "click", InvestigationBoard.saveEdge);
     
     listen(queryEl(".investigation-board-tab .cancel-node-adding-button"), "click", InvestigationBoard.cancel('.board-add-node-popup')); 
     listen(queryEl(".investigation-board-tab .cancel-resource-editing-button"), "click", InvestigationBoard.cancel('.board-edit-resource-popup'));
@@ -63,8 +63,7 @@ InvestigationBoard.addNode = function(node, callback){
     InvestigationBoard.showPopup('.board-add-node-popup', true);
     InvestigationBoard.modifyArgs = {
         newNode: node,
-//        callback: callback
-        callback: debugInterceptor(callback)
+        callback: callback
     };
 };
 
@@ -168,7 +167,6 @@ InvestigationBoard.renameResource = function () {
     });
 };
 
-
 InvestigationBoard.deleteNode = function(data, callback){
     var node = InvestigationBoard.nodesDataset.get(data.nodes[0]);
     var funcName = node.group === 'groups' ? 'removeBoardGroup' : 'removeResource';
@@ -206,8 +204,6 @@ InvestigationBoard.redrawBoard = function (ibData) {
     }
     
     var nodes = [];
-//    var makeNode = R.compose(R.zipObj(['id', 'label']),R.repeat(R.__, 2));
-//    var makeResourceNode = R.compose(R.zipObj(['label']),R.repeat(R.__, 1));
     function makeResourceNode(name){
         return {
             label: name,
@@ -235,7 +231,8 @@ InvestigationBoard.redrawBoard = function (ibData) {
             return {
                 from: rel1,
                 to: rel2,
-                label: ibData.relations[rel1][rel2]
+                label: ibData.relations[rel1][rel2],
+//                id: rel1 + '-' + rel2
             }
         });
     }));
@@ -256,13 +253,35 @@ InvestigationBoard.redrawBoard = function (ibData) {
             deleteNode : InvestigationBoard.deleteNode,
             editNode: InvestigationBoard.editNodeFun,
             addEdge: InvestigationBoard.addEdge,
-            editEdge: InvestigationBoard.editEdge,
             editEdge: false,
             deleteEdge: InvestigationBoard.deleteEdge,
         }
     });
     
     InvestigationBoard.network = new vis.Network(container, data, opts);
+    
+    InvestigationBoard.network.on("selectEdge", InvestigationBoard.showEdgeLabelEditor);
+    InvestigationBoard.network.on("deselectEdge", InvestigationBoard.hideEdgeLabelEditor);
+};
+
+InvestigationBoard.showEdgeLabelEditor = function(params){
+    if(params.edges.length !== 0 && params.nodes.length === 0){
+        var edge = InvestigationBoard.edgesDataset.get(params.edges[0]);
+        InvestigationBoard.modifyArgs = {
+            edge : edge,
+            callback : function(edge){
+                if(edge){
+                    InvestigationBoard.edgesDataset.update(edge);
+                }
+            },
+            editEdge: true
+        };
+        queryEl('.investigation-board-tab .add-edge-label-input').value = edge.label;
+        InvestigationBoard.showPopup('.board-add-edge-popup', true);
+    } 
+};
+InvestigationBoard.hideEdgeLabelEditor = function(params){
+    InvestigationBoard.showPopup('.board-add-edge-popup', false);
 };
 
 InvestigationBoard.addEdge = function(data, callback){
@@ -273,12 +292,38 @@ InvestigationBoard.addEdge = function(data, callback){
         return;
     }
     
+//    if(InvestigationBoard.edgesDataset.get(data.from + '-' + data.to)){
+//        Utils.alert(getL10n('investigation-board-such-relation-already-exists'));
+//        callback();
+//        return;
+//    }
+    
     InvestigationBoard.modifyArgs = {
         fromNode : InvestigationBoard.nodesDataset.get(data.from),
         toNode : InvestigationBoard.nodesDataset.get(data.to),
         callback : callback
     };
     InvestigationBoard.showPopup('.board-add-edge-popup', true);
+};
+
+InvestigationBoard.saveEdge = function(){
+    if(InvestigationBoard.modifyArgs.editEdge){
+        InvestigationBoard.updateEdge();
+    } else {
+        InvestigationBoard.createEdge();
+    }
+};
+
+InvestigationBoard.updateEdge = function(){
+    var label = queryEl('.investigation-board-tab .add-edge-label-input').value.trim();
+    var edge = InvestigationBoard.modifyArgs.edge;
+    DBMS.setEdgeLabel(edge.from, edge.to, label, function(err) {
+        if (err) { Utils.handleError(err); return; }
+        
+        edge.label = label;
+        InvestigationBoard.showPopup('.board-add-edge-popup', false);
+        InvestigationBoard.modifyArgs.callback(edge);
+    });
 };
 
 InvestigationBoard.createEdge = function(){
@@ -288,20 +333,17 @@ InvestigationBoard.createEdge = function(){
     
     DBMS.addEdge(fromNode.id, toNode.id, label, function(err) {
         if (err) { Utils.handleError(err); return; }
-
+        
         InvestigationBoard.showPopup('.board-add-edge-popup', false);
         InvestigationBoard.modifyArgs.callback({
             from: fromNode.id,
             to: toNode.id,
-            label: label
+            label: label,
+//            id: fromNode.id + '-' + toNode.id
         });
     });
 };
 
-InvestigationBoard.editEdge = function(data, callback){
-    Utils.alert(JSON.stringify(data));
-    callback(data);
-};
 InvestigationBoard.deleteEdge = function(data, callback){
     var edge = InvestigationBoard.edgesDataset.get(data.edges[0]);
     DBMS.removeEdge(edge.from, edge.to, function(err) {

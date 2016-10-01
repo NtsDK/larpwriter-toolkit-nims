@@ -167,6 +167,25 @@ See the License for the specific language governing permissions and
             }
         };
         
+        LocalDBMS.prototype._setEdgeLabelPrecondition = function(fromId, toId, label, context){
+            if(CommonUtils.startsWith(fromId , 'resource-')){
+                return new Errors.ValidationError(context + "-resource-node-cant-be-first");
+            }
+            if(!R.path(relationsPath, this.database)[fromId][toId]){
+                return new Errors.ValidationError(context + "-relation-is-not-exist");
+            }
+        };
+        
+        LocalDBMS.prototype.setEdgeLabel = function(fromId, toId, label, callback) {
+            var err = this._setEdgeLabelPrecondition(fromId, toId, label, context);
+            if(err){
+                callback(err);
+            } else {
+                R.path(relationsPath, this.database)[fromId][toId] = label;
+                if (callback) callback();
+            }
+        };
+        
         LocalDBMS.prototype.removeEdge = function(fromId, toId, callback) {
             delete R.path(relationsPath, this.database)[fromId][toId];
             if (callback) callback();
