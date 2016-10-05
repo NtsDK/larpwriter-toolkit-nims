@@ -12,6 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
+
 (function(callback){
 
     function storyAdaptationsAPI(LocalDBMS, CommonUtils) {
@@ -156,15 +158,16 @@ See the License for the specific language governing permissions and
         };
     
         // preview, events
-        LocalDBMS.prototype.setEventText = function(storyName, eventIndex, characterName, text, callback){
-            "use strict";
-            
+        LocalDBMS.prototype.setOriginEventText = function(storyName, eventIndex, text, callback){
             var event = this.database.Stories[storyName].events[eventIndex];
-            if(characterName != null){
-                event.characters[characterName].text = text;
-            } else {
-                event.text = text;
-            }
+            event.text = text;
+            callback();
+        };
+        
+        // preview, events
+        LocalDBMS.prototype.setAdaptationEventText = function(storyName, eventIndex, characterName, text, callback){
+            var event = this.database.Stories[storyName].events[eventIndex];
+            event.characters[characterName].text = text;
             callback();
         };
     

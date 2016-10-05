@@ -335,7 +335,7 @@ Events.makeOriginTextInput = function(storyName, event){
     addClass(input,"eventPersonalStory");
     input.value = event.text;
     input.dataKey = JSON.stringify([storyName, event.index]);
-    listen(input, "change", Events.onChangePersonalStoryDelegate);
+    listen(input, "change", Events.onChangeOriginText);
     return input;
 };
 
@@ -346,7 +346,7 @@ Events.makeAdaptationTextInput = function(storyName, event, characterName, isEdi
     addClass(input,"eventPersonalStory");
     input.value = event.characters[characterName].text;
     input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-    listen(input, "change", Events.onChangePersonalStoryDelegate);
+    listen(input, "change", Events.onChangeAdaptationText);
     return input;
 };
 
@@ -373,11 +373,16 @@ Events.onChangeReadyStatus = function (event) {
     DBMS.changeAdaptationReadyStatus(dataKey[0], dataKey[1], dataKey[2], value, Utils.processError());
 };
 
-Events.onChangePersonalStoryDelegate = function (event) {
-    "use strict";
+Events.onChangeOriginText = function (event) {
     var dataKey = JSON.parse(event.target.dataKey);
     var text = event.target.value;
-    DBMS.setEventText(dataKey[0], dataKey[1], dataKey[2], text, Utils.processError());
+    DBMS.setOriginEventText(dataKey[0], dataKey[1], text, Utils.processError());
+};
+
+Events.onChangeAdaptationText = function (event) {
+    var dataKey = JSON.parse(event.target.dataKey);
+    var text = event.target.value;
+    DBMS.setAdaptationEventText(dataKey[0], dataKey[1], dataKey[2], text, Utils.processError());
 };
 
 Events.getSuffix = function(object){
