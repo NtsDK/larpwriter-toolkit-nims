@@ -359,7 +359,7 @@ BriefingPreview.showEvent = function(event, characterName, opts){
         
         var unlockButton = BriefingPreview.makeUnlockEventSourceButton(input, isOriginEditable);
         var originHolder = makeEl('div');
-        addEls(originHolder, [addEl(makeEl('h5'), makeText('Оригинал')), unlockButton, input]);
+        addEls(originHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-origin'))), unlockButton, input]);
         els.push(originHolder);
     }
     
@@ -376,7 +376,7 @@ BriefingPreview.showEvent = function(event, characterName, opts){
         BriefingPreview.attachTextareaResizer(input);
         
         var adaptationHolder = makeEl('div');
-        addEls(adaptationHolder, [addEl(makeEl('h5'), makeText('Адаптация')), input, makeEl("br")]);
+        addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input, makeEl("br")]);
         els.push(adaptationHolder);
     }
     
