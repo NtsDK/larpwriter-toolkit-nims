@@ -81,6 +81,38 @@ See the License for the specific language governing permissions and
             }
         };
         
+        var _renameCharacter = function(fromName, toName){
+            var relData = R.path(relationsPath, this.database);
+            if(relData[fromName] !== undefined){
+                relData[toName] = relData[fromName];
+                delete relData[fromName];
+            }
+            R.values(relData).forEach(function(rels){
+                if(rels[fromName] !== undefined){
+                    rels[toName] = rels[fromName];
+                    delete rels[fromName];
+                }
+            });
+        };
+        
+        listeners.renameCharacter = listeners.renameCharacter || [];
+        listeners.renameCharacter.push(_renameCharacter);
+        
+        var _removeCharacter = function(characterName){
+            var relData = R.path(relationsPath, this.database);
+            if(relData[characterName] !== undefined){
+                delete relData[characterName];
+            }
+            R.values(relData).forEach(function(rels){
+                if(rels[characterName] !== undefined){
+                    delete rels[characterName];
+                }
+            });
+        };
+        
+        listeners.removeCharacter = listeners.removeCharacter || [];
+        listeners.removeCharacter.push(_removeCharacter);
+        
     };
     
     callback(relationsAPI);
