@@ -213,6 +213,7 @@ See the License for the specific language governing permissions and
     
 
     var relationTableHeader = [ 'character-name', 'direct-relation', 'reverse-relation', 'extra-info' ];
+    var partialTableHeader = [ 'character-name', 'direct-relation', 'extra-info' ];
     
     var makeNewRow = R.curry(function(isAdaptationsMode, relationsSummary, fromCharacter, toCharacter){
         var direct = addClass(makeEl('textarea'), 'briefing-relation-area');
@@ -232,13 +233,14 @@ See the License for the specific language governing permissions and
         }
         var stories = relationsSummary.knownCharacters[toCharacter];
         
-        return addEls(makeEl('tr'), [
-            addEl(makeEl('td'), makeText(toCharacter)),
-            addEl(makeEl('td'), direct),
-            addEl(makeEl('td'), reverse),
-            addEl(makeEl('td'), makeText( stories === undefined ? '' : R.keys(stories).join(', ')) )
-            ]
-        );
+        var arr = [addEl(makeEl('td'), makeText(toCharacter)),
+                   addEl(makeEl('td'), direct)];
+        if(isAdaptationsMode){
+            arr.push(addEl(makeEl('td'), reverse));
+        }
+        arr.push(addEl(makeEl('td'), makeText( stories === undefined ? '' : R.keys(stories).join(', ')) ));
+            
+        return addEls(makeEl('tr'),arr);
     });
     
     var makeSelector = function(text, data, body, rowDelegate){
@@ -270,11 +272,15 @@ See the License for the specific language governing permissions and
         
         var makeRow = makeNewRow(isAdaptationsMode, relationsSummary, characterName)
         
-        var body = addEls(makeEl('tbody'), showCharacters.map(makeRow));
+        var body = addEls(makeEl('tbody'), showCharacters.filter(function(toCharacter){
+            return isAdaptationsMode ? true : relationsSummary.directRelations[toCharacter] !== undefined;
+        }).map(makeRow));
+        
         var charSelectors = addEls(makeEl('div'), [makeSelector('Известные персонажи', knownNoRels, body, makeRow),
                                                    makeSelector('Неизвестные персонажи', unknownNoRels, body, makeRow)]); 
         
-        var head = addEl(makeEl('thead'), addEls(makeEl('tr'), relationTableHeader.map(function(name){
+        var array = isAdaptationsMode ? relationTableHeader : partialTableHeader;
+        var head = addEl(makeEl('thead'), addEls(makeEl('tr'), array.map(function(name){
             return addEl(makeEl('th'), makeText(getL10n('briefings-' + name)));
         })));
         
