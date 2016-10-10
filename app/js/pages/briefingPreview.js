@@ -153,19 +153,24 @@ See the License for the specific language governing permissions and
     }, {
         name: 'relations',
         load: function(data, callback){
-            DBMS.getRelationsSummary(data.characterName, function(err, relationsSummary){
+            DBMS.getAllProfiles(function(err, profiles){
                 if(err) {Utils.handleError(err); return;}
-                PermissionInformer.getCharacterNamesArray(false, function(err, characterNamesArray){
+                DBMS.getRelationsSummary(data.characterName, function(err, relationsSummary){
                     if(err) {Utils.handleError(err); return;}
-                    data.relationsSummary = relationsSummary;
-                    data.characterNamesArray = characterNamesArray; 
-                    callback();
+                    PermissionInformer.getCharacterNamesArray(false, function(err, characterNamesArray){
+                        if(err) {Utils.handleError(err); return;}
+                        data.relationsSummary = relationsSummary;
+                        data.characterNamesArray = characterNamesArray; 
+                        data.profiles = profiles; 
+                        callback();
+                    });
                 });
             });
         }, 
         make: function(el, data){
             var label = getL10n("header-relations") + ' (' + R.keys(data.relationsSummary.directRelations).length + ')';
-            addEl(el, makePanel(makeText(label), makeRelationsContent(data.characterName, data.relationsSummary, data.characterNamesArray)));
+            addEl(el, makePanel(makeText(label), makeRelationsContent(data.characterName, 
+                    data.relationsSummary, data.characterNamesArray, data.profiles)));
         } 
     }, {
         name: 'stories',
@@ -215,7 +220,11 @@ See the License for the specific language governing permissions and
     var relationTableHeader = [ 'character-name', 'direct-relation', 'reverse-relation', 'extra-info' ];
     var partialTableHeader = [ 'character-name', 'direct-relation', 'extra-info' ];
     
-    var makeNewRow = R.curry(function(isAdaptationsMode, relationsSummary, fromCharacter, toCharacter){
+    var makeProfileItemContent = function(profileItemName, profileItemValue){
+        return [makeText(profileItemName), makeEl('br'), makeText(profileItemValue)];
+    };
+    
+    var makeNewRow = R.curry(function(profiles, profileItemSelect, isAdaptationsMode, relationsSummary, fromCharacter, toCharacter){
         var direct = addClass(makeEl('textarea'), 'briefing-relation-area');
         direct.value = relationsSummary.directRelations[toCharacter] || '';
         listen(direct, 'change', function(event){
@@ -238,19 +247,26 @@ See the License for the specific language governing permissions and
         if(isAdaptationsMode){
             arr.push(addEl(makeEl('td'), reverse));
         }
-        arr.push(addEl(makeEl('td'), makeText( stories === undefined ? '' : R.keys(stories).join(', ')) ));
+        var subArr = [addEl(makeEl('div'), makeText('Где встречались')),
+                      addEl(makeEl('div'), makeText(stories === undefined ? '' : R.keys(stories).join(', '))),
+                      makeEl('br'),
+                      addEls(setAttr(makeEl('div'), 'toCharacter', toCharacter), 
+                              makeProfileItemContent(profileItemSelect.value, profiles[toCharacter][profileItemSelect.value])),
+        ];
+        
+        arr.push(addEls(makeEl('td'), subArr ));
             
         return addEls(makeEl('tr'),arr);
     });
     
-    var makeSelector = function(text, data, body, rowDelegate){
+    var makeSelector = function(text, data, makeRowCallback){
         var select1 = $("<select></select>");
         var tmpContainer1 = $("<span></span>").append(select1);
         addClass(select1[0],'common-select');
         var tmpSelect = select1.select2(getSelect2Data(data));
         var button = addEl(makeEl('button'),makeText('Добавить'));
         listen(button, 'click', function(){
-            addEl(body, rowDelegate(select1[0].value));
+            makeRowCallback(select1[0].value);
             data = data.filter(R.compose(R.not, R.equals(select1[0].value),R.prop('value')));
             clearEl(select1[0]);
             select1.select2(getSelect2Data(data));
@@ -259,26 +275,47 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('div'), [ makeText(text), tmpContainer1[0], button ]);
     };
     
-    var makeRelationsContent = function(characterName, relationsSummary, characterNamesArray){
+    var makeProfileItemSelector = function(refresh){
+        var select1 = $("<select></select>");
+        var tmpContainer1 = $("<span></span>").append(select1);
+        addClasses(select1[0],['common-select','profile-item-select']);
+        var tmpSelect = select1.select2(arr2Select2(profileSettings.map(R.prop('name')).sort()));
+        
+        tmpSelect.on('change', refresh);
+        tmpSelect.val(profileSettings[0].name).trigger('change');
+        
+        return {
+            el: addEls(makeEl('div'), [ makeText('Поле досье'), tmpContainer1[0]]),
+            select: select1[0]
+        }
+    };
+    
+    var makeRelationsContent = function(characterName, relationsSummary, characterNamesArray, profiles){
         characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName),R.prop('value')));
-        
-        var showCharacters = R.union(R.keys(relationsSummary.directRelations), R.keys(relationsSummary.reverseRelations));
-        showCharacters.sort();
-        
+        var showCharacters = R.union(R.keys(relationsSummary.directRelations), R.keys(relationsSummary.reverseRelations)).sort();
         var noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters),R.prop('value')));
         var knownNoRels = noRelsList.filter(R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)),R.prop('value')));
         var unknownNoRels = noRelsList.filter(R.compose(R.not, R.contains(R.__, R.keys(relationsSummary.knownCharacters)),R.prop('value')));
         var isAdaptationsMode = getEl("adaptationsModeRadio").checked;
         
-        var makeRow = makeNewRow(isAdaptationsMode, relationsSummary, characterName)
+        var body = makeEl('tbody');
+        var selectInfo = makeProfileItemSelector(function(event){
+            var dataArr = nl2array(queryElEls(body, '[toCharacter]'));
+            dataArr.map(clearEl).forEach(function(el){
+                var char = getAttr(el, 'toCharacter');
+                var selectedName = event.target.value;
+                addEls(el, makeProfileItemContent(selectedName, profiles[char][selectedName]));
+            });
+        });
+        var makeRow = makeNewRow(profiles, selectInfo.select, isAdaptationsMode, relationsSummary, characterName);
         
-        var body = addEls(makeEl('tbody'), showCharacters.filter(function(toCharacter){
-            return isAdaptationsMode ? true : relationsSummary.directRelations[toCharacter] !== undefined;
-        }).map(makeRow));
+        // filling header - need table body for callbacks
+        var makeRowCallback = R.compose(addEl(body), makeRow);
+        var charSelectors = addEls(makeEl('div'), [makeSelector('Известные персонажи', knownNoRels, makeRowCallback),
+                                                   makeSelector('Неизвестные персонажи', unknownNoRels, makeRowCallback),
+                                                   selectInfo.el]); 
         
-        var charSelectors = addEls(makeEl('div'), [makeSelector('Известные персонажи', knownNoRels, body, makeRow),
-                                                   makeSelector('Неизвестные персонажи', unknownNoRels, body, makeRow)]); 
-        
+        // making table
         var array = isAdaptationsMode ? relationTableHeader : partialTableHeader;
         var head = addEl(makeEl('thead'), addEls(makeEl('tr'), array.map(function(name){
             return addEl(makeEl('th'), makeText(getL10n('briefings-' + name)));
@@ -286,6 +323,10 @@ See the License for the specific language governing permissions and
         
         var table = addEls(addClasses(makeEl('table'),['table']), [head,body]);
         
+        // filling table
+        addEls(body, showCharacters.filter(function(toCharacter){
+            return isAdaptationsMode ? true : relationsSummary.directRelations[toCharacter] !== undefined;
+        }).map(makeRow));
         return addEls(makeEl('div'), [charSelectors, table]);
     };
     

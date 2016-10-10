@@ -260,6 +260,10 @@ function queryEl(sel){
     return document.querySelector(sel);
 };
 
+function queryElEls(el, sel){
+    return el.querySelectorAll(sel);
+};
+
 function getEls(clazz){
   return document.getElementsByClassName(clazz);
 };
