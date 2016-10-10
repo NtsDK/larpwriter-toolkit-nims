@@ -35,6 +35,7 @@ See the License for the specific language governing permissions and
         var Stories =  getStoriesSchema(base.Characters);
         var Groups =  getGroupsSchema(base.ProfileSettings);
         var InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
+        var Relations = getRelationsSchema(base.Characters);
         var ManagementInfo = {};
         if(base.ManagementInfo){
             ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups);
@@ -52,7 +53,7 @@ See the License for the specific language governing permissions and
             Groups : Groups,
             InvestigationBoard: InvestigationBoard,
             Settings: {},
-            Relations: {},
+            Relations: Relations,
             ManagementInfo: ManagementInfo
         };
 
@@ -645,6 +646,27 @@ See the License for the specific language governing permissions and
         };
         
         return managementInfoSchema;
+    };
+    
+    function getRelationsSchema(Characters){
+        var subProperties = R.map(function(characterData){
+            return {
+                'type' : 'string',
+                "minLength": 1,
+            }
+        }, Characters);
+        var root = {
+                "type" : "object",
+                "additionalProperties" : false
+        };
+        root.properties = R.map(function(characterData){
+            return {
+                "type" : "object",
+                'properties' : subProperties,
+                "additionalProperties" : false
+            };
+        }, Characters);
+        return root;
     };
     
 })(typeof exports === 'undefined' ? this['Schema'] = {} : exports);
