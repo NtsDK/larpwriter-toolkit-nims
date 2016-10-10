@@ -16,6 +16,13 @@ var TEXT_TEMPLATE = "{{gameName}}\n" +
   "{{text}}\n"         +
   "{{/groupTexts}}\n"  +
   "\n" +
+  "{{#relations}}\n"     +
+  "{{toCharacter}}\n"    +
+  "{{text}}\n"           +
+  "{{stories}}\n"        +
+  "\n" +
+  "{{/relations}}\n"     +
+  "\n" +
   "{{#eventsInfo}}\n" +
   "{{{time}}} {{{displayTime}}} {{storyName}}: {{name}}\n" +
   "{{text}}\n" +

@@ -21,92 +21,91 @@ See the License for the specific language governing permissions and
             var that = this;
             that.getAllCharacterGroupTexts(function(err, groupTexts){
                 if(err) {callback(err); return;}
-                _getBriefingData(that.database, selectedCharacters, groupTexts, callback);
+                if(R.isNil(selectedCharacters)){
+                    selectedCharacters = R.keys(that.database.Characters);
+                } else {
+                    selectedCharacters = R.keys(selectedCharacters);
+                }
+                _getBriefingData(that._getKnownCharacters, that.database, selectedCharacters, groupTexts, callback);
             });
         };
         
-        var _getBriefingData = function(database, selectedCharacters, groupTexts, callback) {
-            
-            var data = {};
-    
-            var charArray = [];
-    
-            for ( var charName in database.Characters) {
-                if (selectedCharacters && !selectedCharacters[charName]) {
-                    continue;
-                }
-              
-                var inventory = [];
-                R.values(database.Stories).forEach(function(story){
-                    if (story.characters[charName] && 
-                            story.characters[charName].inventory && 
-                            story.characters[charName].inventory !== "") {
-                        inventory = inventory.concat(story.characters[charName].inventory);
-                    }
-                });
-                inventory = inventory.join(", ");
-    
-                var profileInfo = _getProfileInfoObject(database, charName, false);
-                var profileInfoSplitted = _getProfileInfoObject(database, charName, true);
-                var profileInfoNotEmpty = _getProfileInfoNotEmpty(database, charName);
-                var profileInfoArray = _getProfileInfoArray(database, charName);
-    
-                var storiesInfo = _getStoriesInfo(database, charName);
-                var eventsInfo = _getEventsInfo(database, charName);
+        var _getBriefingData = function(getKnownCharacters, database, selectedCharacters, groupTexts, callback) {
+            var charArray = selectedCharacters.map(function(charName){
                 var dataObject = {
                     "gameName" : database.Meta.name,
                     "name" : charName,
-                    "inventory" : inventory,
-                    "storiesInfo" : storiesInfo,
-                    "eventsInfo" : eventsInfo,
-                    "profileInfoArray" : profileInfoArray,
-                    "groupTexts" : groupTexts[charName]
+                    "inventory" : _makeCharInventory(database, charName),
+                    "storiesInfo" : _getStoriesInfo(database, charName),
+                    "eventsInfo" : _getEventsInfo(database, charName),
+                    "profileInfoArray" : _getProfileInfoArray(database, charName),
+                    "groupTexts" : groupTexts[charName],
+                    "relations" : _makeRelationsInfo(getKnownCharacters(database, charName), database, charName)
                 };
-    
-                for ( var element in profileInfo) {
-                    dataObject["profileInfo-" + element] = profileInfo[element];
-                }
-                for ( var element in profileInfoSplitted) {
-                    dataObject["profileInfo-splitted-" + element] = profileInfoSplitted[element];
-                }
-                for ( var element in profileInfoNotEmpty) {
-                    dataObject["profileInfo-notEmpty-" + element] = profileInfoNotEmpty[element];
-                }
-    
-                charArray.push(dataObject);
-            }
+                
+                dataObject = R.merge(dataObject, _getProfileInfoObject("profileInfo-", database, charName, false));
+                dataObject = R.merge(dataObject, _getProfileInfoObject("profileInfo-splitted-", database, charName, true));
+                dataObject = R.merge(dataObject, _getProfileInfoNotEmpty("profileInfo-notEmpty-", database, charName));
+                
+                return dataObject;
+            });
             
             charArray.sort(CommonUtils.charOrdAFactory(R.prop('name')));
-    
-            data.briefings = charArray;
-            data.gameName = database.Meta.name;
-            callback(null, data);
+            callback(null, {
+                briefings : charArray,
+                gameName : database.Meta.name
+            });
+        };
+        
+        var _makeRelationsInfo = function(knownCharacters, database, charName){
+            var relations = database.Relations[charName];
+            var profiles = database.Characters;
+            //var storyMeets = '';
+            return R.keys(relations).map(function(toCharacter){
+                return {
+                    toCharacter: toCharacter, 
+                    text: relations[toCharacter],
+                    splittedText: _splitText(relations[toCharacter]),
+                    profile: profiles[toCharacter],
+                    stories: R.keys(knownCharacters[toCharacter] || {}).join(', ')
+                }
+            }).sort(CommonUtils.charOrdAFactory(R.prop('toCharacter')));
+        };
+        
+        var _makeCharInventory = function(database, charName){
+            var inventory = [];
+            R.values(database.Stories).forEach(function(story){
+                if (story.characters[charName] && 
+                        story.characters[charName].inventory && 
+                        story.characters[charName].inventory !== "") {
+                    inventory = inventory.concat(story.characters[charName].inventory);
+                }
+            });
+            inventory = inventory.join(", ");
+            return inventory;
         };
     
-        var _getProfileInfoNotEmpty = function(database, charName) {
-            "use strict";
+        var _getProfileInfoNotEmpty = function(prefix, database, charName) {
             var character = database.Characters[charName];
             var profileInfo = {};
             
             database.ProfileSettings.forEach(function(element) {
-                profileInfo[element.name] = String(character[element.name]).length !== 0;
+                profileInfo[prefix + element.name] = String(character[element.name]).length !== 0;
             });
             return profileInfo;
         };
         
-        var _getProfileInfoObject = function(database, charName, returnSplitted) {
-            "use strict";
+        var _getProfileInfoObject = function(prefix, database, charName, returnSplitted) {
             var character = database.Characters[charName];
             var profileInfo = {};
     
             database.ProfileSettings.forEach(function(element) {
-                profileInfo[element.name] = returnSplitted ? _splitText(String(character[element.name])) : character[element.name];
+                profileInfo[prefix + element.name] = returnSplitted ? _splitText(String(character[element.name])) : character[element.name];
             });
             return profileInfo;
         };
     
         var _getProfileInfoArray = function(database, charName) {
-            "use strict";
             var character = database.Characters[charName];
             var value, splittedText;
             var filter = R.compose(R.equals(true), R.prop('doExport'));

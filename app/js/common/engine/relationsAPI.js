@@ -20,7 +20,7 @@ See the License for the specific language governing permissions and
         
         var relationsPath = ['Relations'];
         
-        var _getKnownCharacters = function(database, characterName){
+        LocalDBMS.prototype._getKnownCharacters = function(database, characterName){
             var stories = database.Stories;
             var knownCharacters = {};
             R.values(stories).forEach(function(story){
@@ -49,7 +49,7 @@ See the License for the specific language governing permissions and
             callback(null, {
                 directRelations: relData[characterName] || {},
                 reverseRelations: reverseRelations,
-                knownCharacters: _getKnownCharacters(this.database, characterName)
+                knownCharacters: this._getKnownCharacters(this.database, characterName)
             });
         };
         
