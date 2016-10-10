@@ -52,10 +52,12 @@ See the License for the specific language governing permissions and
             Groups : Groups,
             InvestigationBoard: InvestigationBoard,
             Settings: {},
+            Relations: {},
             ManagementInfo: ManagementInfo
         };
 
-        schema.required = ["Meta", "ProfileSettings","Version", "Characters", "Stories", "Log", 'Groups', 'InvestigationBoard'];
+        schema.required = ["Meta", "ProfileSettings","Version", "Characters", 
+                           "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
         schema.additionalProperties = false;
         
         return schema;

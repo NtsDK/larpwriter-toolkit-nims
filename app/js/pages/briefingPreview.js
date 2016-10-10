@@ -18,408 +18,518 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var BriefingPreview = {};
-
-BriefingPreview.init = function () {
-    "use strict";
+(function(exports){
     
-    $("#briefingCharacter").select2().on("change", BriefingPreview.buildContentDelegate);
+    var profileSettings;
 
-    var button = getEl("eventGroupingByStoryRadio");
-    listen(button, "change", BriefingPreview.refresh);
-    button.checked = true;
+    exports.init = function () {
+        $("#briefingCharacter").select2().on("change", buildContentDelegate);
     
-    button = getEl("adaptationsModeRadio");
-    listen(button, "change", BriefingPreview.refresh);
-    button.checked = true;
-
-    listen(getEl("eventGroupingByTimeRadio"), "change", BriefingPreview.refresh);
-    listen(getEl("proofreadingModeRadio"), "change", BriefingPreview.refresh);
-    listen(getEl("hideAllPanelsCheckbox"), "change", BriefingPreview.refresh);
-    listen(getEl("disableHeadersCheckbox"), "change", BriefingPreview.refresh);
-    
-    BriefingPreview.content = getEl("briefingPreviewDiv");
-};
-
-BriefingPreview.refresh = function () {
-    "use strict";
-    clearEl(getEl("briefingCharacter"));
-    clearEl(getEl("briefingContent"));
-    
-    DBMS.getAllProfileSettings(function(err, profileSettings){
-        if(err) {Utils.handleError(err); return;}
-        BriefingPreview.profileSettings = profileSettings;
-        PermissionInformer.getCharacterNamesArray(false, function(err, names){
-            if(err) {Utils.handleError(err); return;}
-            if (names.length > 0) {
-                var settings = DBMS.getSettings();
-                if(!settings["BriefingPreview"]){
-                    settings["BriefingPreview"] = {
-                            characterName : names[0].value
-                    };
-                }
-                var characterName = settings["BriefingPreview"].characterName;
-                var rawNames = names.map(R.prop('value'));
-                if(rawNames.indexOf(characterName) === -1){
-                    settings["BriefingPreview"].characterName = names[0].value;
-                    characterName = names[0].value;
-                }
-                
-                var data = getSelect2Data(names);
-                // this call trigger BriefingPreview.buildContent
-                $("#briefingCharacter").select2(data).val(characterName).trigger('change');
-            }
-        });
-    });
-    
-};
-
-BriefingPreview.buildContentDelegate = function (event) {
-    "use strict";
-    BriefingPreview.buildContent(event.target.value);
-};
-
-BriefingPreview.updateSettings = function (characterName) {
-    "use strict";
-    var settings = DBMS.getSettings();
-    settings["BriefingPreview"].characterName = characterName;
-};
-
-BriefingPreview.buildContent = function (characterName) {
-    "use strict";
-    BriefingPreview.updateSettings(characterName);
-    var content = clearEl(getEl("briefingContent"));
-
-    var addNodes = function(arr){
-        arr.forEach(addEl(content));
-    };
-
-    DBMS.getProfile(characterName, function(err, profile){
-        if(err) {Utils.handleError(err); return;}
+        var button = getEl("eventGroupingByStoryRadio");
+        listen(button, "change", exports.refresh);
+        button.checked = true;
         
-        DBMS.getAllInventoryLists(characterName, function(err, allInventoryLists){
-            if(err) {Utils.handleError(err); return;}
-            
-            DBMS.getCharacterGroupTexts(characterName, function(err, groupTexts){
-                if(err) {Utils.handleError(err); return;}
-                
-                PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
-                    if(err) {Utils.handleError(err); return;}
-                    
-                    addEl(content, BriefingPreview.makePanel(makeText(getL10n('briefings-profile')), 
-                            BriefingPreview.makeProfileContent(profile)));
-                    
-                    var userStoryNamesMap = {};
-                    userStoryNames.forEach(function(story){
-                        userStoryNamesMap[story.value] = story;
-                    });
+        button = getEl("adaptationsModeRadio");
+        listen(button, "change", exports.refresh);
+        button.checked = true;
     
-                    addEl(content, BriefingPreview.makePanel(makeText(getL10n("briefings-inventory") + ' (' + allInventoryLists.length + ')'), 
-                            BriefingPreview.makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap)));
-
-                    addEl(content, BriefingPreview.makePanel(makeText(getL10n("header-groups") + ' (' + groupTexts.length + ')'), 
-                            BriefingPreview.makeGroupContent(groupTexts)));
-                    
-                    var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
-                    if (groupingByStory) {
-                        BriefingPreview.showEventsByStory(content, characterName, userStoryNamesMap);
-                    } else {
-                        BriefingPreview.showEventsByTime(content, characterName, userStoryNamesMap);
+        listen(getEl("eventGroupingByTimeRadio"), "change", exports.refresh);
+        listen(getEl("proofreadingModeRadio"), "change", exports.refresh);
+        listen(getEl("hideAllPanelsCheckbox"), "change", exports.refresh);
+        listen(getEl("disableHeadersCheckbox"), "change", exports.refresh);
+        
+        exports.content = getEl("briefingPreviewDiv");
+    };
+    
+    exports.refresh = function () {
+        clearEl(getEl("briefingCharacter"));
+        clearEl(getEl("briefingContent"));
+        
+        DBMS.getAllProfileSettings(function(err, loadedProfileSettings){
+            if(err) {Utils.handleError(err); return;}
+            profileSettings = loadedProfileSettings;
+            PermissionInformer.getCharacterNamesArray(false, function(err, names){
+                if(err) {Utils.handleError(err); return;}
+                if (names.length > 0) {
+                    var settings = DBMS.getSettings();
+                    if(!settings["BriefingPreview"]){
+                        settings["BriefingPreview"] = {
+                                characterName : names[0].value
+                        };
                     }
-                });
+                    var characterName = settings["BriefingPreview"].characterName;
+                    var rawNames = names.map(R.prop('value'));
+                    if(rawNames.indexOf(characterName) === -1){
+                        settings["BriefingPreview"].characterName = names[0].value;
+                        characterName = names[0].value;
+                    }
+                    
+                    var data = getSelect2Data(names);
+                    // this call trigger BriefingPreview.buildContent
+                    $("#briefingCharacter").select2(data).val(characterName).trigger('change');
+                }
             });
         });
-    });
-};
-
-BriefingPreview.onBuildContentFinish = function(){
-    "use strict";
-    BriefingPreview.refreshTextAreas();
-    Utils.enable(BriefingPreview.content, "notEditable", false);
-};
-    
-BriefingPreview.refreshTextAreas = function(){
-    "use strict";
-    R.ap([UI.resizeTextarea], nl2array(getEl("briefingContent").getElementsByTagName('textarea')).map(function(el){
-        return {target:el};
-    }));
-};
-
-BriefingPreview.makePanel = function(title, content){
-    "use strict";
-    var panel = addClasses(makeEl('div'), ["panel", "panel-default"]);
-    var h3 = addClass(addEl(makeEl('h3'), title), "panel-title");
-    var a = setAttr(makeEl('a'),'href','#/');
-    var headDiv = addClass(makeEl('div'), "panel-heading");
-    addEl(panel, addEl(headDiv, addEl(a, h3)));
-    var contentDiv = addClass(makeEl('div'), "panel-body");
-    setClassByCondition(contentDiv, 'hidden', getEl('hideAllPanelsCheckbox').checked);
-    addEl(panel, addEl(contentDiv, content));
-    var panelToggler = UI.togglePanel(contentDiv);
-    listen(a, "click", function(){
-        panelToggler();
-        BriefingPreview.refreshTextAreas()
-    });
-    
-    return panel;
-};
-
-BriefingPreview.makeGroupContent = function(groupTexts){
-    return addEls(makeEl('div'), groupTexts.map(function(groupText){
-        var div = makeEl('div');
-        addEl(div,addEl(makeEl('h4'), makeText(groupText.groupName)));
-        var span = addEl(makeEl('span'), makeText(groupText.text));
-        addClass(span, 'briefingTextSpan');
-        return addEl(div, span);
-    }));
-};
-
-BriefingPreview.makeInventoryContent = function(allInventoryLists, characterName, userStoryNamesMap){
-    "use strict";
-    var inventoryDiv;
-    inventoryDiv = makeEl('tbody');
-    
-    allInventoryLists.forEach(function(elem){
-        var input = makeEl("input");
-        input.value = elem.inventory;
-        input.storyName = elem.storyName;
-        input.characterName = characterName;
-        addClass(input, "inventoryInput");
-        if(!userStoryNamesMap[elem.storyName]){
-            addClass(input, "notEditable");
-        }
-        input.addEventListener("change", BriefingPreview.updateCharacterInventory);
         
-        addEl(inventoryDiv,BriefingPreview.makeTableRow(makeText(elem.storyName), input));
-    });
-    return addEl(addClasses(makeEl('table'), ['table','table-striped']), inventoryDiv);
-};
-
-BriefingPreview.makeTableRow = function(col1, col2){
-    return addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'),col2)]);
-};
-
-BriefingPreview.makeProfileContent = function(profile){
-    "use strict";
-    var profileDiv, name, value;
-    profileDiv = makeEl('tbody');
+    };
     
-    BriefingPreview.profileSettings.forEach(function (element) {
-        if(!element.doExport){
-            return;
-        }
-        name = makeText(element.name);
-        switch (element.type) {
-        case "text":
-            value = addClass(makeEl("span"), "briefingTextSpan");
-            addEl(value, makeText(profile[element.name]));
-            break;
-        case "enum":
-        case "number":
-        case "string":
-            value = makeText(profile[element.name]);
-            break;
-        case "checkbox":
-            value = makeText(constL10n(Constants[profile[element.name]]));
-            break;
-        }
+    var buildContentDelegate = function (event) {
+        buildContent(event.target.value);
+    };
+    
+    var updateSettings = function (characterName) {
+        var settings = DBMS.getSettings();
+        settings["BriefingPreview"].characterName = characterName;
+    };
+    
+    var buildContent = function (characterName) {
+        updateSettings(characterName);
+        var content = clearEl(getEl("briefingContent"));
+        var index = 0;
+        var data = {
+            characterName: characterName
+        };
+        var buildContentInner = function(){
+            if(index < panels.length){
+                index++;
+                panels[index-1].load(data, buildContentInner);
+            } else {
+                panels.map(R.prop('make')).forEach(function(make){
+                    make(content, data)
+                });
+            }
+        };
+        buildContentInner();
+    };
+    
+    var panels = [{
+        name: 'storyRights',
+        load: function(data, callback){
+            PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+                if(err) {Utils.handleError(err); return;}
+                data.userStoryNamesMap = R.indexBy(R.prop('value'), userStoryNames); 
+                callback();
+            });
+        }, 
+        make: function(el, data){} 
+    }, {
+        name: 'profile',
+        load: function(data, callback){
+            DBMS.getProfile(data.characterName, function(err, profile){
+                if(err) {Utils.handleError(err); return;}
+                data.profile = profile;
+                callback();
+            });
+        }, 
+        make: function(el, data){
+            addEl(el, makePanel(makeText(getL10n('briefings-profile')), makeProfileContent(data.profile)));
+        } 
+    }, {
+        name: 'inventory',
+        load: function(data, callback){
+            DBMS.getAllInventoryLists(data.characterName, function(err, allInventoryLists){
+                if(err) {Utils.handleError(err); return;}
+                data.allInventoryLists = allInventoryLists;
+                callback();
+            });
+        }, 
+        make: function(el, data){
+            addEl(el, makePanel(makeText(getL10n("briefings-inventory") + ' (' + data.allInventoryLists.length + ')'), 
+                    makeInventoryContent(data.allInventoryLists, data.characterName, data.userStoryNamesMap)));
+        } 
+    }, {
+        name: 'groups',
+        load: function(data, callback){
+            DBMS.getCharacterGroupTexts(data.characterName, function(err, groupTexts){
+                if(err) {Utils.handleError(err); return;}
+                data.groupTexts = groupTexts;
+                callback();
+            });
+        }, 
+        make: function(el, data){
+            addEl(el, makePanel(makeText(getL10n("header-groups") + ' (' + data.groupTexts.length + ')'), 
+                    makeGroupContent(data.groupTexts)));
+        } 
+    }, {
+        name: 'relations',
+        load: function(data, callback){
+            DBMS.getRelationsSummary(data.characterName, function(err, relationsSummary){
+                if(err) {Utils.handleError(err); return;}
+                PermissionInformer.getCharacterNamesArray(false, function(err, characterNamesArray){
+                    if(err) {Utils.handleError(err); return;}
+                    data.relationsSummary = relationsSummary;
+                    data.characterNamesArray = characterNamesArray; 
+                    callback();
+                });
+            });
+        }, 
+        make: function(el, data){
+            var label = getL10n("header-relations") + ' (' + R.keys(data.relationsSummary.directRelations).length + ')';
+            addEl(el, makePanel(makeText(label), makeRelationsContent(data.characterName, data.relationsSummary, data.characterNamesArray)));
+        } 
+    }, {
+        name: 'stories',
+        load: function(data, callback){
+            callback();
+        }, 
+        make: function(el, data){
+            var groupingByStory = getEl("eventGroupingByStoryRadio").checked;
+            if (groupingByStory) {
+                showEventsByStory(el, data.characterName, data.userStoryNamesMap);
+            } else {
+                showEventsByTime(el, data.characterName, data.userStoryNamesMap);
+            }
+        } 
+    }];
+    
+    var onBuildContentFinish = function(){
+        refreshTextAreas();
+        Utils.enable(exports.content, "notEditable", false);
+    };
         
-        addEl(profileDiv,BriefingPreview.makeTableRow(name, value));
-    });
-    return addEl(addClasses(makeEl('table'), ['table','table-striped']), profileDiv);
-};
-
-BriefingPreview.showEventsByTime = function (content, characterName, userStoryNamesMap) {
-    "use strict";
+    var refreshTextAreas = function(){
+        R.ap([UI.resizeTextarea], nl2array(getEl("briefingContent").getElementsByTagName('textarea')).map(function(el){
+            return {target:el};
+        }));
+    };
     
-    DBMS.getCharacterEventsByTime(characterName, function(err, allEvents){
-        if(err) {Utils.handleError(err); return;}
-        var adaptations = allEvents.map(function (event) {
-            return {
-                characterName: characterName,
-                storyName: event.storyName
-            };
+    var makePanel = function(title, content){
+        var panel = addClasses(makeEl('div'), ["panel", "panel-default"]);
+        var h3 = addClass(addEl(makeEl('h3'), title), "panel-title");
+        var a = setAttr(makeEl('a'),'href','#/');
+        var headDiv = addClass(makeEl('div'), "panel-heading");
+        addEl(panel, addEl(headDiv, addEl(a, h3)));
+        var contentDiv = addClass(makeEl('div'), "panel-body");
+        setClassByCondition(contentDiv, 'hidden', getEl('hideAllPanelsCheckbox').checked);
+        addEl(panel, addEl(contentDiv, content));
+        var panelToggler = UI.togglePanel(contentDiv);
+        listen(a, "click", function(){
+            panelToggler();
+            refreshTextAreas()
         });
         
-        PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+        return panel;
+    };
+    
+
+    var relationTableHeader = [ 'character-name', 'direct-relation', 'reverse-relation', 'extra-info' ];
+    
+    var makeNewRow = R.curry(function(isAdaptationsMode, relationsSummary, fromCharacter, toCharacter){
+        var direct = addClass(makeEl('textarea'), 'briefing-relation-area');
+        direct.value = relationsSummary.directRelations[toCharacter] || '';
+        listen(direct, 'change', function(event){
+            DBMS.setCharacterRelation(fromCharacter, toCharacter, event.target.value, Utils.processError());
+        });
+        var reverse;
+        if(isAdaptationsMode){
+            reverse = addClass(makeEl('textarea'), 'briefing-relation-area');
+            reverse.value = relationsSummary.reverseRelations[toCharacter] || '';
+            listen(reverse, 'change', function(event){
+                DBMS.setCharacterRelation(toCharacter, fromCharacter, event.target.value, Utils.processError());
+            });
+        } else {
+            reverse = makeEl('span');
+        }
+        var stories = relationsSummary.knownCharacters[toCharacter];
+        
+        return addEls(makeEl('tr'), [
+            addEl(makeEl('td'), makeText(toCharacter)),
+            addEl(makeEl('td'), direct),
+            addEl(makeEl('td'), reverse),
+            addEl(makeEl('td'), makeText( stories === undefined ? '' : R.keys(stories).join(', ')) )
+            ]
+        );
+    });
+    
+    var makeSelector = function(text, data, body, rowDelegate){
+        var select1 = $("<select></select>");
+        var tmpContainer1 = $("<span></span>").append(select1);
+        addClass(select1[0],'common-select');
+        var tmpSelect = select1.select2(getSelect2Data(data));
+        var button = addEl(makeEl('button'),makeText('Добавить'));
+        listen(button, 'click', function(){
+            addEl(body, rowDelegate(select1[0].value));
+            data = data.filter(R.compose(R.not, R.equals(select1[0].value),R.prop('value')));
+            clearEl(select1[0]);
+            select1.select2(getSelect2Data(data));
+        });
+        
+        return addEls(makeEl('div'), [ makeText(text), tmpContainer1[0], button ]);
+    };
+    
+    var makeRelationsContent = function(characterName, relationsSummary, characterNamesArray){
+        characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName),R.prop('value')));
+        
+        var showCharacters = R.union(R.keys(relationsSummary.directRelations), R.keys(relationsSummary.reverseRelations));
+        showCharacters.sort();
+        
+        var noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters),R.prop('value')));
+        var knownNoRels = noRelsList.filter(R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)),R.prop('value')));
+        var unknownNoRels = noRelsList.filter(R.compose(R.not, R.contains(R.__, R.keys(relationsSummary.knownCharacters)),R.prop('value')));
+        var isAdaptationsMode = getEl("adaptationsModeRadio").checked;
+        
+        var makeRow = makeNewRow(isAdaptationsMode, relationsSummary, characterName)
+        
+        var body = addEls(makeEl('tbody'), showCharacters.map(makeRow));
+        var charSelectors = addEls(makeEl('div'), [makeSelector('Известные персонажи', knownNoRels, body, makeRow),
+                                                   makeSelector('Неизвестные персонажи', unknownNoRels, body, makeRow)]); 
+        
+        var head = addEl(makeEl('thead'), addEls(makeEl('tr'), relationTableHeader.map(function(name){
+            return addEl(makeEl('th'), makeText(getL10n('briefings-' + name)));
+        })));
+        
+        var table = addEls(addClasses(makeEl('table'),['table']), [head,body]);
+        
+        return addEls(makeEl('div'), [charSelectors, table]);
+    };
+    
+    var makeGroupContent = function(groupTexts){
+        return addEls(makeEl('div'), groupTexts.map(function(groupText){
+            var div = makeEl('div');
+            addEl(div,addEl(makeEl('h4'), makeText(groupText.groupName)));
+            var span = addEl(makeEl('span'), makeText(groupText.text));
+            addClass(span, 'briefingTextSpan');
+            return addEl(div, span);
+        }));
+    };
+    
+    var makeInventoryContent = function(allInventoryLists, characterName, userStoryNamesMap){
+        var inventoryDiv;
+        inventoryDiv = makeEl('tbody');
+        
+        allInventoryLists.forEach(function(elem){
+            var input = makeEl("input");
+            input.value = elem.inventory;
+            input.storyName = elem.storyName;
+            input.characterName = characterName;
+            addClass(input, "inventoryInput");
+            if(!userStoryNamesMap[elem.storyName]){
+                addClass(input, "notEditable");
+            }
+            input.addEventListener("change", updateCharacterInventory);
+            
+            addEl(inventoryDiv,makeTableRow(makeText(elem.storyName), input));
+        });
+        return addEl(addClasses(makeEl('table'), ['table','table-striped']), inventoryDiv);
+    };
+    
+    var makeTableRow = function(col1, col2){
+        return addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'),col2)]);
+    };
+    
+    var makeProfileContent = function(profile){
+        var profileDiv, name, value;
+        profileDiv = makeEl('tbody');
+        
+        profileSettings.forEach(function (element) {
+            if(!element.doExport){
+                return;
+            }
+            name = makeText(element.name);
+            switch (element.type) {
+            case "text":
+                value = addClass(makeEl("span"), "briefingTextSpan");
+                addEl(value, makeText(profile[element.name]));
+                break;
+            case "enum":
+            case "number":
+            case "string":
+                value = makeText(profile[element.name]);
+                break;
+            case "checkbox":
+                value = makeText(constL10n(Constants[profile[element.name]]));
+                break;
+            }
+            
+            addEl(profileDiv,makeTableRow(name, value));
+        });
+        return addEl(addClasses(makeEl('table'), ['table','table-striped']), profileDiv);
+    };
+    
+    var showEventsByTime = function (content, characterName, userStoryNamesMap) {
+        DBMS.getCharacterEventsByTime(characterName, function(err, allEvents){
             if(err) {Utils.handleError(err); return;}
+            var adaptations = allEvents.map(function (event) {
+                return {
+                    characterName: characterName,
+                    storyName: event.storyName
+                };
+            });
             
-            var opts = {
-                userStoryNamesMap : userStoryNamesMap,
-                areAdaptationsEditable : areAdaptationsEditable,
-                showStoryName : true
-            };
-            
-            var splitConstant = 5;
-            
-            addEls(content, R.splitEvery(splitConstant, allEvents).map(function(subPart, i){
-                var eventContent = addEls(makeEl('div'), subPart.map(function (event,j) {
-                    opts.index = i*splitConstant+1 + j;
-                    return BriefingPreview.showEvent(event, characterName, opts);
-                }));
+            PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+                if(err) {Utils.handleError(err); return;}
                 
-                var name;
-                if(getEl('disableHeadersCheckbox').checked){
-                    name = makeText(strFormat(getL10n('briefings-events-header'), [i*splitConstant+1, i*splitConstant+subPart.length]));
-                } else {
-                    name = addEls(makeEl('div'), subPart.map(function(event){
-                        return BriefingPreview.getEventHeaderDiv(event, true);
+                var opts = {
+                    userStoryNamesMap : userStoryNamesMap,
+                    areAdaptationsEditable : areAdaptationsEditable,
+                    showStoryName : true
+                };
+                
+                var splitConstant = 5;
+                
+                addEls(content, R.splitEvery(splitConstant, allEvents).map(function(subPart, i){
+                    var eventContent = addEls(makeEl('div'), subPart.map(function (event,j) {
+                        opts.index = i*splitConstant+1 + j;
+                        return showEvent(event, characterName, opts);
                     }));
-                }
-                return BriefingPreview.makePanel(name, eventContent)
-            }));
-            BriefingPreview.onBuildContentFinish();
-        });
-    });
-};
-
-BriefingPreview.getStoryHeader = function(elem, i){
-    "use strict";
-    var name;
-    if(getEl('disableHeadersCheckbox').checked){
-        name = strFormat(getL10n('briefings-story-header'), [i+1]);
-    } else {
-        name = elem.storyName;
-    }
-    return makeText(name + ' ('+elem.events.length+')');
-};
-
-BriefingPreview.showEventsByStory = function (content, characterName, userStoryNamesMap) {
-    "use strict";
-    
-    DBMS.getCharacterEventGroupsByStory(characterName, function(err, eventGroups){
-        if(err) {Utils.handleError(err); return;}
-        var adaptations = eventGroups.map(function (elem) {
-            return {
-                characterName: characterName,
-                storyName: elem.storyName
-            };
-        });
-        PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
-            if(err) {Utils.handleError(err); return;}
-            var opts = {
-                userStoryNamesMap : userStoryNamesMap,
-                areAdaptationsEditable : areAdaptationsEditable,
-                showStoryName : false
-            };
-            
-            addEls(content, eventGroups.map(function(elem, i){
-                var storyContent = addEls(makeEl('div'), elem.events.map(function(event, j){
-                    opts.index = j+1;
-                    return BriefingPreview.showEvent(event, characterName, opts);
+                    
+                    var name;
+                    if(getEl('disableHeadersCheckbox').checked){
+                        name = makeText(strFormat(getL10n('briefings-events-header'), [i*splitConstant+1, i*splitConstant+subPart.length]));
+                    } else {
+                        name = addEls(makeEl('div'), subPart.map(function(event){
+                            return getEventHeaderDiv(event, true);
+                        }));
+                    }
+                    return makePanel(name, eventContent)
                 }));
-                return BriefingPreview.makePanel(BriefingPreview.getStoryHeader(elem, i), storyContent);
-            }));
-            BriefingPreview.onBuildContentFinish();
+                onBuildContentFinish();
+            });
         });
-    });
-};
-
-BriefingPreview.getEventHeaderDiv = function(event, showStoryName){
-    "use strict";
-    var eventName = addEl(makeEl('span'), makeText(strFormat("{0} {1}", [showStoryName?event.storyName+":":"",event.name])));
-    var eventTime = addClass(addEl(makeEl('span'), makeText(event.time)), 'previewEventTime');
-    return addEls(makeEl('div'), [eventTime, eventName]);
-};
-
-BriefingPreview.getEventLabelText = function(event, showStoryName, index){
-    "use strict";
-    if(getEl('disableHeadersCheckbox').checked){
-        return addEl(makeEl('h4'), makeText(strFormat(getL10n('briefings-event-header'), [index])));
-    } else {
-        return addEl(makeEl('h4'), BriefingPreview.getEventHeaderDiv(event, showStoryName));
-    }
-};
-
-BriefingPreview.showEvent = function(event, characterName, opts){
-    var eventDiv = makeEl('div');
-    var isAdaptationsMode = getEl("adaptationsModeRadio").checked;
-    var originText = event.text;
-    var adaptationText = event.characters[characterName].text;
-    var isOriginEditable = !!opts.userStoryNamesMap[event.storyName];
-    var isAdaptationEditable = opts.areAdaptationsEditable[event.storyName + "-" + characterName];
-    var isAdaptationEmpty = adaptationText === "";
-    var els = [];
+    };
     
-    els.push(BriefingPreview.getEventLabelText(event, opts.showStoryName, opts.index));
-    els.push(makeText(getL10n('briefings-subjective-time')));
-    els.push(UI.makeAdaptationTimeInput(event.storyName, event, characterName, isAdaptationEditable));
+    var getStoryHeader = function(elem, i){
+        var name;
+        if(getEl('disableHeadersCheckbox').checked){
+            name = strFormat(getL10n('briefings-story-header'), [i+1]);
+        } else {
+            name = elem.storyName;
+        }
+        return makeText(name + ' ('+elem.events.length+')');
+    };
     
-    var input;
-    if(isAdaptationsMode || isAdaptationEmpty){
-        // origin input
-        input = makeEl("textarea");
-        addClass(input, "briefingPersonalStory");
-        setClassByCondition(input, "notEditable", !isOriginEditable);
-        input.value = event.text;
-        input.eventIndex = event.index;
-        input.storyName = event.storyName;
-        listen(input, "change", BriefingPreview.onChangeOriginText);
-        BriefingPreview.attachTextareaResizer(input);
+    var showEventsByStory = function (content, characterName, userStoryNamesMap) {
+        DBMS.getCharacterEventGroupsByStory(characterName, function(err, eventGroups){
+            if(err) {Utils.handleError(err); return;}
+            var adaptations = eventGroups.map(function (elem) {
+                return {
+                    characterName: characterName,
+                    storyName: elem.storyName
+                };
+            });
+            PermissionInformer.areAdaptationsEditable(adaptations, function(err, areAdaptationsEditable){
+                if(err) {Utils.handleError(err); return;}
+                var opts = {
+                    userStoryNamesMap : userStoryNamesMap,
+                    areAdaptationsEditable : areAdaptationsEditable,
+                    showStoryName : false
+                };
+                
+                addEls(content, eventGroups.map(function(elem, i){
+                    var storyContent = addEls(makeEl('div'), elem.events.map(function(event, j){
+                        opts.index = j+1;
+                        return showEvent(event, characterName, opts);
+                    }));
+                    return makePanel(getStoryHeader(elem, i), storyContent);
+                }));
+                onBuildContentFinish();
+            });
+        });
+    };
+    
+    var getEventHeaderDiv = function(event, showStoryName){
+        var eventName = addEl(makeEl('span'), makeText(strFormat("{0} {1}", [showStoryName?event.storyName+":":"",event.name])));
+        var eventTime = addClass(addEl(makeEl('span'), makeText(event.time)), 'previewEventTime');
+        return addEls(makeEl('div'), [eventTime, eventName]);
+    };
+    
+    var getEventLabelText = function(event, showStoryName, index){
+        if(getEl('disableHeadersCheckbox').checked){
+            return addEl(makeEl('h4'), makeText(strFormat(getL10n('briefings-event-header'), [index])));
+        } else {
+            return addEl(makeEl('h4'), getEventHeaderDiv(event, showStoryName));
+        }
+    };
+    
+    var showEvent = function(event, characterName, opts){
+        var eventDiv = makeEl('div');
+        var isAdaptationsMode = getEl("adaptationsModeRadio").checked;
+        var originText = event.text;
+        var adaptationText = event.characters[characterName].text;
+        var isOriginEditable = !!opts.userStoryNamesMap[event.storyName];
+        var isAdaptationEditable = opts.areAdaptationsEditable[event.storyName + "-" + characterName];
+        var isAdaptationEmpty = adaptationText === "";
+        var els = [];
         
-        var unlockButton = BriefingPreview.makeUnlockEventSourceButton(input, isOriginEditable);
-        var originHolder = makeEl('div');
-        addEls(originHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-origin'))), unlockButton, input]);
-        els.push(originHolder);
-    }
-    
-    if(isAdaptationsMode || !isAdaptationEmpty){
-        // adaptation input
-        input = makeEl("textarea");
-        addClass(input, "briefingPersonalStory");
-        setClassByCondition(input, "notEditable", !isAdaptationEditable);
-        input.value = event.characters[characterName].text;
-        input.characterName = characterName;
-        input.eventIndex = event.index;
-        input.storyName = event.storyName;
-        listen(input, "change", BriefingPreview.onChangeAdaptationText);
-        BriefingPreview.attachTextareaResizer(input);
+        els.push(getEventLabelText(event, opts.showStoryName, opts.index));
+        els.push(makeText(getL10n('briefings-subjective-time')));
+        els.push(UI.makeAdaptationTimeInput(event.storyName, event, characterName, isAdaptationEditable));
         
-        var adaptationHolder = makeEl('div');
-        addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input, makeEl("br")]);
-        els.push(adaptationHolder);
-    }
+        var input;
+        if(isAdaptationsMode || isAdaptationEmpty){
+            // origin input
+            input = makeEl("textarea");
+            addClass(input, "briefingPersonalStory");
+            setClassByCondition(input, "notEditable", !isOriginEditable);
+            input.value = event.text;
+            input.eventIndex = event.index;
+            input.storyName = event.storyName;
+            listen(input, "change", onChangeOriginText);
+            attachTextareaResizer(input);
+            
+            var unlockButton = makeUnlockEventSourceButton(input, isOriginEditable);
+            var originHolder = makeEl('div');
+            addEls(originHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-origin'))), unlockButton, input]);
+            els.push(originHolder);
+        }
+        
+        if(isAdaptationsMode || !isAdaptationEmpty){
+            // adaptation input
+            input = makeEl("textarea");
+            addClass(input, "briefingPersonalStory");
+            setClassByCondition(input, "notEditable", !isAdaptationEditable);
+            input.value = event.characters[characterName].text;
+            input.characterName = characterName;
+            input.eventIndex = event.index;
+            input.storyName = event.storyName;
+            listen(input, "change", onChangeAdaptationText);
+            attachTextareaResizer(input);
+            
+            var adaptationHolder = makeEl('div');
+            addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input, makeEl("br")]);
+            els.push(adaptationHolder);
+        }
+        
+        addEls(eventDiv, els);
+        return eventDiv;
+    };
     
-    addEls(eventDiv, els);
-    return eventDiv;
-};
+    var attachTextareaResizer = function(input){
+        listen(input, 'keydown', UI.resizeTextarea);
+        listen(input, 'paste', UI.resizeTextarea);
+        listen(input, 'cut', UI.resizeTextarea);
+        listen(input, 'change', UI.resizeTextarea);
+        listen(input, 'drop', UI.resizeTextarea);
+    };
+    
+    var makeUnlockEventSourceButton = function (input, isEditable) {
+        input.setAttribute("disabled","disabled");
+        var button = addEl(makeEl("button"), makeText(getL10n("briefings-unlock-event-source")));
+        setClassByCondition(button, "notEditable", !isEditable);
+        listen(button, "click", function(){
+            input.removeAttribute("disabled");
+        });
+        return button;
+    };
+    
+    var updateCharacterInventory = function (event) {
+        var input = event.target;
+        DBMS.updateCharacterInventory(input.storyName, input.characterName, input.value, Utils.processError());
+    };
+    
+    var onChangeOriginText = function (event) {
+        var storyName = event.target.storyName;
+        var eventIndex = event.target.eventIndex;
+        var text = event.target.value;
+        DBMS.setOriginEventText(storyName, eventIndex, text, Utils.processError());
+    };
+    
+    var onChangeAdaptationText = function (event) {
+        var storyName = event.target.storyName;
+        var eventIndex = event.target.eventIndex;
+        var characterName = event.target.characterName;
+        var text = event.target.value;
+        DBMS.setAdaptationEventText(storyName, eventIndex, characterName, text, Utils.processError());
+    };
 
-BriefingPreview.attachTextareaResizer = function(input){
-    listen(input, 'keydown', UI.resizeTextarea);
-    listen(input, 'paste', UI.resizeTextarea);
-    listen(input, 'cut', UI.resizeTextarea);
-    listen(input, 'change', UI.resizeTextarea);
-    listen(input, 'drop', UI.resizeTextarea);
-};
-
-BriefingPreview.makeUnlockEventSourceButton = function (input, isEditable) {
-    "use strict";
-    input.setAttribute("disabled","disabled");
-    var button = addEl(makeEl("button"), makeText(getL10n("briefings-unlock-event-source")));
-    setClassByCondition(button, "notEditable", !isEditable);
-    listen(button, "click", function(){
-        input.removeAttribute("disabled");
-    });
-    return button;
-};
-
-BriefingPreview.updateCharacterInventory = function (event) {
-    "use strict";
-    var input = event.target;
-    DBMS.updateCharacterInventory(input.storyName, input.characterName, input.value, Utils.processError());
-};
-
-BriefingPreview.onChangeOriginText = function (event) {
-    var storyName = event.target.storyName;
-    var eventIndex = event.target.eventIndex;
-    var text = event.target.value;
-    DBMS.setOriginEventText(storyName, eventIndex, text, Utils.processError());
-};
-
-BriefingPreview.onChangeAdaptationText = function (event) {
-    var storyName = event.target.storyName;
-    var eventIndex = event.target.eventIndex;
-    var characterName = event.target.characterName;
-    var text = event.target.value;
-    DBMS.setAdaptationEventText(storyName, eventIndex, characterName, text, Utils.processError());
-};
+})(this['BriefingPreview']={});

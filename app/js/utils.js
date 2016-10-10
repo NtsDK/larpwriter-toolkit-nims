@@ -296,10 +296,10 @@ var rAddEl = R.curry(function(child, parent){
   return parent;
 });
 
-function setAttr(el, name, value){
+var setAttr = R.curry(function(el, name, value){
   el.setAttribute(name, value);
   return el;
-};
+});
 
 function delAttr(el, name){
     el.removeAttribute(name);

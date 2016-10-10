@@ -123,6 +123,10 @@ See the License for the specific language governing permissions and
             };
             data.Version = "0.5.1";
         }
+        if(data.Version === "0.5.1"){
+            data.Relations = {};
+            data.Version = "0.5.2";
+        }
         
         exists(data, 'base', 'Characters');
         exists(data, 'base', 'ProfileSettings');

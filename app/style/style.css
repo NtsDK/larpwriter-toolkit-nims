@@ -177,6 +177,12 @@ See the License for the specific language governing permissions and
 	display: block;
 	width:700px;
 }
+
+.briefing-relation-area{
+  height: 125px;
+  display: block;
+  width:300px;
+}
 .eventPersonalStory {
 	height: 175px;
 	display: block;
@@ -391,7 +397,7 @@ See the License for the specific language governing permissions and
   justify-content: space-between;
 }
 
-.rename-entity-select, .remove-entity-select, .save-entity-select, .group-add-select, .group-replace-select {
+.rename-entity-select, .remove-entity-select, .save-entity-select, .group-add-select, .group-replace-select, .common-select {
   width: 200px;
 }
 
