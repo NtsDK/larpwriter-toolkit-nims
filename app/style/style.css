@@ -428,3 +428,8 @@ See the License for the specific language governing permissions and
   padding:10px;
 /*   text-align: center; */
 }
+
+.bold-cursive{
+  font-weight: bold;
+  font-style: italic;
+}

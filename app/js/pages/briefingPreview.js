@@ -221,7 +221,7 @@ See the License for the specific language governing permissions and
     var partialTableHeader = [ 'character-name', 'direct-relation', 'extra-info' ];
     
     var makeProfileItemContent = function(profileItemName, profileItemValue){
-        return [makeText(profileItemName), makeEl('br'), makeText(profileItemValue)];
+        return [addEl(addClass(makeEl('div'), 'bold-cursive'), makeText(profileItemName)), makeText(profileItemValue)];
     };
     
     var makeNewRow = R.curry(function(profiles, profileItemSelect, isAdaptationsMode, relationsSummary, fromCharacter, toCharacter){
@@ -247,7 +247,7 @@ See the License for the specific language governing permissions and
         if(isAdaptationsMode){
             arr.push(addEl(makeEl('td'), reverse));
         }
-        var subArr = [addEl(makeEl('div'), makeText('Где встречались')),
+        var subArr = [addClass(addEl(makeEl('div'), makeText(getL10n('briefings-where-meets'))), 'bold-cursive'),
                       addEl(makeEl('div'), makeText(stories === undefined ? '' : R.keys(stories).join(', '))),
                       makeEl('br'),
                       addEls(setAttr(makeEl('div'), 'toCharacter', toCharacter), 
@@ -264,7 +264,7 @@ See the License for the specific language governing permissions and
         var tmpContainer1 = $("<span></span>").append(select1);
         addClass(select1[0],'common-select');
         var tmpSelect = select1.select2(getSelect2Data(data));
-        var button = addEl(makeEl('button'),makeText('Добавить'));
+        var button = addEl(makeEl('button'), makeText(getL10n('common-add')));
         listen(button, 'click', function(){
             makeRowCallback(select1[0].value);
             data = data.filter(R.compose(R.not, R.equals(select1[0].value),R.prop('value')));
@@ -285,7 +285,7 @@ See the License for the specific language governing permissions and
         tmpSelect.val(profileSettings[0].name).trigger('change');
         
         return {
-            el: addEls(makeEl('div'), [ makeText('Поле досье'), tmpContainer1[0]]),
+            el: addEls(makeEl('div'), [ makeText(getL10n('briefings-profile-item')), tmpContainer1[0]]),
             select: select1[0]
         }
     };
@@ -311,8 +311,8 @@ See the License for the specific language governing permissions and
         
         // filling header - need table body for callbacks
         var makeRowCallback = R.compose(addEl(body), makeRow);
-        var charSelectors = addEls(makeEl('div'), [makeSelector('Известные персонажи', knownNoRels, makeRowCallback),
-                                                   makeSelector('Неизвестные персонажи', unknownNoRels, makeRowCallback),
+        var charSelectors = addEls(makeEl('div'), [makeSelector(getL10n('briefings-known-characters'), knownNoRels, makeRowCallback),
+                                                   makeSelector(getL10n('briefings-unknown-characters'), unknownNoRels, makeRowCallback),
                                                    selectInfo.el]); 
         
         // making table
