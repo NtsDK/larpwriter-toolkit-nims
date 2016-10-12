@@ -116,7 +116,7 @@ PageManager.onDatabaseLoad = function () {
             setIcon();
 //            addEl(navigation, l10nBtn);
             
-            Utils.addView(containers, "logViewer", LogViewer, {id:"logViewerButton", tooltip:true});
+            Utils.addView(containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
             addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
 //            addEl(navigation, PageManager.makeButton("aboutButton", "about", null, btnOpts));
             if(MODE === "NIMS_Server"){
