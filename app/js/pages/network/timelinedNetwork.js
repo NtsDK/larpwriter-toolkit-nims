@@ -2,40 +2,7 @@
 
 (function(exports){
 
-//    var data1 = getScaleFreeNetwork(25);
-//    
-//    var nodes = new vis.DataSet(data1.nodes);
-//    var edges = new vis.DataSet(data1.edges);
-//    
-//    //// create an array with nodes
-//    //var nodes = new vis.DataSet([
-//    //  {id: 1, label: 'Node 1'},
-//    //  {id: 2, label: 'Node 2'},
-//    //  {id: 3, label: 'Node 3'},
-//    //  {id: 4, label: 'Node 4'},
-//    //  {id: 5, label: 'Node 5'}
-//    //]);
-//    //
-//    //// create an array with edges
-//    //var edges = new vis.DataSet([
-//    //  {from: 1, to: 3},
-//    //  {from: 1, to: 2},
-//    //  {from: 2, to: 4},
-//    //  {from: 2, to: 5}
-//    //]);
-//    
-//    // create a network
-//    var container = document.getElementById('mynetwork');
-//    var data = {
-//      nodes: nodes,
-//      edges: edges
-//    };
-//    var options = {layout:{randomSeed:2}};
-//    var network = new vis.Network(container, data, options);
-    
-    
-    
-    
+    var cameraInitPos = new THREE.Vector3(-30, 40, 30).multiplyScalar(2.5);
     // three.js
     var camera;
     var scene;
@@ -54,7 +21,6 @@
         // create a render and set the size
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
-        renderer.setSize(window.innerWidth, window.innerHeight);
         addEl(clearEl(getEl("WebGL-output")), renderer.domElement);
         
         stats = initStats();
@@ -83,57 +49,67 @@
     //    renderer.shadowMapEnabled = true;
     };
     
+    var isFirstRefresh = true;
+    
     // once everything is loaded, we run our Three.js stuff.
     function refresh(network, nodes, edges) {
+        
+        updateRendererSize();
+//        if(isFirstRefresh){
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         scene = new THREE.Scene();
-//        scene.clear();
-    
+        
         // create a camera, which defines where we're looking at.
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    
-
         
-     // show axes in the screen
+        // show axes in the screen
         var axes = new THREE.AxisHelper(20);
         scene.add(axes);
-    
+        
         // create the ground plane
         var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
         var planeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    //    plane.receiveShadow = true;
-    
+        //    plane.receiveShadow = true;
+        
         // rotate and position the plane
         plane.rotation.x = -0.5 * Math.PI;
         plane.position.x = 15;
         plane.position.y = 0;
         plane.position.z = 0;
-    
+        
         // add the plane to the scene
         scene.add(plane);
-    
+        
         // position and point the camera to the center of the scene
-        camera.position.x = -30;
-        camera.position.y = 40;
-        camera.position.z = 30;
+        camera.position.copy(cameraInitPos);
+        
+//        camera.position.x = -30;
+//        camera.position.y = 40;
+//        camera.position.z = 30;
         camera.lookAt(scene.position);
-    
+        
         // add subtle ambient lighting
         var ambientLight = new THREE.AmbientLight(0x0c0c0c);
         scene.add(ambientLight);
-    
+        
         // add spotlight for the shadows
         var spotLight = new THREE.SpotLight(0xffffff);
         spotLight.position.set(-40, 60, -10);
-    //    spotLight.castShadow = true;
+        //    spotLight.castShadow = true;
         scene.add(spotLight);
+//            isFirstRefresh = false;
+//        }
     
         // call the render function
         var step = 0;
     
         var isInitialized = false;
-        render();
+//        if(isFirstRefresh){
+            render();
+//            isFirstRefresh = false;
+//        }
+//        network.storePositions();
     
         function render() {
             stats.update();
@@ -171,10 +147,23 @@
         }
     
     }
+    
+    function updateRendererSize(){
+        var styles = getComputedStyle(getEl('socialNetworkContainer'));
+        var width = styles.width.split('px').join('') * 0.75;
+        var height = styles.height.split('px').join('') * 0.75;
+        renderer.setSize(width, height);
+        return {
+            width: width,
+            height: height,
+        }
+    }
     function onResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        if(camera && renderer){
+            var sizes = updateRendererSize();
+            camera.aspect = sizes.width / sizes.height;
+            camera.updateProjectionMatrix();
+        }
     }
     
     function addCylinder(x, y, z, id) {
@@ -199,7 +188,7 @@
 //    window.onload = init;
     
     // listen to the resize events
-//    window.addEventListener('resize', onResize, false);
+    window.addEventListener('resize', onResize, false);
     
 
 })(this['TimelinedNetwork']={});

@@ -944,9 +944,8 @@ See the License for the specific language governing permissions and
     
     <div id="socialNetworkDiv">
       <div id="socialNetworkWarning" class="alert alert-warning"></div>
-      <div class="flexRoot">
-      
-<!--         <div style="flex-basis:150px;flex-grow:0; display:flex;flex-direction:column;flex-wrap:wrap;height:500px"> -->
+<!--       <div class="flexRoot"> -->
+      <div>
         <div class="storySelectorContainer" id="commonSettingsContainer">
           <div class="panel panel-default">
             <div class="panel-body">
@@ -1022,28 +1021,25 @@ See the License for the specific language governing permissions and
         </div>
 
         <div class="visualObjectContainer full-screen-elem" id="socialNetworkContainer"></div>
-<!--         <div class="visualObjectContainer" style="display:flex;flex-direction:column;"> -->
-<!--           <div id="socialNetworkContainer" style="flex-base:100px;flex-grow:1;"> -->
-<!--         </div> -->
-        </div>
+      </div>
+      <div>
         <div id="Stats-output"></div>
         <div id="gui-settings-output"></div>
-        <!-- Div which will hold the Output -->
-        <div id="WebGL-output">
-        </div>
+        <div id="WebGL-output"></div>
       </div>
-      
-      <div id="chatDiv">
-        <p class="lead">Welcome to chat!</p>
-        <input type="text" name="message" id="chatMessage" />
-        <button id="sendMessageButton">Send</button>
-        <ul id="messages"></ul>
-      </div>
-      
-      <div id="warehouse"></div>
     </div>
+    
+    <div id="chatDiv">
+      <p class="lead">Welcome to chat!</p>
+      <input type="text" name="message" id="chatMessage" />
+      <button id="sendMessageButton">Send</button>
+      <ul id="messages"></ul>
+    </div>
+    
+    <div id="warehouse"></div>
+  </div>
 
-    <div id="debugNotification" class="hidden"></div>
+  <div id="debugNotification" class="hidden"></div>
 
 </body>
 </html>

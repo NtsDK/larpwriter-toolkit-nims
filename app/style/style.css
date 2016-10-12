@@ -275,10 +275,25 @@ See the License for the specific language governing permissions and
 
 /* social network */
 #socialNetworkContainer {
-	width: 800px;
 	height: calc(100vh - 60px);
 	border: 1px solid lightgray;
 	background-color: #EDEDED;
+}
+
+#commonSettingsContainer, #showSettingsButtonContainer{
+  position: absolute;
+  z-index: 1;
+  height: calc(100vh - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#WebGL-output{
+/*   height: calc(100vh - 60px); */
+}
+
+#commonSettingsContainer > .panel, #showSettingsButtonContainer > .panel{
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 .schema-container{
@@ -286,6 +301,19 @@ See the License for the specific language governing permissions and
   height: calc(100vh - 60px);
   border: 1px solid lightgray;
   background-color: #EDEDED;
+}
+
+#Stats-output {
+  position: absolute;
+}
+
+#gui-settings-output{
+  position: absolute;
+  right: 10px;
+}
+
+#socialNetworkDiv > div {
+  margin-bottom: 10px;
 }
 
 /* briefing export */
