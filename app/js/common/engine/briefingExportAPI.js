@@ -50,7 +50,7 @@ See the License for the specific language governing permissions and
                 return dataObject;
             });
             
-            charArray.sort(CommonUtils.charOrdAFactory(R.prop('name')));
+            charArray.sort(CommonUtils.charOrdAFactory(R.prop('charName')));
             callback(null, {
                 briefings : charArray,
                 gameName : database.Meta.name
