@@ -366,6 +366,10 @@ BriefingExport.generateSingleDocx = R.curry(function (type, template, data) {
 });
 
 BriefingExport.generateSingleTxt = R.curry(function (template, data) {
-    "use strict";
-    return Mustache.render(template, data);
+    try{
+        return Mustache.render(template, data);
+    } catch(err){
+        Utils.alert(strFormat(getL10n('briefings-template-error'), [err.message]));
+        throw err;
+    }
 });
