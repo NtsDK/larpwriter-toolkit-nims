@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
             var charArray = selectedCharacters.map(function(charName){
                 var dataObject = {
                     "gameName" : database.Meta.name,
-                    "name" : charName,
+                    "charName" : charName,
                     "inventory" : _makeCharInventory(database, charName),
                     "storiesInfo" : _getStoriesInfo(database, charName),
                     "eventsInfo" : _getEventsInfo(database, charName),
@@ -113,7 +113,7 @@ See the License for the specific language governing permissions and
                 value = character[element.name];
                 splittedText = _splitText(String(value));
                 return {
-                    name : element.name,
+                    itemName : element.name,
                     value : value,
                     splittedText : splittedText,
                     notEmpty : String(value).length !== 0
@@ -128,11 +128,11 @@ See the License for the specific language governing permissions and
                 return story.characters[charName];
             }).map(function(story){
                 return {
-                    name: story.name,
+                    storyName: story.name,
                     eventsInfo: _getStoryEventsInfo(story, charName, database.Meta.date)
                 };
             }).sort(CommonUtils.charOrdAFactory(function(a){
-                return a.name.toLowerCase();
+                return a.storyName.toLowerCase();
             }));
         };
         
@@ -175,7 +175,7 @@ See the License for the specific language governing permissions and
             } else {
                 eventInfo.displayTime = eventInfo.time;
             }
-            eventInfo.name = event.name;
+            eventInfo.eventName = event.name;
             eventInfo.storyName = storyName;
             return eventInfo;
         });

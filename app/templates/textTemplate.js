@@ -1,14 +1,14 @@
 var TEXT_TEMPLATE = "{{gameName}}\n" +  
   "{{#briefings}}\n" + 
   "{{gameName}}\n" +  
-  "{{name}}\n" +
+  "{{charName}}\n" +
   "\n" +
   "Инвентарь: {{inventory}}\n" +
   "\n" +
   "{0}" +
   "\n" +
   "{{#profileInfoArray}}\n" +
-  "{{name}}:{{value}}\n" +
+  "{{itemName}}:{{value}}\n" +
   "{{/profileInfoArray}}\n" +
   "\n" +
   "{{#groupTexts}}\n"  +
@@ -24,15 +24,15 @@ var TEXT_TEMPLATE = "{{gameName}}\n" +
   "{{/relations}}\n"     +
   "\n" +
   "{{#eventsInfo}}\n" +
-  "{{{time}}} {{{displayTime}}} {{storyName}}: {{name}}\n" +
+  "{{{time}}} {{{displayTime}}} {{storyName}}: {{eventName}}\n" +
   "{{text}}\n" +
   "{{/eventsInfo}}\n" +
   "\n" +
   "{{#storiesInfo}}\n" +
-  "{{name}}\n" +
+  "{{storyName}}\n" +
   "{{#eventsInfo}}\n" +
   "\n" +
-  "{{{time}}} {{{displayTime}}} {{name}}\n" +
+  "{{{time}}} {{{displayTime}}} {{eventName}}\n" +
   "{{text}}\n" +
   "{{#splittedText}}\n" +
   "{{string}}\n" +

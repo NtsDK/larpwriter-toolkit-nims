@@ -181,7 +181,7 @@ BriefingExport.getBriefingData = function(callback){
             
             briefingData.briefings.forEach(function(charData){
                 charData.profileInfoArray.forEach(function(element){
-                    if(checkboxNames.indexOf(element.name) != -1){
+                    if(checkboxNames.indexOf(element.itemName) != -1){
                         element.value = constL10n(Constants[element.value]);
                         element.splittedText = [{'string':constL10n(Constants[element.value])}]
                     }
