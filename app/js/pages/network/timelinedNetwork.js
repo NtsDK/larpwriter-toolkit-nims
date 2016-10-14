@@ -2,7 +2,11 @@
 
 (function(exports){
 
-    var cameraInitPos = new THREE.Vector3(-30, 40, 30).multiplyScalar(2.5);
+//    var cameraInitPos = new THREE.Vector3(-30, 40, 30).multiplyScalar(2.5);
+//    var cameraInitPos = new THREE.Vector3(0, 40, 40).multiplyScalar(2.5);
+    var cameraInitPos = new THREE.Vector3(0, 0, 40).multiplyScalar(2.5);
+    var spotLightInitPos = new THREE.Vector3(0, 0, 50);
+    
     // three.js
     var camera;
     var scene;
@@ -30,6 +34,9 @@
             this.bouncingSpeed = 0.03;
             this.zScale = 1;
             this.planeScale = 10;
+            this.cameraRotX = 0;
+            this.cameraRotY = 0;
+            this.cameraRotZ = 0;
             
             this.outputObjects = function () {
                 console.log(scene.children);
@@ -42,6 +49,9 @@
         gui.add(controls, 'bouncingSpeed', 0, 0.5);
         gui.add(controls, 'zScale', 1, 20);
         gui.add(controls, 'planeScale', 1, 100);
+        gui.add(controls, 'cameraRotX', -1, 1);
+        gui.add(controls, 'cameraRotY', -1, 1);
+        gui.add(controls, 'cameraRotZ', -1, 1);
         
         gui.add(controls, 'outputObjects');
         
@@ -54,13 +64,17 @@
     // once everything is loaded, we run our Three.js stuff.
     function refresh(network, nodes, edges) {
         
-        updateRendererSize();
+        var sizes = updateRendererSize();
 //        if(isFirstRefresh){
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         scene = new THREE.Scene();
         
         // create a camera, which defines where we're looking at.
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
+        
+//        var orbitControls = new THREE.OrbitControls(camera);
+////        orbitControls.autoRotate = true;
+//        var clock = new THREE.Clock();
         
         // show axes in the screen
         var axes = new THREE.AxisHelper(20);
@@ -83,11 +97,18 @@
         
         // position and point the camera to the center of the scene
         camera.position.copy(cameraInitPos);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        camera.position.add(new THREE.Vector3(0, -100, 0));
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+//        camera.rotation.z =  Math.PI;
+//        camera.lookAt(scene.position);
+        
+//        camera.rotateOnAxis(cameraInitPos.normalize() , 0.6);
+//        camera.rotation.z = 0.75 * Math.PI;
         
 //        camera.position.x = -30;
 //        camera.position.y = 40;
 //        camera.position.z = 30;
-        camera.lookAt(scene.position);
         
         // add subtle ambient lighting
         var ambientLight = new THREE.AmbientLight(0x0c0c0c);
@@ -95,7 +116,7 @@
         
         // add spotlight for the shadows
         var spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position.set(-40, 60, -10);
+        spotLight.position.copy(spotLightInitPos);
         //    spotLight.castShadow = true;
         scene.add(spotLight);
 //            isFirstRefresh = false;
@@ -118,8 +139,8 @@
                 console.log(nodes.get());
                 console.log(edges.get());
                 nodes.get().forEach(function(node){
-                    addCylinder(node.x/10,node.y/10, 0, String(node.id + '0'));
-                    addCylinder(node.x/10,node.y/10, 4, String(node.id + '1-top'));
+                    addCylinder(node.x/10,-node.y/10, 0, String(node.id + '0'));
+                    addCylinder(node.x/10,-node.y/10, 4, String(node.id + '1-top'));
                 });
                 
                 isInitialized = true;
@@ -127,19 +148,30 @@
                 nodes.get().forEach(function(node){
                     var cyl = scene.getObjectByName(String(node.id + '0'));
                     cyl.position.x = node.x/10;
-                    cyl.position.z = node.y/10;
+//                    cyl.position.z = node.y/10;
+                    cyl.position.y = -node.y/10;
                     cyl = scene.getObjectByName(String(node.id + '1-top'));
                     cyl.position.x = node.x/10;
-                    cyl.position.z = node.y/10;
+//                    cyl.position.z = node.y/10;
+                    cyl.position.y = -node.y/10;
     //                addCylinder(node.x/10,node.y/10, node.id);
                 });
             }
             
             scene.traverse(function (e) {
                 if (e instanceof THREE.Mesh && e.name.endsWith('1-top')) {
-                    e.position.y = controls.zScale;
+//                    e.position.y = controls.zScale;
+                    e.position.z = controls.zScale;
                 }
             });
+            
+//            var delta = clock.getDelta();
+//            orbitControls.update(delta);
+            
+//            camera.rotateOnAxis(cameraInitPos.normalize() , controls.cameraRotX);
+//            camera.rotateOnAxis(camera.getWorldDirection().normalize() , controls.cameraRotX);
+//            camera.rotation.copy(new THREE.Vector3(controls.cameraRotX, controls.cameraRotY, controls.cameraRotZ).multiplyScalar(Math.PI));
+//            camera.rotation.x = controls.cameraRotX * Math.PI;
     
             // render using requestAnimationFrame
             requestAnimationFrame(render);
@@ -174,8 +206,11 @@
         cylinder.name = id;
         
         cylinder.position.x = x;
-        cylinder.position.y = z;
-        cylinder.position.z = y;
+        cylinder.position.y = y;
+        cylinder.position.z = z;
+        cylinder.rotation.x = -0.5 * Math.PI;
+//        cylinder.position.y = z;
+//        cylinder.position.z = y;
         
     //    cylinder.position.x = 40;
         
