@@ -133,6 +133,8 @@ SocialNetwork.init = function () {
     SocialNetwork.nodeSort = CommonUtils.charOrdAFactory(function(a){
         return a.label.toLowerCase();
     });
+    
+//    TimelinedNetwork.init();
 
     SocialNetwork.content = getEl("socialNetworkDiv");
 };
@@ -189,47 +191,54 @@ SocialNetwork.refresh = function () {
                     DBMS.getAllProfileSettings(function(err, profileSettings){
                         if(err) {Utils.handleError(err); return;}
                         
-                        var groups = profileSettings.filter(function (element) {
-                            return element.type === "enum" || element.type === "checkbox";
-                        });
+                        DBMS.getMetaInfo(function(err, metaInfo){
+                            if(err) {Utils.handleError(err); return;}
+                            
+                            SocialNetwork.metaInfo = metaInfo;
                         
-                        var groupNames = [ {name: Constants.noGroup, displayName: constL10n(Constants.noGroup)} ].concat(groups.map(function (elem) {
-                            return {
-                                name: elem.name,
-                                displayName: elem.name,
-                            }
-                        }));
-                        
-                        groupNames.forEach(function (group) {
-                            var option = makeEl("option");
-                            option.appendChild(makeText(group.displayName));
-                            option.value = group.name;
-                            selector.appendChild(option);
-                        });
-                        
-                        SocialNetwork.groupColors = {};
-                        
-                        for ( var groupName in SocialNetwork.fixedColors) {
-                            SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
-                        }
-                        
-                        groups.forEach(function (group) {
-                            if(group.type === "enum"){
-                                group.value.split(",").forEach(function (subGroupName, i){
-                                    SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
-                                });
-                            } else if( group.type === "checkbox"){
-                                if(group.value){
-                                    SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[0];
-                                    SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[1];
-                                } else {
-                                    SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[1];
-                                    SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[0];
+                            var groups = profileSettings.filter(function (element) {
+                                return element.type === "enum" || element.type === "checkbox";
+                            });
+                            
+                            var groupNames = [ {name: Constants.noGroup, displayName: constL10n(Constants.noGroup)} ].concat(groups.map(function (elem) {
+                                return {
+                                    name: elem.name,
+                                    displayName: elem.name,
                                 }
+                            }));
+                            
+                            groupNames.forEach(function (group) {
+                                var option = makeEl("option");
+                                option.appendChild(makeText(group.displayName));
+                                option.value = group.name;
+                                selector.appendChild(option);
+                            });
+                            
+                            SocialNetwork.groupColors = {};
+                            
+                            for ( var groupName in SocialNetwork.fixedColors) {
+                                SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
                             }
+                            
+                            groups.forEach(function (group) {
+                                if(group.type === "enum"){
+                                    group.value.split(",").forEach(function (subGroupName, i){
+                                        SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
+                                    });
+                                } else if( group.type === "checkbox"){
+                                    if(group.value){
+                                        SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[0];
+                                        SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[1];
+                                    } else {
+                                        SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[1];
+                                        SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[0];
+                                    }
+                                }
+                            });
+                            
+                            NetworkSubsetsSelector.refresh(SocialNetwork);
+//                            SocialNetwork.onDrawNetwork();
                         });
-                        
-                        NetworkSubsetsSelector.refresh(SocialNetwork);
                     });
                 });
             });
@@ -304,6 +313,8 @@ SocialNetwork.onNodeFocus = function (event) {
 SocialNetwork.onDrawNetwork = function () {
     "use strict";
     SocialNetwork.onNetworkSelectorChange(getEl("networkSelector").value);
+//    TimelinedNetwork.refresh(SocialNetwork.network, SocialNetwork.nodesDataset, 
+//            SocialNetwork.edgesDataset, SocialNetwork.getEventDetails(), SocialNetwork.metaInfo);
 };
 
 SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
@@ -485,59 +496,54 @@ SocialNetwork.getSimpleEdges = function () {
     return edges;
 };
 
-SocialNetwork.getDetailedEdges = function () {
-    "use strict";
-    
-    var edgesCheck = {};
-    for ( var name in SocialNetwork.Stories) {
-        var story = SocialNetwork.Stories[name];
-        story.events.forEach(function (event) {
-            for ( var char1 in event.characters) {
-                for ( var char2 in event.characters) {
-                    
-                    if (char1 !== char2) {
-                        if (!edgesCheck[char1 + char2] && !edgesCheck[char2 + char1]) {
-                            var obj = {};
-                            obj[name] = true;
-                            edgesCheck[char1 + char2] = {
-                                    value : 1,
-                                    from : char1,
-                                    to : char2,
-                                    title : obj
-                            };
-                        } else if (edgesCheck[char1 + char2] || edgesCheck[char2 + char1]) {
-                            var value = edgesCheck[char1 + char2] ? edgesCheck[char1 + char2] : edgesCheck[char2 + char1];
-                            if (!value.title[name]) {
-                                value.title[name] = true;
-                                value.value++;
-                            }
-                        }
-                    }
-                }
+SocialNetwork.getEventDetails = function () {
+    return R.flatten(R.values(SocialNetwork.Stories).map(function(story){
+        return story.events.map(function(event){
+            return {
+                eventName: event.name,
+                storyName: story.name,
+                time: event.time,
+                characters: R.keys(event.characters)
             }
         });
-    }
+    }));
+};
 
-    var edges = Object.keys(edgesCheck).map(function (name) {
-        var edgeInfo = edgesCheck[name];
-        var title = "";
-        // var title = edgeInfo.title.join(",");
-        var isFirst = true;
-        for ( var storyName in edgeInfo.title) {
-            title += (isFirst ? "" : ",") + storyName;
-            isFirst = false;
-        }
-        
+SocialNetwork.getDetailedEdges = function () {
+    var edgesCheck = {};
+    R.values(SocialNetwork.Stories).forEach(function(story){
+        story.events.forEach(function (event) {
+            var charNames = R.keys(event.characters).sort();
+            charNames.forEach(function(char1, i){
+                charNames.forEach(function(char2, j){
+                    if (i<=j) {
+                        return;
+                    }
+                    var key = char1 + char2;
+                    if (!edgesCheck[key]) {
+                        edgesCheck[key] = {
+                            from : char1,
+                            to : char2,
+                            title : {},
+                        };
+                    }
+                    edgesCheck[key].title[story.name] = true;
+                });
+            });
+        });
+    });
+
+    return R.values(edgesCheck).map(function (edgeInfo) {
+        var title = R.keys(edgeInfo.title).sort().join(", ");
+        var value = R.keys(edgeInfo.title).length;
         return {
             from : edgeInfo.from,
             to : edgeInfo.to,
-            title : edgeInfo.value + ":" + title,
-            value : edgeInfo.value,
+            title : value + ": " + title,
+            value : value,
             color : "grey"
         };
     });
-    
-    return edges;
 };
 
 SocialNetwork.redrawAll = function () {
@@ -689,6 +695,6 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
 
 SocialNetwork.togglePanel = function () {
     toggleClass(getEl("commonSettingsContainer"), "hidden");
-    toggleClass(getEl("privateSettingsContainer"), "hidden");
+//    toggleClass(getEl("privateSettingsContainer"), "hidden");
     toggleClass(getEl("showSettingsButtonContainer"), "hidden");
 };

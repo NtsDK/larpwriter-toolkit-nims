@@ -4,7 +4,9 @@
 
 //    var cameraInitPos = new THREE.Vector3(-30, 40, 30).multiplyScalar(2.5);
 //    var cameraInitPos = new THREE.Vector3(0, 40, 40).multiplyScalar(2.5);
-    var cameraInitPos = new THREE.Vector3(0, 0, 40).multiplyScalar(2.5);
+//    var cameraInitPos = new THREE.Vector3(0, 0, 40).multiplyScalar(2.5);
+    var cameraInitPos = new THREE.Vector3(0, 0, 60).multiplyScalar(2.5);
+    var basicZScale = 25;
     var spotLightInitPos = new THREE.Vector3(0, 0, 50);
     
     // three.js
@@ -30,13 +32,14 @@
         stats = initStats();
         
         controls = new function () {
-            this.rotationSpeed = 0.02;
-            this.bouncingSpeed = 0.03;
-            this.zScale = 1;
+            this.rotationSpeed = 0.08;
+//            this.bouncingSpeed = 0.03;
+            this.zScale = basicZScale;
             this.planeScale = 10;
-            this.cameraRotX = 0;
-            this.cameraRotY = 0;
-            this.cameraRotZ = 0;
+            this.cameraZ = 120;
+//            this.cameraRotX = 0;
+//            this.cameraRotY = 0;
+//            this.cameraRotZ = 0;
             
             this.outputObjects = function () {
                 console.log(scene.children);
@@ -46,12 +49,13 @@
         
         var gui = new dat.GUI({ autoPlace: false });
         gui.add(controls, 'rotationSpeed', 0, 0.5);
-        gui.add(controls, 'bouncingSpeed', 0, 0.5);
-        gui.add(controls, 'zScale', 1, 20);
+//        gui.add(controls, 'bouncingSpeed', 0, 0.5);
+        gui.add(controls, 'zScale', 1, 100);
         gui.add(controls, 'planeScale', 1, 100);
-        gui.add(controls, 'cameraRotX', -1, 1);
-        gui.add(controls, 'cameraRotY', -1, 1);
-        gui.add(controls, 'cameraRotZ', -1, 1);
+        gui.add(controls, 'cameraZ', -500, 500);
+//        gui.add(controls, 'cameraRotX', -1, 1);
+//        gui.add(controls, 'cameraRotY', -1, 1);
+//        gui.add(controls, 'cameraRotZ', -1, 1);
         
         gui.add(controls, 'outputObjects');
         
@@ -62,7 +66,40 @@
     var isFirstRefresh = true;
     
     // once everything is loaded, we run our Three.js stuff.
-    function refresh(network, nodes, edges) {
+    function refresh(network, nodes, edges, eventDetails, metaInfo) {
+        
+        var lowerTimeBoundary = new Date(metaInfo.preGameDate).getTime();
+        var upperTimeBoundary = new Date(metaInfo.date).getTime();
+        var timeDiff = upperTimeBoundary - lowerTimeBoundary;
+        console.log(lowerTimeBoundary);
+        console.log(upperTimeBoundary);
+        console.log(timeDiff);
+        
+        var characterEvents = {};
+        var storyEvents = {};
+        eventDetails.forEach(function(eventInfo){
+            if(eventInfo.time === ''){
+                eventInfo.time = metaInfo.date;
+            }
+            eventInfo.scaledTime = (new Date(eventInfo.time).getTime() - lowerTimeBoundary) / timeDiff;
+            console.log(eventInfo.scaledTime);
+            storyEvents[eventInfo.storyName] = storyEvents[eventInfo.storyName] || {events: []};
+            storyEvents[eventInfo.storyName].events.push(eventInfo);
+            eventInfo.characters.forEach(function(character){
+                characterEvents[character] = characterEvents[character] || {events: []};
+                characterEvents[character].events.push(eventInfo);
+            });
+        });
+        console.log(storyEvents);
+        console.log(characterEvents);
+        function fillMinMax(objInfo){
+            objInfo.minTime = R.reduce(R.min, Infinity, objInfo.events.map(R.prop('scaledTime')));
+            objInfo.maxTime = R.reduce(R.max, -Infinity, objInfo.events.map(R.prop('scaledTime')));
+        }
+        R.values(storyEvents).forEach(fillMinMax);
+        R.values(characterEvents).forEach(fillMinMax);
+        console.log(storyEvents);
+        console.log(characterEvents);
         
         var sizes = updateRendererSize();
 //        if(isFirstRefresh){
@@ -131,6 +168,14 @@
 //            isFirstRefresh = false;
 //        }
 //        network.storePositions();
+            
+        function getEventInfo(id){
+            if(id.startsWith('St:')){
+                return storyEvents[id.substring(3)];
+            } else {
+                return characterEvents[id];
+            }
+        };
     
         function render() {
             stats.update();
@@ -139,31 +184,58 @@
                 console.log(nodes.get());
                 console.log(edges.get());
                 nodes.get().forEach(function(node){
-                    addCylinder(node.x/10,-node.y/10, 0, String(node.id + '0'));
-                    addCylinder(node.x/10,-node.y/10, 4, String(node.id + '1-top'));
+                    var eventInfo = getEventInfo(node.id);
+                    
+                    if(eventInfo){
+                        var height = eventInfo.maxTime - eventInfo.minTime;
+                        var z = (eventInfo.maxTime + eventInfo.minTime)/2;
+                        addCylinder(node.x/10,-node.y/10, z*basicZScale, height, 0.5, String('cyl-' + node.id));
+//                        addCylinder(0,0,0, 2, 0.5, String('cyl-' + node.id));
+//                        addCylinder(node.x/10,-node.y/10, -5, height, 3, String(node.id + '0'));
+                    }
+//                    addCylinder(node.x/10,-node.y/10, 4, String(node.id + '1-top'));
                 });
                 
                 isInitialized = true;
             } else {
                 nodes.get().forEach(function(node){
-                    var cyl = scene.getObjectByName(String(node.id + '0'));
-                    cyl.position.x = node.x/10;
-//                    cyl.position.z = node.y/10;
-                    cyl.position.y = -node.y/10;
-                    cyl = scene.getObjectByName(String(node.id + '1-top'));
-                    cyl.position.x = node.x/10;
-//                    cyl.position.z = node.y/10;
-                    cyl.position.y = -node.y/10;
-    //                addCylinder(node.x/10,node.y/10, node.id);
+                    var cyl = scene.getObjectByName(String('cyl-' + node.id));
+                    if(cyl){
+                        cyl.position.x = node.x/10;
+                        cyl.position.y = -node.y/10;
+                    }
+//                    cyl = scene.getObjectByName(String(node.id + '1-top'));
+//                    cyl.position.x = node.x/10;
+//                    cyl.position.y = -node.y/10;
                 });
             }
             
             scene.traverse(function (e) {
-                if (e instanceof THREE.Mesh && e.name.endsWith('1-top')) {
+                if (e instanceof THREE.Mesh && e.name.startsWith('cyl-')) {
 //                    e.position.y = controls.zScale;
-                    e.position.z = controls.zScale;
+                    var eventInfo = getEventInfo(e.name.substring(4));
+//                    if(eventInfo){
+                        e.position.z = (eventInfo.maxTime + eventInfo.minTime)/2 * controls.zScale;
+//                        e.setHeight((eventInfo.maxTime - eventInfo.minTime) * controls.zScale);
+//                    } else {
+//                        console.log(e.name);
+//                    }
+                    e.scale.y = controls.zScale;
                 }
             });
+            
+            var nowTime = Date.now();
+            var multip = 0.005;
+            camera.position.x = 50*Math.sin(nowTime*controls.rotationSpeed*multip);
+            camera.position.y = 50*Math.cos(nowTime*controls.rotationSpeed*multip);
+            camera.position.z = controls.cameraZ;
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+//            scene.traverse(function (e) {
+//                if (e instanceof THREE.Mesh && e.name.endsWith('1-top')) {
+////                    e.position.y = controls.zScale;
+//                    e.position.z = controls.zScale;
+//                }
+//            });
             
 //            var delta = clock.getDelta();
 //            orbitControls.update(delta);
@@ -198,9 +270,9 @@
         }
     }
     
-    function addCylinder(x, y, z, id) {
+    function addCylinder(x, y, z, height, radius, id) {
         
-        var geometry = new THREE.CylinderGeometry( 3, 3, 1, 32 );
+        var geometry = new THREE.CylinderGeometry( radius, radius, height, 32 );
         var material = new THREE.MeshLambertMaterial( {color: 0x7777ff} );
         var cylinder = new THREE.Mesh( geometry, material );
         cylinder.name = id;
