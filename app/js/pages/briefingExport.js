@@ -344,7 +344,7 @@ BriefingExport.makeArchiveData = function(briefingData, generateSingleDelegate){
     "use strict";
     var res = {};
     briefingData.briefings.forEach(function (briefing, i) {
-        res[briefing.name] = generateSingleDelegate( {
+        res[briefing.charName] = generateSingleDelegate( {
             gameName: briefingData.gameName,
             briefings : [ briefing ]
         });
