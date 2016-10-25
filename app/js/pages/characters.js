@@ -32,7 +32,7 @@ Characters.init = function () {
         content: getEl(content)
     };
     Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
-    Utils.addView(containers, "character-profile-configurer", CharacterProfileConfigurer);
+    Utils.addView(containers, "character-profile-constructor", CharacterProfileConfigurer);
 
     listen(getEl("createCharacterButton"), "click", Characters.createCharacter);
     listen(getEl("renameCharacter"), "click", Characters.renameCharacter);

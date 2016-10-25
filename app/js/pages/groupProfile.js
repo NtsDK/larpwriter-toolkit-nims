@@ -86,16 +86,9 @@ GroupProfile.applySettings = function (names, selector) {
 };
 
 GroupProfile.makeInput = function (profileItemConfig) {
-    "use strict";
-    var tr = makeEl("tr");
-    var td = makeEl("td");
-    td.appendChild(makeText(profileItemConfig.displayName));
-    tr.appendChild(td);
-
-    td = makeEl("td");
-    
-    var input, values;
-
+    var span = setAttr(makeEl('span'), "l10n-id", "groups-" + profileItemConfig.name);
+    var tr = addEl(makeEl("tr"), addEl(makeEl('td'), addEl(span, makeText(profileItemConfig.displayName))))
+    var input;
     switch (profileItemConfig.type) {
     case "text":
         input = makeEl("textarea");
@@ -114,11 +107,9 @@ GroupProfile.makeInput = function (profileItemConfig) {
     }
     input.selfName = profileItemConfig.name;
     addClass(input,"isGroupEditable");
-    td.appendChild(input);
     GroupProfile.inputItems[profileItemConfig.name] = input;
 
-    tr.appendChild(td);
-    return tr;
+    return addEl(tr, addEl(makeEl('td'), input));
 };
 
 GroupProfile.updateFieldValue = function(type){

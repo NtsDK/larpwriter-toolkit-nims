@@ -187,7 +187,7 @@ InvestigationBoard.deleteNode = function(data, callback){
         getL10n('investigation-board-confirm-resource-node-removing');
     
     var label = node.group === 'groups' ? node.originalLabel : node.label;
-    if (Utils.confirm(msg)) {
+    if (Utils.confirm(strFormat(msg, [label]))) {
         DBMS[funcName](label, function(err){
             if(err) {Utils.handleError(err); callback(); return;}
             InvestigationBoard.refresh(true);
@@ -260,7 +260,8 @@ InvestigationBoard.redrawBoard = function (ibData) {
             addEdge: InvestigationBoard.addEdge,
             editEdge: false,
             deleteEdge: InvestigationBoard.deleteEdge,
-        }
+        },
+//        configure: true
     });
     
     InvestigationBoard.network.setOptions(opts);
