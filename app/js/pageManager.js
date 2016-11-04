@@ -108,16 +108,16 @@ PageManager.onDatabaseLoad = function () {
                 addEl(navigation, PageManager.makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
             }
             addEl(navigation, PageManager.makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
-            var l10nBtn = PageManager.makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
-            var setIcon = function(){
-                l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
-            }
-            L10n.onL10nChange(setIcon);
-            setIcon();
+//            var l10nBtn = PageManager.makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
+//            var setIcon = function(){
+//                l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
+//            }
+//            L10n.onL10nChange(setIcon);
+//            setIcon();
 //            addEl(navigation, l10nBtn);
             
             Utils.addView(containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
-            addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
+//            addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
 //            addEl(navigation, PageManager.makeButton("aboutButton", "about", null, btnOpts));
             if(MODE === "NIMS_Server"){
                 Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
