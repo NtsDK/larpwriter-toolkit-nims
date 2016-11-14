@@ -38,9 +38,9 @@ See the License for the specific language governing permissions and
   <script src="tests/tests.min.js"></script>
   <script src="tests/specs.min.js"></script>
 
-  <div id="navigation">
+  <nav id="navigation">
   
-  </div>
+  </nav>
 
   <div class="block" id="contentArea"></div>
 
@@ -72,8 +72,8 @@ See the License for the specific language governing permissions and
           </div>
           
           <div style="display:flex;margin-right:10px;">
-            <div class="navigation-button overviewInfoButton" id="descriptionPanel" l10n-id="overview-descr"></div>
-            <div class="navigation-button overviewInfoButton" id="diagramsPanel" l10n-id="overview-diagrams"></div>
+            <button class="navigation-button overviewInfoButton" id="descriptionPanel" l10n-id="overview-descr"></button>
+            <button class="navigation-button overviewInfoButton" id="diagramsPanel" l10n-id="overview-diagrams"></button>
           </div>
         
           <div class="panel panel-default" >
@@ -855,9 +855,9 @@ See the License for the specific language governing permissions and
       </div>
           
       <div style="display:flex;margin-right:10px;">
-        <div class="navigation-button exportModeButton" id="simpleExport" l10n-id="briefings-simple-export"></div>
-        <div class="navigation-button exportModeButton" id="advancedWordExport" l10n-id="briefings-advanced-docx-export"></div>
-        <div class="navigation-button exportModeButton" id="advancedTextExport" l10n-id="briefings-advanced-txt-export"></div>
+        <button class="navigation-button exportModeButton" id="simpleExport" l10n-id="briefings-simple-export"></button>
+        <button class="navigation-button exportModeButton" id="advancedWordExport" l10n-id="briefings-advanced-docx-export"></button>
+        <button class="navigation-button exportModeButton" id="advancedTextExport" l10n-id="briefings-advanced-txt-export"></button>
       </div>
           
       <div class="panel panel-default">
@@ -871,7 +871,7 @@ See the License for the specific language governing permissions and
           </div>
           
           <div id="advancedWordExportContainer" class="exportContainer">
-            <div class="file-upload">
+            <div class="file-upload" tabindex="0">
               <label> <input type="file" name="file"
                 id="docxBriefings"> <span l10n-id="briefings-upload-template-and-make-export"></span>
               </label>

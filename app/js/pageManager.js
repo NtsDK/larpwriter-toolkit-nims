@@ -99,7 +99,13 @@ PageManager.onDatabaseLoad = function () {
                 
                 var input = makeEl("input");
                 input.type = "file";
+                addClass(input, 'hidden');
+                setAttr(input, 'tabindex', -1);
                 button.appendChild(input);
+                button.addEventListener('click', function(e){
+                    input.click();
+//                    e.preventDefault(); // prevent navigation to "#"
+                });
                 addEl(navigation, button);
             }
             
@@ -149,7 +155,7 @@ PageManager.postLogout = function(){
 
 PageManager.makeButton = function(id, name, callback, opts){
     "use strict";
-    var button = makeEl("div");
+    var button = makeEl("button");
     button.id = id;
     if(opts.tooltip){
         var delegate = function(){

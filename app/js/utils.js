@@ -28,7 +28,7 @@ Utils.addView = function (containers, name, view, opts) {
     view.init();
     var buttonClass = "navigation-button";
     containers.root.views[name] = view;
-    var button = makeEl("div");
+    var button = makeEl("button");
     if(opts.tooltip){
         var delegate = function(){
             $(button).attr('data-original-title', L10n.getValue("header-" + name));

@@ -48,9 +48,10 @@ body {
   padding: 10px 12px;
   background-color: rgb(221, 221, 221);
   margin: 0px 2px;
+  border: none;
 }
 
-.navigation-button:hover{
+.navigation-button:hover, .navigation-button:focus{
   background-color:  #ccc;
 }
 
@@ -63,6 +64,7 @@ body {
   flex-grow: 0;
   width: 50px;
   margin: 0px 2px;
+  border: none;
 }
 
 .nav-separator {
@@ -198,3 +200,7 @@ body {
   justify-content: space-around;
   text-align: center;
 }
+
+/* :focus { */
+/*   outline: 3px solid red; */
+/* } */
