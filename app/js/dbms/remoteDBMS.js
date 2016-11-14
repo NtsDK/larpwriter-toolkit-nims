@@ -104,6 +104,9 @@ function makeRemoteDBMS(LocalDBMS){
             for (var i = 0; i < arguments.length-1; i++) {
                 arr.push(arguments[i]);
             }
+//            if(CommonUtils.startsWith(name, "_")){
+//                // do nothing for inner functions
+//            } else 
             if(CommonUtils.startsWith(name, "get") || CommonUtils.startsWith(name, "is")){
                 RemoteDBMS._simpleGet(name, arr, arguments[arguments.length-1]);
             } else {
