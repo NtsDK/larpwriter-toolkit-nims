@@ -91,7 +91,11 @@ var libs = addPrefix("app/libs/",[
 'mustache.min.js',
 'ramda.min.js',
 'select2.min.js',
-'vis-custom.min.js']);
+'vis-custom.min.js',
+'three.js',
+'stats.js',
+'dat.gui.js',
+]);
 
 //var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
 var resources = [translationsPath + "/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
