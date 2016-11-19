@@ -190,8 +190,8 @@ StoryCharacters.getCharacterActivity = function (characterMeta, character) {
     tr.appendChild(td);
     
     var input;
-    Constants.characterActivityTypes.forEach(function (activityType) {
-        td = makeEl("td");
+    addEls(tr, Constants.characterActivityTypes.map(function (activityType) {
+        td = addClass(makeEl("td"),'vertical-aligned-td');
         input = makeEl("input");
         addClass(input, "isStoryEditable");
         input.type = "checkbox";
@@ -201,9 +201,13 @@ StoryCharacters.getCharacterActivity = function (characterMeta, character) {
         input.characterName = character.name;
         input.activityType = activityType;
         input.addEventListener("change", StoryCharacters.onChangeCharacterActivity);
-        td.appendChild(input);
-        tr.appendChild(td);
-    });
+        setAttr(input, 'id', character.name + activityType);
+        addClass(input, 'hidden')
+        addEl(td, input)
+        var label = addClass(makeEl('label'),'checkbox-label');
+        setAttr(label, 'for', character.name + activityType);
+        return addEl(td, label);
+    }));
     return tr;
 };
 

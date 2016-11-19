@@ -26,8 +26,8 @@ Stories.init = function () {
     Stories.right = {views:{}};
     var containers = {
         root: Stories.left,
-        navigation: getEl("storiesNavigationLeft"),
-        content: getEl("storiesContentLeft")
+        navigation: queryEl(".stories-navigation-container .left-side"),
+        content: queryEl(".stories-content-container .left-side")
     };
     Utils.addView(containers, "master-story", MasterStory, {mainPage:true, toggle:true});
     Utils.addView(containers, "story-events", StoryEvents, {toggle:true});
@@ -35,17 +35,17 @@ Stories.init = function () {
     Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
     containers = {
         root: Stories.right,
-        navigation: getEl("storiesNavigationRight"),
-        content: getEl("storiesContentRight")
+        navigation: queryEl(".stories-navigation-container .right-side"),
+        content: queryEl(".stories-content-container .right-side")
     };
     Utils.addView(containers, "master-story", MasterStory, {toggle:true});
     Utils.addView(containers, "story-events", StoryEvents, {mainPage:true, toggle:true});
     Utils.addView(containers, "story-characters", StoryCharacters, {toggle:true});
     Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
 
-    listen(getEl('createStoryButton'), "click", Stories.createStory);
-    listen(getEl('renameStoryButton'), "click", Stories.renameStory);
-    listen(getEl('removeStoryButton'), "click", Stories.removeStory);
+    listen(queryEl('#storiesDiv .create-entity-button'), "click", Stories.createStory);
+    listen(queryEl('#storiesDiv .rename-entity-button'), "click", Stories.renameStory);
+    listen(queryEl('#storiesDiv .remove-entity-button'), "click", Stories.removeStory);
     
     $("#storySelector").select2().on("change", Stories.onStorySelectorChangeDelegate);
 
@@ -62,10 +62,10 @@ Stories.chainRefresh = function(){
 
 Stories.refresh = function () {
     "use strict";
-    var selectors = ["fromStory", "storyRemoveSelector"];
+    var selectors = ["#storiesDiv .rename-entity-select", "#storiesDiv .remove-entity-select"];
     
     var storySelector = clearEl(getEl("storySelector"));
-    selectors.forEach(R.compose(clearEl, getEl));
+    selectors.forEach(R.compose(clearEl, queryEl));
     
     PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
         if(err) {Utils.handleError(err); return;}
@@ -74,7 +74,7 @@ Stories.refresh = function () {
             if(userStoryNames.length > 0){
                 var data = getSelect2Data(userStoryNames);
                 selectors.forEach(function(selector){
-                    $("#" + selector).select2(data);
+                    $(selector).select2(data);
                 });
             }
             
@@ -114,7 +114,8 @@ Stories.getSelectedStoryName = function(storyNames){
 
 Stories.createStory = function () {
     "use strict";
-    var storyName = getEl("createStoryName").value.trim();
+    var storyName = queryEl("#storiesDiv .create-entity-input").value.trim();
+    
     if (storyName === "") {
         Utils.alert(getL10n("stories-story-name-is-not-specified"));
         return;
@@ -139,8 +140,8 @@ Stories.createStory = function () {
 
 Stories.renameStory = function () {
     "use strict";
-    var fromName = getEl("fromStory").value.trim();
-    var toName = getEl("toStory").value.trim();
+    var fromName = queryEl("#storiesDiv .rename-entity-select").value.trim();
+    var toName = queryEl("#storiesDiv .rename-entity-input").value.trim();
 
     if (toName === "") {
         Utils.alert(getL10n("stories-new-story-name-is-not-specified"));
@@ -171,7 +172,7 @@ Stories.renameStory = function () {
 
 Stories.removeStory = function () {
     "use strict";
-    var name = getEl("storyRemoveSelector").value.trim();
+    var name = queryEl("#storiesDiv .remove-entity-select").value.trim();
 
     if (Utils.confirm(strFormat(getL10n("stories-are-you-sure-about-story-removing"), [name]))) {
         DBMS.removeStory(name, function(err){

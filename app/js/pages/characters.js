@@ -34,9 +34,9 @@ Characters.init = function () {
     Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
     Utils.addView(containers, "character-profile-constructor", CharacterProfileConfigurer);
 
-    listen(getEl("createCharacterButton"), "click", Characters.createCharacter);
-    listen(getEl("renameCharacter"), "click", Characters.renameCharacter);
-    listen(getEl("removeCharacterButton"), "click", Characters.removeCharacter);
+    listen(queryEl("#charactersDiv .create-entity-button"), "click", Characters.createCharacter);
+    listen(queryEl("#charactersDiv .rename-entity-button"), "click", Characters.renameCharacter);
+    listen(queryEl("#charactersDiv .remove-entity-button"), "click", Characters.removeCharacter);
 
     Characters.content = getEl("charactersDiv");
 };
@@ -51,19 +51,18 @@ Characters.rebuildInterface = function (names) {
     
     var data = getSelect2Data(names);
     
-    clearEl(getEl("fromName"));
-    $("#fromName").select2(data);
+    clearEl(queryEl("#charactersDiv .rename-entity-select"));
+    $("#charactersDiv .rename-entity-select").select2(data);
     
-    clearEl(getEl("characterRemoveSelector"));
-    $("#characterRemoveSelector").select2(data);
+    clearEl(queryEl("#charactersDiv .remove-entity-select"));
+    $("#charactersDiv .remove-entity-select").select2(data);
 
     Characters.currentView.refresh();
 };
 
 Characters.createCharacter = function () {
     "use strict";
-    var characterNameInput = getEl("characterNameInput");
-    var name = characterNameInput.value.trim();
+    var name = queryEl("#charactersDiv .create-entity-input").value.trim();
 
     if (name === "") {
         Utils.alert(getL10n("characters-character-name-is-not-specified"));
@@ -91,8 +90,8 @@ Characters.createCharacter = function () {
 
 Characters.renameCharacter = function () {
     "use strict";
-    var fromName = getEl("fromName").value.trim();
-    var toName = getEl("toName").value.trim();
+    var fromName = queryEl("#charactersDiv .rename-entity-select").value.trim();
+    var toName = queryEl("#charactersDiv .rename-entity-input").value.trim();
 
     if (toName === "") {
         Utils.alert(getL10n("characters-new-character-name-is-not-specified"));

@@ -112,9 +112,6 @@ SocialNetwork.init = function () {
     SocialNetwork.network;
     SocialNetwork.highlightActive = false;
     
-    getEl("hideNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
-    getEl("showNetworkSettingsButton").addEventListener("click", SocialNetwork.togglePanel);
-    
     var initWarning = function(){
         var warning = clearEl(getEl("socialNetworkWarning"));
         addEl(warning, makeText(getL10n("social-network-require-resources-warning")));
@@ -691,10 +688,4 @@ SocialNetwork.neighbourhoodHighlight = function (params) {
         }
     }
     nodesDataset.update(updateArray);
-};
-
-SocialNetwork.togglePanel = function () {
-    toggleClass(getEl("commonSettingsContainer"), "hidden");
-//    toggleClass(getEl("privateSettingsContainer"), "hidden");
-    toggleClass(getEl("showSettingsButtonContainer"), "hidden");
 };

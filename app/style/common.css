@@ -17,7 +17,7 @@ body {
 }
 
 .block {
-  padding: 10px;
+  padding: 8px;
 }
 
 .block table td {
@@ -40,15 +40,21 @@ body {
 }
 
 #contentArea {
-  margin: 40px 0 0 0;
+    margin: 32px 0 0;
 }
 
 .navigation-button {
   flex-grow: 0;
-  padding: 10px 12px;
+/*   padding: 10px 12px; */
+  padding: 6px 8px;
   background-color: rgb(221, 221, 221);
-  margin: 0px 2px;
+/*   margin: 0px 2px; */
   border: none;
+}
+
+.action-button:not(:last-of-type),
+.navigation-button:not(:last-of-type) {
+    border-right: 1px solid grey;
 }
 
 .navigation-button:hover, .navigation-button:focus{
@@ -62,8 +68,8 @@ body {
 
 .action-button {
   flex-grow: 0;
-  width: 50px;
-  margin: 0px 2px;
+  width: 48px;
+/*   margin: 0px 2px; */
   border: none;
 }
 
@@ -74,7 +80,9 @@ body {
 .mainNavButton{
   background-color:  rgb(221, 221, 221) !important;
   background: transparent url("../images/folder29.svg") no-repeat scroll 50% 50%;
-  background-size: 40px;
+/*   background-size: 40px; */
+  width: 44px;
+  background-size: 28px;
 }
 
 .mainNavButton:hover{
@@ -133,8 +141,10 @@ body {
 #groupsButton
 {
   background-color:  rgb(221, 221, 221);
-  width: 50px;
-  background-size: 35px;
+/*   width: 50px; */
+/*   background-size: 35px; */
+  width: 44px;
+  background-size: 28px;
 }
 
 #accessManagerButton:hover, #chatButton:hover,
@@ -175,14 +185,36 @@ body {
   background-color: #ededed;
 }
 
+.panel-body {
+    padding: 8px;
+}
+
 .panel{
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+/*   box-shadow: 2px 4px 4px rgba(0,0,0,0.3); */
 }
 
 #commonInfoDiv span{
   width: 100%;
   display: inline-block;
   text-align: right;
+}
+
+.panel-heading {
+  padding: 8px 12px;
+}
+
+.h1, .h2, .h3, h1, h2, h3 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+legend{
+  margin-bottom: 8px;
+}
+
+label{
+  margin-bottom: 4px;
 }
 
 #commonInfoDiv table{
@@ -204,3 +236,26 @@ body {
 /* :focus { */
 /*   outline: 3px solid red; */
 /* } */
+
+input[selector-filter]{
+  width: 100%;
+}
+
+.checkbox-label{
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  margin: auto;
+  text-align: center;
+  border-radius: 4px;
+}
+
+#eventPresenceTable .vertical-aligned-td,
+#story-characterActivityTable .vertical-aligned-td{
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:checked + .checkbox-label{
+  background-color: limegreen;
+}

@@ -100,7 +100,7 @@ EventPresence.appendTableInput = function (table, event, i, characterArray) {
     tr.appendChild(td);
 
     characterArray.forEach(function(character, j) {
-        td = makeEl("td");
+        td = addClass(makeEl("td"),'vertical-aligned-td');
         addClass(td, j + "-dependent");
         var input = makeEl("input");
         addClass(input, "isStoryEditable");
@@ -113,7 +113,15 @@ EventPresence.appendTableInput = function (table, event, i, characterArray) {
         input.characterName = character;
         input.hasText = event.characters[character] != null && event.characters[character].text != "";
         input.addEventListener("change", EventPresence.onChangeCharacterCheckbox);
-        td.appendChild(input);
+        
+        var id = i+character;
+        setAttr(input, 'id', id);
+        addClass(input, 'hidden');
+        addEl(td, input);
+        var label = addClass(makeEl('label'),'checkbox-label');
+        setAttr(label, 'for', id);
+        addEl(td, label);
+        
         tr.appendChild(td);
     });
 

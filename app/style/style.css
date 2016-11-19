@@ -14,19 +14,16 @@ See the License for the specific language governing permissions and
 
 /** profile configurer */
 .itemNameInput{
-	width:250px;
+	width:240px;
 }
 
 .profile-configurer-enum, .profile-configurer-string, .profile-configurer-text{
-	width:350px;
+	width:360px;
 }
 
 /* profile configurer **/
 
 /** story events */
-#createStoryName{
-  width: 240px;
-}
 
 .story-events-div-main{
 	display:flex;
@@ -35,7 +32,7 @@ See the License for the specific language governing permissions and
 }
 .story-events-div-left{
 	flex-grow:1;
-	margin-right: 10px;
+	margin-right: 8px;
 }
 .story-events-div-left input {
 	width:100%;
@@ -45,7 +42,7 @@ See the License for the specific language governing permissions and
 }
 
 #eventNameInput{
-	width:350px;
+	width:100%;
 }
 /* story events **/
 
@@ -112,7 +109,7 @@ See the License for the specific language governing permissions and
 
 /*----------------------------------------------------*/
 
-
+/** story common */
 
 #masterStoryArea {
 	width: 100%;
@@ -121,14 +118,40 @@ See the License for the specific language governing permissions and
 
 .eventText {
 	width: 100%;
-	height: 150px;
+	height: 160px;
 }
 
+.stories-navigation-container,
+.stories-content-container{
+  display: flex;
+}
+
+.stories-navigation-container .left-side{
+  flex-grow:1;
+  width:50%;
+}
+.stories-navigation-container .right-side{
+  flex-grow:1;
+  width:50%;
+  text-align: right;
+}
+
+.stories-content-container .left-side, 
+.stories-content-container .right-side {
+  flex-grow:1;
+  width:50%;
+}
+
+.stories-content-container .left-side:not(.hidden) + .right-side:not(.hidden){
+  margin-left: 8px;
+}
+
+/* story common **/
 
 /** characterProfile.js */
 .profileTextInput {
-	height: 250px;
-	width: 550px;
+	height: 240px;
+	width: 560px;
 }
 
 .profileStringInput {
@@ -148,8 +171,12 @@ See the License for the specific language governing permissions and
 
 .eventMainPanelRow{
   display:flex;
-  margin: 20px 0;
-  padding: 10px;
+/*   margin: 20px 0; */
+  padding: 8px;
+}
+
+.eventMainPanelRow h3{
+  margin: 0;
 }
 
 #personalStories .eventMainPanelRow:nth-child(2n+1){
@@ -159,7 +186,7 @@ See the License for the specific language governing permissions and
 .eventMainPanelRow-left{
   flex-grow:0;
   margin-right: 20px;
-  flex-basis: 350px;
+  flex-basis: 360px;
 }
 .eventMainPanelRow-right{
   flex-grow:1;
@@ -169,24 +196,24 @@ See the License for the specific language governing permissions and
 
 /** events.js */
 .eventOriginalStory {
-	width: 300px;
+	width: 320px;
 }
 
 .briefingPersonalStory {
-	height: 175px;
+	height: 160px;
 	display: block;
 	width:700px;
 }
 
 .briefing-relation-area{
-  height: 125px;
+  height: 120px;
   display: block;
-  width:300px;
+  width:320px;
 }
 .eventPersonalStory {
-	height: 175px;
+	height: 160px;
 	display: block;
-	width:350px;
+	width:360px;
 }
 
 #personalStoriesCharacterContainer{
@@ -206,6 +233,16 @@ See the License for the specific language governing permissions and
 
 .events-singleEventAdaptation{
 	flex-grow:0;
+}
+
+#eventsDiv .main-container{
+  display:flex;
+}
+
+#eventsDiv .main-container > div:first-child{
+  flex-grow:0;
+  flex-basis: 216px;
+  margin-right: 8px;
 }
 
 /* events.js **/
@@ -242,6 +279,7 @@ See the License for the specific language governing permissions and
 .storySelectorContainer {
 /* 	flex-basis: 150px; */
 	flex-grow: 0;
+	margin-right: 8px;
 }
 
 
@@ -309,11 +347,11 @@ See the License for the specific language governing permissions and
 
 #gui-settings-output{
   position: absolute;
-  right: 10px;
+  right: 8px;
 }
 
 #socialNetworkDiv > div {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 /* briefing export */
@@ -372,7 +410,7 @@ See the License for the specific language governing permissions and
 #profileDiagrams > div{
   flex-basis: 0;
   flex-grow: 1;
-  min-width: 250px;
+  min-width: 240px;
   text-align: center;
 }
 
@@ -382,7 +420,7 @@ See the License for the specific language governing permissions and
 
 /* access manager */
 #permissionTable {
-  width: 250px;
+  width: 240px;
   word-wrap: break-word;
 }
 
@@ -397,7 +435,7 @@ See the License for the specific language governing permissions and
 }
 
 .previewEventTime{
-  width: 170px;
+  width: 160px;
   display: inline-block;
 }
 
@@ -420,12 +458,27 @@ See the License for the specific language governing permissions and
   background-color: #ff8080;
 }
 
+/** character filter */
+
 #characterFilterDiv .group-control-area{
   display:flex;
   justify-content: space-between;
 }
 
-.rename-entity-select, .remove-entity-select, .save-entity-select, .group-add-select, .group-replace-select, .common-select {
+#characterFilterDiv > table  td:first-child{
+  padding-right: 8px;
+}
+
+/* character filter **/
+
+.create-entity-input, 
+.rename-entity-select, 
+.rename-entity-input, 
+.remove-entity-select, 
+.save-entity-select, 
+.group-add-select, 
+.group-replace-select, 
+.common-select {
   width: 200px;
 }
 
@@ -435,7 +488,7 @@ See the License for the specific language governing permissions and
 }
 
 .filter-settings-panel .separator{
-  height: 30px;
+  height: 32px;
 }
 
 .flex-front-element{
@@ -444,16 +497,16 @@ See the License for the specific language governing permissions and
 
 .board-popup {
   position:absolute;
-  top:350px;
-  left:170px;
+  top:360px;
+  left:160px;
   z-index:299;
 /*   width:250px; */
 /*   height:120px; */
   background-color: #f9f9f9;
   border-style:solid;
-  border-width:3px;
+  border-width:2px;
   border-color: #5394ed;
-  padding:10px;
+  padding:8px;
 /*   text-align: center; */
 }
 
@@ -461,3 +514,18 @@ See the License for the specific language governing permissions and
   font-weight: bold;
   font-style: italic;
 }
+
+/** entity-management */
+
+.entity-management{}
+
+.entity-management div > *{
+  margin: 4px 2px;
+}
+
+.entity-management div > input:not([type="radio"]), 
+.entity-management div > select{
+  width: 200px;
+}
+
+/* **/
