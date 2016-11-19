@@ -20,14 +20,15 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function Schema(exports, R) {
+    function Schema(exports, R, CommonUtils) {
     
         exports.getSchema = function(base) {
             var schema = {
                 "$schema": "http://json-schema.org/draft-04/schema#",
                 "title": "SMTK NIMS base",
                 "description": "SMTK NIMS base schema.",
-                "type": "object"
+                "type": "object",
+                'definitions': {}
             };
     
             var Meta =  getMetaSchema();
@@ -37,7 +38,7 @@ See the License for the specific language governing permissions and
             var Stories =  getStoriesSchema(base.Characters);
             var Groups =  getGroupsSchema(base.ProfileSettings);
             var InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
-            var Relations = getRelationsSchema(base.Characters);
+            var Relations = getRelationsSchema(base.Characters, schema.definitions);
             var ManagementInfo = {};
             if(base.ManagementInfo){
                 ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups);
@@ -650,30 +651,31 @@ See the License for the specific language governing permissions and
             return managementInfoSchema;
         };
         
-        function getRelationsSchema(Characters){
-            var subProperties = R.map(function(characterData){
-                return {
-                    'type' : 'string',
-                    "minLength": 1,
+        function getRelationsSchema(Characters, definitions){
+            var names = '^(' + R.keys(Characters).map(CommonUtils.escapeRegExp).join('|') + ')$';
+            var schema = {
+              type: 'object',
+              additionalProperties: false,
+              patternProperties: {
+                [names]: {
+                  type: 'object',
+                  additionalProperties: false,
+                  patternProperties: {
+                    [names]: {
+                      type: 'string',
+                      minLength: 1
+                    }
+                  }
                 }
-            }, Characters);
-            var root = {
-                    "type" : "object",
-                    "additionalProperties" : false
+              }
             };
-            root.properties = R.map(function(characterData){
-                return {
-                    "type" : "object",
-                    'properties' : subProperties,
-                    "additionalProperties" : false
-                };
-            }, Characters);
-            return root;
+            
+            return schema;
         };
     };
     
     callback(Schema);
     
 })(function(api){
-    typeof exports === 'undefined'? api(this['Schema'] = {}, R) : module.exports = api;
+    typeof exports === 'undefined'? api(this['Schema'] = {}, R, CommonUtils) : module.exports = api;
 }.bind(this));

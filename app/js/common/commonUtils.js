@@ -104,6 +104,11 @@ See the License for the specific language governing permissions and
                     /\\\?/g, '.'), 'g');
         };
         
+        // taken from MDN https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+        exports.escapeRegExp = function(string){
+          return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        };
+        
         exports.arr2map = function(array, key){
             return array.reduce(function(a, b) {
                 a[b[key]] = b;
