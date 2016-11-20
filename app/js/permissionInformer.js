@@ -30,6 +30,7 @@ if(MODE === "NIMS_Server"){
             dataType : "text",
             method : "GET",
             contentType : "application/json;charset=utf-8",
+            timeout: Constants.httpTimeout
         });
         
         request.done(function(data) {
@@ -45,7 +46,7 @@ if(MODE === "NIMS_Server"){
         
         request.fail(function(errorInfo, textStatus, errorThrown) {
             if(callback){
-                callback(errorInfo.responseText);
+                callback(errorInfo.responseText || 'error');
             } else {
                 setTimeout(PermissionInformer.subscribe, 500);
             }
@@ -59,6 +60,7 @@ if(MODE === "NIMS_Server"){
             dataType : "text",
             method : "GET",
             contentType : "application/json;charset=utf-8",
+            timeout: Constants.httpTimeout
         });
         
         request.done(function(data) {
@@ -212,4 +214,3 @@ if(MODE === "NIMS_Server"){
         callback(null, map);
     };
 }
-

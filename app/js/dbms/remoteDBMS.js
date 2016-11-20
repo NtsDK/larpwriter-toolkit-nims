@@ -39,6 +39,7 @@ function makeRemoteDBMS(LocalDBMS){
             method : "GET",
             contentType : "application/json;charset=utf-8",
             cache: false,
+            timeout: Constants.httpTimeout,
         });
         
         request.done(function(data) {
@@ -49,7 +50,7 @@ function makeRemoteDBMS(LocalDBMS){
             try {
                 callback(JSON.parse(errorInfo.responseText));
             } catch(err){
-                callback(errorInfo.responseText);
+                callback(errorInfo.responseText || textStatus || 'error');
             }
         });
     };
@@ -61,7 +62,8 @@ function makeRemoteDBMS(LocalDBMS){
             dataType : "text",
             method : "PUT",
             contentType : "application/json;charset=utf-8",
-            data: JSON.stringify(data)
+            data: JSON.stringify(data),
+            timeout: Constants.httpTimeout
         });
         
         if(showNotification){
@@ -92,7 +94,7 @@ function makeRemoteDBMS(LocalDBMS){
             try {
                 callback(JSON.parse(errorInfo.responseText));
             } catch(err){
-                callback(errorInfo.responseText);
+                callback(errorInfo.responseText || textStatus || 'error');
             }
         });
     };

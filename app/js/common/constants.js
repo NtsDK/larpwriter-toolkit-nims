@@ -290,7 +290,8 @@ See the License for the specific language governing permissions and
     exports.visLocales['en_EN'] = exports.visLocales['en'];
     exports.visLocales['en_US'] = exports.visLocales['en'];
     exports.visLocales['ru_RU'] = exports.visLocales['ru'];
-
+    
+    exports.httpTimeout = 5000;
     
 })(typeof exports === 'undefined'? this['Constants']={}: exports);
 
