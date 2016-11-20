@@ -654,20 +654,18 @@ See the License for the specific language governing permissions and
         function getRelationsSchema(Characters, definitions){
             var names = '^(' + R.keys(Characters).map(CommonUtils.escapeRegExp).join('|') + ')$';
             var schema = {
-              type: 'object',
-              additionalProperties: false,
-              patternProperties: {
-                [names]: {
-                  type: 'object',
-                  additionalProperties: false,
-                  patternProperties: {
-                    [names]: {
-                      type: 'string',
-                      minLength: 1
-                    }
-                  }
-                }
-              }
+                type : 'object',
+                additionalProperties : false,
+                patternProperties : {}
+            };
+            schema.patternProperties[names] = {
+                type: 'object',
+                additionalProperties: false,
+                patternProperties: {}
+            };
+            schema.patternProperties[names].patternProperties[names] = {
+                type: 'string',
+                minLength: 1
             };
             
             return schema;
