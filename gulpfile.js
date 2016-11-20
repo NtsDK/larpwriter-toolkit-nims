@@ -79,7 +79,7 @@ gulp.task('styles', gulp.parallel('styles:libs','styles:nims'));
 // js: libs, resources (l10n, templates), common, scripts (dbms, js root), pages, tests
 
 var libs = addPrefix("app/libs/",[
-'jquery-2.1.4.js',
+'jquery-3.1.1.min.js',
 'ajv-4.1.1.js',
 'bootstrap.min.js',
 'Chart.min.js',
