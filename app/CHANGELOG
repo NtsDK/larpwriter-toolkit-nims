@@ -1,3 +1,24 @@
+version 0.5.2 (21 Nov 2016)
+
+  Big update.
+  
+  Major:
+  - rework core module, added internal event emitter
+  - added groups
+  - added investigation board
+  - reworked filter page
+  - added character relations
+  = added page "About"
+  - design improvements
+  - big documentation work
+  
+  Minor:
+  - new diagrams - story number per character and symbol number per character
+  - saving filter result to CSV
+  - added adaptation mode on preview page
+  - updated templates
+  - errors fixing 
+
 version 0.4.4u3 (21 Jul 2016)
 
   Another one minor update. 
