@@ -258,8 +258,8 @@ input[selector-filter]{
   margin: auto;
   text-align: center;
   border-radius: 4px;
-  background-size: 28px;
-  background-image: url("../images/check-grey.svg");
+  background-size: 27px;
+  background: transparent url(../images/check-grey.svg) no-repeat scroll 50% 50%;
 }
 
 #eventPresenceTable .vertical-aligned-td,
@@ -268,6 +268,7 @@ input[selector-filter]{
 }
 
 input[type="checkbox"]:checked + .checkbox-label{
-  background-image: url("../images/check.svg");
+  background: transparent url(../images/check.svg) no-repeat scroll 50% 50%;
+  background-size: 27px;
 }
 
