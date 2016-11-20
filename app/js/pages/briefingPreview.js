@@ -272,7 +272,7 @@ See the License for the specific language governing permissions and
             select1.select2(getSelect2Data(data));
         });
         
-        return addEls(makeEl('div'), [ makeText(text), tmpContainer1[0], button ]);
+        return addEls(makeEl('div'), [ addEl(makeEl('span'),makeText(text)), tmpContainer1[0], button ]);
     };
     
     var makeProfileItemSelector = function(refresh){
@@ -285,7 +285,7 @@ See the License for the specific language governing permissions and
         tmpSelect.val(profileSettings[0].name).trigger('change');
         
         return {
-            el: addEls(makeEl('div'), [ makeText(getL10n('briefings-profile-item')), tmpContainer1[0]]),
+            el: addEls(makeEl('div'), [ addEl(makeEl('span'), makeText(getL10n('briefings-profile-item'))), tmpContainer1[0]]),
             select: select1[0]
         }
     };
@@ -311,7 +311,7 @@ See the License for the specific language governing permissions and
         
         // filling header - need table body for callbacks
         var makeRowCallback = R.compose(addEl(body), makeRow);
-        var charSelectors = addEls(makeEl('div'), [makeSelector(getL10n('briefings-known-characters'), knownNoRels, makeRowCallback),
+        var charSelectors = addEls(addClass(makeEl('div'), 'entity-management relations-management'), [makeSelector(getL10n('briefings-known-characters'), knownNoRels, makeRowCallback),
                                                    makeSelector(getL10n('briefings-unknown-characters'), unknownNoRels, makeRowCallback),
                                                    selectInfo.el]); 
         

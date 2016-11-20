@@ -528,4 +528,10 @@ See the License for the specific language governing permissions and
   width: 200px;
 }
 
+.relations-management.entity-management > div > span:first-child{
+  width: 250px;
+  display: inline-block;
+  text-align: right;
+}
+
 /* **/
