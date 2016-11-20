@@ -217,6 +217,16 @@ label{
   margin-bottom: 4px;
 }
 
+.table {
+    margin-bottom: 8px;
+}
+
+.table > tbody > tr > td, .table > tbody > tr > th, 
+.table > tfoot > tr > td, .table > tfoot > tr > th, 
+.table > thead > tr > td, .table > thead > tr > th{
+  padding: 6px;
+}
+
 #commonInfoDiv table{
   margin: 0;
 }
@@ -243,12 +253,13 @@ input[selector-filter]{
 
 .checkbox-label{
   display: block;
-  width: 24px;
-  height: 24px;
-  background-color: white;
+  width: 28px;
+  height: 28px;
   margin: auto;
   text-align: center;
   border-radius: 4px;
+  background-size: 28px;
+  background-image: url("../images/check-grey.svg");
 }
 
 #eventPresenceTable .vertical-aligned-td,
@@ -257,5 +268,6 @@ input[selector-filter]{
 }
 
 input[type="checkbox"]:checked + .checkbox-label{
-  background-color: limegreen;
+  background-image: url("../images/check.svg");
 }
+
