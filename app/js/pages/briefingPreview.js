@@ -334,7 +334,8 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('div'), groupTexts.map(function(groupText){
             var div = makeEl('div');
             addEl(div,addEl(makeEl('h4'), makeText(groupText.groupName)));
-            var span = addEl(makeEl('span'), makeText(groupText.text));
+            var span = addEl(makeEl('textarea'), makeText(groupText.text));
+            setAttr(span, 'disabled', 'disabled');
             addClass(span, 'briefingTextSpan');
             return addEl(div, span);
         }));
