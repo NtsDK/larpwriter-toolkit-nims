@@ -124,7 +124,7 @@ Characters.renameCharacter = function () {
 
 Characters.removeCharacter = function () {
     "use strict";
-    var name = getEl("characterRemoveSelector").value.trim();
+    var name = queryEl("#charactersDiv .remove-entity-select").value.trim();
 
     if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-character-removing"),[name]))) {
         DBMS.removeCharacter(name, function(err){
