@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 
 /** profile configurer */
 
-.profile-configurer-enum, .profile-configurer-string, .profile-configurer-text{
+.profile-configurer-enum, 
+.profile-configurer-multiEnum, 
+.profile-configurer-string, 
+.profile-configurer-text{
 	width:360px;
 }
 

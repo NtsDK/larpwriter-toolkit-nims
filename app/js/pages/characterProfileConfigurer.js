@@ -182,7 +182,7 @@ See the License for the specific language governing permissions and
         addClass(sel, "adminOnly");
         addColumn(sel);
     
-        var isTextarea = profileSettings.type == "text" || profileSettings.type == "enum";
+        var isTextarea = profileSettings.type == "text" || profileSettings.type == "enum" || profileSettings.type == "multiEnum";
         input = isTextarea ? makeEl("textarea") : makeEl("input");
         setProps(input, {
             info: profileSettings.name,
@@ -196,6 +196,7 @@ See the License for the specific language governing permissions and
         case "text":
         case "string":
         case "enum":
+        case "multiEnum":
             input.value = profileSettings.value;
             break;
         case "number":
@@ -228,21 +229,9 @@ See the License for the specific language governing permissions and
         var type = event.target.infoType;
         var oldValue = event.target.oldValue;
         
-        var value ;
+        var value = type === 'checkbox' ? event.target.checked : event.target.value;
         
-        switch (type) {
-        case "text":
-        case "string":
-        case "number":
-        case "enum":
-            value = event.target.value;
-            break;
-        case "checkbox":
-            value = event.target.checked;
-            break;
-        }
-        
-        var oldOptions, newOptions, newOptionsMap, missedValues, newValue;
+        var newOptions, missedValues, newValue;
         
         switch (type) {
         case "text":
@@ -258,42 +247,32 @@ See the License for the specific language governing permissions and
             }
             DBMS.updateDefaultValue(name, Number(value), Utils.processError());
             break;
+        case "multiEnum":
         case "enum":
-            if (value === "") {
+            if (value === "" && type === "enum") {
                 Utils.alert(getL10n("characters-enum-item-cant-be-empty"));
                 event.target.value = oldValue;
                 return;
             }
-            oldOptions = oldValue.split(",");
-            newOptions = value.split(",");
+            newOptions = value.split(",").map(R.trim);
+            missedValues = oldValue.trim() === '' ? [] : R.difference(oldValue.split(","), newOptions);
             
-            newOptions = newOptions.map(function(elem){
-                return elem.trim();
-            });
-            
-            newOptionsMap = [{}].concat(newOptions).reduce(function (a, b) {
-                a[b] = true;
-                return a;
-            });
-            
-            missedValues = oldOptions.filter(function (oldOption) {
-                return !newOptionsMap[oldOption];
-            });
+            var updateEnum = function(){
+                newValue = newOptions.join(",");
+                event.target.value = newValue;
+                event.target.oldValue = newValue;
+                DBMS.updateDefaultValue(name, newValue, Utils.processError());
+            };
             
             if (missedValues.length !== 0) {
                 if (Utils.confirm(strFormat(getL10n("characters-new-enum-values-remove-some-old-values"),[missedValues.join(",")]))) {
-                    newValue = newOptions.join(",");
-                    event.target.value = newValue;
-                    DBMS.updateDefaultValue(name, newValue, Utils.processError());
-                    return;
+                    updateEnum();
                 } else {
                     event.target.value = oldValue;
-                    return;
                 }
+            } else {
+                updateEnum();
             }
-            newValue = newOptions.join(",");
-            event.target.value = newValue;
-            DBMS.updateDefaultValue(name, newValue, Utils.processError());
             break;
         }
     };

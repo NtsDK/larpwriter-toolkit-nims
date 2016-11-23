@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function profileConfigurerAPI(LocalDBMS, Constants, CommonUtils, Errors) {
+    function profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors) {
         
         LocalDBMS.prototype.getAllProfileSettings = function(callback){
             "use strict";
@@ -137,13 +137,9 @@ See the License for the specific language governing permissions and
     
         // profile configurer
         LocalDBMS.prototype.updateDefaultValue = function(profileItemName, value, callback) {
-            "use strict";
+            var info = this.database.ProfileSettings.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
     
-            var info = this.database.ProfileSettings.filter(function(elem) {
-                return elem.name === profileItemName;
-            })[0];
-    
-            var oldOptions, newOptions, newOptionsMap, missedValues;
+            var newOptions, newOptionsMap, missedValues;
     
             switch (info.type) {
             case "text":
@@ -159,25 +155,14 @@ See the License for the specific language governing permissions and
                 info.value = Number(value);
                 break;
             case "enum":
-                if (value === "") {
+            case "multiEnum":
+                if (value === "" && info.type === 'enum') {
                     callback(new Errors.ValidationError("characters-enum-item-cant-be-empty"));
                     return;
                 }
-                oldOptions = info.value.split(",");
-                newOptions = value.split(",");
-    
-                newOptions = newOptions.map(function(elem) {
-                    return elem.trim();
-                });
-    
-                newOptionsMap = [ {} ].concat(newOptions).reduce(function(a, b) {
-                    a[b] = true;
-                    return a;
-                });
-    
-                missedValues = oldOptions.filter(function(oldOption) {
-                    return !newOptionsMap[oldOption];
-                });
+                newOptions = value.split(",").map(R.trim);
+                missedValues = info.value.trim() === '' ? [] : R.difference(info.value.split(","), newOptions);
+                newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
     
                 if (missedValues.length !== 0) {
                     this.ee.trigger("replaceEnumValue", [profileItemName, newOptions[0], newOptionsMap]);

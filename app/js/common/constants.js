@@ -38,6 +38,10 @@ See the License for the specific language governing permissions and
         "checkbox" : {
             name : "checkbox",
             value : false
+        },
+        "multiEnum" : {
+            name : "multiEnum",
+            value : ""
         }
     };
     
