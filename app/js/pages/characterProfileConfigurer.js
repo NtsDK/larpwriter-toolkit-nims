@@ -30,7 +30,7 @@ See the License for the specific language governing permissions and
 
 (function(exports){
     
-    var root = "#characterProfileConfigurer ";
+    var root = ".character-profile-configurer-tab ";
 
     exports.init = function () {
         var sel = clearEl(queryEl(root+".create-entity-type-select"));
