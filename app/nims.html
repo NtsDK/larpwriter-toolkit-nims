@@ -215,22 +215,22 @@ See the License for the specific language governing permissions and
         <div class="panel-body">
           <div class="entity-management">
             <div>
-              <input id="profileItemNameInput" class="itemNameInput adminOnly" l10n-placeholder-id="characters-profile-item-name"></input> 
+              <input class="adminOnly create-entity-input" l10n-placeholder-id="characters-profile-item-name"></input> 
               <span l10n-id="characters-profile-item-position"></span>
-              <select id="profileItemPositionSelector" class="adminOnly"></select>
+              <select class="adminOnly create-entity-position-select"></select>
               <span l10n-id="characters-profile-item-type"></span>
-              <select id="profileItemTypeSelector" class="adminOnly"></select> 
-              <button id="createProfileItemButton" class="adminOnly" l10n-id="common-create"></button>
+              <select class="adminOnly create-entity-type-select"></select> 
+              <button class="adminOnly create-entity-button" l10n-id="common-create"></button>
             </div>
             <div>
-              <select id="moveProfileItemSelector" class="adminOnly"></select> 
+              <select class="adminOnly move-entity-select"></select> 
               <span l10n-id="characters-profile-item-position"></span>
-              <select id="moveProfileItemPositionSelector" class="adminOnly"></select>
-              <button id="moveProfileItemButton" class="adminOnly" l10n-id="characters-move-item"></button>
+              <select class="adminOnly move-entity-position-select"></select>
+              <button class="adminOnly move-entity-button" l10n-id="characters-move-item"></button>
             </div>
             <div>
-              <select id="removeProfileItemSelector" class="adminOnly"></select>
-              <button id="removeProfileItemButton" class="adminOnly" l10n-id="common-remove"></button>
+              <select class="adminOnly remove-entity-select"></select>
+              <button class="adminOnly remove-entity-button" l10n-id="common-remove"></button>
             </div>
           </div>
           <table class="table table-bordered" style="width: auto;">
@@ -243,7 +243,7 @@ See the License for the specific language governing permissions and
               <th l10n-id="characters-profile-item-do-export"></th>
             </tr>
           </thead>
-          <tbody id="profileConfigBlock"></tbody>
+          <tbody class="profile-config-container"></tbody>
           </table>
         </div>
       </div>

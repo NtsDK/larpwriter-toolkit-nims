@@ -29,27 +29,29 @@ See the License for the specific language governing permissions and
 // 3. simple and lesser complexity, I choose this way
 
 (function(exports){
+    
+    var root = "#characterProfileConfigurer ";
 
     exports.init = function () {
-        var sel = clearEl(getEl("profileItemTypeSelector"));
+        var sel = clearEl(queryEl(root+".create-entity-type-select"));
         var fillMainSel = function(){
             fillSelector(clearEl(sel));
         };
         fillMainSel();
         L10n.onL10nChange(fillMainSel);
     
-        listen(getEl("createProfileItemButton"), "click", createProfileItem);
-        listen(getEl("moveProfileItemButton"), "click", moveProfileItem);
-        listen(getEl("removeProfileItemButton"), "click", removeProfileItem);
+        listen(queryEl(root+".create-entity-button"), "click", createProfileItem);
+        listen(queryEl(root+".move-entity-button"), "click", moveProfileItem);
+        listen(queryEl(root+".remove-entity-button"), "click", removeProfileItem);
     
-        exports.content = getEl("characterProfileConfigurer");
+        exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
         var positionSelectors = [];
         
-        positionSelectors.push(getEl("profileItemPositionSelector"));
-        positionSelectors.push(getEl("moveProfileItemPositionSelector"));
+        positionSelectors.push(queryEl(root+".create-entity-position-select"));
+        positionSelectors.push(queryEl(root+".move-entity-position-select"));
     
         DBMS.getAllProfileSettings(function(err, allProfileSettings){
             if(err) {Utils.handleError(err); return;}
@@ -72,7 +74,7 @@ See the License for the specific language governing permissions and
             });
             
             
-            var table = clearEl(getEl("profileConfigBlock"));
+            var table = clearEl(queryEl(root+".profile-config-container"));
             
             allProfileSettings.forEach(function (profileSettings, i) {
                 addEl(table, getInput(profileSettings, i + 1));
@@ -85,8 +87,8 @@ See the License for the specific language governing permissions and
             
             var selectorArr = [];
             
-            selectorArr.push(getEl("moveProfileItemSelector"));
-            selectorArr.push(getEl("removeProfileItemSelector"));
+            selectorArr.push(queryEl(root+".move-entity-select"));
+            selectorArr.push(queryEl(root+".remove-entity-select"));
             
             selectorArr.forEach(function (selector) {
                 clearEl(selector);
@@ -101,10 +103,10 @@ See the License for the specific language governing permissions and
     };
     
     var createProfileItem = function () {
-        var name = getEl("profileItemNameInput").value.trim();
+        var name = queryEl(root+".create-entity-input").value.trim();
     
         validateProfileItemName(name, function(){
-            var type = getEl("profileItemTypeSelector").value.trim();
+            var type = queryEl(root+".create-entity-type-select").value.trim();
             
             if (!Constants.profileFieldTypes[type]) {
                 Utils.alert(strFormat(getL10n("characters-unknown-profile-item-type"), [type]));
@@ -112,7 +114,7 @@ See the License for the specific language governing permissions and
             }
             var value = Constants.profileFieldTypes[type].value;
             
-            var positionSelector = getEl("profileItemPositionSelector");
+            var positionSelector = queryEl(root+".create-entity-position-select");
             
             var position = positionSelector.value;
             
@@ -122,8 +124,8 @@ See the License for the specific language governing permissions and
     };
     
     var moveProfileItem = function () {
-        var index = getEl("moveProfileItemSelector").selectedOptions[0].profileItemIndex;
-        var newIndex = getEl("moveProfileItemPositionSelector").selectedIndex;
+        var index = queryEl(root+".move-entity-select").selectedOptions[0].profileItemIndex;
+        var newIndex = queryEl(root+".move-entity-position-select").selectedIndex;
         
         if (index === newIndex) {
           Utils.alert(getL10n("characters-profile-item-positions-are-equal"));
@@ -134,8 +136,9 @@ See the License for the specific language governing permissions and
     };
     
     var removeProfileItem = function () {
-        var index = getEl("removeProfileItemSelector").selectedIndex;
-        var name = getEl("removeProfileItemSelector").value;
+        var selector = queryEl(root+".remove-entity-select");
+        var index = selector.selectedIndex;
+        var name = selector.value;
     
         if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-removing-profile-item"), [name]))) {
             DBMS.removeProfileItem(index, name, Utils.processError(exports.refresh));
