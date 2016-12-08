@@ -52,7 +52,7 @@ Overview.init = function () {
     Overview.preDate = getEl("preGameDatePicker");
 
     opts = {
-        lang : "ru",
+        lang : L10n.getLang(),
         mask : true,
         onChangeDateTime : Overview.updatePreGameDate
     };

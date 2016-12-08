@@ -58,15 +58,16 @@ L10n.init = function(){
     L10n.initialized = true;
 };
 
-var lang = "RU";
+//var lang = "RU";
+var lang = defaultLang;
 L10n.toggleL10n = function(){
     "use strict";
-    if(lang === "RU"){
+    if(lang === "ru"){
         L10n.dict = L10n.dictionaries['en'];
-        lang = "EN";
+        lang = "en";
     } else {
         L10n.dict = L10n.dictionaries['ru'];
-        lang = "RU";
+        lang = "ru";
     }
     L10n.localizeStatic();
     L10n.l10nDelegates.forEach(function(delegate){
