@@ -379,6 +379,7 @@ See the License for the specific language governing permissions and
   background-color: white;
   align-items: flex-end;
   padding: 8px;
+  overflow-x: auto;
 }
 
 .overviewHist > .bar{
