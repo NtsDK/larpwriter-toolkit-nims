@@ -18,13 +18,14 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var Template = {};
+(function(exports){
 
-Template.init = function() {
-    "use strict";
-//    Template.content = getEl("overviewDiv");
-};
+    exports.init = function() {
+//        exports.content = getEl('Template');
+    };
+    
+    exports.refresh = function() {
+    
+    };
 
-Template.refresh = function() {
-    "use strict";
-};
+})(this['Template']={});
