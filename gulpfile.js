@@ -98,7 +98,7 @@ var libs = addPrefix("app/libs/",[
 ]);
 
 //var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
-var resources = [translationsPath + "/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
+var resources = [translationsPath + "/l10n/*.js"].concat(addPrefix(langPath + "/embeddedTemplates/",["templatesArr.js","genericTemplate.js",
     "inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]));
 
 var common = addPrefix("app/js/common/",
