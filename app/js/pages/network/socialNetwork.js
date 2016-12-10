@@ -212,6 +212,7 @@ SocialNetwork.refresh = function () {
                             });
                             
                             SocialNetwork.groupColors = {};
+                            SocialNetwork.groupLists = {'noGroup':['noGroup']};
                             
                             for ( var groupName in SocialNetwork.fixedColors) {
                                 SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
@@ -219,9 +220,12 @@ SocialNetwork.refresh = function () {
                             
                             groups.forEach(function (group) {
                                 if(group.type === "enum"){
+                                    var list = [];
                                     group.value.split(",").forEach(function (subGroupName, i){
                                         SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
+                                        list.push(group.name + "." + subGroupName.trim());
                                     });
+                                    SocialNetwork.groupLists[group.name] = list;
                                 } else if( group.type === "checkbox"){
                                     if(group.value){
                                         SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[0];
@@ -230,6 +234,7 @@ SocialNetwork.refresh = function () {
                                         SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[1];
                                         SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[0];
                                     }
+                                    SocialNetwork.groupLists[group.name] = [group.name + ".true", group.name + ".false"];
                                 }
                             });
                             
@@ -251,9 +256,7 @@ SocialNetwork.refreshLegend = function (groupName) {
     clearEl(colorLegend);
     var colorDiv;
     
-    Object.keys(SocialNetwork.groupColors).filter(function (value){
-        return value.substring(0, groupName.length) === groupName;
-    }).forEach(function (value) {
+    SocialNetwork.groupLists[groupName].forEach(function (value) {
         colorDiv = makeEl("div");
         colorDiv.appendChild(makeText(value === "noGroup" ? constL10n('noGroup') : value));
         colorDiv.style.backgroundColor = SocialNetwork.groupColors[value].color.background;
