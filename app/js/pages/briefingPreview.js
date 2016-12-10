@@ -282,7 +282,9 @@ See the License for the specific language governing permissions and
         var tmpSelect = select1.select2(arr2Select2(profileSettings.map(R.prop('name')).sort()));
         
         tmpSelect.on('change', refresh);
-        tmpSelect.val(profileSettings[0].name).trigger('change');
+        if(profileSettings[0]){
+            tmpSelect.val(profileSettings[0].name).trigger('change');
+        }
         
         return {
             el: addEls(makeEl('div'), [ addEl(makeEl('span'), makeText(getL10n('briefings-profile-item'))), tmpContainer1[0]]),
