@@ -32,6 +32,9 @@ See the License for the specific language governing permissions and
         
         var _getBriefingData = function(getKnownCharacters, database, selectedCharacters, groupTexts, callback) {
             var charArray = selectedCharacters.map(function(charName){
+                groupTexts[charName].forEach(function(groupText){
+                    groupText.splittedText = _splitText(groupText.text);
+                });
                 var dataObject = {
                     "gameName" : database.Meta.name,
                     "charName" : charName,
