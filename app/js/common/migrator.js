@@ -127,6 +127,15 @@ See the License for the specific language governing permissions and
             data.Relations = {};
             data.Version = "0.5.2";
         }
+        if(data.Version === "0.5.2"){
+            if(data.Meta.date === ''){
+                data.Meta.date = '1970/01/01 00:00';
+            }
+            if(data.Meta.preGameDate === ''){
+                data.Meta.preGameDate = '1970/01/01 00:00';
+            }
+            data.Version = "0.5.2u1";
+        }
         
         exists(data, 'base', 'Characters');
         exists(data, 'base', 'ProfileSettings');
