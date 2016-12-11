@@ -183,7 +183,7 @@ BriefingExport.getBriefingData = function(callback){
                 charData.profileInfoArray.forEach(function(element){
                     if(checkboxNames.indexOf(element.itemName) != -1){
                         element.value = constL10n(Constants[element.value]);
-                        element.splittedText = [{'string':constL10n(Constants[element.value])}]
+                        element.splittedText = [{'string':element.value}]
                     }
                 });
                 checkboxNames.forEach(function(name){
