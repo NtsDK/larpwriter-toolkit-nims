@@ -235,12 +235,14 @@ See the License for the specific language governing permissions and
         
         function _renameGroup(fromName, toName){
             var container = R.path(groupsPath, this.database);
-            var data = container[fromName];
-            data.name = toName;
-            container[toName] = data;
-            delete container[fromName];
-            
-            _nodeRenamed.apply(this, [fromName, toName, 'groups']);
+            if(container[fromName] !== undefined){
+                var data = container[fromName];
+                data.name = toName;
+                container[toName] = data;
+                delete container[fromName];
+                
+                _nodeRenamed.apply(this, [fromName, toName, 'groups']);
+            }
         };
         
         listeners.renameGroup = listeners.renameGroup || [];
