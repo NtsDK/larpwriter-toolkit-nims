@@ -135,8 +135,10 @@ Utils.processError = function(callback){
 };
 
 Utils.handleError = function(err){
-    "use strict";
-    if (err instanceof Errors.ValidationError || (err.name && err.name === 'ValidationError')) {
+    var checkErrorType = R.curry(function(err, name){
+        return err instanceof Errors[name] || (err.name && err.name === name)
+    });
+    if (R.keys(Errors).some(checkErrorType(err))) {
         Utils.alert(strFormat(getL10n(err.messageId), err.parameters));
     } else if( typeof err === 'object'){
         Utils.alert(err.message);

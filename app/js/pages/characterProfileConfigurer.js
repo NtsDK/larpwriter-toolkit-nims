@@ -76,9 +76,11 @@ See the License for the specific language governing permissions and
             
             var table = clearEl(queryEl(root+".profile-config-container"));
             
-            allProfileSettings.forEach(function (profileSettings, i) {
-                addEl(table, getInput(profileSettings, i + 1));
-            });
+            try {
+                addEls(table, allProfileSettings.map(getInput));
+            } catch (err) {
+                Utils.handleError(err); return;
+            }
             
             PermissionInformer.isAdmin(function(err, isAdmin){
                 if(err) {Utils.handleError(err); return;}
@@ -154,7 +156,8 @@ See the License for the specific language governing permissions and
         });
     };
     
-    var getInput = function (profileSettings, index) {
+    var getInput = function (profileSettings, index) { // throws InternalError
+        index++;
         var tr = makeEl("tr");
         
         var addColumn = R.compose(addEl(tr), function(el){
@@ -208,7 +211,7 @@ See the License for the specific language governing permissions and
             input.checked = profileSettings.value;
             break;
         default:
-            throw new Error('Unexpected type ' + profileSettings.type);
+            throw new Errors.InternalError('errors-unexpected-switch-argument', [profileSettings.type]);
         }
     
         listen(input, "change", updateDefaultValue);
@@ -277,7 +280,8 @@ See the License for the specific language governing permissions and
             }
             break;
         default:
-            throw new Error('Unexpected type ' + type);
+            Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [type]))
+            return;
         }
     };
     

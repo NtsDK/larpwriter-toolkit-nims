@@ -35,5 +35,23 @@ See the License for the specific language governing permissions and
     ValidationError.prototype = Object.create(Error.prototype);
     
     exports.ValidationError = ValidationError;
+    
+    function InternalError(messageId, parameters) {
+        Error.call(this, arguments) ;
+        this.name = "InternalError";
+        
+        this.messageId = messageId;
+        this.parameters = parameters;
+        
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, InternalError);
+        } else {
+            this.stack = (new Error()).stack;
+        }
+    };
+    
+    InternalError.prototype = Object.create(Error.prototype);
+    
+    exports.InternalError = InternalError;
 
 })(typeof exports === 'undefined'? this['Errors']={}: exports);

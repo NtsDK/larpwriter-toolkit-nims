@@ -129,7 +129,7 @@ See the License for the specific language governing permissions and
                 case "checkbox":
                     return !R.is(Boolean, charValue);
                 default:
-                    throw new Error('Unexpected type ' + type);
+                    return true;
                 }
             };
             

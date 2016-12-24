@@ -377,11 +377,11 @@ See the License for the specific language governing permissions and
                     }
                     data.required.push("selectedOptions")
                     break;
-                case "multiEnum":
-                    console.log('TODO - add multiEnum to group schema');
-                    break;
+//                case "multiEnum":
+//                    console.log('TODO - add multiEnum to group schema');
+//                    break;
                 default:
-                    throw new Error('Unexpected type ' + item.type);
+                    console.log('Unexpected type ' + item.type);
                 }
                 return data;
             }));
@@ -481,7 +481,7 @@ See the License for the specific language governing permissions and
                     };
                     break;
                 default:
-                    throw new Error('Unexpected type ' + item.type);
+                    console.log('Unexpected type ' + item.type);
                 }
                 characterProperties[item.name] = value;
             });

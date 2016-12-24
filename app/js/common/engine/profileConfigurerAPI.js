@@ -171,7 +171,7 @@ See the License for the specific language governing permissions and
                 info.value = newOptions.join(",");
                 break;
             default:
-                throw new Error('Unexpected type ' + type);
+                callback(new Errors.InternalError('errors-unexpected-switch-argument', [info.type]));
             }
             callback();
         };
