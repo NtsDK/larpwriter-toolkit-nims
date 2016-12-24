@@ -148,7 +148,7 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
 
         PermissionInformer.isGroupEditable(name, function(err, isGroupEditable){
             if(err) {Utils.handleError(err); return;}
-            CharacterProfile.updateSettings(name);
+            GroupProfile.updateSettings(name);
             
             GroupProfile.name = name;
             var inputItems = GroupProfile.inputItems;
