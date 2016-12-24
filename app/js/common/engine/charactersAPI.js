@@ -122,6 +122,8 @@ See the License for the specific language governing permissions and
             case "checkbox":
                 profileInfo[fieldName] = value;
                 break;
+            default:
+                throw 'Unexpected type ' + type;
             }
             if(callback) callback();
         };

@@ -287,6 +287,8 @@ See the License for the specific language governing permissions and
                     if(subItem.condition === 'lesser'){
                         return subItem.num >= superItem.num;
                     }
+                default:
+                    throw 'Unexpected type ' + superItem.type;
                 }
             });
         }

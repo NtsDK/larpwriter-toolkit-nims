@@ -207,6 +207,8 @@ See the License for the specific language governing permissions and
             input.type = "checkbox";
             input.checked = profileSettings.value;
             break;
+        default:
+            throw 'Unexpected type ' + profileSettings.type;
         }
     
         listen(input, "change", updateDefaultValue);
@@ -274,6 +276,8 @@ See the License for the specific language governing permissions and
                 updateEnum();
             }
             break;
+        default:
+            throw 'Unexpected type ' + type;
         }
     };
     

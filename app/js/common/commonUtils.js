@@ -144,12 +144,16 @@ See the License for the specific language governing permissions and
                     case "lesser":
                         result = value < filterItem.num;
                         break;
+                    default:
+                        throw 'Unexpected condition ' + filterItem.condition;
                     }
                     break;
                 case "text":
                 case "string":
                     result = value.toLowerCase().indexOf(filterItem.regexString.toLowerCase()) != -1;
                     break;
+                default:
+                    throw 'Unexpected type ' + filterItem.type;
                 }
             });
             return result;

@@ -389,6 +389,8 @@ See the License for the specific language governing permissions and
             case "checkbox":
                 value = makeText(constL10n(Constants[profile[element.name]]));
                 break;
+            default:
+                throw 'Unexpected type ' + element.type;
             }
             
             addEl(profileDiv,makeTableRow(name, value));

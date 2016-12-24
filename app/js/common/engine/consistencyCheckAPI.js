@@ -120,6 +120,8 @@ See the License for the specific language governing permissions and
                     return !R.is(Number, charValue);
                 case "checkbox":
                     return !R.is(Boolean, charValue);
+                default:
+                    throw 'Unexpected type ' + type;
                 }
             };
             

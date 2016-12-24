@@ -104,6 +104,8 @@ GroupProfile.makeInput = function (profileItemConfig) {
         input = makeEl("div");
         input.type = "container";
         break;
+    default:
+        throw 'Unexpected type ' + profileItemConfig.type;
     }
     input.selfName = profileItemConfig.name;
     addClass(input,"isGroupEditable");
@@ -126,6 +128,8 @@ GroupProfile.updateFieldValue = function(type){
         case "checkbox":
             value = event.target.checked;
             break;
+        default:
+            throw 'Unexpected type ' + type;
         }
         DBMS.updateGroupField(groupName, fieldName, value, Utils.processError());
     }
@@ -207,6 +211,8 @@ GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filter
     case "string":
         condition = strFormat(getL10n("groups-text-contains"), [filterItem.regexString]);
         break;
+    default:
+        throw 'Unexpected type ' + filterItem.type;
     }
     td = makeEl('td');
     addEl(tr, td);

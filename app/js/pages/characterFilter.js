@@ -97,6 +97,8 @@ CharacterFilter.makePrintData = function (){
         case "enum":
             value = value.toLowerCase();
             break;
+        default:
+            throw 'Unexpected type ' + item.type;
         }
         return value;
     });
@@ -198,6 +200,8 @@ CharacterFilter.applyFilterModel = function(filterModel){
             case "string":
                 inputItem.value = '';
                 break;
+            default:
+                throw 'Unexpected type ' + inputItem.selfInfo.type;
             }
         } else {
             var modelItem = filterModel[inputItemName];
@@ -219,6 +223,8 @@ CharacterFilter.applyFilterModel = function(filterModel){
             case "string":
                 inputItem.value = modelItem.regexString;
                 break;
+            default:
+                throw 'Unexpected type ' + inputItem.selfInfo.type;
             }
         }
     });
@@ -280,6 +286,8 @@ CharacterFilter.makeFilterModel = function(){
             }
             model.push({type: inputItem.selfInfo.type,name: inputItemName,regexString: inputItem.value.toLowerCase()});
             break;
+        default:
+            throw 'Unexpected type ' + inputItem.selfInfo.type;
         }
     });
     return model;
@@ -376,6 +384,8 @@ CharacterFilter.makeFilter = function(profileItemConfig){
         return CharacterFilter.makeNumberFilter(profileItemConfig);
     case "checkbox":
         return CharacterFilter.makeCheckboxFilter(profileItemConfig);
+    default:
+        throw 'Unexpected type ' + profileItemConfig.type;
     }
 };
 

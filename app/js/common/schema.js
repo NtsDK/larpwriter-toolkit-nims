@@ -104,25 +104,65 @@ See the License for the specific language governing permissions and
                 "title": "ProfileSettings",
                 "description": "Describes character profile settings.",
                 "type": "array",
-                "items": {
-                    "type" : "object",
-                    "properties": {
-                        "name" : {
-                            "type":"string"
+                "items" : {
+                    'oneOf' : [ {
+                        "type" : "object",
+                        "properties" : {
+                            "name" : {
+                                "type" : "string"
+                            },
+                            "type" : {
+                                "type" : "string",
+                                "enum" : [ "string", "text", "enum", 'multiEnum' ]
+                            },
+                            "value" : {
+                                "type" : [ "string" ]
+                            },
+                            "doExport" : {
+                                "type" : "boolean"
+                            }
                         },
-                        "type" : {
-                            "type":"string",
-                            "enum": ["string", "number", "text", "checkbox", "enum"]
+                        "required" : [ "name", "type", "value", "doExport" ],
+                        "additionalProperties" : false
+                    }, {
+                        "type" : "object",
+                        "properties" : {
+                            "name" : {
+                                "type" : "string"
+                            },
+                            "type" : {
+                                "type" : "string",
+                                "enum" : [ "number" ]
+                            },
+                            "value" : {
+                                "type" : [ "number" ]
+                            },
+                            "doExport" : {
+                                "type" : "boolean"
+                            }
                         },
-                        "value" : {
-                            "type":["string","number","boolean"]
+                        "required" : [ "name", "type", "value", "doExport" ],
+                        "additionalProperties" : false
+                    }, {
+                        "type" : "object",
+                        "properties" : {
+                            "name" : {
+                                "type" : "string"
+                            },
+                            "type" : {
+                                "type" : "string",
+                                "enum" : [ "checkbox" ]
+                            },
+                            "value" : {
+                                "type" : [ "boolean" ]
+                            },
+                            "doExport" : {
+                                "type" : "boolean"
+                            }
                         },
-                        "doExport" : {
-                            "type":"boolean"
-                        }
-                    },
-                    "required": ["name","type","value","doExport"],
-                    "additionalProperties": false
+                        "required" : [ "name", "type", "value", "doExport" ],
+                        "additionalProperties" : false
+                    } ]
                 }
             };
         };
@@ -337,6 +377,8 @@ See the License for the specific language governing permissions and
                     }
                     data.required.push("selectedOptions")
                     break;
+                default:
+                    throw 'Unexpected type ' + item.type;
                 }
                 return data;
             }));
@@ -434,6 +476,8 @@ See the License for the specific language governing permissions and
                         })
                     };
                     break;
+                default:
+                    throw 'Unexpected type ' + item.type;
                 }
                 characterProperties[item.name] = value;
             });
