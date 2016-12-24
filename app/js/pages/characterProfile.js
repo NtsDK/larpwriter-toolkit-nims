@@ -21,14 +21,11 @@ See the License for the specific language governing permissions and
 var CharacterProfile = {};
 
 CharacterProfile.init = function () {
-    "use strict";
     listen(getEl("bioEditorSelector"), "change", CharacterProfile.showProfileInfoDelegate);
     CharacterProfile.content = getEl("characterProfile");
 };
 
 CharacterProfile.refresh = function () {
-    "use strict";
-    
     PermissionInformer.getCharacterNamesArray(false, function(err, names){
         if(err) {Utils.handleError(err); return;}
         var selector = clearEl(getEl("bioEditorSelector"));
@@ -50,9 +47,11 @@ CharacterProfile.refresh = function () {
         
         DBMS.getAllProfileSettings(function(err, allProfileSettings){
             if(err) {Utils.handleError(err); return;}
-            allProfileSettings.forEach(function (profileSettings) {
-                CharacterProfile.appendInput(tbody, profileSettings);
-            });
+            try {
+                addEls(tbody, allProfileSettings.map(CharacterProfile.appendInput));
+            } catch (err) {
+                Utils.handleError(err); return;
+            }
             
             CharacterProfile.applySettings(names, selector);
         });
@@ -80,17 +79,8 @@ CharacterProfile.applySettings = function (names, selector) {
     }
 };
 
-CharacterProfile.appendInput = function (root, profileItemConfig) {
-    "use strict";
-    var tr = makeEl("tr");
-    var td = makeEl("td");
-    td.appendChild(makeText(profileItemConfig.name));
-    tr.appendChild(td);
-
-    td = makeEl("td");
-    
-    var input, values;
-
+CharacterProfile.appendInput = function (profileItemConfig) {
+    var input;
     switch (profileItemConfig.type) {
     case "text":
         input = makeEl("textarea");
@@ -102,13 +92,7 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         break;
     case "enum":
         input = makeEl("select");
-
-        values = profileItemConfig.value.split(",");
-        values.forEach(function (value) {
-            var option = makeEl("option");
-            option.appendChild(makeText(value));
-            input.appendChild(option);
-        });
+        fillSelector(input, profileItemConfig.value.split(",").map(R.compose(R.zipObj(['name']), R.append(R.__, []))));
         break;
     case "number":
         input = makeEl("input");
@@ -118,17 +102,18 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         input = makeEl("input");
         input.type = "checkbox";
         break;
+    case "multiEnum":
+        input = makeEl("input");
+        input.type = "checkbox";
+        break;
     default:
-        throw new Error('Unexpected type ' + profileItemConfig.type);
+        throw new Errors.InternalError('errors-unexpected-switch-argument', [profileItemConfig.type]);
     }
     input.addEventListener("change", CharacterProfile.updateFieldValue(profileItemConfig.type));
     input.selfName = profileItemConfig.name;
     addClass(input,"isCharacterEditable");
-    td.appendChild(input);
     CharacterProfile.inputItems[profileItemConfig.name] = input;
-
-    tr.appendChild(td);
-    root.appendChild(tr);
+    return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), input)]);
 };
 
 CharacterProfile.updateFieldValue = function(type){
