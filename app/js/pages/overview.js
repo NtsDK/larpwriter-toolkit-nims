@@ -79,19 +79,46 @@ See the License for the specific language governing permissions and
     };
     
     var makeChart = function(id, canvas, data){
-      if(state.Charts[id]){
-          state.Charts[id].destroy();
-      }
-      
-      data.forEach(function(value, i){
-        if(Constants.colorPalette[i]){
-            value.color = Constants.colorPalette[i].color.background;
-            value.highlight = Constants.colorPalette[i].color.hover.background;
+        if (state.Charts[id]) {
+            state.Charts[id].destroy();
         }
-      });
       
-      var ctx = canvas.getContext("2d");
-      state.Charts[id] = new Chart(ctx).Doughnut(data,{animateRotate : false, tooltipTemplate: "<%if (label){%><%=label%><%}%>",});
+        var labels = [];
+        var dataset = {
+            data : [],
+            backgroundColor : [],
+            hoverBackgroundColor : []
+        };
+        data.forEach(function(item, i) {
+            if (Constants.colorPalette[i]) {
+                labels.push(item.label);
+                dataset.data.push(item.value);
+                dataset.backgroundColor.push(Constants.colorPalette[i].color.background);
+                dataset.hoverBackgroundColor.push(Constants.colorPalette[i].color.hover.background);
+            }
+        });
+
+        var ctx = canvas.getContext("2d");
+        state.Charts[id] = new Chart(ctx, {
+            type : 'doughnut',
+            data : {
+                labels : labels,
+                datasets : [ dataset ]
+            },
+            options : {
+                animation:{
+                    animateRotate:false
+                },
+                responsive : false,
+                legend : {
+                    display : false,
+                },
+                tooltips : {
+                    enabled : false,
+                    custom : customTooltips
+                }
+            },
+        });
     };
     
     var makeHistogram = function(place, data){
@@ -105,7 +132,7 @@ See the License for the specific language governing permissions and
       });
       data.forEach(function(barData){
         if(barData){
-    //      barData.normValue = (barData.value - min)/(max-min);
+    // barData.normValue = (barData.value - min)/(max-min);
     //      barData.normValue = (barData.value - 0)/(max-0);
           barData.normValue = (barData.value - 0)/(max-0)*0.9+0.1;
         }
@@ -160,6 +187,15 @@ See the License for the specific language governing permissions and
             makeChart("characterChart", getEl("characterChart"), statistics.characterChartData);
             makeChart("storyChart", getEl("storyChart"), statistics.storyChartData);
             makeChart("groupChart", getEl("groupChart"), statistics.groupChartData);
+            
+            var symbolChartData = R.toPairs(localizeConsts(statistics.textCharactersCount)).map(function(pair){
+                return {
+                    'value': pair[1],
+                    'label': makeChartLabel(statistics.textCharacterNumber, pair[0], pair[1])
+                };
+            });
+            makeChart("symbolChart", getEl("symbolChart"), symbolChartData);
+            
             var barData;
             var profileDiagrams = clearEl(getEl('profileDiagrams')), barDiv, bar;
             
@@ -176,19 +212,22 @@ See the License for the specific language governing permissions and
             }
             var buildChart = function(info){
                 bar = setAttr(setAttr(makeEl('canvas'), "width", "300"), "height", "100");
+                var data = R.zipObj(['name', 'bar'], [info.name, bar]);
+                var container = makeContainer(data);
                 makeChart(info.name, bar, info.prepared);
-                return R.zipObj(['name', 'bar'], [info.name, bar]);
+                return container;
             };
             
             var buildHist = function(info){
-                bar = makeEl('div');
-                addClass(bar,"overviewHist");
+                bar = addClass(makeEl('div'),"overviewHist");
+                var data = R.zipObj(['name', 'bar'], [info.name, bar]);
+                var container = makeContainer(data);
                 makeHistogram(bar, info.prepared);
-                return R.zipObj(['name', 'bar'], [info.name, bar]);
+                return container;
             };
             
-            var innerMakeChart = R.compose(addToProfileDiagrams,makeContainer,buildChart,prepareChart);
-            var innerMakeHist = R.compose(addToProfileDiagrams,makeContainer,buildHist,prepareHist);
+            var innerMakeChart = R.compose(addToProfileDiagrams,buildChart,prepareChart);
+            var innerMakeHist = R.compose(addToProfileDiagrams,buildHist,prepareHist);
             
             var localizeCheckboxes = function(info){
                 info.data = R.fromPairs(R.toPairs(info.data).map(function(val){
@@ -210,6 +249,14 @@ See the License for the specific language governing permissions and
             
           });
         });
+    };
+    
+    var localizeConsts = function(info){
+        info = R.fromPairs(R.toPairs(info).map(function(val){
+            val[0] = constL10n(val[0]);
+            return val;
+        }));
+        return info;
     };
     
     var prepareChart = function(info){
@@ -261,6 +308,73 @@ See the License for the specific language governing permissions and
     };
     var updateDescr = function (event) {
         DBMS.setMetaInfo("description", event.target.value, Utils.processError());
+    };
+    
+    var customTooltips = function(tooltip) {
+        // Tooltip Element
+        var tooltipEl = document.getElementById('chartjs-tooltip');
+        
+        if (!tooltipEl) {
+            tooltipEl = document.createElement('div');
+            tooltipEl.id = 'chartjs-tooltip';
+            tooltipEl.innerHTML = "<table></table>"
+            document.body.appendChild(tooltipEl);
+        }
+
+        // Hide if no tooltip
+        if (tooltip.opacity === 0) {
+            tooltipEl.style.opacity = 0;
+            return;
+        }
+
+        // Set caret Position
+        tooltipEl.classList.remove('above', 'below', 'no-transform');
+        if (tooltip.yAlign) {
+            tooltipEl.classList.add(tooltip.yAlign);
+        } else {
+            tooltipEl.classList.add('no-transform');
+        }
+
+        function getBody(bodyItem) {
+            return bodyItem.lines;
+        }
+
+        // Set Text
+        if (tooltip.body) {
+            var titleLines = tooltip.title || [];
+            var bodyLines = tooltip.body.map(getBody);
+
+            var innerHtml = '<thead>';
+
+            titleLines.forEach(function(title) {
+                innerHtml += '<tr><th>' + title + '</th></tr>';
+            });
+            innerHtml += '</thead><tbody>';
+
+            bodyLines.forEach(function(body, i) {
+                var colors = tooltip.labelColors[i];
+                var style = 'background:' + colors.backgroundColor;
+                style += '; border-color:' + colors.borderColor;
+                style += '; border-width: 2px'; 
+                var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+                innerHtml += '<tr><td>' + span + body + '</td></tr>';
+            });
+            innerHtml += '</tbody>';
+
+            var tableRoot = tooltipEl.querySelector('table');
+            tableRoot.innerHTML = innerHtml;
+        }
+
+        var position = this._chart.canvas.getBoundingClientRect();
+
+//        // Display, position, and set styles for font
+        tooltipEl.style.opacity = 1;
+        tooltipEl.style.left = position.left + tooltip.caretX + 'px';
+        tooltipEl.style.top = position.top + tooltip.caretY + 'px';
+//        tooltipEl.style.fontFamily = tooltip._fontFamily;
+//        tooltipEl.style.fontSize = tooltip.fontSize;
+//        tooltipEl.style.fontStyle = tooltip._fontStyle;
+        tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
     };
 
 })(this['Overview']={});

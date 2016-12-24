@@ -38,7 +38,8 @@ See the License for the specific language governing permissions and
                 statistics.userNumber = Object.keys(database.ManagementInfo.UsersInfo).length;
             }
 
-            statistics.textCharacterNumber = _countTextCharacters(database);
+            statistics.textCharactersCount = _countTextCharacters(database);
+            statistics.textCharacterNumber = R.sum(R.values(statistics.textCharactersCount));
 
             var firstLastEventTime = _getFirstLastEventTime(database);
 
@@ -306,20 +307,25 @@ See the License for the specific language governing permissions and
         };
         
         var _countTextCharacters = function(database) {
-            "use strict";
-            var story, textCharacterNumber = 0, character, storyName;
-            for (storyName in database.Stories) {
-                story = database.Stories[storyName];
-                textCharacterNumber += _noWhiteSpaceLength(story.story);
+            var counts = {
+                masterStories: 0,
+                eventOrigins: 0,
+                eventAdaptations: 0,
+                groups: 0,
+                relations: 0,
+            };
+            R.values(database.Stories).forEach(function(story){
+                counts.masterStories += _noWhiteSpaceLength(story.story);
                 story.events.forEach(function(event) {
-                    textCharacterNumber += _noWhiteSpaceLength(event.text);
-                    for (character in event.characters) {
-                        textCharacterNumber += _noWhiteSpaceLength(event.characters[character].text);
-                    }
+                    counts.eventOrigins += _noWhiteSpaceLength(event.text);
+                    R.keys(event.characters).forEach(function(character){
+                        counts.eventAdaptations += _noWhiteSpaceLength(event.characters[character].text);
+                    });
                 });
-            }
-            textCharacterNumber += R.sum(R.values(database.Groups).map(R.compose(_noWhiteSpaceLength, R.prop('characterDescription'))));
-            return textCharacterNumber;
+            });
+            counts.groups = R.sum(R.values(database.Groups).map(R.compose(_noWhiteSpaceLength, R.prop('characterDescription'))));
+            counts.relations = R.sum(R.flatten(R.values(database.Relations).map(R.values)).map(_noWhiteSpaceLength));
+            return counts;
         };
         
         var _getFirstLastEventTime = function(database) {
