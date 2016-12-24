@@ -119,7 +119,7 @@ CharacterProfile.appendInput = function (root, profileItemConfig) {
         input.type = "checkbox";
         break;
     default:
-        throw 'Unexpected type ' + profileItemConfig.type;
+        throw new Error('Unexpected type ' + profileItemConfig.type);
     }
     input.addEventListener("change", CharacterProfile.updateFieldValue(profileItemConfig.type));
     input.selfName = profileItemConfig.name;
@@ -156,7 +156,7 @@ CharacterProfile.updateFieldValue = function(type){
             value = event.target.checked;
             break;
         default:
-            throw 'Unexpected type ' + type;
+            throw new Error('Unexpected type ' + type);
         }
         DBMS.updateProfileField(characterName, fieldName, type, value, Utils.processError());
     }

@@ -116,12 +116,20 @@ See the License for the specific language governing permissions and
                         var values = profileItemValue.split(',').map(R.trim);
                         return !R.contains(charValue.trim(), values);
                     }
+                case "multiEnum":
+                    if(!R.is(String, charValue)){
+                        return true;
+                    } else {
+                        var values = profileItemValue.split(',').map(R.trim);
+                        var charValues = charValue.split(',').map(R.trim);
+                        return R.difference(charValues, values).length != 0;
+                    }
                 case "number":
                     return !R.is(Number, charValue);
                 case "checkbox":
                     return !R.is(Boolean, charValue);
                 default:
-                    throw 'Unexpected type ' + type;
+                    throw new Error('Unexpected type ' + type);
                 }
             };
             

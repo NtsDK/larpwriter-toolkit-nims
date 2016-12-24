@@ -377,8 +377,11 @@ See the License for the specific language governing permissions and
                     }
                     data.required.push("selectedOptions")
                     break;
+                case "multiEnum":
+                    console.log('TODO - add multiEnum to group schema');
+                    break;
                 default:
-                    throw 'Unexpected type ' + item.type;
+                    throw new Error('Unexpected type ' + item.type);
                 }
                 return data;
             }));
@@ -454,6 +457,7 @@ See the License for the specific language governing permissions and
                 switch(item.type){
                 case "text":
                 case "string":
+                case "multiEnum": // it is hard to check multiEnum with schema. There is second check in consistency checker.
                     value = {
                         "type":"string"
                     };
@@ -477,7 +481,7 @@ See the License for the specific language governing permissions and
                     };
                     break;
                 default:
-                    throw 'Unexpected type ' + item.type;
+                    throw new Error('Unexpected type ' + item.type);
                 }
                 characterProperties[item.name] = value;
             });

@@ -123,7 +123,7 @@ See the License for the specific language governing permissions and
                 profileInfo[fieldName] = value;
                 break;
             default:
-                throw 'Unexpected type ' + type;
+                throw new Error('Unexpected type ' + type);
             }
             if(callback) callback();
         };

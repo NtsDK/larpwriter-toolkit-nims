@@ -153,7 +153,7 @@ See the License for the specific language governing permissions and
                     result = value.toLowerCase().indexOf(filterItem.regexString.toLowerCase()) != -1;
                     break;
                 default:
-                    throw 'Unexpected type ' + filterItem.type;
+                    throw new Error('Unexpected type ' + filterItem.type);
                 }
             });
             return result;

@@ -208,7 +208,7 @@ See the License for the specific language governing permissions and
             input.checked = profileSettings.value;
             break;
         default:
-            throw 'Unexpected type ' + profileSettings.type;
+            throw new Error('Unexpected type ' + profileSettings.type);
         }
     
         listen(input, "change", updateDefaultValue);
@@ -277,7 +277,7 @@ See the License for the specific language governing permissions and
             }
             break;
         default:
-            throw 'Unexpected type ' + type;
+            throw new Error('Unexpected type ' + type);
         }
     };
     

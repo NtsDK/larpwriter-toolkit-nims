@@ -288,7 +288,7 @@ See the License for the specific language governing permissions and
                         return subItem.num >= superItem.num;
                     }
                 default:
-                    throw 'Unexpected type ' + superItem.type;
+                    throw new Error('Unexpected type ' + superItem.type);
                 }
             });
         }

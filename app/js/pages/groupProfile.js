@@ -105,7 +105,7 @@ GroupProfile.makeInput = function (profileItemConfig) {
         input.type = "container";
         break;
     default:
-        throw 'Unexpected type ' + profileItemConfig.type;
+        throw new Error('Unexpected type ' + profileItemConfig.type);
     }
     input.selfName = profileItemConfig.name;
     addClass(input,"isGroupEditable");
@@ -129,7 +129,7 @@ GroupProfile.updateFieldValue = function(type){
             value = event.target.checked;
             break;
         default:
-            throw 'Unexpected type ' + type;
+            throw new Error('Unexpected type ' + type);
         }
         DBMS.updateGroupField(groupName, fieldName, value, Utils.processError());
     }
@@ -212,7 +212,7 @@ GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filter
         condition = strFormat(getL10n("groups-text-contains"), [filterItem.regexString]);
         break;
     default:
-        throw 'Unexpected type ' + filterItem.type;
+        throw new Error('Unexpected type ' + filterItem.type);
     }
     td = makeEl('td');
     addEl(tr, td);
