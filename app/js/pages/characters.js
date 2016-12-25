@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, CharacterProfile, CharacterFilter, CharacterProfileConfigurer, DBMS
+ Utils, CharacterProfile, CharacterProfileConfigurer, DBMS
  */
 
 "use strict";
