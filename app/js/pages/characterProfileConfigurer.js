@@ -185,28 +185,24 @@ See the License for the specific language governing permissions and
         addClass(sel, "adminOnly");
         addColumn(sel);
     
-        var isTextarea = profileSettings.type == "text" || profileSettings.type == "enum" || profileSettings.type == "multiEnum";
-        input = isTextarea ? makeEl("textarea") : makeEl("input");
-        setProps(input, {
-            info: profileSettings.name,
-            infoType: profileSettings.type,
-            oldValue: profileSettings.value
-        });
-        addClass(input, "adminOnly");
-        addClass(input, "profile-configurer-" + profileSettings.type);
-    
         switch (profileSettings.type) {
         case "text":
-        case "string":
         case "enum":
         case "multiEnum":
+            input = makeEl("textarea");
+            input.value = profileSettings.value;
+            break;
+        case "string":
+            input = makeEl("input");
             input.value = profileSettings.value;
             break;
         case "number":
+            input = makeEl("input");
             input.type = "number";
             input.value = profileSettings.value;
             break;
         case "checkbox":
+            input = makeEl("input");
             input.type = "checkbox";
             input.checked = profileSettings.value;
             break;
@@ -214,6 +210,13 @@ See the License for the specific language governing permissions and
             throw new Errors.InternalError('errors-unexpected-switch-argument', [profileSettings.type]);
         }
     
+        setProps(input, {
+            info: profileSettings.name,
+            infoType: profileSettings.type,
+            oldValue: profileSettings.value
+        });
+        addClass(input, "adminOnly");
+        addClass(input, "profile-configurer-" + profileSettings.type);
         listen(input, "change", updateDefaultValue);
         addColumn(input);
         
@@ -330,12 +333,9 @@ See the License for the specific language governing permissions and
     
     var changeProfileItemType = function (event) {
         if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-changing-profile-item-type"), [event.target.info]))) {
-            
             var newType = event.target.value;
             var name = event.target.info;
-            
             DBMS.changeProfileItemType(name, newType, Utils.processError(exports.refresh));
-            
         } else {
             event.target.value = event.target.oldType;
         }
