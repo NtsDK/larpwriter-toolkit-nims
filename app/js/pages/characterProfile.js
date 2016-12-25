@@ -37,6 +37,7 @@ See the License for the specific language governing permissions and
             addEl(clearEl(getEl("profileContentDiv")), addEl(addClass(makeEl("table"), "table"), tbody))
             
             state.inputItems = {};
+            state.disableList = [];
             
             DBMS.getAllProfileSettings(function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
@@ -93,6 +94,9 @@ See the License for the specific language governing permissions and
                 item.showFieldValue(profile);
             });
             Utils.enable(exports.content, "isCharacterEditable", isCharacterEditable);
+            state.disableList.forEach(function(item){
+                item.prop("disabled", !isCharacterEditable);
+            });
         });
     };
     
@@ -125,14 +129,23 @@ See the License for the specific language governing permissions and
             input.type = "checkbox";
             break;
         case "multiEnum":
-            input = makeEl("input");
-            input.type = "checkbox";
+            this.multiEnumSelect = $("<select></select>");
+            input = $("<span></span>").append(this.multiEnumSelect)[0];
+            setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
+
+            var sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(",")));
+            state.disableList.push(this.multiEnumSelect);
+            
+            sel.on('change', this.updateFieldValue.bind(this));
             break;
         default:
             throw new Errors.InternalError('errors-unexpected-switch-argument', [profileItemConfig.type]);
         }
-        listen(input, "change", this.updateFieldValue.bind(this));
-        addClass(input,"isCharacterEditable");
+        
+        if(profileItemConfig.type !== 'multiEnum'){
+            listen(input, "change", this.updateFieldValue.bind(this));
+            addClass(input,"isCharacterEditable");
+        }
         
         this.dom = input;
         this.type = profileItemConfig.type;
@@ -142,6 +155,8 @@ See the License for the specific language governing permissions and
     ProfileItemInput.prototype.showFieldValue = function(profile){
         if (this.type === "checkbox") {
             this.dom.checked = profile[this.name];
+        } else if (this.type === "multiEnum") {
+            this.multiEnumSelect.val(profile[this.name] === '' ? null : profile[this.name].split(',')).trigger("change");
         } else {
             this.dom.value = profile[this.name];
         }
@@ -170,8 +185,12 @@ See the License for the specific language governing permissions and
         case "checkbox":
             value = this.dom.checked;
             break;
+        case "multiEnum":
+            value = this.multiEnumSelect.val().join(',');
+            break;
         default:
-            throw new Error('Unexpected type ' + this.type);
+            Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type])); 
+            return;
         }
         DBMS.updateProfileField(characterName, fieldName, this.type, value, Utils.processError());
     };

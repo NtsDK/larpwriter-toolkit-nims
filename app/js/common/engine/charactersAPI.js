@@ -12,9 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
+
 (function(callback){
 
-    function charactersAPI(LocalDBMS, Constants, CommonUtils, Errors, listeners) {
+    function charactersAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
         
         LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
             "use strict";
@@ -110,6 +112,8 @@ See the License for the specific language governing permissions and
             case "text":
             case "string":
             case "enum":
+            case "multiEnum":
+            case "checkbox":
                 profileInfo[fieldName] = value;
                 break;
             case "number":
@@ -119,11 +123,10 @@ See the License for the specific language governing permissions and
                 }
                 profileInfo[fieldName] = Number(value);
                 break;
-            case "checkbox":
                 profileInfo[fieldName] = value;
                 break;
             default:
-                throw new Error('Unexpected type ' + type);
+                callback(new Errors.InternalError('errors-unexpected-switch-argument', [type]));
             }
             if(callback) callback();
         };
@@ -187,6 +190,20 @@ See the License for the specific language governing permissions and
         
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];
         listeners.replaceEnumValue.push(_replaceEnumValue);
+        
+        function _replaceMultiEnumValue(profileItemName, defaultValue, newOptionsMap){
+            var that = this;
+            Object.keys(this.database.Characters).forEach(function(characterName) {
+                if(value !== ''){
+                    var value = that.database.Characters[characterName][profileItemName];
+                    value = R.intersection(value.split(','), R.keys(newOptionsMap));
+                    that.database.Characters[characterName][profileItemName] = value.join(',');
+                }
+            });
+        };
+        
+        listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
+        listeners.replaceMultiEnumValue.push(_replaceMultiEnumValue);
     };
     
     callback(charactersAPI);

@@ -120,8 +120,8 @@ See the License for the specific language governing permissions and
                     if(!R.is(String, charValue)){
                         return true;
                     } else {
-                        var values = profileItemValue.split(',').map(R.trim);
-                        var charValues = charValue.split(',').map(R.trim);
+                        var values = profileItemValue === '' ? [] : profileItemValue.split(',').map(R.trim);
+                        var charValues = charValue === '' ? [] : charValue.split(',').map(R.trim);
                         return R.difference(charValues, values).length != 0;
                     }
                 case "number":

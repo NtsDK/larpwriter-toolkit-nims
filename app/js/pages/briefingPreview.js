@@ -382,6 +382,7 @@ See the License for the specific language governing permissions and
                 addEl(value, makeText(profile[element.name]));
                 break;
             case "enum":
+            case "multiEnum":
             case "number":
             case "string":
                 value = makeText(profile[element.name]);

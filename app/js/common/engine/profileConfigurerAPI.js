@@ -165,7 +165,7 @@ See the License for the specific language governing permissions and
                 newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
     
                 if (missedValues.length !== 0) {
-                    this.ee.trigger("replaceEnumValue", [profileItemName, newOptions[0], newOptionsMap]);
+                    this.ee.trigger(info.type === 'enum' ? "replaceEnumValue" : "replaceMultiEnumValue", [profileItemName, newOptions[0], newOptionsMap]);
                 }
     
                 info.value = newOptions.join(",");
