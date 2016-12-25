@@ -95,6 +95,7 @@ See the License for the specific language governing permissions and
             case "text":
             case "string":
             case "enum":
+            case "multiEnum":
                 value = value.toLowerCase();
                 break;
             case "checkbox":
@@ -177,7 +178,7 @@ See the License for the specific language governing permissions and
         var filterModel = CommonUtils.arr2map(filterModel, 'name'); 
         
         Object.keys(state.inputItems).forEach(function(inputItemName){
-            if (inputItemName.endsWith(":numberInput")) {
+            if (inputItemName.endsWith(":numberInput") || inputItemName.endsWith(":multiEnumInput")) {
                 return;
             }
             
@@ -197,6 +198,13 @@ See the License for the specific language governing permissions and
                     break;
                 case "number":
                     state.inputItems[inputItem.selfInfo.name + ":numberInput"].value = 0;
+                    inputItem.value = 'ignore';
+                    break;
+                case "multiEnum":
+                    var select = state.inputItems[inputItem.selfInfo.name + ":multiEnumInput"];
+                    for (i = 0; i < select.options.length; i +=1) {
+                        select.options[i].selected = true;
+                    }
                     inputItem.value = 'ignore';
                     break;
                 case "text":
@@ -222,6 +230,13 @@ See the License for the specific language governing permissions and
                     inputItem.value = modelItem.condition;
                     state.inputItems[inputItem.selfInfo.name + ":numberInput"].value = modelItem.num;
                     break;
+                case "multiEnum":
+                    inputItem.value = modelItem.condition;
+                    var select = state.inputItems[inputItem.selfInfo.name + ":multiEnumInput"];
+                    for (i = 0; i < select.options.length; i +=1) {
+                        select.options[i].selected = modelItem.selectedOptions[select.options[i].value] ? true : false;
+                    }
+                    break;
                 case "text":
                 case "string":
                     inputItem.value = modelItem.regexString;
@@ -237,60 +252,48 @@ See the License for the specific language governing permissions and
     var makeFilterModel = function(){
         var model = [];
         Object.keys(state.inputItems).forEach(function(inputItemName){
-            if (inputItemName.endsWith(":numberInput")) {
+            if (inputItemName.endsWith(":numberInput") || inputItemName.endsWith(":multiEnumInput")) {
                 return;
             }
             if(state.checkboxes[inputItemName].checked === false){
                 return;
             }
             var inputItem = state.inputItems[inputItemName];
-            var selectedOptions, regex, num, i, counter;
+            var selectedOptions, regex, num, i, arr;
+            var type = inputItem.selfInfo.type;
     
-            switch (inputItem.selfInfo.type) {
+            switch (type) {
             case "enum":
-                selectedOptions = {};
-                counter = 0;
-                for (i = 0; i < inputItem.options.length; i +=1) {
-                    if (inputItem.options[i].selected) {
-                        selectedOptions[inputItem.options[i].value] = true;
-                        counter++;
-                    }
-                }
-                if(inputItem.options.length == counter){
-                    return; // all selected, nothing to filter
-                } else {
-                    model.push({type: 'enum',name: inputItemName,selectedOptions: selectedOptions});
-                }
+                if(inputItem.options.length == inputItem.selectedOptions.length){return;}
+                arr = nl2array(inputItem.selectedOptions).map(R.prop('value'));
+                model.push({type: type, name: inputItemName, selectedOptions: R.zipObj(arr, R.repeat(true, arr.length))});
                 break;
             case "checkbox":
+                if(inputItem.options[0].selected && inputItem.options[1].selected){return;}
                 selectedOptions = {};
-                if(inputItem.options[0].selected && inputItem.options[1].selected){
-                    return; // nothing to filter
-                }
-                if (inputItem.options[0].selected) {
-                    selectedOptions["true"] = true;
-                }
-                if (inputItem.options[1].selected) {
-                    selectedOptions["false"] = true;
-                }
-                model.push({type: 'checkbox',name: inputItemName,selectedOptions: selectedOptions});
+                if (inputItem.options[0].selected) {selectedOptions["true"] = true;}
+                if (inputItem.options[1].selected) {selectedOptions["false"] = true;}
+                model.push({type: type, name: inputItemName, selectedOptions: selectedOptions});
                 break;
             case "number":
-                if(inputItem.value === 'ignore'){
-                    return; // nothing to filter
-                }
+                if(inputItem.value === 'ignore'){return;}
                 num = Number(state.inputItems[inputItem.selfInfo.name + ":numberInput"].value);
-                model.push({type: 'number',name: inputItemName,num: num,condition: inputItem.value});
+                model.push({type: type, name: inputItemName, num: num, condition: inputItem.value});
+                break;
+            case "multiEnum":
+                if(inputItem.value === 'ignore'){return;}
+                selectedOptions = {};
+                var select2 = state.inputItems[inputItem.selfInfo.name + ":multiEnumInput"];
+                arr = nl2array(select2.selectedOptions).map(R.prop('value'));
+                model.push({type: type, name: inputItemName, condition: inputItem.value, selectedOptions: R.zipObj(arr, R.repeat(true, arr.length))});
                 break;
             case "text":
             case "string":
-                if(inputItem.value == ''){
-                    return; // nothing to filter
-                }
-                model.push({type: inputItem.selfInfo.type,name: inputItemName,regexString: inputItem.value.toLowerCase()});
+                if(inputItem.value == ''){return;}
+                model.push({type: type, name: inputItemName, regexString: inputItem.value.toLowerCase()});
                 break;
             default:
-                throw new Error('Unexpected type ' + inputItem.selfInfo.type);
+                throw new Error('Unexpected type ' + type);
             }
         });
         return model;
@@ -380,6 +383,8 @@ See the License for the specific language governing permissions and
             return makeTextFilter(profileItemConfig);
         case "enum":
             return makeEnumFilter(profileItemConfig);
+        case "multiEnum":
+            return makeMultiEnumFilter(profileItemConfig);
         case "number":
             return makeNumberFilter(profileItemConfig);
         case "checkbox":
@@ -404,38 +409,57 @@ See the License for the specific language governing permissions and
         selector.multiple = "multiple";
         selector.size = values.length;
     
-        values.forEach(function (value) {
-            var option = makeEl("option");
-            option.selected = true;
-            option.value = value.name;
-            option.appendChild(makeText(value.displayName));
-            selector.appendChild(option);
-        });
+        fillSelector(selector, values.map(function(value){
+            value.selected = true;
+            return value;
+        }));
         selector.addEventListener("change", rebuildContent);
         state.inputItems[profileItemConfig.name] = selector;
         return selector;
     };
     
-    
     var makeEnumFilter = function(profileItemConfig){
-        var values = profileItemConfig.value.split(",").map(function(value){
-            return {
-                name: value,
-                displayName: value
-            };
-        });
+        var values = arr2Select(profileItemConfig.value.split(","));
         return makeCommonEnumFilter(profileItemConfig, values);
     };
     
     var makeCheckboxFilter = function(profileItemConfig){
         var values = [ {
-            name : Constants[true],
-            displayName : constL10n(Constants[true])
+            value : Constants[true],
+            name : constL10n(Constants[true])
         }, {
-            name : Constants[false],
-            displayName : constL10n(Constants[false])
+            value : Constants[false],
+            name : constL10n(Constants[false])
         } ];
         return makeCommonEnumFilter(profileItemConfig, values);
+    };
+    
+    var makeMultiEnumFilter = function(profileItemConfig){
+        var selector = makeEl("select");
+        selector.selfInfo = profileItemConfig;
+    
+        Constants.multiEnumFilter.forEach(function (value) {
+            var option = makeEl("option");
+            option.appendChild(makeText(constL10n(value)));
+            option.value = value;
+            selector.appendChild(option);
+        });
+        selector.selectedIndex = 0;
+        state.inputItems[profileItemConfig.name] = selector;
+        selector.addEventListener("change", rebuildContent);
+        
+        var selector2 = makeEl("select");
+        var values = arr2Select(profileItemConfig.value.split(","));
+        fillSelector(selector2, values.map(function(value){
+            value.selected = true;
+            return value;
+        }));
+        selector2.multiple = "multiple";
+        selector2.size = values.length;
+        
+        state.inputItems[profileItemConfig.name + ":multiEnumInput"] = selector2;
+        selector2.addEventListener("change", rebuildContent);
+        return addEls(makeEl('div'), [selector, makeEl('br'), selector2]);
     };
     
     var makeNumberFilter = function(profileItemConfig){
@@ -457,10 +481,7 @@ See the License for the specific language governing permissions and
         input.type = "number";
         state.inputItems[profileItemConfig.name + ":numberInput"] = input;
         input.addEventListener("input", rebuildContent);
-        var div = makeEl('div');
-        addEl(div, selector);
-        addEl(div, input);
-        return div;
+        return addEls(makeEl('div'), [selector, input]);
     };
 
 })(this['CharacterFilter']={});

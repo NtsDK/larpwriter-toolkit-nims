@@ -74,6 +74,13 @@ See the License for the specific language governing permissions and
         "lesser" ,
     ];
     
+    exports.multiEnumFilter = [
+        "ignore" ,
+        "every",
+        "equal",
+        "some",
+    ];
+    
     exports.finishedText   = "finishedText"  ;
     exports.finishedSuffix = "finishedSuffix";
     exports.emptySuffix    = "emptySuffix"   ;

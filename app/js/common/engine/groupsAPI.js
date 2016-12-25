@@ -234,6 +234,9 @@ See the License for the specific language governing permissions and
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];
         listeners.replaceEnumValue.push(_replaceEnumValue);
         
+        listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
+        listeners.replaceMultiEnumValue.push(_replaceEnumValue);
+        
         var _isGroupsEqualByFilterModel = function(fm1, fm2){
             var fmMap1 = R.indexBy(R.prop('name'), fm1);
             var fmMap2 = R.indexBy(R.prop('name'), fm2);
@@ -286,6 +289,26 @@ See the License for the specific language governing permissions and
                     }
                     if(subItem.condition === 'lesser'){
                         return subItem.num >= superItem.num;
+                    }
+                case "multiEnum":
+                    if(subItem.condition === 'every' && superItem.condition === 'some'){
+                        return false;
+                    }
+                    if(subItem.condition === 'some' && superItem.condition === 'every'){
+                        return false;
+                    }
+                    if(subItem.condition === 'equal'){
+                        if(superItem.condition !== 'equal'){
+                            return false;
+                        } else {
+                            return R.difference(R.keys(superItem.selectedOptions), R.keys(subItem.selectedOptions)).length == 0;
+                        }
+                    }
+                    if(subItem.condition === 'every'){
+                        return R.difference(R.keys(superItem.selectedOptions), R.keys(subItem.selectedOptions)).length == 0;
+                    }
+                    if(subItem.condition === 'some'){
+                        return R.difference(R.keys(subItem.selectedOptions), R.keys(superItem.selectedOptions)).length == 0;
                     }
                 default:
                     throw new Error('Unexpected type ' + superItem.type);

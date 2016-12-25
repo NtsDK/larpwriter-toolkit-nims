@@ -207,6 +207,9 @@ GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filter
     case "number":
         condition = strFormat("{0} {1}", [getL10n('constant-' + filterItem.condition), filterItem.num]); 
         break;
+    case "multiEnum":
+        condition = strFormat("{0}: {1}", [getL10n('constant-' + filterItem.condition), Object.keys(filterItem.selectedOptions).join(', ')]); 
+        break;
     case "text":
     case "string":
         condition = strFormat(getL10n("groups-text-contains"), [filterItem.regexString]);

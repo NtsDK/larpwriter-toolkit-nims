@@ -131,6 +131,7 @@ See the License for the specific language governing permissions and
         case "multiEnum":
             this.multiEnumSelect = $("<select></select>");
             input = $("<span></span>").append(this.multiEnumSelect)[0];
+            addClass(this.multiEnumSelect[0], 'common-select');
             setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
             var sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(",")));

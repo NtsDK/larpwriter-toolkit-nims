@@ -380,6 +380,7 @@ var getSelect2Data = getSelect2DataCommon(remapProps4Select2);
 
 var makeSelect2Opt = R.compose(R.zipObj(['id', 'text']), R.repeat(R.__, 2));
 var arr2Select2 = R.compose(R.assoc('data', R.__, {}), R.map(makeSelect2Opt));
+var arr2Select = R.map(R.compose(R.zipObj(['value','name']), R.repeat(R.__, 2)));
 
 var getSelectedRadio = function(query){
     "use strict";

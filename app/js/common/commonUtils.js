@@ -12,6 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
+
 (function(callback){
         
     function CommonUtils(exports, R, Constants) {
@@ -117,7 +119,6 @@ See the License for the specific language governing permissions and
         };
         
         exports.acceptDataRow = R.curry(function (model, dataString) {
-            "use strict";
             var result = true;
             var value, regex;
             var dataMap = exports.arr2map(dataString, 'itemName');
@@ -131,6 +132,26 @@ See the License for the specific language governing permissions and
                 case "checkbox":
                     if (!filterItem.selectedOptions[value]) {
                         result = false;
+                    }
+                    break;
+                case "multiEnum":
+                    var values = value === '' ? [] : value.split(',');
+                    switch (filterItem.condition) {
+                    case "every":
+                        if(R.keys(filterItem.selectedOptions).length === 0){
+                            result = false;
+                        } else {
+                            result = R.difference(R.keys(filterItem.selectedOptions), values).length === 0;
+                        }
+                        break;
+                    case "some":
+                        result = R.difference(values,  R.keys(filterItem.selectedOptions)).length !== values.length;
+                        break;
+                    case "equal":
+                        result = R.symmetricDifference(values,  R.keys(filterItem.selectedOptions)).length === 0;
+                        break;
+                    default:
+                        throw 'Unexpected condition ' + filterItem.condition;
                     }
                     break;
                 case "number":

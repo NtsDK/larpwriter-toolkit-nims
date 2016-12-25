@@ -375,11 +375,25 @@ See the License for the specific language governing permissions and
                         "properties": properties,
                         "additionalProperties" : false
                     }
-                    data.required.push("selectedOptions")
+                    data.required.push("selectedOptions");
                     break;
-//                case "multiEnum":
-//                    console.log('TODO - add multiEnum to group schema');
-//                    break;
+                case "multiEnum":
+                    data.properties.condition = {
+                        "type" : "string",
+                        "enum" : [ "every", "equal", "some" ]
+                    };
+                    var properties = item.value.split(",").reduce(function(result, item){
+                        result[item] = {};
+                        return result;
+                    }, {});
+                    data.properties.selectedOptions = {
+                        "type" : "object",
+                        "properties": properties,
+                        "additionalProperties" : false
+                    }
+                    data.required.push("selectedOptions")
+                    data.required.push("condition");
+                    break;
                 default:
                     console.log('Unexpected type ' + item.type);
                 }
