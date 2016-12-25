@@ -31,19 +31,10 @@ See the License for the specific language governing permissions and
         PermissionInformer.getCharacterNamesArray(false, function(err, names){
             if(err) {Utils.handleError(err); return;}
             var selector = clearEl(getEl("bioEditorSelector"));
-            names.forEach(function (nameInfo) {
-                var option = makeEl("option");
-                option.appendChild(makeText(nameInfo.displayName));
-                option.value = nameInfo.value;
-                selector.appendChild(option);
-            });
+            fillSelector(selector, names.map(remapProps4Select));
             
-            var profileContentDiv = clearEl(getEl("profileContentDiv"));
-            var table = makeEl("table");
             var tbody = makeEl("tbody");
-            table.appendChild(tbody);
-            addClass(table, "table");
-            profileContentDiv.appendChild(table);
+            addEl(clearEl(getEl("profileContentDiv")), addEl(addClass(makeEl("table"), "table"), tbody))
             
             state.inputItems = {};
             
@@ -57,7 +48,6 @@ See the License for the specific language governing permissions and
                 
                 applySettings(names, selector);
             });
-            
         });
     };
     
@@ -81,6 +71,37 @@ See the License for the specific language governing permissions and
     };
     
     var appendInput = function (profileItemConfig) {
+        var itemInput = new ProfileItemInput(profileItemConfig);
+        state.inputItems[profileItemConfig.name] = itemInput;
+        return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), itemInput.dom)]);
+    };
+    
+    var showProfileInfoDelegate = function (event) {
+        var name = event.target.value.trim();
+        DBMS.getProfile(name, showProfileInfoCallback);
+    };
+    
+    var showProfileInfoCallback = function (err, profile) {
+        if(err) {Utils.handleError(err); return;}
+        var name = profile.name;
+        PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
+            if(err) {Utils.handleError(err); return;}
+            updateSettings(name);
+            
+            state.name = name;
+            Object.values(state.inputItems).forEach(function(item){
+                item.showFieldValue(profile);
+            });
+            Utils.enable(exports.content, "isCharacterEditable", isCharacterEditable);
+        });
+    };
+    
+    var updateSettings = function (name) {
+        var settings = DBMS.getSettings();
+        settings["CharacterProfile"].characterName = name;
+    };
+    
+    function ProfileItemInput(profileItemConfig){
         var input;
         switch (profileItemConfig.type) {
         case "text":
@@ -110,72 +131,49 @@ See the License for the specific language governing permissions and
         default:
             throw new Errors.InternalError('errors-unexpected-switch-argument', [profileItemConfig.type]);
         }
-        input.addEventListener("change", updateFieldValue(profileItemConfig.type));
-        input.selfName = profileItemConfig.name;
+        listen(input, "change", this.updateFieldValue.bind(this));
         addClass(input,"isCharacterEditable");
-        state.inputItems[profileItemConfig.name] = input;
-        return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), input)]);
+        
+        this.dom = input;
+        this.type = profileItemConfig.type;
+        this.name = profileItemConfig.name;
     };
     
-    var updateFieldValue = function(type){
-        return function(event){
-            var fieldName = event.target.selfName;
-            var characterName = state.name;
-            
-            var value;
-            switch(type){
-            case "text":
-            case "string":
-            case "enum":
-                value = event.target.value;
-                break;
-            case "number":
-                if (isNaN(event.target.value)) {
-                    Utils.alert(getL10n("characters-not-a-number"));
-                    event.target.value = event.target.oldValue;
-                    return;
-                }
-                value = Number(event.target.value);
-                break;
-            case "checkbox":
-                value = event.target.checked;
-                break;
-            default:
-                throw new Error('Unexpected type ' + type);
-            }
-            DBMS.updateProfileField(characterName, fieldName, type, value, Utils.processError());
+    ProfileItemInput.prototype.showFieldValue = function(profile){
+        if (this.type === "checkbox") {
+            this.dom.checked = profile[this.name];
+        } else {
+            this.dom.value = profile[this.name];
         }
-    }
-    
-    var showProfileInfoDelegate = function (event) {
-        var name = event.target.value.trim();
-        DBMS.getProfile(name, showProfileInfoCallback);
+        this.oldValue = profile[this.name];
     };
     
-    var showProfileInfoCallback = function (err, profile) {
-        if(err) {Utils.handleError(err); return;}
-        var name = profile.name;
-        PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
-            if(err) {Utils.handleError(err); return;}
-            updateSettings(name);
-            
-            state.name = name;
-            var inputItems = state.inputItems;
-            Object.keys(inputItems).forEach(function (inputName) {
-                if (inputItems[inputName].type === "checkbox") {
-                    inputItems[inputName].checked = profile[inputName];
-                } else {
-                    inputItems[inputName].value = profile[inputName];
-                }
-                inputItems[inputName].oldValue = profile[inputName];
-                Utils.enable(exports.content, "isCharacterEditable", isCharacterEditable);
-            });
-        });
-    };
-    
-    var updateSettings = function (name) {
-        var settings = DBMS.getSettings();
-        settings["CharacterProfile"].characterName = name;
+    ProfileItemInput.prototype.updateFieldValue = function(event){
+        var fieldName = this.name;
+        var characterName = state.name;
+        
+        var value;
+        switch(this.type){
+        case "text":
+        case "string":
+        case "enum":
+            value = this.dom.value;
+            break;
+        case "number":
+            if (isNaN(this.dom.value)) {
+                Utils.alert(getL10n("characters-not-a-number"));
+                this.dom.value = this.oldValue;
+                return;
+            }
+            value = Number(this.dom.value);
+            break;
+        case "checkbox":
+            value = this.dom.checked;
+            break;
+        default:
+            throw new Error('Unexpected type ' + this.type);
+        }
+        DBMS.updateProfileField(characterName, fieldName, this.type, value, Utils.processError());
     };
 
 })(this['CharacterProfile']={});
