@@ -21,20 +21,21 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     var state = {};
+    var root = ".character-profile-tab ";
     
     exports.init = function () {
-        listen(getEl("bioEditorSelector"), "change", showProfileInfoDelegate);
-        exports.content = getEl("characterProfile");
+        listen(queryEl(root + ".profile-selector"), "change", showProfileInfoDelegate);
+        exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
         PermissionInformer.getCharacterNamesArray(false, function(err, names){
             if(err) {Utils.handleError(err); return;}
-            var selector = clearEl(getEl("bioEditorSelector"));
+            var selector = clearEl(queryEl(root + ".profile-selector"));
             fillSelector(selector, names.map(remapProps4Select));
             
             var tbody = makeEl("tbody");
-            addEl(clearEl(getEl("profileContentDiv")), addEl(addClass(makeEl("table"), "table"), tbody))
+            addEl(clearEl(queryEl(root + ".profile-content-div")), addEl(addClass(makeEl("table"), "table"), tbody))
             
             state.inputItems = {};
             state.disableList = [];
@@ -89,13 +90,13 @@ See the License for the specific language governing permissions and
             if(err) {Utils.handleError(err); return;}
             updateSettings(name);
             
-            state.name = name;
-            Object.values(state.inputItems).forEach(function(item){
-                item.showFieldValue(profile);
-            });
             Utils.enable(exports.content, "isCharacterEditable", isCharacterEditable);
             state.disableList.forEach(function(item){
                 item.prop("disabled", !isCharacterEditable);
+            });
+            state.name = name;
+            Object.values(state.inputItems).forEach(function(item){
+                item.showFieldValue(profile);
             });
         });
     };
@@ -167,6 +168,9 @@ See the License for the specific language governing permissions and
     ProfileItemInput.prototype.updateFieldValue = function(event){
         var fieldName = this.name;
         var characterName = state.name;
+        if(this.multiEnumSelect && this.multiEnumSelect.prop("disabled")){
+            return; // we need to trigger change event on multiEnumSelect to update selection. It may be disabled so it has false positive call.
+        }
         
         var value;
         switch(this.type){
