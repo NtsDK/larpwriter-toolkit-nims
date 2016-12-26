@@ -10,46 +10,46 @@ describe("LocalDBMS", function(){
         });
     });
     
-    it("вернет characters-profile-item-name-is-not-specified если имя поля досье пусто", function(done){
+    it("вернет profiles-profile-item-name-is-not-specified если имя поля досье пусто", function(done){
         var type = "text";
         DBMS.createProfileItem("", type, Constants.profileFieldTypes[type].value, true, -1, function(err, message){
-            expect(err.messageId).toEqual("characters-profile-item-name-is-not-specified");
+            expect(err.messageId).toEqual("profiles-profile-item-name-is-not-specified");
             done();
         });
     });
     
-    it("вернет characters-such-name-already-used если имя поля досье уже занято", function(done){
+    it("вернет profiles-such-name-already-used если имя поля досье уже занято", function(done){
         var type = "text";
         DBMS.createProfileItem("Игрок", type, Constants.profileFieldTypes[type].value, true, -1, function(err, message){
-            expect(err.messageId).toEqual("characters-such-name-already-used");
+            expect(err.messageId).toEqual("profiles-such-name-already-used");
             done();
         });
     });
     
-    it("вернет characters-profile-item-name-cant-be-name если имя поля досье равно name", function(done){
+    it("вернет profiles-profile-item-name-cant-be-name если имя поля досье равно name", function(done){
         var type = "text";
         DBMS.createProfileItem("name", type, Constants.profileFieldTypes[type].value, true, -1, function(err, message){
-            expect(err.messageId).toEqual("characters-profile-item-name-cant-be-name");
+            expect(err.messageId).toEqual("profiles-profile-item-name-cant-be-name");
             done();
         });
     });
     
-    it("вернет characters-such-name-already-used если имя поля досье уже занято", function(done){
+    it("вернет profiles-such-name-already-used если имя поля досье уже занято", function(done){
         DBMS.renameProfileItem('Пол', "Игрок", function(err, message){
-            expect(err.messageId).toEqual("characters-such-name-already-used");
+            expect(err.messageId).toEqual("profiles-such-name-already-used");
             done();
         });
     });
     
-    it("вернет characters-not-a-number при попытке ввода не числа в числовое поле", function(done){
+    it("вернет profiles-not-a-number при попытке ввода не числа в числовое поле", function(done){
         DBMS.updateDefaultValue('Возраст', "Игрок", function(err, message){
-            expect(err.messageId).toEqual("characters-not-a-number");
+            expect(err.messageId).toEqual("profiles-not-a-number");
             done();
         });
     });
-    it("вернет characters-enum-item-cant-be-empty при попытке очистки перечислимого поля", function(done){
+    it("вернет profiles-enum-item-cant-be-empty при попытке очистки перечислимого поля", function(done){
         DBMS.updateDefaultValue('Пол', "", function(err, message){
-            expect(err.messageId).toEqual("characters-enum-item-cant-be-empty");
+            expect(err.messageId).toEqual("profiles-enum-item-cant-be-empty");
             done();
         });
     });
