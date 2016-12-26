@@ -81,7 +81,7 @@ BriefingExport.refresh = function () {
 
 BriefingExport.resolveTextTemplate = function (callback) {
     "use strict";
-    DBMS.getAllProfileSettings(function(err, profileSettings){
+    DBMS.getCharacterProfileStructure(function(err, profileSettings){
         if(err) {Utils.handleError(err); return;}
         var func = R.compose(R.join(''), R.insert(1, R.__, ["{{profileInfo-","}}\n"]), R.prop('name'));
         var filter = R.compose(R.equals(true), R.prop('doExport'));
@@ -172,7 +172,7 @@ BriefingExport.getBriefingData = function(callback){
     DBMS.getBriefingData(BriefingExport.getSelectedUsers(), function(err, briefingData){
         if(err) {Utils.handleError(err); return;}
         // some postprocessing
-        DBMS.getAllProfileSettings(function(err, profileSettings){
+        DBMS.getCharacterProfileStructure(function(err, profileSettings){
             if(err) {Utils.handleError(err); return;}
             
             var checkboxNames = profileSettings.filter(function(profileItem, i){

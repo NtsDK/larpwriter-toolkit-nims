@@ -62,7 +62,7 @@ See the License for the specific language governing permissions and
                         
             state.filterConfiguration = filterConfiguration;
             
-            var profileSettings = filterConfiguration.getAllProfileSettings();
+            var profileSettings = filterConfiguration.getCharacterProfileStructure();
             
             addEls(filterSettingsDiv, profileSettings.map(makeInput));
             

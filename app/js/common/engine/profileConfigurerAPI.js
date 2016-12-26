@@ -12,17 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
+
 (function(callback){
 
     function profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors) {
         
-        LocalDBMS.prototype.getAllProfileSettings = function(callback){
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.CharacterProfileStructure));
+        var characterProfilePath = ['CharacterProfileStructure'];
+        
+        LocalDBMS.prototype.getCharacterProfileStructure = function(callback){
+            callback(null, CommonUtils.clone(R.path(characterProfilePath, this.database)));
         };
         // profile configurer
         LocalDBMS.prototype.createProfileItem = function(name, type, value, toEnd, selectedIndex, callback) {
-            "use strict";
             var that = this;
             this.isProfileItemNameUsed(name, function(err, isUsed){
                 if(err) {callback(err);return;}
@@ -40,9 +42,9 @@ See the License for the specific language governing permissions and
                 };
                 
                 if (toEnd) {
-                    that.database.CharacterProfileStructure.push(profileItem);
+                    R.path(characterProfilePath, that.database).push(profileItem);
                 } else {
-                    that.database.CharacterProfileStructure.splice(selectedIndex, 0, profileItem);
+                    R.path(characterProfilePath, that.database).splice(selectedIndex, 0, profileItem);
                 }
                 that.ee.trigger("createProfileItem", [name, type, value]);
                 callback();
@@ -52,11 +54,10 @@ See the License for the specific language governing permissions and
         
         //profile configurer
         LocalDBMS.prototype.moveProfileItem = function(index, newIndex, callback){
-            "use strict";
             if(newIndex > index){
                 newIndex--;
             }
-            var profileSettings = this.database.CharacterProfileStructure;
+            var profileSettings = R.path(characterProfilePath, this.database);
             var tmp = profileSettings[index];
             profileSettings.splice(index, 1);
             profileSettings.splice(newIndex, 0, tmp);
@@ -64,16 +65,13 @@ See the License for the specific language governing permissions and
         };
         // profile configurer
         LocalDBMS.prototype.removeProfileItem = function(index, profileItemName, callback) {
-            "use strict";
-            CommonUtils.removeFromArrayByIndex(this.database.CharacterProfileStructure, index);
+            CommonUtils.removeFromArrayByIndex(R.path(characterProfilePath, this.database), index);
             this.ee.trigger("removeProfileItem", arguments);
             callback();
         };
         // profile configurer
         LocalDBMS.prototype.changeProfileItemType = function(profileItemName, newType, callback) {
-            "use strict";
-    
-            var profileItem = this.database.CharacterProfileStructure.filter(function(elem) {
+            var profileItem = R.path(characterProfilePath, this.database).filter(function(elem) {
                 return elem.name === profileItemName;
             })[0];
     
@@ -85,8 +83,6 @@ See the License for the specific language governing permissions and
     
         // profile configurer
         LocalDBMS.prototype.isProfileItemNameUsed = function(profileItemName, callback) {
-            "use strict";
-            
             if (profileItemName === "") {
                 callback(new Errors.ValidationError("characters-profile-item-name-is-not-specified"));
                 return;
@@ -101,11 +97,10 @@ See the License for the specific language governing permissions and
                 return profileItemName === profile.name;
             };
     
-            callback(null, this.database.CharacterProfileStructure.some(nameUsedTest));
+            callback(null, R.path(characterProfilePath, this.database).some(nameUsedTest));
         };
         // profile configurer
         LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback) {
-            "use strict";
             var that = this;
             this.isProfileItemNameUsed(newName, function(err, isUsed){
                 if(err) {callback(err);return;}
@@ -117,7 +112,7 @@ See the License for the specific language governing permissions and
                 
                 that.ee.trigger("renameProfileItem", [newName, oldName]);
 
-                that.database.CharacterProfileStructure.filter(function(elem) {
+                R.path(characterProfilePath, that.database).filter(function(elem) {
                     return elem.name === oldName;
                 })[0].name = newName;
                 callback();
@@ -126,8 +121,7 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.doExportProfileItemChange = function(profileItemName, checked, callback) {
-            'use strict';
-            var profileItem = this.database.CharacterProfileStructure.filter(function(elem) {
+            var profileItem = R.path(characterProfilePath, this.database).filter(function(elem) {
                 return elem.name === profileItemName;
             })[0];
             
@@ -137,7 +131,7 @@ See the License for the specific language governing permissions and
     
         // profile configurer
         LocalDBMS.prototype.updateDefaultValue = function(profileItemName, value, callback) {
-            var info = this.database.CharacterProfileStructure.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
+            var info = R.path(characterProfilePath, this.database).filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
     
             var newOptions, newOptionsMap, missedValues;
     

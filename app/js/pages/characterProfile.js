@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
             state.inputItems = {};
             state.disableList = [];
             
-            DBMS.getAllProfileSettings(function(err, allProfileSettings){
+            DBMS.getCharacterProfileStructure(function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
                 try {
                     addEls(tbody, allProfileSettings.map(appendInput));

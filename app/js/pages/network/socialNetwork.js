@@ -185,7 +185,7 @@ SocialNetwork.refresh = function () {
                         stories[elem.value].displayName = elem.displayName;
                     });
                     
-                    DBMS.getAllProfileSettings(function(err, profileSettings){
+                    DBMS.getCharacterProfileStructure(function(err, profileSettings){
                         if(err) {Utils.handleError(err); return;}
                         
                         DBMS.getMetaInfo(function(err, metaInfo){

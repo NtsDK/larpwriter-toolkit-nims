@@ -157,7 +157,7 @@ See the License for the specific language governing permissions and
                     if(err) {callback(err); return;}
                     that.getCharactersSummary(function(err, charactersSummary){
                         if(err) {callback(err); return;}
-                        that.getAllProfileSettings(function(err, allProfileSettings){
+                        that.getCharacterProfileStructure(function(err, allProfileSettings){
                             if(err) {callback(err); return;}
                             var info = CommonUtils.makeFilterInfo(allProfileSettings, characterOwners, profiles, charactersSummary, Constants);
                             callback(null, info);

@@ -38,7 +38,7 @@ FilterConfiguration.makeFilterConfiguration = function(callback){
     });
 };
 
-FilterConfiguration.prototype.getAllProfileSettings = function(){
+FilterConfiguration.prototype.getCharacterProfileStructure = function(){
     return this.innerProfileSettings;
 };
 

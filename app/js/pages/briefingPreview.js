@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
         clearEl(getEl("briefingCharacter"));
         clearEl(getEl("briefingContent"));
         
-        DBMS.getAllProfileSettings(function(err, loadedProfileSettings){
+        DBMS.getCharacterProfileStructure(function(err, loadedProfileSettings){
             if(err) {Utils.handleError(err); return;}
             profileSettings = loadedProfileSettings;
             PermissionInformer.getCharacterNamesArray(false, function(err, names){
