@@ -322,10 +322,10 @@ function getAttr(el, name){
     return el.getAttribute(name);
 };
 
-function setProp(el, key, value){
+var setProp = R.curry(function(el, key, value){
   el[key] = value;
   return el;
-};
+});
 
 function setProps(el, map){
   for(var key in map){
@@ -357,7 +357,7 @@ function arr2Chunks(array, chunkSize) {
   return chunks;
 };
 
-function fillSelector(sel, data){
+var fillSelector = R.curry(function(sel, data){
     data.forEach(function (item) {
         var opt = makeEl("option");
         addEl(opt, makeText(item.name));
@@ -365,7 +365,8 @@ function fillSelector(sel, data){
         if(item.selected){opt.selected = true;}
         addEl(sel, opt);
     });
-}
+    return sel;
+});
 
 function nl2array(nodeList){
     return Array.prototype.slice.call(nodeList);

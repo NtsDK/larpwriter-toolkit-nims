@@ -35,44 +35,30 @@ See the License for the specific language governing permissions and
     exports.init = function () {
         var sel = clearEl(queryEl(root+".create-entity-type-select"));
         var fillMainSel = function(){
-            fillSelector(clearEl(sel));
+            fillSelector2(clearEl(sel));
         };
         fillMainSel();
         L10n.onL10nChange(fillMainSel);
     
-        listen(queryEl(root+".create-entity-button"), "click", createProfileItem);
-        listen(queryEl(root+".move-entity-button"), "click", moveProfileItem);
-        listen(queryEl(root+".remove-entity-button"), "click", removeProfileItem);
+        listen(queryEl(root+".create-entity-button"), "click", createProfileItem(root));
+        listen(queryEl(root+".move-entity-button"), "click", moveProfileItem(root));
+        listen(queryEl(root+".remove-entity-button"), "click", removeProfileItem(root));
     
         exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
-        var positionSelectors = [];
-        
-        positionSelectors.push(queryEl(root+".create-entity-position-select"));
-        positionSelectors.push(queryEl(root+".move-entity-position-select"));
+        refreshPanel(root);
+    };
     
+    var refreshPanel = function(root){
         DBMS.getCharacterProfileStructure(function(err, allProfileSettings){
             if(err) {Utils.handleError(err); return;}
             
-            var option;
-            positionSelectors.forEach(function(sel){
-                clearEl(sel);
-                
-                var addOpt = function(text){
-                    addEl(sel, addEl(makeEl('option'), makeText(text)));
-                };
-                
-                allProfileSettings.forEach(function (elem) {
-                    addOpt(strFormat(getL10n("common-set-item-before"), [elem.name]));
-                });
-                
-                addOpt(getL10n("common-set-item-as-last"));
-                
-                sel.selectedIndex = allProfileSettings.length;
-            });
-            
+            var arr = allProfileSettings.map(R.compose(strFormat(getL10n("common-set-item-before")), R.append(R.__, []), R.prop('name')));
+            arr.push(getL10n("common-set-item-as-last"));
+            var positionSelectors = [queryEl(root+".create-entity-position-select"), queryEl(root+".move-entity-position-select")];
+            positionSelectors.map(clearEl).map(fillSelector(R.__, arr2Select(arr))).map(setProp(R.__, 'selectedIndex', allProfileSettings.length));
             
             var table = clearEl(queryEl(root+".profile-config-container"));
             
@@ -87,67 +73,61 @@ See the License for the specific language governing permissions and
                 Utils.enable(exports.content, "adminOnly", isAdmin);
             });
             
-            var selectorArr = [];
+            var selectorArr = [queryEl(root+".move-entity-select"), queryEl(root+".remove-entity-select")];
+            selectorArr.map(clearEl).map(fillSelector(R.__, arr2Select(allProfileSettings.map(R.prop('name')))))
+        });
+    }
+    
+    var createProfileItem = function (root) {
+        return function(){
+            var name = queryEl(root+".create-entity-input").value.trim();
             
-            selectorArr.push(queryEl(root+".move-entity-select"));
-            selectorArr.push(queryEl(root+".remove-entity-select"));
-            
-            selectorArr.forEach(function (selector) {
-                clearEl(selector);
-                allProfileSettings.forEach(function (elem, i) {
-                    option = makeEl("option");
-                    option.appendChild(makeText(elem.name));
-                    option.profileItemIndex = i;
-                    selector.appendChild(option);
-                });
+            validateProfileItemName(name, function(){
+                var type = queryEl(root+".create-entity-type-select").value.trim();
+                
+                if (!Constants.profileFieldTypes[type]) {
+                    Utils.alert(strFormat(getL10n("characters-unknown-profile-item-type"), [type]));
+                    return;
+                }
+                var value = Constants.profileFieldTypes[type].value;
+                
+                var positionSelector = queryEl(root+".create-entity-position-select");
+                
+                var position = positionSelector.value;
+                
+                DBMS.createProfileItem(name, type, value, position === getL10n("common-set-item-as-last"), 
+                        positionSelector.selectedIndex, Utils.processError(exports.refresh));
             });
-        });
+        }
     };
     
-    var createProfileItem = function () {
-        var name = queryEl(root+".create-entity-input").value.trim();
-    
-        validateProfileItemName(name, function(){
-            var type = queryEl(root+".create-entity-type-select").value.trim();
+    var moveProfileItem = function (root) {
+        return function(){
+            var index = queryEl(root+".move-entity-select").selectedOptions[0].index;
+            var newIndex = queryEl(root+".move-entity-position-select").selectedIndex;
             
-            if (!Constants.profileFieldTypes[type]) {
-                Utils.alert(strFormat(getL10n("characters-unknown-profile-item-type"), [type]));
-                return;
+            if (index === newIndex) {
+              Utils.alert(getL10n("characters-profile-item-positions-are-equal"));
+              return;
             }
-            var value = Constants.profileFieldTypes[type].value;
             
-            var positionSelector = queryEl(root+".create-entity-position-select");
-            
-            var position = positionSelector.value;
-            
-            DBMS.createProfileItem(name, type, value, position === getL10n("common-set-item-as-last"), 
-                    positionSelector.selectedIndex, Utils.processError(exports.refresh));
-        });
-    };
-    
-    var moveProfileItem = function () {
-        var index = queryEl(root+".move-entity-select").selectedOptions[0].profileItemIndex;
-        var newIndex = queryEl(root+".move-entity-position-select").selectedIndex;
-        
-        if (index === newIndex) {
-          Utils.alert(getL10n("characters-profile-item-positions-are-equal"));
-          return;
-        }
-        
-        DBMS.moveProfileItem(index, newIndex, Utils.processError(exports.refresh));
-    };
-    
-    var removeProfileItem = function () {
-        var selector = queryEl(root+".remove-entity-select");
-        var index = selector.selectedIndex;
-        var name = selector.value;
-    
-        if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-removing-profile-item"), [name]))) {
-            DBMS.removeProfileItem(index, name, Utils.processError(exports.refresh));
+            DBMS.moveProfileItem(index, newIndex, Utils.processError(exports.refresh));
         }
     };
     
-    var fillSelector = function (sel) {
+    var removeProfileItem = function (root) {
+        return function(){
+            var selector = queryEl(root+".remove-entity-select");
+            var index = selector.selectedIndex;
+            var name = selector.value;
+        
+            if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-removing-profile-item"), [name]))) {
+                DBMS.removeProfileItem(index, name, Utils.processError(exports.refresh));
+            }
+        }
+    };
+    
+    var fillSelector2 = function (sel) {
         var makeOption = function(value, displayName){
             return setProp(addEl(makeEl("option"), makeText(displayName)),'value', value);
         };
@@ -175,7 +155,7 @@ See the License for the specific language governing permissions and
         addColumn(input);
     
         var sel = makeEl("select"); 
-        fillSelector(sel);
+        fillSelector2(sel);
         setProps(sel, {
             value: profileSettings.type,
             info: profileSettings.name,
