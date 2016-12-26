@@ -92,7 +92,7 @@ See the License for the specific language governing permissions and
             var character = database.Characters[charName];
             var profileInfo = {};
             
-            database.ProfileSettings.forEach(function(element) {
+            database.CharacterProfileStructure.forEach(function(element) {
                 profileInfo[prefix + element.name] = String(character[element.name]).length !== 0;
             });
             return profileInfo;
@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
             var character = database.Characters[charName];
             var profileInfo = {};
     
-            database.ProfileSettings.forEach(function(element) {
+            database.CharacterProfileStructure.forEach(function(element) {
                 profileInfo[prefix + element.name] = returnSplitted ? _splitText(String(character[element.name])) : character[element.name];
             });
             return profileInfo;
@@ -112,7 +112,7 @@ See the License for the specific language governing permissions and
             var character = database.Characters[charName];
             var value, splittedText;
             var filter = R.compose(R.equals(true), R.prop('doExport'));
-            var profileInfoArray = database.ProfileSettings.filter(filter).map(function(element) {
+            var profileInfoArray = database.CharacterProfileStructure.filter(filter).map(function(element) {
                 value = character[element.name];
                 splittedText = _splitText(String(value));
                 return {

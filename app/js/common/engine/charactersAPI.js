@@ -56,7 +56,7 @@ See the License for the specific language governing permissions and
                 name : characterName
             };
     
-            this.database.ProfileSettings.forEach(function(profileSettings) {
+            this.database.CharacterProfileStructure.forEach(function(profileSettings) {
                 if (profileSettings.type === "enum") {
                     newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
                 } else {

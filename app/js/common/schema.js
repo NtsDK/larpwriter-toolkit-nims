@@ -32,11 +32,11 @@ See the License for the specific language governing permissions and
             };
     
             var Meta =  getMetaSchema();
-            var ProfileSettings =  getProfileSettingsSchema();
+            var CharacterProfileStructure =  getProfileSettingsSchema();
             var Log =  getLogSchema();
-            var Characters =  getCharactersSchema(base.ProfileSettings);
+            var Characters =  getCharactersSchema(base.CharacterProfileStructure);
             var Stories =  getStoriesSchema(base.Characters);
-            var Groups =  getGroupsSchema(base.ProfileSettings);
+            var Groups =  getGroupsSchema(base.CharacterProfileStructure);
             var InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
             var Relations = getRelationsSchema(base.Characters, schema.definitions);
             var ManagementInfo = {};
@@ -46,7 +46,7 @@ See the License for the specific language governing permissions and
     
             schema.properties = {
                 Meta : Meta,
-                ProfileSettings : ProfileSettings,
+                CharacterProfileStructure : CharacterProfileStructure,
                 Characters : Characters,
                 Stories : Stories,
                 Version : {
@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
                 ManagementInfo: ManagementInfo
             };
     
-            schema.required = ["Meta", "ProfileSettings","Version", "Characters", 
+            schema.required = ["Meta", "CharacterProfileStructure","Version", "Characters", 
                                "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
             schema.additionalProperties = false;
             
@@ -101,7 +101,7 @@ See the License for the specific language governing permissions and
         
         function getProfileSettingsSchema() {
             return {
-                "title": "ProfileSettings",
+                "title": "CharacterProfileStructure",
                 "description": "Describes character profile settings.",
                 "type": "array",
                 "items" : {

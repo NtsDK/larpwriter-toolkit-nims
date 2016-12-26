@@ -101,7 +101,7 @@ See the License for the specific language governing permissions and
         
         var checkProfileValueConsistency = function(data, callback){
             "use strict";
-            var profileItems = data.ProfileSettings;
+            var profileItems = data.CharacterProfileStructure;
             var processError = getErrorProcessor(callback)('Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}');
             
             var isInconsistent = function(charValue, type, profileItemValue){
@@ -144,7 +144,7 @@ See the License for the specific language governing permissions and
         
         var checkCharacterProfileConsistency = function(data, callback){
             "use strict";
-            var profileItems = data.ProfileSettings.map(R.prop('name'));
+            var profileItems = data.CharacterProfileStructure.map(R.prop('name'));
             var processError = getErrorProcessor(callback);
             
             R.values(data.Characters).forEach(function(character){

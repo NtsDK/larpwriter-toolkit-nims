@@ -136,9 +136,14 @@ See the License for the specific language governing permissions and
             }
             data.Version = "0.5.2u1";
         }
+        if(data.Version === "0.5.2u1"){
+            data.CharacterProfileStructure = data.ProfileSettings;
+            delete data.ProfileSettings;
+            data.Version = "0.5.3";
+        }
         
         exists(data, 'base', 'Characters');
-        exists(data, 'base', 'ProfileSettings');
+        exists(data, 'base', 'CharacterProfileStructure');
         exists(data, 'base', 'Meta');
         exists(data, 'base', 'Log');
         exists(data.Meta, 'base.Meta', 'name');

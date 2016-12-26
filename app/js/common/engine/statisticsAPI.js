@@ -96,7 +96,7 @@ See the License for the specific language governing permissions and
         var _getProfileChartData = function(database) {
             "use strict";
             
-            var profileItems = database.ProfileSettings.filter(function(value) {
+            var profileItems = database.CharacterProfileStructure.filter(function(value) {
                 return value.type !== 'string' && value.type !== 'text';
             }).map(R.pick(['name', 'type']));
             

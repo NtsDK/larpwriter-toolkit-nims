@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.getAllProfileSettings = function(callback){
             "use strict";
-            callback(null, CommonUtils.clone(this.database.ProfileSettings));
+            callback(null, CommonUtils.clone(this.database.CharacterProfileStructure));
         };
         // profile configurer
         LocalDBMS.prototype.createProfileItem = function(name, type, value, toEnd, selectedIndex, callback) {
@@ -40,9 +40,9 @@ See the License for the specific language governing permissions and
                 };
                 
                 if (toEnd) {
-                    that.database.ProfileSettings.push(profileItem);
+                    that.database.CharacterProfileStructure.push(profileItem);
                 } else {
-                    that.database.ProfileSettings.splice(selectedIndex, 0, profileItem);
+                    that.database.CharacterProfileStructure.splice(selectedIndex, 0, profileItem);
                 }
                 that.ee.trigger("createProfileItem", [name, type, value]);
                 callback();
@@ -56,7 +56,7 @@ See the License for the specific language governing permissions and
             if(newIndex > index){
                 newIndex--;
             }
-            var profileSettings = this.database.ProfileSettings;
+            var profileSettings = this.database.CharacterProfileStructure;
             var tmp = profileSettings[index];
             profileSettings.splice(index, 1);
             profileSettings.splice(newIndex, 0, tmp);
@@ -65,7 +65,7 @@ See the License for the specific language governing permissions and
         // profile configurer
         LocalDBMS.prototype.removeProfileItem = function(index, profileItemName, callback) {
             "use strict";
-            CommonUtils.removeFromArrayByIndex(this.database.ProfileSettings, index);
+            CommonUtils.removeFromArrayByIndex(this.database.CharacterProfileStructure, index);
             this.ee.trigger("removeProfileItem", arguments);
             callback();
         };
@@ -73,7 +73,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.changeProfileItemType = function(profileItemName, newType, callback) {
             "use strict";
     
-            var profileItem = this.database.ProfileSettings.filter(function(elem) {
+            var profileItem = this.database.CharacterProfileStructure.filter(function(elem) {
                 return elem.name === profileItemName;
             })[0];
     
@@ -101,7 +101,7 @@ See the License for the specific language governing permissions and
                 return profileItemName === profile.name;
             };
     
-            callback(null, this.database.ProfileSettings.some(nameUsedTest));
+            callback(null, this.database.CharacterProfileStructure.some(nameUsedTest));
         };
         // profile configurer
         LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback) {
@@ -117,7 +117,7 @@ See the License for the specific language governing permissions and
                 
                 that.ee.trigger("renameProfileItem", [newName, oldName]);
 
-                that.database.ProfileSettings.filter(function(elem) {
+                that.database.CharacterProfileStructure.filter(function(elem) {
                     return elem.name === oldName;
                 })[0].name = newName;
                 callback();
@@ -127,7 +127,7 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.doExportProfileItemChange = function(profileItemName, checked, callback) {
             'use strict';
-            var profileItem = this.database.ProfileSettings.filter(function(elem) {
+            var profileItem = this.database.CharacterProfileStructure.filter(function(elem) {
                 return elem.name === profileItemName;
             })[0];
             
@@ -137,7 +137,7 @@ See the License for the specific language governing permissions and
     
         // profile configurer
         LocalDBMS.prototype.updateDefaultValue = function(profileItemName, value, callback) {
-            var info = this.database.ProfileSettings.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
+            var info = this.database.CharacterProfileStructure.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
     
             var newOptions, newOptionsMap, missedValues;
     
