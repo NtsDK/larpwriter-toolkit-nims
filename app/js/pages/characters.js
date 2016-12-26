@@ -18,121 +18,118 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var Characters = {};
+(function(exports){
 
-Characters.init = function () {
-    "use strict";
-    var root = Characters;
-    root.views = {};
-    var nav = "charactersNavigation";
-    var content = "charactersContent";
-    var containers = {
-        root: root,
-        navigation: getEl(nav),
-        content: getEl(content)
+    var state = {};
+    var root = '#charactersDiv ';
+    
+    exports.init = function () {
+        state.views = {};
+        var nav = "charactersNavigation";
+        var content = "charactersContent";
+        var containers = {
+            root: state,
+            navigation: getEl(nav),
+            content: getEl(content)
+        };
+        Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
+        Utils.addView(containers, "character-profile-constructor", CharacterProfileConfigurer);
+    
+        listen(queryEl(root + ".create-entity-button"), "click", createProfile);
+        listen(queryEl(root + ".rename-entity-button"), "click", renameProfile);
+        listen(queryEl(root + ".remove-entity-button"), "click", removeProfile);
+    
+        exports.content = queryEl(root);
     };
-    Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
-    Utils.addView(containers, "character-profile-constructor", CharacterProfileConfigurer);
-
-    listen(queryEl("#charactersDiv .create-entity-button"), "click", Characters.createProfile);
-    listen(queryEl("#charactersDiv .rename-entity-button"), "click", Characters.renameProfile);
-    listen(queryEl("#charactersDiv .remove-entity-button"), "click", Characters.removeProfile);
-
-    Characters.content = getEl("charactersDiv");
-};
-
-Characters.refresh = function () {
-    "use strict";
-    PermissionInformer.getCharacterNamesArray(true, Utils.processError(Characters.rebuildInterface));
-};
-
-Characters.rebuildInterface = function (names) {
-    "use strict";
     
-    var data = getSelect2Data(names);
+    exports.refresh = function () {
+        PermissionInformer.getCharacterNamesArray(true, Utils.processError(rebuildInterface));
+    };
     
-    clearEl(queryEl("#charactersDiv .rename-entity-select"));
-    $("#charactersDiv .rename-entity-select").select2(data);
+    var rebuildInterface = function (names) {
+        var data = getSelect2Data(names);
+        
+        clearEl(queryEl(root + ".rename-entity-select"));
+        $(root + ".rename-entity-select").select2(data);
+        
+        clearEl(queryEl(root + ".remove-entity-select"));
+        $(root + ".remove-entity-select").select2(data);
     
-    clearEl(queryEl("#charactersDiv .remove-entity-select"));
-    $("#charactersDiv .remove-entity-select").select2(data);
-
-    Characters.currentView.refresh();
-};
-
-Characters.createProfile = function () {
-    "use strict";
-    var name = queryEl("#charactersDiv .create-entity-input").value.trim();
-
-    if (name === "") {
-        Utils.alert(getL10n("characters-character-name-is-not-specified"));
-        return;
-    }
+        state.currentView.refresh();
+    };
     
-    DBMS.isProfileNameUsed(name, function(err, isProfileNameUsed){
-        if(err) {Utils.handleError(err); return;}
-        if (isProfileNameUsed) {
-            Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [name]));
-        } else {
-            DBMS.createProfile(name, function(err){
-                if(err) {Utils.handleError(err); return;}
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    if(Characters.currentView.updateSettings){
-                        Characters.currentView.updateSettings(name);
-                    }
-                    Characters.refresh();
-                });
-            });
+    var createProfile = function () {
+        var name = queryEl(root + ".create-entity-input").value.trim();
+    
+        if (name === "") {
+            Utils.alert(getL10n("characters-character-name-is-not-specified"));
+            return;
         }
-    });
-};
-
-Characters.renameProfile = function () {
-    "use strict";
-    var fromName = queryEl("#charactersDiv .rename-entity-select").value.trim();
-    var toName = queryEl("#charactersDiv .rename-entity-input").value.trim();
-
-    if (toName === "") {
-        Utils.alert(getL10n("characters-new-character-name-is-not-specified"));
-        return;
-    }
-
-    if (fromName === toName) {
-        Utils.alert(getL10n("characters-names-are-the-same"));
-        return;
-    }
-
-    DBMS.isProfileNameUsed(toName, function(err, isProfileNameUsed){
-        if(err) {Utils.handleError(err); return;}
-        if (isProfileNameUsed) {
-            Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [toName]));
-        } else {
-            DBMS.renameProfile(fromName, toName, function(err){
-                if(err) {Utils.handleError(err); return;}
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    if(Characters.currentView.updateSettings){
-                        Characters.currentView.updateSettings(toName);
-                    }
-                    Characters.refresh();
-                });
-            });
-        }
-    });
-};
-
-Characters.removeProfile = function () {
-    "use strict";
-    var name = queryEl("#charactersDiv .remove-entity-select").value.trim();
-
-    if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-character-removing"),[name]))) {
-        DBMS.removeProfile(name, function(err){
+        
+        DBMS.isProfileNameUsed(name, function(err, isProfileNameUsed){
             if(err) {Utils.handleError(err); return;}
-            PermissionInformer.refresh(function(err){
-                if(err) {Utils.handleError(err); return;}
-                Characters.refresh();
-            });
+            if (isProfileNameUsed) {
+                Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [name]));
+            } else {
+                DBMS.createProfile(name, function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    PermissionInformer.refresh(function(err){
+                        if(err) {Utils.handleError(err); return;}
+                        if(state.currentView.updateSettings){
+                            state.currentView.updateSettings(name);
+                        }
+                        exports.refresh();
+                    });
+                });
+            }
         });
-    }
-};
+    };
+    
+    var renameProfile = function () {
+        var fromName = queryEl(root + ".rename-entity-select").value.trim();
+        var toName = queryEl(root + ".rename-entity-input").value.trim();
+    
+        if (toName === "") {
+            Utils.alert(getL10n("characters-new-character-name-is-not-specified"));
+            return;
+        }
+    
+        if (fromName === toName) {
+            Utils.alert(getL10n("characters-names-are-the-same"));
+            return;
+        }
+    
+        DBMS.isProfileNameUsed(toName, function(err, isProfileNameUsed){
+            if(err) {Utils.handleError(err); return;}
+            if (isProfileNameUsed) {
+                Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [toName]));
+            } else {
+                DBMS.renameProfile(fromName, toName, function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    PermissionInformer.refresh(function(err){
+                        if(err) {Utils.handleError(err); return;}
+                        if(state.currentView.updateSettings){
+                            state.currentView.updateSettings(toName);
+                        }
+                        exports.refresh();
+                    });
+                });
+            }
+        });
+    };
+    
+    var removeProfile = function () {
+        var name = queryEl(root + ".remove-entity-select").value.trim();
+    
+        if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-character-removing"),[name]))) {
+            DBMS.removeProfile(name, function(err){
+                if(err) {Utils.handleError(err); return;}
+                PermissionInformer.refresh(function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    exports.refresh();
+                });
+            });
+        }
+    };
+
+})(this['Characters']={});
