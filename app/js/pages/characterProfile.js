@@ -120,10 +120,10 @@ See the License for the specific language governing permissions and
         var p = value / total;
         if(p<0.5){
             p=p*2;
-            return strFormat('rgba({0},{1},{2}, 0.7)', [calc(255,255,p),calc(0,255,p),calc(0,0,p)]);
+            return strFormat('rgba({0},{1},{2}, 1)', [calc(251,255,p),calc(126,255,p),calc(129,0,p)]);
         } else {
             p=(p-0.5)*2;
-            return strFormat('rgba({0},{1},{2}, 0.7)', [calc(255,25,p),calc(255,255,p),calc(0,0,p)]);
+            return strFormat('rgba({0},{1},{2}, 1)', [calc(255,123,p),calc(255,225,p),calc(0,65,p)]);
         }
     };
     
