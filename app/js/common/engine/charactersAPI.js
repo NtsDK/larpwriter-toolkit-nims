@@ -131,8 +131,8 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         
-        function _createProfileItem(name, type, value){
-            "use strict";
+        function _createProfileItem(type, name, itemType, value){
+            if(type === 'player') return;
             var that = this;
             Object.keys(that.database.Characters).forEach(function(characterName) {
                 that.database.Characters[characterName][name] = value;
@@ -142,8 +142,8 @@ See the License for the specific language governing permissions and
         listeners.createProfileItem = listeners.createProfileItem || [];
         listeners.createProfileItem.push(_createProfileItem);
 
-        function _removeProfileItem(index, profileItemName){
-            "use strict";
+        function _removeProfileItem(type, index, profileItemName){
+            if(type === 'player') return;
             var that = this;
             Object.keys(this.database.Characters).forEach(function(characterName) {
                 delete that.database.Characters[characterName][profileItemName];
@@ -153,8 +153,8 @@ See the License for the specific language governing permissions and
         listeners.removeProfileItem = listeners.removeProfileItem || [];
         listeners.removeProfileItem.push(_removeProfileItem);
 
-        function _changeProfileItemType(profileItemName, newType){
-            "use strict";
+        function _changeProfileItemType(type, profileItemName, newType){
+            if(type === 'player') return;
             var that = this;
             Object.keys(this.database.Characters).forEach(function(characterName) {
                 that.database.Characters[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
@@ -164,8 +164,8 @@ See the License for the specific language governing permissions and
         listeners.changeProfileItemType = listeners.changeProfileItemType || [];
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
-        function _renameProfileItem(newName, oldName){
-            "use strict";
+        function _renameProfileItem(type, newName, oldName){
+            if(type === 'player') return;
             var that = this;
             Object.keys(this.database.Characters).forEach(function(characterName) {
                 var tmp = that.database.Characters[characterName][oldName];
@@ -177,8 +177,8 @@ See the License for the specific language governing permissions and
         listeners.renameProfileItem = listeners.renameProfileItem || [];
         listeners.renameProfileItem.push(_renameProfileItem);
         
-        function _replaceEnumValue(profileItemName, defaultValue, newOptionsMap){
-            "use strict";
+        function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
+            if(type === 'player') return;
             var that = this;
             Object.keys(this.database.Characters).forEach(function(characterName) {
                 var enumValue = that.database.Characters[characterName][profileItemName];
@@ -191,7 +191,8 @@ See the License for the specific language governing permissions and
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];
         listeners.replaceEnumValue.push(_replaceEnumValue);
         
-        function _replaceMultiEnumValue(profileItemName, defaultValue, newOptionsMap){
+        function _replaceMultiEnumValue(type, profileItemName, defaultValue, newOptionsMap){
+            if(type === 'player') return;
             var that = this;
             Object.keys(this.database.Characters).forEach(function(characterName) {
                 if(value !== ''){

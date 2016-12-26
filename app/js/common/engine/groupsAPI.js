@@ -167,7 +167,8 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _removeProfileItem(index, profileItemName){
+        function _removeProfileItem(type, index, profileItemName){
+            if(type === 'player') return;
             var subFilterName = 'profile-' + profileItemName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
@@ -181,14 +182,16 @@ See the License for the specific language governing permissions and
         listeners.removeProfileItem = listeners.removeProfileItem || [];
         listeners.removeProfileItem.push(_removeProfileItem);
 
-        function _changeProfileItemType(profileItemName, newType){
+        function _changeProfileItemType(type, profileItemName, newType){
+            if(type === 'player') return;
             _removeProfileItem.apply(this, [-1, profileItemName]);
         };
         
         listeners.changeProfileItemType = listeners.changeProfileItemType || [];
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
-        function _renameProfileItem(newName, oldName){
+        function _renameProfileItem(type, newName, oldName){
+            if(type === 'player') return;
             var subFilterName = 'profile-' + oldName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
@@ -205,7 +208,8 @@ See the License for the specific language governing permissions and
         listeners.renameProfileItem = listeners.renameProfileItem || [];
         listeners.renameProfileItem.push(_renameProfileItem);
         
-        function _replaceEnumValue(profileItemName, defaultValue, newOptionsMap){
+        function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
+            if(type === 'player') return;
             var subFilterName = 'profile-' + profileItemName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {

@@ -33,6 +33,7 @@ See the License for the specific language governing permissions and
     
             var Meta =  getMetaSchema();
             var CharacterProfileStructure =  getProfileSettingsSchema();
+            var PlayerProfileStructure =  CharacterProfileStructure;
             var Log =  getLogSchema();
             var Characters =  getCharactersSchema(base.CharacterProfileStructure);
             var Stories =  getStoriesSchema(base.Characters);
@@ -47,6 +48,7 @@ See the License for the specific language governing permissions and
             schema.properties = {
                 Meta : Meta,
                 CharacterProfileStructure : CharacterProfileStructure,
+                PlayerProfileStructure : PlayerProfileStructure,
                 Characters : Characters,
                 Stories : Stories,
                 Version : {
@@ -60,7 +62,7 @@ See the License for the specific language governing permissions and
                 ManagementInfo: ManagementInfo
             };
     
-            schema.required = ["Meta", "CharacterProfileStructure","Version", "Characters", 
+            schema.required = ["Meta", "CharacterProfileStructure", "PlayerProfileStructure", "Version", "Characters", 
                                "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
             schema.additionalProperties = false;
             

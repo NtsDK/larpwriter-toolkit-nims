@@ -139,11 +139,13 @@ See the License for the specific language governing permissions and
         if(data.Version === "0.5.2u1"){
             data.CharacterProfileStructure = data.ProfileSettings;
             delete data.ProfileSettings;
+            data.PlayerProfileStructure = [];
             data.Version = "0.5.3";
         }
         
         exists(data, 'base', 'Characters');
         exists(data, 'base', 'CharacterProfileStructure');
+        exists(data, 'base', 'PlayerProfileStructure');
         exists(data, 'base', 'Meta');
         exists(data, 'base', 'Log');
         exists(data.Meta, 'base.Meta', 'name');

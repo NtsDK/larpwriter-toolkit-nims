@@ -31,28 +31,37 @@ See the License for the specific language governing permissions and
 (function(exports){
     
     var root = ".character-profile-configurer-tab ";
+    var characterPanel = root + ".character-profile-panel ";
+    var playerPanel = root + ".player-profile-panel ";
 
     exports.init = function () {
-        var sel = clearEl(queryEl(root+".create-entity-type-select"));
-        var fillMainSel = function(){
-            fillSelector2(clearEl(sel));
-        };
+        var sel = clearEl(queryEl(characterPanel+".create-entity-type-select"));
+        var fillMainSel = function(){fillSelector2(clearEl(sel));};
         fillMainSel();
         L10n.onL10nChange(fillMainSel);
+        var sel2 = clearEl(queryEl(playerPanel+".create-entity-type-select"));
+        var fillMainSel2 = function(){fillSelector2(clearEl(sel2));};
+        fillMainSel2();
+        L10n.onL10nChange(fillMainSel2);
     
-        listen(queryEl(root+".create-entity-button"), "click", createProfileItem(root));
-        listen(queryEl(root+".move-entity-button"), "click", moveProfileItem(root));
-        listen(queryEl(root+".remove-entity-button"), "click", removeProfileItem(root));
+        listen(queryEl(characterPanel+".create-entity-button"), "click", createProfileItem('character', characterPanel));
+        listen(queryEl(characterPanel+".move-entity-button"), "click", moveProfileItem('character', characterPanel));
+        listen(queryEl(characterPanel+".remove-entity-button"), "click", removeProfileItem('character', characterPanel));
+        
+        listen(queryEl(playerPanel+".create-entity-button"), "click", createProfileItem('player', playerPanel));
+        listen(queryEl(playerPanel+".move-entity-button"), "click", moveProfileItem('player', playerPanel));
+        listen(queryEl(playerPanel+".remove-entity-button"), "click", removeProfileItem('player', playerPanel));
     
         exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
-        refreshPanel(root);
+        refreshPanel('character', characterPanel);
+        refreshPanel('player', playerPanel);
     };
     
-    var refreshPanel = function(root){
-        DBMS.getCharacterProfileStructure(function(err, allProfileSettings){
+    var refreshPanel = function(type, root){
+        DBMS.getProfileStructure(type,function(err, allProfileSettings){
             if(err) {Utils.handleError(err); return;}
             
             var arr = allProfileSettings.map(R.compose(strFormat(getL10n("common-set-item-before")), R.append(R.__, []), R.prop('name')));
@@ -63,7 +72,7 @@ See the License for the specific language governing permissions and
             var table = clearEl(queryEl(root+".profile-config-container"));
             
             try {
-                addEls(table, allProfileSettings.map(getInput));
+                addEls(table, allProfileSettings.map(getInput(type)));
             } catch (err) {
                 Utils.handleError(err); return;
             }
@@ -78,30 +87,30 @@ See the License for the specific language governing permissions and
         });
     }
     
-    var createProfileItem = function (root) {
+    var createProfileItem = function (type, root) {
         return function(){
             var name = queryEl(root+".create-entity-input").value.trim();
             
-            validateProfileItemName(name, function(){
-                var type = queryEl(root+".create-entity-type-select").value.trim();
+            validateProfileItemName(type, name, function(){
+                var itemType = queryEl(root+".create-entity-type-select").value.trim();
                 
-                if (!Constants.profileFieldTypes[type]) {
-                    Utils.alert(strFormat(getL10n("characters-unknown-profile-item-type"), [type]));
+                if (!Constants.profileFieldTypes[itemType]) {
+                    Utils.alert(strFormat(getL10n("characters-unknown-profile-item-type"), [itemType]));
                     return;
                 }
-                var value = Constants.profileFieldTypes[type].value;
+                var value = Constants.profileFieldTypes[itemType].value;
                 
                 var positionSelector = queryEl(root+".create-entity-position-select");
                 
                 var position = positionSelector.value;
                 
-                DBMS.createProfileItem(name, type, value, position === getL10n("common-set-item-as-last"), 
+                DBMS.createProfileItem(type, name, itemType, value, position === getL10n("common-set-item-as-last"), 
                         positionSelector.selectedIndex, Utils.processError(exports.refresh));
             });
         }
     };
     
-    var moveProfileItem = function (root) {
+    var moveProfileItem = function (type, root) {
         return function(){
             var index = queryEl(root+".move-entity-select").selectedOptions[0].index;
             var newIndex = queryEl(root+".move-entity-position-select").selectedIndex;
@@ -111,32 +120,29 @@ See the License for the specific language governing permissions and
               return;
             }
             
-            DBMS.moveProfileItem(index, newIndex, Utils.processError(exports.refresh));
+            DBMS.moveProfileItem(type, index, newIndex, Utils.processError(exports.refresh));
         }
     };
     
-    var removeProfileItem = function (root) {
+    var removeProfileItem = function (type, root) {
         return function(){
             var selector = queryEl(root+".remove-entity-select");
             var index = selector.selectedIndex;
             var name = selector.value;
         
             if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-removing-profile-item"), [name]))) {
-                DBMS.removeProfileItem(index, name, Utils.processError(exports.refresh));
+                DBMS.removeProfileItem(type, index, name, Utils.processError(exports.refresh));
             }
         }
     };
     
     var fillSelector2 = function (sel) {
-        var makeOption = function(value, displayName){
-            return setProp(addEl(makeEl("option"), makeText(displayName)),'value', value);
-        };
-        R.values(Constants.profileFieldTypes).forEach(function (value) {
-            addEl(sel, makeOption(value.name, constL10n(value.name)))
-        });
+        fillSelector(sel, R.keys(Constants.profileFieldTypes).map(function(name){
+            return {value: name,name: constL10n(name)};
+        }));
     };
     
-    var getInput = function (profileSettings, index) { // throws InternalError
+    var getInput = R.curry(function (type, profileSettings, index) { // throws InternalError
         index++;
         var tr = makeEl("tr");
         
@@ -149,7 +155,7 @@ See the License for the specific language governing permissions and
             value: profileSettings.name,
             info: profileSettings.name
         });
-        listen(input, "change", renameProfileItem);
+        listen(input, "change", renameProfileItem(type));
         addClass(input,"itemNameInput");
         addClass(input, "adminOnly");
         addColumn(input);
@@ -161,7 +167,7 @@ See the License for the specific language governing permissions and
             info: profileSettings.name,
             oldType: profileSettings.type
         });
-        listen(sel, "change", changeProfileItemType);
+        listen(sel, "change", changeProfileItemType(type));
         addClass(sel, "adminOnly");
         addColumn(sel);
     
@@ -197,7 +203,7 @@ See the License for the specific language governing permissions and
         });
         addClass(input, "adminOnly");
         addClass(input, "profile-configurer-" + profileSettings.type);
-        listen(input, "change", updateDefaultValue);
+        listen(input, "change", updateDefaultValue(type));
         addColumn(input);
         
         var input = setProps(makeEl("input"), {
@@ -205,85 +211,91 @@ See the License for the specific language governing permissions and
             info: profileSettings.name,
             type: "checkbox"
         });
-        listen(input, "change", doExportChange);
+        listen(input, "change", doExportChange(type));
         addClass(input, "adminOnly");
         addColumn(input);
         
         return tr;
-    };
+    });
     
-    var updateDefaultValue = function (event) {
-        var name = event.target.info;
-        var type = event.target.infoType;
-        var oldValue = event.target.oldValue;
-        
-        var value = type === 'checkbox' ? event.target.checked : event.target.value;
-        
-        var newOptions, missedValues, newValue;
-        
-        switch (type) {
-        case "text":
-        case "string":
-        case "checkbox":
-            DBMS.updateDefaultValue(name, value, Utils.processError());
-            break;
-        case "number":
-            if (isNaN(value)) {
-                Utils.alert(getL10n("characters-not-a-number"));
-                event.target.value = oldValue;
-                return;
-            }
-            DBMS.updateDefaultValue(name, Number(value), Utils.processError());
-            break;
-        case "multiEnum":
-        case "enum":
-            if (value === "" && type === "enum") {
-                Utils.alert(getL10n("characters-enum-item-cant-be-empty"));
-                event.target.value = oldValue;
-                return;
-            }
-            newOptions = value.split(",").map(R.trim);
-            missedValues = oldValue.trim() === '' ? [] : R.difference(oldValue.split(","), newOptions);
+    var updateDefaultValue = function (type) {
+        return function(event){
+            var name = event.target.info;
+            var itemType = event.target.infoType;
+            var oldValue = event.target.oldValue;
             
-            var updateEnum = function(){
-                newValue = newOptions.join(",");
-                event.target.value = newValue;
-                event.target.oldValue = newValue;
-                DBMS.updateDefaultValue(name, newValue, Utils.processError());
-            };
+            var value = itemType === 'checkbox' ? event.target.checked : event.target.value;
             
-            if (missedValues.length !== 0) {
-                if (Utils.confirm(strFormat(getL10n("characters-new-enum-values-remove-some-old-values"),[missedValues.join(",")]))) {
-                    updateEnum();
-                } else {
+            var newOptions, missedValues, newValue;
+            
+            switch (itemType) {
+            case "text":
+            case "string":
+            case "checkbox":
+                DBMS.updateDefaultValue(type, name, value, Utils.processError());
+                break;
+            case "number":
+                if (isNaN(value)) {
+                    Utils.alert(getL10n("characters-not-a-number"));
                     event.target.value = oldValue;
+                    return;
                 }
-            } else {
-                updateEnum();
+                DBMS.updateDefaultValue(type, name, Number(value), Utils.processError());
+                break;
+            case "multiEnum":
+            case "enum":
+                if (value === "" && itemType === "enum") {
+                    Utils.alert(getL10n("characters-enum-item-cant-be-empty"));
+                    event.target.value = oldValue;
+                    return;
+                }
+                newOptions = value.split(",").map(R.trim);
+                missedValues = oldValue.trim() === '' ? [] : R.difference(oldValue.split(","), newOptions);
+                
+                var updateEnum = function(){
+                    newValue = newOptions.join(",");
+                    event.target.value = newValue;
+                    event.target.oldValue = newValue;
+                    DBMS.updateDefaultValue(type, name, newValue, Utils.processError());
+                };
+                
+                if (missedValues.length !== 0) {
+                    if (Utils.confirm(strFormat(getL10n("characters-new-enum-values-remove-some-old-values"),[missedValues.join(",")]))) {
+                        updateEnum();
+                    } else {
+                        event.target.value = oldValue;
+                    }
+                } else {
+                    updateEnum();
+                }
+                break;
+            default:
+                Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]))
+                return;
             }
-            break;
-        default:
-            Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [type]))
-            return;
         }
     };
     
-    var doExportChange = function (event) {
-        DBMS.doExportProfileItemChange(event.target.info, event.target.checked, Utils.processError());
+    var doExportChange = function (type) {
+        return function(event){
+            DBMS.doExportProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
+        }
     };
     
-    var renameProfileItem = function (event) {
-        var newName = event.target.value.trim();
-        var oldName = event.target.info;
-    
-        validateProfileItemName(newName, function(){
-            DBMS.renameProfileItem(newName, oldName, Utils.processError(exports.refresh));
-        }, function(){
-            event.target.value = event.target.info;
-        });
+    var renameProfileItem = function (type) {
+        return function(event){
+            var newName = event.target.value.trim();
+            var oldName = event.target.info;
+            
+            validateProfileItemName(type, newName, function(){
+                DBMS.renameProfileItem(type, newName, oldName, Utils.processError(exports.refresh));
+            }, function(){
+                event.target.value = event.target.info;
+            });
+        }
     };
     
-    var validateProfileItemName = function (name, success, failure) {
+    var validateProfileItemName = function (type, name, success, failure) {
         if (name === "") {
             Utils.alert(getL10n("characters-profile-item-name-is-not-specified"));
             if(failure) failure();
@@ -301,7 +313,7 @@ See the License for the specific language governing permissions and
             if(failure) failure();
         };
         
-        DBMS.isProfileItemNameUsed(name, function(err, isUsed){
+        DBMS.isProfileItemNameUsed(type, name, function(err, isUsed){
             if(err) {Utils.handleError(err); return;}
             if(isUsed){
                 tmpFailure();
@@ -311,13 +323,15 @@ See the License for the specific language governing permissions and
         });
     };
     
-    var changeProfileItemType = function (event) {
-        if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-changing-profile-item-type"), [event.target.info]))) {
-            var newType = event.target.value;
-            var name = event.target.info;
-            DBMS.changeProfileItemType(name, newType, Utils.processError(exports.refresh));
-        } else {
-            event.target.value = event.target.oldType;
+    var changeProfileItemType = function (type) {
+        return function(event){
+            if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-changing-profile-item-type"), [event.target.info]))) {
+                var newType = event.target.value;
+                var name = event.target.info;
+                DBMS.changeProfileItemType(type, name, newType, Utils.processError(exports.refresh));
+            } else {
+                event.target.value = event.target.oldType;
+            }
         }
     };
 

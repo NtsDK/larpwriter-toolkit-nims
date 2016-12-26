@@ -19,14 +19,24 @@ See the License for the specific language governing permissions and
     function profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors) {
         
         var characterProfilePath = ['CharacterProfileStructure'];
+        var playerProfilePath = ['PlayerProfileStructure'];
+        
+        function getPath(type){
+            if(type === 'character') return characterProfilePath;
+            if(type === 'player') return playerProfilePath;
+            return null;
+        }
         
         LocalDBMS.prototype.getCharacterProfileStructure = function(callback){
-            callback(null, CommonUtils.clone(R.path(characterProfilePath, this.database)));
+            this.getProfileStructure('character', callback);
+        };
+        LocalDBMS.prototype.getProfileStructure = function(type, callback){
+            callback(null, CommonUtils.clone(R.path(getPath(type), this.database)));
         };
         // profile configurer
-        LocalDBMS.prototype.createProfileItem = function(name, type, value, toEnd, selectedIndex, callback) {
+        LocalDBMS.prototype.createProfileItem = function(type, name, itemType, value, toEnd, selectedIndex, callback) {
             var that = this;
-            this.isProfileItemNameUsed(name, function(err, isUsed){
+            this.isProfileItemNameUsed(type, name, function(err, isUsed){
                 if(err) {callback(err);return;}
                 
                 if(isUsed){
@@ -36,42 +46,42 @@ See the License for the specific language governing permissions and
                 
                 var profileItem = {
                     name : name,
-                    type : type,
+                    type : itemType,
                     value : value,
                     doExport : true
                 };
                 
                 if (toEnd) {
-                    R.path(characterProfilePath, that.database).push(profileItem);
+                    R.path(getPath(type), that.database).push(profileItem);
                 } else {
-                    R.path(characterProfilePath, that.database).splice(selectedIndex, 0, profileItem);
+                    R.path(getPath(type), that.database).splice(selectedIndex, 0, profileItem);
                 }
-                that.ee.trigger("createProfileItem", [name, type, value]);
+                that.ee.trigger("createProfileItem", [type, name, itemType, value]);
                 callback();
             });
             
         };
         
         //profile configurer
-        LocalDBMS.prototype.moveProfileItem = function(index, newIndex, callback){
+        LocalDBMS.prototype.moveProfileItem = function(type, index, newIndex, callback){
             if(newIndex > index){
                 newIndex--;
             }
-            var profileSettings = R.path(characterProfilePath, this.database);
+            var profileSettings = R.path(getPath(type), this.database);
             var tmp = profileSettings[index];
             profileSettings.splice(index, 1);
             profileSettings.splice(newIndex, 0, tmp);
             callback();
         };
         // profile configurer
-        LocalDBMS.prototype.removeProfileItem = function(index, profileItemName, callback) {
-            CommonUtils.removeFromArrayByIndex(R.path(characterProfilePath, this.database), index);
+        LocalDBMS.prototype.removeProfileItem = function(type, index, profileItemName, callback) {
+            CommonUtils.removeFromArrayByIndex(R.path(getPath(type), this.database), index);
             this.ee.trigger("removeProfileItem", arguments);
             callback();
         };
         // profile configurer
-        LocalDBMS.prototype.changeProfileItemType = function(profileItemName, newType, callback) {
-            var profileItem = R.path(characterProfilePath, this.database).filter(function(elem) {
+        LocalDBMS.prototype.changeProfileItemType = function(type, profileItemName, newType, callback) {
+            var profileItem = R.path(getPath(type), this.database).filter(function(elem) {
                 return elem.name === profileItemName;
             })[0];
     
@@ -82,7 +92,7 @@ See the License for the specific language governing permissions and
         };
     
         // profile configurer
-        LocalDBMS.prototype.isProfileItemNameUsed = function(profileItemName, callback) {
+        LocalDBMS.prototype.isProfileItemNameUsed = function(type, profileItemName, callback) {
             if (profileItemName === "") {
                 callback(new Errors.ValidationError("characters-profile-item-name-is-not-specified"));
                 return;
@@ -97,12 +107,12 @@ See the License for the specific language governing permissions and
                 return profileItemName === profile.name;
             };
     
-            callback(null, R.path(characterProfilePath, this.database).some(nameUsedTest));
+            callback(null, R.path(getPath(type), this.database).some(nameUsedTest));
         };
         // profile configurer
-        LocalDBMS.prototype.renameProfileItem = function(newName, oldName, callback) {
+        LocalDBMS.prototype.renameProfileItem = function(type, newName, oldName, callback) {
             var that = this;
-            this.isProfileItemNameUsed(newName, function(err, isUsed){
+            this.isProfileItemNameUsed(type, newName, function(err, isUsed){
                 if(err) {callback(err);return;}
                 
                 if(isUsed){
@@ -110,9 +120,9 @@ See the License for the specific language governing permissions and
                     return;
                 }
                 
-                that.ee.trigger("renameProfileItem", [newName, oldName]);
+                that.ee.trigger("renameProfileItem", [type, newName, oldName]);
 
-                R.path(characterProfilePath, that.database).filter(function(elem) {
+                R.path(getPath(type), that.database).filter(function(elem) {
                     return elem.name === oldName;
                 })[0].name = newName;
                 callback();
@@ -120,8 +130,8 @@ See the License for the specific language governing permissions and
             
         };
         
-        LocalDBMS.prototype.doExportProfileItemChange = function(profileItemName, checked, callback) {
-            var profileItem = R.path(characterProfilePath, this.database).filter(function(elem) {
+        LocalDBMS.prototype.doExportProfileItemChange = function(type, profileItemName, checked, callback) {
+            var profileItem = R.path(getPath(type), this.database).filter(function(elem) {
                 return elem.name === profileItemName;
             })[0];
             
@@ -130,8 +140,8 @@ See the License for the specific language governing permissions and
         };
     
         // profile configurer
-        LocalDBMS.prototype.updateDefaultValue = function(profileItemName, value, callback) {
-            var info = R.path(characterProfilePath, this.database).filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
+        LocalDBMS.prototype.updateDefaultValue = function(type, profileItemName, value, callback) {
+            var info = R.path(getPath(type), this.database).filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
     
             var newOptions, newOptionsMap, missedValues;
     
@@ -159,7 +169,7 @@ See the License for the specific language governing permissions and
                 newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
     
                 if (missedValues.length !== 0) {
-                    this.ee.trigger(info.type === 'enum' ? "replaceEnumValue" : "replaceMultiEnumValue", [profileItemName, newOptions[0], newOptionsMap]);
+                    this.ee.trigger(info.type === 'enum' ? "replaceEnumValue" : "replaceMultiEnumValue", [type, profileItemName, newOptions[0], newOptionsMap]);
                 }
     
                 info.value = newOptions.join(",");
