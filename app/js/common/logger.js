@@ -46,9 +46,9 @@ See the License for the specific language governing permissions and
                     return args[0] !== "description";
                 }
             },
-            "createCharacter" : {},
-            "renameCharacter" : {},
-            "removeCharacter" : {},
+            "createProfile" : {},
+            "renameProfile" : {},
+            "removeProfile" : {},
             
             "createProfileItem" : {},
             "renameProfileItem" : {},

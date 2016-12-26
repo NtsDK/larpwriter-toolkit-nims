@@ -20,13 +20,7 @@ See the License for the specific language governing permissions and
 
 (function(exports) {
     
-    var exists = function(data, prefix, key){
-        console.log(prefix + '.' + key + ': ' + (data[key] !== undefined ? "OK" : "undefined"));
-    };
-    
     exports.migrate = function(data) {
-        exists(data, 'base', 'Stories');
-        
         if (!data.Version) {
 
             data.Settings = {};
@@ -140,19 +134,9 @@ See the License for the specific language governing permissions and
             data.CharacterProfileStructure = data.ProfileSettings;
             delete data.ProfileSettings;
             data.PlayerProfileStructure = [];
+            data.Players = {};
             data.Version = "0.5.3";
         }
-        
-        exists(data, 'base', 'Characters');
-        exists(data, 'base', 'CharacterProfileStructure');
-        exists(data, 'base', 'PlayerProfileStructure');
-        exists(data, 'base', 'Meta');
-        exists(data, 'base', 'Log');
-        exists(data.Meta, 'base.Meta', 'name');
-        exists(data.Meta, 'base.Meta', 'date');
-        exists(data.Meta, 'base.Meta', 'preGameDate');
-        exists(data.Meta, 'base.Meta', 'description');
-        exists(data.Meta, 'base.Meta', 'saveTime');
         
         return data;
     };

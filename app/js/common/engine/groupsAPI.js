@@ -153,7 +153,7 @@ See the License for the specific language governing permissions and
                 } else {
                     characterOwners = R.zipObj(characterOwners, R.repeat('user', characterOwners.length));
                 }
-                that.getAllProfiles(function(err, profiles){
+                that.getAllCharacterProfiles(function(err, profiles){
                     if(err) {callback(err); return;}
                     that.getCharactersSummary(function(err, charactersSummary){
                         if(err) {callback(err); return;}

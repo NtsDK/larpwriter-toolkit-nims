@@ -118,8 +118,8 @@ See the License for the specific language governing permissions and
             }
         };
         
-        listeners.renameCharacter = listeners.renameCharacter || [];
-        listeners.renameCharacter.push(_renameCharacterInStories);
+        listeners.renameProfile = listeners.renameProfile || [];
+        listeners.renameProfile.push(_renameCharacterInStories);
         
         var _removeCharacterFromStories = function(characterName){
             "use strict";
@@ -140,8 +140,8 @@ See the License for the specific language governing permissions and
             }
         };
         
-        listeners.removeCharacter = listeners.removeCharacter || [];
-        listeners.removeCharacter.push(_removeCharacterFromStories);
+        listeners.removeProfile = listeners.removeProfile || [];
+        listeners.removeProfile.push(_removeCharacterFromStories);
     
         // story characters
         LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory, callback){

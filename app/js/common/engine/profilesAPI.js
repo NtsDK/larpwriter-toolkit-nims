@@ -18,30 +18,44 @@ See the License for the specific language governing permissions and
 
     function profilesAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
         
+        var characterProfilePath = ['Characters'];
+        var playerProfilePath = ['Players'];
+        
+        function getPath(type){
+            if(type === 'character') return characterProfilePath;
+            if(type === 'player') return playerProfilePath;
+            return null;
+        }
+        
         LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
-            "use strict";
-            callback(null, Object.keys(this.database.Characters).sort(CommonUtils.charOrdA));
+            this.getProfileNamesArray('character', callback);
+        };
+        
+        LocalDBMS.prototype.getProfileNamesArray = function(type, callback) {
+            callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CommonUtils.charOrdA));
         };
         
         // profile, preview
-        LocalDBMS.prototype.getProfile = function(name, callback) {
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.Characters[name]));
+        LocalDBMS.prototype.getCharacterProfile = function(name, callback) {
+            this.getProfile('character', name, callback);
+        };
+        LocalDBMS.prototype.getProfile = function(type, name, callback) {
+            callback(null, CommonUtils.clone(R.path(getPath(type), this.database)[name]));
         };
         // social network, character filter
-        LocalDBMS.prototype.getAllProfiles = function(callback) {
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.Characters));
+        LocalDBMS.prototype.getAllCharacterProfiles = function(callback) {
+            this.getAllProfiles('character', callback);
+        };
+        LocalDBMS.prototype.getAllProfiles = function(type, callback) {
+            callback(null, CommonUtils.clone(R.path(getPath(type), this.database)));
         };
         
         // characters
-        LocalDBMS.prototype.isCharacterNameUsed = function(characterName, callback) {
-            "use strict";
+        LocalDBMS.prototype.isProfileNameUsed = function(characterName, callback) {
             callback(null, this.database.Characters[characterName] !== undefined);
         };
         // characters
-        LocalDBMS.prototype.createCharacter = function(characterName, callback) {
-            "use strict";
+        LocalDBMS.prototype.createProfile = function(characterName, callback) {
             if(characterName === ""){
                 callback(new Errors.ValidationError("characters-character-name-is-not-specified"));
                 return;
@@ -65,12 +79,11 @@ See the License for the specific language governing permissions and
             });
     
             this.database.Characters[characterName] = newCharacter;
-            this.ee.trigger("createCharacter", arguments);
+            this.ee.trigger("createProfile", arguments);
             if(callback) callback();
         };
         // characters
-        LocalDBMS.prototype.renameCharacter = function(fromName, toName, callback) {
-            "use strict";
+        LocalDBMS.prototype.renameProfile = function(fromName, toName, callback) {
             if (toName === "") {
                 callback(new Errors.ValidationError("characters-new-character-name-is-not-specified"));
                 return;
@@ -91,22 +104,20 @@ See the License for the specific language governing permissions and
             this.database.Characters[toName] = data;
             delete this.database.Characters[fromName];
             
-            this.ee.trigger("renameCharacter", arguments);
+            this.ee.trigger("renameProfile", arguments);
     
             if(callback) callback();
         };
     
         // characters
-        LocalDBMS.prototype.removeCharacter = function(characterName, callback) {
-            "use strict";
+        LocalDBMS.prototype.removeProfile = function(characterName, callback) {
             delete this.database.Characters[characterName];
-            this.ee.trigger("removeCharacter", arguments);
+            this.ee.trigger("removeProfile", arguments);
             if(callback) callback();
         };
     
         // profile
         LocalDBMS.prototype.updateProfileField = function(characterName, fieldName, type, value, callback) {
-            "use strict";
             var profileInfo = this.database.Characters[characterName];
             switch (type) {
             case "text":

@@ -115,7 +115,7 @@ See the License for the specific language governing permissions and
     }, {
         name: 'profile',
         load: function(data, callback){
-            DBMS.getProfile(data.characterName, function(err, profile){
+            DBMS.getCharacterProfile(data.characterName, function(err, profile){
                 if(err) {Utils.handleError(err); return;}
                 data.profile = profile;
                 callback();
@@ -153,7 +153,7 @@ See the License for the specific language governing permissions and
     }, {
         name: 'relations',
         load: function(data, callback){
-            DBMS.getAllProfiles(function(err, profiles){
+            DBMS.getAllCharacterProfiles(function(err, profiles){
                 if(err) {Utils.handleError(err); return;}
                 DBMS.getRelationsSummary(data.characterName, function(err, relationsSummary){
                     if(err) {Utils.handleError(err); return;}

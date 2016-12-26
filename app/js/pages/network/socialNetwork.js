@@ -169,7 +169,7 @@ SocialNetwork.refresh = function () {
         PermissionInformer.getStoryNamesArray(false, function(err, storyNames){
             if(err) {Utils.handleError(err); return;}
         
-            DBMS.getAllProfiles(function(err, profiles){
+            DBMS.getAllCharacterProfiles(function(err, profiles){
                 if(err) {Utils.handleError(err); return;}
                 SocialNetwork.Characters = profiles;
                 

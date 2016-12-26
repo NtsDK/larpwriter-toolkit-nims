@@ -67,7 +67,7 @@ See the License for the specific language governing permissions and
                 settings["CharacterProfile"].characterName = name;
                 characterName = name;
             }
-            DBMS.getProfile(characterName, showProfileInfoCallback);
+            DBMS.getCharacterProfile(characterName, showProfileInfoCallback);
             $(root + ".profile-selector").select2().val(characterName).trigger('change');
         }
     };
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
     
     var showProfileInfoDelegate = function (event) {
         var name = event.target.value.trim();
-        DBMS.getProfile(name, showProfileInfoCallback);
+        DBMS.getCharacterProfile(name, showProfileInfoCallback);
     };
     
     var showProfileInfoCallback = function (err, profile) {

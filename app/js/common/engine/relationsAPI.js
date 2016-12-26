@@ -95,8 +95,8 @@ See the License for the specific language governing permissions and
             });
         };
         
-        listeners.renameCharacter = listeners.renameCharacter || [];
-        listeners.renameCharacter.push(_renameCharacter);
+        listeners.renameProfile = listeners.renameProfile || [];
+        listeners.renameProfile.push(_renameCharacter);
         
         var _removeCharacter = function(characterName){
             var relData = R.path(relationsPath, this.database);
@@ -110,8 +110,8 @@ See the License for the specific language governing permissions and
             });
         };
         
-        listeners.removeCharacter = listeners.removeCharacter || [];
-        listeners.removeCharacter.push(_removeCharacter);
+        listeners.removeProfile = listeners.removeProfile || [];
+        listeners.removeProfile.push(_removeCharacter);
         
     };
     
