@@ -123,7 +123,7 @@ function makeRemoteDBMS(LocalDBMS){
         this.Settings = {
                 "BriefingPreview" : {},
                 "Stories" : {},
-                "CharacterProfile" : {}
+                "ProfileEditor" : {}
         };
     };
     

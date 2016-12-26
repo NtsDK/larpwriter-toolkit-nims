@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
                 if(err) {callback(err);return;}
                 
                 if(isUsed){
-                    callback(new Errors.ValidationError("characters-such-name-already-used"));
+                    callback(new Errors.ValidationError("profiles-such-name-already-used"));
                     return;
                 }
                 
@@ -94,12 +94,12 @@ See the License for the specific language governing permissions and
         // profile configurer
         LocalDBMS.prototype.isProfileItemNameUsed = function(type, profileItemName, callback) {
             if (profileItemName === "") {
-                callback(new Errors.ValidationError("characters-profile-item-name-is-not-specified"));
+                callback(new Errors.ValidationError("profiles-profile-item-name-is-not-specified"));
                 return;
             }
             
             if (profileItemName === "name") {
-                callback(new Errors.ValidationError("characters-profile-item-name-cant-be-name"));
+                callback(new Errors.ValidationError("profiles-profile-item-name-cant-be-name"));
                 return;
             }
             
@@ -116,7 +116,7 @@ See the License for the specific language governing permissions and
                 if(err) {callback(err);return;}
                 
                 if(isUsed){
-                    callback(new Errors.ValidationError("characters-such-name-already-used"));
+                    callback(new Errors.ValidationError("profiles-such-name-already-used"));
                     return;
                 }
                 
@@ -153,7 +153,7 @@ See the License for the specific language governing permissions and
                 break;
             case "number":
                 if (isNaN(value)) {
-                    callback(new Errors.ValidationError("characters-not-a-number"));
+                    callback(new Errors.ValidationError("profiles-not-a-number"));
                     return;
                 }
                 info.value = Number(value);
@@ -161,7 +161,7 @@ See the License for the specific language governing permissions and
             case "enum":
             case "multiEnum":
                 if (value === "" && info.type === 'enum') {
-                    callback(new Errors.ValidationError("characters-enum-item-cant-be-empty"));
+                    callback(new Errors.ValidationError("profiles-enum-item-cant-be-empty"));
                     return;
                 }
                 newOptions = value.split(",").map(R.trim);

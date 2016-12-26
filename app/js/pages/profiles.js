@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils, CharacterProfile, CharacterProfileConfigurer, DBMS
+ Utils, ProfileEditor, ProfileConfigurer, DBMS
  */
 
 "use strict";
@@ -32,8 +32,8 @@ See the License for the specific language governing permissions and
             navigation: getEl(nav),
             content: getEl(content)
         };
-        Utils.addView(containers, "character-profile", CharacterProfile,{mainPage:true});
-        Utils.addView(containers, "character-profile-constructor", CharacterProfileConfigurer);
+        Utils.addView(containers, "character-profile", ProfileEditor,{mainPage:true});
+        Utils.addView(containers, "character-profile-constructor", ProfileConfigurer);
     
         listen(queryEl(root + ".create-entity-button"), "click", createProfile);
         listen(queryEl(root + ".rename-entity-button"), "click", renameProfile);
@@ -62,14 +62,14 @@ See the License for the specific language governing permissions and
         var name = queryEl(root + ".create-entity-input").value.trim();
     
         if (name === "") {
-            Utils.alert(getL10n("characters-character-name-is-not-specified"));
+            Utils.alert(getL10n("profiles-character-name-is-not-specified"));
             return;
         }
         
         DBMS.isProfileNameUsed(name, function(err, isProfileNameUsed){
             if(err) {Utils.handleError(err); return;}
             if (isProfileNameUsed) {
-                Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [name]));
+                Utils.alert(strFormat(getL10n("profiles-character-name-already-used"), [name]));
             } else {
                 DBMS.createProfile(name, function(err){
                     if(err) {Utils.handleError(err); return;}
@@ -90,19 +90,19 @@ See the License for the specific language governing permissions and
         var toName = queryEl(root + ".rename-entity-input").value.trim();
     
         if (toName === "") {
-            Utils.alert(getL10n("characters-new-character-name-is-not-specified"));
+            Utils.alert(getL10n("profiles-new-character-name-is-not-specified"));
             return;
         }
     
         if (fromName === toName) {
-            Utils.alert(getL10n("characters-names-are-the-same"));
+            Utils.alert(getL10n("profiles-names-are-the-same"));
             return;
         }
     
         DBMS.isProfileNameUsed(toName, function(err, isProfileNameUsed){
             if(err) {Utils.handleError(err); return;}
             if (isProfileNameUsed) {
-                Utils.alert(strFormat(getL10n("characters-character-name-already-used"), [toName]));
+                Utils.alert(strFormat(getL10n("profiles-character-name-already-used"), [toName]));
             } else {
                 DBMS.renameProfile(fromName, toName, function(err){
                     if(err) {Utils.handleError(err); return;}
@@ -121,7 +121,7 @@ See the License for the specific language governing permissions and
     var removeProfile = function () {
         var name = queryEl(root + ".remove-entity-select").value.trim();
     
-        if (Utils.confirm(strFormat(getL10n("characters-are-you-sure-about-character-removing"),[name]))) {
+        if (Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-character-removing"),[name]))) {
             DBMS.removeProfile(name, function(err){
                 if(err) {Utils.handleError(err); return;}
                 PermissionInformer.refresh(function(err){

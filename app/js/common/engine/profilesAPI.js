@@ -57,12 +57,12 @@ See the License for the specific language governing permissions and
         // characters
         LocalDBMS.prototype.createProfile = function(characterName, callback) {
             if(characterName === ""){
-                callback(new Errors.ValidationError("characters-character-name-is-not-specified"));
+                callback(new Errors.ValidationError("profiles-character-name-is-not-specified"));
                 return;
             }
             
             if(this.database.Characters[characterName]){
-                callback(new Errors.ValidationError("characters-character-name-already-used", [characterName]));
+                callback(new Errors.ValidationError("profiles-character-name-already-used", [characterName]));
                 return;
             }
             
@@ -85,17 +85,17 @@ See the License for the specific language governing permissions and
         // characters
         LocalDBMS.prototype.renameProfile = function(fromName, toName, callback) {
             if (toName === "") {
-                callback(new Errors.ValidationError("characters-new-character-name-is-not-specified"));
+                callback(new Errors.ValidationError("profiles-new-character-name-is-not-specified"));
                 return;
             }
 
             if (fromName === toName) {
-                callback(new Errors.ValidationError("characters-names-are-the-same"));
+                callback(new Errors.ValidationError("profiles-names-are-the-same"));
                 return;
             }
             
             if(this.database.Characters[toName]){
-                callback(new Errors.ValidationError("characters-character-name-already-used", [toName]));
+                callback(new Errors.ValidationError("profiles-character-name-already-used", [toName]));
                 return;
             }
             
@@ -129,7 +129,7 @@ See the License for the specific language governing permissions and
                 break;
             case "number":
                 if (isNaN(value)) {
-                    callback(new Errors.ValidationError("characters-not-a-number"));
+                    callback(new Errors.ValidationError("profiles-not-a-number"));
                     return;
                 }
                 profileInfo[fieldName] = Number(value);

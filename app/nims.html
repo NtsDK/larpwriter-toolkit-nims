@@ -171,17 +171,17 @@ See the License for the specific language governing permissions and
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <a href="#" panel-toggler=".profiles-tab div.panel-body"> <h3 class="panel-title" l10n-id="characters-character-managing"></h3></a>
+          <a href="#" panel-toggler=".profiles-tab div.panel-body"> <h3 class="panel-title" l10n-id="profiles-character-managing"></h3></a>
         </div>
         <div class="panel-body">
           <div class="entity-management">
             <div>
-              <input class="create-entity-input" l10n-placeholder-id="characters-character-name"></input>
+              <input class="create-entity-input" l10n-placeholder-id="profiles-character-name"></input>
               <button class="create-entity-button" l10n-id="common-create"></button>
             </div>
             <div>
               <select class="rename-entity-select select2-mono-selector"></select> <span l10n-id="common-to"></span>
-              <input class="rename-entity-input" l10n-placeholder-id="characters-new-character-name"></input>
+              <input class="rename-entity-input" l10n-placeholder-id="profiles-new-character-name"></input>
               <button class="rename-entity-button" l10n-id="common-rename"></button>
             </div>
             <div>
@@ -208,17 +208,17 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-heading">
           <a href="#" panel-toggler=".character-profile-tab .report-content-div">
-            <h3 class="panel-title" l10n-id="characters-character-report"></h3>
+            <h3 class="panel-title" l10n-id="profiles-character-report"></h3>
           </a>
         </div>
         <div class="panel-body report-content-div">
           <table class="table table-bordered table-striped">
             <thead>
-              <th l10n-id="characters-story"></th>
-              <th l10n-id="characters-activity" colspan="4"></th>
-              <th l10n-id="characters-completness"></th>
-              <th l10n-id="characters-meets"></th>
-              <th l10n-id="characters-inventory"></th>
+              <th l10n-id="profiles-story"></th>
+              <th l10n-id="profiles-activity" colspan="4"></th>
+              <th l10n-id="profiles-completness"></th>
+              <th l10n-id="profiles-meets"></th>
+              <th l10n-id="profiles-inventory"></th>
             </thead>
             <tbody></tbody>
           </table>
@@ -228,7 +228,7 @@ See the License for the specific language governing permissions and
       <div class="panel panel-default">
         <div class="panel-heading">
           <a href="#" panel-toggler=".character-profile-tab .profile-content-div">
-            <h3 class="panel-title" l10n-id="characters-character-profile"></h3>
+            <h3 class="panel-title" l10n-id="profiles-character-profile"></h3>
           </a>
         </div>
         <div class="panel-body profile-content-div">
@@ -236,28 +236,28 @@ See the License for the specific language governing permissions and
       </div>
     </div>
 
-    <div class="character-profile-configurer-tab">
+    <div class="profile-configurer-tab">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <a href="#" panel-toggler=".character-profile-configurer-tab .character-profile-panel">
-            <h3 class="panel-title" l10n-id="characters-characters-profile-structure"></h3>
+          <a href="#" panel-toggler=".profile-configurer-tab .character-profile-panel">
+            <h3 class="panel-title" l10n-id="profiles-characters-profile-structure"></h3>
           </a>
         </div>
         <div class="panel-body character-profile-panel">
           <div class="entity-management">
             <div>
-              <input class="adminOnly create-entity-input" l10n-placeholder-id="characters-profile-item-name"></input> 
-              <span l10n-id="characters-profile-item-position"></span>
+              <input class="adminOnly create-entity-input" l10n-placeholder-id="profiles-profile-item-name"></input> 
+              <span l10n-id="profiles-profile-item-position"></span>
               <select class="adminOnly create-entity-position-select"></select>
-              <span l10n-id="characters-profile-item-type"></span>
+              <span l10n-id="profiles-profile-item-type"></span>
               <select class="adminOnly create-entity-type-select"></select> 
               <button class="adminOnly create-entity-button" l10n-id="common-create"></button>
             </div>
             <div>
               <select class="adminOnly move-entity-select"></select> 
-              <span l10n-id="characters-profile-item-position"></span>
+              <span l10n-id="profiles-profile-item-position"></span>
               <select class="adminOnly move-entity-position-select"></select>
-              <button class="adminOnly move-entity-button" l10n-id="characters-move-item"></button>
+              <button class="adminOnly move-entity-button" l10n-id="profiles-move-item"></button>
             </div>
             <div>
               <select class="adminOnly remove-entity-select"></select>
@@ -268,10 +268,10 @@ See the License for the specific language governing permissions and
           <thead>
             <tr>
               <th>№</th>
-              <th l10n-id="characters-table-profile-item-name"></th>
-              <th l10n-id="characters-profile-item-type"></th>
-              <th l10n-id="characters-profile-item-default-value"></th>
-              <th l10n-id="characters-profile-item-do-export"></th>
+              <th l10n-id="profiles-table-profile-item-name"></th>
+              <th l10n-id="profiles-profile-item-type"></th>
+              <th l10n-id="profiles-profile-item-default-value"></th>
+              <th l10n-id="profiles-profile-item-do-export"></th>
             </tr>
           </thead>
           <tbody class="profile-config-container"></tbody>
@@ -280,25 +280,25 @@ See the License for the specific language governing permissions and
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <a href="#" panel-toggler=".character-profile-configurer-tab .player-profile-panel">
-            <h3 class="panel-title" l10n-id="characters-players-profile-structure"></h3>
+          <a href="#" panel-toggler=".profile-configurer-tab .player-profile-panel">
+            <h3 class="panel-title" l10n-id="profiles-players-profile-structure"></h3>
           </a>
         </div>
         <div class="panel-body player-profile-panel">
           <div class="entity-management">
             <div>
-              <input class="adminOnly create-entity-input" l10n-placeholder-id="characters-profile-item-name"></input> 
-              <span l10n-id="characters-profile-item-position"></span>
+              <input class="adminOnly create-entity-input" l10n-placeholder-id="profiles-profile-item-name"></input> 
+              <span l10n-id="profiles-profile-item-position"></span>
               <select class="adminOnly create-entity-position-select"></select>
-              <span l10n-id="characters-profile-item-type"></span>
+              <span l10n-id="profiles-profile-item-type"></span>
               <select class="adminOnly create-entity-type-select"></select> 
               <button class="adminOnly create-entity-button" l10n-id="common-create"></button>
             </div>
             <div>
               <select class="adminOnly move-entity-select"></select> 
-              <span l10n-id="characters-profile-item-position"></span>
+              <span l10n-id="profiles-profile-item-position"></span>
               <select class="adminOnly move-entity-position-select"></select>
-              <button class="adminOnly move-entity-button" l10n-id="characters-move-item"></button>
+              <button class="adminOnly move-entity-button" l10n-id="profiles-move-item"></button>
             </div>
             <div>
               <select class="adminOnly remove-entity-select"></select>
@@ -309,10 +309,10 @@ See the License for the specific language governing permissions and
           <thead>
             <tr>
               <th>№</th>
-              <th l10n-id="characters-table-profile-item-name"></th>
-              <th l10n-id="characters-profile-item-type"></th>
-              <th l10n-id="characters-profile-item-default-value"></th>
-              <th l10n-id="characters-profile-item-do-export"></th>
+              <th l10n-id="profiles-table-profile-item-name"></th>
+              <th l10n-id="profiles-profile-item-type"></th>
+              <th l10n-id="profiles-profile-item-default-value"></th>
+              <th l10n-id="profiles-profile-item-do-export"></th>
             </tr>
           </thead>
           <tbody class="profile-config-container"></tbody>
