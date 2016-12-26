@@ -200,19 +200,18 @@ See the License for the specific language governing permissions and
       
     <div class="character-profile-tab">
       <div class="panel panel-default">
-        <div class="panel-body">
-          <table>
-            <tr>
-              <th l10n-id="characters-characters"></th>
-            </tr>
-            <tr>
-              <td><input selector-filter=".character-profile-tab .bioEditorSelector"><br>
-              <select size=20 class="profile-selector"></select></td>
-              <td>
-                <div class="profile-content-div"></div>
-              </td>
-            </tr>
-          </table>
+        <div class="panel-heading">
+          <select class="profile-selector common-select"></select>
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="#" panel-toggler=".character-profile-tab .profile-content-div">
+            <h3 class="panel-title" l10n-id="characters-character-profile"></h3>
+          </a>
+        </div>
+        <div class="panel-body profile-content-div">
         </div>
       </div>
 

@@ -24,18 +24,18 @@ See the License for the specific language governing permissions and
     var root = ".character-profile-tab ";
     
     exports.init = function () {
-        listen(queryEl(root + ".profile-selector"), "change", showProfileInfoDelegate);
+        $(root + ".profile-selector").select2().on("change", showProfileInfoDelegate);
         exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
         PermissionInformer.getCharacterNamesArray(false, function(err, names){
             if(err) {Utils.handleError(err); return;}
-            var selector = clearEl(queryEl(root + ".profile-selector"));
-            fillSelector(selector, names.map(remapProps4Select));
+            clearEl(queryEl(root + ".profile-selector"));
+            $(root + ".profile-selector").select2(getSelect2Data(names));
             
             var tbody = makeEl("tbody");
-            addEl(clearEl(queryEl(root + ".profile-content-div")), addEl(addClass(makeEl("table"), "table"), tbody))
+            addEl(clearEl(queryEl(root + ".profile-content-div")), addEl(addClasses(makeEl("table"), ["table", 'table-striped']), tbody))
             
             state.inputItems = {};
             state.disableList = [];
@@ -48,12 +48,12 @@ See the License for the specific language governing permissions and
                     Utils.handleError(err); return;
                 }
                 
-                applySettings(names, selector);
+                applySettings(names);
             });
         });
     };
     
-    var applySettings = function (names, selector) {
+    var applySettings = function (names) {
         if (names.length > 0) {
             var name = names[0].value;
             var settings = DBMS.getSettings();
@@ -68,7 +68,7 @@ See the License for the specific language governing permissions and
                 characterName = name;
             }
             DBMS.getProfile(characterName, showProfileInfoCallback);
-            selector.value = characterName;
+            $(root + ".profile-selector").select2().val(characterName).trigger('change');
         }
     };
     
