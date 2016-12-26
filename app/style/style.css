@@ -62,6 +62,13 @@ See the License for the specific language governing permissions and
   background-size: 16px;
 }
 
+.green-back{
+  background-color: lime;
+}
+.text-right{
+  text-align: right;
+}
+
 /* character filter **/
 
 /** briefing preview */

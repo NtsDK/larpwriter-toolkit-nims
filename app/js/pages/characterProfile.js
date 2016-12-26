@@ -88,17 +88,57 @@ See the License for the specific language governing permissions and
         var name = profile.name;
         PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
             if(err) {Utils.handleError(err); return;}
-            updateSettings(name);
-            
-            Utils.enable(exports.content, "isCharacterEditable", isCharacterEditable);
-            state.disableList.forEach(function(item){
-                item.prop("disabled", !isCharacterEditable);
-            });
-            state.name = name;
-            Object.values(state.inputItems).forEach(function(item){
-                item.showFieldValue(profile);
+            DBMS.getCharacterReport(name, function(err, characterReport){
+                if(err) {Utils.handleError(err); return;}
+                
+                updateSettings(name);
+                
+                Utils.enable(exports.content, "isCharacterEditable", isCharacterEditable);
+                state.disableList.forEach(function(item){
+                    item.prop("disabled", !isCharacterEditable);
+                });
+                state.name = name;
+                Object.values(state.inputItems).forEach(function(item){
+                    item.showFieldValue(profile);
+                });
+                
+                addEls(clearEl(queryEl(root + ' .report-content-div tbody')), characterReport.map(makeReportRow));
             });
         });
+    };
+    
+    var makeCompletenessLabel = function(value, total) {
+        return strFormat('{0} ({1}/{2})', [total === 0 ? '-': (value / total * 100).toFixed(0) + '%', value, total]);
+    };
+    
+    var getCompletenessColor = function(value, total) {
+        if(total === 0){return 'transparent';}
+        function calc(b,a,part){
+            return (a*part + (1-part)*b).toFixed(0);
+        }
+        
+        var p = value / total;
+        if(p<0.5){
+            p=p*2;
+            return strFormat('rgba({0},{1},{2}, 0.7)', [calc(255,255,p),calc(0,255,p),calc(0,0,p)]);
+        } else {
+            p=(p-0.5)*2;
+            return strFormat('rgba({0},{1},{2}, 0.7)', [calc(255,25,p),calc(255,255,p),calc(0,0,p)]);
+        }
+    };
+    
+    var makeReportRow = function(storyInfo){
+        var act = storyInfo.activity;
+        var label = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
+        var color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
+        return addEls(makeEl('tr'), [ addEl(makeEl('td'), makeText(storyInfo.storyName)), 
+                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.active   ), makeText(constL10n('active-s'))), 
+                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.follower ), makeText(constL10n('follower-s'))), 
+                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.defensive), makeText(constL10n('defensive-s'))), 
+                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.passive  ), makeText(constL10n('passive-s'))), 
+                                      addEl(addClass(setStyle(makeEl('td'),'backgroundColor', color), 'text-right') , makeText(label)), 
+                                      addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))), 
+                                      addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);
     };
     
     var updateSettings = function (name) {

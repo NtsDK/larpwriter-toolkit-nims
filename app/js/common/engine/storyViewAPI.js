@@ -167,6 +167,43 @@ See the License for the specific language governing permissions and
             });
             callback(null, charactersInfo);
         };
+        
+        // character profile
+        LocalDBMS.prototype.getCharacterReport = function(characterName, callback){
+            var characterReport = R.values(this.database.Stories).filter(function(story){
+                return story.characters[characterName] !== undefined;
+            }).map(function(story){
+                var charEvents = story.events.filter(function(event){
+                    return event.characters[characterName] !== undefined;
+                });
+                
+                var finishedAdaptations = charEvents.filter(function(event){
+                    return event.characters[characterName].ready === true;
+                }).length;
+                
+                var meets = {};
+                charEvents.forEach(function(event){
+                    var chars = R.keys(event.characters);
+                    meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
+                });
+                
+                delete meets[characterName];
+                meets = R.keys(meets).sort();
+                
+                
+                return {
+                    storyName: story.name,
+                    inventory: story.characters[characterName].inventory, 
+                    activity: story.characters[characterName].activity, 
+                    meets: meets,
+                    totalAdaptations: charEvents.length,
+                    finishedAdaptations: finishedAdaptations
+                }
+            });
+            characterReport.sort(CommonUtils.charOrdAFactory(R.prop('storyName')));
+            
+            callback(null, characterReport);
+        };
     
     };
     callback(storyViewAPI);

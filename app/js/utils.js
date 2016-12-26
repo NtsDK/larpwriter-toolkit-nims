@@ -252,6 +252,7 @@ function setClassByCondition(o,c,condition){
     } else {
         removeClass(o,c);
     }
+    return o;
 };
 
 function getEl(id){
@@ -305,6 +306,11 @@ var rAddEl = R.curry(function(child, parent){
 var setAttr = R.curry(function(el, name, value){
   el.setAttribute(name, value);
   return el;
+});
+
+var setStyle = R.curry(function(el, name, value){
+    el.style[name] = value;
+    return el;
 });
 
 function delAttr(el, name){
