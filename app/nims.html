@@ -223,20 +223,31 @@ See the License for the specific language governing permissions and
 
 
       
-    <div class="character-profile-tab">
+    <div class="profile-editor-tab">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <select class="profile-selector common-select"></select>
+          <select class="character-profile-selector common-select"></select>
+          <select class="player-profile-selector common-select"></select>
         </div>
       </div>
       
       <div class="panel panel-default">
         <div class="panel-heading">
-          <a href="#" panel-toggler=".character-profile-tab .report-content-div">
+          <a href="#" panel-toggler=".profile-editor-tab .player-profile-div">
+            <h3 class="panel-title" l10n-id="profiles-player-profile"></h3>
+          </a>
+        </div>
+        <div class="panel-body player-profile-div">
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="#" panel-toggler=".profile-editor-tab .character-report-div">
             <h3 class="panel-title" l10n-id="profiles-character-report"></h3>
           </a>
         </div>
-        <div class="panel-body report-content-div">
+        <div class="panel-body character-report-div">
           <table class="table table-bordered table-striped">
             <thead>
               <th l10n-id="profiles-story"></th>
@@ -252,11 +263,11 @@ See the License for the specific language governing permissions and
       
       <div class="panel panel-default">
         <div class="panel-heading">
-          <a href="#" panel-toggler=".character-profile-tab .profile-content-div">
+          <a href="#" panel-toggler=".profile-editor-tab .character-profile-div">
             <h3 class="panel-title" l10n-id="profiles-character-profile"></h3>
           </a>
         </div>
-        <div class="panel-body profile-content-div">
+        <div class="panel-body character-profile-div">
         </div>
       </div>
     </div>

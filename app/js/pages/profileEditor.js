@@ -20,91 +20,108 @@ See the License for the specific language governing permissions and
 
 (function(exports){
 
-    var state = {};
-    var root = ".character-profile-tab ";
+    var state = {
+        'character':{},
+        'player':{}
+    };
+    var root = ".profile-editor-tab ";
+    var characterSelector = root + ".character-profile-selector";
+    var playerSelector = root + ".player-profile-selector";
+    var characterProfileDiv = root + ".character-profile-div";
+    var playerProfileDiv = root + ".player-profile-div";
     
     exports.init = function () {
-        $(root + ".profile-selector").select2().on("change", showProfileInfoDelegate);
+        $(characterSelector).select2().on("change", showProfileInfoDelegate('character', characterProfileDiv));
+//        $(root + ".player-profile-selector").select2().on("change", showProfileInfoDelegate);
         exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
-        PermissionInformer.getEntityNamesArray('character', false, function(err, names){
+        refreshPanel('character', characterSelector, characterProfileDiv);
+    };
+    
+    var refreshPanel = function(type, selector, profileDiv){
+        PermissionInformer.getEntityNamesArray(type, false, function(err, names){
             if(err) {Utils.handleError(err); return;}
-            clearEl(queryEl(root + ".profile-selector"));
-            $(root + ".profile-selector").select2(getSelect2Data(names));
+            
+            clearEl(queryEl(selector));
+            $(selector).select2(getSelect2Data(names));
             
             var tbody = makeEl("tbody");
-            addEl(clearEl(queryEl(root + ".profile-content-div")), addEl(addClasses(makeEl("table"), ["table", 'table-striped']), tbody))
+            addEl(clearEl(queryEl(profileDiv)), addEl(addClasses(makeEl("table"), ["table", 'table-striped']), tbody))
             
-            state.inputItems = {};
-            state.disableList = [];
+            state[type].inputItems = {};
+            state[type].disableList = [];
             
-            DBMS.getCharacterProfileStructure(function(err, allProfileSettings){
+            DBMS.getProfileStructure(type, function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
                 try {
-                    addEls(tbody, allProfileSettings.map(appendInput));
+                    addEls(tbody, allProfileSettings.map(appendInput(type)));
                 } catch (err) {
                     Utils.handleError(err); return;
                 }
                 
-                applySettings(names);
+                applySettings(type, names, selector, profileDiv);
             });
+            
         });
     };
     
-    var applySettings = function (names) {
+    var applySettings = function (type, names, selector, profileDiv) {
         if (names.length > 0) {
             var name = names[0].value;
             var settings = DBMS.getSettings();
             if(!settings["ProfileEditor"]){
-                settings["ProfileEditor"] = {
-                    characterName : name
-                };
+                settings["ProfileEditor"] = {};
+                settings["ProfileEditor"][type] = name;
             }
-            var characterName = settings["ProfileEditor"].characterName;
-            if(names.map(function(nameInfo){return nameInfo.value;}).indexOf(characterName) === -1){
-                settings["ProfileEditor"].characterName = name;
-                characterName = name;
+            var profileName = settings["ProfileEditor"][type];
+            if(names.map(function(nameInfo){return nameInfo.value;}).indexOf(profileName) === -1){
+                settings["ProfileEditor"][type] = name;
+                profileName = name;
             }
-            DBMS.getProfile('character', characterName, showProfileInfoCallback);
-            $(root + ".profile-selector").select2().val(characterName).trigger('change');
+            DBMS.getProfile(type, profileName, showProfileInfoCallback(type, profileDiv));
+            $(selector).select2().val(profileName).trigger('change');
         }
     };
     
-    var appendInput = function (profileItemConfig) {
-        var itemInput = new ProfileItemInput(profileItemConfig);
-        state.inputItems[profileItemConfig.name] = itemInput;
+    var appendInput = R.curry(function (type, profileItemConfig) {
+        var itemInput = new ProfileItemInput(type, profileItemConfig);
+        state[type].inputItems[profileItemConfig.name] = itemInput;
         return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), itemInput.dom)]);
+    });
+    
+    var showProfileInfoDelegate = function (type, profileDiv) {
+        return function(event){
+            var name = event.target.value.trim();
+            DBMS.getProfile(type, name, showProfileInfoCallback(type, profileDiv));
+        }
     };
     
-    var showProfileInfoDelegate = function (event) {
-        var name = event.target.value.trim();
-        DBMS.getProfile('character', name, showProfileInfoCallback);
-    };
-    
-    var showProfileInfoCallback = function (err, profile) {
-        if(err) {Utils.handleError(err); return;}
-        var name = profile.name;
-        PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
+    var showProfileInfoCallback = function (type, profileDiv) {
+        return function(err, profile){
             if(err) {Utils.handleError(err); return;}
-            DBMS.getCharacterReport(name, function(err, characterReport){
+            var name = profile.name;
+            PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
                 if(err) {Utils.handleError(err); return;}
+                updateSettings(type, name);
                 
-                updateSettings(name);
-                
-                Utils.enable(exports.content, "isCharacterEditable", isCharacterEditable);
-                state.disableList.forEach(function(item){
+                Utils.enable(queryEl(profileDiv), "isCharacterEditable", isCharacterEditable);
+                state[type].disableList.forEach(function(item){
                     item.prop("disabled", !isCharacterEditable);
                 });
-                state.name = name;
-                Object.values(state.inputItems).forEach(function(item){
+                state[type].name = name;
+                Object.values(state[type].inputItems).forEach(function(item){
                     item.showFieldValue(profile);
                 });
-                
-                addEls(clearEl(queryEl(root + ' .report-content-div tbody')), characterReport.map(makeReportRow));
+                if(type === 'character'){
+                    DBMS.getCharacterReport(name, function(err, characterReport){
+                        if(err) {Utils.handleError(err); return;}
+                        addEls(clearEl(queryEl(root + ' .character-report-div tbody')), characterReport.map(makeReportRow));
+                    });
+                }
             });
-        });
+        }
     };
     
     var makeCompletenessLabel = function(value, total) {
@@ -141,12 +158,12 @@ See the License for the specific language governing permissions and
                                       addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);
     };
     
-    var updateSettings = function (name) {
+    var updateSettings = function (type, name) {
         var settings = DBMS.getSettings();
-        settings["ProfileEditor"].characterName = name;
+        settings["ProfileEditor"][type] = name;
     };
     
-    function ProfileItemInput(profileItemConfig){
+    function ProfileItemInput(profileType, profileItemConfig){
         var input;
         switch (profileItemConfig.type) {
         case "text":
@@ -176,7 +193,7 @@ See the License for the specific language governing permissions and
             setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
             var sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(",")));
-            state.disableList.push(this.multiEnumSelect);
+            state[profileType].disableList.push(this.multiEnumSelect);
             
             sel.on('change', this.updateFieldValue.bind(this));
             break;
@@ -191,6 +208,7 @@ See the License for the specific language governing permissions and
         
         this.dom = input;
         this.type = profileItemConfig.type;
+        this.profileType = profileType;
         this.name = profileItemConfig.name;
     };
     
@@ -207,7 +225,7 @@ See the License for the specific language governing permissions and
     
     ProfileItemInput.prototype.updateFieldValue = function(event){
         var fieldName = this.name;
-        var characterName = state.name;
+        var characterName = state[this.profileType].name;
         if(this.multiEnumSelect && this.multiEnumSelect.prop("disabled")){
             return; // we need to trigger change event on multiEnumSelect to update selection. It may be disabled so it has false positive call.
         }
