@@ -54,7 +54,7 @@ GroupProfile.init = function () {
 };
 
 GroupProfile.refresh = function () {
-    PermissionInformer.getGroupNamesArray(false, function(err, groupNames){
+    PermissionInformer.getEntityNamesArray('group', false, function(err, groupNames){
         if(err) {Utils.handleError(err); return;}
         
         var sel = clearEl(queryEl(".group-profile-tab .entity-selector"));

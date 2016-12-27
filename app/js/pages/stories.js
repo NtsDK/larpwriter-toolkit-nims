@@ -67,9 +67,9 @@ Stories.refresh = function () {
     var storySelector = clearEl(getEl("storySelector"));
     selectors.forEach(R.compose(clearEl, queryEl));
     
-    PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
+    PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
         if(err) {Utils.handleError(err); return;}
-        PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+        PermissionInformer.getEntityNamesArray('story', true, function(err, userStoryNames){
             if(err) {Utils.handleError(err); return;}
             if(userStoryNames.length > 0){
                 var data = getSelect2Data(userStoryNames);

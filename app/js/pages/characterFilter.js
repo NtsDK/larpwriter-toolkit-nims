@@ -36,8 +36,8 @@ See the License for the specific language governing permissions and
     };
     
     var groupAreaRefresh = function(){
-        PermissionInformer.getGroupNamesArray(true, Utils.processError(function(userGroupNames){
-            PermissionInformer.getGroupNamesArray(false, Utils.processError(function(allGroupNames){
+        PermissionInformer.getEntityNamesArray('group', true, Utils.processError(function(userGroupNames){
+            PermissionInformer.getEntityNamesArray('group', false, Utils.processError(function(allGroupNames){
                 Groups.rebuildInterface("#characterFilterDiv", userGroupNames);
                 var data = getSelect2Data(allGroupNames);
                 clearEl(queryEl("#characterFilterDiv .save-entity-select"));

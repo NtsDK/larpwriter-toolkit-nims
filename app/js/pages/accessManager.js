@@ -51,11 +51,11 @@ AccessManager.refresh = function() {
             if(err) {Utils.handleError(err); return;}
             PermissionInformer.isEditor(function(err, isEditor){
                 if(err) {Utils.handleError(err); return;}
-                PermissionInformer.getCharacterNamesArray(!isAdmin, function(err, characterNames){
+                PermissionInformer.getEntityNamesArray('character', !isAdmin, function(err, characterNames){
                     if(err) {Utils.handleError(err); return;}
-                    PermissionInformer.getStoryNamesArray(!isAdmin, function(err, storyNames){
+                    PermissionInformer.getEntityNamesArray('story', !isAdmin, function(err, storyNames){
                         if(err) {Utils.handleError(err); return;}
-                        PermissionInformer.getGroupNamesArray(!isAdmin, function(err, groupNames){
+                        PermissionInformer.getEntityNamesArray('group', !isAdmin, function(err, groupNames){
                             if(err) {Utils.handleError(err); return;}
                             var names = {
                                     characters: characterNames,

@@ -48,7 +48,7 @@ See the License for the specific language governing permissions and
         DBMS.getCharacterProfileStructure(function(err, loadedProfileSettings){
             if(err) {Utils.handleError(err); return;}
             profileSettings = loadedProfileSettings;
-            PermissionInformer.getCharacterNamesArray(false, function(err, names){
+            PermissionInformer.getEntityNamesArray('character', false, function(err, names){
                 if(err) {Utils.handleError(err); return;}
                 if (names.length > 0) {
                     var settings = DBMS.getSettings();
@@ -105,7 +105,7 @@ See the License for the specific language governing permissions and
     var panels = [{
         name: 'storyRights',
         load: function(data, callback){
-            PermissionInformer.getStoryNamesArray(true, function(err, userStoryNames){
+            PermissionInformer.getEntityNamesArray('story', true, function(err, userStoryNames){
                 if(err) {Utils.handleError(err); return;}
                 data.userStoryNamesMap = R.indexBy(R.prop('value'), userStoryNames); 
                 callback();
@@ -115,7 +115,7 @@ See the License for the specific language governing permissions and
     }, {
         name: 'profile',
         load: function(data, callback){
-            DBMS.getCharacterProfile(data.characterName, function(err, profile){
+            DBMS.getProfile('character', data.characterName, function(err, profile){
                 if(err) {Utils.handleError(err); return;}
                 data.profile = profile;
                 callback();
@@ -153,11 +153,11 @@ See the License for the specific language governing permissions and
     }, {
         name: 'relations',
         load: function(data, callback){
-            DBMS.getAllCharacterProfiles(function(err, profiles){
+            DBMS.getAllProfiles('character', function(err, profiles){
                 if(err) {Utils.handleError(err); return;}
                 DBMS.getRelationsSummary(data.characterName, function(err, relationsSummary){
                     if(err) {Utils.handleError(err); return;}
-                    PermissionInformer.getCharacterNamesArray(false, function(err, characterNamesArray){
+                    PermissionInformer.getEntityNamesArray('character', false, function(err, characterNamesArray){
                         if(err) {Utils.handleError(err); return;}
                         data.relationsSummary = relationsSummary;
                         data.characterNamesArray = characterNamesArray; 

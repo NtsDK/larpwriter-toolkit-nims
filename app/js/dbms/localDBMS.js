@@ -38,6 +38,7 @@ function makeLocalDBMS(){
     relationsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
     profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
+    entityAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
     storyBaseAPI(LocalDBMS, R, CommonUtils, Errors);
     storyEventsAPI(LocalDBMS, R, CommonUtils, Errors);
     storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners);

@@ -52,7 +52,7 @@ StoryCharacters.refresh = function () {
     
     PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
         if(err) {Utils.handleError(err); return;}
-        PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
+        PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacters){
             if(err) {Utils.handleError(err); return;}
             DBMS.getStoryCharacters(Stories.CurrentStoryName, function(err, localCharacters){
                 if(err) {Utils.handleError(err); return;}

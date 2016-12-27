@@ -164,12 +164,12 @@ SocialNetwork.refresh = function () {
     
     selector = clearEl(getEl("networkNodeGroupSelector"));
     
-    PermissionInformer.getCharacterNamesArray(false, function(err, characterNames){
+    PermissionInformer.getEntityNamesArray('character', false, function(err, characterNames){
         if(err) {Utils.handleError(err); return;}
-        PermissionInformer.getStoryNamesArray(false, function(err, storyNames){
+        PermissionInformer.getEntityNamesArray('story', false, function(err, storyNames){
             if(err) {Utils.handleError(err); return;}
         
-            DBMS.getAllCharacterProfiles(function(err, profiles){
+            DBMS.getAllProfiles('character', function(err, profiles){
                 if(err) {Utils.handleError(err); return;}
                 SocialNetwork.Characters = profiles;
                 

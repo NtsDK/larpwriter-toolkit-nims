@@ -53,7 +53,7 @@ InvestigationBoard.init = function () {
 };
 
 InvestigationBoard.refresh = function (softRefresh) {
-    PermissionInformer.getGroupNamesArray(false, Utils.processError(function(groupNames){
+    PermissionInformer.getEntityNamesArray('group', false, Utils.processError(function(groupNames){
         DBMS.getInvestigationBoardData(function(err, ibData){
             var allGroupNames = groupNames.map(R.prop('value'));
             var ibGroupNames = R.keys(ibData.groups);

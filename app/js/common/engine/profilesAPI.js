@@ -27,25 +27,15 @@ See the License for the specific language governing permissions and
             return null;
         }
         
-        LocalDBMS.prototype.getCharacterNamesArray = function(callback) {
-            this.getProfileNamesArray('character', callback);
-        };
-        
         LocalDBMS.prototype.getProfileNamesArray = function(type, callback) {
             callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CommonUtils.charOrdA));
         };
         
         // profile, preview
-        LocalDBMS.prototype.getCharacterProfile = function(name, callback) {
-            this.getProfile('character', name, callback);
-        };
         LocalDBMS.prototype.getProfile = function(type, name, callback) {
             callback(null, CommonUtils.clone(R.path(getPath(type), this.database)[name]));
         };
         // social network, character filter
-        LocalDBMS.prototype.getAllCharacterProfiles = function(callback) {
-            this.getAllProfiles('character', callback);
-        };
         LocalDBMS.prototype.getAllProfiles = function(type, callback) {
             callback(null, CommonUtils.clone(R.path(getPath(type), this.database)));
         };

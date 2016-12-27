@@ -19,7 +19,7 @@ describe("Ticket testing", function(){
                 DBMS.createProfile('char1', function(){
                     DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), function() {
                         setTimeout(function() {
-                            DBMS.getAllCharacterProfiles(function(err, profiles){
+                            DBMS.getAllProfiles('character', function(err, profiles){
                                 expect(Object.keys(profiles).length).toEqual(0);
                                 done();
                             });
@@ -36,7 +36,7 @@ describe("Ticket testing", function(){
                 DBMS.createProfile('char1', function(){
                     document.querySelector('#socialNetworkButton').click();
                     setTimeout(function() {
-                        DBMS.getCharacterProfile('char1', function(err, profile){
+                        DBMS.getProfile('character', 'char1', function(err, profile){
                             expect(profile.displayName).not.toBeDefined();
                             done();
                         });

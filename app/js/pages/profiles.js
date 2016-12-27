@@ -43,7 +43,7 @@ See the License for the specific language governing permissions and
     };
     
     exports.refresh = function () {
-        PermissionInformer.getCharacterNamesArray(true, Utils.processError(rebuildInterface));
+        PermissionInformer.getEntityNamesArray('character', true, Utils.processError(rebuildInterface));
     };
     
     var rebuildInterface = function (names) {

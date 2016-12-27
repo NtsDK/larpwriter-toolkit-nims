@@ -82,7 +82,7 @@ Timeline.refresh = function () {
             start : startDate,
         });
         
-        PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames){
+        PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
             if(err) {Utils.handleError(err); return;}
             allStoryNames.forEach(function(nameInfo){
                 option = makeEl("option");

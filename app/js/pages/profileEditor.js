@@ -29,7 +29,7 @@ See the License for the specific language governing permissions and
     };
     
     exports.refresh = function () {
-        PermissionInformer.getCharacterNamesArray(false, function(err, names){
+        PermissionInformer.getEntityNamesArray('character', false, function(err, names){
             if(err) {Utils.handleError(err); return;}
             clearEl(queryEl(root + ".profile-selector"));
             $(root + ".profile-selector").select2(getSelect2Data(names));
@@ -67,7 +67,7 @@ See the License for the specific language governing permissions and
                 settings["ProfileEditor"].characterName = name;
                 characterName = name;
             }
-            DBMS.getCharacterProfile(characterName, showProfileInfoCallback);
+            DBMS.getProfile('character', characterName, showProfileInfoCallback);
             $(root + ".profile-selector").select2().val(characterName).trigger('change');
         }
     };
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
     
     var showProfileInfoDelegate = function (event) {
         var name = event.target.value.trim();
-        DBMS.getCharacterProfile(name, showProfileInfoCallback);
+        DBMS.getProfile('character', name, showProfileInfoCallback);
     };
     
     var showProfileInfoCallback = function (err, profile) {

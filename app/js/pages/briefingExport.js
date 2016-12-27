@@ -128,7 +128,7 @@ BriefingExport.onNumberSelectorChange = function () {
   var num = Number(BriefingExport.briefingNumberSelector.value);
   
   var option, chunks, displayText, value;
-  PermissionInformer.getCharacterNamesArray(false, function(err, names){
+  PermissionInformer.getEntityNamesArray('character', false, function(err, names){
     if(err) {Utils.handleError(err); return;}
     if (names.length > 0) {
       chunks = arr2Chunks(names, num);

@@ -131,9 +131,9 @@ if(MODE === "NIMS_Server"){
         callback(null, names);
     });
     
-    PermissionInformer.getCharacterNamesArray = PermissionInformer.getEntityNamesArray('characters');
-    PermissionInformer.getStoryNamesArray = PermissionInformer.getEntityNamesArray('stories');
-    PermissionInformer.getGroupNamesArray = PermissionInformer.getEntityNamesArray('groups');
+//    PermissionInformer.getCharacterNamesArray = PermissionInformer.getEntityNamesArray('characters');
+//    PermissionInformer.getStoryNamesArray = PermissionInformer.getEntityNamesArray('stories');
+//    PermissionInformer.getGroupNamesArray = PermissionInformer.getEntityNamesArray('groups');
     
     PermissionInformer.areAdaptationsEditable = function(adaptations, callback){
         var map = {};
@@ -180,8 +180,8 @@ if(MODE === "NIMS_Server"){
 //        });
 //    };
     
-    PermissionInformer.getEntityNamesArray = R.curry(function(entityNamesFunction, editableOnly, callback){
-        DBMS[entityNamesFunction](function(err, names){
+    PermissionInformer.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
+        function processNames(err, names){
             if(err) {Utils.handleError(err); return;}
             var newNames = [];
             names.forEach(function(name){
@@ -192,13 +192,10 @@ if(MODE === "NIMS_Server"){
                 });
             });
             callback(null, newNames);
-        });
+        }
+        DBMS.getEntityNamesArray(type, processNames);
     });
     
-    PermissionInformer.getCharacterNamesArray = PermissionInformer.getEntityNamesArray("getCharacterNamesArray");
-    PermissionInformer.getStoryNamesArray = PermissionInformer.getEntityNamesArray("getStoryNamesArray");
-    PermissionInformer.getGroupNamesArray = PermissionInformer.getEntityNamesArray("getGroupNamesArray");
-
     PermissionInformer.isStoryEditable = 
     PermissionInformer.isGroupEditable = 
     PermissionInformer.isCharacterEditable = function(entityName, callback) {

@@ -145,7 +145,7 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.getCharacterFilterInfo = function(callback) {
             var that = this;
-            that.getCharacterNamesArray(function(err, characterOwners){
+            that.getEntityNamesArray('character', function(err, characterOwners){
                 if(err) {callback(err); return;}
                 // _getOwnerMap is part of permission summary API which is available on server 
                 if(that._getOwnerMap){
@@ -153,7 +153,7 @@ See the License for the specific language governing permissions and
                 } else {
                     characterOwners = R.zipObj(characterOwners, R.repeat('user', characterOwners.length));
                 }
-                that.getAllCharacterProfiles(function(err, profiles){
+                that.getAllProfiles('character', function(err, profiles){
                     if(err) {callback(err); return;}
                     that.getCharactersSummary(function(err, charactersSummary){
                         if(err) {callback(err); return;}

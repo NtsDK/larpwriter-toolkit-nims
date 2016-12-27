@@ -44,7 +44,7 @@ Groups.init = function () {
 
 Groups.refresh = function () {
     "use strict";
-    PermissionInformer.getGroupNamesArray(true, Utils.processError(function(names){
+    PermissionInformer.getEntityNamesArray('group', true, Utils.processError(function(names){
         Groups.rebuildInterface(".groups-tab", names);
         Groups.currentView.refresh();
     }));

@@ -82,7 +82,7 @@ Events.refresh = function() {
     clearEl(getEl("events-eventSelector"));
     clearEl(getEl("personalStories"));
 
-    PermissionInformer.getStoryNamesArray(false, function(err, allStoryNames) {
+    PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames) {
         if (err) {Utils.handleError(err);return;}
         DBMS.getFilteredStoryNames(getEl("finishedStoryCheckbox").checked, function(err, storyNames) {
             if (err) {Utils.handleError(err);return;}
@@ -125,7 +125,7 @@ Events.updateAdaptationSelector = function (storyName) {
     var characterSelector = clearEl(getEl("events-characterSelector"));
     var eventSelector = clearEl(getEl("events-eventSelector"));
     
-    PermissionInformer.getCharacterNamesArray(false, function(err, allCharacters){
+    PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacters){
         if(err) {Utils.handleError(err); return;}
         DBMS.getFilteredCharacterNames(storyName, getEl("finishedStoryCheckbox").checked, function(err, characterArray){
             if(err) {Utils.handleError(err); return;}
