@@ -18,12 +18,14 @@ See the License for the specific language governing permissions and
 
     function profilesAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
         
-        var characterProfilePath = ['Characters'];
-        var playerProfilePath = ['Players'];
-        
         function getPath(type){
-            if(type === 'character') return characterProfilePath;
-            if(type === 'player') return playerProfilePath;
+            if(type === 'character') return ['Characters'];
+            if(type === 'player') return ['Players'];
+            return null;
+        }
+        function getStructurePath(type){
+            if(type === 'character') return ['CharacterProfileStructure'];
+            if(type === 'player') return ['PlayerProfileStructure'];
             return null;
         }
         
@@ -41,17 +43,19 @@ See the License for the specific language governing permissions and
         };
         
         // characters
-        LocalDBMS.prototype.isProfileNameUsed = function(characterName, callback) {
-            callback(null, this.database.Characters[characterName] !== undefined);
+        LocalDBMS.prototype.isProfileNameUsed = function(type, characterName, callback) {
+            callback(null, R.path(getPath(type), this.database)[characterName] !== undefined);
         };
         // characters
-        LocalDBMS.prototype.createProfile = function(characterName, callback) {
+        LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
             if(characterName === ""){
                 callback(new Errors.ValidationError("profiles-character-name-is-not-specified"));
                 return;
             }
             
-            if(this.database.Characters[characterName]){
+            var profileSet = R.path(getPath(type), this.database);
+            
+            if(profileSet[characterName]){
                 callback(new Errors.ValidationError("profiles-character-name-already-used", [characterName]));
                 return;
             }
@@ -60,7 +64,7 @@ See the License for the specific language governing permissions and
                 name : characterName
             };
     
-            this.database.CharacterProfileStructure.forEach(function(profileSettings) {
+            R.path(getStructurePath(type), this.database).forEach(function(profileSettings) {
                 if (profileSettings.type === "enum") {
                     newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
                 } else {
@@ -68,12 +72,12 @@ See the License for the specific language governing permissions and
                 }
             });
     
-            this.database.Characters[characterName] = newCharacter;
+            profileSet[characterName] = newCharacter;
             this.ee.trigger("createProfile", arguments);
             if(callback) callback();
         };
         // characters
-        LocalDBMS.prototype.renameProfile = function(fromName, toName, callback) {
+        LocalDBMS.prototype.renameProfile = function(type, fromName, toName, callback) {
             if (toName === "") {
                 callback(new Errors.ValidationError("profiles-new-character-name-is-not-specified"));
                 return;
@@ -84,15 +88,17 @@ See the License for the specific language governing permissions and
                 return;
             }
             
-            if(this.database.Characters[toName]){
+            var profileSet = R.path(getPath(type), this.database);
+            
+            if(profileSet[toName]){
                 callback(new Errors.ValidationError("profiles-character-name-already-used", [toName]));
                 return;
             }
             
-            var data = this.database.Characters[fromName];
+            var data = profileSet[fromName];
             data.name = toName;
-            this.database.Characters[toName] = data;
-            delete this.database.Characters[fromName];
+            profileSet[toName] = data;
+            delete profileSet[fromName];
             
             this.ee.trigger("renameProfile", arguments);
     
@@ -100,8 +106,8 @@ See the License for the specific language governing permissions and
         };
     
         // characters
-        LocalDBMS.prototype.removeProfile = function(characterName, callback) {
-            delete this.database.Characters[characterName];
+        LocalDBMS.prototype.removeProfile = function(type, characterName, callback) {
+            delete R.path(getPath(type), this.database)[characterName];
             this.ee.trigger("removeProfile", arguments);
             if(callback) callback();
         };

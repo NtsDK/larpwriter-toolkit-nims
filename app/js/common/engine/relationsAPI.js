@@ -81,7 +81,8 @@ See the License for the specific language governing permissions and
             }
         };
         
-        var _renameCharacter = function(fromName, toName){
+        var _renameCharacter = function(type, fromName, toName){
+            if(type === 'player') return;
             var relData = R.path(relationsPath, this.database);
             if(relData[fromName] !== undefined){
                 relData[toName] = relData[fromName];
@@ -98,7 +99,8 @@ See the License for the specific language governing permissions and
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameCharacter);
         
-        var _removeCharacter = function(characterName){
+        var _removeCharacter = function(type, characterName){
+            if(type === 'player') return;
             var relData = R.path(relationsPath, this.database);
             if(relData[characterName] !== undefined){
                 delete relData[characterName];

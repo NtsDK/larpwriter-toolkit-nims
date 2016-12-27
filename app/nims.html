@@ -169,24 +169,49 @@ See the License for the specific language governing permissions and
 
     <div class="profiles-tab">
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <a href="#" panel-toggler=".profiles-tab div.panel-body"> <h3 class="panel-title" l10n-id="profiles-character-managing"></h3></a>
+      <div style="display:flex;">
+        <div class="panel panel-default left-side">
+          <div class="panel-heading">
+            <a href="#" panel-toggler=".profiles-tab .character-profile-panel"> <h3 class="panel-title" l10n-id="profiles-character-managing"></h3></a>
+          </div>
+          <div class="panel-body character-profile-panel">
+            <div class="entity-management">
+              <div>
+                <input class="create-entity-input" l10n-placeholder-id="profiles-character-name"></input>
+                <button class="create-entity-button" l10n-id="common-create"></button>
+              </div>
+              <div>
+                <select class="rename-entity-select select2-mono-selector"></select> <span l10n-id="common-to"></span>
+                <input class="rename-entity-input" l10n-placeholder-id="profiles-new-character-name"></input>
+                <button class="rename-entity-button" l10n-id="common-rename"></button>
+              </div>
+              <div>
+                <select class="remove-entity-select select2-mono-selector"></select>
+                <button class="remove-entity-button" l10n-id="common-remove"></button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="panel-body">
-          <div class="entity-management">
-            <div>
-              <input class="create-entity-input" l10n-placeholder-id="profiles-character-name"></input>
-              <button class="create-entity-button" l10n-id="common-create"></button>
-            </div>
-            <div>
-              <select class="rename-entity-select select2-mono-selector"></select> <span l10n-id="common-to"></span>
-              <input class="rename-entity-input" l10n-placeholder-id="profiles-new-character-name"></input>
-              <button class="rename-entity-button" l10n-id="common-rename"></button>
-            </div>
-            <div>
-              <select class="remove-entity-select select2-mono-selector"></select>
-              <button class="remove-entity-button" l10n-id="common-remove"></button>
+        
+        <div class="panel panel-default right-side">
+          <div class="panel-heading">
+            <a href="#" panel-toggler=".profiles-tab .player-profile-panel"> <h3 class="panel-title" l10n-id="profiles-player-managing"></h3></a>
+          </div>
+          <div class="panel-body player-profile-panel">
+            <div class="entity-management">
+              <div>
+                <input class="create-entity-input" l10n-placeholder-id="profiles-player-name"></input>
+                <button class="create-entity-button" l10n-id="common-create"></button>
+              </div>
+              <div>
+                <select class="rename-entity-select select2-mono-selector"></select> <span l10n-id="common-to"></span>
+                <input class="rename-entity-input" l10n-placeholder-id="profiles-new-player-name"></input>
+                <button class="rename-entity-button" l10n-id="common-rename"></button>
+              </div>
+              <div>
+                <select class="remove-entity-select select2-mono-selector"></select>
+                <button class="remove-entity-button" l10n-id="common-remove"></button>
+              </div>
             </div>
           </div>
         </div>

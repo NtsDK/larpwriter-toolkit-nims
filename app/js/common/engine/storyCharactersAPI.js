@@ -93,8 +93,8 @@ See the License for the specific language governing permissions and
             callback();
         };
         
-        var _renameCharacterInStories = function(fromName, toName){
-            "use strict";
+        var _renameCharacterInStories = function(type, fromName, toName){
+            if(type === 'player') return;
             var storyName, story, data;
 
             var renameEventCharacter = function(event) {
@@ -121,8 +121,8 @@ See the License for the specific language governing permissions and
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameCharacterInStories);
         
-        var _removeCharacterFromStories = function(characterName){
-            "use strict";
+        var _removeCharacterFromStories = function(type, characterName){
+            if(type === 'player') return;
             var storyName, story;
 
             var cleanEvent = function(event) {

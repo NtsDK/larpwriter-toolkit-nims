@@ -133,24 +133,18 @@ See the License for the specific language governing permissions and
   display: flex;
 }
 
-.stories-navigation-container .left-side{
-  flex-grow:1;
-  width:50%;
-}
-.stories-navigation-container .right-side{
-  flex-grow:1;
-  width:50%;
-  text-align: right;
-}
-
-.stories-content-container .left-side, 
-.stories-content-container .right-side {
+.left-side, 
+.right-side {
   flex-grow:1;
   width:50%;
 }
 
-.stories-content-container .left-side:not(.hidden) + .right-side:not(.hidden){
+.left-side:not(.hidden) + .right-side:not(.hidden){
   margin-left: 8px;
+}
+
+.stories-navigation-container .right-side{
+  text-align: right;
 }
 
 /* story common **/

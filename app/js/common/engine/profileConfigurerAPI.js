@@ -18,12 +18,9 @@ See the License for the specific language governing permissions and
 
     function profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors) {
         
-        var characterProfilePath = ['CharacterProfileStructure'];
-        var playerProfilePath = ['PlayerProfileStructure'];
-        
         function getPath(type){
-            if(type === 'character') return characterProfilePath;
-            if(type === 'player') return playerProfilePath;
+            if(type === 'character') return ['CharacterProfileStructure'];
+            if(type === 'player') return ['PlayerProfileStructure'];
             return null;
         }
         
