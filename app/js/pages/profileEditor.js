@@ -32,12 +32,13 @@ See the License for the specific language governing permissions and
     
     exports.init = function () {
         $(characterSelector).select2().on("change", showProfileInfoDelegate('character', characterProfileDiv));
-//        $(root + ".player-profile-selector").select2().on("change", showProfileInfoDelegate);
+        $(playerSelector).select2().on("change", showProfileInfoDelegate('player', playerProfileDiv));
         exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
         refreshPanel('character', characterSelector, characterProfileDiv);
+        refreshPanel('player', playerSelector, playerProfileDiv);
     };
     
     var refreshPanel = function(type, selector, profileDiv){
@@ -255,7 +256,7 @@ See the License for the specific language governing permissions and
             Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type])); 
             return;
         }
-        DBMS.updateProfileField(characterName, fieldName, this.type, value, Utils.processError());
+        DBMS.updateProfileField(this.profileType, characterName, fieldName, this.type, value, Utils.processError());
     };
 
 })(this['ProfileEditor']={});
