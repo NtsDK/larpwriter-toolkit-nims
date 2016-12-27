@@ -146,7 +146,7 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
     FilterConfiguration.makeFilterConfiguration(function(err, filterConfiguration){
         if(err) {Utils.handleError(err); return;}
 
-        PermissionInformer.isGroupEditable(name, function(err, isGroupEditable){
+        PermissionInformer.isEntityEditable('group', name, function(err, isGroupEditable){
             if(err) {Utils.handleError(err); return;}
             GroupProfile.updateSettings(name);
             

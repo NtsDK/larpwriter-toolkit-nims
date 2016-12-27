@@ -50,7 +50,7 @@ StoryCharacters.refresh = function () {
     
     if(!Stories.CurrentStoryName){return;}
     
-    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
+    PermissionInformer.isEntityEditable('story', Stories.CurrentStoryName, function(err, isStoryEditable){
         if(err) {Utils.handleError(err); return;}
         PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacters){
             if(err) {Utils.handleError(err); return;}

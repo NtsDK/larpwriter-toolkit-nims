@@ -103,7 +103,7 @@ See the License for the specific language governing permissions and
         return function(err, profile){
             if(err) {Utils.handleError(err); return;}
             var name = profile.name;
-            PermissionInformer.isCharacterEditable(name, function(err, isCharacterEditable){
+            PermissionInformer.isEntityEditable(type, name, function(err, isCharacterEditable){
                 if(err) {Utils.handleError(err); return;}
                 updateSettings(type, name);
                 

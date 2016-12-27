@@ -47,7 +47,7 @@ StoryEvents.refresh = function () {
         return;
     }
     
-    PermissionInformer.isStoryEditable(Stories.CurrentStoryName, function(err, isStoryEditable){
+    PermissionInformer.isEntityEditable('story', Stories.CurrentStoryName, function(err, isStoryEditable){
         if(err) {Utils.handleError(err); return;}
         DBMS.getMetaInfo(function(err, metaInfo){
             if(err) {Utils.handleError(err); return;}

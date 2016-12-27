@@ -239,7 +239,7 @@ Events.showPersonalStories = function (storyName, characterNames, delegate) {
         if(err) {Utils.handleError(err); return;}
         DBMS.getEvents(storyName, characterNames, function(err, events){
             if(err) {Utils.handleError(err); return;}
-            PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
+            PermissionInformer.isEntityEditable('story', storyName, function(err, isStoryEditable){
                 if(err) {Utils.handleError(err); return;}
                 var adaptations = characterNames.map(function(characterName){
                     return {

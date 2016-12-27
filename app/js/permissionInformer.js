@@ -84,16 +84,8 @@ if(MODE === "NIMS_Server"){
         callback(null, PermissionInformer.summary.isEditor);
     };
     
-    PermissionInformer.isCharacterEditable = function(characterName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('character', characterName));
-    };
-
-    PermissionInformer.isStoryEditable = function(storyName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('story', storyName));
-    };
-
-    PermissionInformer.isGroupEditable = function(groupName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('group', groupName));
+    PermissionInformer.isEntityEditable = function(type, entityName, callback) {
+        callback(null, PermissionInformer.isObjectEditableSync(type, entityName));
     };
     
     PermissionInformer.isObjectEditableSync = function(type, name){
@@ -160,21 +152,6 @@ if(MODE === "NIMS_Server"){
         callback(null, true);
     };
     
-//    PermissionInformer.getOwnerMap = function(objectType, callback){
-//        var func;
-//        switch(objectType){
-//        case 'characters': func = 'getCharacterNamesArray'; break;
-//        case 'stories': func = 'getStoryNamesArray'; break;
-//        case 'groups': func = 'getGroupNamesArray'; break;
-//        default: callback("Unknown objectType: " + objectType);
-//        }
-//        DBMS[func](function(err, names){
-//            if(err) {Utils.handleError(err); return;}
-//            names = R.zipObj(names, R.repeat('user', names.length));
-//            callback(null, names);
-//        });
-//    };
-    
     PermissionInformer.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
         function processNames(err, names){
             if(err) {Utils.handleError(err); return;}
@@ -191,9 +168,7 @@ if(MODE === "NIMS_Server"){
         DBMS.getEntityNamesArray(type, processNames);
     });
     
-    PermissionInformer.isStoryEditable = 
-    PermissionInformer.isGroupEditable = 
-    PermissionInformer.isCharacterEditable = function(entityName, callback) {
+    PermissionInformer.isEntityEditable = function(type, entityName, callback) {
         callback(null, true);
     };
     

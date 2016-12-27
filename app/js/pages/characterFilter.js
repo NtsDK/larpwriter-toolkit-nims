@@ -118,7 +118,7 @@ See the License for the specific language governing permissions and
     
     var saveFilterToGroup = function(){
         var groupName = queryEl("#characterFilterDiv .save-entity-select").value.trim();
-        PermissionInformer.isGroupEditable(groupName, function(err, isGroupEditable){
+        PermissionInformer.isEntityEditable('group', groupName, function(err, isGroupEditable){
             if(err) {Utils.handleError(err); return;}
             if(!isGroupEditable){
                 Utils.alert(strFormat(getL10n("groups-group-editing-forbidden"), [groupName]));

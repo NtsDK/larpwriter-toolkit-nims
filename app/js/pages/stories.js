@@ -197,7 +197,7 @@ Stories.onStorySelectorChange = function (storyName) {
     
     if(storyName){
         Stories.updateSettings(storyName);
-        PermissionInformer.isStoryEditable(storyName, function(err, isStoryEditable){
+        PermissionInformer.isEntityEditable('story', storyName, function(err, isStoryEditable){
             if (err) {Utils.handleError(err);return;}
             if(Stories.left.currentView)Stories.left.currentView.refresh();
             if(Stories.right.currentView)Stories.right.currentView.refresh();
