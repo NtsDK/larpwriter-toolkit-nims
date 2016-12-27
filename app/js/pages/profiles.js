@@ -25,12 +25,12 @@ See the License for the specific language governing permissions and
     
     exports.init = function () {
         state.views = {};
-        var nav = "charactersNavigation";
-        var content = "charactersContent";
+        var nav = root + ".sub-tab-navigation";
+        var content = root + ".sub-tab-content";
         var containers = {
             root: state,
-            navigation: getEl(nav),
-            content: getEl(content)
+            navigation: queryEl(nav),
+            content: queryEl(content)
         };
         Utils.addView(containers, "character-profile", ProfileEditor,{mainPage:true});
         Utils.addView(containers, "character-profile-constructor", ProfileConfigurer);
