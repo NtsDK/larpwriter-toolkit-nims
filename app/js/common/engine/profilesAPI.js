@@ -42,11 +42,11 @@ See the License for the specific language governing permissions and
             callback(null, CommonUtils.clone(R.path(getPath(type), this.database)));
         };
         
-        // characters
+        // profiles
         LocalDBMS.prototype.isProfileNameUsed = function(type, characterName, callback) {
             callback(null, R.path(getPath(type), this.database)[characterName] !== undefined);
         };
-        // characters
+        // profiles
         LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
             if(characterName === ""){
                 callback(new Errors.ValidationError("profiles-character-name-is-not-specified"));
@@ -67,6 +67,8 @@ See the License for the specific language governing permissions and
             R.path(getStructurePath(type), this.database).forEach(function(profileSettings) {
                 if (profileSettings.type === "enum") {
                     newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
+                } else if(profileSettings.type === "multiEnum") {
+                    newCharacter[profileSettings.name] = '';
                 } else {
                     newCharacter[profileSettings.name] = profileSettings.value;
                 }
@@ -76,7 +78,7 @@ See the License for the specific language governing permissions and
             this.ee.trigger("createProfile", arguments);
             if(callback) callback();
         };
-        // characters
+        // profiles
         LocalDBMS.prototype.renameProfile = function(type, fromName, toName, callback) {
             if (toName === "") {
                 callback(new Errors.ValidationError("profiles-new-character-name-is-not-specified"));
@@ -105,17 +107,17 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
     
-        // characters
+        // profiles
         LocalDBMS.prototype.removeProfile = function(type, characterName, callback) {
             delete R.path(getPath(type), this.database)[characterName];
             this.ee.trigger("removeProfile", arguments);
             if(callback) callback();
         };
     
-        // profile
-        LocalDBMS.prototype.updateProfileField = function(characterName, fieldName, type, value, callback) {
-            var profileInfo = this.database.Characters[characterName];
-            switch (type) {
+        // profile editor
+        LocalDBMS.prototype.updateProfileField = function(type, characterName, fieldName, itemType, value, callback) {
+            var profileInfo = R.path(getPath(type), this.database)[characterName];
+            switch (itemType) {
             case "text":
             case "string":
             case "enum":
@@ -133,16 +135,15 @@ See the License for the specific language governing permissions and
                 profileInfo[fieldName] = value;
                 break;
             default:
-                callback(new Errors.InternalError('errors-unexpected-switch-argument', [type]));
+                callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
             }
             if(callback) callback();
         };
         
         function _createProfileItem(type, name, itemType, value){
-            if(type === 'player') return;
-            var that = this;
-            Object.keys(that.database.Characters).forEach(function(characterName) {
-                that.database.Characters[characterName][name] = value;
+            var profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach(function(characterName) {
+                profileSet[characterName][name] = value;
             });
         };
         
@@ -150,10 +151,9 @@ See the License for the specific language governing permissions and
         listeners.createProfileItem.push(_createProfileItem);
 
         function _removeProfileItem(type, index, profileItemName){
-            if(type === 'player') return;
-            var that = this;
-            Object.keys(this.database.Characters).forEach(function(characterName) {
-                delete that.database.Characters[characterName][profileItemName];
+            var profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach(function(characterName) {
+                delete profileSet[characterName][profileItemName];
             });
         };
         
@@ -161,10 +161,9 @@ See the License for the specific language governing permissions and
         listeners.removeProfileItem.push(_removeProfileItem);
 
         function _changeProfileItemType(type, profileItemName, newType){
-            if(type === 'player') return;
-            var that = this;
-            Object.keys(this.database.Characters).forEach(function(characterName) {
-                that.database.Characters[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
+            var profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach(function(characterName) {
+                profileSet[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
             });
         };
         
@@ -172,12 +171,11 @@ See the License for the specific language governing permissions and
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
         function _renameProfileItem(type, newName, oldName){
-            if(type === 'player') return;
-            var that = this;
-            Object.keys(this.database.Characters).forEach(function(characterName) {
-                var tmp = that.database.Characters[characterName][oldName];
-                delete that.database.Characters[characterName][oldName];
-                that.database.Characters[characterName][newName] = tmp;
+            var profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach(function(characterName) {
+                var tmp = profileSet[characterName][oldName];
+                delete profileSet[characterName][oldName];
+                profileSet[characterName][newName] = tmp;
             });
         };
         
@@ -185,12 +183,11 @@ See the License for the specific language governing permissions and
         listeners.renameProfileItem.push(_renameProfileItem);
         
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
-            if(type === 'player') return;
-            var that = this;
-            Object.keys(this.database.Characters).forEach(function(characterName) {
-                var enumValue = that.database.Characters[characterName][profileItemName];
+            var profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach(function(characterName) {
+                var enumValue = profileSet[characterName][profileItemName];
                 if (!newOptionsMap[enumValue]) {
-                    that.database.Characters[characterName][profileItemName] = defaultValue;
+                    profileSet[characterName][profileItemName] = defaultValue;
                 }
             });
         };
@@ -199,13 +196,12 @@ See the License for the specific language governing permissions and
         listeners.replaceEnumValue.push(_replaceEnumValue);
         
         function _replaceMultiEnumValue(type, profileItemName, defaultValue, newOptionsMap){
-            if(type === 'player') return;
-            var that = this;
-            Object.keys(this.database.Characters).forEach(function(characterName) {
+            var profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach(function(characterName) {
                 if(value !== ''){
-                    var value = that.database.Characters[characterName][profileItemName];
+                    var value = profileSet[characterName][profileItemName];
                     value = R.intersection(value.split(','), R.keys(newOptionsMap));
-                    that.database.Characters[characterName][profileItemName] = value.join(',');
+                    profileSet[characterName][profileItemName] = value.join(',');
                 }
             });
         };
