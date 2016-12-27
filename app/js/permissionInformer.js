@@ -22,7 +22,6 @@ var PermissionInformer = {};
 PermissionInformer.summary = {
 };
 
-
 if(MODE === "NIMS_Server"){
     PermissionInformer.refresh = function(callback) {
         var request = $.ajax({
@@ -86,15 +85,15 @@ if(MODE === "NIMS_Server"){
     };
     
     PermissionInformer.isCharacterEditable = function(characterName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('characters', characterName));
+        callback(null, PermissionInformer.isObjectEditableSync('character', characterName));
     };
 
     PermissionInformer.isStoryEditable = function(storyName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('stories', storyName));
+        callback(null, PermissionInformer.isObjectEditableSync('story', storyName));
     };
 
     PermissionInformer.isGroupEditable = function(groupName, callback){
-        callback(null, PermissionInformer.isObjectEditableSync('groups', groupName));
+        callback(null, PermissionInformer.isObjectEditableSync('group', groupName));
     };
     
     PermissionInformer.isObjectEditableSync = function(type, name){
@@ -131,10 +130,6 @@ if(MODE === "NIMS_Server"){
         callback(null, names);
     });
     
-//    PermissionInformer.getCharacterNamesArray = PermissionInformer.getEntityNamesArray('characters');
-//    PermissionInformer.getStoryNamesArray = PermissionInformer.getEntityNamesArray('stories');
-//    PermissionInformer.getGroupNamesArray = PermissionInformer.getEntityNamesArray('groups');
-    
     PermissionInformer.areAdaptationsEditable = function(adaptations, callback){
         var map = {};
         var isAdaptationRightsByStory = PermissionInformer.summary.isAdaptationRightsByStory;
@@ -142,9 +137,9 @@ if(MODE === "NIMS_Server"){
         adaptations.forEach(function(elem){
             var key = elem.storyName + "-" + elem.characterName;
             if(isAdaptationRightsByStory){
-                map[key] = PermissionInformer.isObjectEditableSync('stories', elem.storyName);
+                map[key] = PermissionInformer.isObjectEditableSync('story', elem.storyName);
             } else {
-                map[key] = PermissionInformer.isObjectEditableSync('characters', elem.characterName);
+                map[key] = PermissionInformer.isObjectEditableSync('character', elem.characterName);
             }
         });
         

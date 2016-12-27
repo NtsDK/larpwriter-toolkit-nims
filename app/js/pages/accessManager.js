@@ -31,7 +31,7 @@ AccessManager.init = function() {
     listen(getEl("removeEditorButton"),"click", AccessManager.removeEditor);
     listen(getEl("newEditorButton"),"click", AccessManager.assignEditor);
     
-    AccessManager.entities = ['characters','stories','groups'];
+    AccessManager.entities = ['characters','stories','groups','players'];
     
     var inputs = document.getElementsByClassName("adaptationRights");
     var i, elem;
@@ -57,19 +57,23 @@ AccessManager.refresh = function() {
                         if(err) {Utils.handleError(err); return;}
                         PermissionInformer.getEntityNamesArray('group', !isAdmin, function(err, groupNames){
                             if(err) {Utils.handleError(err); return;}
-                            var names = {
-                                    characters: characterNames,
-                                    groups: groupNames,
-                                    stories: storyNames,
-                            };
-                            if(!isAdmin && isEditor){
-                                for(var entity in names){
-                                    names[entity] = names[entity].filter(R.prop('isOwner'));
+                            PermissionInformer.getEntityNamesArray('player', !isAdmin, function(err, playerNames){
+                                if(err) {Utils.handleError(err); return;}
+                                var names = {
+                                        characters: characterNames,
+                                        groups: groupNames,
+                                        stories: storyNames,
+                                        players: playerNames,
+                                };
+                                if(!isAdmin && isEditor){
+                                    for(var entity in names){
+                                        names[entity] = names[entity].filter(R.prop('isOwner'));
+                                    }
                                 }
-                            }
-                            AccessManager.rebuildInterface(names, managementInfo);
-                            Utils.enable(AccessManager.content, "adminOnly", isAdmin);
-                            Utils.enable(AccessManager.content, "editorOrAdmin", isAdmin || isEditor);
+                                AccessManager.rebuildInterface(names, managementInfo);
+                                Utils.enable(AccessManager.content, "adminOnly", isAdmin);
+                                Utils.enable(AccessManager.content, "editorOrAdmin", isAdmin || isEditor);
+                            });
                         });
                     });
                 });
@@ -139,6 +143,7 @@ AccessManager.buildPermissionList = function (names, usersInfo) {
         characters : getL10n("admins-characters"),
         stories : getL10n("admins-stories"),
         groups : getL10n("admins-groups"),
+        players : getL10n("admins-players"),
     };
     
     function liMaker(text){

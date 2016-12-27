@@ -43,7 +43,7 @@ See the License for the specific language governing permissions and
             var Relations = getRelationsSchema(base.Characters, schema.definitions);
             var ManagementInfo = {};
             if(base.ManagementInfo){
-                ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups);
+                ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups, base.Players);
             }
     
             schema.properties = {
@@ -634,10 +634,11 @@ See the License for the specific language governing permissions and
         };
         
         
-        function getManagementInfoSchema(managementInfo, characters, stories, groups) {
+        function getManagementInfoSchema(managementInfo, characters, stories, groups, players) {
             var charNames = Object.keys(characters);
             var storyNames = Object.keys(stories);
             var groupNames = Object.keys(groups);
+            var playerNames = Object.keys(players);
             var userNames = Object.keys(managementInfo.UsersInfo);
             // enum can't be empty, ask about it here 
             // http://stackoverflow.com/questions/37635675/how-to-validate-empty-array-of-strings-with-ajv
@@ -649,6 +650,9 @@ See the License for the specific language governing permissions and
             }
             if(groupNames.length == 0){
                 groupNames = ['123'];
+            }
+            if(playerNames.length == 0){
+                playerNames = ['123'];
             }
             
             var userSchema = {
@@ -679,6 +683,13 @@ See the License for the specific language governing permissions and
                             "enum" : groupNames
                         }
                     },
+                    "players" : {
+                        "type" : "array",
+                        "items" : {
+                            "type" : "string",
+                            "enum" : playerNames
+                        }
+                    },
                     "salt" : {
                         "type" : "string"
                     },
@@ -686,7 +697,7 @@ See the License for the specific language governing permissions and
                         "type" : "string"
                     },
                 },
-                "required" : [ "name", "stories", "characters", "groups", "salt", "hashedPassword" ],
+                "required" : [ "name", "stories", "characters", "groups", "players", "salt", "hashedPassword" ],
                 "additionalProperties" : false
             };
             

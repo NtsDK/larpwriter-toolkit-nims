@@ -135,6 +135,11 @@ See the License for the specific language governing permissions and
             delete data.ProfileSettings;
             data.PlayerProfileStructure = [];
             data.Players = {};
+            if(data.ManagementInfo){
+                for(var userName in data.ManagementInfo.UsersInfo){
+                    data.ManagementInfo.UsersInfo[userName].players = [];
+                }
+            }
             data.Version = "0.5.3";
         }
         

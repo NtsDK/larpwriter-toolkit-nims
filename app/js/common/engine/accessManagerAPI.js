@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
 //            }
             var ManagementInfo = this.database.ManagementInfo;
             var usersInfo = CommonUtils.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
-                result[user] = R.pick(['characters', 'groups','stories'], ManagementInfo.UsersInfo[user]);
+                result[user] = R.pick(['characters', 'groups','stories','players'], ManagementInfo.UsersInfo[user]);
                 return result;
             }, {}));
             callback(null, {
@@ -89,6 +89,7 @@ See the License for the specific language governing permissions and
                 name : name,
                 stories : [],
                 characters : [],
+                players : [],
                 groups : []
             };
             callback();
