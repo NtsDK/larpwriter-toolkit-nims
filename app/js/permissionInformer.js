@@ -17,167 +17,170 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var PermissionInformer = {};
+(function(exports, mode){
 
-PermissionInformer.summary = {
-};
-
-if(MODE === "NIMS_Server"){
-    PermissionInformer.refresh = function(callback) {
-        var request = $.ajax({
-            url : "/getPermissionsSummary",
-            dataType : "text",
-            method : "GET",
-            contentType : "application/json;charset=utf-8",
-            timeout: Constants.httpTimeout
-        });
+    var state = {};
+    
+    state.summary = {};
+    
+    if(mode === "NIMS_Server"){
+        exports.refresh = function(callback) {
+            var request = $.ajax({
+                url : "/getPermissionsSummary",
+                dataType : "text",
+                method : "GET",
+                contentType : "application/json;charset=utf-8",
+                timeout: Constants.httpTimeout
+            });
+            
+            request.done(function(data) {
+                state.summary = JSON.parse(data);
+                if(callback){
+                    callback();
+                } else {
+                    exports.subscribe();
+                }
+    //        alert(data);
+    //        alert(state.summary);
+            });
+            
+            request.fail(function(errorInfo, textStatus, errorThrown) {
+                if(callback){
+                    callback(errorInfo.responseText || 'error');
+                } else {
+                    setTimeout(exports.subscribe, 500);
+                }
+            });
+        };
         
-        request.done(function(data) {
-            PermissionInformer.summary = JSON.parse(data);
-            if(callback){
-                callback();
-            } else {
-                PermissionInformer.subscribe();
-            }
-//        alert(data);
-//        alert(PermissionInformer.summary);
-        });
+        exports.subscribe = function() {
+            
+            var request = $.ajax({
+                url : "/subscribeOnPermissionsUpdate",
+                dataType : "text",
+                method : "GET",
+                contentType : "application/json;charset=utf-8",
+                timeout: Constants.httpTimeout
+            });
+            
+            request.done(function(data) {
+                state.summary = JSON.parse(data);
+    //        alert(data);
+    //        alert(state.summary);
+                exports.subscribe();
+            });
+            
+            request.fail(function(errorInfo, textStatus, errorThrown) {
+                setTimeout(exports.subscribe, 500);
+            });
+        };
         
-        request.fail(function(errorInfo, textStatus, errorThrown) {
-            if(callback){
-                callback(errorInfo.responseText || 'error');
-            } else {
-                setTimeout(PermissionInformer.subscribe, 500);
-            }
-        });
-    };
+        exports.refresh();
     
-    PermissionInformer.subscribe = function() {
+        exports.isAdmin = function(callback){
+            callback(null, state.summary.isAdmin);
+        };
         
-        var request = $.ajax({
-            url : "/subscribeOnPermissionsUpdate",
-            dataType : "text",
-            method : "GET",
-            contentType : "application/json;charset=utf-8",
-            timeout: Constants.httpTimeout
-        });
+        exports.isEditor = function(callback){
+            callback(null, state.summary.isEditor);
+        };
         
-        request.done(function(data) {
-            PermissionInformer.summary = JSON.parse(data);
-//        alert(data);
-//        alert(PermissionInformer.summary);
-            PermissionInformer.subscribe();
-        });
+        exports.isEntityEditable = function(type, entityName, callback) {
+            callback(null, isObjectEditableSync(type, entityName));
+        };
         
-        request.fail(function(errorInfo, textStatus, errorThrown) {
-            setTimeout(PermissionInformer.subscribe, 500);
-        });
-    };
-    
-    PermissionInformer.refresh();
-
-    PermissionInformer.isAdmin = function(callback){
-        callback(null, PermissionInformer.summary.isAdmin);
-    };
-    
-    PermissionInformer.isEditor = function(callback){
-        callback(null, PermissionInformer.summary.isEditor);
-    };
-    
-    PermissionInformer.isEntityEditable = function(type, entityName, callback) {
-        callback(null, PermissionInformer.isObjectEditableSync(type, entityName));
-    };
-    
-    PermissionInformer.isObjectEditableSync = function(type, name){
-        if(PermissionInformer.summary.isEditor){
-            return true;
-        }
-        if(PermissionInformer.summary.existEditor){
-            return false;
-        }
-        return PermissionInformer.summary.user[type].indexOf(name) !== -1;
-    };
-    
-    PermissionInformer.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
-        var userEntities = PermissionInformer.summary.user[type];
-        var allEntities = PermissionInformer.summary.all[type];
-        var ownerMap = PermissionInformer.summary.ownerMaps[type];
-        var names = allEntities.filter(function(name){
-            if(editableOnly){
-                return PermissionInformer.isObjectEditableSync(type, name);
-            } else {
+        var isObjectEditableSync = function(type, name){
+            if(state.summary.isEditor){
                 return true;
             }
-        }).map(function(name){
-            return {
-                displayName : ownerMap[name] + ". " + name,
-                value : name,
-                editable : PermissionInformer.isObjectEditableSync(type, name),
-                isOwner : userEntities.indexOf(name) !== -1
-            };
-        });
-        
-        names.sort(Utils.charOrdAObject);
-        
-        callback(null, names);
-    });
-    
-    PermissionInformer.areAdaptationsEditable = function(adaptations, callback){
-        var map = {};
-        var isAdaptationRightsByStory = PermissionInformer.summary.isAdaptationRightsByStory;
-        
-        adaptations.forEach(function(elem){
-            var key = elem.storyName + "-" + elem.characterName;
-            if(isAdaptationRightsByStory){
-                map[key] = PermissionInformer.isObjectEditableSync('story', elem.storyName);
-            } else {
-                map[key] = PermissionInformer.isObjectEditableSync('character', elem.characterName);
+            if(state.summary.existEditor){
+                return false;
             }
-        });
+            return state.summary.user[type].indexOf(name) !== -1;
+        };
         
-        callback(null, map);
-    };
-    
-} else {
-    
-    PermissionInformer.refresh = function(callback) {
-        callback();
-    };
-    
-    PermissionInformer.isAdmin = function(callback){
-        callback(null, true);
-    };
-    
-    PermissionInformer.isEditor = function(callback){
-        callback(null, true);
-    };
-    
-    PermissionInformer.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
-        function processNames(err, names){
-            if(err) {Utils.handleError(err); return;}
-            var newNames = [];
-            names.forEach(function(name){
-                newNames.push({
-                    displayName:name,
-                    value:name,
-                    editable: true
-                });
+        exports.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
+            var userEntities = state.summary.user[type];
+            var allEntities = state.summary.all[type];
+            var ownerMap = state.summary.ownerMaps[type];
+            var names = allEntities.filter(function(name){
+                if(editableOnly){
+                    return isObjectEditableSync(type, name);
+                } else {
+                    return true;
+                }
+            }).map(function(name){
+                return {
+                    displayName : ownerMap[name] + ". " + name,
+                    value : name,
+                    editable : isObjectEditableSync(type, name),
+                    isOwner : userEntities.indexOf(name) !== -1
+                };
             });
-            callback(null, newNames);
-        }
-        DBMS.getEntityNamesArray(type, processNames);
-    });
-    
-    PermissionInformer.isEntityEditable = function(type, entityName, callback) {
-        callback(null, true);
-    };
-    
-    PermissionInformer.areAdaptationsEditable = function(adaptations, callback){
-        var map = {};
-        adaptations.forEach(function(elem){
-            map[elem.storyName + "-" + elem.characterName] = true;
+            
+            names.sort(Utils.charOrdAObject);
+            
+            callback(null, names);
         });
         
-        callback(null, map);
-    };
-}
+        exports.areAdaptationsEditable = function(adaptations, callback){
+            var map = {};
+            var isAdaptationRightsByStory = state.summary.isAdaptationRightsByStory;
+            
+            adaptations.forEach(function(elem){
+                var key = elem.storyName + "-" + elem.characterName;
+                if(isAdaptationRightsByStory){
+                    map[key] = isObjectEditableSync('story', elem.storyName);
+                } else {
+                    map[key] = isObjectEditableSync('character', elem.characterName);
+                }
+            });
+            
+            callback(null, map);
+        };
+        
+    } else {
+        
+        exports.refresh = function(callback) {
+            callback();
+        };
+        
+        exports.isAdmin = function(callback){
+            callback(null, true);
+        };
+        
+        exports.isEditor = function(callback){
+            callback(null, true);
+        };
+        
+        exports.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
+            function processNames(err, names){
+                if(err) {Utils.handleError(err); return;}
+                var newNames = [];
+                names.forEach(function(name){
+                    newNames.push({
+                        displayName:name,
+                        value:name,
+                        editable: true
+                    });
+                });
+                callback(null, newNames);
+            }
+            DBMS.getEntityNamesArray(type, processNames);
+        });
+        
+        exports.isEntityEditable = function(type, entityName, callback) {
+            callback(null, true);
+        };
+        
+        exports.areAdaptationsEditable = function(adaptations, callback){
+            var map = {};
+            adaptations.forEach(function(elem){
+                map[elem.storyName + "-" + elem.characterName] = true;
+            });
+            
+            callback(null, map);
+        };
+    }
+
+})(this['PermissionInformer']={}, MODE);
