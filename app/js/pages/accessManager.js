@@ -167,7 +167,6 @@ AccessManager.buildPermissionList = function (names, usersInfo) {
 };
 
 AccessManager.createUser = function () {
-    "use strict";
     var userNameInput = getEl("userNameInput");
     var name = userNameInput.value.trim();
 
@@ -189,14 +188,18 @@ AccessManager.createUser = function () {
         if (isUserNameUsed) {
             Utils.alert(getL10n('admins-user-already-exists'));
         } else {
-            DBMS.createUser(name, password, Utils.processError(AccessManager.refresh));
+            
+            DBMS.createUser(name, password, Utils.processError(function(){
+                userNameInput.value = '';
+                userPasswordInput.value = '';
+                AccessManager.refresh();
+            }));
         }
     });
 };
 
 
 AccessManager.changePassword = function () {
-    "use strict";
     var userName = getEl("passwordUserName").value.trim();
     var newPassword = getEl("newPassword").value.trim();
 
@@ -205,7 +208,10 @@ AccessManager.changePassword = function () {
         return;
     }
     
-    DBMS.changePassword(userName, newPassword, Utils.processError(AccessManager.refresh));
+    DBMS.changePassword(userName, newPassword, Utils.processError(function(){
+        getEl("newPassword").value = '';
+        AccessManager.refresh();
+    }));
 
 };
 

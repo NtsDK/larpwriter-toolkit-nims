@@ -113,8 +113,8 @@ Stories.getSelectedStoryName = function(storyNames){
 };
 
 Stories.createStory = function () {
-    "use strict";
-    var storyName = queryEl("#storiesDiv .create-entity-input").value.trim();
+    var input = queryEl("#storiesDiv .create-entity-input");
+    var storyName = input.value.trim();
     
     if (storyName === "") {
         Utils.alert(getL10n("stories-story-name-is-not-specified"));
@@ -131,6 +131,7 @@ Stories.createStory = function () {
                 Stories.updateSettings(storyName);
                 PermissionInformer.refresh(function(err){
                     if(err) {Utils.handleError(err); return;}
+                    input.value = '';
                     Stories.refresh();
                 });
             });
@@ -139,9 +140,9 @@ Stories.createStory = function () {
 };
 
 Stories.renameStory = function () {
-    "use strict";
+    var toInput = queryEl("#storiesDiv .rename-entity-input");
     var fromName = queryEl("#storiesDiv .rename-entity-select").value.trim();
-    var toName = queryEl("#storiesDiv .rename-entity-input").value.trim();
+    var toName = toInput.value.trim();
 
     if (toName === "") {
         Utils.alert(getL10n("stories-new-story-name-is-not-specified"));
@@ -163,6 +164,7 @@ Stories.renameStory = function () {
                 Stories.updateSettings(toName);
                 PermissionInformer.refresh(function(err){
                     if(err) {Utils.handleError(err); return;}
+                    toInput.value = '';
                     Stories.refresh();
                 });
             });

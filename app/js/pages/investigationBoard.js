@@ -89,9 +89,11 @@ InvestigationBoard.addGroup = function () {
 };
 
 InvestigationBoard.createResource = function () {
-    var name = queryEl(".investigation-board-tab .create-entity-input").value.trim();
+    var input = queryEl(".investigation-board-tab .create-entity-input");
+    var name = input.value.trim();
     DBMS.createResource(name, function(err){
         if(err) {Utils.handleError(err); return;}
+        input.value = '';
         InvestigationBoard.setNode(name, 'resources');
     });
 };
@@ -318,13 +320,15 @@ InvestigationBoard.saveEdge = function(){
 };
 
 InvestigationBoard.updateEdge = function(){
-    var label = queryEl('.investigation-board-tab .add-edge-label-input').value.trim();
+    var input = queryEl('.investigation-board-tab .add-edge-label-input');
+    var label = input.value.trim();
     var edge = InvestigationBoard.modifyArgs.edge;
     DBMS.setEdgeLabel(edge.from, edge.to, label, function(err) {
         if (err) { Utils.handleError(err); return; }
         
         edge.label = label;
         InvestigationBoard.showPopup('.board-add-edge-popup', false);
+        input.value = '';
         InvestigationBoard.modifyArgs.callback(edge);
     });
 };
@@ -332,12 +336,14 @@ InvestigationBoard.updateEdge = function(){
 InvestigationBoard.createEdge = function(){
     var fromNode = InvestigationBoard.modifyArgs.fromNode;
     var toNode = InvestigationBoard.modifyArgs.toNode;
-    var label = queryEl('.investigation-board-tab .add-edge-label-input').value.trim();
+    var input = queryEl('.investigation-board-tab .add-edge-label-input');
+    var label = input.value.trim();
     
     DBMS.addEdge(fromNode.id, toNode.id, label, function(err) {
         if (err) { Utils.handleError(err); return; }
         
         InvestigationBoard.showPopup('.board-add-edge-popup', false);
+        input.value = '';
         InvestigationBoard.modifyArgs.callback({
             from: fromNode.id,
             to: toNode.id,

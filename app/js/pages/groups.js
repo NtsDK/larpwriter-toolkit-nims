@@ -63,9 +63,9 @@ Groups.rebuildInterface = function (selector, names) {
 };
 
 Groups.createGroup = function (selector, refresh) {
-    "use strict";
     return function(){
-        var name = queryEl(selector + " .create-entity-input").value.trim();
+        var input = queryEl(selector + " .create-entity-input");
+        var name = input.value.trim();
         
         if (name === "") {
             Utils.alert(getL10n("groups-group-name-is-not-specified"));
@@ -85,6 +85,7 @@ Groups.createGroup = function (selector, refresh) {
 //                    if(Groups.currentView.updateSettings){
 //                        Groups.currentView.updateSettings(name);
 //                    }
+                    input.value = '';
                     refresh();
                 });
             });
@@ -93,10 +94,10 @@ Groups.createGroup = function (selector, refresh) {
 };
 
 Groups.renameGroup = function (selector, refresh) {
-    "use strict";
     return function(){
+        var toInput = queryEl(selector + " .rename-entity-input");
         var fromName = queryEl(selector + " .rename-entity-select").value.trim();
-        var toName = queryEl(selector + " .rename-entity-input").value.trim();
+        var toName = toInput.value.trim();
         
         if (toName === "") {
             Utils.alert(getL10n("groups-new-group-name-is-not-specified"));
@@ -120,6 +121,7 @@ Groups.renameGroup = function (selector, refresh) {
 //                        if(Groups.currentView.updateSettings){
 //                            Groups.currentView.updateSettings(toName);
 //                        }
+                        toInput.value = '';
                         refresh();
                     });
                 });

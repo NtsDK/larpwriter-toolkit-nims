@@ -89,7 +89,8 @@ See the License for the specific language governing permissions and
     
     var createProfileItem = function (type, root) {
         return function(){
-            var name = queryEl(root+".create-entity-input").value.trim();
+            var input = queryEl(root+".create-entity-input");
+            var name = input.value.trim();
             
             validateProfileItemName(type, name, function(){
                 var itemType = queryEl(root+".create-entity-type-select").value.trim();
@@ -105,7 +106,10 @@ See the License for the specific language governing permissions and
                 var position = positionSelector.value;
                 
                 DBMS.createProfileItem(type, name, itemType, value, position === getL10n("common-set-item-as-last"), 
-                        positionSelector.selectedIndex, Utils.processError(exports.refresh));
+                        positionSelector.selectedIndex, Utils.processError(function(){
+                            input.value = '';
+                            exports.refresh();
+                        }));
             });
         }
     };

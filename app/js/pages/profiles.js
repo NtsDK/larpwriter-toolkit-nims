@@ -72,7 +72,8 @@ See the License for the specific language governing permissions and
     
     var createProfile = function (type, root) {
         return function(){
-            var name = queryEl(root + ".create-entity-input").value.trim();
+            var input = queryEl(root + ".create-entity-input");
+            var name = input.value.trim();
             
             if (name === "") {
                 Utils.alert(getL10n("profiles-character-name-is-not-specified"));
@@ -91,6 +92,7 @@ See the License for the specific language governing permissions and
                             if(state.currentView.updateSettings){
                                 state.currentView.updateSettings(name);
                             }
+                            input.value = '';
                             exports.refresh();
                         });
                     });
@@ -101,8 +103,9 @@ See the License for the specific language governing permissions and
     
     var renameProfile = function (type, root) {
         return function(){
+            var toInput = queryEl(root + ".rename-entity-input");
             var fromName = queryEl(root + ".rename-entity-select").value.trim();
-            var toName = queryEl(root + ".rename-entity-input").value.trim();
+            var toName = toInput.value.trim();
         
             if (toName === "") {
                 Utils.alert(getL10n("profiles-new-character-name-is-not-specified"));
@@ -126,6 +129,7 @@ See the License for the specific language governing permissions and
                             if(state.currentView.updateSettings){
                                 state.currentView.updateSettings(toName);
                             }
+                            toInput.value = '';
                             exports.refresh();
                         });
                     });
