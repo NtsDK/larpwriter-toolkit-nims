@@ -37,6 +37,7 @@ See the License for the specific language governing permissions and
             var Log =  getLogSchema();
             var Characters =  getProfileSchema(base.CharacterProfileStructure);
             var Players =  getProfileSchema(base.PlayerProfileStructure);
+            var ProfileBindings =  getProfileBindings(base.Characters, base.Players);
             var Stories =  getStoriesSchema(base.Characters);
             var Groups =  getGroupsSchema(base.CharacterProfileStructure);
             var InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
@@ -52,6 +53,7 @@ See the License for the specific language governing permissions and
                 PlayerProfileStructure : PlayerProfileStructure,
                 Characters : Characters,
                 Players : Players,
+                ProfileBindings : ProfileBindings,
                 Stories : Stories,
                 Version : {
                     "type" : "string"
@@ -65,7 +67,7 @@ See the License for the specific language governing permissions and
             };
     
             schema.required = ["Meta", "CharacterProfileStructure", "PlayerProfileStructure", "Version", "Characters", 
-                               "Players", "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
+                               "Players", "ProfileBindings", "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
             schema.additionalProperties = false;
             
             return schema;
@@ -517,6 +519,26 @@ See the License for the specific language governing permissions and
             };
             return schema;
         };
+        
+        function getProfileBindings(characters, players) {
+            var playerNames = Object.keys(players);
+            if(playerNames.length == 0){
+                playerNames = ['123'];
+            }
+            
+            var names = '^(' + R.keys(characters).map(CommonUtils.escapeRegExp).join('|') + ')$';
+            var schema = {
+                type : 'object',
+                additionalProperties : false,
+                patternProperties : {}
+            };
+            schema.patternProperties[names] = {
+                type: 'string',
+                enum: playerNames
+            };
+            
+            return schema;
+        }
         
         function getStoriesSchema(characters) {
             var charNames = Object.keys(characters);

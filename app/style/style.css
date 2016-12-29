@@ -23,6 +23,10 @@ See the License for the specific language governing permissions and
 
 /* profile configurer **/
 
+.profile-binding-tab .panel-body{
+  display: flex;
+}
+
 /** story events */
 
 .story-events-div-main{
