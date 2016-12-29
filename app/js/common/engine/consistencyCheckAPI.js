@@ -12,13 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
+
 (function(callback){
     
     function consistencyCheckAPI(LocalDBMS, R, CommonUtils, validatorLib, schemaBuilder) {
         
         LocalDBMS.prototype.getConsistencyCheckResult = function(callback) {
-            "use strict";
-            
             var errors = [];
             var pushError = function(str){
                 errors.push(str);
@@ -28,6 +28,7 @@ See the License for the specific language governing permissions and
             checkProfileValueConsistency(this.database, pushError);
             checkStoryCharactersConsistency(this.database, pushError);
             checkEventsCharactersConsistency(this.database, pushError);
+            checkBindingsConsistency(this.database, pushError);
             if(this.database.ManagementInfo){
                 checkObjectRightsConsistency(this.database, pushError);
             }
@@ -48,7 +49,6 @@ See the License for the specific language governing permissions and
         }
         
         var checkObjectRightsConsistency = function(data, callback){
-            "use strict";
             var storyNames = R.values(data.Stories).map(R.prop('name'));
             var characterNames = R.values(data.Characters).map(R.prop('name'));
             var processError = getErrorProcessor(callback);
@@ -66,7 +66,6 @@ See the License for the specific language governing permissions and
         };
         
         var checkEventsCharactersConsistency = function(data, callback){
-            "use strict";
             var processError = getErrorProcessor(callback);
             R.values(data.Stories).forEach(function(story){
                 var storyCharacters = R.values(story.characters).map(R.prop('name'));
@@ -79,9 +78,17 @@ See the License for the specific language governing permissions and
                 });
             });
         };
+        
+        var checkBindingsConsistency = function(data, callback){
+            var processError = getErrorProcessor(callback);
+            R.toPairs(R.invert(data.ProfileBindings)).filter(function(pair){
+                return pair[1].length > 1;
+            }).map(function(pair){
+                processError("Profile bindings inconsistent, player has multiple characters: player {0}, characters {1}", [pair[0], JSON.stringify(pair[1])]);
+            });
+        };
             
         var checkStoryCharactersConsistency = function(data, callback){
-            "use strict";
             var charNames = R.values(data.Characters).map(R.prop('name'));
             var processError = getErrorProcessor(callback);
             
@@ -100,7 +107,6 @@ See the License for the specific language governing permissions and
         };
         
         var checkProfileValueConsistency = function(data, callback){
-            "use strict";
             var profileItems = data.CharacterProfileStructure;
             var processError = getErrorProcessor(callback)('Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}');
             
@@ -143,7 +149,6 @@ See the License for the specific language governing permissions and
         };
         
         var checkCharacterProfileConsistency = function(data, callback){
-            "use strict";
             var profileItems = data.CharacterProfileStructure.map(R.prop('name'));
             var processError = getErrorProcessor(callback);
             
