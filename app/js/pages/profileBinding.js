@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
         var playerName = queryEl(root +".player-selector").value;
         
         if(characterName === '' || playerName === ''){
-            Utils.alert('Персонаж или игрок не выбран');
+            Utils.alert(getL10n('binding-character-or-player-not-selected'));
             return;
         }
         
@@ -91,7 +91,7 @@ See the License for the specific language governing permissions and
         var bindingVal = queryEl(root +".binding-selector").value;
         
         if(bindingVal === ''){
-            Utils.alert('Сопоставление не выбрано');
+            Utils.alert(getL10n('binding-binding-is-not-selected'));
             return;
         }
         var binding = JSON.parse(bindingVal);
