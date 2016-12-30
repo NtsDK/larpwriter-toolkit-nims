@@ -311,7 +311,7 @@ See the License for the specific language governing permissions and
 	width: 300px;
 }
 
-#gameDescription {
+.game-description-area {
   width: 100%;
   height: 400px;
 }

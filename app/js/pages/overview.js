@@ -20,10 +20,15 @@ See the License for the specific language governing permissions and
 
 
 (function(exports){
-  
+    
+    var defaultHists = [ 'storyEventsHist', 'storyCharactersHist', 'eventCompletenessHist', 'characterSymbolsHist', 'characterStoriesHist' ];
+    var entityCharts = [ 'characterChart', 'playerChart', 'storyChart', 'groupChart' ];
+    
     var statisticKeys = [
-        'storyNumber',
         'characterNumber',
+        'playerNumber',
+        'storyNumber',
+        'groupNumber',
         'eventsNumber',
         'userNumber',
         'textCharacterNumber',
@@ -31,6 +36,7 @@ See the License for the specific language governing permissions and
         'firstEvent',
         ]; 
     
+    var root = '.overview-tab ';
     var state = {};
         
     state.Charts = {};
@@ -70,12 +76,12 @@ See the License for the specific language governing permissions and
             });
         });
     
-        state.descr = getEl("gameDescription");
+        state.descr = queryEl(root + ".game-description-area");
         state.descr.addEventListener("change", updateDescr);
         
         UI.initTabPanel("overviewInfoButton", "overviewContainer");
         
-        exports.content = getEl("overviewDiv");
+        exports.content = queryEl(root);
     };
     
     var makeChart = function(id, canvas, data){
@@ -173,20 +179,19 @@ See the License for the specific language governing permissions and
             statistics['firstEvent'] = statistics['firstEvent'] !== "" ? new Date(statistics['firstEvent']).format("yyyy/mm/dd h:MM") : "";
             
             statisticKeys.forEach(function(key){
-              updateStatisticValue(statistics, key);
+                updateStatisticValue(statistics, key);
             });
             
             addEl(clearEl(getEl('generalCompleteness')), makeText(strFormat(getL10n('overview-general-completeness-value'),statistics['generalCompleteness'])));
             addEl(clearEl(getEl('storyCompleteness')), makeText(strFormat(getL10n('overview-story-completeness-value'),statistics['storyCompleteness'])));
             
-            makeHistogram(clearEl(getEl("storyEventsHist")), statistics.storyEventsHist);
-            makeHistogram(clearEl(getEl("storyCharactersHist")), statistics.storyCharactersHist);
-            makeHistogram(clearEl(getEl("eventCompletenessHist")), statistics.eventCompletenessHist);
-            makeHistogram(clearEl(getEl("characterSymbolsHist")), statistics.characterSymbolsHist);
-            makeHistogram(clearEl(getEl("characterStoriesHist")), statistics.characterStoriesHist);
-            makeChart("characterChart", getEl("characterChart"), statistics.characterChartData);
-            makeChart("storyChart", getEl("storyChart"), statistics.storyChartData);
-            makeChart("groupChart", getEl("groupChart"), statistics.groupChartData);
+            defaultHists.forEach(function(histName){
+                makeHistogram(clearEl(queryEl(root + '.' + histName)), statistics[histName]);
+            });
+            
+            entityCharts.forEach(function(entityChart){
+                makeChart(entityChart, queryEl(root + '.' + entityChart), statistics[entityChart]);
+            });
             
             var symbolChartData = R.toPairs(localizeConsts(statistics.textCharactersCount)).map(function(pair){
                 return {
@@ -194,7 +199,15 @@ See the License for the specific language governing permissions and
                     'label': makeChartLabel(statistics.textCharacterNumber, pair[0], pair[1])
                 };
             });
-            makeChart("symbolChart", getEl("symbolChart"), symbolChartData);
+            makeChart("symbolChart", queryEl(root + ".symbolChart"), symbolChartData);
+            
+            var bindingChartData = R.toPairs(localizeConsts(statistics.bindingStats)).map(function(pair){
+                return {
+                    'value': pair[1],
+                    'label': [ pair[0], ": ", pair[1]].join("")
+                };
+            });
+            makeChart("bindingChart", queryEl(root + ".bindingChart"), bindingChartData);
             
             var barData;
             var profileDiagrams = clearEl(getEl('profileDiagrams')), barDiv, bar;

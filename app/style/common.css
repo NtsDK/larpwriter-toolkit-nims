@@ -194,7 +194,7 @@ body {
 /*   box-shadow: 2px 4px 4px rgba(0,0,0,0.3); */
 }
 
-#commonInfoDiv span{
+.common-info-div span{
   width: 100%;
   display: inline-block;
   text-align: right;
@@ -227,7 +227,7 @@ label{
   padding: 6px;
 }
 
-#commonInfoDiv table{
+.common-info-div table{
   margin: 0;
 }
 

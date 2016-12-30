@@ -30,6 +30,8 @@ See the License for the specific language governing permissions and
             var statistics = {};
             statistics.storyNumber = Object.keys(database.Stories).length;
             statistics.characterNumber = Object.keys(database.Characters).length;
+            statistics.groupNumber = Object.keys(database.Groups).length;
+            statistics.playerNumber = Object.keys(database.Players).length;
 
             statistics.eventsNumber = R.sum(R.values(database.Stories).map(R.compose(R.length, R.prop('events'))));
 
@@ -40,6 +42,7 @@ See the License for the specific language governing permissions and
 
             statistics.textCharactersCount = _countTextCharacters(database);
             statistics.textCharacterNumber = R.sum(R.values(statistics.textCharactersCount));
+            statistics.bindingStats = _countBindingStats(database);
 
             var firstLastEventTime = _getFirstLastEventTime(database);
 
@@ -61,9 +64,10 @@ See the License for the specific language governing permissions and
             statistics.generalCompleteness = _getGeneralCompleteness(database);
             statistics.storyCompleteness = _getStoryCompleteness(database);
 
-            statistics.characterChartData = _getChartData(database, "characters", "Characters");
-            statistics.storyChartData = _getChartData(database, "stories", "Stories");
-            statistics.groupChartData = _getChartData(database, "groups", "Groups");
+            statistics.characterChart = _getChartData(database, "characters", "Characters");
+            statistics.storyChart = _getChartData(database, "stories", "Stories");
+            statistics.groupChart = _getChartData(database, "groups", "Groups");
+            statistics.playerChart = _getChartData(database, "players", "Players");
 
             statistics.profileCharts = _getProfileChartData(database);
 
@@ -94,8 +98,6 @@ See the License for the specific language governing permissions and
         }
         
         var _getProfileChartData = function(database) {
-            "use strict";
-            
             var profileItems = database.CharacterProfileStructure.filter(function(value) {
                 return value.type !== 'string' && value.type !== 'text';
             }).map(R.pick(['name', 'type']));
@@ -133,7 +135,6 @@ See the License for the specific language governing permissions and
         };
         
         var _getChartData = function(database, objectKey, totalKey) {
-            "use strict";
             var characterChartData = [];
             var total = Object.keys(database[totalKey]).length;
             var sum = 0;
@@ -235,7 +236,6 @@ See the License for the specific language governing permissions and
         };
         
         var _getEventCompletenessHist = function(database) {
-            "use strict";
             var story, hist = [], storyCompleteness;
             for ( var storyName in database.Stories) {
                 story = database.Stories[storyName];
@@ -256,7 +256,6 @@ See the License for the specific language governing permissions and
         };
         
         var _getStoryAdaptationStats = function(story) {
-            "use strict";
             var finishedAdaptations = 0;
             var allAdaptations = 0;
             story.events.forEach(function(event) {
@@ -274,13 +273,11 @@ See the License for the specific language governing permissions and
         }
         
         var _calcStoryCompleteness = function(story) {
-            "use strict";
             var stats = _getStoryAdaptationStats(story);
             return stats.allAdaptations !== 0 ? stats.finishedAdaptations / stats.allAdaptations : 0;
         }
         
         var _getStoryCompleteness = function(database) {
-            "use strict";
             var finishedStories = 0, allStories = Object.keys(database.Stories).length;
             
             R.values(database.Stories).map(_getStoryAdaptationStats).forEach(function(stats){
@@ -292,7 +289,6 @@ See the License for the specific language governing permissions and
         };
         
         var _getGeneralCompleteness = function(database) {
-            "use strict";
             var finishedAdaptations = 0, allAdaptations = 0;
             
             R.values(database.Stories).map(_getStoryAdaptationStats).forEach(function(stats){
@@ -328,8 +324,19 @@ See the License for the specific language governing permissions and
             return counts;
         };
         
+        var _countBindingStats = function(database){
+            var charNum = R.keys(database.Characters).length;
+            var playerNum = R.keys(database.Players).length;
+            var bindingNum = R.keys(database.ProfileBindings).length;
+            
+            return {
+                freeCharacters: charNum - bindingNum,
+                freePlayers: playerNum - bindingNum,
+                bindingNum: bindingNum,
+            };
+        }
+        
         var _getFirstLastEventTime = function(database) {
-            "use strict";
             var story, lastEvent = null, firstEvent = null, date;
             for ( var storyName in database.Stories) {
                 story = database.Stories[storyName];
@@ -349,7 +356,6 @@ See the License for the specific language governing permissions and
         };
         
         var _getHistogram = function(database, keyParamDelegate) {
-            "use strict";
             var story, hist = [];
             for ( var storyName in database.Stories) {
                 story = database.Stories[storyName];

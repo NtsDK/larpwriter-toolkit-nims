@@ -45,10 +45,10 @@ See the License for the specific language governing permissions and
   <div class="block" id="contentArea"></div>
 
   <div class="hidden">
-    <div id="overviewDiv">
+    <div class="overview-tab">
       <div style="display:flex;justify-content: space-around;">
         <div style="flex-grow:1;margin-right: 8px;">
-          <div id="commonInfoDiv" class="panel panel-default">
+          <div class="panel panel-default common-info-div">
             <div class="panel-body">
               <table class="table table-bordered" style="width: auto;">
                 <tr>
@@ -78,41 +78,41 @@ See the License for the specific language governing permissions and
         
           <div class="panel panel-default" >
             <div class="panel-body">
-              <div id="descriptionPanelContainer" class="overviewContainer">
-                <textarea id="gameDescription" class="adminOnly"></textarea>
+              <div  id="descriptionPanelContainer" class="overviewContainer">
+                <textarea class="adminOnly game-description-area"></textarea>
               </div>
               <div id="diagramsPanelContainer" class="overviewContainer">
                 <div class="diagram-container">
                   <div class="diagram-subcontainer">
                     <div>
                       <h4 l10n-id="overview-event-count-diagram"></h4>
-                      <div id="storyEventsHist" class="overviewHist"></div>
+                      <div class="overviewHist storyEventsHist"></div>
                     </div>
                     <div>
                       <h4 l10n-id="overview-character-count-diagram"></h4>
-                      <div id="storyCharactersHist" class="overviewHist"></div>
+                      <div class="overviewHist storyCharactersHist"></div>
                     </div>
                   </div>
                   <div class="diagram-subcontainer">
                     <div>
                       <h4 l10n-id="overview-character-stories-diagram"></h4>
-                      <div id="characterStoriesHist" class="overviewHist"></div>
+                      <div class="overviewHist characterStoriesHist"></div>
                     </div>
                     <div>
                       <h4 l10n-id="overview-story-completeness-diagram"></h4>
-                      <div id="eventCompletenessHist" class="overviewHist"></div>
+                      <div class="overviewHist eventCompletenessHist"></div>
                     </div>
                   </div>
                   <div class="diagram-subcontainer">
                     <div>
                       <h4 l10n-id="overview-character-symbols-diagram"></h4>
-                      <div id="characterSymbolsHist" class="overviewHist"></div>
+                      <div class="overviewHist characterSymbolsHist"></div>
                     </div>
                     <div>
                       <h4 l10n-id="overview-character-symbols-doughnut"></h4>
                       <div style="display:flex;justify-content:center;">
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
-                          <canvas id="symbolChart" width="300" height="125""></canvas>
+                          <canvas class="symbolChart" width="300" height="125""></canvas>
                         </div>
                       </div>
                     </div>
@@ -122,16 +122,28 @@ See the License for the specific language governing permissions and
                       <h4 l10n-id="overview-object-belonging-diagrams"></h4>
                       <div style="display:flex;justify-content:center;">
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
-                          <canvas id="characterChart" width="200" height="100"></canvas><br>
+                          <canvas class="characterChart" width="120" height="100"></canvas><br>
                           <span l10n-id="header-characters"></span>
                         </div>
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
-                          <canvas id="storyChart" width="200" height="100"></canvas><br>
+                          <canvas class="playerChart" width="120" height="100"></canvas><br>
+                          <span l10n-id="header-players"></span>
+                        </div>
+                        <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                          <canvas class="storyChart" width="120" height="100"></canvas><br>
                           <span l10n-id="header-stories"></span>
                         </div>
                         <div style="flex-grow:1;flex-basis:0;text-align: center;">
-                          <canvas id="groupChart" width="200" height="100"></canvas><br>
+                          <canvas class="groupChart" width="120" height="100"></canvas><br>
                           <span l10n-id="header-groups"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 l10n-id="overview-binding-doughnut"></h4>
+                      <div style="display:flex;justify-content:center;">
+                        <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                          <canvas class="bindingChart" width="300" height="125""></canvas>
                         </div>
                       </div>
                     </div>
@@ -150,15 +162,17 @@ See the License for the specific language governing permissions and
           <div class="panel-body">
             <table class="table table-bordered" style="width: auto;">
             <tbody>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-story-count"></span></td><td><span class="statisticsValue" id="storyNumber"></span>        </td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-character-count"></span></td><td><span class="statisticsValue" id="characterNumber"></span>    </td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-event-count"></span></td><td><span class="statisticsValue" id="eventsNumber"></span>       </td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-user-count"></span></td><td><span class="statisticsValue" id="userNumber"></span>         </td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-first-event"></span></td><td><span class="statisticsValue" id="firstEvent"></span>         </td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-last-event"></span></td><td><span class="statisticsValue" id="lastEvent"></span>          </td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-symbol-count"></span></td><td><span class="statisticsValue" id="textCharacterNumber"></span></td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-story-completeness"></span></td><td><span class="statisticsValue" id="storyCompleteness"></span>  </td></tr>
-              <tr><td><span class="statisticsLabel" l10n-id="overview-general-completeness"></span></td><td><span class="statisticsValue" id="generalCompleteness"></span></td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-character-count">      </span></td><td><span class="statisticsValue" id="characterNumber"></span>    </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-player-count">         </span></td><td><span class="statisticsValue" id="playerNumber"></span>       </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-story-count">          </span></td><td><span class="statisticsValue" id="storyNumber"></span>        </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-group-count">          </span></td><td><span class="statisticsValue" id="groupNumber"></span>        </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-event-count">          </span></td><td><span class="statisticsValue" id="eventsNumber"></span>       </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-user-count">           </span></td><td><span class="statisticsValue" id="userNumber"></span>         </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-first-event">          </span></td><td><span class="statisticsValue" id="firstEvent"></span>         </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-last-event">           </span></td><td><span class="statisticsValue" id="lastEvent"></span>          </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-symbol-count">         </span></td><td><span class="statisticsValue" id="textCharacterNumber"></span></td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-story-completeness">   </span></td><td><span class="statisticsValue" id="storyCompleteness"></span>  </td></tr>
+              <tr><td><span class="statisticsLabel" l10n-id="overview-general-completeness"> </span></td><td><span class="statisticsValue" id="generalCompleteness"></span></td></tr>
             </tbody>
             </table>
           </div>
