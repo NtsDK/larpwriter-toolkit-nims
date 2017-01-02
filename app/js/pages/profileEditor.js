@@ -29,21 +29,28 @@ See the License for the specific language governing permissions and
     var playerSelector = root + ".player-profile-selector";
     var characterProfileDiv = root + ".character-profile-div";
     var playerProfileDiv = root + ".player-profile-div";
+    var characterReportDiv = root + ".character-report-div tbody";
     
     exports.init = function () {
-        $(characterSelector).select2().on("change", showProfileInfoDelegate('character', characterProfileDiv));
-        $(playerSelector).select2().on("change", showProfileInfoDelegate('player', playerProfileDiv));
+        $(characterSelector).select2().on("select2:select", showProfileInfoDelegate2('character'));
+        $(playerSelector).select2().on("select2:select", showProfileInfoDelegate2('player'));
         exports.content = queryEl(root);
     };
     
     exports.refresh = function () {
-        refreshPanel('character', characterSelector, characterProfileDiv);
-        refreshPanel('player', playerSelector, playerProfileDiv);
+        clearEl(queryEl(characterReportDiv));
+        refreshPanel('character', characterSelector, characterProfileDiv, () => {
+            refreshPanel('player', playerSelector, playerProfileDiv, ()=>{
+                applySettings('character', characterSelector, characterProfileDiv);
+            });
+        });
     };
     
-    var refreshPanel = function(type, selector, profileDiv){
+    var refreshPanel = function(type, selector, profileDiv, callback){
         PermissionInformer.getEntityNamesArray(type, false, function(err, names){
             if(err) {Utils.handleError(err); return;}
+            
+            names.push({displayName: '', value: '', editable: false});
             
             clearEl(queryEl(selector));
             $(selector).select2(getSelect2Data(names));
@@ -53,6 +60,7 @@ See the License for the specific language governing permissions and
             
             state[type].inputItems = {};
             state[type].disableList = [];
+            state[type].names = names;
             
             DBMS.getProfileStructure(type, function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
@@ -62,13 +70,14 @@ See the License for the specific language governing permissions and
                     Utils.handleError(err); return;
                 }
                 
-                applySettings(type, names, selector, profileDiv);
+                if(callback) callback();
             });
             
         });
     };
     
-    var applySettings = function (type, names, selector, profileDiv) {
+    var applySettings = function (type, selector, profileDiv) {
+        var names = state[type].names;
         if (names.length > 0) {
             var name = names[0].value;
             var settings = DBMS.getSettings();
@@ -77,11 +86,10 @@ See the License for the specific language governing permissions and
                 settings["ProfileEditor"][type] = name;
             }
             var profileName = settings["ProfileEditor"][type];
-            if(names.map(function(nameInfo){return nameInfo.value;}).indexOf(profileName) === -1){
+            if(names.map(nameInfo => nameInfo.value).indexOf(profileName) === -1){
                 settings["ProfileEditor"][type] = name;
                 profileName = name;
             }
-            DBMS.getProfile(type, profileName, showProfileInfoCallback(type, profileDiv));
             $(selector).select2().val(profileName).trigger('change');
         }
     };
@@ -92,21 +100,48 @@ See the License for the specific language governing permissions and
         return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), itemInput.dom)]);
     });
     
-    var showProfileInfoDelegate = function (type, profileDiv) {
+    var showProfileInfoDelegate2 = function(type){
         return function(event){
             var name = event.target.value.trim();
-            DBMS.getProfile(type, name, showProfileInfoCallback(type, profileDiv));
-        }
-    };
+            if(name === ''){
+                showProfileInfoDelegate('character', characterProfileDiv, '');
+                showProfileInfoDelegate('player', playerProfileDiv, '');
+                $(characterSelector).select2().val('').trigger('change');
+                $(playerSelector).select2().val('').trigger('change');
+                return;
+            }
+            DBMS.getProfileBinding(type, name, function(err, binding){
+                if(err) {Utils.handleError(err); return;}
+                let pair = R.toPairs(binding);
+                var charName = type === 'character' ? name : '';
+                var playerName = type === 'player' ? name : '';
+                if(pair.length !== 0){
+                    charName = pair[0][0];
+                    playerName = pair[0][1];
+                }
+                showProfileInfoDelegate('character', characterProfileDiv, charName);
+                showProfileInfoDelegate('player', playerProfileDiv, playerName);
+                $(characterSelector).select2().val(charName).trigger('change');
+                $(playerSelector).select2().val(playerName).trigger('change');
+            });
+        };
+    }
     
-    var showProfileInfoCallback = function (type, profileDiv) {
-        return function(err, profile){
+    var showProfileInfoDelegate = function (type, profileDiv, name) {
+        updateSettings(type, name);
+        if(name === ''){
+            addClass(queryEl(profileDiv),'hidden');
+            if(type === 'character'){
+                addClass(queryEl(characterReportDiv),'hidden');
+            }
+            return;
+        }
+        DBMS.getProfile(type, name, function(err, profile){
             if(err) {Utils.handleError(err); return;}
-            var name = profile.name;
             PermissionInformer.isEntityEditable(type, name, function(err, isCharacterEditable){
                 if(err) {Utils.handleError(err); return;}
-                updateSettings(type, name);
                 
+                removeClass(queryEl(profileDiv),'hidden');
                 Utils.enable(queryEl(profileDiv), "isCharacterEditable", isCharacterEditable);
                 state[type].disableList.forEach(function(item){
                     item.prop("disabled", !isCharacterEditable);
@@ -118,11 +153,12 @@ See the License for the specific language governing permissions and
                 if(type === 'character'){
                     DBMS.getCharacterReport(name, function(err, characterReport){
                         if(err) {Utils.handleError(err); return;}
-                        addEls(clearEl(queryEl(root + ' .character-report-div tbody')), characterReport.map(makeReportRow));
+                        removeClass(queryEl(characterReportDiv),'hidden');
+                        addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(makeReportRow));
                     });
                 }
             });
-        }
+        });
     };
     
     var makeCompletenessLabel = function(value, total) {
@@ -138,10 +174,10 @@ See the License for the specific language governing permissions and
         var p = value / total;
         if(p<0.5){
             p=p*2;
-            return strFormat('rgba({0},{1},{2}, 1)', [calc(251,255,p),calc(126,255,p),calc(129,0,p)]);
+            return strFormat('rgba({0},{1},{2}, 1)', [calc(251,255,p),calc(126,255,p),calc(129,0,p)]); // red to yellow mapping
         } else {
             p=(p-0.5)*2;
-            return strFormat('rgba({0},{1},{2}, 1)', [calc(255,123,p),calc(255,225,p),calc(0,65,p)]);
+            return strFormat('rgba({0},{1},{2}, 1)', [calc(255,123,p),calc(255,225,p),calc(0,65,p)]); // yellow to green mapping
         }
     };
     

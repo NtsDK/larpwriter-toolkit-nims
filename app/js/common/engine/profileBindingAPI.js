@@ -26,6 +26,24 @@ See the License for the specific language governing permissions and
             callback(null, CommonUtils.clone(R.path(path, this.database)));
         };
         
+        LocalDBMS.prototype._getProfileBindingPrecondition = function(type, name){
+            if (type !== 'character' && type !== 'player') {
+                return [ null, 'binding-wrong-profile-type', [ type ] ];
+            } else if (type === 'character' && this.database.Characters[name] === undefined) {
+                return [ null, 'binding-character-not-exists', [ name ] ];
+            } else if (type === 'player' && this.database.Players[name] === undefined) {
+                return [ null, 'binding-player-not-exists', [ name ] ];
+            }
+        }
+        
+        LocalDBMS.prototype.getProfileBinding = function(type, name, callback) {
+            var err = this._getProfileBindingPrecondition(type, name);
+            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
+            var bindings = R.path(path, this.database);
+            var obj = type === 'character' ? R.pick([name], bindings) : R.invertObj(R.pick([name], R.invertObj(bindings)));
+            callback(null, obj);
+        };
+        
         LocalDBMS.prototype._createBindingPrecondition = function(characterName, playerName){
             var bindings = R.path(path, this.database);
             var invertedBindings = R.invertObj(bindings);
