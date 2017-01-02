@@ -171,12 +171,16 @@ See the License for the specific language governing permissions and
                     if(err) {callback(err); return;}
                     that.getCharactersSummary(function(err, charactersSummary){
                         if(err) {callback(err); return;}
-                        var info = CommonUtils.makeGroupedProfileFilterInfo({
-                            'characters': charactersInfo,
-                            'players': playersInfo,
-                            charactersSummary: charactersSummary
+                        that.getExtendedProfileBindings(function(err, bindingData){
+                            if(err) {callback(err); return;}
+                            var info = CommonUtils.makeGroupedProfileFilterInfo({
+                                'characters' : charactersInfo,
+                                'players' : playersInfo,
+                                charactersSummary : charactersSummary,
+                                bindingData : bindingData
+                            });
+                            callback(null, info);
                         });
-                        callback(null, info);
                     });
                 });
             });

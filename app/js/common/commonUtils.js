@@ -30,10 +30,14 @@ See the License for the specific language governing permissions and
         };
         
         exports.charOrdAFactoryBase = R.curry(function(sortDir, prepare){
-            "use strict";
             return function(a, b) {
                 a = prepare(a);
                 b = prepare(b);
+                if(R.isNil(a) && R.isNil(b)) return 0;
+                if(R.isNil(a)) return 1;
+                if(R.isNil(b)) return -1;
+//                if(R.isNil(a)) return sortDir === "asc" ? -1 : 1;
+//                if(R.isNil(b)) return sortDir === "asc" ? 1 : -1;
                 if (a > b)
                     return sortDir === "asc" ? 1 : -1;
                 if (a < b)
@@ -119,14 +123,15 @@ See the License for the specific language governing permissions and
         };
         
         exports.acceptDataRow = R.curry(function (model, dataString) {
-            var result = true;
-            var value, regex;
+            var value, regex, result;
             var dataMap = exports.arr2map(dataString, 'itemName');
-            model.forEach(function(filterItem){
-                if (!result) {
+            return model.every(function(filterItem){
+                result = true;
+                value = dataMap[filterItem.name].value;
+                if (value === undefined) {
+                    result = false;
                     return;
                 }
-                value = dataMap[filterItem.name].value;
                 switch (filterItem.type) {
                 case "enum":
                 case "checkbox":
@@ -176,8 +181,8 @@ See the License for the specific language governing permissions and
                 default:
                     throw new Error('Unexpected type ' + filterItem.type);
                 }
+                return result;
             });
-            return result;
         });
         
         exports.makeGroupedProfileFilterInfo = function(opts){
@@ -206,6 +211,30 @@ See the License for the specific language governing permissions and
                 profileFilterItems: arr
             });
             
+            arr = [];
+            arr.push({
+                name : Constants.PLAYER_NAME,
+                type : "string",
+                displayName : "profile-filter-player-name",
+            });
+            arr.push({
+                name : Constants.PLAYER_OWNER,
+                type : "string",
+                displayName : "profile-filter-player-owner",
+            });
+            arr = arr.concat(opts.players.profileStructure.map(function(element){
+                return {
+                    name: Constants.PLAYER_PREFIX + element.name,
+                    type: element.type,
+                    displayName: element.name,
+                    value: element.value
+                }
+            }));
+            groupedProfileFilterItems.push({
+                name: 'player',
+                profileFilterItems: arr
+            });
+            
             arr = Constants.summaryStats.map(function(stat){
                 return {
                     name: Constants.SUMMARY_PREFIX + stat[0],
@@ -221,7 +250,7 @@ See the License for the specific language governing permissions and
             return opts;
         };
         
-        exports.getCharacterInfoValue = function(info, characterName, profileItemName){
+        var getCharacterInfoValue = function(info, characterName, profileItemName){
             if(profileItemName == Constants.CHAR_NAME){
                 return characterName;
             } else if(profileItemName == Constants.CHAR_OWNER){
@@ -234,10 +263,52 @@ See the License for the specific language governing permissions and
                 throw new Error('Unexpected profileItemName: ' + profileItemName);
             }
         };
+        var getCharacterInfoValue2 = function(info, profileId, profileItemName){
+            if (profileItemName == Constants.CHAR_NAME || 
+                    profileItemName == Constants.CHAR_OWNER || 
+                    exports.startsWith(profileItemName, Constants.SUMMARY_PREFIX) || 
+                    exports.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
+                if(profileId[0] === '') return undefined;
+                var characterName = profileId[0];
+                if(profileItemName == Constants.CHAR_NAME){
+                    return characterName;
+                } else if(profileItemName == Constants.CHAR_OWNER){
+                    return info.characters.owners[characterName];
+                } else if(exports.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ){
+                    return info.charactersSummary[characterName][profileItemName.substring(Constants.SUMMARY_PREFIX.length)];
+                } else if(exports.startsWith(profileItemName, Constants.CHAR_PREFIX) ){
+                    return info.characters.profiles[characterName][profileItemName.substring(Constants.CHAR_PREFIX.length)];
+                } 
+            } else if(profileItemName == Constants.PLAYER_NAME || 
+                    profileItemName == Constants.PLAYER_OWNER || 
+                    exports.startsWith(profileItemName, Constants.PLAYER_PREFIX)){
+                if(profileId[1] === '') return undefined;
+                var playerName = profileId[1];
+                if(profileItemName == Constants.PLAYER_NAME){
+                    return playerName;
+                } else if(profileItemName == Constants.PLAYER_OWNER){
+                    return info.players.owners[playerName];
+                } else if(exports.startsWith(profileItemName, Constants.PLAYER_PREFIX) ){
+                    return info.players.profiles[playerName][profileItemName.substring(Constants.PLAYER_PREFIX.length)];
+                } 
+            } else {
+                throw new Error('Unexpected profileItemName: ' + profileItemName);
+            }
+        };
         
         exports.getDataArray = R.curry(function (info, character) {
             return R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map(function(profileItemInfo){
-                var value = exports.getCharacterInfoValue(info, character, profileItemInfo.name);
+                var value = getCharacterInfoValue(info, character, profileItemInfo.name);
+                return {
+                    value: value,
+                    type: profileItemInfo.type,
+                    itemName: profileItemInfo.name
+                }
+            });
+        });
+        exports.getDataArray2 = R.curry(function (info, profileId) {
+            return R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map(function(profileItemInfo){
+                var value = getCharacterInfoValue2(info, profileId, profileItemInfo.name);
                 return {
                     value: value,
                     type: profileItemInfo.type,
@@ -246,8 +317,18 @@ See the License for the specific language governing permissions and
             });
         });
         
+        var bindings2Arr = function(bindingData){
+            return R.reduce(R.concat, [], [R.toPairs(bindingData.bindings),
+                R.zip(bindingData.characters, R.repeat('', bindingData.characters.length)), 
+                R.zip(R.repeat('', bindingData.players.length), bindingData.players)]);
+        };
+        
         exports.getDataArrays = function(info, filterModel) {
             return Object.keys(info.characters.profiles).map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
+        };
+        
+        exports.getDataArrays2 = function(info, filterModel) {
+            return bindings2Arr(info.bindingData).map(exports.getDataArray2(info)).filter(exports.acceptDataRow(filterModel));
         };
         
         exports.isFilterModelCompatibleWithProfiles = function(profileSettings, filterModel){

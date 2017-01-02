@@ -26,6 +26,20 @@ See the License for the specific language governing permissions and
             callback(null, CommonUtils.clone(R.path(path, this.database)));
         };
         
+        LocalDBMS.prototype.getExtendedProfileBindings = function(callback) {
+            var characters = R.keys(R.path(charPath, this.database));
+            var players = R.keys(R.path(playerPath, this.database));
+            var bindings = CommonUtils.clone(R.path(path, this.database));
+            characters = R.difference(characters, R.keys(bindings));
+            players = R.difference(players, R.values(bindings));
+            
+            callback(null, {
+                bindings : bindings,
+                players : players,
+                characters : characters
+            });
+        };
+        
         LocalDBMS.prototype._getProfileBindingPrecondition = function(type, name){
             if (type !== 'character' && type !== 'player') {
                 return [ null, 'binding-wrong-profile-type', [ type ] ];

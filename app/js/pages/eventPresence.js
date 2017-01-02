@@ -68,7 +68,7 @@ EventPresence.refresh = function () {
                     
                     clearEl(tableHead);
                     clearEl(table);
-                    UI.fillShowItemSelector(clearEl(characterSelector), displayArray, characterArray);
+                    UI.fillShowItemSelector(clearEl(characterSelector), displayArray.map((name) => {return {'name':name, 'hidden': false};}));
                     
                     EventPresence.appendTableHeader(tableHead, displayArray);
                     events.forEach(function (event, i) {

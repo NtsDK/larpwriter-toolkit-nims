@@ -21,11 +21,12 @@ See the License for the specific language governing permissions and
 function FilterConfiguration(info){
     this.info = info;
     function populateProfileItems(item){
-        if(!CommonUtils.startsWith(item.name, Constants.CHAR_PREFIX)){
+        if(!CommonUtils.startsWith(item.name, Constants.CHAR_PREFIX) &&
+           !CommonUtils.startsWith(item.name, Constants.PLAYER_PREFIX)){
             item.displayName = getL10n(item.displayName);
             item.value = "";
         }
-        item.canHide = item.name != Constants.CHAR_NAME;
+        item.canHide = item.name != Constants.CHAR_NAME && item.name != Constants.PLAYER_NAME;
     }
     this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);
     this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
@@ -48,5 +49,5 @@ FilterConfiguration.prototype.getBaseProfileSettings = function(){
 };
 
 FilterConfiguration.prototype.getDataArrays = function(filterModel) {
-    return CommonUtils.getDataArrays(this.info, filterModel);
+    return CommonUtils.getDataArrays2(this.info, filterModel);
 };

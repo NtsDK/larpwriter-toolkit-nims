@@ -47,14 +47,14 @@ UI.tabButtonClick = function(buttons, containers) {
 };
 
 UI.fillShowItemSelector = function (selector, displayArray) {
-    "use strict";
     var el;
     setAttr(selector, "size", displayArray.length);
-    displayArray.forEach(function(value, i) {
+    displayArray.forEach(function(value) {
         el = setProps(makeEl("option"), {
             "selected" : true,
         });
-        addEl(selector, addEl(el, makeText(value)));
+        setClassByCondition(el, 'hidden', value.hidden);
+        addEl(selector, addEl(el, makeText(value.name)));
     });
 };
 
@@ -64,6 +64,9 @@ UI.showSelectedEls = function(classKey){
         var el = event.target;
         var els, i, j;
         for (i = 0; i < el.options.length; i += 1) {
+            if(hasClass(el.options[i], 'hidden')){
+                continue;
+            }
             els = getEls(i + classKey);
             for (j = 0; j < els.length; j++) {
                 setClassByCondition(els[j], "hidden", !el.options[i].selected);

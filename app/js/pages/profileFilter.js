@@ -77,8 +77,16 @@ See the License for the specific language governing permissions and
         });
     };
     
+//    var getShowProfileItemNames = function(profileSettings){
+//        return R.map(R.prop('displayName'), profileSettings.filter(R.prop('canHide')));
+//    };
     var getShowProfileItemNames = function(profileSettings){
-        return R.map(R.prop('displayName'), profileSettings.filter(R.prop('canHide')));
+        return profileSettings.map(function(item){
+            return {
+                name: item.displayName,
+                hidden: !item.canHide
+            };
+        });
     };
     
     var getHeaderProfileItemNames = function(profileSettings){
@@ -92,6 +100,7 @@ See the License for the specific language governing permissions and
             var map = CommonUtils.arr2map(a, 'itemName');
             var item = map[state.sortKey];
             var value = item.value;
+            if(value === undefined) return value;
             switch (item.type) {
             case "text":
             case "string":
@@ -265,12 +274,10 @@ See the License for the specific language governing permissions and
     
             switch (type) {
             case "enum":
-                if(inputItem.options.length == inputItem.selectedOptions.length){return;}
                 arr = nl2array(inputItem.selectedOptions).map(R.prop('value'));
                 model.push({type: type, name: inputItemName, selectedOptions: R.zipObj(arr, R.repeat(true, arr.length))});
                 break;
             case "checkbox":
-                if(inputItem.options[0].selected && inputItem.options[1].selected){return;}
                 selectedOptions = {};
                 if (inputItem.options[0].selected) {selectedOptions["true"] = true;}
                 if (inputItem.options[1].selected) {selectedOptions["false"] = true;}
@@ -290,7 +297,6 @@ See the License for the specific language governing permissions and
                 break;
             case "text":
             case "string":
-                if(inputItem.value == ''){return;}
                 model.push({type: type, name: inputItemName, regexString: inputItem.value.toLowerCase()});
                 break;
             default:
@@ -306,14 +312,16 @@ See the License for the specific language governing permissions and
         var td, regex, pos, value;
         return addEls(makeEl("tr"), dataArray.map(function (valueInfo, i) {
             value = valueInfo.value;
-            if (valueInfo.type === "checkbox") {
+            if(value === undefined){
+                value = 'Н/Д';
+            } else if (valueInfo.type === "checkbox") {
                 value = constL10n(Constants[value]);
             } else if (valueInfo.type === "text") {
                 pos = value.toLowerCase().indexOf(inputItems[valueInfo.itemName].value.toLowerCase());
                 value = value.substring(pos - 5, pos + 15);
             }
             td = addEl(makeEl("td"), makeText(value));
-            addClass(td, (i-1) +"-dependent");
+            addClass(td, i +"-dependent");
             return td;
         }));
     };
@@ -322,7 +330,7 @@ See the License for the specific language governing permissions and
         return addEls(makeEl("tr"), profileItemNames.map(function (elem, i) {
             var td = addEls(makeEl("th"), [makeText(elem.displayName), makeEl("span")]);
             td.info = elem.name;
-            addClass(td, (i-1) +"-dependent");
+            addClass(td, i +"-dependent");
             listen(td, "click", onSortChange);
             return td;
         }));

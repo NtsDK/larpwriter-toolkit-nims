@@ -121,6 +121,9 @@ See the License for the specific language governing permissions and
     exports.CHAR_NAME = 'char-name';
     exports.CHAR_OWNER = 'char-owner';
     exports.CHAR_PREFIX = 'profile-';
+    exports.PLAYER_NAME = 'player-name';
+    exports.PLAYER_OWNER = 'player-owner';
+    exports.PLAYER_PREFIX = 'player-profile-';
     exports.SUMMARY_PREFIX = 'summary-';
     
     exports.summaryStats = [
