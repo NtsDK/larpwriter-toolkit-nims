@@ -186,12 +186,12 @@ See the License for the specific language governing permissions and
             arr.push({
                 name : Constants.CHAR_NAME,
                 type : "string",
-                displayName : "character-filter-character",
+                displayName : "profile-filter-character",
             });
             arr.push({
                 name : Constants.CHAR_OWNER,
                 type : "string",
-                displayName : "character-filter-character-owner",
+                displayName : "profile-filter-character-owner",
             });
             arr = arr.concat(opts.characters.profileStructure.map(function(element){
                 return {
@@ -205,6 +205,7 @@ See the License for the specific language governing permissions and
                 name: 'character',
                 profileFilterItems: arr
             });
+            
             arr = Constants.summaryStats.map(function(stat){
                 return {
                     name: Constants.SUMMARY_PREFIX + stat[0],

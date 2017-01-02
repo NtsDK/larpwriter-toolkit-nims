@@ -488,12 +488,12 @@ See the License for the specific language governing permissions and
 
 /** character filter */
 
-.character-filter-tab .group-control-area{
+.profile-filter-tab .group-control-area{
   display:flex;
   justify-content: space-between;
 }
 
-.character-filter-tab > table  td:first-child{
+.profile-filter-tab > table  td:first-child{
   padding-right: 8px;
 }
 

@@ -128,8 +128,8 @@ See the License for the specific language governing permissions and
         ['follower'    , "constant-follower" ],
         ['defensive'   , "constant-defensive"],
         ['passive'     , "constant-passive"  ],
-        ['completeness', "character-filter-completeness"],
-        ['totalStories', "character-filter-totalStories"]
+        ['completeness', "profile-filter-completeness"],
+        ['totalStories', "profile-filter-totalStories"]
     ];
     
     exports.socialNetworkOpts = {

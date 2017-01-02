@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 (function(exports){
     
     var state = {};
-    const root = '.character-filter-tab ';
+    const root = '.profile-filter-tab ';
     
     exports.init = function () {
         listen(queryEl(root + '.profile-item-selector'), "change", UI.showSelectedEls("-dependent"));
@@ -485,4 +485,4 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('div'), [selector, input]);
     };
 
-})(this['CharacterFilter']={});
+})(this['ProfileFilter']={});
