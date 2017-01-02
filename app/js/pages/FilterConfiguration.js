@@ -20,26 +20,27 @@ See the License for the specific language governing permissions and
 
 function FilterConfiguration(info){
     this.info = info;
-    this.innerProfileSettings = CommonUtils.clone(info.innerProfileSettings);
-    this.innerProfileSettings.forEach(function(item){
+    function populateProfileItems(item){
         if(!CommonUtils.startsWith(item.name, 'profile-')){
             item.displayName = getL10n(item.displayName);
             item.value = "";
         }
         item.canHide = item.name != Constants.CHAR_NAME;
-    });
+    }
+    this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);
+    this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
 };
 
 FilterConfiguration.makeFilterConfiguration = function(callback){
-    DBMS.getCharacterFilterInfo(function(err, info){
+    DBMS.getProfileFilterInfo(function(err, info){
         if(err) {Utils.handleError(err); return;}
         var filterConfiguration = new FilterConfiguration(info);
         callback(null, filterConfiguration);
     });
 };
 
-FilterConfiguration.prototype.getCharacterProfileStructure = function(){
-    return this.innerProfileSettings;
+FilterConfiguration.prototype.getProfileFilterItems = function(){
+    return R.flatten(this.groupedProfileFilterItems.map(R.prop('profileFilterItems')));
 };
 
 FilterConfiguration.prototype.getBaseProfileSettings = function(){

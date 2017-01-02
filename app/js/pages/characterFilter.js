@@ -63,15 +63,15 @@ See the License for the specific language governing permissions and
                         
             state.filterConfiguration = filterConfiguration;
             
-            var profileSettings = filterConfiguration.getCharacterProfileStructure();
+            var profileFilterItems = filterConfiguration.getProfileFilterItems();
             
-            addEls(filterSettingsDiv, profileSettings.map(makeInput));
+            addEls(filterSettingsDiv, profileFilterItems.map(makeInput));
             
             UI.fillShowItemSelector(clearEl(queryEl(root + '.profile-item-selector')), 
-                    getShowProfileItemNames(profileSettings));
+                    getShowProfileItemNames(profileFilterItems));
     
             addEl(clearEl(queryEl(root + '.filter-head')), makeContentHeader(
-                    getHeaderProfileItemNames(profileSettings)));
+                    getHeaderProfileItemNames(profileFilterItems)));
             
             rebuildContent();
         });

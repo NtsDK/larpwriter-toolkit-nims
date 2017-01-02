@@ -184,7 +184,7 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
 };
 
 GroupProfile.getHeaderDisplayName = function(filterConfiguration, name){
-    return CommonUtils.arr2map(filterConfiguration.getCharacterProfileStructure(), 'name')[name].displayName;
+    return CommonUtils.arr2map(filterConfiguration.getProfileFilterItems(), 'name')[name].displayName;
 };
 
 GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filterItem){

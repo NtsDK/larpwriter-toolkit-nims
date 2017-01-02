@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
         // preview
         LocalDBMS.prototype.getCharacterGroupTexts = function(characterName, callback) {
             var that = this;
-            this.getCharacterFilterInfo(function(err, info){
+            this.getProfileFilterInfo(function(err, info){
                 if(err) {callback(err); return;}
                 callback(null, _getCharacterGroupTexts(that.database.Groups, info, characterName));
             });
@@ -54,7 +54,7 @@ See the License for the specific language governing permissions and
         // export
         LocalDBMS.prototype.getAllCharacterGroupTexts = function(callback) {
             var that = this;
-            this.getCharacterFilterInfo(function(err, info){
+            this.getProfileFilterInfo(function(err, info){
                 if(err) {callback(err); return;}
                 var texts = Object.keys(that.database.Characters).reduce(function(result, characterName){
                     result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, characterName);
@@ -143,25 +143,40 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         
-        LocalDBMS.prototype.getCharacterFilterInfo = function(callback) {
-            var that = this;
-            that.getEntityNamesArray('character', function(err, characterOwners){
+        var initProfileInfo = function(that, type, ownerMapType, callback){
+            that.getAllProfiles(type, function(err, profiles){
                 if(err) {callback(err); return;}
-                // _getOwnerMap is part of permission summary API which is available on server 
+                var owners = R.keys(profiles);
                 if(that._getOwnerMap){
-                    characterOwners = that._getOwnerMap('Characters');
+                    owners = that._getOwnerMap(ownerMapType);
                 } else {
-                    characterOwners = R.zipObj(characterOwners, R.repeat('user', characterOwners.length));
+                    owners = R.zipObj(owners, R.repeat('user', owners.length));
                 }
-                that.getAllProfiles('character', function(err, profiles){
+                that.getProfileStructure(type, function(err, profileStructure){
+                    if(err) {callback(err); return;}
+                    callback(null, {
+                        'profileStructure':profileStructure,
+                        'owners':owners,
+                        'profiles':profiles
+                    });
+                });
+            });
+        };
+        
+        LocalDBMS.prototype.getProfileFilterInfo = function(callback) {
+            var that = this;
+            initProfileInfo(that, 'character', 'Characters', function(err, charactersInfo){
+                if(err) {callback(err); return;}
+                initProfileInfo(that, 'player', 'Players', function(err, playersInfo){
                     if(err) {callback(err); return;}
                     that.getCharactersSummary(function(err, charactersSummary){
                         if(err) {callback(err); return;}
-                        that.getCharacterProfileStructure(function(err, allProfileSettings){
-                            if(err) {callback(err); return;}
-                            var info = CommonUtils.makeFilterInfo(allProfileSettings, characterOwners, profiles, charactersSummary, Constants);
-                            callback(null, info);
+                        var info = CommonUtils.makeGroupedProfileFilterInfo({
+                            'characters': charactersInfo,
+                            'players': playersInfo,
+                            charactersSummary: charactersSummary
                         });
+                        callback(null, info);
                     });
                 });
             });
@@ -442,7 +457,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getGroupSchemas = function(callback) {
             var that = this;
             
-            this.getCharacterFilterInfo(function(err, info){
+            this.getProfileFilterInfo(function(err, info){
                 if(err) {callback(err); return;}
                 var schemas = {};
                 var groups = that.database.Groups;

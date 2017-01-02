@@ -180,24 +180,20 @@ See the License for the specific language governing permissions and
             return result;
         });
         
-        exports.makeFilterInfo = function(profileSettings, characterOwners, profiles, charactersSummary, Constants){
-            var info = {};
-            info.profiles = profiles;
-            info.charactersSummary = charactersSummary;
-            info.characterOwners = characterOwners;
-            info.profileSettings = profileSettings;
-            var innerProfileSettings = [];
-            innerProfileSettings.push({
+        exports.makeGroupedProfileFilterInfo = function(opts){
+            var groupedProfileFilterItems = [];
+            var arr = [];
+            arr.push({
                 name : Constants.CHAR_NAME,
                 type : "string",
                 displayName : "character-filter-character",
             });
-            innerProfileSettings.push({
+            arr.push({
                 name : Constants.CHAR_OWNER,
                 type : "string",
                 displayName : "character-filter-character-owner",
             });
-            innerProfileSettings = innerProfileSettings.concat(profileSettings.map(function(element){
+            arr = arr.concat(opts.characters.profileStructure.map(function(element){
                 return {
                     name: 'profile-' + element.name,
                     type: element.type,
@@ -205,31 +201,41 @@ See the License for the specific language governing permissions and
                     value: element.value
                 }
             }));
-            innerProfileSettings = innerProfileSettings.concat(Constants.summaryStats.map(function(stat){
+            groupedProfileFilterItems.push({
+                name: 'character',
+                profileFilterItems: arr
+            });
+            arr = Constants.summaryStats.map(function(stat){
                 return {
                     name: stat[0],
                     type: 'number',
                     displayName: stat[1],
                 };
-            }));
-            info.innerProfileSettings = innerProfileSettings;
-            return info;
+            });
+            groupedProfileFilterItems.push({
+                name: 'summary',
+                profileFilterItems: arr
+            });
+            opts.groupedProfileFilterItems = groupedProfileFilterItems;
+            return opts;
         };
         
         exports.getCharacterInfoValue = function(info, characterName, profileItemName){
             if(profileItemName == Constants.CHAR_NAME){
                 return characterName;
             } else if(profileItemName == Constants.CHAR_OWNER){
-                return info.characterOwners[characterName];
+                return info.characters.owners[characterName];
             } else if(exports.startsWith(profileItemName, 'summary-') ){
                 return info.charactersSummary[characterName][profileItemName.substring('summary-'.length)];
+            } else if(exports.startsWith(profileItemName, 'profile-') ){
+                return info.characters.profiles[characterName][profileItemName.substring('profile-'.length)];
             } else {
-                return info.profiles[characterName][profileItemName.substring('profile-'.length)];
+                throw new Error('Unexpected profileItemName: ' + profileItemName);
             }
         };
         
         exports.getDataArray = R.curry(function (info, character) {
-            return info.innerProfileSettings.map(function(profileItemInfo){
+            return R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map(function(profileItemInfo){
                 var value = exports.getCharacterInfoValue(info, character, profileItemInfo.name);
                 return {
                     value: value,
@@ -240,7 +246,7 @@ See the License for the specific language governing permissions and
         });
         
         exports.getDataArrays = function(info, filterModel) {
-            return Object.keys(info.profiles).map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
+            return Object.keys(info.characters.profiles).map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
         };
         
         exports.isFilterModelCompatibleWithProfiles = function(profileSettings, filterModel){
