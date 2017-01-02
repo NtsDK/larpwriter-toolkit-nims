@@ -120,14 +120,16 @@ See the License for the specific language governing permissions and
     
     exports.CHAR_NAME = 'char-name';
     exports.CHAR_OWNER = 'char-owner';
+    exports.CHAR_PREFIX = 'profile-';
+    exports.SUMMARY_PREFIX = 'summary-';
     
     exports.summaryStats = [
-        ['summary-active'      , "constant-active"   ],
-        ['summary-follower'    , "constant-follower" ],
-        ['summary-defensive'   , "constant-defensive"],
-        ['summary-passive'     , "constant-passive"  ],
-        ['summary-completeness', "character-filter-completeness"],
-        ['summary-totalStories', "character-filter-totalStories"]
+        ['active'      , "constant-active"   ],
+        ['follower'    , "constant-follower" ],
+        ['defensive'   , "constant-defensive"],
+        ['passive'     , "constant-passive"  ],
+        ['completeness', "character-filter-completeness"],
+        ['totalStories', "character-filter-totalStories"]
     ];
     
     exports.socialNetworkOpts = {

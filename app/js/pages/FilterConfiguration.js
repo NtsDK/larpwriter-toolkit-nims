@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 function FilterConfiguration(info){
     this.info = info;
     function populateProfileItems(item){
-        if(!CommonUtils.startsWith(item.name, 'profile-')){
+        if(!CommonUtils.startsWith(item.name, Constants.CHAR_PREFIX)){
             item.displayName = getL10n(item.displayName);
             item.value = "";
         }
@@ -44,7 +44,7 @@ FilterConfiguration.prototype.getProfileFilterItems = function(){
 };
 
 FilterConfiguration.prototype.getBaseProfileSettings = function(){
-    return this.info.profileSettings;
+    return this.info.characters.profileStructure;
 };
 
 FilterConfiguration.prototype.getDataArrays = function(filterModel) {

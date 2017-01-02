@@ -184,7 +184,7 @@ See the License for the specific language governing permissions and
 
         function _removeProfileItem(type, index, profileItemName){
             if(type === 'player') return;
-            var subFilterName = 'profile-' + profileItemName;
+            var subFilterName = Constants.CHAR_PREFIX + profileItemName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
                 var group = that.database.Groups[groupName];
@@ -207,13 +207,13 @@ See the License for the specific language governing permissions and
 
         function _renameProfileItem(type, newName, oldName){
             if(type === 'player') return;
-            var subFilterName = 'profile-' + oldName;
+            var subFilterName = Constants.CHAR_PREFIX + oldName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
                 var group = that.database.Groups[groupName];
                 group.filterModel = group.filterModel.map(function(filterItem){
                     if(filterItem.name === subFilterName){
-                        filterItem.name = 'profile-' + newName;
+                        filterItem.name = Constants.CHAR_PREFIX + newName;
                     }
                     return filterItem;
                 });
@@ -225,7 +225,7 @@ See the License for the specific language governing permissions and
         
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
             if(type === 'player') return;
-            var subFilterName = 'profile-' + profileItemName;
+            var subFilterName = Constants.CHAR_PREFIX + profileItemName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
                 var group = that.database.Groups[groupName];

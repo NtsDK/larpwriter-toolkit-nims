@@ -195,7 +195,7 @@ See the License for the specific language governing permissions and
             });
             arr = arr.concat(opts.characters.profileStructure.map(function(element){
                 return {
-                    name: 'profile-' + element.name,
+                    name: Constants.CHAR_PREFIX + element.name,
                     type: element.type,
                     displayName: element.name,
                     value: element.value
@@ -207,7 +207,7 @@ See the License for the specific language governing permissions and
             });
             arr = Constants.summaryStats.map(function(stat){
                 return {
-                    name: stat[0],
+                    name: Constants.SUMMARY_PREFIX + stat[0],
                     type: 'number',
                     displayName: stat[1],
                 };
@@ -225,10 +225,10 @@ See the License for the specific language governing permissions and
                 return characterName;
             } else if(profileItemName == Constants.CHAR_OWNER){
                 return info.characters.owners[characterName];
-            } else if(exports.startsWith(profileItemName, 'summary-') ){
-                return info.charactersSummary[characterName][profileItemName.substring('summary-'.length)];
-            } else if(exports.startsWith(profileItemName, 'profile-') ){
-                return info.characters.profiles[characterName][profileItemName.substring('profile-'.length)];
+            } else if(exports.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ){
+                return info.charactersSummary[characterName][profileItemName.substring(Constants.SUMMARY_PREFIX.length)];
+            } else if(exports.startsWith(profileItemName, Constants.CHAR_PREFIX) ){
+                return info.characters.profiles[characterName][profileItemName.substring(Constants.CHAR_PREFIX.length)];
             } else {
                 throw new Error('Unexpected profileItemName: ' + profileItemName);
             }
@@ -250,11 +250,11 @@ See the License for the specific language governing permissions and
         };
         
         exports.isFilterModelCompatibleWithProfiles = function(profileSettings, filterModel){
-            var profilePart = filterModel.filter(R.compose(R.test(/^profile-/), R.prop('name')));
+            var profilePart = filterModel.filter(R.compose(R.test(new RegExp('^' + Constants.CHAR_PREFIX)), R.prop('name')));
             var profileSettingsMap = R.indexBy(R.prop('name'), profileSettings);
             var conflictTypes = [];
             profilePart.forEach(function(modelItem){
-                var itemName = modelItem.name.substring('profile-'.length);
+                var itemName = modelItem.name.substring(Constants.CHAR_PREFIX.length);
                 var profileItem = profileSettingsMap[itemName];
                 if(!profileItem || profileItem.type !== modelItem.type){
                     conflictTypes.push(itemName);
