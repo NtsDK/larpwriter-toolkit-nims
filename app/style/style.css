@@ -72,6 +72,9 @@ See the License for the specific language governing permissions and
 .text-right{
   text-align: right;
 }
+.lightGrey{
+  color: rgb(184,184,184);
+}
 
 /* character filter **/
 

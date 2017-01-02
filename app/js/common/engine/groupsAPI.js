@@ -28,8 +28,8 @@ See the License for the specific language governing permissions and
             callback(null, CommonUtils.clone(this.database.Groups[groupName]));
         };
         
-        var _getCharacterGroupTexts = function(groups, info, characterName){
-            var dataArray = CommonUtils.getDataArray(info, characterName);
+        var _getCharacterGroupTexts = function(groups, info, profileId){
+            var dataArray = CommonUtils.getDataArray(info, profileId);
             var array = R.values(groups).filter(function(group){
                 return group.doExport && CommonUtils.acceptDataRow(group.filterModel, dataArray);
             }).map(function(group){
@@ -45,22 +45,31 @@ See the License for the specific language governing permissions and
         // preview
         LocalDBMS.prototype.getCharacterGroupTexts = function(characterName, callback) {
             var that = this;
-            this.getProfileFilterInfo(function(err, info){
+            this.getProfileBinding('character', characterName, function(err, profileId){
                 if(err) {callback(err); return;}
-                callback(null, _getCharacterGroupTexts(that.database.Groups, info, characterName));
-            });
+                profileId = R.equals(profileId, {}) ? [characterName, ''] : R.toPairs(profileId)[0];
+                that.getProfileFilterInfo(function(err, info){
+                    if(err) {callback(err); return;}
+                    callback(null, _getCharacterGroupTexts(that.database.Groups, info, profileId));
+                });
+            })
         };
         
         // export
         LocalDBMS.prototype.getAllCharacterGroupTexts = function(callback) {
             var that = this;
+            
             this.getProfileFilterInfo(function(err, info){
                 if(err) {callback(err); return;}
-                var texts = Object.keys(that.database.Characters).reduce(function(result, characterName){
-                    result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, characterName);
-                    return result;
-                }, {});
-                callback(null, texts);
+                that.getProfileBindings(function(err, bindings){
+                    if(err) {callback(err); return;}
+                    var texts = Object.keys(that.database.Characters).reduce(function(result, characterName){
+                        var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
+                        result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, profileId);
+                        return result;
+                    }, {});
+                    callback(null, texts);
+                })
             });
         };
         
@@ -443,12 +452,13 @@ See the License for the specific language governing permissions and
             return _makeGraph(equalGroups, superGroups, groupCharacterSets);
         };
         
-        var _getGroupCharacterSets = function(groups, characterNames, info){
+        var _getGroupCharacterSets = function(groups, characterNames, bindings, info){
             
             var groupNames = R.keys(groups);
             var groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
             characterNames.forEach(function(characterName){
-                var dataArray = CommonUtils.getDataArray(info, characterName);
+                var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
+                var dataArray = CommonUtils.getDataArray(info, profileId);
                 groupNames.forEach(function(groupName){
                     if(CommonUtils.acceptDataRow(groups[groupName].filterModel, dataArray)){
                         groupCharacterSets[groupName][characterName] = true;
@@ -466,7 +476,7 @@ See the License for the specific language governing permissions and
                 var schemas = {};
                 var groups = that.database.Groups;
                 
-                var groupCharacterSets = _getGroupCharacterSets(groups, R.keys(that.database.Characters), info);
+                var groupCharacterSets = _getGroupCharacterSets(groups, R.keys(that.database.Characters), R.clone(that.database.ProfileBindings), info);
 
                 schemas.theory = _makeGroupSchema(groups, _isGroupsEqualByFilterModel, _isSuperGroupByFilterModel, function(groupName){
                     return groups[groupName].filterModel;

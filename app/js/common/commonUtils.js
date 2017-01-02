@@ -296,17 +296,7 @@ See the License for the specific language governing permissions and
             }
         };
         
-        exports.getDataArray = R.curry(function (info, character) {
-            return R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map(function(profileItemInfo){
-                var value = getCharacterInfoValue(info, character, profileItemInfo.name);
-                return {
-                    value: value,
-                    type: profileItemInfo.type,
-                    itemName: profileItemInfo.name
-                }
-            });
-        });
-        exports.getDataArray2 = R.curry(function (info, profileId) {
+        exports.getDataArray = R.curry(function (info, profileId) {
             return R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map(function(profileItemInfo){
                 var value = getCharacterInfoValue2(info, profileId, profileItemInfo.name);
                 return {
@@ -324,11 +314,7 @@ See the License for the specific language governing permissions and
         };
         
         exports.getDataArrays = function(info, filterModel) {
-            return Object.keys(info.characters.profiles).map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
-        };
-        
-        exports.getDataArrays2 = function(info, filterModel) {
-            return bindings2Arr(info.bindingData).map(exports.getDataArray2(info)).filter(exports.acceptDataRow(filterModel));
+            return bindings2Arr(info.bindingData).map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
         };
         
         exports.isFilterModelCompatibleWithProfiles = function(profileSettings, filterModel){

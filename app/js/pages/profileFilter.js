@@ -320,7 +320,7 @@ See the License for the specific language governing permissions and
                 pos = value.toLowerCase().indexOf(inputItems[valueInfo.itemName].value.toLowerCase());
                 value = value.substring(pos - 5, pos + 15);
             }
-            td = addEl(makeEl("td"), makeText(value));
+            td = addEl(setClassByCondition(makeEl("td"), 'lightGrey', value === 'Н/Д'), makeText(value));
             addClass(td, i +"-dependent");
             return td;
         }));
