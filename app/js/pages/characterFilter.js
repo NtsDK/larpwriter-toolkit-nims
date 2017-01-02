@@ -21,27 +21,28 @@ See the License for the specific language governing permissions and
 (function(exports){
     
     var state = {};
+    const root = '.character-filter-tab ';
     
     exports.init = function () {
-        listen(getEl('profileItemSelector'), "change", UI.showSelectedEls("-dependent"));
+        listen(queryEl(root + '.profile-item-selector'), "change", UI.showSelectedEls("-dependent"));
         
-        listen(queryEl("#characterFilterDiv .create-entity-button"), "click", Groups.createGroup('#characterFilterDiv', groupAreaRefresh));
-        listen(queryEl("#characterFilterDiv .rename-entity-button"), "click", Groups.renameGroup('#characterFilterDiv', groupAreaRefresh));
-        listen(queryEl("#characterFilterDiv .remove-entity-button"), "click", Groups.removeGroup('#characterFilterDiv', groupAreaRefresh));
-        listen(queryEl("#characterFilterDiv .show-entity-button"), "click", loadFilterFromGroup);
-        listen(queryEl("#characterFilterDiv .save-entity-button"), "click", saveFilterToGroup);
-        listen(queryEl("#download-filter-table"), "click", downloadFilterTable);
+        listen(queryEl(root + ".create-entity-button"), "click", Groups.createGroup(root, groupAreaRefresh));
+        listen(queryEl(root + ".rename-entity-button"), "click", Groups.renameGroup(root, groupAreaRefresh));
+        listen(queryEl(root + ".remove-entity-button"), "click", Groups.removeGroup(root, groupAreaRefresh));
+        listen(queryEl(root + ".show-entity-button"), "click", loadFilterFromGroup);
+        listen(queryEl(root + ".save-entity-button"), "click", saveFilterToGroup);
+        listen(queryEl(root + ".download-filter-table"), "click", downloadFilterTable);
         
-        exports.content = getEl("characterFilterDiv");
+        exports.content = queryEl(root);
     };
     
     var groupAreaRefresh = function(){
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError(function(userGroupNames){
             PermissionInformer.getEntityNamesArray('group', false, Utils.processError(function(allGroupNames){
-                Groups.rebuildInterface("#characterFilterDiv", userGroupNames);
+                Groups.rebuildInterface(root, userGroupNames);
                 var data = getSelect2Data(allGroupNames);
-                clearEl(queryEl("#characterFilterDiv .save-entity-select"));
-                $("#characterFilterDiv .save-entity-select").select2(data);
+                clearEl(queryEl(root +".save-entity-select"));
+                $(root + ".save-entity-select").select2(data);
             }));
         }));
     };
@@ -52,7 +53,7 @@ See the License for the specific language governing permissions and
         state.inputItems = {};
         state.checkboxes = {};
         
-        var filterSettingsDiv = clearEl(queryEl("#characterFilterDiv .filter-settings-panel"));
+        var filterSettingsDiv = clearEl(queryEl(root + ".filter-settings-panel"));
         addEl(filterSettingsDiv, addClass(makeEl('div'), 'separator'));
         
         groupAreaRefresh();
@@ -66,10 +67,10 @@ See the License for the specific language governing permissions and
             
             addEls(filterSettingsDiv, profileSettings.map(makeInput));
             
-            UI.fillShowItemSelector(clearEl(getEl('profileItemSelector')), 
+            UI.fillShowItemSelector(clearEl(queryEl(root + '.profile-item-selector')), 
                     getShowProfileItemNames(profileSettings));
     
-            addEl(clearEl(getEl('filterHead')), makeContentHeader(
+            addEl(clearEl(queryEl(root + '.filter-head')), makeContentHeader(
                     getHeaderProfileItemNames(profileSettings)));
             
             rebuildContent();
@@ -111,13 +112,13 @@ See the License for the specific language governing permissions and
     
     var rebuildContent = function () {
         var dataArrays = makePrintData();
-        addEl(clearEl(getEl("filterResultSize")), makeText(dataArrays.length));
-        addEls(clearEl(getEl("filterContent")), dataArrays.map(makeDataString));
-        UI.showSelectedEls("-dependent")({target:getEl('profileItemSelector')});
+        addEl(clearEl(queryEl(root + ".filter-result-size")), makeText(dataArrays.length));
+        addEls(clearEl(queryEl(root + ".filter-content")), dataArrays.map(makeDataString));
+        UI.showSelectedEls("-dependent")({target:queryEl(root + '.profile-item-selector')});
     };
     
     var saveFilterToGroup = function(){
-        var groupName = queryEl("#characterFilterDiv .save-entity-select").value.trim();
+        var groupName = queryEl(root + ".save-entity-select").value.trim();
         PermissionInformer.isEntityEditable('group', groupName, function(err, isGroupEditable){
             if(err) {Utils.handleError(err); return;}
             if(!isGroupEditable){
@@ -129,7 +130,7 @@ See the License for the specific language governing permissions and
     };
     
     var loadFilterFromGroup = function(){
-        var groupName = queryEl("#characterFilterDiv .save-entity-select").value.trim();
+        var groupName = queryEl(root + ".save-entity-select").value.trim();
         DBMS.getGroup(groupName,  function(err, group){
             if(err) {Utils.handleError(err); return;}
             var conflictTypes = CommonUtils.isFilterModelCompatibleWithProfiles(
@@ -144,7 +145,7 @@ See the License for the specific language governing permissions and
     };
     
     var downloadFilterTable = function(){
-        var el = getEl('profileItemSelector');
+        var el = queryEl(root + '.profile-item-selector');
         var selected = [true];
         for (var i = 0; i < el.options.length; i += 1) {
             selected[i+1] = el.options[i].selected;
@@ -338,7 +339,7 @@ See the License for the specific language governing permissions and
             setClassByCondition(target, 'sortDesc', state.sortDir === 'desc');
             setClassByCondition(target, 'sortAsc', state.sortDir === 'asc');
         } else {
-            var filterHead = getEl("filterHead");
+            var filterHead = queryEl(root + ".filter-head");
             nl2array(filterHead.getElementsByClassName("sortAsc")).forEach(removeClass(R.__, "sortAsc"));
             nl2array(filterHead.getElementsByClassName("sortDesc")).forEach(removeClass(R.__, "sortDesc"));
             

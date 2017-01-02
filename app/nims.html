@@ -528,11 +528,11 @@ See the License for the specific language governing permissions and
       </div>
     </div>
 
-    <div id="characterFilterDiv">
+    <div class="character-filter-tab">
     
       <div class="panel panel-default">
         <div class="panel-heading">
-          <a href="#" panel-toggler="#characterFilterDiv .group-control-area">
+          <a href="#" panel-toggler=".character-filter-tab .group-control-area">
             <h3 class="panel-title" l10n-id="groups-groups"></h3>
           </a>
         </div>
@@ -582,23 +582,23 @@ See the License for the specific language governing permissions and
           <td>
             <div class="panel panel-default">
               <div class="panel-heading">
-                <a href="#" panel-toggler="#characterFilterDiv div.column-select-area">
+                <a href="#" panel-toggler=".character-filter-tab div.column-select-area">
                   <h3 class="panel-title" l10n-id="character-filter-show-profile-item"></h3>
                 </a>
               </div>
               <div class="panel-body column-select-area">
-                <select multiple id="profileItemSelector"></select>
+                <select multiple class="profile-item-selector"></select>
               </div>
             </div>
             <div class="panel panel-default">
               <div class="panel-heading">
-                <a href="#" panel-toggler="#characterFilterDiv div.filter-settings-area">
+                <a href="#" panel-toggler=".character-filter-tab div.filter-settings-area">
                   <h3 class="panel-title" l10n-id="character-filter-filter"></h3>
                 </a>
               </div>
               <div class="panel-body filter-settings-area panel-resizable">
-                <span l10n-id="character-filter-results"></span> <span id="filterResultSize"></span><br>
-                <button id="download-filter-table" l10n-id="character-filter-download-filter-table"></button>
+                <span l10n-id="character-filter-results"></span> <span class="filter-result-size"></span><br>
+                <button class="download-filter-table" l10n-id="character-filter-download-filter-table"></button>
                 <br><br>
                 
                 <div class="filter-settings-panel"></div>
@@ -609,8 +609,8 @@ See the License for the specific language governing permissions and
             <div class="panel panel-default">
               <div class="panel-body">
                 <table  class="table table-striped table-bordered">
-                <thead id="filterHead"></thead>
-                <tbody id="filterContent"></tbody>
+                <thead class="filter-head"></thead>
+                <tbody class="filter-content"></tbody>
                 </table>
               </div>
             </div>
