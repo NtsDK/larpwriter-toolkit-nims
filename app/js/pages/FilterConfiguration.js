@@ -44,6 +44,10 @@ FilterConfiguration.prototype.getProfileFilterItems = function(){
     return R.flatten(this.groupedProfileFilterItems.map(R.prop('profileFilterItems')));
 };
 
+FilterConfiguration.prototype.getGroupedProfileFilterItems = function(){
+    return this.groupedProfileFilterItems;
+};
+
 FilterConfiguration.prototype.getBaseProfileSettings = function(){
     return this.info.characters.profileStructure;
 };

@@ -36,8 +36,6 @@ See the License for the specific language governing permissions and
                 if(R.isNil(a) && R.isNil(b)) return 0;
                 if(R.isNil(a)) return 1;
                 if(R.isNil(b)) return -1;
-//                if(R.isNil(a)) return sortDir === "asc" ? -1 : 1;
-//                if(R.isNil(b)) return sortDir === "asc" ? 1 : -1;
                 if (a > b)
                     return sortDir === "asc" ? 1 : -1;
                 if (a < b)
@@ -207,7 +205,7 @@ See the License for the specific language governing permissions and
                 }
             }));
             groupedProfileFilterItems.push({
-                name: 'character',
+                name: 'characterFilterItems',
                 profileFilterItems: arr
             });
             
@@ -231,7 +229,7 @@ See the License for the specific language governing permissions and
                 }
             }));
             groupedProfileFilterItems.push({
-                name: 'player',
+                name: 'playerFilterItems',
                 profileFilterItems: arr
             });
             
@@ -243,7 +241,7 @@ See the License for the specific language governing permissions and
                 };
             });
             groupedProfileFilterItems.push({
-                name: 'summary',
+                name: 'summaryFilterItems',
                 profileFilterItems: arr
             });
             opts.groupedProfileFilterItems = groupedProfileFilterItems;

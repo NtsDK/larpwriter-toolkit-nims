@@ -58,6 +58,24 @@ UI.fillShowItemSelector = function (selector, displayArray) {
     });
 };
 
+UI.fillShowItemSelector2 = function (selector, optionGroups) {
+    var el, groupEl, counter = 0;
+    addEls(selector, optionGroups.map(function(group) {
+        counter++;
+        groupEl = setAttr(makeEl("optgroup"), 'label', group.name);
+        addEls(groupEl, group.array.map((value) => {
+            el = setProps(makeEl("option"), {
+                "selected" : true,
+            });
+            setClassByCondition(el, 'hidden', value.hidden);
+            counter += (value.hidden ? 0 : 1);
+            return addEl(el, makeText(value.name));
+        }));
+        return groupEl;
+    }));
+    setAttr(selector, "size", counter);
+};
+
 UI.showSelectedEls = function(classKey){
     "use strict";
     return function(event){

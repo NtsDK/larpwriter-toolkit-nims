@@ -64,11 +64,10 @@ See the License for the specific language governing permissions and
             state.filterConfiguration = filterConfiguration;
             
             var profileFilterItems = filterConfiguration.getProfileFilterItems();
-            
             addEls(filterSettingsDiv, profileFilterItems.map(makeInput));
             
-            UI.fillShowItemSelector(clearEl(queryEl(root + '.profile-item-selector')), 
-                    getShowProfileItemNames(profileFilterItems));
+            UI.fillShowItemSelector2(clearEl(queryEl(root + '.profile-item-selector')), 
+                    getShowProfileItemNames(filterConfiguration.getGroupedProfileFilterItems()));
     
             addEl(clearEl(queryEl(root + '.filter-head')), makeContentHeader(
                     getHeaderProfileItemNames(profileFilterItems)));
@@ -77,14 +76,17 @@ See the License for the specific language governing permissions and
         });
     };
     
-//    var getShowProfileItemNames = function(profileSettings){
-//        return R.map(R.prop('displayName'), profileSettings.filter(R.prop('canHide')));
-//    };
-    var getShowProfileItemNames = function(profileSettings){
-        return profileSettings.map(function(item){
+    var getShowProfileItemNames = function(groups){
+        return groups.map(function(group){
+            let data = group.profileFilterItems.map(function(item){
+                return {
+                    name: item.displayName,
+                    hidden: !item.canHide
+                };
+            });
             return {
-                name: item.displayName,
-                hidden: !item.canHide
+                name: getL10n('profile-filter-'+group.name),
+                array: data
             };
         });
     };
