@@ -20,7 +20,7 @@ See the License for the specific language governing permissions and
 
 (function(exports){
     
-    var profileSettings;
+    var state = {};
 
     exports.init = function () {
         $("#briefingCharacter").select2().on("change", buildContentDelegate);
@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
         
         DBMS.getCharacterProfileStructure(function(err, loadedProfileSettings){
             if(err) {Utils.handleError(err); return;}
-            profileSettings = loadedProfileSettings;
+            state.profileSettings = loadedProfileSettings;
             PermissionInformer.getEntityNamesArray('character', false, function(err, names){
                 if(err) {Utils.handleError(err); return;}
                 if (names.length > 0) {
@@ -122,7 +122,7 @@ See the License for the specific language governing permissions and
             });
         }, 
         make: function(el, data){
-            addEl(el, makePanel(makeText(getL10n('briefings-profile')), makeProfileContent(data.profile)));
+            addEl(el, makePanel(makeText(getL10n('briefings-profile')), makeProfileContent(state.profileSettings, data.profile)));
         } 
     }, {
         name: 'inventory',
@@ -279,11 +279,11 @@ See the License for the specific language governing permissions and
         var select1 = $("<select></select>");
         var tmpContainer1 = $("<span></span>").append(select1);
         addClasses(select1[0],['common-select','profile-item-select']);
-        var tmpSelect = select1.select2(arr2Select2(profileSettings.map(R.prop('name')).sort()));
+        var tmpSelect = select1.select2(arr2Select2(state.profileSettings.map(R.prop('name')).sort()));
         
         tmpSelect.on('change', refresh);
-        if(profileSettings[0]){
-            tmpSelect.val(profileSettings[0].name).trigger('change');
+        if(state.profileSettings[0]){
+            tmpSelect.val(state.profileSettings[0].name).trigger('change');
         }
         
         return {
@@ -367,15 +367,9 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'),col2)]);
     };
     
-    var makeProfileContent = function(profile){
-        var profileDiv, name, value;
-        profileDiv = makeEl('tbody');
-        
-        profileSettings.forEach(function (element) {
-            if(!element.doExport){
-                return;
-            }
-            name = makeText(element.name);
+    var makeProfileContent = function(profileStructure, profile){
+        var value;
+        var profileDiv = addEls(makeEl('tbody'), profileStructure.filter(element => element.doExport).map(function (element) {
             switch (element.type) {
             case "text":
                 value = addClass(makeEl("span"), "briefingTextSpan");
@@ -393,9 +387,8 @@ See the License for the specific language governing permissions and
             default:
                 throw new Error('Unexpected type ' + element.type);
             }
-            
-            addEl(profileDiv,makeTableRow(name, value));
-        });
+            return makeTableRow(makeText(element.name), value);
+        }));
         return addEl(addClasses(makeEl('table'), ['table','table-striped']), profileDiv);
     };
     
