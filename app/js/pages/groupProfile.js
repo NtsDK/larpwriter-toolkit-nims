@@ -38,7 +38,6 @@ GroupProfile.profileSettings = [{
 }];
 
 GroupProfile.init = function () {
-    "use strict";
     listen(queryEl(".group-profile-tab .entity-selector"), "change", GroupProfile.showProfileInfoDelegate);
     
     var tbody = clearEl(queryEl(".group-profile-tab .entity-profile"));
@@ -66,7 +65,6 @@ GroupProfile.refresh = function () {
 };
 
 GroupProfile.applySettings = function (names, selector) {
-    "use strict";
     if (names.length > 0) {
         var name = names[0].value;
         var settings = DBMS.getSettings();
@@ -115,7 +113,6 @@ GroupProfile.makeInput = function (profileItemConfig) {
 };
 
 GroupProfile.updateFieldValue = function(type){
-    "use strict";
     return function(event){
         var fieldName = event.target.selfName;
         var groupName = GroupProfile.name;
@@ -133,7 +130,7 @@ GroupProfile.updateFieldValue = function(type){
         }
         DBMS.updateGroupField(groupName, fieldName, value, Utils.processError());
     }
-}
+};
 
 GroupProfile.showProfileInfoDelegate = function (event) {
     var name = event.target.value.trim();
@@ -157,21 +154,13 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
                     inputItems[inputName].checked = group[inputName];
                 } else if (inputItems[inputName].type === "container") {
                     if(inputName === 'filterModel'){
-                        var inputItem = clearEl(inputItems[inputName]);
-                        var table = makeEl('table');
-                        addClass(table, 'table');
-                        var tbody = makeEl('tbody');
-                        addEls(tbody, group.filterModel.map(GroupProfile.makeFilterItemString(filterConfiguration)));
-                        addEl(table, tbody);
-                        addEl(inputItem, table);
+                        var table = addClass(makeEl('table'), 'table');
+                        var tbody = addEls(makeEl('tbody'), group.filterModel.map(GroupProfile.makeFilterItemString(filterConfiguration)));
+                        addEl(clearEl(inputItems[inputName]), addEl(table, tbody));
                     } else if(inputName === 'characterList'){
-                        var data = filterConfiguration.getDataArrays(group.filterModel).map(function(dataArray){
-                            return dataArray[0].value;
-                        }).sort();
+                        var data = filterConfiguration.getProfileIds(group.filterModel);
                         var inputItem = clearEl(inputItems[inputName]);
-                        addEl(inputItem, makeText(data.join(', ')));
-                        addEl(inputItem, makeEl('br'));
-                        addEl(inputItem, makeText(getL10n('groups-total') + data.length));
+                        addEls(inputItem, [makeText(data.join(', ')), makeEl('br'), makeText(getL10n('groups-total') + data.length)]);
                     } else {
                         throw new Error('Unexpected container: ' + inputName);
                     }
@@ -192,11 +181,7 @@ GroupProfile.getHeaderDisplayName = function(filterConfiguration, name){
 };
 
 GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filterItem){
-    var tr = makeEl('tr');
-    var td = makeEl('td');
-    addEl(tr, td);
     var displayName = GroupProfile.getHeaderDisplayName(filterConfiguration, filterItem.name);
-    addEl(td, makeText(displayName));
     var condition;
     switch(filterItem.type){
     case "enum":
@@ -221,10 +206,9 @@ GroupProfile.makeFilterItemString = R.curry(function(filterConfiguration, filter
     default:
         throw new Error('Unexpected type ' + filterItem.type);
     }
-    td = makeEl('td');
-    addEl(tr, td);
-    addEl(td, makeText(condition));
-    return tr;
+    var td1 = addEl(makeEl('td'), makeText(displayName));
+    var td2 = addEl(makeEl('td'), makeText(condition));
+    return addEls(makeEl('tr'), [td1, td2]);
 });
 
 GroupProfile.updateSettings = function (name) {

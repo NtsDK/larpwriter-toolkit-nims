@@ -51,3 +51,9 @@ FilterConfiguration.prototype.getBaseProfileSettings = function(){
 FilterConfiguration.prototype.getDataArrays = function(filterModel) {
     return CommonUtils.getDataArrays(this.info, filterModel);
 };
+
+FilterConfiguration.prototype.getProfileIds = function(filterModel) {
+    return this.getDataArrays(filterModel).map(function(dataArray){
+        return dataArray[0].value;
+    }).sort();
+};
