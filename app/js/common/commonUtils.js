@@ -307,14 +307,8 @@ See the License for the specific language governing permissions and
             });
         });
         
-        var bindings2Arr = function(bindingData){
-            return R.reduce(R.concat, [], [R.toPairs(bindingData.bindings),
-                R.zip(bindingData.characters, R.repeat('', bindingData.characters.length)), 
-                R.zip(R.repeat('', bindingData.players.length), bindingData.players)]);
-        };
-        
         exports.getDataArrays = function(info, filterModel) {
-            return bindings2Arr(info.bindingData).map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
+            return info.bindingData.map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
         };
         
         exports.isFilterModelCompatibleWithProfiles = function(profileSettings, filterModel){

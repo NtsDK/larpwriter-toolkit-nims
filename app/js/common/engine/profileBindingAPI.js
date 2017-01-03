@@ -33,11 +33,10 @@ See the License for the specific language governing permissions and
             characters = R.difference(characters, R.keys(bindings));
             players = R.difference(players, R.values(bindings));
             
-            callback(null, {
-                bindings : bindings,
-                players : players,
-                characters : characters
-            });
+            var bindingData = R.reduce(R.concat, [], [R.toPairs(bindings), 
+                                           R.zip(characters, R.repeat('', characters.length)), 
+                                           R.zip(R.repeat('', players.length), players)]);
+            callback(null, bindingData);
         };
         
         LocalDBMS.prototype._getProfileBindingPrecondition = function(type, name){
