@@ -97,12 +97,18 @@ See the License for the specific language governing permissions and
             return step;
         }
         
+        var filter = R.compose(R.contains(R.__, ['enum', 'number', 'checkbox']), R.prop('type'));
+        
         var _getProfileChartData = function(database) {
-            var profileItems = database.CharacterProfileStructure.filter(function(value) {
-                return value.type !== 'string' && value.type !== 'text';
-            }).map(R.pick(['name', 'type']));
+            var charCharts = _getProfileChartArray(database, 'Characters', 'CharacterProfileStructure');
+            var playerCharts = _getProfileChartArray(database, 'Players', 'PlayerProfileStructure');
+            return charCharts.concat(playerCharts);
+        };
+        
+        var _getProfileChartArray = function(database, profileType, profileStructureType){
+            var profileItems = database[profileStructureType].filter(filter).map(R.pick(['name', 'type']));
             
-            var groupCharacters = R.groupBy(R.__, R.values(database.Characters));
+            var groupProfiles = R.groupBy(R.__, R.values(database[profileType]));
             var groupReduce = function(group){
                 return R.fromPairs(R.toPairs(group).map(function(elem){
                     elem[1] = elem[1].length;
@@ -111,17 +117,18 @@ See the License for the specific language governing permissions and
             };
             var groupedValues = profileItems.map(function(profileItem) {
                 if (profileItem.type === "enum" || profileItem.type === "checkbox") {
-                    return groupReduce(groupCharacters(R.prop(profileItem.name)));
-                } else {
-                    var array = R.ap([R.prop(profileItem.name)],R.values(database.Characters));
+                    return groupReduce(groupProfiles(R.prop(profileItem.name)));
+                } else if (profileItem.type === "number") {
+                    var array = R.ap([R.prop(profileItem.name)],R.values(database[profileType]));
                     var step = _makeNumberStep(array);
-                    
                     return {
-                        groups: groupReduce(groupCharacters(function(character){
-                            return Math.floor(character[profileItem.name] / step)
+                        groups: groupReduce(groupProfiles(function(profile){
+                            return Math.floor(profile[profileItem.name] / step)
                         })),
                         step: step
                     }
+                } else {
+                    throw new Error('Unexpected profile item type: ' + profileItem.type);
                 }
             });
                     
