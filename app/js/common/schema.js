@@ -305,7 +305,6 @@ See the License for the specific language governing permissions and
             };
             
             let assocFunc = R.assocPath(['properties', 'name', 'enum']);
-            R.clone(staticStringTemplate)
             filterItems.push(assocFunc([Constants.CHAR_NAME], R.clone(staticStringTemplate)));
             filterItems.push(assocFunc([Constants.CHAR_OWNER], R.clone(staticStringTemplate)));
             filterItems.push(assocFunc([Constants.PLAYER_NAME], R.clone(staticStringTemplate)));
