@@ -20,7 +20,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function Schema(exports, R, CommonUtils) {
+    function Schema(exports, R, CommonUtils, Constants) {
     
         exports.getSchema = function(base) {
             var schema = {
@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
             var Players =  getProfileSchema(base.PlayerProfileStructure);
             var ProfileBindings =  getProfileBindings(base.Characters, base.Players);
             var Stories =  getStoriesSchema(base.Characters);
-            var Groups =  getGroupsSchema(base.CharacterProfileStructure);
+            var Groups =  getGroupsSchema(base.CharacterProfileStructure, base.PlayerProfileStructure);
             var InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
             var Relations = getRelationsSchema(base.Characters, schema.definitions);
             var ManagementInfo = {};
@@ -282,14 +282,14 @@ See the License for the specific language governing permissions and
             return schema;
         };
         
-        function getGroupsSchema(profileSettings) {
+        function getGroupsSchema(characterProfileSettings, playerProfileSettings) {
             var filterItems = [];
-            filterItems.push({
+            var staticStringTemplate = {
                 "type" : "object",
                 "properties": {
                     "name" : {
                         "type" : "string",
-                        "enum": ["char-name"]
+                        "enum": [] // enum can't be empty, it is necessary to populate it
                     }, 
                     "type" :{
                         "type" : "string",
@@ -297,125 +297,30 @@ See the License for the specific language governing permissions and
                     },
                     "regexString" :{
                         "type" : "string",
-                        "minLength": 1
+                        "minLength": 0
                     }
                 }, 
                 "required" : [ "name", "type", "regexString"],
                 "additionalProperties" : false
-            });
-            filterItems.push({
-                "type" : "object",
-                "properties": {
-                    "name" : {
-                        "type" : "string",
-                        "enum": ["char-owner"]
-                    }, 
-                    "type" :{
-                        "type" : "string",
-                        "enum": ["string"]
-                    },
-                    "regexString" :{
-                        "type" : "string",
-                        "minLength": 1
-                    }
-                }, 
-                "required" : [ "name", "type", "regexString"],
-                "additionalProperties" : false
-            });
+            };
+            
+            let assocFunc = R.assocPath(['properties', 'name', 'enum']);
+            R.clone(staticStringTemplate)
+            filterItems.push(assocFunc([Constants.CHAR_NAME], R.clone(staticStringTemplate)));
+            filterItems.push(assocFunc([Constants.CHAR_OWNER], R.clone(staticStringTemplate)));
+            filterItems.push(assocFunc([Constants.PLAYER_NAME], R.clone(staticStringTemplate)));
+            filterItems.push(assocFunc([Constants.PLAYER_OWNER], R.clone(staticStringTemplate)));
     
-            filterItems = filterItems.concat(profileSettings.map(function(item) {
-                var data = {
-                    "type" : "object",
-                    "properties" : {
-                        "name" : {
-                            "type" : "string",
-                            "enum" : [ "profile-" + item.name ]
-                        },
-                        "type" : {
-                            "type" : "string",
-                            "enum" : [ item.type ]
-                        },
-                    },
-                    "required" : [ "name", "type" ],
-                    "additionalProperties" : false
-                };
-    
-                switch (item.type) {
-                case "text":
-                case "string":
-                    data.properties.regexString = {
-                        "type" : "string",
-                        "minLength" : 1
-                    };
-                    data.required.push("regexString");
-                    break;
-                case "number":
-                    data.properties.num = {
-                        "type" : "number"
-                    };
-                    data.properties.condition = {
-                        "type" : "string",
-                        "enum" : [ "greater", "lesser", "equal" ]
-                    };
-                    data.required.push("num");
-                    data.required.push("condition");
-                    break;
-                case "checkbox":
-                    data.properties.selectedOptions = {
-                        "type" : "object",
-                        "properties":{
-                            "false" :{},
-                            "true" :{}
-                        },
-                        "additionalProperties" : false
-                    }
-                    data.required.push("selectedOptions")
-                    break;
-                case "enum":
-                    var properties = item.value.split(",").reduce(function(result, item){
-                        result[item] = {};
-                        return result;
-                    }, {});
-                    data.properties.selectedOptions = {
-                        "type" : "object",
-                        "properties": properties,
-                        "additionalProperties" : false
-                    }
-                    data.required.push("selectedOptions");
-                    break;
-                case "multiEnum":
-                    data.properties.condition = {
-                        "type" : "string",
-                        "enum" : [ "every", "equal", "some" ]
-                    };
-                    var properties = item.value.split(",").reduce(function(result, item){
-                        result[item] = {};
-                        return result;
-                    }, {});
-                    data.properties.selectedOptions = {
-                        "type" : "object",
-                        "properties": properties,
-                        "additionalProperties" : false
-                    }
-                    data.required.push("selectedOptions")
-                    data.required.push("condition");
-                    break;
-                default:
-                    console.log('Unexpected type ' + item.type);
-                }
-                return data;
-            }));
+            filterItems = filterItems.concat(characterProfileSettings.map(makeProfileStructureItemSchema(Constants.CHAR_PREFIX)));
+            filterItems = filterItems.concat(playerProfileSettings.map(makeProfileStructureItemSchema(Constants.PLAYER_PREFIX)));
             
-            
-            var summaries = [ 'active', 'follower', 'defensive', 'passive', 'completeness', 'totalStories' ];
-            
-            summaries.forEach(function(item){
+            R.keys(R.fromPairs(Constants.summaryStats)).forEach(function(item){
                 filterItems.push({
                     "type" : "object",
                     "properties" : {
                         "name" : {
                             "type" : "string",
-                            "enum" : [ "summary-" + item ]
+                            "enum" : [ Constants.SUMMARY_PREFIX + item ]
                         },
                         "type" : {
                             "type" : "string",
@@ -465,6 +370,89 @@ See the License for the specific language governing permissions and
             };
             return schema;
         }
+        
+        var makeProfileStructureItemSchema = R.curry(function(prefix, item){
+            var data = {
+                "type" : "object",
+                "properties" : {
+                    "name" : {
+                        "type" : "string",
+                        "enum" : [ prefix + item.name ]
+                    },
+                    "type" : {
+                        "type" : "string",
+                        "enum" : [ item.type ]
+                    },
+                },
+                "required" : [ "name", "type" ],
+                "additionalProperties" : false
+            };
+
+            switch (item.type) {
+            case "text":
+            case "string":
+                data.properties.regexString = {
+                    "type" : "string",
+                    "minLength" : 0
+                };
+                data.required.push("regexString");
+                break;
+            case "number":
+                data.properties.num = {
+                    "type" : "number"
+                };
+                data.properties.condition = {
+                    "type" : "string",
+                    "enum" : [ "greater", "lesser", "equal" ]
+                };
+                data.required.push("num");
+                data.required.push("condition");
+                break;
+            case "checkbox":
+                data.properties.selectedOptions = {
+                    "type" : "object",
+                    "properties":{
+                        "false" :{},
+                        "true" :{}
+                    },
+                    "additionalProperties" : false
+                }
+                data.required.push("selectedOptions")
+                break;
+            case "enum":
+                var properties = item.value.split(",").reduce(function(result, item){
+                    result[item] = {};
+                    return result;
+                }, {});
+                data.properties.selectedOptions = {
+                    "type" : "object",
+                    "properties": properties,
+                    "additionalProperties" : false
+                }
+                data.required.push("selectedOptions");
+                break;
+            case "multiEnum":
+                data.properties.condition = {
+                    "type" : "string",
+                    "enum" : [ "every", "equal", "some" ]
+                };
+                var properties = item.value.split(",").reduce(function(result, item){
+                    result[item] = {};
+                    return result;
+                }, {});
+                data.properties.selectedOptions = {
+                    "type" : "object",
+                    "properties": properties,
+                    "additionalProperties" : false
+                }
+                data.required.push("selectedOptions")
+                data.required.push("condition");
+                break;
+            default:
+                console.log('Unexpected type ' + item.type);
+            }
+            return data;
+        });
         
         function getProfileSchema(profileSettings) {
             var characterProperties = {
@@ -774,5 +762,5 @@ See the License for the specific language governing permissions and
     callback(Schema);
     
 })(function(api){
-    typeof exports === 'undefined'? api(this['Schema'] = {}, R, CommonUtils) : module.exports = api;
+    typeof exports === 'undefined'? api(this['Schema'] = {}, R, CommonUtils, Constants) : module.exports = api;
 }.bind(this));
