@@ -100,29 +100,23 @@ See the License for the specific language governing permissions and
         return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), itemInput.dom)]);
     });
     
+    var selectProfiles = function(charName, playerName){
+        showProfileInfoDelegate('character', characterProfileDiv, charName);
+        showProfileInfoDelegate('player', playerProfileDiv, playerName);
+        $(characterSelector).select2().val(charName).trigger('change');
+        $(playerSelector).select2().val(playerName).trigger('change');
+    };
+    
     var showProfileInfoDelegate2 = function(type){
         return function(event){
             var name = event.target.value.trim();
             if(name === ''){
-                showProfileInfoDelegate('character', characterProfileDiv, '');
-                showProfileInfoDelegate('player', playerProfileDiv, '');
-                $(characterSelector).select2().val('').trigger('change');
-                $(playerSelector).select2().val('').trigger('change');
+                selectProfiles('','');
                 return;
             }
             DBMS.getProfileBinding(type, name, function(err, binding){
                 if(err) {Utils.handleError(err); return;}
-                let pair = R.toPairs(binding);
-                var charName = type === 'character' ? name : '';
-                var playerName = type === 'player' ? name : '';
-                if(pair.length !== 0){
-                    charName = pair[0][0];
-                    playerName = pair[0][1];
-                }
-                showProfileInfoDelegate('character', characterProfileDiv, charName);
-                showProfileInfoDelegate('player', playerProfileDiv, playerName);
-                $(characterSelector).select2().val(charName).trigger('change');
-                $(playerSelector).select2().val(playerName).trigger('change');
+                selectProfiles(binding[0],binding[1]);
             });
         };
     }

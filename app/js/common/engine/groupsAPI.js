@@ -47,7 +47,6 @@ See the License for the specific language governing permissions and
             var that = this;
             this.getProfileBinding('character', characterName, function(err, profileId){
                 if(err) {callback(err); return;}
-                profileId = R.equals(profileId, {}) ? [characterName, ''] : R.toPairs(profileId)[0];
                 that.getProfileFilterInfo(function(err, info){
                     if(err) {callback(err); return;}
                     callback(null, _getCharacterGroupTexts(that.database.Groups, info, profileId));

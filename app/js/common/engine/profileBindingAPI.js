@@ -52,9 +52,15 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getProfileBinding = function(type, name, callback) {
             var err = this._getProfileBindingPrecondition(type, name);
             if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            var bindings = R.path(path, this.database);
-            var obj = type === 'character' ? R.pick([name], bindings) : R.invertObj(R.pick([name], R.invertObj(bindings)));
-            callback(null, obj);
+            var arr;
+            if(type === 'character'){
+                let bindings = R.path(path, this.database); 
+                arr = [name, bindings[name] || ''];
+            } else {
+                let bindings = R.invertObj(R.path(path, this.database)); 
+                arr = [bindings[name] || '', name];
+            }
+            callback(null, arr);
         };
         
         LocalDBMS.prototype._createBindingPrecondition = function(characterName, playerName){
