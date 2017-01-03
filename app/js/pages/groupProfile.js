@@ -164,7 +164,7 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
                         addEls(tbody, group.filterModel.map(GroupProfile.makeFilterItemString(filterConfiguration)));
                         addEl(table, tbody);
                         addEl(inputItem, table);
-                    } else {
+                    } else if(inputName === 'characterList'){
                         var data = filterConfiguration.getDataArrays(group.filterModel).map(function(dataArray){
                             return dataArray[0].value;
                         }).sort();
@@ -172,9 +172,13 @@ GroupProfile.showProfileInfoCallback = function (err, group) {
                         addEl(inputItem, makeText(data.join(', ')));
                         addEl(inputItem, makeEl('br'));
                         addEl(inputItem, makeText(getL10n('groups-total') + data.length));
+                    } else {
+                        throw new Error('Unexpected container: ' + inputName);
                     }
-                } else {
+                } else if (inputItems[inputName].type === "textarea") {
                     inputItems[inputName].value = group[inputName];
+                } else {
+                    throw new Error('Unexpected input type: ' + inputItems[inputName].type);
                 }
                 inputItems[inputName].oldValue = group[inputName];
                 Utils.enable(GroupProfile.content, "isGroupEditable", isGroupEditable);
