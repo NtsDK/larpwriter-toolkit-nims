@@ -53,7 +53,8 @@ FilterConfiguration.prototype.getDataArrays = function(filterModel) {
 };
 
 FilterConfiguration.prototype.getProfileIds = function(filterModel) {
+    var offset = this.groupedProfileFilterItems[0].profileFilterItems.length;
     return this.getDataArrays(filterModel).map(function(dataArray){
-        return dataArray[0].value;
+        return (dataArray[0].value || '') + '/' + (dataArray[offset].value || '');
     }).sort();
 };
