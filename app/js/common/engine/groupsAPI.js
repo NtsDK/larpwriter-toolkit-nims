@@ -19,12 +19,10 @@ See the License for the specific language governing permissions and
     function groupsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
         
         LocalDBMS.prototype.getGroupNamesArray = function(callback) {
-            "use strict";
             callback(null, Object.keys(this.database.Groups).sort(CommonUtils.charOrdA));
         };
         
         LocalDBMS.prototype.getGroup = function(groupName, callback) {
-            "use strict";
             callback(null, CommonUtils.clone(this.database.Groups[groupName]));
         };
         
@@ -73,12 +71,10 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.isGroupNameUsed = function(groupName, callback) {
-            "use strict";
             callback(null, this.database.Groups[groupName] !== undefined);
         };
         
         LocalDBMS.prototype.createGroup = function(groupName, callback) {
-            "use strict";
             if(groupName === ""){
                 callback(new Errors.ValidationError("groups-group-name-is-not-specified"));
                 return;
@@ -103,7 +99,6 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.renameGroup = function(fromName, toName, callback) {
-            "use strict";
             if (toName === "") {
                 callback(new Errors.ValidationError("groups-new-group-name-is-not-specified"));
                 return;
@@ -130,11 +125,11 @@ See the License for the specific language governing permissions and
         };
     
         LocalDBMS.prototype.removeGroup = function(groupName, callback) {
-            "use strict";
             delete this.database.Groups[groupName];
             this.ee.trigger("removeGroup", arguments);
             if(callback) callback();
         };
+        
         LocalDBMS.prototype.saveFilterToGroup = function(groupName, filterModel, callback) {
             var conflictTypes = CommonUtils.isFilterModelCompatibleWithProfiles(this.database.CharacterProfileStructure, filterModel);
             if(conflictTypes.length != 0){
@@ -195,8 +190,8 @@ See the License for the specific language governing permissions and
         };
 
         function _removeProfileItem(type, index, profileItemName){
-            if(type === 'player') return;
-            var subFilterName = Constants.CHAR_PREFIX + profileItemName;
+            let prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
+            let subFilterName = prefix + profileItemName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
                 var group = that.database.Groups[groupName];
@@ -210,22 +205,21 @@ See the License for the specific language governing permissions and
         listeners.removeProfileItem.push(_removeProfileItem);
 
         function _changeProfileItemType(type, profileItemName, newType){
-            if(type === 'player') return;
-            _removeProfileItem.apply(this, [-1, profileItemName]);
+            _removeProfileItem.apply(this, [type, -1, profileItemName]);
         };
         
         listeners.changeProfileItemType = listeners.changeProfileItemType || [];
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
         function _renameProfileItem(type, newName, oldName){
-            if(type === 'player') return;
-            var subFilterName = Constants.CHAR_PREFIX + oldName;
+            let prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
+            let subFilterName = prefix + oldName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
                 var group = that.database.Groups[groupName];
                 group.filterModel = group.filterModel.map(function(filterItem){
                     if(filterItem.name === subFilterName){
-                        filterItem.name = Constants.CHAR_PREFIX + newName;
+                        filterItem.name = prefix + newName;
                     }
                     return filterItem;
                 });
@@ -236,8 +230,7 @@ See the License for the specific language governing permissions and
         listeners.renameProfileItem.push(_renameProfileItem);
         
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
-            if(type === 'player') return;
-            var subFilterName = Constants.CHAR_PREFIX + profileItemName;
+            var subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) + profileItemName;
             var that = this;
             Object.keys(this.database.Groups).forEach(function(groupName) {
                 var group = that.database.Groups[groupName];
