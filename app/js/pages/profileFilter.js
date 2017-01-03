@@ -309,18 +309,22 @@ See the License for the specific language governing permissions and
     var makeDataString = function (dataArray) {
         var inputItems = state.inputItems;
     
-        var td, regex, pos, value;
+        var td, regex, pos, value, displayValue;
         return addEls(makeEl("tr"), dataArray.map(function (valueInfo, i) {
             value = valueInfo.value;
             if(value === undefined){
-                value = 'Н/Д';
+                displayValue = constL10n('notAvailable');
             } else if (valueInfo.type === "checkbox") {
-                value = constL10n(Constants[value]);
+                displayValue = constL10n(Constants[value]);
             } else if (valueInfo.type === "text") {
                 pos = value.toLowerCase().indexOf(inputItems[valueInfo.itemName].value.toLowerCase());
-                value = value.substring(pos - 5, pos + 15);
+                displayValue = value.substring(pos - 5, pos + 15);
+            } else if(R.contains(valueInfo.type, ['number', 'enum', 'multiEnum', 'string'])){
+                displayValue = value;
+            } else {
+                throw new Error('Unexpected valueInfo.type: ' + valueInfo.type);
             }
-            td = addEl(setClassByCondition(makeEl("td"), 'lightGrey', value === 'Н/Д'), makeText(value));
+            td = addEl(setClassByCondition(makeEl("td"), 'lightGrey', value === undefined), makeText(displayValue));
             addClass(td, i +"-dependent");
             return td;
         }));
