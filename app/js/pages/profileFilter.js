@@ -63,14 +63,16 @@ See the License for the specific language governing permissions and
                         
             state.filterConfiguration = filterConfiguration;
             
-            var profileFilterItems = filterConfiguration.getProfileFilterItems();
-            addEls(filterSettingsDiv, profileFilterItems.map(makeInput));
+            let groupedProfileFilterItems = filterConfiguration.getGroupedProfileFilterItems();
+            addEls(filterSettingsDiv, R.flatten(groupedProfileFilterItems.map(item => {
+                return R.concat(item.profileFilterItems.map(makeInput), [addClass(makeEl('div'), 'filterSeparator')]);
+            })));
             
             UI.fillShowItemSelector2(clearEl(queryEl(root + '.profile-item-selector')), 
                     getShowProfileItemNames(filterConfiguration.getGroupedProfileFilterItems()));
     
             addEl(clearEl(queryEl(root + '.filter-head')), makeContentHeader(
-                    getHeaderProfileItemNames(profileFilterItems)));
+                    getHeaderProfileItemNames(filterConfiguration.getProfileFilterItems())));
             
             rebuildContent();
         });
