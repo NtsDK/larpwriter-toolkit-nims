@@ -35,20 +35,30 @@ See the License for the specific language governing permissions and
                 groupTexts[charName].forEach(function(groupText){
                     groupText.splittedText = _splitText(groupText.text);
                 });
+                var profile = database.Characters[charName];
                 var dataObject = {
                     "gameName" : database.Meta.name,
                     "charName" : charName,
                     "inventory" : _makeCharInventory(database, charName),
                     "storiesInfo" : _getStoriesInfo(database, charName),
                     "eventsInfo" : _getEventsInfo(database, charName),
-                    "profileInfoArray" : _getProfileInfoArray(database, charName),
+                    "profileInfoArray" : _getProfileInfoArray(profile, database.CharacterProfileStructure),
                     "groupTexts" : groupTexts[charName],
                     "relations" : _makeRelationsInfo(getKnownCharacters(database, charName), database, charName)
                 };
                 
-                dataObject = R.merge(dataObject, _getProfileInfoObject("profileInfo-", database, charName, false));
-                dataObject = R.merge(dataObject, _getProfileInfoObject("profileInfo-splitted-", database, charName, true));
-                dataObject = R.merge(dataObject, _getProfileInfoNotEmpty("profileInfo-notEmpty-", database, charName));
+                dataObject = R.merge(dataObject, _getSimpleProfileInfoObject("profileInfo-", profile, database.CharacterProfileStructure));
+                dataObject = R.merge(dataObject, _getSplittedProfileInfoObject("profileInfo-splitted-", profile, database.CharacterProfileStructure));
+                dataObject = R.merge(dataObject, _getProfileInfoNotEmpty("profileInfo-notEmpty-", profile, database.CharacterProfileStructure));
+                
+                let playerName = database.ProfileBindings[charName];
+                if(playerName !== undefined){
+                    profile = database.Players[playerName]
+                    dataObject.playerInfoArray = _getProfileInfoArray(profile, database.PlayerProfileStructure);
+                    dataObject = R.merge(dataObject, _getSimpleProfileInfoObject("playerInfo-", profile, database.PlayerProfileStructure));
+                    dataObject = R.merge(dataObject, _getSplittedProfileInfoObject("playerInfo-splitted-", profile, database.PlayerProfileStructure));
+                    dataObject = R.merge(dataObject, _getProfileInfoNotEmpty("playerInfo-notEmpty-", profile, database.PlayerProfileStructure));
+                }
                 
                 return dataObject;
             });
@@ -63,7 +73,6 @@ See the License for the specific language governing permissions and
         var _makeRelationsInfo = function(knownCharacters, database, charName){
             var relations = database.Relations[charName];
             var profiles = database.Characters;
-            //var storyMeets = '';
             return R.keys(relations).map(function(toCharacter){
                 return {
                     toCharacter: toCharacter, 
@@ -76,53 +85,32 @@ See the License for the specific language governing permissions and
         };
         
         var _makeCharInventory = function(database, charName){
-            var inventory = [];
-            R.values(database.Stories).forEach(function(story){
-                if (story.characters[charName] && 
-                        story.characters[charName].inventory && 
-                        story.characters[charName].inventory !== "") {
-                    inventory = inventory.concat(story.characters[charName].inventory);
-                }
-            });
-            inventory = inventory.join(", ");
-            return inventory;
+            return R.values(database.Stories).filter(story => !R.isNil(story.characters[charName]) && !R.isEmpty(story.characters[charName].inventory))
+                .map(story => story.characters[charName].inventory).join(", ");
         };
     
-        var _getProfileInfoNotEmpty = function(prefix, database, charName) {
-            var character = database.Characters[charName];
-            var profileInfo = {};
-            
-            database.CharacterProfileStructure.forEach(function(element) {
-                profileInfo[prefix + element.name] = String(character[element.name]).length !== 0;
-            });
-            return profileInfo;
-        };
+        var _processProfileInfo = R.curry(function(processor, prefix, profile, profileStructure) {
+            return R.fromPairs(profileStructure.map((element) => {
+                return [prefix + element.name, processor(profile[element.name])];
+            }));
+        });
         
-        var _getProfileInfoObject = function(prefix, database, charName, returnSplitted) {
-            var character = database.Characters[charName];
-            var profileInfo = {};
-    
-            database.CharacterProfileStructure.forEach(function(element) {
-                profileInfo[prefix + element.name] = returnSplitted ? _splitText(String(character[element.name])) : character[element.name];
-            });
-            return profileInfo;
-        };
-    
-        var _getProfileInfoArray = function(database, charName) {
-            var character = database.Characters[charName];
+        var _getProfileInfoNotEmpty = _processProfileInfo((el) => String(el).length !== 0);
+        var _getSimpleProfileInfoObject = _processProfileInfo((el) => (el));
+        var _getSplittedProfileInfoObject = _processProfileInfo((el) => (_splitText(String(el))));
+        
+        var _getProfileInfoArray = function(profile, profileStructure) {
             var value, splittedText;
             var filter = R.compose(R.equals(true), R.prop('doExport'));
-            var profileInfoArray = database.CharacterProfileStructure.filter(filter).map(function(element) {
-                value = character[element.name];
-                splittedText = _splitText(String(value));
+            return profileStructure.filter(filter).map(function(element) {
+                value = profile[element.name];
                 return {
                     itemName : element.name,
                     value : value,
-                    splittedText : splittedText,
+                    splittedText : _splitText(String(value)),
                     notEmpty : String(value).length !== 0
                 };
             });
-            return profileInfoArray;
         };
         
         var _getStoriesInfo = function(database, charName) {
