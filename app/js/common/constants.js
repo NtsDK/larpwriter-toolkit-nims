@@ -269,6 +269,58 @@ See the License for the specific language governing permissions and
 //            }
     };
     
+    exports.snActivityColors = {
+            "active": "red", 
+            "follower": "blue", 
+            "defensive": "green", 
+            "passive": "grey"
+    };
+    
+    exports.snFocusOptions = {
+        scale : 1.2,
+        offset : {
+            x : 0,
+            y : 0
+        },
+        animation : {
+            duration : 1000,
+            easingFunction : "easeInOutQuad"
+        }
+    };
+    
+    exports.snFixedColors = {
+        "storyColor" : {
+            color : {
+                background : 'rgb(255,255,0)',
+                border : 'rgb(255,168,3)'
+            }
+        },
+        "noGroup" : {
+            color : {
+                background : 'rgb(151,194,252)',
+                border : 'rgb(43,124,233)'
+            }
+        },
+        "thirdDegreeNode" : {
+            color : {
+                background : 'rgba(200,200,200,0.5)',
+                border : 'rgba(200,200,200,0.5)'
+            }
+        },
+        "secondDegreeNode" : {
+            color : {
+                background : 'rgba(150,150,150,0.75)',
+                border : 'rgba(150,150,150,0.75)'
+            }
+        },
+        "firstDegreeNode" : {
+            color : {
+                background : 'rgb(151,194,252)',
+                border : 'rgb(43,124,233)'
+            }
+        }
+    };
+    
 
     exports.visLocales = {
         'ru' : {

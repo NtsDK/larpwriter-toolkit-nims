@@ -18,677 +18,538 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var SocialNetwork = {};
+(function(exports){
 
-SocialNetwork.colorMap = {};
-
-SocialNetwork.activityColors = {
-        "active": "red", 
-        "follower": "blue", 
-        "defensive": "green", 
-        "passive": "grey"
-};
-
-SocialNetwork.generatedColors = [];
-
-SocialNetwork.focusOptions = {
-    scale : 1.2,
-    offset : {
-        x : 0,
-        y : 0
-    },
-    animation : {
-        duration : 1000,
-        easingFunction : "easeInOutQuad"
-    }
-};
-
-SocialNetwork.fixedColors = {
-    "storyColor" : {
-        color : {
-            background : 'rgb(255,255,0)',
-            border : 'rgb(255,168,3)'
-        }
-    },
-    "noGroup" : {
-        color : {
-            background : 'rgb(151,194,252)',
-            border : 'rgb(43,124,233)'
-        }
-    },
-    "thirdDegreeNode" : {
-        color : {
-            background : 'rgba(200,200,200,0.5)',
-            border : 'rgba(200,200,200,0.5)'
-        }
-    },
-    "secondDegreeNode" : {
-        color : {
-            background : 'rgba(150,150,150,0.75)',
-            border : 'rgba(150,150,150,0.75)'
-        }
-    },
-    "firstDegreeNode" : {
-        color : {
-            background : 'rgb(151,194,252)',
-            border : 'rgb(43,124,233)'
-        }
-    }
-};
-
-SocialNetwork.init = function () {
-    "use strict";
-
-    SocialNetwork.highlightActive = true;
+    var state = {};
     
-    NetworkSubsetsSelector.init();
-    
-    listen(getEl("networkNodeGroupSelector"), "change", function (event) {
-        SocialNetwork.updateNodes(event.target.value);
-    });
-    
-    listen(getEl("drawNetworkButton"), "click", SocialNetwork.onDrawNetwork);
-    
-    $("#nodeFocusSelector").select2().on("change", SocialNetwork.onNodeFocus);
-
-    var selector = getEl("networkSelector");
-    selector.addEventListener("change", SocialNetwork.onNetworkSelectorChangeDelegate);
-    
-    selector = getEl("activitySelector");
-    selector.addEventListener("change", SocialNetwork.onActivitySelectorChangeDelegate);
-    
-    var st, option;
-    Constants.characterActivityTypes.forEach(function (activity) {
-        option = makeEl("option");
-        option.appendChild(makeText(constL10n(activity)));
-        st = option.style;
-        st.color = SocialNetwork.activityColors[activity];
-        option.activity = activity;
-        selector.appendChild(option);
-    });
-    
-    SocialNetwork.selectedActivities = {};
-
-    SocialNetwork.network;
-    SocialNetwork.highlightActive = false;
-    
-    var initWarning = function(){
-        var warning = clearEl(getEl("socialNetworkWarning"));
-        addEl(warning, makeText(getL10n("social-network-require-resources-warning")));
-        var button = makeEl("button");
-        addEl(button, makeText(getL10n("social-network-remove-resources-warning")));
-        addEl(warning, button);
+    exports.init = function () {
+        NetworkSubsetsSelector.init();
         
-        button.addEventListener("click", function(){
-            addClass(warning,"hidden");
+        listen(getEl("networkNodeGroupSelector"), "change", function (event) {
+            updateNodes(event.target.value);
         });
-    };
-    initWarning();
-    
-    L10n.onL10nChange(initWarning);
-    
-    SocialNetwork.nodeSort = CommonUtils.charOrdAFactory(function(a){
-        return a.label.toLowerCase();
-    });
-    
-//    TimelinedNetwork.init();
-
-    SocialNetwork.content = getEl("socialNetworkDiv");
-};
-
-//SocialNetwork.fillColorPalette = function(){
-//    "use strict";
-//    SocialNetwork.generatedColors.forEach(function(genColor){
-//        SocialNetwork.colorPalette.push({
-//            color : { 
-//                background : genColor,
-//                border : genColor
-//            }
-//        });  
-//    });
-//};
-
-SocialNetwork.refresh = function () {
-    "use strict";
-    
-    var selector = clearEl(getEl("networkSelector"));
-
-    var option;
-    Constants.networks.forEach(function (network) {
-        option = makeEl("option");
-        option.appendChild(makeText(constL10n(network)));
-        option.value = network;
-        selector.appendChild(option);
-    });
-    selector.value = Constants.networks[0];
-    
-    selector = clearEl(getEl("networkNodeGroupSelector"));
-    
-    PermissionInformer.getEntityNamesArray('character', false, function(err, characterNames){
-        if(err) {Utils.handleError(err); return;}
-        PermissionInformer.getEntityNamesArray('story', false, function(err, storyNames){
-            if(err) {Utils.handleError(err); return;}
         
-            DBMS.getAllProfiles('character', function(err, profiles){
+        listen(getEl("drawNetworkButton"), "click", onDrawNetwork);
+        
+        $("#nodeFocusSelector").select2().on("change", onNodeFocus);
+    
+        var selector = getEl("networkSelector");
+        selector.addEventListener("change", onNetworkSelectorChangeDelegate);
+        
+        selector = getEl("activitySelector");
+        
+        var st, option;
+        Constants.characterActivityTypes.forEach(function (activity) {
+            option = makeEl("option");
+            option.appendChild(makeText(constL10n(activity)));
+            st = option.style;
+            st.color = Constants.snActivityColors[activity];
+            option.activity = activity;
+            selector.appendChild(option);
+        });
+        
+        state.network;
+        state.highlightActive = false;
+        
+        var initWarning = function(){
+            var warning = clearEl(getEl("socialNetworkWarning"));
+            addEl(warning, makeText(getL10n("social-network-require-resources-warning")));
+            var button = makeEl("button");
+            addEl(button, makeText(getL10n("social-network-remove-resources-warning")));
+            addEl(warning, button);
+            
+            button.addEventListener("click", function(){
+                addClass(warning,"hidden");
+            });
+        };
+        initWarning();
+        
+        L10n.onL10nChange(initWarning);
+        
+    //    TimelinedNetwork.init();
+    
+        exports.content = getEl("socialNetworkDiv");
+    };
+    
+    var nodeSort = CommonUtils.charOrdAFactory((a) => a.label.toLowerCase());
+    
+    exports.refresh = function () {
+        var selector = clearEl(getEl("networkSelector"));
+    
+        var option;
+        Constants.networks.forEach(function (network) {
+            option = makeEl("option");
+            option.appendChild(makeText(constL10n(network)));
+            option.value = network;
+            selector.appendChild(option);
+        });
+        selector.value = Constants.networks[0];
+        
+        selector = clearEl(getEl("networkNodeGroupSelector"));
+        
+        PermissionInformer.getEntityNamesArray('character', false, function(err, characterNames){
+            if(err) {Utils.handleError(err); return;}
+            PermissionInformer.getEntityNamesArray('story', false, function(err, storyNames){
                 if(err) {Utils.handleError(err); return;}
-                SocialNetwork.Characters = profiles;
-                
-                characterNames.forEach(function(elem){
-                    profiles[elem.value].displayName = elem.displayName;
-                });
-                
-                DBMS.getAllStories(function(err, stories){
+            
+                DBMS.getAllProfiles('character', function(err, profiles){
                     if(err) {Utils.handleError(err); return;}
-                    SocialNetwork.Stories = stories;
+                    state.Characters = profiles;
                     
-                    storyNames.forEach(function(elem){
-                        stories[elem.value].displayName = elem.displayName;
+                    characterNames.forEach(function(elem){
+                        profiles[elem.value].displayName = elem.displayName;
                     });
                     
-                    DBMS.getCharacterProfileStructure(function(err, profileSettings){
+                    DBMS.getAllStories(function(err, stories){
                         if(err) {Utils.handleError(err); return;}
+                        state.Stories = stories;
                         
-                        DBMS.getMetaInfo(function(err, metaInfo){
+                        storyNames.forEach(function(elem){
+                            stories[elem.value].displayName = elem.displayName;
+                        });
+                        
+                        DBMS.getCharacterProfileStructure(function(err, profileSettings){
                             if(err) {Utils.handleError(err); return;}
                             
-                            SocialNetwork.metaInfo = metaInfo;
-                        
-                            var groups = profileSettings.filter(function (element) {
-                                return element.type === "enum" || element.type === "checkbox";
-                            });
+                            DBMS.getMetaInfo(function(err, metaInfo){
+                                if(err) {Utils.handleError(err); return;}
+                                
+                                state.metaInfo = metaInfo;
                             
-                            var groupNames = [ {name: Constants.noGroup, displayName: constL10n(Constants.noGroup)} ].concat(groups.map(function (elem) {
-                                return {
-                                    name: elem.name,
-                                    displayName: elem.name,
-                                }
-                            }));
-                            
-                            groupNames.forEach(function (group) {
-                                var option = makeEl("option");
-                                option.appendChild(makeText(group.displayName));
-                                option.value = group.name;
-                                selector.appendChild(option);
-                            });
-                            
-                            SocialNetwork.groupColors = {};
-                            SocialNetwork.groupLists = {'noGroup':['noGroup']};
-                            
-                            for ( var groupName in SocialNetwork.fixedColors) {
-                                SocialNetwork.groupColors[groupName] = SocialNetwork.fixedColors[groupName];
-                            }
-                            
-                            groups.forEach(function (group) {
-                                if(group.type === "enum"){
-                                    var list = [];
-                                    group.value.split(",").forEach(function (subGroupName, i){
-                                        SocialNetwork.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
-                                        list.push(group.name + "." + subGroupName.trim());
-                                    });
-                                    SocialNetwork.groupLists[group.name] = list;
-                                } else if( group.type === "checkbox"){
-                                    if(group.value){
-                                        SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[0];
-                                        SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[1];
-                                    } else {
-                                        SocialNetwork.groupColors[group.name + ".true"] = Constants.colorPalette[1];
-                                        SocialNetwork.groupColors[group.name + ".false"] = Constants.colorPalette[0];
+                                var groups = profileSettings.filter(function (element) {
+                                    return element.type === "enum" || element.type === "checkbox";
+                                });
+                                
+                                var groupNames = [ {name: Constants.noGroup, displayName: constL10n(Constants.noGroup)} ].concat(groups.map(function (elem) {
+                                    return {
+                                        name: elem.name,
+                                        displayName: elem.name,
                                     }
-                                    SocialNetwork.groupLists[group.name] = [group.name + ".true", group.name + ".false"];
+                                }));
+                                
+                                groupNames.forEach(function (group) {
+                                    var option = makeEl("option");
+                                    option.appendChild(makeText(group.displayName));
+                                    option.value = group.name;
+                                    selector.appendChild(option);
+                                });
+                                
+                                state.groupColors = {};
+                                state.groupLists = {'noGroup':['noGroup']};
+                                
+                                for ( var groupName in Constants.snFixedColors) {
+                                    state.groupColors[groupName] = Constants.snFixedColors[groupName];
                                 }
+                                
+                                groups.forEach(function (group) {
+                                    if(group.type === "enum"){
+                                        var list = [];
+                                        group.value.split(",").forEach(function (subGroupName, i){
+                                            state.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
+                                            list.push(group.name + "." + subGroupName.trim());
+                                        });
+                                        state.groupLists[group.name] = list;
+                                    } else if( group.type === "checkbox"){
+                                        if(group.value){
+                                            state.groupColors[group.name + ".true"] = Constants.colorPalette[0];
+                                            state.groupColors[group.name + ".false"] = Constants.colorPalette[1];
+                                        } else {
+                                            state.groupColors[group.name + ".true"] = Constants.colorPalette[1];
+                                            state.groupColors[group.name + ".false"] = Constants.colorPalette[0];
+                                        }
+                                        state.groupLists[group.name] = [group.name + ".true", group.name + ".false"];
+                                    }
+                                });
+                                
+                                NetworkSubsetsSelector.refresh(state);
+    //                            onDrawNetwork();
                             });
-                            
-                            NetworkSubsetsSelector.refresh(SocialNetwork);
-//                            SocialNetwork.onDrawNetwork();
                         });
                     });
                 });
             });
         });
-    });
+    };
     
-    
-};
-
-SocialNetwork.refreshLegend = function (groupName) {
-    "use strict";
-    var colorLegend = getEl("colorLegend");
-    clearEl(colorLegend);
-    var colorDiv;
-    
-    SocialNetwork.groupLists[groupName].forEach(function (value) {
-        colorDiv = makeEl("div");
-        colorDiv.appendChild(makeText(value === "noGroup" ? constL10n('noGroup') : value));
-        colorDiv.style.backgroundColor = SocialNetwork.groupColors[value].color.background;
-        colorDiv.style.border = "solid 2px " + SocialNetwork.groupColors[value].color.border;
-        colorLegend.appendChild(colorDiv);
-    });
-    
-    if(["characterPresenceInStory", "characterActivityInStory"].indexOf(SocialNetwork.selectedNetwork) !== -1){
-        colorDiv = makeEl("div");
-        colorDiv.appendChild(makeText(getL10n("social-network-story")));
-        colorDiv.style.backgroundColor = SocialNetwork.fixedColors["storyColor"].color.background;
-        colorDiv.style.border = "solid 2px " + SocialNetwork.fixedColors["storyColor"].color.border;
-        colorLegend.appendChild(colorDiv);
-    }
-};
-
-SocialNetwork.updateNodes = function (groupName) {
-    "use strict";
-    SocialNetwork.refreshLegend(groupName);
-    
-    var group;
-    NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
-        var character = SocialNetwork.Characters[characterName];
-        group = groupName === "noGroup" ? groupName : groupName + "." + character[groupName];
-        SocialNetwork.nodesDataset.update({
-            id : character.name,
-            group : group
-        });
-    });
-};
-
-SocialNetwork.onActivitySelectorChangeDelegate = function (event) {
-    "use strict";
-    SocialNetwork.selectedActivities = {};
-
-    var i;
-    for (i = 0; i < event.target.selectedOptions.length; i +=1) {
-        SocialNetwork.selectedActivities[event.target.selectedOptions[i].activity] = true;
-    }
-};
-
-SocialNetwork.onNetworkSelectorChangeDelegate = function (event) {
-    "use strict";
-    var selectedNetwork = event.target.value;
-    var activityBlock = getEl("activityBlock");
-    setClassByCondition(activityBlock, "hidden", selectedNetwork !== "characterActivityInStory");
-};
-
-SocialNetwork.onNodeFocus = function (event) {
-    "use strict";
-    SocialNetwork.network.focus(event.target.value, SocialNetwork.focusOptions);
-};
-
-SocialNetwork.onDrawNetwork = function () {
-    "use strict";
-    SocialNetwork.onNetworkSelectorChange(getEl("networkSelector").value);
-//    TimelinedNetwork.refresh(SocialNetwork.network, SocialNetwork.nodesDataset, 
-//            SocialNetwork.edgesDataset, SocialNetwork.getEventDetails(), SocialNetwork.metaInfo);
-};
-
-SocialNetwork.onNetworkSelectorChange = function (selectedNetwork) {
-    "use strict";
-    SocialNetwork.selectedNetwork = selectedNetwork;
-    SocialNetwork.nodes = [];
-    SocialNetwork.edges = [];
-    
-    switch (selectedNetwork) {
-    case "simpleNetwork":
-        SocialNetwork.nodes = SocialNetwork.getCharacterNodes();
-        SocialNetwork.edges = SocialNetwork.getSimpleEdges();
-        break;
-    case "socialRelations":
-        SocialNetwork.nodes = SocialNetwork.getCharacterNodes();
-        SocialNetwork.edges = SocialNetwork.getDetailedEdges();
-        break;
-    case "characterPresenceInStory":
-        SocialNetwork.nodes = SocialNetwork.getCharacterNodes().concat(SocialNetwork.getStoryNodes());
-        SocialNetwork.edges = SocialNetwork.getStoryEdges();
-        break;
-    case "characterActivityInStory":
-        SocialNetwork.nodes = SocialNetwork.getCharacterNodes().concat(SocialNetwork.getStoryNodes());
-        SocialNetwork.edges = SocialNetwork.getActivityEdges();
-        break;
-    }
-    
-    SocialNetwork.refreshLegend(getEl("networkNodeGroupSelector").value);
-    
-    clearEl(getEl('nodeFocusSelector'));
-    SocialNetwork.nodes.sort(SocialNetwork.nodeSort);
-    
-    var data = getSelect2DataCommon(remapProps(['id','text'], ['id', 'label']), SocialNetwork.nodes);
-    $("#nodeFocusSelector").select2(data);
-
-//    if(SocialNetwork.network){
-//        SocialNetwork.network.storePositions();
-//        
-//        var str = SocialNetwork.nodesDataset.get().map(function(node){
-////            return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
-//            return strFormat('"{0}";', [node.id]);
-//        }).join("\n");
-//        
-//        str += SocialNetwork.edgesDataset.get().map(function(edge){
-////          return strFormat('{0} [pos="{1},{2}!"];', [node.label, node.x, node.y]);
-//          return strFormat('"{0}" -- "{1}";', [edge.from, edge.to]);
-//      }).join("\n");
-//        
-//        str = "graph {" + str + "}";
-//        
-//        window.open(str);
-//        
-////        FileUtils.json2File(str, "network.json");
-//        
-////        FileUtils.json2File({
-////            nodes: SocialNetwork.nodesDataset.get(),
-////            edges: SocialNetwork.edgesDataset.get(),
-////        }, "network.json");
-//    }
-    
-//      if(SocialNetwork.network){
-////          alert(SocialNetwork.network.getSVG());
-//          SocialNetwork.network.storePositions();
-//          SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodesDataset.get());
-//          SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edgesDataset.get());
-//          
-//          SocialNetwork.redrawAll(false);
-//          setTimeout(function(){
-////              window.open("data:image/svg+xml;base64," + btoa(SocialNetwork.network.getSVG()));
-//              window.open("data:image/svg+xml;utf8," + SocialNetwork.network.getSVG());
-//          }, 500);
-//      }
-    
-    //window.open(document.querySelector('#socialNetworkContainer canvas').toDataURL())
-    SocialNetwork.nodesDataset = new vis.DataSet(SocialNetwork.nodes);
-    SocialNetwork.edgesDataset = new vis.DataSet(SocialNetwork.edges);
-    
-    SocialNetwork.redrawAll();
-};
-
-SocialNetwork.getCharacterNodes = function () {
-    "use strict";
-    var groupName = getEl("networkNodeGroupSelector").value;
-
-    var nodes = [];
-    NetworkSubsetsSelector.getCharacterNames().forEach(
-            function (characterName) {
-                var character = SocialNetwork.Characters[characterName];
-                nodes.push({
-                    id : character.name,
-                    label : character.name.split(" ").join("\n"),
-                    group : groupName === "noGroup" ? constL10n('noGroup'): groupName
-                            + "." + character[groupName]
-                });
-            });
-
-    return nodes;
-};
-
-SocialNetwork.getStoryNodes = function () {
-    "use strict";
-    var nodes = NetworkSubsetsSelector.getStoryNames().map(function (name) {
-        return {
-            id : "St:" + name,
-            label : name.split(" ").join("\n"),
-            value : Object.keys(SocialNetwork.Stories[name].characters).length,
-            title : Object.keys(SocialNetwork.Stories[name].characters).length,
-            group : "storyColor"
-        };
-    });
-    return nodes;
-};
-
-
-
-SocialNetwork.getActivityEdges = function () {
-    "use strict";
-    var edges = [];
-    var edgesCheck = {};
-    for ( var name in SocialNetwork.Stories) {
-        var story = SocialNetwork.Stories[name];
-        for ( var char1 in story.characters) {
-            for(var activity in story.characters[char1].activity){
-                if(SocialNetwork.selectedActivities[activity]){
-                    edges.push({
-                        from : "St:" + name,
-                        to : char1,
-                        color : SocialNetwork.activityColors[activity],
-                        width: 2,
-                        hoverWidth: 4
-                    });
-                }
-                
-            }
-        }
-    }
-    return edges;
-};
-
-SocialNetwork.getStoryEdges = function () {
-    "use strict";
-    var edges = [];
-    var edgesCheck = {};
-    for ( var name in SocialNetwork.Stories) {
-        var story = SocialNetwork.Stories[name];
-        for ( var char1 in story.characters) {
-            edges.push({
-                from : "St:" + name,
-                to : char1,
-                color : "grey"
-            });
-        }
-    }
-    return edges;
-};
-
-SocialNetwork.getSimpleEdges = function () {
-    "use strict";
-    var edges = [];
-    var edgesCheck = {};
-    for ( var name in SocialNetwork.Stories) {
-        var story = SocialNetwork.Stories[name];
+    var refreshLegend = function (groupName) {
+        var colorLegend = getEl("colorLegend");
+        clearEl(colorLegend);
+        var colorDiv;
         
-        story.events.forEach(function (event) {
-            for ( var char1 in event.characters) {
-                for ( var char2 in event.characters) {
-                    if (char1 !== char2 && !edgesCheck[name + char1 + char2] && !edgesCheck[name + char2 + char1]) {
-                        edgesCheck[name + char1 + char2] = true;
-                        edges.push({
-                            from : char1,
-                            to : char2,
-                            color : "grey"
-                        });
-                    }
-                }
-            }
+        state.groupLists[groupName].forEach(function (value) {
+            colorDiv = makeEl("div");
+            colorDiv.appendChild(makeText(value === "noGroup" ? constL10n('noGroup') : value));
+            colorDiv.style.backgroundColor = state.groupColors[value].color.background;
+            colorDiv.style.border = "solid 2px " + state.groupColors[value].color.border;
+            colorLegend.appendChild(colorDiv);
         });
-    }
-    return edges;
-};
-
-SocialNetwork.getEventDetails = function () {
-    return R.flatten(R.values(SocialNetwork.Stories).map(function(story){
-        return story.events.map(function(event){
+        
+        if(["characterPresenceInStory", "characterActivityInStory"].indexOf(state.selectedNetwork) !== -1){
+            colorDiv = makeEl("div");
+            colorDiv.appendChild(makeText(getL10n("social-network-story")));
+            colorDiv.style.backgroundColor = Constants.snFixedColors["storyColor"].color.background;
+            colorDiv.style.border = "solid 2px " + Constants.snFixedColors["storyColor"].color.border;
+            colorLegend.appendChild(colorDiv);
+        }
+    };
+    
+    var updateNodes = function (groupName) {
+        refreshLegend(groupName);
+        
+        var group;
+        NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
+            var character = state.Characters[characterName];
+            group = groupName === "noGroup" ? groupName : groupName + "." + character[groupName];
+            state.nodesDataset.update({
+                id : character.name,
+                group : group
+            });
+        });
+    };
+    
+    var onNetworkSelectorChangeDelegate = function (event) {
+        var selectedNetwork = event.target.value;
+        var activityBlock = getEl("activityBlock");
+        setClassByCondition(activityBlock, "hidden", selectedNetwork !== "characterActivityInStory");
+    };
+    
+    var onNodeFocus = function (event) {
+        state.network.focus(event.target.value, Constants.snFocusOptions);
+    };
+    
+    var onDrawNetwork = function () {
+        onNetworkSelectorChange(getEl("networkSelector").value);
+    //    TimelinedNetwork.refresh(state.network, state.nodesDataset, 
+    //            state.edgesDataset, getEventDetails(), state.metaInfo);
+    };
+    
+    var onNetworkSelectorChange = function (selectedNetwork) {
+        state.selectedNetwork = selectedNetwork;
+        let nodes = [];
+        let edges = [];
+        
+        switch (selectedNetwork) {
+        case "simpleNetwork":
+            nodes = getCharacterNodes();
+            edges = getSimpleEdges();
+            break;
+        case "socialRelations":
+            nodes = getCharacterNodes();
+            edges = getDetailedEdges();
+            break;
+        case "characterPresenceInStory":
+            nodes = getCharacterNodes().concat(getStoryNodes());
+            edges = getStoryEdges();
+            break;
+        case "characterActivityInStory":
+            nodes = getCharacterNodes().concat(getStoryNodes());
+            edges = getActivityEdges();
+            break;
+        default:
+            throw new Error('Unexpected network type: ' + selectedNetwork);
+        }
+        
+        refreshLegend(getEl("networkNodeGroupSelector").value);
+        
+        clearEl(getEl('nodeFocusSelector'));
+        nodes.sort(nodeSort);
+        
+        var data = getSelect2DataCommon(remapProps(['id','text'], ['id', 'label']), nodes);
+        $("#nodeFocusSelector").select2(data);
+    
+        state.nodesDataset = new vis.DataSet(nodes);
+        state.edgesDataset = new vis.DataSet(edges);
+        
+        redrawAll();
+    };
+    
+    var getCharacterNodes = function () {
+        var groupName = getEl("networkNodeGroupSelector").value;
+    
+        var nodes = [];
+        NetworkSubsetsSelector.getCharacterNames().forEach(
+                function (characterName) {
+                    var character = state.Characters[characterName];
+                    nodes.push({
+                        id : character.name,
+                        label : character.name.split(" ").join("\n"),
+                        group : groupName === "noGroup" ? constL10n('noGroup'): groupName
+                                + "." + character[groupName]
+                    });
+                });
+    
+        return nodes;
+    };
+    
+    var getStoryNodes = function () {
+        var nodes = NetworkSubsetsSelector.getStoryNames().map(function (name) {
             return {
-                eventName: event.name,
-                storyName: story.name,
-                time: event.time,
-                characters: R.keys(event.characters)
-            }
+                id : "St:" + name,
+                label : name.split(" ").join("\n"),
+                value : Object.keys(state.Stories[name].characters).length,
+                title : Object.keys(state.Stories[name].characters).length,
+                group : "storyColor"
+            };
         });
-    }));
-};
-
-SocialNetwork.getDetailedEdges = function () {
-    var edgesCheck = {};
-    R.values(SocialNetwork.Stories).forEach(function(story){
-        story.events.forEach(function (event) {
-            var charNames = R.keys(event.characters).sort();
-            charNames.forEach(function(char1, i){
-                charNames.forEach(function(char2, j){
-                    if (i<=j) {
-                        return;
+        return nodes;
+    };
+    
+    var getActivityEdges = function () {
+        var selectedActivities = nl2array(getEl("activitySelector").selectedOptions).map(opt => opt.activity);
+        
+        var edges = [];
+        var edgesCheck = {};
+        for ( var name in state.Stories) {
+            var story = state.Stories[name];
+            for ( var char1 in story.characters) {
+                for(var activity in story.characters[char1].activity){
+                    if(R.contains(activity, selectedActivities)){
+                        edges.push({
+                            from : "St:" + name,
+                            to : char1,
+                            color : Constants.snActivityColors[activity],
+                            width: 2,
+                            hoverWidth: 4
+                        });
                     }
-                    var key = char1 + char2;
-                    if (!edgesCheck[key]) {
-                        edgesCheck[key] = {
-                            from : char1,
-                            to : char2,
-                            title : {},
-                        };
+                }
+            }
+        }
+        return edges;
+    };
+    
+    var getStoryEdges = function () {
+        var edges = [];
+        var edgesCheck = {};
+        for ( var name in state.Stories) {
+            var story = state.Stories[name];
+            for ( var char1 in story.characters) {
+                edges.push({
+                    from : "St:" + name,
+                    to : char1,
+                    color : "grey"
+                });
+            }
+        }
+        return edges;
+    };
+    
+    var getSimpleEdges = function () {
+        var edges = [];
+        var edgesCheck = {};
+        for ( var name in state.Stories) {
+            var story = state.Stories[name];
+            
+            story.events.forEach(function (event) {
+                for ( var char1 in event.characters) {
+                    for ( var char2 in event.characters) {
+                        if (char1 !== char2 && !edgesCheck[name + char1 + char2] && !edgesCheck[name + char2 + char1]) {
+                            edgesCheck[name + char1 + char2] = true;
+                            edges.push({
+                                from : char1,
+                                to : char2,
+                                color : "grey"
+                            });
+                        }
                     }
-                    edgesCheck[key].title[story.name] = true;
+                }
+            });
+        }
+        return edges;
+    };
+    
+    var getEventDetails = function () {
+        return R.flatten(R.values(state.Stories).map(function(story){
+            return story.events.map(function(event){
+                return {
+                    eventName: event.name,
+                    storyName: story.name,
+                    time: event.time,
+                    characters: R.keys(event.characters)
+                }
+            });
+        }));
+    };
+    
+    var getDetailedEdges = function () {
+        var edgesCheck = {};
+        R.values(state.Stories).forEach(function(story){
+            story.events.forEach(function (event) {
+                var charNames = R.keys(event.characters).sort();
+                charNames.forEach(function(char1, i){
+                    charNames.forEach(function(char2, j){
+                        if (i<=j) {
+                            return;
+                        }
+                        var key = char1 + char2;
+                        if (!edgesCheck[key]) {
+                            edgesCheck[key] = {
+                                from : char1,
+                                to : char2,
+                                title : {},
+                            };
+                        }
+                        edgesCheck[key].title[story.name] = true;
+                    });
                 });
             });
         });
-    });
-
-    return R.values(edgesCheck).map(function (edgeInfo) {
-        var title = R.keys(edgeInfo.title).sort().join(", ");
-        var value = R.keys(edgeInfo.title).length;
-        return {
-            from : edgeInfo.from,
-            to : edgeInfo.to,
-            title : value + ": " + title,
-            value : value,
-            color : "grey"
-        };
-    });
-};
-
-SocialNetwork.redrawAll = function () {
-    "use strict";
-    var container = getEl('socialNetworkContainer');
-
-    var data = {
-        nodes : SocialNetwork.nodesDataset,
-        edges : SocialNetwork.edgesDataset
-    } // Note: data is coming from ./datasources/WorldCup2014.js
-
-    if(SocialNetwork.network){
-        SocialNetwork.network.destroy();
-    }
     
-    var opts = CommonUtils.clone(Constants.socialNetworkOpts);
-    opts.groups = SocialNetwork.groupColors;
+        return R.values(edgesCheck).map(function (edgeInfo) {
+            var title = R.keys(edgeInfo.title).sort().join(", ");
+            var value = R.keys(edgeInfo.title).length;
+            return {
+                from : edgeInfo.from,
+                to : edgeInfo.to,
+                title : value + ": " + title,
+                value : value,
+                color : "grey"
+            };
+        });
+    };
     
-    SocialNetwork.network = new vis.Network(container, data, opts);
+    var redrawAll = function () {
+        var container = getEl('socialNetworkContainer');
     
-    SocialNetwork.network.on("click", SocialNetwork.neighbourhoodHighlight);
-};
-
-SocialNetwork.neighbourhoodHighlight = function (params) {
-    "use strict";
-
-    // get a JSON object
-    var allNodes = SocialNetwork.nodesDataset.get({
-        returnType : "Object"
-    });
-
-    var network = SocialNetwork.network;
-    var nodesDataset = SocialNetwork.nodesDataset;
-    if (params.nodes.length > 0) {
-        SocialNetwork.highlightActive = true;
-        var i, j;
-        var selectedNode = params.nodes[0];
-        var degrees = 2;
+        var data = {
+            nodes : state.nodesDataset,
+            edges : state.edgesDataset
+        } // Note: data is coming from ./datasources/WorldCup2014.js
+    
+        if(state.network){
+            state.network.destroy();
+        }
         
-        // mark all nodes as hard to read.
-        for ( var nodeId in allNodes) {
-            allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
-            if (allNodes[nodeId].hiddenLabel === undefined) {
-                allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-                allNodes[nodeId].label = undefined;
+        var opts = CommonUtils.clone(Constants.socialNetworkOpts);
+        opts.groups = state.groupColors;
+        
+        state.network = new vis.Network(container, data, opts);
+        
+        state.network.on("click", neighbourhoodHighlight);
+    };
+    
+    var neighbourhoodHighlight = function (params) {
+        // get a JSON object
+        var allNodes = state.nodesDataset.get({
+            returnType : "Object"
+        });
+    
+        var network = state.network;
+        var nodesDataset = state.nodesDataset;
+        if (params.nodes.length > 0) {
+            state.highlightActive = true;
+            var i, j;
+            var selectedNode = params.nodes[0];
+            var degrees = 2;
+            
+            // mark all nodes as hard to read.
+            for ( var nodeId in allNodes) {
+                allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
+                if (allNodes[nodeId].hiddenLabel === undefined) {
+                    allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+                    allNodes[nodeId].label = undefined;
+                }
+            }
+            var firstDegreeNodes = network.getConnectedNodes(selectedNode);
+            var secondDegreeNodes = [];
+    
+            // get the second degree nodes
+            for (i = 1; i < degrees; i++) {
+                for (j = 0; j < firstDegreeNodes.length; j++) {
+                    secondDegreeNodes = secondDegreeNodes.concat(network
+                            .getConnectedNodes(firstDegreeNodes[j]));
+                }
+            }
+    
+            // all second degree nodes get a different color and their label back
+            for (i = 0; i < secondDegreeNodes.length; i++) {
+                allNodes[secondDegreeNodes[i]].color = 'rgba(150,150,150,0.75)';
+                if (allNodes[secondDegreeNodes[i]].hiddenLabel !== undefined) {
+                    allNodes[secondDegreeNodes[i]].label = allNodes[secondDegreeNodes[i]].hiddenLabel;
+                    allNodes[secondDegreeNodes[i]].hiddenLabel = undefined;
+                }
+            }
+    
+            // all first degree nodes get their own color and their label back
+            for (i = 0; i < firstDegreeNodes.length; i++) {
+                allNodes[firstDegreeNodes[i]].color = undefined;
+                if (allNodes[firstDegreeNodes[i]].hiddenLabel !== undefined) {
+                    allNodes[firstDegreeNodes[i]].label = allNodes[firstDegreeNodes[i]].hiddenLabel;
+                    allNodes[firstDegreeNodes[i]].hiddenLabel = undefined;
+                }
+            }
+    
+            // the main node gets its own color and its label back.
+            allNodes[selectedNode].color = undefined;
+            if (allNodes[selectedNode].hiddenLabel !== undefined) {
+                allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+                allNodes[selectedNode].hiddenLabel = undefined;
+            }
+    
+        } else if (params.edges.length > 0) {
+            state.highlightActive = true;
+            var i, j;
+            // var selectedNode = params.nodes[0];
+            var selectedEdge = params.edges[0];
+            var degrees = 2;
+    
+            // mark all nodes as hard to read.
+            for ( var nodeId in allNodes) {
+                allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
+                if (allNodes[nodeId].hiddenLabel === undefined) {
+                    allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+                    allNodes[nodeId].label = undefined;
+                }
+            }
+            var connectedNodes = network.getConnectedNodes(selectedEdge);
+            var allConnectedNodes = [];
+    
+            // get the second degree nodes
+            for (i = 1; i < degrees; i++) {
+                for (j = 0; j < connectedNodes.length; j++) {
+                    allConnectedNodes = allConnectedNodes.concat(network
+                            .getConnectedNodes(connectedNodes[j]));
+                }
+            }
+    
+            // all second degree nodes get a different color and their label back
+            for (i = 0; i < allConnectedNodes.length; i++) {
+                allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.75)';
+                if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+                    allNodes[allConnectedNodes[i]].label = allNodes[allConnectedNodes[i]].hiddenLabel;
+                    allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+                }
+            }
+    
+            // all first degree nodes get their own color and their label back
+            for (i = 0; i < connectedNodes.length; i++) {
+                allNodes[connectedNodes[i]].color = undefined;
+                if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+                    allNodes[connectedNodes[i]].label = allNodes[connectedNodes[i]].hiddenLabel;
+                    allNodes[connectedNodes[i]].hiddenLabel = undefined;
+                }
+            }
+    
+        } else if (state.highlightActive === true) {
+            // reset all nodes
+            for ( var nodeId in allNodes) {
+                allNodes[nodeId].color = undefined;
+                if (allNodes[nodeId].hiddenLabel !== undefined) {
+                    allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+                    allNodes[nodeId].hiddenLabel = undefined;
+                }
+            }
+            state.highlightActive = false;
+        }
+    
+        // transform the object into an array
+        var updateArray = [];
+        for (nodeId in allNodes) {
+            if (allNodes.hasOwnProperty(nodeId)) {
+                updateArray.push(allNodes[nodeId]);
             }
         }
-        var firstDegreeNodes = network.getConnectedNodes(selectedNode);
-        var secondDegreeNodes = [];
+        nodesDataset.update(updateArray);
+    };
 
-        // get the second degree nodes
-        for (i = 1; i < degrees; i++) {
-            for (j = 0; j < firstDegreeNodes.length; j++) {
-                secondDegreeNodes = secondDegreeNodes.concat(network
-                        .getConnectedNodes(firstDegreeNodes[j]));
-            }
-        }
-
-        // all second degree nodes get a different color and their label back
-        for (i = 0; i < secondDegreeNodes.length; i++) {
-            allNodes[secondDegreeNodes[i]].color = 'rgba(150,150,150,0.75)';
-            if (allNodes[secondDegreeNodes[i]].hiddenLabel !== undefined) {
-                allNodes[secondDegreeNodes[i]].label = allNodes[secondDegreeNodes[i]].hiddenLabel;
-                allNodes[secondDegreeNodes[i]].hiddenLabel = undefined;
-            }
-        }
-
-        // all first degree nodes get their own color and their label back
-        for (i = 0; i < firstDegreeNodes.length; i++) {
-            allNodes[firstDegreeNodes[i]].color = undefined;
-            if (allNodes[firstDegreeNodes[i]].hiddenLabel !== undefined) {
-                allNodes[firstDegreeNodes[i]].label = allNodes[firstDegreeNodes[i]].hiddenLabel;
-                allNodes[firstDegreeNodes[i]].hiddenLabel = undefined;
-            }
-        }
-
-        // the main node gets its own color and its label back.
-        allNodes[selectedNode].color = undefined;
-        if (allNodes[selectedNode].hiddenLabel !== undefined) {
-            allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
-            allNodes[selectedNode].hiddenLabel = undefined;
-        }
-
-    } else if (params.edges.length > 0) {
-        SocialNetwork.highlightActive = true;
-        var i, j;
-        // var selectedNode = params.nodes[0];
-        var selectedEdge = params.edges[0];
-        var degrees = 2;
-
-        // mark all nodes as hard to read.
-        for ( var nodeId in allNodes) {
-            allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
-            if (allNodes[nodeId].hiddenLabel === undefined) {
-                allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-                allNodes[nodeId].label = undefined;
-            }
-        }
-        var connectedNodes = network.getConnectedNodes(selectedEdge);
-        var allConnectedNodes = [];
-
-        // get the second degree nodes
-        for (i = 1; i < degrees; i++) {
-            for (j = 0; j < connectedNodes.length; j++) {
-                allConnectedNodes = allConnectedNodes.concat(network
-                        .getConnectedNodes(connectedNodes[j]));
-            }
-        }
-
-        // all second degree nodes get a different color and their label back
-        for (i = 0; i < allConnectedNodes.length; i++) {
-            allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.75)';
-            if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
-                allNodes[allConnectedNodes[i]].label = allNodes[allConnectedNodes[i]].hiddenLabel;
-                allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
-            }
-        }
-
-        // all first degree nodes get their own color and their label back
-        for (i = 0; i < connectedNodes.length; i++) {
-            allNodes[connectedNodes[i]].color = undefined;
-            if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
-                allNodes[connectedNodes[i]].label = allNodes[connectedNodes[i]].hiddenLabel;
-                allNodes[connectedNodes[i]].hiddenLabel = undefined;
-            }
-        }
-
-    } else if (SocialNetwork.highlightActive === true) {
-        // reset all nodes
-        for ( var nodeId in allNodes) {
-            allNodes[nodeId].color = undefined;
-            if (allNodes[nodeId].hiddenLabel !== undefined) {
-                allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
-                allNodes[nodeId].hiddenLabel = undefined;
-            }
-        }
-        SocialNetwork.highlightActive = false;
-    }
-
-    // transform the object into an array
-    var updateArray = [];
-    for (nodeId in allNodes) {
-        if (allNodes.hasOwnProperty(nodeId)) {
-            updateArray.push(allNodes[nodeId]);
-        }
-    }
-    nodesDataset.update(updateArray);
-};
+})(this['SocialNetwork']={});
