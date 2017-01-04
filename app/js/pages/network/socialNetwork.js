@@ -51,17 +51,6 @@ See the License for the specific language governing permissions and
         state.network;
         state.highlightActive = false;
         
-        var initWarning = function(){
-            var warning = clearEl(getEl("socialNetworkWarning"));
-            addEl(warning, makeText(getL10n("social-network-require-resources-warning")));
-            var button = makeEl("button");
-            addEl(button, makeText(getL10n("social-network-remove-resources-warning")));
-            addEl(warning, button);
-            
-            button.addEventListener("click", function(){
-                addClass(warning,"hidden");
-            });
-        };
         initWarning();
         
         L10n.onL10nChange(initWarning);
@@ -69,6 +58,18 @@ See the License for the specific language governing permissions and
     //    TimelinedNetwork.init();
     
         exports.content = getEl("socialNetworkDiv");
+    };
+    
+    var initWarning = function(){
+        var warning = clearEl(getEl("socialNetworkWarning"));
+        addEl(warning, makeText(getL10n("social-network-require-resources-warning")));
+        var button = makeEl("button");
+        addEl(button, makeText(getL10n("social-network-remove-resources-warning")));
+        addEl(warning, button);
+        
+        button.addEventListener("click", function(){
+            addClass(warning,"hidden");
+        });
     };
     
     var nodeSort = CommonUtils.charOrdAFactory((a) => a.label.toLowerCase());
@@ -84,6 +85,7 @@ See the License for the specific language governing permissions and
             selector.appendChild(option);
         });
         selector.value = Constants.networks[0];
+        onNetworkSelectorChangeDelegate({target: selector});
         
         selector = clearEl(getEl("networkNodeGroupSelector"));
         
@@ -428,6 +430,44 @@ See the License for the specific language governing permissions and
         state.network.on("click", neighbourhoodHighlight);
     };
     
+    var hideLabel = function(node){
+        if (node.hiddenLabel === undefined) {
+            node.hiddenLabel = node.label;
+            node.label = undefined;
+        }
+    };
+    var showLabel = function(node){
+        if (node.hiddenLabel !== undefined) {
+            node.label = node.hiddenLabel;
+            node.hiddenLabel = undefined;
+        }
+    };
+    
+    var highlightNodes = function(network, allNodes, zeroDegreeNodes, firstDegreeNodes){
+        // get the second degree nodes
+        var secondDegreeNodes = R.uniq(R.flatten(firstDegreeNodes.map(id => network.getConnectedNodes(id))));
+        // mark all nodes as hard to read.
+        R.values(allNodes).forEach( node => {
+            node.color = 'rgba(200,200,200,0.5)';
+            hideLabel(node);
+        });
+        // all second degree nodes get a different color and their label back
+        secondDegreeNodes.map( id => allNodes[id]).forEach( node => {
+            node.color = 'rgba(150,150,150,0.75)';
+            showLabel(node);
+        });
+        // all first degree nodes get their own color and their label back
+        firstDegreeNodes.map( id => allNodes[id]).forEach( node => {
+            node.color = undefined;
+            showLabel(node);
+        });
+        // the main node gets its own color and its label back.
+        zeroDegreeNodes.map( id => allNodes[id]).forEach( node => {
+            node.color = undefined;
+            showLabel(node);
+        });
+    };
+    
     var neighbourhoodHighlight = function (params) {
         // get a JSON object
         var allNodes = state.nodesDataset.get({
@@ -435,121 +475,28 @@ See the License for the specific language governing permissions and
         });
     
         var network = state.network;
-        var nodesDataset = state.nodesDataset;
         if (params.nodes.length > 0) {
             state.highlightActive = true;
-            var i, j;
             var selectedNode = params.nodes[0];
-            var degrees = 2;
-            
-            // mark all nodes as hard to read.
-            for ( var nodeId in allNodes) {
-                allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
-                if (allNodes[nodeId].hiddenLabel === undefined) {
-                    allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-                    allNodes[nodeId].label = undefined;
-                }
-            }
+            var zeroDegreeNodes = [selectedNode];
             var firstDegreeNodes = network.getConnectedNodes(selectedNode);
-            var secondDegreeNodes = [];
-    
-            // get the second degree nodes
-            for (i = 1; i < degrees; i++) {
-                for (j = 0; j < firstDegreeNodes.length; j++) {
-                    secondDegreeNodes = secondDegreeNodes.concat(network
-                            .getConnectedNodes(firstDegreeNodes[j]));
-                }
-            }
-    
-            // all second degree nodes get a different color and their label back
-            for (i = 0; i < secondDegreeNodes.length; i++) {
-                allNodes[secondDegreeNodes[i]].color = 'rgba(150,150,150,0.75)';
-                if (allNodes[secondDegreeNodes[i]].hiddenLabel !== undefined) {
-                    allNodes[secondDegreeNodes[i]].label = allNodes[secondDegreeNodes[i]].hiddenLabel;
-                    allNodes[secondDegreeNodes[i]].hiddenLabel = undefined;
-                }
-            }
-    
-            // all first degree nodes get their own color and their label back
-            for (i = 0; i < firstDegreeNodes.length; i++) {
-                allNodes[firstDegreeNodes[i]].color = undefined;
-                if (allNodes[firstDegreeNodes[i]].hiddenLabel !== undefined) {
-                    allNodes[firstDegreeNodes[i]].label = allNodes[firstDegreeNodes[i]].hiddenLabel;
-                    allNodes[firstDegreeNodes[i]].hiddenLabel = undefined;
-                }
-            }
-    
-            // the main node gets its own color and its label back.
-            allNodes[selectedNode].color = undefined;
-            if (allNodes[selectedNode].hiddenLabel !== undefined) {
-                allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
-                allNodes[selectedNode].hiddenLabel = undefined;
-            }
-    
+            highlightNodes(network, allNodes, zeroDegreeNodes, firstDegreeNodes);
         } else if (params.edges.length > 0) {
             state.highlightActive = true;
-            var i, j;
-            // var selectedNode = params.nodes[0];
             var selectedEdge = params.edges[0];
-            var degrees = 2;
-    
-            // mark all nodes as hard to read.
-            for ( var nodeId in allNodes) {
-                allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
-                if (allNodes[nodeId].hiddenLabel === undefined) {
-                    allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-                    allNodes[nodeId].label = undefined;
-                }
-            }
-            var connectedNodes = network.getConnectedNodes(selectedEdge);
-            var allConnectedNodes = [];
-    
-            // get the second degree nodes
-            for (i = 1; i < degrees; i++) {
-                for (j = 0; j < connectedNodes.length; j++) {
-                    allConnectedNodes = allConnectedNodes.concat(network
-                            .getConnectedNodes(connectedNodes[j]));
-                }
-            }
-    
-            // all second degree nodes get a different color and their label back
-            for (i = 0; i < allConnectedNodes.length; i++) {
-                allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.75)';
-                if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
-                    allNodes[allConnectedNodes[i]].label = allNodes[allConnectedNodes[i]].hiddenLabel;
-                    allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
-                }
-            }
-    
-            // all first degree nodes get their own color and their label back
-            for (i = 0; i < connectedNodes.length; i++) {
-                allNodes[connectedNodes[i]].color = undefined;
-                if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
-                    allNodes[connectedNodes[i]].label = allNodes[connectedNodes[i]].hiddenLabel;
-                    allNodes[connectedNodes[i]].hiddenLabel = undefined;
-                }
-            }
-    
+            var firstDegreeNodes = network.getConnectedNodes(selectedEdge);
+            highlightNodes(network, allNodes, [], firstDegreeNodes);
         } else if (state.highlightActive === true) {
             // reset all nodes
-            for ( var nodeId in allNodes) {
-                allNodes[nodeId].color = undefined;
-                if (allNodes[nodeId].hiddenLabel !== undefined) {
-                    allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
-                    allNodes[nodeId].hiddenLabel = undefined;
-                }
-            }
+            R.values(allNodes).forEach( node => {
+                node.color = undefined;
+                showLabel(node);
+            });
             state.highlightActive = false;
         }
     
         // transform the object into an array
-        var updateArray = [];
-        for (nodeId in allNodes) {
-            if (allNodes.hasOwnProperty(nodeId)) {
-                updateArray.push(allNodes[nodeId]);
-            }
-        }
-        nodesDataset.update(updateArray);
+        state.nodesDataset.update(R.values(allNodes));
     };
 
 })(this['SocialNetwork']={});
