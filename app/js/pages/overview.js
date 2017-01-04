@@ -209,14 +209,8 @@ See the License for the specific language governing permissions and
             });
             makeChart("bindingChart", queryEl(root + ".bindingChart"), bindingChartData);
             
-            var barData;
-            var profileDiagrams = clearEl(getEl('profileDiagrams')), barDiv, bar;
+            var barData, barDiv, bar;
             
-            var msg = function(text){
-                Utils.alert(text);
-            };
-            
-            var addToProfileDiagrams = addEl(profileDiagrams);
             var makeContainer = function(obj){
                 barDiv = makeEl('div');
                 addEl(barDiv, addEl(makeEl('h4'),makeText(obj.name)));
@@ -239,8 +233,8 @@ See the License for the specific language governing permissions and
                 return container;
             };
             
-            var innerMakeChart = R.compose(addToProfileDiagrams,buildChart,prepareChart);
-            var innerMakeHist = R.compose(addToProfileDiagrams,buildHist,prepareHist);
+            var innerMakeChart = R.compose(buildChart,prepareChart);
+            var innerMakeHist = R.compose(buildHist,prepareHist);
             
             var localizeCheckboxes = function(info){
                 info.data = R.fromPairs(R.toPairs(info.data).map(function(val){
@@ -257,8 +251,9 @@ See the License for the specific language governing permissions and
                 [R.compose(R.equals('checkbox'), R.prop('type')),   makeCheckboxChart],
                 [R.T,   innerMakeHist],
             ]);
-                         
-            statistics.profileCharts.forEach(fn);
+            
+            statistics.profileCharts.characterCharts.map(fn).map(addEl(clearEl(queryEl(root + '.characterProfileDiagrams'))));
+            statistics.profileCharts.playerCharts.map(fn).map(addEl(clearEl(queryEl(root + '.playerProfileDiagrams'))));
             
           });
         });

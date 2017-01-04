@@ -412,11 +412,12 @@ See the License for the specific language governing permissions and
   text-align: right;
 }
 
-#profileDiagrams{
+.profileDiagrams{
   display: flex;
   flex-wrap: wrap;
+  border-top: 64px solid transparent;
 }
-#profileDiagrams > div{
+.profileDiagrams > div{
   flex-basis: 0;
   flex-grow: 1;
   min-width: 240px;

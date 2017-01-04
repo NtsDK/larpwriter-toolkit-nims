@@ -100,9 +100,12 @@ See the License for the specific language governing permissions and
         var filter = R.compose(R.contains(R.__, ['enum', 'number', 'checkbox']), R.prop('type'));
         
         var _getProfileChartData = function(database) {
-            var charCharts = _getProfileChartArray(database, 'Characters', 'CharacterProfileStructure');
+            var characterCharts = _getProfileChartArray(database, 'Characters', 'CharacterProfileStructure');
             var playerCharts = _getProfileChartArray(database, 'Players', 'PlayerProfileStructure');
-            return charCharts.concat(playerCharts);
+            return {
+                characterCharts : characterCharts,
+                playerCharts : playerCharts
+            };
         };
         
         var _getProfileChartArray = function(database, profileType, profileStructureType){
