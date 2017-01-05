@@ -24,6 +24,7 @@ See the License for the specific language governing permissions and
     
     var STORY_PREFIX = 'St:';
     var CHAR_PREFIX = 'Ch:';
+    var PROFILE_GROUP = 'prof-';
     
     exports.init = function () {
         NetworkSubsetsSelector.init();
@@ -131,28 +132,28 @@ See the License for the specific language governing permissions and
                 state.groupColors[group.name + "." + trueName] = Constants.colorPalette[group.value ? 0 : 1];
                 state.groupColors[group.name + "." + falseName] = Constants.colorPalette[group.value ? 1 : 0];
                 state.groupLists[group.name] = [group.name + "." + trueName, group.name + "." + falseName];
+            } else {
+                throw new Error('Unexpected profile item type: ' + group.type);
             }
         });
     };
     
+    var makeLegendItem = function(label, color){
+        var colorDiv = addEl(makeEl("div"), makeText(label));
+        colorDiv.style.backgroundColor = color.background;
+        colorDiv.style.border = "solid 2px " + color.border;
+        return colorDiv;
+    };
+    
     var refreshLegend = function (groupName) {
         var colorLegend = clearEl(getEl("colorLegend"));
-        var colorDiv;
         
         addEls(colorLegend, state.groupLists[groupName].map(function (value) {
-            colorDiv = makeEl("div");
-            colorDiv.appendChild(makeText(value === "noGroup" ? constL10n('noGroup') : value));
-            colorDiv.style.backgroundColor = state.groupColors[value].color.background;
-            colorDiv.style.border = "solid 2px " + state.groupColors[value].color.border;
-            return colorDiv;
+            return makeLegendItem(value === "noGroup" ? constL10n('noGroup') : value, state.groupColors[value].color);
         }));
         
         if(["characterPresenceInStory", "characterActivityInStory"].indexOf(state.selectedNetwork) !== -1){
-            colorDiv = makeEl("div");
-            colorDiv.appendChild(makeText(getL10n("social-network-story")));
-            colorDiv.style.backgroundColor = Constants.snFixedColors["storyColor"].color.background;
-            colorDiv.style.border = "solid 2px " + Constants.snFixedColors["storyColor"].color.border;
-            colorLegend.appendChild(colorDiv);
+            addEl(colorLegend, makeLegendItem(getL10n("social-network-story"), Constants.snFixedColors["storyColor"].color));
         }
     };
     
