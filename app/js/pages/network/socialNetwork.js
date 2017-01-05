@@ -43,14 +43,9 @@ See the License for the specific language governing permissions and
     
     var initWarning = function(){
         var warning = clearEl(getEl("socialNetworkWarning"));
-        addEl(warning, makeText(getL10n("social-network-require-resources-warning")));
-        var button = makeEl("button");
-        addEl(button, makeText(getL10n("social-network-remove-resources-warning")));
-        addEl(warning, button);
-        
-        button.addEventListener("click", function(){
-            addClass(warning,"hidden");
-        });
+        var button = addEl(makeEl("button"), makeText(getL10n("social-network-remove-resources-warning")));
+        addEls(warning, [makeText(getL10n("social-network-require-resources-warning")), button]);
+        listen(button, "click", () => addClass(warning,"hidden"));
     };
     
     var nodeSort = CommonUtils.charOrdAFactory((a) => a.label.toLowerCase());
