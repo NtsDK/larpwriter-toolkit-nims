@@ -63,20 +63,20 @@ See the License for the specific language governing permissions and
         
         selector = clearEl(getEl("networkNodeGroupSelector"));
         
-        PermissionInformer.getEntityNamesArray('character', false, function(err, characterNames){
+        PermissionInformer.getEntityNamesArray('character', false, function(err, characterNames){ // subset selector
             if(err) {Utils.handleError(err); return;}
-            PermissionInformer.getEntityNamesArray('story', false, function(err, storyNames){
+            PermissionInformer.getEntityNamesArray('story', false, function(err, storyNames){ // subset selector
                 if(err) {Utils.handleError(err); return;}
-                DBMS.getAllProfiles('character', function(err, profiles){
+                DBMS.getAllProfiles('character', function(err, profiles){ // node coloring
                     if(err) {Utils.handleError(err); return;}
                     state.Characters = profiles;
-                    DBMS.getAllStories(function(err, stories){
+                    DBMS.getAllStories(function(err, stories){ // contains most part of SN data
                         if(err) {Utils.handleError(err); return;}
                         state.Stories = stories;
-                        DBMS.getCharacterProfileStructure(function(err, profileStructure){
+                        DBMS.getCharacterProfileStructure(function(err, profileStructure){ // node coloring
                             if(err) {Utils.handleError(err); return;}
                             
-                            DBMS.getMetaInfo(function(err, metaInfo){
+                            DBMS.getMetaInfo(function(err, metaInfo){ // timelined network
                                 if(err) {Utils.handleError(err); return;}
                                 
                                 state.metaInfo = metaInfo;
@@ -91,25 +91,7 @@ See the License for the specific language governing permissions and
                                 
                                 fillSelector(selector, [defaultGroup].concat(arr2Select(groups.map(group => group.name))));
                                 
-                                state.groupColors = R.clone(Constants.snFixedColors);
-                                state.groupLists = {'noGroup':['noGroup']};
-                                
-                                groups.forEach(function (group) {
-                                    if(group.type === "enum"){
-                                        var list = [];
-                                        group.value.split(",").forEach(function (subGroupName, i){
-                                            state.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
-                                            list.push(group.name + "." + subGroupName.trim());
-                                        });
-                                        state.groupLists[group.name] = list;
-                                    } else if( group.type === "checkbox"){
-                                        var trueName = constL10n(Constants[true]);
-                                        var falseName = constL10n(Constants[false]);
-                                        state.groupColors[group.name + "." + trueName] = Constants.colorPalette[group.value ? 0 : 1];
-                                        state.groupColors[group.name + "." + falseName] = Constants.colorPalette[group.value ? 1 : 0];
-                                        state.groupLists[group.name] = [group.name + "." + trueName, group.name + "." + falseName];
-                                    }
-                                });
+                                initGroupColors(groups);
                                 
                                 NetworkSubsetsSelector.refresh({
                                     characterNames: characterNames,
@@ -122,6 +104,26 @@ See the License for the specific language governing permissions and
                     });
                 });
             });
+        });
+    };
+    
+    var initGroupColors = function(groups){
+        state.groupColors = R.clone(Constants.snFixedColors);
+        state.groupLists = {'noGroup':['noGroup']};
+        
+        groups.forEach(function (group) {
+            if(group.type === "enum"){
+                state.groupLists[group.name] = group.value.split(",").map(function (subGroupName, i){
+                    state.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
+                    return group.name + "." + subGroupName.trim();
+                });
+            } else if( group.type === "checkbox"){
+                var trueName = constL10n(Constants[true]);
+                var falseName = constL10n(Constants[false]);
+                state.groupColors[group.name + "." + trueName] = Constants.colorPalette[group.value ? 0 : 1];
+                state.groupColors[group.name + "." + falseName] = Constants.colorPalette[group.value ? 1 : 0];
+                state.groupLists[group.name] = [group.name + "." + trueName, group.name + "." + falseName];
+            }
         });
     };
     
