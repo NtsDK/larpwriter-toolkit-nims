@@ -301,6 +301,12 @@ See the License for the specific language governing permissions and
                 border : 'rgb(43,124,233)'
             }
         },
+        "fromGroup" : {
+            color : {
+                background : '#7BE141',
+                border : '#41A906'
+            }
+        },
         "thirdDegreeNode" : {
             color : {
                 background : 'rgba(200,200,200,0.5)',

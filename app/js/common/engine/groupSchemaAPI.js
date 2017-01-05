@@ -201,32 +201,14 @@ See the License for the specific language governing permissions and
             return _makeGraph(equalGroups, superGroups, groupCharacterSets);
         };
         
-        var _getGroupCharacterSets = function(groups, characterNames, bindings, info){
-            
-            var groupNames = R.keys(groups);
-            var groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
-            characterNames.forEach(function(characterName){
-                var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
-                var dataArray = CommonUtils.getDataArray(info, profileId);
-                groupNames.forEach(function(groupName){
-                    if(CommonUtils.acceptDataRow(groups[groupName].filterModel, dataArray)){
-                        groupCharacterSets[groupName][characterName] = true;
-                    }
-                });
-            });
-            return groupCharacterSets;
-        };
-        
         LocalDBMS.prototype.getGroupSchemas = function(callback) {
             var that = this;
             
-            this.getProfileFilterInfo(function(err, info){
+            this.getGroupCharacterSets(function(err, groupCharacterSets){
                 if(err) {callback(err); return;}
                 var schemas = {};
                 var groups = that.database.Groups;
                 
-                var groupCharacterSets = _getGroupCharacterSets(groups, R.keys(that.database.Characters), R.clone(that.database.ProfileBindings), info);
-
                 schemas.theory = _makeGroupSchema(groups, _isGroupsEqualByFilterModel, _isSuperGroupByFilterModel, function(groupName){
                     return groups[groupName].filterModel;
                 }, groupCharacterSets);

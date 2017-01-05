@@ -188,6 +188,30 @@ See the License for the specific language governing permissions and
                 });
             });
         };
+        
+        var _getGroupCharacterSets = function(groups, characterNames, bindings, info){
+            var groupNames = R.keys(groups);
+            var groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
+            characterNames.forEach(function(characterName){
+                var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
+                var dataArray = CommonUtils.getDataArray(info, profileId);
+                groupNames.forEach(function(groupName){
+                    if(CommonUtils.acceptDataRow(groups[groupName].filterModel, dataArray)){
+                        groupCharacterSets[groupName][characterName] = true;
+                    }
+                });
+            });
+            return groupCharacterSets;
+        };
+        
+        LocalDBMS.prototype.getGroupCharacterSets = function(callback) {
+            var that = this;
+            
+            this.getProfileFilterInfo(function(err, info){
+                if(err) {callback(err); return;}
+                callback(null, _getGroupCharacterSets(that.database.Groups, R.keys(that.database.Characters), R.clone(that.database.ProfileBindings), info));
+            });
+        };
 
         function _removeProfileItem(type, index, profileItemName){
             let prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);

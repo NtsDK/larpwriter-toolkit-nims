@@ -25,6 +25,7 @@ See the License for the specific language governing permissions and
     var STORY_PREFIX = 'St:';
     var CHAR_PREFIX = 'Ch:';
     var PROFILE_GROUP = 'prof-';
+    var FILTER_GROUP = 'filter-';
     
     exports.init = function () {
         NetworkSubsetsSelector.init();
@@ -75,38 +76,48 @@ See the License for the specific language governing permissions and
                 DBMS.getAllProfiles('character', function(err, profiles){ // node coloring
                     if(err) {Utils.handleError(err); return;}
                     state.Characters = profiles;
+                    
                     DBMS.getAllStories(function(err, stories){ // contains most part of SN data
                         if(err) {Utils.handleError(err); return;}
                         state.Stories = stories;
+                        
                         DBMS.getCharacterProfileStructure(function(err, profileStructure){ // node coloring
                             if(err) {Utils.handleError(err); return;}
+                            
                             DBMS.getProfileBindings(function(err, profileBindings){ // node coloring
                                 if(err) {Utils.handleError(err); return;}
                                 state.profileBindings = profileBindings;
                             
-                                DBMS.getMetaInfo(function(err, metaInfo){ // timelined network
+                                DBMS.getGroupCharacterSets(function(err, groupCharacterSets){ // node coloring
                                     if(err) {Utils.handleError(err); return;}
+                                    state.groupCharacterSets = groupCharacterSets;
                                     
-                                    state.metaInfo = metaInfo;
-                                
-                                    var checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
-                                    R.values(profiles).forEach(profile => {
-                                        checkboxes.map(item => profile[item.name] = constL10n(Constants[profile[item.name]]));
+                                    DBMS.getMetaInfo(function(err, metaInfo){ // timelined network
+                                        if(err) {Utils.handleError(err); return;}
+                                        
+                                        state.metaInfo = metaInfo;
+                                    
+                                        var checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
+                                        R.values(profiles).forEach(profile => {
+                                            checkboxes.map(item => profile[item.name] = constL10n(Constants[profile[item.name]]));
+                                        });
+                                        
+                                        var colorGroups = profileStructure.filter((element) => R.contains(element.type, ['enum', 'checkbox']));
+                                        var defaultColorGroup = {value: Constants.noGroup, name: constL10n(Constants.noGroup)};
+                                        
+                                        var profileGroups = colorGroups.map(group => group.name).map(name => {return {value: PROFILE_GROUP + name, name: 'Досье: ' + name};});
+                                        var filterGroups = R.keys(groupCharacterSets).map(name => {return {value: FILTER_GROUP + name, name: 'Группа: ' + name};});
+                                        fillSelector(selector, [defaultColorGroup].concat(profileGroups).concat(filterGroups));
+                                        
+                                        initGroupColors(colorGroups);
+                                        
+                                        NetworkSubsetsSelector.refresh({
+                                            characterNames: characterNames,
+                                            storyNames: storyNames,
+                                            Stories: stories
+                                        });
+            //                            onDrawNetwork();
                                     });
-                                    
-                                    var colorGroups = profileStructure.filter((element) => R.contains(element.type, ['enum', 'checkbox']));
-                                    var defaultColorGroup = {value: Constants.noGroup, name: constL10n(Constants.noGroup)};
-                                    
-                                    fillSelector(selector, [defaultColorGroup].concat(arr2Select(colorGroups.map(group => group.name))));
-                                    
-                                    initGroupColors(colorGroups);
-                                    
-                                    NetworkSubsetsSelector.refresh({
-                                        characterNames: characterNames,
-                                        storyNames: storyNames,
-                                        Stories: stories
-                                    });
-        //                            onDrawNetwork();
                                 });
                             });
                         });
@@ -118,20 +129,20 @@ See the License for the specific language governing permissions and
     
     var initGroupColors = function(colorGroups){
         state.groupColors = R.clone(Constants.snFixedColors);
-        state.groupLists = {'noGroup':['noGroup']};
+        state.groupLists = {};
         
         colorGroups.forEach(function (group) {
             if(group.type === "enum"){
-                state.groupLists[group.name] = group.value.split(",").map(function (subGroupName, i){
-                    state.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
-                    return group.name + "." + subGroupName.trim();
+                state.groupLists[PROFILE_GROUP + group.name] = group.value.split(",").map(function (subGroupName, i){
+                    state.groupColors[PROFILE_GROUP + group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
+                    return PROFILE_GROUP + group.name + "." + subGroupName.trim();
                 });
             } else if( group.type === "checkbox"){
                 var trueName = constL10n(Constants[true]);
                 var falseName = constL10n(Constants[false]);
-                state.groupColors[group.name + "." + trueName] = Constants.colorPalette[group.value ? 0 : 1];
-                state.groupColors[group.name + "." + falseName] = Constants.colorPalette[group.value ? 1 : 0];
-                state.groupLists[group.name] = [group.name + "." + trueName, group.name + "." + falseName];
+                state.groupColors[PROFILE_GROUP + group.name + "." + trueName] = Constants.colorPalette[group.value ? 0 : 1];
+                state.groupColors[PROFILE_GROUP + group.name + "." + falseName] = Constants.colorPalette[group.value ? 1 : 0];
+                state.groupLists[PROFILE_GROUP + group.name] = [PROFILE_GROUP + group.name + "." + trueName, PROFILE_GROUP + group.name + "." + falseName];
             } else {
                 throw new Error('Unexpected profile item type: ' + group.type);
             }
@@ -147,14 +158,25 @@ See the License for the specific language governing permissions and
     
     var refreshLegend = function (groupName) {
         var colorLegend = clearEl(getEl("colorLegend"));
+        var els = [];
         
-        addEls(colorLegend, state.groupLists[groupName].map(function (value) {
-            return makeLegendItem(value === "noGroup" ? constL10n('noGroup') : value, state.groupColors[value].color);
-        }));
+        if(groupName === 'noGroup'){
+            els.push(makeLegendItem(constL10n('noGroup'), Constants.snFixedColors["noGroup"].color));
+        } else if(CommonUtils.startsWith(groupName, PROFILE_GROUP)){
+            els = els.concat(state.groupLists[groupName].map(function (value) {
+                return makeLegendItem(value.substring(PROFILE_GROUP.length), state.groupColors[value].color);
+            }));
+        } else if(CommonUtils.startsWith(groupName, FILTER_GROUP)){
+            els.push(makeLegendItem(constL10n('noGroup'), Constants.snFixedColors["noGroup"].color));
+            els.push(makeLegendItem(constL10n('fromGroup'), Constants.snFixedColors["fromGroup"].color));
+        } else {
+            throw new Error('Unexpected group name/type: ' + groupName);
+        }
         
         if(["characterPresenceInStory", "characterActivityInStory"].indexOf(state.selectedNetwork) !== -1){
-            addEl(colorLegend, makeLegendItem(getL10n("social-network-story"), Constants.snFixedColors["storyColor"].color));
+            els.push(makeLegendItem(getL10n("social-network-story"), Constants.snFixedColors["storyColor"].color));
         }
+        addEls(colorLegend, els);
     };
     
     var colorNodes = function (event) {
@@ -162,16 +184,26 @@ See the License for the specific language governing permissions and
         refreshLegend(groupName);
         if(state.nodesDataset == undefined) return;
         
-        var group;
         NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
-            var character = state.Characters[characterName];
-            group = groupName === "noGroup" ? groupName : groupName + "." + character[groupName];
             state.nodesDataset.update({
-                id : CHAR_PREFIX + character.name,
-                group : group
+                id : CHAR_PREFIX + characterName,
+                group : getNodeGroup(characterName, groupName)
             });
         });
     };
+    
+    function getNodeGroup(characterName, groupName){
+        if(groupName === "noGroup"){
+            return groupName;
+        } else if(CommonUtils.startsWith(groupName, PROFILE_GROUP)){
+            var character = state.Characters[characterName];
+            return groupName + "." + character[groupName.substring(PROFILE_GROUP.length)];
+        } else if(CommonUtils.startsWith(groupName, FILTER_GROUP)){
+            return state.groupCharacterSets[groupName.substring(FILTER_GROUP.length)][characterName] ? 'fromGroup' : 'noGroup';
+        } else {
+            throw new Error('Unexpected group name: ' + groupName);
+        }
+    }
     
     var updateNodeLabels = function () {
         if(state.nodesDataset === undefined) return;
