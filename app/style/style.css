@@ -365,6 +365,22 @@ See the License for the specific language governing permissions and
   margin-bottom: 8px;
 }
 
+.activeOption {
+  color: red;
+}
+
+.followerOption {
+  color: blue;
+}
+
+.defensiveOption {
+  color: green;
+}
+
+.passiveOption {
+  color: grey;
+}
+
 /* briefing export */
 #advancedTextExportContainer {
 	display: flex;

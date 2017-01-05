@@ -25,34 +25,15 @@ See the License for the specific language governing permissions and
     exports.init = function () {
         NetworkSubsetsSelector.init();
         
-        listen(getEl("networkNodeGroupSelector"), "change", function (event) {
-            updateNodes(event.target.value);
-        });
-        
+        listen(getEl("networkNodeGroupSelector"), "change", (event) => updateNodes(event.target.value));
         listen(getEl("drawNetworkButton"), "click", onDrawNetwork);
-        
         $("#nodeFocusSelector").select2().on("change", onNodeFocus);
-    
-        var selector = getEl("networkSelector");
-        selector.addEventListener("change", onNetworkSelectorChangeDelegate);
-        
-        selector = getEl("activitySelector");
-        
-        var st, option;
-        Constants.characterActivityTypes.forEach(function (activity) {
-            option = makeEl("option");
-            option.appendChild(makeText(constL10n(activity)));
-            st = option.style;
-            st.color = Constants.snActivityColors[activity];
-            option.activity = activity;
-            selector.appendChild(option);
-        });
+        listen(getEl("networkSelector"), "change", onNetworkSelectorChangeDelegate);
         
         state.network;
         state.highlightActive = false;
         
         initWarning();
-        
         L10n.onL10nChange(initWarning);
         
     //    TimelinedNetwork.init();
@@ -75,15 +56,13 @@ See the License for the specific language governing permissions and
     var nodeSort = CommonUtils.charOrdAFactory((a) => a.label.toLowerCase());
     
     exports.refresh = function () {
-        var selector = clearEl(getEl("networkSelector"));
-    
-        var option;
-        Constants.networks.forEach(function (network) {
-            option = makeEl("option");
-            option.appendChild(makeText(constL10n(network)));
-            option.value = network;
-            selector.appendChild(option);
-        });
+        
+        fillSelector(clearEl(getEl("activitySelector")), constArr2Select(Constants.characterActivityTypes).map(obj => {
+            obj.className = obj.value + 'Option';
+            return obj;
+        }));
+        
+        var selector = fillSelector(clearEl(getEl("networkSelector")), constArr2Select(Constants.networks));
         selector.value = Constants.networks[0];
         onNetworkSelectorChangeDelegate({target: selector});
         
@@ -93,23 +72,12 @@ See the License for the specific language governing permissions and
             if(err) {Utils.handleError(err); return;}
             PermissionInformer.getEntityNamesArray('story', false, function(err, storyNames){
                 if(err) {Utils.handleError(err); return;}
-            
                 DBMS.getAllProfiles('character', function(err, profiles){
                     if(err) {Utils.handleError(err); return;}
                     state.Characters = profiles;
-                    
-                    characterNames.forEach(function(elem){
-                        profiles[elem.value].displayName = elem.displayName;
-                    });
-                    
                     DBMS.getAllStories(function(err, stories){
                         if(err) {Utils.handleError(err); return;}
                         state.Stories = stories;
-                        
-                        storyNames.forEach(function(elem){
-                            stories[elem.value].displayName = elem.displayName;
-                        });
-                        
                         DBMS.getCharacterProfileStructure(function(err, profileSettings){
                             if(err) {Utils.handleError(err); return;}
                             
@@ -163,7 +131,11 @@ See the License for the specific language governing permissions and
                                     }
                                 });
                                 
-                                NetworkSubsetsSelector.refresh(state);
+                                NetworkSubsetsSelector.refresh({
+                                    characterNames: characterNames,
+                                    storyNames: storyNames,
+                                    Stories: stories
+                                });
     //                            onDrawNetwork();
                             });
                         });
@@ -231,10 +203,6 @@ See the License for the specific language governing permissions and
         let edges = [];
         
         switch (selectedNetwork) {
-        case "simpleNetwork":
-            nodes = getCharacterNodes();
-            edges = getSimpleEdges();
-            break;
         case "socialRelations":
             nodes = getCharacterNodes();
             edges = getDetailedEdges();
@@ -275,6 +243,8 @@ See the License for the specific language governing permissions and
                     nodes.push({
                         id : character.name,
                         label : character.name.split(" ").join("\n"),
+                        type : 'character',
+                        originName : character.name,
                         group : groupName === "noGroup" ? constL10n('noGroup'): groupName
                                 + "." + character[groupName]
                     });
@@ -290,14 +260,16 @@ See the License for the specific language governing permissions and
                 label : name.split(" ").join("\n"),
                 value : Object.keys(state.Stories[name].characters).length,
                 title : Object.keys(state.Stories[name].characters).length,
-                group : "storyColor"
+                group : "storyColor",
+                type : 'story',
+                originName : name,
             };
         });
         return nodes;
     };
     
     var getActivityEdges = function () {
-        var selectedActivities = nl2array(getEl("activitySelector").selectedOptions).map(opt => opt.activity);
+        var selectedActivities = nl2array(getEl("activitySelector").selectedOptions).map(opt => opt.value);
         
         var edges = [];
         var edgesCheck = {};
@@ -332,30 +304,6 @@ See the License for the specific language governing permissions and
                     color : "grey"
                 });
             }
-        }
-        return edges;
-    };
-    
-    var getSimpleEdges = function () {
-        var edges = [];
-        var edgesCheck = {};
-        for ( var name in state.Stories) {
-            var story = state.Stories[name];
-            
-            story.events.forEach(function (event) {
-                for ( var char1 in event.characters) {
-                    for ( var char2 in event.characters) {
-                        if (char1 !== char2 && !edgesCheck[name + char1 + char2] && !edgesCheck[name + char2 + char1]) {
-                            edgesCheck[name + char1 + char2] = true;
-                            edges.push({
-                                from : char1,
-                                to : char2,
-                                color : "grey"
-                            });
-                        }
-                    }
-                }
-            });
         }
         return edges;
     };

@@ -358,14 +358,14 @@ function arr2Chunks(array, chunkSize) {
 };
 
 var fillSelector = R.curry(function(sel, data){
-    data.forEach(function (item) {
+    return addEls(sel, data.map(function (item) {
         var opt = makeEl("option");
         addEl(opt, makeText(item.name));
         if(item.value){opt.value = item.value;}
         if(item.selected){opt.selected = true;}
-        addEl(sel, opt);
-    });
-    return sel;
+        if(item.className){addClass(opt, item.className);}
+        return opt;
+    }));
 });
 
 function nl2array(nodeList){
@@ -388,6 +388,7 @@ var getSelect2Data = getSelect2DataCommon(remapProps4Select2);
 var makeSelect2Opt = R.compose(R.zipObj(['id', 'text']), R.repeat(R.__, 2));
 var arr2Select2 = R.compose(R.assoc('data', R.__, {}), R.map(makeSelect2Opt));
 var arr2Select = R.map(R.compose(R.zipObj(['value','name']), R.repeat(R.__, 2)));
+var constArr2Select = R.map(R.compose(R.zipObj(['value','name']), (name) => [name, constL10n(name)]));
 
 var getSelectedRadio = function(query){
     "use strict";
