@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function storyAdaptationsAPI(LocalDBMS, CommonUtils) {
+    function storyAdaptationsAPI(LocalDBMS, CommonUtils, dbmsUtils) {
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
             "use strict";
@@ -43,6 +43,8 @@ See the License for the specific language governing permissions and
             return database.Stories[storyName].events.length == 0;
         };
         
+        dbmsUtils._isStoryEmpty = _isStoryEmpty;
+        
         var _isStoryFinished = function (database, storyName) {
             "use strict";
             return database.Stories[storyName].events.every(function(event){
@@ -56,6 +58,8 @@ See the License for the specific language governing permissions and
                 return isReady;
             });
         };
+        
+        dbmsUtils._isStoryFinished = _isStoryFinished;
     
         //events
         LocalDBMS.prototype.getFilteredCharacterNames = function (storyName, showOnlyUnfinishedStories, callback){

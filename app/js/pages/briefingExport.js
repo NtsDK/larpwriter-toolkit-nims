@@ -163,7 +163,7 @@ See the License for the specific language governing permissions and
     };
     
     var getBriefingData = function(callback){
-        DBMS.getBriefingData(getSelectedUsers(), function(err, briefingData){
+        DBMS.getBriefingData(getSelectedUsers(), getEl('exportOnlyFinishedStories').checked, function(err, briefingData){
             if(err) {Utils.handleError(err); return;}
             // some postprocessing
             DBMS.getCharacterProfileStructure(function(err, profileSettings){

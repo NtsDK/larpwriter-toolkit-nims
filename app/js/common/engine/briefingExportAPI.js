@@ -15,9 +15,9 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function briefingExportAPI(LocalDBMS, CommonUtils, R, Constants) {
+    function briefingExportAPI(LocalDBMS, CommonUtils, R, Constants, dbmsUtils) {
     
-        LocalDBMS.prototype.getBriefingData = function(selectedCharacters, callback) {
+        LocalDBMS.prototype.getBriefingData = function(selectedCharacters, exportOnlyFinishedStories, callback) {
             var that = this;
             that.getAllCharacterGroupTexts(function(err, groupTexts){
                 if(err) {callback(err); return;}
@@ -26,11 +26,11 @@ See the License for the specific language governing permissions and
                 } else {
                     selectedCharacters = R.keys(selectedCharacters);
                 }
-                _getBriefingData(that._getKnownCharacters, that.database, selectedCharacters, groupTexts, callback);
+                _getBriefingData(that._getKnownCharacters, that.database, selectedCharacters, groupTexts, exportOnlyFinishedStories, callback);
             });
         };
         
-        var _getBriefingData = function(getKnownCharacters, database, selectedCharacters, groupTexts, callback) {
+        var _getBriefingData = function(getKnownCharacters, database, selectedCharacters, groupTexts, exportOnlyFinishedStories, callback) {
             var charArray = selectedCharacters.map(function(charName){
                 groupTexts[charName].forEach(function(groupText){
                     groupText.splittedText = _splitText(groupText.text);
@@ -40,8 +40,8 @@ See the License for the specific language governing permissions and
                     "gameName" : database.Meta.name,
                     "charName" : charName,
                     "inventory" : _makeCharInventory(database, charName),
-                    "storiesInfo" : _getStoriesInfo(database, charName),
-                    "eventsInfo" : _getEventsInfo(database, charName),
+                    "storiesInfo" : _getStoriesInfo(database, charName, exportOnlyFinishedStories),
+                    "eventsInfo" : _getEventsInfo(database, charName, exportOnlyFinishedStories),
                     "profileInfoArray" : _getProfileInfoArray(profile, database.CharacterProfileStructure),
                     "groupTexts" : groupTexts[charName],
                     "relations" : _makeRelationsInfo(getKnownCharacters(database, charName), database, charName)
@@ -113,9 +113,14 @@ See the License for the specific language governing permissions and
             });
         };
         
-        var _getStoriesInfo = function(database, charName) {
+        var _getStoriesInfo = function(database, charName, exportOnlyFinishedStories) {
             "use strict";
             return R.values(database.Stories).filter(function(story){
+                if(exportOnlyFinishedStories){
+                    if(!dbmsUtils._isStoryFinished(database, story.name) || dbmsUtils._isStoryEmpty(database, story.name)){
+                        return false;
+                    }
+                }
                 return story.characters[charName];
             }).map(function(story){
                 return {
@@ -127,9 +132,14 @@ See the License for the specific language governing permissions and
             }));
         };
         
-        var _getEventsInfo = function(database, charName) {
+        var _getEventsInfo = function(database, charName, exportOnlyFinishedStories) {
             "use strict";
             var eventsInfo = R.values(database.Stories).filter(function(story){
+                if(exportOnlyFinishedStories){
+                    if(!dbmsUtils._isStoryFinished(database, story.name) || dbmsUtils._isStoryEmpty(database, story.name)){
+                        return false;
+                    }
+                }
                 return story.characters[charName];
             }).map(function(story){
                 return _getStoryEventsInfo(story, charName, database.Meta.date);

@@ -19,6 +19,7 @@ See the License for the specific language governing permissions and
 
 function makeLocalDBMS(){
     var listeners = {};
+    var dbmsUtils = {};
     
     function LocalDBMS(){
         this._init(listeners);
@@ -39,7 +40,7 @@ function makeLocalDBMS(){
     groupSchemaAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     investigationBoardAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     relationsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
-    briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
+    briefingExportAPI(LocalDBMS, CommonUtils, R, Constants, dbmsUtils);
     
     profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
     entityAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
@@ -48,7 +49,7 @@ function makeLocalDBMS(){
     storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners);
     
     storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
-    storyAdaptationsAPI(LocalDBMS, CommonUtils);
+    storyAdaptationsAPI(LocalDBMS, CommonUtils, dbmsUtils);
     accessManagerAPI(LocalDBMS, CommonUtils, R);
     
     logAPI(LocalDBMS, R, CommonUtils);
