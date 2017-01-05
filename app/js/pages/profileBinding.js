@@ -21,28 +21,10 @@ See the License for the specific language governing permissions and
 (function(exports){
     
     var root = ".profile-binding-tab ";
-//    var characterPanel = root + ".character-profile-panel ";
-//    var playerPanel = root + ".player-profile-panel ";
 
     exports.init = function () {
-//        var sel = clearEl(queryEl(characterPanel+".create-entity-type-select"));
-//        var fillMainSel = function(){fillSelector2(clearEl(sel));};
-//        fillMainSel();
-//        L10n.onL10nChange(fillMainSel);
-//        var sel2 = clearEl(queryEl(playerPanel+".create-entity-type-select"));
-//        var fillMainSel2 = function(){fillSelector2(clearEl(sel2));};
-//        fillMainSel2();
-//        L10n.onL10nChange(fillMainSel2);
-//    
         listen(queryEl(root+".create-binding-button"), "click", createBinding);
         listen(queryEl(root+".remove-binding-button"), "click", removeBinding);
-//        listen(queryEl(characterPanel+".move-entity-button"), "click", moveProfileItem('character', characterPanel));
-//        listen(queryEl(characterPanel+".remove-entity-button"), "click", removeProfileItem('character', characterPanel));
-//        
-//        listen(queryEl(playerPanel+".create-entity-button"), "click", createProfileItem('player', playerPanel));
-//        listen(queryEl(playerPanel+".move-entity-button"), "click", moveProfileItem('player', playerPanel));
-//        listen(queryEl(playerPanel+".remove-entity-button"), "click", removeProfileItem('player', playerPanel));
-    
         exports.content = queryEl(root);
     };
     
