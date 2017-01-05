@@ -105,8 +105,11 @@ See the License for the specific language governing permissions and
                                         var colorGroups = profileStructure.filter((element) => R.contains(element.type, ['enum', 'checkbox']));
                                         var defaultColorGroup = {value: Constants.noGroup, name: constL10n(Constants.noGroup)};
                                         
-                                        var profileGroups = colorGroups.map(group => group.name).map(name => {return {value: PROFILE_GROUP + name, name: 'Досье: ' + name};});
-                                        var filterGroups = R.keys(groupCharacterSets).map(name => {return {value: FILTER_GROUP + name, name: 'Группа: ' + name};});
+                                        var profileLabel = strFormat(getL10n('social-network-profile-group'));
+                                        var filterLabel = strFormat(getL10n('social-network-filter-group'));
+                                        
+                                        var profileGroups = colorGroups.map(group => group.name).map(name => {return {value: PROFILE_GROUP + name, name: profileLabel([name])};});
+                                        var filterGroups = R.keys(groupCharacterSets).map(name => {return {value: FILTER_GROUP + name, name: filterLabel([name])};});
                                         fillSelector(selector, [defaultColorGroup].concat(profileGroups).concat(filterGroups));
                                         
                                         initGroupColors(colorGroups);
