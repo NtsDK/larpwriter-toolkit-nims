@@ -34,19 +34,23 @@ function makeLocalDBMS(){
     consistencyCheckAPI(LocalDBMS, R, CommonUtils, Ajv, Schema);
     profilesAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     profileBindingAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
+    
     groupsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     groupSchemaAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     investigationBoardAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     relationsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
     briefingExportAPI(LocalDBMS, CommonUtils, R, Constants);
+    
     profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
     entityAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
     storyBaseAPI(LocalDBMS, R, CommonUtils, Errors);
     storyEventsAPI(LocalDBMS, R, CommonUtils, Errors);
     storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners);
+    
     storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
     storyAdaptationsAPI(LocalDBMS, CommonUtils);
     accessManagerAPI(LocalDBMS, CommonUtils, R);
+    
     logAPI(LocalDBMS, R, CommonUtils);
     
     Logger.attachLogCalls(LocalDBMS, R, false);
