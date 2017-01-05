@@ -22,10 +22,14 @@ See the License for the specific language governing permissions and
 
     var state = {};
     
+    var STORY_PREFIX = 'St:';
+    var CHAR_PREFIX = 'Ch:';
+    
     exports.init = function () {
         NetworkSubsetsSelector.init();
         
         listen(getEl("networkNodeGroupSelector"), "change", colorNodes);
+        listen(getEl('showPlayerNamesCheckbox'), "change", updateNodeLabels);
         listen(getEl("drawNetworkButton"), "click", onDrawNetwork);
         $("#nodeFocusSelector").select2().on("change", onNodeFocus);
         listen(getEl("networkSelector"), "change", onNetworkSelectorChangeDelegate);
@@ -75,30 +79,34 @@ See the License for the specific language governing permissions and
                         state.Stories = stories;
                         DBMS.getCharacterProfileStructure(function(err, profileStructure){ // node coloring
                             if(err) {Utils.handleError(err); return;}
-                            
-                            DBMS.getMetaInfo(function(err, metaInfo){ // timelined network
+                            DBMS.getProfileBindings(function(err, profileBindings){ // node coloring
                                 if(err) {Utils.handleError(err); return;}
-                                
-                                state.metaInfo = metaInfo;
+                                state.profileBindings = profileBindings;
                             
-                                var checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
-                                R.values(profiles).forEach(profile => {
-                                    checkboxes.map(item => profile[item.name] = constL10n(Constants[profile[item.name]]));
+                                DBMS.getMetaInfo(function(err, metaInfo){ // timelined network
+                                    if(err) {Utils.handleError(err); return;}
+                                    
+                                    state.metaInfo = metaInfo;
+                                
+                                    var checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
+                                    R.values(profiles).forEach(profile => {
+                                        checkboxes.map(item => profile[item.name] = constL10n(Constants[profile[item.name]]));
+                                    });
+                                    
+                                    var colorGroups = profileStructure.filter((element) => R.contains(element.type, ['enum', 'checkbox']));
+                                    var defaultColorGroup = {value: Constants.noGroup, name: constL10n(Constants.noGroup)};
+                                    
+                                    fillSelector(selector, [defaultColorGroup].concat(arr2Select(colorGroups.map(group => group.name))));
+                                    
+                                    initGroupColors(colorGroups);
+                                    
+                                    NetworkSubsetsSelector.refresh({
+                                        characterNames: characterNames,
+                                        storyNames: storyNames,
+                                        Stories: stories
+                                    });
+        //                            onDrawNetwork();
                                 });
-                                
-                                var groups = profileStructure.filter((element) => R.contains(element.type, ['enum', 'checkbox']));
-                                var defaultGroup = {value: Constants.noGroup, name: constL10n(Constants.noGroup)};
-                                
-                                fillSelector(selector, [defaultGroup].concat(arr2Select(groups.map(group => group.name))));
-                                
-                                initGroupColors(groups);
-                                
-                                NetworkSubsetsSelector.refresh({
-                                    characterNames: characterNames,
-                                    storyNames: storyNames,
-                                    Stories: stories
-                                });
-    //                            onDrawNetwork();
                             });
                         });
                     });
@@ -107,11 +115,11 @@ See the License for the specific language governing permissions and
         });
     };
     
-    var initGroupColors = function(groups){
+    var initGroupColors = function(colorGroups){
         state.groupColors = R.clone(Constants.snFixedColors);
         state.groupLists = {'noGroup':['noGroup']};
         
-        groups.forEach(function (group) {
+        colorGroups.forEach(function (group) {
             if(group.type === "enum"){
                 state.groupLists[group.name] = group.value.split(",").map(function (subGroupName, i){
                     state.groupColors[group.name + "." + subGroupName.trim()] = Constants.colorPalette[i];
@@ -158,16 +166,35 @@ See the License for the specific language governing permissions and
             var character = state.Characters[characterName];
             group = groupName === "noGroup" ? groupName : groupName + "." + character[groupName];
             state.nodesDataset.update({
-                id : character.name,
+                id : CHAR_PREFIX + character.name,
                 group : group
             });
         });
     };
     
+    var updateNodeLabels = function () {
+        if(state.nodesDataset === undefined) return;
+        var showPlayer = getEl('showPlayerNamesCheckbox').checked;
+        var allNodes = state.nodesDataset.get({
+            returnType : "Object"
+        });
+        
+        R.values(allNodes).filter(node => node.type === 'character').forEach(node => {
+            var label = makeCharacterNodeLabel(showPlayer, node.originName);
+            if(node.label !== undefined){
+                node.label = label;
+            } else if(node.hiddenLabel !== undefined){
+                node.hiddenLabel = label;
+            } else {
+                console.log('Suspicious node: ' + JSON.stringify(node));
+            }
+        });
+    
+        state.nodesDataset.update(R.values(allNodes));
+    };
+    
     var onNetworkSelectorChangeDelegate = function (event) {
-        var selectedNetwork = event.target.value;
-        var activityBlock = getEl("activityBlock");
-        setClassByCondition(activityBlock, "hidden", selectedNetwork !== "characterActivityInStory");
+        setClassByCondition(getEl("activityBlock"), "hidden", event.target.value !== "characterActivityInStory");
     };
     
     var onNodeFocus = function (event) {
@@ -207,7 +234,7 @@ See the License for the specific language governing permissions and
         clearEl(getEl('nodeFocusSelector'));
         nodes.sort(nodeSort);
         
-        var data = getSelect2DataCommon(remapProps(['id','text'], ['id', 'label']), nodes);
+        var data = getSelect2DataCommon(remapProps(['id','text'], ['id', 'originName']), nodes);
         $("#nodeFocusSelector").select2(data);
     
         state.nodesDataset = new vis.DataSet(nodes);
@@ -216,30 +243,35 @@ See the License for the specific language governing permissions and
         redrawAll();
     };
     
+    var makeCharacterNodeLabel = function(showPlayer, characterName){
+        var label = characterName.split(" ").join("\n");
+        if(showPlayer){
+            var player = state.profileBindings[characterName] || '';
+            return label +  '/\n' + player;
+        } else {
+            return label;
+        }
+    };
+    
     var getCharacterNodes = function () {
         var groupName = getEl("networkNodeGroupSelector").value;
-    
-        var nodes = [];
-        NetworkSubsetsSelector.getCharacterNames().forEach(
-                function (characterName) {
-                    var character = state.Characters[characterName];
-                    nodes.push({
-                        id : character.name,
-                        label : character.name.split(" ").join("\n"),
-                        type : 'character',
-                        originName : character.name,
-                        group : groupName === "noGroup" ? constL10n('noGroup'): groupName
-                                + "." + character[groupName]
-                    });
-                });
-    
-        return nodes;
+        var showPlayer = getEl('showPlayerNamesCheckbox').checked;
+        return NetworkSubsetsSelector.getCharacterNames().map(function (characterName) {
+            var profile = state.Characters[characterName];
+            return {
+                id : CHAR_PREFIX + characterName,
+                label : makeCharacterNodeLabel(showPlayer, characterName),
+                type : 'character',
+                originName : characterName,
+                group : groupName === "noGroup" ? constL10n('noGroup'): groupName + "." + profile[groupName]
+            };
+        });
     };
     
     var getStoryNodes = function () {
         var nodes = NetworkSubsetsSelector.getStoryNames().map(function (name) {
             return {
-                id : "St:" + name,
+                id : STORY_PREFIX + name,
                 label : name.split(" ").join("\n"),
                 value : Object.keys(state.Stories[name].characters).length,
                 title : Object.keys(state.Stories[name].characters).length,
@@ -262,8 +294,8 @@ See the License for the specific language governing permissions and
                 for(var activity in story.characters[char1].activity){
                     if(R.contains(activity, selectedActivities)){
                         edges.push({
-                            from : "St:" + name,
-                            to : char1,
+                            from : STORY_PREFIX + name,
+                            to : CHAR_PREFIX + char1,
                             color : Constants.snActivityColors[activity],
                             width: 2,
                             hoverWidth: 4
@@ -282,8 +314,8 @@ See the License for the specific language governing permissions and
             var story = state.Stories[name];
             for ( var char1 in story.characters) {
                 edges.push({
-                    from : "St:" + name,
-                    to : char1,
+                    from : STORY_PREFIX + name,
+                    to : CHAR_PREFIX + char1,
                     color : "grey"
                 });
             }
@@ -317,8 +349,8 @@ See the License for the specific language governing permissions and
                         var key = char1 + char2;
                         if (!edgesCheck[key]) {
                             edgesCheck[key] = {
-                                from : char1,
-                                to : char2,
+                                from : CHAR_PREFIX + char1,
+                                to : CHAR_PREFIX + char2,
                                 title : {},
                             };
                         }
