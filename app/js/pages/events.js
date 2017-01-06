@@ -118,7 +118,7 @@ See the License for the specific language governing permissions and
         });
         setAttr(eventSelector, "size", eventArray.length);
         
-        var selectedFilter = DBMS.getSettings()["Events"].selectedFilter;
+        var selectedFilter = DBMS.getSettings()["Adaptations"].selectedFilter;
         getEl(selectedFilter).checked = true;
         updateFilter({
             target : {
@@ -347,24 +347,24 @@ See the License for the specific language governing permissions and
     
     var updateSettings = function (name, value) {
         var settings = DBMS.getSettings();
-        settings["Events"][name] = value;
+        settings["Adaptations"][name] = value;
     };
     
     var getSelectedStoryName = function(storyNames){
         var storyNamesOnly = storyNames.map(R.prop('storyName'));
         
         var settings = DBMS.getSettings();
-        if(!settings["Events"]){
-            settings["Events"] = {
+        if(!settings["Adaptations"]){
+            settings["Adaptations"] = {
                 storyName : storyNamesOnly[0],
                 characterNames : [],
                 eventIndexes : [],
                 selectedFilter : "adaptationFilterByCharacter"
             };
         }
-        var storyName = settings["Events"].storyName;
+        var storyName = settings["Adaptations"].storyName;
         if(storyNamesOnly.indexOf(storyName) === -1){
-            settings["Events"].storyName = storyNamesOnly[0];
+            settings["Adaptations"].storyName = storyNamesOnly[0];
             storyName = storyNamesOnly[0];
         }
         return storyName;
@@ -372,7 +372,7 @@ See the License for the specific language governing permissions and
         
     var getNames = function(nameObjectArray, nameObjectProperty, settingsProperty){
         var namesOnly = nameObjectArray.map(R.prop(nameObjectProperty));
-        var names = DBMS.getSettings()["Events"][settingsProperty];
+        var names = DBMS.getSettings()["Adaptations"][settingsProperty];
         var existingNames = names.filter(function(name){
             return namesOnly.indexOf(name) !== -1;
         });
@@ -389,4 +389,4 @@ See the License for the specific language governing permissions and
         return getNames(eventArray, 'index', "eventIndexes");
     };
 
-})(this['Events']={});
+})(this['Adaptations']={});

@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
-PageManager, Utils, Overview, Characters, Stories, Events, Briefings, Timeline, SocialNetwork, FileUtils
+PageManager, Utils, Overview, Characters, Stories, Adaptations, Briefings, Timeline, SocialNetwork, FileUtils
  */
 
 "use strict";
@@ -76,7 +76,7 @@ PageManager.onDatabaseLoad = function () {
             Utils.addView(containers, "overview", Overview, {mainPage:true});
             Utils.addView(containers, "characters", Characters);
             Utils.addView(containers, "stories", Stories);
-            Utils.addView(containers, "adaptations", Events);
+            Utils.addView(containers, "adaptations", Adaptations);
             Utils.addView(containers, "briefings", Briefings);
             
             addEl(navigation, addClass(makeEl("div"), "nav-separator"));

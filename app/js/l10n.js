@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
-PageManager, Utils, Overview, Characters, Stories, Events, Briefings, Timeline, SocialNetwork, FileUtils
+PageManager, Utils, Overview, Characters, Stories, Adaptations, Briefings, Timeline, SocialNetwork, FileUtils
  */
 
 "use strict";
