@@ -227,7 +227,8 @@ Events.showPersonalStoriesDelegate2 = function (event) {
     }
     for (i = 0; i < eventSelector.selectedOptions.length; i +=1) {
         eventIndex = eventSelector.selectedOptions[i].eventIndex222;
-        removeClass(getEls(eventIndex+"-dependent")[0],"hidden");
+        var el = getEls(eventIndex+"-dependent")[0];
+        if(el !== undefined) removeClass(el,"hidden");
         eventIndexes.push(eventIndex);
     }
     Events.updateSettings("eventIndexes", eventIndexes);
