@@ -17,20 +17,17 @@ See the License for the specific language governing permissions and
 
     function briefingExportAPI(LocalDBMS, CommonUtils, R, Constants, dbmsUtils) {
     
-        LocalDBMS.prototype.getBriefingData = function(selectedCharacters, exportOnlyFinishedStories, callback) {
+        LocalDBMS.prototype.getBriefingData = function(selectedCharacters, selectedStories, exportOnlyFinishedStories, callback) {
             var that = this;
+            selectedCharacters = selectedCharacters || R.keys(this.database.Characters);
+            selectedStories = selectedStories || R.keys(this.database.Stories);
             that.getAllCharacterGroupTexts(function(err, groupTexts){
                 if(err) {callback(err); return;}
-                if(R.isNil(selectedCharacters)){
-                    selectedCharacters = R.keys(that.database.Characters);
-                } else {
-                    selectedCharacters = R.keys(selectedCharacters);
-                }
-                _getBriefingData(that._getKnownCharacters, that.database, selectedCharacters, groupTexts, exportOnlyFinishedStories, callback);
+                _getBriefingData(that._getKnownCharacters, that.database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback);
             });
         };
         
-        var _getBriefingData = function(getKnownCharacters, database, selectedCharacters, groupTexts, exportOnlyFinishedStories, callback) {
+        var _getBriefingData = function(getKnownCharacters, database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback) {
             var charArray = selectedCharacters.map(function(charName){
                 groupTexts[charName].forEach(function(groupText){
                     groupText.splittedText = _splitText(groupText.text);
@@ -40,8 +37,8 @@ See the License for the specific language governing permissions and
                     "gameName" : database.Meta.name,
                     "charName" : charName,
                     "inventory" : _makeCharInventory(database, charName),
-                    "storiesInfo" : _getStoriesInfo(database, charName, exportOnlyFinishedStories),
-                    "eventsInfo" : _getEventsInfo(database, charName, exportOnlyFinishedStories),
+                    "storiesInfo" : _getStoriesInfo(database, charName, selectedStories, exportOnlyFinishedStories),
+                    "eventsInfo" : _getEventsInfo(database, charName, selectedStories, exportOnlyFinishedStories),
                     "profileInfoArray" : _getProfileInfoArray(profile, database.CharacterProfileStructure),
                     "groupTexts" : groupTexts[charName],
                     "relations" : _makeRelationsInfo(getKnownCharacters(database, charName), database, charName)
@@ -113,9 +110,9 @@ See the License for the specific language governing permissions and
             });
         };
         
-        var _getStoriesInfo = function(database, charName, exportOnlyFinishedStories) {
-            "use strict";
+        var _getStoriesInfo = function(database, charName, selectedStories, exportOnlyFinishedStories) {
             return R.values(database.Stories).filter(function(story){
+                if(!R.contains(story.name, selectedStories)) return false;
                 if(exportOnlyFinishedStories){
                     if(!dbmsUtils._isStoryFinished(database, story.name) || dbmsUtils._isStoryEmpty(database, story.name)){
                         return false;
@@ -132,9 +129,9 @@ See the License for the specific language governing permissions and
             }));
         };
         
-        var _getEventsInfo = function(database, charName, exportOnlyFinishedStories) {
-            "use strict";
+        var _getEventsInfo = function(database, charName, selectedStories, exportOnlyFinishedStories) {
             var eventsInfo = R.values(database.Stories).filter(function(story){
+                if(!R.contains(story.name, selectedStories)) return false;
                 if(exportOnlyFinishedStories){
                     if(!dbmsUtils._isStoryFinished(database, story.name) || dbmsUtils._isStoryEmpty(database, story.name)){
                         return false;

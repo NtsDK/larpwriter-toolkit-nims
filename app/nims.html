@@ -1067,23 +1067,46 @@ See the License for the specific language governing permissions and
         
           <fieldset>
             <legend l10n-id="briefings-briefing-selection"></legend>
-            <input type="radio" name="exportSelection" value="all" id="exportSelectionAll"/>
-            <label for="exportSelectionAll" l10n-id="briefings-print-all"></label> <br> 
-            <input type="radio" name="exportSelection" value="specific" id="exportSelectionSpecific"/>
-            <label for="exportSelectionSpecific" l10n-id="briefings-print-partly"></label> <br> 
-            <input type="radio" name="exportSelection" value="multiple" id="exportSelectionMultiple"/>
-            <label for="exportSelectionMultiple" l10n-id="briefings-exact-multiselect"></label> <br> 
+            <div>
+              <input type="radio" name="exportCharacterSelection" id="exportAllCharacters"/>
+              <label for="exportAllCharacters" l10n-id="briefings-print-all"></label> <br> 
+            </div>
+            <div>
+              <input type="radio" name="exportCharacterSelection" id="exportCharacterRange"/>
+              <label for="exportCharacterRange" l10n-id="briefings-print-partly"></label> <br> 
+            </div>
+            <div>
+              <input type="radio" name="exportCharacterSelection" id="exportCharacterSet"/>
+              <label for="exportCharacterSet" l10n-id="briefings-exact-multiselect"></label> <br> 
+            </div>
             
-            <div id="briefingSelector" class="hidden">
+            <div id="characterRangeSelect" class="hidden">
               <span l10n-id="briefings-briefings-amount"></span> 
               <select id="briefingNumberSelector"></select><br>
               <span l10n-id="briefings-briefings-range"></span>
               <select id="briefingIntervalSelector"></select>
             </div>
             
-            <div id="briefingMultiSelect" class="hidden">
-              <input selector-filter="#briefingMultiSelector"><br>
-              <select id="briefingMultiSelector" multiple size=15 ></select>
+            <div id="characterSetSelect" class="hidden">
+              <input selector-filter="#characterSetSelector"><br>
+              <select id="characterSetSelector" multiple size=15 ></select>
+            </div>
+          </fieldset>
+          
+          <fieldset>
+            <legend l10n-id="briefings-story-selection"></legend>
+            <div>
+              <input type="radio" name="exportStorySelection" value="all" id="exportAllStories"/>
+              <label for="exportAllStories" l10n-id="briefings-export-all-stories"></label> <br> 
+            </div>
+            <div>
+              <input type="radio" name="exportStorySelection" value="multiple" id="exportStorySet"/>
+              <label for="exportStorySet" l10n-id="briefings-exact-multiselect"></label> <br> 
+            </div>
+            
+            <div id="storySetSelect" class="hidden">
+              <input selector-filter="#storySetSelector"><br>
+              <select id="storySetSelector" multiple size=15 ></select>
             </div>
           </fieldset>
         </div>

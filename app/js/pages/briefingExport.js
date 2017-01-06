@@ -32,27 +32,28 @@ See the License for the specific language governing permissions and
         });
     
         listen(getEl("makeCustomTextBriefings"), "click", function(){
-          makeTextBriefings(getEl("textTypeSelector").value, getEl("templateArea").value);
+            makeTextBriefings(getEl("textTypeSelector").value, getEl("templateArea").value);
         });
         
-        var el = getEl("docxBriefings");
-        el.addEventListener("change", readTemplateFile);
+        listen(getEl("docxBriefings"), "change", readTemplateFile);
     
-        var els = document.querySelectorAll("#briefingExportDiv input[name=exportSelection]");
-        for (var i = 0; i < els.length; i++) {
-            listen(els[i], "change", onExportSelectionChange);
-        }
-        getEl("exportSelectionAll").checked = true;
+        var els = queryElEls(document, "#briefingExportDiv input[name=exportCharacterSelection]");
+        nl2array(els).map(listen(R.__, "change", onCharacterSelectionChange));
+        getEl("exportAllCharacters").checked = true;
+
+        els = queryElEls(document, "#briefingExportDiv input[name=exportStorySelection]");
+        nl2array(els).map(listen(R.__, "change", onStorySelectionChange));
+        getEl("exportAllStories").checked = true;
     
-        el = getEl("briefingNumberSelector");
+        var el = getEl("briefingNumberSelector");
         Constants.briefingNumber.forEach(R.compose(addEl(el), makeOpt));
-        
-        listen(el, "change", onNumberSelectorChange);
+        listen(el, "change", refreshCharacterRangeSelect);
         
         state.briefingNumberSelector = el;
         state.briefingIntervalSelector = getEl("briefingIntervalSelector");
-        state.briefingMultiSelector = getEl("briefingMultiSelector");
-        
+        state.characterSetSelector = getEl("characterSetSelector");
+        state.storySetSelector = getEl("storySetSelector");
+
         getEl("makeBriefingsByTime ".trim()).addEventListener("click", makeExport("templateByTime")); 
         getEl("makeBriefingsByStory".trim()).addEventListener("click", makeExport("templateByStory")); 
         getEl("makeInventoryList   ".trim()).addEventListener("click", makeExport("inventoryTemplate")); 
@@ -67,15 +68,15 @@ See the License for the specific language governing permissions and
         listen(getEl("convertToDocxTemplate"), "click", convertToDocxTemplate);
         listen(getEl("generateByDocxTemplate"), "click", generateByDocxTemplate);
     
-        state.briefingSelector = getEl("briefingSelector");
-        state.briefingMultiSelect = getEl("briefingMultiSelect");
         exports.content = getEl("briefingExportDiv");
     };
     
     exports.refresh = function () {
         resolveTextTemplate(function(textTemplate) {
             getEl("templateArea").value = textTemplate;
-            onNumberSelectorChange();
+            refreshCharacterRangeSelect();
+            refreshCharacterSetSelect();
+            refreshStorySetSelect();
         });
     };
     
@@ -90,68 +91,81 @@ See the License for the specific language governing permissions and
         });
     };
     
-    
-    var onExportSelectionChange = function (event) {
-      var showBriefingSelector = event.target.id === 'exportSelectionSpecific';
-      var showBriefingMultiSelect = event.target.id === 'exportSelectionMultiple';
-      setClassByCondition(state.briefingSelector, "hidden", !showBriefingSelector);
-      setClassByCondition(state.briefingMultiSelect, "hidden", !showBriefingMultiSelect);
+    var onCharacterSelectionChange = function (event) {
+      var exportCharacterRange = event.target.id === 'exportCharacterRange';
+      var exportCharacterSet = event.target.id === 'exportCharacterSet';
+      setClassByCondition(getEl("characterRangeSelect"), "hidden", !exportCharacterRange);
+      setClassByCondition(getEl("characterSetSelect"), "hidden", !exportCharacterSet);
+    };
+
+    var onStorySelectionChange = function (event) {
+        var exportStorySet = event.target.id === 'exportStorySet';
+        setClassByCondition(getEl("storySetSelect"), "hidden", !exportStorySet);
     };
     
     var getSelectedUsers = function () {
-      var id = getSelectedRadio("#briefingExportDiv input[name=exportSelection]").id;
+      var id = getSelectedRadio("#briefingExportDiv input[name=exportCharacterSelection]").id;
       switch(id){
-      case 'exportSelectionAll':
+      case 'exportAllCharacters':
           return null;
-      case 'exportSelectionSpecific':
+      case 'exportCharacterRange':
           return JSON.parse(state.briefingIntervalSelector.selectedOptions[0].value);
-      case 'exportSelectionMultiple':
-          var opts = state.briefingMultiSelector.selectedOptions;
-          var vals = {};
-          for (var i = 0; i < opts.length; i++) {
-              vals[opts[i].value] = true;
-          }
-          return vals;
+      case 'exportCharacterSet':
+          return nl2array(state.characterSetSelector.selectedOptions).map(opt => opt.value);
       default:
           Utils.alert("unexpected id: " + id);
       }
       return null;
     };
     
-    var onNumberSelectorChange = function () {
-      var selector = clearEl(state.briefingIntervalSelector);
-      var multiSel = clearEl(state.briefingMultiSelector);
-      var num = Number(state.briefingNumberSelector.value);
-      
-      var option, chunks, displayText, value;
-      PermissionInformer.getEntityNamesArray('character', false, function(err, names){
-        if(err) {Utils.handleError(err); return;}
-        if (names.length > 0) {
-          chunks = arr2Chunks(names, num);
-          
-          var data = chunks.map(function (chunk) {
-            if(chunk.length === 1){
-              displayText = chunk[0].displayName;
-            } else {
-              displayText = chunk[0].displayName + " - " + chunk[chunk.length-1].displayName;
-            }
-            
-            value = JSON.stringify(chunk.reduce(function(map, nameInfo){
-              map[nameInfo.value] = true;
-              return map;
-            }, {})); 
-            
-            return {
-                "id":  value,
-                "text": displayText
-            };
-          });
-          
-          $("#" + state.briefingIntervalSelector.id).select2({data:data});
-          fillSelector(multiSel, names.map(remapProps4Select));
+    var getSelectedStories = function () {
+        var id = getSelectedRadio("#briefingExportDiv input[name=exportStorySelection]").id;
+        switch(id){
+        case 'exportAllStories':
+            return null;
+        case 'exportStorySet':
+            return nl2array(state.storySetSelector.selectedOptions).map(opt => opt.value);
+        default:
+            Utils.alert("unexpected id: " + id);
         }
-      });
+        return null;
     };
+    
+    var refreshCharacterRangeSelect = function () {
+        var selector = clearEl(state.briefingIntervalSelector);
+        var num = Number(state.briefingNumberSelector.value);
+        
+        var chunks;
+        PermissionInformer.getEntityNamesArray('character', false, function(err, names){
+            if(err) {Utils.handleError(err); return;}
+            if (names.length > 0) {
+                chunks = R.splitEvery(num, names);
+                var data = chunks.map(function (chunk) {
+                    return {
+                        "id":  JSON.stringify(chunk.map(nameInfo => nameInfo.value)),
+                        "text": chunk.length === 1 ? chunk[0].displayName : chunk[0].displayName + " - " + chunk[chunk.length-1].displayName
+                    };
+                });
+                
+                $("#" + state.briefingIntervalSelector.id).select2({data:data});
+            }
+        });
+    };
+    
+
+    var refreshSetSelect = function(entityType, selectorName) {
+        var multiSel = clearEl(state[selectorName]);
+        PermissionInformer.getEntityNamesArray(entityType, false, function(err, names) {
+            if (err) {Utils.handleError(err);return;}
+            if (names.length > 0) {
+                fillSelector(multiSel, names.map(remapProps4Select));
+                setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
+            }
+        });
+    };
+    
+    var refreshStorySetSelect = () => refreshSetSelect('story', 'storySetSelector');
+    var refreshCharacterSetSelect = () => refreshSetSelect('character', 'characterSetSelector');
     
     var makeExport = function (type) {
         return function(){
@@ -163,7 +177,7 @@ See the License for the specific language governing permissions and
     };
     
     var getBriefingData = function(callback){
-        DBMS.getBriefingData(getSelectedUsers(), getEl('exportOnlyFinishedStories').checked, function(err, briefingData){
+        DBMS.getBriefingData(getSelectedUsers(), getSelectedStories(), getEl('exportOnlyFinishedStories').checked, function(err, briefingData){
             if(err) {Utils.handleError(err); return;}
             // some postprocessing
             DBMS.getCharacterProfileStructure(function(err, profileSettings){

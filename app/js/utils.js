@@ -345,17 +345,10 @@ function passEls(src, dst){
     }
 };
 
-function listen(el, event, listener){
+var listen = R.curry(function(el, event, listener){
   el.addEventListener(event, listener);
-};
-
-function arr2Chunks(array, chunkSize) {
-  var i, j, chunks = [];
-  for (i = 0, j = array.length; i < j; i += chunkSize) {
-    chunks.push(array.slice(i, i + chunkSize));
-  }
-  return chunks;
-};
+  return el;
+});
 
 var fillSelector = R.curry(function(sel, data){
     return addEls(sel, data.map(function (item) {
@@ -391,7 +384,6 @@ var arr2Select = R.map(R.compose(R.zipObj(['value','name']), R.repeat(R.__, 2)))
 var constArr2Select = R.map(R.compose(R.zipObj(['value','name']), (name) => [name, constL10n(name)]));
 
 var getSelectedRadio = function(query){
-    "use strict";
     var els = document.querySelectorAll(query);
     for (var i = 0; i < els.length; i++) {
         if(els[i].checked === true){
