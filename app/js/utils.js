@@ -263,6 +263,10 @@ function queryEl(sel){
     return document.querySelector(sel);
 };
 
+function queryEls(sel){
+    return nl2array(document.querySelectorAll(sel));
+};
+
 function queryElEls(el, sel){
     return el.querySelectorAll(sel);
 };
@@ -279,10 +283,6 @@ function makeText(text){
   return document.createTextNode(text);
 };
 
-//function addEl(parent, child){
-//  parent.appendChild(child);
-//  return parent;
-//};
 var addEl = R.curry(function(parent, child){
     parent.appendChild(child);
     return parent;
