@@ -39,24 +39,13 @@ See the License for the specific language governing permissions and
         };
     
         var _isStoryEmpty = function (database, storyName) {
-            "use strict";
             return database.Stories[storyName].events.length == 0;
         };
         
         dbmsUtils._isStoryEmpty = _isStoryEmpty;
         
         var _isStoryFinished = function (database, storyName) {
-            "use strict";
-            return database.Stories[storyName].events.every(function(event){
-                var isReady = true;
-                for(var characterName in event.characters){
-                    if(event.characters[characterName] && !event.characters[characterName].ready){
-                        isReady = false;
-                        break;
-                    } 
-                }
-                return isReady;
-            });
+            return database.Stories[storyName].events.every(event => !R.isEmpty(event.characters) && R.values(event.characters).every(adaptation => adaptation.ready));
         };
         
         dbmsUtils._isStoryFinished = _isStoryFinished;

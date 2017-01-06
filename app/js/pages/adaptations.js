@@ -145,7 +145,7 @@ See the License for the specific language governing permissions and
         nl2array(queryElEls(exports.content, 'div[dependent-on-character]')).map(addClass(R.__,"hidden"));
         
         var characterNames = nl2array(getEl('events-characterSelector').selectedOptions).map(opt => opt.characterName);
-        characterNames.forEach( name => nl2array(queryElEls(exports.content, 'div[dependent-on-character=' + name + ']')).map(removeClass(R.__,"hidden")));
+        characterNames.forEach( name => nl2array(queryElEls(exports.content, 'div[dependent-on-character="' + name + '"]')).map(removeClass(R.__,"hidden")));
         eventRows.map( row => setClassByCondition(row, 'hidden', R.intersection(row.dependsOnCharacters,characterNames).length === 0));
         
         updateSettings("characterNames", characterNames);
