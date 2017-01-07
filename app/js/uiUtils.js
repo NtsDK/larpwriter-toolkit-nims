@@ -165,6 +165,10 @@ See the License for the specific language governing permissions and
         that.style.height = that.scrollHeight + 12 + 'px';
     };
     
+    exports.resizeTextarea2 = function (that) {
+        that.style.height = '24px';
+        that.style.height = that.scrollHeight + 12 + 'px';
+    };
     
     exports.makeAdaptationTimeInput = function(storyName, event, characterName, isEditable){
         var input = makeEl("input");
@@ -201,6 +205,21 @@ See the License for the specific language governing permissions and
         var dataKey = JSON.parse(event.target.dataKey);
         var value = event.target.checked;
         DBMS.changeAdaptationReadyStatus(dataKey[0], dataKey[1], dataKey[2], value, Utils.processError());
+    };
+    
+    exports.makePanelCore = function(title, content){
+        var panel = addClasses(makeEl('div'), ["panel", "panel-default"]);
+        var h3 = addClass(addEl(makeEl('h3'), title), "panel-title");
+        var a = setAttr(makeEl('a'),'href','#/');
+        var headDiv = addClass(makeEl('div'), "panel-heading");
+        addEl(panel, addEl(headDiv, addEl(a, h3)));
+        var contentDiv = addClass(makeEl('div'), "panel-body");
+        addEl(panel, addEl(contentDiv, content));
+        return {
+            panel: panel,
+            contentDiv: contentDiv,
+            a: a
+        };
     };
 
 })(this['UI']={});

@@ -134,11 +134,18 @@ body {
 #groupsButton{
   background: transparent url("../images/shared-folder.svg") no-repeat scroll 50% 50%;
 }
+#textSearchButton{
+  background: transparent url("../images/textSearch.svg") no-repeat scroll 50% 50%;
+}
 
-#accessManagerButton, #chatButton, 
-#timelineButton, #socialNetworkButton, 
-#filterButton, #logViewerButton, 
-#groupsButton
+#accessManagerButton, 
+#chatButton, 
+#timelineButton, 
+#socialNetworkButton, 
+#filterButton, 
+#logViewerButton, 
+#groupsButton,
+#textSearchButton
 {
   background-color:  rgb(221, 221, 221);
 /*   width: 50px; */
@@ -147,18 +154,26 @@ body {
   background-size: 28px;
 }
 
-#accessManagerButton:hover, #chatButton:hover,
-#timelineButton:hover, #socialNetworkButton:hover, 
-#filterButton:hover, #logViewerButton:hover,
-#groupsButton:hover
+#accessManagerButton:hover, 
+#chatButton:hover,
+#timelineButton:hover, 
+#socialNetworkButton:hover, 
+#filterButton:hover, 
+#logViewerButton:hover,
+#groupsButton:hover,
+#textSearchButton:hover
 {
   background-color:  #ccc;
 }
 
-#accessManagerButton.active, #chatButton.active, 
-#timelineButton.active, #socialNetworkButton.active, 
-#filterButton.active, #logViewerButton.active,
-#groupsButton.active
+#accessManagerButton.active, 
+#chatButton.active, 
+#timelineButton.active, 
+#socialNetworkButton.active, 
+#filterButton.active, 
+#logViewerButton.active,
+#groupsButton.active,
+#textSearchButton.active
 {
   color: #FFF;
 /*   background-color: #337AB7; */

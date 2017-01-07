@@ -586,3 +586,37 @@ See the License for the specific language governing permissions and
 }
 
 /* **/
+
+/** text-search-tab */
+.text-search-tab .settings-panel{
+  flex-grow: 0;
+  margin-right: 8px;
+  flex-basis: 240px;
+  flex-shrink: 0;
+}
+.text-search-tab .text-search-input{
+  width: 100%;
+}
+
+.text-search-tab .result-panel{
+  flex-grow: 1;
+}
+
+.text-search-tab .text-card{
+  margin-bottom: 16px;
+}
+.text-search-tab .text-body{
+  border: 1px solid grey;
+  height: 160px;
+  overflow: auto;
+  resize: both;
+}
+.text-search-tab .string-body{
+  border: 1px solid grey;
+}
+.text-search-tab .text-body span,
+.text-search-tab .string-body span{
+  background-color: green;
+  color: white;
+}
+/* text-search-tab **/

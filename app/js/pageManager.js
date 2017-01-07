@@ -85,6 +85,7 @@ PageManager.onDatabaseLoad = function () {
             Utils.addView(containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
             Utils.addView(containers, "profile-filter", ProfileFilter, {id:"filterButton", tooltip:true});
             Utils.addView(containers, "groups", Groups, {id:"groupsButton", tooltip:true});
+            Utils.addView(containers, "textSearch", TextSearch, {id:"textSearchButton", tooltip:true});
             
             addEl(navigation, addClass(makeEl("div"), "nav-separator"));
             

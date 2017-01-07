@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     exports.init = function() {
-//        exports.content = getEl('Template');
+//        exports.content = queryEl('.Template');
     };
     
     exports.refresh = function() {

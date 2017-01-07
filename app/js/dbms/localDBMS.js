@@ -51,6 +51,7 @@ function makeLocalDBMS(){
     storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
     storyAdaptationsAPI(LocalDBMS, CommonUtils, dbmsUtils);
     accessManagerAPI(LocalDBMS, CommonUtils, R);
+    textSearchAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
     
     logAPI(LocalDBMS, R, CommonUtils);
     

@@ -350,6 +350,14 @@ var listen = R.curry(function(el, event, listener){
   return el;
 });
 
+var listenOnEnter = R.curry(function(el, callback){
+    listen(el, 'keydown', function(e) {
+        if (e.keyCode === 13) {
+            callback();
+        }
+    });
+});
+
 var fillSelector = R.curry(function(sel, data){
     return addEls(sel, data.map(function (item) {
         var opt = makeEl("option");

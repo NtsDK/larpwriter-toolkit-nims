@@ -240,21 +240,15 @@ See the License for the specific language governing permissions and
     };
     
     var makePanel = function(title, content, hideAllPanels){
-        var panel = addClasses(makeEl('div'), ["panel", "panel-default"]);
-        var h3 = addClass(addEl(makeEl('h3'), title), "panel-title");
-        var a = setAttr(makeEl('a'),'href','#/');
-        var headDiv = addClass(makeEl('div'), "panel-heading");
-        addEl(panel, addEl(headDiv, addEl(a, h3)));
-        var contentDiv = addClass(makeEl('div'), "panel-body");
-        setClassByCondition(contentDiv, 'hidden', hideAllPanels);
-        addEl(panel, addEl(contentDiv, content));
-        var panelToggler = UI.togglePanel(contentDiv);
-        listen(a, "click", function(){
+        var panelInfo = UI.makePanelCore(title, content);
+        setClassByCondition(panelInfo.contentDiv, 'hidden', hideAllPanels);
+        var panelToggler = UI.togglePanel(panelInfo.contentDiv);
+        listen(panelInfo.a, "click", function(){
             panelToggler();
             refreshTextAreas()
         });
         
-        return panel;
+        return panelInfo.panel;
     };
     
     var makeGroupContent = function(groupTexts){
