@@ -309,18 +309,18 @@ See the License for the specific language governing permissions and
             return info.bindingData.map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
         };
         
-        exports.isFilterModelCompatibleWithProfiles = function(profileSettings, filterModel){
-            var profilePart = filterModel.filter(R.compose(R.test(new RegExp('^' + Constants.CHAR_PREFIX)), R.prop('name')));
-            var profileSettingsMap = R.indexBy(R.prop('name'), profileSettings);
+        var findProfileStructureConflicts = function(prefix, profileStructure, filterModel){
             var conflictTypes = [];
+            var profilePart = filterModel.filter(R.compose(R.test(new RegExp('^' + prefix)), R.prop('name')));
+            var profileSettingsMap = R.indexBy(R.prop('name'), profileStructure);
             profilePart.forEach(function(modelItem){
-                var itemName = modelItem.name.substring(Constants.CHAR_PREFIX.length);
+                var itemName = modelItem.name.substring(prefix.length);
                 var profileItem = profileSettingsMap[itemName];
                 if(!profileItem || profileItem.type !== modelItem.type){
                     conflictTypes.push(itemName);
                     return;
                 }
-                if(profileItem.type === 'enum'){
+                if(profileItem.type === 'enum' || profileItem.type === 'multiEnum'){
                     var profileEnum = profileItem.value.split(',');
                     var modelEnum = Object.keys(modelItem.selectedOptions);
                     if(R.difference(modelEnum, profileEnum).length != 0){
@@ -331,7 +331,13 @@ See the License for the specific language governing permissions and
             });
             return conflictTypes;
         };
-
+        
+        exports.isFilterModelCompatibleWithProfiles = function(profileStructure, filterModel){
+            var charConflicts = findProfileStructureConflicts(Constants.CHAR_PREFIX, profileStructure.characters, filterModel);
+            var playerConflicts = findProfileStructureConflicts(Constants.PLAYER_PREFIX, profileStructure.players, filterModel);
+            console.log('playerConflicts' + playerConflicts);
+            return charConflicts.concat(playerConflicts);
+        };
 
     }
     

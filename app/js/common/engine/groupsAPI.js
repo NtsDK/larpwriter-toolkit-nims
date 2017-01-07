@@ -131,7 +131,10 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.saveFilterToGroup = function(groupName, filterModel, callback) {
-            var conflictTypes = CommonUtils.isFilterModelCompatibleWithProfiles(this.database.CharacterProfileStructure, filterModel);
+            var conflictTypes = CommonUtils.isFilterModelCompatibleWithProfiles({
+                characters: this.database.CharacterProfileStructure,
+                players: this.database.PlayerProfileStructure
+            }, filterModel);
             if(conflictTypes.length != 0){
                 callback(new Errors.ValidationError("groups-page-filter-is-incompatible-with-base-profiles", [conflictTypes.join(',')]));
                 return;

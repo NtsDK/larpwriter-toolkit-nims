@@ -49,7 +49,10 @@ FilterConfiguration.prototype.getGroupedProfileFilterItems = function(){
 };
 
 FilterConfiguration.prototype.getBaseProfileSettings = function(){
-    return this.info.characters.profileStructure;
+    return {
+        characters: this.info.characters.profileStructure,
+        players: this.info.players.profileStructure
+    }
 };
 
 FilterConfiguration.prototype.getDataArrays = function(filterModel) {
