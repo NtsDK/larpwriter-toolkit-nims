@@ -14,181 +14,193 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var UI = {};
+(function(exports){
 
-UI.initTabPanel = function(tabClazz, containerClazz) {
-    "use strict";
-    var containers = getEls(containerClazz);
-
-    var i;
-    for (i = 1; i < containers.length; i++) { // don't hide 1st element
-        addClass(containers[i], "hidden");
-    }
-
-    var tabButtons = getEls(tabClazz);
-
-    addClass(tabButtons[0], "active");
-
-    for (i = 0; i < tabButtons.length; i++) {
-        listen(tabButtons[i], "click", UI.tabButtonClick(tabButtons, containers));
-    }
-};
-
-UI.tabButtonClick = function(buttons, containers) {
-    "use strict";
-    return function(event) {
-        for (var i = 0; i < buttons.length; i++) {
-            setClassByCondition(buttons[i], "active", event.target.id === buttons[i].id);
+    exports.initTabPanel = function(tabClazz, containerClazz) {
+        var containers = getEls(containerClazz);
+    
+        var i;
+        for (i = 1; i < containers.length; i++) { // don't hide 1st element
+            addClass(containers[i], "hidden");
         }
-        for (var i = 0; i < containers.length; i++) {
-            setClassByCondition(containers[i], "hidden", event.target.id + "Container" !== containers[i].id);
+    
+        var tabButtons = getEls(tabClazz);
+    
+        addClass(tabButtons[0], "active");
+    
+        for (i = 0; i < tabButtons.length; i++) {
+            listen(tabButtons[i], "click", tabButtonClick(tabButtons, containers));
         }
     };
-};
-
-UI.fillShowItemSelector = function (selector, displayArray) {
-    var el;
-    setAttr(selector, "size", displayArray.length);
-    displayArray.forEach(function(value) {
-        el = setProps(makeEl("option"), {
-            "selected" : true,
-        });
-        setClassByCondition(el, 'hidden', value.hidden);
-        addEl(selector, addEl(el, makeText(value.name)));
-    });
-};
-
-UI.fillShowItemSelector2 = function (selector, optionGroups) {
-    var el, groupEl, counter = 0;
-    addEls(selector, optionGroups.map(function(group) {
-        counter++;
-        groupEl = setAttr(makeEl("optgroup"), 'label', group.name);
-        addEls(groupEl, group.array.map((value) => {
+    
+    var tabButtonClick = function(buttons, containers) {
+        return function(event) {
+            for (var i = 0; i < buttons.length; i++) {
+                setClassByCondition(buttons[i], "active", event.target.id === buttons[i].id);
+            }
+            for (var i = 0; i < containers.length; i++) {
+                setClassByCondition(containers[i], "hidden", event.target.id + "Container" !== containers[i].id);
+            }
+        };
+    };
+    
+    exports.fillShowItemSelector = function (selector, displayArray) {
+        var el;
+        setAttr(selector, "size", displayArray.length);
+        displayArray.forEach(function(value) {
             el = setProps(makeEl("option"), {
                 "selected" : true,
             });
             setClassByCondition(el, 'hidden', value.hidden);
-            counter += (value.hidden ? 0 : 1);
-            return addEl(el, makeText(value.name));
-        }));
-        return groupEl;
-    }));
-    setAttr(selector, "size", counter);
-};
-
-UI.showSelectedEls = function(classKey){
-    "use strict";
-    return function(event){
-        var el = event.target;
-        var els, i, j;
-        for (i = 0; i < el.options.length; i += 1) {
-            if(hasClass(el.options[i], 'hidden')){
-                continue;
-            }
-            els = getEls(i + classKey);
-            for (j = 0; j < els.length; j++) {
-                setClassByCondition(els[j], "hidden", !el.options[i].selected);
-            }
-        }
-    }
-};
-
-UI.initSelectorFilters = function(){
-    "use strict";
-    var elems = document.querySelectorAll("[selector-filter]");
-    var el, sel;
-    for (var i = 0; i < elems.length; i++) {
-        el = elems[i];
-        sel = queryEl(getAttr(el,"selector-filter"));
-        listen(el, "input", UI.filterOptions(sel))
-    }
-};
-
-UI.filterOptions = function(sel){
-    "use strict";
-    return function(event){
-        var val = event.target.value;
-        var i, opt;
-        val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
-        for (i = 0; i < sel.options.length; i += 1) {
-            opt = sel.options[i];
-            setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
-        }
-    }
-};
-
-UI.initPanelTogglers = function(){
-    "use strict";
-    var elems = document.querySelectorAll("[panel-toggler]");
-    var el, sel, attr;
-    for (var i = 0; i < elems.length; i++) {
-        el = elems[i];
-        attr = getAttr(el,"panel-toggler");
-        sel = document.querySelector(attr);
-        if(sel == null){
-            Utils.alert("Panel toggler is broken: " + attr);
-        }
-        listen(el, "click", UI.togglePanel(sel))
-    }
-};
-
-UI.togglePanel = function(sel){
-    "use strict";
-    return function(event){
-        toggleClass(sel, "hidden");
-    }
-};
-
-UI.makeEventTimePicker = function (opts) {
-    "use strict";
-    var input = makeEl("input");
-    R.ap([addClass(input)], opts.extraClasses);
-    addClass(input, "eventTime");
-    input.value = opts.eventTime;
-    
-    input.eventIndex = opts.index;
-    
-    var pickerOpts = {
-        lang : L10n.getLang(),
-        mask : true,
-        startDate : new Date(opts.preGameDate),
-        endDate : new Date(opts.date),
-        onChangeDateTime : opts.onChangeDateTimeCreator(input),
+            addEl(selector, addEl(el, makeText(value.name)));
+        });
     };
     
-    if (opts.eventTime !== "") {
-        pickerOpts.value = opts.eventTime;
-    } else {
-        pickerOpts.value = opts.date;
-        addClass(input, "defaultDate");
-    }
+    exports.fillShowItemSelector2 = function (selector, optionGroups) {
+        var el, groupEl, counter = 0;
+        addEls(selector, optionGroups.map(function(group) {
+            counter++;
+            groupEl = setAttr(makeEl("optgroup"), 'label', group.name);
+            addEls(groupEl, group.array.map((value) => {
+                el = setProps(makeEl("option"), {
+                    "selected" : true,
+                });
+                setClassByCondition(el, 'hidden', value.hidden);
+                counter += (value.hidden ? 0 : 1);
+                return addEl(el, makeText(value.name));
+            }));
+            return groupEl;
+        }));
+        setAttr(selector, "size", counter);
+    };
     
-    jQuery(input).datetimepicker(pickerOpts);
-    return input;
-};
+    exports.showSelectedEls = function(classKey){
+        return function(event){
+            var el = event.target;
+            var els, i, j;
+            for (i = 0; i < el.options.length; i += 1) {
+                if(hasClass(el.options[i], 'hidden')){
+                    continue;
+                }
+                els = getEls(i + classKey);
+                for (j = 0; j < els.length; j++) {
+                    setClassByCondition(els[j], "hidden", !el.options[i].selected);
+                }
+            }
+        }
+    };
+    
+    exports.initSelectorFilters = function(){
+        var elems = document.querySelectorAll("[selector-filter]");
+        var el, sel;
+        for (var i = 0; i < elems.length; i++) {
+            el = elems[i];
+            sel = queryEl(getAttr(el,"selector-filter"));
+            listen(el, "input", filterOptions(sel))
+        }
+    };
+    
+    var filterOptions = function(sel){
+        return function(event){
+            var val = event.target.value;
+            var i, opt;
+            val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
+            for (i = 0; i < sel.options.length; i += 1) {
+                opt = sel.options[i];
+                setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
+            }
+        }
+    };
+    
+    exports.initPanelTogglers = function(){
+        var elems = document.querySelectorAll("[panel-toggler]");
+        var el, sel, attr;
+        for (var i = 0; i < elems.length; i++) {
+            el = elems[i];
+            attr = getAttr(el,"panel-toggler");
+            sel = document.querySelector(attr);
+            if(sel == null){
+                Utils.alert("Panel toggler is broken: " + attr);
+            }
+            listen(el, "click", exports.togglePanel(sel))
+        }
+    };
+    
+    exports.togglePanel = function(sel){
+        return function(event){
+            toggleClass(sel, "hidden");
+        }
+    };
+    
+    exports.makeEventTimePicker = function (opts) {
+        var input = makeEl("input");
+        R.ap([addClass(input)], opts.extraClasses);
+        addClass(input, "eventTime");
+        input.value = opts.eventTime;
+        
+        input.eventIndex = opts.index;
+        
+        var pickerOpts = {
+            lang : L10n.getLang(),
+            mask : true,
+            startDate : new Date(opts.preGameDate),
+            endDate : new Date(opts.date),
+            onChangeDateTime : opts.onChangeDateTimeCreator(input),
+        };
+        
+        if (opts.eventTime !== "") {
+            pickerOpts.value = opts.eventTime;
+        } else {
+            pickerOpts.value = opts.date;
+            addClass(input, "defaultDate");
+        }
+        
+        jQuery(input).datetimepicker(pickerOpts);
+        return input;
+    };
+    
+    exports.resizeTextarea = function (ev) {
+        var that = ev.target;
+        that.style.height = '24px';
+        that.style.height = that.scrollHeight + 12 + 'px';
+    };
+    
+    
+    exports.makeAdaptationTimeInput = function(storyName, event, characterName, isEditable){
+        var input = makeEl("input");
+        setClassByCondition(input, "notEditable", !isEditable);
+        addClass(input,"adaptationTimeInput");
+        input.value = event.characters[characterName].time;
+        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+        listen(input, "change", onChangePersonalTimeDelegate);
+        return input;
+    };
+    
+    var onChangePersonalTimeDelegate = function (event) {
+        var dataKey = JSON.parse(event.target.dataKey);
+        var time = event.target.value;
+        DBMS.setEventAdaptationTime(dataKey[0], dataKey[1], dataKey[2], time, Utils.processError());
+    };
+    
+    exports.makeAdaptationReadyInput = function(storyName, event, characterName, isEditable){
+        var div = makeEl("div");
+        var input = makeEl("input");
+        setClassByCondition(input, "notEditable", !isEditable);
+        input.type = "checkbox";
+        input.checked = event.characters[characterName].ready;
+        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+        input.id = event.index + "-" + storyName + "-" + characterName;
+        listen(input, "change", onChangeReadyStatus);
+        addEl(div, input);
+        
+        addEl(div, setAttr(addEl(makeEl("label"), makeText(constL10n(Constants.finishedText))), "for", input.id));
+        return div;
+    };
+    
+    var onChangeReadyStatus = function (event) {
+        var dataKey = JSON.parse(event.target.dataKey);
+        var value = event.target.checked;
+        DBMS.changeAdaptationReadyStatus(dataKey[0], dataKey[1], dataKey[2], value, Utils.processError());
+    };
 
-UI.resizeTextarea = function (ev) {
-    "use strict";
-    var that = ev.target;
-    that.style.height = '24px';
-    that.style.height = that.scrollHeight + 12 + 'px';
-};
-
-
-UI.makeAdaptationTimeInput = function(storyName, event, characterName, isEditable){
-    "use strict";
-    var input = makeEl("input");
-    setClassByCondition(input, "notEditable", !isEditable);
-    addClass(input,"adaptationTimeInput");
-    input.value = event.characters[characterName].time;
-    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-    listen(input, "change", UI.onChangePersonalTimeDelegate);
-    return input;
-};
-
-UI.onChangePersonalTimeDelegate = function (event) {
-    "use strict";
-    var dataKey = JSON.parse(event.target.dataKey);
-    var time = event.target.value;
-    DBMS.setEventAdaptationTime(dataKey[0], dataKey[1], dataKey[2], time, Utils.processError());
-};
+})(this['UI']={});

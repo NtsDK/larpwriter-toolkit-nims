@@ -457,9 +457,14 @@ See the License for the specific language governing permissions and
             attachTextareaResizer(input);
             
             var adaptationHolder = makeEl('div');
-            addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input, makeEl("br")]);
+            addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input]);
             els.push(adaptationHolder);
         }
+        
+        if(isAdaptationsMode){
+            els.push(UI.makeAdaptationReadyInput(event.storyName, event, characterName, isAdaptationEditable));
+        }
+        els.push(makeEl("br"));
         
         addEls(eventDiv, els);
         return eventDiv;

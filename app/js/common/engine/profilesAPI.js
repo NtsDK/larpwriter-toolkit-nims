@@ -132,8 +132,6 @@ See the License for the specific language governing permissions and
                 }
                 profileInfo[fieldName] = Number(value);
                 break;
-                profileInfo[fieldName] = value;
-                break;
             default:
                 callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
             }

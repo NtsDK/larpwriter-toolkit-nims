@@ -270,7 +270,7 @@ See the License for the specific language governing permissions and
                 addEl(divLeft, makeText(characterName));
                 addEl(divRight, UI.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
                 addEl(div, makeAdaptationTextInput(storyName, event, characterName, isEditable));
-                addEl(div, makeAdaptationReadyInput(storyName, event, characterName, isEditable));
+                addEl(div, UI.makeAdaptationReadyInput(storyName, event, characterName, isEditable));
                 return div;
             }));
             
@@ -304,27 +304,6 @@ See the License for the specific language governing permissions and
         input.dataKey = JSON.stringify([storyName, event.index, characterName]);
         listen(input, "change", onChangeAdaptationText);
         return input;
-    };
-    
-    var makeAdaptationReadyInput = function(storyName, event, characterName, isEditable){
-        var div = makeEl("div");
-        var input = makeEl("input");
-        setClassByCondition(input, "notEditable", !isEditable);
-        input.type = "checkbox";
-        input.checked = event.characters[characterName].ready;
-        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-        input.id = event.index + "-" + storyName + "-" + characterName;
-        listen(input, "change", onChangeReadyStatus);
-        addEl(div, input);
-        
-        addEl(div, setAttr(addEl(makeEl("label"), makeText(constL10n(Constants.finishedText))), "for", input.id));
-        return div;
-    };
-    
-    var onChangeReadyStatus = function (event) {
-        var dataKey = JSON.parse(event.target.dataKey);
-        var value = event.target.checked;
-        DBMS.changeAdaptationReadyStatus(dataKey[0], dataKey[1], dataKey[2], value, Utils.processError());
     };
     
     var onChangeOriginText = function (event) {
