@@ -90,7 +90,7 @@ See the License for the specific language governing permissions and
                 settings["ProfileEditor"][type] = name;
                 profileName = name;
             }
-            $(selector).select2().val(profileName).trigger('change');
+            showProfileInfoDelegate2(type)({target: {value: profileName}});
         }
     };
     
