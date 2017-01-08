@@ -49,7 +49,7 @@ function makeLocalDBMS(){
     storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners);
     
     storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
-    storyAdaptationsAPI(LocalDBMS, CommonUtils, dbmsUtils);
+    storyAdaptationsAPI(LocalDBMS, R, CommonUtils, dbmsUtils);
     accessManagerAPI(LocalDBMS, CommonUtils, R);
     textSearchAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
     

@@ -98,7 +98,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getEventsTimeInfo = function(callback) {
             var result = R.flatten(R.values(CommonUtils.clone(this.database.Stories)).map(story => {
                 return story.events.map((event, index) => {
-                    return setProps(R.pick(['name', 'time'], event), {
+                    return R.merge(R.pick(['name', 'time'], event), {
                         characters: R.keys(event.characters),
                         storyName: story.name,
                         index: index
