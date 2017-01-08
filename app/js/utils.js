@@ -327,12 +327,12 @@ var setProp = R.curry(function(el, key, value){
   return el;
 });
 
-function setProps(el, map){
+var setProps = R.curry(function(el, map){
   for(var key in map){
     setProp(el, key, map[key]);
   }
   return el;
-}
+});
 
 function clearEl(el){
   Utils.removeChildren(el);

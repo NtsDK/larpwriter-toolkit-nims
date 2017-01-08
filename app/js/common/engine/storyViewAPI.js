@@ -95,33 +95,18 @@ See the License for the specific language governing permissions and
         };
     
         // timeline
-        LocalDBMS.prototype.getEventGroupsForStories = function(storyNames, callback) {
-            "use strict";
-            var eventGroups = [];
-    
-            var events;
-    
-            var that = this;
-            Object.keys(this.database.Stories).filter(function(storyName) {
-                return storyNames.indexOf(storyName) !== -1;
-            }).forEach(function(storyName) {
-                events = [];
-    
-                var tmpEvents = CommonUtils.clone(that.database.Stories[storyName].events);
-                tmpEvents.map(function(elem, i) {
-                    elem.index = i;
-                    elem.storyName = storyName;
-                    return elem;
-                }).forEach(function(event) {
-                    events.push(event);
+        LocalDBMS.prototype.getEventsTimeInfo = function(callback) {
+            var result = R.flatten(R.values(CommonUtils.clone(this.database.Stories)).map(story => {
+                return story.events.map((event, index) => {
+                    return setProps(R.pick(['name', 'time'], event), {
+                        characters: R.keys(event.characters),
+                        storyName: story.name,
+                        index: index
+                    });
                 });
-    
-                eventGroups.push({
-                    storyName : storyName,
-                    events : events
-                })
-            });
-            callback(null, eventGroups);
+            }));
+            
+            callback(null, result);
         };
         
         // character filter

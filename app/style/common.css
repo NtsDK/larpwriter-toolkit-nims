@@ -287,3 +287,7 @@ input[type="checkbox"]:checked + .checkbox-label{
   background-size: 27px;
 }
 
+.flexRoot {
+  display: flex;
+}
+

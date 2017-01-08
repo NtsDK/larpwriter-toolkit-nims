@@ -820,7 +820,7 @@ See the License for the specific language governing permissions and
 
 
 
-    <div id="eventsDiv">
+    <div class="adaptations-tab">
       <div class="panel panel-default">
         <div class="panel-body">
           <input type="checkbox" id="finishedStoryCheckbox"/><label for="finishedStoryCheckbox" l10n-id="adaptations-show-only-unfinished-stories"></label>
@@ -1172,9 +1172,18 @@ See the License for the specific language governing permissions and
         <div class="storySelectorContainer">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title" l10n-id="timeline-stories"></h3>
+              <h3 class="panel-title" l10n-id="timeline-filter"></h3>
             </div>
             <div class="panel-body panel-resizable">
+              <div>
+                <input type="radio" name="timelineFilter" value="ByStory" id="timelineFilterByStory">
+                <label for="timelineFilterByStory" l10n-id="timeline-filter-by-stories"></label>
+              </div>
+              <div>
+                <input type="radio" name="timelineFilter" value="ByCharacter" id="timelineFilterByCharacter">
+                <label for="timelineFilterByCharacter" l10n-id="timeline-filter-by-characters"></label>
+              </div>
+            
               <input selector-filter="#timelineStorySelector"><br>
               <select size=20 id="timelineStorySelector" multiple></select>
             </div>

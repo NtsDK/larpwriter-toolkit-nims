@@ -45,6 +45,7 @@ See the License for the specific language governing permissions and
     };
     
     var makePanelContent = function(textsInfo, searchStr, caseSensitive){
+        textsInfo.result.sort(CommonUtils.charOrdAFactory(R.prop('name')));
         return addEls(makeEl('div'), textsInfo.result.map(textInfo => {
             var head = addEl(makeEl('div'), makeText(textInfo.name));
             var body = addClass(makeEl('div'), textInfo.type === 'text' ? 'text-body' : 'string-body');

@@ -26,8 +26,8 @@ See the License for the specific language governing permissions and
         listen(getEl('events-characterSelector'), "change", showPersonalStoriesByCharacters);
         listen(getEl('events-eventSelector'), "change", showPersonalStoriesByEvents);
         listen(getEl('finishedStoryCheckbox'), "change", exports.refresh);
-        queryEls('#eventsDiv input[name=adaptationFilter]').map(listen(R.__, "change", updateFilter));
-        exports.content = getEl("eventsDiv");
+        queryEls('.adaptations-tab input[name=adaptationFilter]').map(listen(R.__, "change", updateFilter));
+        exports.content = queryEl(".adaptations-tab");
     };
     
     exports.refresh = function() {

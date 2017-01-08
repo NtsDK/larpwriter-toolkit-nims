@@ -246,22 +246,17 @@ See the License for the specific language governing permissions and
 	flex-grow:0;
 }
 
-#eventsDiv .main-container{
+.adaptations-tab .main-container{
   display:flex;
 }
 
-#eventsDiv .main-container > div:first-child{
+.adaptations-tab .main-container > div:first-child{
   flex-grow:0;
   flex-basis: 216px;
   margin-right: 8px;
 }
 
 /* events.js **/
-
-.bioInput {
-	width: 300px;
-	height: 100px;
-}
 
 .inventoryInput {
 	width: 300px;
@@ -274,6 +269,8 @@ See the License for the specific language governing permissions and
 	background-color: rgba(255, 0, 0, 0.1);
 }
 
+/** timeline.js */
+
 #timelineContainer {
 	background-color: #fff;
 }
@@ -283,9 +280,12 @@ See the License for the specific language governing permissions and
   height: calc(100% - 30px);
 }
 
-.flexRoot {
-	display: flex;
+#timelineContainer .vis-item .vis-item-content{
+  padding: 4px;
+  line-height: 14px;
 }
+
+/* timeline.js **/
 
 .storySelectorContainer {
 /* 	flex-basis: 150px; */

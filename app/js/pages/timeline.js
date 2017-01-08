@@ -23,14 +23,13 @@ See the License for the specific language governing permissions and
     var state = {};
     
     exports.init = function () {
-        var selector = getEl("timelineStorySelector");
-        selector.addEventListener("change", onStorySelectorChangeDelegate);
-    
-        var container = getEl('timelineContainer');
+        listen(getEl("timelineStorySelector"), "change", onStorySelectorChangeDelegate);
     
         state.TimelineDataset = new vis.DataSet();
-    
         state.TagDataset = new vis.DataSet();
+        
+        queryEls("#timelineDiv input[name=timelineFilter]").map(listen(R.__, "change", refreshTimeline));
+        getEl("timelineFilterByStory").checked = true;
     
         // specify options
         var options = {
@@ -50,7 +49,7 @@ See the License for the specific language governing permissions and
     //        multiselect : true
         };
     
-        var timeline = new vis.Timeline(container, null, options);
+        var timeline = new vis.Timeline(getEl('timelineContainer'), null, options);
         timeline.setGroups(state.TagDataset);
         timeline.setItems(state.TimelineDataset);
         state.timelineComponent = timeline;
@@ -59,18 +58,12 @@ See the License for the specific language governing permissions and
     };
     
     exports.refresh = function () {
-        var selector = getEl("timelineStorySelector");
-        clearEl(selector);
-    
-        var option;
-            
         DBMS.getMetaInfo(function(err, metaInfo){
             if(err) {Utils.handleError(err); return;}
             
             state.postDate = metaInfo.date;
             state.preDate = metaInfo.preGameDate;
             
-            var timeExtra = 24*60*60*30*12*1000;
             var endDate = new Date(state.postDate);
             var startDate = new Date(state.preDate);
             endDate.setFullYear(endDate.getFullYear() + 1);
@@ -81,80 +74,96 @@ See the License for the specific language governing permissions and
                 start : startDate,
             });
             
-            PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
+            DBMS.getEventsTimeInfo( function(err, eventsTimeInfo){
                 if(err) {Utils.handleError(err); return;}
-                allStoryNames.forEach(function(nameInfo){
-                    option = makeEl("option");
-                    option.appendChild(makeText(nameInfo.displayName));
-                    option.value = nameInfo.value;
-                    selector.appendChild(option);
-                });
+                state.eventsTimeInfo = eventsTimeInfo;
+                state.eventsByStories = R.groupBy(R.prop('storyName'), eventsTimeInfo);
+                state.eventsByCharacters = R.uniq(R.flatten(eventsTimeInfo.map(event => event.characters)));
+                state.eventsByCharacters = R.zipObj(state.eventsByCharacters, R.ap([R.clone], R.repeat([], state.eventsByCharacters.length)));
+                eventsTimeInfo.forEach(event => event.characters.forEach( character => state.eventsByCharacters[character].push(event)));
                 
-                if(allStoryNames.length != 0){
-                    onStorySelectorChange([ allStoryNames[0].value ]);
-                }
-            });
-        });
-    };
-    
-    var onStorySelectorChangeDelegate = function (event) {
-        var selOptions = event.target.selectedOptions;
-        var storyNames = [];
-        for (var i = 0; i < selOptions.length; i++) {
-            storyNames.push(selOptions[i].value);
-        }
-        onStorySelectorChange(storyNames);
-    };
-    
-    var onStorySelectorChange = function (storyNames) {
-        state.TagDataset.clear();
-        state.TimelineDataset.clear();
-        
-        var storyName;
-        DBMS.getEventGroupsForStories(storyNames, function(err, eventGroups){
-            if(err) {Utils.handleError(err); return;}
-            
-            eventGroups.forEach(function (elem) {
-                storyName = elem.storyName;
-                state.TagDataset.add({
-                    id : storyName,
-                    content : storyName
-                });
-                var events = elem.events;
+                console.log(JSON.stringify(state.eventsByCharacters));
                 
-                events.forEach(function (event) {
-                    var date = state.postDate;
-                    if (event.time) {
-                        date = event.time;
-                    }
-                    
-                    state.TimelineDataset.add({
-                        content : event.name,
-                        start : date,
-                        group : storyName,
-                        storyName : storyName,
-                        eventIndex : event.index
+                PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
+                    if(err) {Utils.handleError(err); return;}
+                    PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacterNames){
+                        if(err) {Utils.handleError(err); return;}
+                        suffixy(allStoryNames, state.eventsByStories);
+                        state.allStoryNames = allStoryNames;
+                        suffixy(allCharacterNames, state.eventsByCharacters);
+                        state.allCharacterNames = allCharacterNames;
+                        refreshTimeline();
                     });
                 });
             });
-            
-            if(storyNames[0]){
-                state.TimelineDataset.add({
-                    content : L10n.getValue("overview-pre-game-end-date"),
-                    start : new Date(state.postDate),
-                    group : storyNames[0],
-                    className : "importantItem",
-                    editable : false
-                });
-                state.TimelineDataset.add({
-                    content : L10n.getValue("overview-pre-game-start-date"),
-                    start : new Date(state.preDate),
-                    group : storyNames[0],
-                    className : "importantItem",
-                    editable : false
-                });
-            }
         });
+    };
+    
+    function suffixy(entityNames, data){
+        var emptySuffix = constL10n(Constants.emptySuffix);
+        entityNames.forEach(nameInfo => {
+            if(data[nameInfo.value] === undefined){
+                nameInfo.displayName += emptySuffix;
+            } 
+        });
+    }
+    
+    var refreshTimeline = function(){
+        var selectorValues = getEl("timelineFilterByStory").checked ? state.allStoryNames : state.allCharacterNames;
+        
+        var selector = clearEl(getEl("timelineStorySelector"));
+        fillSelector(selector, selectorValues.map(remapProps4Select));
+        setAttr(selector, 'size', selectorValues.length > 15 ? 15 : selectorValues.length);
+        
+        if(selectorValues.length != 0){
+            selector.options[0].selected = true;
+            onStorySelectorChange([ selectorValues[0].value ]);
+        }
+    };
+    
+    var onStorySelectorChangeDelegate =  (event) => onStorySelectorChange(nl2array(event.target.selectedOptions).map(opt => opt.value));
+    
+    var prepareLabel = label => R.splitEvery(20, label).join('<br>');
+    
+    var onStorySelectorChange = function (entityNames) {
+        state.TagDataset.clear();
+        state.TimelineDataset.clear();
+        
+        state.TagDataset.add(entityNames.map(entityName => R.always({id : entityName, content : entityName})()));
+        
+        function fillTimelines(entityNames, data){
+            entityNames = R.intersection(entityNames, R.keys(data));
+            state.TimelineDataset.add(R.flatten(R.toPairs(R.pick(entityNames, data)).map(pair => {
+                var entityName = pair[0];
+                return pair[1].map(event => {
+                    return {
+                        content : prepareLabel(event.name),
+                        start : event.time !== '' ? event.time : state.postDate,
+                        group : entityName
+                    }
+                });
+            })));
+        }
+        
+        var byStory = getEl("timelineFilterByStory").checked
+        fillTimelines(entityNames, byStory ? state.eventsByStories : state.eventsByCharacters);
+        
+        if(entityNames[0]){
+            state.TimelineDataset.add({
+                content : prepareLabel(L10n.getValue("overview-pre-game-end-date")),
+                start : new Date(state.postDate),
+                group : entityNames[0],
+                className : "importantItem",
+                editable : false
+            });
+            state.TimelineDataset.add({
+                content : prepareLabel(L10n.getValue("overview-pre-game-start-date")),
+                start : new Date(state.preDate),
+                group : entityNames[0],
+                className : "importantItem",
+                editable : false
+            });
+        }
     };
 
 })(this['Timeline']={});
