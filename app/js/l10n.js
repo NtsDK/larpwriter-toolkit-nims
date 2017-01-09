@@ -18,18 +18,38 @@ PageManager, Utils, Overview, Characters, Stories, Adaptations, Briefings, Timel
 
 "use strict";
 
-var L10n = {};
+(function(exports, Dictionaries){
 
-L10n.initialized = false;
-L10n.l10nDelegates = [];
-
-L10n.init = function(){
-    "use strict";
-    if(L10n.initialized){
-        return;
-    }
-    L10n.dictionaries = {};
-    console.log(navigator.language);
+    var state = {};
+    
+    state.initialized = false;
+    state.l10nDelegates = [];
+    state.dictionaries = {};
+    state.lang = defaultLang;
+    
+    var init = function(){
+        if(state.initialized){
+            return;
+        }
+//        console.log(navigator.language);
+        
+        for(var name in Dictionaries){
+            state.dictionaries[name] = processDictionary(Dictionaries[name]);
+        }
+        
+    //    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
+    //    var lang = 'ru';
+//        var lang = defaultLang;
+//        console.log(lang);
+        
+        if(state.dictionaries[defaultLang]){
+            state.dict = state.dictionaries[defaultLang];
+        } else {
+            state.dict = state.dictionaries['en'];
+        }
+        setHtmlLang(defaultLang)
+        state.initialized = true;
+    };
     
     var processDictionary = function(dictionary){
         var processedDictionary = {};
@@ -41,84 +61,39 @@ L10n.init = function(){
         return processedDictionary;
     };
     
-    for(var name in Dictionaries){
-        L10n.dictionaries[name] = processDictionary(Dictionaries[name]);
-    }
+    var setHtmlLang = (lang) => setAttr(document.getElementsByTagName("html")[0],'lang', lang);
     
-//    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
-//    var lang = 'ru';
-    var lang = defaultLang;
-    console.log(lang);
-    
-    if(L10n.dictionaries[lang]){
-        L10n.dict = L10n.dictionaries[lang];
-    } else {
-        L10n.dict = L10n.dictionaries['en'];
-    }
-    L10n.initialized = true;
-};
-
-//var lang = "RU";
-var lang = defaultLang;
-L10n.toggleL10n = function(){
-    "use strict";
-    if(lang === "ru"){
-        L10n.dict = L10n.dictionaries['en'];
-        lang = "en";
-    } else {
-        L10n.dict = L10n.dictionaries['ru'];
-        lang = "ru";
-    }
-    L10n.localizeStatic();
-    L10n.l10nDelegates.forEach(function(delegate){
-        delegate();
-    });
-    PageManager.currentView.refresh();
-};
-
-L10n.getLang = function(){
-    return lang.toLowerCase();
-};
-
-L10n.getValue = function(name){
-    "use strict";
-    var value = L10n.dict[name];
-    return value ? value : name + ":RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA";
-};
-
-L10n.getFixedValue = function(name){
-    "use strict";
-    return function(){
-        return L10n.getValue(name);
+    exports.toggleL10n = function(){
+        if(state.lang === "ru"){
+            state.dict = state.dictionaries['en'];
+            state.lang = "en";
+        } else {
+            state.dict = state.dictionaries['ru'];
+            state.lang = "ru";
+        }
+        setHtmlLang(state.lang);
+        exports.localizeStatic();
+        state.l10nDelegates.forEach(function(delegate){
+            delegate();
+        });
+        PageManager.currentView.refresh();
     };
-};
+    
+    exports.getLang = () => state.lang.toLowerCase();
+    
+    exports.getValue = function(name){
+        var value = state.dict[name];
+        return value ? value : name + ":RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA";
+    };
+    
+    exports.onL10nChange = function(delegate){
+        state.l10nDelegates.push(delegate);
+    };
+    
+    exports.localizeStatic = function(){
+        init();
+        nl2array(document.querySelectorAll("[l10n-id]")).map(el => addEl(clearEl(el), makeText(exports.getValue(getAttr(el,"l10n-id")))));
+        nl2array(document.querySelectorAll("[l10n-placeholder-id]")).map(el => setAttr(el,"placeholder", exports.getValue(getAttr(el,"l10n-placeholder-id"))));
+    };
 
-L10n.onL10nChange = function(delegate){
-    "use strict";
-    L10n.l10nDelegates.push(delegate);
-};
-
-L10n.localizeStatic = function(){
-    "use strict";
-    L10n.init();
-    
-    var elems = document.querySelectorAll("[l10n-id]");
-    
-    var el;
-//    var sum = {};
-    for (var i = 0; i < elems.length; i++) {
-        el = elems[i];
-//        if(el.innerHTML !== ""){
-//            sum[getAttr(el,"l10n-id")] = el.innerHTML;
-//        }
-        addEl(clearEl(el), makeText(L10n.getValue(getAttr(el,"l10n-id"))));
-    }
-    
-//    addEl(document.getElementsByTagName('body')[0],makeText(JSON.stringify(sum)));
-    
-    elems = document.querySelectorAll("[l10n-placeholder-id]");
-    for (var i = 0; i < elems.length; i++) {
-        el = elems[i];
-        setAttr(el,"placeholder", L10n.getValue(getAttr(el,"l10n-placeholder-id")))
-    }
-};
+})(this['L10n']={}, Dictionaries);

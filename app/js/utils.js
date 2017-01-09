@@ -195,12 +195,10 @@ String.prototype.endsWith = function (suffix) {
 var strFormat = R.curry(CommonUtils.strFormat);
 
 function getL10n(key){
-    "use strict";
     return L10n.getValue(key);
 };
 
 function constL10n(key){
-    "use strict";
     return L10n.getValue('constant-' + key);
 }
 
