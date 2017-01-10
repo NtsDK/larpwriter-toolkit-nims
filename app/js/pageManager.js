@@ -165,6 +165,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 });
                 
                 state.currentView.refresh();
+                addBeforeUnloadListener();
             });
         });
         
@@ -212,15 +213,18 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         return button;
     };
     
-    window.onbeforeunload = function (evt) {
-        var message = getL10n("utils-close-page-warning");
-        if (typeof evt == "undefined") {
-            evt = window.event;
-        }
-        if (evt) {
-            evt.returnValue = message;
-        }
-        return message;
-    };
+    var addBeforeUnloadListener = function(){
+        window.onbeforeunload = function (evt) {
+            var message = getL10n("utils-close-page-warning");
+            if (typeof evt == "undefined") {
+                evt = window.event;
+            }
+            if (evt) {
+                evt.returnValue = message;
+            }
+            return message;
+        };
+    }
+    
 
 })(this['PageManager']={});
