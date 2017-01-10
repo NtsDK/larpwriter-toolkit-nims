@@ -19,6 +19,11 @@
 //set NODE_ENV=prod && set MODE=standalone && set LANG=en && gulp dist:final
 //set NODE_ENV=prod && set MODE=server && gulp dist:final
 
+//set NODE_ENV=prod && set MODE=standalone && set LANG=ru && gulp dist:final
+//set NODE_ENV=prod && set MODE=standalone && set LANG=en && gulp dist:final
+//set NODE_ENV=prod && set MODE=server && set LANG=ru && gulp dist:final
+//set NODE_ENV=prod && set MODE=server && set LANG=en && gulp dist:final
+
 process.chdir("../NIMS");
 var gulp = require('gulp');
 var concat = require('gulp-concat');
@@ -224,7 +229,7 @@ gulp.task('copyPresentation', function() {
 
 gulp.task('zip', function() {
     return gulp.src('dist/**/*')
-        .pipe(zip('dist.zip'))
+        .pipe(zip((isServer?'server':'stand') + '-' + lang + '.zip'))
         .pipe(gulp.dest('./'));
 });
 
