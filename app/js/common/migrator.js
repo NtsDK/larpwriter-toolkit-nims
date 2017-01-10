@@ -143,6 +143,14 @@ See the License for the specific language governing permissions and
             }
             data.Version = "0.5.3";
         }
+        if(data.Version === "0.5.3"){
+            if(data.ManagementInfo){
+                for(var userName in data.ManagementInfo.UsersInfo){
+                    data.ManagementInfo.UsersInfo[userName].role = 'master';
+                }
+            }
+            data.Version = "0.6.0";
+        }
         
         return data;
     };
