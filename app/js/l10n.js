@@ -13,7 +13,6 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
-PageManager, Utils, Overview, Characters, Stories, Adaptations, Briefings, Timeline, SocialNetwork, FileUtils
  */
 
 "use strict";
@@ -47,7 +46,8 @@ PageManager, Utils, Overview, Characters, Stories, Adaptations, Briefings, Timel
         } else {
             state.dict = state.dictionaries['en'];
         }
-        setHtmlLang(defaultLang)
+        setHtmlLang(defaultLang);
+        exports.onL10nChange(exports.localizeStatic);
         state.initialized = true;
     };
     
@@ -72,7 +72,6 @@ PageManager, Utils, Overview, Characters, Stories, Adaptations, Briefings, Timel
             state.lang = "ru";
         }
         setHtmlLang(state.lang);
-        exports.localizeStatic();
         state.l10nDelegates.forEach(function(delegate){
             delegate();
         });
