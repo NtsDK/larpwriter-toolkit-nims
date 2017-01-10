@@ -1,0 +1,48 @@
+<div id="storyCharactersDiv">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <a href="#" panel-toggler="#storyCharactersDiv div.character-management-area">
+        <h3 l10n-id="stories-story-character-management"></h3>
+      </a>
+      <div class="character-management-area">
+        <div class="entity-management">
+          <div>
+            <select id="storyCharactersAddSelector" class="isStoryEditable"></select>
+            <button id="storyCharactersAddButton" class="isStoryEditable" l10n-id="common-add"></button>
+          </div>
+          <div>
+            <select id="storyCharactersFromSelector" class="isStoryEditable"></select>
+            <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select>
+            <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-replace"></button>
+          </div>
+          <div>
+            <select id="storyCharactersRemoveSelector" class="isStoryEditable"></select>
+            <button id="storyCharactersRemoveButton" class="isStoryEditable" l10n-id="common-remove"></button>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div style="display:flex;flex-wrap: wrap; justify-content:space-around;">
+        <div style="flex-grow:0;margin-right:8px;max-width: 440px;">
+          <a href="#" panel-toggler="#storyCharactersDiv table.character-inventory-area">
+            <h3 l10n-id="stories-inventory"></h3>
+          </a>
+          <table class="table table-bordered character-inventory-area">
+            <thead id="storyCharactersTableHead"></thead>
+            <tbody id="storyCharactersTable"></tbody>
+          </table>
+        </div>
+        <div style="flex-grow:1;max-width: 440px;">
+          <a href="#" panel-toggler="#storyCharactersDiv table.character-activity-area">
+            <h3 l10n-id="stories-activity"></h3>
+          </a>
+          <table class="table table-bordered table-striped character-activity-area">
+            <thead id="story-characterActivityTableHead"></thead>
+            <tbody id="story-characterActivityTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

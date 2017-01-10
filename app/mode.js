@@ -1,1 +1,0 @@
-var MODE = "Standalone";

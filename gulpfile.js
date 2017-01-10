@@ -41,6 +41,7 @@ var R = require('ramda');
 var htmlmin = require('gulp-htmlmin');
 var config = require('./config');
 const zip = require('gulp-zip');
+var fileInclude = require('gulp-file-include');
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV.trim() == 'dev';
 var isServer = !process.env.MODE || process.env.MODE.trim() == 'server';
@@ -144,15 +145,24 @@ gulp.task('scripts:pages', processScripts(pages, "pages", 'scripts:pages', true)
 
 gulp.task('scripts', gulp.parallel('scripts:libs','scripts:resources','scripts:common','scripts:scripts','scripts:pages'));
 
+var htmls = ['app/nims.html', 'app/index.html'];
+
 gulp.task('html', function() {
-    return gulp.src('app/nims.html', {base : 'app'})
+    return gulp.src(htmls, {base : 'app'})
+    .pipe(fileInclude({
+      prefix: '@@',
+      basepath: './app/partials/',
+      context: {
+        MODE: isServer ? 'NIMS_Server' : 'Standalone'
+      }
+    }))
     .pipe(htmlmin({collapseWhitespace : true}))
     .pipe(gulp.dest('dist'))
 });
 
 // plain copy
 var plains = [];
-plains = plains.concat(addPrefix("app/",['CHANGELOG','LICENSE','LICENSE_RUS','mode.js','NOTICE','NOTICE_RUS']));
+plains = plains.concat(addPrefix("app/",['CHANGELOG','LICENSE','LICENSE_RUS','NOTICE','NOTICE_RUS']));
 //plains = plains.concat(['app/templates/*.docx']);
 
 gulp.task('plains', function() {
@@ -236,13 +246,16 @@ gulp.task('zip', function() {
 gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','plains','tests','server')));
 gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
 
+var partials = ["app/partials/*.html"];
+
 gulp.task('watch', function() {
     
     gulp.watch(scripts, gulp.series('scripts:scripts'));
     gulp.watch(common, gulp.series('scripts:common'));
     gulp.watch(pages, gulp.series('scripts:pages'));
     gulp.watch(styles, gulp.series('styles:nims'));
-    gulp.watch('app/nims.html', gulp.series('html'));
+    gulp.watch(htmls, gulp.series('html'));
+    gulp.watch(partials, gulp.series('html'));
     
 });
 gulp.task('dev', gulp.series('dist', 'watch'));
