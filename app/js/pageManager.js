@@ -13,199 +13,214 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
-PageManager, Utils, Overview, Characters, Stories, Adaptations, Briefings, Timeline, SocialNetwork, FileUtils
+Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetwork, FileUtils
  */
 
 "use strict";
 
-var PageManager = {};
+(function(exports){
 
-var DBMS;
-
-PageManager.onLoad = function () {
-    L10n.localizeStatic();
-    UI.initSelectorFilters();
-    UI.initPanelTogglers();
-    if(MODE === "Standalone"){
-        DBMS = new LocalDBMS();
-        DBMS.setDatabase(BaseExample.data, function(err){
-            if(err) {Utils.handleError(err); return;}
-            PageManager.consistencyCheck(PageManager.onDatabaseLoad);
-        });
-    } else if(MODE === "NIMS_Server") {
-        DBMS = new RemoteDBMS();
-        PageManager.consistencyCheck(PageManager.onDatabaseLoad);
-    }
-};
-
-PageManager.consistencyCheck = function(callback){
-    "use strict";
-    DBMS.getConsistencyCheckResult(function(err, consistencyErrors){
-        if(err) {Utils.handleError(err); return;}
-        consistencyErrors.forEach(CommonUtils.consoleLog);
-        if(consistencyErrors.length > 0){
-            Utils.alert(getL10n('overview-consistency-problem-detected'));
-        } else {
-            console.log('Consistency check didn\'t find errors');
-        }
-        callback();
-    });
-};
-
-PageManager.onDatabaseLoad = function () {
-    "use strict";
+    var state = {};
+    state.views = {};
     
-//  PageManager.enableFullScreenElements();
-    PermissionInformer.refresh(function(err){
-        if(err) {Utils.handleError(err); return;}
-        
-        PermissionInformer.isAdmin(function(err, isAdmin){
-            if(err) {Utils.handleError(err); return;}
-            
-            var root = PageManager;
-            root.views = {};
-            var nav = "navigation";
-            var content = "contentArea";
-            var button;
-            var navigation = getEl(nav);
-            var containers = {
-                    root: root,
-                    navigation: navigation,
-                    content: getEl(content)
-            };
-            Utils.addView(containers, "overview", Overview, {mainPage:true});
-            Utils.addView(containers, "characters", Characters);
-            Utils.addView(containers, "stories", Stories);
-            Utils.addView(containers, "adaptations", Adaptations);
-            Utils.addView(containers, "briefings", Briefings);
-            
-            addEl(navigation, addClass(makeEl("div"), "nav-separator"));
-            
-            Utils.addView(containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
-            Utils.addView(containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
-            Utils.addView(containers, "profile-filter", ProfileFilter, {id:"filterButton", tooltip:true});
-            Utils.addView(containers, "groups", Groups, {id:"groupsButton", tooltip:true});
-            Utils.addView(containers, "textSearch", TextSearch, {id:"textSearchButton", tooltip:true});
-            
-            addEl(navigation, addClass(makeEl("div"), "nav-separator"));
-            
-            var btnOpts = {
-                tooltip : true,
-                className : 'mainNavButton'
-            }
-            
-            if(isAdmin){
-                var button = PageManager.makeButton("dataLoadButton", "open-database", null, btnOpts);
-                button.addEventListener('change', FileUtils.readSingleFile, false);
-                
-                var input = makeEl("input");
-                input.type = "file";
-                addClass(input, 'hidden');
-                setAttr(input, 'tabindex', -1);
-                button.appendChild(input);
-                button.addEventListener('click', function(e){
-                    input.click();
-//                    e.preventDefault(); // prevent navigation to "#"
-                });
-                addEl(navigation, button);
-            }
-            
-            addEl(navigation, PageManager.makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
-            if(MODE === "Standalone"){
-                addEl(navigation, PageManager.makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
-            }
-            addEl(navigation, PageManager.makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
-//            var l10nBtn = PageManager.makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
-//            var setIcon = function(){
-//                l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
-//            }
-//            L10n.onL10nChange(setIcon);
-//            setIcon();
-//            addEl(navigation, l10nBtn);
-            
-            Utils.addView(containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
-//            addEl(navigation, PageManager.makeButton("testButton", "test", PageManager.runTests, btnOpts));
-//            addEl(navigation, PageManager.makeButton("aboutButton", "about", null, btnOpts));
-            if(MODE === "NIMS_Server"){
-                Utils.addView(containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
-//                Utils.addView(containers, "chat", Chat, {id:"chatButton", tooltip:true});
-                addEl(navigation, PageManager.makeButton("logoutButton", "logout", PageManager.postLogout, btnOpts));
-            }
-            
-            FileUtils.init(function(err){
+    var btnOpts = {
+        tooltip : true,
+        className : 'mainNavButton'
+    }
+    
+    var initPage = function(){
+        L10n.localizeStatic();
+        L10n.onL10nChange(() => state.currentView.refresh());
+        UI.initSelectorFilters();
+        UI.initPanelTogglers();
+    }
+    
+    exports.onPlayerPageLoad = function () {
+        initPage();
+        var LocalDBMS = makeLocalDBMS(false);
+        window.DBMS = new LocalDBMS();
+        stateInit();
+        Utils.addView(state.containers, "profile-editor", ProfileEditor, {mainPage:true});
+        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+        Utils.addView(state.containers, "about", About);
+        addEl(state.navigation, makeL10nButton());
+        addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
+    };
+    
+    exports.onIndexPageLoad = function () {
+        initPage();
+        var LocalDBMS = makeLocalDBMS(false);
+        window.DBMS = new LocalDBMS();
+        stateInit();
+        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+        Utils.addView(state.containers, "enter", Enter, {mainPage:true});
+        Utils.addView(state.containers, "register", Register);
+        Utils.addView(state.containers, "about", About);
+        addEl(state.navigation, makeL10nButton());
+    };
+    
+    exports.onMasterPageLoad = function () {
+        initPage();
+        var LocalDBMS = makeLocalDBMS(true);
+        if(MODE === "Standalone"){
+            window.DBMS = new LocalDBMS();
+            DBMS.setDatabase(BaseExample.data, function(err){
                 if(err) {Utils.handleError(err); return;}
-                PageManager.consistencyCheck(PageManager.currentView.refresh);
+                consistencyCheck(onDatabaseLoad);
             });
-            
-            PageManager.currentView.refresh();
-        });
-    });
+        } else if(MODE === "NIMS_Server") {
+            var RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+            window.DBMS = new RemoteDBMS();
+            consistencyCheck(onDatabaseLoad);
+        }
+    };
     
-};
-
-PageManager.runTests = function(){
-    "use strict";
-//    window.RunTests();
-    PageManager.consistencyCheck(function(){});
-};
-
-PageManager.postLogout = function(){
-    "use strict";
-    document.querySelector('#logoutForm button').click();
-};
-
-PageManager.makeButton = function(id, name, callback, opts){
-    "use strict";
-    var button = makeEl("button");
-    button.id = id;
-    if(opts.tooltip){
-        var delegate = function(){
-            $(button).attr('data-original-title', L10n.getValue("header-" + name));
-        };
-        L10n.onL10nChange(delegate);
-        $(button).tooltip({
-            title : L10n.getValue("header-" + name),
-            placement : "bottom"
+    var consistencyCheck = function(callback){
+        DBMS.getConsistencyCheckResult(function(err, consistencyErrors){
+            if(err) {Utils.handleError(err); return;}
+            consistencyErrors.forEach(CommonUtils.consoleLog);
+            if(consistencyErrors.length > 0){
+                Utils.alert(getL10n('overview-consistency-problem-detected'));
+            } else {
+                console.log('Consistency check didn\'t find errors');
+            }
+            callback();
         });
-    }
-    addClass(button, "action-button");
-    if(opts.className){
-        addClass(button, opts.className);
-    }
-    if(callback){
-        listen(button, 'click', callback);
-    }
-    return button;
-};
+    };
+    
+    var stateInit = function(){
+        state.navigation = getEl("navigation");
+        state.containers = {
+                root: state,
+                navigation: state.navigation,
+                content: getEl("contentArea")
+        };
+    };
+    
+    var onDatabaseLoad = function () {
+        PermissionInformer.refresh(function(err){
+            if(err) {Utils.handleError(err); return;}
+            
+            PermissionInformer.isAdmin(function(err, isAdmin){
+                if(err) {Utils.handleError(err); return;}
+                
+                var button;
+                stateInit();
 
-//PageManager.enableFullScreenElements = function(){
-//    "use strict";
-//    var elems = document.getElementsByClassName("full-screen-elem");
-//    var i, elem, button;
-//    for (i = 0; i < elems.length; i++) {
-//        elem = elems[i];
-//        button = makeEl("button");
-//        button.appendChild(makeText("%"));
-//        addClass(button, "fullScreenButton");
-//        button.addEventListener("click", PageManager.fullScreenToggler(elem));
-//        elem.appendChild(button);
-//    }
-//};
-//
-//PageManager.fullScreenToggler = function(elem){
-//    "use strict";
-//    return function(){
-//        toggleClass(elem, "full-screen");
-//    };
-//};
+                Utils.addView(state.containers, "register", Register, {mainPage:true});
+                Utils.addView(state.containers, "enter", Enter);
+                Utils.addView(state.containers, "overview", Overview);
+                Utils.addView(state.containers, "profiles", Profiles);
+                Utils.addView(state.containers, "stories", Stories);
+                Utils.addView(state.containers, "adaptations", Adaptations);
+                Utils.addView(state.containers, "briefings", Briefings);
+    //            Utils.addView(state.containers, "about", About);
+                
+                addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+                
+                Utils.addView(state.containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
+                Utils.addView(state.containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
+                Utils.addView(state.containers, "profile-filter", ProfileFilter, {id:"filterButton", tooltip:true});
+                Utils.addView(state.containers, "groups", Groups, {id:"groupsButton", tooltip:true});
+                Utils.addView(state.containers, "textSearch", TextSearch, {id:"textSearchButton", tooltip:true});
+                
+                addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+                
+                if(isAdmin){
+                    var button = makeButton("dataLoadButton", "open-database", null, btnOpts);
+                    button.addEventListener('change', FileUtils.readSingleFile, false);
+                    
+                    var input = makeEl("input");
+                    input.type = "file";
+                    addClass(input, 'hidden');
+                    setAttr(input, 'tabindex', -1);
+                    button.appendChild(input);
+                    button.addEventListener('click', function(e){
+                        input.click();
+    //                    e.preventDefault(); // prevent navigation to "#"
+                    });
+                    addEl(state.navigation, button);
+                }
+                
+                addEl(state.navigation, makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
+                if(MODE === "Standalone"){
+                    addEl(state.navigation, makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
+                }
+                addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
+                
+                addEl(state.navigation, makeL10nButton());
+                
+                Utils.addView(state.containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
+    //            addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
+    //            addEl(state.navigation, makeButton("aboutButton", "about", null, btnOpts));
+                if(MODE === "NIMS_Server"){
+                    Utils.addView(state.containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
+    //                Utils.addView(state.containers, "chat", Chat, {id:"chatButton", tooltip:true});
+                    addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
+                }
+                
+                FileUtils.init(function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    consistencyCheck(state.currentView.refresh);
+                });
+                
+                state.currentView.refresh();
+            });
+        });
+        
+    };
+    
+    var makeL10nButton = function(){
+        var l10nBtn = makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
+        var setIcon = function(){
+            l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
+        }
+        L10n.onL10nChange(setIcon);
+        setIcon();
+        return l10nBtn;
+    };
+    
+    var runTests = function(){
+    //    window.RunTests();
+        consistencyCheck(function(){});
+    };
+    
+    var postLogout = function(){
+        document.querySelector('#logoutForm button').click();
+    };
+    
+    var makeButton = function(id, name, callback, opts){
+        var button = makeEl("button");
+        button.id = id;
+        if(opts.tooltip){
+            var delegate = function(){
+                $(button).attr('data-original-title', L10n.getValue("header-" + name));
+            };
+            L10n.onL10nChange(delegate);
+            $(button).tooltip({
+                title : L10n.getValue("header-" + name),
+                placement : "bottom"
+            });
+        }
+        addClass(button, "action-button");
+        if(opts.className){
+            addClass(button, opts.className);
+        }
+        if(callback){
+            listen(button, 'click', callback);
+        }
+        return button;
+    };
+    
+    window.onbeforeunload = function (evt) {
+        var message = getL10n("utils-close-page-warning");
+        if (typeof evt == "undefined") {
+            evt = window.event;
+        }
+        if (evt) {
+            evt.returnValue = message;
+        }
+        return message;
+    };
 
-window.onbeforeunload = function (evt) {
-    var message = getL10n("utils-close-page-warning");
-    if (typeof evt == "undefined") {
-        evt = window.event;
-    }
-    if (evt) {
-        evt.returnValue = message;
-    }
-    return message;
-};
+})(this['PageManager']={});

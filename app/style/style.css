@@ -528,7 +528,8 @@ See the License for the specific language governing permissions and
 .remove-entity-select, 
 .save-entity-select, 
 .group-add-select, 
-.group-replace-select, 
+.group-replace-select,
+.common-input, 
 .common-select {
   width: 200px;
 }
@@ -621,3 +622,13 @@ See the License for the specific language governing permissions and
   color: white;
 }
 /* text-search-tab **/
+
+/** register.js */
+.register-form > div > :first-child{
+  width: 240px;
+  text-align: right;
+  padding: 0 10px 0 0;
+  display: inline-block;
+}
+
+/* register.js **/

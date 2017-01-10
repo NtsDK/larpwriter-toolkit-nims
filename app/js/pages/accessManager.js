@@ -22,9 +22,9 @@ var AccessManager = {};
 AccessManager.init = function() {
     "use strict";
     
-    listen(getEl("createUserButton"),"click", AccessManager.createUser);
-    listen(getEl("changePasswordButton"),"click", AccessManager.changePassword);
-    listen(getEl("removeUserButton"),"click", AccessManager.removeUser);
+    listen(getEl("createUserButton"),"click", AccessManager.createMaster);
+    listen(getEl("changePasswordButton"),"click", AccessManager.changeMasterPassword);
+    listen(getEl("removeUserButton"),"click", AccessManager.removeMaster);
     listen(getEl("assignPermissionButton"),"click", AccessManager.assignPermission);
     listen(getEl("removePermissionButton"),"click", AccessManager.removePermission);
     listen(getEl("newAdminButton"),"click", AccessManager.assignNewAdmin);
@@ -166,7 +166,7 @@ AccessManager.buildPermissionList = function (names, usersInfo) {
     }, []));
 };
 
-AccessManager.createUser = function () {
+AccessManager.createMaster = function () {
     var userNameInput = getEl("userNameInput");
     var name = userNameInput.value.trim();
 
@@ -183,13 +183,13 @@ AccessManager.createUser = function () {
         return;
     }
     
-    DBMS.isUserNameUsed(name, function(err, isUserNameUsed){
+    DBMS.isMasterNameUsed(name, function(err, isMasterNameUsed){
         if(err) {Utils.handleError(err); return;}
-        if (isUserNameUsed) {
+        if (isMasterNameUsed) {
             Utils.alert(getL10n('admins-user-already-exists'));
         } else {
             
-            DBMS.createUser(name, password, Utils.processError(function(){
+            DBMS.createMaster(name, password, Utils.processError(function(){
                 userNameInput.value = '';
                 userPasswordInput.value = '';
                 AccessManager.refresh();
@@ -199,7 +199,7 @@ AccessManager.createUser = function () {
 };
 
 
-AccessManager.changePassword = function () {
+AccessManager.changeMasterPassword = function () {
     var userName = getEl("passwordUserName").value.trim();
     var newPassword = getEl("newPassword").value.trim();
 
@@ -208,19 +208,19 @@ AccessManager.changePassword = function () {
         return;
     }
     
-    DBMS.changePassword(userName, newPassword, Utils.processError(function(){
+    DBMS.changeMasterPassword(userName, newPassword, Utils.processError(function(){
         getEl("newPassword").value = '';
         AccessManager.refresh();
     }));
 
 };
 
-AccessManager.removeUser = function () {
+AccessManager.removeMaster = function () {
     "use strict";
     var name = getEl("userRemoveSelector").value.trim();
 
     if (Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]))) {
-        DBMS.removeUser(name, Utils.processError(AccessManager.refresh));
+        DBMS.removeMaster(name, Utils.processError(AccessManager.refresh));
     }
 };
 

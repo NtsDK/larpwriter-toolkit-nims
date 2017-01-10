@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title l10n-id="header-page-title"></title>
 
+<link rel="stylesheet" type="text/css" href="styles/libsCore.min.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="styles/libs.min.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="styles/nims.min.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="tests/tests.min.css" media="screen" />
@@ -28,11 +29,13 @@ See the License for the specific language governing permissions and
 <script>
     var MODE = "@@MODE";
 </script>
+<script src="js/libsCore.min.js"></script>
 <script src="js/libs.min.js"></script>
 
 </head>
-<body onload="PageManager.onLoad()">
+<body onload="PageManager.onMasterPageLoad()">
   <script src="js/resources.min.js"></script>
+  <script src="js/translations.min.js"></script>
   <script src="js/common.min.js"></script>
   <script src="js/scripts.min.js"></script>
   <script src="js/pages.min.js"></script>
@@ -45,6 +48,9 @@ See the License for the specific language governing permissions and
   <div class="block" id="contentArea"></div>
 
   <div class="hidden">
+    @@include('./enter-tab.html')
+    @@include('./register-tab.html')
+    
     @@include('./about-tab.html')
     @@include('./access-manager-tab.html')
     @@include('./adaptations-tab.html')

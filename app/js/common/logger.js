@@ -29,7 +29,7 @@ See the License for the specific language governing permissions and
         // argument description
         // add function name to log it
         // ignoreParams - make true if you don't need params in log. 
-        //     Example - createUser params include password.
+        //     Example - createMaster params include password.
         // filter - add this function to filter out unnecessary calls. 
         //     Example - we need all meta info calls except description.
         // rewrite - make true if you don't want to flood log with some repeated call. 

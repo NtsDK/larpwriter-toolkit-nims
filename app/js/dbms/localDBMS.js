@@ -17,7 +17,13 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-function makeLocalDBMS(){
+function makeLocalDBMS(fullVersion){
+    if(!fullVersion){
+        function LocalDBMS(){
+        };
+        return LocalDBMS;
+    }
+    
     var listeners = {};
     var dbmsUtils = {};
     
@@ -57,6 +63,6 @@ function makeLocalDBMS(){
     
     Logger.attachLogCalls(LocalDBMS, R, false);
     return LocalDBMS;
-}
+};
 
-var LocalDBMS = makeLocalDBMS();
+

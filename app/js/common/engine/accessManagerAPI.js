@@ -19,27 +19,6 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.getManagementInfo = function(callback){
             "use strict";
-//            if(!this.database.ManagementInfo){
-//                this.database.ManagementInfo = {};
-//                var ManagementInfo = this.database.ManagementInfo;
-//                ManagementInfo.UsersInfo = {};
-//                var that = this;
-//                that.createUser("admin", "password", function(err){
-//                    if(err) {callback(err); return;}
-//                    ManagementInfo.admin = "admin";
-//                    ManagementInfo.editor = null;
-//                    ManagementInfo.adaptationRights = "ByStory";
-//                    that.createUser("user", "password", function(err){
-//                        if(err) {callback(err); return;}
-//                        callback(null, {
-//                            usersInfo : ManagementInfo.UsersInfo,
-//                            admin : ManagementInfo.admin,
-//                            editor : ManagementInfo.editor,
-//                            adaptationRights : ManagementInfo.adaptationRights
-//                        });
-//                    });
-//                });
-//            }
             var ManagementInfo = this.database.ManagementInfo;
             var usersInfo = CommonUtils.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
                 result[user] = R.pick(['characters', 'groups','stories','players'], ManagementInfo.UsersInfo[user]);
@@ -78,12 +57,12 @@ See the License for the specific language governing permissions and
             callback();
         };
         
-        LocalDBMS.prototype.isUserNameUsed = function(name, callback){
+        LocalDBMS.prototype.isMasterNameUsed = function(name, callback){
             "use strict";
             callback(null, this.database.ManagementInfo.UsersInfo[name] !== undefined);
         };
         
-        LocalDBMS.prototype.createUser = function(name, password, callback){
+        LocalDBMS.prototype.createMaster = function(name, password, callback){
             "use strict";
             this.database.ManagementInfo.UsersInfo[name] = {
                 name : name,
@@ -95,13 +74,13 @@ See the License for the specific language governing permissions and
             callback();
         };
         
-        LocalDBMS.prototype.changePassword = function(userName, newPassword, callback){
+        LocalDBMS.prototype.changeMasterPassword = function(userName, newPassword, callback){
             "use strict";
-            Utils.alert(strFormat(getL10n('function-must-be-overriden-on-server'), ['changePassword']));
+            Utils.alert(strFormat(getL10n('function-must-be-overriden-on-server'), ['changeMasterPassword']));
             callback();
         };
         
-        LocalDBMS.prototype.removeUser = function(name, callback){
+        LocalDBMS.prototype.removeMaster = function(name, callback){
             "use strict";
             delete this.database.ManagementInfo.UsersInfo[name];
             this.publishPermissionsUpdate();

@@ -1,0 +1,43 @@
+<div class="register-tab flexRoot" style="justify-content: center; height: 80vh; align-items: center;">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title" l10n-id3="">Введите имя пользователя и пароль</h3>
+    </div>
+    <div class="panel-body group-control-area">
+
+      <form class="register-form entity-management" name="register-form">
+        <div class="">
+          <label for="input-username" class="" style="">Логин</label>
+          <input name="username" value="admin" type="text" class="common-input" id="input-username" placeholder="Логин">
+        </div>
+        <div class="">
+          <label for="input-password" class="" style="">Пароль</label>
+          <input name="password" type="password" class="common-input" id="input-password" placeholder="Пароль">
+        </div>
+        <div class="">
+          <label for="confirm-password" class="" style="">Подтверждение</label>
+          <input name="confirm-password" type="password" class="common-input" id="confirm-password" placeholder="Подтвердите пароль">
+        </div>
+        <div>
+          <span class="">
+            <label for="createPlayerProfile" l10n-id2="">Создать досье/заявку</label>
+            <input type="radio" name="playerProfileActivator" value="createPlayerProfile" id="createPlayerProfile">
+          </span>
+          <input name="player-name-input" type="text" class="common-input" id="player-name-input" placeholder="Введите имя игрока">
+        </div>
+        <div>
+          <span class="">
+            <label for="activatePlayerProfile" l10n-id2="">Активировать досье/заявку</label>
+            <input type="radio" name="playerProfileActivator" value="activatePlayerProfile" id="activatePlayerProfile">
+          </span>
+          <input name="player-key-input" type="text" class="common-input" id="player-key-input" placeholder="Введите ключ активации">
+        </div>
+        
+        <div class="">
+          <span class="help-block error"></span>
+          <button type="submit" class="" data-loading-text="Отправляю..." style="float: right;">Зарегистрироваться</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -75,7 +75,6 @@ See the License for the specific language governing permissions and
         state.l10nDelegates.forEach(function(delegate){
             delegate();
         });
-        PageManager.currentView.refresh();
     };
     
     exports.getLang = () => state.lang.toLowerCase();
