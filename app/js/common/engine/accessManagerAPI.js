@@ -12,13 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+"use strict";
 
 (function(callback){
 
     function accessManagerAPI(LocalDBMS, CommonUtils, R) {
         
         LocalDBMS.prototype.getManagementInfo = function(callback){
-            "use strict";
             var ManagementInfo = this.database.ManagementInfo;
             var usersInfo = CommonUtils.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
                 result[user] = R.pick(['characters', 'groups','stories','players'], ManagementInfo.UsersInfo[user]);
@@ -33,62 +33,45 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.assignAdmin = function(name, callback){
-            "use strict";
             this.database.ManagementInfo.admin = name;
             this.publishPermissionsUpdate();
             callback();
         };
         LocalDBMS.prototype.assignEditor = function(name, callback){
-            "use strict";
             this.database.ManagementInfo.editor = name;
             this.publishPermissionsUpdate();
             callback();
         };
         LocalDBMS.prototype.removeEditor = function(callback){
-            "use strict";
             this.database.ManagementInfo.editor = null;
             this.publishPermissionsUpdate();
             callback();
         };
         LocalDBMS.prototype.changeAdaptationRightsMode = function(mode, callback){
-            "use strict";
             this.database.ManagementInfo.adaptationRights = mode;
             this.publishPermissionsUpdate();
             callback();
         };
         
         LocalDBMS.prototype.isMasterNameUsed = function(name, callback){
-            "use strict";
             callback(null, this.database.ManagementInfo.UsersInfo[name] !== undefined);
         };
         
         LocalDBMS.prototype.createMaster = function(name, password, callback){
-            "use strict";
-            this.database.ManagementInfo.UsersInfo[name] = {
-                name : name,
-                stories : [],
-                characters : [],
-                players : [],
-                groups : []
-            };
-            callback();
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMaster']));
         };
         
         LocalDBMS.prototype.changeMasterPassword = function(userName, newPassword, callback){
-            "use strict";
-            Utils.alert(strFormat(getL10n('function-must-be-overriden-on-server'), ['changeMasterPassword']));
-            callback();
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeMasterPassword']));
         };
         
         LocalDBMS.prototype.removeMaster = function(name, callback){
-            "use strict";
             delete this.database.ManagementInfo.UsersInfo[name];
             this.publishPermissionsUpdate();
             callback();
         };
         
         LocalDBMS.prototype.removePermission = function(userName, names, callback){
-            "use strict";
             var ManagementInfo = this.database.ManagementInfo;
             for(var entity in names){
                 if(names[entity].length != 0){
@@ -102,7 +85,6 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.assignPermission = function(userName, names, callback){
-            "use strict";
             var ManagementInfo = this.database.ManagementInfo;
             for(var entity in names){
                 if(names[entity].length != 0){
@@ -128,8 +110,7 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.publishPermissionsUpdate = function() {
-            // overrided by server
-            Utils.alert(strFormat(getL10n('function-must-be-overriden-on-server'), ['publishPermissionsUpdate']));
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['publishPermissionsUpdate']));
         };
     };
     
