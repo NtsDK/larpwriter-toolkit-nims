@@ -709,6 +709,22 @@ See the License for the specific language governing permissions and
                 "required" : [ "name", "stories", "characters", "groups", "players", "salt", "hashedPassword" ],
                 "additionalProperties" : false
             };
+            var playerSchema = {
+                "type" : "object",
+                "properties" : {
+                    "name" : {
+                        "type" : "string"
+                    },
+                    "salt" : {
+                        "type" : "string"
+                    },
+                    "hashedPassword" : {
+                        "type" : "string"
+                    },
+                },
+                "required" : [ "name", "salt", "hashedPassword" ],
+                "additionalProperties" : false
+            };
             
             var managementInfoSchema = {
                 "type" : "object",
@@ -716,6 +732,10 @@ See the License for the specific language governing permissions and
                     "UsersInfo": {
                         "type":"object",
                         "additionalProperties" : userSchema
+                    },
+                    "PlayersInfo": {
+                        "type":"object",
+                        "additionalProperties" : playerSchema
                     },
                     "admin": {
                         "type":"string",
@@ -730,7 +750,7 @@ See the License for the specific language governing permissions and
                         "enum": ["ByStory", "ByCharacter"]
                     }
                 },
-                "required":["UsersInfo","admin","editor","adaptationRights"],
+                "required":["UsersInfo","PlayersInfo","admin","editor","adaptationRights"],
                 "additionalProperties" : false
             };
             

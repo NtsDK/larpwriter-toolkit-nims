@@ -46,19 +46,21 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.isProfileNameUsed = function(type, characterName, callback) {
             callback(null, R.path(getPath(type), this.database)[characterName] !== undefined);
         };
+        
         // profiles
+        LocalDBMS.prototype._createProfilePrecondition = function(type, characterName){
+            if (characterName === "") {
+                return [ null, 'profiles-character-name-is-not-specified'];
+            } else if (type !== 'character' && type !== 'player') {
+                return [ null, 'binding-wrong-profile-type', [ type ] ];
+            } else if (R.path(getPath(type), this.database)[characterName] !== undefined) {
+                return [ null, 'profiles-character-name-already-used', [ characterName ] ];
+            }
+        }
+  
         LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
-            if(characterName === ""){
-                callback(new Errors.ValidationError("profiles-character-name-is-not-specified"));
-                return;
-            }
-            
-            var profileSet = R.path(getPath(type), this.database);
-            
-            if(profileSet[characterName]){
-                callback(new Errors.ValidationError("profiles-character-name-already-used", [characterName]));
-                return;
-            }
+            var err = this._createProfilePrecondition(type, characterName);
+            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
             
             var newCharacter = {
                 name : characterName
@@ -74,7 +76,7 @@ See the License for the specific language governing permissions and
                 }
             });
     
-            profileSet[characterName] = newCharacter;
+            R.path(getPath(type), this.database)[characterName] = newCharacter;
             this.ee.trigger("createProfile", arguments);
             if(callback) callback();
         };

@@ -109,8 +109,82 @@ See the License for the specific language governing permissions and
             callback();
         };
         
-        LocalDBMS.prototype.publishPermissionsUpdate = function() {
+        LocalDBMS.prototype.publishPermissionsUpdate = function(callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['publishPermissionsUpdate']));
+        };
+        
+        LocalDBMS.prototype.getPlayerLoginsArray = function(callback) {
+            callback(null, R.keys(this.database.ManagementInfo.PlayersInfo));
+        };
+        
+        LocalDBMS.prototype.createPlayer = function(userName, password, callback) {
+            var err = this._passwordNotEmptyPrecondition(password);
+            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
+            
+            var that = this;
+            this.createProfile('player', userName, function(err){
+                if(err) callback(err);
+                that.database.ManagementInfo.PlayersInfo[userName] = {
+                    name : userName,
+                    salt: 'dfgdfg',
+                    hashedPassword: 'sdfsdfsdf'  +password
+                };
+                if(callback) callback();
+            });
+        };
+        
+        LocalDBMS.prototype.createPlayerLogin = function(userName, password, callback) {
+            var err = this._createPlayerLoginPrecondition(userName, password);
+            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
+            
+            this.database.ManagementInfo.PlayersInfo[userName] = {
+                name : userName,
+                salt: 'dfgdfg',
+                hashedPassword: 'sdfsdfsdf' + password
+            };
+            if(callback) callback();
+        };
+        
+        LocalDBMS.prototype.changePlayerPassword = function(userName, password, callback) {
+            var err = this._changePlayerPasswordPrecondition(userName, password);
+            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
+            
+            this.database.ManagementInfo.PlayersInfo[userName].hashedPassword = 'sdfsdfsdf' + password;
+            if(callback) callback();
+        };
+        
+        LocalDBMS.prototype.removePlayerLogin = function(userName, callback) {
+            var err = this._playerHasLoginPrecondition(userName);
+            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
+            
+            delete this.database.ManagementInfo.PlayersInfo[userName];
+            if(callback) callback();
+        };
+        
+        LocalDBMS.prototype._passwordNotEmptyPrecondition = function(password){
+            if (password === '') {
+                return [ null, 'admins-password-is-not-specified' ];
+            }
+        };
+        
+        LocalDBMS.prototype._playerHasLoginPrecondition = function(userName){
+            if (this.database.ManagementInfo.PlayersInfo[userName] === undefined) {
+                return [ null, 'admins-player-has-no-login', [userName] ];
+            }
+        };
+
+        LocalDBMS.prototype._createPlayerLoginPrecondition = function(userName, password){
+            if (this.database.ManagementInfo.PlayersInfo[userName] !== undefined) {
+                return [ null, 'admins-player-already-has-password', [userName] ];
+            } else if (this.database.Players[userName] === undefined) {
+                return [ null, 'profiles-player-is-not-exist' ];
+            } else {
+                return this._passwordNotEmptyPrecondition(password);
+            }
+        };
+        
+        LocalDBMS.prototype._changePlayerPasswordPrecondition = function(userName, password){
+            return this._passwordNotEmptyPrecondition(password) || this._playerHasLoginPrecondition(userName);
         };
     };
     
