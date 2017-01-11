@@ -27,14 +27,15 @@ See the License for the specific language governing permissions and
     var root = '.master-management-tab ';
     
     exports.init = function() {
-        listen(getEl("createUserButton"),"click", createMaster);
-        listen(getEl("changePasswordButton"),"click", changeMasterPassword);
-        listen(getEl("removeUserButton"),"click", removeMaster);
-        listen(getEl("assignPermissionButton"),"click", assignPermission);
-        listen(getEl("removePermissionButton"),"click", removePermission);
-        listen(getEl("newAdminButton"),"click", assignNewAdmin);
-        listen(getEl("removeEditorButton"),"click", removeEditor);
-        listen(getEl("newEditorButton"),"click", assignEditor);
+        listen(queryEl(root + ".create-user-button"),"click", createMaster);
+        listen(queryEl(root + ".change-password-button"),"click", changeMasterPassword);
+        listen(queryEl(root + ".remove-user-button"),"click", removeMaster);
+        
+        listen(queryEl(root + ".assign-permission-button"),"click", assignPermission);
+        listen(queryEl(root + ".remove-permission-button"),"click", removePermission);
+        listen(queryEl(root + ".assign-admin-button"),"click", assignNewAdmin);
+        listen(queryEl(root + ".remove-editor-button"),"click", removeEditor);
+        listen(queryEl(root + ".assign-editor-button"),"click", assignEditor);
         
         nl2array(queryElEls(queryEl(root), '.adaptationRights')).map(listen(R.__, "click", changeAdaptationRightsMode));
         
@@ -85,9 +86,9 @@ See the License for the specific language governing permissions and
         var userNames = Object.keys(usersInfo).sort(CommonUtils.charOrdA);
         
         var selectors = [];
-        selectors.push(getEl("passwordUserName"));
-        selectors.push(getEl("userPermissionSelector"));
-        selectors.push(getEl("newEditorSelector"));
+        selectors.push(queryEl(root + ".change-password-user-select"));
+        selectors.push(queryEl(root + ".user-permission-select"));
+        selectors.push(queryEl(root + ".assign-editor-select"));
         
         selectors.forEach(function(selector){
             Utils.rebuildSelectorArr(selector, userNames);
@@ -95,19 +96,19 @@ See the License for the specific language governing permissions and
         
         var clone = userNames.slice(0);
         clone.splice(userNames.indexOf(managementInfo.admin), 1);
-        var selector = getEl("newAdminSelector");
+        var selector = queryEl(root + ".assign-admin-select");
         Utils.rebuildSelectorArr(selector, clone);
         
-        selector = getEl("userRemoveSelector");
+        selector = queryEl(root + ".remove-user-select");
         Utils.rebuildSelectorArr(selector, clone);
         
         state.entities.forEach(function(entity){
-            Utils.rebuildSelector(getEl("permission-selector__" + entity), names[entity]);
+            Utils.rebuildSelector(queryEl(root + ".permission-selector__" + entity), names[entity]);
         });
         
-        addEl(clearEl(getEl("currentAdministrator")), makeText(managementInfo.admin));
+        addEl(clearEl(queryEl(root + ".current-admin-label")), makeText(managementInfo.admin));
     
-        var span = clearEl(getEl("currentEditor"));
+        var span = clearEl(queryEl(root + ".current-editor-label"));
         if(managementInfo.editor){
             addEl(span,makeText(managementInfo.editor));
         }
@@ -118,7 +119,7 @@ See the License for the specific language governing permissions and
     };
     
     var buildPermissionList = function (names, usersInfo) {
-        var permissionTable = clearEl(getEl("permissionTable"));
+        var permissionTable = clearEl(queryEl(root + ".permission-table"));
         var treeRoot = makeEl('ul');
         addEl(permissionTable, treeRoot);
         
@@ -162,7 +163,7 @@ See the License for the specific language governing permissions and
     };
     
     var createMaster = function () {
-        var userNameInput = getEl("userNameInput");
+        var userNameInput = queryEl(root + ".create-user-name-input");
         var name = userNameInput.value.trim();
     
         if (name === "") {
@@ -170,7 +171,7 @@ See the License for the specific language governing permissions and
             return;
         }
         
-        var userPasswordInput = getEl("userPasswordInput");
+        var userPasswordInput = queryEl(root + ".create-user-password-input");
         var password = userPasswordInput.value.trim();
         
         if (password === "") {
@@ -195,8 +196,8 @@ See the License for the specific language governing permissions and
     
     
     var changeMasterPassword = function () {
-        var userName = getEl("passwordUserName").value.trim();
-        var newPassword = getEl("newPassword").value.trim();
+        var userName = queryEl(root + ".change-password-user-select").value.trim();
+        var newPassword = queryEl(root + ".change-password-password-input").value.trim();
     
         if (newPassword === "") {
             Utils.alert(getL10n('admins-password-is-not-specified'));
@@ -204,25 +205,25 @@ See the License for the specific language governing permissions and
         }
         
         DBMS.changeMasterPassword(userName, newPassword, Utils.processError(function(){
-            getEl("newPassword").value = '';
+            queryEl(root + ".change-password-password-input").value = '';
             exports.refresh();
         }));
     
     };
     
     var removeMaster = function () {
-        var name = getEl("userRemoveSelector").value.trim();
+        var name = queryEl(root + ".remove-user-select").value.trim();
     
         if (Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]))) {
             DBMS.removeMaster(name, Utils.processError(exports.refresh));
         }
     };
     
-    var getSelectedOptions = (id) => nl2array(getEl(id).selectedOptions).map(opt => opt.value);
+    var getSelectedOptions = (sel) => nl2array(queryEl(sel).selectedOptions).map(opt => opt.value);
     
     var permissionAction = function(action){
         return function(){
-            var userName = getEl("userPermissionSelector").value.trim();
+            var userName = queryEl(root + ".user-permission-select").value.trim();
             
             if(userName === ""){
                 Utils.alert(getL10n('admins-user-is-not-selected'));
@@ -231,7 +232,7 @@ See the License for the specific language governing permissions and
             
             var names = {};
             state.entities.forEach(function(entity){
-                names[entity] = getSelectedOptions("permission-selector__" + entity);
+                names[entity] = getSelectedOptions(root + ".permission-selector__" + entity);
             });
             
             DBMS[action](userName, names, Utils.processError(exports.refresh));
@@ -242,7 +243,7 @@ See the License for the specific language governing permissions and
     var assignPermission = permissionAction('assignPermission');
     
     var assignNewAdmin = function() {
-        var userName = getEl("newAdminSelector").value.trim();
+        var userName = queryEl(root + ".assign-admin-select").value.trim();
         if(Utils.confirm(strFormat(getL10n('admins-confirm-admin-assigment'), [userName]))){
             DBMS.assignAdmin(userName, Utils.processError(exports.refresh));
         }
@@ -251,7 +252,7 @@ See the License for the specific language governing permissions and
         DBMS.removeEditor(Utils.processError(exports.refresh));
     };
     var assignEditor = function() {
-        var userName = getEl("newEditorSelector").value.trim();
+        var userName = queryEl(root + ".assign-editor-select").value.trim();
         if(Utils.confirm(strFormat(getL10n('admins-confirm-editor-assigment'), [userName]))){
             DBMS.assignEditor(userName, Utils.processError(exports.refresh));
         }
