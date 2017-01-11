@@ -13,32 +13,23 @@ See the License for the specific language governing permissions and
    limitations under the License. */
 
 /*global
- Utils
+ Utils, DBMS
  */
 
 "use strict";
 
 (function(exports){
-
+    
     var state = {};
-    state.views = {};
-    var root = '.access-manager-tab '
+
+    var root = '.player-management-tab ';
     
-    exports.init = function () {
-        var containers = {
-            root: state,
-            navigation: queryEl(root + ' .navigation'),
-            content: queryEl(root + ' .content')
-        };
+    exports.init = function() {
         
-        Utils.addView(containers, "masterManagement", MasterManagement, {mainPage:true});
-        Utils.addView(containers, "playerManagement", PlayerManagement);
-    
         exports.content = queryEl(root);
     };
     
-    exports.refresh = function () {
-        state.currentView.refresh();
+    exports.refresh = function() {
     };
 
-})(this['AccessManager']={});
+})(this['PlayerManagement']={});
