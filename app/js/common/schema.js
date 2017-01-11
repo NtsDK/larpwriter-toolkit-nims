@@ -705,12 +705,8 @@ See the License for the specific language governing permissions and
                     "hashedPassword" : {
                         "type" : "string"
                     },
-                    'role' : {
-                        "type" : "string",
-                        'enum' : ['master']
-                    }
                 },
-                "required" : [ "name", "stories", "characters", "groups", "players", "salt", "hashedPassword", 'role'],
+                "required" : [ "name", "stories", "characters", "groups", "players", "salt", "hashedPassword" ],
                 "additionalProperties" : false
             };
             
