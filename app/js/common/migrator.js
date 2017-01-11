@@ -146,6 +146,7 @@ See the License for the specific language governing permissions and
         if(data.Version === "0.5.3"){
             if(data.ManagementInfo){
                 data.ManagementInfo.PlayersInfo = {};
+                data.ManagementInfo.WelcomeText = '';
             }
             data.Version = "0.6.0";
         }

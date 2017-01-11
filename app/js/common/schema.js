@@ -748,9 +748,12 @@ See the License for the specific language governing permissions and
                     "adaptationRights": {
                         "type":"string",
                         "enum": ["ByStory", "ByCharacter"]
-                    }
+                    },
+                    "WelcomeText": {
+                        "type":"string",
+                    },
                 },
-                "required":["UsersInfo","PlayersInfo","admin","editor","adaptationRights"],
+                "required":["UsersInfo","PlayersInfo","admin","editor","adaptationRights",'WelcomeText'],
                 "additionalProperties" : false
             };
             

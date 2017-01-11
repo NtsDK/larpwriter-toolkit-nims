@@ -161,6 +161,15 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         
+        LocalDBMS.prototype.getWelcomeText = function(callback){
+            callback(null, this.database.ManagementInfo.WelcomeText);
+        };
+
+        LocalDBMS.prototype.setWelcomeText = function(text, callback){
+            this.database.ManagementInfo.WelcomeText = text;
+            if(callback) callback();
+        };
+        
         LocalDBMS.prototype._passwordNotEmptyPrecondition = function(password){
             if (password === '') {
                 return [ null, 'admins-password-is-not-specified' ];
