@@ -179,6 +179,15 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         
+        var prepareInfo = function(profile, profileStructure){
+            var hiddenItems = profileStructure.filter(item => item.playerAccess === 'hidden').map( item => item.name);
+            profileStructure = profileStructure.filter(item => item.playerAccess !== 'hidden');
+            return {
+                'profile':R.omit(hiddenItems, profile),
+                'profileStructure':profileStructure,
+            };
+        };
+        
         LocalDBMS.prototype.getPlayerProfileInfo = function(callback){
             var that = this;
             that.getProfileStructure('player', function(err, playerProfileStructure){
@@ -187,10 +196,7 @@ See the License for the specific language governing permissions and
                     if(err) return callback(err);
                     that.getProfileBinding('player', '123', function(err, binding){
                         if(err) return callback(err);
-                        var playerInfo = {
-                            'profile':playerProfile,
-                            'profileStructure':playerProfileStructure,
-                        };
+                        var playerInfo = prepareInfo(playerProfile, playerProfileStructure);
                         if(binding[0] === ''){
                             callback(null, { 'player': playerInfo });
                         } else {
@@ -200,10 +206,7 @@ See the License for the specific language governing permissions and
                                     if(err) return callback(err);
                                     callback(null, { 
                                         'player': playerInfo,
-                                        'character':{
-                                            'profile':characterProfile,
-                                            'profileStructure':characterProfileStructure,
-                                        }
+                                        'character':prepareInfo(characterProfile, characterProfileStructure)
                                     });
                                 });
                             });

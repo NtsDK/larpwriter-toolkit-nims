@@ -33,7 +33,7 @@ See the License for the specific language governing permissions and
             addEl(clearEl(queryEl(profileDiv)), addEl(addClasses(makeEl("table"), ["table", 'table-striped']), tbody))
             
             state[type].inputItems = {};
-            state[type].disableList = [];
+            state[type].profileStructure = profileStructure;
             try {
                 addEls(tbody, profileStructure.map(appendInput(type)));
             } catch (err) {
@@ -49,17 +49,21 @@ See the License for the specific language governing permissions and
             return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), itemInput.dom)]);
         });
         
-        innerExports.fillProfileInformation = function(profileDiv, type, profile, isCharacterEditable){
+        innerExports.fillProfileInformation = function(profileDiv, type, profile, isEditable){
             removeClass(queryEl(profileDiv),'hidden');
-            Utils.enable(queryEl(profileDiv), "isCharacterEditable", isCharacterEditable);
-            state[type].disableList.forEach(function(item){
-                item.prop("disabled", !isCharacterEditable);
+            R.values(state[type].inputItems).forEach(itemInput => {
+                if(itemInput.type === 'multiEnum'){
+                    itemInput.multiEnumSelect.prop("disabled", !isEditable(itemInput.name, state[type].profileStructure));
+                } else {
+                    Utils.enableEl(itemInput.dom, isEditable(itemInput.name, state[type].profileStructure));
+                }
             });
+            
             state[type].name = profile.name;
             Object.values(state[type].inputItems).forEach(function(item){
                 item.showFieldValue(profile);
             });
-        }
+        };
         
         function ProfileItemInput(profileType, profileItemConfig){
             var input;
@@ -91,7 +95,6 @@ See the License for the specific language governing permissions and
                 setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
                 var sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(",")));
-                state[profileType].disableList.push(this.multiEnumSelect);
                 
                 sel.on('change', this.updateFieldValue.bind(this));
                 break;
@@ -101,7 +104,6 @@ See the License for the specific language governing permissions and
             
             if(profileItemConfig.type !== 'multiEnum'){
                 listen(input, "change", this.updateFieldValue.bind(this));
-                addClass(input,"isCharacterEditable");
             }
             
             this.dom = input;

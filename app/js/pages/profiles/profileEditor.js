@@ -117,7 +117,7 @@ See the License for the specific language governing permissions and
             if(err) {Utils.handleError(err); return;}
             PermissionInformer.isEntityEditable(type, name, function(err, isCharacterEditable){
                 if(err) {Utils.handleError(err); return;}
-                profileEditorCore.fillProfileInformation(profileDiv, type, profile, isCharacterEditable);
+                profileEditorCore.fillProfileInformation(profileDiv, type, profile, () => isCharacterEditable);
                 
                 if(type === 'character'){
                     DBMS.getCharacterReport(name, function(err, characterReport){

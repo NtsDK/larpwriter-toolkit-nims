@@ -147,19 +147,17 @@ Utils.handleError = function(err){
     }
 };
 
-Utils.enable = function(root, className, condition){
-    "use strict";
-    var arr = root.getElementsByClassName(className);
-    var i, elem, key;
-    for (i = 0; i < arr.length; i++) {
-        elem = arr[i];
-        key = elem.tagName.toLowerCase() === "textarea" ? "readonly" : "disabled";
-        if(condition){
-            elem.removeAttribute(key);
-        } else {
-            elem.setAttribute(key,key);
-        }
+Utils.enableEl = R.curry(function(el, condition){
+    var key = el.tagName.toLowerCase() === "textarea" ? "readonly" : "disabled";
+    if(condition){
+        el.removeAttribute(key);
+    } else {
+        el.setAttribute(key,key);
     }
+});
+
+Utils.enable = function(root, className, condition){
+    nl2array(root.getElementsByClassName(className)).map(Utils.enableEl(R.__, condition));
 };
 
 Utils.charOrdAObject = CommonUtils.charOrdAFactory(function(a){

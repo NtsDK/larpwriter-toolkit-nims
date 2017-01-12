@@ -46,9 +46,13 @@ See the License for the specific language governing permissions and
         });
     };
     
+    var isEditable = function(profileName, profileStructure){
+        return R.find(R.propEq('name', profileName), profileStructure).playerAccess === 'write';
+    };
+    
     var buildInterface = function(text, profileInfo, playersOptions){
         profileEditorCore.initProfileStructure(playerProfileDiv, 'player', profileInfo.player.profileStructure);
-        profileEditorCore.fillProfileInformation(playerProfileDiv, 'player', profileInfo.player.profile, true);
+        profileEditorCore.fillProfileInformation(playerProfileDiv, 'player', profileInfo.player.profile, isEditable);
         addEl(clearEl(queryEl(playerHeader)), makeText(strFormat(getL10n('briefings-player-profile'), [profileInfo.player.profile.name])));
         
         if(profileInfo.character === undefined){
@@ -67,7 +71,7 @@ See the License for the specific language governing permissions and
             }
         } else {
             profileEditorCore.initProfileStructure(characterProfileDiv, 'character', profileInfo.character.profileStructure);
-            profileEditorCore.fillProfileInformation(characterProfileDiv, 'character', profileInfo.character.profile, true);
+            profileEditorCore.fillProfileInformation(characterProfileDiv, 'character', profileInfo.character.profile, isEditable);
             addEl(clearEl(queryEl(characterHeader)), makeText(strFormat(getL10n('briefings-character-profile'), [profileInfo.character.profile.name])));
         }
         
