@@ -37,7 +37,7 @@ See the License for the specific language governing permissions and
         listen(queryEl(root + ".remove-editor-button"),"click", removeEditor);
         listen(queryEl(root + ".assign-editor-button"),"click", assignEditor);
         
-        nl2array(queryElEls(queryEl(root), '.adaptationRights')).map(listen(R.__, "click", changeAdaptationRightsMode));
+        queryElEls(queryEl(root), '.adaptationRights').map(listen(R.__, "click", changeAdaptationRightsMode));
         
         exports.content = queryEl(root);
     };

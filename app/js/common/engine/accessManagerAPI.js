@@ -170,6 +170,15 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         
+        LocalDBMS.prototype.getPlayersOptions = function(callback){
+            callback(null, CommonUtils.clone(this.database.ManagementInfo.PlayersOptions));
+        };
+        
+        LocalDBMS.prototype.setPlayerOption = function(name, value, callback){
+            this.database.ManagementInfo.PlayersOptions[name] = value;
+            if(callback) callback();
+        };
+        
         LocalDBMS.prototype._passwordNotEmptyPrecondition = function(password){
             if (password === '') {
                 return [ null, 'admins-password-is-not-specified' ];

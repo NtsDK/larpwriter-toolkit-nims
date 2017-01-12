@@ -32,7 +32,7 @@ See the License for the specific language governing permissions and
     };
     
     var findTexts = function(){
-        var selectedTextTypes = nl2array(queryElEls(queryEl(root), root + '.textSearchTypeRadio')).filter(el => el.checked).map(el => el.value);
+        var selectedTextTypes = queryElEls(queryEl(root), root + '.textSearchTypeRadio').filter(el => el.checked).map(el => el.value);
         var searchStr = queryEl(root + '.text-search-input').value;
         var caseSensitive = getEl('caseSensitiveTextSearch').checked;
         DBMS.getTexts(searchStr, selectedTextTypes, caseSensitive, function(err, texts){

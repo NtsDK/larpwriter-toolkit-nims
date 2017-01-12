@@ -147,6 +147,10 @@ See the License for the specific language governing permissions and
             if(data.ManagementInfo){
                 data.ManagementInfo.PlayersInfo = {};
                 data.ManagementInfo.WelcomeText = '';
+                data.ManagementInfo.PlayersOptions = {
+                    allowPlayerCreation: false,
+                    allowCharacterCreation: false,
+                };
             }
             data.Version = "0.6.0";
         }

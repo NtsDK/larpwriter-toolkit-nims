@@ -140,20 +140,20 @@ See the License for the specific language governing permissions and
     };
     
     var showPersonalStoriesByCharacters = function () {
-        var eventRows = nl2array(queryElEls(exports.content, '.eventRow-dependent'));
+        var eventRows = queryElEls(exports.content, '.eventRow-dependent');
         eventRows.map(removeClass(R.__,"hidden"));
         nl2array(queryElEls(exports.content, 'div[dependent-on-character]')).map(addClass(R.__,"hidden"));
         
         var characterNames = nl2array(getEl('events-characterSelector').selectedOptions).map(opt => opt.characterName);
-        characterNames.forEach( name => nl2array(queryElEls(exports.content, 'div[dependent-on-character="' + name + '"]')).map(removeClass(R.__,"hidden")));
+        characterNames.forEach( name => queryElEls(exports.content, 'div[dependent-on-character="' + name + '"]').map(removeClass(R.__,"hidden")));
         eventRows.map( row => setClassByCondition(row, 'hidden', R.intersection(row.dependsOnCharacters,characterNames).length === 0));
         
         updateSettings("characterNames", characterNames);
     };
     
     var showPersonalStoriesByEvents = function () {
-        nl2array(queryElEls(exports.content, 'div[dependent-on-character]')).map(removeClass(R.__,"hidden"));
-        nl2array(queryElEls(exports.content, '.eventRow-dependent')).map(addClass(R.__,"hidden"));
+        queryElEls(exports.content, 'div[dependent-on-character]').map(removeClass(R.__,"hidden"));
+        queryElEls(exports.content, '.eventRow-dependent').map(addClass(R.__,"hidden"));
         
         var eventIndexes = nl2array(getEl('events-eventSelector').selectedOptions).map(opt => opt.eventIndex222);
         eventIndexes.forEach( index => removeClass(getEls(index+"-dependent")[0],"hidden"));

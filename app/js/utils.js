@@ -266,7 +266,7 @@ function queryEls(sel){
 };
 
 function queryElEls(el, sel){
-    return el.querySelectorAll(sel);
+    return nl2array(el.querySelectorAll(sel));
 };
 
 function getEls(clazz){

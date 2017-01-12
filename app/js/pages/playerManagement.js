@@ -31,6 +31,7 @@ See the License for the specific language governing permissions and
         listen(queryEl(root + '.change-password-button'), 'click', changePassword);
         listen(queryEl(root + '.remove-user-button'    ), 'click', removeUser);
         listen(queryEl(root + '.welcome-text-area'     ), 'change', setWelcomeText);
+        queryElEls(queryEl(root), '.playerOptions').map(listen(R.__, 'change', setPlayerOption));
         
         exports.content = queryEl(root);
     };
@@ -42,12 +43,17 @@ See the License for the specific language governing permissions and
                 if(err) {Utils.handleError(err); return;}
                 DBMS.getWelcomeText(function(err, text){
                     if(err) {Utils.handleError(err); return;}
-                    queryEl(root + '.welcome-text-area'     ).value = text;
-                    var playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
-                    var hasLoginObj = R.groupBy(playerHasLogin, playerNames);
-                    fillSelector(clearEl(queryEl(root + '.create-login-name-select')), (hasLoginObj[false] || []).sort(Utils.charOrdAObject).map(remapProps4Select));
-                    fillSelector(clearEl(queryEl(root + '.change-password-user-select')), (hasLoginObj[true] || []).sort(Utils.charOrdAObject).map(remapProps4Select));
-                    fillSelector(clearEl(queryEl(root + '.remove-user-select')), (hasLoginObj[true] || []).sort(Utils.charOrdAObject).map(remapProps4Select));
+                    DBMS.getPlayersOptions(function(err, playersOptions){
+                        if(err) {Utils.handleError(err); return;}
+                        R.toPairs(playersOptions).map(pair => getEl(pair[0]).checked = pair[1]);
+                        
+                        queryEl(root + '.welcome-text-area'     ).value = text;
+                        var playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
+                        var hasLoginObj = R.groupBy(playerHasLogin, playerNames);
+                        fillSelector(clearEl(queryEl(root + '.create-login-name-select')), (hasLoginObj[false] || []).sort(Utils.charOrdAObject).map(remapProps4Select));
+                        fillSelector(clearEl(queryEl(root + '.change-password-user-select')), (hasLoginObj[true] || []).sort(Utils.charOrdAObject).map(remapProps4Select));
+                        fillSelector(clearEl(queryEl(root + '.remove-user-select')), (hasLoginObj[true] || []).sort(Utils.charOrdAObject).map(remapProps4Select));
+                    });
                 });
             });
         });
@@ -88,6 +94,10 @@ See the License for the specific language governing permissions and
     
     var setWelcomeText = function(event) {
         DBMS.setWelcomeText(event.target.value, Utils.processError());
+    };
+    
+    var setPlayerOption = function(event) {
+        DBMS.setPlayerOption(event.target.value, event.target.checked, Utils.processError());
     };
 
 })(this['PlayerManagement']={});

@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
         
         var body = makeEl('tbody');
         var selectInfo = makeProfileItemSelector(profileSettings, function(event){
-            var dataArr = nl2array(queryElEls(body, '[toCharacter]'));
+            var dataArr = queryElEls(body, '[toCharacter]');
             dataArr.map(clearEl).forEach(function(el){
                 var char = getAttr(el, 'toCharacter');
                 var selectedName = event.target.value;

@@ -38,11 +38,11 @@ See the License for the specific language governing permissions and
         listen(getEl("docxBriefings"), "change", readTemplateFile);
     
         var els = queryElEls(document, "#briefingExportDiv input[name=exportCharacterSelection]");
-        nl2array(els).map(listen(R.__, "change", onCharacterSelectionChange));
+        els.map(listen(R.__, "change", onCharacterSelectionChange));
         getEl("exportAllCharacters").checked = true;
 
         els = queryElEls(document, "#briefingExportDiv input[name=exportStorySelection]");
-        nl2array(els).map(listen(R.__, "change", onStorySelectionChange));
+        els.map(listen(R.__, "change", onStorySelectionChange));
         getEl("exportAllStories").checked = true;
     
         var el = getEl("briefingNumberSelector");

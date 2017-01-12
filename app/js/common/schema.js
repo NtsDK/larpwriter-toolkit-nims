@@ -725,6 +725,19 @@ See the License for the specific language governing permissions and
                 "required" : [ "name", "salt", "hashedPassword" ],
                 "additionalProperties" : false
             };
+            var playersOptionsSchema = {
+                "type" : "object",
+                "properties" : {
+                    "allowPlayerCreation" : {
+                        "type" : "boolean"
+                    },
+                    "allowCharacterCreation" : {
+                        "type" : "boolean"
+                    },
+                },
+                "required" : [ "allowPlayerCreation", "allowCharacterCreation" ],
+                "additionalProperties" : false
+            };
             
             var managementInfoSchema = {
                 "type" : "object",
@@ -752,8 +765,9 @@ See the License for the specific language governing permissions and
                     "WelcomeText": {
                         "type":"string",
                     },
+                    "PlayersOptions": playersOptionsSchema,
                 },
-                "required":["UsersInfo","PlayersInfo","admin","editor","adaptationRights",'WelcomeText'],
+                "required":["UsersInfo","PlayersInfo","admin","editor","adaptationRights",'WelcomeText', "PlayersOptions"],
                 "additionalProperties" : false
             };
             

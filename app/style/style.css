@@ -575,10 +575,14 @@ See the License for the specific language governing permissions and
   margin: 4px 2px;
 }
 
-.entity-management div > input:not([type="radio"]), 
+.entity-management div > input,
 .entity-management div > select{
   width: 200px;
 }
+.entity-management div > input[type="radio"],
+.entity-management div > input[type="checkbox"]{
+  width: auto;
+}  
 
 .relations-management.entity-management > div > span:first-child{
   width: 250px;
