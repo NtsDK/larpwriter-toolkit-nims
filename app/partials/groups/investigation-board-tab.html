@@ -1,0 +1,54 @@
+<div class="investigation-board-tab">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="schema-container"></div>
+    </div>
+  </div>
+  
+  <div class="board-add-node-popup board-popup hidden">
+    <div class="entity-management">
+      <div>
+        <h3 class="panel-title" l10n-id="investigation-board-add-group"></h3>
+        <select class="group-add-select"></select>
+        <button class="group-add-button" l10n-id="common-add"></button>
+      </div>
+      <div>
+        <h3 class="panel-title" l10n-id="investigation-board-create-resource"></h3>
+        <input class="create-entity-input" l10n-placeholder-id="investigation-board-resource-name"></input>
+        <button class="create-entity-button" l10n-id="common-create"></button>
+      </div>
+      <div>
+        <button class="cancel-node-adding-button" l10n-id="common-cancel"></button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="board-edit-group-popup board-popup hidden">
+    <h3 class="panel-title" l10n-id="investigation-board-replace-group"></h3>
+    <select class="group-switch-select"></select>
+    <button class="group-switch-button" l10n-id="common-ok"></button>
+    
+    <h3 class="panel-title" l10n-id="investigation-board-group-notes"></h3>
+    <textarea class="group-notes-editor" rows="3"></textarea>
+    
+    <button class="group-save-notes-button" l10n-id="common-ok"></button>
+    <button class="cancel-group-editing-button" l10n-id="common-cancel"></button>
+  </div>
+  
+  <div class="board-edit-resource-popup board-popup hidden">
+    <h3 class="panel-title" l10n-id="investigation-board-rename-resource"></h3>
+    <div>
+      <input class="rename-entity-input"
+        l10n-placeholder-id="investigation-board-new-resource-name"
+      ></input>
+      <button class="rename-entity-button" l10n-id="common-rename"></button>
+    </div>
+    <button class="cancel-resource-editing-button" l10n-id="common-cancel"></button>
+  </div>
+
+  <div class="board-add-edge-popup board-popup hidden">
+    <input class="add-edge-label-input" l10n-placeholder-id="investigation-board-enter-edge-label">
+    <button class="save-edge-button" l10n-id="common-ok"></button>
+    <button class="cancel-add-edge-button" l10n-id="common-cancel"></button>
+  </div>
+</div>

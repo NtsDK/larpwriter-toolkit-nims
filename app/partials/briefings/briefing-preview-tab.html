@@ -1,0 +1,37 @@
+<div id="briefingPreviewDiv">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <select id="briefingCharacter"></select><br> 
+    </div>
+    <div class="panel-body">
+      <table>
+        <tr>
+          <td style="padding: 0px 32px 0px 0px;">
+            <input type="radio" name="tabMode" value="adaptations" id="adaptationsModeRadio" />
+            <label for="adaptationsModeRadio" l10n-id="briefings-adaptations-mode"></label>
+            <br>
+            <input type="radio" name="tabMode" value="proofreading" id="proofreadingModeRadio" />
+            <label for="proofreadingModeRadio" l10n-id="briefings-proofreading-mode"></label>
+          </td>
+          <td style="padding: 0px 32px 0px 0px;">
+            <input type="radio" name="eventsGroupBy" value="story" id="eventGroupingByStoryRadio" />
+            <label for="eventGroupingByStoryRadio" l10n-id="briefings-group-by-story"></label>
+            <br>
+            <input type="radio" name="eventsGroupBy" value="time" id="eventGroupingByTimeRadio" />
+            <label for="eventGroupingByTimeRadio" l10n-id="briefings-sort-by-timeline"></label>
+          </td>
+          <td>
+            <input type="checkbox" id="hideAllPanelsCheckbox" />
+            <label for="hideAllPanelsCheckbox" l10n-id="briefings-hide-all-panels"></label>
+            <br>
+            <input type="checkbox" id="disableHeadersCheckbox" />
+            <label for="disableHeadersCheckbox" l10n-id="briefings-disable-headers"></label>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  
+  <div id="briefingContent"></div>
+  
+</div>
