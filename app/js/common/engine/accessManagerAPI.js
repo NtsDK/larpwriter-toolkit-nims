@@ -179,6 +179,51 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         
+        LocalDBMS.prototype.getPlayerProfileInfo = function(callback){
+            var that = this;
+            that.getProfileStructure('player', function(err, playerProfileStructure){
+                if(err) return callback(err);
+                that.getProfile('player', '123', function(err, playerProfile){
+                    if(err) return callback(err);
+                    that.getProfileBinding('player', '123', function(err, binding){
+                        if(err) return callback(err);
+                        var playerInfo = {
+                            'profile':playerProfile,
+                            'profileStructure':playerProfileStructure,
+                        };
+                        if(binding[0] === ''){
+                            callback(null, { 'player': playerInfo });
+                        } else {
+                            that.getProfileStructure('character', function(err, characterProfileStructure){
+                                if(err) return callback(err);
+                                that.getProfile('character', binding[0], function(err, characterProfile){
+                                    if(err) return callback(err);
+                                    callback(null, { 
+                                        'player': playerInfo,
+                                        'character':{
+                                            'profile':characterProfile,
+                                            'profileStructure':characterProfileStructure,
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+        };
+        
+        LocalDBMS.prototype.createCharacterByPlayer = function(characterName, callback) {
+            var that = this;
+            that.createProfile('character', characterName, function(err){
+                if(err) return callback(err);
+                that.createBinding(characterName, '123', function(err){
+                    if(err) return callback(err);
+                    callback();
+                });
+            });
+        };
+        
         LocalDBMS.prototype._passwordNotEmptyPrecondition = function(password){
             if (password === '') {
                 return [ null, 'admins-password-is-not-specified' ];

@@ -81,7 +81,7 @@ See the License for the specific language governing permissions and
                         if(err) {Utils.handleError(err); return;}
                         state.Stories = stories;
                         
-                        DBMS.getCharacterProfileStructure(function(err, profileStructure){ // node coloring
+                        DBMS.getProfileStructure('character', function(err, profileStructure){ // node coloring
                             if(err) {Utils.handleError(err); return;}
                             
                             DBMS.getProfileBindings(function(err, profileBindings){ // node coloring
