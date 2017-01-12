@@ -126,9 +126,13 @@ See the License for the specific language governing permissions and
                             },
                             "doExport" : {
                                 "type" : "boolean"
-                            }
+                            },
+                            "playerAccess" : {
+                                "type" : "string",
+                                "enum" : [ "write", "readonly", "hidden" ]
+                            },
                         },
-                        "required" : [ "name", "type", "value", "doExport" ],
+                        "required" : [ "name", "type", "value", "doExport", "playerAccess"],
                         "additionalProperties" : false
                     }, {
                         "type" : "object",
@@ -145,9 +149,13 @@ See the License for the specific language governing permissions and
                             },
                             "doExport" : {
                                 "type" : "boolean"
-                            }
+                            },
+                            "playerAccess" : {
+                                "type" : "string",
+                                "enum" : [ "write", "readonly", "hidden" ]
+                            },
                         },
-                        "required" : [ "name", "type", "value", "doExport" ],
+                        "required" : [ "name", "type", "value", "doExport", "playerAccess" ],
                         "additionalProperties" : false
                     }, {
                         "type" : "object",
@@ -164,9 +172,13 @@ See the License for the specific language governing permissions and
                             },
                             "doExport" : {
                                 "type" : "boolean"
-                            }
+                            },
+                            "playerAccess" : {
+                                "type" : "string",
+                                "enum" : [ "write", "readonly", "hidden" ]
+                            },
                         },
-                        "required" : [ "name", "type", "value", "doExport" ],
+                        "required" : [ "name", "type", "value", "doExport", "playerAccess" ],
                         "additionalProperties" : false
                     } ]
                 }

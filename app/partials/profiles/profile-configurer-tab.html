@@ -1,84 +1,10 @@
 <div class="profile-configurer-tab">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href="#" panel-toggler=".profile-configurer-tab .player-profile-panel">
-        <h3 class="panel-title" l10n-id="profiles-players-profile-structure"></h3>
-      </a>
-    </div>
-    <div class="panel-body player-profile-panel">
-      <div class="entity-management">
-        <div>
-          <input class="adminOnly create-entity-input" l10n-placeholder-id="profiles-profile-item-name"></input> 
-          <span l10n-id="profiles-profile-item-position"></span>
-          <select class="adminOnly create-entity-position-select"></select>
-          <span l10n-id="profiles-profile-item-type"></span>
-          <select class="adminOnly create-entity-type-select"></select> 
-          <button class="adminOnly create-entity-button" l10n-id="common-create"></button>
-        </div>
-        <div>
-          <select class="adminOnly move-entity-select"></select> 
-          <span l10n-id="profiles-profile-item-position"></span>
-          <select class="adminOnly move-entity-position-select"></select>
-          <button class="adminOnly move-entity-button" l10n-id="profiles-move-item"></button>
-        </div>
-        <div>
-          <select class="adminOnly remove-entity-select"></select>
-          <button class="adminOnly remove-entity-button" l10n-id="common-remove"></button>
-        </div>
-      </div>
-      <table class="table table-bordered" style="width: auto;">
-      <thead>
-        <tr>
-          <th>¹</th>
-          <th l10n-id="profiles-table-profile-item-name"></th>
-          <th l10n-id="profiles-profile-item-type"></th>
-          <th l10n-id="profiles-profile-item-default-value"></th>
-          <th l10n-id="profiles-profile-item-do-export"></th>
-        </tr>
-      </thead>
-      <tbody class="profile-config-container"></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href="#" panel-toggler=".profile-configurer-tab .character-profile-panel">
-        <h3 class="panel-title" l10n-id="profiles-characters-profile-structure"></h3>
-      </a>
-    </div>
-    <div class="panel-body character-profile-panel">
-      <div class="entity-management">
-        <div>
-          <input class="adminOnly create-entity-input" l10n-placeholder-id="profiles-profile-item-name"></input> 
-          <span l10n-id="profiles-profile-item-position"></span>
-          <select class="adminOnly create-entity-position-select"></select>
-          <span l10n-id="profiles-profile-item-type"></span>
-          <select class="adminOnly create-entity-type-select"></select> 
-          <button class="adminOnly create-entity-button" l10n-id="common-create"></button>
-        </div>
-        <div>
-          <select class="adminOnly move-entity-select"></select> 
-          <span l10n-id="profiles-profile-item-position"></span>
-          <select class="adminOnly move-entity-position-select"></select>
-          <button class="adminOnly move-entity-button" l10n-id="profiles-move-item"></button>
-        </div>
-        <div>
-          <select class="adminOnly remove-entity-select"></select>
-          <button class="adminOnly remove-entity-button" l10n-id="common-remove"></button>
-        </div>
-      </div>
-      <table class="table table-bordered" style="width: auto;">
-      <thead>
-        <tr>
-          <th>¹</th>
-          <th l10n-id="profiles-table-profile-item-name"></th>
-          <th l10n-id="profiles-profile-item-type"></th>
-          <th l10n-id="profiles-profile-item-default-value"></th>
-          <th l10n-id="profiles-profile-item-do-export"></th>
-        </tr>
-      </thead>
-      <tbody class="profile-config-container"></tbody>
-      </table>
-    </div>
-  </div>
+  @@include('./profiles/profile-configurer-panel.html', {
+    "panelClass" : "player-profile-panel",
+    "panelHeaderId" : "profiles-players-profile-structure"
+  })
+  @@include('./profiles/profile-configurer-panel.html', {
+    "panelClass" : "character-profile-panel",
+    "panelHeaderId" : "profiles-characters-profile-structure"
+  })
 </div>

@@ -154,6 +154,16 @@ See the License for the specific language governing permissions and
             }
             data.Version = "0.6.0";
         }
+        if(data.Version === "0.6.0"){
+            data.CharacterProfileStructure.forEach(function(item){
+                item.playerAccess = 'hidden';
+            });
+            data.PlayerProfileStructure.forEach(function(item){
+                item.playerAccess = 'hidden';
+            });
+            data.Version = "0.6.1";
+        }
+        
         
         return data;
     };

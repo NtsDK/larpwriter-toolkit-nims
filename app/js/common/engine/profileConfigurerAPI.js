@@ -87,6 +87,26 @@ See the License for the specific language governing permissions and
             this.ee.trigger("changeProfileItemType", arguments);
             callback();
         };
+        
+        LocalDBMS.prototype._changeProfileItemPlayerAccessPrecondition = function(type, profileItemName, playerAccessType){
+            if (type !== 'character' && type !== 'player') {
+                return [ null, 'binding-wrong-profile-type', [ type ] ];
+            } else if (R.find(R.propEq('name', profileItemName), R.path(getPath(type), this.database)) === undefined) {
+                return [ null, 'profiles-profile-item-is-not-exist', [ profileItemName ] ];
+            } else if (!R.contains(playerAccessType, Constants.playerAccessTypes)) {
+                return [ null, 'profiles-wrong-player-access-type', [ playerAccessType ] ];
+            }
+        };
+  
+        LocalDBMS.prototype.changeProfileItemPlayerAccess = function(type, profileItemName, playerAccessType, callback) {
+            var err = this._changeProfileItemPlayerAccessPrecondition(type, profileItemName, playerAccessType);
+            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
+            
+            var profileStructure = R.path(getPath(type), this.database);
+            var profileItem = R.find(R.propEq('name', profileItemName), profileStructure);
+            profileItem.playerAccess = playerAccessType;
+            callback();
+        };
     
         // profile configurer
         LocalDBMS.prototype.isProfileItemNameUsed = function(type, profileItemName, callback) {

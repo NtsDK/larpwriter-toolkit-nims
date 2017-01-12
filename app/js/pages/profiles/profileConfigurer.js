@@ -36,11 +36,11 @@ See the License for the specific language governing permissions and
 
     exports.init = function () {
         var sel = clearEl(queryEl(characterPanel+".create-entity-type-select"));
-        var fillMainSel = function(){fillSelector2(clearEl(sel));};
+        var fillMainSel = function(){fillItemTypesSel(clearEl(sel));};
         fillMainSel();
         L10n.onL10nChange(fillMainSel);
         var sel2 = clearEl(queryEl(playerPanel+".create-entity-type-select"));
-        var fillMainSel2 = function(){fillSelector2(clearEl(sel2));};
+        var fillMainSel2 = function(){fillItemTypesSel(clearEl(sel2));};
         fillMainSel2();
         L10n.onL10nChange(fillMainSel2);
     
@@ -140,20 +140,14 @@ See the License for the specific language governing permissions and
         }
     };
     
-    var fillSelector2 = function (sel) {
-        fillSelector(sel, R.keys(Constants.profileFieldTypes).map(function(name){
-            return {value: name,name: constL10n(name)};
-        }));
-    };
+    var fillItemTypesSel = (sel) => fillSelector(sel, constArr2Select(R.keys(Constants.profileFieldTypes)));
+    var fillPlayerAccessSel = (sel) => fillSelector(sel, constArr2Select(Constants.playerAccessTypes));
     
     var getInput = R.curry(function (type, profileSettings, index) { // throws InternalError
         index++;
-        var tr = makeEl("tr");
-        
-        var addColumn = R.compose(addEl(tr), function(el){
-            return addEl(makeEl("td"), el);
-        });
-        addColumn(addEl(makeEl("span"),makeText(index)));
+        var els = [];
+
+        els.push(addEl(makeEl("span"),makeText(index)));
     
         var input = setProps(makeEl("input"), {
             value: profileSettings.name,
@@ -161,19 +155,17 @@ See the License for the specific language governing permissions and
         });
         listen(input, "change", renameProfileItem(type));
         addClass(input,"itemNameInput");
-        addClass(input, "adminOnly");
-        addColumn(input);
+        els.push(input);
     
         var sel = makeEl("select"); 
-        fillSelector2(sel);
+        fillItemTypesSel(sel);
         setProps(sel, {
             value: profileSettings.type,
             info: profileSettings.name,
             oldType: profileSettings.type
         });
         listen(sel, "change", changeProfileItemType(type));
-        addClass(sel, "adminOnly");
-        addColumn(sel);
+        els.push(sel);
     
         switch (profileSettings.type) {
         case "text":
@@ -205,10 +197,9 @@ See the License for the specific language governing permissions and
             infoType: profileSettings.type,
             oldValue: profileSettings.value
         });
-        addClass(input, "adminOnly");
         addClass(input, "profile-configurer-" + profileSettings.type);
         listen(input, "change", updateDefaultValue(type));
-        addColumn(input);
+        els.push(input);
         
         var input = setProps(makeEl("input"), {
             checked: profileSettings.doExport,
@@ -216,10 +207,19 @@ See the License for the specific language governing permissions and
             type: "checkbox"
         });
         listen(input, "change", doExportChange(type));
-        addClass(input, "adminOnly");
-        addColumn(input);
+        els.push(input);
         
-        return tr;
+        var sel = makeEl("select"); 
+        fillPlayerAccessSel(sel);
+        setProps(sel, {
+            value: profileSettings.playerAccess,
+            info: profileSettings.name,
+            oldValue: profileSettings.playerAccess,
+        });
+        listen(sel, "change", changeProfileItemPlayerAccess(type));
+        els.push(sel);
+        
+        return addEls(makeEl("tr"), els.map(el => addEl(makeEl("td"), addClass(el, 'adminOnly'))));
     });
     
     var updateDefaultValue = function (type) {
@@ -337,6 +337,19 @@ See the License for the specific language governing permissions and
                 event.target.value = event.target.oldType;
             }
         }
+    };
+    
+    var changeProfileItemPlayerAccess = function (type) {
+        return function(event){
+            var playerAccessType = event.target.value;
+            var name = event.target.info;
+            DBMS.changeProfileItemPlayerAccess(type, name, playerAccessType, function(err){
+                if(err){
+                    event.target.value = event.target.oldValue;
+                    Utils.processError()(err);
+                }
+            });
+        };
     };
 
 })(this['ProfileConfigurer']={});

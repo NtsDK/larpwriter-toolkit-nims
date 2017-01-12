@@ -45,6 +45,12 @@ See the License for the specific language governing permissions and
         }
     };
     
+    exports.playerAccessTypes = [
+        "write", 
+        "readonly", 
+        "hidden"
+    ];
+    
     exports.objectSubsets = [
         "allObjects",
         "selectedCharacters",
