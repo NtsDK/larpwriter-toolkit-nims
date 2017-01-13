@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CommonUtils   = opts.CommonUtils ;
+        var listeners     = opts.listeners   ;
         
         LocalDBMS.prototype.getManagementInfo = function(callback){
             var ManagementInfo = this.database.ManagementInfo;
@@ -255,9 +256,32 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype._changePlayerPasswordPrecondition = function(userName, password){
             return this._passwordNotEmptyPrecondition(password) || this._playerHasLoginPrecondition(userName);
         };
+        
+        var _renameCharacter = function(type, fromName, toName){
+            if(type === 'character') return;
+            var playersInfo = this.database.ManagementInfo.PlayersInfo;
+            if(playersInfo[fromName] !== undefined){
+                playersInfo[toName] = playersInfo[fromName];  
+                playersInfo[toName].name = toName;
+                delete playersInfo[fromName];
+            }
+        };
+        
+        listeners.renameProfile = listeners.renameProfile || [];
+        listeners.renameProfile.push(_renameCharacter);
+        
+        var _removeCharacter = function(type, characterName){
+            if(type === 'character') return;
+            var playersInfo = this.database.ManagementInfo.PlayersInfo;
+            if(playersInfo[characterName] !== undefined){
+                delete playersInfo[characterName];
+            }
+        };
+        
+        listeners.removeProfile = listeners.removeProfile || [];
+        listeners.removeProfile.push(_removeCharacter);    
     };
     
-
     callback(accessManagerAPI);
 
 })(function(api){
