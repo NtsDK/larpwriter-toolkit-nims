@@ -16,7 +16,13 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function groupSchemaAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
+    function groupSchemaAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var Constants     = opts.Constants   ;
+        var Errors        = opts.Errors      ;
+        var listeners     = opts.listeners   ;
         
         var _isGroupsEqualByFilterModel = function(fm1, fm2){
             var fmMap1 = R.indexBy(R.prop('name'), fm1);

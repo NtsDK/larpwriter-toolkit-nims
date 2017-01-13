@@ -16,7 +16,13 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function profilesAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
+    function profilesAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var Constants     = opts.Constants   ;
+        var Errors        = opts.Errors      ;
+        var listeners     = opts.listeners   ;
         
         function getPath(type){
             if(type === 'character') return ['Characters'];

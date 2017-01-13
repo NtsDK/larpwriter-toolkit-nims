@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function logAPI(LocalDBMS, R, CommonUtils) {
+    function logAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
         
         LocalDBMS.prototype.log = function(userName, funcName, rewrite, params, callback) {
             "use strict";

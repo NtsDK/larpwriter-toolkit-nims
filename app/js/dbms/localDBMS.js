@@ -24,11 +24,22 @@ function makeLocalDBMS(fullVersion){
         return LocalDBMS;
     }
     
-    var listeners = {};
-    var dbmsUtils = {};
+    var opts = {
+        Migrator     : Migrator    ,
+        CommonUtils  : CommonUtils ,
+        EventEmitter : EventEmitter,
+        R            : R           ,
+        Ajv          : Ajv         ,
+        Schema       : Schema      ,
+        Errors       : Errors      ,
+        listeners    : {}          ,
+        Constants    : Constants   ,
+        dbmsUtils    : {}          ,
+        dateFormat   : dateFormat  ,
+    };
     
     function LocalDBMS(){
-        this._init(listeners);
+        this._init(opts.listeners);
     };
     
     LocalDBMS.prototype.getSettings = function(){
@@ -36,30 +47,31 @@ function makeLocalDBMS(fullVersion){
         return this.database.Settings;
     };
     
-    baseAPI(LocalDBMS, Migrator, CommonUtils, EventEmitter);
-    statisticsAPI(LocalDBMS, R, CommonUtils);
-    consistencyCheckAPI(LocalDBMS, R, CommonUtils, Ajv, Schema);
-    profilesAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
-    profileBindingAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
+    var func = (name) => window[name](LocalDBMS, opts);
     
-    groupsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
-    groupSchemaAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
-    investigationBoardAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
-    relationsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners);
-    briefingExportAPI(LocalDBMS, CommonUtils, R, Constants, dbmsUtils);
+    ["baseAPI"               ,
+    "consistencyCheckAPI"   ,
+    "statisticsAPI"         ,
+    "profilesAPI"           ,
+    "profileBindingAPI"     ,
     
-    profileConfigurerAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
-    entityAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
-    storyBaseAPI(LocalDBMS, R, CommonUtils, Errors);
-    storyEventsAPI(LocalDBMS, R, CommonUtils, Errors);
-    storyCharactersAPI(LocalDBMS, R, CommonUtils, Errors, listeners);
+    "groupsAPI"             ,
+    "groupSchemaAPI"        ,
+    "investigationBoardAPI" ,
+    "relationsAPI"          ,
+    "briefingExportAPI"     ,
     
-    storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat);
-    storyAdaptationsAPI(LocalDBMS, R, CommonUtils, dbmsUtils);
-    accessManagerAPI(LocalDBMS, CommonUtils, R);
-    textSearchAPI(LocalDBMS, Constants, R, CommonUtils, Errors);
+    "profileConfigurerAPI"  ,
+    "entityAPI"             ,
+    "storyBaseAPI"          ,
+    "storyEventsAPI"        ,
+    "storyCharactersAPI"    ,
     
-    logAPI(LocalDBMS, R, CommonUtils);
+    "storyViewAPI"          ,
+    "storyAdaptationsAPI"   ,
+    "accessManagerAPI"      ,
+    "textSearchAPI"         ,
+    "logAPI"].map(func);
     
     Logger.attachLogCalls(LocalDBMS, R, false);
     return LocalDBMS;

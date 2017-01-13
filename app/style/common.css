@@ -291,3 +291,6 @@ input[type="checkbox"]:checked + .checkbox-label{
   display: flex;
 }
 
+textarea[readonly]{
+  background-color: #eee;
+}

@@ -16,7 +16,13 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function groupsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
+    function groupsAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var Constants     = opts.Constants   ;
+        var Errors        = opts.Errors      ;
+        var listeners     = opts.listeners   ;
         
         LocalDBMS.prototype.getGroupNamesArray = function(callback) {
             callback(null, Object.keys(this.database.Groups).sort(CommonUtils.charOrdA));

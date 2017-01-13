@@ -16,7 +16,11 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function consistencyCheckAPI(LocalDBMS, R, CommonUtils, validatorLib, schemaBuilder) {
+    function consistencyCheckAPI(LocalDBMS, opts) {
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var validatorLib  = opts.Ajv         ;
+        var schemaBuilder = opts.Schema      ;
         
         LocalDBMS.prototype.getConsistencyCheckResult = function(callback) {
             var errors = [];
@@ -31,6 +35,7 @@ See the License for the specific language governing permissions and
             checkBindingsConsistency(this.database, pushError);
             if(this.database.ManagementInfo){
                 checkObjectRightsConsistency(this.database, pushError);
+                checkPlayerLoginConsistency(this.database, pushError);
             }
             
             var schema = schemaBuilder.getSchema(this.database);
@@ -63,6 +68,17 @@ See the License for the specific language governing permissions and
                     processError("Object rights inconsistent, user story is not exist: user {0}, story {1}", [user.name, difference]);
                 }
             })
+        };
+        
+        var checkPlayerLoginConsistency = function(data, callback){
+            var playerNames = R.values(data.Players).map(R.prop('name'));
+            var loginNames = R.keys(data.ManagementInfo.PlayersInfo);
+            var processError = getErrorProcessor(callback);
+            
+            var difference = R.difference(loginNames, playerNames);
+            if(difference.length != 0){
+                processError("Player logins inconsistent, logins which have no player: logins {0}", [difference]);
+            }
         };
         
         var checkEventsCharactersConsistency = function(data, callback){

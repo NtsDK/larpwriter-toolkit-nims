@@ -16,7 +16,9 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function statisticsAPI(LocalDBMS, R, CommonUtils) {
+    function statisticsAPI(LocalDBMS, opts) {
+        var R            = opts.R           ;
+        var CommonUtils  = opts.CommonUtils ;
         
         LocalDBMS.prototype.getStatistics = function(callback) {
             var that = this;

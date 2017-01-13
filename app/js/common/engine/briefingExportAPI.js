@@ -15,7 +15,12 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function briefingExportAPI(LocalDBMS, CommonUtils, R, Constants, dbmsUtils) {
+    function briefingExportAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var Constants     = opts.Constants   ;
+        var dbmsUtils     = opts.dbmsUtils   ;
     
         LocalDBMS.prototype.getBriefingData = function(selectedCharacters, selectedStories, exportOnlyFinishedStories, callback) {
             var that = this;

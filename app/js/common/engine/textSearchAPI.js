@@ -16,7 +16,12 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function textSearchAPI(LocalDBMS, Constants, R, CommonUtils, Errors) {
+    function textSearchAPI(LocalDBMS, opts) {
+
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var Constants     = opts.Constants   ;
+        var Errors        = opts.Errors      ;
 
         var searchers = {};
         

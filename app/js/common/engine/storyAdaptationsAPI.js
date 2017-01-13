@@ -16,7 +16,12 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function storyAdaptationsAPI(LocalDBMS, R, CommonUtils, dbmsUtils) {
+    function storyAdaptationsAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var dbmsUtils     = opts.dbmsUtils   ;
+        
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
             "use strict";

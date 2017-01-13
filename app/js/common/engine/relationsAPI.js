@@ -16,7 +16,13 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function relationsAPI(LocalDBMS, R, Constants, CommonUtils, Errors, listeners) {
+    function relationsAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var Constants     = opts.Constants   ;
+        var Errors        = opts.Errors      ;
+        var listeners     = opts.listeners   ;
         
         var relationsPath = ['Relations'];
         

@@ -16,7 +16,11 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function storyEventsAPI(LocalDBMS, R, CommonUtils, Errors) {
+    function storyEventsAPI(LocalDBMS, opts) {
+        
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var Errors        = opts.Errors      ;
         
         //story events, event presence
         LocalDBMS.prototype.getStoryEvents = function(storyName, callback){

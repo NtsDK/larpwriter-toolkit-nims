@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 
 (function(callback){
     
-    function baseAPI(LocalDBMS, Migrator, CommonUtils, EventEmitter) {
+    function baseAPI(LocalDBMS, opts) {
+        var Migrator     = opts.Migrator    ;
+        var CommonUtils  = opts.CommonUtils ;
+        var EventEmitter = opts.EventEmitter;
         
         LocalDBMS.prototype._init = function(listeners){
             "use strict";

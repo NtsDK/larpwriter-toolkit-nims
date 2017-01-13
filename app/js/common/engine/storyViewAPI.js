@@ -14,7 +14,12 @@ See the License for the specific language governing permissions and
 
 (function(callback){
 
-    function storyViewAPI(LocalDBMS, R, CommonUtils, dateFormat) {
+    function storyViewAPI(LocalDBMS, opts) {
+
+        var R             = opts.R           ;
+        var CommonUtils   = opts.CommonUtils ;
+        var dateFormat    = opts.dateFormat  ;
+        
         // preview
         LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
             "use strict";
