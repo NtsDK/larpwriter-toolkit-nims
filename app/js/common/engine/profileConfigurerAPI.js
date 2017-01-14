@@ -50,7 +50,8 @@ See the License for the specific language governing permissions and
                     name : name,
                     type : itemType,
                     value : value,
-                    doExport : true
+                    doExport : true,
+                    playerAccess: 'hidden'
                 };
                 
                 if (toEnd) {

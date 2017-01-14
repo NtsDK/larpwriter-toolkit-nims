@@ -134,18 +134,20 @@ Utils.processError = function(callback){
     }
 };
 
-Utils.handleError = function(err){
+Utils.handleErrorMsg = function(err){
     var checkErrorType = R.curry(function(err, name){
         return err instanceof Errors[name] || (err.name && err.name === name)
     });
     if (R.keys(Errors).some(checkErrorType(err))) {
-        Utils.alert(strFormat(getL10n(err.messageId), err.parameters));
+        return strFormat(getL10n(err.messageId), err.parameters);
     } else if( typeof err === 'object'){
-        Utils.alert(err.message);
+        return err.message;
     } else {
-        Utils.alert(err);
+        return err;
     }
 };
+
+Utils.handleError = (err) => Utils.alert(Utils.handleErrorMsg(err));
 
 Utils.enableEl = R.curry(function(el, condition){
     var key = el.tagName.toLowerCase() === "textarea" ? "readonly" : "disabled";

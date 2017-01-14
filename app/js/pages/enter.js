@@ -61,10 +61,17 @@ See the License for the specific language governing permissions and
             window.location.href = "/page.html";
         });
         
-        request.fail(function(jqXHR, textStatus, errorThrown) {
+        request.fail(function(errorInfo, textStatus, errorThrown) {
+            var msg;
+            try {
+                msg = Utils.handleErrorMsg(JSON.parse(errorInfo.responseText));
+            } catch(err){
+                msg = Utils.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
+            }
 //             var error = JSON.parse(jqXHR.responseText);
 //             $('.error', form).html(error.message); 
-            $('.error', form).html(textStatus); 
+//            $('.error', form).html(textStatus); 
+            $('.error', form).html(msg); 
         });
         
         return false;

@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
     
     state.summary = {};
     
-    if(mode === "NIMS_Server"){
+    if(mode === "NIMS_Server" && PERMISSION_INFORMER_ENABLED){
         exports.refresh = function(callback) {
             var request = $.ajax({
                 url : "/getPermissionsSummary",
@@ -139,7 +139,7 @@ See the License for the specific language governing permissions and
             callback(null, map);
         };
         
-    } else {
+    } else if (mode === "Standalone"){
         
         exports.refresh = function(callback) {
             callback();

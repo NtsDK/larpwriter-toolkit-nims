@@ -38,25 +38,29 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     exports.onPlayerPageLoad = function () {
         initPage();
         var LocalDBMS = makeLocalDBMS(false);
-        window.DBMS = new LocalDBMS();
+        var RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+        window.DBMS = new RemoteDBMS();
         stateInit();
-        Utils.addView(state.containers, "profile-editor", ProfileEditor, {mainPage:true});
+        Utils.addView(state.containers, "player", Player, {mainPage:true});
         addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
         Utils.addView(state.containers, "about", About);
         addEl(state.navigation, makeL10nButton());
         addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
+        state.currentView.refresh();
     };
     
     exports.onIndexPageLoad = function () {
         initPage();
         var LocalDBMS = makeLocalDBMS(false);
-        window.DBMS = new LocalDBMS();
+        var RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+        window.DBMS = new RemoteDBMS();
         stateInit();
         addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
         Utils.addView(state.containers, "enter", Enter, {mainPage:true});
         Utils.addView(state.containers, "register", Register);
         Utils.addView(state.containers, "about", About);
         addEl(state.navigation, makeL10nButton());
+        state.currentView.refresh();
     };
     
     exports.onMasterPageLoad = function () {
@@ -107,10 +111,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 var button;
                 stateInit();
 
-                Utils.addView(state.containers, "register", Register, {mainPage:true});
+                Utils.addView(state.containers, "register", Register);
                 Utils.addView(state.containers, "enter", Enter);
+                Utils.addView(state.containers, "player", Player);
                 Utils.addView(state.containers, "overview", Overview);
-                Utils.addView(state.containers, "profiles", Profiles);
+                Utils.addView(state.containers, "profiles", Profiles, {mainPage:true});
                 Utils.addView(state.containers, "stories", Stories);
                 Utils.addView(state.containers, "adaptations", Adaptations);
                 Utils.addView(state.containers, "briefings", Briefings);
@@ -151,13 +156,12 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addEl(state.navigation, makeL10nButton());
                 
                 Utils.addView(state.containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
-    //            addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
+                addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
     //            addEl(state.navigation, makeButton("aboutButton", "about", null, btnOpts));
-                if(MODE === "NIMS_Server"){
+//                if(MODE === "NIMS_Server"){
                     Utils.addView(state.containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
-    //                Utils.addView(state.containers, "chat", Chat, {id:"chatButton", tooltip:true});
                     addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
-                }
+//                }
                 
                 FileUtils.init(function(err){
                     if(err) {Utils.handleError(err); return;}

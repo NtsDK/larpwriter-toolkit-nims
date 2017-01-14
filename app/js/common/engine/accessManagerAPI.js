@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
         var R             = opts.R           ;
         var CommonUtils   = opts.CommonUtils ;
         var listeners     = opts.listeners   ;
+        var Errors        = opts.Errors      ;
         
         LocalDBMS.prototype.getManagementInfo = function(callback){
             var ManagementInfo = this.database.ManagementInfo;
@@ -122,39 +123,15 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.createPlayer = function(userName, password, callback) {
-            var err = this._passwordNotEmptyPrecondition(password);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            
-            var that = this;
-            this.createProfile('player', userName, function(err){
-                if(err) callback(err);
-                that.database.ManagementInfo.PlayersInfo[userName] = {
-                    name : userName,
-                    salt: 'dfgdfg',
-                    hashedPassword: 'sdfsdfsdf'  +password
-                };
-                if(callback) callback();
-            });
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayer']));
         };
         
         LocalDBMS.prototype.createPlayerLogin = function(userName, password, callback) {
-            var err = this._createPlayerLoginPrecondition(userName, password);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            
-            this.database.ManagementInfo.PlayersInfo[userName] = {
-                name : userName,
-                salt: 'dfgdfg',
-                hashedPassword: 'sdfsdfsdf' + password
-            };
-            if(callback) callback();
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayerLogin']));
         };
         
         LocalDBMS.prototype.changePlayerPassword = function(userName, password, callback) {
-            var err = this._changePlayerPasswordPrecondition(userName, password);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            
-            this.database.ManagementInfo.PlayersInfo[userName].hashedPassword = 'sdfsdfsdf' + password;
-            if(callback) callback();
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changePlayerPassword']));
         };
         
         LocalDBMS.prototype.removePlayerLogin = function(userName, callback) {
@@ -183,78 +160,18 @@ See the License for the specific language governing permissions and
             if(callback) callback();
         };
         
-        var prepareInfo = function(profile, profileStructure){
-            var hiddenItems = profileStructure.filter(item => item.playerAccess === 'hidden').map( item => item.name);
-            profileStructure = profileStructure.filter(item => item.playerAccess !== 'hidden');
-            return {
-                'profile':R.omit(hiddenItems, profile),
-                'profileStructure':profileStructure,
-            };
-        };
-        
         LocalDBMS.prototype.getPlayerProfileInfo = function(callback){
-            var that = this;
-            that.getProfileStructure('player', function(err, playerProfileStructure){
-                if(err) return callback(err);
-                that.getProfile('player', '123', function(err, playerProfile){
-                    if(err) return callback(err);
-                    that.getProfileBinding('player', '123', function(err, binding){
-                        if(err) return callback(err);
-                        var playerInfo = prepareInfo(playerProfile, playerProfileStructure);
-                        if(binding[0] === ''){
-                            callback(null, { 'player': playerInfo });
-                        } else {
-                            that.getProfileStructure('character', function(err, characterProfileStructure){
-                                if(err) return callback(err);
-                                that.getProfile('character', binding[0], function(err, characterProfile){
-                                    if(err) return callback(err);
-                                    callback(null, { 
-                                        'player': playerInfo,
-                                        'character':prepareInfo(characterProfile, characterProfileStructure)
-                                    });
-                                });
-                            });
-                        }
-                    });
-                });
-            });
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['getPlayerProfileInfo']));
         };
         
         LocalDBMS.prototype.createCharacterByPlayer = function(characterName, callback) {
-            var that = this;
-            that.createProfile('character', characterName, function(err){
-                if(err) return callback(err);
-                that.createBinding(characterName, '123', function(err){
-                    if(err) return callback(err);
-                    callback();
-                });
-            });
-        };
-        
-        LocalDBMS.prototype._passwordNotEmptyPrecondition = function(password){
-            if (password === '') {
-                return [ null, 'admins-password-is-not-specified' ];
-            }
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createCharacterByPlayer']));
         };
         
         LocalDBMS.prototype._playerHasLoginPrecondition = function(userName){
             if (this.database.ManagementInfo.PlayersInfo[userName] === undefined) {
                 return [ null, 'admins-player-has-no-login', [userName] ];
             }
-        };
-
-        LocalDBMS.prototype._createPlayerLoginPrecondition = function(userName, password){
-            if (this.database.ManagementInfo.PlayersInfo[userName] !== undefined) {
-                return [ null, 'admins-player-already-has-password', [userName] ];
-            } else if (this.database.Players[userName] === undefined) {
-                return [ null, 'profiles-player-is-not-exist' ];
-            } else {
-                return this._passwordNotEmptyPrecondition(password);
-            }
-        };
-        
-        LocalDBMS.prototype._changePlayerPasswordPrecondition = function(userName, password){
-            return this._passwordNotEmptyPrecondition(password) || this._playerHasLoginPrecondition(userName);
         };
         
         var _renameCharacter = function(type, fromName, toName){

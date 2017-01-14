@@ -18,11 +18,11 @@ See the License for the specific language governing permissions and
 "use strict";
 
 function makeLocalDBMS(fullVersion){
-    if(!fullVersion){
-        function LocalDBMS(){
-        };
-        return LocalDBMS;
-    }
+//    if(!fullVersion){
+//        function LocalDBMS(){
+//        };
+//        return LocalDBMS;
+//    }
     
     var opts = {
         Migrator     : Migrator    ,
