@@ -164,56 +164,26 @@ See the License for the specific language governing permissions and
     
     var createMaster = function () {
         var userNameInput = queryEl(root + ".create-user-name-input");
-        var name = userNameInput.value.trim();
-    
-        if (name === "") {
-            Utils.alert(getL10n('admins-user-name-is-not-specified'));
-            return;
-        }
-        
         var userPasswordInput = queryEl(root + ".create-user-password-input");
-        var password = userPasswordInput.value.trim();
-        
-        if (password === "") {
-            Utils.alert(getL10n('admins-password-is-not-specified'));
-            return;
-        }
-        
-        DBMS.isMasterNameUsed(name, function(err, isMasterNameUsed){
-            if(err) {Utils.handleError(err); return;}
-            if (isMasterNameUsed) {
-                Utils.alert(getL10n('admins-user-already-exists'));
-            } else {
-                
-                DBMS.createMaster(name, password, Utils.processError(function(){
-                    userNameInput.value = '';
-                    userPasswordInput.value = '';
-                    exports.refresh();
-                }));
-            }
-        });
+        DBMS.createMaster(userNameInput.value.trim(), userPasswordInput.value, Utils.processError(function(){
+            userNameInput.value = '';
+            userPasswordInput.value = '';
+            exports.refresh();
+        }));
     };
     
     
     var changeMasterPassword = function () {
         var userName = queryEl(root + ".change-password-user-select").value.trim();
-        var newPassword = queryEl(root + ".change-password-password-input").value.trim();
-    
-        if (newPassword === "") {
-            Utils.alert(getL10n('admins-password-is-not-specified'));
-            return;
-        }
-        
-        DBMS.changeMasterPassword(userName, newPassword, Utils.processError(function(){
+        var passwordInput = queryEl(root + ".change-password-password-input");
+        DBMS.changeMasterPassword(userName, passwordInput.value, Utils.processError(function(){
             queryEl(root + ".change-password-password-input").value = '';
             exports.refresh();
         }));
-    
     };
     
     var removeMaster = function () {
         var name = queryEl(root + ".remove-user-select").value.trim();
-    
         if (Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]))) {
             DBMS.removeMaster(name, Utils.processError(exports.refresh));
         }
@@ -225,6 +195,7 @@ See the License for the specific language governing permissions and
         return function(){
             var userName = queryEl(root + ".user-permission-select").value.trim();
             
+            // TODO remove this check
             if(userName === ""){
                 Utils.alert(getL10n('admins-user-is-not-selected'));
                 return;

@@ -629,7 +629,7 @@ See the License for the specific language governing permissions and
 
 /** register.js */
 .register-form > div > :first-child{
-  width: 240px;
+  width: 120px;;
   text-align: right;
   padding: 0 10px 0 0;
   display: inline-block;

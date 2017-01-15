@@ -58,10 +58,6 @@ See the License for the specific language governing permissions and
             callback();
         };
         
-        LocalDBMS.prototype.isMasterNameUsed = function(name, callback){
-            callback(null, this.database.ManagementInfo.UsersInfo[name] !== undefined);
-        };
-        
         LocalDBMS.prototype.createMaster = function(name, password, callback){
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMaster']));
         };
