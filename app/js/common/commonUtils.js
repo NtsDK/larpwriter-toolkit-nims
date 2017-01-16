@@ -341,11 +341,8 @@ See the License for the specific language governing permissions and
         
         
         // precondition API
-        exports.precondition = R.curry(function(arr, reject, resolve){
-            var err = arr.reduce(function(err, item){
-                if(err) return err;
-                return item();
-            }, null);
+        exports.precondition = R.curry(function(check, reject, resolve){
+            var err = check();
             if(err === null){
                 resolve();
             } else {
@@ -354,12 +351,39 @@ See the License for the specific language governing permissions and
             }
         });
         
-        exports.elementsFromEnum = R.curry(function(els, valueList){
+        exports.chainCheck = R.curry(function(arr){
             return () => {
-                var diff = R.difference(els, valueList);
-                return diff.length === 0 ? null : ['errors-unsupported-types-in-list', [JSON.stringify(diff)]];
+                return arr.reduce(function(err, item){
+                    if(err) return err;
+                    return item();
+                }, null);
             }
         });
+        
+        exports.eitherCheck = R.curry(function(func1, func2){
+            return () => {
+                var res1 = func1();
+                if(res1 === null){
+                    return null;
+                }
+                var res2 = func2();
+                if(res2 === null){
+                    return null;
+                }
+                return res1;
+            }
+        });
+        
+        // primitive precondition checks
+        var arrContainsElsCheck = R.curry(function(msg, els, valueList){
+            return () => {
+                var diff = R.difference(els, valueList);
+                return diff.length === 0 ? null : [msg, [JSON.stringify(diff)]];
+            }
+        });
+        
+        exports.elementsFromEnum = arrContainsElsCheck('errors-unsupported-types-in-list');
+        exports.entitiesExist = arrContainsElsCheck('errors-entities-are-not-exist');
         
         var arrContainsElCheck = R.curry(function(msg, el, valueList){
             return () => {
@@ -368,7 +392,7 @@ See the License for the specific language governing permissions and
         });
         
         exports.elementFromEnum = arrContainsElCheck('errors-unsupported-type-in-list');
-        exports.entityExists = arrContainsElCheck('errors-entity-is-not-exists');
+        exports.entityExists = arrContainsElCheck('errors-entity-is-not-exist');
         
         exports.isString = R.curry(function(el){
             return () => {
@@ -385,6 +409,12 @@ See the License for the specific language governing permissions and
         exports.isBoolean = R.curry(function(el){
             return () => {
                 return R.is(Boolean, el) ? null : ['errors-argument-is-not-a-boolean', [el]];
+            }
+        });
+        
+        exports.isNil = R.curry(function(el){
+            return () => {
+                return R.isNil(el) ? null : ['errors-argument-is-not-nil', [el]];
             }
         });
         

@@ -40,7 +40,9 @@ See the License for the specific language governing permissions and
 //        };
         
         LocalDBMS.prototype.getTexts = function(searchStr, textTypes, caseSensitive, callback) {
-            CU.precondition([CU.isString(searchStr), CU.isArray(textTypes), textTypesPrecondition(textTypes), CU.isBoolean(caseSensitive)], callback, () => {
+            var check = CU.chainCheck([CU.isString(searchStr), CU.isArray(textTypes), 
+                                       textTypesPrecondition(textTypes), CU.isBoolean(caseSensitive)]);
+            CU.precondition(check, callback, () => {
                 var test;
                 if(caseSensitive){
                     test = (text) => (text.indexOf(searchStr) != -1);

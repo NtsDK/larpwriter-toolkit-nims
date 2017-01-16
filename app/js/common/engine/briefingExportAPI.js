@@ -18,17 +18,25 @@ See the License for the specific language governing permissions and
     function briefingExportAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var dbmsUtils     = opts.dbmsUtils   ;
-    
-        LocalDBMS.prototype.getBriefingData = function(selectedCharacters, selectedStories, exportOnlyFinishedStories, callback) {
-            var that = this;
-            selectedCharacters = selectedCharacters || R.keys(this.database.Characters);
-            selectedStories = selectedStories || R.keys(this.database.Stories);
-            that.getAllCharacterGroupTexts(function(err, groupTexts){
-                if(err) {callback(err); return;}
-                _getBriefingData(that._getKnownCharacters, that.database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback);
+        
+        var check = function(selChars, selStories, exportOnlyFinishedStories, database){
+            var charsCheck = CU.eitherCheck(CU.isNil(selChars), CU.chainCheck([CU.isArray(selChars), CU.entitiesExist(selChars, R.keys(database.Characters))]));
+            var storiesCheck = CU.eitherCheck(CU.isNil(selStories), CU.chainCheck([CU.isArray(selStories), CU.entitiesExist(selStories, R.keys(database.Stories))]));
+            return CU.chainCheck([charsCheck, storiesCheck, CU.isBoolean(exportOnlyFinishedStories)]);
+        };
+        
+        LocalDBMS.prototype.getBriefingData = function(selCharacters, selStories, exportOnlyFinishedStories, callback) {
+            CU.precondition(check(selCharacters, selStories, exportOnlyFinishedStories, this.database), callback, () => {
+                var that = this;
+                selCharacters = selCharacters || R.keys(this.database.Characters);
+                selStories = selStories || R.keys(this.database.Stories);
+                that.getAllCharacterGroupTexts(function(err, groupTexts){
+                    if(err) {callback(err); return;}
+                    _getBriefingData(that._getKnownCharacters, that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories, callback);
+                });
             });
         };
         
@@ -65,7 +73,7 @@ See the License for the specific language governing permissions and
                 return dataObject;
             });
             
-            charArray.sort(CommonUtils.charOrdAFactory(R.prop('charName')));
+            charArray.sort(CU.charOrdAFactory(R.prop('charName')));
             callback(null, {
                 briefings : charArray,
                 gameName : database.Meta.name
@@ -83,7 +91,7 @@ See the License for the specific language governing permissions and
                     profile: profiles[toCharacter],
                     stories: R.keys(knownCharacters[toCharacter] || {}).join(', ')
                 }
-            }).sort(CommonUtils.charOrdAFactory(R.prop('toCharacter')));
+            }).sort(CU.charOrdAFactory(R.prop('toCharacter')));
         };
         
         var _makeCharInventory = function(database, charName){
@@ -129,7 +137,7 @@ See the License for the specific language governing permissions and
                     storyName: story.name,
                     eventsInfo: _getStoryEventsInfo(story, charName, database.Meta.date)
                 };
-            }).sort(CommonUtils.charOrdAFactory(function(a){
+            }).sort(CU.charOrdAFactory(function(a){
                 return a.storyName.toLowerCase();
             }));
         };
@@ -151,7 +159,7 @@ See the License for the specific language governing permissions and
                 return result.concat(array);
             }, []);
 
-            eventsInfo.sort(CommonUtils.eventsByTime);
+            eventsInfo.sort(CU.eventsByTime);
     
             return eventsInfo;
         };
