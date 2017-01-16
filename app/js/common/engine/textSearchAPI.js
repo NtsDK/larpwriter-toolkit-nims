@@ -19,29 +19,40 @@ See the License for the specific language governing permissions and
     function textSearchAPI(LocalDBMS, opts) {
 
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
 
         var searchers = {};
         
+//        LocalDBMS.prototype.getTextsTest = function(searchStr, textTypes, caseSensitive, callback){
+//            var errPrint = function(err){
+//                console.log(err);
+//            };
+//            var okPrint = function(){
+//                console.log('OK');
+//            };
+//            this.getTexts(123, null, null, errPrint, okPrint);
+//            this.getTexts('23', true, null, errPrint, okPrint);
+//            this.getTexts('23', ['window'], null, errPrint, okPrint);
+//            this.getTexts('23', [], '123', errPrint, okPrint);
+//            callback('test result');
+//        };
+        
         LocalDBMS.prototype.getTexts = function(searchStr, textTypes, caseSensitive, callback) {
-            var diff = R.difference(textTypes, R.keys(searchers));
-            var test;
-            if(caseSensitive){
-                test = (text) => (text.indexOf(searchStr) != -1);
-            } else {
-                searchStr = searchStr.toLowerCase();
-                test = (text) => (text.toLowerCase().indexOf(searchStr) != -1);
-            }
-            if(diff.length != 0){
-                callback(new Errors.ValidationError('text-search-unsupported-text-types', [JSON.stringify(diff)]));
-                return;
-            }
-            callback(null, textTypes.map(textType => {return {
-                textType: textType,
-                result: searchers[textType](textType, test, this.database)
-            };}));
+            CU.precondition([CU.isString(searchStr), CU.isArray(textTypes), textTypesPrecondition(textTypes), CU.isBoolean(caseSensitive)], callback, () => {
+                var test;
+                if(caseSensitive){
+                    test = (text) => (text.indexOf(searchStr) != -1);
+                } else {
+                    searchStr = searchStr.toLowerCase();
+                    test = (text) => (text.toLowerCase().indexOf(searchStr) != -1);
+                }
+                callback(null, textTypes.map(textType => {return {
+                    textType: textType,
+                    result: searchers[textType](textType, test, this.database)
+                };}));
+            });
         };
         
         var format = (name, type, text) => {
@@ -101,6 +112,8 @@ See the License for the specific language governing permissions and
                 return arr;
             }));
         };
+        
+        var textTypesPrecondition = CU.elementsFromEnum(R.__, R.keys(searchers));
     
     };
     callback(textSearchAPI);

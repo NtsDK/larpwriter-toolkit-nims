@@ -170,7 +170,7 @@ See the License for the specific language governing permissions and
             }
         };
         
-        var _renameCharacter = function(type, fromName, toName){
+        var _renameProfile = function(type, fromName, toName){
             if(type === 'character') return;
             var playersInfo = this.database.ManagementInfo.PlayersInfo;
             if(playersInfo[fromName] !== undefined){
@@ -181,9 +181,9 @@ See the License for the specific language governing permissions and
         };
         
         listeners.renameProfile = listeners.renameProfile || [];
-        listeners.renameProfile.push(_renameCharacter);
+        listeners.renameProfile.push(_renameProfile);
         
-        var _removeCharacter = function(type, characterName){
+        var _removeProfile = function(type, characterName){
             if(type === 'character') return;
             var playersInfo = this.database.ManagementInfo.PlayersInfo;
             if(playersInfo[characterName] !== undefined){
@@ -192,7 +192,7 @@ See the License for the specific language governing permissions and
         };
         
         listeners.removeProfile = listeners.removeProfile || [];
-        listeners.removeProfile.push(_removeCharacter);    
+        listeners.removeProfile.push(_removeProfile);    
     };
     
     callback(accessManagerAPI);

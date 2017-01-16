@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 
 (function(callback){
         
-    function CommonUtils(exports, R, Constants) {
+    function CommonUtils(exports, R, Constants, Errors) {
     
         exports.startsWith = function(str1, str2){
             return str1.substring(0, str2.length) === str2;
@@ -338,11 +338,57 @@ See the License for the specific language governing permissions and
             console.log('playerConflicts' + playerConflicts);
             return charConflicts.concat(playerConflicts);
         };
-
+        
+        
+        // precondition API
+        exports.precondition = R.curry(function(arr, reject, resolve){
+            var err = arr.reduce(function(err, item){
+                if(err) return err;
+                return item();
+            }, null);
+            if(err === null){
+                resolve();
+            } else {
+                err.splice(0, 0, null);
+                reject(new (Function.prototype.bind.apply(Errors.ValidationError, err)));
+            }
+        });
+        
+        exports.elementsFromEnum = R.curry(function(els, valueList){
+            return () => {
+                var diff = R.difference(els, valueList);
+                return diff.length === 0 ? null : ['errors-unsupported-types-in-list', [JSON.stringify(diff)]];
+            }
+        });
+        
+        exports.elementFromEnum = R.curry(function(el, valueList){
+            return () => {
+                return R.contains(el, valueList) ? null : ['errors-unsupported-type-in-list', [el]];
+            }
+        });
+        
+        exports.isString = R.curry(function(el){
+            return () => {
+                return R.is(String, el) ? null : ['errors-argument-is-not-a-string', [el]];
+            }
+        });
+        
+        exports.isArray = R.curry(function(el){
+            return () => {
+                return R.is(Array, el) ? null : ['errors-argument-is-not-an-array', [el]];
+            }
+        });
+        
+        exports.isBoolean = R.curry(function(el){
+            return () => {
+                return R.is(Boolean, el) ? null : ['errors-argument-is-not-a-boolean', [el]];
+            }
+        });
+        
     }
     
     callback(CommonUtils);
 
 })(function(api){
-    typeof exports === 'undefined'? api(this['CommonUtils'] = {}, R, Constants) : module.exports = api;
+    typeof exports === 'undefined'? api(this['CommonUtils'] = {}, R, Constants, Errors) : module.exports = api;
 }.bind(this));
