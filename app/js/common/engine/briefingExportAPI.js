@@ -23,8 +23,8 @@ See the License for the specific language governing permissions and
         var dbmsUtils     = opts.dbmsUtils   ;
         
         var check = function(selChars, selStories, exportOnlyFinishedStories, database){
-            var charsCheck = CU.eitherCheck(CU.isNil(selChars), CU.chainCheck([CU.isArray(selChars), CU.entitiesExist(selChars, R.keys(database.Characters))]));
-            var storiesCheck = CU.eitherCheck(CU.isNil(selStories), CU.chainCheck([CU.isArray(selStories), CU.entitiesExist(selStories, R.keys(database.Stories))]));
+            var charsCheck = CU.eitherCheck(CU.chainCheck([CU.isArray(selChars), CU.entitiesExist(selChars, R.keys(database.Characters))]), CU.isNil(selChars));
+            var storiesCheck = CU.eitherCheck(CU.chainCheck([CU.isArray(selStories), CU.entitiesExist(selStories, R.keys(database.Stories))]), CU.isNil(selStories));
             return CU.chainCheck([charsCheck, storiesCheck, CU.isBoolean(exportOnlyFinishedStories)]);
         };
         
