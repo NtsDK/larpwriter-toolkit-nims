@@ -19,25 +19,28 @@ See the License for the specific language governing permissions and
     function entityAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         
         LocalDBMS.prototype.getEntityNamesArray = function(type, callback) {
-            switch(type){
-            case 'character':
-            case 'player':
-                this.getProfileNamesArray(type, callback);
-                break;
-            case 'group':
-                this.getGroupNamesArray(callback);
-                break;
-            case 'story':
-                this.getStoryNamesArray(callback);
-                break;
-            default:
-                callback(new Errors.InternalError('errors-unexpected-switch-argument', [type]));
-            }
+            var chain = CU.chainCheck([CU.isString(type), CU.elementFromEnum(type, Constants.ownedEntityTypes)]);
+            CU.precondition(chain, callback, () => {
+                switch(type){
+                case 'character':
+                case 'player':
+                    this.getProfileNamesArray(type, callback);
+                    break;
+                case 'group':
+                    this.getGroupNamesArray(callback);
+                    break;
+                case 'story':
+                    this.getStoryNamesArray(callback);
+                    break;
+                default:
+                    callback(new Errors.InternalError('errors-unexpected-switch-argument', [type]));
+                }
+            });
         };
     
     };

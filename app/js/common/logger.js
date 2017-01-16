@@ -127,7 +127,7 @@ See the License for the specific language governing permissions and
                         userName = arguments[arguments.length-1].name;
                     }
                     
-                    this.log(userName, funcName, includeList[funcName].rewrite, includeList[funcName].ignoreParams ? [] : arr);
+                    this.log(userName, funcName, !!includeList[funcName].rewrite, includeList[funcName].ignoreParams ? [] : arr);
                 }
                 
                 return oldFun.apply(this, arguments);

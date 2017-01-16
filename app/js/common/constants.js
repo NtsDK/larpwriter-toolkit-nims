@@ -58,11 +58,14 @@ See the License for the specific language governing permissions and
     ];
     
     exports.networks = [
-//        "simpleNetwork"            ,
         "socialRelations"          ,
         "characterPresenceInStory" ,
         "characterActivityInStory" ,
     ];
+    
+    exports.ownedEntityTypes = ['character','player','story','group'];
+    
+    exports.metaInfoList = ["name", "date", "preGameDate", "description"];
     
     exports.noGroup = "noGroup";
     

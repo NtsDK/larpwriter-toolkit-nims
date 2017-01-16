@@ -35,12 +35,12 @@ See the License for the specific language governing permissions and
                 selStories = selStories || R.keys(this.database.Stories);
                 that.getAllCharacterGroupTexts(function(err, groupTexts){
                     if(err) {callback(err); return;}
-                    _getBriefingData(that._getKnownCharacters, that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories, callback);
+                    _getBriefingData(that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories, callback);
                 });
             });
         };
         
-        var _getBriefingData = function(getKnownCharacters, database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback) {
+        var _getBriefingData = function(database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback) {
             var charArray = selectedCharacters.map(function(charName){
                 groupTexts[charName].forEach(function(groupText){
                     groupText.splittedText = _splitText(groupText.text);
@@ -54,7 +54,7 @@ See the License for the specific language governing permissions and
                     "eventsInfo" : _getEventsInfo(database, charName, selectedStories, exportOnlyFinishedStories),
                     "profileInfoArray" : _getProfileInfoArray(profile, database.CharacterProfileStructure),
                     "groupTexts" : groupTexts[charName],
-                    "relations" : _makeRelationsInfo(getKnownCharacters(database, charName), database, charName)
+                    "relations" : _makeRelationsInfo(dbmsUtils.getKnownCharacters(database, charName), database, charName)
                 };
                 
                 dataObject = R.merge(dataObject, _getSimpleProfileInfoObject("profileInfo-", profile, database.CharacterProfileStructure));

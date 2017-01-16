@@ -412,6 +412,12 @@ See the License for the specific language governing permissions and
             }
         });
         
+        exports.isNumber = R.curry(function(el){
+            return () => {
+                return R.is(Number, el) ? null : ['errors-argument-is-not-a-number', [el]];
+            }
+        });
+        
         exports.isNil = R.curry(function(el){
             return () => {
                 return R.isNil(el) ? null : ['errors-argument-is-not-nil', [el]];

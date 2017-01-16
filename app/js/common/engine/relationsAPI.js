@@ -19,14 +19,15 @@ See the License for the specific language governing permissions and
     function relationsAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
+        var dbmsUtils     = opts.dbmsUtils   ;
         
         var relationsPath = ['Relations'];
         
-        LocalDBMS.prototype._getKnownCharacters = function(database, characterName){
+        dbmsUtils._getKnownCharacters = function(database, characterName){
             var stories = database.Stories;
             var knownCharacters = {};
             R.values(stories).forEach(function(story){
@@ -42,38 +43,32 @@ See the License for the specific language governing permissions and
             return knownCharacters;
         };
         
-        LocalDBMS.prototype.getRelationsSummary = function(characterName, callback){
-            var relData = R.path(relationsPath, this.database);
-            var reverseRelations = {};
-            R.keys(relData).forEach(function(revCharName){
-                var rels = relData[revCharName];
-                if(rels[characterName]){
-                    reverseRelations[revCharName] = rels[characterName];
-                }
-            });
-            
-            callback(null, {
-                directRelations: relData[characterName] || {},
-                reverseRelations: reverseRelations,
-                knownCharacters: this._getKnownCharacters(this.database, characterName)
-            });
+        var characterCheck = function(characterName, database){
+            return CU.chainCheck([CU.isString(characterName), CU.entityExists(characterName, R.keys(database.Characters))]);
         };
         
-        var _setCharacterRelationPrecondition = function(fromCharacter, toCharacter, database){
-            if(database.Characters[fromCharacter] === undefined){
-                return new Errors.ValidationError("briefings-character-does-not-exist", [fromCharacter]);
-            }
-            if(database.Characters[toCharacter] === undefined){
-                return new Errors.ValidationError("briefings-character-does-not-exist", [toCharacter]);
-            }
+        LocalDBMS.prototype.getRelationsSummary = function(characterName, callback){
+            CU.precondition(characterCheck(characterName, this.database), callback, () => {
+                var relData = R.path(relationsPath, this.database);
+                var reverseRelations = {};
+                R.keys(relData).forEach(function(revCharName){
+                    var rels = relData[revCharName];
+                    if(rels[characterName]){
+                        reverseRelations[revCharName] = rels[characterName];
+                    }
+                });
+                
+                callback(null, {
+                    directRelations: relData[characterName] || {},
+                    reverseRelations: reverseRelations,
+                    knownCharacters: dbmsUtils._getKnownCharacters(this.database, characterName)
+                });
+            });
         };
         
         LocalDBMS.prototype.setCharacterRelation = function(fromCharacter, toCharacter, text, callback){
-            var err = _setCharacterRelationPrecondition(fromCharacter, toCharacter, this.database);
-            var relData = R.path(relationsPath, this.database);
-            if(err){
-                callback(err);
-            } else {
+            var chain = CU.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), CU.isString(text)]);
+            CU.precondition(chain, callback, () => {
                 text = text.trim();
                 if(text === ''){
                     if(relData[fromCharacter] !== undefined){
@@ -84,7 +79,7 @@ See the License for the specific language governing permissions and
                     relData[fromCharacter][toCharacter] = text;
                 }
                 if (callback) callback();
-            }
+            });
         };
         
         var _renameCharacter = function(type, fromName, toName){
