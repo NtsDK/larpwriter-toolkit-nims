@@ -361,11 +361,14 @@ See the License for the specific language governing permissions and
             }
         });
         
-        exports.elementFromEnum = R.curry(function(el, valueList){
+        var arrContainsElCheck = R.curry(function(msg, el, valueList){
             return () => {
-                return R.contains(el, valueList) ? null : ['errors-unsupported-type-in-list', [el]];
+                return R.contains(el, valueList) ? null : [msg, [el]];
             }
         });
+        
+        exports.elementFromEnum = arrContainsElCheck('errors-unsupported-type-in-list');
+        exports.entityExists = arrContainsElCheck('errors-entity-is-not-exists');
         
         exports.isString = R.curry(function(el){
             return () => {

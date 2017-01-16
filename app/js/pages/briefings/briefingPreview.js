@@ -166,7 +166,7 @@ See the License for the specific language governing permissions and
         load: function(data, callback){
             DBMS.getAllInventoryLists(data.characterName, function(err, allInventoryLists){
                 if(err) {Utils.handleError(err); return;}
-                data.allInventoryLists = allInventoryLists;
+                data.allInventoryLists = allInventoryLists.sort(CommonUtils.charOrdAFactory(R.compose(R.toLower, R.prop('storyName'))));
                 callback();
             });
         }, 

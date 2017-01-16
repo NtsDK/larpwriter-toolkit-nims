@@ -92,6 +92,9 @@ See the License for the specific language governing permissions and
     
     var showProfileInfoDelegate2 = function(type){
         return function(event){
+            clearEl(queryEl(characterReportDiv));
+            clearEl(queryEl(playerProfileDiv));
+            clearEl(queryEl(characterProfileDiv));
             var name = event.target.value.trim();
             if(name === ''){
                 selectProfiles('','');
