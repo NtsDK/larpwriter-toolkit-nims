@@ -69,6 +69,25 @@ See the License for the specific language governing permissions and
     
     exports.profileTypes = ["character", "player"];
     
+    exports.groupProfileStructure = [{
+        name: "filterModel",
+        type: "container",
+    },{
+        name: "characterList",
+        type: "container",
+    },{
+        name: "masterDescription",
+        type: "text",
+    },{
+        name: "doExport",
+        type: "checkbox",
+    },{
+        name: "characterDescription",
+        type: "text",
+    }];
+    
+    exports.groupEditableItems = ['masterDescription','doExport','characterDescription'];
+    
     exports.noGroup = "noGroup";
     
     exports.characterActivityTypes = [

@@ -82,8 +82,6 @@ See the License for the specific language governing permissions and
                 state.eventsByCharacters = R.zipObj(state.eventsByCharacters, R.ap([R.clone], R.repeat([], state.eventsByCharacters.length)));
                 eventsTimeInfo.forEach(event => event.characters.forEach( character => state.eventsByCharacters[character].push(event)));
                 
-                console.log(JSON.stringify(state.eventsByCharacters));
-                
                 PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
                     if(err) {Utils.handleError(err); return;}
                     PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacterNames){

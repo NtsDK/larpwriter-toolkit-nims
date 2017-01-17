@@ -65,29 +65,16 @@ Groups.rebuildInterface = function (selector, names) {
 Groups.createGroup = function (selector, refresh) {
     return function(){
         var input = queryEl(selector + " .create-entity-input");
-        var name = input.value.trim();
         
-        if (name === "") {
-            Utils.alert(getL10n("groups-group-name-is-not-specified"));
-            return;
-        }
-        
-        DBMS.isGroupNameUsed(name, function(err, isGroupNameUsed){
+        DBMS.createGroup(input.value.trim(), function(err){
             if(err) {Utils.handleError(err); return;}
-            if (isGroupNameUsed) {
-                Utils.alert(strFormat(getL10n("groups-group-name-already-used"), [name]));
-                return;
-            } 
-            DBMS.createGroup(name, function(err){
+            PermissionInformer.refresh(function(err){
                 if(err) {Utils.handleError(err); return;}
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
 //                    if(Groups.currentView.updateSettings){
 //                        Groups.currentView.updateSettings(name);
 //                    }
-                    input.value = '';
-                    refresh();
-                });
+                input.value = '';
+                refresh();
             });
         });
     }
@@ -97,35 +84,16 @@ Groups.renameGroup = function (selector, refresh) {
     return function(){
         var toInput = queryEl(selector + " .rename-entity-input");
         var fromName = queryEl(selector + " .rename-entity-select").value.trim();
-        var toName = toInput.value.trim();
-        
-        if (toName === "") {
-            Utils.alert(getL10n("groups-new-group-name-is-not-specified"));
-            return;
-        }
-        
-        if (fromName === toName) {
-            Utils.alert(getL10n("groups-names-are-the-same"));
-            return;
-        }
-        
-        DBMS.isGroupNameUsed(toName, function(err, isGroupNameUsed){
+        DBMS.renameGroup(fromName, toInput.value.trim(), function(err){
             if(err) {Utils.handleError(err); return;}
-            if (isGroupNameUsed) {
-                Utils.alert(strFormat(getL10n("groups-group-name-already-used"), [toName]));
-            } else {
-                DBMS.renameGroup(fromName, toName, function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    PermissionInformer.refresh(function(err){
-                        if(err) {Utils.handleError(err); return;}
+            PermissionInformer.refresh(function(err){
+                if(err) {Utils.handleError(err); return;}
 //                        if(Groups.currentView.updateSettings){
 //                            Groups.currentView.updateSettings(toName);
 //                        }
-                        toInput.value = '';
-                        refresh();
-                    });
-                });
-            }
+                toInput.value = '';
+                refresh();
+            });
         });
     }
 };

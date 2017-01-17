@@ -22,23 +22,6 @@ See the License for the specific language governing permissions and
 
     var state = {};
     
-    state.profileSettings = [{
-        name: "filterModel",
-        type: "container",
-    },{
-        name: "characterList",
-        type: "container",
-    },{
-        name: "masterDescription",
-        type: "text",
-    },{
-        name: "doExport",
-        type: "checkbox",
-    },{
-        name: "characterDescription",
-        type: "text",
-    }];
-    
     exports.init = function () {
         listen(queryEl(".group-profile-tab .entity-selector"), "change", showProfileInfoDelegate);
         
@@ -46,7 +29,7 @@ See the License for the specific language governing permissions and
         
         state.inputItems = {};
         
-        state.profileSettings.forEach(function (profileSettings) {
+        Constants.groupProfileStructure.forEach(function (profileSettings) {
             profileSettings.displayName = getL10n("groups-" + profileSettings.name);
             addEl(tbody, makeInput(profileSettings));
         });

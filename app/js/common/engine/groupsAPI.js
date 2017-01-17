@@ -19,30 +19,36 @@ See the License for the specific language governing permissions and
     function groupsAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
         
         LocalDBMS.prototype.getGroupNamesArray = function(callback) {
-            callback(null, Object.keys(this.database.Groups).sort(CommonUtils.charOrdA));
+            callback(null, Object.keys(this.database.Groups).sort(CU.charOrdA));
+        };
+        
+        var groupCheck = function(groupName, database){
+            return CU.chainCheck([CU.isString(groupName), CU.entityExists(groupName, R.keys(database.Groups))]);
         };
         
         LocalDBMS.prototype.getGroup = function(groupName, callback) {
-            callback(null, CommonUtils.clone(this.database.Groups[groupName]));
+            CU.precondition(groupCheck(groupName, this.database), callback, () => {
+                callback(null, CU.clone(this.database.Groups[groupName]));
+            });
         };
         
         var _getCharacterGroupTexts = function(groups, info, profileId){
-            var dataArray = CommonUtils.getDataArray(info, profileId);
+            var dataArray = CU.getDataArray(info, profileId);
             var array = R.values(groups).filter(function(group){
-                return group.doExport && CommonUtils.acceptDataRow(group.filterModel, dataArray);
+                return group.doExport && CU.acceptDataRow(group.filterModel, dataArray);
             }).map(function(group){
                 return {
                     groupName: group.name,
                     text: group.characterDescription
                 }
             });
-            array.sort(CommonUtils.charOrdAFactory(R.prop('groupName')));
+            array.sort(CU.charOrdAFactory(R.prop('groupName')));
             return array;
         }
         
@@ -61,7 +67,6 @@ See the License for the specific language governing permissions and
         // export
         LocalDBMS.prototype.getAllCharacterGroupTexts = function(callback) {
             var that = this;
-            
             this.getProfileFilterInfo(function(err, info){
                 if(err) {callback(err); return;}
                 that.getProfileBindings(function(err, bindings){
@@ -76,83 +81,67 @@ See the License for the specific language governing permissions and
             });
         };
         
-        LocalDBMS.prototype.isGroupNameUsed = function(groupName, callback) {
-            callback(null, this.database.Groups[groupName] !== undefined);
-        };
-        
         LocalDBMS.prototype.createGroup = function(groupName, callback) {
-            if(groupName === ""){
-                callback(new Errors.ValidationError("groups-group-name-is-not-specified"));
-                return;
-            }
-            
-            if(this.database.Groups[groupName]){
-                callback(new Errors.ValidationError("groups-group-name-already-used", [groupName]));
-                return;
-            }
-            
-            var newGroup = {
-                name : groupName,
-                masterDescription : "",
-                characterDescription : "",
-                filterModel: [],
-                doExport: true
-            };
-    
-            this.database.Groups[groupName] = newGroup;
-            this.ee.trigger("createGroup", arguments);
-            if(callback) callback();
+            CU.precondition(CU.createEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
+                var newGroup = {
+                    name : groupName,
+                    masterDescription : "",
+                    characterDescription : "",
+                    filterModel: [],
+                    doExport: true
+                };
+        
+                this.database.Groups[groupName] = newGroup;
+                this.ee.trigger("createGroup", arguments);
+                if(callback) callback();
+            });
         };
 
         LocalDBMS.prototype.renameGroup = function(fromName, toName, callback) {
-            if (toName === "") {
-                callback(new Errors.ValidationError("groups-new-group-name-is-not-specified"));
-                return;
-            }
-
-            if (fromName === toName) {
-                callback(new Errors.ValidationError("groups-names-are-the-same"));
-                return;
-            }
-            
-            if(this.database.Groups[toName]){
-                callback(new Errors.ValidationError("groups-group-name-already-used", [toName]));
-                return;
-            }
-            
-            var data = this.database.Groups[fromName];
-            data.name = toName;
-            this.database.Groups[toName] = data;
-            delete this.database.Groups[fromName];
-            
-            this.ee.trigger("renameGroup", arguments);
-    
-            if(callback) callback();
+            CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), callback, () => {
+                var data = this.database.Groups[fromName];
+                data.name = toName;
+                this.database.Groups[toName] = data;
+                delete this.database.Groups[fromName];
+                
+                this.ee.trigger("renameGroup", arguments);
+        
+                if(callback) callback();
+            });
         };
     
         LocalDBMS.prototype.removeGroup = function(groupName, callback) {
-            delete this.database.Groups[groupName];
-            this.ee.trigger("removeGroup", arguments);
-            if(callback) callback();
+            CU.precondition(CU.removeEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
+                delete this.database.Groups[groupName];
+                this.ee.trigger("removeGroup", arguments);
+                if(callback) callback();
+            });
         };
         
         LocalDBMS.prototype.saveFilterToGroup = function(groupName, filterModel, callback) {
-            var conflictTypes = CommonUtils.isFilterModelCompatibleWithProfiles({
-                characters: this.database.CharacterProfileStructure,
-                players: this.database.PlayerProfileStructure
-            }, filterModel);
-            if(conflictTypes.length != 0){
-                callback(new Errors.ValidationError("groups-page-filter-is-incompatible-with-base-profiles", [conflictTypes.join(',')]));
-                return;
-            }
-            this.database.Groups[groupName].filterModel = filterModel;
-            if(callback) callback();
+            CU.precondition(groupCheck(groupName, this.database), callback, () => {
+                var conflictTypes = CU.isFilterModelCompatibleWithProfiles({
+                    characters: this.database.CharacterProfileStructure,
+                    players: this.database.PlayerProfileStructure
+                }, filterModel);
+                if(conflictTypes.length != 0){
+                    callback(new Errors.ValidationError("groups-page-filter-is-incompatible-with-base-profiles", [conflictTypes.join(',')]));
+                    return;
+                }
+                this.database.Groups[groupName].filterModel = filterModel;
+                if(callback) callback();
+            });
         };
     
         LocalDBMS.prototype.updateGroupField = function(groupName, fieldName, value, callback) {
-            var profileInfo = this.database.Groups[groupName];
-            profileInfo[fieldName] = value;
-            if(callback) callback();
+            var chain = CU.chainCheck([groupCheck(groupName, this.database), 
+                                       CU.isString(fieldName), CU.elementFromEnum(fieldName, Constants.groupEditableItems),
+                                       fieldName === 'doExport' ? CU.isBoolean(value) : CU.isString(value)]);
+            CU.precondition(chain, callback, () => {
+                var profileInfo = this.database.Groups[groupName];
+                profileInfo[fieldName] = value;
+                if(callback) callback();
+            });
         };
         
         var initProfileInfo = function(that, type, ownerMapType, callback){
@@ -185,7 +174,7 @@ See the License for the specific language governing permissions and
                         if(err) {callback(err); return;}
                         that.getExtendedProfileBindings(function(err, bindingData){
                             if(err) {callback(err); return;}
-                            var info = CommonUtils.makeGroupedProfileFilterInfo({
+                            var info = CU.makeGroupedProfileFilterInfo({
                                 'characters' : charactersInfo,
                                 'players' : playersInfo,
                                 charactersSummary : charactersSummary,
@@ -203,9 +192,9 @@ See the License for the specific language governing permissions and
             var groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
             characterNames.forEach(function(characterName){
                 var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
-                var dataArray = CommonUtils.getDataArray(info, profileId);
+                var dataArray = CU.getDataArray(info, profileId);
                 groupNames.forEach(function(groupName){
-                    if(CommonUtils.acceptDataRow(groups[groupName].filterModel, dataArray)){
+                    if(CU.acceptDataRow(groups[groupName].filterModel, dataArray)){
                         groupCharacterSets[groupName][characterName] = true;
                     }
                 });
