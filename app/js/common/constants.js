@@ -67,6 +67,8 @@ See the License for the specific language governing permissions and
     
     exports.metaInfoList = ["name", "date", "preGameDate", "description"];
     
+    exports.profileTypes = ["character", "player"];
+    
     exports.noGroup = "noGroup";
     
     exports.characterActivityTypes = [

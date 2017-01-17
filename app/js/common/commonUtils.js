@@ -394,6 +394,12 @@ See the License for the specific language governing permissions and
         exports.elementFromEnum = arrContainsElCheck('errors-unsupported-type-in-list');
         exports.entityExists = arrContainsElCheck('errors-entity-is-not-exist');
         
+        exports.entityIsNotUsed = R.curry(function(el, valueList){
+            return () => {
+                return !R.contains(el, valueList) ? null : ['errors-entity-is-used', [el]];
+            }
+        });
+        
         exports.isString = R.curry(function(el){
             return () => {
                 return R.is(String, el) ? null : ['errors-argument-is-not-a-string', [el]];

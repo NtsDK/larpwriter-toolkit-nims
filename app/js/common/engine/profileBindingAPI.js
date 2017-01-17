@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
     function profileBindingAPI(LocalDBMS, opts) {
 
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -29,13 +29,13 @@ See the License for the specific language governing permissions and
         var playerPath = ['Players'];
                     
         LocalDBMS.prototype.getProfileBindings = function(callback) {
-            callback(null, CommonUtils.clone(R.path(path, this.database)));
+            callback(null, CU.clone(R.path(path, this.database)));
         };
         
         LocalDBMS.prototype.getExtendedProfileBindings = function(callback) {
             var characters = R.keys(R.path(charPath, this.database));
             var players = R.keys(R.path(playerPath, this.database));
-            var bindings = CommonUtils.clone(R.path(path, this.database));
+            var bindings = CU.clone(R.path(path, this.database));
             characters = R.difference(characters, R.keys(bindings));
             players = R.difference(players, R.values(bindings));
             
@@ -45,67 +45,42 @@ See the License for the specific language governing permissions and
             callback(null, bindingData);
         };
         
-        LocalDBMS.prototype._getProfileBindingPrecondition = function(type, name){
-            if (type !== 'character' && type !== 'player') {
-                return [ null, 'binding-wrong-profile-type', [ type ] ];
-            } else if (type === 'character' && this.database.Characters[name] === undefined) {
-                return [ null, 'binding-character-not-exists', [ name ] ];
-            } else if (type === 'player' && this.database.Players[name] === undefined) {
-                return [ null, 'binding-player-not-exists', [ name ] ];
-            }
-        }
-        
         LocalDBMS.prototype.getProfileBinding = function(type, name, callback) {
-            var err = this._getProfileBindingPrecondition(type, name);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            var arr;
-            if(type === 'character'){
-                let bindings = R.path(path, this.database); 
-                arr = [name, bindings[name] || ''];
-            } else {
-                let bindings = R.invertObj(R.path(path, this.database)); 
-                arr = [bindings[name] || '', name];
-            }
-            callback(null, arr);
-        };
-        
-        LocalDBMS.prototype._createBindingPrecondition = function(characterName, playerName){
-            var bindings = R.path(path, this.database);
-            var invertedBindings = R.invertObj(bindings);
-            if (this.database.Characters[characterName] === undefined) {
-                return [null, 'binding-character-not-exists', [ characterName ] ];
-            } else if (this.database.Players[playerName] === undefined) {
-                return [null, 'binding-player-not-exists', [ playerName ] ];
-            } else if (bindings[characterName] !== undefined) {
-                return [null, 'binding-character-is-used-in-binding', [ characterName, characterName + '/' + bindings[characterName] ] ];
-            } else if (invertedBindings[playerName] !== undefined) {
-                return [null, 'binding-player-is-used-in-binding', [ playerName, invertedBindings[playerName] + '/' + playerName ] ];
-            }
+            var conditions = [CU.isString(type), CU.elementFromEnum(type, Constants.profileTypes), 
+                              CU.isString(name), CU.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
+            CU.precondition(CU.chainCheck(conditions), callback, () => {
+                var arr;
+                if(type === 'character'){
+                    let bindings = R.path(path, this.database); 
+                    arr = [name, bindings[name] || ''];
+                } else {
+                    let bindings = R.invertObj(R.path(path, this.database)); 
+                    arr = [bindings[name] || '', name];
+                }
+                callback(null, arr);
+            });
         };
         
         LocalDBMS.prototype.createBinding = function(characterName, playerName, callback) {
-            var err = this._createBindingPrecondition(characterName, playerName);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            R.path(path, this.database)[characterName] = playerName;
-            if(callback) callback();
-        };
-        
-        LocalDBMS.prototype._removeBindingPrecondition = function(characterName, playerName){
             var bindings = R.path(path, this.database);
-            if (this.database.Characters[characterName] === undefined) {
-                return [null, 'binding-character-not-exists', [ characterName ] ];
-            } else if (this.database.Players[playerName] === undefined) {
-                return [null, 'binding-player-not-exists', [ playerName ] ];
-            } else if (bindings[characterName] !== playerName) {
-                return [null, 'binding-binding-not-exists', [ characterName + '/' + playerName ] ];
-            }
+            var conditions = [CU.isString(characterName), CU.entityExists(characterName, R.keys(this.database.Characters)),
+                              CU.isString(playerName), CU.entityExists(playerName, R.keys(this.database.Players)),
+                              CU.entityIsNotUsed(characterName, R.keys(bindings)), CU.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
+            CU.precondition(CU.chainCheck(conditions), callback, () => {
+                bindings[characterName] = playerName;
+                if(callback) callback();
+            });
         };
         
         LocalDBMS.prototype.removeBinding = function(characterName, playerName, callback) {
-            var err = this._removeBindingPrecondition(characterName, playerName);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            delete R.path(path, this.database)[characterName];
-            if(callback) callback();
+            var bindingArr = R.toPairs(R.path(path, this.database)).map(pair => pair[0] + '/' + pair[1]);
+            var conditions = [CU.isString(characterName), CU.entityExists(characterName, R.keys(this.database.Characters)),
+                              CU.isString(playerName), CU.entityExists(playerName, R.keys(this.database.Players)),
+                              CU.entityExists(characterName + '/' + playerName, bindingArr)];
+            CU.precondition(CU.chainCheck(conditions), callback, () => {
+                delete R.path(path, this.database)[characterName];
+                if(callback) callback();
+            });
         };
         
         var _renameProfile = function(type, fromName, toName){
