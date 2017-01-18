@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
     function investigationBoardAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -29,186 +29,173 @@ See the License for the specific language governing permissions and
         var relationsPath = ['InvestigationBoard', 'relations'];
         var context = 'investigation-board';
         
-        LocalDBMS.prototype.isResourceNameUsed = function(resourceName, callback) {
-            "use strict";
-            callback(null, this.database.InvestigationBoard.resources[resourceName] !== undefined);
-        };
-        
         LocalDBMS.prototype.getInvestigationBoardData = function(callback) {
-            callback(null, CommonUtils.clone(this.database.InvestigationBoard));
+            callback(null, CU.clone(this.database.InvestigationBoard));
         };
         
         LocalDBMS.prototype.addBoardGroup = function(groupName, callback) {
-            if(groupName === ""){
-                callback(new Errors.ValidationError(context + "-group-name-is-not-specified"));
-                return;
-            }
-            var ibData = this.database.InvestigationBoard;
-                
-            if(ibData.groups[groupName]){
-                callback(new Errors.ValidationError(context + "-group-already-used-on-board"));
-                return;
-            }
-            
-            ibData.groups[groupName] = {
-                    name:groupName,
-                    notes: ""
-            };
-            this.ee.trigger("nodeAdded", [groupName, 'groups']);
-            if(callback) callback();
+            var container = R.path(groupsPath, this.database);
+            var chain = CU.chainCheck([CU.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
+                                       CU.entityIsNotUsed(groupName, R.keys(container))]);
+            CU.precondition(chain, callback, () => {
+                container[groupName] = {
+                        name:groupName,
+                        notes: ""
+                };
+                this.ee.trigger("nodeAdded", [groupName, 'groups']);
+                if(callback) callback();
+            });
         };
         
         LocalDBMS.prototype.switchGroups = function(fromName, toName, callback) {
-            var err = this._renameEntityPrecondition(fromName, toName, groupsPath, context);
-            if (err) {
-                callback(err);
-            } else {
-                var container = R.path(groupsPath, this.database);
+            var container = R.path(groupsPath, this.database);
+            var check = CU.switchEntityCheck(fromName, toName, R.keys(this.database.Groups), R.keys(container));
+            CU.precondition(check, callback, () => {
                 var data = container[fromName];
                 data.name = toName;
                 container[toName] = data;
                 delete container[fromName];
                 this.ee.trigger("nodeRenamed", [fromName, toName, 'groups']);
                 if (callback) callback();
-            }
+            });
         };
 
         LocalDBMS.prototype.setGroupNotes = function(groupName, notes, callback) {
             var container = R.path(groupsPath, this.database);
-            var data = container[groupName];
-            data.notes = notes;
-            if (callback) callback();
+            var chain = CU.chainCheck([CU.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
+                                       CU.entityExists(groupName, R.keys(container)), CU.isString(notes)]);
+            CU.precondition(chain, callback, () => {
+                container[groupName].notes = notes;
+                if (callback) callback();
+            });
         };
         
         LocalDBMS.prototype.removeBoardGroup = function(groupName, callback) {
-            if(groupName === ""){
-                callback(new Errors.ValidationError(context + "-group-name-is-not-specified"));
-                return;
-            }
-            var ibData = this.database.InvestigationBoard;
-            
-            if(!ibData.groups[groupName]){
-                callback(new Errors.ValidationError(context + "-group-is-not-used-on-board"));
-                return;
-            }
-            
-            delete ibData.groups[groupName];
-            this.ee.trigger("nodeRemoved", [groupName, 'groups']);
-            if(callback) callback();
-        };
-        
-        LocalDBMS.prototype._createEntityPrecondition = function(entityName, containerPath, context){
-            if(entityName === ""){
-                return new Errors.ValidationError(context + "-new-name-is-not-specified");
-            }
-            if(R.path(containerPath, this.database)[entityName] !== undefined){
-                return new Errors.ValidationError(context + "-name-already-used", [entityName])
-            }
-        };
-        
-        LocalDBMS.prototype._renameEntityPrecondition = function(fromEntityName, toEntityName, containerPath, context){
-            if(toEntityName === ""){
-                return new Errors.ValidationError(context + "-rename-name-is-not-specified");
-            }
-            if(toEntityName === fromEntityName){
-                return new Errors.ValidationError(context + "-names-are-the-same");
-            }
-            if(R.path(containerPath, this.database)[toEntityName]){
-                return new Errors.ValidationError(context + "-name-already-used", [toEntityName])
-            }
+            var container = R.path(groupsPath, this.database);
+            var chain = CU.chainCheck([CU.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
+                                       CU.entityExists(groupName, R.keys(container))]);
+            CU.precondition(chain, callback, () => {
+                delete container[groupName];
+                this.ee.trigger("nodeRemoved", [groupName, 'groups']);
+                if(callback) callback();
+            });
         };
         
         LocalDBMS.prototype.createResource = function(resourceName, callback) {
-            var err = this._createEntityPrecondition(resourceName, resourcesPath, context);
-            if(err){
-                callback(err);
-            } else {
-                R.path(resourcesPath, this.database)[resourceName] = {
+            var container = R.path(resourcesPath, this.database);
+            CU.precondition(CU.createEntityCheck(resourceName, R.keys(container)), callback, () => {
+                container[resourceName] = {
                     name : resourceName
                 };
                 this.ee.trigger("nodeAdded", [resourceName, 'resources']);
                 if (callback) callback();
-            }
+            });
         };
 
         LocalDBMS.prototype.renameResource = function(fromName, toName, callback) {
-            var err = this._renameEntityPrecondition(fromName, toName, resourcesPath, context);
-            if(err){
-                callback(err);
-            } else {
-                var container = R.path(resourcesPath, this.database);
+            var container = R.path(resourcesPath, this.database);
+            CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
                 var data = container[fromName];
                 data.name = toName;
                 container[toName] = data;
                 delete container[fromName];
                 this.ee.trigger("nodeRenamed", [fromName, toName, 'resources']);
                 if (callback) callback();
-            }
+            });
         };
         
         LocalDBMS.prototype.removeResource = function(resourceName, callback) {
-            delete R.path(resourcesPath, this.database)[resourceName];
-            this.ee.trigger("nodeRemoved", [resourceName, 'resources']);
-            if (callback) callback();
-        };
-        
-        LocalDBMS.prototype._addEdgePrecondition = function(fromId, toId, label, context){
-            if(CommonUtils.startsWith(fromId , 'resource-')){
-                return new Errors.ValidationError(context + "-resource-node-cant-be-first");
-            }
-            if(R.path(relationsPath, this.database)[fromId][toId] !== undefined){
-                return new Errors.ValidationError(context + "-such-relation-already-exists");
-            }
-        };
-        
-        LocalDBMS.prototype.addEdge = function(fromId, toId, label, callback) {
-            var err = this._addEdgePrecondition(fromId, toId, label, context);
-            if(err){
-                callback(err);
-            } else {
-                R.path(relationsPath, this.database)[fromId][toId] = label;
+            var container = R.path(resourcesPath, this.database);
+            CU.precondition(CU.removeEntityCheck(resourceName, R.keys(container)), callback, () => {
+                delete container[resourceName];
+                this.ee.trigger("nodeRemoved", [resourceName, 'resources']);
                 if (callback) callback();
-            }
+            });
         };
         
-        LocalDBMS.prototype._setEdgeLabelPrecondition = function(fromId, toId, label, context){
-            if(CommonUtils.startsWith(fromId , 'resource-')){
-                return new Errors.ValidationError(context + "-resource-node-cant-be-first");
+        var isNotResource = R.curry(function(id){
+            return () => {
+                var info = _edgeEndId2info(id);
+                return !R.equals('resources', info[0]) ? null : ['investigation-board-resource-node-cant-be-first'];
             }
-            if(R.path(relationsPath, this.database)[fromId][toId] === undefined){
-                return new Errors.ValidationError(context + "-relation-is-not-exist");
-            }
+        });
+        
+        var edgeEndCheck = function(id, database){
+            var info = _edgeEndId2info(id);
+            var container = R.path(info[0] === 'groups' ? groupsPath : resourcesPath, database);
+            return CU.entityExists(info[1], R.keys(container));
         };
         
+        LocalDBMS.prototype.addEdge = function(fromId, toId, callback) {
+            var chain = CU.chainCheck([CU.isString(fromId),CU.isString(toId)]);
+            CU.precondition(chain, callback, () => {
+                var container = R.path(relationsPath, this.database);
+                chain = CU.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database), edgeEndCheck(toId, this.database), 
+                                       edgeNotExistCheck(fromId, toId, container)]);
+                CU.precondition(chain, callback, () => {
+                    container[fromId][toId] = '';
+                    if (callback) callback();
+                });
+            });
+        };
+        
+        var getEdgeList = function(container){
+            return R.flatten(R.toPairs(container).map( pair => R.keys(pair[1]).map(toId2 => pair[0] + '-' + toId2)));
+        };
+        
+        var edgeExistsCheck = function(fromId, toId, container){
+            return CU.chainCheck([CU.isString(fromId), CU.isString(toId), CU.entityExists(fromId + '-' + toId, getEdgeList(container))]);
+        };
+        
+        var edgeNotExistCheck = function(fromId, toId, container){
+            return CU.chainCheck([CU.isString(fromId), CU.isString(toId), CU.entityIsNotUsed(fromId + '-' + toId, getEdgeList(container))]);
+        };
+
         LocalDBMS.prototype.setEdgeLabel = function(fromId, toId, label, callback) {
-            var err = this._setEdgeLabelPrecondition(fromId, toId, label, context);
-            if(err){
-                callback(err);
-            } else {
-                R.path(relationsPath, this.database)[fromId][toId] = label;
+            var container = R.path(relationsPath, this.database);
+            var chain = CU.chainCheck([edgeExistsCheck(fromId, toId, container), CU.isString(label)]);
+            CU.precondition(chain, callback, () => {
+                container[fromId][toId] = label;
                 if (callback) callback();
-            }
+            });
         };
         
         LocalDBMS.prototype.removeEdge = function(fromId, toId, callback) {
-            delete R.path(relationsPath, this.database)[fromId][toId];
-            if (callback) callback();
+            var container = R.path(relationsPath, this.database);
+            CU.precondition(edgeExistsCheck(fromId, toId, container), callback, () => {
+                delete container[fromId][toId];
+                if (callback) callback();
+            });
         };
         
-        var _makeRelNodeId = function(name, type){
+        var _info2edgeEndId = function(name, type){
             return (type === 'groups' ? 'group-' : 'resource-') + name;
+        };
+        
+        var _edgeEndId2info = function(id){
+            var info = [];
+            if(CU.startsWith(id , 'resource-')){
+                info[0] = 'resources';
+                info[1] = id.substring('resource-'.length);
+                return info;
+            } else if(CU.startsWith(id , 'group-')){
+                info[0] = 'groups';
+                info[1] = id.substring('group-'.length);
+                return info;
+            }
+            throw new Error('Unknown type of edge end: ' + id);
         }
         
         function _nodeAdded(nodeName, type){
             if(type === 'resources') return;
-            R.path(relationsPath, this.database)[_makeRelNodeId(nodeName, type)] = {};
+            R.path(relationsPath, this.database)[_info2edgeEndId(nodeName, type)] = {};
         };
         
         listeners.nodeAdded = listeners.nodeAdded || [];
         listeners.nodeAdded.push(_nodeAdded);
 
         function _nodeRemoved(nodeName, type){
-            var relNodeName = _makeRelNodeId(nodeName, type);
+            var relNodeName = _info2edgeEndId(nodeName, type);
             var data = R.path(relationsPath, this.database);
             delete data[relNodeName];
             R.values(data).forEach(function(item){
@@ -222,8 +209,8 @@ See the License for the specific language governing permissions and
         function _nodeRenamed(fromName, toName, group){
           
             var container = R.path(relationsPath, this.database);
-            var toId = _makeRelNodeId(toName, group);
-            var fromId  = _makeRelNodeId(fromName, group);
+            var toId = _info2edgeEndId(toName, group);
+            var fromId  = _info2edgeEndId(fromName, group);
             if(group === 'groups'){
                 container[toId] = container[fromId];
                 delete container[fromId];
@@ -260,7 +247,7 @@ See the License for the specific language governing permissions and
                 delete container[groupName];
                 
                 container = R.path(relationsPath, this.database);
-                var nodeId = _makeRelNodeId(groupName, 'groups');
+                var nodeId = _info2edgeEndId(groupName, 'groups');
                 delete container[nodeId];
                 R.values(container).forEach(function(item){
                     if(item[nodeId] !== undefined){

@@ -29,7 +29,7 @@ InvestigationBoard.init = function () {
     listen(queryEl(".investigation-board-tab .create-entity-button"), "click", InvestigationBoard.createResource);
     listen(queryEl(".investigation-board-tab .rename-entity-button"), "click", InvestigationBoard.renameResource);
     
-    listen(queryEl(".investigation-board-tab .save-edge-button"), "click", InvestigationBoard.saveEdge);
+    listen(queryEl(".investigation-board-tab .save-edge-button"), "click", InvestigationBoard.updateEdge);
     
     listen(queryEl(".investigation-board-tab .cancel-node-adding-button"), "click", InvestigationBoard.cancel('.board-add-node-popup')); 
     listen(queryEl(".investigation-board-tab .cancel-resource-editing-button"), "click", InvestigationBoard.cancel('.board-edit-resource-popup'));
@@ -259,7 +259,7 @@ InvestigationBoard.redrawBoard = function (ibData) {
             addNode : InvestigationBoard.addNode,
             deleteNode : InvestigationBoard.deleteNode,
             editNode: InvestigationBoard.editNodeFun,
-            addEdge: InvestigationBoard.addEdge,
+            addEdge: InvestigationBoard.createEdge,
             editEdge: false,
             deleteEdge: InvestigationBoard.deleteEdge,
         },
@@ -289,34 +289,33 @@ InvestigationBoard.hideEdgeLabelEditor = function(params){
     InvestigationBoard.showPopup('.board-add-edge-popup', false);
 };
 
-InvestigationBoard.addEdge = function(data, callback){
-    var fromNode = InvestigationBoard.nodesDataset.get(data.from);
-    if(fromNode.group === 'resources'){
-        Utils.alert(getL10n('investigation-board-resource-node-cant-be-first'));
-        callback();
-        return;
-    }
-    
-//    if(InvestigationBoard.edgesDataset.get(data.from + '-' + data.to)){
-//        Utils.alert(getL10n('investigation-board-such-relation-already-exists'));
-//        callback();
-//        return;
-//    }
-    
-    InvestigationBoard.modifyArgs = {
-        fromNode : InvestigationBoard.nodesDataset.get(data.from),
-        toNode : InvestigationBoard.nodesDataset.get(data.to),
-        callback : callback
-    };
-    InvestigationBoard.showPopup('.board-add-edge-popup', true);
-};
 
 InvestigationBoard.saveEdge = function(){
-    if(InvestigationBoard.modifyArgs.editEdge){
-        InvestigationBoard.updateEdge();
-    } else {
-        InvestigationBoard.createEdge();
-    }
+    InvestigationBoard.updateEdge();
+};
+
+InvestigationBoard.createEdge = function(data, callback){
+    var fromNode = InvestigationBoard.nodesDataset.get(data.from);
+    var toNode = InvestigationBoard.nodesDataset.get(data.to);
+    
+    DBMS.addEdge(fromNode.id, toNode.id, function(err) {
+        if (err) { callback(); Utils.handleError(err); return; }
+        
+        var edge = {
+            from: fromNode.id,
+            to: toNode.id,
+            label: '',
+        };
+        callback(edge);
+        
+        var items = InvestigationBoard.edgesDataset.get({
+            filter: function (item) {
+                return item.from === fromNode.id && item.to === toNode.id;
+            }
+        });
+        
+        InvestigationBoard.showEdgeLabelEditor({edges: [items[0].id], nodes:[]});
+    });
 };
 
 InvestigationBoard.updateEdge = function(){
@@ -330,26 +329,6 @@ InvestigationBoard.updateEdge = function(){
         InvestigationBoard.showPopup('.board-add-edge-popup', false);
         input.value = '';
         InvestigationBoard.modifyArgs.callback(edge);
-    });
-};
-
-InvestigationBoard.createEdge = function(){
-    var fromNode = InvestigationBoard.modifyArgs.fromNode;
-    var toNode = InvestigationBoard.modifyArgs.toNode;
-    var input = queryEl('.investigation-board-tab .add-edge-label-input');
-    var label = input.value.trim();
-    
-    DBMS.addEdge(fromNode.id, toNode.id, label, function(err) {
-        if (err) { Utils.handleError(err); return; }
-        
-        InvestigationBoard.showPopup('.board-add-edge-popup', false);
-        input.value = '';
-        InvestigationBoard.modifyArgs.callback({
-            from: fromNode.id,
-            to: toNode.id,
-            label: label,
-//            id: fromNode.id + '-' + toNode.id
-        });
     });
 };
 

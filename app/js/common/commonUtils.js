@@ -439,12 +439,19 @@ See the License for the specific language governing permissions and
             return exports.chainCheck([exports.isString(entityName), exports.nameIsNotEmpty(entityName), exports.entityIsNotUsed(entityName, entityList)]);
         });
         
-        exports.removeEntityCheck = R.curry(function(entityName, entityList){
+        exports.entityExistsCheck = exports.removeEntityCheck = R.curry(function(entityName, entityList){
             return exports.chainCheck([exports.isString(entityName), exports.entityExists(entityName, entityList)]);
         });
         
         exports.renameEntityCheck = R.curry(function(fromName, toName, entityList){
             return exports.chainCheck([exports.removeEntityCheck(fromName, entityList), exports.createEntityCheck(toName, entityList)]);
+        });
+        
+        exports.switchEntityCheck = R.curry(function(entity1, entity2, entityList, entityContainerList){
+            return exports.chainCheck([exports.entityExistsCheck(entity1, entityList), 
+                                       exports.entityExistsCheck(entity2, entityList),
+                                       exports.entityExists(entity1, entityContainerList),
+                                       exports.entityIsNotUsed(entity2, entityContainerList)]);
         });
         
     }
