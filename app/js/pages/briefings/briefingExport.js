@@ -81,7 +81,7 @@ See the License for the specific language governing permissions and
     };
     
     var resolveTextTemplate = function (callback) {
-        DBMS.getCharacterProfileStructure(function(err, profileSettings){
+        DBMS.getProfileStructure('character', function(err, profileSettings){
             if(err) {Utils.handleError(err); return;}
             var func = R.compose(R.join(''), R.insert(1, R.__, ["{{profileInfo-","}}\n"]), R.prop('name'));
             var filter = R.compose(R.equals(true), R.prop('doExport'));
@@ -176,29 +176,34 @@ See the License for the specific language governing permissions and
         };
     };
     
+    var postprocessCheckboxes = function(briefingData, profileStructure, prefix, arrName){
+        var checkboxNames = profileStructure.filter( (item) => item.type === 'checkbox').map(R.prop('name'));
+        briefingData.briefings.forEach(function(charData){
+            if(charData[arrName] === undefined) return;
+            charData[arrName].forEach(function(element){
+                if(checkboxNames.indexOf(element.itemName) != -1){
+                    element.value = constL10n(Constants[element.value]);
+                    element.splittedText = [{'string':element.value}]
+                }
+            });
+            checkboxNames.forEach(function(name){
+                charData[prefix + name] = constL10n(Constants[charData[prefix + name]]);
+            });
+        });
+    };
+    
     var getBriefingData = function(callback){
         DBMS.getBriefingData(getSelectedUsers(), getSelectedStories(), getEl('exportOnlyFinishedStories').checked, function(err, briefingData){
             if(err) {Utils.handleError(err); return;}
             // some postprocessing
-            DBMS.getCharacterProfileStructure(function(err, profileSettings){
+            DBMS.getProfileStructure('character', function(err, characterProfileStructure){
                 if(err) {Utils.handleError(err); return;}
-                
-                var checkboxNames = profileSettings.filter(function(profileItem, i){
-                    return profileItem.type === 'checkbox';
-                }).map(R.prop('name'));
-                
-                briefingData.briefings.forEach(function(charData){
-                    charData.profileInfoArray.forEach(function(element){
-                        if(checkboxNames.indexOf(element.itemName) != -1){
-                            element.value = constL10n(Constants[element.value]);
-                            element.splittedText = [{'string':element.value}]
-                        }
-                    });
-                    checkboxNames.forEach(function(name){
-                        charData['profileInfo-' + name] = constL10n(Constants[charData['profileInfo-' + name]]);
-                    });
+                DBMS.getProfileStructure('player', function(err, playerProfileStructure){
+                    if(err) {Utils.handleError(err); return;}
+                    postprocessCheckboxes(briefingData, characterProfileStructure, 'profileInfo-', 'profileInfoArray');
+                    postprocessCheckboxes(briefingData, playerProfileStructure, 'playerInfo-', 'playerInfoArray');
+                    callback(null, briefingData);
                 });
-                callback(null, briefingData);
             });
         });
     };

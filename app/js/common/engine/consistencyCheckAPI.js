@@ -28,8 +28,12 @@ See the License for the specific language governing permissions and
                 errors.push(str);
             }
             
-            checkCharacterProfileConsistency(this.database, pushError);
-            checkProfileValueConsistency(this.database, pushError);
+            checkProfileStructureConsistency(this.database, 'character', 'CharacterProfileStructure', pushError);
+            checkProfileStructureConsistency(this.database, 'player', 'PlayerProfileStructure', pushError);
+            checkProfileConsistency(this.database, 'Characters', 'CharacterProfileStructure', pushError);
+            checkProfileConsistency(this.database, 'Players', 'PlayerProfileStructure', pushError);
+            checkProfileValueConsistency(this.database, 'Characters', 'CharacterProfileStructure', pushError);
+            checkProfileValueConsistency(this.database, 'Players', 'PlayerProfileStructure', pushError);
             checkStoryCharactersConsistency(this.database, pushError);
             checkEventsCharactersConsistency(this.database, pushError);
             checkBindingsConsistency(this.database, pushError);
@@ -54,19 +58,22 @@ See the License for the specific language governing permissions and
         }
         
         var checkObjectRightsConsistency = function(data, callback){
-            var storyNames = R.values(data.Stories).map(R.prop('name'));
-            var characterNames = R.values(data.Characters).map(R.prop('name'));
+            var entities = {
+                characters : R.keys(data.Characters),
+                stories : R.keys(data.Stories),
+                groups : R.keys(data.Groups),
+                players : R.keys(data.Players)
+            };
+            var types = R.keys(entities);
             var processError = getErrorProcessor(callback);
             
             R.values(data.ManagementInfo.UsersInfo).forEach(function(user){
-                var difference = R.difference(user.characters, characterNames);
-                if(difference.length != 0){
-                    processError("Object rights inconsistent, user character is not exist: user {0}, character {1}", [user.name, difference]);
-                }
-                difference = R.difference(user.stories, storyNames);
-                if(difference.length != 0){
-                    processError("Object rights inconsistent, user story is not exist: user {0}, story {1}", [user.name, difference]);
-                }
+                types.forEach(type => {
+                    var difference = R.difference(user[type], entities[type]);
+                    if(difference.length != 0){
+                        processError("Object rights inconsistent, user entity is not exist: user {0}, entity {1}, type {2}", [user.name, difference, type]);
+                    }
+                })
             })
         };
         
@@ -122,41 +129,40 @@ See the License for the specific language governing permissions and
             });
         };
         
-        var checkProfileValueConsistency = function(data, callback){
-            var profileItems = data.CharacterProfileStructure;
+        var isInconsistent = function(charValue, type, profileItemValue){
+            switch(type){
+            case "text":
+            case "string":
+                return !R.is(String, charValue);
+            case "enum":
+                if(!R.is(String, charValue)){
+                    return true;
+                } else {
+                    var values = profileItemValue.split(',').map(R.trim);
+                    return !R.contains(charValue.trim(), values);
+                }
+            case "multiEnum":
+                if(!R.is(String, charValue)){
+                    return true;
+                } else {
+                    var values = profileItemValue === '' ? [] : profileItemValue.split(',').map(R.trim);
+                    var charValues = charValue === '' ? [] : charValue.split(',').map(R.trim);
+                    return R.difference(charValues, values).length != 0;
+                }
+            case "number":
+                return !R.is(Number, charValue);
+            case "checkbox":
+                return !R.is(Boolean, charValue);
+            default:
+                return true;
+            }
+        };
+        
+        var checkProfileValueConsistency = function(data, profiles, structure, callback){
             var processError = getErrorProcessor(callback)('Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}');
             
-            var isInconsistent = function(charValue, type, profileItemValue){
-                switch(type){
-                case "text":
-                case "string":
-                    return !R.is(String, charValue);
-                case "enum":
-                    if(!R.is(String, charValue)){
-                        return true;
-                    } else {
-                        var values = profileItemValue.split(',').map(R.trim);
-                        return !R.contains(charValue.trim(), values);
-                    }
-                case "multiEnum":
-                    if(!R.is(String, charValue)){
-                        return true;
-                    } else {
-                        var values = profileItemValue === '' ? [] : profileItemValue.split(',').map(R.trim);
-                        var charValues = charValue === '' ? [] : charValue.split(',').map(R.trim);
-                        return R.difference(charValues, values).length != 0;
-                    }
-                case "number":
-                    return !R.is(Number, charValue);
-                case "checkbox":
-                    return !R.is(Boolean, charValue);
-                default:
-                    return true;
-                }
-            };
-            
-            R.values(data.Characters).forEach(function(character){
-                profileItems.forEach(function(profileItem){
+            R.values(data[profiles]).forEach(function(character){
+                data[structure].forEach(function(profileItem){
                     if(isInconsistent(character[profileItem.name], profileItem.type, profileItem.value)){
                         processError([character.name, profileItem.name, character[profileItem.name]]);
                     }
@@ -164,15 +170,15 @@ See the License for the specific language governing permissions and
             });
         };
         
-        var checkCharacterProfileConsistency = function(data, callback){
-            var profileItems = data.CharacterProfileStructure.map(R.prop('name'));
+        var checkProfileConsistency = function(data, profiles, structure, callback){
+            var profileItems = data[structure].map(R.prop('name'));
             var processError = getErrorProcessor(callback);
             
-            R.values(data.Characters).forEach(function(character){
-                var charItems = R.keys(character).filter(R.compose(R.not, R.equals('name')));
+            R.values(data[profiles]).forEach(function(profile){
+                var charItems = R.keys(profile).filter(R.compose(R.not, R.equals('name')));
                 var difference = R.symmetricDifference(charItems,profileItems);
                 if(difference.length != 0){
-                    var processCharacterError = processError(R.__, [character.name,difference]);
+                    var processCharacterError = processError(R.__, [profile.name,difference]);
                     if(charItems.length !== profileItems.length){
                         return processCharacterError("Character profile inconsistent, lengths are different: char {0}, difference [{1}]");
                     }
@@ -181,6 +187,15 @@ See the License for the specific language governing permissions and
                     }
                 }
             });
+        };
+        
+        var checkProfileStructureConsistency = function(data, type, structure, callback){
+            var profileItems = data[structure].map(R.prop('name'));
+            var processError = getErrorProcessor(callback);
+            if(profileItems.length !== R.uniq(profileItems).length){
+                var diff = R.toPairs(R.groupBy((name) => name, profileItems)).filter(pair => pair[1].length > 1).map(pair => pair[0]);
+                processError("Profile structure inconsistent, item names are repeated: type {0}, values {1}", [type, diff]);
+            }
         };
     };
     

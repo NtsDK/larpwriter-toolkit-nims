@@ -54,7 +54,7 @@ See the License for the specific language governing permissions and
                     "eventsInfo" : _getEventsInfo(database, charName, selectedStories, exportOnlyFinishedStories),
                     "profileInfoArray" : _getProfileInfoArray(profile, database.CharacterProfileStructure),
                     "groupTexts" : groupTexts[charName],
-                    "relations" : _makeRelationsInfo(dbmsUtils.getKnownCharacters(database, charName), database, charName)
+                    "relations" : _makeRelationsInfo(dbmsUtils._getKnownCharacters(database, charName), database, charName)
                 };
                 
                 dataObject = R.merge(dataObject, _getSimpleProfileInfoObject("profileInfo-", profile, database.CharacterProfileStructure));
