@@ -76,28 +76,16 @@ See the License for the specific language governing permissions and
             var input = queryEl(root + ".create-entity-input");
             var name = input.value.trim();
             
-            if (name === "") {
-                Utils.alert(getL10n("profiles-character-name-is-not-specified"));
-                return;
-            }
-            
-            DBMS.isProfileNameUsed(type, name, function(err, isProfileNameUsed){
+            DBMS.createProfile(type, name, function(err){
                 if(err) {Utils.handleError(err); return;}
-                if (isProfileNameUsed) {
-                    Utils.alert(strFormat(getL10n("profiles-character-name-already-used"), [name]));
-                } else {
-                    DBMS.createProfile(type, name, function(err){
-                        if(err) {Utils.handleError(err); return;}
-                        PermissionInformer.refresh(function(err){
-                            if(err) {Utils.handleError(err); return;}
-                            if(state.currentView.updateSettings){
-                                state.currentView.updateSettings(name);
-                            }
-                            input.value = '';
-                            exports.refresh();
-                        });
-                    });
-                }
+                PermissionInformer.refresh(function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    if(state.currentView.updateSettings){
+                        state.currentView.updateSettings(name);
+                    }
+                    input.value = '';
+                    exports.refresh();
+                });
             });
         }
     };
@@ -108,33 +96,16 @@ See the License for the specific language governing permissions and
             var fromName = queryEl(root + ".rename-entity-select").value.trim();
             var toName = toInput.value.trim();
         
-            if (toName === "") {
-                Utils.alert(getL10n("profiles-new-character-name-is-not-specified"));
-                return;
-            }
-        
-            if (fromName === toName) {
-                Utils.alert(getL10n("profiles-names-are-the-same"));
-                return;
-            }
-        
-            DBMS.isProfileNameUsed(type, toName, function(err, isProfileNameUsed){
+            DBMS.renameProfile(type, fromName, toName, function(err){
                 if(err) {Utils.handleError(err); return;}
-                if (isProfileNameUsed) {
-                    Utils.alert(strFormat(getL10n("profiles-character-name-already-used"), [toName]));
-                } else {
-                    DBMS.renameProfile(type, fromName, toName, function(err){
-                        if(err) {Utils.handleError(err); return;}
-                        PermissionInformer.refresh(function(err){
-                            if(err) {Utils.handleError(err); return;}
-                            if(state.currentView.updateSettings){
-                                state.currentView.updateSettings(toName);
-                            }
-                            toInput.value = '';
-                            exports.refresh();
-                        });
-                    });
-                }
+                PermissionInformer.refresh(function(err){
+                    if(err) {Utils.handleError(err); return;}
+                    toInput.value = '';
+                    if(state.currentView.updateSettings){
+                        state.currentView.updateSettings(type, toName);
+                    }
+                    exports.refresh();
+                });
             });
         }
     };

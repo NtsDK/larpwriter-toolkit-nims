@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
     function profilesAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -35,115 +35,124 @@ See the License for the specific language governing permissions and
             return null;
         }
         
+        var typeCheck = function(type){
+            return CU.chainCheck([CU.isString(type), CU.elementFromEnum(type, Constants.profileTypes)]);
+        };
+        
         LocalDBMS.prototype.getProfileNamesArray = function(type, callback) {
-            callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CommonUtils.charOrdA));
+            CU.precondition(typeCheck(type), callback, () => {
+                callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
+            });
         };
         
         // profile, preview
         LocalDBMS.prototype.getProfile = function(type, name, callback) {
-            callback(null, CommonUtils.clone(R.path(getPath(type), this.database)[name]));
+            CU.precondition(typeCheck(type), callback, () => {
+                var container = R.path(getPath(type), this.database);
+                CU.precondition(CU.entityExistsCheck(name, R.keys(container)), callback, () => {
+                    callback(null, CU.clone(container[name]));
+                });
+            });
         };
         // social network, character filter
         LocalDBMS.prototype.getAllProfiles = function(type, callback) {
-            callback(null, CommonUtils.clone(R.path(getPath(type), this.database)));
-        };
-        
-        // profiles
-        LocalDBMS.prototype.isProfileNameUsed = function(type, characterName, callback) {
-            callback(null, R.path(getPath(type), this.database)[characterName] !== undefined);
-        };
-        
-        // profiles
-        LocalDBMS.prototype._createProfilePrecondition = function(type, characterName){
-            if (characterName === "") {
-                return [ null, 'profiles-character-name-is-not-specified'];
-            } else if (type !== 'character' && type !== 'player') {
-                return [ null, 'binding-wrong-profile-type', [ type ] ];
-            } else if (R.path(getPath(type), this.database)[characterName] !== undefined) {
-                return [ null, 'profiles-character-name-already-used', [ characterName ] ];
-            }
-        }
-  
-        LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
-            var err = this._createProfilePrecondition(type, characterName);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            
-            var newCharacter = {
-                name : characterName
-            };
-    
-            R.path(getStructurePath(type), this.database).forEach(function(profileSettings) {
-                if (profileSettings.type === "enum") {
-                    newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
-                } else if(profileSettings.type === "multiEnum") {
-                    newCharacter[profileSettings.name] = '';
-                } else {
-                    newCharacter[profileSettings.name] = profileSettings.value;
-                }
+            CU.precondition(typeCheck(type), callback, () => {
+                callback(null, CU.clone(R.path(getPath(type), this.database)));
             });
-    
-            R.path(getPath(type), this.database)[characterName] = newCharacter;
-            this.ee.trigger("createProfile", arguments);
-            if(callback) callback();
+        };
+        
+        // profiles
+        LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
+            CU.precondition(typeCheck(type), callback, () => {
+                var container = R.path(getPath(type), this.database);
+                CU.precondition(CU.createEntityCheck(characterName, R.keys(container)), callback, () => {
+                    var newCharacter = {
+                            name : characterName
+                    };
+                    
+                    R.path(getStructurePath(type), this.database).forEach(function(profileSettings) {
+                        if (profileSettings.type === "enum") {
+                            newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
+                        } else if(profileSettings.type === "multiEnum") {
+                            newCharacter[profileSettings.name] = '';
+                        } else {
+                            newCharacter[profileSettings.name] = profileSettings.value;
+                        }
+                    });
+                    
+                    R.path(getPath(type), this.database)[characterName] = newCharacter;
+                    this.ee.trigger("createProfile", arguments);
+                    if(callback) callback();
+                });
+            });
         };
         // profiles
         LocalDBMS.prototype.renameProfile = function(type, fromName, toName, callback) {
-            if (toName === "") {
-                callback(new Errors.ValidationError("profiles-new-character-name-is-not-specified"));
-                return;
-            }
-
-            if (fromName === toName) {
-                callback(new Errors.ValidationError("profiles-names-are-the-same"));
-                return;
-            }
-            
-            var profileSet = R.path(getPath(type), this.database);
-            
-            if(profileSet[toName]){
-                callback(new Errors.ValidationError("profiles-character-name-already-used", [toName]));
-                return;
-            }
-            
-            var data = profileSet[fromName];
-            data.name = toName;
-            profileSet[toName] = data;
-            delete profileSet[fromName];
-            
-            this.ee.trigger("renameProfile", arguments);
-    
-            if(callback) callback();
+            CU.precondition(typeCheck(type), callback, () => {
+                var container = R.path(getPath(type), this.database);
+                CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
+                    var data = container[fromName];
+                    data.name = toName;
+                    container[toName] = data;
+                    delete container[fromName];
+                    
+                    this.ee.trigger("renameProfile", arguments);
+                    
+                    if(callback) callback();
+                });
+            });
         };
     
         // profiles
         LocalDBMS.prototype.removeProfile = function(type, characterName, callback) {
-            delete R.path(getPath(type), this.database)[characterName];
-            this.ee.trigger("removeProfile", arguments);
-            if(callback) callback();
+            CU.precondition(typeCheck(type), callback, () => {
+                var container = R.path(getPath(type), this.database);
+                CU.precondition(CU.removeEntityCheck(characterName, R.keys(container)), callback, () => {
+                    delete container[characterName];
+                    this.ee.trigger("removeProfile", arguments);
+                    if(callback) callback();
+                });
+            });
+        };
+        
+        var getValueCheck = function(type){
+            switch (type) {
+            case "checkbox":
+                return CU.isBoolean;
+            case "number":
+                return CU.isNumber;
+            }
+            return CU.isString;
         };
     
         // profile editor
         LocalDBMS.prototype.updateProfileField = function(type, characterName, fieldName, itemType, value, callback) {
-            var profileInfo = R.path(getPath(type), this.database)[characterName];
-            switch (itemType) {
-            case "text":
-            case "string":
-            case "enum":
-            case "multiEnum":
-            case "checkbox":
-                profileInfo[fieldName] = value;
-                break;
-            case "number":
-                if (isNaN(value)) {
-                    callback(new Errors.ValidationError("profiles-not-a-number"));
-                    return;
-                }
-                profileInfo[fieldName] = Number(value);
-                break;
-            default:
-                callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
-            }
-            if(callback) callback();
+            CU.precondition(typeCheck(type), callback, () => {
+                var container = R.path(getPath(type), this.database);
+                var containerStructure = R.path(getStructurePath(type), this.database);
+                var arr = [CU.entityExistsCheck(characterName, R.keys(container)), 
+                           CU.entityExistsCheck(fieldName +'/' + itemType, containerStructure.map(item => item.name + '/' + item.type)), 
+                           getValueCheck(itemType)(value)];
+                CU.precondition(CU.chainCheck(arr), callback, () => {
+                    
+                    var profileInfo = container[characterName];
+                    switch (itemType) {
+                    case "text":
+                    case "string":
+                    case "enum":
+                    case "multiEnum":
+                    case "checkbox":
+                        profileInfo[fieldName] = value;
+                        break;
+                    case "number":
+                        profileInfo[fieldName] = Number(value);
+                        break;
+                    default:
+                        callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
+                    }
+                    if(callback) callback();
+                });
+            });
         };
         
         function _createProfileItem(type, name, itemType, value){
