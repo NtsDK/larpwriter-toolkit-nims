@@ -405,6 +405,18 @@ See the License for the specific language governing permissions and
             }
         });
         
+        exports.isEmptyString = R.curry(function(el){
+            return () => {
+                return R.equals('', el) ? null : ['errors-argument-is-not-empty-string', [el]];
+            }
+        });
+        
+        exports.isNotEmptyString = R.curry(function(el){
+            return () => {
+                return !R.equals('', el) ? null : ['errors-argument-is-empty-string', [el]];
+            }
+        });
+        
         exports.nameIsNotEmpty = R.curry(function(el){
             return () => {
                 return !R.equals('', el) ? null : ['errors-name-is-empty-string', [el]];
@@ -435,6 +447,24 @@ See the License for the specific language governing permissions and
             }
         });
         
+        exports.nil = R.curry(function(){
+            return () => {
+                return null;
+            }
+        });
+        
+        exports.notEquals = R.curry(function(el, el2){
+            return () => {
+                return !R.equals(el, el2) ? null : ['errors-argument-must-not-be-equal', [el]];
+            }
+        });
+        
+        exports.isInRange = R.curry(function(el, low, up){
+            return () => {
+                return low <= el && el <= up ? null : ['errors-argument-is-not-in-range', [el, low, up]];
+            }
+        });
+        
         exports.createEntityCheck = R.curry(function(entityName, entityList){
             return exports.chainCheck([exports.isString(entityName), exports.nameIsNotEmpty(entityName), exports.entityIsNotUsed(entityName, entityList)]);
         });
@@ -453,6 +483,16 @@ See the License for the specific language governing permissions and
                                        exports.entityExists(entity1, entityContainerList),
                                        exports.entityIsNotUsed(entity2, entityContainerList)]);
         });
+        
+        exports.getValueCheck = function(type){
+            switch (type) {
+            case "checkbox":
+                return exports.isBoolean;
+            case "number":
+                return exports.isNumber;
+            }
+            return exports.isString;
+        };
         
     }
     

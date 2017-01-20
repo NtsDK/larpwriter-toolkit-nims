@@ -115,16 +115,20 @@ See the License for the specific language governing permissions and
             });
         };
         
-        var getValueCheck = function(type){
-            switch (type) {
+        var typeSpecificPreconditions = function(itemType, itemDesc, value){
+            switch (itemType) {
+            case "text":
+            case "string":
             case "checkbox":
-                return CU.isBoolean;
             case "number":
-                return CU.isNumber;
+                return CU.nil();
+            case "enum":
+                return CU.elementFromEnum(value, itemDesc.value.split(','));
+            case "multiEnum":
+                return CU.eitherCheck(CU.elementsFromEnum(value.split(','), itemDesc.value.split(',')), CU.isEmptyString(value));
             }
-            return CU.isString;
         };
-    
+        
         // profile editor
         LocalDBMS.prototype.updateProfileField = function(type, characterName, fieldName, itemType, value, callback) {
             CU.precondition(typeCheck(type), callback, () => {
@@ -132,25 +136,27 @@ See the License for the specific language governing permissions and
                 var containerStructure = R.path(getStructurePath(type), this.database);
                 var arr = [CU.entityExistsCheck(characterName, R.keys(container)), 
                            CU.entityExistsCheck(fieldName +'/' + itemType, containerStructure.map(item => item.name + '/' + item.type)), 
-                           getValueCheck(itemType)(value)];
+                           CU.getValueCheck(itemType)(value)];
                 CU.precondition(CU.chainCheck(arr), callback, () => {
-                    
-                    var profileInfo = container[characterName];
-                    switch (itemType) {
-                    case "text":
-                    case "string":
-                    case "enum":
-                    case "multiEnum":
-                    case "checkbox":
-                        profileInfo[fieldName] = value;
-                        break;
-                    case "number":
-                        profileInfo[fieldName] = Number(value);
-                        break;
-                    default:
-                        callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
-                    }
-                    if(callback) callback();
+                    var itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
+                    CU.precondition(typeSpecificPreconditions(itemType, itemDesc, value), callback, () => {
+                        var profileInfo = container[characterName];
+                        switch (itemType) {
+                        case "text":
+                        case "string":
+                        case "enum":
+                        case "multiEnum":
+                        case "checkbox":
+                            profileInfo[fieldName] = value;
+                            break;
+                        case "number":
+                            profileInfo[fieldName] = Number(value);
+                            break;
+                        default:
+                            callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
+                        }
+                        if(callback) callback();
+                    });
                 });
             });
         };

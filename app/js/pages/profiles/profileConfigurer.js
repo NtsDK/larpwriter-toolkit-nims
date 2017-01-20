@@ -91,26 +91,13 @@ See the License for the specific language governing permissions and
         return function(){
             var input = queryEl(root+".create-entity-input");
             var name = input.value.trim();
+            var itemType = queryEl(root+".create-entity-type-select").value.trim();
+            var positionSelector = queryEl(root+".create-entity-position-select");
             
-            validateProfileItemName(type, name, function(){
-                var itemType = queryEl(root+".create-entity-type-select").value.trim();
-                
-                if (!Constants.profileFieldTypes[itemType]) {
-                    Utils.alert(strFormat(getL10n("profiles-unknown-profile-item-type"), [itemType]));
-                    return;
-                }
-                var value = Constants.profileFieldTypes[itemType].value;
-                
-                var positionSelector = queryEl(root+".create-entity-position-select");
-                
-                var position = positionSelector.value;
-                
-                DBMS.createProfileItem(type, name, itemType, value, position === getL10n("common-set-item-as-last"), 
-                        positionSelector.selectedIndex, Utils.processError(function(){
-                            input.value = '';
-                            exports.refresh();
-                        }));
-            });
+            DBMS.createProfileItem(type, name, itemType, positionSelector.selectedIndex, Utils.processError(function(){
+                input.value = '';
+                exports.refresh();
+            }));
         }
     };
     
@@ -291,40 +278,15 @@ See the License for the specific language governing permissions and
             var newName = event.target.value.trim();
             var oldName = event.target.info;
             
-            validateProfileItemName(type, newName, function(){
-                DBMS.renameProfileItem(type, newName, oldName, Utils.processError(exports.refresh));
-            }, function(){
-                event.target.value = event.target.info;
+            DBMS.renameProfileItem(type, newName, oldName, function(err){
+                if(err){
+                    event.target.value = event.target.info;
+                    Utils.handleError(err); 
+                    return;
+                }
+                exports.refresh();
             });
         }
-    };
-    
-    var validateProfileItemName = function (type, name, success, failure) {
-        if (name === "") {
-            Utils.alert(getL10n("profiles-profile-item-name-is-not-specified"));
-            if(failure) failure();
-            return;
-        }
-        
-        if (name === "name") {
-            Utils.alert(getL10n("profiles-profile-item-name-cant-be-name"));
-            if(failure) failure();
-            return;
-        }
-        
-        var tmpFailure = function(){
-            Utils.alert(getL10n("profiles-such-name-already-used"));
-            if(failure) failure();
-        };
-        
-        DBMS.isProfileItemNameUsed(type, name, function(err, isUsed){
-            if(err) {Utils.handleError(err); return;}
-            if(isUsed){
-                tmpFailure();
-            } else {
-                success();
-            }
-        });
     };
     
     var changeProfileItemType = function (type) {
