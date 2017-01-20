@@ -491,7 +491,7 @@ See the License for the specific language governing permissions and
         var storyName = event.target.storyName;
         var eventIndex = event.target.eventIndex;
         var text = event.target.value;
-        DBMS.setOriginEventText(storyName, eventIndex, text, Utils.processError());
+        DBMS.setEventOriginProperty(storyName, eventIndex, 'text', text, Utils.processError());
     };
     
     var onChangeAdaptationText = function (event) {
@@ -499,7 +499,7 @@ See the License for the specific language governing permissions and
         var eventIndex = event.target.eventIndex;
         var characterName = event.target.characterName;
         var text = event.target.value;
-        DBMS.setAdaptationEventText(storyName, eventIndex, characterName, text, Utils.processError());
+        DBMS.setEventAdaptationProperty(storyName, eventIndex, characterName, 'text', text, Utils.processError());
     };
 
 })(this['BriefingPreview']={});

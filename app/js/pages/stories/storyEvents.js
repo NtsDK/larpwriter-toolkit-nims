@@ -248,7 +248,7 @@ StoryEvents.makeEventTextInput = function (event, index) {
 StoryEvents.onChangeDateTimeCreator = function (myInput) {
     "use strict";
     return function (dp, input) {
-        DBMS.updateEventProperty(Stories.CurrentStoryName, myInput.eventIndex, "time", input.val(), Utils.processError());
+        DBMS.setEventOriginProperty(Stories.CurrentStoryName, myInput.eventIndex, "time", input.val(), Utils.processError());
         StoryEvents.lastDate = input.val();
         removeClass(myInput, "defaultDate");
     }
@@ -263,7 +263,7 @@ StoryEvents.updateEventName = function (event) {
         return;
     }
 
-    DBMS.updateEventProperty(Stories.CurrentStoryName, input.eventIndex, "name", input.value, Utils.processError(StoryEvents.refresh));
+    DBMS.setEventOriginProperty(Stories.CurrentStoryName, input.eventIndex, "name", input.value, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.updateEventText = function (event) {
@@ -274,5 +274,5 @@ StoryEvents.updateEventText = function (event) {
         StoryEvents.refresh();
         return;
     }
-    DBMS.updateEventProperty(Stories.CurrentStoryName, input.eventIndex, "text", input.value, Utils.processError());
+    DBMS.setEventOriginProperty(Stories.CurrentStoryName, input.eventIndex, "text", input.value, Utils.processError());
 };

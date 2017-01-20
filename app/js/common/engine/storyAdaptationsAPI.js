@@ -19,28 +19,29 @@ See the License for the specific language governing permissions and
     function storyAdaptationsAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var dbmsUtils     = opts.dbmsUtils   ;
         
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
-            "use strict";
-            var storyArray = Object.keys(this.database.Stories).sort(CommonUtils.charOrdA);
-            var that = this;
-            storyArray = storyArray.map(function(elem){
-                return {
-                    storyName: elem,
-                    isFinished: _isStoryFinished(that.database, elem),
-                    isEmpty: _isStoryEmpty(that.database, elem)
-                }
-            });
-            
-            if(showOnlyUnfinishedStories){
-                storyArray = storyArray.filter(function(elem){
-                    return !elem.isFinished || elem.isEmpty;
+            CU.precondition(CU.isBoolean(showOnlyUnfinishedStories), callback, () => {
+                var storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
+                var that = this;
+                storyArray = storyArray.map(function(elem){
+                    return {
+                        storyName: elem,
+                        isFinished: _isStoryFinished(that.database, elem),
+                        isEmpty: _isStoryEmpty(that.database, elem)
+                    }
                 });
-            }
-            callback(null, storyArray);
+                
+                if(showOnlyUnfinishedStories){
+                    storyArray = storyArray.filter(function(elem){
+                        return !elem.isFinished || elem.isEmpty;
+                    });
+                }
+                callback(null, storyArray);
+            });
         };
     
         var _isStoryEmpty = function (database, storyName) {
@@ -55,39 +56,42 @@ See the License for the specific language governing permissions and
         
         dbmsUtils._isStoryFinished = _isStoryFinished;
     
-        //events
+        //adaptations
         LocalDBMS.prototype.getStory = function(storyName, callback){
-            callback(null, CommonUtils.clone(this.database.Stories[storyName]));
+            var chain = [CU.isString(storyName), CU.entityExists(storyName, R.keys(this.database.Stories))];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                callback(null, CU.clone(this.database.Stories[storyName]));
+            });
         };
         
-        LocalDBMS.prototype.setEventAdaptationTime = function(storyName, eventIndex, characterName, time, callback){
-            "use strict";
-            var event = this.database.Stories[storyName].events[eventIndex];
-            event.characters[characterName].time = time;
-            callback();
-        };
-    
-        // preview, events
-        LocalDBMS.prototype.setOriginEventText = function(storyName, eventIndex, text, callback){
-            var event = this.database.Stories[storyName].events[eventIndex];
-            event.text = text;
-            callback();
+        var getValueCheck = function(type){
+            switch(type){
+            case 'text':
+            case 'time':
+                return CU.isString;
+            case 'ready':
+                return CU.isBoolean;
+            };
+            throw new Error('Unexpected type ' + type);
         };
         
         // preview, events
-        LocalDBMS.prototype.setAdaptationEventText = function(storyName, eventIndex, characterName, text, callback){
-            var event = this.database.Stories[storyName].events[eventIndex];
-            event.characters[characterName].text = text;
-            callback();
+        LocalDBMS.prototype.setEventAdaptationProperty = function(storyName, eventIndex, characterName, type, value, callback){
+            var chain = [CU.isString(storyName), CU.entityExists(storyName, R.keys(this.database.Stories)), CU.isNumber(eventIndex), 
+                         CU.isString(type), CU.elementFromEnum(type, adaptationProperties), CU.isString(characterName)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                chain = [CU.entityExists(characterName, R.keys(story.characters)), CU.isInRange(eventIndex, 0, story.events.length-1), getValueCheck(type, value)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    var event = story.events[eventIndex];
+                    CU.precondition(CU.entityExists(characterName, R.keys(event.characters)), callback, () => {
+                        event.characters[characterName][type] = value;
+                        callback();
+                    });
+                });
+            });
         };
-    
-        // events
-        LocalDBMS.prototype.changeAdaptationReadyStatus = function(storyName, eventIndex, characterName, value, callback){
-            "use strict";
-            var event = this.database.Stories[storyName].events[eventIndex];
-            event.characters[characterName].ready = value;
-            callback();
-        };
+        
     };
     callback(storyAdaptationsAPI);
 

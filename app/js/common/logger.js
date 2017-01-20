@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
             "cloneEvent" : {},
             "mergeEvents" : {},
             "removeEvent" : {},
-            "updateEventProperty" : {
+            "setEventOriginProperty" : {
                 "filter": function(args){
                     return args[2] !== "text";
                 }

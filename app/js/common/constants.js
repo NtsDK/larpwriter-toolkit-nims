@@ -51,6 +51,12 @@ See the License for the specific language governing permissions and
         "hidden"
     ];
     
+    exports.adaptationProperties = [
+        'text', 
+        'time',
+        'ready'
+    ];
+    
     exports.objectSubsets = [
         "allObjects",
         "selectedCharacters",

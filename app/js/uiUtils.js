@@ -183,7 +183,7 @@ See the License for the specific language governing permissions and
     var onChangePersonalTimeDelegate = function (event) {
         var dataKey = JSON.parse(event.target.dataKey);
         var time = event.target.value;
-        DBMS.setEventAdaptationTime(dataKey[0], dataKey[1], dataKey[2], time, Utils.processError());
+        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'time', time, Utils.processError());
     };
     
     exports.makeAdaptationReadyInput = function(storyName, event, characterName, isEditable){
@@ -204,7 +204,7 @@ See the License for the specific language governing permissions and
     var onChangeReadyStatus = function (event) {
         var dataKey = JSON.parse(event.target.dataKey);
         var value = event.target.checked;
-        DBMS.changeAdaptationReadyStatus(dataKey[0], dataKey[1], dataKey[2], value, Utils.processError());
+        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, Utils.processError());
     };
     
     exports.makePanelCore = function(title, content){

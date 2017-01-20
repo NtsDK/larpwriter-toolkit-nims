@@ -129,13 +129,13 @@ describe("LocalDBMS", function(){
         });
     });
     it("вернет stories-event-name-is-not-specified при попытке удаления названия события", function(done){
-        DBMS.updateEventProperty('Репка', 0, 'name', '', function(err, message){
+        DBMS.setEventOriginProperty('Репка', 0, 'name', '', function(err, message){
             expect(err.messageId).toEqual("stories-event-name-is-not-specified");
             done();
         });
     });
     it("вернет stories-event-text-is-empty при попытке удаления текста события", function(done){
-        DBMS.updateEventProperty('Репка', 0, 'text', '', function(err, message){
+        DBMS.setEventOriginProperty('Репка', 0, 'text', '', function(err, message){
             expect(err.messageId).toEqual("stories-event-text-is-empty");
             done();
         });

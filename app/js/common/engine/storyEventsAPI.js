@@ -116,8 +116,8 @@ See the License for the specific language governing permissions and
             callback();
         };
     
-        // story events
-        LocalDBMS.prototype.updateEventProperty = function(storyName, index, property, value, callback){
+        // story events, preview, adaptations
+        LocalDBMS.prototype.setEventOriginProperty = function(storyName, index, property, value, callback){
             "use strict";
             if(property === "name" && value.trim() === ""){
                 callback(new Errors.ValidationError("stories-event-name-is-not-specified"));

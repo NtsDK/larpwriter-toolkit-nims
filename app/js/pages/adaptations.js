@@ -281,7 +281,7 @@ See the License for the specific language governing permissions and
     
     var onChangeDateTimeCreator = R.curry(function (storyName, myInput) {
         return function (dp, input) {
-            DBMS.updateEventProperty(storyName, myInput.eventIndex, "time", input.val(), Utils.processError());
+            DBMS.setEventOriginProperty(storyName, myInput.eventIndex, "time", input.val(), Utils.processError());
             removeClass(myInput, "defaultDate");
         }
     });
@@ -309,13 +309,13 @@ See the License for the specific language governing permissions and
     var onChangeOriginText = function (event) {
         var dataKey = JSON.parse(event.target.dataKey);
         var text = event.target.value;
-        DBMS.setOriginEventText(dataKey[0], dataKey[1], text, Utils.processError());
+        DBMS.setEventOriginProperty(dataKey[0], dataKey[1], 'text', text, Utils.processError());
     };
     
     var onChangeAdaptationText = function (event) {
         var dataKey = JSON.parse(event.target.dataKey);
         var text = event.target.value;
-        DBMS.setAdaptationEventText(dataKey[0], dataKey[1], dataKey[2], text, Utils.processError());
+        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'text', text, Utils.processError());
     };
     
     var getSuffix = function(object){
