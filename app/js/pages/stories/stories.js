@@ -116,26 +116,14 @@ Stories.createStory = function () {
     var input = queryEl("#storiesDiv .create-entity-input");
     var storyName = input.value.trim();
     
-    if (storyName === "") {
-        Utils.alert(getL10n("stories-story-name-is-not-specified"));
-        return;
-    }
-    
-    DBMS.isStoryExist(storyName, function(err, isExist){
+    DBMS.createStory(storyName, function(err){
         if(err) {Utils.handleError(err); return;}
-        if(isExist){
-            Utils.alert(strFormat(getL10n("stories-story-name-already-used"), [storyName]));
-        } else {
-            DBMS.createStory(storyName, function(err){
-                if(err) {Utils.handleError(err); return;}
-                Stories.updateSettings(storyName);
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    input.value = '';
-                    Stories.refresh();
-                });
-            });
-        }
+        Stories.updateSettings(storyName);
+        PermissionInformer.refresh(function(err){
+            if(err) {Utils.handleError(err); return;}
+            input.value = '';
+            Stories.refresh();
+        });
     });
 };
 
@@ -144,31 +132,14 @@ Stories.renameStory = function () {
     var fromName = queryEl("#storiesDiv .rename-entity-select").value.trim();
     var toName = toInput.value.trim();
 
-    if (toName === "") {
-        Utils.alert(getL10n("stories-new-story-name-is-not-specified"));
-        return;
-    }
-
-    if (fromName === toName) {
-        Utils.alert(getL10n("stories-names-are-the-same"));
-        return;
-    }
-    
-    DBMS.isStoryExist(toName, function(err, isExist){
+    DBMS.renameStory(fromName, toName, function(err){
         if(err) {Utils.handleError(err); return;}
-        if(isExist){
-            Utils.alert(strFormat(getL10n("stories-story-name-already-used"), [toName]));
-        } else {
-            DBMS.renameStory(fromName, toName, function(err){
-                if(err) {Utils.handleError(err); return;}
-                Stories.updateSettings(toName);
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    toInput.value = '';
-                    Stories.refresh();
-                });
-            });
-        }
+        Stories.updateSettings(toName);
+        PermissionInformer.refresh(function(err){
+            if(err) {Utils.handleError(err); return;}
+            toInput.value = '';
+            Stories.refresh();
+        });
     });
 };
 

@@ -19,90 +19,65 @@ See the License for the specific language governing permissions and
     function storyBaseAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Errors        = opts.Errors      ;
         
         // stories, timeline
         LocalDBMS.prototype.getStoryNamesArray = function (callback) {
-            "use strict";
-            callback(null, Object.keys(this.database.Stories).sort(CommonUtils.charOrdA));
+            callback(null, Object.keys(this.database.Stories).sort(CU.charOrdA));
         };
         // social network
         LocalDBMS.prototype.getAllStories = function(callback) {
-            "use strict";
-            callback(null, CommonUtils.clone(this.database.Stories));
+            callback(null, CU.clone(this.database.Stories));
         };
+        
         //stories
         LocalDBMS.prototype.getMasterStory = function(storyName, callback){
-            "use strict";
-            callback(null, this.database.Stories[storyName].story);
+            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+                callback(null, this.database.Stories[storyName].story);
+            });
         };
         //stories
-        LocalDBMS.prototype.updateMasterStory = function(storyName, value, callback){
-            "use strict";
-            this.database.Stories[storyName].story = value;
-            callback();
+        LocalDBMS.prototype.setMasterStory = function(storyName, value, callback){
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isString(value)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                this.database.Stories[storyName].story = value;
+                callback();
+            });
         };
     
-        //stories
-        LocalDBMS.prototype.isStoryExist = function(storyName, callback){
-            "use strict";
-            callback(null,  this.database.Stories[storyName] !== undefined);
-        };
         // stories
         LocalDBMS.prototype.createStory = function(storyName, callback){
-            "use strict";
-            if (storyName === "") {
-                callback(new Errors.ValidationError("stories-story-name-is-not-specified"));
-                return;
-            }
-            
-            if(this.database.Stories[storyName]){
-                callback(new Errors.ValidationError("stories-story-name-already-used", [storyName]));
-                return;
-            }
-            
-            this.database.Stories[storyName] = {
-                    name : storyName,
-                    story : "",
-                    characters : {},
-                    events : []
-            };
-            this.ee.trigger("createStory", arguments);
-            callback();
+            CU.precondition(CU.createEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+                this.database.Stories[storyName] = {
+                        name : storyName,
+                        story : "",
+                        characters : {},
+                        events : []
+                };
+                this.ee.trigger("createStory", arguments);
+                callback();
+            });
         };
         // stories
         LocalDBMS.prototype.renameStory = function(fromName, toName, callback){
-            "use strict";
-            if (toName === "") {
-                callback(new Errors.ValidationError("stories-story-name-is-not-specified"));
-                return;
-            }
-
-            if (fromName === toName) {
-                callback(new Errors.ValidationError("stories-names-are-the-same"));
-                return;
-            }
-            
-            if(this.database.Stories[toName]){
-                callback(new Errors.ValidationError("stories-story-name-already-used", [toName]));
-                return;
-            }
-            
-            var data = this.database.Stories[fromName];
-            data.name = toName;
-            this.database.Stories[toName] = data;
-            delete this.database.Stories[fromName];
-            this.ee.trigger("renameStory", arguments);
-            callback();
+            CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(this.database.Stories)), callback, () => {
+                var data = this.database.Stories[fromName];
+                data.name = toName;
+                this.database.Stories[toName] = data;
+                delete this.database.Stories[fromName];
+                this.ee.trigger("renameStory", arguments);
+                callback();
+            });
         };
     
         // stories
         LocalDBMS.prototype.removeStory = function(storyName, callback){
-            "use strict";
-            delete this.database.Stories[storyName];
-            this.ee.trigger("removeStory", arguments);
-            callback();
+            CU.precondition(CU.removeEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+                delete this.database.Stories[storyName];
+                this.ee.trigger("removeStory", arguments);
+                callback();
+            });
         };
     
     };

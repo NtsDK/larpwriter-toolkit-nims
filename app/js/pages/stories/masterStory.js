@@ -45,5 +45,5 @@ MasterStory.refresh = function() {
 MasterStory.updateMasterStory = function () {
     "use strict";
     var storyArea = getEl("masterStoryArea");
-    DBMS.updateMasterStory(Stories.CurrentStoryName, storyArea.value, Utils.processError());
+    DBMS.setMasterStory(Stories.CurrentStoryName, storyArea.value, Utils.processError());
 };
