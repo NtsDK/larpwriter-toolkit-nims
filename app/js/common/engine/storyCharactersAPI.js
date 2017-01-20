@@ -25,27 +25,17 @@ See the License for the specific language governing permissions and
         
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
-            "use strict";
             var localCharacters = this.database.Stories[storyName].characters;
             callback(null,  Object.keys(localCharacters).sort(CommonUtils.charOrdA));
         };
     
         //story characters
         LocalDBMS.prototype.getStoryCharacters = function(storyName, callback){
-            "use strict";
             callback(null,  CommonUtils.clone(this.database.Stories[storyName].characters));
         };
     
-    
         //story characters
         LocalDBMS.prototype.addStoryCharacter = function(storyName, characterName, callback){
-            "use strict";
-
-            if (characterName === "") {
-                callback(new Errors.ValidationError("stories-character-name-is-not-specified"));
-                return;
-            }
-            
             this.database.Stories[storyName].characters[characterName] = {
                     name : characterName,
                     inventory : "",
@@ -57,12 +47,6 @@ See the License for the specific language governing permissions and
     
         //story characters
         LocalDBMS.prototype.switchStoryCharacters = function(storyName, fromName, toName, callback){
-            "use strict";
-            
-            if (fromName === "" || toName === "") {
-                callback(new Errors.ValidationError("stories-one-of-switch-characters-is-not-specified"));
-                return;
-            }
             
             var story = this.database.Stories[storyName];
             story.characters[toName] = story.characters[fromName];
@@ -81,13 +65,6 @@ See the License for the specific language governing permissions and
     
         //story characters
         LocalDBMS.prototype.removeStoryCharacter = function(storyName, characterName, callback){
-            "use strict";
-            
-            if (characterName === "") {
-                callback(new Errors.ValidationError("stories-character-name-is-not-specified"));
-                return;
-            }
-            
             var story = this.database.Stories[storyName];
             delete story.characters[characterName];
             
@@ -95,6 +72,38 @@ See the License for the specific language governing permissions and
                 delete event.characters[characterName];
             });
             
+            callback();
+        };
+        
+        // story characters
+        LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory, callback){
+            this.database.Stories[storyName].characters[characterName].inventory = inventory;
+            callback();
+        };
+    
+        //story characters
+        LocalDBMS.prototype.onChangeCharacterActivity = function(storyName, characterName, activityType, checked, callback){
+            var character = this.database.Stories[storyName].characters[characterName];
+            if (checked) {
+                character.activity[activityType] = true;
+            } else {
+                delete character.activity[activityType];
+            }
+            callback();
+        };
+        
+        //event presence
+        LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
+            this.database.Stories[storyName].events[eventIndex].characters[characterName] = {
+                text : "",
+                time : ""
+            };
+            callback();
+        };
+    
+        // event presence
+        LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName, callback){
+            delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
             callback();
         };
         
@@ -147,42 +156,6 @@ See the License for the specific language governing permissions and
         
         listeners.removeProfile = listeners.removeProfile || [];
         listeners.removeProfile.push(_removeCharacterFromStories);
-    
-        // story characters
-        LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory, callback){
-            "use strict";
-            this.database.Stories[storyName].characters[characterName].inventory = inventory;
-            callback();
-        };
-    
-        //story characters
-        LocalDBMS.prototype.onChangeCharacterActivity = function(storyName, characterName, activityType, checked, callback){
-            "use strict";
-            var character = this.database.Stories[storyName].characters[characterName];
-            if (checked) {
-                character.activity[activityType] = true;
-            } else {
-                delete character.activity[activityType];
-            }
-            callback();
-        };
-        
-        //event presence
-        LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
-            "use strict";
-            this.database.Stories[storyName].events[eventIndex].characters[characterName] = {
-                text : "",
-                time : ""
-            };
-            callback();
-        };
-    
-        // event presence
-        LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName, callback){
-            "use strict";
-            delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
-            callback();
-        };
     };
     callback(storyCharactersAPI);
 
