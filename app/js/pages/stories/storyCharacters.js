@@ -113,12 +113,6 @@ StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
 StoryCharacters.addCharacter = function () {
     "use strict";
     var characterName = getEl("storyCharactersAddSelector").value.trim();
-    
-    if (characterName === "") {
-        Utils.alert(getL10n("stories-character-name-is-not-specified"));
-        return;
-    }
-    
     DBMS.addStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
 };
 
@@ -126,24 +120,12 @@ StoryCharacters.switchCharacters = function () {
     "use strict";
     var fromName = getEl("storyCharactersFromSelector").value.trim();
     var toName = getEl("storyCharactersToSelector").value.trim();
-    
-    if (fromName === "" || toName === "") {
-        Utils.alert(getL10n("stories-one-of-switch-characters-is-not-specified"));
-        return;
-    }
-    
     DBMS.switchStoryCharacters(Stories.CurrentStoryName, fromName, toName, Utils.processError(StoryCharacters.refresh));
 };
 
 StoryCharacters.removeCharacter = function () {
     "use strict";
     var characterName = getEl("storyCharactersRemoveSelector").value.trim();
-    
-    if (characterName === "") {
-        Utils.alert(getL10n("stories-character-name-is-not-specified"));
-        return;
-    }
-
     if (Utils.confirm(strFormat(getL10n("stories-remove-character-from-story-warning"),[characterName]))) {
         DBMS.removeStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
     }

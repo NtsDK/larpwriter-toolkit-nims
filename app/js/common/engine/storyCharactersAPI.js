@@ -19,92 +19,144 @@ See the License for the specific language governing permissions and
     function storyCharactersAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
         
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
-            var localCharacters = this.database.Stories[storyName].characters;
-            callback(null,  Object.keys(localCharacters).sort(CommonUtils.charOrdA));
+            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+                var localCharacters = this.database.Stories[storyName].characters;
+                callback(null,  Object.keys(localCharacters).sort(CU.charOrdA));
+            });
         };
     
         //story characters
         LocalDBMS.prototype.getStoryCharacters = function(storyName, callback){
-            callback(null,  CommonUtils.clone(this.database.Stories[storyName].characters));
+            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+                callback(null,  CU.clone(this.database.Stories[storyName].characters));
+            });
         };
     
         //story characters
         LocalDBMS.prototype.addStoryCharacter = function(storyName, characterName, callback){
-            this.database.Stories[storyName].characters[characterName] = {
-                    name : characterName,
-                    inventory : "",
-                    activity: {}
-            };
-            
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.entityExistsCheck(characterName, R.keys(this.database.Characters))];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                CU.precondition(CU.entityIsNotUsed(characterName, R.keys(story.characters)), callback, () => {
+                    story.characters[characterName] = {
+                            name : characterName,
+                            inventory : "",
+                            activity: {}
+                    };
+                    
+                    callback();
+                });
+            });
         };
     
         //story characters
         LocalDBMS.prototype.switchStoryCharacters = function(storyName, fromName, toName, callback){
-            
-            var story = this.database.Stories[storyName];
-            story.characters[toName] = story.characters[fromName];
-            story.characters[toName].name = toName;
-            delete story.characters[fromName];
-            
-            story.events.forEach(function (event) {
-                if (event.characters[fromName]) {
-                    event.characters[toName] = event.characters[fromName];
-                    delete event.characters[fromName];
-                }
+            var cond = CU.entityExistsCheck(storyName, R.keys(this.database.Stories));
+            CU.precondition(cond, callback, () => {
+                var story = this.database.Stories[storyName];
+                cond = CU.switchEntityCheck(fromName, toName, R.keys(this.database.Characters), R.keys(story.characters))
+                CU.precondition(cond, callback, () => {
+                    
+                    story.characters[toName] = story.characters[fromName];
+                    story.characters[toName].name = toName;
+                    delete story.characters[fromName];
+                    
+                    story.events.forEach(function (event) {
+                        if (event.characters[fromName]) {
+                            event.characters[toName] = event.characters[fromName];
+                            delete event.characters[fromName];
+                        }
+                    });
+                    
+                    callback();
+                });
             });
-            
-            callback();
         };
     
         //story characters
         LocalDBMS.prototype.removeStoryCharacter = function(storyName, characterName, callback){
-            var story = this.database.Stories[storyName];
-            delete story.characters[characterName];
-            
-            story.events.forEach(function (event) {
-                delete event.characters[characterName];
+            var cond = CU.entityExistsCheck(storyName, R.keys(this.database.Stories));
+            CU.precondition(cond, callback, () => {
+                var story = this.database.Stories[storyName];
+                CU.precondition(CU.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
+                    delete story.characters[characterName];
+                    story.events.forEach(function (event) {
+                        delete event.characters[characterName];
+                    });
+                    callback();
+                });
             });
-            
-            callback();
         };
         
         // story characters
         LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory, callback){
-            this.database.Stories[storyName].characters[characterName].inventory = inventory;
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isString(inventory)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                CU.precondition(CU.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
+                    story.characters[characterName].inventory = inventory;
+                    callback();
+                });
+            });
         };
     
         //story characters
         LocalDBMS.prototype.onChangeCharacterActivity = function(storyName, characterName, activityType, checked, callback){
-            var character = this.database.Stories[storyName].characters[characterName];
-            if (checked) {
-                character.activity[activityType] = true;
-            } else {
-                delete character.activity[activityType];
-            }
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isString(activityType), 
+                         CU.elementFromEnum(activityType, Constants.characterActivityTypes) , CU.isBoolean(checked)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                CU.precondition(CU.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
+                    var character = story.characters[characterName];
+                    if (checked) {
+                        character.activity[activityType] = true;
+                    } else {
+                        delete character.activity[activityType];
+                    }
+                    callback();
+                });
+            });
         };
         
         //event presence
         LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
-            this.database.Stories[storyName].events[eventIndex].characters[characterName] = {
-                text : "",
-                time : ""
-            };
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(eventIndex)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                chain = [CU.entityExistsCheck(characterName, R.keys(story.characters)), CU.isInRange(eventIndex, 0, story.events.length - 1)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    var event = story.events[eventIndex];
+                    CU.precondition(CU.entityIsNotUsed(characterName, R.keys(event.characters)), callback, () => {
+                        event.characters[characterName] = {
+                            text : "",
+                            time : ""
+                        };
+                        callback();
+                    });
+                });
+            });
         };
     
         // event presence
         LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName, callback){
-            delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(eventIndex)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                chain = [CU.entityExistsCheck(characterName, R.keys(story.characters)), CU.isInRange(eventIndex, 0, story.events.length - 1)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    var event = story.events[eventIndex];
+                    CU.precondition(CU.entityExists(characterName, R.keys(event.characters)), callback, () => {
+                        delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
+                        callback();
+                    });
+                });
+            });
         };
         
         var _renameCharacterInStories = function(type, fromName, toName){
