@@ -19,13 +19,13 @@ See the License for the specific language governing permissions and
     function accessManagerAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var listeners     = opts.listeners   ;
         var Errors        = opts.Errors      ;
         
         LocalDBMS.prototype.getManagementInfo = function(callback){
             var ManagementInfo = this.database.ManagementInfo;
-            var usersInfo = CommonUtils.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
+            var usersInfo = CU.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
                 result[user] = R.pick(['characters', 'groups','stories','players'], ManagementInfo.UsersInfo[user]);
                 return result;
             }, {}));
@@ -38,14 +38,18 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.assignAdmin = function(name, callback){
-            this.database.ManagementInfo.admin = name;
-            this.publishPermissionsUpdate();
-            callback();
+            CU.precondition(CU.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
+                this.database.ManagementInfo.admin = name;
+                this.publishPermissionsUpdate();
+                callback();
+            });
         };
         LocalDBMS.prototype.assignEditor = function(name, callback){
-            this.database.ManagementInfo.editor = name;
-            this.publishPermissionsUpdate();
-            callback();
+            CU.precondition(CU.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
+                this.database.ManagementInfo.editor = name;
+                this.publishPermissionsUpdate();
+                callback();
+            });
         };
         LocalDBMS.prototype.removeEditor = function(callback){
             this.database.ManagementInfo.editor = null;
@@ -53,9 +57,12 @@ See the License for the specific language governing permissions and
             callback();
         };
         LocalDBMS.prototype.changeAdaptationRightsMode = function(mode, callback){
-            this.database.ManagementInfo.adaptationRights = mode;
-            this.publishPermissionsUpdate();
-            callback();
+            var chain = [CU.isString(mode), CU.elementFromEnum(mode, ['ByStory','ByCharacter'])];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                this.database.ManagementInfo.adaptationRights = mode;
+                this.publishPermissionsUpdate();
+                callback();
+            });
         };
         
         LocalDBMS.prototype.createMaster = function(name, password, callback){
@@ -67,13 +74,16 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.removeMaster = function(name, callback){
-            delete this.database.ManagementInfo.UsersInfo[name];
-            this.publishPermissionsUpdate();
-            callback();
+            CU.precondition(CU.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
+                delete this.database.ManagementInfo.UsersInfo[name];
+                this.publishPermissionsUpdate();
+                callback();
+            });
         };
         
         LocalDBMS.prototype.removePermission = function(userName, names, callback){
             var ManagementInfo = this.database.ManagementInfo;
+            
             for(var entity in names){
                 if(names[entity].length != 0){
                     ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity].filter(function(charName){
@@ -131,11 +141,10 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.removePlayerLogin = function(userName, callback) {
-            var err = this._playerHasLoginPrecondition(userName);
-            if(err){callback(new (Function.prototype.bind.apply(Errors.ValidationError, err)));return;}
-            
-            delete this.database.ManagementInfo.PlayersInfo[userName];
-            if(callback) callback();
+            CU.precondition(CU.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), callback, () => {
+                delete this.database.ManagementInfo.PlayersInfo[userName];
+                if(callback) callback();
+            });
         };
         
         LocalDBMS.prototype.getWelcomeText = function(callback){
@@ -143,17 +152,22 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.setWelcomeText = function(text, callback){
-            this.database.ManagementInfo.WelcomeText = text;
-            if(callback) callback();
+            CU.precondition(CU.isString(text), callback, () => {
+                this.database.ManagementInfo.WelcomeText = text;
+                if(callback) callback();
+            });
         };
         
         LocalDBMS.prototype.getPlayersOptions = function(callback){
-            callback(null, CommonUtils.clone(this.database.ManagementInfo.PlayersOptions));
+            callback(null, CU.clone(this.database.ManagementInfo.PlayersOptions));
         };
         
         LocalDBMS.prototype.setPlayerOption = function(name, value, callback){
-            this.database.ManagementInfo.PlayersOptions[name] = value;
-            if(callback) callback();
+            var chain = [CU.isString(name), CU.elementFromEnum(name, Constants.playersOptionTypes), CU.isBoolean(value)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                this.database.ManagementInfo.PlayersOptions[name] = value;
+                if(callback) callback();
+            });
         };
         
         LocalDBMS.prototype.getPlayerProfileInfo = function(callback){
@@ -162,12 +176,6 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.createCharacterByPlayer = function(characterName, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createCharacterByPlayer']));
-        };
-        
-        LocalDBMS.prototype._playerHasLoginPrecondition = function(userName){
-            if (this.database.ManagementInfo.PlayersInfo[userName] === undefined) {
-                return [ null, 'admins-player-has-no-login', [userName] ];
-            }
         };
         
         var _renameProfile = function(type, fromName, toName){

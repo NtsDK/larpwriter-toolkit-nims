@@ -45,19 +45,13 @@ See the License for the specific language governing permissions and
         }
     };
     
-    exports.playerAccessTypes = [
-        "write", 
-        "readonly", 
-        "hidden"
-    ];
+    exports.playerAccessTypes = ["write","readonly","hidden"];
     
     exports.originProperties = ['name','text','time'];
     
-    exports.adaptationProperties = [
-        'text', 
-        'time',
-        'ready'
-    ];
+    exports.adaptationProperties = ['text','time','ready'];
+    
+    exports.playersOptionTypes = ["allowPlayerCreation","allowCharacterCreation"];
     
     exports.objectSubsets = [
         "allObjects",
