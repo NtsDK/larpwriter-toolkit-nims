@@ -65,14 +65,6 @@ See the License for the specific language governing permissions and
             });
         };
         
-        LocalDBMS.prototype.createMaster = function(name, password, callback){
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMaster']));
-        };
-        
-        LocalDBMS.prototype.changeMasterPassword = function(userName, newPassword, callback){
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeMasterPassword']));
-        };
-        
         LocalDBMS.prototype.removeMaster = function(name, callback){
             CU.precondition(CU.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 delete this.database.ManagementInfo.UsersInfo[name];
@@ -120,24 +112,8 @@ See the License for the specific language governing permissions and
             callback();
         };
         
-        LocalDBMS.prototype.publishPermissionsUpdate = function(callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['publishPermissionsUpdate']));
-        };
-        
         LocalDBMS.prototype.getPlayerLoginsArray = function(callback) {
             callback(null, R.keys(this.database.ManagementInfo.PlayersInfo));
-        };
-        
-        LocalDBMS.prototype.createPlayer = function(userName, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayer']));
-        };
-        
-        LocalDBMS.prototype.createPlayerLogin = function(userName, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayerLogin']));
-        };
-        
-        LocalDBMS.prototype.changePlayerPassword = function(userName, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changePlayerPassword']));
         };
         
         LocalDBMS.prototype.removePlayerLogin = function(userName, callback) {
@@ -168,6 +144,30 @@ See the License for the specific language governing permissions and
                 this.database.ManagementInfo.PlayersOptions[name] = value;
                 if(callback) callback();
             });
+        };
+        
+        LocalDBMS.prototype.createMaster = function(name, password, callback){
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMaster']));
+        };
+        
+        LocalDBMS.prototype.changeMasterPassword = function(userName, newPassword, callback){
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeMasterPassword']));
+        };
+        
+        LocalDBMS.prototype.publishPermissionsUpdate = function(callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['publishPermissionsUpdate']));
+        };
+        
+        LocalDBMS.prototype.createPlayer = function(userName, password, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayer']));
+        };
+        
+        LocalDBMS.prototype.createPlayerLogin = function(userName, password, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayerLogin']));
+        };
+        
+        LocalDBMS.prototype.changePlayerPassword = function(userName, password, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changePlayerPassword']));
         };
         
         LocalDBMS.prototype.getPlayerProfileInfo = function(callback){
