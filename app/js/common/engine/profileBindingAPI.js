@@ -86,8 +86,11 @@ See the License for the specific language governing permissions and
         var _renameProfile = function(type, fromName, toName){
             var bindings = R.path(path, this.database);
             if(type === 'character'){
-                bindings[toName] = bindings[fromName];
-                delete bindings[fromName];
+                var playerName = bindings[fromName];
+                if(playerName !== undefined){
+                    bindings[toName] = playerName;
+                    delete bindings[fromName];
+                }
             } else if(type === 'player'){
                 var invertedBindings = R.invertObj(bindings);
                 var characterName = invertedBindings[fromName];
