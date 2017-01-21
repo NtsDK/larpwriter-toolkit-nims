@@ -126,33 +126,18 @@ StoryEvents.createEvent = function () {
     var eventTextInput = getEl("eventTextInput");
     var positionSelector = getEl("positionSelector");
     var eventText = eventTextInput.value.trim();
-
-    if (eventName === "") {
-        Utils.alert(getL10n("stories-event-name-is-not-specified"));
-        return;
-    }
-    if (eventText === "") {
-        Utils.alert(getL10n("stories-event-text-is-empty"));
-        return;
-    }
     
-    DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, positionSelector.value === getL10n("common-set-item-as-last"), 
-        positionSelector.selectedIndex, function(err){
-            if(err) {Utils.handleError(err); return;}
-            eventNameInput.value = "";
-            eventTextInput.value = "";
-            StoryEvents.refresh();
-        });
+    DBMS.createEvent(Stories.CurrentStoryName, eventName, eventText, positionSelector.selectedIndex, function(err){
+        if(err) {Utils.handleError(err); return;}
+        eventNameInput.value = "";
+        eventTextInput.value = "";
+        StoryEvents.refresh();
+    });
 };
 
 StoryEvents.moveEvent = function () {
     var index = getEl("moveEventSelector").selectedOptions[0].eventIndex;
     var newIndex = getEl("movePositionSelector").selectedIndex;
-    
-    if (index === newIndex) {
-      Utils.alert(getL10n("stories-event-positions-are-the-same"));
-      return;
-    }
     
     DBMS.moveEvent(Stories.CurrentStoryName, index, newIndex, Utils.processError(StoryEvents.refresh));
 };
@@ -160,7 +145,6 @@ StoryEvents.moveEvent = function () {
 StoryEvents.cloneEvent = function () {
     "use strict";
     var index = getEl("cloneEventSelector").selectedIndex;
-    
     DBMS.cloneEvent(Stories.CurrentStoryName, index, Utils.processError(StoryEvents.refresh));
 };
 
@@ -257,22 +241,11 @@ StoryEvents.onChangeDateTimeCreator = function (myInput) {
 StoryEvents.updateEventName = function (event) {
     "use strict";
     var input = event.target;
-    if (input.value.trim() === "") {
-        Utils.alert(getL10n("stories-event-name-is-not-specified"));
-        StoryEvents.refresh();
-        return;
-    }
-
     DBMS.setEventOriginProperty(Stories.CurrentStoryName, input.eventIndex, "name", input.value, Utils.processError(StoryEvents.refresh));
 };
 
 StoryEvents.updateEventText = function (event) {
     "use strict";
     var input = event.target;
-    if (input.value.trim() === "") {
-        Utils.alert(getL10n("stories-event-text-is-empty"));
-        StoryEvents.refresh();
-        return;
-    }
     DBMS.setEventOriginProperty(Stories.CurrentStoryName, input.eventIndex, "text", input.value, Utils.processError());
 };

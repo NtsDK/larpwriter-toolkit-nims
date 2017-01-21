@@ -64,13 +64,13 @@ See the License for the specific language governing permissions and
             });
         };
         
-        var getValueCheck = function(type){
+        var getValueCheck = function(type, value){
             switch(type){
             case 'text':
             case 'time':
-                return CU.isString;
+                return CU.isString(value);
             case 'ready':
-                return CU.isBoolean;
+                return CU.isBoolean(value);
             };
             throw new Error('Unexpected type ' + type);
         };
@@ -78,7 +78,7 @@ See the License for the specific language governing permissions and
         // preview, events
         LocalDBMS.prototype.setEventAdaptationProperty = function(storyName, eventIndex, characterName, type, value, callback){
             var chain = [CU.isString(storyName), CU.entityExists(storyName, R.keys(this.database.Stories)), CU.isNumber(eventIndex), 
-                         CU.isString(type), CU.elementFromEnum(type, adaptationProperties), CU.isString(characterName)];
+                         CU.isString(type), CU.elementFromEnum(type, Constants.adaptationProperties), CU.isString(characterName)];
             CU.precondition(CU.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
                 chain = [CU.entityExists(characterName, R.keys(story.characters)), CU.isInRange(eventIndex, 0, story.events.length-1), getValueCheck(type, value)];

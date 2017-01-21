@@ -105,12 +105,6 @@ See the License for the specific language governing permissions and
         return function(){
             var index = queryEl(root+".move-entity-select").selectedOptions[0].index;
             var newIndex = queryEl(root+".move-entity-position-select").selectedIndex;
-            
-            if (index === newIndex) {
-              Utils.alert(getL10n("profiles-profile-item-positions-are-equal"));
-              return;
-            }
-            
             DBMS.moveProfileItem(type, index, newIndex, Utils.processError(exports.refresh));
         }
     };

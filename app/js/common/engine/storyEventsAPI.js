@@ -19,130 +19,120 @@ See the License for the specific language governing permissions and
     function storyEventsAPI(LocalDBMS, opts) {
         
         var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
+        var CU            = opts.CommonUtils ;
         var Errors        = opts.Errors      ;
         
         //story events, event presence
         LocalDBMS.prototype.getStoryEvents = function(storyName, callback){
-            "use strict";
-            callback(null,  CommonUtils.clone(this.database.Stories[storyName].events));
+            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+                callback(null,  CU.clone(this.database.Stories[storyName].events));
+            });
         };
         
         //story events
-        LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, toEnd, selectedIndex, callback){
-            "use strict";
-            if (eventName === "") {
-                callback(new Errors.ValidationError("stories-event-name-is-not-specified"));
-                return;
-            }
-            if (eventText === "") {
-                callback(new Errors.ValidationError("stories-event-text-is-empty"));
-                return;
-            }
-            
-            var event = {
-                name : eventName,
-                text : eventText,
-                time : "",
-                characters : {}
-            };
-            if (toEnd) {
-                this.database.Stories[storyName].events.push(event);
-            } else {
-                this.database.Stories[storyName].events.splice(selectedIndex, 0, event);
-            }
-            callback();
+        LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, selectedIndex, callback){
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(selectedIndex), 
+                         CU.isString(eventName), CU.isNotEmptyString(eventName), CU.isString(eventText), CU.isNotEmptyString(eventText)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                CU.precondition(CU.isInRange(selectedIndex, 0, story.events.length), callback, () => {
+                    var event = {
+                        name : eventName,
+                        text : eventText,
+                        time : "",
+                        characters : {}
+                    };
+                    story.events.splice(selectedIndex, 0, event);
+                    callback();
+                });
+            });
         };
     
         //story events
         LocalDBMS.prototype.moveEvent = function(storyName, index, newIndex, callback){
-            "use strict";
-            if(newIndex > index){
-                newIndex--;
-            }
-            var events = this.database.Stories[storyName].events;
-            var tmp = events[index];
-            events.splice(index, 1);
-            events.splice(newIndex, 0, tmp);
-            
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index),CU.isNumber(newIndex)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var events = this.database.Stories[storyName].events;
+                chain = [CU.isInRange(index, 0, events.length-1), CU.isInRange(newIndex, 0, events.length)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    if(newIndex > index){
+                        newIndex--;
+                    }
+                    var tmp = events[index];
+                    events.splice(index, 1);
+                    events.splice(newIndex, 0, tmp);
+                    callback();
+                });
+            });
         };
     
         //story events
         LocalDBMS.prototype.cloneEvent = function(storyName, index, callback){
-            "use strict";
-            var story = this.database.Stories[storyName];
-            var event = story.events[index];
-            var copy = CommonUtils.clone(event);
-            
-            story.events.splice(index, 0, copy);
-            
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var events = this.database.Stories[storyName].events;
+                chain = [CU.isInRange(index, 0, events.length-1)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    events.splice(index, 0, CU.clone(events[index]));
+                    callback();
+                });
+            });
         };
     
         //story events
         LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
-            "use strict";
-            var story = this.database.Stories[storyName];
-            if (story.events.length === index + 1) {
-                callback(new Errors.ValidationError("stories-cant-merge-last-event"));
-                return;
-            }
-    
-            var event1 = story.events[index];
-            var event2 = story.events[index + 1];
-            
-            event1.name += '/' + event2.name;
-            event1.text += '\n\n' + event2.text;
-            for ( var characterName in event2.characters) {
-                if (event1.characters[characterName]) {
-                    event1.characters[characterName].text += '\n\n' + event2.characters[characterName].text;
-                    event1.characters[characterName].time += '/' + event2.characters[characterName].time;
-                    event1.characters[characterName].ready = false;
-                } else {
-                    event1.characters[characterName] = event2.characters[characterName];
-                }
-            }
-            CommonUtils.removeFromArrayByIndex(story.events, index + 1);
-            
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var events = this.database.Stories[storyName].events;
+                chain = [CU.isInRange(index, 0, events.length-2)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    var event1 = events[index];
+                    var event2 = events[index + 1];
+                    
+                    event1.name += '/' + event2.name;
+                    event1.text += '\n\n' + event2.text;
+                    for ( var characterName in event2.characters) {
+                        if (event1.characters[characterName]) {
+                            event1.characters[characterName].text += '\n\n' + event2.characters[characterName].text;
+                            event1.characters[characterName].time += '/' + event2.characters[characterName].time;
+                            event1.characters[characterName].ready = false;
+                        } else {
+                            event1.characters[characterName] = event2.characters[characterName];
+                        }
+                    }
+                    CU.removeFromArrayByIndex(events, index + 1);
+                    
+                    callback();
+                });
+            });
         };
     
         //story events
         LocalDBMS.prototype.removeEvent = function(storyName, index, callback){
-            "use strict";
-            var story = this.database.Stories[storyName];
-            CommonUtils.removeFromArrayByIndex(story.events, index);
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var events = this.database.Stories[storyName].events;
+                chain = [CU.isInRange(index, 0, events.length-1)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    CU.removeFromArrayByIndex(events, index);
+                    callback();
+                });
+            });
         };
     
         // story events, preview, adaptations
         LocalDBMS.prototype.setEventOriginProperty = function(storyName, index, property, value, callback){
-            "use strict";
-            if(property === "name" && value.trim() === ""){
-                callback(new Errors.ValidationError("stories-event-name-is-not-specified"));
-                return;
-            }
-            if(property === "text" && value.trim() === ""){
-                callback(new Errors.ValidationError("stories-event-text-is-empty"));
-                return;
-            }
-            var story = this.database.Stories[storyName].events[index][property] = value;
-            callback();
+            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(index), 
+                         CU.isString(property), CU.elementFromEnum(property, Constants.originProperties), CU.isString(value)];
+            CU.precondition(CU.chainCheck(chain), callback, () => {
+                var story = this.database.Stories[storyName];
+                chain = [CU.isInRange(index, 0, story.events.length-1)];
+                CU.precondition(CU.chainCheck(chain), callback, () => {
+                    story.events[index][property] = value;
+                    callback();
+                });
+            });
         };
-        
-//      // timeline
-//      // disabled for this moment
-//      LocalDBMS.prototype.setEventTime = function(storyName, eventIndex, time, callback) {
-//          "use strict";
-//  
-//          var event = this.database.Stories[storyName].events[eventIndex];
-//          event.time = dateFormat(time, "yyyy/mm/dd h:MM");
-//          callback();
-//      };
-
-     
-
     };
     callback(storyEventsAPI);
 
