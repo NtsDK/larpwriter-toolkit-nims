@@ -429,6 +429,12 @@ See the License for the specific language governing permissions and
             }
         });
         
+        exports.isObject = R.curry(function(el){
+            return () => {
+                return R.is(Object, el) ? null : ['errors-argument-is-not-an-object', [el]];
+            }
+        });
+        
         exports.isBoolean = R.curry(function(el){
             return () => {
                 return R.is(Boolean, el) ? null : ['errors-argument-is-not-a-boolean', [el]];
