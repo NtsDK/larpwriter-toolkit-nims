@@ -338,6 +338,10 @@ See the License for the specific language governing permissions and
             return charConflicts.concat(playerConflicts);
         };
         
+        exports.makeValidationError = function(err){
+            err.splice(0, 0, null);
+            return new (Function.prototype.bind.apply(Errors.ValidationError, err));
+        };
         
         // precondition API
         exports.precondition = R.curry(function(check, reject, resolve){
@@ -345,8 +349,7 @@ See the License for the specific language governing permissions and
             if(err === null){
                 resolve();
             } else {
-                err.splice(0, 0, null);
-                reject(new (Function.prototype.bind.apply(Errors.ValidationError, err)));
+                reject(exports.makeValidationError(err));
             }
         });
         

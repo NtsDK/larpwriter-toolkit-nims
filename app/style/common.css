@@ -291,6 +291,7 @@ input[type="checkbox"]:checked + .checkbox-label{
   display: flex;
 }
 
-textarea[readonly]{
+textarea[readonly],
+select[disabled]{
   background-color: #eee;
 }

@@ -22,6 +22,7 @@ See the License for the specific language governing permissions and
         var CU            = opts.CommonUtils ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
+        var Constants     = opts.Constants   ;
         
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {

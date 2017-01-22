@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var dbmsUtils     = opts.dbmsUtils   ;
+        var Constants     = opts.Constants   ;
         
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){

@@ -23,6 +23,7 @@ See the License for the specific language governing permissions and
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
+        var dbmsUtils     = opts.dbmsUtils   ;
         
         var path = ['ProfileBindings'];
         var charPath = ['Characters'];
@@ -45,19 +46,25 @@ See the License for the specific language governing permissions and
             callback(null, bindingData);
         };
         
+        var _getProfileBinding = function(type, name, db){
+            var arr;
+            if(type === 'character'){
+                let bindings = R.path(path, db); 
+                arr = [name, bindings[name] || ''];
+            } else {
+                let bindings = R.invertObj(R.path(path, db)); 
+                arr = [bindings[name] || '', name];
+            }
+            return arr;
+        }
+        
+        dbmsUtils._getProfileBinding = _getProfileBinding;
+        
         LocalDBMS.prototype.getProfileBinding = function(type, name, callback) {
             var conditions = [CU.isString(type), CU.elementFromEnum(type, Constants.profileTypes), 
                               CU.isString(name), CU.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
             CU.precondition(CU.chainCheck(conditions), callback, () => {
-                var arr;
-                if(type === 'character'){
-                    let bindings = R.path(path, this.database); 
-                    arr = [name, bindings[name] || ''];
-                } else {
-                    let bindings = R.invertObj(R.path(path, this.database)); 
-                    arr = [bindings[name] || '', name];
-                }
-                callback(null, arr);
+                callback(null, _getProfileBinding(type, name, this.database));
             });
         };
         

@@ -22,6 +22,7 @@ See the License for the specific language governing permissions and
         var CU            = opts.CommonUtils ;
         var listeners     = opts.listeners   ;
         var Errors        = opts.Errors      ;
+        var Constants     = opts.Constants   ;
         
         LocalDBMS.prototype.getManagementInfo = function(callback){
             var ManagementInfo = this.database.ManagementInfo;

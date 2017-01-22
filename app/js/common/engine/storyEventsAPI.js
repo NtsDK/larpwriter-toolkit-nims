@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var Errors        = opts.Errors      ;
+        var Constants     = opts.Constants   ;
         
         //story events, event presence
         LocalDBMS.prototype.getStoryEvents = function(storyName, callback){
