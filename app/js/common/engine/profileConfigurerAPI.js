@@ -190,7 +190,7 @@ See the License for the specific language governing permissions and
                             break;
                         case "enum":
                         case "multiEnum":
-                            newOptions = value.split(",").map(R.trim);
+                            newOptions = R.uniq(value.split(",").map(R.trim));
                             missedValues = info.value.trim() === '' ? [] : R.difference(info.value.split(","), newOptions);
                             newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
                 
