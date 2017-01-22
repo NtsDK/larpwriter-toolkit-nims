@@ -643,3 +643,13 @@ See the License for the specific language governing permissions and
   height: 160px;
 }
 /* playerManagement.js **/
+
+/** log-viewer2-tab */
+#logViewerDiv table td:nth-child(5) span{
+  word-break: break-all;
+  max-height: 160px;
+  overflow: auto;
+  display: inline-block;
+}
+
+/* log-viewer2-tab **/

@@ -23,8 +23,7 @@ See the License for the specific language governing permissions and
     // isServer - used in server mode. If false then user in logs will be named "user".
     // environment - used to disable this.log function in thin client in server version.
     //      I agree it is strange.
-    // extras - additions to include list. Used in server mode.
-    exports.attachLogCalls = function(LocalDBMS, R, isServer, extras) {
+    exports.attachLogCalls = function(LocalDBMS, R, isServer) {
         
         // argument description
         // add function name to log it
@@ -34,79 +33,184 @@ See the License for the specific language governing permissions and
         //     Example - we need all meta info calls except description.
         // rewrite - make true if you don't want to flood log with some repeated call. 
         //     For example auto call of getDatabase will flood everything.
-        var includeList = {
-            "getDatabase": {
-                "rewrite" : true
+        var apiInfo = {
+            "baseAPI" : {
+                "_init" : null,
+                "getDatabase" : {"rewrite" : true},
+                "setDatabase" : {"ignoreParams": true},
+                "getMetaInfo" : null,
+                "setMetaInfo" : {}
             },
-            "setDatabase": {
-                "ignoreParams": true
+            "consistencyCheckAPI" : {
+                "getConsistencyCheckResult" : null
             },
-            "setMetaInfo" : {
-                "filter": function(args){
-                    return args[0] !== "description";
-                }
+            "statisticsAPI" : {
+                "getStatistics" : null
             },
-            "createProfile" : {},
-            "renameProfile" : {},
-            "removeProfile" : {},
-            
-            "createProfileItem" : {},
-            "renameProfileItem" : {},
-            "moveProfileItem" : {},
-            "removeProfileItem" : {},
-            "updateDefaultValue" : {},
-            "changeProfileItemType" : {},
-            
-            "createStory" : {},
-            "renameStory" : {},
-            "removeStory" : {},
-            
-            "addStoryCharacter" : {},
-            "switchStoryCharacters" : {},
-            "removeStoryCharacter" : {},
-            "updateCharacterInventory" : {},
-            "onChangeCharacterActivity" : {},
-
-            "addCharacterToEvent" : {},
-            "removeCharacterFromEvent" : {},
-
-            "createEvent" : {},
-            "moveEvent" : {},
-            "cloneEvent" : {},
-            "mergeEvents" : {},
-            "removeEvent" : {},
-            "setEventOriginProperty" : {
-                "filter": function(args){
-                    return args[2] !== "text";
-                }
+            "profilesAPI" : {
+                "getProfileNamesArray" : null,
+                "getProfile" : null,
+                "getAllProfiles" : null,
+                "createProfile" : {},
+                "renameProfile" : {},
+                "removeProfile" : {},
+                "updateProfileField" : {}
             },
-            
-            "createGroup" : {},
-            "renameGroup" : {},
-            "removeGroup" : {},
-            "saveFilterToGroup" : {},
-            
-            "changeAdaptationReadyStatus" : {},
-            "getBriefingData" : {},
-            
-            "addBoardGroup" : {},
-            "switchGroups" : {},
-            "setGroupNotes" : {},
-            "removeBoardGroup" : {},
-            "createResource" : {},
-            "renameResource" : {},
-            "removeResource" : {},
-            "addEdge" : {},
-            "setEdgeLabel" : {},
-            "removeEdge" : {},
+            "profileBindingAPI" : {
+                "getProfileBindings" : null,
+                "getExtendedProfileBindings" : null,
+                "getProfileBinding" : null,
+                "createBinding" : {},
+                "removeBinding" : {}
+            },
+            "groupsAPI" : {
+                "getGroupNamesArray" : null,
+                "getGroup" : null,
+                "getCharacterGroupTexts" : null,
+                "getAllCharacterGroupTexts" : null,
+                "createGroup" : {},
+                "renameGroup" : {},
+                "removeGroup" : {},
+                "saveFilterToGroup" : {},
+                "updateGroupField" : {},
+                "getProfileFilterInfo" : null,
+                "getGroupCharacterSets" : null
+            },
+            "groupSchemaAPI" : {
+                "getGroupSchemas" : null
+            },
+            "investigationBoardAPI" : {
+                "getInvestigationBoardData" : null,
+                "addBoardGroup" : {},
+                "switchGroups" : {},
+                "setGroupNotes" : {},
+                "removeBoardGroup" : {},
+                "createResource" : {},
+                "renameResource" : {},
+                "removeResource" : {},
+                "addEdge" : {},
+                "setEdgeLabel" : {},
+                "removeEdge" : {}
+            },
+            "relationsAPI" : {
+                "getRelationsSummary" : null,
+                "setCharacterRelation" : {}
+            },
+            "briefingExportAPI" : {
+                "getBriefingData" : {}
+            },
+            "profileConfigurerAPI" : {
+                "getProfileStructure" : null,
+                "createProfileItem" : {},
+                "moveProfileItem" : {},
+                "removeProfileItem" : {},
+                "changeProfileItemType" : {},
+                "changeProfileItemPlayerAccess" : {},
+                "renameProfileItem" : {},
+                "doExportProfileItemChange" : {},
+                "updateDefaultValue" : {}
+            },
+            "entityAPI" : {
+                "getEntityNamesArray" : null
+            },
+            "storyBaseAPI" : {
+                "getStoryNamesArray" : null,
+                "getAllStories" : null,
+                "getMasterStory" : null,
+                "setMasterStory" : {},
+                "createStory" : {},
+                "renameStory" : {},
+                "removeStory" : {}
+            },
+            "storyEventsAPI" : {
+                "getStoryEvents" : null,
+                "createEvent" : {},
+                "moveEvent" : {},
+                "cloneEvent" : {},
+                "mergeEvents" : {},
+                "removeEvent" : {},
+                "setEventOriginProperty" : {}
+            },
+            "storyCharactersAPI" : {
+                "getStoryCharacterNamesArray" : null,
+                "getStoryCharacters" : null,
+                "addStoryCharacter" : {},
+                "switchStoryCharacters" : {},
+                "removeStoryCharacter" : {},
+                "updateCharacterInventory" : {},
+                "onChangeCharacterActivity" : {},
+                "addCharacterToEvent" : {},
+                "removeCharacterFromEvent" : {}
+            },
+            "storyViewAPI" : {
+                "getAllInventoryLists" : null,
+                "getCharacterEventGroupsByStory" : null,
+                "getCharacterEventsByTime" : null,
+                "getEventsTimeInfo" : null,
+                "getCharactersSummary" : null,
+                "getCharacterReport" : null
+            },
+            "storyAdaptationsAPI" : {
+                "getFilteredStoryNames" : null,
+                "getStory" : null,
+                "setEventAdaptationProperty" : {}
+            },
+            "accessManagerAPI" : {
+                "getManagementInfo" : null,
+                "assignAdmin" : {},
+                "assignEditor" : {},
+                "removeEditor" : {},
+                "changeAdaptationRightsMode" : {},
+                "createMaster" : {"ignoreParams": true},
+                "changeMasterPassword" : {"ignoreParams": true},
+                "removeMaster" : {},
+                "removePermission" : {},
+                "assignPermission" : {},
+                "publishPermissionsUpdate" : null,
+                "getPlayerLoginsArray" : null,
+                "createPlayer" : {"ignoreParams": true},
+                "createPlayerLogin" : {"ignoreParams": true},
+                "changePlayerPassword" : {"ignoreParams": true},
+                "removePlayerLogin" : {},
+                "getWelcomeText" : null,
+                "setWelcomeText" : {},
+                "getPlayersOptions" : null,
+                "setPlayerOption" : {},
+                "getPlayerProfileInfo" : null,
+                "createCharacterByPlayer" : {}
+            },
+            "textSearchAPI" : {
+                "getTexts" : null
+            },
+            "userAPI" : {
+                "getUser" : null,
+                "setPassword" : null,
+                "checkPassword" : null,
+                "login" : null,
+                "register" : null
+            },
+            "accessManagerOverridesAPI" : {},
+            "overridesAPI" : {},
+            "permissionAPI" : {
+                "hasPermission" : null
+            },
+            "permissionSummaryAPI" : {
+                "_getOwnerMap" : null,
+                "getPermissionsSummary" : null, // special case
+                "subscribeOnPermissionsUpdate" : null // special case
+            },
+            "logAPI" : {
+                "log" : null,
+                "getLog" : null
+            }
         };
         
-        if(extras){
-            includeList = R.merge(includeList, extras);
-        }
+        var apiInfoObj = R.mergeAll(R.values(apiInfo));
+        
+        apiInfoObj = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
         
         Object.keys(LocalDBMS.prototype)
-        .filter(R.prop(R.__, includeList))
+        .filter(R.prop(R.__, apiInfoObj))
         .forEach(function(funcName){
             var oldFun = LocalDBMS.prototype[funcName];
             LocalDBMS.prototype[funcName] = function(){
@@ -117,8 +221,8 @@ See the License for the specific language governing permissions and
                 }
                 
                 var accept = true;
-                if(includeList[funcName].filter){
-                    accept = includeList[funcName].filter(arr);
+                if(apiInfoObj[funcName].filter){
+                    accept = apiInfoObj[funcName].filter(arr);
                 }
                 
                 if(accept){
@@ -127,7 +231,7 @@ See the License for the specific language governing permissions and
                         userName = arguments[arguments.length-1].name;
                     }
                     
-                    this.log(userName, funcName, !!includeList[funcName].rewrite, includeList[funcName].ignoreParams ? [] : arr);
+                    this.log(userName, funcName, !!apiInfoObj[funcName].rewrite, apiInfoObj[funcName].ignoreParams ? [] : arr);
                 }
                 
                 return oldFun.apply(this, arguments);
