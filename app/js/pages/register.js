@@ -45,20 +45,9 @@ See the License for the specific language governing permissions and
             complete : function() {
                 $(":submit", form).button("reset");
             },
-//             statusCode : {
-//                 200 : function() {
-//                 },
-//                 403 : function(jqXHR) {
-//                     var error = JSON.parse(jqXHR.responseText);
-//                     $('.error', form).html(error.message);
-//                 }
-//             }
         });
         request.done(function(data) {
-            form.html("Регистрация принята. Воспользуйтесь формой входа.").addClass('alert-success');
-//             //window.location.href = "/chat";
-//             window.location.href = "/nims.html";
-//            window.location.href = "/page.html";
+            form.html(getL10n('entrance-register-success')).addClass('alert-success');
         });
         
         request.fail(function(errorInfo, textStatus, errorThrown) {

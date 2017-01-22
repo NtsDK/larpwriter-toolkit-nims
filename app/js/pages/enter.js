@@ -55,7 +55,6 @@ See the License for the specific language governing permissions and
 //             }
         });
         request.done(function(data) {
-            form.html("Вы вошли в сайт").addClass('alert-success');
 //             //window.location.href = "/chat";
 //             window.location.href = "/nims.html";
             window.location.href = "/page.html";
