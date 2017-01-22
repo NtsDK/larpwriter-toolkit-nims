@@ -37,6 +37,7 @@ See the License for the specific language governing permissions and
 <body onload="PageManager.onMasterPageLoad()">
   <script src="js/resources.min.js"></script>
   <script src="js/translations.min.js"></script>
+  <script src="js/commonCore.min.js"></script>
   <script src="js/common.min.js"></script>
   <script src="js/scripts.min.js"></script>
   <script src="js/pages.min.js"></script>
@@ -49,9 +50,6 @@ See the License for the specific language governing permissions and
   <div class="block" id="contentArea"></div>
 
   <div class="hidden">
-    @@include('./enter-tab.html')
-    @@include('./register-tab.html')
-    
     @@include('./accessManager/access-manager-tab.html')
     @@include('./accessManager/master-management-tab.html')
     @@include('./accessManager/player-management-tab.html')
@@ -88,7 +86,6 @@ See the License for the specific language governing permissions and
     @@include('./overview-tab.html')
     @@include('./text-search-tab.html')
     @@include('./timeline-tab.html')
-    @@include('./player-tab.html')
     
     <div id="warehouse"></div>
   </div>

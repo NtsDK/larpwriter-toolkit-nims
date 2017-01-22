@@ -35,10 +35,21 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         UI.initPanelTogglers();
     }
     
+    var protoExpander = function(arr){
+        function protoCarrier(){};
+        arr.forEach( name => protoCarrier.prototype[name] = (() => 1));
+        return protoCarrier;
+    };
+    var playerArr = [
+                    'getPlayersOptions'        ,
+                    'getWelcomeText'           ,
+                    'getPlayerProfileInfo'     ,
+                    'createCharacterByPlayer'  ,
+                    'updateProfileField'       ];
+    
     exports.onPlayerPageLoad = function () {
         initPage();
-        var LocalDBMS = makeLocalDBMS(false);
-        var RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+        var RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
         window.DBMS = new RemoteDBMS();
         stateInit();
         Utils.addView(state.containers, "player", Player, {mainPage:true});
@@ -51,16 +62,21 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     
     exports.onIndexPageLoad = function () {
         initPage();
-        var LocalDBMS = makeLocalDBMS(false);
-        var RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+        var RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptions']));
         window.DBMS = new RemoteDBMS();
         stateInit();
-        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-        Utils.addView(state.containers, "enter", Enter, {mainPage:true});
-        Utils.addView(state.containers, "register", Register);
-        Utils.addView(state.containers, "about", About);
-        addEl(state.navigation, makeL10nButton());
-        state.currentView.refresh();
+        DBMS.getPlayersOptions(function(err, playersOptions){
+            if(err) {Utils.handleError(err); return;}
+            addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+            Utils.addView(state.containers, "enter", Enter, {mainPage:true});
+            if(playersOptions.allowPlayerCreation){
+                Utils.addView(state.containers, "register", Register);
+            }
+            Utils.addView(state.containers, "about", About);
+            addEl(state.navigation, makeL10nButton());
+            state.currentView.refresh();
+        });
+        
     };
     
     exports.onMasterPageLoad = function () {
@@ -111,11 +127,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 var button;
                 stateInit();
 
-                Utils.addView(state.containers, "register", Register);
-                Utils.addView(state.containers, "enter", Enter);
-                Utils.addView(state.containers, "player", Player);
-                Utils.addView(state.containers, "overview", Overview);
-                Utils.addView(state.containers, "profiles", Profiles, {mainPage:true});
+                Utils.addView(state.containers, "overview", Overview, {mainPage:true});
+                Utils.addView(state.containers, "profiles", Profiles);
                 Utils.addView(state.containers, "stories", Stories);
                 Utils.addView(state.containers, "adaptations", Adaptations);
                 Utils.addView(state.containers, "briefings", Briefings);

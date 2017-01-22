@@ -60,7 +60,8 @@ var addPrefix = function(path, files){
 };
 
 var styles = addPrefix("app/style/", ["common.css", "style.css", "experimental.css"]);
-var libStyles = ["app/libs/*.css"];
+var libCoreStyles = addPrefix("app/libs/", ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css"]);
+var libStyles = addPrefix("app/libs/", ['vis.min.css']);
 
 var processStyles = function(styles, fileName, taskName, addSourcemaps) {
     return function(){
@@ -78,52 +79,66 @@ var processStyles = function(styles, fileName, taskName, addSourcemaps) {
 };
 
 gulp.task('styles:nims', processStyles(styles, "nims", 'styles:nims', true));
+gulp.task('styles:libsCore', processStyles(libCoreStyles, "libsCore", 'styles:libsCore', false));
 gulp.task('styles:libs', processStyles(libStyles, "libs", 'styles:libs', false));
 
-gulp.task('styles', gulp.parallel('styles:libs','styles:nims'));
+gulp.task('styles', gulp.parallel('styles:libs','styles:nims', 'styles:libsCore'));
 
 // js: libs, resources (l10n, templates), common, scripts (dbms, js root), pages, tests
 
-var libs = addPrefix("app/libs/",[
+var libsCore = addPrefix("app/libs/",[
 'jquery-3.1.1.min.js',
-'ajv-4.1.1.js',
 'bootstrap.min.js',
-'Chart.min.js',
+'jquery.datetimepicker.js',
+'ramda.min.js',
+'select2.min.js',
+]);
+
+var libs = addPrefix("app/libs/",[
 'docxgen-121.min.js',
 'FileSaver.js',
-'jquery.datetimepicker.js',
 'jszip-utils.js',
 'jszip.js',
 'mustache.min.js',
-'ramda.min.js',
-'select2.min.js',
+'ajv-4.1.1.js',
+'Chart.min.js',
 'vis-custom.min.js',
-'three.js',
-'stats.js',
-'dat.gui.js',
+//'three.js',
+//'stats.js',
+//'dat.gui.js',
 ]);
 
 //var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
-var resources = [translationsPath + "/l10n/*.js"].concat(addPrefix(langPath + "/embeddedTemplates/",["templatesArr.js","genericTemplate.js",
-    "inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]));
+var translations = [translationsPath + "/l10n/*.js"];
+var resources = addPrefix(langPath + "/embeddedTemplates/",["templatesArr.js","genericTemplate.js",
+    "inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]);
+
+var commonCore = addPrefix("app/js/common/",
+['constants.js'   ,
+ 'errors.js'      ,
+ 'commonUtils.js' ,
+ 'dateFormat.js'  ]);
+commonCore.push(langPath + "/defaultLang.js");
 
 var common = addPrefix("app/js/common/",
-['constants.js'   ,
- 'commonUtils.js' ,
- 'dateFormat.js'  ,
- 'emptyBase.js'   ,
- 'errors.js'      ,
+['emptyBase.js'   ,
  'EventEmitter.js',
  'logger.js'      ,
  'migrator.js'    ,
  'schema.js']);
 
-common = common.concat(["app/js/common/engine/*.js"]);
-common = common.concat([langPath + "/baseExample.js", langPath + "/defaultLang.js"]);
+common.push("app/js/common/engine/*.js");
+common.push(langPath + "/baseExample.js");
 
 var scripts = ["app/js/dbms/*.js"].concat("app/js/*.js");
 
 var pages = ["app/js/pages/**/*.js"];
+var pagesLight = addPrefix("app/js/pages/",
+        ['enter.js'   ,
+         'player.js',
+         'register.js'      ,
+         'logs/about.js',
+         'profiles/profileEditorCore.js']);
 
 var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
     return function() {
@@ -137,15 +152,20 @@ var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
     }
 };
 
+gulp.task('scripts:libsCore', processScripts(libsCore, "libsCore", 'scripts:libsCore', false));
 gulp.task('scripts:libs', processScripts(libs, "libs", 'scripts:libs', false));
+gulp.task('scripts:translations', processScripts(translations, "translations", 'scripts:translations', false));
 gulp.task('scripts:resources', processScripts(resources, "resources", 'scripts:resources', false));
+gulp.task('scripts:commonCore', processScripts(commonCore, "commonCore", 'scripts:commonCore', true));
 gulp.task('scripts:common', processScripts(common, "common", 'scripts:common', true));
 gulp.task('scripts:scripts', processScripts(scripts, "scripts", 'scripts:scripts', true));
 gulp.task('scripts:pages', processScripts(pages, "pages", 'scripts:pages', true));
+gulp.task('scripts:pagesLight', processScripts(pagesLight, "pagesLight", 'scripts:pagesLight', true));
 
-gulp.task('scripts', gulp.parallel('scripts:libs','scripts:resources','scripts:common','scripts:scripts','scripts:pages'));
+gulp.task('scripts', gulp.parallel('scripts:libsCore', 'scripts:libs','scripts:resources','scripts:translations',
+        'scripts:commonCore','scripts:common','scripts:scripts','scripts:pages','scripts:pagesLight'));
 
-var htmls = ['app/nims.html', 'app/index.html'];
+var htmls = ['app/nims.html', 'app/index.html', 'app/player.html'];
 
 gulp.task('html', function() {
     return gulp.src(htmls, {base : 'app'})
@@ -246,13 +266,16 @@ gulp.task('zip', function() {
 gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','plains','tests','server')));
 gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
 
-var partials = ["app/partials/*.html"];
+var partials = ["app/partials/**/*.html"];
 
 gulp.task('watch', function() {
     
     gulp.watch(scripts, gulp.series('scripts:scripts'));
+    gulp.watch(commonCore, gulp.series('scripts:commonCore'));
     gulp.watch(common, gulp.series('scripts:common'));
     gulp.watch(pages, gulp.series('scripts:pages'));
+    gulp.watch(pagesLight, gulp.series('scripts:pagesLight'));
+    gulp.watch(translations, gulp.series('scripts:translations'));
     gulp.watch(styles, gulp.series('styles:nims'));
     gulp.watch(htmls, gulp.series('html'));
     gulp.watch(partials, gulp.series('html'));
