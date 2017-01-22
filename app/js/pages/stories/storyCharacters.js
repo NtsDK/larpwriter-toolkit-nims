@@ -126,9 +126,9 @@ StoryCharacters.switchCharacters = function () {
 StoryCharacters.removeCharacter = function () {
     "use strict";
     var characterName = getEl("storyCharactersRemoveSelector").value.trim();
-    if (Utils.confirm(strFormat(getL10n("stories-remove-character-from-story-warning"),[characterName]))) {
+    Utils.confirm(strFormat(getL10n("stories-remove-character-from-story-warning"),[characterName]), () => {
         DBMS.removeStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
-    }
+    });
 };
 
 StoryCharacters.getCharacterHeader = function (values) {

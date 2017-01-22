@@ -147,7 +147,7 @@ Stories.removeStory = function () {
     "use strict";
     var name = queryEl("#storiesDiv .remove-entity-select").value.trim();
 
-    if (Utils.confirm(strFormat(getL10n("stories-are-you-sure-about-story-removing"), [name]))) {
+    Utils.confirm(strFormat(getL10n("stories-are-you-sure-about-story-removing"), [name]), () => {
         DBMS.removeStory(name, function(err){
             if(err) {Utils.handleError(err); return;}
             PermissionInformer.refresh(function(err){
@@ -155,7 +155,7 @@ Stories.removeStory = function () {
                 Stories.refresh();
             });
         });
-    }
+    });
 };
 
 Stories.onStorySelectorChangeDelegate = function (event) {

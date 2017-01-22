@@ -33,6 +33,12 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         L10n.onL10nChange(() => state.currentView.refresh());
         UI.initSelectorFilters();
         UI.initPanelTogglers();
+        function updateDialogs(){
+            vex.dialog.buttons.YES.text = getL10n('common-ok');
+            vex.dialog.buttons.NO.text = getL10n('common-cancel');
+        }
+        updateDialogs();
+        L10n.onL10nChange(updateDialogs);
     }
     
     var protoExpander = function(arr){

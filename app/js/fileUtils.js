@@ -27,10 +27,9 @@ FileUtils.init = function (callback) {
 
 FileUtils.makeNewBase = function () {
     "use strict";
-    if(Utils.confirm(getL10n("utils-new-base-warning"))) {
-        "use strict";
+    Utils.confirm(getL10n("utils-new-base-warning"), () => {
         DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), FileUtils.callback);
-    }
+    });
 };
 
 FileUtils.openHelp = function () {

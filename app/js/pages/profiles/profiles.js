@@ -114,7 +114,7 @@ See the License for the specific language governing permissions and
         return function(){
             var name = queryEl(root + ".remove-entity-select").value.trim();
         
-            if (Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-character-removing"),[name]))) {
+            Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-character-removing"),[name]), () => {
                 DBMS.removeProfile(type, name, function(err){
                     if(err) {Utils.handleError(err); return;}
                     PermissionInformer.refresh(function(err){
@@ -122,7 +122,7 @@ See the License for the specific language governing permissions and
                         exports.refresh();
                     });
                 });
-            }
+            });
         }
     };
 

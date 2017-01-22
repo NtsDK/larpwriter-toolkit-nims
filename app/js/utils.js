@@ -98,13 +98,20 @@ Utils.addView = function (containers, name, view, opts) {
 };
 
 Utils.alert = function (message) {
-    "use strict";
-    window.alert(message);
+    vex.dialog.alert(message);
 };
 
-Utils.confirm = function (message) {
-    "use strict";
-    return window.confirm(message);
+Utils.confirm = function (message, onOk, onCancel) {
+    vex.dialog.confirm({
+        message: message,
+        callback: (val) => {
+            if(val){
+                if(onOk) onOk();
+            } else {
+                if(onCancel) onCancel();
+            }
+        }
+    });
 };
 
 Utils.removeChildren = function (myNode) {

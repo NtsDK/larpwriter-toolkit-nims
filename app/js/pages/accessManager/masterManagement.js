@@ -184,9 +184,9 @@ See the License for the specific language governing permissions and
     
     var removeMaster = function () {
         var name = queryEl(root + ".remove-user-select").value.trim();
-        if (Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]))) {
+        Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]), () => {
             DBMS.removeMaster(name, Utils.processError(exports.refresh));
-        }
+        });
     };
     
     var getSelectedOptions = (sel) => nl2array(queryEl(sel).selectedOptions).map(opt => opt.value);
@@ -215,18 +215,18 @@ See the License for the specific language governing permissions and
     
     var assignNewAdmin = function() {
         var userName = queryEl(root + ".assign-admin-select").value.trim();
-        if(Utils.confirm(strFormat(getL10n('admins-confirm-admin-assigment'), [userName]))){
+        Utils.confirm(strFormat(getL10n('admins-confirm-admin-assigment'), [userName]), () => {
             DBMS.assignAdmin(userName, Utils.processError(exports.refresh));
-        }
+        });
     };
     var removeEditor = function() {
         DBMS.removeEditor(Utils.processError(exports.refresh));
     };
     var assignEditor = function() {
         var userName = queryEl(root + ".assign-editor-select").value.trim();
-        if(Utils.confirm(strFormat(getL10n('admins-confirm-editor-assigment'), [userName]))){
+        Utils.confirm(strFormat(getL10n('admins-confirm-editor-assigment'), [userName]), () => {
             DBMS.assignEditor(userName, Utils.processError(exports.refresh));
-        }
+        });
     };
     var changeAdaptationRightsMode = function(event) {
         DBMS.changeAdaptationRightsMode(event.target.value, Utils.processError());

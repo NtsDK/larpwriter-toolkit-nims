@@ -102,8 +102,7 @@ Groups.removeGroup = function (selector, refresh) {
     "use strict";
     return function(){
         var name = queryEl(selector + " .remove-entity-select").value.trim();
-        
-        if (Utils.confirm(strFormat(getL10n("groups-are-you-sure-about-group-removing"),[name]))) {
+        Utils.confirm(strFormat(getL10n("groups-are-you-sure-about-group-removing"),[name]), () => {
             DBMS.removeGroup(name, function(err){
                 if(err) {Utils.handleError(err); return;}
                 PermissionInformer.refresh(function(err){
@@ -111,6 +110,6 @@ Groups.removeGroup = function (selector, refresh) {
                     refresh();
                 });
             });
-        }
+        });
     }
 };

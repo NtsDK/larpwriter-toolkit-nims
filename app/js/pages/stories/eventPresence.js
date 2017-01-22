@@ -135,10 +135,10 @@ EventPresence.onChangeCharacterCheckbox = function (event) {
     } else if (!event.target.hasText){
         DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName, Utils.processError());
     } else {
-        if (Utils.confirm(strFormat(getL10n("stories-remove-character-from-event-warning"),[event.target.characterName, event.target.eventName]))) {
+        Utils.confirm(strFormat(getL10n("stories-remove-character-from-event-warning"),[event.target.characterName, event.target.eventName]), () => {
             DBMS.removeCharacterFromEvent(Stories.CurrentStoryName, event.target.eventIndex, event.target.characterName, Utils.processError());
-        } else {
+        }, () => {
             event.target.checked = true;
-        }
+        });
     }
 };

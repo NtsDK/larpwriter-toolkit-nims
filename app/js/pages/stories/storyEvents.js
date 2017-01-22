@@ -162,9 +162,9 @@ StoryEvents.mergeEvents = function () {
 StoryEvents.removeEvent = function () {
     "use strict";
     var sel = getEl("removeEventSelector")
-    if (Utils.confirm(strFormat(getL10n("stories-remove-event-warning"), [sel.value]))) {
+    Utils.confirm(strFormat(getL10n("stories-remove-event-warning"), [sel.value]), () => {
         DBMS.removeEvent(Stories.CurrentStoryName, sel.selectedIndex, Utils.processError(StoryEvents.refresh));
-    }
+    });
 };
 
 StoryEvents.getEventHeader = function () {

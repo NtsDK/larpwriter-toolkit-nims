@@ -115,9 +115,9 @@ See the License for the specific language governing permissions and
             var index = selector.selectedIndex;
             var name = selector.value;
         
-            if (Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-removing-profile-item"), [name]))) {
+            Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-removing-profile-item"), [name]), () => {
                 DBMS.removeProfileItem(type, index, name, Utils.processError(exports.refresh));
-            }
+            });
         }
     };
     
@@ -245,11 +245,9 @@ See the License for the specific language governing permissions and
                 };
                 
                 if (missedValues.length !== 0) {
-                    if (Utils.confirm(strFormat(getL10n("profiles-new-enum-values-remove-some-old-values"),[missedValues.join(",")]))) {
-                        updateEnum();
-                    } else {
+                    Utils.confirm(strFormat(getL10n("profiles-new-enum-values-remove-some-old-values"),[missedValues.join(",")]), updateEnum, () => {
                         event.target.value = oldValue;
-                    }
+                    });
                 } else {
                     updateEnum();
                 }
@@ -285,13 +283,13 @@ See the License for the specific language governing permissions and
     
     var changeProfileItemType = function (type) {
         return function(event){
-            if (Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-changing-profile-item-type"), [event.target.info]))) {
+            Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-changing-profile-item-type"), [event.target.info]), () => {
                 var newType = event.target.value;
                 var name = event.target.info;
                 DBMS.changeProfileItemType(type, name, newType, Utils.processError(exports.refresh));
-            } else {
+            }, () => {
                 event.target.value = event.target.oldType;
-            }
+            });
         }
     };
     

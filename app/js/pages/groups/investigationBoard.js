@@ -189,15 +189,13 @@ See the License for the specific language governing permissions and
             getL10n('investigation-board-confirm-resource-node-removing');
         
         var label = node.group === 'groups' ? node.originalLabel : node.label;
-        if (Utils.confirm(strFormat(msg, [label]))) {
+        Utils.confirm(strFormat(msg, [label]), () => {
             DBMS[funcName](label, function(err){
                 if(err) {Utils.handleError(err); callback(); return;}
                 exports.refresh(true);
                 callback(data); 
             });
-        } else {
-            callback();
-        }
+        }, callback);
     };
 
     function prepareStr(str){

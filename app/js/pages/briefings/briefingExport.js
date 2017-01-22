@@ -217,9 +217,9 @@ See the License for the specific language governing permissions and
     
     var convertToDocxTemplate = function () {
         var docxTemplate = makeDocxTemplate("blob");
-        if(Utils.confirm(getL10n("briefings-save-file"))){
+        Utils.confirm(getL10n("briefings-save-file"), () => {
             saveAs(docxTemplate, "template.docx");
-        }
+        });
     };
     
     var generateByDocxTemplate = function () {
@@ -335,9 +335,9 @@ See the License for the specific language governing permissions and
     };
     
     var saveFile = function(msgKey, out, fileName){
-        if(Utils.confirm(getL10n(msgKey))){
-          saveAs(out, fileName);
-        }
+        Utils.confirm(getL10n(msgKey), () => {
+            saveAs(out, fileName);
+        });
     };
     
     var makeArchiveData = function(briefingData, generateSingleDelegate){
