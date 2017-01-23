@@ -17,10 +17,10 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
+var showNotification = true;
 function makeRemoteDBMS(LocalDBMS){
     
     var url = "/";
-    var showNotification = false;
     
     function RemoteDBMS(){
         this.clearSettings();
@@ -79,7 +79,7 @@ function makeRemoteDBMS(LocalDBMS){
                 addClass(notificationBox, 'operationOK');
                 setTimeout(function(){
                     addClass(notificationBox, 'hidden');
-                }, 1000);
+                }, 2000);
             }
             if(callback) callback();
         });
@@ -89,7 +89,7 @@ function makeRemoteDBMS(LocalDBMS){
                 addClass(notificationBox, 'operationFail');
                 setTimeout(function(){
                     addClass(notificationBox, 'hidden');
-                }, 1000);
+                }, 2000);
             }
             try {
                 callback(JSON.parse(errorInfo.responseText));
