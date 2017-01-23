@@ -172,15 +172,14 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 }
                 addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
                 
-                addEl(state.navigation, makeL10nButton());
+//                addEl(state.navigation, makeL10nButton());
                 
                 Utils.addView(state.containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
                 addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
-    //            addEl(state.navigation, makeButton("aboutButton", "about", null, btnOpts));
-//                if(MODE === "NIMS_Server"){
+                if(MODE === "NIMS_Server"){
                     Utils.addView(state.containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
                     addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
-//                }
+                }
                 
                 FileUtils.init(function(err){
                     if(err) {Utils.handleError(err); return;}
