@@ -62,7 +62,7 @@ See the License for the specific language governing permissions and
         opts = {
             lang : L10n.getLang(),
             mask : true,
-            onChangeDateTime : state.updatePreGameDate
+            onChangeDateTime : updatePreGameDate
         };
     
         jQuery(state.preDate).datetimepicker(opts);
