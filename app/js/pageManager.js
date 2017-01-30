@@ -207,7 +207,14 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     
     var runTests = function(){
     //    window.RunTests();
-        consistencyCheck(function(){});
+        consistencyCheck(function(err, checkRes){
+            if(err) {Utils.handleError(err); return;}
+            if(checkRes === undefined || checkRes.length === 0){
+                Utils.alert(getL10n('overview-consistency-is-ok'));
+            } else {
+                Utils.alert(getL10n('overview-consistency-problem-detected'));
+            }
+        });
     };
     
     var postLogout = function(){
