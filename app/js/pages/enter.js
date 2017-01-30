@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
         var form = $(this);
 
         $('.error', form).html('');
-        $(":submit", form).button("loading");
+//        $(":submit", form).button("loading");
 
         var request = $.ajax({
             url : "/login",
