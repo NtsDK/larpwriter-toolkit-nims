@@ -69,6 +69,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.setCharacterRelation = function(fromCharacter, toCharacter, text, callback){
             var chain = CU.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), CU.isString(text)]);
             CU.precondition(chain, callback, () => {
+                var relData = R.path(relationsPath, this.database);
                 text = text.trim();
                 if(text === ''){
                     if(relData[fromCharacter] !== undefined){
