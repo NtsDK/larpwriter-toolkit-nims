@@ -27,12 +27,15 @@ See the License for the specific language governing permissions and
     exports.init = function () {
         listen(getEl("makeDefaultTextBriefings"), "click", function(){
             resolveTextTemplate(function(textTemplate){
-                makeTextBriefings("txt",textTemplate);
+                makeTextBriefings("txt", generateSingleTxt(textTemplate));
             });
         });
     
         listen(getEl("makeCustomTextBriefings"), "click", function(){
-            makeTextBriefings(getEl("textTypeSelector").value, getEl("templateArea").value);
+            makeTextBriefings(getEl("textTypeSelector").value, generateSingleTxt(getEl("templateArea").value));
+        });
+        listen(getEl("makeMarkdownBriefings"), "click", function(){
+            makeTextBriefings('html', R.compose((data) => markdownit('commonmark').render(data), generateSingleTxt(getEl("templateArea").value)));
         });
         
         listen(getEl("docxBriefings"), "change", readTemplateFile);
@@ -261,9 +264,7 @@ See the License for the specific language governing permissions and
         });
     };
     
-    var makeTextBriefings = function (fileType, template) {
-        var delegate = generateSingleTxt(template);
-        
+    var makeTextBriefings = function (fileType, delegate) {
         getBriefingData(function(err, briefingData){
             if(err) {Utils.handleError(err); return;}
             generateBriefings(briefingData, fileType, function(data){
