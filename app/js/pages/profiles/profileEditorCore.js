@@ -78,6 +78,7 @@ See the License for the specific language governing permissions and
                 break;
             case "enum":
                 input = makeEl("select");
+                addClass(input, "profileSelectInput");
                 fillSelector(input, profileItemConfig.value.split(",").map(R.compose(R.zipObj(['name']), R.append(R.__, []))));
                 break;
             case "number":
@@ -90,8 +91,10 @@ See the License for the specific language governing permissions and
                 break;
             case "multiEnum":
                 this.multiEnumSelect = $("<select></select>");
-                input = $("<span></span>").append(this.multiEnumSelect)[0];
+                setAttr(this.multiEnumSelect[0], 'style', 'width: 400px;');
                 addClass(this.multiEnumSelect[0], 'common-select');
+                addClass(this.multiEnumSelect[0], 'profileStringInput');
+                input = $("<span></span>").append(this.multiEnumSelect)[0];
                 setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
                 var sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(",")));
