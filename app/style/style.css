@@ -91,39 +91,6 @@ See the License for the specific language governing permissions and
 }
 /* briefing preview **/
 
-/** file uploader style*/
-.file-upload {
-     position: relative; 
-     overflow: hidden; 
-     height: 36px; 
-/*      background: #6da047; */
-     background: grey;
-     border-radius: 3px;
-     padding: 8px 4px;
-     color: #fff;
-     text-align: center;
-     width: 400px;
-}
-.file-upload:hover {
-/*      background: #7aad55; */
-}
-.file-upload input[type="file"]{
-    display: none; 
-}
-.file-upload label {
-     display: block;
-     position: absolute;
-     top: 0;
-     left: 0;
-     width: 400px;
-     height: 100%;
-     cursor: pointer;
-}
-.file-upload span {
-     line-height: 36px; 
-}
-/* file uploader style**/
-
 /*----------------------------------------------------*/
 
 /** story common */

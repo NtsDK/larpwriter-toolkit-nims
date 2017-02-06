@@ -23,6 +23,7 @@ See the License for the specific language governing permissions and
     var state = {};
     
     state.templates = {};
+    state.customDocxTemplate = null;
     
     exports.init = function () {
         listen(getEl("makeDefaultTextBriefings"), "click", function(){
@@ -39,6 +40,19 @@ See the License for the specific language governing permissions and
         });
         
         listen(getEl("docxBriefings"), "change", readTemplateFile);
+        listen(getEl("docxBriefings"), "focus", (e)=>{ 
+            e.target.value = '';
+            state.customDocxTemplate = null;
+        });
+        
+        listen(getEl("makeDocxBriefings"), "click", () => {
+            if(state.customDocxTemplate === null){
+                Utils.alert(getL10n("briefings-custom-docx-template-is-missing"));
+            } else {
+                exportDocxByTemplate(state.customDocxTemplate);
+            }
+        });
+        
     
         var els = queryElEls(document, "#briefingExportDiv input[name=exportCharacterSelection]");
         els.map(listen(R.__, "change", onCharacterSelectionChange));
@@ -283,11 +297,8 @@ See the License for the specific language governing permissions and
         if (f) {
             var r = new FileReader();
             r.onload = function (e) {
-                var template = e.target.result;
-                getBriefingData(function(err, briefingData){
-                    if(err) {Utils.handleError(err); return;}
-                    generateBriefings(briefingData, "docx", generateSingleDocx("blob", template), generateSingleDocx("Uint8Array", template));
-                });
+                state.customDocxTemplate = e.target.result;
+                Utils.alert(getL10n("briefings-template-is-loaded"));
             }
             r.readAsBinaryString(f);
         } else {
