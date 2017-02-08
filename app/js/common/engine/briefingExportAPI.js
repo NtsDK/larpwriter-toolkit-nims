@@ -45,29 +45,21 @@ See the License for the specific language governing permissions and
                 groupTexts[charName].forEach(function(groupText){
                     groupText.splittedText = _splitText(groupText.text);
                 });
-                var profile = database.Characters[charName];
                 var dataObject = {
                     "gameName" : database.Meta.name,
                     "charName" : charName,
                     "inventory" : _makeCharInventory(database, charName),
                     "storiesInfo" : _getStoriesInfo(database, charName, selectedStories, exportOnlyFinishedStories),
                     "eventsInfo" : _getEventsInfo(database, charName, selectedStories, exportOnlyFinishedStories),
-                    "profileInfoArray" : _getProfileInfoArray(profile, database.CharacterProfileStructure),
                     "groupTexts" : groupTexts[charName],
                     "relations" : _makeRelationsInfo(dbmsUtils._getKnownCharacters(database, charName), database, charName)
                 };
                 
-                dataObject = R.merge(dataObject, _getSimpleProfileInfoObject("profileInfo-", profile, database.CharacterProfileStructure));
-                dataObject = R.merge(dataObject, _getSplittedProfileInfoObject("profileInfo-splitted-", profile, database.CharacterProfileStructure));
-                dataObject = R.merge(dataObject, _getProfileInfoNotEmpty("profileInfo-notEmpty-", profile, database.CharacterProfileStructure));
+                dataObject = R.merge(dataObject, _makeProfileInfo(charName, 'character', database));
                 
                 let playerName = database.ProfileBindings[charName];
                 if(playerName !== undefined){
-                    profile = database.Players[playerName]
-                    dataObject.playerInfoArray = _getProfileInfoArray(profile, database.PlayerProfileStructure);
-                    dataObject = R.merge(dataObject, _getSimpleProfileInfoObject("playerInfo-", profile, database.PlayerProfileStructure));
-                    dataObject = R.merge(dataObject, _getSplittedProfileInfoObject("playerInfo-splitted-", profile, database.PlayerProfileStructure));
-                    dataObject = R.merge(dataObject, _getProfileInfoNotEmpty("playerInfo-notEmpty-", profile, database.PlayerProfileStructure));
+                    dataObject = R.merge(dataObject, _makeProfileInfo(playerName, 'player', database));
                 }
                 
                 return dataObject;
@@ -80,17 +72,39 @@ See the License for the specific language governing permissions and
             });
         };
         
+        var _makeProfileInfo = function(profileName, profileType, database){
+            var profileStructure, prefix, profile;
+            if(profileType === 'character'){
+                profileStructure = database.CharacterProfileStructure;
+                prefix = 'profileInfo';
+                profile = database.Characters[profileName];
+            } else if(profileType === 'player'){
+                profileStructure = database.PlayerProfileStructure;
+                prefix = 'playerInfo';
+                profile = database.Players[profileName];
+            } else {
+                throw new Error('Unexpected profile type ' + profileType)
+            }
+            var dataObject = {};
+            dataObject[prefix + 'Array'] = _getProfileInfoArray(profile, profileStructure);
+            dataObject = R.merge(dataObject, _getSimpleProfileInfoObject(prefix + "-", profile, profileStructure));
+            dataObject = R.merge(dataObject, _getSplittedProfileInfoObject(prefix + "-splitted-", profile, profileStructure));
+            dataObject = R.merge(dataObject, _getProfileInfoNotEmpty(prefix + "-notEmpty-", profile, profileStructure));
+            return dataObject;
+        };
+        
         var _makeRelationsInfo = function(knownCharacters, database, charName){
             var relations = database.Relations[charName];
             var profiles = database.Characters;
             return R.keys(relations).map(function(toCharacter){
-                return {
+                var obj = {
                     toCharacter: toCharacter, 
                     text: relations[toCharacter],
                     splittedText: _splitText(relations[toCharacter]),
-                    profile: profiles[toCharacter],
                     stories: R.keys(knownCharacters[toCharacter] || {}).join(', ')
-                }
+                };
+                obj = R.merge(obj, _makeProfileInfo(toCharacter, 'character', database));
+                return obj;
             }).sort(CU.charOrdAFactory(R.prop('toCharacter')));
         };
         
