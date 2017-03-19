@@ -149,7 +149,7 @@ See the License for the specific language governing permissions and
         function makeEntityLists(userInfo){
             return state.entities.reduce(function(result, entity){
                 result.push(liMaker(headers[entity]));
-                result.push(addEls(makeEl('ol'), userInfo[entity].sort().map(liMaker)));
+                result.push(addEls(makeEl('ol'), userInfo[entity].sort(CommonUtils.charOrdA).map(liMaker)));
                 return result;
             }, []);
         }
