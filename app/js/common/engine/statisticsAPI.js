@@ -104,9 +104,13 @@ See the License for the specific language governing permissions and
         var _getProfileChartData = function(database) {
             var characterCharts = _getProfileChartArray(database, 'Characters', 'CharacterProfileStructure');
             var playerCharts = _getProfileChartArray(database, 'Players', 'PlayerProfileStructure');
+            var postProcess = R.curry((prefix, el) => {
+                el.id = prefix + el.name;
+                return el;
+            });
             return {
-                characterCharts : characterCharts,
-                playerCharts : playerCharts
+                characterCharts : characterCharts.map(postProcess('character-')),
+                playerCharts : playerCharts.map(postProcess('player-'))
             };
         };
         

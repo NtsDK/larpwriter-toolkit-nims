@@ -221,7 +221,7 @@ See the License for the specific language governing permissions and
                 bar = setAttr(setAttr(makeEl('canvas'), "width", "300"), "height", "100");
                 var data = R.zipObj(['name', 'bar'], [info.name, bar]);
                 var container = makeContainer(data);
-                makeChart(info.name, bar, info.prepared);
+                makeChart(info.id, bar, info.prepared);
                 return container;
             };
             
