@@ -54,6 +54,8 @@ function makeLocalDBMS(fullVersion){
     "statisticsAPI"         ,
     "profilesAPI"           ,
     "profileBindingAPI"     ,
+
+    "profileViewAPI"        ,
     
     "groupsAPI"             ,
     "groupSchemaAPI"        ,

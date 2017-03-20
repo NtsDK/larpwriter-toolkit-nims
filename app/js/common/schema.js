@@ -127,12 +127,15 @@ See the License for the specific language governing permissions and
                             "doExport" : {
                                 "type" : "boolean"
                             },
+                            "showInRoleGrid" : {
+                                "type" : "boolean"
+                            },
                             "playerAccess" : {
                                 "type" : "string",
                                 "enum" : [ "write", "readonly", "hidden" ]
                             },
                         },
-                        "required" : [ "name", "type", "value", "doExport", "playerAccess"],
+                        "required" : [ "name", "type", "value", "doExport", "playerAccess","showInRoleGrid"],
                         "additionalProperties" : false
                     }, {
                         "type" : "object",
@@ -150,12 +153,15 @@ See the License for the specific language governing permissions and
                             "doExport" : {
                                 "type" : "boolean"
                             },
+                            "showInRoleGrid" : {
+                                "type" : "boolean"
+                            },
                             "playerAccess" : {
                                 "type" : "string",
                                 "enum" : [ "write", "readonly", "hidden" ]
                             },
                         },
-                        "required" : [ "name", "type", "value", "doExport", "playerAccess" ],
+                        "required" : [ "name", "type", "value", "doExport", "playerAccess", "showInRoleGrid" ],
                         "additionalProperties" : false
                     }, {
                         "type" : "object",
@@ -173,12 +179,15 @@ See the License for the specific language governing permissions and
                             "doExport" : {
                                 "type" : "boolean"
                             },
+                            "showInRoleGrid" : {
+                                "type" : "boolean"
+                            },
                             "playerAccess" : {
                                 "type" : "string",
                                 "enum" : [ "write", "readonly", "hidden" ]
                             },
                         },
-                        "required" : [ "name", "type", "value", "doExport", "playerAccess" ],
+                        "required" : [ "name", "type", "value", "doExport", "playerAccess", "showInRoleGrid" ],
                         "additionalProperties" : false
                     } ]
                 }

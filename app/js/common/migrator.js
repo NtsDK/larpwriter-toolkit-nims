@@ -163,6 +163,15 @@ See the License for the specific language governing permissions and
             });
             data.Version = "0.6.1";
         }
+        if(data.Version === "0.6.1"){
+            data.CharacterProfileStructure.forEach(function(item){
+                item.showInRoleGrid = false;
+            });
+            data.PlayerProfileStructure.forEach(function(item){
+                item.showInRoleGrid = false;
+            });
+            data.Version = "0.6.2";
+        }
         
         
         return data;

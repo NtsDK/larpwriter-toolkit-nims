@@ -68,19 +68,22 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     
     exports.onIndexPageLoad = function () {
         initPage();
-        var RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptions']));
+        var RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptions','getRoleGridInfo']));
         window.DBMS = new RemoteDBMS();
         stateInit();
         DBMS.getPlayersOptions(function(err, playersOptions){
             if(err) {Utils.handleError(err); return;}
-            addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-            Utils.addView(state.containers, "enter", Enter, {mainPage:true});
-            if(playersOptions.allowPlayerCreation){
-                Utils.addView(state.containers, "register", Register);
-            }
-            Utils.addView(state.containers, "about", About);
-            addEl(state.navigation, makeL10nButton());
-            state.currentView.refresh();
+            DBMS.getRoleGridInfo(function(err, data){
+                if(err) {Utils.handleError(err); return;}
+                addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+                Utils.addView(state.containers, "enter", Enter, {mainPage:true});
+                if(playersOptions.allowPlayerCreation){
+                    Utils.addView(state.containers, "register", Register);
+                }
+                Utils.addView(state.containers, "about", About);
+                addEl(state.navigation, makeL10nButton());
+                state.currentView.refresh();
+            });
         });
         
     };

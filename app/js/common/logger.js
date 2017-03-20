@@ -58,6 +58,9 @@ See the License for the specific language governing permissions and
             "createBinding" : {},
             "removeBinding" : {}
         },
+        "profileViewAPI":{
+            "getRoleGridInfo" : null,
+        },
         "groupsAPI" : {
             "getGroupNamesArray" : null,
             "getGroup" : null,
@@ -103,6 +106,7 @@ See the License for the specific language governing permissions and
             "changeProfileItemPlayerAccess" : {},
             "renameProfileItem" : {},
             "doExportProfileItemChange" : {},
+            "showInRoleGridProfileItemChange": {},
             "updateDefaultValue" : {}
         },
         "entityAPI" : {

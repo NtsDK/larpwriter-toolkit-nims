@@ -200,6 +200,14 @@ See the License for the specific language governing permissions and
         listen(sel, "change", changeProfileItemPlayerAccess(type));
         els.push(sel);
         
+        input = setProps(makeEl("input"), {
+            checked: profileSettings.showInRoleGrid,
+            info: profileSettings.name,
+            type: "checkbox"
+        });
+        listen(input, "change", showInRoleGridChange(type));
+        els.push(input);
+        
         return addEls(makeEl("tr"), els.map(el => addEl(makeEl("td"), addClass(el, 'adminOnly'))));
     });
     
@@ -262,6 +270,12 @@ See the License for the specific language governing permissions and
     var doExportChange = function (type) {
         return function(event){
             DBMS.doExportProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
+        }
+    };
+    
+    var showInRoleGridChange = function (type) {
+        return function(event){
+            DBMS.showInRoleGridProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
         }
     };
     
