@@ -295,3 +295,19 @@ textarea[readonly],
 select[disabled]{
   background-color: #eee;
 }
+
+.remove-ul-dots{
+  list-style-type: none;
+}
+
+.zero-padding{
+  padding: 0;
+}
+
+.list-content-padding{
+  padding-left: 40px;
+}
+
+.inline-panel {
+  display: inline-block;
+}

@@ -58,7 +58,8 @@ See the License for the specific language governing permissions and
                         type : itemType,
                         value : value,
                         doExport : true,
-                        playerAccess: 'hidden'
+                        playerAccess: 'hidden',
+                        showInRoleGrid: false
                     };
                     
                     container.splice(selectedIndex, 0, profileItem);

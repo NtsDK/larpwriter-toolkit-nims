@@ -221,5 +221,34 @@ See the License for the specific language governing permissions and
             a: a
         };
     };
+    
+    exports.makeProfileTable = function(profileStructure, profile){
+        var value;
+        var profileDiv = addEls(makeEl('tbody'), profileStructure.filter(element => element.doExport).map(function (element) {
+            switch (element.type) {
+            case "text":
+                value = addClass(makeEl("span"), "briefingTextSpan");
+                addEl(value, makeText(profile[element.name]));
+                break;
+            case "enum":
+            case "multiEnum":
+            case "number":
+            case "string":
+                value = makeText(profile[element.name]);
+                break;
+            case "checkbox":
+                value = makeText(constL10n(Constants[profile[element.name]]));
+                break;
+            default:
+                throw new Error('Unexpected type ' + element.type);
+            }
+            return exports.makeTableRow(makeText(element.name), value);
+        }));
+        return addEl(addClasses(makeEl('table'), ['table','table-striped']), profileDiv);
+    };
+    
+    exports.makeTableRow = function(col1, col2){
+        return addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'),col2)]);
+    };
 
 })(this['UI']={});

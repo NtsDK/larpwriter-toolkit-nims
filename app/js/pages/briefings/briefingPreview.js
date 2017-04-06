@@ -136,7 +136,7 @@ See the License for the specific language governing permissions and
         }, 
         make: function(el, data){
             let label = strFormat(getL10n('briefings-character-profile'), [data.characterName]);
-            addEl(el, makePanel(makeText(label), makeProfileContent(state.characterProfileStructure, data.profile), getFlags().hideAllPanels));
+            addEl(el, makePanel(makeText(label), UI.makeProfileTable(state.characterProfileStructure, data.profile), getFlags().hideAllPanels));
         } 
     }, {
         name: 'playerProfile',
@@ -158,7 +158,7 @@ See the License for the specific language governing permissions and
         make: function(el, data){
             if(data.playerProfile){
                 let label = strFormat(getL10n('briefings-player-profile'), [data.playerName]);
-                addEl(el, makePanel(makeText(label), makeProfileContent(state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels));
+                addEl(el, makePanel(makeText(label), UI.makeProfileTable(state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels));
             }
         } 
     }, {
@@ -277,38 +277,9 @@ See the License for the specific language governing permissions and
             }
             input.addEventListener("change", updateCharacterInventory);
             
-            addEl(inventoryDiv,makeTableRow(makeText(elem.storyName), input));
+            addEl(inventoryDiv,UI.makeTableRow(makeText(elem.storyName), input));
         });
         return addEl(addClasses(makeEl('table'), ['table','table-striped']), inventoryDiv);
-    };
-    
-    var makeTableRow = function(col1, col2){
-        return addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'),col2)]);
-    };
-    
-    var makeProfileContent = function(profileStructure, profile){
-        var value;
-        var profileDiv = addEls(makeEl('tbody'), profileStructure.filter(element => element.doExport).map(function (element) {
-            switch (element.type) {
-            case "text":
-                value = addClass(makeEl("span"), "briefingTextSpan");
-                addEl(value, makeText(profile[element.name]));
-                break;
-            case "enum":
-            case "multiEnum":
-            case "number":
-            case "string":
-                value = makeText(profile[element.name]);
-                break;
-            case "checkbox":
-                value = makeText(constL10n(Constants[profile[element.name]]));
-                break;
-            default:
-                throw new Error('Unexpected type ' + element.type);
-            }
-            return makeTableRow(makeText(element.name), value);
-        }));
-        return addEl(addClasses(makeEl('table'), ['table','table-striped']), profileDiv);
     };
     
     var showEventsByTime = function (content, characterName, userStoryNamesMap, flags) {

@@ -51,7 +51,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     'getWelcomeText'           ,
                     'getPlayerProfileInfo'     ,
                     'createCharacterByPlayer'  ,
-                    'updateProfileField'       ];
+                    'updateProfileField'       ,
+                    'getRoleGridInfo'          ];
     
     exports.onPlayerPageLoad = function () {
         initPage();
@@ -60,6 +61,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         stateInit();
         Utils.addView(state.containers, "player", Player, {mainPage:true});
         addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+        Utils.addView(state.containers, "roleGrid", RoleGrid);
         Utils.addView(state.containers, "about", About);
         addEl(state.navigation, makeL10nButton());
         addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
@@ -73,17 +75,15 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         stateInit();
         DBMS.getPlayersOptions(function(err, playersOptions){
             if(err) {Utils.handleError(err); return;}
-            DBMS.getRoleGridInfo(function(err, data){
-                if(err) {Utils.handleError(err); return;}
-                addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-                Utils.addView(state.containers, "enter", Enter, {mainPage:true});
-                if(playersOptions.allowPlayerCreation){
-                    Utils.addView(state.containers, "register", Register);
-                }
-                Utils.addView(state.containers, "about", About);
-                addEl(state.navigation, makeL10nButton());
-                state.currentView.refresh();
-            });
+            addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+            Utils.addView(state.containers, "enter", Enter);
+            if(playersOptions.allowPlayerCreation){
+                Utils.addView(state.containers, "register", Register);
+            }
+            Utils.addView(state.containers, "roleGrid", RoleGrid, {mainPage:true});
+            Utils.addView(state.containers, "about", About);
+            addEl(state.navigation, makeL10nButton());
+            state.currentView.refresh();
         });
         
     };
@@ -141,6 +141,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 Utils.addView(state.containers, "stories", Stories);
                 Utils.addView(state.containers, "adaptations", Adaptations);
                 Utils.addView(state.containers, "briefings", Briefings);
+                Utils.addView(state.containers, "roleGrid", RoleGrid);
     //            Utils.addView(state.containers, "about", About);
                 
                 addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
