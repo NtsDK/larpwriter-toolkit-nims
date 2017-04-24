@@ -11,8 +11,11 @@
 //set NODE_ENV=dev && gulp dev
 
 //set NODE_ENV=dev && set MODE=server && gulp dev
+//set NODE_ENV=dev && set MODE=server && npm run gulp dev
 //set NODE_ENV=dev && set MODE=standalone && gulp dev
 //set NODE_ENV=dev && set MODE=standalone && set LANG=en && gulp dev
+//set NODE_ENV=dev && set MODE=server && gulp dist:final
+//set NODE_ENV=dev && set MODE=standalone && gulp dist:final
 
 //set NODE_ENV=prod && set MODE=standalone && gulp dist
 //set NODE_ENV=prod && set MODE=standalone && gulp dist:final
@@ -42,6 +45,7 @@ var htmlmin = require('gulp-htmlmin');
 var config = require('./config');
 const zip = require('gulp-zip');
 var fileInclude = require('gulp-file-include');
+var dateformat = require('dateformat');
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV.trim() == 'dev';
 var isServer = !process.env.MODE || process.env.MODE.trim() == 'server';
@@ -60,7 +64,8 @@ var addPrefix = function(path, files){
 };
 
 var styles = addPrefix("app/style/", ["common.css", "style.css", "experimental.css"]);
-var libCoreStyles = addPrefix("app/libs/", ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css"]);
+var libCoreStyles = addPrefix("app/libs/", ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", 'vex-theme-default.css', 'vex.css']);
+
 var libStyles = addPrefix("app/libs/", ['vis.min.css']);
 
 var processStyles = function(styles, fileName, taskName, addSourcemaps) {
@@ -92,6 +97,7 @@ var libsCore = addPrefix("app/libs/",[
 'jquery.datetimepicker.js',
 'ramda.min.js',
 'select2.min.js',
+'vex.combined.min.js',
 ]);
 
 var libs = addPrefix("app/libs/",[
@@ -103,6 +109,7 @@ var libs = addPrefix("app/libs/",[
 'ajv-4.1.1.js',
 'Chart.min.js',
 'vis-custom.min.js',
+'markdown-it.min.js',
 //'three.js',
 //'stats.js',
 //'dat.gui.js',
@@ -137,6 +144,7 @@ var pagesLight = addPrefix("app/js/pages/",
         ['enter.js'   ,
          'player.js',
          'register.js'      ,
+         'profiles/roleGrid.js'      ,
          'logs/about.js',
          'profiles/profileEditorCore.js']);
 
@@ -165,7 +173,11 @@ gulp.task('scripts:pagesLight', processScripts(pagesLight, "pagesLight", 'script
 gulp.task('scripts', gulp.parallel('scripts:libsCore', 'scripts:libs','scripts:resources','scripts:translations',
         'scripts:commonCore','scripts:common','scripts:scripts','scripts:pages','scripts:pagesLight'));
 
-var htmls = ['app/nims.html', 'app/index.html', 'app/player.html'];
+if(isServer){
+    var htmls = ['app/nims.html', 'app/index.html', 'app/player.html'];
+} else {
+    var htmls = ['app/nims.html'];
+}
 
 gulp.task('html', function() {
     return gulp.src(htmls, {base : 'app'})
@@ -259,7 +271,7 @@ gulp.task('copyPresentation', function() {
 
 gulp.task('zip', function() {
     return gulp.src('dist/**/*')
-        .pipe(zip((isServer?'server':'stand') + '-' + lang + '.zip'))
+        .pipe(zip((isServer?'server':'stand') + '-' + lang + dateformat(new Date(), '_dd-mmm-yyyy_HH-MM-ss') + '.zip'))
         .pipe(gulp.dest('./'));
 });
 
@@ -273,6 +285,8 @@ gulp.task('watch', function() {
     gulp.watch(scripts, gulp.series('scripts:scripts'));
     gulp.watch(commonCore, gulp.series('scripts:commonCore'));
     gulp.watch(common, gulp.series('scripts:common'));
+    gulp.watch(commonCore, gulp.series('server'));
+    gulp.watch(common, gulp.series('server'));
     gulp.watch(pages, gulp.series('scripts:pages'));
     gulp.watch(pagesLight, gulp.series('scripts:pagesLight'));
     gulp.watch(translations, gulp.series('scripts:translations'));
