@@ -1,3 +1,13 @@
+version 0.6.1 (23 May 2017)
+
+  Character profiles splitted into characters and players profiles.
+  Added players everywhere: diagrams, statistics, export, filter, social network and other.
+  Added text search.
+  Implemented claim database.
+  
+  Export improvements: export only finished stories, story selector and markdown.
+  Added timeline by character. 
+
 version 0.5.2 (21 Nov 2016)
 
   Big update.

@@ -61,7 +61,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         Utils.addView(state.containers, "player", Player, {mainPage:true});
         addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
         Utils.addView(state.containers, "about", About);
-        addEl(state.navigation, makeL10nButton());
+//        addEl(state.navigation, makeL10nButton());
         addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
         state.currentView.refresh();
     };
@@ -79,7 +79,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 Utils.addView(state.containers, "register", Register);
             }
             Utils.addView(state.containers, "about", About);
-            addEl(state.navigation, makeL10nButton());
+//            addEl(state.navigation, makeL10nButton());
             state.currentView.refresh();
         });
         
@@ -172,10 +172,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 }
                 addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
                 
-                addEl(state.navigation, makeL10nButton());
+                //addEl(state.navigation, makeL10nButton());
                 
                 Utils.addView(state.containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
-                addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
+                //addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
                 if(MODE === "NIMS_Server"){
                     Utils.addView(state.containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
                     addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
