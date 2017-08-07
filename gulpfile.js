@@ -11,8 +11,11 @@
 //set NODE_ENV=dev && gulp dev
 
 //set NODE_ENV=dev && set MODE=server && gulp dev
+//set NODE_ENV=dev && set MODE=server && npm run gulp dev
 //set NODE_ENV=dev && set MODE=standalone && gulp dev
 //set NODE_ENV=dev && set MODE=standalone && set LANG=en && gulp dev
+//set NODE_ENV=dev && set MODE=server && gulp dist:final
+//set NODE_ENV=dev && set MODE=standalone && gulp dist:final
 
 //set NODE_ENV=prod && set MODE=standalone && gulp dist
 //set NODE_ENV=prod && set MODE=standalone && gulp dist:final
@@ -24,7 +27,7 @@
 //set NODE_ENV=prod && set MODE=server && set LANG=ru && gulp dist:final
 //set NODE_ENV=prod && set MODE=server && set LANG=en && gulp dist:final
 
-process.chdir("../NIMS");
+//process.chdir("../NIMS");
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var debug = require('gulp-debug');
@@ -42,6 +45,7 @@ var htmlmin = require('gulp-htmlmin');
 var config = require('./config');
 const zip = require('gulp-zip');
 var fileInclude = require('gulp-file-include');
+var dateformat = require('dateformat');
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV.trim() == 'dev';
 var isServer = !process.env.MODE || process.env.MODE.trim() == 'server';
@@ -59,9 +63,10 @@ var addPrefix = function(path, files){
     return R.ap([R.concat(path)], files)
 };
 
-var styles = addPrefix("app/style/", ["common.css", "style.css", "experimental.css"]);
-var libCoreStyles = addPrefix("app/libs/", ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css"]);
-var libStyles = addPrefix("app/libs/", ['vis.min.css']);
+var styles = addPrefix("app/style/", config.get('styles:customStyles'));
+var libCoreStyles = addPrefix("app/libs/", config.get('styles:libCore'));
+
+var libStyles = addPrefix("app/libs/", config.get('styles:lib'));
 
 var processStyles = function(styles, fileName, taskName, addSourcemaps) {
     return function(){
@@ -78,40 +83,26 @@ var processStyles = function(styles, fileName, taskName, addSourcemaps) {
     }
 };
 
-gulp.task('styles:nims', processStyles(styles, "nims", 'styles:nims', true));
-gulp.task('styles:libsCore', processStyles(libCoreStyles, "libsCore", 'styles:libsCore', false));
-gulp.task('styles:libs', processStyles(libStyles, "libs", 'styles:libs', false));
+gulp.task('styles:nims',    processStyles(styles,       "nims",     'styles:nims',      true));
+gulp.task('styles:libsCore',processStyles(libCoreStyles,"libsCore", 'styles:libsCore',  false));
+gulp.task('styles:libs',    processStyles(libStyles,    "libs",     'styles:libs',      false));
 
 gulp.task('styles', gulp.parallel('styles:libs','styles:nims', 'styles:libsCore'));
 
 // js: libs, resources (l10n, templates), common, scripts (dbms, js root), pages, tests
 
-var libsCore = addPrefix("app/libs/",[
-'jquery-3.1.1.min.js',
-'bootstrap.min.js',
-'jquery.datetimepicker.js',
-'ramda.min.js',
-'select2.min.js',
-]);
+var libsCore = addPrefix("app/libs/", config.get('scripts:libsCore'));
 
-var libs = addPrefix("app/libs/",[
-'docxgen-121.min.js',
-'FileSaver.js',
-'jszip-utils.js',
-'jszip.js',
-'mustache.min.js',
-'ajv-4.1.1.js',
-'Chart.min.js',
-'vis-custom.min.js',
+var libs = addPrefix("app/libs/", config.get('scripts:libs'));
+
+// used in experimental page
 //'three.js',
 //'stats.js',
 //'dat.gui.js',
-]);
 
 //var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
 var translations = [translationsPath + "/l10n/*.js"];
-var resources = addPrefix(langPath + "/embeddedTemplates/",["templatesArr.js","genericTemplate.js",
-    "inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]);
+var resources = addPrefix(langPath + "/embeddedTemplates/", config.get('resources:files'));
 
 var commonCore = addPrefix("app/js/common/",
 ['constants.js'   ,
@@ -133,12 +124,7 @@ common.push(langPath + "/baseExample.js");
 var scripts = ["app/js/dbms/*.js"].concat("app/js/*.js");
 
 var pages = ["app/js/pages/**/*.js"];
-var pagesLight = addPrefix("app/js/pages/",
-        ['enter.js'   ,
-         'player.js',
-         'register.js'      ,
-         'logs/about.js',
-         'profiles/profileEditorCore.js']);
+var pagesLight = addPrefix("app/js/pages/", config.get('pagesLight'));
 
 var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
     return function() {
@@ -152,20 +138,30 @@ var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
     }
 };
 
-gulp.task('scripts:libsCore', processScripts(libsCore, "libsCore", 'scripts:libsCore', false));
-gulp.task('scripts:libs', processScripts(libs, "libs", 'scripts:libs', false));
-gulp.task('scripts:translations', processScripts(translations, "translations", 'scripts:translations', false));
-gulp.task('scripts:resources', processScripts(resources, "resources", 'scripts:resources', false));
-gulp.task('scripts:commonCore', processScripts(commonCore, "commonCore", 'scripts:commonCore', true));
-gulp.task('scripts:common', processScripts(common, "common", 'scripts:common', true));
-gulp.task('scripts:scripts', processScripts(scripts, "scripts", 'scripts:scripts', true));
-gulp.task('scripts:pages', processScripts(pages, "pages", 'scripts:pages', true));
-gulp.task('scripts:pagesLight', processScripts(pagesLight, "pagesLight", 'scripts:pagesLight', true));
+gulp.task('scripts:libsCore',       processScripts(libsCore,    "libsCore",     'scripts:libsCore',     false));
+gulp.task('scripts:libs',           processScripts(libs,        "libs",         'scripts:libs',         false));
+gulp.task('scripts:translations',   processScripts(translations,"translations", 'scripts:translations', false));
+gulp.task('scripts:resources',      processScripts(resources,   "resources",    'scripts:resources',    false));
+gulp.task('scripts:commonCore',     processScripts(commonCore,  "commonCore",   'scripts:commonCore',   true ));
+gulp.task('scripts:common',         processScripts(common,      "common",       'scripts:common',       true ));
+gulp.task('scripts:scripts',        processScripts(scripts,     "scripts",      'scripts:scripts',      true ));
+gulp.task('scripts:pages',          processScripts(pages,       "pages",        'scripts:pages',        true ));
+gulp.task('scripts:pagesLight',     processScripts(pagesLight,  "pagesLight",   'scripts:pagesLight',   true ));
 
-gulp.task('scripts', gulp.parallel('scripts:libsCore', 'scripts:libs','scripts:resources','scripts:translations',
-        'scripts:commonCore','scripts:common','scripts:scripts','scripts:pages','scripts:pagesLight'));
+var scriptsArr = ['scripts:libsCore', 'scripts:libs','scripts:translations',
+                  'scripts:commonCore','scripts:common','scripts:scripts','scripts:pages','scripts:pagesLight']
 
-var htmls = ['app/nims.html', 'app/index.html', 'app/player.html'];
+if(config.get('resources:enabled')){
+    scriptsArr.push('scripts:resources');
+}
+
+gulp.task('scripts', gulp.parallel.apply(null, scriptsArr));
+
+if(isServer){
+    var htmls = ['app/nims.html', 'app/index.html', 'app/player.html'];
+} else {
+    var htmls = ['app/nims.html'];
+}
 
 gulp.task('html', function() {
     return gulp.src(htmls, {base : 'app'})
@@ -259,7 +255,7 @@ gulp.task('copyPresentation', function() {
 
 gulp.task('zip', function() {
     return gulp.src('dist/**/*')
-        .pipe(zip((isServer?'server':'stand') + '-' + lang + '.zip'))
+        .pipe(zip((isServer?'server':'stand') + '-' + lang + dateformat(new Date(), '_dd-mmm-yyyy_HH-MM-ss') + '.zip'))
         .pipe(gulp.dest('./'));
 });
 
@@ -273,6 +269,8 @@ gulp.task('watch', function() {
     gulp.watch(scripts, gulp.series('scripts:scripts'));
     gulp.watch(commonCore, gulp.series('scripts:commonCore'));
     gulp.watch(common, gulp.series('scripts:common'));
+    gulp.watch(commonCore, gulp.series('server'));
+    gulp.watch(common, gulp.series('server'));
     gulp.watch(pages, gulp.series('scripts:pages'));
     gulp.watch(pagesLight, gulp.series('scripts:pagesLight'));
     gulp.watch(translations, gulp.series('scripts:translations'));

@@ -1,3 +1,40 @@
 {
-	"translationsPath" : "C:\\workspaces\\smtk-nims-translations"
+    "translationsPath" : "C:\\workspaces\\smtk-nims-translations",
+    "resources": {
+        "enabled" : true,
+        "files": ["templatesArr.js","genericTemplate.js","inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]
+    },
+    "styles" : {
+        "customStyles":["common.css", "style.css", "experimental.css"],
+        "libCore": ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", "vex-theme-default.css", "vex.css"],
+        "lib" : ["vis.min.css"]
+    },
+    "scripts" : {
+        "libsCore" : [
+            "jquery-3.1.1.min.js",
+            "bootstrap.min.js",
+            "jquery.datetimepicker.js",
+            "ramda.min.js",
+            "select2.min.js",
+            "vex.combined.min.js"
+        ],
+        "libs" : [
+            "docxgen-121.min.js",
+            "FileSaver.js",
+            "jszip-utils.js",
+            "jszip.js",
+            "mustache.min.js",
+            "ajv-4.1.1.js",
+            "Chart.min.js",
+            "vis-custom.min.js",
+            "markdown-it.min.js"
+        ]
+    },
+    "pagesLight" :[
+        "enter.js"   ,
+        "player.js",
+        "register.js"      ,
+        "logs/about.js",
+        "profiles/profileEditorCore.js"
+    ]
 }
