@@ -1,4 +1,5 @@
 {
+    "projectName" : "des",
     "translationsPath" : "C:\\workspaces\\stream-workspace\\DES_Translations",
     "resources": {
         "enabled" : false,

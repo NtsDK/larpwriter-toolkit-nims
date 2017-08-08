@@ -1,4 +1,5 @@
 {
+    "projectName" : "nims",
     "translationsPath" : "C:\\workspaces\\smtk-nims-translations",
     "resources": {
         "enabled" : true,

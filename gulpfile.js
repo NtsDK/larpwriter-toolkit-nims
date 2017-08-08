@@ -1,33 +1,3 @@
-'use strict';
-
-// Make standalone build
-// gulp dist
-// Make server build
-// gulp server
-// make prod build
-// set NODE_ENV=prod && gulp dist
-// set NODE_ENV=dev && gulp dist
-
-//set NODE_ENV=dev && gulp dev
-
-//set NODE_ENV=dev && set MODE=server && gulp dev --configFile "config\des-config.json"
-//set NODE_ENV=dev && set MODE=server && npm run gulp dev
-//set NODE_ENV=dev && set MODE=standalone && gulp dev
-//set NODE_ENV=dev && set MODE=standalone && set LANG=en && gulp dev
-//set NODE_ENV=dev && set MODE=server && gulp dist:final
-//set NODE_ENV=dev && set MODE=standalone && gulp dist:final
-
-//set NODE_ENV=prod && set MODE=standalone && gulp dist
-//set NODE_ENV=prod && set MODE=standalone && gulp dist:final
-//set NODE_ENV=prod && set MODE=standalone && set LANG=en && gulp dist:final
-//set NODE_ENV=prod && set MODE=server && gulp dist:final
-
-//set NODE_ENV=prod && set MODE=standalone && set LANG=ru && gulp dist:final
-//set NODE_ENV=prod && set MODE=standalone && set LANG=en && gulp dist:final
-//set NODE_ENV=prod && set MODE=server && set LANG=ru && gulp dist:final
-//set NODE_ENV=prod && set MODE=server && set LANG=en && gulp dist:final
-
-//process.chdir("../NIMS");
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var debug = require('gulp-debug');
@@ -66,8 +36,8 @@ var addPrefix = function(path, files){
 var coreDir = 'app/core';
 var coreBase= 'app/core';
 
-var projectDir = 'app/des';
-var projectBase = 'app/des';
+var projectDir = 'app/' + config.get('projectName');
+var projectBase = 'app/' + config.get('projectName');
 
 var styles = addPrefix(projectDir + "/style/", config.get('styles:customStyles'));
 var libCoreStyles = addPrefix(coreDir + "/libs/", config.get('styles:libCore'));

@@ -1,4 +1,4 @@
-/*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
+/*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -162,6 +162,39 @@ See the License for the specific language governing permissions and
         jQuery(input).datetimepicker(pickerOpts);
         return input;
     };
+    
+    // bug about setting 0900 years in Braavos game is event date. Fixed in production.
+//  exports.makeEventTimePicker = function (opts) {
+//      var input = makeEl("input");
+//      R.ap([addClass(input)], opts.extraClasses);
+//      addClass(input, "eventTime");
+//      input.value = opts.eventTime;
+//      
+//      input.eventIndex = opts.index;
+//      
+//      var pickerOpts = {
+//          lang : L10n.getLang(),
+//          mask : true,
+//          startDate : new Date(opts.preGameDate),
+//          endDate : new Date(opts.date),
+//          onChangeDateTime : opts.onChangeDateTimeCreator(input),
+//      };
+//      
+//      var picker = jQuery(input).datetimepicker(pickerOpts);
+//      
+//      var value;
+//      if (opts.eventTime !== "") {
+//          value = new Date(opts.eventTime);
+//      } else {
+//          value = opts.date;
+//          addClass(input, "defaultDate");
+//      }
+//      
+//      picker.value = value;
+//      
+//      
+//      return input;
+//  };
     
     exports.resizeTextarea = function (ev) {
         var that = ev.target;
