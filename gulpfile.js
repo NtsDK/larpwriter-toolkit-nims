@@ -10,7 +10,7 @@
 
 //set NODE_ENV=dev && gulp dev
 
-//set NODE_ENV=dev && set MODE=server && gulp dev
+//set NODE_ENV=dev && set MODE=server && gulp dev --configFile "config\des-config.json"
 //set NODE_ENV=dev && set MODE=server && npm run gulp dev
 //set NODE_ENV=dev && set MODE=standalone && gulp dev
 //set NODE_ENV=dev && set MODE=standalone && set LANG=en && gulp dev
@@ -63,15 +63,20 @@ var addPrefix = function(path, files){
     return R.ap([R.concat(path)], files)
 };
 
-var styles = addPrefix("app/style/", config.get('styles:customStyles'));
-var libCoreStyles = addPrefix("app/libs/", config.get('styles:libCore'));
+var coreDir = 'app/core';
+var coreBase= 'app/core';
 
-var libStyles = addPrefix("app/libs/", config.get('styles:lib'));
+var projectDir = 'app/des';
+var projectBase = 'app/des';
+
+var styles = addPrefix(projectDir + "/style/", config.get('styles:customStyles'));
+var libCoreStyles = addPrefix(coreDir + "/libs/", config.get('styles:libCore'));
+
+var libStyles = addPrefix(coreDir + "/libs/", config.get('styles:lib'));
 
 var processStyles = function(styles, fileName, taskName, addSourcemaps) {
     return function(){
-        return gulp.src(styles, {base: 'app', since: gulp.lastRun(taskName)}) // can't use since here because we need all data
-        .pipe(debug({title:'app'}))
+        return gulp.src(styles, {base: projectBase, since: gulp.lastRun(taskName)}) // can't use since here because we need all data
         .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.init()))
         .pipe(autoprefixer())
         .pipe(remember(taskName))
@@ -91,44 +96,46 @@ gulp.task('styles', gulp.parallel('styles:libs','styles:nims', 'styles:libsCore'
 
 // js: libs, resources (l10n, templates), common, scripts (dbms, js root), pages, tests
 
-var libsCore = addPrefix("app/libs/", config.get('scripts:libsCore'));
+var libsCore = addPrefix(coreDir + "/libs/", config.get('scripts:libsCore'));
 
-var libs = addPrefix("app/libs/", config.get('scripts:libs'));
+var libs = addPrefix(coreDir + "/libs/", config.get('scripts:libs'));
 
 // used in experimental page
 //'three.js',
 //'stats.js',
 //'dat.gui.js',
 
-//var resources = ["app/l10n/*.js"].concat(addPrefix("app/templates/",["templatesArr.js","genericTemplate.js",
 var translations = [translationsPath + "/l10n/*.js"];
 var resources = addPrefix(langPath + "/embeddedTemplates/", config.get('resources:files'));
 
-var commonCore = addPrefix("app/js/common/",
-['constants.js'   ,
+var commonCore = addPrefix(coreDir + "/js/common/",
+[
  'errors.js'      ,
+ 'EventEmitter.js',
  'commonUtils.js' ,
+ 'precondition.js' ,
  'dateFormat.js'  ]);
 commonCore.push(langPath + "/defaultLang.js");
 
-var common = addPrefix("app/js/common/",
+var common = addPrefix(projectDir + "/js/common/",
 ['emptyBase.js'   ,
- 'EventEmitter.js',
+ 'constants.js'   ,
  'logger.js'      ,
+ 'projectUtils.js' ,
  'migrator.js'    ,
  'schema.js']);
 
-common.push("app/js/common/engine/*.js");
+common.push(projectDir + "/js/common/engine/*.js");
 common.push(langPath + "/baseExample.js");
 
-var scripts = ["app/js/dbms/*.js"].concat("app/js/*.js");
+var scripts = [projectDir + "/js/dbms/*.js"].concat(coreDir + "/js/*.js").concat(projectDir + "/js/*.js");
 
-var pages = ["app/js/pages/**/*.js"];
-var pagesLight = addPrefix("app/js/pages/", config.get('pagesLight'));
+var pages = [projectDir + "/js/pages/**/*.js"];
+var pagesLight = addPrefix(projectDir + "/js/pages/", config.get('pagesLight'));
 
 var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
     return function() {
-        return gulp.src(scripts, {base: 'app'})
+        return gulp.src(scripts, {base: projectBase})
             .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.init()))
             .pipe(remember(taskName))
             .pipe(concat(fileName + '.min.js'))
@@ -158,16 +165,16 @@ if(config.get('resources:enabled')){
 gulp.task('scripts', gulp.parallel.apply(null, scriptsArr));
 
 if(isServer){
-    var htmls = ['app/nims.html', 'app/index.html', 'app/player.html'];
+    var htmls = [projectDir + '/nims.html', projectDir + '/index.html', projectDir + '/player.html'];
 } else {
-    var htmls = ['app/nims.html'];
+    var htmls = [projectDir + '/nims.html'];
 }
 
 gulp.task('html', function() {
-    return gulp.src(htmls, {base : 'app'})
+    return gulp.src(htmls, {base : projectBase})
     .pipe(fileInclude({
       prefix: '@@',
-      basepath: './app/partials/',
+      basepath: './' + projectDir + '/partials/',
       context: {
         MODE: isServer ? 'NIMS_Server' : 'Standalone'
       }
@@ -177,17 +184,20 @@ gulp.task('html', function() {
 });
 
 // plain copy
-var plains = [];
-plains = plains.concat(addPrefix("app/",['CHANGELOG','LICENSE','LICENSE_RUS','NOTICE','NOTICE_RUS']));
-//plains = plains.concat(['app/templates/*.docx']);
+var corePlains = addPrefix(coreDir + "/",['LICENSE','LICENSE_RUS','NOTICE','NOTICE_RUS']);
+var projectPlains = [projectDir + '/' + 'CHANGELOG'];
 
-gulp.task('plains', function() {
-    return gulp.src(plains, {base: 'app'})
-        .pipe(gulp.dest('dist'));
-});
+var copyFiles = (files, base) =>{
+    return function() {
+        return gulp.src(files, {base: base}).pipe(gulp.dest('dist'));
+    }
+};
+
+gulp.task('corePlains', copyFiles(corePlains, coreDir));
+gulp.task('projectPlains', copyFiles(projectPlains, projectBase));
 
 gulp.task('assets', function() {
-    return gulp.src('app/images/*', {base: 'app', since: gulp.lastRun('assets')})
+    return gulp.src(projectDir + '/images/*', {base: projectBase, since: gulp.lastRun('assets')})
     .pipe(newer('dist')) // used for single tasks when many files already copied, like first launch
 //    .pipe(gulpIf(!isDevelopment, imagemin())) // enable on adding new images
     .pipe(debug({title:'assets copy'}))
@@ -198,22 +208,22 @@ gulp.task('clean', function() {
     return del('dist');
 });
 
-var tests = addPrefix("app/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]);
-var specs = addPrefix("app/tests/spec/",[
+var tests = addPrefix(projectDir + "/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]);
+var specs = addPrefix(projectDir + "/tests/spec/",[
                                         "DBMSSpec.js",
 //                                                "tickets.js"
                                         ]);
 if(!isDevelopment){
-    specs = tests = ["app/tests/empty.js"];
+    specs = tests = [projectDir + "/tests/empty.js"];
 }
 
 gulp.task('tests', function() {
-    gulp.src(isDevelopment ? ["app/tests/jasmine/jasmine.css"] : ["app/tests/empty.js"], {base: 'app'})
+    gulp.src(isDevelopment ? [projectDir + "/tests/jasmine/jasmine.css"] : [projectDir + "/tests/empty.js"], {base: projectBase})
     .pipe(concat('tests.min.css'))
     .pipe(cssnano())
     .pipe(gulp.dest('dist/tests'));
     
-    gulp.src(specs, {base: 'app'})
+    gulp.src(specs, {base: projectBase})
     .pipe(gulpIf(false && isDevelopment, sourcemaps.init()))
 //    .pipe(remember('tests'))
     .pipe(concat('specs.min.js'))
@@ -221,7 +231,7 @@ gulp.task('tests', function() {
     .pipe(gulpIf(false && isDevelopment, sourcemaps.write()))
     .pipe(gulp.dest('dist/tests'));
     
-    return gulp.src(tests, {base: 'app'})
+    return gulp.src(tests, {base: projectBase})
     .pipe(gulpIf(false && isDevelopment, sourcemaps.init()))
 //    .pipe(remember('tests'))
     .pipe(concat('tests.min.js'))
@@ -232,7 +242,9 @@ gulp.task('tests', function() {
 
 gulp.task('server', function(callback) {
     if(isServer){
-        gulp.src('app/js/common/**/*.js', {base: 'app'})
+        gulp.src(coreDir + '/js/common/**/*.js', {base: coreBase})
+        .pipe(gulp.dest('dist'));
+        gulp.src(projectDir + '/js/common/**/*.js', {base: projectBase})
         .pipe(gulp.dest('dist'));
     }
     callback();
@@ -259,10 +271,10 @@ gulp.task('zip', function() {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','plains','tests','server')));
+gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','corePlains','projectPlains','tests','server')));
 gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
 
-var partials = ["app/partials/**/*.html"];
+var partials = [projectDir + "/partials/**/*.html"];
 
 gulp.task('watch', function() {
     

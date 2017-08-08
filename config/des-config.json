@@ -1,0 +1,38 @@
+{
+    "translationsPath" : "C:\\workspaces\\stream-workspace\\DES_Translations",
+    "resources": {
+        "enabled" : false,
+        "files": []
+    },
+    "styles" : {
+        "customStyles":["common.css", "style.css", "experimental.css","deus.css"],
+        "libCore": ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", "vex-theme-default.css", "vex.css"],
+        "lib" : ["vis.min.css"]
+    },
+    "scripts" : {
+        "libsCore" : [
+            "jquery-3.1.1.min.js",
+            "bootstrap.min.js",
+            "jquery.datetimepicker.js",
+            "ramda.min.js",
+            "select2.min.js",
+            "vex.combined.min.js",
+            "llqrcode.js"
+        ],
+        "libs" : [
+            "FileSaver.js",
+            "jszip-utils.js",
+            "jszip.js",
+            "ajv-4.1.1.js"
+        ]
+    },
+    "pagesLight" :[
+        "enter.js"   ,
+        "deusex/shopManagement.js",
+        "deusex/shopWindow.js",
+        "deusex/shopAbout.js",
+        "deusex/categoryContentManagement.js",
+        "deusex/assetProfile.js",
+        "logs/about.js"
+    ]
+}

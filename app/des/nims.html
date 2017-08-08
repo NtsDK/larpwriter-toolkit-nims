@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<!-- Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+   limitations under the License.  -->
+
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title l10n-id="header-page-title"></title>
+
+<link rel="stylesheet" type="text/css" href="styles/libsCore.min.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="styles/libs.min.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="styles/nims.min.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="tests/tests.min.css" media="screen" />
+
+<script>
+    var MODE = "@@MODE";
+    var PERMISSION_INFORMER_ENABLED = true;
+</script>
+<script src="js/libsCore.min.js"></script>
+<script src="js/libs.min.js"></script>
+
+</head>
+<body onload="PageManager.onMasterPageLoad()">
+<!--   <script src="js/resources.min.js"></script> -->
+  <script src="js/translations.min.js"></script>
+  <script src="js/commonCore.min.js"></script>
+  <script src="js/common.min.js"></script>
+  <script src="js/scripts.min.js"></script>
+  <script src="js/pages.min.js"></script>
+
+  <script src="tests/tests.min.js"></script>
+  <script src="tests/specs.min.js"></script>
+
+  <nav id="navigation"></nav>
+
+  <div class="block" id="contentArea"></div>
+
+  <div class="hidden">
+    @@include('./logs/about-tab.html')
+    @@include('./logs/log-viewer-tab.html')
+    @@include('./logs/log-viewer2-tab.html')
+
+    @@include('./logout-form.html')
+    
+    @@include('./deusex/assets-tab.html')
+    @@include('./deusex/asset-profile-tab.html')
+    @@include('./deusex/asset-presence-tab.html')
+    
+    @@include('./deusex/shops-tab2.html')
+    @@include('./deusex/shop-passwords-tab.html')
+    @@include('./deusex/shop-profile-tab.html')
+
+    @@include('./deusex/master-shop-management-tab.html')
+    @@include('./deusex/local-asset-profile-tab.html')
+    @@include('./deusex/global-asset-profile-tab.html')
+    @@include('./deusex/category-content-management-tab.html')
+    @@include('./deusex/shop-window-tab.html')
+    @@include('./deusex/api-check-tab.html')
+    
+    <div id="warehouse"></div>
+  </div>
+
+  <div id="debugNotification" class="hidden"></div>
+
+</body>
+</html>

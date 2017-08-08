@@ -1,0 +1,129 @@
+version 0.5.2 (21 Nov 2016)
+
+  Big update.
+  
+  Major:
+  - rework core module, added internal event emitter
+  - added groups
+  - added investigation board
+  - reworked filter page
+  - added character relations
+  = added page "About"
+  - design improvements
+  - big documentation work
+  
+  Minor:
+  - new diagrams - story number per character and symbol number per character
+  - saving filter result to CSV
+  - added adaptation mode on preview page
+  - updated templates
+  - errors fixing 
+
+version 0.4.4u3 (21 Jul 2016)
+
+  Another one minor update. 
+  
+  General:
+  - fixes and updates of export process
+  - reworked character filter page
+  - added character statistics to character filter page
+  
+  Support:
+  - new example database - Lord of the Rings
+  - new embedded templated
+  - extended example template library
+  - added presentation to archive
+  - documentation improvement - new section about handout export
+  
+  Server:
+  - replaced disabled attribute with readonly for textareas
+  - added notification mechanism for PUT queries  
+
+version 0.4.4u2 (14 Jun 2016)
+
+  This is a minor update. It includes some bug fixes and a bit improvements.
+  
+  Reworked handout preview:
+  - data is splitted by panels
+  - new options: Hide panels and Hide headers
+  
+  Features:
+  - added checkbox 'Show this item in handout' in profile configuration
+  - added subjective time in adaptations
+  
+  UI changes:
+  - added flexible panels to adaptations, character filter and timeline
+  
+  Bugs:
+  - fixed statistic diagrams for big numbers
+  
+  Other changes:
+  - added strict base validation with JSON-schema
+  - added gulp build scripts
+  - removed unused files
+  - replaced original vis with custom vis build to reduce NIMS size
+
+version 0.4.4 (21 Apr 2016)
+
+  This version include many defensive tools, export and UI improvements.
+  
+  Defensive tools:
+  - simple base check on base load
+  - references check on base load
+  - some Jasmine tests
+  - user actions log
+  
+  Briefing export changes:
+  - saving Mustache template as docx template
+  - added game name to export template
+  - added texts splitted by strings to export template
+  - added profile item by name to export template
+  - reworked export process to make it similar in text and docx modes
+  - exact multiselect of characters for export
+  
+  UI changes:
+  - replaced character/story selectors with type filter
+  - added filters to character/story multiselect lists
+  - added showing/hiding of panel content by header click
+  
+  Other changes:
+  - added last saving date storing
+  - implemented localization support
+  - added English translation
+
+version 0.4.3 (29 Feb 2016)
+
+  This update include statistics page and extended text export. Also there are many usability changes.
+  
+  Big changes:
+  - statistics and diagrams
+  - text export templates
+  
+  Other changes:
+  - added story-presence character selector
+  - added character filter column selector and size of filtered data
+  - added two panel mode in story page
+  - added adaptation filter by event
+  - added search selector for social network
+
+version 0.4.2 (18 Jan 2016)
+
+  NIMS was deeply reworked for server version without significant interface changes.
+  
+  Big changes:
+  - implemented Data API
+  
+  Other changes:
+  - new icons
+  - added placeholders
+  - swapping of events and profile fields was replaced by move operation
+  - character profile is showed automatically on character creation
+  - event creation information is cleaned on event creation
+  - improved adaptations annotation: fixed bugs and added new annotation "empty"
+  - fixed minor bugs
+
+version 0.4.1 (27 Nov 2015)
+
+  Initial release. 
+  Base tabs: overview, stories, characters, adaptations and briefings
+  Extra tabs: filter, social networks and timeline.
