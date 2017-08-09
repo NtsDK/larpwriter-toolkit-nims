@@ -20,12 +20,13 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         
         LocalDBMS.prototype.getEntityNamesArray = function(type, callback) {
-            var chain = CU.chainCheck([CU.isString(type), CU.elementFromEnum(type, Constants.ownedEntityTypes)]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
+            PC.precondition(chain, callback, () => {
                 switch(type){
                 case 'character':
                 case 'player':

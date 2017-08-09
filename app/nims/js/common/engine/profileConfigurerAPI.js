@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         
@@ -30,28 +31,28 @@ See the License for the specific language governing permissions and
         }
         
         var typeCheck = function(type){
-            return CU.chainCheck([CU.isString(type), CU.elementFromEnum(type, Constants.profileTypes)]);
+            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
         };
         var itemTypeCheck = function(type){
-            return CU.chainCheck([CU.isString(type), CU.elementFromEnum(type, R.keys(Constants.profileFieldTypes))]);
+            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, R.keys(Constants.profileFieldTypes))]);
         };
         var playerAccessCheck = function(type){
-            return CU.chainCheck([CU.isString(type), CU.elementFromEnum(type, Constants.playerAccessTypes)]);
+            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.playerAccessTypes)]);
         };
         
         LocalDBMS.prototype.getProfileStructure = function(type, callback){
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 callback(null, CU.clone(R.path(getPath(type), this.database)));
             });
         };
         // profile configurer
         LocalDBMS.prototype.createProfileItem = function(type, name, itemType, selectedIndex, callback) {
-            var chain = [typeCheck(type), CU.isString(name), CU.notEquals(name, 'name'), 
-                         CU.isNumber(selectedIndex), itemTypeCheck(itemType)]; 
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [typeCheck(type), PC.isString(name), PC.notEquals(name, 'name'), 
+                         PC.isNumber(selectedIndex), itemTypeCheck(itemType)]; 
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                chain = [CU.createEntityCheck(name, container.map(R.prop('name'))), CU.isInRange(selectedIndex, 0, container.length)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.createEntityCheck(name, container.map(R.prop('name'))), PC.isInRange(selectedIndex, 0, container.length)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     var value = Constants.profileFieldTypes[itemType].value;
                     var profileItem = {
                         name : name,
@@ -70,11 +71,11 @@ See the License for the specific language governing permissions and
         
         //profile configurer
         LocalDBMS.prototype.moveProfileItem = function(type, index, newIndex, callback){
-            var chain = [typeCheck(type),CU.isNumber(index),CU.isNumber(newIndex)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [typeCheck(type),PC.isNumber(index),PC.isNumber(newIndex)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                chain = [CU.isInRange(index, 0, container.length-1), CU.isInRange(newIndex, 0, container.length)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.isInRange(index, 0, container.length-1), PC.isInRange(newIndex, 0, container.length)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     if(newIndex > index){
                         newIndex--;
                     }
@@ -87,12 +88,12 @@ See the License for the specific language governing permissions and
         };
         // profile configurer
         LocalDBMS.prototype.removeProfileItem = function(type, index, profileItemName, callback) {
-            var chain = [typeCheck(type),CU.isNumber(index),CU.isString(profileItemName)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [typeCheck(type),PC.isNumber(index),PC.isString(profileItemName)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
                 var els = container.map((item, i) => i + '/' +item.name);
-                CU.precondition(CU.entityExists(index + '/' + profileItemName, els), callback, () => {
-                    CU.removeFromArrayByIndex(container, index);
+                PC.precondition(PC.entityExists(index + '/' + profileItemName, els), callback, () => {
+                    PC.removeFromArrayByIndex(container, index);
                     this.ee.trigger("removeProfileItem", arguments);
                     callback();
                 });
@@ -100,10 +101,10 @@ See the License for the specific language governing permissions and
         };
         // profile configurer
         LocalDBMS.prototype.changeProfileItemType = function(type, profileItemName, newType, callback) {
-            var chain = [typeCheck(type),CU.isString(profileItemName),itemTypeCheck(newType)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [typeCheck(type),PC.isString(profileItemName),itemTypeCheck(newType)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
+                PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
                     var profileItem = container.filter((elem) => elem.name === profileItemName)[0];
                     profileItem.type = newType;
                     profileItem.value = Constants.profileFieldTypes[newType].value;
@@ -114,10 +115,10 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.changeProfileItemPlayerAccess = function(type, profileItemName, playerAccessType, callback) {
-            var chain = [typeCheck(type),CU.isString(profileItemName),playerAccessCheck(playerAccessType)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [typeCheck(type),PC.isString(profileItemName),playerAccessCheck(playerAccessType)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
+                PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
                     var profileStructure = R.path(getPath(type), this.database);
                     var profileItem = R.find(R.propEq('name', profileItemName), profileStructure);
                     profileItem.playerAccess = playerAccessType;
@@ -128,9 +129,9 @@ See the License for the specific language governing permissions and
     
         // profile configurer
         LocalDBMS.prototype.renameProfileItem = function(type, newName, oldName, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.renameEntityCheck(oldName, newName, container.map(R.prop('name'))), callback, () => {
+                PC.precondition(PC.renameEntityCheck(oldName, newName, container.map(R.prop('name'))), callback, () => {
                     this.ee.trigger("renameProfileItem", [type, newName, oldName]);
                     container.filter(function(elem) {
                         return elem.name === oldName;
@@ -141,10 +142,10 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.doExportProfileItemChange = function(type, profileItemName, checked, callback) {
-            var chain = [typeCheck(type),CU.isString(profileItemName),CU.isBoolean(checked)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [typeCheck(type),PC.isString(profileItemName),PC.isBoolean(checked)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
+                PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
                     var profileItem = container.filter(function(elem) {
                         return elem.name === profileItemName;
                     })[0];
@@ -162,21 +163,21 @@ See the License for the specific language governing permissions and
             case "checkbox":
             case "number":
             case "multiEnum":
-                return CU.nil();
+                return PC.nil();
             case "enum":
-                return CU.isNotEmptyString(value);
+                return PC.isNotEmptyString(value);
             }
         };
     
         // profile configurer
         LocalDBMS.prototype.updateDefaultValue = function(type, profileItemName, value, callback) {
-            var chain = [typeCheck(type),CU.isString(profileItemName)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [typeCheck(type),PC.isString(profileItemName)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
+                PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
                     var info = container.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
-                    chain = [CU.getValueCheck(info.type)(value),typeSpecificPreconditions(info.type, value)];
-                    CU.precondition(CU.chainCheck(chain), callback, () => {
+                    chain = [PC.getValueCheck(info.type)(value),typeSpecificPreconditions(info.type, value)];
+                    PC.precondition(PC.chainCheck(chain), callback, () => {
                         var newOptions, newOptionsMap, missedValues;
                 
                         switch (info.type) {

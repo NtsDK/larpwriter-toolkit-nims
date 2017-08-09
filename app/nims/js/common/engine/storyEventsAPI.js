@@ -20,23 +20,24 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Errors        = opts.Errors      ;
         var Constants     = opts.Constants   ;
         
         //story events, event presence
         LocalDBMS.prototype.getStoryEvents = function(storyName, callback){
-            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 callback(null,  CU.clone(this.database.Stories[storyName].events));
             });
         };
         
         //story events
         LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, selectedIndex, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(selectedIndex), 
-                         CU.isString(eventName), CU.isNotEmptyString(eventName), CU.isString(eventText), CU.isNotEmptyString(eventText)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(selectedIndex), 
+                         PC.isString(eventName), PC.isNotEmptyString(eventName), PC.isString(eventText), PC.isNotEmptyString(eventText)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                CU.precondition(CU.isInRange(selectedIndex, 0, story.events.length), callback, () => {
+                PC.precondition(PC.isInRange(selectedIndex, 0, story.events.length), callback, () => {
                     var event = {
                         name : eventName,
                         text : eventText,
@@ -51,11 +52,11 @@ See the License for the specific language governing permissions and
     
         //story events
         LocalDBMS.prototype.moveEvent = function(storyName, index, newIndex, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index),CU.isNumber(newIndex)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index),PC.isNumber(newIndex)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var events = this.database.Stories[storyName].events;
-                chain = [CU.isInRange(index, 0, events.length-1), CU.isInRange(newIndex, 0, events.length)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.isInRange(index, 0, events.length-1), PC.isInRange(newIndex, 0, events.length)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     if(newIndex > index){
                         newIndex--;
                     }
@@ -69,11 +70,11 @@ See the License for the specific language governing permissions and
     
         //story events
         LocalDBMS.prototype.cloneEvent = function(storyName, index, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var events = this.database.Stories[storyName].events;
-                chain = [CU.isInRange(index, 0, events.length-1)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.isInRange(index, 0, events.length-1)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     events.splice(index, 0, CU.clone(events[index]));
                     callback();
                 });
@@ -82,11 +83,11 @@ See the License for the specific language governing permissions and
     
         //story events
         LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var events = this.database.Stories[storyName].events;
-                chain = [CU.isInRange(index, 0, events.length-2)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.isInRange(index, 0, events.length-2)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     var event1 = events[index];
                     var event2 = events[index + 1];
                     
@@ -110,11 +111,11 @@ See the License for the specific language governing permissions and
     
         //story events
         LocalDBMS.prototype.removeEvent = function(storyName, index, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)),CU.isNumber(index)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var events = this.database.Stories[storyName].events;
-                chain = [CU.isInRange(index, 0, events.length-1)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.isInRange(index, 0, events.length-1)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     CU.removeFromArrayByIndex(events, index);
                     callback();
                 });
@@ -123,12 +124,12 @@ See the License for the specific language governing permissions and
     
         // story events, preview, adaptations
         LocalDBMS.prototype.setEventOriginProperty = function(storyName, index, property, value, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(index), 
-                         CU.isString(property), CU.elementFromEnum(property, Constants.originProperties), CU.isString(value)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index), 
+                         PC.isString(property), PC.elementFromEnum(property, Constants.originProperties), PC.isString(value)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                chain = [CU.isInRange(index, 0, story.events.length-1)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.isInRange(index, 0, story.events.length-1)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     story.events[index][property] = value;
                     callback();
                 });

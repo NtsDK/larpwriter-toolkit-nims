@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
 
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -61,19 +62,19 @@ See the License for the specific language governing permissions and
         dbmsUtils._getProfileBinding = _getProfileBinding;
         
         LocalDBMS.prototype.getProfileBinding = function(type, name, callback) {
-            var conditions = [CU.isString(type), CU.elementFromEnum(type, Constants.profileTypes), 
-                              CU.isString(name), CU.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
-            CU.precondition(CU.chainCheck(conditions), callback, () => {
+            var conditions = [PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes), 
+                              PC.isString(name), PC.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
+            PC.precondition(PC.chainCheck(conditions), callback, () => {
                 callback(null, _getProfileBinding(type, name, this.database));
             });
         };
         
         LocalDBMS.prototype.createBinding = function(characterName, playerName, callback) {
             var bindings = R.path(path, this.database);
-            var conditions = [CU.isString(characterName), CU.entityExists(characterName, R.keys(this.database.Characters)),
-                              CU.isString(playerName), CU.entityExists(playerName, R.keys(this.database.Players)),
-                              CU.entityIsNotUsed(characterName, R.keys(bindings)), CU.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
-            CU.precondition(CU.chainCheck(conditions), callback, () => {
+            var conditions = [PC.isString(characterName), PC.entityExists(characterName, R.keys(this.database.Characters)),
+                              PC.isString(playerName), PC.entityExists(playerName, R.keys(this.database.Players)),
+                              PC.entityIsNotUsed(characterName, R.keys(bindings)), PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
+            PC.precondition(PC.chainCheck(conditions), callback, () => {
                 bindings[characterName] = playerName;
                 if(callback) callback();
             });
@@ -81,10 +82,10 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.removeBinding = function(characterName, playerName, callback) {
             var bindingArr = R.toPairs(R.path(path, this.database)).map(pair => pair[0] + '/' + pair[1]);
-            var conditions = [CU.isString(characterName), CU.entityExists(characterName, R.keys(this.database.Characters)),
-                              CU.isString(playerName), CU.entityExists(playerName, R.keys(this.database.Players)),
-                              CU.entityExists(characterName + '/' + playerName, bindingArr)];
-            CU.precondition(CU.chainCheck(conditions), callback, () => {
+            var conditions = [PC.isString(characterName), PC.entityExists(characterName, R.keys(this.database.Characters)),
+                              PC.isString(playerName), PC.entityExists(playerName, R.keys(this.database.Players)),
+                              PC.entityExists(characterName + '/' + playerName, bindingArr)];
+            PC.precondition(PC.chainCheck(conditions), callback, () => {
                 delete R.path(path, this.database)[characterName];
                 if(callback) callback();
             });

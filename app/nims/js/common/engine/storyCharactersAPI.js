@@ -20,13 +20,14 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
         var Constants     = opts.Constants   ;
         
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
-            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 var localCharacters = this.database.Stories[storyName].characters;
                 callback(null,  Object.keys(localCharacters).sort(CU.charOrdA));
             });
@@ -34,17 +35,17 @@ See the License for the specific language governing permissions and
     
         //story characters
         LocalDBMS.prototype.getStoryCharacters = function(storyName, callback){
-            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 callback(null,  CU.clone(this.database.Stories[storyName].characters));
             });
         };
     
         //story characters
         LocalDBMS.prototype.addStoryCharacter = function(storyName, characterName, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.entityExistsCheck(characterName, R.keys(this.database.Characters))];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.entityExistsCheck(characterName, R.keys(this.database.Characters))];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                CU.precondition(CU.entityIsNotUsed(characterName, R.keys(story.characters)), callback, () => {
+                PC.precondition(PC.entityIsNotUsed(characterName, R.keys(story.characters)), callback, () => {
                     story.characters[characterName] = {
                             name : characterName,
                             inventory : "",
@@ -58,11 +59,11 @@ See the License for the specific language governing permissions and
     
         //story characters
         LocalDBMS.prototype.switchStoryCharacters = function(storyName, fromName, toName, callback){
-            var cond = CU.entityExistsCheck(storyName, R.keys(this.database.Stories));
-            CU.precondition(cond, callback, () => {
+            var cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
+            PC.precondition(cond, callback, () => {
                 var story = this.database.Stories[storyName];
-                cond = CU.switchEntityCheck(fromName, toName, R.keys(this.database.Characters), R.keys(story.characters))
-                CU.precondition(cond, callback, () => {
+                cond = PC.switchEntityCheck(fromName, toName, R.keys(this.database.Characters), R.keys(story.characters))
+                PC.precondition(cond, callback, () => {
                     
                     story.characters[toName] = story.characters[fromName];
                     story.characters[toName].name = toName;
@@ -82,10 +83,10 @@ See the License for the specific language governing permissions and
     
         //story characters
         LocalDBMS.prototype.removeStoryCharacter = function(storyName, characterName, callback){
-            var cond = CU.entityExistsCheck(storyName, R.keys(this.database.Stories));
-            CU.precondition(cond, callback, () => {
+            var cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
+            PC.precondition(cond, callback, () => {
                 var story = this.database.Stories[storyName];
-                CU.precondition(CU.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
+                PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
                     delete story.characters[characterName];
                     story.events.forEach(function (event) {
                         delete event.characters[characterName];
@@ -97,10 +98,10 @@ See the License for the specific language governing permissions and
         
         // story characters
         LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isString(inventory)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(inventory)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                CU.precondition(CU.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
+                PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
                     story.characters[characterName].inventory = inventory;
                     callback();
                 });
@@ -109,11 +110,11 @@ See the License for the specific language governing permissions and
     
         //story characters
         LocalDBMS.prototype.onChangeCharacterActivity = function(storyName, characterName, activityType, checked, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isString(activityType), 
-                         CU.elementFromEnum(activityType, Constants.characterActivityTypes) , CU.isBoolean(checked)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(activityType), 
+                         PC.elementFromEnum(activityType, Constants.characterActivityTypes) , PC.isBoolean(checked)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                CU.precondition(CU.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
+                PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
                     var character = story.characters[characterName];
                     if (checked) {
                         character.activity[activityType] = true;
@@ -127,13 +128,13 @@ See the License for the specific language governing permissions and
         
         //event presence
         LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(eventIndex)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                chain = [CU.entityExistsCheck(characterName, R.keys(story.characters)), CU.isInRange(eventIndex, 0, story.events.length - 1)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length - 1)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     var event = story.events[eventIndex];
-                    CU.precondition(CU.entityIsNotUsed(characterName, R.keys(event.characters)), callback, () => {
+                    PC.precondition(PC.entityIsNotUsed(characterName, R.keys(event.characters)), callback, () => {
                         event.characters[characterName] = {
                             text : "",
                             time : ""
@@ -146,13 +147,13 @@ See the License for the specific language governing permissions and
     
         // event presence
         LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isNumber(eventIndex)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                chain = [CU.entityExistsCheck(characterName, R.keys(story.characters)), CU.isInRange(eventIndex, 0, story.events.length - 1)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length - 1)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     var event = story.events[eventIndex];
-                    CU.precondition(CU.entityExists(characterName, R.keys(event.characters)), callback, () => {
+                    PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), callback, () => {
                         delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
                         callback();
                     });

@@ -146,7 +146,7 @@ See the License for the specific language governing permissions and
         var groupName = queryEl(root + ".save-entity-select").value.trim();
         DBMS.getGroup(groupName,  function(err, group){
             if(err) {Utils.handleError(err); return;}
-            var conflictTypes = CommonUtils.isFilterModelCompatibleWithProfiles(
+            var conflictTypes = ProjectUtils.isFilterModelCompatibleWithProfiles(
                     state.filterConfiguration.getBaseProfileSettings(), group.filterModel);
             if(conflictTypes.length != 0){
                 Utils.alert(strFormat(getL10n("groups-base-filter-is-incompatible-with-page-profiles"), [conflictTypes.join(',')]));

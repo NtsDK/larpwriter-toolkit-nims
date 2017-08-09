@@ -20,10 +20,11 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         
         LocalDBMS.prototype.log = function(userName, funcName, rewrite, params, callback) {
-            var chain = CU.chainCheck([CU.isString(userName), CU.isString(funcName), CU.isBoolean(rewrite), CU.isArray(params)]);
-            CU.precondition(chain, (err) => console.error(err), () => {
+            var chain = PC.chainCheck([PC.isString(userName), PC.isString(funcName), PC.isBoolean(rewrite), PC.isArray(params)]);
+            PC.precondition(chain, (err) => console.error(err), () => {
                 var info = [userName, new Date().toString(), funcName, JSON.stringify(params)];
                 if(this.database){
                     if(rewrite && this.database.Log[this.database.Log.length-1] != undefined){
@@ -44,7 +45,7 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.getLog = function(pageNumber, callback) {
-            CU.precondition(CU.isNumber(pageNumber), callback, () => {
+            PC.precondition(PC.isNumber(pageNumber), callback, () => {
                 var requestedLog = [];
                 for (var i = pageNumber*100; i < (pageNumber+1)*100; i++) {
                     if(this.database.Log[i]){

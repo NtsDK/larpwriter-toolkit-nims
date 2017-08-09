@@ -20,6 +20,8 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PU            = opts.ProjectUtils;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -29,19 +31,19 @@ See the License for the specific language governing permissions and
         };
         
         var groupCheck = function(groupName, database){
-            return CU.chainCheck([CU.isString(groupName), CU.entityExists(groupName, R.keys(database.Groups))]);
+            return PC.chainCheck([PC.isString(groupName), PC.entityExists(groupName, R.keys(database.Groups))]);
         };
         
         LocalDBMS.prototype.getGroup = function(groupName, callback) {
-            CU.precondition(groupCheck(groupName, this.database), callback, () => {
+            PC.precondition(groupCheck(groupName, this.database), callback, () => {
                 callback(null, CU.clone(this.database.Groups[groupName]));
             });
         };
         
         var _getCharacterGroupTexts = function(groups, info, profileId){
-            var dataArray = CU.getDataArray(info, profileId);
+            var dataArray = PU.getDataArray(info, profileId);
             var array = R.values(groups).filter(function(group){
-                return group.doExport && CU.acceptDataRow(group.filterModel, dataArray);
+                return group.doExport && PU.acceptDataRow(group.filterModel, dataArray);
             }).map(function(group){
                 return {
                     groupName: group.name,
@@ -82,7 +84,7 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.createGroup = function(groupName, callback) {
-            CU.precondition(CU.createEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
+            PC.precondition(PC.createEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
                 var newGroup = {
                     name : groupName,
                     masterDescription : "",
@@ -98,7 +100,7 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.renameGroup = function(fromName, toName, callback) {
-            CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), callback, () => {
+            PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), callback, () => {
                 var data = this.database.Groups[fromName];
                 data.name = toName;
                 this.database.Groups[toName] = data;
@@ -111,7 +113,7 @@ See the License for the specific language governing permissions and
         };
     
         LocalDBMS.prototype.removeGroup = function(groupName, callback) {
-            CU.precondition(CU.removeEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
+            PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
                 delete this.database.Groups[groupName];
                 this.ee.trigger("removeGroup", arguments);
                 if(callback) callback();
@@ -119,8 +121,8 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.saveFilterToGroup = function(groupName, filterModel, callback) {
-            CU.precondition(groupCheck(groupName, this.database), callback, () => {
-                var conflictTypes = CU.isFilterModelCompatibleWithProfiles({
+            PC.precondition(groupCheck(groupName, this.database), callback, () => {
+                var conflictTypes = PU.isFilterModelCompatibleWithProfiles({
                     characters: this.database.CharacterProfileStructure,
                     players: this.database.PlayerProfileStructure
                 }, filterModel);
@@ -134,10 +136,10 @@ See the License for the specific language governing permissions and
         };
     
         LocalDBMS.prototype.updateGroupField = function(groupName, fieldName, value, callback) {
-            var chain = CU.chainCheck([groupCheck(groupName, this.database), 
-                                       CU.isString(fieldName), CU.elementFromEnum(fieldName, Constants.groupEditableItems),
-                                       fieldName === 'doExport' ? CU.isBoolean(value) : CU.isString(value)]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([groupCheck(groupName, this.database), 
+                                       PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
+                                       fieldName === 'doExport' ? PC.isBoolean(value) : PC.isString(value)]);
+            PC.precondition(chain, callback, () => {
                 var profileInfo = this.database.Groups[groupName];
                 profileInfo[fieldName] = value;
                 if(callback) callback();
@@ -174,7 +176,7 @@ See the License for the specific language governing permissions and
                         if(err) {callback(err); return;}
                         that.getExtendedProfileBindings(function(err, bindingData){
                             if(err) {callback(err); return;}
-                            var info = CU.makeGroupedProfileFilterInfo({
+                            var info = PU.makeGroupedProfileFilterInfo({
                                 'characters' : charactersInfo,
                                 'players' : playersInfo,
                                 charactersSummary : charactersSummary,
@@ -192,9 +194,9 @@ See the License for the specific language governing permissions and
             var groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
             characterNames.forEach(function(characterName){
                 var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
-                var dataArray = CU.getDataArray(info, profileId);
+                var dataArray = PU.getDataArray(info, profileId);
                 groupNames.forEach(function(groupName){
-                    if(CU.acceptDataRow(groups[groupName].filterModel, dataArray)){
+                    if(PU.acceptDataRow(groups[groupName].filterModel, dataArray)){
                         groupCharacterSets[groupName][characterName] = true;
                     }
                 });

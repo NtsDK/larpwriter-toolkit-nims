@@ -16,11 +16,11 @@ See the License for the specific language governing permissions and
 
 (function(callback){
         
-    function ProjectUtils(exports, R, Constants, Errors) {
+    function ProjectUtils(exports, R, Constants, Errors, CU) {
         
         exports.acceptDataRow = R.curry(function (model, dataString) {
             var value, regex, result;
-            var dataMap = exports.arr2map(dataString, 'itemName');
+            var dataMap = CU.arr2map(dataString, 'itemName');
             return model.every(function(filterItem){
                 result = true;
                 value = dataMap[filterItem.name].value;
@@ -151,9 +151,9 @@ See the License for the specific language governing permissions and
                 return characterName;
             } else if(profileItemName == Constants.CHAR_OWNER){
                 return info.characters.owners[characterName];
-            } else if(exports.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ){
+            } else if(CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ){
                 return info.charactersSummary[characterName][profileItemName.substring(Constants.SUMMARY_PREFIX.length)];
-            } else if(exports.startsWith(profileItemName, Constants.CHAR_PREFIX) ){
+            } else if(CU.startsWith(profileItemName, Constants.CHAR_PREFIX) ){
                 return info.characters.profiles[characterName][profileItemName.substring(Constants.CHAR_PREFIX.length)];
             } else {
                 throw new Error('Unexpected profileItemName: ' + profileItemName);
@@ -162,29 +162,29 @@ See the License for the specific language governing permissions and
         var getCharacterInfoValue2 = function(info, profileId, profileItemName){
             if (profileItemName == Constants.CHAR_NAME || 
                     profileItemName == Constants.CHAR_OWNER || 
-                    exports.startsWith(profileItemName, Constants.SUMMARY_PREFIX) || 
-                    exports.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
+                    CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX) || 
+                    CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
                 if(profileId[0] === '') return undefined;
                 var characterName = profileId[0];
                 if(profileItemName == Constants.CHAR_NAME){
                     return characterName;
                 } else if(profileItemName == Constants.CHAR_OWNER){
                     return info.characters.owners[characterName];
-                } else if(exports.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ){
+                } else if(CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ){
                     return info.charactersSummary[characterName][profileItemName.substring(Constants.SUMMARY_PREFIX.length)];
-                } else if(exports.startsWith(profileItemName, Constants.CHAR_PREFIX) ){
+                } else if(CU.startsWith(profileItemName, Constants.CHAR_PREFIX) ){
                     return info.characters.profiles[characterName][profileItemName.substring(Constants.CHAR_PREFIX.length)];
                 } 
             } else if(profileItemName == Constants.PLAYER_NAME || 
                     profileItemName == Constants.PLAYER_OWNER || 
-                    exports.startsWith(profileItemName, Constants.PLAYER_PREFIX)){
+                    CU.startsWith(profileItemName, Constants.PLAYER_PREFIX)){
                 if(profileId[1] === '') return undefined;
                 var playerName = profileId[1];
                 if(profileItemName == Constants.PLAYER_NAME){
                     return playerName;
                 } else if(profileItemName == Constants.PLAYER_OWNER){
                     return info.players.owners[playerName];
-                } else if(exports.startsWith(profileItemName, Constants.PLAYER_PREFIX) ){
+                } else if(CU.startsWith(profileItemName, Constants.PLAYER_PREFIX) ){
                     return info.players.profiles[playerName][profileItemName.substring(Constants.PLAYER_PREFIX.length)];
                 } 
             } else {
@@ -241,5 +241,5 @@ See the License for the specific language governing permissions and
     callback(ProjectUtils);
 
 })(function(api){
-    typeof exports === 'undefined'? api(this['ProjectUtils'] = {}, R, Constants, Errors) : module.exports = api;
+    typeof exports === 'undefined'? api(this['ProjectUtils'] = {}, R, Constants, Errors, CommonUtils) : module.exports = api;
 }.bind(this));

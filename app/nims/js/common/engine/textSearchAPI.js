@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
 
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
 
@@ -40,9 +41,9 @@ See the License for the specific language governing permissions and
 //        };
         
         LocalDBMS.prototype.getTexts = function(searchStr, textTypes, caseSensitive, callback) {
-            var check = CU.chainCheck([CU.isString(searchStr), CU.isArray(textTypes), 
-                                       textTypesPrecondition(textTypes), CU.isBoolean(caseSensitive)]);
-            CU.precondition(check, callback, () => {
+            var check = PC.chainCheck([PC.isString(searchStr), PC.isArray(textTypes), 
+                                       textTypesPrecondition(textTypes), PC.isBoolean(caseSensitive)]);
+            PC.precondition(check, callback, () => {
                 var test;
                 if(caseSensitive){
                     test = (text) => (text.indexOf(searchStr) != -1);
@@ -115,7 +116,7 @@ See the License for the specific language governing permissions and
             }));
         };
         
-        var textTypesPrecondition = CU.elementsFromEnum(R.__, R.keys(searchers));
+        var textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
     
     };
     callback(textSearchAPI);

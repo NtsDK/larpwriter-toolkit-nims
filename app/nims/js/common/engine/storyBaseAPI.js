@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Errors        = opts.Errors      ;
         
         // stories, timeline
@@ -33,14 +34,14 @@ See the License for the specific language governing permissions and
         
         //stories
         LocalDBMS.prototype.getMasterStory = function(storyName, callback){
-            CU.precondition(CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 callback(null, this.database.Stories[storyName].story);
             });
         };
         //stories
         LocalDBMS.prototype.setMasterStory = function(storyName, value, callback){
-            var chain = [CU.entityExistsCheck(storyName, R.keys(this.database.Stories)), CU.isString(value)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(value)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.Stories[storyName].story = value;
                 callback();
             });
@@ -48,7 +49,7 @@ See the License for the specific language governing permissions and
     
         // stories
         LocalDBMS.prototype.createStory = function(storyName, callback){
-            CU.precondition(CU.createEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.createEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 this.database.Stories[storyName] = {
                         name : storyName,
                         story : "",
@@ -61,7 +62,7 @@ See the License for the specific language governing permissions and
         };
         // stories
         LocalDBMS.prototype.renameStory = function(fromName, toName, callback){
-            CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Stories)), callback, () => {
                 var data = this.database.Stories[fromName];
                 data.name = toName;
                 this.database.Stories[toName] = data;
@@ -73,7 +74,7 @@ See the License for the specific language governing permissions and
     
         // stories
         LocalDBMS.prototype.removeStory = function(storyName, callback){
-            CU.precondition(CU.removeEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.removeEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 delete this.database.Stories[storyName];
                 this.ee.trigger("removeStory", arguments);
                 callback();

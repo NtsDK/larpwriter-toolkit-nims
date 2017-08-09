@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var listeners     = opts.listeners   ;
         var Errors        = opts.Errors      ;
         var Constants     = opts.Constants   ;
@@ -39,14 +40,14 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.assignAdmin = function(name, callback){
-            CU.precondition(CU.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 this.database.ManagementInfo.admin = name;
                 this.publishPermissionsUpdate();
                 callback();
             });
         };
         LocalDBMS.prototype.assignEditor = function(name, callback){
-            CU.precondition(CU.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 this.database.ManagementInfo.editor = name;
                 this.publishPermissionsUpdate();
                 callback();
@@ -58,8 +59,8 @@ See the License for the specific language governing permissions and
             callback();
         };
         LocalDBMS.prototype.changeAdaptationRightsMode = function(mode, callback){
-            var chain = [CU.isString(mode), CU.elementFromEnum(mode, ['ByStory','ByCharacter'])];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.isString(mode), PC.elementFromEnum(mode, ['ByStory','ByCharacter'])];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.ManagementInfo.adaptationRights = mode;
                 this.publishPermissionsUpdate();
                 callback();
@@ -67,7 +68,7 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.removeMaster = function(name, callback){
-            CU.precondition(CU.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 delete this.database.ManagementInfo.UsersInfo[name];
                 this.publishPermissionsUpdate();
                 callback();
@@ -118,7 +119,7 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.removePlayerLogin = function(userName, callback) {
-            CU.precondition(CU.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), callback, () => {
+            PC.precondition(PC.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), callback, () => {
                 delete this.database.ManagementInfo.PlayersInfo[userName];
                 if(callback) callback();
             });
@@ -129,7 +130,7 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.setWelcomeText = function(text, callback){
-            CU.precondition(CU.isString(text), callback, () => {
+            PC.precondition(PC.isString(text), callback, () => {
                 this.database.ManagementInfo.WelcomeText = text;
                 if(callback) callback();
             });
@@ -140,8 +141,8 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.setPlayerOption = function(name, value, callback){
-            var chain = [CU.isString(name), CU.elementFromEnum(name, Constants.playersOptionTypes), CU.isBoolean(value)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes), PC.isBoolean(value)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.ManagementInfo.PlayersOptions[name] = value;
                 if(callback) callback();
             });

@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -35,9 +36,9 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.addBoardGroup = function(groupName, callback) {
             var container = R.path(groupsPath, this.database);
-            var chain = CU.chainCheck([CU.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
-                                       CU.entityIsNotUsed(groupName, R.keys(container))]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
+                                       PC.entityIsNotUsed(groupName, R.keys(container))]);
+            PC.precondition(chain, callback, () => {
                 container[groupName] = {
                         name:groupName,
                         notes: ""
@@ -49,8 +50,8 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.switchGroups = function(fromName, toName, callback) {
             var container = R.path(groupsPath, this.database);
-            var check = CU.switchEntityCheck(fromName, toName, R.keys(this.database.Groups), R.keys(container));
-            CU.precondition(check, callback, () => {
+            var check = PC.switchEntityCheck(fromName, toName, R.keys(this.database.Groups), R.keys(container));
+            PC.precondition(check, callback, () => {
                 var data = container[fromName];
                 data.name = toName;
                 container[toName] = data;
@@ -62,9 +63,9 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.setGroupNotes = function(groupName, notes, callback) {
             var container = R.path(groupsPath, this.database);
-            var chain = CU.chainCheck([CU.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
-                                       CU.entityExists(groupName, R.keys(container)), CU.isString(notes)]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
+                                       PC.entityExists(groupName, R.keys(container)), PC.isString(notes)]);
+            PC.precondition(chain, callback, () => {
                 container[groupName].notes = notes;
                 if (callback) callback();
             });
@@ -72,9 +73,9 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.removeBoardGroup = function(groupName, callback) {
             var container = R.path(groupsPath, this.database);
-            var chain = CU.chainCheck([CU.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
-                                       CU.entityExists(groupName, R.keys(container))]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
+                                       PC.entityExists(groupName, R.keys(container))]);
+            PC.precondition(chain, callback, () => {
                 delete container[groupName];
                 this.ee.trigger("nodeRemoved", [groupName, 'groups']);
                 if(callback) callback();
@@ -83,7 +84,7 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.createResource = function(resourceName, callback) {
             var container = R.path(resourcesPath, this.database);
-            CU.precondition(CU.createEntityCheck(resourceName, R.keys(container)), callback, () => {
+            PC.precondition(PC.createEntityCheck(resourceName, R.keys(container)), callback, () => {
                 container[resourceName] = {
                     name : resourceName
                 };
@@ -94,7 +95,7 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.renameResource = function(fromName, toName, callback) {
             var container = R.path(resourcesPath, this.database);
-            CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
+            PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
                 var data = container[fromName];
                 data.name = toName;
                 container[toName] = data;
@@ -106,7 +107,7 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.removeResource = function(resourceName, callback) {
             var container = R.path(resourcesPath, this.database);
-            CU.precondition(CU.removeEntityCheck(resourceName, R.keys(container)), callback, () => {
+            PC.precondition(PC.removeEntityCheck(resourceName, R.keys(container)), callback, () => {
                 delete container[resourceName];
                 this.ee.trigger("nodeRemoved", [resourceName, 'resources']);
                 if (callback) callback();
@@ -123,16 +124,16 @@ See the License for the specific language governing permissions and
         var edgeEndCheck = function(id, database){
             var info = _edgeEndId2info(id);
             var container = R.path(info[0] === 'groups' ? groupsPath : resourcesPath, database);
-            return CU.entityExists(info[1], R.keys(container));
+            return PC.entityExists(info[1], R.keys(container));
         };
         
         LocalDBMS.prototype.addEdge = function(fromId, toId, callback) {
-            var chain = CU.chainCheck([CU.isString(fromId),CU.isString(toId)]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([PC.isString(fromId),PC.isString(toId)]);
+            PC.precondition(chain, callback, () => {
                 var container = R.path(relationsPath, this.database);
-                chain = CU.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database), edgeEndCheck(toId, this.database), 
+                chain = PC.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database), edgeEndCheck(toId, this.database), 
                                        edgeNotExistCheck(fromId, toId, container)]);
-                CU.precondition(chain, callback, () => {
+                PC.precondition(chain, callback, () => {
                     container[fromId][toId] = '';
                     if (callback) callback();
                 });
@@ -144,17 +145,17 @@ See the License for the specific language governing permissions and
         };
         
         var edgeExistsCheck = function(fromId, toId, container){
-            return CU.chainCheck([CU.isString(fromId), CU.isString(toId), CU.entityExists(fromId + '-' + toId, getEdgeList(container))]);
+            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityExists(fromId + '-' + toId, getEdgeList(container))]);
         };
         
         var edgeNotExistCheck = function(fromId, toId, container){
-            return CU.chainCheck([CU.isString(fromId), CU.isString(toId), CU.entityIsNotUsed(fromId + '-' + toId, getEdgeList(container))]);
+            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityIsNotUsed(fromId + '-' + toId, getEdgeList(container))]);
         };
 
         LocalDBMS.prototype.setEdgeLabel = function(fromId, toId, label, callback) {
             var container = R.path(relationsPath, this.database);
-            var chain = CU.chainCheck([edgeExistsCheck(fromId, toId, container), CU.isString(label)]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([edgeExistsCheck(fromId, toId, container), PC.isString(label)]);
+            PC.precondition(chain, callback, () => {
                 container[fromId][toId] = label;
                 if (callback) callback();
             });
@@ -162,7 +163,7 @@ See the License for the specific language governing permissions and
         
         LocalDBMS.prototype.removeEdge = function(fromId, toId, callback) {
             var container = R.path(relationsPath, this.database);
-            CU.precondition(edgeExistsCheck(fromId, toId, container), callback, () => {
+            PC.precondition(edgeExistsCheck(fromId, toId, container), callback, () => {
                 delete container[fromId][toId];
                 if (callback) callback();
             });

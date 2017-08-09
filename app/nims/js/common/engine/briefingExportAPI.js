@@ -19,17 +19,18 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var dbmsUtils     = opts.dbmsUtils   ;
         
         var check = function(selChars, selStories, exportOnlyFinishedStories, database){
-            var charsCheck = CU.eitherCheck(CU.chainCheck([CU.isArray(selChars), CU.entitiesExist(selChars, R.keys(database.Characters))]), CU.isNil(selChars));
-            var storiesCheck = CU.eitherCheck(CU.chainCheck([CU.isArray(selStories), CU.entitiesExist(selStories, R.keys(database.Stories))]), CU.isNil(selStories));
-            return CU.chainCheck([charsCheck, storiesCheck, CU.isBoolean(exportOnlyFinishedStories)]);
+            var charsCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selChars), PC.entitiesExist(selChars, R.keys(database.Characters))]), PC.isNil(selChars));
+            var storiesCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selStories), PC.entitiesExist(selStories, R.keys(database.Stories))]), PC.isNil(selStories));
+            return PC.chainCheck([charsCheck, storiesCheck, PC.isBoolean(exportOnlyFinishedStories)]);
         };
         
         LocalDBMS.prototype.getBriefingData = function(selCharacters, selStories, exportOnlyFinishedStories, callback) {
-            CU.precondition(check(selCharacters, selStories, exportOnlyFinishedStories, this.database), callback, () => {
+            PC.precondition(check(selCharacters, selStories, exportOnlyFinishedStories, this.database), callback, () => {
                 var that = this;
                 selCharacters = selCharacters || R.keys(this.database.Characters);
                 selStories = selStories || R.keys(this.database.Stories);

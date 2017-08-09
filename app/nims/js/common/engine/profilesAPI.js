@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -36,36 +37,36 @@ See the License for the specific language governing permissions and
         }
         
         var typeCheck = function(type){
-            return CU.chainCheck([CU.isString(type), CU.elementFromEnum(type, Constants.profileTypes)]);
+            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
         };
         
         LocalDBMS.prototype.getProfileNamesArray = function(type, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
             });
         };
         
         // profile, preview
         LocalDBMS.prototype.getProfile = function(type, name, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.entityExistsCheck(name, R.keys(container)), callback, () => {
+                PC.precondition(PC.entityExistsCheck(name, R.keys(container)), callback, () => {
                     callback(null, CU.clone(container[name]));
                 });
             });
         };
         // social network, character filter
         LocalDBMS.prototype.getAllProfiles = function(type, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 callback(null, CU.clone(R.path(getPath(type), this.database)));
             });
         };
         
         // profiles
         LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.createEntityCheck(characterName, R.keys(container)), callback, () => {
+                PC.precondition(PC.createEntityCheck(characterName, R.keys(container)), callback, () => {
                     var newCharacter = {
                             name : characterName
                     };
@@ -88,9 +89,9 @@ See the License for the specific language governing permissions and
         };
         // profiles
         LocalDBMS.prototype.renameProfile = function(type, fromName, toName, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
+                PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
                     var data = container[fromName];
                     data.name = toName;
                     container[toName] = data;
@@ -105,9 +106,9 @@ See the License for the specific language governing permissions and
     
         // profiles
         LocalDBMS.prototype.removeProfile = function(type, characterName, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 var container = R.path(getPath(type), this.database);
-                CU.precondition(CU.removeEntityCheck(characterName, R.keys(container)), callback, () => {
+                PC.precondition(PC.removeEntityCheck(characterName, R.keys(container)), callback, () => {
                     delete container[characterName];
                     this.ee.trigger("removeProfile", arguments);
                     if(callback) callback();
@@ -121,25 +122,25 @@ See the License for the specific language governing permissions and
             case "string":
             case "checkbox":
             case "number":
-                return CU.nil();
+                return PC.nil();
             case "enum":
-                return CU.elementFromEnum(value, itemDesc.value.split(','));
+                return PC.elementFromEnum(value, itemDesc.value.split(','));
             case "multiEnum":
-                return CU.eitherCheck(CU.elementsFromEnum(value.split(','), itemDesc.value.split(',')), CU.isEmptyString(value));
+                return PC.eitherCheck(PC.elementsFromEnum(value.split(','), itemDesc.value.split(',')), PC.isEmptyString(value));
             }
         };
         
         // profile editor
         LocalDBMS.prototype.updateProfileField = function(type, characterName, fieldName, itemType, value, callback) {
-            CU.precondition(typeCheck(type), callback, () => {
+            PC.precondition(typeCheck(type), callback, () => {
                 var container = R.path(getPath(type), this.database);
                 var containerStructure = R.path(getStructurePath(type), this.database);
-                var arr = [CU.entityExistsCheck(characterName, R.keys(container)), 
-                           CU.entityExistsCheck(fieldName +'/' + itemType, containerStructure.map(item => item.name + '/' + item.type)), 
-                           CU.getValueCheck(itemType)(value)];
-                CU.precondition(CU.chainCheck(arr), callback, () => {
+                var arr = [PC.entityExistsCheck(characterName, R.keys(container)), 
+                           PC.entityExistsCheck(fieldName +'/' + itemType, containerStructure.map(item => item.name + '/' + item.type)), 
+                           PC.getValueCheck(itemType)(value)];
+                PC.precondition(PC.chainCheck(arr), callback, () => {
                     var itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
-                    CU.precondition(typeSpecificPreconditions(itemType, itemDesc, value), callback, () => {
+                    PC.precondition(typeSpecificPreconditions(itemType, itemDesc, value), callback, () => {
                         var profileInfo = container[characterName];
                         switch (itemType) {
                         case "text":

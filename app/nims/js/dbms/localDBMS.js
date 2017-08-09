@@ -27,6 +27,8 @@ function makeLocalDBMS(fullVersion){
     var opts = {
         Migrator     : Migrator    ,
         CommonUtils  : CommonUtils ,
+        ProjectUtils : ProjectUtils,
+        Precondition : Precondition,
         EventEmitter : EventEmitter,
         R            : R           ,
         Ajv          : Ajv         ,

@@ -18,15 +18,16 @@ See the License for the specific language governing permissions and
 
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var dateFormat    = opts.dateFormat  ;
         
         var characterCheck = function(characterName, database){
-            return CU.chainCheck([CU.isString(characterName), CU.entityExists(characterName, R.keys(database.Characters))]);
+            return PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
         } 
         
         // preview
         LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
-            CU.precondition(characterCheck(characterName, this.database), callback, () => {
+            PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var array = R.values(this.database.Stories).filter( story => story.characters[characterName] !== undefined &&
                         story.characters[characterName].inventory !== "")
                         .map(story => {
@@ -41,7 +42,7 @@ See the License for the specific language governing permissions and
     
         // preview
         LocalDBMS.prototype.getCharacterEventGroupsByStory = function(characterName, callback) {
-            CU.precondition(characterCheck(characterName, this.database), callback, () => {
+            PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var eventGroups = [];
         
                 var events;
@@ -77,7 +78,7 @@ See the License for the specific language governing permissions and
     
         // preview
         LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback) {
-            CU.precondition(characterCheck(characterName, this.database), callback, () => {
+            PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var allEvents = [];
         
                 var that = this;
@@ -162,7 +163,7 @@ See the License for the specific language governing permissions and
         
         // character profile
         LocalDBMS.prototype.getCharacterReport = function(characterName, callback){
-            CU.precondition(characterCheck(characterName, this.database), callback, () => {
+            PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var characterReport = R.values(this.database.Stories).filter(function(story){
                     return story.characters[characterName] !== undefined;
                 }).map(function(story){

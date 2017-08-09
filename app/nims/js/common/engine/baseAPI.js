@@ -19,6 +19,7 @@ See the License for the specific language governing permissions and
     function baseAPI(LocalDBMS, opts) {
         var Migrator     = opts.Migrator    ;
         var CU           = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var EventEmitter = opts.EventEmitter;
         var Constants     = opts.Constants   ;
         
@@ -52,8 +53,8 @@ See the License for the specific language governing permissions and
     
         // overview
         LocalDBMS.prototype.setMetaInfo = function(name, value, callback){
-            var chain = CU.chainCheck([CU.isString(name), CU.elementFromEnum(name, Constants.metaInfoList), CU.isString(value)]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoList), PC.isString(value)]);
+            PC.precondition(chain, callback, () => {
                 this.database.Meta[name] = value;
                 if(callback) callback();
             });

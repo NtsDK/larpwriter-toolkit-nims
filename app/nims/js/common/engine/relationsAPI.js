@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
@@ -44,11 +45,11 @@ See the License for the specific language governing permissions and
         };
         
         var characterCheck = function(characterName, database){
-            return CU.chainCheck([CU.isString(characterName), CU.entityExists(characterName, R.keys(database.Characters))]);
+            return PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
         };
         
         LocalDBMS.prototype.getRelationsSummary = function(characterName, callback){
-            CU.precondition(characterCheck(characterName, this.database), callback, () => {
+            PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var relData = R.path(relationsPath, this.database);
                 var reverseRelations = {};
                 R.keys(relData).forEach(function(revCharName){
@@ -67,8 +68,8 @@ See the License for the specific language governing permissions and
         };
         
         LocalDBMS.prototype.setCharacterRelation = function(fromCharacter, toCharacter, text, callback){
-            var chain = CU.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), CU.isString(text)]);
-            CU.precondition(chain, callback, () => {
+            var chain = PC.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), PC.isString(text)]);
+            PC.precondition(chain, callback, () => {
                 var relData = R.path(relationsPath, this.database);
                 text = text.trim();
                 if(text === ''){

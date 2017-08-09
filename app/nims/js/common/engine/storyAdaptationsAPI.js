@@ -20,12 +20,13 @@ See the License for the specific language governing permissions and
         
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
+        var PC            = opts.Precondition;
         var dbmsUtils     = opts.dbmsUtils   ;
         var Constants     = opts.Constants   ;
         
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
-            CU.precondition(CU.isBoolean(showOnlyUnfinishedStories), callback, () => {
+            PC.precondition(PC.isBoolean(showOnlyUnfinishedStories), callback, () => {
                 var storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
                 var that = this;
                 storyArray = storyArray.map(function(elem){
@@ -59,8 +60,8 @@ See the License for the specific language governing permissions and
     
         //adaptations
         LocalDBMS.prototype.getStory = function(storyName, callback){
-            var chain = [CU.isString(storyName), CU.entityExists(storyName, R.keys(this.database.Stories))];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 callback(null, CU.clone(this.database.Stories[storyName]));
             });
         };
@@ -69,23 +70,23 @@ See the License for the specific language governing permissions and
             switch(type){
             case 'text':
             case 'time':
-                return CU.isString(value);
+                return PC.isString(value);
             case 'ready':
-                return CU.isBoolean(value);
+                return PC.isBoolean(value);
             };
             throw new Error('Unexpected type ' + type);
         };
         
         // preview, events
         LocalDBMS.prototype.setEventAdaptationProperty = function(storyName, eventIndex, characterName, type, value, callback){
-            var chain = [CU.isString(storyName), CU.entityExists(storyName, R.keys(this.database.Stories)), CU.isNumber(eventIndex), 
-                         CU.isString(type), CU.elementFromEnum(type, Constants.adaptationProperties), CU.isString(characterName)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            var chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex), 
+                         PC.isString(type), PC.elementFromEnum(type, Constants.adaptationProperties), PC.isString(characterName)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
-                chain = [CU.entityExists(characterName, R.keys(story.characters)), CU.isInRange(eventIndex, 0, story.events.length-1), getValueCheck(type, value)];
-                CU.precondition(CU.chainCheck(chain), callback, () => {
+                chain = [PC.entityExists(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length-1), getValueCheck(type, value)];
+                PC.precondition(PC.chainCheck(chain), callback, () => {
                     var event = story.events[eventIndex];
-                    CU.precondition(CU.entityExists(characterName, R.keys(event.characters)), callback, () => {
+                    PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), callback, () => {
                         event.characters[characterName][type] = value;
                         callback();
                     });
