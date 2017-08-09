@@ -89,63 +89,64 @@ body {
   background-color:  #ccc  !important;
 }
 
-#dataLoadButton, #toggleL10nButton{
+.dataLoadButton, 
+.toggleL10nButton{
   background-image: url("../images/folder29.svg");
 }
-#dataSaveButton{
+.dataSaveButton{
   background-image: url("../images/download149.svg");
   
 }
-#newBaseButton{
+.newBaseButton{
   background-image: url("../images/file11.svg");
 }
-#mainHelpButton{
+.mainHelpButton{
   background-image: url("../images/question5.svg");
 }
-#logoutButton{
+.logoutButton{
   background-image: url("../images/exit22.svg");
 }
-#testButton{
+.testButton{
   background-image: url("../images/long-checklist.svg");
 }
-#aboutButton{
+.aboutButton{
   background-image: url("../images/copyright.svg");
 }
 
-#chatButton{
+.chatButton{
   background: transparent url("../images/chat55.svg") no-repeat scroll 50% 0%;
 }
 
-#accessManagerButton{
+.accessManagerButton{
   background: transparent url("../images/business20.svg") no-repeat scroll 50% 50%;
 }
-#timelineButton{
+.timelineButton{
   background: transparent url("../images/time39.svg") no-repeat scroll 50% 50%;
 }
-#socialNetworkButton{
+.socialNetworkButton{
   background: transparent url("../images/share41.svg") no-repeat scroll 50% 50%;
 }
-#filterButton{
+.filterButton{
   background: transparent url("../images/rightarrow7.svg") no-repeat scroll 50% 50%;
 }
-#logViewerButton{
+.logViewerButton{
   background: transparent url("../images/monuments.svg") no-repeat scroll 50% 50%;
 }
-#groupsButton{
+.groupsButton{
   background: transparent url("../images/shared-folder.svg") no-repeat scroll 50% 50%;
 }
-#textSearchButton{
+.textSearchButton{
   background: transparent url("../images/textSearch.svg") no-repeat scroll 50% 50%;
 }
 
-#accessManagerButton, 
-#chatButton, 
-#timelineButton, 
-#socialNetworkButton, 
-#filterButton, 
-#logViewerButton, 
-#groupsButton,
-#textSearchButton
+.accessManagerButton, 
+.chatButton, 
+.timelineButton, 
+.socialNetworkButton, 
+.filterButton, 
+.logViewerButton, 
+.groupsButton,
+.textSearchButton
 {
   background-color:  rgb(221, 221, 221);
 /*   width: 50px; */
@@ -154,26 +155,26 @@ body {
   background-size: 28px;
 }
 
-#accessManagerButton:hover, 
-#chatButton:hover,
-#timelineButton:hover, 
-#socialNetworkButton:hover, 
-#filterButton:hover, 
-#logViewerButton:hover,
-#groupsButton:hover,
-#textSearchButton:hover
+.accessManagerButton:hover, 
+.chatButton:hover,
+.timelineButton:hover, 
+.socialNetworkButton:hover, 
+.filterButton:hover, 
+.logViewerButton:hover,
+.groupsButton:hover,
+.textSearchButton:hover
 {
   background-color:  #ccc;
 }
 
-#accessManagerButton.active, 
-#chatButton.active, 
-#timelineButton.active, 
-#socialNetworkButton.active, 
-#filterButton.active, 
-#logViewerButton.active,
-#groupsButton.active,
-#textSearchButton.active
+.accessManagerButton.active, 
+.chatButton.active, 
+.timelineButton.active, 
+.socialNetworkButton.active, 
+.filterButton.active, 
+.logViewerButton.active,
+.groupsButton.active,
+.textSearchButton.active
 {
   color: #FFF;
 /*   background-color: #337AB7; */
@@ -182,7 +183,7 @@ body {
   -webkit-filter: invert(100%);
 }
 
-#dataLoadButton input {
+.dataLoadButton input {
   filter: alpha(opacity = 0);
   opacity: 0;
   height: 40px;

@@ -142,11 +142,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 
                 addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
                 
-                Utils.addView(state.containers, "timeline", Timeline, {id:"timelineButton", tooltip:true});
-                Utils.addView(state.containers, "social-network", SocialNetwork, {id:"socialNetworkButton", tooltip:true});
-                Utils.addView(state.containers, "profile-filter", ProfileFilter, {id:"filterButton", tooltip:true});
-                Utils.addView(state.containers, "groups", Groups, {id:"groupsButton", tooltip:true});
-                Utils.addView(state.containers, "textSearch", TextSearch, {id:"textSearchButton", tooltip:true});
+                Utils.addView(state.containers, "timeline", Timeline, {clazz:"timelineButton", tooltip:true});
+                Utils.addView(state.containers, "social-network", SocialNetwork, {clazz:"socialNetworkButton", tooltip:true});
+                Utils.addView(state.containers, "profile-filter", ProfileFilter, {clazz:"filterButton", tooltip:true});
+                Utils.addView(state.containers, "groups", Groups, {clazz:"groupsButton", tooltip:true});
+                Utils.addView(state.containers, "textSearch", TextSearch, {clazz:"textSearchButton", tooltip:true});
                 
                 addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
                 
@@ -174,10 +174,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 
                 //addEl(state.navigation, makeL10nButton());
                 
-                Utils.addView(state.containers, "logViewer", LogViewer2, {id:"logViewerButton", tooltip:true});
+                Utils.addView(state.containers, "logViewer", LogViewer2, {clazz:"logViewerButton", tooltip:true});
                 //addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
                 if(MODE === "NIMS_Server"){
-                    Utils.addView(state.containers, "admins", AccessManager, {id:"accessManagerButton", tooltip:true});
+                    Utils.addView(state.containers, "admins", AccessManager, {clazz:"accessManagerButton", tooltip:true});
                     addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
                 }
                 
@@ -221,9 +221,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         document.querySelector('#logoutForm button').click();
     };
     
-    var makeButton = function(id, name, callback, opts){
+    var makeButton = function(clazz, name, callback, opts){
         var button = makeEl("button");
-        button.id = id;
+        addClass(button, clazz);
         if(opts.tooltip){
             var delegate = function(){
                 $(button).attr('data-original-title', L10n.getValue("header-" + name));
