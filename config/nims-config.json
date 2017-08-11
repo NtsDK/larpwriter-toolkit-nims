@@ -1,6 +1,6 @@
 {
     "projectName" : "nims",
-    "translationsPath" : "C:\\workspaces\\smtk-nims-translations",
+    "translationsPath" : "C:\\workspaces\\smtk-nims-translations\\nims",
     "resources": {
         "enabled" : true,
         "files": ["templatesArr.js","genericTemplate.js","inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]

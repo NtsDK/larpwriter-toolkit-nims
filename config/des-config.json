@@ -1,6 +1,6 @@
 {
     "projectName" : "des",
-    "translationsPath" : "C:\\workspaces\\stream-workspace\\DES_Translations",
+    "translationsPath" : "C:\\workspaces\\smtk-nims-translations\\des",
     "resources": {
         "enabled" : false,
         "files": []
