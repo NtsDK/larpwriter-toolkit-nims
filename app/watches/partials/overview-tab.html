@@ -1,0 +1,135 @@
+<div class="overview-tab">
+  <div style="display:flex;justify-content: space-around;">
+    <div style="flex-grow:1;margin-right: 8px;">
+      <div class="panel panel-default common-info-div">
+        <div class="panel-body">
+          <table class="table table-bordered" style="width: auto;">
+            <tr>
+              <td><span l10n-id="overview-name"></span></td>
+              <td><input id="gameNameInput" class="adminOnly"></input></td>
+            </tr>
+            <tr>
+              <td><span l10n-id="overview-pre-game-start-date"></span></td>
+              <td><input id="preGameDatePicker" class="adminOnly"></input></td>
+            </tr>
+            <tr>
+              <td><span l10n-id="overview-pre-game-end-date"></span></td>
+              <td><input id="gameDatePicker" class="adminOnly"></input></td>
+            </tr>
+            <tr>
+              <td><span l10n-id="overview-last-save-time"></span></td>
+              <td id="lastSaveTime"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      <div style="display:flex;margin-right:8px;">
+        <button class="navigation-button overviewInfoButton" id="descriptionPanel" l10n-id="overview-descr"></button>
+        <button class="navigation-button overviewInfoButton" id="diagramsPanel" l10n-id="overview-diagrams"></button>
+      </div>
+    
+      <div class="panel panel-default" >
+        <div class="panel-body">
+          <div  id="descriptionPanelContainer" class="overviewContainer">
+            <textarea class="adminOnly game-description-area"></textarea>
+          </div>
+          <div id="diagramsPanelContainer" class="overviewContainer">
+            <div class="diagram-container">
+              <div class="diagram-subcontainer">
+                <div>
+                  <h4 l10n-id="overview-event-count-diagram"></h4>
+                  <div class="overviewHist storyEventsHist"></div>
+                </div>
+                <div>
+                  <h4 l10n-id="overview-character-count-diagram"></h4>
+                  <div class="overviewHist storyCharactersHist"></div>
+                </div>
+              </div>
+              <div class="diagram-subcontainer">
+                <div>
+                  <h4 l10n-id="overview-character-stories-diagram"></h4>
+                  <div class="overviewHist characterStoriesHist"></div>
+                </div>
+                <div>
+                  <h4 l10n-id="overview-story-completeness-diagram"></h4>
+                  <div class="overviewHist eventCompletenessHist"></div>
+                </div>
+              </div>
+              <div class="diagram-subcontainer">
+                <div>
+                  <h4 l10n-id="overview-character-symbols-diagram"></h4>
+                  <div class="overviewHist characterSymbolsHist"></div>
+                </div>
+                <div>
+                  <h4 l10n-id="overview-character-symbols-doughnut"></h4>
+                  <div style="display:flex;justify-content:center;">
+                    <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                      <canvas class="symbolChart" width="300" height="125""></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="diagram-subcontainer">
+                <div>
+                  <h4 l10n-id="overview-object-belonging-diagrams"></h4>
+                  <div style="display:flex;justify-content:center;">
+                    <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                      <canvas class="characterChart" width="120" height="100"></canvas><br>
+                      <span l10n-id="header-characters"></span>
+                    </div>
+                    <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                      <canvas class="playerChart" width="120" height="100"></canvas><br>
+                      <span l10n-id="header-players"></span>
+                    </div>
+                    <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                      <canvas class="storyChart" width="120" height="100"></canvas><br>
+                      <span l10n-id="header-stories"></span>
+                    </div>
+                    <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                      <canvas class="groupChart" width="120" height="100"></canvas><br>
+                      <span l10n-id="header-groups"></span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 l10n-id="overview-binding-doughnut"></h4>
+                  <div style="display:flex;justify-content:center;">
+                    <div style="flex-grow:1;flex-basis:0;text-align: center;">
+                      <canvas class="bindingChart" width="300" height="125""></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="profileDiagrams characterProfileDiagrams"></div>
+            <div class="profileDiagrams playerProfileDiagrams"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="panel panel-default" style="flex-grow:0;flex-basis: 400px;">
+      <div class="panel-heading">
+        <h3 class="panel-title" l10n-id="overview-stats"></h3>
+      </div>
+      <div class="panel-body">
+        <table class="table table-bordered" style="width: auto;">
+        <tbody>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-character-count">      </span></td><td><span class="statisticsValue" id="characterNumber"></span>    </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-player-count">         </span></td><td><span class="statisticsValue" id="playerNumber"></span>       </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-story-count">          </span></td><td><span class="statisticsValue" id="storyNumber"></span>        </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-group-count">          </span></td><td><span class="statisticsValue" id="groupNumber"></span>        </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-event-count">          </span></td><td><span class="statisticsValue" id="eventsNumber"></span>       </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-user-count">           </span></td><td><span class="statisticsValue" id="userNumber"></span>         </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-first-event">          </span></td><td><span class="statisticsValue" id="firstEvent"></span>         </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-last-event">           </span></td><td><span class="statisticsValue" id="lastEvent"></span>          </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-symbol-count">         </span></td><td><span class="statisticsValue" id="textCharacterNumber"></span></td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-story-completeness">   </span></td><td><span class="statisticsValue" id="storyCompleteness"></span>  </td></tr>
+          <tr><td><span class="statisticsLabel" l10n-id="overview-general-completeness"> </span></td><td><span class="statisticsValue" id="generalCompleteness"></span></td></tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

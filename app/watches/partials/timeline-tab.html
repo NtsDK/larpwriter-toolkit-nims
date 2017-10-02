@@ -1,0 +1,26 @@
+<div id="timelineDiv">
+  <div class="flexRoot">
+    <div class="storySelectorContainer">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title" l10n-id="timeline-filter"></h3>
+        </div>
+        <div class="panel-body panel-resizable">
+          <div>
+            <input type="radio" name="timelineFilter" value="ByStory" id="timelineFilterByStory">
+            <label for="timelineFilterByStory" l10n-id="timeline-filter-by-stories"></label>
+          </div>
+          <div>
+            <input type="radio" name="timelineFilter" value="ByCharacter" id="timelineFilterByCharacter">
+            <label for="timelineFilterByCharacter" l10n-id="timeline-filter-by-characters"></label>
+          </div>
+        
+          <input selector-filter="#timelineStorySelector"><br>
+          <select size=20 id="timelineStorySelector" multiple></select>
+        </div>
+      </div>
+    </div>
+    <div class="visualObjectContainer full-screen-elem" id="timelineContainer"></div>
+  </div>
+
+</div>
