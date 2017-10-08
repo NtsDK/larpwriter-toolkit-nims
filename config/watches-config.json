@@ -2,8 +2,8 @@
     "projectName" : "watches",
     "translationsPath" : "C:\\workspaces\\smtk-nims-translations\\watches",
     "resources": {
-        "enabled" : true,
-        "files": ["templatesArr.js","genericTemplate.js","inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]
+        "enabled" : false,
+        "files": []
     },
     "styles" : {
         "customStyles":["common.css", "style.css", "experimental.css"],
@@ -34,6 +34,11 @@
     "pagesLight" :[
         "enter.js"   ,
         "player.js",
+        "watches/map.js",
+        "watches/influences.js",
+        "watches/human.js",
+        "watches/analyst.js",
+        "watches/other.js",
         "register.js"      ,
         "logs/about.js",
         "profiles/profileEditorCore.js"

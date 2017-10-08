@@ -32,6 +32,7 @@ See the License for the specific language governing permissions and
 </script>
 <script src="js/libsCore.min.js"></script>
 <script src="js/libs.min.js"></script>
+<script src="https://api-maps.yandex.ru/2.1/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
 
 </head>
 <body onload="PageManager.onMasterPageLoad()">
@@ -80,6 +81,12 @@ See the License for the specific language governing permissions and
     @@include('./stories/stories-tab.html')
     @@include('./stories/story-characters-tab.html')
     @@include('./stories/story-events-tab.html')
+    
+    @@include('./watches/influences-tab.html')
+    @@include('./watches/human-tab.html')
+    @@include('./watches/analyst-tab.html')
+    @@include('./watches/other-tab.html')
+    @@include('./watches/map-tab.html')
     
     @@include('./adaptations-tab.html')
     @@include('./logout-form.html')

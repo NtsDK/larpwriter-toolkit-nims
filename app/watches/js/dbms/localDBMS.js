@@ -73,6 +73,7 @@ function makeLocalDBMS(fullVersion){
     "storyAdaptationsAPI"   ,
     "accessManagerAPI"      ,
     "textSearchAPI"         ,
+    "influencesAPI"         ,
     "logAPI"].map(func);
     
     Logger.attachLogCalls(LocalDBMS, R, false);

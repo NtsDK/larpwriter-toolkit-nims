@@ -20,14 +20,14 @@ See the License for the specific language governing permissions and
 
 (function(exports){
     
-    var root = ".Template ";
+    var root = ".human-tab ";
 
     exports.init = function() {
-//        exports.content = queryEl('.Template');
+        exports.content = queryEl(root);
     };
     
     exports.refresh = function() {
     
     };
 
-})(this['Template']={});
+})(this['Human']={});

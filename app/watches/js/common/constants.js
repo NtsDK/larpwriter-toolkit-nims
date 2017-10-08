@@ -17,7 +17,42 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports){
-
+    
+    exports.influenceSettings = {
+      '7': {
+          radius:5,
+          time:2
+      },
+      '6': {
+          radius:100,
+          time:3
+      },
+      '5': {
+          radius:200,
+          time:5
+      },
+      '4': {
+          radius:500,
+          time:9
+      },
+      '3': {
+          radius:1000,
+          time:12
+      },
+      '2': {
+          radius:2500,
+          time:18
+      },
+      '1': {
+          radius:5000,
+          time:24
+      },
+      '0': {
+          radius:0,
+          time:0
+      }
+    };
+    
     exports.profileFieldTypes = {
         "text" : {
             name : "text",

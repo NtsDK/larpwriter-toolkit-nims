@@ -29,6 +29,7 @@ See the License for the specific language governing permissions and
     var PERMISSION_INFORMER_ENABLED = false;
 </script>
 <script src="js/libsCore.min.js"></script>
+<script src="https://api-maps.yandex.ru/2.1/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
 
 </head>
 <body onload="PageManager.onPlayerPageLoad()">
@@ -46,6 +47,11 @@ See the License for the specific language governing permissions and
     @@include('./logs/about-tab.html')
     @@include('./logout-form.html')
     @@include('./player-tab.html')
+    
+    @@include('./watches/map-tab.html')
+    @@include('./watches/human-tab.html')
+    @@include('./watches/analyst-tab.html')
+    @@include('./watches/other-tab.html')
 
     <div id="warehouse"></div>
   </div>

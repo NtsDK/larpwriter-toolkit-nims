@@ -51,6 +51,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     'getWelcomeText'           ,
                     'getPlayerProfileInfo'     ,
                     'createCharacterByPlayer'  ,
+                    'getInfluences'  ,
                     'updateProfileField'       ];
     
     exports.onPlayerPageLoad = function () {
@@ -58,7 +59,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         var RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
         window.DBMS = new RemoteDBMS();
         stateInit();
-        Utils.addView(state.containers, "player", Player, {mainPage:true});
+//        Utils.addView(state.containers, "player", Player, {mainPage:true});
+        Utils.addView(state.containers, "map", Map, {mainPage:true});
+        Utils.addView(state.containers, "human", Human);
+        Utils.addView(state.containers, "analyst", Analyst);
+        Utils.addView(state.containers, "other", Other);
         addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
         Utils.addView(state.containers, "about", About);
 //        addEl(state.navigation, makeL10nButton());
@@ -133,17 +138,22 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 var button;
                 stateInit();
 
-                Utils.addView(state.containers, "overview", Overview, {mainPage:true});
+                Utils.addView(state.containers, "overview", Overview);
                 Utils.addView(state.containers, "profiles", Profiles);
-                Utils.addView(state.containers, "stories", Stories);
-                Utils.addView(state.containers, "adaptations", Adaptations);
-                Utils.addView(state.containers, "briefings", Briefings);
+                Utils.addView(state.containers, "influences", Influences, {mainPage:true});
+                Utils.addView(state.containers, "human", Human);
+                Utils.addView(state.containers, "analyst", Analyst);
+                Utils.addView(state.containers, "other", Other);
+                Utils.addView(state.containers, "map", Map);
+//                Utils.addView(state.containers, "stories", Stories);
+//                Utils.addView(state.containers, "adaptations", Adaptations);
+//                Utils.addView(state.containers, "briefings", Briefings);
     //            Utils.addView(state.containers, "about", About);
                 
                 addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
                 
-                Utils.addView(state.containers, "timeline", Timeline, {clazz:"timelineButton", tooltip:true});
-                Utils.addView(state.containers, "social-network", SocialNetwork, {clazz:"socialNetworkButton", tooltip:true});
+//                Utils.addView(state.containers, "timeline", Timeline, {clazz:"timelineButton", tooltip:true});
+//                Utils.addView(state.containers, "social-network", SocialNetwork, {clazz:"socialNetworkButton", tooltip:true});
                 Utils.addView(state.containers, "profile-filter", ProfileFilter, {clazz:"filterButton", tooltip:true});
                 Utils.addView(state.containers, "groups", Groups, {clazz:"groupsButton", tooltip:true});
                 Utils.addView(state.containers, "textSearch", TextSearch, {clazz:"textSearchButton", tooltip:true});

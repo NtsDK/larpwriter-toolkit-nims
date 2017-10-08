@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
         };
         Utils.addView(containers, "profile-editor", ProfileEditor,{mainPage:true});
         Utils.addView(containers, "profile-constructor", ProfileConfigurer);
-        Utils.addView(containers, "profile-binding", ProfileBinding);
+//        Utils.addView(containers, "profile-binding", ProfileBinding);
     
         listen(queryEl(characterRoot + ".create-entity-button"), "click", createProfile('character', characterRoot));
         listen(queryEl(characterRoot + ".rename-entity-button"), "click", renameProfile('character', characterRoot));

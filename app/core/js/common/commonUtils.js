@@ -48,7 +48,7 @@ See the License for the specific language governing permissions and
         
         exports.charOrdA = exports.charOrdAFactory(function(a){return a.toLowerCase();});
         
-        exports.eventsByTime = exports.charOrdAFactory(function(a){return new Date(a.time);});
+        exports.eventsByTime = exports.charOrdAFactory(a => new Date(a.time));
     
         exports.strFormat = function(str, vals){
             "use strict";

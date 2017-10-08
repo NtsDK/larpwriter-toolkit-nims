@@ -62,12 +62,13 @@ See the License for the specific language governing permissions and
                 Groups : Groups,
                 InvestigationBoard: InvestigationBoard,
                 Settings: {},
+                Influences: {},
                 Relations: Relations,
                 ManagementInfo: ManagementInfo
             };
     
             schema.required = ["Meta", "CharacterProfileStructure", "PlayerProfileStructure", "Version", "Characters", 
-                               "Players", "ProfileBindings", "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
+                               "Players", "ProfileBindings", "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations','Influences'];
             schema.additionalProperties = false;
             
             return schema;
