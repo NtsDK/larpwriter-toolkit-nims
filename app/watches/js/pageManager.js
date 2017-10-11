@@ -52,6 +52,15 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     'getPlayerProfileInfo'     ,
                     'createCharacterByPlayer'  ,
                     'getInfluences'  ,
+                    'getUserProfile'  ,
+                    'applyCrater'  ,
+                    'getEntityNamesArray'  ,
+                    'hearSummons'  ,
+                    'getCraters'  ,
+                    'applyPersonInfluence'  ,
+                    'getAnalystInfluences'  ,
+                    'unhearSummons'  ,
+                    'applyInfluence'  ,
                     'updateProfileField'       ];
     
     exports.onPlayerPageLoad = function () {
@@ -59,16 +68,34 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         var RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
         window.DBMS = new RemoteDBMS();
         stateInit();
+        DBMS.getUserProfile(function(err, userProfile){
+            if(err) {Utils.handleError(err); return;}
+            exports.userProfile = userProfile;
 //        Utils.addView(state.containers, "player", Player, {mainPage:true});
-        Utils.addView(state.containers, "map", Map, {mainPage:true});
-        Utils.addView(state.containers, "human", Human);
-        Utils.addView(state.containers, "analyst", Analyst);
-        Utils.addView(state.containers, "other", Other);
-        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-        Utils.addView(state.containers, "about", About);
+            if(userProfile['Тип'] === 'Человек'){
+                Utils.addView(state.containers, "human", Human, {mainPage:true});
+            }
+            if(userProfile['Аналитик'] === true){
+//                Utils.addView(state.containers, "map", Map);
+                Utils.addView(state.containers, "analyst", Analyst);
+            }
+            if(userProfile['Тип'] === 'Светлый Иной' || userProfile['Тип'] === 'Тёмный Иной'){
+                Utils.addView(state.containers, "other", Other, {mainPage:true});
+            }
+            addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+//            Utils.addView(state.containers, "about", About);
 //        addEl(state.navigation, makeL10nButton());
-        addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
-        state.currentView.refresh();
+            addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
+            addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
+            state.currentView.refresh();
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    console.log(position.coords.latitude, position.coords.longitude);
+                });
+            } else {
+                Utils.alert('Геолокация недоступна');
+            }
+        });
     };
     
     exports.onIndexPageLoad = function () {
@@ -139,12 +166,12 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 Utils.addView(state.containers, "overview", Overview);
-                Utils.addView(state.containers, "profiles", Profiles);
-                Utils.addView(state.containers, "influences", Influences, {mainPage:true});
-                Utils.addView(state.containers, "human", Human);
-                Utils.addView(state.containers, "analyst", Analyst);
-                Utils.addView(state.containers, "other", Other);
-                Utils.addView(state.containers, "map", Map);
+                Utils.addView(state.containers, "profiles", Profiles, {mainPage:true});
+                Utils.addView(state.containers, "influences", Influences);
+//                Utils.addView(state.containers, "human", Human);
+//                Utils.addView(state.containers, "analyst", Analyst);
+//                Utils.addView(state.containers, "other", Other);
+//                Utils.addView(state.containers, "map", Map);
 //                Utils.addView(state.containers, "stories", Stories);
 //                Utils.addView(state.containers, "adaptations", Adaptations);
 //                Utils.addView(state.containers, "briefings", Briefings);
@@ -176,6 +203,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     addEl(state.navigation, button);
                 }
                 
+                addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
                 addEl(state.navigation, makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
                 if(MODE === "Standalone"){
                     addEl(state.navigation, makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));

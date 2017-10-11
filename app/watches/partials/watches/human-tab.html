@@ -1,2 +1,59 @@
 <div class="human-tab">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href="#" panel-toggler=".human-tab .action-panel">
+        <h3 class="panel-title" l10n-id2="profiles-player-profile">Действия</h3>
+      </a>
+    </div>
+    <div class="panel-body action-panel">
+      <button class="applyCrater">Наложить воронку</button>
+      <br>
+      <select class="summons-player-select"></select>
+      <button class="hearSummons">Слышу зов</button>
+      <br>
+      <button class="unhearSummons">Не слышу зов</button>
+      <br>
+      <select class="influence-player-select"></select>
+      <input type="number" class="influence-power" min="1" max="7">
+      <button class="apply-influence">Наложить воздействие</button>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href="#" panel-toggler=".human-tab .profile-panel">
+        <h3 class="panel-title" l10n-id2="profiles-player-profile">Состояние</h3>
+      </a>
+    </div>
+    <div class="panel-body profile-panel">
+      <table class="table table-bordered table-striped profile-table">
+        <tbody>
+          <tr>
+            <td>Наложена воронка</td>
+            <td class="isCraterApplied"></td>
+          </tr>
+          <tr>
+            <td>Слышу зов</td>
+            <td class="isHearSummons"></td>
+          </tr>
+          <tr>
+            <td>Территоритальные воздействия</td>
+            <td class="territorialInfluences"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a href="#" panel-toggler=".human-tab .influence-map-panel">
+        <h3 class="panel-title" l10n-id2="profiles-player-profile">Карта</h3>
+      </a>
+    </div>
+    <div class="panel-body influence-map-panel">
+      <div id="human-map" style="width: 600px; height: 400px;"></div>
+<!--       <div id="map" style="width: 100vw; height: 90vh;"></div> -->
+    </div>
+  </div>
 </div>

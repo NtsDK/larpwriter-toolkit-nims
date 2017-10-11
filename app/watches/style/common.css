@@ -138,6 +138,9 @@ body {
 .textSearchButton{
   background: transparent url("../images/textSearch.svg") no-repeat scroll 50% 50%;
 }
+.refreshButton{
+  background: transparent url("../images/circular-arrow.svg") no-repeat scroll 50% 50%;
+}
 
 .accessManagerButton, 
 .chatButton, 
@@ -145,6 +148,7 @@ body {
 .socialNetworkButton, 
 .filterButton, 
 .logViewerButton, 
+.refreshButton,
 .groupsButton,
 .textSearchButton
 {
@@ -161,6 +165,7 @@ body {
 .socialNetworkButton:hover, 
 .filterButton:hover, 
 .logViewerButton:hover,
+.refreshButton:hover,
 .groupsButton:hover,
 .textSearchButton:hover
 {

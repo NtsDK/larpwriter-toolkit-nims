@@ -24,10 +24,21 @@ See the License for the specific language governing permissions and
 
     exports.init = function() {
         exports.content = queryEl(root);
+        
+        listen(queryEl(root + '.apply-influence-button'), 'click', applyInfluence);
     };
     
     exports.refresh = function() {
+    };
     
+    var applyInfluence = () => {
+        var input = queryEl(root + '.power');
+        navigator.geolocation.getCurrentPosition(function(position) {
+            DBMS.applyInfluence(Number(input.value), position.coords.latitude, position.coords.longitude, (err) => {
+                if(err) {Utils.handleError(err); return;}
+                Utils.alert('Воздействие применено');
+            })
+        });
     };
 
 })(this['Other']={});

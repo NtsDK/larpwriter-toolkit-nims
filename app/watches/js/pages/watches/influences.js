@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
     var root = '.influences-tab ';
     
 
-    exports.initMap = (id, state) => {
+    exports.initMap = (id, state, root) => {
         ymaps.ready(() => {
             state.map = new ymaps.Map (id, {
                 center: [55.1565, 61.4577],   
@@ -35,8 +35,12 @@ See the License for the specific language governing permissions and
                 var coords = e.get('coords');
                 var latitude = queryEl(root + '.latitude');
                 var longitude = queryEl(root + '.longitude');
-                latitude.value = coords[0].toPrecision(6);
-                longitude.value = coords[1].toPrecision(6);
+                if(longitude){
+                    latitude.value = coords[0].toPrecision(6);
+                    longitude.value = coords[1].toPrecision(6);
+                }
+                state.customLatitude = coords[0].toPrecision(6);
+                state.customLongitude = coords[1].toPrecision(6);
             });
             
             state.map.behaviors.enable('scrollZoom');
@@ -57,7 +61,7 @@ See the License for the specific language governing permissions and
         
         listen(queryEl(root + ".create-entity-button"), "click", createInfluence);
         
-        exports.initMap('map', state);
+        exports.initMap('map', state, root);
         
         exports.content = queryEl(root);
     };
@@ -106,7 +110,7 @@ See the License for the specific language governing permissions and
         });
     };
     
-    exports.fillMap = (activeInfluences, state) => {
+    exports.fillMap = (activeInfluences, state, callback) => {
         ymaps.ready(() => {
             state.map.geoObjects.removeAll();
            
@@ -131,6 +135,7 @@ See the License for the specific language governing permissions and
                 //myPlacemark.setData(33);
                 
                 state.map.geoObjects.add(myCircle);
+                if(callback)callback();
             })
         });
     }
@@ -141,18 +146,14 @@ See the License for the specific language governing permissions and
         var latitude = queryEl(root + '.latitude');
         var longitude = queryEl(root + '.longitude');
         var power = queryEl(root + '.power');
-//        		"
+        
         DBMS.createInfluence(time, sender.value, Number(latitude.value), Number(longitude.value), Number(power.value), function(err){
             if(err) {Utils.handleError(err); return;}
+            sender.value = '';
+            latitude.value = '';
+            longitude.value = '';
+            power.value = '';
             exports.refresh();
-//            PermissionInformer.refresh(function(err){
-//                if(err) {Utils.handleError(err); return;}
-//                if(state.currentView.updateSettings){
-//                    state.currentView.updateSettings(name);
-//                }
-//                input.value = '';
-//                exports.refresh();
-//            });
         });
     };
 

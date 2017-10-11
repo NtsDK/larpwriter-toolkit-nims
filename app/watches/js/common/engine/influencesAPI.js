@@ -46,7 +46,12 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.removeInfluence = function(influence, callback) {
             var chain = [PC.isString(influence)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                influence = JSON.parse(influence);
+                try{
+                    influence = JSON.parse(influence);
+                } catch(err){
+                    callback(err);
+                    return;
+                }
                 var index = R.indexOf(influence, this.database.Influences);
                 if(index !== -1){
                     this.database.Influences.splice(index, 1)
@@ -54,6 +59,16 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         }
+        
+        LocalDBMS.prototype.removePersonInfluence = function(characterName, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['removePersonInfluence']));
+        };
+        LocalDBMS.prototype.createMasterPersonInfluence = function(characterName, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMasterPersonInfluence']));
+        };
+        LocalDBMS.prototype.getAnalystInfluences = function(characterName, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['getAnalystInfluences']));
+        };
         
 //        LocalDBMS.prototype.getEntityNamesArray = function(type, callback) {
 //            var chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);

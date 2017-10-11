@@ -25,19 +25,19 @@ See the License for the specific language governing permissions and
 
     exports.init = function() {
         
-        Influences.initMap('analyst-map', state);
+//        Influences.initMap('analyst-map', state, root);
         
         exports.content = queryEl(root);
     };
     
     exports.refresh = function() {
-        DBMS.getInfluences(function(err, influences){
-            if(err) {Utils.handleError(err); return;}
-//            influences.sort(CommonUtils.charOrdAFactoryBase('desc', a => new Date(a.time)));
-            var now = Date.now();
-            var activeInfluences = Influences.getActiveInfluences(influences, now);
-            Influences.fillMap(activeInfluences, state);
-        });
+//        DBMS.getInfluences(function(err, influences){
+//            if(err) {Utils.handleError(err); return;}
+////            influences.sort(CommonUtils.charOrdAFactoryBase('desc', a => new Date(a.time)));
+//            var now = Date.now();
+//            var activeInfluences = Influences.getActiveInfluences(influences, now);
+//            Influences.fillMap(activeInfluences, state);
+//        });
     };
 
 })(this['Map']={});

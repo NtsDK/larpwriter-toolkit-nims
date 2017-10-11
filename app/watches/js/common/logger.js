@@ -182,7 +182,17 @@ See the License for the specific language governing permissions and
             "setPassword" : null,
             "checkPassword" : null,
             "login" : null,
-            "register" : null
+            "register" : null,
+            "getUserProfile" : null,
+            "getCraters" : null,
+            "getAnalystInfluences" : null,
+            "applyCrater" : {},
+            "removePersonInfluence" : {},
+            "createMasterPersonInfluence" : {},
+            "applyPersonInfluence" : {},
+            "hearSummons" : {},
+            "unhearSummons" : {},
+            "applyInfluence" : {}
         },
         "accessManagerOverridesAPI" : {},
         "overridesAPI" : {},
