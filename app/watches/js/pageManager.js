@@ -57,6 +57,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     'getEntityNamesArray'  ,
                     'hearSummons'  ,
                     'getCraters'  ,
+                    'getSummons'  ,
                     'applyPersonInfluence'  ,
                     'getAnalystInfluences'  ,
                     'unhearSummons'  ,

@@ -89,54 +89,63 @@ See the License for the specific language governing permissions and
     exports.refresh = function() {
         DBMS.getInfluences(function(err, influences){
             if(err) {Utils.handleError(err); return;}
-            influences.sort(CommonUtils.charOrdAFactoryBase('desc', a => new Date(a.time)));
-            var now = Date.now();
-            var activeInfluences = exports.getActiveInfluences(influences, now);
-            var expiredInfluences = influences.filter(influence => {
-                var time = Constants.influenceSettings[String(Math.abs(influence.power))].time;
-                var expirationDate = new Date(new Date(influence.time).getTime() + time * 1000*60*60); 
-                return now >= expirationDate;
+            PermissionInformer.getEntityNamesArray('player', true, function(err, playerNames){
+                if(err) {Utils.handleError(err); return;}
+                var data = getSelect2Data(playerNames);
+                clearEl(queryEl(root + ".sender"));
+                $(root + ".sender").select2(data);
+                
+                influences.sort(CommonUtils.charOrdAFactoryBase('desc', a => new Date(a.time)));
+                var now = Date.now();
+                var activeInfluences = exports.getActiveInfluences(influences, now);
+                var expiredInfluences = influences.filter(influence => {
+                    var time = Constants.influenceSettings[String(Math.abs(influence.power))].time;
+                    var expirationDate = new Date(new Date(influence.time).getTime() + time * 1000*60*60); 
+                    return now >= expirationDate;
+                });
+                
+                var influence2dom = el => {
+                    return addEls(makeEl('tr'), [text2span(el.time),text2span(el.sender),text2span(el.latitude),
+                        text2span(el.longitude),text2span(el.power), addEl(makeEl('td'),makeDelBtn(el))]);
+                };
+                
+                addEls(clearEl(queryEl(root + '.influence-table tbody')), activeInfluences.map(influence2dom));
+                addEls(clearEl(queryEl(root + '.expired-influence-table tbody')), expiredInfluences.map(influence2dom));
+                
+                exports.fillMap(activeInfluences, state);
             });
-            
-            var influence2dom = el => {
-                return addEls(makeEl('tr'), [text2span(el.time),text2span(el.sender),text2span(el.latitude),
-                    text2span(el.longitude),text2span(el.power), addEl(makeEl('td'),makeDelBtn(el))]);
-            };
-            
-            addEls(clearEl(queryEl(root + '.influence-table tbody')), activeInfluences.map(influence2dom));
-            addEls(clearEl(queryEl(root + '.expired-influence-table tbody')), expiredInfluences.map(influence2dom));
-            
-            exports.fillMap(activeInfluences, state);
         });
     };
     
-    exports.fillMap = (activeInfluences, state, callback) => {
+    exports.fillMap = (activeInfluences, state, callback, show) => {
         ymaps.ready(() => {
             state.map.geoObjects.removeAll();
            
-            activeInfluences.forEach(influence => {
-                var radius = Constants.influenceSettings[String(Math.abs(influence.power))].radius;
-                var isPositive = influence.power > 0;
-                
+            if(show === true || show === undefined){
+                activeInfluences.forEach(influence => {
+                    var radius = Constants.influenceSettings[String(Math.abs(influence.power))].radius;
+                    var isPositive = influence.power > 0;
+                    
 //            var str = name + ' (' + fullData[name].value + ')';
-                var myCircle = new ymaps.Circle([[influence.latitude, influence.longitude], radius], { 
-                    balloonContent: 'Психополе: ' + influence.sender,
+                    var myCircle = new ymaps.Circle([[influence.latitude, influence.longitude], radius], { 
+                        balloonContent: 'Психополе: ' + influence.sender,
 //                var myPlacemark = new ymaps.Placemark([influence.latitude, influence.longitude], { 
 //                hintContent: str, 
 //                balloonContent: str,
 //                iconContent: fullData[name].value
-                }, {
+                    }, {
 //                preset: 'twirl#whiteStretchyIcon',"#FA0A10", background: "#FB7E81"
-                    fillColor: isPositive ? "#7BE14177" : "#FB7E8177",
-                    strokeColor: isPositive ? "#41A906" : "#FA0A10",
-                    strokeOpacity: 0.8,
-                    strokeWidth: 4
+                        fillColor: isPositive ? "#7BE14177" : "#FB7E8177",
+                                strokeColor: isPositive ? "#41A906" : "#FA0A10",
+                                        strokeOpacity: 0.8,
+                                        strokeWidth: 4
+                    });
+                    //myPlacemark.setData(33);
+                    
+                    state.map.geoObjects.add(myCircle);
                 });
-                //myPlacemark.setData(33);
-                
-                state.map.geoObjects.add(myCircle);
-                if(callback)callback();
-            })
+            }
+            if(callback)callback();
         });
     }
     

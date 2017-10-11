@@ -82,6 +82,14 @@ See the License for the specific language governing permissions and
                             });
                             str = str.join(', ');
                             addEl(clearEl(queryEl(root + '.territorialInfluences')), makeText(str));
+                            
+                            var personalInfluences = []; 
+                            try{
+                                personalInfluences = JSON.parse(userProfile['Воздействия']);
+                            } catch(err) {
+                            }
+                            addEl(clearEl(queryEl(root + '.personalInfluences')), makeText(personalInfluences.map(R.prop('power')).join(', ')));
+                            
 //                            filteredCircles = circles.searchInside(mark);
 //                            activeInfluences.map(el => new ymaps.Placemark([el.latitude, el.longitude]));
                         });
@@ -108,9 +116,11 @@ See the License for the specific language governing permissions and
     
     var hearSummons = () => {
         var fromName = queryEl(root + ".summons-player-select").value.trim();
-        DBMS.hearSummons(fromName, function(err){
-            if(err) {Utils.handleError(err); return;}
-            exports.refresh();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            DBMS.hearSummons(fromName, position.coords.latitude, position.coords.longitude, function(err){
+                if(err) {Utils.handleError(err); return;}
+                exports.refresh();
+            });
         });
     }
     var unhearSummons = () => {
@@ -131,9 +141,11 @@ See the License for the specific language governing permissions and
     }
     
     var applyCrater = () => {
-        DBMS.applyCrater(function(err){
-            if(err) {Utils.handleError(err); return;}
-            exports.refresh();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            DBMS.applyCrater(position.coords.latitude, position.coords.longitude, function(err){
+                if(err) {Utils.handleError(err); return;}
+                exports.refresh();
+            });
         });
     };
 

@@ -57,9 +57,16 @@ See the License for the specific language governing permissions and
         ymaps.ready(() => {
             state.map.geoObjects.removeAll();
         });
-        refreshPanel('character', characterSelector, characterProfileDiv, () => {
-            refreshPanel('player', playerSelector, playerProfileDiv, ()=>{
-                applySettings('player', characterSelector, characterProfileDiv);
+        PermissionInformer.getEntityNamesArray('player', true, function(err, playerNames){
+            if(err) {Utils.handleError(err); return;}
+            var data = getSelect2Data(playerNames);
+            clearEl(queryEl(root + ".sender"));
+            $(root + ".sender").select2(data);
+            
+            refreshPanel('character', characterSelector, characterProfileDiv, () => {
+                refreshPanel('player', playerSelector, playerProfileDiv, ()=>{
+                    applySettings('player', characterSelector, characterProfileDiv);
+                });
             });
         });
     };

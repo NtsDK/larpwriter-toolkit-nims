@@ -186,6 +186,7 @@ See the License for the specific language governing permissions and
             "getUserProfile" : null,
             "getCraters" : null,
             "getAnalystInfluences" : null,
+            "getSummons" : null,
             "applyCrater" : {},
             "removePersonInfluence" : {},
             "createMasterPersonInfluence" : {},
