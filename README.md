@@ -45,6 +45,8 @@ SMTK NIMS is an LARP handout editor. This is it is main feature and it must do i
 
 SMTK NIMS is an interactive web page. You need only modern browser to work with SMTK NIMS. We check it in Firefox, Chrome and Internet Explorer. SMTK NIMS doesn't require internet connection. It can work in offline mode.
 
+NIMS is a small full stack JavaScript platform so there are some customizations: AWS Shop for Deus Ex Machina LARP and Watches for city LARP. These projects are part of this repo.
+
 ### SMTK NIMS work sequence ###
 
 1. Open SMTK NIMS
