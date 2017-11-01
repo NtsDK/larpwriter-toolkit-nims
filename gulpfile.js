@@ -134,11 +134,7 @@ if(config.get('resources:enabled')){
 
 gulp.task('scripts', gulp.parallel.apply(null, scriptsArr));
 
-if(isServer){
-    var htmls = [projectDir + '/nims.html', projectDir + '/index.html', projectDir + '/player.html'];
-} else {
-    var htmls = [projectDir + '/nims.html'];
-}
+var htmls = config.get( isServer ? 'serverPages' : 'standalonePages' ).map(el => projectDir + '/' + el);
 
 gulp.task('html', function() {
     return gulp.src(htmls, {base : projectBase})

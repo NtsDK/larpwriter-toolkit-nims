@@ -42,5 +42,7 @@
         "register.js"      ,
         "logs/about.js",
         "profiles/profileEditorCore.js"
-    ]
+    ],
+    "serverPages": ["nims.html","index.html","player.html"],
+    "standalonePages": ["nims.html"]
 }

@@ -36,6 +36,7 @@ Examples:
 set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\des-config.json"
 set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\nims-config.json"
 set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\watches-config.json"
+set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dev --configFile "config\vtmcl-config.json"
 
 set NODE_ENV=dev && set MODE=server && gulp dev --configFile "config\nims-config.json"
 set NODE_ENV=dev && set MODE=server && npm run gulp dev
