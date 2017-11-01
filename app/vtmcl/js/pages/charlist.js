@@ -31,81 +31,16 @@ See the License for the specific language governing permissions and
 //
 //    };
 
-    // var profileCols = [ [ 'name', 'player', 'chronicle', 'age', 'sex' ],
-    // [ 'nature', 'demeanor', 'concept', 'clan', 'generation', 'sire' ] ];
-    var profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
-
-    var attributeCols = [ {
-        name : 'physical',
-        arr : [ 'strength', 'dexterity', 'stamina' ]
-    }, {
-        name : 'social',
-        arr : [ 'charisma', 'manipulation', 'appearance' ]
-    }, {
-        name : 'mental',
-        arr : [ 'perception', 'intelligence', 'wits' ]
-    } ];
-
-    var abilityCols = [
-            {
-                name : 'talents',
-                arr : [ 'athletics', 'alertness', 'brawl', 'dodge', 'empathy', 'intimidation', 'leadership',
-                        'streetwise', 'expression', 'subterfuge' ]
-            },
-            {
-                name : 'skills',
-                arr : [ 'animalken', 'drive', 'etiquette', 'firearms', 'melee', 'survival', 'crafts', 'stealth',
-                        'security', 'performance', ]
-            },
-            {
-                name : 'knowledges',
-                arr : [ 'science', 'politics', 'occult', 'medicine', 'linguistics', 'law', 'investigation', 'finance',
-                        'computer', 'academics', ]
-            } ];
-
-    var healthCols = [ {
-        name : 'health',
-        arr : [ {
-            name : 'bruised',
-            penalty : ''
-        }, {
-            name : 'hurt',
-            penalty : '-1'
-        }, {
-            name : 'injured',
-            penalty : '-1'
-        }, {
-            name : 'wounded',
-            penalty : '-2'
-        }, {
-            name : 'mauled',
-            penalty : '-2'
-        }, {
-            name : 'crippled',
-            penalty : '-5'
-        }, {
-            name : 'incapacitated',
-            penalty : ''
-        }, ]
-    } ];
-
-    var virtues = [ "conscience", "self_control", "courage" ];
-
-    var disciplines = [ 'animalism', 'bardo', 'valeren', 'visceratika', 'obtenebration', 'daimoinon', 'dominate',
-            'obfuscate', 'vicissitude', 'kineticism', 'melpominee', 'mytherceria', 'potence', 'nihilistics', 'obeah',
-            'gargoyle flight', 'dementation', 'protean', 'presence', 'auspex', 'sanguinus', 'serpentis', 'quietus',
-            'mortis', 'fortitude', 'celerity', 'thanatosis', 'temporis', 'chimerstry', 'spiritus' ];
-
     var refreshHooks = [];
 
     exports.init = function() {
 
         fillProfile();
-        fillStats('.attributes-container', attributeCols, makeRangeEl2('setAttribute', 0, 5, makeStaticLabel,
+        fillStats('.attributes-container', Constants.attributeCols, makeRangeEl2('setAttribute', 0, 5, makeStaticLabel,
                 makeRangeLoadHook(refreshHooks, 'getAttribute')));
-        fillStats('.abilities-container', abilityCols, makeRangeEl2('setAbility', 0, 5, makeStaticLabel,
+        fillStats('.abilities-container', Constants.abilityCols, makeRangeEl2('setAbility', 0, 5, makeStaticLabel,
                 makeRangeLoadHook(refreshHooks, 'getAbility')));
-        fillVirtues('.virtues-container', virtues, makeRangeEl2('setVirtue', 1, 5, makeStaticLabel, makeRangeLoadHook(
+        fillVirtues('.virtues-container', Constants.virtues, makeRangeEl2('setVirtue', 1, 5, makeStaticLabel, makeRangeLoadHook(
                 refreshHooks, 'getVirtue')));
 
         addEl(queryEl('.humanity-container'), makeRangeEl2('setState', 0, 10, nuller, makeRangeLoadHook(refreshHooks,
@@ -137,7 +72,7 @@ See the License for the specific language governing permissions and
         // 'getAdvantages', 'traits',makeAdvantageInput('renameAdvantage',
         // 'traits', 'setTrait')));
 
-        fillStats('.health-container', healthCols, makeHealthRow);
+        fillStats('.health-container', Constants.healthCols, makeHealthRow);
         // initDynamics('.disciplines-container', 'addDiscipline',
         // 'removeDiscipline', 'getDisciplineList', disciplines,
         // makeRangeEl('setDiscipline', 'getDiscipline', 1, 5));
@@ -201,7 +136,7 @@ See the License for the specific language governing permissions and
 
     // fill profile
     var fillProfile = function() {
-        addEls(queryEl('.profile-container'), profileCols.map(function(arr) {
+        addEls(queryEl('.profile-container'), Constants.profileCols.map(function(arr) {
             return addEls(makeEl('div'), arr.map(makeProfileEl));
         }));
     };

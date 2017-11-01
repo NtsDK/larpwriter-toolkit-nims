@@ -16,45 +16,110 @@ See the License for the specific language governing permissions and
  */
 "use strict";
 
-(function(exports){
-    
-    exports.themeList = ['nims-theme', 'des-light-theme', 'des-dark-theme'];
-    
-    exports.assetTypes = ["local","global"];
-    
-    exports.shopDataTypes = ["corporation","sellerLogin","sellerPassword"];
-    
-    exports.ownedEntityTypes = ['shop','asset'];
+(function(exports) {
 
-    exports.assetProfileStructure = [{
-        name: "displayString",
-        type: "string",
-    },{
-        name: "isPhysical",
-        type: "checkbox",
-    },{
-        name: "resourceCost",
-        type: "number",
-    },{
-        name: "apiKey",
-        type: "string",
-    },{
-        name: "description",
-        type: "text",
-    }];
-    
-    exports.assetEditableItems = ['displayString','isPhysical','resourceCost','apiKey','description'];
-    exports.localAssetEditableItems = ['displayString','description'];
-    
-    exports.localAssetProfileStructure = [{
-        name: "displayString",
-        type: "string",
-    },{
-        name: "description",
-        type: "text",
-    }];
-    
+    // exports.profileCols = [ [ 'name', 'player', 'chronicle', 'age', 'sex' ],
+    // [ 'nature', 'demeanor', 'concept', 'clan', 'generation', 'sire' ] ];
+    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
+
+    exports.attributeCols = [ {
+        name : 'physical',
+        arr : [ 'strength', 'dexterity', 'stamina' ]
+    }, {
+        name : 'social',
+        arr : [ 'charisma', 'manipulation', 'appearance' ]
+    }, {
+        name : 'mental',
+        arr : [ 'perception', 'intelligence', 'wits' ]
+    } ];
+
+    exports.abilityCols = [
+            {
+                name : 'talents',
+                arr : [ 'athletics', 'alertness', 'brawl', 'dodge', 'empathy', 'intimidation', 'leadership',
+                        'streetwise', 'expression', 'subterfuge' ]
+            },
+            {
+                name : 'skills',
+                arr : [ 'animalken', 'drive', 'etiquette', 'firearms', 'melee', 'survival', 'crafts', 'stealth',
+                        'security', 'performance', ]
+            },
+            {
+                name : 'knowledges',
+                arr : [ 'science', 'politics', 'occult', 'medicine', 'linguistics', 'law', 'investigation', 'finance',
+                        'computer', 'academics', ]
+            } ];
+
+    exports.healthCols = [ {
+        name : 'health',
+        arr : [ {
+            name : 'bruised',
+            penalty : ''
+        }, {
+            name : 'hurt',
+            penalty : '-1'
+        }, {
+            name : 'injured',
+            penalty : '-1'
+        }, {
+            name : 'wounded',
+            penalty : '-2'
+        }, {
+            name : 'mauled',
+            penalty : '-2'
+        }, {
+            name : 'crippled',
+            penalty : '-5'
+        }, {
+            name : 'incapacitated',
+            penalty : ''
+        }, ]
+    } ];
+
+    exports.virtues = [ "conscience", "self_control", "courage" ];
+
+    exports.disciplines = [ 'animalism', 'bardo', 'valeren', 'visceratika', 'obtenebration', 'daimoinon', 'dominate',
+            'obfuscate', 'vicissitude', 'kineticism', 'melpominee', 'mytherceria', 'potence', 'nihilistics', 'obeah',
+            'gargoyle flight', 'dementation', 'protean', 'presence', 'auspex', 'sanguinus', 'serpentis', 'quietus',
+            'mortis', 'fortitude', 'celerity', 'thanatosis', 'temporis', 'chimerstry', 'spiritus' ];
+
+    exports.themeList = [ 'nims-theme', 'des-light-theme', 'des-dark-theme' ];
+
+    // exports.assetTypes = ["local","global"];
+    //    
+    // exports.shopDataTypes = ["corporation","sellerLogin","sellerPassword"];
+    //    
+    // exports.ownedEntityTypes = ['shop','asset'];
+    //
+    // exports.assetProfileStructure = [{
+    // name: "displayString",
+    // type: "string",
+    // },{
+    // name: "isPhysical",
+    // type: "checkbox",
+    // },{
+    // name: "resourceCost",
+    // type: "number",
+    // },{
+    // name: "apiKey",
+    // type: "string",
+    // },{
+    // name: "description",
+    // type: "text",
+    // }];
+    //    
+    // exports.assetEditableItems =
+    // ['displayString','isPhysical','resourceCost','apiKey','description'];
+    // exports.localAssetEditableItems = ['displayString','description'];
+    //    
+    // exports.localAssetProfileStructure = [{
+    // name: "displayString",
+    // type: "string",
+    // },{
+    // name: "description",
+    // type: "text",
+    // }];
+
     exports.httpTimeout = 5000;
-    
-})(typeof exports === 'undefined'? this['Constants']={}: exports);
 
+})(typeof exports === 'undefined' ? this['Constants'] = {} : exports);
