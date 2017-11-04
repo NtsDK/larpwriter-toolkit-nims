@@ -21,138 +21,60 @@ See the License for the specific language governing permissions and
 (function(exports) {
 
     var root = '.charlist-tab ';
-    var state = {};
-
-//    exports.init = function() {
-//        exports.content = queryEl(root);
-//    };
-//
-//    exports.refresh = function() {
-//
-//    };
-
-    var refreshHooks = [];
+    var state = {
+        refreshHooks: []
+    };
 
     exports.init = function() {
+        
+        addEls(queryEl(root + '.profile-container'), Constants.profileCols.map(function(arr) {
+            return addEls(makeEl('div'), arr.map(makeProfileEl));
+        }));
 
-        fillProfile();
         fillStats('.attributes-container', Constants.attributeCols, makeRangeEl2('setAttribute', 0, 5, makeStaticLabel,
-                makeRangeLoadHook(refreshHooks, 'getAttribute')));
+                addRefreshHook('getAttribute')));
         fillStats('.abilities-container', Constants.abilityCols, makeRangeEl2('setAbility', 0, 5, makeStaticLabel,
-                makeRangeLoadHook(refreshHooks, 'getAbility')));
-        fillVirtues('.virtues-container', Constants.virtues, makeRangeEl2('setVirtue', 1, 5, makeStaticLabel, makeRangeLoadHook(
-                refreshHooks, 'getVirtue')));
+                addRefreshHook('getAbility')));
+        fillVirtues('.virtues-container', Constants.virtues, makeRangeEl2('setVirtue', 1, 5, makeStaticLabel,
+                addRefreshHook('getVirtue')));
 
-        addEl(queryEl('.humanity-container'), makeRangeEl2('setState', 0, 10, nuller, makeRangeLoadHook(refreshHooks,
+        addEl(queryEl('.humanity-container'), makeRangeEl2('setState', 0, 10, nuller, addRefreshHook(
                 'getState'), 'humanity'));
-        addEl(queryEl('.willpower-container'), makeRangeEl2('setState', 0, 10, nuller, makeRangeLoadHook(refreshHooks,
+        addEl(queryEl('.willpower-container'), makeRangeEl2('setState', 0, 10, nuller, addRefreshHook(
                 'getState'), 'willpower'));
 
         listen(queryEl('.merits-container .add-button'), "click", makeInputBuilder('.merits-container',
                 makeEntityRenameInput('setBackstory', 'merits', false)));
-        refreshHooks.push(makeBackstoryHook('.merits-container', 'getBackstory', 'merits', makeEntityRenameInput(
-                'setBackstory', 'merits', false)));
+        const meritRenameInput = makeEntityRenameInput('setBackstory', 'merits', false);
+        addRefreshHook('getBackstory', 'merits', backstoryCb('.merits-container', meritRenameInput));
+        
         listen(queryEl('.flaws-container .add-button'), "click", makeInputBuilder('.flaws-container',
                 makeEntityRenameInput('setBackstory', 'flaws', false)));
-        refreshHooks.push(makeBackstoryHook('.flaws-container', 'getBackstory', 'flaws', makeEntityRenameInput(
-                'setBackstory', 'flaws', false)));
+        const flawRenameInput = makeEntityRenameInput('setBackstory', 'flaws', false);
+        addRefreshHook('getBackstory', 'flaws', backstoryCb('.flaws-container', flawRenameInput));
 
         listen(queryEl('.backgrounds-container .add-button'), "click", makeInputBuilder('.backgrounds-container',
                 makeAdvantageInput('renameAdvantage', 'backgrounds', 'setBackground')));
-        refreshHooks.push(makeBackstoryHook('.backgrounds-container', 'getAdvantages', 'backgrounds',
-                makeAdvantageInput('renameAdvantage', 'backgrounds', 'setBackground')));
+        const backgroundInput = makeAdvantageInput('renameAdvantage', 'backgrounds', 'setBackground');
+        addRefreshHook('getAdvantages', 'backgrounds', backstoryCb('.backgrounds-container', backgroundInput));
+        
         listen(queryEl('.disciplines-container .add-button'), "click", makeInputBuilder('.disciplines-container',
                 makeAdvantageInput('renameAdvantage', 'disciplines', 'setDiscipline')));
-        refreshHooks.push(makeBackstoryHook('.disciplines-container', 'getAdvantages', 'disciplines',
-                makeAdvantageInput('renameAdvantage', 'disciplines', 'setDiscipline')));
-        // listen(queryEl('.traits-container .add-button'), "click",
-        // makeInputBuilder('.traits-container',
-        // makeAdvantageInput('renameAdvantage', 'traits', 'setTrait')));
-        // refreshHooks.push(makeBackstoryHook('.traits-container',
-        // 'getAdvantages', 'traits',makeAdvantageInput('renameAdvantage',
-        // 'traits', 'setTrait')));
+        const disciplineInput = makeAdvantageInput('renameAdvantage', 'disciplines', 'setDiscipline');
+        addRefreshHook('getAdvantages', 'disciplines', backstoryCb('.disciplines-container', disciplineInput));
 
         fillStats('.health-container', Constants.healthCols, makeHealthRow);
-        // initDynamics('.disciplines-container', 'addDiscipline',
-        // 'removeDiscipline', 'getDisciplineList', disciplines,
-        // makeRangeEl('setDiscipline', 'getDiscipline', 1, 5));
-        // DBMS.getDisciplineList(function(err, disciplineList){
-        // if(err) {Utils.handleError(err); return;}
-        // fillDynamics('.disciplines-container', disciplineList, disciplines,
-        // makeRangeEl('setDiscipline', 'getDiscipline', 1, 5));
-        // });
-        // MainPage.container = container;
         exports.content = queryEl(root);
     };
-
-    // var fillDynamics = function(selector, usedList, fullList, func){
-    // //addEls(queryEl(selector), data.map(function(obj){
-    // //return addEls(makeEl('div'), makeRangeEls(obj, func));
-    // //}));
-    // };
-
-    var initDynamics = function(selector, adder, remover, listGetter, fullList, func) {
-        var localHooks = [];
-        var addEntitySel = queryEl(selector + ' .add-entity-select');
-        listen(queryEl(selector + ' .add-entity-button'), 'click', function() {
-            if (addEntitySel.value !== '') {
-                DBMS[adder](addEntitySel.value, Utils.processError(exports.refresh));
-            }
-        });
-        var removeEntitySel = queryEl(selector + ' .remove-entity-select');
-        listen(queryEl(selector + ' .remove-entity-button'), 'click', function() {
-            if (removeEntitySel.value !== '') {
-                DBMS[remover](removeEntitySel.value, Utils.processError(exports.refresh));
-            }
-        });
-        refreshHooks.push(function() {
-            DBMS[listGetter](function(err, usedList) {
-                if (err) {
-                    Utils.handleError(err);
-                    return;
-                }
-
-                localHooks = [];
-
-                var addList = R.difference(fullList, usedList);
-
-                clearEl(queryEl(selector + " .add-entity-select"));
-                $(selector + " .add-entity-select").select2(arr2Select2(addList));
-
-                clearEl(queryEl(selector + " .remove-entity-select"));
-                $(selector + " .remove-entity-select").select2(arr2Select2(usedList));
-
-                addEls(clearEl(queryEl(selector + ' .entity-container')), usedList.map(func(localHooks)));
-
-                localHooks.forEach(R.apply(R.__, []));
-
-                // clearEl(queryEl(".investigation-board-tab
-                // .group-switch-select"));
-                // $(".investigation-board-tab
-                // .group-switch-select").select2(arr2Select2(freeGroupNames));
-            });
-        });
-    };
-
-    // fill profile
-    var fillProfile = function() {
-        addEls(queryEl('.profile-container'), Constants.profileCols.map(function(arr) {
-            return addEls(makeEl('div'), arr.map(makeProfileEl));
-        }));
-    };
-
-    var makeProfileEl = function(str) {
+    
+    var makeProfileEl = function(itemName) {
         var input = makeEl('input');
-        refreshHooks.push(makeCommonHook('getProfileItem', input, str));
-        listen(input, 'change', function(event) {
-            DBMS.setProfileItem(str, event.target.value.trim(), Utils.processError());
-        });
-        return addEls(makeEl('div'), [ fillText(makeEl('span'), str), input ]);
+        addRefreshHook('getProfileItem', itemName, value => input.value = value);
+        listen(input, 'change', event => DBMS.setProfileItem(itemName, event.target.value.trim(), Utils.processError()));
+        return addEls(makeEl('div'), [ fillText(makeEl('span'), itemName), input ]);
     };
 
-    var fillVirtues = function(selector, data, func) {
-        addEls(queryEl(selector), data.map(func));
-    };
+    var fillVirtues = (selector, data, func) => addEls(queryEl(selector), data.map(func));
 
     var fillStats = function(selector, data, func) {
         addEls(queryEl(selector), data.map(function(obj) {
@@ -161,25 +83,6 @@ See the License for the specific language governing permissions and
         }));
     };
 
-    // var makeRangeEls = function(obj, func){
-    // //return R.flatten([fillText(makeEl('div'), obj.name),
-    // obj.arr.map(func)]);
-    // return R.flatten( [obj.arr.map(func)]);
-    // };
-
-    // utils
-    // var makeRangeEl = R.curry(function(setter, getter, min, max, hooks, str){
-    // var input = makeEl('input');
-    // setAttr(input, 'type', 'range');
-    // setAttr(input, 'min', min);
-    // setAttr(input, 'value', min);
-    // setAttr(input, 'max', max);
-    // hooks.push(makeCommonHook(getter,input, str));
-    // listen(input, 'change', function(event){
-    // DBMS[setter](str, Number(event.target.value), Utils.processError());
-    // });
-    // return addEls(makeEl('div'), [fillText(makeEl('span'), str), input]);
-    // });
     var makeHealthRow = function(val) {
         var icon = makeEl('img');
         icon.str = val.name;
@@ -196,17 +99,12 @@ See the License for the specific language governing permissions and
             }
             setClassByCondition(icon.parentNode, 'wounded', num !== 0);
         };
-
-        refreshHooks.push(function() {
-            DBMS['getHealth'](val.name, function(err, num) {
-                if (err) {
-                    Utils.handleError(err);
-                    return;
-                }
-                icon.num = num;
-                setImg(num);
-            });
+        
+        addRefreshHook('getHealth', val.name, (num) => {
+            icon.num = num;
+            setImg(num);
         });
+
         listen(icon, 'click', function(event) {
             if (!event.ctrlKey && !event.metaKey)
                 return;
@@ -248,10 +146,6 @@ See the License for the specific language governing permissions and
         };
     };
 
-    var makeRangeLoadHook = R.curry(function(hooks, getter, str, rangeOnLoad) {
-        hooks.push(makeCommonHook2(getter, str, rangeOnLoad));
-    });
-
     var makeRangeEl2 = R.curry(function(setter, min, max, labelMaker, initRange, str) {
         var icons = [];
         for (var i = 0; i < max; i++) {
@@ -264,7 +158,6 @@ See the License for the specific language governing permissions and
             return addEl(makeEl('div'), icon);
         }));
         initRange(str, rangeOnLoad(icons, max));
-        // hooks.push(makeCommonHook2(getter, str, rangeOnLoad(icons, max)));
         var label = labelMaker(str);
         var els = label != null ? [ label, div ] : [ div ];
         return addEls(addClass(makeEl('div'), 'stat-container'), els);
@@ -307,51 +200,29 @@ See the License for the specific language governing permissions and
         }, pair[0]);
     });
 
-    var makeCommonHook = function(funcName, input, str) {
+    var onRefreshHook = function(getter, itemName, callback) {
         return function() {
-            DBMS[funcName](str, function(err, value) {
-                if (err) {
-                    Utils.handleError(err);
-                    return;
-                }
-                input.value = value;
+            DBMS[getter](itemName, function(err, value) {
+                if (err) { Utils.handleError(err); return; }
+                callback(value);
             });
         };
     };
-
-    var makeCommonHook2 = function(funcName, str, rangeOnLoad) {
-        return function() {
-            DBMS[funcName](str, function(err, num) {
-                if (err) {
-                    Utils.handleError(err);
-                    return;
-                }
-                rangeOnLoad(num);
-            });
-        };
-    };
-
-    var makeBackstoryHook = function(container, getter, type, inputMaker) {
-        return function() {
-            DBMS[getter](type, function(err, arr) {
-                if (err) {
-                    Utils.handleError(err);
-                    return;
-                }
-                var el = clearEl(queryEl(container + ' .entity-container'))
-                addEls(el, arr.map(inputMaker));
-            });
-        }
-    };
+    
+    var addRefreshHook = R.curry((getter, itemName, rangeOnLoad) => onRefresh(onRefreshHook(getter, itemName, rangeOnLoad)));
+    
+    var backstoryCb = (container, inputMaker) => (arr) => addEls(clearEl(queryEl(container + ' .entity-container')), arr.map(inputMaker));
 
     var fillText = function(el, str) {
         var l10nKey = 'main-' + str;
         setAttr(el, 'l10n-id', l10nKey);
         return addEl(el, makeText(getL10n(l10nKey)));
     };
+    
+    var onRefresh = callback => state.refreshHooks.push(callback);
 
     exports.refresh = function() {
-        refreshHooks.forEach(R.apply(R.__, []));
+        state.refreshHooks.forEach(R.apply(R.__, []));
         // Utils.alert('Refresh');
     };
 
