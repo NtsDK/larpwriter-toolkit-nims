@@ -68,7 +68,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.setState = setter(['state'], R.always(Constants.basicStateList), isValInRange(1, extrasMaxPoints));
         
         LocalDBMS.prototype.getHealth = getter(['state','health'], R.always(Constants.healthList));
-        LocalDBMS.prototype.setHealth = setter(['state','health'], R.always(Constants.healthList), isValInRange(0, 2));
+        LocalDBMS.prototype.setHealth = setter(['state','health'], R.always(Constants.healthList), isValInRange(0, R.always(2)));
         
         LocalDBMS.prototype.setBackground = setter(['backgrounds'], objListGetter('backgrounds'), isValInRange(0, maxPoints));
         

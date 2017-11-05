@@ -63,13 +63,14 @@ See the License for the specific language governing permissions and
                     'alertness' : 0,
                     'athletics' : 0,
                     'brawl' : 0,
-                    'dodge' : 0,
+//                    'dodge' : 0,
                     'empathy' : 0,
                     'expression' : 0,
                     'intimidation' : 0,
                     'leadership' : 0,
                     'streetwise' : 0,
                     'subterfuge' : 0,
+                    'awareness' : 0,
 //                        'skills' : {
                     'animalken' : 0,
                     'crafts' : 0,
@@ -78,31 +79,32 @@ See the License for the specific language governing permissions and
                     'firearms' : 0,
                     'melee' : 0,
                     'performance' : 0,
-                    'security' : 0,
+//                    'security' : 0,
                     'stealth' : 0,
                     'survival' : 0,
+                    'larceny' : 0,
 //                        'knowledges' : {
                     'academics' : 0,
                     'computer' : 0,
                     'finance' : 0,
                     'investigation' : 0,
                     'law' : 0,
-                    'linguistics' : 0,
+//                    'linguistics' : 0,
                     'medicine' : 0,
                     'occult' : 0,
                     'politics' : 0,
                     'science' : 0,
+                    'technology' : 0,
                 },
 //                    'advantages' : {
                 'disciplines' : {},
                 'backgrounds' : {},
-                'traits' : {},
                 'virtues' : {
                     'conscience' : 1,
                     'self_control' : 1,
                     'courage' : 1,
                 },
-//                    },
+                // backstory
                 'merits' : {},
                 'flaws' : {},
                 'state' : {
@@ -118,9 +120,9 @@ See the License for the specific language governing permissions and
                         'crippled'      :0,
                         'incapacitated' :0
                     },
-                    'experience' : 0
+                    'willpower2' : 0
                 },
-                'weakness' : ''
+                'notes' : ''
             };
         }
         
