@@ -10,11 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
-
-/*global
- Utils, DBMS
- */
+    limitations under the License. */
 
 "use strict";
 
@@ -24,18 +20,18 @@ See the License for the specific language governing permissions and
     var state = {
         refreshHooks: []
     };
-    
+
     exports.init = function() {
-        
+
         const profileEls = Constants.profileCols.map(R.map(makeProfileEl)).map(els => addEls(makeEl('div'), els));
         addEls(queryEl(root + '.profile-container'), profileEls);
 
         const attrRange = makeRangeEl('setAttribute', 0, Constants.maxPoints, makeStaticLabel, addRefreshHook('getAttribute'));
         fillStats('.attributes-container', Constants.attributeCols, attrRange);
-        
+
         const abilRange = makeRangeEl('setAbility', 0, Constants.maxPoints, makeStaticLabel, addRefreshHook('getAbility'));
         fillStats('.abilities-container', Constants.abilityCols, abilRange);
-        
+
         const virtueRange = makeRangeEl('setVirtue', 1, Constants.maxPoints, makeStaticLabel, addRefreshHook('getVirtue'));
         fillVirtues('.virtues-container', Constants.virtues, virtueRange);
 
@@ -49,7 +45,7 @@ See the License for the specific language governing permissions and
         const meritInput = makeEntityRenameInput('setBackstory', 'merits', false);
         listen(queryEl('.merits-container .add-button'), "click", makeInputBuilder('.merits-container', meritInput));
         addRefreshHook('getBackstory', 'merits', backstoryCb('.merits-container', meritInput));
-        
+
         const flawInput = makeEntityRenameInput('setBackstory', 'flaws', false);
         listen(queryEl('.flaws-container .add-button'), "click", makeInputBuilder('.flaws-container', flawInput));
         addRefreshHook('getBackstory', 'flaws', backstoryCb('.flaws-container', flawInput));
@@ -57,13 +53,13 @@ See the License for the specific language governing permissions and
         const backgroundInput = makeAdvantageInput('renameAdvantage', 'backgrounds', 'setBackground');
         listen(queryEl('.backgrounds-container .add-button'), "click", makeInputBuilder('.backgrounds-container', backgroundInput));
         addRefreshHook('getAdvantages', 'backgrounds', backstoryCb('.backgrounds-container', backgroundInput));
-        
+
         const disciplineInput = makeAdvantageInput('renameAdvantage', 'disciplines', 'setDiscipline');
         listen(queryEl('.disciplines-container .add-button'), "click", makeInputBuilder('.disciplines-container', disciplineInput));
         addRefreshHook('getAdvantages', 'disciplines', backstoryCb('.disciplines-container', disciplineInput));
 
         fillStats('.health-container', Constants.healthCols, makeHealthRow);
-        
+
         listen(queryEl('.notes-content'), "change", event => DBMS.setNotes(event.target.value, Utils.processError()));
         onRefresh(() => {
             DBMS.getNotes(function(err, value) {
@@ -71,10 +67,10 @@ See the License for the specific language governing permissions and
                 queryEl('.notes-content').value = value;
             });
         });
-        
+
         exports.content = queryEl(root);
     };
-    
+
     var makeProfileEl = function(itemName) {
         var input = makeEl('input');
         addRefreshHook('getProfileItem', itemName, value => input.value = value);
@@ -107,7 +103,7 @@ See the License for the specific language governing permissions and
             }
             setClassByCondition(icon.parentNode, 'wounded', num !== 0);
         };
-        
+
         addRefreshHook('getHealth', val.name, (num) => {
             icon.num = num;
             setImg(num);
@@ -158,7 +154,7 @@ See the License for the specific language governing permissions and
         var label = labelMaker(itemName);
         return makeRangeEl2(setter, min, max, label, initRange, R.always(itemName));
     });
-    
+
     var makeRangeEl2 = R.curry(function(setter, min, max, label, initRange, itemNameCb) {
         var icons = [];
         for (var i = 0; i < max; i++) {
@@ -167,7 +163,7 @@ See the License for the specific language governing permissions and
             listen(icon, 'click', rangeOnClick(setter, icons, min, max, itemNameCb));
             icons.push(icon);
         }
-        
+
         var div = addEls(addClass(makeEl('div'), 'range-container'), icons.map(function(icon) {
             return addEl(makeEl('div'), icon);
         }));
@@ -175,7 +171,7 @@ See the License for the specific language governing permissions and
         var els = label != null ? [ label, div ] : [ div ];
         return addEls(addClass(makeEl('div'), 'stat-container'), els);
     });
-    
+
     var makeRangeEl3 = R.curry(function(setter, min, max, labelMaker, initRange, itemName) {
         var label = labelMaker(itemName);
         const itemNameCb = R.always(itemName);
@@ -186,11 +182,11 @@ See the License for the specific language governing permissions and
             listen(icon, 'click', rangeOnClick(setter, icons, min, max, itemNameCb));
             icons.push(icon);
         }
-        
+
         const icons2Container = icons => addEls(addClass(makeEl('div'), 'range-container'), icons.map(function(icon) {
             return addEl(makeEl('div'), icon);
         }));
-        
+
         var divs = R.splitEvery(10, icons).map(icons2Container);
         initRange(itemNameCb(), rangeOnLoad(icons, max));
         var els = label != null ? R.prepend(label, divs) : divs;
@@ -230,7 +226,7 @@ See the License for the specific language governing permissions and
     });
     var makeAdvantageInput = R.curry(function(renameFunc, type, setter, pair) {
         pair = pair || [ '', 0 ];
-        
+
         const labelMaker = makeEntityRenameInput(renameFunc, type, true);
         const initRange = function(str, rangeOnLoad) {
             rangeOnLoad(pair[1]);
@@ -248,9 +244,9 @@ See the License for the specific language governing permissions and
             });
         };
     };
-    
+
     var addRefreshHook = R.curry((getter, itemName, rangeOnLoad) => onRefresh(onRefreshHook(getter, itemName, rangeOnLoad)));
-    
+
     var backstoryCb = (container, inputMaker) => (arr) => addEls(clearEl(queryEl(container + ' .entity-container')), arr.map(inputMaker));
 
     var fillText = function(el, str) {
@@ -258,7 +254,7 @@ See the License for the specific language governing permissions and
         setAttr(el, 'l10n-id', l10nKey);
         return addEl(el, makeText(getL10n(l10nKey)));
     };
-    
+
     var onRefresh = callback => state.refreshHooks.push(callback);
 
     exports.refresh = function() {

@@ -10,48 +10,46 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
-/*
- */
 "use strict";
 
 (function(exports){
 
     function ValidationError(messageId, parameters) {
-      Error.call(this, arguments) ;
-      this.name = "ValidationError";
-    
-      this.messageId = messageId;
-      this.parameters = parameters;
-    
-      if (Error.captureStackTrace) {
+    Error.call(this, arguments) ;
+    this.name = "ValidationError";
+
+    this.messageId = messageId;
+    this.parameters = parameters;
+
+    if (Error.captureStackTrace) {
         Error.captureStackTrace(this, ValidationError);
-      } else {
+    } else {
         this.stack = (new Error()).stack;
-      }
+    }
     };
-    
+
     ValidationError.prototype = Object.create(Error.prototype);
-    
+
     exports.ValidationError = ValidationError;
-    
+
     function InternalError(messageId, parameters) {
         Error.call(this, arguments) ;
         this.name = "InternalError";
-        
+
         this.messageId = messageId;
         this.parameters = parameters;
-        
+
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, InternalError);
         } else {
             this.stack = (new Error()).stack;
         }
     };
-    
+
     InternalError.prototype = Object.create(Error.prototype);
-    
+
     exports.InternalError = InternalError;
 
 })(typeof exports === 'undefined'? this['Errors']={}: exports);

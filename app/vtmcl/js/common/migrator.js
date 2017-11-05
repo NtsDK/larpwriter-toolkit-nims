@@ -10,11 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
-
-/*global
- // Utils
- */
+    limitations under the License. */
 
 "use strict";
 
@@ -36,7 +32,7 @@ See the License for the specific language governing permissions and
                     'player' : '',
                     'chronicle' : '',
                     'nature' : '',
-                    'age' : '',     
+                    'age' : '',
                     'sex' : '',
                     'demeanor' : '',
                     'concept' : '',
@@ -125,7 +121,7 @@ See the License for the specific language governing permissions and
                 'notes' : ''
             };
         }
-        
+
         return data;
     };
 })(typeof exports === 'undefined' ? this['Migrator'] = {} : exports);

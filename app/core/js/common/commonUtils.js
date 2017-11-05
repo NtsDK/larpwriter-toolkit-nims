@@ -10,25 +10,25 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
-        
+
     function CommonUtils(exports, R) {
-    
+
         exports.startsWith = function(str1, str2){
             return str1.substring(0, str2.length) === str2;
         };
-    
+
         exports.removeFromArrayByIndex = function(array, from, to) {
             "use strict";
             var rest = array.slice((to || from) + 1 || array.length);
             array.length = from < 0 ? array.length + from : from;
             return array.push.apply(array, rest);
         };
-        
+
         exports.charOrdAFactoryBase = R.curry(function(sortDir, prepare){
             return function(a, b) {
                 a = prepare(a);
@@ -43,13 +43,13 @@ See the License for the specific language governing permissions and
                 return 0;
             };
         });
-        
+
         exports.charOrdAFactory = exports.charOrdAFactoryBase('asc');
-        
+
         exports.charOrdA = exports.charOrdAFactory(function(a){return a.toLowerCase();});
-        
+
         exports.eventsByTime = exports.charOrdAFactory(a => new Date(a.time));
-    
+
         exports.strFormat = function(str, vals){
             "use strict";
             return str.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
@@ -58,12 +58,12 @@ See the License for the specific language governing permissions and
                 return vals[n];
             });
         };
-        
+
         exports.consoleLog = function(str){
             "use strict";
             console.log(str);
         };
-        
+
         exports.clone = function(o) {
             "use strict";
             if (!o || 'object' !== typeof o) {
@@ -83,7 +83,7 @@ See the License for the specific language governing permissions and
             }
             return c;
         };
-        
+
         var preg_quote = function (str, delimiter) {
             "use strict";
             // http://kevin.vanzonneveld.net
@@ -101,27 +101,27 @@ See the License for the specific language governing permissions and
             return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\'
                     + (delimiter || '') + '-]', 'g'), '\\$&');
         };
-        
+
         exports.globStringToRegex = function (str) {
             "use strict";
             return new RegExp(preg_quote(str).replace(/\\\*/g, '.*').replace(
                     /\\\?/g, '.'), 'g');
         };
-        
+
         // taken from MDN https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
         exports.escapeRegExp = function(string){
-          return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
         };
-        
+
         exports.arr2map = function(array, key){
             return array.reduce(function(a, b) {
                 a[b[key]] = b;
                 return a;
             }, {});
         };
-        
+
     }
-    
+
     callback(CommonUtils);
 
 })(function(api){

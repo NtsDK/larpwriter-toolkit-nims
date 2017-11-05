@@ -10,18 +10,14 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
-
-/*global
- // Utils
- */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
-    
+
     function Schema(exports, R, CommonUtils, Constants) {
-    
+
         exports.getSchema = function(base) {
             var schema = {
                 "$schema": "http://json-schema.org/draft-04/schema#",
@@ -30,11 +26,11 @@ See the License for the specific language governing permissions and
                 "type": "object",
                 'definitions': {}
             };
-    
+
             var Meta =  getMetaSchema();
             var Log =  getLogSchema();
             var Charlist =  getCharlistSchema();
-    
+
             schema.properties = {
                 Meta : Meta,
                 Version : {
@@ -47,10 +43,10 @@ See the License for the specific language governing permissions and
             };
             schema.required = ['Meta','Version','Log','Charlist'];
             schema.additionalProperties = false;
-            
+
             return schema;
         };
-        
+
         function getCharlistSchema() {
             const arr2PointsObj = (arr) => ({
                 "type": "object",
@@ -65,7 +61,7 @@ See the License for the specific language governing permissions and
                 "required": arr,
                 "additionalProperties": false
             });
-            
+
             return {
                 "type": "object",
                 "properties": {
@@ -82,7 +78,7 @@ See the License for the specific language governing permissions and
                     "abilities" : arr2PointsObj(Constants.abilityList),
                     "disciplines" : {
                         "type": "object",
-                        "additionalProperties": { 
+                        "additionalProperties": {
                             "type": "number",
                             "minimum":0,
                             "maximum":Constants.maxPoints,
@@ -90,7 +86,7 @@ See the License for the specific language governing permissions and
                     },
                     "backgrounds" : {
                         "type": "object",
-                        "additionalProperties": { 
+                        "additionalProperties": {
                             "type": "number",
                             "minimum":0,
                             "maximum":Constants.maxPoints,
@@ -99,14 +95,14 @@ See the License for the specific language governing permissions and
                     "virtues" : arr2PointsObj(Constants.virtues),
                     "merits" : {
                         "type": "object",
-                        "additionalProperties": { 
+                        "additionalProperties": {
                             "type": "boolean",
                             "enum":[true],
                         }
                     },
                     "flaws" : {
                         "type": "object",
-                        "additionalProperties": { 
+                        "additionalProperties": {
                             "type": "boolean",
                             "enum":[true],
                         }
@@ -162,7 +158,7 @@ See the License for the specific language governing permissions and
                 "additionalProperties": false
             };
         };
-        
+
         function getMetaSchema() {
             return {
                 "title": "Meta",
@@ -194,7 +190,7 @@ See the License for the specific language governing permissions and
                 "additionalProperties": false
             };
         };
-        
+
         function getLogSchema(){
             return {
                 "type" : "array",
@@ -208,11 +204,11 @@ See the License for the specific language governing permissions and
                 }
             };
         };
-        
+
     };
-    
+
     callback(Schema);
-    
+
 })(function(api){
     typeof exports === 'undefined'? api(this['Schema'] = {}, R, CommonUtils, Constants) : module.exports = api;
 }.bind(this));

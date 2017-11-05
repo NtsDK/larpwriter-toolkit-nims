@@ -10,14 +10,12 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
-/*
- */
 "use strict";
 
 (function(exports) {
-    
+
     exports.maxPoints = 5;
     exports.extrasMaxPoints = 10;
     exports.bloodpoolMax = 20;
@@ -25,7 +23,7 @@ See the License for the specific language governing permissions and
     exports.profileCols = [ [ 'name', 'player', 'chronicle', 'age', 'sex' ],
         [ 'nature', 'demeanor', 'concept', 'clan', 'generation', 'sire' ] ];
 //    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
-    
+
     exports.profileItemList = R.flatten(exports.profileCols);
 
     exports.attributeCols = [ {
@@ -38,29 +36,29 @@ See the License for the specific language governing permissions and
         name : 'mental',
         arr : [ 'perception', 'intelligence', 'wits' ]
     } ];
-    
+
     exports.attributeList = R.flatten(exports.attributeCols.map(R.prop('arr')));
 
 //    'dodge',
 //    'security',
-//    'linguistics', 
+//    'linguistics',
     exports.abilityCols = [
     {
         name : 'talents',
-        arr : [ 'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 
+        arr : [ 'alertness', 'athletics', 'awareness', 'brawl', 'empathy',
             'expression', 'intimidation', 'leadership', 'streetwise', 'subterfuge' ]
     },
     {
         name : 'skills',
-        arr : [ 'animalken', 'crafts', 'drive', 'etiquette', 'firearms', 
+        arr : [ 'animalken', 'crafts', 'drive', 'etiquette', 'firearms',
             'larceny', 'melee', 'performance', 'stealth', 'survival',                  ]
     },
     {
         name : 'knowledges',
-        arr : [ 'academics', 'computer', 'finance', 'investigation', 'law', 
+        arr : [ 'academics', 'computer', 'finance', 'investigation', 'law',
             'medicine', 'occult', 'politics', 'science', 'technology']
     } ];
-    
+
     exports.abilityList = R.flatten(exports.abilityCols.map(R.prop('arr')));
 
     exports.healthCols = [ {
@@ -90,14 +88,14 @@ See the License for the specific language governing permissions and
     } ];
 
     exports.virtues = [ "conscience", "self_control", "courage" ];
-    
+
     exports.basicStateList = ["humanity", "willpower", "willpower2", "bloodpool" ];
-    
+
     exports.advantagesList = ["backgrounds", "disciplines"];
-    
+
     exports.backstoryList = ["merits", "flaws"];
-    
-    
+
+
     exports.healthList = exports.healthCols[0].arr.map(R.prop('name'));
 
     //    exports.disciplines = [ 'animalism', 'bardo', 'valeren', 'visceratika', 'obtenebration', 'daimoinon', 'dominate',

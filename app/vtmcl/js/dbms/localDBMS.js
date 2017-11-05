@@ -10,11 +10,8 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
-/*global
- Utils, Database, Migrator
- */
 "use strict";
 
 function makeLocalDBMS(fullVersion){
@@ -32,26 +29,24 @@ function makeLocalDBMS(fullVersion){
         dbmsUtils    : {}          ,
         dateFormat   : dateFormat  ,
     };
-    
+
     function LocalDBMS(){
         this._init(opts.listeners);
     };
-    
+
     LocalDBMS.prototype.getSettings = function(){
         "use strict";
         return this.database.Settings;
     };
-    
+
     var func = (name) => window[name](LocalDBMS, opts);
-    
+
     ["baseAPI"               ,
     "consistencyCheckAPI"   ,
     "logAPI"                ,
     "charlistAPI"           ,
     ].map(func);
-    
+
     Logger.attachLogCalls(LocalDBMS, R, false);
     return LocalDBMS;
 };
-
-

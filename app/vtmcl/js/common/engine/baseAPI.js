@@ -10,19 +10,19 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
-    
+
     function baseAPI(LocalDBMS, opts) {
         var Migrator      = opts.Migrator    ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var EventEmitter  = opts.EventEmitter;
         var Constants     = opts.Constants   ;
-        
+
         LocalDBMS.prototype._init = function(listeners){
             this.ee = new EventEmitter();
             var that = this;
@@ -32,12 +32,12 @@ See the License for the specific language governing permissions and
                 });
             }
         };
-    
+
         LocalDBMS.prototype.getDatabase = function(callback){
             this.database.Meta.saveTime = new Date().toString();
             callback(null, CU.clone(this.database));
         };
-    
+
         LocalDBMS.prototype.setDatabase = function(database, callback){
             try {
                 this.database = Migrator.migrate(database);
@@ -46,11 +46,11 @@ See the License for the specific language governing permissions and
             }
             if(callback) callback();
         };
-    
+
         LocalDBMS.prototype.getMetaInfo = function(callback){
             callback(null, CU.clone(this.database.Meta));
         };
-    
+
         // overview
         LocalDBMS.prototype.setMetaInfo = function(name, value, callback){
             var chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoList), PC.isString(value)]);
@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
             });
         };
     };
-  
+
     callback(baseAPI);
 
 })(function(api){

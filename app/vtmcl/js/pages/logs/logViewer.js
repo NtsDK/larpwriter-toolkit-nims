@@ -10,11 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
-
-/*global
- Utils, DBMS
- */
+    limitations under the License. */
 
 "use strict";
 
@@ -38,7 +34,7 @@ LogViewer.refresh = function() {
 LogViewer.dataRecieved = function(err, data) {
     "use strict";
     if(err) {Utils.handleError(err); return;}
-    
+
     var sel = getEl('logPageSelector');
     var selectedIndex = sel.selectedIndex;
     clearEl(sel);
@@ -48,9 +44,9 @@ LogViewer.dataRecieved = function(err, data) {
         selData.push({ name: i+1, value: String(i), selected: selectedIndex == i });
     }
     fillSelector(sel, selData);
-    
+
     var container = clearEl(getEl('logData'));
-    
+
     R.ap([addEl(container)], data.requestedLog.map(LogViewer.makeRow));
 };
 

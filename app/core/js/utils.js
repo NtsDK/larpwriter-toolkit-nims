@@ -10,18 +10,18 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 var Utils = {};
 
 /** opts
- *      tooltip - add tooltip to button, used for iconic buttons
- *      id - set button id
- *      mainPage - enable view as first page
- *      toggle - toggle content, associated with button
- */
+    tooltip - add tooltip to button, used for iconic buttons
+    id - set button id
+    mainPage - enable view as first page
+    toggle - toggle content, associated with button
+*/
 Utils.addView = function (containers, name, view, opts) {
     "use strict";
     var opts = opts || {};
@@ -49,7 +49,7 @@ Utils.addView = function (containers, name, view, opts) {
         addClass(button, opts.clazz);
     }
     containers.navigation.appendChild(button);
-    
+
 
     var elems, i;
     var onClickDelegate = function (view) {
@@ -67,14 +67,14 @@ Utils.addView = function (containers, name, view, opts) {
                     }
                 }
             }
-            
+
             var isActive = hasClass(evt.target, "active");
             for (i = 0; i < elems.length; i++) {
                 removeClass(elems[i], "active");
             }
             if(!opts.toggle || (opts.toggle && !isActive)){
                 addClass(evt.target, "active");
-                
+
                 passEls(containers.content, getEl('warehouse'));
                 containers.content.appendChild(view.content);
                 removeClass(containers.content, "hidden");
@@ -130,7 +130,7 @@ Utils.processError = function(callback){
             Utils.handleError(err);
             return;
         }
-        
+
         if(callback){
             var arr = [];
             for (var i = 1; i < arguments.length; i++) {
@@ -227,10 +227,10 @@ var addClasses = R.curry(function(o, c){
 });
 
 var rAddClass = R.curry(function(c, o){
-  var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
-  if (re.test(o.className)) return;
-  o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
-  return o;
+    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+    if (re.test(o.className)) return;
+    o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+    return o;
 });
 
 var toggleClass = R.curry(function(o, c){
@@ -245,7 +245,7 @@ function hasClass(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     return (re.test(o.className));
 };
- 
+
 var removeClass = R.curry(function(o, c){
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
     o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "")
@@ -261,7 +261,7 @@ function setClassByCondition(o,c,condition){
 };
 
 function getEl(id){
-  return document.getElementById(id);
+    return document.getElementById(id);
 };
 
 function queryEl(sel){
@@ -277,15 +277,15 @@ function queryElEls(el, sel){
 };
 
 function getEls(clazz){
-  return document.getElementsByClassName(clazz);
+    return document.getElementsByClassName(clazz);
 };
 
 function makeEl(elTag){
-  return document.createElement(elTag);
+    return document.createElement(elTag);
 };
 
 function makeText(text){
-  return document.createTextNode(text);
+    return document.createTextNode(text);
 };
 
 var addEl = R.curry(function(parent, child){
@@ -304,13 +304,13 @@ var makeOpt = function(label){
 };
 
 var rAddEl = R.curry(function(child, parent){
-  parent.appendChild(child);
-  return parent;
+    parent.appendChild(child);
+    return parent;
 });
 
 var setAttr = R.curry(function(el, name, value){
-  el.setAttribute(name, value);
-  return el;
+    el.setAttribute(name, value);
+    return el;
 });
 
 var setStyle = R.curry(function(el, name, value){
@@ -328,20 +328,20 @@ function getAttr(el, name){
 };
 
 var setProp = R.curry(function(el, key, value){
-  el[key] = value;
-  return el;
+    el[key] = value;
+    return el;
 });
 
 var setProps = R.curry(function(el, map){
-  for(var key in map){
-    setProp(el, key, map[key]);
-  }
-  return el;
+    for(var key in map){
+        setProp(el, key, map[key]);
+    }
+    return el;
 });
 
 function clearEl(el){
-  Utils.removeChildren(el);
-  return el;
+    Utils.removeChildren(el);
+    return el;
 };
 
 function passEls(src, dst){
@@ -351,8 +351,8 @@ function passEls(src, dst){
 };
 
 var listen = R.curry(function(el, event, listener){
-  el.addEventListener(event, listener);
-  return el;
+    el.addEventListener(event, listener);
+    return el;
 });
 
 var listenOnEnter = R.curry(function(el, callback){
@@ -385,7 +385,7 @@ var remapProps = R.curry(function(outKeys, pickKeys, obj){
 var remapProps4Select2 = remapProps(['id','text'], ['value', 'displayName']);
 var remapProps4Select = remapProps(['value','name'], ['value', 'displayName']);
 
-var getSelect2DataCommon = R.curry(function(preparator, obj){ 
+var getSelect2DataCommon = R.curry(function(preparator, obj){
     return R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj);
 });
 
@@ -418,4 +418,3 @@ var debugInterceptor = function(callback){
 Date.prototype.format = function (mask, utc) {
     return dateFormat(this, mask, utc);
 };
-

@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
@@ -22,11 +22,11 @@ See the License for the specific language governing permissions and
         var EventEmitter  = opts.EventEmitter;
         var Constants     = opts.Constants   ;
         var R             = opts.R   ;
-        
+
         var containerPath = ['Charlist'];
-        
+
         var char = (db) => R.path(containerPath, db.database);
-        
+
         const getter = R.curry(function(subPath, enumArr, itemName, callback){
             var chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr())]);
             PC.precondition(chain, callback, () => {
@@ -40,47 +40,47 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         });
-        
+
         const objListGetter = (container) => {
             return function(){
                 return R.keys(char(this)[container])
             };
         };
-        
+
         const isValString = (itemName, value) => PC.chainCheck([PC.isString(value)]);
         const maxPoints = R.always(Constants.maxPoints);
         const extrasMaxPoints = itemName => itemName === 'bloodpool' ? Constants.bloodpoolMax : Constants.extrasMaxPoints;
         const isValInRange = R.curry((min, max, itemName, value) => PC.chainCheck([PC.isNumber(value), PC.isInRange(value, min, max(itemName))]));
-        
+
         LocalDBMS.prototype.getProfileItem = getter(['profile'], R.always(Constants.profileItemList));
         LocalDBMS.prototype.setProfileItem = setter(['profile'], R.always(Constants.profileItemList), isValString);
-        
+
         LocalDBMS.prototype.getAttribute = getter(['attributes'], R.always(Constants.attributeList));
         LocalDBMS.prototype.setAttribute = setter(['attributes'], R.always(Constants.attributeList), isValInRange(0, maxPoints));
-        
+
         LocalDBMS.prototype.getAbility = getter(['abilities'], R.always(Constants.abilityList));
         LocalDBMS.prototype.setAbility = setter(['abilities'], R.always(Constants.abilityList), isValInRange(0, maxPoints));
-        
+
         LocalDBMS.prototype.getVirtue = getter(['virtues'], R.always(Constants.virtues));
         LocalDBMS.prototype.setVirtue = setter(['virtues'], R.always(Constants.virtues), isValInRange(1, maxPoints));
-        
+
         LocalDBMS.prototype.getState = getter(['state'], R.always(Constants.basicStateList));
         LocalDBMS.prototype.setState = setter(['state'], R.always(Constants.basicStateList), isValInRange(1, extrasMaxPoints));
-        
+
         LocalDBMS.prototype.getHealth = getter(['state','health'], R.always(Constants.healthList));
         LocalDBMS.prototype.setHealth = setter(['state','health'], R.always(Constants.healthList), isValInRange(0, R.always(2)));
-        
+
         LocalDBMS.prototype.setBackground = setter(['backgrounds'], objListGetter('backgrounds'), isValInRange(0, maxPoints));
-        
+
         LocalDBMS.prototype.setDiscipline = setter(['disciplines'], objListGetter('disciplines'), isValInRange(0, maxPoints));
-        
+
         const arrGetter = R.curry(function(initter, enumArr, type, callback){
             var chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, enumArr)]);
             PC.precondition(chain, callback, () => {
                 callback(null, initter(char(this)[type]));
             });
         });
-        
+
         const namer = R.curry(function(defaultValue, enumArr, type, oldName, newName, callback) {
             const chain = [PC.isString(type), PC.elementFromEnum(type, enumArr), PC.isString(oldName), PC.isString(newName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
@@ -115,11 +115,11 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.getAdvantages = arrGetter(R.toPairs, Constants.advantagesList);
         LocalDBMS.prototype.renameAdvantage = namer(0, Constants.advantagesList);
-        
+
         LocalDBMS.prototype.getNotes = function(callback){
             callback(null, char(this).notes);
         };
-        
+
         LocalDBMS.prototype.setNotes = function(text, callback){
             var chain = PC.chainCheck([PC.isString(text)]);
             PC.precondition(chain, callback, () => {
@@ -128,7 +128,7 @@ See the License for the specific language governing permissions and
             });
         };
     };
-  
+
     callback(api);
 })(function(api){
     typeof exports === 'undefined'? this['charlistAPI'] = api: module.exports = api;
