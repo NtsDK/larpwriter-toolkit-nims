@@ -17,10 +17,15 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports) {
+    
+    exports.maxPoints = 5;
+    exports.extrasMaxPoints = 10;
 
-    // exports.profileCols = [ [ 'name', 'player', 'chronicle', 'age', 'sex' ],
-    // [ 'nature', 'demeanor', 'concept', 'clan', 'generation', 'sire' ] ];
-    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
+    exports.profileCols = [ [ 'name', 'player', 'chronicle', 'age', 'sex' ],
+        [ 'nature', 'demeanor', 'concept', 'clan', 'generation', 'sire' ] ];
+//    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
+    
+    exports.profileItemList = R.flatten(exports.profileCols);
 
     exports.attributeCols = [ {
         name : 'physical',
@@ -32,6 +37,8 @@ See the License for the specific language governing permissions and
         name : 'mental',
         arr : [ 'perception', 'intelligence', 'wits' ]
     } ];
+    
+    exports.attributeList = R.flatten(exports.attributeCols.map(R.prop('arr')));
 
     exports.abilityCols = [
     {
@@ -49,6 +56,8 @@ See the License for the specific language governing permissions and
         arr : [ 'science', 'politics', 'occult', 'medicine', 'linguistics', 'law', 'investigation', 'finance',
                 'computer', 'academics', ]
     } ];
+    
+    exports.abilityList = R.flatten(exports.abilityCols.map(R.prop('arr')));
 
     exports.healthCols = [ {
         name : 'health',
@@ -77,6 +86,15 @@ See the License for the specific language governing permissions and
     } ];
 
     exports.virtues = [ "conscience", "self_control", "courage" ];
+    
+    exports.basicStateList = ["humanity", "willpower", "bloodpool" ];
+    
+    exports.advantagesList = ["backgrounds", "disciplines"];
+    
+    exports.backstoryList = ["merits", "flaws"];
+    
+    
+    exports.healthList = exports.healthCols[0].arr.map(R.prop('name'));
 
     exports.disciplines = [ 'animalism', 'bardo', 'valeren', 'visceratika', 'obtenebration', 'daimoinon', 'dominate',
             'obfuscate', 'vicissitude', 'kineticism', 'melpominee', 'mytherceria', 'potence', 'nihilistics', 'obeah',
@@ -84,41 +102,6 @@ See the License for the specific language governing permissions and
             'mortis', 'fortitude', 'celerity', 'thanatosis', 'temporis', 'chimerstry', 'spiritus' ];
 
     exports.themeList = [ 'nims-theme', 'des-light-theme', 'des-dark-theme' ];
-
-    // exports.assetTypes = ["local","global"];
-    //    
-    // exports.shopDataTypes = ["corporation","sellerLogin","sellerPassword"];
-    //    
-    // exports.ownedEntityTypes = ['shop','asset'];
-    //
-    // exports.assetProfileStructure = [{
-    // name: "displayString",
-    // type: "string",
-    // },{
-    // name: "isPhysical",
-    // type: "checkbox",
-    // },{
-    // name: "resourceCost",
-    // type: "number",
-    // },{
-    // name: "apiKey",
-    // type: "string",
-    // },{
-    // name: "description",
-    // type: "text",
-    // }];
-    //    
-    // exports.assetEditableItems =
-    // ['displayString','isPhysical','resourceCost','apiKey','description'];
-    // exports.localAssetEditableItems = ['displayString','description'];
-    //    
-    // exports.localAssetProfileStructure = [{
-    // name: "displayString",
-    // type: "string",
-    // },{
-    // name: "description",
-    // type: "text",
-    // }];
 
     exports.httpTimeout = 5000;
 

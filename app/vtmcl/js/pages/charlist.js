@@ -25,24 +25,21 @@ See the License for the specific language governing permissions and
         refreshHooks: []
     };
     
-    const maxPoints = 5;
-    const extrasMaxPoints = 10;
-
     exports.init = function() {
         
         const profileEls = Constants.profileCols.map(R.map(makeProfileEl)).map(els => addEls(makeEl('div'), els));
         addEls(queryEl(root + '.profile-container'), profileEls);
 
-        const attrRange = makeRangeEl('setAttribute', 0, maxPoints, makeStaticLabel, addRefreshHook('getAttribute'));
+        const attrRange = makeRangeEl('setAttribute', 0, Constants.maxPoints, makeStaticLabel, addRefreshHook('getAttribute'));
         fillStats('.attributes-container', Constants.attributeCols, attrRange);
         
-        const abilRange = makeRangeEl('setAbility', 0, maxPoints, makeStaticLabel, addRefreshHook('getAbility'));
+        const abilRange = makeRangeEl('setAbility', 0, Constants.maxPoints, makeStaticLabel, addRefreshHook('getAbility'));
         fillStats('.abilities-container', Constants.abilityCols, abilRange);
         
-        const virtueRange = makeRangeEl('setVirtue', 1, maxPoints, makeStaticLabel, addRefreshHook('getVirtue'));
+        const virtueRange = makeRangeEl('setVirtue', 1, Constants.maxPoints, makeStaticLabel, addRefreshHook('getVirtue'));
         fillVirtues('.virtues-container', Constants.virtues, virtueRange);
 
-        const someState = makeRangeEl('setState', 0, extrasMaxPoints, nuller, addRefreshHook('getState'));
+        const someState = makeRangeEl('setState', 0, Constants.extrasMaxPoints, nuller, addRefreshHook('getState'));
         addEl(queryEl('.humanity-container'), someState('humanity'));
         addEl(queryEl('.willpower-container'), someState('willpower'));
 
@@ -204,7 +201,7 @@ See the License for the specific language governing permissions and
         };
         const itemName = pair[0];
         var label = labelMaker(itemName);
-        return makeRangeEl2(setter, 0, maxPoints, label, initRange, () => label.value);
+        return makeRangeEl2(setter, 0, Constants.maxPoints, label, initRange, () => label.value);
     });
 
     var onRefreshHook = function(getter, itemName, callback) {
