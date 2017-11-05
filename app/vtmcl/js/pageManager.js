@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
     state.views = {};
 
@@ -23,7 +23,68 @@ See the License for the specific language governing permissions and
         className: 'mainNavButton'
     };
 
-    const initPage = function () {
+    exports.onMasterPageLoad = () => {
+        initPage();
+        const LocalDBMS = makeLocalDBMS(true);
+        if (MODE === 'Standalone') {
+            window.DBMS = new LocalDBMS();
+            DBMS.setDatabase(BaseExample.data, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                consistencyCheck(onDatabaseLoad);
+            });
+        } else if (MODE === 'NIMS_Server') {
+            const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+            window.DBMS = new RemoteDBMS();
+            consistencyCheck(onDatabaseLoad);
+        }
+    };
+
+    function onDatabaseLoad() {
+        //        initTheme();
+
+        stateInit();
+
+        Utils.addView(state.containers, 'charlist', Charlist, { mainPage: true });
+
+        addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
+
+        const button = makeButton('dataLoadButton', 'open-database', null, btnOpts);
+        button.addEventListener('change', FileUtils.readSingleFile, false);
+
+        const input = makeEl('input');
+        input.type = 'file';
+        addClass(input, 'hidden');
+        setAttr(input, 'tabindex', -1);
+        button.appendChild(input);
+        button.addEventListener('click', (e) => {
+            input.click();
+        });
+        addEl(state.navigation, button);
+
+        //                addEl(state.navigation, makeButton("themeButton", "theme", () => nextTheme(), btnOpts));
+        addEl(state.navigation, makeButton('dataSaveButton', 'save-database', FileUtils.saveFile, btnOpts));
+        if (MODE === 'Standalone') {
+            addEl(state.navigation, makeButton('newBaseButton', 'create-database', FileUtils.makeNewBase, btnOpts));
+        }
+        //addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
+
+        addEl(state.navigation, makeL10nButton());
+
+        Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
+        addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
+
+        //addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
+
+        FileUtils.init((err) => {
+            if (err) { Utils.handleError(err); return; }
+            consistencyCheck(state.currentView.refresh);
+        });
+
+        state.currentView.refresh();
+        addBeforeUnloadListener();
+    }
+
+    function initPage() {
         L10n.localizeStatic();
         L10n.onL10nChange(() => state.currentView.refresh());
         UI.initSelectorFilters();
@@ -34,7 +95,7 @@ See the License for the specific language governing permissions and
         }
         updateDialogs();
         L10n.onL10nChange(updateDialogs);
-    };
+    }
 
     //    var curTheme = Constants.themeList[1];
     //
@@ -63,23 +124,7 @@ See the License for the specific language governing permissions and
     //        }
     //    };
 
-    exports.onMasterPageLoad = function () {
-        initPage();
-        const LocalDBMS = makeLocalDBMS(true);
-        if (MODE === 'Standalone') {
-            window.DBMS = new LocalDBMS();
-            DBMS.setDatabase(BaseExample.data, (err) => {
-                if (err) { Utils.handleError(err); return; }
-                consistencyCheck(onDatabaseLoad);
-            });
-        } else if (MODE === 'NIMS_Server') {
-            const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
-            window.DBMS = new RemoteDBMS();
-            consistencyCheck(onDatabaseLoad);
-        }
-    };
-
-    var consistencyCheck = function (callback) {
+    function consistencyCheck(callback) {
         DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
             if (err) { Utils.handleError(err); return; }
             consistencyErrors.forEach(CommonUtils.consoleLog);
@@ -90,86 +135,28 @@ See the License for the specific language governing permissions and
             }
             callback();
         });
-    };
+    }
 
-    const stateInit = function () {
+    function stateInit() {
         state.navigation = getEl('navigation');
         state.containers = {
             root: state,
             navigation: state.navigation,
             content: getEl('contentArea')
         };
-    };
+    }
 
-    var onDatabaseLoad = function () {
-        //        initTheme();
-
-        var button;
-        stateInit();
-
-        Utils.addView(state.containers, 'charlist', Charlist, { mainPage: true });
-
-        addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
-
-        var button = makeButton('dataLoadButton', 'open-database', null, btnOpts);
-        button.addEventListener('change', FileUtils.readSingleFile, false);
-
-        const input = makeEl('input');
-        input.type = 'file';
-        addClass(input, 'hidden');
-        setAttr(input, 'tabindex', -1);
-        button.appendChild(input);
-        button.addEventListener('click', (e) => {
-            input.click();
-        });
-        addEl(state.navigation, button);
-
-        //                addEl(state.navigation, makeButton("themeButton", "theme", () => nextTheme(), btnOpts));
-        addEl(state.navigation, makeButton('dataSaveButton', 'save-database', FileUtils.saveFile, btnOpts));
-        if (MODE === 'Standalone') {
-            addEl(state.navigation, makeButton('newBaseButton', 'create-database', FileUtils.makeNewBase, btnOpts));
-        }
-        //                addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
-
-        addEl(state.navigation, makeL10nButton());
-
-        Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
-        addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
-
-        //                addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
-
-        FileUtils.init((err) => {
-            if (err) { Utils.handleError(err); return; }
-            consistencyCheck(state.currentView.refresh);
-        });
-
-        state.currentView.refresh();
-        if (MODE === 'Standalone') {
-            addBeforeUnloadListener();
-        }
-    };
-
-    var makeL10nButton = function () {
-        const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
-        const setIcon = function () {
-            l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
-        };
-        L10n.onL10nChange(setIcon);
-        setIcon();
-        return l10nBtn;
-    };
-
-    var runTests = function () {
+    function runTests() {
         consistencyCheck(() => '');
-    };
+    }
 
-    var makeButton = function (clazz, name, callback, opts) {
+    function makeButton(clazz, name, callback, opts) {
         const button = makeEl('button');
         addClass(button, clazz);
+        function delegate() {
+            $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
+        }
         if (opts.tooltip) {
-            const delegate = function () {
-                $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
-            };
             L10n.onL10nChange(delegate);
             $(button).tooltip({
                 title: L10n.getValue(`header-${name}`),
@@ -184,10 +171,20 @@ See the License for the specific language governing permissions and
             listen(button, 'click', callback);
         }
         return button;
-    };
+    }
 
-    var addBeforeUnloadListener = function () {
-        window.onbeforeunload = function (evt) {
+    function makeL10nButton() {
+        const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
+        function setIcon() {
+            l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
+        }
+        L10n.onL10nChange(setIcon);
+        setIcon();
+        return l10nBtn;
+    }
+
+    function addBeforeUnloadListener() {
+        window.onbeforeunload = (evt) => {
             const message = getL10n('utils-close-page-warning');
             if (typeof evt === 'undefined') {
                 evt = window.event;
@@ -197,5 +194,5 @@ See the License for the specific language governing permissions and
             }
             return message;
         };
-    };
-}(this.PageManager = {}));
+    }
+})(this.PageManager = {});

@@ -24,9 +24,17 @@ module.exports = {
         $: false,
         vex: false,
         Ya: false,
+        MODE: false,
+        FileUtils: false,
+        LogViewer2: false,
+        BaseExample: false,
+        Charlist: false,
         
         
+        makeLocalDBMS: false,
+        makeRemoteDBMS: false,
         l10n: false,
+        getL10n: false,
         constL10n: false,
         getEl: false,
         getEls: false,
