@@ -42,6 +42,9 @@ See the License for the specific language governing permissions and
         const someState = makeRangeEl('setState', 0, Constants.extrasMaxPoints, nuller, addRefreshHook('getState'));
         addEl(queryEl('.humanity-container'), someState('humanity'));
         addEl(queryEl('.willpower-container'), someState('willpower'));
+        addEl(queryEl('.willpower2-container'), someState('willpower2'));
+        const someState2 = makeRangeEl3('setState', 0, 20, nuller, addRefreshHook('getState'));
+        addEls(queryEl('.bloodpool-container'), someState2('bloodpool'));
 
         const meritInput = makeEntityRenameInput('setBackstory', 'merits', false);
         listen(queryEl('.merits-container .add-button'), "click", makeInputBuilder('.merits-container', meritInput));
@@ -155,12 +158,36 @@ See the License for the specific language governing permissions and
             listen(icon, 'click', rangeOnClick(setter, icons, min, max, itemNameCb));
             icons.push(icon);
         }
+        
         var div = addEls(addClass(makeEl('div'), 'range-container'), icons.map(function(icon) {
             return addEl(makeEl('div'), icon);
         }));
         initRange(itemNameCb(), rangeOnLoad(icons, max));
         var els = label != null ? [ label, div ] : [ div ];
         return addEls(addClass(makeEl('div'), 'stat-container'), els);
+    });
+    
+    var makeRangeEl3 = R.curry(function(setter, min, max, labelMaker, initRange, itemName) {
+        var label = labelMaker(itemName);
+        const itemNameCb = R.always(itemName);
+        var icons = [];
+        for (var i = 0; i < max; i++) {
+            var icon = makeEl('img');
+            icon.number = i;
+            listen(icon, 'click', rangeOnClick(setter, icons, min, max, itemNameCb));
+            icons.push(icon);
+        }
+        
+        const icons2Container = icons => addEls(addClass(makeEl('div'), 'range-container'), icons.map(function(icon) {
+            return addEl(makeEl('div'), icon);
+        }));
+        
+        var divs = R.splitEvery(10, icons).map(icons2Container);
+        initRange(itemNameCb(), rangeOnLoad(icons, max));
+        var els = label != null ? R.prepend(label, divs) : divs;
+        return els.map(el => {
+            return addEl(addClass(makeEl('div'), 'stat-container'), el);
+        })
     });
 
     var makeInputBuilder = function(container, makeInput) {

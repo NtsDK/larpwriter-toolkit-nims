@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
     
     exports.maxPoints = 5;
     exports.extrasMaxPoints = 10;
+    exports.bloodpoolMax = 20;
 
     exports.profileCols = [ [ 'name', 'player', 'chronicle', 'age', 'sex' ],
         [ 'nature', 'demeanor', 'concept', 'clan', 'generation', 'sire' ] ];
@@ -40,21 +41,24 @@ See the License for the specific language governing permissions and
     
     exports.attributeList = R.flatten(exports.attributeCols.map(R.prop('arr')));
 
+//    'dodge',
+//    'security',
+//    'linguistics', 
     exports.abilityCols = [
     {
         name : 'talents',
-        arr : [ 'athletics', 'alertness', 'brawl', 'dodge', 'empathy', 'intimidation', 'leadership',
-                'streetwise', 'expression', 'subterfuge' ]
+        arr : [ 'alertness', 'athletics', 'awareness', 'brawl', 'empathy', 
+            'expression', 'intimidation', 'leadership', 'streetwise', 'subterfuge' ]
     },
     {
         name : 'skills',
-        arr : [ 'animalken', 'drive', 'etiquette', 'firearms', 'melee', 'survival', 'crafts', 'stealth',
-                'security', 'performance', ]
+        arr : [ 'animalken', 'crafts', 'drive', 'etiquette', 'firearms', 
+            'larceny', 'melee', 'performance', 'stealth', 'survival',                  ]
     },
     {
         name : 'knowledges',
-        arr : [ 'science', 'politics', 'occult', 'medicine', 'linguistics', 'law', 'investigation', 'finance',
-                'computer', 'academics', ]
+        arr : [ 'academics', 'computer', 'finance', 'investigation', 'law', 
+            'medicine', 'occult', 'politics', 'science', 'technology']
     } ];
     
     exports.abilityList = R.flatten(exports.abilityCols.map(R.prop('arr')));
@@ -87,7 +91,7 @@ See the License for the specific language governing permissions and
 
     exports.virtues = [ "conscience", "self_control", "courage" ];
     
-    exports.basicStateList = ["humanity", "willpower", "bloodpool" ];
+    exports.basicStateList = ["humanity", "willpower", "willpower2", "bloodpool" ];
     
     exports.advantagesList = ["backgrounds", "disciplines"];
     

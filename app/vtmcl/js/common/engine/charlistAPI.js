@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
             });
         });
         const setter = R.curry(function(subPath, enumArr, valueCheck, itemName, itemValue, callback){
-            var chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr.bind(this)()), valueCheck(itemValue)]);
+            var chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr.bind(this)()), valueCheck(itemName, itemValue)]);
             PC.precondition(chain, callback, () => {
                 R.path(subPath, char(this))[itemName] = itemValue;
                 if(callback) callback();
@@ -47,30 +47,32 @@ See the License for the specific language governing permissions and
             };
         };
         
-        const isValString = value => PC.chainCheck([PC.isString(value)]);
-        const isValInRange = R.curry((min, max, value) => PC.chainCheck([PC.isNumber(value), PC.isInRange(value, min, max)]));
+        const isValString = (itemName, value) => PC.chainCheck([PC.isString(value)]);
+        const maxPoints = R.always(Constants.maxPoints);
+        const extrasMaxPoints = itemName => itemName === 'bloodpool' ? Constants.bloodpoolMax : Constants.extrasMaxPoints;
+        const isValInRange = R.curry((min, max, itemName, value) => PC.chainCheck([PC.isNumber(value), PC.isInRange(value, min, max(itemName))]));
         
         LocalDBMS.prototype.getProfileItem = getter(['profile'], R.always(Constants.profileItemList));
         LocalDBMS.prototype.setProfileItem = setter(['profile'], R.always(Constants.profileItemList), isValString);
         
         LocalDBMS.prototype.getAttribute = getter(['attributes'], R.always(Constants.attributeList));
-        LocalDBMS.prototype.setAttribute = setter(['attributes'], R.always(Constants.attributeList), isValInRange(0, Constants.maxPoints));
+        LocalDBMS.prototype.setAttribute = setter(['attributes'], R.always(Constants.attributeList), isValInRange(0, maxPoints));
         
         LocalDBMS.prototype.getAbility = getter(['abilities'], R.always(Constants.abilityList));
-        LocalDBMS.prototype.setAbility = setter(['abilities'], R.always(Constants.abilityList), isValInRange(0, Constants.maxPoints));
+        LocalDBMS.prototype.setAbility = setter(['abilities'], R.always(Constants.abilityList), isValInRange(0, maxPoints));
         
         LocalDBMS.prototype.getVirtue = getter(['virtues'], R.always(Constants.virtues));
-        LocalDBMS.prototype.setVirtue = setter(['virtues'], R.always(Constants.virtues), isValInRange(1, Constants.maxPoints));
+        LocalDBMS.prototype.setVirtue = setter(['virtues'], R.always(Constants.virtues), isValInRange(1, maxPoints));
         
         LocalDBMS.prototype.getState = getter(['state'], R.always(Constants.basicStateList));
-        LocalDBMS.prototype.setState = setter(['state'], R.always(Constants.basicStateList), isValInRange(1, Constants.extrasMaxPoints));
+        LocalDBMS.prototype.setState = setter(['state'], R.always(Constants.basicStateList), isValInRange(1, extrasMaxPoints));
         
         LocalDBMS.prototype.getHealth = getter(['state','health'], R.always(Constants.healthList));
         LocalDBMS.prototype.setHealth = setter(['state','health'], R.always(Constants.healthList), isValInRange(0, 2));
         
-        LocalDBMS.prototype.setBackground = setter(['backgrounds'], objListGetter('backgrounds'), isValInRange(0, Constants.maxPoints));
+        LocalDBMS.prototype.setBackground = setter(['backgrounds'], objListGetter('backgrounds'), isValInRange(0, maxPoints));
         
-        LocalDBMS.prototype.setDiscipline = setter(['disciplines'], objListGetter('disciplines'), isValInRange(0, Constants.maxPoints));
+        LocalDBMS.prototype.setDiscipline = setter(['disciplines'], objListGetter('disciplines'), isValInRange(0, maxPoints));
         
         const arrGetter = R.curry(function(initter, enumArr, type, callback){
             var chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, enumArr)]);
