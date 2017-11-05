@@ -5,32 +5,49 @@ module.exports = {
         "es6": true
     },
     "globals":{
-        R: false,
+        // common
+        FileUtils: false,
+        Migrator: false,
+        Precondition: false,
+        EventEmitter: false,
+        Schema: false,
+        Logger: false,
+        L10n: false,
         Utils: false,
         CommonUtils: false,
         UI: false,
-        marriage: false,
-        ymaps: false,
-        L10n: false,
-        dataByMonth: true,
-        dragula: false,
-        PNotify: false,
-        Data: false,
+        dateFormat: false,
         Constants: false,
         Errors: false,
-        dateFormat: false,
         DBMS: false,
+        MODE: false,
+        BaseExample: false,
+        
+        // libs
+        R: false,
+        Ajv: false,
         jQuery: false,
         $: false,
         vex: false,
         Ya: false,
-        MODE: false,
-        FileUtils: false,
+        dragula: false,
+        PNotify: false,
+        ymaps: false,
+        
+        // common pages
+        About: false,
+        LogViewer: false,
         LogViewer2: false,
-        BaseExample: false,
+        
+        // vtmcl pages
         Charlist: false,
         
+        // matcher pages
+        marriage: false,
+        dataByMonth: true,
+        Data: false,
         
+        // utility functions
         makeLocalDBMS: false,
         makeRemoteDBMS: false,
         l10n: false,
@@ -59,6 +76,8 @@ module.exports = {
         setStyle: false,
         listen: false,
         strFormat: false,
+        fillSelector: false,
+        
     },
 //    "extends": "eslint:recommended",
     "extends": "airbnb" ,
