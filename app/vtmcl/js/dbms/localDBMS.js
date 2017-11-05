@@ -12,41 +12,42 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-function makeLocalDBMS(fullVersion){
-    var opts = {
-        Migrator     : Migrator    ,
-        CommonUtils  : CommonUtils ,
-        EventEmitter : EventEmitter,
-        Precondition : Precondition,
-        R            : R           ,
-        Ajv          : Ajv         ,
-        Schema       : Schema      ,
-        Errors       : Errors      ,
-        listeners    : {}          ,
-        Constants    : Constants   ,
-        dbmsUtils    : {}          ,
-        dateFormat   : dateFormat  ,
+function makeLocalDBMS(fullVersion) {
+    const opts = {
+        Migrator,
+        CommonUtils,
+        EventEmitter,
+        Precondition,
+        R,
+        Ajv,
+        Schema,
+        Errors,
+        listeners: {},
+        Constants,
+        dbmsUtils: {},
+        dateFormat,
     };
 
-    function LocalDBMS(){
+    function LocalDBMS() {
         this._init(opts.listeners);
-    };
+    }
 
-    LocalDBMS.prototype.getSettings = function(){
-        "use strict";
+    LocalDBMS.prototype.getSettings = function () {
+        'use strict';
+
         return this.database.Settings;
     };
 
-    var func = (name) => window[name](LocalDBMS, opts);
+    const func = name => window[name](LocalDBMS, opts);
 
-    ["baseAPI"               ,
-    "consistencyCheckAPI"   ,
-    "logAPI"                ,
-    "charlistAPI"           ,
+    ['baseAPI',
+        'consistencyCheckAPI',
+        'logAPI',
+        'charlistAPI',
     ].map(func);
 
     Logger.attachLogCalls(LocalDBMS, R, false);
     return LocalDBMS;
-};
+}
