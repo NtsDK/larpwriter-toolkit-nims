@@ -14,13 +14,16 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const root = '.charlist-tab ';
     const state = {
         refreshHooks: []
     };
+    const onRefresh = callback => state.refreshHooks.push(callback);
+    const addRefreshHook = R.curry((getter, itemName, rangeOnLoad2) =>
+        onRefresh(onRefreshHook(getter, itemName, rangeOnLoad2)));
 
-    exports.init = function () {
+    exports.init = () => {
         const profileEls = Constants.profileCols.map(R.map(makeProfileEl)).map(els => addEls(makeEl('div'), els));
         addEls(queryEl(`${root}.profile-container`), profileEls);
 
@@ -69,26 +72,32 @@ See the License for the specific language governing permissions and
         exports.content = queryEl(root);
     };
 
-    var makeProfileEl = function (itemName) {
-        const input = makeEl('input');
-        addRefreshHook('getProfileItem', itemName, value => input.value = value);
-        listen(input, 'change', event => DBMS.setProfileItem(itemName, event.target.value.trim(), Utils.processError()));
-        return addEls(makeEl('div'), [fillText(makeEl('span'), itemName), input]);
+    exports.refresh = () => {
+        state.refreshHooks.forEach(R.apply(R.__, []));
+        // Utils.alert('Refresh');
     };
 
+    function makeProfileEl(itemName) {
+        const input = makeEl('input');
+        addRefreshHook('getProfileItem', itemName, value => (input.value = value));
+        listen(input, 'change', event => DBMS.setProfileItem(itemName, event.target.value.trim(), Utils.processError()));
+        return addEls(makeEl('div'), [fillText(makeEl('span'), itemName), input]);
+    }
+
+    // eslint-disable-next-line no-var,vars-on-top
     var fillVirtues = (selector, data, func) => addEls(queryEl(selector), data.map(func));
 
-    var fillStats = function (selector, data, func) {
+    function fillStats(selector, data, func) {
         addEls(queryEl(selector), data.map(obj =>
             // return addEls(makeEl('div'), makeRangeEls(obj, func));
             addEls(makeEl('div'), obj.arr.map(func))));
-    };
+    }
 
-    var makeHealthRow = function (val) {
+    function makeHealthRow(val) {
         const icon = makeEl('img');
         icon.str = val.name;
         setAttr(icon, 'src', 'images/injure_deadly.svg');
-        const setImg = function (num) {
+        function setImg(num) {
             if (num === 0) {
                 setAttr(icon, 'src', 'images/injure_no.svg');
             }
@@ -99,7 +108,7 @@ See the License for the specific language governing permissions and
                 setAttr(icon, 'src', 'images/injure_deadly.svg');
             }
             setClassByCondition(icon.parentNode, 'wounded', num !== 0);
-        };
+        }
 
         addRefreshHook('getHealth', val.name, (num) => {
             icon.num = num;
@@ -114,19 +123,19 @@ See the License for the specific language governing permissions and
         });
         return addEls(addClass(makeEl('div'), 'health-stat'), [makeStaticLabel(val.name), icon,
             addEl(makeEl('span'), makeText(val.penalty))]);
-    };
+    }
 
-    var makeStaticLabel = function (label) {
+    function makeStaticLabel(label) {
         return fillText(makeEl('span'), label);
-    };
-    var nuller = function () {
+    }
+    function nuller() {
         return null;
-    };
+    }
 
-    const rangeOnClick = function (setter, icons, min, max, itemNameCb) {
-        return function (event) {
+    function rangeOnClick(setter, icons, min, max, itemNameCb) {
+        return (event) => {
             if (!event.ctrlKey && !event.metaKey) { return; }
-            const target = event.target;
+            const { target } = event;
             const isPointOn = getAttr(target, 'src') === 'images/radio-on-button.svg';
             let selected = isPointOn ? target.number - 1 : target.number;
             selected = selected < min ? min - 1 : selected;
@@ -135,21 +144,23 @@ See the License for the specific language governing permissions and
             }
             DBMS[setter](itemNameCb(), Number(selected + 1), Utils.processError());
         };
-    };
+    }
 
-    const rangeOnLoad = function (icons, max) {
-        return function (num) {
+    function rangeOnLoad(icons, max) {
+        return (num) => {
             for (let i = 0; i < max; i++) {
                 setAttr(icons[i], 'src', num > i ? 'images/radio-on-button.svg' : 'images/circumference.svg');
             }
         };
-    };
+    }
 
+    // eslint-disable-next-line no-var,vars-on-top
     var makeRangeEl = R.curry((setter, min, max, labelMaker, initRange, itemName) => {
         const label = labelMaker(itemName);
         return makeRangeEl2(setter, min, max, label, initRange, R.always(itemName));
     });
 
+    // eslint-disable-next-line no-var,vars-on-top
     var makeRangeEl2 = R.curry((setter, min, max, label, initRange, itemNameCb) => {
         const icons = [];
         for (let i = 0; i < max; i++) {
@@ -165,6 +176,7 @@ See the License for the specific language governing permissions and
         return addEls(addClass(makeEl('div'), 'stat-container'), els);
     });
 
+    // eslint-disable-next-line no-var,vars-on-top
     var makeRangeEl3 = R.curry((setter, min, max, labelMaker, initRange, itemName) => {
         const label = labelMaker(itemName);
         const itemNameCb = R.always(itemName);
@@ -176,7 +188,8 @@ See the License for the specific language governing permissions and
             icons.push(icon);
         }
 
-        const icons2Container = icons => addEls(addClass(makeEl('div'), 'range-container'), icons.map(icon => addEl(makeEl('div'), icon)));
+        const icons2Container = icons2 =>
+            addEls(addClass(makeEl('div'), 'range-container'), icons2.map(icon => addEl(makeEl('div'), icon)));
 
         const divs = R.splitEvery(10, icons).map(icons2Container);
         initRange(itemNameCb(), rangeOnLoad(icons, max));
@@ -184,16 +197,16 @@ See the License for the specific language governing permissions and
         return els.map(el => addEl(addClass(makeEl('div'), 'stat-container'), el));
     });
 
-    var makeInputBuilder = function (container, makeInput) {
-        return function (event) {
+    function makeInputBuilder(container, makeInput) {
+        return (event) => {
             if (!event.ctrlKey && !event.metaKey) { return; }
             addEl(queryEl(`${container} .entity-container`), makeInput(null));
         };
-    };
+    }
 
-    const onInputChange = function (renameFunc, type, isPart) {
-        return function (event) {
-            const oldName = event.target.oldName;
+    function onInputChange(renameFunc, type, isPart) {
+        return (event) => {
+            const { oldName } = event.target;
             const newName = event.target.value;
             if (newName.trim() === '') {
                 addClass(isPart ? event.target.parentNode : event.target, 'hidden');
@@ -202,8 +215,9 @@ See the License for the specific language governing permissions and
             }
             DBMS[renameFunc](type, oldName, newName, Utils.processError());
         };
-    };
+    }
 
+    // eslint-disable-next-line no-var,vars-on-top
     var makeEntityRenameInput = R.curry((renameFunc, type, isPart, oldName) => {
         oldName = oldName || '';
         const input = makeEl('input');
@@ -212,41 +226,34 @@ See the License for the specific language governing permissions and
         listen(input, 'change', onInputChange(renameFunc, type, isPart));
         return input;
     });
+    // eslint-disable-next-line no-var,vars-on-top
     var makeAdvantageInput = R.curry((renameFunc, type, setter, pair) => {
         pair = pair || ['', 0];
 
         const labelMaker = makeEntityRenameInput(renameFunc, type, true);
-        const initRange = function (str, rangeOnLoad) {
-            rangeOnLoad(pair[1]);
-        };
+        function initRange(str, rangeOnLoad2) {
+            rangeOnLoad2(pair[1]);
+        }
         const itemName = pair[0];
         const label = labelMaker(itemName);
         return makeRangeEl2(setter, 0, Constants.maxPoints, label, initRange, () => label.value);
     });
 
-    const onRefreshHook = function (getter, itemName, callback) {
-        return function () {
+    function onRefreshHook(getter, itemName, callback) {
+        return () => {
             DBMS[getter](itemName, (err, value) => {
                 if (err) { Utils.handleError(err); return; }
                 callback(value);
             });
         };
-    };
+    }
 
-    var addRefreshHook = R.curry((getter, itemName, rangeOnLoad) => onRefresh(onRefreshHook(getter, itemName, rangeOnLoad)));
-
-    var backstoryCb = (container, inputMaker) => arr => addEls(clearEl(queryEl(`${container} .entity-container`)), arr.map(inputMaker));
-
-    var fillText = function (el, str) {
+    function fillText(el, str) {
         const l10nKey = `main-${str}`;
         setAttr(el, 'l10n-id', l10nKey);
         return addEl(el, makeText(getL10n(l10nKey)));
-    };
-
-    var onRefresh = callback => state.refreshHooks.push(callback);
-
-    exports.refresh = function () {
-        state.refreshHooks.forEach(R.apply(R.__, []));
-        // Utils.alert('Refresh');
-    };
-}(this.Charlist = {}));
+    }
+    // eslint-disable-next-line no-var,vars-on-top
+    var backstoryCb = (container, inputMaker) =>
+        arr => addEls(clearEl(queryEl(`${container} .entity-container`)), arr.map(inputMaker));
+})(this.Charlist = {});

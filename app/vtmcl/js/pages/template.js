@@ -14,15 +14,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const root = '.-tab ';
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
 
     };
-}(this.Template = {}));
+})(this.Template = {});

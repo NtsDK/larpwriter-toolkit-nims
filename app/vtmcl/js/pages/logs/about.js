@@ -14,13 +14,11 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-const About = {};
+((exports) => {
+    exports.init = () => {
+        exports.content = getEl('aboutDiv');
+    };
 
-About.init = function () {
-    'use strict';
-
-    About.content = getEl('aboutDiv');
-};
-
-About.refresh = function () {
-};
+    exports.refresh = () => {
+    };
+})(this.About = {});

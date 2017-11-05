@@ -14,24 +14,26 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-const LogViewer2 = {};
+((exports) => {
+    const state = {};
 
-LogViewer2.init = function () {
-    const root = LogViewer2;
-    root.views = {};
-    const nav = '.log-viewer2-tab .sub-tab-navigation';
-    const content = '.log-viewer2-tab .sub-tab-content';
-    const containers = {
-        root,
-        navigation: queryEl(nav),
-        content: queryEl(content)
+    exports.init = () => {
+        state.views = {};
+        const nav = '.log-viewer2-tab .sub-tab-navigation';
+        const content = '.log-viewer2-tab .sub-tab-content';
+        const containers = {
+            root: state,
+            navigation: queryEl(nav),
+            content: queryEl(content)
+        };
+        Utils.addView(containers, 'logViewer', LogViewer, { mainPage: true });
+        Utils.addView(containers, 'about', About);
+
+        exports.content = queryEl('.log-viewer2-tab');
     };
-    Utils.addView(containers, 'logViewer', LogViewer, { mainPage: true });
-    Utils.addView(containers, 'about', About);
 
-    LogViewer2.content = queryEl('.log-viewer2-tab');
-};
+    exports.refresh = () => {
+        state.currentView.refresh();
+    };
+})(this.LogViewer2 = {});
 
-LogViewer2.refresh = function () {
-    LogViewer2.currentView.refresh();
-};

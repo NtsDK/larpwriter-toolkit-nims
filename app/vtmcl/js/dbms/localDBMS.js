@@ -34,15 +34,12 @@ function makeLocalDBMS(fullVersion) {
         this._init(opts.listeners);
     }
 
-    LocalDBMS.prototype.getSettings = function () {
-        'use strict';
-
-        return this.database.Settings;
-    };
+    LocalDBMS.prototype.getSettings = () => this.database.Settings;
 
     const func = name => window[name](LocalDBMS, opts);
 
-    ['baseAPI',
+    [
+        'baseAPI',
         'consistencyCheckAPI',
         'logAPI',
         'charlistAPI',

@@ -14,56 +14,49 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-const LogViewer = {};
+((exports) => {
+    exports.init = () => {
+        listen(getEl('logPageSelector'), 'change', (event) => {
+            DBMS.getLog(Number(event.target.value), dataRecieved);
+        });
 
-LogViewer.init = function () {
-    'use strict';
-
-    listen(getEl('logPageSelector'), 'change', (event) => {
-        DBMS.getLog(Number(event.target.value), LogViewer.dataRecieved);
-    });
-
-    LogViewer.content = getEl('logViewerDiv');
-};
-
-LogViewer.refresh = function () {
-    'use strict';
-
-    getEl('logPageSelector').selectedIndex = 0;
-    DBMS.getLog(0, LogViewer.dataRecieved);
-};
-
-LogViewer.dataRecieved = function (err, data) {
-    'use strict';
-
-    if (err) { Utils.handleError(err); return; }
-
-    const sel = getEl('logPageSelector');
-    const selectedIndex = sel.selectedIndex;
-    clearEl(sel);
-
-    const selData = [];
-    for (let i = 0; i < data.logSize; i++) {
-        selData.push({ name: i + 1, value: String(i), selected: selectedIndex == i });
-    }
-    fillSelector(sel, selData);
-
-    const container = clearEl(getEl('logData'));
-
-    R.ap([addEl(container)], data.requestedLog.map(LogViewer.makeRow));
-};
-
-LogViewer.makeRow = function (rowData) {
-    'use strict';
-
-    const tr = makeEl('tr');
-    const addText = function (text) {
-        addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(text))));
+        exports.content = getEl('logViewerDiv');
     };
-    addText(rowData[0]);
-    addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss'));
-    addText(rowData[1]);
-    addText(rowData[3]);
-    addText(rowData[4]);
-    return tr;
-};
+
+    exports.refresh = () => {
+        getEl('logPageSelector').selectedIndex = 0;
+        DBMS.getLog(0, dataRecieved);
+    };
+
+    function dataRecieved(err, data) {
+        if (err) { Utils.handleError(err); return; }
+
+        const sel = getEl('logPageSelector');
+        const { selectedIndex } = sel;
+        clearEl(sel);
+
+        const selData = [];
+        for (let i = 0; i < data.logSize; i++) {
+            selData.push({ name: i + 1, value: String(i), selected: selectedIndex === i });
+        }
+        fillSelector(sel, selData);
+
+        const container = clearEl(getEl('logData'));
+
+        R.ap([addEl(container)], data.requestedLog.map(makeRow));
+    }
+
+    function makeRow(rowData) {
+        const tr = makeEl('tr');
+        const addText = (text) => {
+            addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(text))));
+        };
+        addText(rowData[0]);
+        addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss'));
+        addText(rowData[1]);
+        addText(rowData[3]);
+        addText(rowData[4]);
+        return tr;
+    }
+})(this.LogViewer = {});
+
