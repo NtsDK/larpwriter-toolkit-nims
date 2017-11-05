@@ -12,19 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(exports){
+(function (exports) {
+    const root = '.-tab ';
+    const state = {};
 
-    var root = '.-tab ';
-    var state = {};
-
-    exports.init = function() {
+    exports.init = function () {
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function() {
+    exports.refresh = function () {
 
     };
-
-})(this['Template']={});
+}(this.Template = {}));

@@ -12,24 +12,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-var LogViewer2 = {};
+const LogViewer2 = {};
 
 LogViewer2.init = function () {
-    var root = LogViewer2;
+    const root = LogViewer2;
     root.views = {};
-    var nav = ".log-viewer2-tab .sub-tab-navigation";
-    var content = ".log-viewer2-tab .sub-tab-content";
-    var containers = {
-        root: root,
+    const nav = '.log-viewer2-tab .sub-tab-navigation';
+    const content = '.log-viewer2-tab .sub-tab-content';
+    const containers = {
+        root,
         navigation: queryEl(nav),
         content: queryEl(content)
     };
-    Utils.addView(containers, "logViewer", LogViewer,{mainPage:true});
-    Utils.addView(containers, "about", About);
+    Utils.addView(containers, 'logViewer', LogViewer, { mainPage: true });
+    Utils.addView(containers, 'about', About);
 
-    LogViewer2.content = queryEl(".log-viewer2-tab");
+    LogViewer2.content = queryEl('.log-viewer2-tab');
 };
 
 LogViewer2.refresh = function () {

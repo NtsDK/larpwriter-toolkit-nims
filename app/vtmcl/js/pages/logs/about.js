@@ -12,15 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-var About = {};
+const About = {};
 
-About.init = function() {
-    "use strict";
+About.init = function () {
+    'use strict';
 
     About.content = getEl('aboutDiv');
 };
 
-About.refresh = function() {
+About.refresh = function () {
 };
