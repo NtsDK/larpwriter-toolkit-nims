@@ -34,21 +34,21 @@ See the License for the specific language governing permissions and
     } ];
 
     exports.abilityCols = [
-            {
-                name : 'talents',
-                arr : [ 'athletics', 'alertness', 'brawl', 'dodge', 'empathy', 'intimidation', 'leadership',
-                        'streetwise', 'expression', 'subterfuge' ]
-            },
-            {
-                name : 'skills',
-                arr : [ 'animalken', 'drive', 'etiquette', 'firearms', 'melee', 'survival', 'crafts', 'stealth',
-                        'security', 'performance', ]
-            },
-            {
-                name : 'knowledges',
-                arr : [ 'science', 'politics', 'occult', 'medicine', 'linguistics', 'law', 'investigation', 'finance',
-                        'computer', 'academics', ]
-            } ];
+    {
+        name : 'talents',
+        arr : [ 'athletics', 'alertness', 'brawl', 'dodge', 'empathy', 'intimidation', 'leadership',
+                'streetwise', 'expression', 'subterfuge' ]
+    },
+    {
+        name : 'skills',
+        arr : [ 'animalken', 'drive', 'etiquette', 'firearms', 'melee', 'survival', 'crafts', 'stealth',
+                'security', 'performance', ]
+    },
+    {
+        name : 'knowledges',
+        arr : [ 'science', 'politics', 'occult', 'medicine', 'linguistics', 'law', 'investigation', 'finance',
+                'computer', 'academics', ]
+    } ];
 
     exports.healthCols = [ {
         name : 'health',

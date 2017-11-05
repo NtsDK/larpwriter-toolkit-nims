@@ -24,43 +24,42 @@ See the License for the specific language governing permissions and
     var state = {
         refreshHooks: []
     };
+    
+    const maxPoints = 5;
+    const extrasMaxPoints = 10;
 
     exports.init = function() {
         
-        addEls(queryEl(root + '.profile-container'), Constants.profileCols.map(function(arr) {
-            return addEls(makeEl('div'), arr.map(makeProfileEl));
-        }));
+        const profileEls = Constants.profileCols.map(R.map(makeProfileEl)).map(els => addEls(makeEl('div'), els));
+        addEls(queryEl(root + '.profile-container'), profileEls);
 
-        fillStats('.attributes-container', Constants.attributeCols, makeRangeEl2('setAttribute', 0, 5, makeStaticLabel,
-                addRefreshHook('getAttribute')));
-        fillStats('.abilities-container', Constants.abilityCols, makeRangeEl2('setAbility', 0, 5, makeStaticLabel,
-                addRefreshHook('getAbility')));
-        fillVirtues('.virtues-container', Constants.virtues, makeRangeEl2('setVirtue', 1, 5, makeStaticLabel,
-                addRefreshHook('getVirtue')));
-
-        addEl(queryEl('.humanity-container'), makeRangeEl2('setState', 0, 10, nuller, addRefreshHook(
-                'getState'), 'humanity'));
-        addEl(queryEl('.willpower-container'), makeRangeEl2('setState', 0, 10, nuller, addRefreshHook(
-                'getState'), 'willpower'));
-
-        listen(queryEl('.merits-container .add-button'), "click", makeInputBuilder('.merits-container',
-                makeEntityRenameInput('setBackstory', 'merits', false)));
-        const meritRenameInput = makeEntityRenameInput('setBackstory', 'merits', false);
-        addRefreshHook('getBackstory', 'merits', backstoryCb('.merits-container', meritRenameInput));
+        const attrRange = makeRangeEl('setAttribute', 0, maxPoints, makeStaticLabel, addRefreshHook('getAttribute'));
+        fillStats('.attributes-container', Constants.attributeCols, attrRange);
         
-        listen(queryEl('.flaws-container .add-button'), "click", makeInputBuilder('.flaws-container',
-                makeEntityRenameInput('setBackstory', 'flaws', false)));
-        const flawRenameInput = makeEntityRenameInput('setBackstory', 'flaws', false);
-        addRefreshHook('getBackstory', 'flaws', backstoryCb('.flaws-container', flawRenameInput));
+        const abilRange = makeRangeEl('setAbility', 0, maxPoints, makeStaticLabel, addRefreshHook('getAbility'));
+        fillStats('.abilities-container', Constants.abilityCols, abilRange);
+        
+        const virtueRange = makeRangeEl('setVirtue', 1, maxPoints, makeStaticLabel, addRefreshHook('getVirtue'));
+        fillVirtues('.virtues-container', Constants.virtues, virtueRange);
 
-        listen(queryEl('.backgrounds-container .add-button'), "click", makeInputBuilder('.backgrounds-container',
-                makeAdvantageInput('renameAdvantage', 'backgrounds', 'setBackground')));
+        const someState = makeRangeEl('setState', 0, extrasMaxPoints, nuller, addRefreshHook('getState'));
+        addEl(queryEl('.humanity-container'), someState('humanity'));
+        addEl(queryEl('.willpower-container'), someState('willpower'));
+
+        const meritInput = makeEntityRenameInput('setBackstory', 'merits', false);
+        listen(queryEl('.merits-container .add-button'), "click", makeInputBuilder('.merits-container', meritInput));
+        addRefreshHook('getBackstory', 'merits', backstoryCb('.merits-container', meritInput));
+        
+        const flawInput = makeEntityRenameInput('setBackstory', 'flaws', false);
+        listen(queryEl('.flaws-container .add-button'), "click", makeInputBuilder('.flaws-container', flawInput));
+        addRefreshHook('getBackstory', 'flaws', backstoryCb('.flaws-container', flawInput));
+
         const backgroundInput = makeAdvantageInput('renameAdvantage', 'backgrounds', 'setBackground');
+        listen(queryEl('.backgrounds-container .add-button'), "click", makeInputBuilder('.backgrounds-container', backgroundInput));
         addRefreshHook('getAdvantages', 'backgrounds', backstoryCb('.backgrounds-container', backgroundInput));
         
-        listen(queryEl('.disciplines-container .add-button'), "click", makeInputBuilder('.disciplines-container',
-                makeAdvantageInput('renameAdvantage', 'disciplines', 'setDiscipline')));
         const disciplineInput = makeAdvantageInput('renameAdvantage', 'disciplines', 'setDiscipline');
+        listen(queryEl('.disciplines-container .add-button'), "click", makeInputBuilder('.disciplines-container', disciplineInput));
         addRefreshHook('getAdvantages', 'disciplines', backstoryCb('.disciplines-container', disciplineInput));
 
         fillStats('.health-container', Constants.healthCols, makeHealthRow);
@@ -123,7 +122,7 @@ See the License for the specific language governing permissions and
         return null;
     }
 
-    var rangeOnClick = function(setter, icons, min, max, str) {
+    var rangeOnClick = function(setter, icons, min, max, itemNameCb) {
         return function(event) {
             if (!event.ctrlKey && !event.metaKey)
                 return;
@@ -134,7 +133,7 @@ See the License for the specific language governing permissions and
             for (var j = 0; j < max; j++) {
                 setAttr(icons[j], 'src', selected >= j ? 'images/radio-on-button.svg' : 'images/circumference.svg');
             }
-            DBMS[setter](str, Number(selected + 1), Utils.processError());
+            DBMS[setter](itemNameCb(), Number(selected + 1), Utils.processError());
         };
     };
 
@@ -146,19 +145,23 @@ See the License for the specific language governing permissions and
         };
     };
 
-    var makeRangeEl2 = R.curry(function(setter, min, max, labelMaker, initRange, str) {
+    var makeRangeEl = R.curry(function(setter, min, max, labelMaker, initRange, itemName) {
+        var label = labelMaker(itemName);
+        return makeRangeEl2(setter, min, max, label, initRange, R.always(itemName));
+    });
+    
+    var makeRangeEl2 = R.curry(function(setter, min, max, label, initRange, itemNameCb) {
         var icons = [];
         for (var i = 0; i < max; i++) {
             var icon = makeEl('img');
             icon.number = i;
-            listen(icon, 'click', rangeOnClick(setter, icons, min, max, str));
+            listen(icon, 'click', rangeOnClick(setter, icons, min, max, itemNameCb));
             icons.push(icon);
         }
         var div = addEls(addClass(makeEl('div'), 'range-container'), icons.map(function(icon) {
             return addEl(makeEl('div'), icon);
         }));
-        initRange(str, rangeOnLoad(icons, max));
-        var label = labelMaker(str);
+        initRange(itemNameCb(), rangeOnLoad(icons, max));
         var els = label != null ? [ label, div ] : [ div ];
         return addEls(addClass(makeEl('div'), 'stat-container'), els);
     });
@@ -194,10 +197,14 @@ See the License for the specific language governing permissions and
     });
     var makeAdvantageInput = R.curry(function(renameFunc, type, setter, pair) {
         pair = pair || [ '', 0 ];
-
-        return makeRangeEl2(setter, 0, 5, makeEntityRenameInput(renameFunc, type, true), function(str, rangeOnLoad) {
+        
+        const labelMaker = makeEntityRenameInput(renameFunc, type, true);
+        const initRange = function(str, rangeOnLoad) {
             rangeOnLoad(pair[1]);
-        }, pair[0]);
+        };
+        const itemName = pair[0];
+        var label = labelMaker(itemName);
+        return makeRangeEl2(setter, 0, maxPoints, label, initRange, () => label.value);
     });
 
     var onRefreshHook = function(getter, itemName, callback) {
