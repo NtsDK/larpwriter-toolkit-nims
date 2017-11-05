@@ -12,44 +12,42 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
+(function (callback) {
     function api(LocalDBMS, opts) {
-        var Migrator      = opts.Migrator    ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var EventEmitter  = opts.EventEmitter;
-        var Constants     = opts.Constants   ;
-        var R             = opts.R   ;
+        const Migrator = opts.Migrator;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const EventEmitter = opts.EventEmitter;
+        const Constants = opts.Constants;
+        const R = opts.R;
 
-        var containerPath = ['Charlist'];
+        const containerPath = ['Charlist'];
 
-        var char = (db) => R.path(containerPath, db.database);
+        const char = db => R.path(containerPath, db.database);
 
-        const getter = R.curry(function(subPath, enumArr, itemName, callback){
-            var chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr())]);
+        const getter = R.curry(function (subPath, enumArr, itemName, callback) {
+            const chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr())]);
             PC.precondition(chain, callback, () => {
                 callback(null, R.path(subPath, char(this))[itemName]);
             });
         });
-        const setter = R.curry(function(subPath, enumArr, valueCheck, itemName, itemValue, callback){
-            var chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr.bind(this)()), valueCheck(itemName, itemValue)]);
+        const setter = R.curry(function (subPath, enumArr, valueCheck, itemName, itemValue, callback) {
+            const chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr.bind(this)()), valueCheck(itemName, itemValue)]);
             PC.precondition(chain, callback, () => {
                 R.path(subPath, char(this))[itemName] = itemValue;
-                if(callback) callback();
+                if (callback) callback();
             });
         });
 
-        const objListGetter = (container) => {
-            return function(){
-                return R.keys(char(this)[container])
-            };
+        const objListGetter = container => function () {
+            return R.keys(char(this)[container]);
         };
 
         const isValString = (itemName, value) => PC.chainCheck([PC.isString(value)]);
         const maxPoints = R.always(Constants.maxPoints);
-        const extrasMaxPoints = itemName => itemName === 'bloodpool' ? Constants.bloodpoolMax : Constants.extrasMaxPoints;
+        const extrasMaxPoints = itemName => (itemName === 'bloodpool' ? Constants.bloodpoolMax : Constants.extrasMaxPoints);
         const isValInRange = R.curry((min, max, itemName, value) => PC.chainCheck([PC.isNumber(value), PC.isInRange(value, min, max(itemName))]));
 
         LocalDBMS.prototype.getProfileItem = getter(['profile'], R.always(Constants.profileItemList));
@@ -67,45 +65,45 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getState = getter(['state'], R.always(Constants.basicStateList));
         LocalDBMS.prototype.setState = setter(['state'], R.always(Constants.basicStateList), isValInRange(1, extrasMaxPoints));
 
-        LocalDBMS.prototype.getHealth = getter(['state','health'], R.always(Constants.healthList));
-        LocalDBMS.prototype.setHealth = setter(['state','health'], R.always(Constants.healthList), isValInRange(0, R.always(2)));
+        LocalDBMS.prototype.getHealth = getter(['state', 'health'], R.always(Constants.healthList));
+        LocalDBMS.prototype.setHealth = setter(['state', 'health'], R.always(Constants.healthList), isValInRange(0, R.always(2)));
 
         LocalDBMS.prototype.setBackground = setter(['backgrounds'], objListGetter('backgrounds'), isValInRange(0, maxPoints));
 
         LocalDBMS.prototype.setDiscipline = setter(['disciplines'], objListGetter('disciplines'), isValInRange(0, maxPoints));
 
-        const arrGetter = R.curry(function(initter, enumArr, type, callback){
-            var chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, enumArr)]);
+        const arrGetter = R.curry(function (initter, enumArr, type, callback) {
+            const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, enumArr)]);
             PC.precondition(chain, callback, () => {
                 callback(null, initter(char(this)[type]));
             });
         });
 
-        const namer = R.curry(function(defaultValue, enumArr, type, oldName, newName, callback) {
+        const namer = R.curry(function (defaultValue, enumArr, type, oldName, newName, callback) {
             const chain = [PC.isString(type), PC.elementFromEnum(type, enumArr), PC.isString(oldName), PC.isString(newName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const container = char(this)[type];
                 oldName = oldName.trim();
                 newName = newName.trim();
                 const chain2 = [];
-                if(oldName !== ''){
+                if (oldName !== '') {
                     chain2.push(PC.entityExistsCheck(oldName, R.keys(container)));
                 }
-                if(newName !== ''){
+                if (newName !== '') {
                     chain2.push(PC.createEntityCheck(newName, R.keys(container)));
                 }
                 PC.precondition(PC.chainCheck(chain2), callback, () => {
-                    if(oldName === '' && newName !== ''){
+                    if (oldName === '' && newName !== '') {
                         char(this)[type][newName] = defaultValue;
                     }
-                    if(oldName !== '' && newName === ''){
+                    if (oldName !== '' && newName === '') {
                         delete char(this)[type][oldName];
                     }
-                    if(oldName !== '' && newName !== ''){
+                    if (oldName !== '' && newName !== '') {
                         char(this)[type][newName] = char(this)[type][oldName];
                         delete char(this)[type][oldName];
                     }
-                    if(callback) callback();
+                    if (callback) callback();
                 });
             });
         });
@@ -116,20 +114,20 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getAdvantages = arrGetter(R.toPairs, Constants.advantagesList);
         LocalDBMS.prototype.renameAdvantage = namer(0, Constants.advantagesList);
 
-        LocalDBMS.prototype.getNotes = function(callback){
+        LocalDBMS.prototype.getNotes = function (callback) {
             callback(null, char(this).notes);
         };
 
-        LocalDBMS.prototype.setNotes = function(text, callback){
-            var chain = PC.chainCheck([PC.isString(text)]);
+        LocalDBMS.prototype.setNotes = function (text, callback) {
+            const chain = PC.chainCheck([PC.isString(text)]);
             PC.precondition(chain, callback, () => {
                 char(this).notes = text;
-                if(callback) callback();
+                if (callback) callback();
             });
         };
-    };
+    }
 
     callback(api);
-})(function(api){
-    typeof exports === 'undefined'? this['charlistAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.charlistAPI = api : module.exports = api;
+}));

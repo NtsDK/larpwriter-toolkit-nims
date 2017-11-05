@@ -12,26 +12,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function consistencyCheckAPI(LocalDBMS, opts) {
-        var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
-        var validatorLib  = opts.Ajv         ;
-        var schemaBuilder = opts.Schema      ;
+        const R = opts.R;
+        const CommonUtils = opts.CommonUtils;
+        const validatorLib = opts.Ajv;
+        const schemaBuilder = opts.Schema;
 
-        LocalDBMS.prototype.getConsistencyCheckResult = function(callback) {
-            var errors = [];
-            var pushError = function(str){
+        LocalDBMS.prototype.getConsistencyCheckResult = function (callback) {
+            let errors = [];
+            const pushError = function (str) {
                 errors.push(str);
-            }
+            };
 
-            var schema = schemaBuilder.getSchema(this.database);
-            var validator = validatorLib({allErrors: true}); // options can be passed, e.g. {allErrors: true}
-            var validate = validator.compile(schema);
-            var valid = validate(this.database);
+            const schema = schemaBuilder.getSchema(this.database);
+            const validator = validatorLib({ allErrors: true }); // options can be passed, e.g. {allErrors: true}
+            const validate = validator.compile(schema);
+            const valid = validate(this.database);
             if (!valid) {
                 errors = errors.concat(validate.errors);
             }
@@ -39,14 +38,12 @@ See the License for the specific language governing permissions and
             callback(null, errors);
         };
 
-        var getErrorProcessor = function(callback){
+        const getErrorProcessor = function (callback) {
             return R.curry(R.compose(callback, CommonUtils.strFormat));
-        }
-
-    };
+        };
+    }
 
     callback(consistencyCheckAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['consistencyCheckAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.consistencyCheckAPI = api : module.exports = api;
+}));
