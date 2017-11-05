@@ -12,30 +12,29 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
-    var state = {};
+(function (exports) {
+    const state = {};
     state.views = {};
 
-    var btnOpts = {
-        tooltip : true,
-        className : 'mainNavButton'
-    }
+    const btnOpts = {
+        tooltip: true,
+        className: 'mainNavButton'
+    };
 
-    var initPage = function(){
+    const initPage = function () {
         L10n.localizeStatic();
         L10n.onL10nChange(() => state.currentView.refresh());
         UI.initSelectorFilters();
         UI.initPanelTogglers();
-        function updateDialogs(){
+        function updateDialogs() {
             vex.dialog.buttons.YES.text = getL10n('common-ok');
             vex.dialog.buttons.NO.text = getL10n('common-cancel');
         }
         updateDialogs();
         L10n.onL10nChange(updateDialogs);
-    }
+    };
 
     //    var curTheme = Constants.themeList[1];
     //
@@ -66,25 +65,25 @@ See the License for the specific language governing permissions and
 
     exports.onMasterPageLoad = function () {
         initPage();
-        var LocalDBMS = makeLocalDBMS(true);
-        if(MODE === "Standalone"){
+        const LocalDBMS = makeLocalDBMS(true);
+        if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
-            DBMS.setDatabase(BaseExample.data, function(err){
-                if(err) {Utils.handleError(err); return;}
+            DBMS.setDatabase(BaseExample.data, (err) => {
+                if (err) { Utils.handleError(err); return; }
                 consistencyCheck(onDatabaseLoad);
             });
-        } else if(MODE === "NIMS_Server") {
-            var RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+        } else if (MODE === 'NIMS_Server') {
+            const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
             window.DBMS = new RemoteDBMS();
             consistencyCheck(onDatabaseLoad);
         }
     };
 
-    var consistencyCheck = function(callback){
-        DBMS.getConsistencyCheckResult(function(err, consistencyErrors){
-            if(err) {Utils.handleError(err); return;}
+    var consistencyCheck = function (callback) {
+        DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
+            if (err) { Utils.handleError(err); return; }
             consistencyErrors.forEach(CommonUtils.consoleLog);
-            if(consistencyErrors.length > 0){
+            if (consistencyErrors.length > 0) {
                 Utils.alert(getL10n('overview-consistency-problem-detected'));
             } else {
                 console.log('Consistency check didn\'t find errors');
@@ -93,104 +92,104 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var stateInit = function(){
-        state.navigation = getEl("navigation");
+    const stateInit = function () {
+        state.navigation = getEl('navigation');
         state.containers = {
-                root: state,
-                navigation: state.navigation,
-                content: getEl("contentArea")
+            root: state,
+            navigation: state.navigation,
+            content: getEl('contentArea')
         };
     };
 
     var onDatabaseLoad = function () {
-//        initTheme();
+        //        initTheme();
 
         var button;
         stateInit();
 
-        Utils.addView(state.containers, "charlist", Charlist, {mainPage:true});
+        Utils.addView(state.containers, 'charlist', Charlist, { mainPage: true });
 
-        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+        addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
-        var button = makeButton("dataLoadButton", "open-database", null, btnOpts);
+        var button = makeButton('dataLoadButton', 'open-database', null, btnOpts);
         button.addEventListener('change', FileUtils.readSingleFile, false);
 
-        var input = makeEl("input");
-        input.type = "file";
+        const input = makeEl('input');
+        input.type = 'file';
         addClass(input, 'hidden');
         setAttr(input, 'tabindex', -1);
         button.appendChild(input);
-        button.addEventListener('click', function(e){
+        button.addEventListener('click', (e) => {
             input.click();
         });
         addEl(state.navigation, button);
 
-//                addEl(state.navigation, makeButton("themeButton", "theme", () => nextTheme(), btnOpts));
-        addEl(state.navigation, makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
-        if(MODE === "Standalone"){
-            addEl(state.navigation, makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
+        //                addEl(state.navigation, makeButton("themeButton", "theme", () => nextTheme(), btnOpts));
+        addEl(state.navigation, makeButton('dataSaveButton', 'save-database', FileUtils.saveFile, btnOpts));
+        if (MODE === 'Standalone') {
+            addEl(state.navigation, makeButton('newBaseButton', 'create-database', FileUtils.makeNewBase, btnOpts));
         }
-//                addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
+        //                addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
 
         addEl(state.navigation, makeL10nButton());
 
-        Utils.addView(state.containers, "logViewer", LogViewer2, {clazz:"logViewerButton", tooltip:true});
-        addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
+        Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
+        addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
 
-//                addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
+        //                addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
 
-        FileUtils.init(function(err){
-            if(err) {Utils.handleError(err); return;}
+        FileUtils.init((err) => {
+            if (err) { Utils.handleError(err); return; }
             consistencyCheck(state.currentView.refresh);
         });
 
         state.currentView.refresh();
-        if(MODE === "Standalone") {
+        if (MODE === 'Standalone') {
             addBeforeUnloadListener();
         }
     };
 
-    var makeL10nButton = function(){
-        var l10nBtn = makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
-        var setIcon = function(){
+    var makeL10nButton = function () {
+        const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
+        const setIcon = function () {
             l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
-        }
+        };
         L10n.onL10nChange(setIcon);
         setIcon();
         return l10nBtn;
     };
 
-    var runTests = function(){
+    var runTests = function () {
         consistencyCheck(() => '');
     };
 
-    var makeButton = function(clazz, name, callback, opts){
-        var button = makeEl("button");
+    var makeButton = function (clazz, name, callback, opts) {
+        const button = makeEl('button');
         addClass(button, clazz);
-        if(opts.tooltip){
-            var delegate = function(){
-                $(button).attr('data-original-title', L10n.getValue("header-" + name));
+        if (opts.tooltip) {
+            const delegate = function () {
+                $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
             };
             L10n.onL10nChange(delegate);
             $(button).tooltip({
-                title : L10n.getValue("header-" + name),
-                placement : "bottom"
+                title: L10n.getValue(`header-${name}`),
+                placement: 'bottom'
             });
         }
-        addClass(button, "action-button");
-        if(opts.className){
+        addClass(button, 'action-button');
+        if (opts.className) {
             addClass(button, opts.className);
         }
-        if(callback){
+        if (callback) {
             listen(button, 'click', callback);
         }
         return button;
     };
 
-    var addBeforeUnloadListener = function(){
+    var addBeforeUnloadListener = function () {
         window.onbeforeunload = function (evt) {
-            var message = getL10n("utils-close-page-warning");
-            if (typeof evt == "undefined") {
+            const message = getL10n('utils-close-page-warning');
+            if (typeof evt === 'undefined') {
                 evt = window.event;
             }
             if (evt) {
@@ -198,7 +197,5 @@ See the License for the specific language governing permissions and
             }
             return message;
         };
-    }
-
-
-})(this['PageManager']={});
+    };
+}(this.PageManager = {}));
