@@ -87,13 +87,7 @@ var commonCore = addPrefix(coreDir + "/js/common/",
  'dateFormat.js'  ]);
 commonCore.push(langPath + "/defaultLang.js");
 
-var common = addPrefix(projectDir + "/js/common/",
-['emptyBase.js'   ,
- 'constants.js'   ,
- 'logger.js'      ,
- 'projectUtils.js' ,
- 'migrator.js'    ,
- 'schema.js']);
+var common = addPrefix(projectDir + "/js/common/", config.get('scripts:commonList'));
 
 common.push(projectDir + "/js/common/engine/*.js");
 common.push(langPath + "/baseExample.js");

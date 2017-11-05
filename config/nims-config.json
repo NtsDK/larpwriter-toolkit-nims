@@ -11,6 +11,14 @@
         "lib" : ["vis.min.css"]
     },
     "scripts" : {
+        "commonList": [
+            "emptyBase.js", 
+            "constants.js", 
+            "logger.js", 
+            "projectUtils.js", 
+            "migrator.js", 
+            "schema.js"
+        ],
         "libsCore" : [
             "jquery-3.1.1.min.js",
             "bootstrap.min.js",

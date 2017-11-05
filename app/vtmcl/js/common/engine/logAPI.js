@@ -37,7 +37,6 @@ See the License for the specific language governing permissions and
                             this.database.Log.splice(0, 1000);
                         }
                     }
-    //                console.log(this.database.Log.length);
                 }
                 console.log(CU.strFormat("{0},{1},{2},{3}", info));
                 if(callback) callback();
@@ -53,11 +52,6 @@ See the License for the specific language governing permissions and
                         requestedLog.push([i+1].concat(this.database.Log[i]));
                     }
                 }
-//                for (var i = pageNumber*100; i < (pageNumber+1)*100; i++) {
-//                    if(this.database.Log[i]){
-//                        requestedLog.push([i+1].concat(this.database.Log[i]));
-//                    }
-//                }
                 
                 callback(null, {
                     requestedLog: requestedLog,

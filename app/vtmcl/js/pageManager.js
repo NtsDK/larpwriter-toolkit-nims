@@ -41,101 +41,32 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         L10n.onL10nChange(updateDialogs);
     }
     
-    var curTheme = Constants.themeList[1];
-    
-    var initTheme = function() {
-        if(DBMS.setTheme){
-            DBMS.getTheme(function(err, theme){
-                if(err) {console.log(err);}
-                if(theme !== ''){
-                    curTheme = theme;
-                }
-                addClass(queryEl('body'), curTheme);
-            });
-        } else {
-            addClass(queryEl('body'), curTheme);
-        }
-    };
-    
-    var nextTheme = function() {
-        removeClass(queryEl('body'), curTheme);
-        curTheme = Constants.themeList[(R.indexOf(curTheme, Constants.themeList)+1)%Constants.themeList.length];
-        addClass(queryEl('body'), curTheme);
-        if(DBMS.setTheme){
-            DBMS.setTheme(curTheme, function(err){
-                if(err) {console.log(err); return;}
-            });
-        }
-    };
-    
-    var protoExpander = function(arr){
-        function protoCarrier(){};
-        arr.forEach( name => protoCarrier.prototype[name] = (() => 1));
-        return protoCarrier;
-    };
-    
-//    var playerArr = [
-//                    'getShop'        ,
-//                    "createCategory" ,
-//                    "renameCategory" ,
-//                    "removeCategory" ,
-//                    
-//                    "getLocalAsset",
-//                    "createLocalAsset",
-//                    "renameLocalAsset",
-//                    "removeLocalAsset",
-//                    
-//                    "updateLocalAssetField",
-//                    "setAssetCost",
-//                    "addGlobalAssetToCategory",
-//                    "addLocalAssetToCategory" ,
-//                    
-//                    "removeGlobalAssetFromCategory",
-//                    "removeLocalAssetFromCategory",
-//                    "getShopName",
-//                    "getAsset",
-//                    
-//                    "getShopIndex",
-//                    "getGlobalAssetDisplayNames",
-//                    "buyAsset",
-//                    "getTheme",
-//                    "setTheme",
-//                    ];
-//    
-//    exports.onPlayerPageLoad = function () {
-//        initPage();
-//        var RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
-//        window.DBMS = new RemoteDBMS();
-//        initTheme();
-//        stateInit();
-//        Utils.addView(state.containers, "shop-management", PlayerShopManagement, {mainPage:true});
-//        Utils.addView(state.containers, "shop-window", ShopWindow);
-//        Utils.addView(state.containers, "shop-about", ShopAbout);
-//        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-////        addEl(state.navigation, makeL10nButton());
-//        addEl(state.navigation, makeButton("themeButton", "theme", () => nextTheme(), btnOpts));
-//        addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
-//        addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
-//        addEl(state.navigation, makeButton("fullScreenButton", "fullScreen", toggleToolbarButtons, btnOpts));
-//        state.currentView.refresh();
-//    };
-    
-    var toggleToolbarButtons = () => {
-        queryEls('#navigation > button').filter( button => !hasClass(button, 'refreshButton') && !hasClass(button, 'fullScreenButton'))
-                                        .map(toggleClass(R.__, 'hidden'));
-    };
-    
-//    exports.onIndexPageLoad = function () {
-//        initPage();
-//        var RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptions','getRoleGridInfo']));
-//        window.DBMS = new RemoteDBMS();
-//        initTheme();
-//        stateInit();
-//        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-//        Utils.addView(state.containers, "enter", Enter, {mainPage:true});
-////            addEl(state.navigation, makeL10nButton());
-//        state.currentView.refresh();
-//    };
+    //    var curTheme = Constants.themeList[1];
+    //    
+    //    var initTheme = function() {
+    //        if(DBMS.setTheme){
+    //            DBMS.getTheme(function(err, theme){
+    //                if(err) {console.log(err);}
+    //                if(theme !== ''){
+    //                    curTheme = theme;
+    //                }
+    //                addClass(queryEl('body'), curTheme);
+    //            });
+    //        } else {
+    //            addClass(queryEl('body'), curTheme);
+    //        }
+    //    };
+    //    
+    //    var nextTheme = function() {
+    //        removeClass(queryEl('body'), curTheme);
+    //        curTheme = Constants.themeList[(R.indexOf(curTheme, Constants.themeList)+1)%Constants.themeList.length];
+    //        addClass(queryEl('body'), curTheme);
+    //        if(DBMS.setTheme){
+    //            DBMS.setTheme(curTheme, function(err){
+    //                if(err) {console.log(err); return;}
+    //            });
+    //        }
+    //    };
     
     exports.onMasterPageLoad = function () {
         initPage();
@@ -176,68 +107,51 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     };
     
     var onDatabaseLoad = function () {
-        initTheme();
-        PermissionInformer.refresh(function(err){
-            if(err) {Utils.handleError(err); return;}
-            
-            PermissionInformer.isAdmin(function(err, isAdmin){
-                if(err) {Utils.handleError(err); return;}
+//        initTheme();
                 
-                var button;
-                stateInit();
+        var button;
+        stateInit();
 
-                Utils.addView(state.containers, "charlist", Charlist, {mainPage:true});
-//                Utils.addView(state.containers, "shops2", Shops2);
-//                Utils.addView(state.containers, "assets", Assets);
-//                Utils.addView(state.containers, "apiCheck", ApiCheck);
-                
-                addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-                
-                if(isAdmin){
-                    var button = makeButton("dataLoadButton", "open-database", null, btnOpts);
-                    button.addEventListener('change', FileUtils.readSingleFile, false);
-                    
-                    var input = makeEl("input");
-                    input.type = "file";
-                    addClass(input, 'hidden');
-                    setAttr(input, 'tabindex', -1);
-                    button.appendChild(input);
-                    button.addEventListener('click', function(e){
-                        input.click();
-    //                    e.preventDefault(); // prevent navigation to "#"
-                    });
-                    addEl(state.navigation, button);
-                }
-                
+        Utils.addView(state.containers, "charlist", Charlist, {mainPage:true});
+        
+        addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
+        
+        var button = makeButton("dataLoadButton", "open-database", null, btnOpts);
+        button.addEventListener('change', FileUtils.readSingleFile, false);
+        
+        var input = makeEl("input");
+        input.type = "file";
+        addClass(input, 'hidden');
+        setAttr(input, 'tabindex', -1);
+        button.appendChild(input);
+        button.addEventListener('click', function(e){
+            input.click();
+        });
+        addEl(state.navigation, button);
+        
 //                addEl(state.navigation, makeButton("themeButton", "theme", () => nextTheme(), btnOpts));
-                addEl(state.navigation, makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
-                if(MODE === "Standalone"){
-                    addEl(state.navigation, makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
-                }
+        addEl(state.navigation, makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
+        if(MODE === "Standalone"){
+            addEl(state.navigation, makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
+        }
 //                addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
-                
-                addEl(state.navigation, makeL10nButton());
-                
-                Utils.addView(state.containers, "logViewer", LogViewer2, {clazz:"logViewerButton", tooltip:true});
-                addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
-                if(MODE === "NIMS_Server"){
-//                    Utils.addView(state.containers, "admins", AccessManager, {clazz:"accessManagerButton", tooltip:true});
-                    addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
-                }
+        
+        addEl(state.navigation, makeL10nButton());
+        
+        Utils.addView(state.containers, "logViewer", LogViewer2, {clazz:"logViewerButton", tooltip:true});
+        addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
+        
 //                addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
-                
-                FileUtils.init(function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    consistencyCheck(state.currentView.refresh);
-                });
-                
-                state.currentView.refresh();
-                if(MODE === "Standalone") {
-                    addBeforeUnloadListener();
-                }
-            });
+        
+        FileUtils.init(function(err){
+            if(err) {Utils.handleError(err); return;}
+            consistencyCheck(state.currentView.refresh);
         });
         
+        state.currentView.refresh();
+        if(MODE === "Standalone") {
+            addBeforeUnloadListener();
+        }
     };
     
     var makeL10nButton = function(){
@@ -251,20 +165,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     };
     
     var runTests = function(){
-    //    window.RunTests();
         consistencyCheck(() => '');
-//        consistencyCheck(function(err, checkRes){
-//            if(err) {Utils.handleError(err); return;}
-//            if(checkRes === undefined || checkRes.length === 0){
-//                Utils.alert(getL10n('overview-consistency-is-ok'));
-//            } else {
-//                Utils.alert(getL10n('overview-consistency-problem-detected'));
-//            }
-//        });
-    };
-    
-    var postLogout = function(){
-        document.querySelector('#logoutForm button').click();
     };
     
     var makeButton = function(clazz, name, callback, opts){

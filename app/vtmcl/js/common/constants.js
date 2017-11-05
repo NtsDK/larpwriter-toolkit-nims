@@ -100,13 +100,13 @@ See the License for the specific language governing permissions and
     
     exports.healthList = exports.healthCols[0].arr.map(R.prop('name'));
 
-    exports.disciplines = [ 'animalism', 'bardo', 'valeren', 'visceratika', 'obtenebration', 'daimoinon', 'dominate',
-            'obfuscate', 'vicissitude', 'kineticism', 'melpominee', 'mytherceria', 'potence', 'nihilistics', 'obeah',
-            'gargoyle flight', 'dementation', 'protean', 'presence', 'auspex', 'sanguinus', 'serpentis', 'quietus',
-            'mortis', 'fortitude', 'celerity', 'thanatosis', 'temporis', 'chimerstry', 'spiritus' ];
+    //    exports.disciplines = [ 'animalism', 'bardo', 'valeren', 'visceratika', 'obtenebration', 'daimoinon', 'dominate',
+    //            'obfuscate', 'vicissitude', 'kineticism', 'melpominee', 'mytherceria', 'potence', 'nihilistics', 'obeah',
+    //            'gargoyle flight', 'dementation', 'protean', 'presence', 'auspex', 'sanguinus', 'serpentis', 'quietus',
+    //            'mortis', 'fortitude', 'celerity', 'thanatosis', 'temporis', 'chimerstry', 'spiritus' ];
 
-    exports.themeList = [ 'nims-theme', 'des-light-theme', 'des-dark-theme' ];
+    //    exports.themeList = [ 'nims-theme', 'des-light-theme', 'des-dark-theme' ];
 
-    exports.httpTimeout = 5000;
+    //    exports.httpTimeout = 5000;
 
 })(typeof exports === 'undefined' ? this['Constants'] = {} : exports);
