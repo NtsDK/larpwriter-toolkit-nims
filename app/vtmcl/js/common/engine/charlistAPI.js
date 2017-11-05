@@ -115,44 +115,18 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.getAdvantages = arrGetter(R.toPairs, Constants.advantagesList);
         LocalDBMS.prototype.renameAdvantage = namer(0, Constants.advantagesList);
-
-
-//        LocalDBMS.prototype._init = function(listeners){
-//            this.ee = new EventEmitter();
-//            var that = this;
-//            for(var triggerName in listeners){
-//                listeners[triggerName].forEach(function(listener){
-//                    that.ee.on(triggerName, listener.bind(that));
-//                });
-//            }
-//        };
-//    
-//        LocalDBMS.prototype.getDatabase = function(callback){
-//            this.database.Meta.saveTime = new Date().toString();
-//            callback(null, CU.clone(this.database));
-//        };
-//    
-//        LocalDBMS.prototype.setDatabase = function(database, callback){
-//            try {
-//                this.database = Migrator.migrate(database);
-//            } catch(err){
-//                return callback(err);
-//            }
-//            if(callback) callback();
-//        };
-//    
-//        LocalDBMS.prototype.getMetaInfo = function(callback){
-//            callback(null, CU.clone(this.database.Meta));
-//        };
-//    
-//        // overview
-//        LocalDBMS.prototype.setMetaInfo = function(name, value, callback){
-//            var chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoList), PC.isString(value)]);
-//            PC.precondition(chain, callback, () => {
-//                this.database.Meta[name] = value;
-//                if(callback) callback();
-//            });
-//        };
+        
+        LocalDBMS.prototype.getNotes = function(callback){
+            callback(null, char(this).notes);
+        };
+        
+        LocalDBMS.prototype.setNotes = function(text, callback){
+            var chain = PC.chainCheck([PC.isString(text)]);
+            PC.precondition(chain, callback, () => {
+                char(this).notes = text;
+                if(callback) callback();
+            });
+        };
     };
   
     callback(api);

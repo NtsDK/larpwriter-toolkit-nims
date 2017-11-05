@@ -239,6 +239,12 @@ div.injure_wound{
   flex-basis: 180px;
 }
 
+.notes-content {
+  width: 100%;
+  height: 200px;
+  background-color: transparent;
+}
+
 /* @media screen, print { */
 @media print {
   #navigation, .add-button{

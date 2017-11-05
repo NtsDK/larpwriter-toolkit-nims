@@ -63,6 +63,15 @@ See the License for the specific language governing permissions and
         addRefreshHook('getAdvantages', 'disciplines', backstoryCb('.disciplines-container', disciplineInput));
 
         fillStats('.health-container', Constants.healthCols, makeHealthRow);
+        
+        listen(queryEl('.notes-content'), "change", event => DBMS.setNotes(event.target.value, Utils.processError()));
+        onRefresh(() => {
+            DBMS.getNotes(function(err, value) {
+                if (err) { Utils.handleError(err); return; }
+                queryEl('.notes-content').value = value;
+            });
+        });
+        
         exports.content = queryEl(root);
     };
     
