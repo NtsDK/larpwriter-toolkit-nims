@@ -52,7 +52,7 @@ function makeLocalDBMS(fullVersion){
     
     ["baseAPI"               ,
     "consistencyCheckAPI"   ,
-    "entityAPI"             ,
+//    "entityAPI"             ,
     "logAPI"                ,
     "charlistAPI"           ,
     ].map(func);

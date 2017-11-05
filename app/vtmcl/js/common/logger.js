@@ -43,70 +43,28 @@ See the License for the specific language governing permissions and
             "log" : null,
             "getLog" : null
         },
-        "entityAPI" : {
-            "getEntityNamesArray" : null
-        },
-        "shopAPI" : {
-            "getShopNamesArray" : null,
-            "getShopAssets" : null,
-            "getShopPasswords" : null,
-            "addAssetToShop" : {},
+        "charlistAPI" : {
+            "getProfileItem" : null,
+            "setProfileItem" : {},
+            "getAttribute" : null,
+            "setAttribute" : {},
+            "getAbility" : null,
+            "setAbility" : {},
+            "getVirtue" : null,
+            "setVirtue" : {},
+            "getState" : null,
+            "setState" : {},
+            "getHealth" : null,
+            "setHealth" : {},
+            "setBackground" : {},
+            "setDiscipline" : {},
             
-            "removeAssetFromShop" : {},
-            "setShopData" : {},
-            "getShop" : null,
-            "createShop" : {},
-            
-            "changeShopPassword" : {},
-            "removeShop" : {},
-            "createCategory" : {},
-            "renameCategory" : {},
-            
-            "removeCategory" : {},
-            "getLocalAsset" : null,
-            "createLocalAsset" : {},
-            "renameLocalAsset" : {},
-            
-            "removeLocalAsset" : {},
-            "updateLocalAssetField" : {},
-            "setAssetCost" : {},
-            "addGlobalAssetToCategory" : {},
-            
-            "addLocalAssetToCategory" : {},
-            "removeGlobalAssetFromCategory" : {},
-            "removeLocalAssetFromCategory" : {},
-        },
-        "externalAPI" : {
-            "getShopAPICheck" : null,
-            "getShopsAPICheck" : null,
-            "getImplantsAPICheck" : null,
-            "getPillsAPICheck" : null,
-            "importImplants" : {},
-            "importPills" : {},
-            "getShopIndex" : null,
-            "buyAsset" : {},
-            "getTheme": null,
-            "setTheme": {}
-        },
-        "assetsAPI" : {
-            "getAssetNamesArray" : null,
-            "getGlobalAssetDisplayNames" : null,
-            "getAsset" : null,
-            "createAsset" : {},
-            "renameAsset" : {},
-            "removeAsset" : {},
-            "updateAssetField" : {},
-        },
-        "userAPI" : {
-            "getUser" : null,
-            "setPassword" : null,
-            "checkPassword" : null,
-            "login" : null,
-            "register" : null,
-            "getShopName" : null
-        },
-        "permissionAPI" : {
-            "hasPermission" : null
+            "getBackstory" : null,
+            "setBackstory" : {},
+            "getAdvantages" : null,
+            "renameAdvantage" : {},
+            "getNotes" : null,
+            "setNotes" : {},
         },
     };
     
