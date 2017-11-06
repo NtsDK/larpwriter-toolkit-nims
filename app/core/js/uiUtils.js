@@ -14,8 +14,10 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
-    exports.initTabPanel = function (tabClazz, containerClazz) {
+/* eslint-disable no-var,vars-on-top */
+
+((exports) => {
+    exports.initTabPanel = (tabClazz, containerClazz) => {
         const containers = getEls(containerClazz);
 
         let i;
@@ -32,18 +34,16 @@ See the License for the specific language governing permissions and
         }
     };
 
-    var tabButtonClick = function (buttons, containers) {
-        return function (event) {
-            for (var i = 0; i < buttons.length; i++) {
-                setClassByCondition(buttons[i], 'active', event.target.id === buttons[i].id);
-            }
-            for (var i = 0; i < containers.length; i++) {
-                setClassByCondition(containers[i], 'hidden', `${event.target.id}Container` !== containers[i].id);
-            }
-        };
+    var tabButtonClick = (buttons, containers) => (event) => {
+        for (let i = 0; i < buttons.length; i++) {
+            setClassByCondition(buttons[i], 'active', event.target.id === buttons[i].id);
+        }
+        for (let i = 0; i < containers.length; i++) {
+            setClassByCondition(containers[i], 'hidden', `${event.target.id}Container` !== containers[i].id);
+        }
     };
 
-    exports.fillShowItemSelector = function (selector, displayArray) {
+    exports.fillShowItemSelector = (selector, displayArray) => {
         let el;
         setAttr(selector, 'size', displayArray.length);
         displayArray.forEach((value) => {
@@ -55,7 +55,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    exports.fillShowItemSelector2 = function (selector, optionGroups) {
+    exports.fillShowItemSelector2 = (selector, optionGroups) => {
         let el, groupEl, counter = 0;
         addEls(selector, optionGroups.map((group) => {
             counter++;
@@ -73,20 +73,18 @@ See the License for the specific language governing permissions and
         setAttr(selector, 'size', counter);
     };
 
-    exports.showSelectedEls = function (classKey) {
-        return function (event) {
-            const el = event.target;
-            let els, i, j;
-            for (i = 0; i < el.options.length; i += 1) {
-                els = getEls(i + classKey);
-                for (j = 0; j < els.length; j++) {
-                    setClassByCondition(els[j], 'hidden', !el.options[i].selected);
-                }
+    exports.showSelectedEls = classKey => (event) => {
+        const el = event.target;
+        let els, i, j;
+        for (i = 0; i < el.options.length; i += 1) {
+            els = getEls(i + classKey);
+            for (j = 0; j < els.length; j++) {
+                setClassByCondition(els[j], 'hidden', !el.options[i].selected);
             }
-        };
+        }
     };
 
-    exports.initSelectorFilters = function () {
+    exports.initSelectorFilters = () => {
         const elems = document.querySelectorAll('[selector-filter]');
         let el, sel;
         for (let i = 0; i < elems.length; i++) {
@@ -97,25 +95,23 @@ See the License for the specific language governing permissions and
         }
     };
 
-    var filterOptions = function (sel) {
-        return function (event) {
-            let val = event.target.value;
-            let i, opt;
-            val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
-            for (i = 0; i < sel.options.length; i += 1) {
-                opt = sel.options[i];
-                const isVisible = opt.innerHTML.toLowerCase().search(val) !== -1;
-                if (!isVisible) {
-                    opt.selected = false;
-                }
-                setClassByCondition(opt, 'hidden', !isVisible);
-                //                setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
+    var filterOptions = sel => (event) => {
+        let val = event.target.value;
+        let i, opt;
+        val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
+        for (i = 0; i < sel.options.length; i += 1) {
+            opt = sel.options[i];
+            const isVisible = opt.innerHTML.toLowerCase().search(val) !== -1;
+            if (!isVisible) {
+                opt.selected = false;
             }
-            sel.dispatchEvent(new Event('change'));
-        };
+            setClassByCondition(opt, 'hidden', !isVisible);
+            //                setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
+        }
+        sel.dispatchEvent(new Event('change'));
     };
 
-    exports.initPanelTogglers = function () {
+    exports.initPanelTogglers = () => {
         const elems = document.querySelectorAll('[panel-toggler]');
         let el, sel, attr;
         for (let i = 0; i < elems.length; i++) {
@@ -129,13 +125,11 @@ See the License for the specific language governing permissions and
         }
     };
 
-    exports.togglePanel = function (sel) {
-        return function (event) {
-            toggleClass(sel, 'hidden');
-        };
+    exports.togglePanel = sel => (event) => {
+        toggleClass(sel, 'hidden');
     };
 
-    exports.makeEventTimePicker = function (opts) {
+    exports.makeEventTimePicker = (opts) => {
         const input = makeEl('input');
         R.ap([addClass(input)], opts.extraClasses);
         addClass(input, 'eventTime');
@@ -195,18 +189,18 @@ See the License for the specific language governing permissions and
     //      return input;
     //  };
 
-    exports.resizeTextarea = function (ev) {
+    exports.resizeTextarea = (ev) => {
         const that = ev.target;
         that.style.height = '24px';
         that.style.height = `${that.scrollHeight + 12}px`;
     };
 
-    exports.resizeTextarea2 = function (that) {
+    exports.resizeTextarea2 = (that) => {
         that.style.height = '24px';
         that.style.height = `${that.scrollHeight + 12}px`;
     };
 
-    exports.makeAdaptationTimeInput = function (storyName, event, characterName, isEditable) {
+    exports.makeAdaptationTimeInput = (storyName, event, characterName, isEditable) => {
         const input = makeEl('input');
         setClassByCondition(input, 'notEditable', !isEditable);
         addClass(input, 'adaptationTimeInput');
@@ -216,13 +210,13 @@ See the License for the specific language governing permissions and
         return input;
     };
 
-    var onChangePersonalTimeDelegate = function (event) {
+    var onChangePersonalTimeDelegate = (event) => {
         const dataKey = JSON.parse(event.target.dataKey);
         const time = event.target.value;
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'time', time, Utils.processError());
     };
 
-    exports.makeAdaptationReadyInput = function (storyName, event, characterName, isEditable) {
+    exports.makeAdaptationReadyInput = (storyName, event, characterName, isEditable) => {
         const div = makeEl('div');
         const input = makeEl('input');
         setClassByCondition(input, 'notEditable', !isEditable);
@@ -237,13 +231,13 @@ See the License for the specific language governing permissions and
         return div;
     };
 
-    var onChangeReadyStatus = function (event) {
+    var onChangeReadyStatus = (event) => {
         const dataKey = JSON.parse(event.target.dataKey);
         const value = event.target.checked;
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, Utils.processError());
     };
 
-    exports.makePanelCore = function (title, content) {
+    exports.makePanelCore = (title, content) => {
         const panel = addClasses(makeEl('div'), ['panel', 'panel-default']);
         const h3 = addClass(addEl(makeEl('h3'), title), 'panel-title');
         const a = setAttr(makeEl('a'), 'href', '#/');
@@ -258,7 +252,7 @@ See the License for the specific language governing permissions and
         };
     };
 
-    exports.makeProfileTable = function (profileStructure, profile) {
+    exports.makeProfileTable = (profileStructure, profile) => {
         let value;
         const profileDiv = addEls(makeEl('tbody'), profileStructure.filter(element => element.doExport).map((element) => {
             switch (element.type) {
@@ -283,7 +277,5 @@ See the License for the specific language governing permissions and
         return addEl(addClasses(makeEl('table'), ['table', 'table-striped']), profileDiv);
     };
 
-    exports.makeTableRow = function (col1, col2) {
-        return addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);
-    };
-}(this.UI = {}));
+    exports.makeTableRow = (col1, col2) => addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);
+})(this.UI = {});

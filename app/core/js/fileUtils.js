@@ -14,53 +14,55 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-const FileUtils = {};
+((exports) => {
+    const state = {};
 
-FileUtils.init = function (callback) {
-    FileUtils.callback = callback;
-};
+    exports.init = (callback) => {
+        state.callback = callback;
+    };
 
-FileUtils.makeNewBase = function () {
-    Utils.confirm(getL10n('utils-new-base-warning'), () => {
-        DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), FileUtils.callback);
-    });
-};
+    exports.makeNewBase = () => {
+        Utils.confirm(getL10n('utils-new-base-warning'), () => {
+            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), exports.callback);
+        });
+    };
 
-FileUtils.openHelp = function () {
-    window.open('extras/doc/nims.html');
-};
+    exports.openHelp = () => {
+        window.open('extras/doc/nims.html');
+    };
 
-FileUtils.readSingleFile = function (evt) {
-    // Retrieve the first (and only!) File from the FileList object
-    const f = evt.target.files[0];
+    exports.readSingleFile = (evt) => {
+        // Retrieve the first (and only!) File from the FileList object
+        const f = evt.target.files[0];
 
-    if (f) {
-        const r = new FileReader();
-        r.onload = function (e) {
-            const contents = e.target.result;
-            const database = JSON.parse(contents);
-            DBMS.setDatabase(database, FileUtils.callback);
-        };
-        r.readAsText(f);
-    } else {
-        Utils.alert(getL10n('utils-base-file-loading-error'));
-    }
-};
+        if (f) {
+            const r = new FileReader();
+            r.onload = (e) => {
+                const contents = e.target.result;
+                const database = JSON.parse(contents);
+                DBMS.setDatabase(database, state.callback);
+            };
+            r.readAsText(f);
+        } else {
+            Utils.alert(getL10n('utils-base-file-loading-error'));
+        }
+    };
 
-FileUtils.saveFile = function () {
-    DBMS.getDatabase((err, database) => {
-        if (err) { Utils.handleError(err); return; }
-        FileUtils.json2File(database, 'nims-base.json');
-    });
-};
+    exports.saveFile = () => {
+        DBMS.getDatabase((err, database) => {
+            if (err) { Utils.handleError(err); return; }
+            exports.json2File(database, 'nims-base.json');
+        });
+    };
 
-FileUtils.json2File = function (str, fileName) {
-    FileUtils.str2File(JSON.stringify(str, null, '  '), fileName);
-};
+    exports.json2File = (str, fileName) => {
+        exports.str2File(JSON.stringify(str, null, '  '), fileName);
+    };
 
-FileUtils.str2File = function (str, fileName) {
-    const blob = new Blob([str], {
-        type: 'text/plain;charset=utf-8'
-    });
-    saveAs(blob, fileName);
-};
+    exports.str2File = (str, fileName) => {
+        const blob = new Blob([str], {
+            type: 'text/plain;charset=utf-8'
+        });
+        saveAs(blob, fileName);
+    };
+})(this.FileUtils = {});

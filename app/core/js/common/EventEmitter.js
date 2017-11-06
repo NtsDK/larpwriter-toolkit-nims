@@ -4,6 +4,7 @@
     Oliver Caldwell - http://oli.me.uk/
     @preserve
 */
+/* eslint-disable */
 (function () {
     'use strict';
 

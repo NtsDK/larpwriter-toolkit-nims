@@ -14,21 +14,17 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+((callback) => {
     function CommonUtils(exports, R) {
-        exports.startsWith = function (str1, str2) {
-            return str1.substring(0, str2.length) === str2;
-        };
+        exports.startsWith = (str1, str2) => str1.substring(0, str2.length) === str2;
 
-        exports.removeFromArrayByIndex = function (array, from, to) {
-            'use strict';
-
+        exports.removeFromArrayByIndex = (array, from, to) => {
             const rest = array.slice((to || from) + 1 || array.length);
             array.length = from < 0 ? array.length + from : from;
             return array.push(...rest);
         };
 
-        exports.charOrdAFactoryBase = R.curry((sortDir, prepare) => function (a, b) {
+        exports.charOrdAFactoryBase = R.curry((sortDir, prepare) => function cmp(a, b) {
             a = prepare(a);
             b = prepare(b);
             if (R.isNil(a) && R.isNil(b)) return 0;
@@ -45,82 +41,64 @@ See the License for the specific language governing permissions and
 
         exports.eventsByTime = exports.charOrdAFactory(a => new Date(a.time));
 
-        exports.strFormat = function (str, vals) {
-            'use strict';
+        exports.strFormat = (str, vals) => str.replace(/\{\{|\}\}|\{(\d+)\}/g, (m, n) => {
+            if (m === '{{') { return '{'; }
+            if (m === '}}') { return '}'; }
+            return vals[n];
+        });
 
-            return str.replace(/\{\{|\}\}|\{(\d+)\}/g, (m, n) => {
-                if (m == '{{') { return '{'; }
-                if (m == '}}') { return '}'; }
-                return vals[n];
-            });
-        };
-
-        exports.consoleLog = function (str) {
-            'use strict';
-
+        exports.consoleLog = (str) => {
             console.log(str);
         };
 
-        exports.clone = function (o) {
-            'use strict';
+        exports.clone = R.clone;
 
-            if (!o || typeof o !== 'object') {
-                return o;
-            }
-            const c = typeof o.pop === 'function' ? [] : {};
-            let p, v;
-            for (p in o) {
-                if (o.hasOwnProperty(p)) {
-                    v = o[p];
-                    if (v && typeof v === 'object') {
-                        c[p] = exports.clone(v);
-                    } else {
-                        c[p] = v;
-                    }
-                }
-            }
-            return c;
-        };
+        //        exports.clone = (o) => {
+        //            if (!o || typeof o !== 'object') {
+        //                return o;
+        //            }
+        //            const c = typeof o.pop === 'function' ? [] : {};
+        //            let p, v;
+        //            for (p in o) {
+        //                if (o.hasOwnProperty(p)) {
+        //                    v = o[p];
+        //                    if (v && typeof v === 'object') {
+        //                        c[p] = exports.clone(v);
+        //                    } else {
+        //                        c[p] = v;
+        //                    }
+        //                }
+        //            }
+        //            return c;
+        //        };
 
-        const preg_quote = function (str, delimiter) {
-            'use strict';
-
+        const pregQuote = (str, delimiter) =>
             // http://kevin.vanzonneveld.net
             // + original by: booeyOH
             // + improved by: Ates Goral (http://magnetiq.com)
             // + improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
             // + bugfixed by: Onno Marsman
             // + improved by: Brett Zamir (http://brett-zamir.me)
-            // * example 1: preg_quote("$40");
+            // * example 1: pregQuote("$40");
             // * returns 1: '\$40'
-            // * example 2: preg_quote("*RRRING* Hello?");
+            // * example 2: pregQuote("*RRRING* Hello?");
             // * returns 2: '\*RRRING\* Hello\?'
-            // * example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
+            // * example 3: pregQuote("\\.+*?[^]$(){}=!<>|:");
             // * returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
-            return (`${str}`).replace(new RegExp(`[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\${
+            (`${str}`).replace(new RegExp(`[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\${
                 delimiter || ''}-]`, 'g'), '\\$&');
-        };
 
-        exports.globStringToRegex = function (str) {
-            'use strict';
-
-            return new RegExp(preg_quote(str).replace(/\\\*/g, '.*').replace(/\\\?/g, '.'), 'g');
-        };
+        exports.globStringToRegex = str => new RegExp(pregQuote(str).replace(/\\\*/g, '.*').replace(/\\\?/g, '.'), 'g');
 
         // taken from MDN https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-        exports.escapeRegExp = function (string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-        };
+        exports.escapeRegExp = string =>
+            string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 
-        exports.arr2map = function (array, key) {
-            return array.reduce((a, b) => {
-                a[b[key]] = b;
-                return a;
-            }, {});
-        };
+        exports.arr2map = (array, key) => array.reduce((a, b) => {
+            a[b[key]] = b;
+            return a;
+        }, {});
     }
 
     callback(CommonUtils);
-}((api) => {
-    typeof exports === 'undefined' ? api(this.CommonUtils = {}, R) : module.exports = api;
-}));
+})(api => ((typeof exports === 'undefined') ? api((this.CommonUtils = {}), R) : (module.exports = api)));

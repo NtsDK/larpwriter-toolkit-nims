@@ -15,6 +15,8 @@
 // Thanks for your work ;)
 // NtsDK
 
+/* eslint-disable */
+
 (function (callback) {
     var dateFormat = (function () {
         let token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
@@ -122,6 +124,4 @@
     };
 
     callback(dateFormat);
-}((dateFormat) => {
-    typeof exports === 'undefined' ? this.dateFormat = dateFormat : module.exports = dateFormat;
-}));
+}(dateFormat => ((typeof exports === 'undefined') ? (this.dateFormat = dateFormat) : (module.exports = dateFormat))));

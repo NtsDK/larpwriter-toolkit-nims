@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports, Dictionaries) {
+/* eslint-disable no-var,vars-on-top */
+
+((exports, Dictionaries) => {
     const state = {};
 
     state.initialized = false;
@@ -22,15 +24,13 @@ See the License for the specific language governing permissions and
     state.dictionaries = {};
     state.lang = defaultLang;
 
-    const init = function () {
+    const init = () => {
         if (state.initialized) {
             return;
         }
         //        console.log(navigator.language);
 
-        for (const name in Dictionaries) {
-            state.dictionaries[name] = processDictionary(Dictionaries[name]);
-        }
+        state.dictionaries = R.map(processDictionary, Dictionaries);
 
         //    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
         //    var lang = 'ru';
@@ -47,19 +47,24 @@ See the License for the specific language governing permissions and
         state.initialized = true;
     };
 
-    var processDictionary = function (dictionary) {
+    var processDictionary = (dictionary) => {
         const processedDictionary = {};
-        for (const sectionName in dictionary) {
-            for (const name in dictionary[sectionName]) {
-                processedDictionary[`${sectionName}-${name}`] = dictionary[sectionName][name];
-            }
-        }
+        R.toPairs(dictionary).forEach(([sectionName, section]) => {
+            R.toPairs(section).forEach(([key, value]) => {
+                processedDictionary[`${sectionName}-${key}`] = value;
+            });
+        });
+        //        for (const sectionName in dictionary) {
+        //            for (const name in dictionary[sectionName]) {
+        //                processedDictionary[`${sectionName}-${name}`] = dictionary[sectionName][name];
+        //            }
+        //        }
         return processedDictionary;
     };
 
     var setHtmlLang = lang => setAttr(document.getElementsByTagName('html')[0], 'lang', lang);
 
-    exports.toggleL10n = function () {
+    exports.toggleL10n = () => {
         if (state.lang === 'ru') {
             state.dict = state.dictionaries.en;
             state.lang = 'en';
@@ -79,19 +84,19 @@ See the License for the specific language governing permissions and
 
     exports.get = R.curry((namespace, name) => L10n.getValue(`${namespace}-${name}`));
 
-    exports.getValue = function (name) {
+    exports.getValue = (name) => {
         const value = state.dict[name];
         if (value === undefined) console.log(`Value is not found: ${name}`);
         return value || `${name}:RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA`;
     };
 
-    exports.onL10nChange = function (delegate) {
+    exports.onL10nChange = (delegate) => {
         state.l10nDelegates.push(delegate);
     };
 
-    exports.localizeStatic = function () {
+    exports.localizeStatic = () => {
         init();
         nl2array(document.querySelectorAll('[l10n-id]')).map(el => addEl(clearEl(el), makeText(exports.getValue(getAttr(el, 'l10n-id')))));
         nl2array(document.querySelectorAll('[l10n-placeholder-id]')).map(el => setAttr(el, 'placeholder', exports.getValue(getAttr(el, 'l10n-placeholder-id'))));
     };
-}(this.L10n = {}, Dictionaries));
+})(this.L10n = {}, Dictionaries);
