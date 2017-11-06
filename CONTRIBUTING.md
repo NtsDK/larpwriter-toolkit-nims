@@ -16,7 +16,9 @@ eclint check app\vtmcl\js\capitalApp.js
 "node_modules/.bin/eslint" .eslintrc.js
 
 "node_modules/.bin/eslint" app\core\js
+"node_modules/.bin/eslint" app\core\js --fix
 
 "node_modules/.bin/eslint" app\vtmcl\js
+"node_modules/.bin/eslint" app\vtmcl\js --fix
 "node_modules/.bin/eslint" app\vtmcl\js\pageManager.js
 "node_modules/.bin/eslint" app\vtmcl\js\pageManager.js --fix

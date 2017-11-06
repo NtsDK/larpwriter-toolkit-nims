@@ -26,6 +26,7 @@ module.exports = {
         EmptyBase: false,
         Dictionaries: false,
         MODE: false,
+        BASE_FILE_NAME: false,
         defaultLang: false,
         
         // libs
@@ -46,7 +47,8 @@ module.exports = {
         LogViewer2: false,
         
         // vtmcl pages
-        Charlist: false,
+        Charsheet: false,
+        Instruction: false,
         
         // matcher pages
         marriage: false,

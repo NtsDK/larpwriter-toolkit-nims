@@ -36,4 +36,3 @@ See the License for the specific language governing permissions and
         state.currentView.refresh();
     };
 })(this.LogViewer2 = {});
-

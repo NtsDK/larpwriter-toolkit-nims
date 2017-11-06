@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 
     exports.allProfileCols = [['name', 'player', 'chronicle', 'age', 'sex'],
         ['nature', 'demeanor', 'concept', 'clan', 'generation', 'sire']];
-//    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
+    //    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
     exports.profileCols = exports.allProfileCols;
 
     exports.profileItemList = R.flatten(exports.allProfileCols);

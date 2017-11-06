@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-// TODO need to lint utils with NIMS fixes 
+// TODO need to lint utils with NIMS fixes
 /* eslint-disable */
 
 const strFormat = R.curry(CommonUtils.strFormat);

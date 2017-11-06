@@ -73,7 +73,7 @@ See the License for the specific language governing permissions and
         addEl(state.navigation, makeL10nButton());
 
         Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
-//        addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
+        //        addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
 
         //addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
 
