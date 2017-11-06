@@ -12,16 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
+/* eslint-disable func-names */
+
 'use strict';
 
-(function (callback) {
+((callback2) => {
     function api(LocalDBMS, opts) {
-        const Migrator = opts.Migrator;
+        const { Migrator } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const EventEmitter = opts.EventEmitter;
-        const Constants = opts.Constants;
-        const R = opts.R;
+        const { Constants } = opts;
+        const { R } = opts;
 
         const containerPath = ['Charlist'];
 
@@ -34,7 +35,8 @@ See the License for the specific language governing permissions and
             });
         });
         const setter = R.curry(function (subPath, enumArr, valueCheck, itemName, itemValue, callback) {
-            const chain = PC.chainCheck([PC.isString(itemName), PC.elementFromEnum(itemName, enumArr.bind(this)()), valueCheck(itemName, itemValue)]);
+            const chain = PC.chainCheck([PC.isString(itemName),
+                PC.elementFromEnum(itemName, enumArr.bind(this)()), valueCheck(itemName, itemValue)]);
             PC.precondition(chain, callback, () => {
                 R.path(subPath, char(this))[itemName] = itemValue;
                 if (callback) callback();
@@ -48,7 +50,8 @@ See the License for the specific language governing permissions and
         const isValString = (itemName, value) => PC.chainCheck([PC.isString(value)]);
         const maxPoints = R.always(Constants.maxPoints);
         const extrasMaxPoints = itemName => (itemName === 'bloodpool' ? Constants.bloodpoolMax : Constants.extrasMaxPoints);
-        const isValInRange = R.curry((min, max, itemName, value) => PC.chainCheck([PC.isNumber(value), PC.isInRange(value, min, max(itemName))]));
+        const isValInRange = R.curry((min, max, itemName, value) =>
+            PC.chainCheck([PC.isNumber(value), PC.isInRange(value, min, max(itemName))]));
 
         LocalDBMS.prototype.getProfileItem = getter(['profile'], R.always(Constants.profileItemList));
         LocalDBMS.prototype.setProfileItem = setter(['profile'], R.always(Constants.profileItemList), isValString);
@@ -80,7 +83,8 @@ See the License for the specific language governing permissions and
         });
 
         const namer = R.curry(function (defaultValue, enumArr, type, oldName, newName, callback) {
-            const chain = [PC.isString(type), PC.elementFromEnum(type, enumArr), PC.isString(oldName), PC.isString(newName)];
+            const chain = [PC.isString(type), PC.elementFromEnum(type, enumArr),
+                PC.isString(oldName), PC.isString(newName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const container = char(this)[type];
                 oldName = oldName.trim();
@@ -127,7 +131,5 @@ See the License for the specific language governing permissions and
         };
     }
 
-    callback(api);
-}((api) => {
-    typeof exports === 'undefined' ? this.charlistAPI = api : module.exports = api;
-}));
+    callback2(api);
+})(api => (typeof exports === 'undefined' ? (this.charlistAPI = api) : (module.exports = api)));

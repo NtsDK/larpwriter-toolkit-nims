@@ -14,16 +14,17 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+((callback2) => {
     function consistencyCheckAPI(LocalDBMS, opts) {
-        const R = opts.R;
-        const CommonUtils = opts.CommonUtils;
+        const { R } = opts;
+        const { CommonUtils } = opts;
         const validatorLib = opts.Ajv;
         const schemaBuilder = opts.Schema;
 
+        // eslint-disable-next-line func-names
         LocalDBMS.prototype.getConsistencyCheckResult = function (callback) {
             let errors = [];
-            const pushError = function (str) {
+            const pushError = (str) => {
                 errors.push(str);
             };
 
@@ -38,12 +39,8 @@ See the License for the specific language governing permissions and
             callback(null, errors);
         };
 
-        const getErrorProcessor = function (callback) {
-            return R.curry(R.compose(callback, CommonUtils.strFormat));
-        };
+        const getErrorProcessor = callback => R.curry(R.compose(callback, CommonUtils.strFormat));
     }
 
-    callback(consistencyCheckAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.consistencyCheckAPI = api : module.exports = api;
-}));
+    callback2(consistencyCheckAPI);
+})(api => (typeof exports === 'undefined' ? (this.consistencyCheckAPI = api) : (module.exports = api)));
