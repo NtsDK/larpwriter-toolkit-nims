@@ -14,190 +14,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-const Utils = {};
-
-/** opts
-    tooltip - add tooltip to button, used for iconic buttons
-    id - set button id
-    mainPage - enable view as first page
-    toggle - toggle content, associated with button
-*/
-Utils.addView = function (containers, name, view, opts) {
-    'use strict';
-
-    var opts = opts || {};
-    view.init();
-    const buttonClass = 'navigation-button';
-    containers.root.views[name] = view;
-    const button = makeEl('button');
-    if (opts.tooltip) {
-        const delegate = function () {
-            $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
-        };
-        L10n.onL10nChange(delegate);
-        $(button).tooltip({
-            title: L10n.getValue(`header-${name}`),
-            placement: 'bottom'
-        });
-    } else {
-        addEl(button, makeText(L10n.getValue(`header-${name}`)));
-        setAttr(button, 'l10n-id', `header-${name}`);
-    }
-    addClass(button, buttonClass);
-    addClass(button, `-test-${name}`);
-    addClass(button, `-toggle-class-${name}`);
-    if (opts.clazz) {
-        addClass(button, opts.clazz);
-    }
-    containers.navigation.appendChild(button);
-
-
-    let elems, i;
-    const onClickDelegate = function (view) {
-        return function (evt) {
-            //Tests.run();
-            elems = containers.navigation.getElementsByClassName(buttonClass);
-            if (opts.toggle) {
-                const els = getEls(`-toggle-class-${name}`);
-                for (var i = 0; i < els.length; i++) {
-                    if (evt.target.isEqualNode(els[i])) {
-                        continue;
-                    }
-                    if (hasClass(els[i], 'active')) {
-                        els[i].click();
-                    }
-                }
-            }
-
-            const isActive = hasClass(evt.target, 'active');
-            for (i = 0; i < elems.length; i++) {
-                removeClass(elems[i], 'active');
-            }
-            if (!opts.toggle || (opts.toggle && !isActive)) {
-                addClass(evt.target, 'active');
-
-                passEls(containers.content, getEl('warehouse'));
-                containers.content.appendChild(view.content);
-                removeClass(containers.content, 'hidden');
-                containers.root.currentView = view;
-                view.refresh();
-            } else {
-                removeClass(evt.target, 'active');
-                passEls(containers.content, getEl('warehouse'));
-                containers.root.currentView = null;
-                addClass(containers.content, 'hidden');
-            }
-        };
-    };
-
-    button.addEventListener('click', onClickDelegate(view));
-    if (opts.mainPage) {
-        addClass(button, 'active');
-        containers.content.appendChild(view.content);
-        containers.root.currentView = view;
-    }
-};
-
-Utils.alert = function (message) {
-    vex.dialog.alert(message);
-};
-
-Utils.confirm = function (message, onOk, onCancel) {
-    vex.dialog.confirm({
-        message,
-        callback: (val) => {
-            if (val) {
-                if (onOk) onOk();
-            } else if (onCancel) onCancel();
-        }
-    });
-};
-
-Utils.removeChildren = function (myNode) {
-    'use strict';
-
-    if (!myNode) {
-        return;
-    }
-    while (myNode.firstChild) {
-        myNode.removeChild(myNode.firstChild);
-    }
-};
-
-Utils.processError = function (callback) {
-    return function (err) {
-        if (err) {
-            Utils.handleError(err);
-            return;
-        }
-
-        if (callback) {
-            const arr = [];
-            for (let i = 1; i < arguments.length; i++) {
-                arr.push(arguments[i]);
-            }
-            callback(...arr);
-        }
-    };
-};
-
-Utils.handleErrorMsg = function (err) {
-    const checkErrorType = R.curry((err, name) => err instanceof Errors[name] || (err.name && err.name === name));
-    if (R.keys(Errors).some(checkErrorType(err))) {
-        return strFormat(getL10n(err.messageId), err.parameters);
-    } else if (typeof err === 'object') {
-        return err.message;
-    }
-    return err;
-};
-
-Utils.handleError = err => Utils.alert(Utils.handleErrorMsg(err));
-
-Utils.enableEl = R.curry((el, condition) => {
-    const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';
-    if (condition) {
-        el.removeAttribute(key);
-    } else {
-        el.setAttribute(key, key);
-    }
-});
-
-Utils.enable = function (root, className, condition) {
-    nl2array(root.getElementsByClassName(className)).map(Utils.enableEl(R.__, condition));
-};
-
-Utils.charOrdAObject = CommonUtils.charOrdAFactory(a => a.displayName.toLowerCase());
-
-Utils.rebuildSelector = function (selector, names) {
-    'use strict';
-
-    clearEl(selector);
-    names.forEach((nameInfo) => {
-        const option = makeEl('option');
-        option.appendChild(makeText(nameInfo.displayName));
-        option.value = nameInfo.value;
-        selector.appendChild(option);
-    });
-};
-
-Utils.rebuildSelectorArr = function (selector, names) {
-    'use strict';
-
-    clearEl(selector);
-    names.forEach((name) => {
-        const option = makeEl('option');
-        option.appendChild(makeText(name));
-        selector.appendChild(option);
-    });
-};
-
-String.prototype.endsWith = function (suffix) {
-    'use strict';
-
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-
-var strFormat = R.curry(CommonUtils.strFormat);
+const strFormat = R.curry(CommonUtils.strFormat);
 
 function getL10n(key) {
     return L10n.getValue(key);
@@ -208,14 +25,12 @@ function constL10n(key) {
 }
 
 function isEmpty(obj) {
-    'use strict';
-
     return (Object.getOwnPropertyNames(obj).length === 0);
 }
 
-var addClass = R.curry((o, c) => {
+const addClass = R.curry((o, c) => {
     const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
-    if (re.test(o.className)) return;
+    if (re.test(o.className)) return o;
     o.className = (`${o.className} ${c}`).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
     return o;
 });
@@ -225,11 +40,16 @@ const addClasses = R.curry((o, c) => {
     return o;
 });
 
-const rAddClass = R.curry((c, o) => {
+const rAddClass = R.curry((c, o) => addClass(o, c));
+
+function hasClass(o, c) {
     const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
-    if (re.test(o.className)) return;
-    o.className = (`${o.className} ${c}`).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-    return o;
+    return (re.test(o.className));
+}
+
+const removeClass = R.curry((o, c) => {
+    const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
+    o.className = o.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
 });
 
 const toggleClass = R.curry((o, c) => {
@@ -238,16 +58,6 @@ const toggleClass = R.curry((o, c) => {
     } else {
         addClass(o, c);
     }
-});
-
-function hasClass(o, c) {
-    const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
-    return (re.test(o.className));
-}
-
-var removeClass = R.curry((o, c) => {
-    const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
-    o.className = o.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
 });
 
 function setClassByCondition(o, c, condition) {
@@ -287,7 +97,7 @@ function makeText(text) {
     return document.createTextNode(text);
 }
 
-var addEl = R.curry((parent, child) => {
+const addEl = R.curry((parent, child) => {
     parent.appendChild(child);
     return parent;
 });
@@ -307,7 +117,8 @@ const rAddEl = R.curry((child, parent) => {
     return parent;
 });
 
-var setAttr = R.curry((el, name, value) => {
+
+const setAttr = R.curry((el, name, value) => {
     el.setAttribute(name, value);
     return el;
 });
@@ -404,6 +215,177 @@ const debugInterceptor = function (callback) {
         console.log(JSON.stringify(arguments[0]));
         callback(...arguments);
     };
+};
+
+const Utils = {};
+
+/** opts
+    tooltip - add tooltip to button, used for iconic buttons
+    id - set button id
+    mainPage - enable view as first page
+    toggle - toggle content, associated with button
+*/
+Utils.addView = function (containers, name, view, opts2) {
+    const opts = opts2 || {};
+    view.init();
+    const buttonClass = 'navigation-button';
+    containers.root.views[name] = view;
+    const button = makeEl('button');
+    function delegate() {
+        $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
+    }
+    if (opts.tooltip) {
+        L10n.onL10nChange(delegate);
+        $(button).tooltip({
+            title: L10n.getValue(`header-${name}`),
+            placement: 'bottom'
+        });
+    } else {
+        addEl(button, makeText(L10n.getValue(`header-${name}`)));
+        setAttr(button, 'l10n-id', `header-${name}`);
+    }
+    addClass(button, buttonClass);
+    addClass(button, `-test-${name}`);
+    addClass(button, `-toggle-class-${name}`);
+    if (opts.clazz) {
+        addClass(button, opts.clazz);
+    }
+    containers.navigation.appendChild(button);
+
+    const onClickDelegate = function (view2) {
+        return function (evt) {
+            //Tests.run();
+            const elems = containers.navigation.getElementsByClassName(buttonClass);
+            if (opts.toggle) {
+                const els = getEls(`-toggle-class-${name}`);
+                for (let i = 0; i < els.length; i++) {
+                    if (evt.target.isEqualNode(els[i])) {
+                        continue;
+                    }
+                    if (hasClass(els[i], 'active')) {
+                        els[i].click();
+                    }
+                }
+            }
+
+            const isActive = hasClass(evt.target, 'active');
+            for (let i = 0; i < elems.length; i++) {
+                removeClass(elems[i], 'active');
+            }
+            if (!opts.toggle || (opts.toggle && !isActive)) {
+                addClass(evt.target, 'active');
+
+                passEls(containers.content, getEl('warehouse'));
+                containers.content.appendChild(view2.content);
+                removeClass(containers.content, 'hidden');
+                containers.root.currentView = view2;
+                view2.refresh();
+            } else {
+                removeClass(evt.target, 'active');
+                passEls(containers.content, getEl('warehouse'));
+                containers.root.currentView = null;
+                addClass(containers.content, 'hidden');
+            }
+        };
+    };
+
+    button.addEventListener('click', onClickDelegate(view));
+    if (opts.mainPage) {
+        addClass(button, 'active');
+        containers.content.appendChild(view.content);
+        containers.root.currentView = view;
+    }
+};
+
+Utils.alert = function (message) {
+    vex.dialog.alert(message);
+};
+
+Utils.confirm = function (message, onOk, onCancel) {
+    vex.dialog.confirm({
+        message,
+        callback: (val) => {
+            if (val) {
+                if (onOk) onOk();
+            } else if (onCancel) onCancel();
+        }
+    });
+};
+
+Utils.removeChildren = function (myNode) {
+    if (!myNode) {
+        return;
+    }
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.firstChild);
+    }
+};
+
+Utils.processError = function (callback) {
+    return function (err) {
+        if (err) {
+            Utils.handleError(err);
+            return;
+        }
+
+        if (callback) {
+            const arr = [];
+            for (let i = 1; i < arguments.length; i++) {
+                arr.push(arguments[i]);
+            }
+            callback(...arr);
+        }
+    };
+};
+
+Utils.handleErrorMsg = function (err) {
+    const checkErrorType = R.curry((err2, name) => err2 instanceof Errors[name] || (err2.name && err2.name === name));
+    if (R.keys(Errors).some(checkErrorType(err))) {
+        return strFormat(getL10n(err.messageId), err.parameters);
+    } else if (typeof err === 'object') {
+        return err.message;
+    }
+    return err;
+};
+
+Utils.handleError = err => Utils.alert(Utils.handleErrorMsg(err));
+
+Utils.enableEl = R.curry((el, condition) => {
+    const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';
+    if (condition) {
+        el.removeAttribute(key);
+    } else {
+        el.setAttribute(key, key);
+    }
+});
+
+Utils.enable = function (root, className, condition) {
+    nl2array(root.getElementsByClassName(className)).map(Utils.enableEl(R.__, condition));
+};
+
+Utils.charOrdAObject = CommonUtils.charOrdAFactory(a => a.displayName.toLowerCase());
+
+Utils.rebuildSelector = function (selector, names) {
+    clearEl(selector);
+    names.forEach((nameInfo) => {
+        const option = makeEl('option');
+        option.appendChild(makeText(nameInfo.displayName));
+        option.value = nameInfo.value;
+        selector.appendChild(option);
+    });
+};
+
+Utils.rebuildSelectorArr = function (selector, names) {
+    clearEl(selector);
+    names.forEach((name) => {
+        const option = makeEl('option');
+        option.appendChild(makeText(name));
+        selector.appendChild(option);
+    });
+};
+
+String.prototype.endsWith = function (suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
 // from date format utils
