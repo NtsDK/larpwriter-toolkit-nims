@@ -27,25 +27,25 @@ See the License for the specific language governing permissions and
 
             const Meta = getMetaSchema();
             const Log = getLogSchema();
-            const Charlist = getCharlistSchema();
+            const Charsheet = getCharsheetSchema();
 
             schema.properties = {
                 Meta,
                 Version: {
                     type: 'string'
                 },
-                Charlist,
+                Charsheet,
                 Log,
                 Settings: {},
                 Misc: {},
             };
-            schema.required = ['Meta', 'Version', 'Log', 'Charlist'];
+            schema.required = ['Meta', 'Version', 'Log', 'Charsheet'];
             schema.additionalProperties = false;
 
             return schema;
         };
 
-        function getCharlistSchema() {
+        function getCharsheetSchema() {
             const arr2PointsObj = arr => ({
                 type: 'object',
                 properties: arr.reduce((acc, el) => {

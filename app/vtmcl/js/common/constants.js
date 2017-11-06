@@ -19,11 +19,12 @@ See the License for the specific language governing permissions and
     exports.extrasMaxPoints = 10;
     exports.bloodpoolMax = 20;
 
-    exports.profileCols = [['name', 'player', 'chronicle', 'age', 'sex'],
+    exports.allProfileCols = [['name', 'player', 'chronicle', 'age', 'sex'],
         ['nature', 'demeanor', 'concept', 'clan', 'generation', 'sire']];
-    //    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
+//    exports.profileCols = [ [ 'name', 'age', 'sex' ], [ 'nature', 'demeanor', 'concept' ] ];
+    exports.profileCols = exports.allProfileCols;
 
-    exports.profileItemList = R.flatten(exports.profileCols);
+    exports.profileItemList = R.flatten(exports.allProfileCols);
 
     exports.attributeCols = [{
         name: 'physical',

@@ -42,7 +42,7 @@ body {
   flex-basis: 0;
 }
 
-.charlist-tab{
+.charsheet-page{
   width: 700px;
 /*   padding: 50px 40px; */
 /*   background-color: rgb(196,176,146); */
@@ -245,9 +245,27 @@ div.injure_wound{
   background-color: transparent;
 }
 
+.panel-header{
+  margin-bottom: 10px;
+}
+.custom-panel{
+  margin-bottom: 10px;
+}
+
 /* @media screen, print { */
 @media print {
   #navigation, .add-button{
     display: none;
+  }
+  #contentArea{
+    margin: 0;
+    padding: 0;
+  }
+/*   .custom-panel{ */
+/*     page-break-after: always;  */
+/*   } */
+/*   #notes{ */
+  .charsheet-page{
+    page-break-after: always; 
   }
 }

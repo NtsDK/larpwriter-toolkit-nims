@@ -42,7 +42,7 @@ function makeLocalDBMS(fullVersion) {
         'baseAPI',
         'consistencyCheckAPI',
         'logAPI',
-        'charlistAPI',
+        'charsheetAPI',
     ].map(func);
 
     Logger.attachLogCalls(LocalDBMS, R, false);

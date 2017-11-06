@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    const root = '.charlist-tab ';
+    const root = '.charsheet-tab ';
     const state = {
         refreshHooks: []
     };
@@ -256,4 +256,4 @@ See the License for the specific language governing permissions and
     // eslint-disable-next-line no-var,vars-on-top
     var backstoryCb = (container, inputMaker) =>
         arr => addEls(clearEl(queryEl(`${container} .entity-container`)), arr.map(inputMaker));
-})(this.Charlist = {});
+})(this.Charsheet = {});

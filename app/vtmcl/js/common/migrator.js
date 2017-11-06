@@ -26,7 +26,7 @@ See the License for the specific language governing permissions and
             };
             data.Version = '0.1.0';
             data.Log = [];
-            data.Charlist = {
+            data.Charsheet = {
                 profile: {
                     name: '',
                     player: '',

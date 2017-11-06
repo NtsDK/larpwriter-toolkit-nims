@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
         const { Constants } = opts;
         const { R } = opts;
 
-        const containerPath = ['Charlist'];
+        const containerPath = ['Charsheet'];
 
         const char = db => R.path(containerPath, db.database);
 
@@ -132,4 +132,4 @@ See the License for the specific language governing permissions and
     }
 
     callback2(api);
-})(api => (typeof exports === 'undefined' ? (this.charlistAPI = api) : (module.exports = api)));
+})(api => (typeof exports === 'undefined' ? (this.charsheetAPI = api) : (module.exports = api)));

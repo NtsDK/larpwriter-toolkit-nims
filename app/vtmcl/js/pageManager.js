@@ -44,7 +44,7 @@ See the License for the specific language governing permissions and
 
         stateInit();
 
-        Utils.addView(state.containers, 'charlist', Charlist, { mainPage: true });
+        Utils.addView(state.containers, 'charsheet', Charsheet, { mainPage: true });
 
         addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
