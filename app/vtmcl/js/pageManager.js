@@ -57,6 +57,7 @@ See the License for the specific language governing permissions and
         setAttr(input, 'tabindex', -1);
         button.appendChild(input);
         button.addEventListener('click', (e) => {
+            input.value = '';
             input.click();
         });
         addEl(state.navigation, button);
@@ -147,7 +148,16 @@ See the License for the specific language governing permissions and
     }
 
     function runTests() {
-        consistencyCheck(() => '');
+        DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
+            if (err) { Utils.handleError(err); return; }
+            consistencyErrors.forEach(CommonUtils.consoleLog);
+            if (consistencyErrors.length > 0) {
+                Utils.alert(getL10n('overview-consistency-problem-detected'));
+            } else {
+                Utils.alert(getL10n('overview-consistency-is-ok'));
+                console.log('Consistency check didn\'t find errors');
+            }
+        });
     }
 
     function makeButton(clazz, name, callback, opts) {
