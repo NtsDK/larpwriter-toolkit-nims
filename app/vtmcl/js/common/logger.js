@@ -12,10 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(exports) {
+/* eslint-disable func-names */
 
+((exports) => {
     // argument description
     // add function name to log it
     // ignoreParams - make true if you don't need params in log.
@@ -25,42 +26,42 @@ See the License for the specific language governing permissions and
     // rewrite - make true if you don't want to flood log with some repeated call.
     //     For example auto call of getDatabase will flood everything.
     exports.apiInfo = {
-        "baseAPI" : {
-            "_init" : null,
-            "getDatabase" : {"rewrite" : true},
-            "setDatabase" : {"ignoreParams": true},
-            "getMetaInfo" : null,
-            "setMetaInfo" : {}
+        baseAPI: {
+            _init: null,
+            getDatabase: { rewrite: true },
+            setDatabase: { ignoreParams: true },
+            getMetaInfo: null,
+            setMetaInfo: {}
         },
-        "consistencyCheckAPI" : {
-            "getConsistencyCheckResult" : null
+        consistencyCheckAPI: {
+            getConsistencyCheckResult: null
         },
-        "logAPI" : {
-            "log" : null,
-            "getLog" : null
+        logAPI: {
+            log: null,
+            getLog: null
         },
-        "charlistAPI" : {
-            "getProfileItem" : null,
-            "setProfileItem" : {},
-            "getAttribute" : null,
-            "setAttribute" : {},
-            "getAbility" : null,
-            "setAbility" : {},
-            "getVirtue" : null,
-            "setVirtue" : {},
-            "getState" : null,
-            "setState" : {},
-            "getHealth" : null,
-            "setHealth" : {},
-            "setBackground" : {},
-            "setDiscipline" : {},
+        charlistAPI: {
+            getProfileItem: null,
+            setProfileItem: {},
+            getAttribute: null,
+            setAttribute: {},
+            getAbility: null,
+            setAbility: {},
+            getVirtue: null,
+            setVirtue: {},
+            getState: null,
+            setState: {},
+            getHealth: null,
+            setHealth: {},
+            setBackground: {},
+            setDiscipline: {},
 
-            "getBackstory" : null,
-            "setBackstory" : {},
-            "getAdvantages" : null,
-            "renameAdvantage" : {},
-            "getNotes" : null,
-            "setNotes" : {},
+            getBackstory: null,
+            setBackstory: {},
+            getAdvantages: null,
+            renameAdvantage: {},
+            getNotes: null,
+            setNotes: {},
         },
     };
 
@@ -68,39 +69,34 @@ See the License for the specific language governing permissions and
     // isServer - used in server mode. If false then user in logs will be named "user".
     // environment - used to disable this.log function in thin client in server version.
     //      I agree it is strange.
-    exports.attachLogCalls = function(LocalDBMS, R, isServer) {
-
-        var apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
-        var filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
+    exports.attachLogCalls = (LocalDBMS, R, isServer) => {
+        const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
+        const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
 
         Object.keys(LocalDBMS.prototype)
-        .filter(R.prop(R.__, filteredApi))
-        .forEach(function(funcName){
-            var oldFun = LocalDBMS.prototype[funcName];
-            LocalDBMS.prototype[funcName] = function(){
-                var arr = [];
-                for (var i = 0; i < arguments.length-1; i++) {
-                    arr.push(arguments[i]);
-                }
-
-                var accept = true;
-                if(filteredApi[funcName].filter){
-                    accept = filteredApi[funcName].filter(arr);
-                }
-
-                if(accept){
-                    var userName = "user";
-                    if(isServer){
-                        userName = arguments[arguments.length-1].name;
+            .filter(R.prop(R.__, filteredApi))
+            .forEach((funcName) => {
+                const oldFun = LocalDBMS.prototype[funcName];
+                LocalDBMS.prototype[funcName] = function (...args) {
+                    let accept = true;
+                    if (filteredApi[funcName].filter) {
+                        accept = filteredApi[funcName].filter(args);
                     }
 
-                    this.log(userName, funcName, !!filteredApi[funcName].rewrite, filteredApi[funcName].ignoreParams ? [] : arr);
-                }
+                    if (accept) {
+                        let userName = 'user';
+                        if (isServer) {
+                            userName = args[args.length - 1].name;
+                        }
 
-                return oldFun.apply(this, arguments);
-            }
-        });
+                        this.log(
+                            userName, funcName, !!filteredApi[funcName].rewrite,
+                            filteredApi[funcName].ignoreParams ? [] : args
+                        );
+                    }
 
+                    return oldFun.apply(this, args);
+                };
+            });
     };
-
-})(typeof exports === 'undefined' ? this['Logger'] = {} : exports);
+})(typeof exports === 'undefined' ? this.Logger = {} : exports);

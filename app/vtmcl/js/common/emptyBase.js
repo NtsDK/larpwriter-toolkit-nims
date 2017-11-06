@@ -12,8 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(exports){
+((exports) => {
     exports.data = {};
-})(typeof exports === 'undefined'? this['EmptyBase']={}: exports);
+})(typeof exports === 'undefined' ? this.EmptyBase = {} : exports);
