@@ -18,6 +18,17 @@ See the License for the specific language governing permissions and
   src: url(../images/CentSchbkCyrill.ttf);
 }
 
+.flex-1-1-auto {
+  flex: 1 1 auto;
+}
+
+.flex-0-0-auto {
+  flex: 0 0 auto;
+}
+
+.instruction-panel + .instruction-panel {
+  margin-left: 8px;
+} 
 
 body {
   background-color: #ABABAB;
@@ -250,6 +261,10 @@ div.injure_wound{
 }
 .custom-panel{
   margin-bottom: 10px;
+}
+
+.instruction-tab img{
+  width: 24px;
 }
 
 /* @media screen, print { */
