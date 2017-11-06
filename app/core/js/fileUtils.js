@@ -51,7 +51,7 @@ See the License for the specific language governing permissions and
     exports.saveFile = () => {
         DBMS.getDatabase((err, database) => {
             if (err) { Utils.handleError(err); return; }
-            exports.json2File(database, 'nims-base.json');
+            exports.json2File(database, `${BASE_FILE_NAME}.json`);
         });
     };
 

@@ -37,5 +37,6 @@
             "logs/about.js"
     ],
     "serverPages": [],
-    "standalonePages": ["index.html"]
+    "standalonePages": ["index.html"],
+    "baseFileName" : "vtm-charsheet"
 }

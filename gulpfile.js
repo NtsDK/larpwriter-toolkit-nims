@@ -136,7 +136,8 @@ gulp.task('html', function() {
       prefix: '@@',
       basepath: './' + projectDir + '/partials/',
       context: {
-        MODE: isServer ? 'NIMS_Server' : 'Standalone'
+        MODE: isServer ? 'NIMS_Server' : 'Standalone',
+        BASE_FILE_NAME: config.get( 'baseFileName' )
       }
     }))
     .pipe(htmlmin({collapseWhitespace : true}))
