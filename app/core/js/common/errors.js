@@ -12,31 +12,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
+(function (exports) {
     function ValidationError(messageId, parameters) {
-    Error.call(this, arguments) ;
-    this.name = "ValidationError";
+        Error.call(this, arguments);
+        this.name = 'ValidationError';
 
-    this.messageId = messageId;
-    this.parameters = parameters;
+        this.messageId = messageId;
+        this.parameters = parameters;
 
-    if (Error.captureStackTrace) {
-        Error.captureStackTrace(this, ValidationError);
-    } else {
-        this.stack = (new Error()).stack;
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, ValidationError);
+        } else {
+            this.stack = (new Error()).stack;
+        }
     }
-    };
 
     ValidationError.prototype = Object.create(Error.prototype);
 
     exports.ValidationError = ValidationError;
 
     function InternalError(messageId, parameters) {
-        Error.call(this, arguments) ;
-        this.name = "InternalError";
+        Error.call(this, arguments);
+        this.name = 'InternalError';
 
         this.messageId = messageId;
         this.parameters = parameters;
@@ -46,10 +45,9 @@ See the License for the specific language governing permissions and
         } else {
             this.stack = (new Error()).stack;
         }
-    };
+    }
 
     InternalError.prototype = Object.create(Error.prototype);
 
     exports.InternalError = InternalError;
-
-})(typeof exports === 'undefined'? this['Errors']={}: exports);
+}(typeof exports === 'undefined' ? this.Errors = {} : exports));

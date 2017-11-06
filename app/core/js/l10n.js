@@ -12,92 +12,86 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(exports, Dictionaries){
-
-    var state = {};
+(function (exports, Dictionaries) {
+    const state = {};
 
     state.initialized = false;
     state.l10nDelegates = [];
     state.dictionaries = {};
     state.lang = defaultLang;
 
-    var init = function(){
-        if(state.initialized){
+    const init = function () {
+        if (state.initialized) {
             return;
         }
-//        console.log(navigator.language);
+        //        console.log(navigator.language);
 
-        for(var name in Dictionaries){
+        for (const name in Dictionaries) {
             state.dictionaries[name] = processDictionary(Dictionaries[name]);
         }
 
-    //    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
-    //    var lang = 'ru';
-//        var lang = defaultLang;
-//        console.log(lang);
+        //    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
+        //    var lang = 'ru';
+        //        var lang = defaultLang;
+        //        console.log(lang);
 
-        if(state.dictionaries[defaultLang]){
+        if (state.dictionaries[defaultLang]) {
             state.dict = state.dictionaries[defaultLang];
         } else {
-            state.dict = state.dictionaries['en'];
+            state.dict = state.dictionaries.en;
         }
         setHtmlLang(defaultLang);
         exports.onL10nChange(exports.localizeStatic);
         state.initialized = true;
     };
 
-    var processDictionary = function(dictionary){
-        var processedDictionary = {};
-        for(var sectionName in dictionary){
-            for(var name in dictionary[sectionName]){
-                processedDictionary[sectionName+"-"+name] = dictionary[sectionName][name];
+    var processDictionary = function (dictionary) {
+        const processedDictionary = {};
+        for (const sectionName in dictionary) {
+            for (const name in dictionary[sectionName]) {
+                processedDictionary[`${sectionName}-${name}`] = dictionary[sectionName][name];
             }
         }
         return processedDictionary;
     };
 
-    var setHtmlLang = (lang) => setAttr(document.getElementsByTagName("html")[0],'lang', lang);
+    var setHtmlLang = lang => setAttr(document.getElementsByTagName('html')[0], 'lang', lang);
 
-    exports.toggleL10n = function(){
-        if(state.lang === "ru"){
-            state.dict = state.dictionaries['en'];
-            state.lang = "en";
+    exports.toggleL10n = function () {
+        if (state.lang === 'ru') {
+            state.dict = state.dictionaries.en;
+            state.lang = 'en';
         } else {
-            state.dict = state.dictionaries['ru'];
-            state.lang = "ru";
+            state.dict = state.dictionaries.ru;
+            state.lang = 'ru';
         }
         setHtmlLang(state.lang);
-        state.l10nDelegates.forEach(function(delegate){
+        state.l10nDelegates.forEach((delegate) => {
             delegate();
         });
     };
 
     exports.getLang = () => state.lang.toLowerCase();
 
-    exports.format = R.curry(function(namespace, name, args){
-        return strFormat(exports.get(namespace, name), args);
-    });
+    exports.format = R.curry((namespace, name, args) => strFormat(exports.get(namespace, name), args));
 
-    exports.get = R.curry(function(namespace, name){
-        return L10n.getValue(namespace + '-' + name);
-    });
+    exports.get = R.curry((namespace, name) => L10n.getValue(`${namespace}-${name}`));
 
-    exports.getValue = function(name){
-        var value = state.dict[name];
-        if(value === undefined) console.log("Value is not found: " + name);
-        return value ? value : name + ":RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA";
+    exports.getValue = function (name) {
+        const value = state.dict[name];
+        if (value === undefined) console.log(`Value is not found: ${name}`);
+        return value || `${name}:RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA`;
     };
 
-    exports.onL10nChange = function(delegate){
+    exports.onL10nChange = function (delegate) {
         state.l10nDelegates.push(delegate);
     };
 
-    exports.localizeStatic = function(){
+    exports.localizeStatic = function () {
         init();
-        nl2array(document.querySelectorAll("[l10n-id]")).map(el => addEl(clearEl(el), makeText(exports.getValue(getAttr(el,"l10n-id")))));
-        nl2array(document.querySelectorAll("[l10n-placeholder-id]")).map(el => setAttr(el,"placeholder", exports.getValue(getAttr(el,"l10n-placeholder-id"))));
+        nl2array(document.querySelectorAll('[l10n-id]')).map(el => addEl(clearEl(el), makeText(exports.getValue(getAttr(el, 'l10n-id')))));
+        nl2array(document.querySelectorAll('[l10n-placeholder-id]')).map(el => setAttr(el, 'placeholder', exports.getValue(getAttr(el, 'l10n-placeholder-id'))));
     };
-
-})(this['L10n']={}, Dictionaries);
+}(this.L10n = {}, Dictionaries));

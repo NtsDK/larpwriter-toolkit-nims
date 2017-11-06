@@ -12,62 +12,55 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-var FileUtils = {};
+const FileUtils = {};
 
 FileUtils.init = function (callback) {
-    "use strict";
     FileUtils.callback = callback;
 };
 
 FileUtils.makeNewBase = function () {
-    "use strict";
-    Utils.confirm(getL10n("utils-new-base-warning"), () => {
+    Utils.confirm(getL10n('utils-new-base-warning'), () => {
         DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), FileUtils.callback);
     });
 };
 
 FileUtils.openHelp = function () {
-    "use strict";
-    window.open("extras/doc/nims.html");
+    window.open('extras/doc/nims.html');
 };
 
 FileUtils.readSingleFile = function (evt) {
-    "use strict";
     // Retrieve the first (and only!) File from the FileList object
-    var f = evt.target.files[0];
+    const f = evt.target.files[0];
 
     if (f) {
-        var r = new FileReader();
+        const r = new FileReader();
         r.onload = function (e) {
-            var contents = e.target.result;
-            var database = JSON.parse(contents);
+            const contents = e.target.result;
+            const database = JSON.parse(contents);
             DBMS.setDatabase(database, FileUtils.callback);
         };
         r.readAsText(f);
     } else {
-        Utils.alert(getL10n("utils-base-file-loading-error"));
+        Utils.alert(getL10n('utils-base-file-loading-error'));
     }
 };
 
 FileUtils.saveFile = function () {
-    "use strict";
-    DBMS.getDatabase(function(err, database){
-        if(err) {Utils.handleError(err); return;}
-        FileUtils.json2File(database, "nims-base.json");
+    DBMS.getDatabase((err, database) => {
+        if (err) { Utils.handleError(err); return; }
+        FileUtils.json2File(database, 'nims-base.json');
     });
 };
 
 FileUtils.json2File = function (str, fileName) {
-    "use strict";
     FileUtils.str2File(JSON.stringify(str, null, '  '), fileName);
 };
 
 FileUtils.str2File = function (str, fileName) {
-    "use strict";
-    var blob = new Blob([ str ], {
-        type : "text/plain;charset=utf-8"
+    const blob = new Blob([str], {
+        type: 'text/plain;charset=utf-8'
     });
     saveAs(blob, fileName);
 };

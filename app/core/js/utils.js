@@ -12,9 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-var Utils = {};
+const Utils = {};
 
 /** opts
     tooltip - add tooltip to button, used for iconic buttons
@@ -23,75 +23,76 @@ var Utils = {};
     toggle - toggle content, associated with button
 */
 Utils.addView = function (containers, name, view, opts) {
-    "use strict";
+    'use strict';
+
     var opts = opts || {};
     view.init();
-    var buttonClass = "navigation-button";
+    const buttonClass = 'navigation-button';
     containers.root.views[name] = view;
-    var button = makeEl("button");
-    if(opts.tooltip){
-        var delegate = function(){
-            $(button).attr('data-original-title', L10n.getValue("header-" + name));
+    const button = makeEl('button');
+    if (opts.tooltip) {
+        const delegate = function () {
+            $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
         };
         L10n.onL10nChange(delegate);
         $(button).tooltip({
-            title : L10n.getValue("header-" + name),
-            placement : "bottom"
+            title: L10n.getValue(`header-${name}`),
+            placement: 'bottom'
         });
     } else {
-        addEl(button, makeText(L10n.getValue("header-" + name)));
-        setAttr(button, "l10n-id", "header-" + name);
+        addEl(button, makeText(L10n.getValue(`header-${name}`)));
+        setAttr(button, 'l10n-id', `header-${name}`);
     }
     addClass(button, buttonClass);
-    addClass(button, "-test-" + name);
-    addClass(button, "-toggle-class-" + name);
-    if(opts.clazz){
+    addClass(button, `-test-${name}`);
+    addClass(button, `-toggle-class-${name}`);
+    if (opts.clazz) {
         addClass(button, opts.clazz);
     }
     containers.navigation.appendChild(button);
 
 
-    var elems, i;
-    var onClickDelegate = function (view) {
+    let elems, i;
+    const onClickDelegate = function (view) {
         return function (evt) {
             //Tests.run();
             elems = containers.navigation.getElementsByClassName(buttonClass);
-            if(opts.toggle){
-                var els = getEls("-toggle-class-" + name);
+            if (opts.toggle) {
+                const els = getEls(`-toggle-class-${name}`);
                 for (var i = 0; i < els.length; i++) {
-                    if(evt.target.isEqualNode(els[i])){
+                    if (evt.target.isEqualNode(els[i])) {
                         continue;
                     }
-                    if(hasClass(els[i], "active")){
+                    if (hasClass(els[i], 'active')) {
                         els[i].click();
                     }
                 }
             }
 
-            var isActive = hasClass(evt.target, "active");
+            const isActive = hasClass(evt.target, 'active');
             for (i = 0; i < elems.length; i++) {
-                removeClass(elems[i], "active");
+                removeClass(elems[i], 'active');
             }
-            if(!opts.toggle || (opts.toggle && !isActive)){
-                addClass(evt.target, "active");
+            if (!opts.toggle || (opts.toggle && !isActive)) {
+                addClass(evt.target, 'active');
 
                 passEls(containers.content, getEl('warehouse'));
                 containers.content.appendChild(view.content);
-                removeClass(containers.content, "hidden");
+                removeClass(containers.content, 'hidden');
                 containers.root.currentView = view;
                 view.refresh();
             } else {
-                removeClass(evt.target, "active");
+                removeClass(evt.target, 'active');
                 passEls(containers.content, getEl('warehouse'));
                 containers.root.currentView = null;
-                addClass(containers.content, "hidden");
+                addClass(containers.content, 'hidden');
             }
         };
     };
 
-    button.addEventListener("click", onClickDelegate(view));
+    button.addEventListener('click', onClickDelegate(view));
     if (opts.mainPage) {
-        addClass(button, "active");
+        addClass(button, 'active');
         containers.content.appendChild(view.content);
         containers.root.currentView = view;
     }
@@ -103,19 +104,18 @@ Utils.alert = function (message) {
 
 Utils.confirm = function (message, onOk, onCancel) {
     vex.dialog.confirm({
-        message: message,
+        message,
         callback: (val) => {
-            if(val){
-                if(onOk) onOk();
-            } else {
-                if(onCancel) onCancel();
-            }
+            if (val) {
+                if (onOk) onOk();
+            } else if (onCancel) onCancel();
         }
     });
 };
 
 Utils.removeChildren = function (myNode) {
-    "use strict";
+    'use strict';
+
     if (!myNode) {
         return;
     }
@@ -124,293 +124,286 @@ Utils.removeChildren = function (myNode) {
     }
 };
 
-Utils.processError = function(callback){
-    return function(err){
-        if(err) {
+Utils.processError = function (callback) {
+    return function (err) {
+        if (err) {
             Utils.handleError(err);
             return;
         }
 
-        if(callback){
-            var arr = [];
-            for (var i = 1; i < arguments.length; i++) {
+        if (callback) {
+            const arr = [];
+            for (let i = 1; i < arguments.length; i++) {
                 arr.push(arguments[i]);
             }
-            callback.apply(null, arr);
+            callback(...arr);
         }
-    }
+    };
 };
 
-Utils.handleErrorMsg = function(err){
-    var checkErrorType = R.curry(function(err, name){
-        return err instanceof Errors[name] || (err.name && err.name === name)
-    });
+Utils.handleErrorMsg = function (err) {
+    const checkErrorType = R.curry((err, name) => err instanceof Errors[name] || (err.name && err.name === name));
     if (R.keys(Errors).some(checkErrorType(err))) {
         return strFormat(getL10n(err.messageId), err.parameters);
-    } else if( typeof err === 'object'){
+    } else if (typeof err === 'object') {
         return err.message;
-    } else {
-        return err;
     }
+    return err;
 };
 
-Utils.handleError = (err) => Utils.alert(Utils.handleErrorMsg(err));
+Utils.handleError = err => Utils.alert(Utils.handleErrorMsg(err));
 
-Utils.enableEl = R.curry(function(el, condition){
-    var key = el.tagName.toLowerCase() === "textarea" ? "readonly" : "disabled";
-    if(condition){
+Utils.enableEl = R.curry((el, condition) => {
+    const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';
+    if (condition) {
         el.removeAttribute(key);
     } else {
-        el.setAttribute(key,key);
+        el.setAttribute(key, key);
     }
 });
 
-Utils.enable = function(root, className, condition){
+Utils.enable = function (root, className, condition) {
     nl2array(root.getElementsByClassName(className)).map(Utils.enableEl(R.__, condition));
 };
 
-Utils.charOrdAObject = CommonUtils.charOrdAFactory(function(a){
-    return a.displayName.toLowerCase();
-});
+Utils.charOrdAObject = CommonUtils.charOrdAFactory(a => a.displayName.toLowerCase());
 
-Utils.rebuildSelector = function(selector, names){
-    "use strict";
+Utils.rebuildSelector = function (selector, names) {
+    'use strict';
+
     clearEl(selector);
-    names.forEach(function (nameInfo) {
-        var option = makeEl("option");
+    names.forEach((nameInfo) => {
+        const option = makeEl('option');
         option.appendChild(makeText(nameInfo.displayName));
         option.value = nameInfo.value;
         selector.appendChild(option);
     });
 };
 
-Utils.rebuildSelectorArr = function(selector, names){
-    "use strict";
+Utils.rebuildSelectorArr = function (selector, names) {
+    'use strict';
+
     clearEl(selector);
-    names.forEach(function (name) {
-        var option = makeEl("option");
+    names.forEach((name) => {
+        const option = makeEl('option');
         option.appendChild(makeText(name));
         selector.appendChild(option);
     });
 };
 
 String.prototype.endsWith = function (suffix) {
-    "use strict";
+    'use strict';
+
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
 var strFormat = R.curry(CommonUtils.strFormat);
 
-function getL10n(key){
+function getL10n(key) {
     return L10n.getValue(key);
-};
-
-function constL10n(key){
-    return L10n.getValue('constant-' + key);
 }
 
-function isEmpty (obj) {
-    "use strict";
-    return (Object.getOwnPropertyNames(obj).length === 0);
-};
+function constL10n(key) {
+    return L10n.getValue(`constant-${key}`);
+}
 
-var addClass = R.curry(function(o, c){
-    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+function isEmpty(obj) {
+    'use strict';
+
+    return (Object.getOwnPropertyNames(obj).length === 0);
+}
+
+var addClass = R.curry((o, c) => {
+    const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
     if (re.test(o.className)) return;
-    o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+    o.className = (`${o.className} ${c}`).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
     return o;
 });
 
-var addClasses = R.curry(function(o, c){
+const addClasses = R.curry((o, c) => {
     R.ap([addClass(o)], c);
     return o;
 });
 
-var rAddClass = R.curry(function(c, o){
-    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+const rAddClass = R.curry((c, o) => {
+    const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
     if (re.test(o.className)) return;
-    o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+    o.className = (`${o.className} ${c}`).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
     return o;
 });
 
-var toggleClass = R.curry(function(o, c){
-    if(hasClass(o, c)){
+const toggleClass = R.curry((o, c) => {
+    if (hasClass(o, c)) {
         removeClass(o, c);
     } else {
         addClass(o, c);
     }
 });
 
-function hasClass(o, c){
-    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
+function hasClass(o, c) {
+    const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
     return (re.test(o.className));
-};
+}
 
-var removeClass = R.curry(function(o, c){
-    var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g")
-    o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "")
+var removeClass = R.curry((o, c) => {
+    const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
+    o.className = o.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
 });
 
-function setClassByCondition(o,c,condition){
-    if(condition){
-        addClass(o,c);
+function setClassByCondition(o, c, condition) {
+    if (condition) {
+        addClass(o, c);
     } else {
-        removeClass(o,c);
+        removeClass(o, c);
     }
     return o;
-};
+}
 
-function getEl(id){
+function getEl(id) {
     return document.getElementById(id);
-};
+}
 
-function queryEl(sel){
+function queryEl(sel) {
     return document.querySelector(sel);
-};
+}
 
-function queryEls(sel){
+function queryEls(sel) {
     return nl2array(document.querySelectorAll(sel));
-};
+}
 
-function queryElEls(el, sel){
+function queryElEls(el, sel) {
     return nl2array(el.querySelectorAll(sel));
-};
+}
 
-function getEls(clazz){
+function getEls(clazz) {
     return document.getElementsByClassName(clazz);
-};
+}
 
-function makeEl(elTag){
+function makeEl(elTag) {
     return document.createElement(elTag);
-};
+}
 
-function makeText(text){
+function makeText(text) {
     return document.createTextNode(text);
-};
+}
 
-var addEl = R.curry(function(parent, child){
+var addEl = R.curry((parent, child) => {
     parent.appendChild(child);
     return parent;
 });
-var addEls = R.curry(function(parent, children){
+const addEls = R.curry((parent, children) => {
     R.ap([addEl(parent)], children);
     return parent;
 });
 
-var makeOpt = function(label){
-    var option = makeEl("option");
+const makeOpt = function (label) {
+    const option = makeEl('option');
     addEl(option, (makeText(label)));
     return option;
 };
 
-var rAddEl = R.curry(function(child, parent){
+const rAddEl = R.curry((child, parent) => {
     parent.appendChild(child);
     return parent;
 });
 
-var setAttr = R.curry(function(el, name, value){
+var setAttr = R.curry((el, name, value) => {
     el.setAttribute(name, value);
     return el;
 });
 
-var setStyle = R.curry(function(el, name, value){
+const setStyle = R.curry((el, name, value) => {
     el.style[name] = value;
     return el;
 });
 
-function delAttr(el, name){
+function delAttr(el, name) {
     el.removeAttribute(name);
     return el;
-};
+}
 
-function getAttr(el, name){
+function getAttr(el, name) {
     return el.getAttribute(name);
-};
+}
 
-var setProp = R.curry(function(el, key, value){
+const setProp = R.curry((el, key, value) => {
     el[key] = value;
     return el;
 });
 
-var setProps = R.curry(function(el, map){
-    for(var key in map){
+const setProps = R.curry((el, map) => {
+    for (const key in map) {
         setProp(el, key, map[key]);
     }
     return el;
 });
 
-function clearEl(el){
+function clearEl(el) {
     Utils.removeChildren(el);
     return el;
-};
+}
 
-function passEls(src, dst){
-    for (var i = 0; i < src.children.length; i++) {
+function passEls(src, dst) {
+    for (let i = 0; i < src.children.length; i++) {
         addEl(dst, src.children[i]);
     }
-};
+}
 
-var listen = R.curry(function(el, event, listener){
+const listen = R.curry((el, event, listener) => {
     el.addEventListener(event, listener);
     return el;
 });
 
-var listenOnEnter = R.curry(function(el, callback){
-    listen(el, 'keydown', function(e) {
+const listenOnEnter = R.curry((el, callback) => {
+    listen(el, 'keydown', (e) => {
         if (e.keyCode === 13) {
             callback();
         }
     });
 });
 
-var fillSelector = R.curry(function(sel, data){
-    return addEls(sel, data.map(function (item) {
-        var opt = makeEl("option");
-        addEl(opt, makeText(item.name));
-        if(item.value){opt.value = item.value;}
-        if(item.selected){opt.selected = true;}
-        if(item.className){addClass(opt, item.className);}
-        return opt;
-    }));
-});
+const fillSelector = R.curry((sel, data) => addEls(sel, data.map((item) => {
+    const opt = makeEl('option');
+    addEl(opt, makeText(item.name));
+    if (item.value) { opt.value = item.value; }
+    if (item.selected) { opt.selected = true; }
+    if (item.className) { addClass(opt, item.className); }
+    return opt;
+})));
 
-function nl2array(nodeList){
+function nl2array(nodeList) {
     return Array.prototype.slice.call(nodeList);
-};
+}
 
-var remapProps = R.curry(function(outKeys, pickKeys, obj){
-    return R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj);
-});
+const remapProps = R.curry((outKeys, pickKeys, obj) => R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj));
 
-var remapProps4Select2 = remapProps(['id','text'], ['value', 'displayName']);
-var remapProps4Select = remapProps(['value','name'], ['value', 'displayName']);
+const remapProps4Select2 = remapProps(['id', 'text'], ['value', 'displayName']);
+const remapProps4Select = remapProps(['value', 'name'], ['value', 'displayName']);
 
-var getSelect2DataCommon = R.curry(function(preparator, obj){
-    return R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj);
-});
+const getSelect2DataCommon = R.curry((preparator, obj) => R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj));
 
-var getSelect2Data = getSelect2DataCommon(remapProps4Select2);
+const getSelect2Data = getSelect2DataCommon(remapProps4Select2);
 
-var makeSelect2Opt = R.compose(R.zipObj(['id', 'text']), R.repeat(R.__, 2));
-var arr2Select2 = R.compose(R.assoc('data', R.__, {}), R.map(makeSelect2Opt));
-var arr2Select = R.map(R.compose(R.zipObj(['value','name']), R.repeat(R.__, 2)));
-var constArr2Select = R.map(R.compose(R.zipObj(['value','name']), (name) => [name, constL10n(name)]));
+const makeSelect2Opt = R.compose(R.zipObj(['id', 'text']), R.repeat(R.__, 2));
+const arr2Select2 = R.compose(R.assoc('data', R.__, {}), R.map(makeSelect2Opt));
+const arr2Select = R.map(R.compose(R.zipObj(['value', 'name']), R.repeat(R.__, 2)));
+const constArr2Select = R.map(R.compose(R.zipObj(['value', 'name']), name => [name, constL10n(name)]));
 
-var getSelectedRadio = function(query){
-    var els = document.querySelectorAll(query);
-    for (var i = 0; i < els.length; i++) {
-        if(els[i].checked === true){
+const getSelectedRadio = function (query) {
+    const els = document.querySelectorAll(query);
+    for (let i = 0; i < els.length; i++) {
+        if (els[i].checked === true) {
             return els[i];
         }
     }
     return null;
 };
 
-var debugInterceptor = function(callback){
-    return function(){
+const debugInterceptor = function (callback) {
+    return function () {
         console.log(JSON.stringify(arguments[0]));
-        callback.apply(null, arguments);
-    }
+        callback(...arguments);
+    };
 };
 
 // from date format utils
