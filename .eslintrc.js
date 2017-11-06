@@ -9,19 +9,24 @@ module.exports = {
         FileUtils: false,
         Migrator: false,
         Precondition: false,
-        EventEmitter: false,
         Schema: false,
         Logger: false,
         L10n: false,
         Utils: false,
         CommonUtils: false,
         UI: false,
-        dateFormat: false,
         Constants: false,
         Errors: false,
         DBMS: false,
-        MODE: false,
+
+        EventEmitter: false,
+        dateFormat: false,
+        
         BaseExample: false,
+        EmptyBase: false,
+        Dictionaries: false,
+        MODE: false,
+        defaultLang: false,
         
         // libs
         R: false,
@@ -33,6 +38,7 @@ module.exports = {
         dragula: false,
         PNotify: false,
         ymaps: false,
+        saveAs: false,
         
         // common pages
         About: false,
@@ -77,6 +83,7 @@ module.exports = {
         listen: false,
         strFormat: false,
         fillSelector: false,
+        nl2array: false,
         
     },
 //    "extends": "eslint:recommended",
