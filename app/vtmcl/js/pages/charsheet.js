@@ -116,7 +116,7 @@ See the License for the specific language governing permissions and
         });
 
         listen(icon, 'click', (event) => {
-            if (!event.ctrlKey && !event.metaKey) { return; }
+//            if (!event.ctrlKey && !event.metaKey) { return; }
             event.target.num = (event.target.num + 1) % 3;
             setImg(event.target.num);
             DBMS.setHealth(event.target.str, event.target.num, Utils.processError());
@@ -134,7 +134,7 @@ See the License for the specific language governing permissions and
 
     function rangeOnClick(setter, icons, min, max, itemNameCb) {
         return (event) => {
-            if (!event.ctrlKey && !event.metaKey) { return; }
+//            if (!event.ctrlKey && !event.metaKey) { return; }
             const { target } = event;
             const isPointOn = getAttr(target, 'src') === 'images/radio-on-button.svg';
             let selected = isPointOn ? target.number - 1 : target.number;
@@ -199,7 +199,7 @@ See the License for the specific language governing permissions and
 
     function makeInputBuilder(container, makeInput) {
         return (event) => {
-            if (!event.ctrlKey && !event.metaKey) { return; }
+//            if (!event.ctrlKey && !event.metaKey) { return; }
             addEl(queryEl(`${container} .entity-container`), makeInput(null));
         };
     }
