@@ -1,0 +1,623 @@
+/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+   limitations under the License. */
+
+/** profile configurer */
+
+.profile-configurer-enum, 
+.profile-configurer-multiEnum, 
+.profile-configurer-string, 
+.profile-configurer-text{
+	width:360px;
+}
+
+/* profile configurer **/
+
+.profile-binding-tab .panel-body{
+  display: flex;
+}
+
+/** story events */
+
+.story-events-div-main{
+	display:flex;
+	width: 100%;
+	margin-bottom: 8px;
+}
+.story-events-div-left{
+	flex-grow:1;
+	margin-right: 8px;
+}
+.story-events-div-left input {
+	width:100%;
+}
+.story-events-div-right{
+	flex-grow:0;
+}
+
+#eventNameInput{
+	width:100%;
+}
+/* story events **/
+
+/** profile filter */
+
+.sortAsc span {
+	background: transparent url("../images/sort_ascending.png") no-repeat scroll 0% 0%;
+}
+.sortDesc span {
+	background: transparent url("../images/sort_descending.png") no-repeat scroll 0% 0%;
+}
+.sortAsc span,.sortDesc span {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+  margin-left: 8px;
+  background-size: 16px;
+}
+
+.green-back{
+  background-color: rgb(116,214,106);
+}
+.text-right{
+  text-align: right;
+}
+.lightGrey{
+  color: rgb(184,184,184);
+}
+.filterSeparator{
+  height: 24px;
+}
+
+/* profile filter **/
+
+/** briefing preview */
+.briefingTextSpan{
+  width: 700px;
+  display: inline-block;
+  max-height: 400px;
+  overflow-y: scroll;
+  border: 1px solid grey;
+}
+/* briefing preview **/
+
+/*----------------------------------------------------*/
+
+/** story common */
+
+#masterStoryArea {
+	width: 100%;
+	height: 500px;
+}
+
+.eventText {
+	width: 100%;
+	height: 160px;
+}
+
+.stories-navigation-container,
+.stories-content-container{
+  display: flex;
+}
+
+.left-side, 
+.right-side {
+  flex-grow:1;
+  width:50%;
+}
+
+.left-side:not(.hidden) + .right-side:not(.hidden){
+  margin-left: 8px;
+}
+
+.stories-navigation-container .right-side{
+  text-align: right;
+}
+
+/* story common **/
+
+/** profileEditor.js */
+.profileTextInput {
+	height: 240px;
+	width: 560px;
+}
+
+.profileStringInput, 
+.profileSelectInput {
+	width: 400px;
+}
+/* profileEditor.js **/
+
+#eventPresenceTable tr:nth-child(odd), #eventPresenceTable tr td:nth-child(odd){
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+#eventPresenceTable tr:nth-child(even), #eventPresenceTable tr td:nth-child(even){
+	background-color: rgba(222, 226, 228, 0.5);
+}
+
+/** events */
+
+.eventMainPanelRow{
+  display:flex;
+/*   margin: 20px 0; */
+  padding: 8px;
+}
+
+.eventMainPanelRow h3{
+  margin: 0;
+}
+
+#personalStories .eventMainPanelRow:nth-child(2n+1){
+  background-color: #DEE2E4;
+}
+
+.eventMainPanelRow-left{
+  flex-grow:0;
+  margin-right: 20px;
+  flex-basis: 360px;
+}
+.eventMainPanelRow-right{
+  flex-grow:1;
+}
+
+/* events **/
+
+/** events.js */
+.eventOriginalStory {
+	width: 320px;
+}
+
+.briefingPersonalStory {
+	height: 160px;
+	display: block;
+	width:700px;
+}
+
+.briefing-relation-area{
+  height: 120px;
+  display: block;
+  width:320px;
+}
+.eventPersonalStory {
+	height: 160px;
+	display: block;
+	width:360px;
+}
+
+#personalStoriesCharacterContainer{
+	overflow: auto;
+}
+
+#events-storySelector, #events-characterSelector {
+	display: block;
+	width:100%;
+	height: calc(100% - 30px);
+}
+
+.events-eventsContainer{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.events-singleEventAdaptation{
+	flex-grow:0;
+}
+
+.adaptations-tab .main-container{
+  display:flex;
+}
+
+.adaptations-tab .main-container > div:first-child{
+  flex-grow:0;
+  flex-basis: 216px;
+  margin-right: 8px;
+}
+
+/* events.js **/
+
+.inventoryInput {
+	width: 300px;
+}
+#briefingPreviewDiv .inventoryInput {
+	width: 500px;
+}
+
+.defaultDate {
+	background-color: rgba(255, 0, 0, 0.1);
+}
+
+/** timeline.js */
+
+#timelineContainer {
+	background-color: #fff;
+}
+
+#timelineStorySelector {
+  width: 100%;
+  height: calc(100% - 30px);
+}
+
+#timelineContainer .vis-item .vis-item-content{
+  padding: 4px;
+  line-height: 14px;
+}
+
+/* timeline.js **/
+
+.storySelectorContainer {
+/* 	flex-basis: 150px; */
+	flex-grow: 0;
+	margin-right: 8px;
+}
+
+
+.storySelectorContainer2 {
+    flex-basis: 20px;
+    flex-grow: 0;
+}
+
+.storySelectorContainer>select {
+	width: 90%;
+}
+
+.visualObjectContainer {
+	flex-grow: 1;
+}
+
+.importantItem .vis-item-content {
+	color: white;
+	background-color: red;
+	border-color: darkred;
+}
+
+#gameNameInput {
+	width: 300px;
+}
+
+.game-description-area {
+  width: 100%;
+  height: 400px;
+}
+
+/* social network */
+#socialNetworkContainer {
+	height: calc(100vh - 60px);
+	border: 1px solid lightgray;
+	background-color: #EDEDED;
+}
+
+#commonSettingsContainer, #showSettingsButtonContainer{
+  position: absolute;
+  z-index: 1;
+  height: calc(100vh - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#WebGL-output{
+/*   height: calc(100vh - 60px); */
+}
+
+#commonSettingsContainer > .panel, #showSettingsButtonContainer > .panel{
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.schema-container{
+  width: 100%;
+  height: calc(100vh - 60px);
+  border: 1px solid lightgray;
+  background-color: #EDEDED;
+}
+
+#Stats-output {
+  position: absolute;
+}
+
+#gui-settings-output{
+  position: absolute;
+  right: 8px;
+}
+
+#socialNetworkDiv > div {
+  margin-bottom: 8px;
+}
+
+.activeOption {
+  color: red;
+}
+
+.followerOption {
+  color: blue;
+}
+
+.defensiveOption {
+  color: green;
+}
+
+.passiveOption {
+  color: grey;
+}
+
+/* briefing export */
+#advancedTextExportContainer {
+	display: flex;
+}
+
+#advancedTextExportContainer div {
+	flex-basis: 0px;
+	flex-grow: 1;
+}
+
+#advancedTextExportContainer div textarea {
+	width: 100%;
+	height: 400px;
+}
+
+
+/* histogram */
+
+.overviewHist{
+  display: flex;
+  height:130px;
+  width: 100%;
+  background-color: white;
+  align-items: flex-end;
+  padding: 8px;
+  overflow-x: auto;
+}
+
+.overviewHist > .bar{
+  flex-basis: 0;
+  flex-grow: 1;
+}
+
+.overviewHist > .bar{
+  background-color: #7BE141;
+  border: 1px solid #41A906;
+  margin: 0 2px;
+  max-width: 30px;
+  text-align: center;
+}
+
+.overviewHist > .bar:hover{
+  background-color: #A1EC76;
+  border: 1px solid #41A906;
+}
+
+.statisticsLabel{
+  text-align: right;
+}
+
+.profileDiagrams{
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 64px solid transparent;
+}
+.profileDiagrams > div{
+  flex-basis: 0;
+  flex-grow: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.select2-mono-selector{
+  width: 200px;
+}
+
+#chartjs-tooltip {
+  opacity: 1;
+  position: fixed;
+  background: rgba(0, 0, 0, .7);
+  color: white;
+  border-radius: 3px;
+  -webkit-transition: all .1s ease;
+  transition: all .1s ease;
+  pointer-events: none;
+  -webkit-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
+}
+
+.chartjs-tooltip-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+}
+
+/* access manager */
+#permissionTable {
+  width: 240px;
+  word-wrap: break-word;
+}
+
+#permissionTable ol, #permissionTable ul{
+  padding-left: 20px;
+} 
+
+
+.panel-resizable{
+  resize: both;
+  overflow: auto;
+}
+
+.previewEventTime{
+  width: 160px;
+  display: inline-block;
+}
+
+#briefingPreviewDiv .adaptationTimeInput{
+  width: 300px;
+}
+
+#debugNotification{
+  position: fixed;
+  bottom: 0px;
+  background-color: #dedede;
+  padding: 2px;
+}
+
+#debugNotification.operationOK {
+  background-color: #00ff40;
+}
+
+#debugNotification.operationFail{
+  background-color: #ff8080;
+}
+
+/** character filter */
+
+.profile-filter-tab .group-control-area{
+  display:flex;
+  justify-content: space-between;
+}
+
+.profile-filter-tab > table  td:first-child{
+  padding-right: 8px;
+}
+
+/* character filter **/
+
+.create-entity-input, 
+.rename-entity-select, 
+.rename-entity-input, 
+.remove-entity-select, 
+.save-entity-select, 
+.group-add-select, 
+.group-replace-select,
+.common-input, 
+.common-select {
+  width: 200px;
+}
+
+.filter-settings-panel{
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-settings-panel .separator{
+  height: 32px;
+}
+
+.flex-front-element{
+  order: -1;
+}
+
+.board-popup {
+  position:absolute;
+  top:360px;
+  left:160px;
+  z-index:299;
+/*   width:250px; */
+/*   height:120px; */
+  background-color: #f9f9f9;
+  border-style:solid;
+  border-width:2px;
+  border-color: #5394ed;
+  padding:8px;
+/*   text-align: center; */
+}
+
+.bold-cursive{
+  font-weight: bold;
+  font-style: italic;
+}
+
+/** entity-management */
+
+.entity-management{}
+
+.entity-management div > *{
+  margin: 4px 2px;
+}
+
+.entity-management div > input,
+.entity-management div > select{
+  width: 200px;
+}
+.entity-management div > input[type="radio"],
+.entity-management div > input[type="checkbox"]{
+  width: auto;
+}  
+
+.relations-management.entity-management > div > span:first-child{
+  width: 250px;
+  display: inline-block;
+  text-align: right;
+}
+
+/* **/
+
+/** text-search-tab */
+.text-search-tab .settings-panel{
+  flex-grow: 0;
+  margin-right: 8px;
+  flex-basis: 240px;
+  flex-shrink: 0;
+}
+.text-search-tab .text-search-input{
+  width: 100%;
+}
+
+.text-search-tab .result-panel{
+  flex-grow: 1;
+}
+
+.text-search-tab .text-card{
+  margin-bottom: 16px;
+}
+.text-search-tab .text-body{
+  border: 1px solid grey;
+  height: 160px;
+  overflow: auto;
+  resize: both;
+  white-space: pre-line
+}
+.text-search-tab .string-body{
+  border: 1px solid grey;
+}
+.text-search-tab .text-body span,
+.text-search-tab .string-body span{
+  background-color: green;
+  color: white;
+}
+/* text-search-tab **/
+
+/** register.js */
+.register-form > div > :first-child{
+  width: 120px;;
+  text-align: right;
+  padding: 0 10px 0 0;
+  display: inline-block;
+}
+
+/* register.js **/
+
+/** playerManagement.js */
+.welcome-text-area{
+  width: 100%;
+  height: 160px;
+}
+/* playerManagement.js **/
+
+/** log-viewer2-tab */
+#logViewerDiv table td:nth-child(5) span{
+  word-break: break-all;
+  max-height: 160px;
+  overflow: auto;
+  display: inline-block;
+}
+
+/* log-viewer2-tab **/

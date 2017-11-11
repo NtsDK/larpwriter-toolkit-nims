@@ -1,5 +1,63 @@
 # Набор инструментов мастера сюжетника (НИМС) ([English](https://bitbucket.org/NtsDK/story-master-toolkit-smtk-nims#markdown-header-english-intro))
 
+### Building NIMS ###
+
+NIMS consists of three parts: client, server and translations.
+
+### Building offline version ###
+
+1. Checkout this repo and run "npm i". Possibly you will need to globally install gulp 4.
+1. Checkout server repo and run "npm i" (if necessary)
+1. Checkout translations repo.
+1. Open client/config/nims-config.json and set path to translations directory.
+1. Open server/config/nims-config.json and set path to client directory.
+
+Gulp client build options:
+
+1. NODE_ENV
+	1. dev - build with sourcemaps and without uglification
+	1. prod - build without sourcemaps and with uglification
+1. MODE
+	1. server - build with common directory copy to be used by server
+	1. standalone - build offline version
+1. LANG
+	1. ru - build with Ru lang enabled by default
+	2. en - build with En lang enabled by default
+1. --configFile - file with project configuration
+	
+Gulp targets:
+
+1. dist - make distributive 
+1. dev - make distributive and watch for changes to update distributive
+1. dist:final - make distributive with extra materials: presentation, documentation, handout templates and zip it
+
+Examples:
+
+set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\des-config.json"
+set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\nims-config.json"
+set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\watches-config.json"
+set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dev --configFile "config\vtmcl-config.json"
+
+set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dist:final --configFile "config\vtmcl-config.json"
+
+set NODE_ENV=dev && set MODE=server && gulp dev --configFile "config\nims-config.json"
+set NODE_ENV=dev && set MODE=server && npm run gulp dev
+set NODE_ENV=dev && set MODE=standalone && gulp dev
+set NODE_ENV=dev && set MODE=standalone && set LANG=en && gulp dev
+set NODE_ENV=dev && set MODE=server && gulp dist:final
+set NODE_ENV=dev && set MODE=standalone && gulp dist:final
+
+set NODE_ENV=prod && set MODE=standalone && gulp dist
+set NODE_ENV=prod && set MODE=standalone && gulp dist:final
+set NODE_ENV=prod && set MODE=standalone && set LANG=en && gulp dist:final
+set NODE_ENV=prod && set MODE=server && gulp dist:final
+
+set NODE_ENV=prod && set MODE=standalone && set LANG=ru && gulp dist:final
+set NODE_ENV=prod && set MODE=standalone && set LANG=en && gulp dist:final
+set NODE_ENV=prod && set MODE=server && set LANG=ru && gulp dist:final
+set NODE_ENV=prod && set MODE=server && set LANG=en && gulp dist:final
+
+
 ### НИМС - что это? ###
 
 НИМС - это редактор для написания вводных для ролевых игр (РИ). Это его основная функция, и именно это он должен делать хорошо. Помимо этого, с его помощью решаются побочные задачи, но об этом позже.

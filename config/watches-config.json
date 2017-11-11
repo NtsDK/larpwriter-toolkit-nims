@@ -1,0 +1,56 @@
+{
+    "projectName" : "watches",
+    "translationsPath" : "C:\\workspaces\\smtk-nims-translations\\watches",
+    "resources": {
+        "enabled" : false,
+        "files": []
+    },
+    "styles" : {
+        "customStyles":["common.css", "style.css", "experimental.css"],
+        "libCore": ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", "vex-theme-default.css", "vex.css"],
+        "lib" : ["vis.min.css"]
+    },
+    "scripts" : {
+        "commonList": [
+            "emptyBase.js", 
+            "constants.js", 
+            "logger.js", 
+            "projectUtils.js", 
+            "migrator.js", 
+            "schema.js"
+        ],
+        "libsCore" : [
+            "jquery-3.1.1.min.js",
+            "bootstrap.min.js",
+            "jquery.datetimepicker.js",
+            "ramda.min.js",
+            "select2.min.js",
+            "vex.combined.min.js"
+        ],
+        "libs" : [
+            "docxgen-121.min.js",
+            "FileSaver.js",
+            "jszip-utils.js",
+            "jszip.js",
+            "mustache.min.js",
+            "ajv-4.1.1.js",
+            "Chart.min.js",
+            "vis-custom.min.js",
+            "markdown-it.min.js"
+        ]
+    },
+    "pagesLight" :[
+        "enter.js"   ,
+        "player.js",
+        "watches/map.js",
+        "watches/influences.js",
+        "watches/human.js",
+        "watches/analyst.js",
+        "watches/other.js",
+        "register.js"      ,
+        "logs/about.js",
+        "profiles/profileEditorCore.js"
+    ],
+    "serverPages": ["nims.html","index.html","player.html"],
+    "standalonePages": ["nims.html"]
+}
