@@ -106,4 +106,7 @@ See the License for the specific language governing permissions and
     //    exports.themeList = [ 'nims-theme', 'des-light-theme', 'des-dark-theme' ];
 
     //    exports.httpTimeout = 5000;
+    exports.charsheetBackModes = ['charsheet-image', 'charsheet-none', 'charsheet-color'];
+
+    exports.defaultImg = '../images/back.png';
 })(typeof exports === 'undefined' ? this.Constants = {} : exports);

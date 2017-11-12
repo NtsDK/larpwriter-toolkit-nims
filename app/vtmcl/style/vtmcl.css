@@ -55,11 +55,15 @@ body {
 
 .charsheet-page{
   width: 700px;
-/*   padding: 50px 40px; */
-/*   background-color: rgb(196,176,146); */
-  background: transparent url("../images/back.png") no-repeat scroll 50% 50% !important;
+  background-position-x: 50% !important;
+  background-position-y: 50% !important;
+  background-size: 100% 100%!important;
+  background-attachment: scroll !important;
+  background-repeat: no-repeat !important;
+  background-clip: border-box !important;
+  background-origin: padding-box !important;
+
   box-sizing: content-box;
-  background-size: 100% 100% !important;
   border: 43px solid transparent;
   padding: 15px;
   border-top: 60px solid;
@@ -71,6 +75,7 @@ body {
   border-image-outset: 0px 0px 0px 0px;
   border-image-repeat: stretch stretch; 
   border-image-source: url("../images/border.png");
+  margin: 0 auto;
 }
 
 .panel-header{
@@ -267,9 +272,18 @@ div.injure_wound{
   width: 24px;
 }
 
+.charsheet-tab .charsheet-background-image{
+  width: 100px;
+  height: 100px;
+  background-size: 100px 100px;
+}
+
 /* @media screen, print { */
 @media print {
-  #navigation, .add-button{
+  #navigation, 
+  .add-button,
+  .settings-panel
+  {
     display: none;
   }
   #contentArea{

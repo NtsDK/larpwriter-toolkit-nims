@@ -159,6 +159,7 @@ See the License for the specific language governing permissions and
                                       addEl(setClassByCondition(makeEl('td'),'green-back',act.follower ), makeText(constL10n('follower-s'))), 
                                       addEl(setClassByCondition(makeEl('td'),'green-back',act.defensive), makeText(constL10n('defensive-s'))), 
                                       addEl(setClassByCondition(makeEl('td'),'green-back',act.passive  ), makeText(constL10n('passive-s'))), 
+                                      // TODO fix setStyle call here and test
                                       addEl(addClass(setStyle(makeEl('td'),'backgroundColor', color), 'text-right') , makeText(label)), 
                                       addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))), 
                                       addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);

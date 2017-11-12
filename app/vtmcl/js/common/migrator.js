@@ -121,6 +121,15 @@ See the License for the specific language governing permissions and
                 notes: ''
             };
         }
+        if (data.Version === '0.1.0') {
+            data.Settings = {
+                backgroundColor: '#ababab',
+                charsheetBackColor: '#ffffff',
+                charsheetBackImage: Constants.defaultImg,
+                charsheetBackMode: 'charsheet-image'
+            };
+            data.Version = '0.2.0';
+        }
 
         return data;
     };

@@ -98,6 +98,10 @@ See the License for the specific language governing permissions and
             a[b[key]] = b;
             return a;
         }, {});
+
+        exports.colorPattern = /^#[0-9A-Fa-f]{6}$/;
+
+        exports.isColor = str => exports.colorPattern.test(str);
     }
 
     callback(CommonUtils);
