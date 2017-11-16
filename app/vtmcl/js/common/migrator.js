@@ -128,7 +128,7 @@ See the License for the specific language governing permissions and
                 charsheetBackImage: Constants.defaultImg,
                 charsheetBackMode: 'charsheet-image'
             };
-            data.Version = '0.2.0';
+            data.Version = '0.1.1';
         }
 
         return data;
