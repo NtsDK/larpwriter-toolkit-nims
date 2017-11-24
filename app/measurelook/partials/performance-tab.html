@@ -2,15 +2,15 @@
   <div style="display:flex;justify-content: stretch;">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <a href="#" panel-toggler="#performance div#benchmark-description"> <h3 class="panel-title">Информация</h3></a>
+        <a href="#" panel-toggler="#performance div#benchmark-description"> <h3 class="panel-title" l10n-id="performance-information"></h3></a>
       </div>
       <div class="panel-body" id="benchmark-description">
         <table class="table table-bordered table-striped table-condensed">
           <thead>
             <tr>
               <th></th>
-              <th>Название</th>
-              <th>Значение</th>
+              <th l10n-id="performance-name"></th>
+              <th l10n-id="performance-value"></th>
             </tr>
           </thead>
           <tbody>
@@ -23,7 +23,7 @@
   <div style="display:flex;">
     <div class="panel panel-default" style="flex-grow: 1;">
       <div class="panel-heading">
-        <h3 class="panel-title">График</h3>
+        <h3 class="panel-title" l10n-id="performance-graphic"></h3>
       </div>
       <div class="panel-body">
         <div id="chartContainer" style="height: 600px; width: 100%;">
@@ -33,17 +33,17 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <a href="#" panel-toggler="#performance div#benchmark-settings"> <h3 class="panel-title">Настройки</h3></a>
+        <a href="#" panel-toggler="#performance div#benchmark-settings"> <h3 class="panel-title" l10n-id="performance-settings"></h3></a>
       </div>
       <div class="panel-body" id="benchmark-settings">
-        <div><input type="checkbox" id="showRawData"/><label for="showRawData">Показать графики по исходным данным</label></div>
-        <div><input type="checkbox" id="showAvgData"/><label for="showAvgData">Показать график по средним значениям</label></div>
-        <div><input type="checkbox" id="showMedianData"/><label for="showMedianData">Показать график по медиане</label></div>
+        <div><input type="checkbox" id="showRawData"/><label for="showRawData" l10n-id="performance-graphics-by-src"></label></div>
+        <div><input type="checkbox" id="showAvgData"/><label for="showAvgData" l10n-id="performance-graphics-by-avg"></label></div>
+        <div><input type="checkbox" id="showMedianData"/><label for="showMedianData" l10n-id="performance-graphics-by-median"></label></div>
         <div>
           <input type="checkbox" id="showYLogData"/>
-          <label for="showYLogData">Логарифмическая шкала по Y</label>
+          <label for="showYLogData" l10n-id="performance-log-y"></label>
         </div>
-        <div>Данные для отображения</div>
+        <div l10n-id="performance-data-for-graphics"></div>
         <select multiple id="chartDataSelector"></select>
       </div>
     </div>
