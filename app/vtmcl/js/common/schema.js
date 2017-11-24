@@ -28,6 +28,7 @@ See the License for the specific language governing permissions and
             const Meta = getMetaSchema();
             const Log = getLogSchema();
             const Charsheet = getCharsheetSchema();
+            const Settings = getSettingsSchema();
 
             schema.properties = {
                 Meta,
@@ -36,10 +37,9 @@ See the License for the specific language governing permissions and
                 },
                 Charsheet,
                 Log,
-                Settings: {},
-                Misc: {},
+                Settings,
             };
-            schema.required = ['Meta', 'Version', 'Log', 'Charsheet'];
+            schema.required = ['Meta', 'Version', 'Log', 'Charsheet', 'Settings'];
             schema.additionalProperties = false;
 
             return schema;
@@ -185,6 +185,33 @@ See the License for the specific language governing permissions and
                     }
                 },
                 required: ['name', 'date', 'preGameDate', 'description', 'saveTime'],
+                additionalProperties: false
+            };
+        }
+
+        function getSettingsSchema() {
+            return {
+                title: 'Meta',
+                description: 'Contains meta data for game: name, description, dates and saving time.',
+                type: 'object',
+                properties: {
+                    backgroundColor: {
+                        type: 'string',
+                        pattern: CommonUtils.colorPattern.source
+                    },
+                    charsheetBackColor: {
+                        type: 'string',
+                        pattern: CommonUtils.colorPattern.source
+                    },
+                    charsheetBackImage: {
+                        type: 'string',
+                    },
+                    charsheetBackMode: {
+                        type: 'string',
+                        enum: Constants.charsheetBackModes,
+                    }
+                },
+                required: ['backgroundColor', 'charsheetBackColor', 'charsheetBackImage', 'charsheetBackMode'],
                 additionalProperties: false
             };
         }

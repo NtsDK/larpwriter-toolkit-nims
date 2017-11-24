@@ -86,6 +86,8 @@ module.exports = {
         strFormat: false,
         fillSelector: false,
         nl2array: false,
+        constArr2Select: false,
+        setImportantStyle: false,
         
     },
 //    "extends": "eslint:recommended",

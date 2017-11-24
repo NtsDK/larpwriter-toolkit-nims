@@ -127,7 +127,12 @@ const setAttr = R.curry((el, name, value) => {
 });
 
 const setStyle = R.curry((el, name, value) => {
-    el.style[name] = value;
+    el.style.setProperty(name, value);
+    return el;
+});
+
+const setImportantStyle = R.curry((el, name, value) => {
+    el.style.setProperty(name, value, 'important');
     return el;
 });
 

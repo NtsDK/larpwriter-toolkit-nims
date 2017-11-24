@@ -24,6 +24,19 @@ See the License for the specific language governing permissions and
         onRefresh(onRefreshHook(getter, itemName, rangeOnLoad2)));
 
     exports.init = () => {
+        listen(queryEl(`${root}.background-color-input`), 'change', onBackgroundColorChange);
+
+        const sel = clearEl(queryEl(`${root}.charsheet-back-mode`));
+        fillSelector(sel, constArr2Select(Constants.charsheetBackModes));
+        listen(sel, 'change', onCharsheetBackModeChange);
+        listen(queryEl(`${root}.charsheet-background-color-input`), 'change', onCharsheetBackColorChange);
+        listen(queryEl(`${root}.back-image-to-default`), 'click', toDefaultImage);
+
+        listen(queryEl(`${root}.charsheet-background-image-input`), 'change', readImage);
+        listen(queryEl(`${root}.charsheet-background-image-input`), 'focus', (e) => {
+            e.target.value = '';
+        });
+
         const profileEls = Constants.profileCols.map(R.map(makeProfileEl)).map(els => addEls(makeEl('div'), els));
         addEls(queryEl(`${root}.profile-container`), profileEls);
 
@@ -73,14 +86,72 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        state.refreshHooks.forEach(R.apply(R.__, []));
-        // Utils.alert('Refresh');
+        DBMS.getSettings((err, settings) => {
+            if (err) { Utils.handleError(err); return; }
+            setStyle(queryEl('body'), 'background-color', settings.backgroundColor);
+            queryEl(`${root}.background-color-input`).value = settings.backgroundColor;
+            queryEl(`${root}.charsheet-background-color-input`).value = settings.charsheetBackColor;
+            queryEl(`${root}.charsheet-back-mode`).value = settings.charsheetBackMode;
+            let img = settings.charsheetBackImage;
+            if (CommonUtils.startsWith(img, '..')) {
+                img = img.substring(1);
+            }
+            //            setStyle(queryEl(`${root}.charsheet-background-image`), 'backgroundImage', `url(${img})`);
+            let color;
+            let image;
+            switch (settings.charsheetBackMode) {
+            case 'charsheet-image':
+                color = 'transparent';
+                image = `url(${img})`;
+                break;
+            case 'charsheet-none':
+                color = 'transparent';
+                image = 'none';
+                break;
+            case 'charsheet-color':
+                color = settings.charsheetBackColor;
+                image = 'none';
+                break;
+            default:
+                throw new Error(`Unexpected mode ${settings.charsheetBackMode}`);
+            }
+            queryEls(`${root}.charsheet-page`).forEach((el) => {
+                setImportantStyle(el, 'background-color', color);
+                setImportantStyle(el, 'background-image', image);
+            });
+
+            state.refreshHooks.forEach(R.apply(R.__, []));
+        });
     };
+
+    function readImage(event) {
+        const reader = new FileReader();
+        reader.onload = (readerEvent) => {
+            const imageData = readerEvent.target.result;
+            // setStyle(queryEl(`${root}.charsheet-background-image`), 'backgroundImage', `url(${imageData})`);
+            DBMS.setCharsheetBackImage(imageData, Utils.processError(exports.refresh));
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function onBackgroundColorChange(event) {
+        DBMS.setBackgroundColor(event.target.value, Utils.processError(exports.refresh));
+    }
+    function toDefaultImage(event) {
+        DBMS.setCharsheetBackImage(Constants.defaultImg, Utils.processError(exports.refresh));
+    }
+    function onCharsheetBackColorChange(event) {
+        DBMS.setCharsheetBackgroundColor(event.target.value, Utils.processError(exports.refresh));
+    }
+    function onCharsheetBackModeChange(event) {
+        DBMS.setCharsheetBackMode(event.target.value, Utils.processError(exports.refresh));
+    }
 
     function makeProfileEl(itemName) {
         const input = makeEl('input');
         addRefreshHook('getProfileItem', itemName, value => (input.value = value));
-        listen(input, 'change', event => DBMS.setProfileItem(itemName, event.target.value.trim(), Utils.processError()));
+        listen(input, 'change', event =>
+            DBMS.setProfileItem(itemName, event.target.value.trim(), Utils.processError()));
         return addEls(makeEl('div'), [fillText(makeEl('span'), itemName), input]);
     }
 
@@ -249,7 +320,7 @@ See the License for the specific language governing permissions and
     }
 
     function fillText(el, str) {
-        const l10nKey = `main-${str}`;
+        const l10nKey = `charsheet-${str}`;
         setAttr(el, 'l10n-id', l10nKey);
         return addEl(el, makeText(getL10n(l10nKey)));
     }
