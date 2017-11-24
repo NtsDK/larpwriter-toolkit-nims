@@ -45,7 +45,8 @@ var libCoreStyles = addPrefix(coreDir + "/libs/", config.get('styles:libCore'));
 var libStyles = addPrefix(coreDir + "/libs/", config.get('styles:lib'));
 
 var processStyles = function(styles, fileName, taskName, addSourcemaps) {
-    return function(){
+    return function(done){
+        if(styles.length === 0) return done();
         return gulp.src(styles, {base: projectBase, since: gulp.lastRun(taskName)}) // can't use since here because we need all data
         .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.init()))
         .pipe(autoprefixer())

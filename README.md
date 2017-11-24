@@ -37,6 +37,7 @@ set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "con
 set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\nims-config.json"
 set NODE_ENV=dev && set MODE=server && set LANG=ru && gulp dev --configFile "config\watches-config.json"
 set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dev --configFile "config\vtmcl-config.json"
+set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dev --configFile "config\measurelook-config.json"
 
 set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dist:final --configFile "config\vtmcl-config.json"
 

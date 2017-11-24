@@ -1,0 +1,51 @@
+<div id="performance">
+  <div style="display:flex;justify-content: stretch;">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a href="#" panel-toggler="#performance div#benchmark-description"> <h3 class="panel-title">Информация</h3></a>
+      </div>
+      <div class="panel-body" id="benchmark-description">
+        <table class="table table-bordered table-striped table-condensed">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Название</th>
+              <th>Значение</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+  <div style="display:flex;">
+    <div class="panel panel-default" style="flex-grow: 1;">
+      <div class="panel-heading">
+        <h3 class="panel-title">График</h3>
+      </div>
+      <div class="panel-body">
+        <div id="chartContainer" style="height: 600px; width: 100%;">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a href="#" panel-toggler="#performance div#benchmark-settings"> <h3 class="panel-title">Настройки</h3></a>
+      </div>
+      <div class="panel-body" id="benchmark-settings">
+        <div><input type="checkbox" id="showRawData"/><label for="showRawData">Показать графики по исходным данным</label></div>
+        <div><input type="checkbox" id="showAvgData"/><label for="showAvgData">Показать график по средним значениям</label></div>
+        <div><input type="checkbox" id="showMedianData"/><label for="showMedianData">Показать график по медиане</label></div>
+        <div>
+          <input type="checkbox" id="showYLogData"/>
+          <label for="showYLogData">Логарифмическая шкала по Y</label>
+        </div>
+        <div>Данные для отображения</div>
+        <select multiple id="chartDataSelector"></select>
+      </div>
+    </div>
+  </div>
+</div>

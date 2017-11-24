@@ -1,0 +1,41 @@
+{
+    "projectName" : "measurelook",
+    "translationsPath" : "C:\\workspaces\\smtk-nims-translations\\measurelook",
+    "resources": {
+        "enabled" : false,
+        "files": []
+    },
+    "styles" : {
+        "customStyles":["common.css", "style.css", "experimental.css"],
+        "libCore": ["bootstrap.min.css", "vex-theme-default.css", "vex.css"],
+        "lib" : []
+    },
+    "scripts" : {
+        "commonList": [
+            "emptyBase.js", 
+            "constants.js", 
+            "logger.js", 
+            "migrator.js", 
+            "schema.js"
+        ],
+        "libsCore" : [
+            "jquery-3.1.1.min.js",
+            "bootstrap.min.js",
+            "ramda.min.js",
+            "vex.combined.min.js"
+        ],
+        "libs" : [
+            "FileSaver.js",
+            "jszip-utils.js",
+            "jszip.js",
+            "ajv-4.1.1.js",
+            "canvasjs.min.js"
+        ]
+    },
+    "pagesLight" :[
+            "logs/about.js"
+    ],
+    "serverPages": [],
+    "standalonePages": ["index.html"],
+    "baseFileName" : "measurelook"
+}
