@@ -41,11 +41,11 @@ function makeLocalDBMS(fullVersion) {
     [
         'baseAPI',
         'consistencyCheckAPI',
-//        'logAPI',
-//        'charsheetAPI',
-//        'settingsAPI',
+        //        'logAPI',
+        //        'charsheetAPI',
+        //        'settingsAPI',
     ].map(func);
 
-//    Logger.attachLogCalls(LocalDBMS, R, false);
+    //    Logger.attachLogCalls(LocalDBMS, R, false);
     return LocalDBMS;
 }

@@ -40,6 +40,7 @@ module.exports = {
         PNotify: false,
         ymaps: false,
         saveAs: false,
+        CanvasJS: false,
         
         // common pages
         About: false,

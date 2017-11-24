@@ -17,16 +17,16 @@ See the License for the specific language governing permissions and
 ((exports) => {
     exports.migrate = (data) => {
         if (!data.version) {
-            data.version = "0.1.0";
+            data.version = '0.1.0';
         }
-        if(data.version === "0.1.0"){
-            data.measuredParams.forEach(el => el.type = 'direct');
-            data.version = "0.2.0";
+        if (data.version === '0.1.0') {
+            data.measuredParams.forEach(el => (el.type = 'direct'));
+            data.version = '0.2.0';
         }
-        if(data.version === "0.2.0"){
-            data.name = "";
-            data.timestamp = "";
-            data.version = "0.3.0";
+        if (data.version === '0.2.0') {
+            data.name = '';
+            data.timestamp = '';
+            data.version = '0.3.0';
         }
         return data;
     };

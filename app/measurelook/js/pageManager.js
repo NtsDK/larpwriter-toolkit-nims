@@ -45,12 +45,12 @@ See the License for the specific language governing permissions and
         stateInit();
 
         Utils.addView(state.containers, 'performance', Performance, { mainPage: true });
-//        Utils.addView(state.containers, 'instruction', Instruction);
+        //        Utils.addView(state.containers, 'instruction', Instruction);
 
         addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
-        
-        Utils.addView(state.containers, "about", About);
-        
+
+        Utils.addView(state.containers, 'about', About);
+
         addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
 
         const button = makeButton('dataLoadButton', 'open-database', null, btnOpts);
@@ -69,14 +69,14 @@ See the License for the specific language governing permissions and
 
         //                addEl(state.navigation, makeButton("themeButton", "theme", () => nextTheme(), btnOpts));
         addEl(state.navigation, makeButton('dataSaveButton', 'save-database', FileUtils.saveFile, btnOpts));
-//        if (MODE === 'Standalone') {
-//            addEl(state.navigation, makeButton('newBaseButton', 'create-database', FileUtils.makeNewBase, btnOpts));
-//        }
+        //if (MODE === 'Standalone') {
+        //  addEl(state.navigation, makeButton('newBaseButton', 'create-database', FileUtils.makeNewBase, btnOpts));
+        //}
         //addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
 
-//        addEl(state.navigation, makeL10nButton());
+        //        addEl(state.navigation, makeL10nButton());
 
-//        Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
+        //        Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
         //        addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
 
         //addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));

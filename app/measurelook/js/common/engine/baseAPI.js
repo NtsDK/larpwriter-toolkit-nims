@@ -23,31 +23,31 @@ See the License for the specific language governing permissions and
         const PC = opts.Precondition;
         const { EventEmitter } = opts;
         const { Constants } = opts;
-        
-        LocalDBMS.prototype.getDatabase = function(callback){
+
+        LocalDBMS.prototype.getDatabase = function (callback) {
             callback(null, this.bases[0]);
         };
-        
-        LocalDBMS.prototype.getBases = function(callback){
+
+        LocalDBMS.prototype.getBases = function (callback) {
             callback(null, this.bases);
         };
-    
+
         const populateIndirectParams = (base) => {
-            var indirectParams = base.measuredParams.filter(param => param.type === 'indirect');
-            R.values(base.measures).forEach(measure => {
-                indirectParams.forEach( indirectParam => {
+            const indirectParams = base.measuredParams.filter(param => param.type === 'indirect');
+            R.values(base.measures).forEach((measure) => {
+                indirectParams.forEach((indirectParam) => {
                     measure[indirectParam.name] = R.sum(R.values(R.pick(indirectParam.sumOf, measure)));
                 });
             });
         };
-        
-        LocalDBMS.prototype.setDatabase = function(database, callback){
+
+        LocalDBMS.prototype.setDatabase = function (database, callback) {
             database = Migrator.migrate(database);
             populateIndirectParams(database);
-            this.bases = [database]
-            if(callback) callback();
+            this.bases = [database];
+            if (callback) callback();
         };
-        
+
 
         LocalDBMS.prototype._init = function (listeners) {
             this.ee = new EventEmitter();
@@ -58,35 +58,6 @@ See the License for the specific language governing permissions and
             R.toPairs(listeners).forEach(([triggerName, listenerArr]) =>
                 listenerArr.forEach(addListener(triggerName)));
         };
-//
-//        LocalDBMS.prototype.getDatabase = function (callback) {
-//            this.database.Meta.saveTime = new Date().toString();
-//            callback(null, CU.clone(this.database));
-//        };
-//
-//        LocalDBMS.prototype.setDatabase = function (database, callback) {
-//            try {
-//                this.database = Migrator.migrate(database);
-//            } catch (err) {
-//                callback(err);
-//                return;
-//            }
-//            if (callback) callback();
-//        };
-//
-//        LocalDBMS.prototype.getMetaInfo = function (callback) {
-//            callback(null, CU.clone(this.database.Meta));
-//        };
-//
-//        // overview
-//        LocalDBMS.prototype.setMetaInfo = function (name, value, callback) {
-//            const chain = PC.chainCheck([PC.isString(name),
-//                PC.elementFromEnum(name, Constants.metaInfoList), PC.isString(value)]);
-//            PC.precondition(chain, callback, () => {
-//                this.database.Meta[name] = value;
-//                if (callback) callback();
-//            });
-//        };
     }
 
     callback2(baseAPI);

@@ -10,6 +10,9 @@ eclint fix app\core\js
 eclint check app\vtmcl\js
 eclint fix app\vtmcl\js
 eclint check app\vtmcl\js\capitalApp.js
+eclint check app\measurelook\js
+eclint fix app\measurelook\js
+
 
 # Using eslint
 
@@ -22,3 +25,6 @@ eclint check app\vtmcl\js\capitalApp.js
 "node_modules/.bin/eslint" app\vtmcl\js --fix
 "node_modules/.bin/eslint" app\vtmcl\js\pageManager.js
 "node_modules/.bin/eslint" app\vtmcl\js\pageManager.js --fix
+
+"node_modules/.bin/eslint" app\measurelook\js
+"node_modules/.bin/eslint" app\measurelook\js --fix
