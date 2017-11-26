@@ -1,3 +1,10 @@
+version 0.3.0 (26 Nov 2017)
+
+  Added name and timestamp in schema.
+  Measurelook moved to NIMS superproject.
+  Added LogY scaler by dphov.
+  Added linters by partyordie.
+
 version 0.2.0 (2 Apr 2017)
 
   Fixed couple bugs.

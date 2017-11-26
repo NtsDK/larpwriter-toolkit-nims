@@ -16,6 +16,8 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const l10n = L10n.get('performance');
+    const root = '.performance-tab ';
+    const state = {};
 
     exports.init = () => {
         listen(getEl('chartDataSelector'), 'change', onSettingsChange);
@@ -27,8 +29,9 @@ See the License for the specific language governing permissions and
         getEl('showAvgData').checked = false;
         getEl('showMedianData').checked = false;
         getEl('showYLogData').checked = false;
+        listen(queryEl(`${root}.download-csv-button`), 'click', () => FileUtils.arr2d2Csv(state.data, 'table.csv'));
 
-        exports.content = getEl('performance');
+        exports.content = queryEl(root);
     };
 
     function paramTitle(param) {
@@ -93,8 +96,6 @@ See the License for the specific language governing permissions and
         let data = [];
         const scaler = opts.drawYLog ? Math.log : R.identity;
 
-        // var scaler = Math.log
-
         const measuredParams = R.filter(R.compose(R.contains(R.__, measuredParamsList), R.prop('name')), database.measuredParams);
 
         if (opts.drawRaw) {
@@ -130,7 +131,28 @@ See the License for the specific language governing permissions and
         });
 
         chart.render();
+
+        fillDataTable(data);
     }
+
+    function fillDataTable(data) {
+        const thead = clearEl(queryEl(`${root}.table-panel table thead`));
+        const tbody = clearEl(queryEl(`${root}.table-panel table tbody`));
+
+        const data2 = [];
+
+        const keys = ['track name', 'units'].concat(data[0].dataPoints.map(R.prop('x')));
+        data2.push(keys);
+        addEl(thead, addEls(makeEl('tr'), keys.map(makeText).map(el => addEl(makeEl('th'), el))));
+
+        addEls(tbody, data.map((row) => {
+            const vals = [row.legendText, row.units].concat(row.dataPoints.map(R.prop('y')));
+            data2.push(vals);
+            return addEls(makeEl('tr'), vals.map(makeText).map(el => addEl(makeEl('td'), el)));
+        }));
+        state.data = data2;
+    }
+
 
     // eslint-disable-next-line no-var,vars-on-top
     var makeRawDataLines = R.curry((scaler, database, changedParam, measuredParam) => {
@@ -160,6 +182,7 @@ See the License for the specific language governing permissions and
             markerBorderColor: 'black',
             markerSize: 15,
             markerBorderThickness: 1,
+            units: measuredParam.units,
             dataPoints: array
         }), dataPoints));
     });
@@ -195,6 +218,7 @@ See the License for the specific language governing permissions and
                 markerBorderColor: 'black',
                 markerSize: 30,
                 markerBorderThickness: 1,
+                units: measuredParam.units,
                 dataPoints: avg
             };
         });

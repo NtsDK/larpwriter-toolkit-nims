@@ -65,4 +65,24 @@ See the License for the specific language governing permissions and
         });
         saveAs(blob, fileName);
     };
+
+    function preprocessCsvStr(str) {
+        if (!(typeof str === 'string' || str instanceof String)) {
+            return str;
+        }
+        let result = str.replace(/"/g, '""');
+        if (result.search(/("|,|\n)/g) >= 0) {
+            result = `"${result}"`;
+        }
+        return result;
+    }
+
+    exports.arr2d2Csv = (arr, fileName) => {
+        const csv = `\ufeff${arr.map(dataArray => dataArray.map(preprocessCsvStr).join(';')).join('\n')}`;
+
+        const out = new Blob([csv], {
+            type: 'text/csv;charset=utf-8;'
+        });
+        saveAs(out, 'table.csv');
+    };
 })(this.FileUtils = {});
