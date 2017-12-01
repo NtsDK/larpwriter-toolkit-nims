@@ -164,28 +164,14 @@ See the License for the specific language governing permissions and
             selected[i+1] = el.options[i].selected;
         }
         
-        function preprocess(str){
-            if(!(typeof str === 'string' || str instanceof String)){
-                return str;
-            }
-            var result = str.replace(/"/g, '""');
-            if (result.search(/("|,|\n)/g) >= 0){
-                result = '"' + result + '"';
-            }
-            return result;
-        }
-        
         var dataArrays = makePrintData();
-        var csv = "\ufeff" + dataArrays.map(function(dataArray){
+        var cleanArrays = dataArrays.map(function(dataArray){
             return dataArray.filter(function(item, index){
                 return selected[index];
-            }).map(R.pipe(R.prop('value'), preprocess)).join(';');
-        }).join('\n');
-        
-        var out = new Blob([csv], {
-            type : "text/csv;charset=utf-8;"
+            }).map(R.prop('value'));
         });
-        saveAs(out, "table.csv");
+        
+        FileUtils.arr2d2Csv(cleanArrays, "table.csv");
     };
     
     var applyFilterModel = function(filterModel){
