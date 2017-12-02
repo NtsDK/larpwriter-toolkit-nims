@@ -4,7 +4,10 @@
   "description": "Story master toolkit NIMS",
   "main": "",
   "scripts": {
-    "gulp": "gulp"
+    "vtmcl-dev": "./node_modules/.bin/gulp dev --configFile \"config/vtmcl-config.json\"",
+    "measurelook-dev": "./node_modules/.bin/gulp dev --configFile \"config/measurelook-config.json\"",
+    "vtmcl-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/vtmcl-config.json\"",
+    "measurelook-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/measurelook-config.json\""
   },
   "author": "Timofey Rechkalov (NtsDK)",
   "license": "Apache-2.0",
