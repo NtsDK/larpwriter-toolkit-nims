@@ -1,0 +1,379 @@
+/*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+   limitations under the License. */
+   
+
+@font-face {
+  font-family: CentSchbkCyrill;
+  src: url(../images/CentSchbkCyrill.ttf);
+}
+
+.flex-1-1-auto {
+  flex: 1 1 auto;
+}
+
+.flex-0-0-auto {
+  flex: 0 0 auto;
+}
+
+.instruction-panel + .instruction-panel {
+  margin-left: 8px;
+} 
+
+body {
+  background-color: #ABABAB;
+  font-family: CentSchbkCyrill, "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+
+.hidden {
+  display: none;
+}
+
+.panel, .panel-body {
+  background-color: #ededed;
+}
+
+.columns{
+  display:flex;
+}
+
+.columns > div {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.charsheet-page{
+  width: 700px;
+  background-position-x: 50% !important;
+  background-position-y: 50% !important;
+  background-size: 100% 100%!important;
+  background-attachment: scroll !important;
+  background-repeat: no-repeat !important;
+  background-clip: border-box !important;
+  background-origin: padding-box !important;
+
+  box-sizing: content-box;
+  border: 43px solid transparent;
+  padding: 15px;
+  border-top: 60px solid;
+  border-left: 41px solid;
+  border-right: 39px solid;
+  border-bottom: 45px solid;
+  border-image-slice: 60 40 50 40;
+  border-image-width: 60px 40px 50px 40px;
+  border-image-outset: 0px 0px 0px 0px;
+  border-image-repeat: stretch stretch; 
+  border-image-source: url("../images/border.png");
+  margin: 0 auto;
+}
+
+.panel-header{
+  display:flex;
+  text-align: center;
+  font-size: 115%;
+  height: 23px;
+}
+
+.panel-subheader{
+  text-align: center;
+}
+
+.custom-panel{
+  margin-bottom: 30px;
+}
+
+.profile-container > div > div > span{
+  width: 90px;
+  display: inline-block;
+}
+
+.profile-container > div > div > input{
+/*   width: calc(100% - 110px); */
+  width: 180px;
+  margin: 0 10px;
+  background-color: rgba(0,0,0,0);
+  border: none;
+  text-align: center;
+}
+
+.profile-container > div > div > input:hover{
+  outline: solid 1px red;
+}
+
+.stat-container{
+  display: flex;
+  margin: 5px 5px;
+}
+
+.stat-container > span{
+  flex-basis: 130px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: block;
+  word-break: break-all;
+}
+
+.stat-container > div.range-container{
+  flex-grow: 1;
+  display: flex;
+}
+
+
+.stat-container > div.range-container > div{
+  flex-grow: 1;
+}
+
+.stat-container > div.range-container > div > img{
+  height: 19px;
+}
+
+.health-stat{
+  display: flex;
+  margin: 5px 5px;
+  justify-content: center;
+}
+
+.health-stat > span{
+  flex-basis: 130px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: block;
+  word-break: break-all;
+}
+
+.health-stat > span:nth-of-type(2){
+  flex-basis: 30px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: block;
+  word-break: break-all;
+  text-align: center;
+}
+
+.health-stat > img{
+  height: 19px;
+  flex-shrink: 0;
+}
+
+.health-container > div > .health-stat.wounded:last-of-type{
+  border: solid 5px black;
+}
+/* .health-container img[isWound="true"]:last-of-type + span{ */
+/*   border: solid 5px black; */
+/* } */
+
+
+.add-button{
+  background: transparent url("../images/add-squared-button.svg") no-repeat scroll 50% 50%;
+  flex-grow: 1;
+  background-size: 30px;
+  height: 50px;
+}
+
+.humanity-container > .stat-container, .willpower-container > .stat-container{
+  height: 20px;
+}
+
+.entity-container > input{
+  width: calc(100% - 10px);
+  margin: 5px;
+  background-color: transparent;
+}
+.stat-container > input{
+/*   width: calc(100% - 10px); */
+/*   margin: 5px; */
+  background-color: transparent;
+  flex-grow: 0;
+  max-width: 128px;
+}
+
+.test-svg{
+  display: flex;
+}
+
+.test-svg > div {
+  flex-grow: 1;
+  height: 40px;
+  background-size: cover;
+}
+div.injure_deadly{
+  background: transparent url("../images/injure_deadly.svg") no-repeat scroll 50% 50%;
+  flex-grow: 0;
+  background-size: cover;
+  flex-basis: 57px;
+}
+div.injure_deadly{
+  background: transparent url("../images/injure_deadly.svg") no-repeat scroll 50% 50%;
+  flex-grow: 0;
+  background-size: cover;
+  flex-basis: 57px;
+}
+div.injure_no{
+  background: transparent url("../images/injure_no.svg") no-repeat scroll 50% 50%;
+  flex-grow: 0;
+  background-size: cover;
+  flex-basis: 57px;
+}
+div.injure_wound{
+  background: transparent url("../images/injure_wound.svg") no-repeat scroll 50% 50%;
+  flex-grow: 0;
+  background-size: cover;
+  flex-basis: 57px;
+}
+
+.panel-header{
+  display:flex;
+  text-align: center;
+  font-size: 115%;
+}
+
+.panel-header > .left-arrow{
+  flex-grow: 0;
+  flex-basis: 30px;
+}
+.panel-header > .right-arrow{
+  flex-grow: 0;
+  flex-basis: 30px;
+}
+.panel-header > .line-separator{
+  flex-grow: 1;
+}
+
+.panel-header > .header-text{
+  flex-grow: 0;
+  flex-basis: 180px;
+}
+
+.notes-content {
+  width: 100%;
+  height: 200px;
+  background-color: transparent;
+}
+
+.panel-header{
+  margin-bottom: 10px;
+}
+.custom-panel{
+  margin-bottom: 10px;
+}
+
+.instruction-tab img{
+  width: 24px;
+}
+
+.charsheet-tab .charsheet-background-image{
+  width: 100px;
+  height: 100px;
+  background-size: 100px 100px;
+}
+
+/* @media screen, print { */
+@media print {
+  #navigation, 
+  .add-button,
+  .settings-panel
+  {
+    display: none;
+  }
+  #contentArea{
+    margin: 0;
+    padding: 0;
+  }
+/*   .custom-panel{ */
+/*     page-break-after: always;  */
+/*   } */
+/*   #notes{ */
+  .charsheet-page{
+    page-break-after: always; 
+  }
+}
+
+
+
+
+.a4-body {
+  height: 21cm;
+  width: 297mm;
+  background-color: green;
+  padding: 10mm;
+}
+
+.a4-content {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  display: flex;
+}
+
+.a4-content > div{
+/*   flex: 1 1 auto; */
+  flex: 0 0 auto;
+} 
+
+.republic {
+/*   height: 4cm; */
+/*   width: 4cm; */
+  height: 8cm;
+  width: 8cm;
+  background-color: red;
+  margin: 0 8px 8px 0;
+/*   margin: 0 6px 0px 0; */
+  background: url("../images/Uglykotoricon.svg") !important;
+  background-size: 100% 100% !important;
+}
+
+.cont {
+  margin: 0 8px 8px 0;
+/*   border: 1px solid black; */
+}
+
+.czerka-s{
+  height: 24.6mm;
+  width: 35mm;
+  background-color: blue;
+/*   margin: 0 8px 8px 0; */
+/*   background: url("../images/Czerka.svg") !important; */
+/*   background: url("../images/Czerka2.svg") !important; */
+  background: url("../images/Czerka3.svg") !important;
+  background-size: 100% 100% !important;
+  background-color: black !important;
+/*   border: 1px solid black; */
+/*       box-sizing: content-box; */
+}
+
+.ib {
+  display: inline-block;
+}
+
+.czerka-m{
+  height: 50mm;
+  width: 71mm;
+  background-color: brown;
+/*   margin: 0 8px 8px 0; */
+/*   background: url("../images/Czerka.svg") !important; */
+/*   background: url("../images/Czerka2.svg") !important; */
+  background: url("../images/Czerka3.svg") !important;
+  background-size: 100% 100% !important;
+  background-color: black !important;
+/*   border: 1px solid black; */
+/*       box-sizing: content-box; */
+}
+
+/* .czerka-m2{ */
+/*   height:71mm  ; */
+/*   width: 50mm; */
+/*   background-color: brown; */
+/* } */
+
+
