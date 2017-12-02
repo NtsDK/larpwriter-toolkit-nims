@@ -22,12 +22,13 @@
 Далее выполните команды.
 Пример команд сборки в режиме разработки. В этом режиме разрабатываемый вами проект будет собираться в папке dist и обновляться по мере внесения изменений.
 
-	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dev --configFile "config\vtmcl-config.json"
-	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dev --configFile "config\measurelook-config.json"
-    
+	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run vtmcl-dev
+	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run measurelook-dev
+	
 Пример команды сборки конечного архива.
 
-	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && gulp dist:final --configFile "config\vtmcl-config.json"
+	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run vtmcl-dist
+	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run measurelook-dist
     
 Опции сборки Gulp:
 
