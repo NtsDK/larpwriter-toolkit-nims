@@ -210,4 +210,17 @@ See the License for the specific language governing permissions and
             return message;
         };
     }
+    
+    listen(window, 'paste', function (evt) {
+        try{
+            JSON.parse(evt.clipboardData.getData("text"))
+        } catch(e){
+            Utils.alert('Error on parsing base ' + e);
+            return;
+        }
+        DBMS.setDatabase(JSON.parse(evt.clipboardData.getData("text")), (err) => {
+            if (err) { Utils.handleError(err); return; }
+            consistencyCheck(state.currentView.refresh);
+        });
+    });
 })(this.PageManager = {});
