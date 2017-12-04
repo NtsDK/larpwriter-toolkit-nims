@@ -18,11 +18,11 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
     const root = '.profile-filter-tab ';
 
-    exports.init = function () {
+    exports.init = () => {
         listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls('-dependent'));
 
         listen(queryEl(`${root}.create-entity-button`), 'click', Groups.createGroup(root, groupAreaRefresh));
@@ -35,7 +35,7 @@ See the License for the specific language governing permissions and
         exports.content = queryEl(root);
     };
 
-    var groupAreaRefresh = function () {
+    function groupAreaRefresh() {
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError((userGroupNames) => {
             PermissionInformer.getEntityNamesArray('group', false, Utils.processError((allGroupNames) => {
                 Groups.rebuildInterface(root, userGroupNames);
@@ -44,9 +44,9 @@ See the License for the specific language governing permissions and
                 $(`${root}.save-entity-select`).select2(data);
             }));
         }));
-    };
+    }
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         state.sortKey = Constants.CHAR_NAME;
         state.sortDir = 'asc';
         state.inputItems = {};
@@ -70,13 +70,16 @@ See the License for the specific language governing permissions and
                 getShowProfileItemNames(filterConfiguration.getGroupedProfileFilterItems())
             );
 
-            addEl(clearEl(queryEl(`${root}.filter-head`)), makeContentHeader(getHeaderProfileItemNames(filterConfiguration.getProfileFilterItems())));
+            addEl(
+                clearEl(queryEl(`${root}.filter-head`)),
+                makeContentHeader(getHeaderProfileItemNames(filterConfiguration.getProfileFilterItems()))
+            );
 
             rebuildContent();
         });
     };
 
-    var getShowProfileItemNames = function (groups) {
+    function getShowProfileItemNames(groups) {
         return groups.map((group) => {
             const data = group.profileFilterItems.map(item => ({
                 name: item.displayName,
@@ -87,19 +90,19 @@ See the License for the specific language governing permissions and
                 array: data
             };
         });
-    };
+    }
 
-    var getHeaderProfileItemNames = function (profileSettings) {
+    function getHeaderProfileItemNames(profileSettings) {
         return R.map(R.pick(['name', 'displayName']), profileSettings);
-    };
+    }
 
-    const makePrintData = function () {
+    function makePrintData() {
         const dataArrays = state.filterConfiguration.getDataArrays(makeFilterModel());
 
         const sortFunc = CommonUtils.charOrdAFactoryBase(state.sortDir, (a) => {
             const map = CommonUtils.arr2map(a, 'itemName');
             const item = map[state.sortKey];
-            let value = item.value;
+            let { value } = item;
             if (value === undefined) return value;
             switch (item.type) {
             case 'text':
@@ -117,16 +120,16 @@ See the License for the specific language governing permissions and
             return value;
         });
         return dataArrays.sort(sortFunc);
-    };
+    }
 
-    var rebuildContent = function () {
+    function rebuildContent() {
         const dataArrays = makePrintData();
         addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
         addEls(clearEl(queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
         UI.showSelectedEls('-dependent')({ target: queryEl(`${root}.profile-item-selector`) });
-    };
+    }
 
-    var saveFilterToGroup = function () {
+    function saveFilterToGroup() {
         const groupName = queryEl(`${root}.save-entity-select`).value.trim();
         PermissionInformer.isEntityEditable('group', groupName, (err, isGroupEditable) => {
             if (err) { Utils.handleError(err); return; }
@@ -136,23 +139,27 @@ See the License for the specific language governing permissions and
             }
             DBMS.saveFilterToGroup(groupName, makeFilterModel(), Utils.processError());
         });
-    };
+    }
 
-    var loadFilterFromGroup = function () {
+    function loadFilterFromGroup() {
         const groupName = queryEl(`${root}.save-entity-select`).value.trim();
         DBMS.getGroup(groupName, (err, group) => {
             if (err) { Utils.handleError(err); return; }
-            const conflictTypes = ProjectUtils.isFilterModelCompatibleWithProfiles(state.filterConfiguration.getBaseProfileSettings(), group.filterModel);
-            if (conflictTypes.length != 0) {
+            const conflictTypes =
+                ProjectUtils.isFilterModelCompatibleWithProfiles(
+                    state.filterConfiguration.getBaseProfileSettings(),
+                    group.filterModel
+                );
+            if (conflictTypes.length !== 0) {
                 Utils.alert(strFormat(getL10n('groups-base-filter-is-incompatible-with-page-profiles'), [conflictTypes.join(',')]));
                 return;
             }
             applyFilterModel(group.filterModel);
             rebuildContent();
         });
-    };
+    }
 
-    var downloadFilterTable = function () {
+    function downloadFilterTable() {
         const el = queryEl(`${root}.profile-item-selector`);
         const selected = [true];
         for (let i = 0; i < el.options.length; i += 1) {
@@ -163,10 +170,10 @@ See the License for the specific language governing permissions and
         const cleanArrays = dataArrays.map(dataArray => dataArray.filter((item, index) => selected[index]).map(R.prop('value')));
 
         FileUtils.arr2d2Csv(cleanArrays, 'table.csv');
-    };
+    }
 
-    var applyFilterModel = function (filterModel) {
-        var filterModel = CommonUtils.arr2map(filterModel, 'name');
+    function applyFilterModel(filterModel) {
+        filterModel = CommonUtils.arr2map(filterModel, 'name');
 
         Object.keys(state.inputItems).forEach((inputItemName) => {
             if (inputItemName.endsWith(':numberInput') || inputItemName.endsWith(':multiEnumInput')) {
@@ -176,10 +183,11 @@ See the License for the specific language governing permissions and
             const inputItem = state.inputItems[inputItemName];
             let selectedOptions, regex, num, i, counter;
 
-            if (state.checkboxes[inputItemName].checked != (filterModel[inputItemName] != null)) {
+            if (state.checkboxes[inputItemName].checked !== (filterModel[inputItemName] !== null)) {
                 state.checkboxes[inputItemName].click();
             }
             if (!filterModel[inputItemName]) {
+                let select;
                 switch (inputItem.selfInfo.type) {
                 case 'enum':
                 case 'checkbox':
@@ -192,7 +200,7 @@ See the License for the specific language governing permissions and
                     inputItem.value = 'ignore';
                     break;
                 case 'multiEnum':
-                    var select = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
+                    select = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
                     for (i = 0; i < select.options.length; i += 1) {
                         select.options[i].selected = true;
                     }
@@ -207,6 +215,7 @@ See the License for the specific language governing permissions and
                 }
             } else {
                 const modelItem = filterModel[inputItemName];
+                let select;
                 switch (inputItem.selfInfo.type) {
                 case 'enum':
                     for (i = 0; i < inputItem.options.length; i += 1) {
@@ -223,7 +232,7 @@ See the License for the specific language governing permissions and
                     break;
                 case 'multiEnum':
                     inputItem.value = modelItem.condition;
-                    var select = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
+                    select = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
                     for (i = 0; i < select.options.length; i += 1) {
                         select.options[i].selected = !!modelItem.selectedOptions[select.options[i].value];
                     }
@@ -237,9 +246,9 @@ See the License for the specific language governing permissions and
                 }
             }
         });
-    };
+    }
 
-    var makeFilterModel = function () {
+    function makeFilterModel() {
         const model = [];
         Object.keys(state.inputItems).forEach((inputItemName) => {
             if (inputItemName.endsWith(':numberInput') || inputItemName.endsWith(':multiEnumInput')) {
@@ -250,8 +259,9 @@ See the License for the specific language governing permissions and
             }
             const inputItem = state.inputItems[inputItemName];
             let selectedOptions, regex, num, i, arr;
-            const type = inputItem.selfInfo.type;
+            const { type } = inputItem.selfInfo;
 
+            let select2;
             switch (type) {
             case 'enum':
                 arr = nl2array(inputItem.selectedOptions).map(R.prop('value'));
@@ -273,10 +283,13 @@ See the License for the specific language governing permissions and
             case 'multiEnum':
                 if (inputItem.value === 'ignore') { return; }
                 selectedOptions = {};
-                var select2 = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
+                select2 = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
                 arr = nl2array(select2.selectedOptions).map(R.prop('value'));
                 model.push({
-                    type, name: inputItemName, condition: inputItem.value, selectedOptions: R.zipObj(arr, R.repeat(true, arr.length))
+                    type,
+                    name: inputItemName,
+                    condition: inputItem.value,
+                    selectedOptions: R.zipObj(arr, R.repeat(true, arr.length))
                 });
                 break;
             case 'text':
@@ -288,14 +301,13 @@ See the License for the specific language governing permissions and
             }
         });
         return model;
-    };
+    }
 
-    var makeDataString = function (dataArray) {
-        const inputItems = state.inputItems;
-
-        let td, regex, pos, value, displayValue;
+    function makeDataString(dataArray) {
+        const { inputItems } = state;
         return addEls(makeEl('tr'), dataArray.map((valueInfo, i) => {
-            value = valueInfo.value;
+            let regex, pos, displayValue;
+            const { value } = valueInfo;
             if (value === undefined) {
                 displayValue = constL10n('notAvailable');
             } else if (valueInfo.type === 'checkbox') {
@@ -308,13 +320,13 @@ See the License for the specific language governing permissions and
             } else {
                 throw new Error(`Unexpected valueInfo.type: ${valueInfo.type}`);
             }
-            td = addEl(setClassByCondition(makeEl('td'), 'lightGrey', value === undefined), makeText(displayValue));
+            const td = addEl(setClassByCondition(makeEl('td'), 'lightGrey', value === undefined), makeText(displayValue));
             addClass(td, `${i}-dependent`);
             return td;
         }));
-    };
+    }
 
-    var makeContentHeader = function (profileItemNames) {
+    function makeContentHeader(profileItemNames) {
         return addEls(makeEl('tr'), profileItemNames.map((elem, i) => {
             const td = addEls(makeEl('th'), [makeText(elem.displayName), makeEl('span')]);
             td.info = elem.name;
@@ -322,10 +334,10 @@ See the License for the specific language governing permissions and
             listen(td, 'click', onSortChange);
             return td;
         }));
-    };
+    }
 
-    var onSortChange = function (event) {
-        let target = event.target;
+    function onSortChange(event) {
+        let { target } = event;
         if (target.tagName.toLowerCase() === 'span') {
             target = target.parentElement;
         }
@@ -344,9 +356,9 @@ See the License for the specific language governing permissions and
             addClass(target, 'sortAsc');
         }
         rebuildContent();
-    };
+    }
 
-    var makeInput = function (profileItemConfig) {
+    function makeInput(profileItemConfig) {
         const div = makeEl('div');
         const span = makeEl('label');
         const checkbox = makeEl('input');
@@ -354,13 +366,13 @@ See the License for the specific language governing permissions and
         checkbox.checked = false;
         addEl(span, checkbox);
         addEl(span, makeText(profileItemConfig.displayName));
-        const toggleContent = function (itemContainer, inputContainer) {
-            return function (event) {
+        function toggleContent(itemContainer, inputContainer) {
+            return (event) => {
                 setClassByCondition(inputContainer, 'hidden', !event.target.checked);
                 setClassByCondition(itemContainer, 'flex-front-element', event.target.checked);
                 rebuildContent();
             };
-        };
+        }
 
         addEl(div, span);
         const inputContainer = makeEl('div');
@@ -371,9 +383,9 @@ See the License for the specific language governing permissions and
 
         addEl(inputContainer, makeFilter(profileItemConfig));
         return div;
-    };
+    }
 
-    var makeFilter = function (profileItemConfig) {
+    function makeFilter(profileItemConfig) {
         switch (profileItemConfig.type) {
         case 'text':
         case 'string':
@@ -389,18 +401,18 @@ See the License for the specific language governing permissions and
         default:
             throw new Error(`Unexpected type ${profileItemConfig.type}`);
         }
-    };
+    }
 
-    var makeTextFilter = function (profileItemConfig) {
+    function makeTextFilter(profileItemConfig) {
         const input = makeEl('input');
         input.selfInfo = profileItemConfig;
         input.value = '';
         input.addEventListener('input', rebuildContent);
         state.inputItems[profileItemConfig.name] = input;
         return input;
-    };
+    }
 
-    const makeCommonEnumFilter = function (profileItemConfig, values) {
+    function makeCommonEnumFilter(profileItemConfig, values) {
         const selector = makeEl('select');
         selector.selfInfo = profileItemConfig;
         selector.multiple = 'multiple';
@@ -413,14 +425,14 @@ See the License for the specific language governing permissions and
         selector.addEventListener('change', rebuildContent);
         state.inputItems[profileItemConfig.name] = selector;
         return selector;
-    };
+    }
 
-    var makeEnumFilter = function (profileItemConfig) {
+    function makeEnumFilter(profileItemConfig) {
         const values = arr2Select(profileItemConfig.value.split(','));
         return makeCommonEnumFilter(profileItemConfig, values);
-    };
+    }
 
-    var makeCheckboxFilter = function (profileItemConfig) {
+    function makeCheckboxFilter(profileItemConfig) {
         const values = [{
             value: Constants.true,
             name: constL10n(Constants.true)
@@ -429,9 +441,9 @@ See the License for the specific language governing permissions and
             name: constL10n(Constants.false)
         }];
         return makeCommonEnumFilter(profileItemConfig, values);
-    };
+    }
 
-    var makeMultiEnumFilter = function (profileItemConfig) {
+    function makeMultiEnumFilter(profileItemConfig) {
         const selector = makeEl('select');
         selector.selfInfo = profileItemConfig;
 
@@ -457,9 +469,9 @@ See the License for the specific language governing permissions and
         state.inputItems[`${profileItemConfig.name}:multiEnumInput`] = selector2;
         selector2.addEventListener('change', rebuildContent);
         return addEls(makeEl('div'), [selector, makeEl('br'), selector2]);
-    };
+    }
 
-    var makeNumberFilter = function (profileItemConfig) {
+    function makeNumberFilter(profileItemConfig) {
         const selector = makeEl('select');
         selector.selfInfo = profileItemConfig;
 
@@ -479,5 +491,5 @@ See the License for the specific language governing permissions and
         state.inputItems[`${profileItemConfig.name}:numberInput`] = input;
         input.addEventListener('input', rebuildContent);
         return addEls(makeEl('div'), [selector, input]);
-    };
-}(this.ProfileFilter = {}));
+    }
+})(this.ProfileFilter = {});

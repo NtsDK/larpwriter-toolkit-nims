@@ -18,13 +18,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
 
     state.templates = {};
     state.customDocxTemplate = null;
 
-    exports.init = function () {
+    let generateSingleDocx, generateSingleTxt, refreshStorySetSelect, refreshCharacterSetSelect;
+
+    exports.init = () => {
         listen(getEl('makeDefaultTextBriefings'), 'click', () => {
             resolveTextTemplate((textTemplate) => {
                 makeTextBriefings('txt', generateSingleTxt(textTemplate));
@@ -87,7 +89,7 @@ See the License for the specific language governing permissions and
         exports.content = getEl('briefingExportDiv');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         resolveTextTemplate((textTemplate) => {
             getEl('templateArea').value = textTemplate;
             refreshCharacterRangeSelect();
@@ -96,7 +98,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var resolveTextTemplate = function (callback) {
+    function resolveTextTemplate(callback) {
         DBMS.getProfileStructure('character', (err, profileSettings) => {
             if (err) { Utils.handleError(err); return; }
             const func = R.compose(R.join(''), R.insert(1, R.__, ['{{profileInfo-', '}}\n']), R.prop('name'));
@@ -105,22 +107,22 @@ See the License for the specific language governing permissions and
 
             callback(R.replace(/\{0\}/g, value, TEXT_TEMPLATE));
         });
-    };
+    }
 
-    var onCharacterSelectionChange = function (event) {
+    function onCharacterSelectionChange(event) {
         const exportCharacterRange = event.target.id === 'exportCharacterRange';
         const exportCharacterSet = event.target.id === 'exportCharacterSet';
         setClassByCondition(getEl('characterRangeSelect'), 'hidden', !exportCharacterRange);
         setClassByCondition(getEl('characterSetSelect'), 'hidden', !exportCharacterSet);
-    };
+    }
 
-    var onStorySelectionChange = function (event) {
+    function onStorySelectionChange(event) {
         const exportStorySet = event.target.id === 'exportStorySet';
         setClassByCondition(getEl('storySetSelect'), 'hidden', !exportStorySet);
-    };
+    }
 
-    const getSelectedUsers = function () {
-        const id = getSelectedRadio('#briefingExportDiv input[name=exportCharacterSelection]').id;
+    function getSelectedUsers() {
+        const { id } = getSelectedRadio('#briefingExportDiv input[name=exportCharacterSelection]');
         switch (id) {
         case 'exportAllCharacters':
             return null;
@@ -132,10 +134,10 @@ See the License for the specific language governing permissions and
             Utils.alert(`unexpected id: ${id}`);
         }
         return null;
-    };
+    }
 
-    const getSelectedStories = function () {
-        const id = getSelectedRadio('#briefingExportDiv input[name=exportStorySelection]').id;
+    function getSelectedStories() {
+        const { id } = getSelectedRadio('#briefingExportDiv input[name=exportStorySelection]');
         switch (id) {
         case 'exportAllStories':
             return null;
@@ -145,9 +147,9 @@ See the License for the specific language governing permissions and
             Utils.alert(`unexpected id: ${id}`);
         }
         return null;
-    };
+    }
 
-    var refreshCharacterRangeSelect = function () {
+    function refreshCharacterRangeSelect() {
         const selector = clearEl(state.briefingIntervalSelector);
         const num = Number(state.briefingNumberSelector.value);
 
@@ -158,16 +160,17 @@ See the License for the specific language governing permissions and
                 chunks = R.splitEvery(num, names);
                 const data = chunks.map(chunk => ({
                     id: JSON.stringify(chunk.map(nameInfo => nameInfo.value)),
-                    text: chunk.length === 1 ? chunk[0].displayName : `${chunk[0].displayName} - ${chunk[chunk.length - 1].displayName}`
+                    text: chunk.length === 1 ? chunk[0].displayName :
+                        `${chunk[0].displayName} - ${chunk[chunk.length - 1].displayName}`
                 }));
 
                 $(`#${state.briefingIntervalSelector.id}`).select2({ data });
             }
         });
-    };
+    }
 
 
-    const refreshSetSelect = function (entityType, selectorName) {
+    function refreshSetSelect(entityType, selectorName) {
         const multiSel = clearEl(state[selectorName]);
         PermissionInformer.getEntityNamesArray(entityType, false, (err, names) => {
             if (err) { Utils.handleError(err); return; }
@@ -176,26 +179,26 @@ See the License for the specific language governing permissions and
                 setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
             }
         });
-    };
+    }
 
-    var refreshStorySetSelect = () => refreshSetSelect('story', 'storySetSelector');
-    var refreshCharacterSetSelect = () => refreshSetSelect('character', 'characterSetSelector');
+    refreshStorySetSelect = () => refreshSetSelect('story', 'storySetSelector');
+    refreshCharacterSetSelect = () => refreshSetSelect('character', 'characterSetSelector');
 
-    var makeExport = function (type) {
-        return function () {
+    function makeExport(type) {
+        return () => {
             if (!state.templates[type]) {
                 state.templates[type] = atob(templatesArr[type]);
             }
             exportDocxByTemplate(state.templates[type]);
         };
-    };
+    }
 
-    const postprocessCheckboxes = function (briefingData, profileStructure, prefix, arrName) {
+    function postprocessCheckboxes(briefingData, profileStructure, prefix, arrName) {
         const checkboxNames = profileStructure.filter(item => item.type === 'checkbox').map(R.prop('name'));
         briefingData.briefings.forEach((charData) => {
             if (charData[arrName] === undefined) return;
             charData[arrName].forEach((element) => {
-                if (checkboxNames.indexOf(element.itemName) != -1) {
+                if (checkboxNames.indexOf(element.itemName) !== -1) {
                     element.value = constL10n(Constants[element.value]);
                     element.splittedText = [{ string: element.value }];
                 }
@@ -204,43 +207,43 @@ See the License for the specific language governing permissions and
                 charData[prefix + name] = constL10n(Constants[charData[prefix + name]]);
             });
         });
-    };
+    }
 
-    const getBriefingData = function (callback) {
+    function getBriefingData(callback) {
         DBMS.getBriefingData(getSelectedUsers(), getSelectedStories(), getEl('exportOnlyFinishedStories').checked, (err, briefingData) => {
             if (err) { Utils.handleError(err); return; }
             // some postprocessing
-            DBMS.getProfileStructure('character', (err, characterProfileStructure) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getProfileStructure('player', (err, playerProfileStructure) => {
-                    if (err) { Utils.handleError(err); return; }
+            DBMS.getProfileStructure('character', (err2, characterProfileStructure) => {
+                if (err2) { Utils.handleError(err2); return; }
+                DBMS.getProfileStructure('player', (err3, playerProfileStructure) => {
+                    if (err3) { Utils.handleError(err3); return; }
                     postprocessCheckboxes(briefingData, characterProfileStructure, 'profileInfo-', 'profileInfoArray');
                     postprocessCheckboxes(briefingData, playerProfileStructure, 'playerInfo-', 'playerInfoArray');
                     callback(null, briefingData);
                 });
             });
         });
-    };
+    }
 
-    var exportDocxByTemplate = function (template) {
+    function exportDocxByTemplate(template) {
         getBriefingData((err, briefingData) => {
             if (err) { Utils.handleError(err); return; }
             generateBriefings(briefingData, 'docx', generateSingleDocx('blob', template), generateSingleDocx('Uint8Array', template));
         });
-    };
+    }
 
-    var convertToDocxTemplate = function () {
+    function convertToDocxTemplate() {
         const docxTemplate = makeDocxTemplate('blob');
         Utils.confirm(getL10n('briefings-save-file'), () => {
             saveAs(docxTemplate, 'template.docx');
         });
-    };
+    }
 
-    var generateByDocxTemplate = function () {
+    function generateByDocxTemplate() {
         exportDocxByTemplate(makeDocxTemplate('Uint8Array'));
-    };
+    }
 
-    var makeDocxTemplate = function (type) {
+    function makeDocxTemplate(type) {
         let template = getEl('templateArea').value;
 
         const replaceBrackets = R.pipe(R.replace(/{{{/g, '{'), R.replace(/}}}/g, '}'), R.replace(/{{/g, '{'), R.replace(/}}/g, '}'));
@@ -258,22 +261,22 @@ See the License for the specific language governing permissions and
         return doc.getZip().generate({
             type
         });
-    };
-    var previewTextDataAsIs = function () {
+    }
+    function previewTextDataAsIs() {
         getBriefingData((err, briefingData) => {
             if (err) { Utils.handleError(err); return; }
             getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, '  ');
         });
-    };
+    }
 
-    var previewTextOutput = function () {
+    function previewTextOutput() {
         getBriefingData((err, data) => {
             if (err) { Utils.handleError(err); return; }
             getEl('textBriefingPreviewArea').value = generateSingleTxt(getEl('templateArea').value, data);
         });
-    };
+    }
 
-    var makeTextBriefings = function (fileType, delegate) {
+    function makeTextBriefings(fileType, delegate) {
         getBriefingData((err, briefingData) => {
             if (err) { Utils.handleError(err); return; }
             generateBriefings(briefingData, fileType, (data) => {
@@ -283,15 +286,15 @@ See the License for the specific language governing permissions and
                 });
             }, delegate);
         });
-    };
+    }
 
-    var readTemplateFile = function (evt) {
+    function readTemplateFile(evt) {
         // Retrieve the first (and only!) File from the FileList object
         const f = evt.target.files[0];
 
         if (f) {
             const r = new FileReader();
-            r.onload = function (e) {
+            r.onload = (e) => {
                 state.customDocxTemplate = e.target.result;
                 Utils.alert(getL10n('briefings-template-is-loaded'));
             };
@@ -299,15 +302,15 @@ See the License for the specific language governing permissions and
         } else {
             Utils.alert(getL10n('briefings-error-on-template-uploading'));
         }
-    };
+    }
 
-    const updateStatus = function (text) {
+    function updateStatus(text) {
         const exportStatus = getEl('exportStatus');
         clearEl(exportStatus);
         exportStatus.appendChild(makeText(text));
-    };
+    }
 
-    var generateBriefings = function (briefingData, fileType, oneFileDelegate, separateFileDelegate) {
+    function generateBriefings(briefingData, fileType, oneFileDelegate, separateFileDelegate) {
         const toSeparateFiles = getEl('toSeparateFileCheckbox').checked;
 
         const fileName = 'briefings';
@@ -321,9 +324,9 @@ See the License for the specific language governing permissions and
                 updateStatus(getL10n('briefings-start-saving'));
 
                 const res = makeArchiveData(briefingData, separateFileDelegate);
-                for (const key in res) {
+                R.keys(res).forEach((key) => {
                     zip.file(`${key}.${fileType}`, res[key]);
-                }
+                });
 
                 updateStatus(getL10n('briefings-archiving'));
                 archive = zip.generate({ type: 'blob' });
@@ -339,15 +342,15 @@ See the License for the specific language governing permissions and
             Utils.alert(getL10n('briefings-error-on-generating-briefings'));
             console.log(err);
         }
-    };
+    }
 
-    var saveFile = function (msgKey, out, fileName) {
+    function saveFile(msgKey, out, fileName) {
         Utils.confirm(getL10n(msgKey), () => {
             saveAs(out, fileName);
         });
-    };
+    }
 
-    var makeArchiveData = function (briefingData, generateSingleDelegate) {
+    function makeArchiveData(briefingData, generateSingleDelegate) {
         const res = {};
         briefingData.briefings.forEach((briefing, i) => {
             res[briefing.charName] = generateSingleDelegate({
@@ -357,9 +360,9 @@ See the License for the specific language governing permissions and
             updateStatus(strFormat(getL10n('briefings-save-status'), [i + 1, briefingData.briefings.length]));
         });
         return res;
-    };
+    }
 
-    var generateSingleDocx = R.curry((type, template, data) => {
+    generateSingleDocx = R.curry((type, template, data) => {
         const doc = new window.Docxgen(template);
         doc.setData(data);
         doc.render(); // apply them (replace all occurences of {first_name} by
@@ -370,7 +373,7 @@ See the License for the specific language governing permissions and
         return out;
     });
 
-    var generateSingleTxt = R.curry((template, data) => {
+    generateSingleTxt = R.curry((template, data) => {
         try {
             return Mustache.render(template, data);
         } catch (err) {
@@ -378,4 +381,4 @@ See the License for the specific language governing permissions and
             throw err;
         }
     });
-}(this.BriefingExport = {}));
+})(this.BriefingExport = {});

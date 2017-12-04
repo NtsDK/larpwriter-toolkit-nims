@@ -21,17 +21,17 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         exports.content = queryEl('.group-schema-tab');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         DBMS.getGroupSchemas((err, schemas) => {
             redrawSchema(schemas.theory);
         });
     };
 
-    var redrawSchema = function (graph) {
+    function redrawSchema(graph) {
         const container = queryEl('.group-schema-tab .schema-container');
 
         if (state.network) {
@@ -42,5 +42,5 @@ See the License for the specific language governing permissions and
         }));
 
         state.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
-    };
+    }
 })(this.GroupSchema = {});

@@ -18,23 +18,25 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const relationTableHeader = ['character-name', 'direct-relation', 'reverse-relation', 'extra-info'];
     const partialTableHeader = ['character-name', 'direct-relation', 'extra-info'];
 
-    exports.makeRelationsContent = function (data, flags, profileSettings) {
-        const characterName = data.characterName;
-        const relationsSummary = data.relationsSummary;
-        let characterNamesArray = data.characterNamesArray;
-        const profiles = data.profiles;
-        const profileBindings = data.profileBindings;
+    let makeNewRow;
+
+    exports.makeRelationsContent = (data, flags, profileSettings) => {
+        const {
+            characterName, relationsSummary, profiles, profileBindings
+        } = data;
+        let { characterNamesArray } = data;
 
         characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName), R.prop('value')));
-        const showCharacters = R.union(R.keys(relationsSummary.directRelations), R.keys(relationsSummary.reverseRelations)).sort();
+        const showCharacters =
+            R.union(R.keys(relationsSummary.directRelations), R.keys(relationsSummary.reverseRelations)).sort();
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
         const knownNoRels = noRelsList.filter(R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value')));
         const unknownNoRels = noRelsList.filter(R.compose(R.not, R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value')));
-        const isAdaptationsMode = flags.isAdaptationsMode;
+        const { isAdaptationsMode } = flags;
 
         const body = makeEl('tbody');
         const selectInfo = makeProfileItemSelector(profileSettings, (event) => {
@@ -45,26 +47,36 @@ See the License for the specific language governing permissions and
                 addEls(el, makeProfileItemContent(selectedName, profiles[char][selectedName]));
             });
         });
-        const makeRow = makeNewRow(profiles, selectInfo.select, isAdaptationsMode, relationsSummary, profileBindings, characterName);
+        const makeRow = makeNewRow(
+            profiles, selectInfo.select, isAdaptationsMode, relationsSummary, profileBindings,
+            characterName
+        );
 
         // filling header - need table body for callbacks
         const makeRowCallback = R.compose(addEl(body), makeRow);
-        const charSelectors = addEls(addClass(makeEl('div'), 'entity-management relations-management'), [makeSelector(getL10n('briefings-known-characters'), knownNoRels, makeRowCallback),
-            makeSelector(getL10n('briefings-unknown-characters'), unknownNoRels, makeRowCallback),
-            selectInfo.el]);
+        const charSelectors = addEls(
+            addClass(makeEl('div'), 'entity-management relations-management'),
+            [makeSelector(getL10n('briefings-known-characters'), knownNoRels, makeRowCallback),
+                makeSelector(getL10n('briefings-unknown-characters'), unknownNoRels, makeRowCallback),
+                selectInfo.el]
+        );
 
         // making table
         const array = isAdaptationsMode ? relationTableHeader : partialTableHeader;
-        const head = addEl(makeEl('thead'), addEls(makeEl('tr'), array.map(name => addEl(makeEl('th'), makeText(getL10n(`briefings-${name}`))))));
+        const head = addEl(makeEl('thead'), addEls(
+            makeEl('tr'),
+            array.map(name => addEl(makeEl('th'), makeText(getL10n(`briefings-${name}`))))
+        ));
 
         const table = addEls(addClasses(makeEl('table'), ['table']), [head, body]);
 
         // filling table
-        addEls(body, showCharacters.filter(toCharacter => (isAdaptationsMode ? true : relationsSummary.directRelations[toCharacter] !== undefined)).map(makeRow));
+        addEls(body, showCharacters.filter(toCharacter =>
+            (isAdaptationsMode ? true : relationsSummary.directRelations[toCharacter] !== undefined)).map(makeRow));
         return addEls(makeEl('div'), [charSelectors, table]);
     };
 
-    var makeProfileItemSelector = function (profileSettings, refresh) {
+    function makeProfileItemSelector(profileSettings, refresh) {
         const select1 = $('<select></select>');
         const tmpContainer1 = $('<span></span>').append(select1);
         addClasses(select1[0], ['common-select', 'profile-item-select']);
@@ -76,12 +88,18 @@ See the License for the specific language governing permissions and
         }
 
         return {
-            el: addEls(makeEl('div'), [addEl(makeEl('span'), makeText(getL10n('briefings-profile-item'))), tmpContainer1[0]]),
+            el: addEls(
+                makeEl('div'),
+                [addEl(makeEl('span'), makeText(getL10n('briefings-profile-item'))), tmpContainer1[0]]
+            ),
             select: select1[0]
         };
-    };
+    }
 
-    var makeNewRow = R.curry((profiles, profileItemSelect, isAdaptationsMode, relationsSummary, profileBindings, fromCharacter, toCharacter) => {
+    makeNewRow = R.curry((
+        profiles, profileItemSelect, isAdaptationsMode, relationsSummary, profileBindings,
+        fromCharacter, toCharacter
+    ) => {
         const direct = addClass(makeEl('textarea'), 'briefing-relation-area');
         direct.value = relationsSummary.directRelations[toCharacter] || '';
         listen(direct, 'change', (event) => {
@@ -118,11 +136,11 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('tr'), arr);
     });
 
-    var makeProfileItemContent = function (profileItemName, profileItemValue) {
+    function makeProfileItemContent(profileItemName, profileItemValue) {
         return [addEl(addClass(makeEl('div'), 'bold-cursive'), makeText(profileItemName)), makeText(profileItemValue)];
-    };
+    }
 
-    var makeSelector = function (text, data, makeRowCallback) {
+    function makeSelector(text, data, makeRowCallback) {
         const select1 = $('<select></select>');
         const tmpContainer1 = $('<span></span>').append(select1);
         addClass(select1[0], 'common-select');
@@ -136,5 +154,5 @@ See the License for the specific language governing permissions and
         });
 
         return addEls(makeEl('div'), [addEl(makeEl('span'), makeText(text)), tmpContainer1[0], button]);
-    };
-}(this.RelationsPreview = {}));
+    }
+})(this.RelationsPreview = {});

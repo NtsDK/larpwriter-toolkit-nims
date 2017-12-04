@@ -16,6 +16,8 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+/* eslint-disable func-names */
+
 'use strict';
 
 function FilterConfiguration(info) {
@@ -26,7 +28,7 @@ function FilterConfiguration(info) {
             item.displayName = getL10n(item.displayName);
             item.value = '';
         }
-        item.canHide = item.name != Constants.CHAR_NAME && item.name != Constants.PLAYER_NAME;
+        item.canHide = item.name !== Constants.CHAR_NAME && item.name !== Constants.PLAYER_NAME;
     }
     this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);
     this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));

@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         const root = state;
         root.views = {};
         const nav = '.groups-tab .sub-tab-navigation';
@@ -42,14 +42,14 @@ See the License for the specific language governing permissions and
         exports.content = queryEl('.groups-tab');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError((names) => {
-            rebuildInterface('.groups-tab', names);
+            exports.rebuildInterface('.groups-tab', names);
             state.currentView.refresh();
         }));
     };
 
-    var rebuildInterface = function (selector, names) {
+    exports.rebuildInterface = (selector, names) => {
         const data = getSelect2Data(names);
 
         clearEl(queryEl(`${selector} .rename-entity-select`));
@@ -57,56 +57,50 @@ See the License for the specific language governing permissions and
 
         clearEl(queryEl(`${selector} .remove-entity-select`));
         $(`${selector} .remove-entity-select`).select2(data);
+    }
+
+    exports.createGroup = (selector, refresh) => () => {
+        const input = queryEl(`${selector} .create-entity-input`);
+
+        DBMS.createGroup(input.value.trim(), (err) => {
+            if (err) { Utils.handleError(err); return; }
+            PermissionInformer.refresh((err2) => {
+                if (err2) { Utils.handleError(err2); return; }
+                //                    if(Groups.currentView.updateSettings){
+                //                        Groups.currentView.updateSettings(name);
+                //                    }
+                input.value = '';
+                refresh();
+            });
+        });
     };
 
-    exports.createGroup = function (selector, refresh) {
-        return function () {
-            const input = queryEl(`${selector} .create-entity-input`);
+    exports.renameGroup = (selector, refresh) => () => {
+        const toInput = queryEl(`${selector} .rename-entity-input`);
+        const fromName = queryEl(`${selector} .rename-entity-select`).value.trim();
+        DBMS.renameGroup(fromName, toInput.value.trim(), (err) => {
+            if (err) { Utils.handleError(err); return; }
+            PermissionInformer.refresh((err2) => {
+                if (err2) { Utils.handleError(err2); return; }
+                //                        if(Groups.currentView.updateSettings){
+                //                            Groups.currentView.updateSettings(toName);
+                //                        }
+                toInput.value = '';
+                refresh();
+            });
+        });
+    };
 
-            DBMS.createGroup(input.value.trim(), (err) => {
+    exports.removeGroup = (selector, refresh) => () => {
+        const name = queryEl(`${selector} .remove-entity-select`).value.trim();
+        Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
+            DBMS.removeGroup(name, (err) => {
                 if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err) => {
-                    if (err) { Utils.handleError(err); return; }
-                    //                    if(Groups.currentView.updateSettings){
-                    //                        Groups.currentView.updateSettings(name);
-                    //                    }
-                    input.value = '';
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
                     refresh();
                 });
             });
-        };
-    };
-
-    exports.renameGroup = function (selector, refresh) {
-        return function () {
-            const toInput = queryEl(`${selector} .rename-entity-input`);
-            const fromName = queryEl(`${selector} .rename-entity-select`).value.trim();
-            DBMS.renameGroup(fromName, toInput.value.trim(), (err) => {
-                if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err) => {
-                    if (err) { Utils.handleError(err); return; }
-                    //                        if(Groups.currentView.updateSettings){
-                    //                            Groups.currentView.updateSettings(toName);
-                    //                        }
-                    toInput.value = '';
-                    refresh();
-                });
-            });
-        };
-    };
-
-    exports.removeGroup = function (selector, refresh) {
-        return function () {
-            const name = queryEl(`${selector} .remove-entity-select`).value.trim();
-            Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
-                DBMS.removeGroup(name, (err) => {
-                    if (err) { Utils.handleError(err); return; }
-                    PermissionInformer.refresh((err) => {
-                        if (err) { Utils.handleError(err); return; }
-                        refresh();
-                    });
-                });
-            });
-        };
+        });
     };
 })(this.Groups = {});

@@ -18,12 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
 
     const root = '.player-management-tab ';
 
-    exports.init = function () {
+    exports.init = () => {
         listen(queryEl(`${root}.create-user-button`), 'click', createUser);
         listen(queryEl(`${root}.create-login-button`), 'click', createLogin);
         listen(queryEl(`${root}.change-password-button`), 'click', changePassword);
@@ -34,30 +34,34 @@ See the License for the specific language governing permissions and
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         PermissionInformer.getEntityNamesArray('player', false, (err, playerNames) => {
             if (err) { Utils.handleError(err); return; }
-            DBMS.getPlayerLoginsArray((err, playerLogins) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getWelcomeText((err, text) => {
-                    if (err) { Utils.handleError(err); return; }
-                    DBMS.getPlayersOptions((err, playersOptions) => {
-                        if (err) { Utils.handleError(err); return; }
-                        R.toPairs(playersOptions).map(pair => getEl(pair[0]).checked = pair[1]);
+            DBMS.getPlayerLoginsArray((err2, playerLogins) => {
+                if (err2) { Utils.handleError(err2); return; }
+                DBMS.getWelcomeText((err3, text) => {
+                    if (err3) { Utils.handleError(err3); return; }
+                    DBMS.getPlayersOptions((err4, playersOptions) => {
+                        if (err4) { Utils.handleError(err4); return; }
+                        // eslint-disable-next-line prefer-destructuring
+                        R.toPairs(playersOptions).map(pair => (getEl(pair[0]).checked = pair[1]));
 
                         queryEl(`${root}.welcome-text-area`).value = text;
                         const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
                         const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
-                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || []).sort(Utils.charOrdAObject).map(remapProps4Select));
-                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || []).sort(Utils.charOrdAObject).map(remapProps4Select));
-                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || []).sort(Utils.charOrdAObject).map(remapProps4Select));
+                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
+                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
+                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
+                            .sort(Utils.charOrdAObject).map(remapProps4Select));
                     });
                 });
             });
         });
     };
 
-    var createUser = function () {
+    function createUser() {
         const userNameInput = queryEl(`${root}.create-user-name-input`);
         const passwordInput = queryEl(`${root}.create-user-password-input`);
         DBMS.createPlayer(userNameInput.value.trim(), passwordInput.value, Utils.processError(() => {
@@ -65,36 +69,36 @@ See the License for the specific language governing permissions and
             passwordInput.value = '';
             exports.refresh();
         }));
-    };
+    }
 
-    var createLogin = function () {
+    function createLogin() {
         const userNameSelect = queryEl(`${root}.create-login-name-select`);
         const passwordInput = queryEl(`${root}.create-login-password-input`);
         DBMS.createPlayerLogin(userNameSelect.value, passwordInput.value, Utils.processError(() => {
             passwordInput.value = '';
             exports.refresh();
         }));
-    };
+    }
 
-    var changePassword = function () {
+    function changePassword() {
         const userNameSelect = queryEl(`${root}.change-password-user-select`);
         const passwordInput = queryEl(`${root}.change-password-password-input`);
         DBMS.changePlayerPassword(userNameSelect.value, passwordInput.value, Utils.processError(() => {
             passwordInput.value = '';
             exports.refresh();
         }));
-    };
+    }
 
-    var removeUser = function () {
+    function removeUser() {
         const userNameSelect = queryEl(`${root}.remove-user-select`);
         DBMS.removePlayerLogin(userNameSelect.value, Utils.processError(exports.refresh));
-    };
+    }
 
-    var setWelcomeText = function (event) {
+    function setWelcomeText(event) {
         DBMS.setWelcomeText(event.target.value, Utils.processError());
-    };
+    }
 
-    var setPlayerOption = function (event) {
+    function setPlayerOption(event) {
         DBMS.setPlayerOption(event.target.value, event.target.checked, Utils.processError());
-    };
-}(this.PlayerManagement = {}));
+    }
+})(this.PlayerManagement = {});

@@ -18,14 +18,16 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
 
     state.entities = ['characters', 'stories', 'groups', 'players'];
 
     const root = '.master-management-tab ';
 
-    exports.init = function () {
+    let removePermission, assignPermission;
+
+    exports.init = () => {
         listen(queryEl(`${root}.create-user-button`), 'click', createMaster);
         listen(queryEl(`${root}.change-password-button`), 'click', changeMasterPassword);
         listen(queryEl(`${root}.remove-user-button`), 'click', removeMaster);
@@ -41,21 +43,21 @@ See the License for the specific language governing permissions and
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         DBMS.getManagementInfo((err, managementInfo) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.isAdmin((err, isAdmin) => {
-                if (err) { Utils.handleError(err); return; }
-                PermissionInformer.isEditor((err, isEditor) => {
-                    if (err) { Utils.handleError(err); return; }
-                    PermissionInformer.getEntityNamesArray('character', !isAdmin, (err, characterNames) => {
-                        if (err) { Utils.handleError(err); return; }
-                        PermissionInformer.getEntityNamesArray('story', !isAdmin, (err, storyNames) => {
-                            if (err) { Utils.handleError(err); return; }
-                            PermissionInformer.getEntityNamesArray('group', !isAdmin, (err, groupNames) => {
-                                if (err) { Utils.handleError(err); return; }
-                                PermissionInformer.getEntityNamesArray('player', !isAdmin, (err, playerNames) => {
-                                    if (err) { Utils.handleError(err); return; }
+            PermissionInformer.isAdmin((err2, isAdmin) => {
+                if (err2) { Utils.handleError(err2); return; }
+                PermissionInformer.isEditor((err3, isEditor) => {
+                    if (err3) { Utils.handleError(err3); return; }
+                    PermissionInformer.getEntityNamesArray('character', !isAdmin, (err4, characterNames) => {
+                        if (err4) { Utils.handleError(err4); return; }
+                        PermissionInformer.getEntityNamesArray('story', !isAdmin, (err5, storyNames) => {
+                            if (err5) { Utils.handleError(err5); return; }
+                            PermissionInformer.getEntityNamesArray('group', !isAdmin, (err6, groupNames) => {
+                                if (err6) { Utils.handleError(err6); return; }
+                                PermissionInformer.getEntityNamesArray('player', !isAdmin, (err7, playerNames) => {
+                                    if (err7) { Utils.handleError(err7); return; }
                                     const names = {
                                         characters: characterNames,
                                         groups: groupNames,
@@ -63,9 +65,9 @@ See the License for the specific language governing permissions and
                                         players: playerNames,
                                     };
                                     if (!isAdmin && isEditor) {
-                                        for (const entity in names) {
+                                        R.keys(names).forEach((entity) => {
                                             names[entity] = names[entity].filter(R.prop('isOwner'));
-                                        }
+                                        });
                                     }
                                     rebuildInterface(names, managementInfo);
                                     Utils.enable(exports.content, 'adminOnly', isAdmin);
@@ -79,8 +81,8 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var rebuildInterface = function (names, managementInfo) {
-        const usersInfo = managementInfo.usersInfo;
+    function rebuildInterface(names, managementInfo) {
+        const { usersInfo } = managementInfo;
 
         const userNames = Object.keys(usersInfo).sort(CommonUtils.charOrdA);
 
@@ -115,9 +117,9 @@ See the License for the specific language governing permissions and
         getEl(`adaptationRights${managementInfo.adaptationRights}`).checked = true;
 
         buildPermissionList(names, usersInfo);
-    };
+    }
 
-    var buildPermissionList = function (names, usersInfo) {
+    function buildPermissionList(names, usersInfo) {
         const permissionTable = clearEl(queryEl(`${root}.permission-table`));
         const treeRoot = makeEl('ul');
         addEl(permissionTable, treeRoot);
@@ -159,9 +161,9 @@ See the License for the specific language governing permissions and
             result.push(addEls(makeEl('ol'), makeEntityLists(usersInfo[userName])));
             return result;
         }, []));
-    };
+    }
 
-    var createMaster = function () {
+    function createMaster() {
         const userNameInput = queryEl(`${root}.create-user-name-input`);
         const userPasswordInput = queryEl(`${root}.create-user-password-input`);
         DBMS.createMaster(userNameInput.value.trim(), userPasswordInput.value, Utils.processError(() => {
@@ -169,29 +171,29 @@ See the License for the specific language governing permissions and
             userPasswordInput.value = '';
             exports.refresh();
         }));
-    };
+    }
 
 
-    var changeMasterPassword = function () {
+    function changeMasterPassword() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         const passwordInput = queryEl(`${root}.change-password-password-input`);
         DBMS.changeMasterPassword(userName, passwordInput.value, Utils.processError(() => {
             queryEl(`${root}.change-password-password-input`).value = '';
             exports.refresh();
         }));
-    };
+    }
 
-    var removeMaster = function () {
+    function removeMaster() {
         const name = queryEl(`${root}.remove-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]), () => {
             DBMS.removeMaster(name, Utils.processError(exports.refresh));
         });
-    };
+    }
 
     const getSelectedOptions = sel => nl2array(queryEl(sel).selectedOptions).map(opt => opt.value);
 
-    const permissionAction = function (action) {
-        return function () {
+    function permissionAction(action) {
+        return () => {
             const userName = queryEl(`${root}.user-permission-select`).value.trim();
 
             // TODO remove this check
@@ -207,27 +209,27 @@ See the License for the specific language governing permissions and
 
             DBMS[action](userName, names, Utils.processError(exports.refresh));
         };
-    };
+    }
 
-    var removePermission = permissionAction('removePermission');
-    var assignPermission = permissionAction('assignPermission');
+    removePermission = permissionAction('removePermission');
+    assignPermission = permissionAction('assignPermission');
 
-    var assignNewAdmin = function () {
+    function assignNewAdmin() {
         const userName = queryEl(`${root}.assign-admin-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-admin-assigment'), [userName]), () => {
             DBMS.assignAdmin(userName, Utils.processError(exports.refresh));
         });
-    };
-    var removeEditor = function () {
+    }
+    function removeEditor() {
         DBMS.removeEditor(Utils.processError(exports.refresh));
-    };
-    var assignEditor = function () {
+    }
+    function assignEditor() {
         const userName = queryEl(`${root}.assign-editor-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-editor-assigment'), [userName]), () => {
             DBMS.assignEditor(userName, Utils.processError(exports.refresh));
         });
-    };
-    var changeAdaptationRightsMode = function (event) {
+    }
+    function changeAdaptationRightsMode(event) {
         DBMS.changeAdaptationRightsMode(event.target.value, Utils.processError());
-    };
-}(this.MasterManagement = {}));
+    }
+})(this.MasterManagement = {});

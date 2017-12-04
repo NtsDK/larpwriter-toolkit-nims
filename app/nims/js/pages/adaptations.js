@@ -19,8 +19,10 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
-    exports.init = function () {
+((exports) => {
+    let onChangeDateTimeCreator;
+
+    exports.init = () => {
         listen(getEl('events-storySelector'), 'change', updateAdaptationSelectorDelegate);
         listen(getEl('events-characterSelector'), 'change', showPersonalStoriesByCharacters);
         listen(getEl('events-eventSelector'), 'change', showPersonalStoriesByEvents);
@@ -29,7 +31,7 @@ See the License for the specific language governing permissions and
         exports.content = queryEl('.adaptations-tab');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         const selector = clearEl(getEl('events-storySelector'));
         clearEl(getEl('events-characterSelector'));
         clearEl(getEl('events-eventSelector'));
@@ -37,8 +39,8 @@ See the License for the specific language governing permissions and
 
         PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
             if (err) { Utils.handleError(err); return; }
-            DBMS.getFilteredStoryNames(getEl('finishedStoryCheckbox').checked, (err, storyNames) => {
-                if (err) { Utils.handleError(err); return; }
+            DBMS.getFilteredStoryNames(getEl('finishedStoryCheckbox').checked, (err2, storyNames) => {
+                if (err2) { Utils.handleError(err2); return; }
                 if (storyNames.length <= 0) { return; }
 
                 const selectedStoryName = getSelectedStoryName(storyNames);
@@ -64,16 +66,16 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var updateAdaptationSelectorDelegate = function (event) {
+    function updateAdaptationSelectorDelegate(event) {
         clearEl(getEl('personalStories'));
         const storyName = event.target.selectedOptions[0].storyInfo;
         updateSettings('storyName', storyName);
         updateSettings('characterNames', []);
         updateSettings('eventIndexes', []);
         showPersonalStories(storyName);
-    };
+    }
 
-    const updateAdaptationSelector = function (story, allCharacters) {
+    function updateAdaptationSelector(story, allCharacters) {
         const characterSelector = clearEl(getEl('events-characterSelector'));
         const eventSelector = clearEl(getEl('events-eventSelector'));
 
@@ -117,16 +119,16 @@ See the License for the specific language governing permissions and
         });
         setAttr(eventSelector, 'size', eventArray.length);
 
-        const selectedFilter = DBMS.getSettings().Adaptations.selectedFilter;
+        const { selectedFilter } = DBMS.getSettings().Adaptations;
         getEl(selectedFilter).checked = true;
         updateFilter({
             target: {
                 id: selectedFilter
             }
         });
-    };
+    }
 
-    var updateFilter = function (event) {
+    function updateFilter(event) {
         updateSettings('selectedFilter', event.target.id);
         const byCharacter = event.target.id === 'adaptationFilterByCharacter';
         setClassByCondition(getEl('events-characterSelectorDiv'), 'hidden', !byCharacter);
@@ -136,9 +138,9 @@ See the License for the specific language governing permissions and
         } else {
             showPersonalStoriesByEvents();
         }
-    };
+    }
 
-    var showPersonalStoriesByCharacters = function () {
+    function showPersonalStoriesByCharacters() {
         const eventRows = queryElEls(exports.content, '.eventRow-dependent');
         eventRows.map(removeClass(R.__, 'hidden'));
         nl2array(queryElEls(exports.content, 'div[dependent-on-character]')).map(addClass(R.__, 'hidden'));
@@ -148,65 +150,69 @@ See the License for the specific language governing permissions and
         eventRows.map(row => setClassByCondition(row, 'hidden', R.intersection(row.dependsOnCharacters, characterNames).length === 0));
 
         updateSettings('characterNames', characterNames);
-    };
+    }
 
-    var showPersonalStoriesByEvents = function () {
+    function showPersonalStoriesByEvents() {
         queryElEls(exports.content, 'div[dependent-on-character]').map(removeClass(R.__, 'hidden'));
         queryElEls(exports.content, '.eventRow-dependent').map(addClass(R.__, 'hidden'));
 
         const eventIndexes = nl2array(getEl('events-eventSelector').selectedOptions).map(opt => opt.eventIndex222);
         eventIndexes.forEach(index => removeClass(getEls(`${index}-dependent`)[0], 'hidden'));
         updateSettings('eventIndexes', eventIndexes);
-    };
+    }
 
-    var getStoryCharacterCompleteness = function (story) {
+    function getStoryCharacterCompleteness(story) {
         return R.keys(story.characters).map(elem => ({
             characterName: elem,
             isFinished: _isStoryFinishedForCharacter(story, elem),
             isEmpty: _isStoryEmptyForCharacter(story, elem)
         }));
-    };
+    }
 
-    var _isStoryEmptyForCharacter = function (story, characterName) {
+    function _isStoryEmptyForCharacter(story, characterName) {
         return story.events.every(event => event.characters[characterName] === undefined);
-    };
+    }
 
-    var _isStoryFinishedForCharacter = function (story, characterName) {
-        return story.events.filter(event => event.characters[characterName] !== undefined).every(event => event.characters[characterName].ready === true);
-    };
+    function _isStoryFinishedForCharacter(story, characterName) {
+        return story.events.filter(event => event.characters[characterName] !== undefined)
+            .every(event => event.characters[characterName].ready === true);
+    }
 
-    var getStoryEventCompleteness = function (story) {
+    function getStoryEventCompleteness(story) {
         return story.events.map((event, i) => ({
             name: event.name,
             index: i,
             isFinished: _isEventReady(event),
             isEmpty: Object.keys(event.characters).length === 0
         }));
-    };
+    }
 
-    var _isEventReady = function (event) {
+    function _isEventReady(event) {
         return R.values(event.characters).every(character => character.ready);
-    };
+    }
 
-    var showPersonalStories = function (storyName) {
+    function showPersonalStories(storyName) {
         DBMS.getMetaInfo((err, metaInfo) => {
             if (err) { Utils.handleError(err); return; }
-            DBMS.getStory(storyName, (err, story) => {
-                if (err) { Utils.handleError(err); return; }
-                PermissionInformer.isEntityEditable('story', storyName, (err, isStoryEditable) => {
-                    if (err) { Utils.handleError(err); return; }
-                    PermissionInformer.getEntityNamesArray('character', false, (err, allCharacters) => {
-                        if (err) { Utils.handleError(err); return; }
+            DBMS.getStory(storyName, (err2, story) => {
+                if (err2) { Utils.handleError(err2); return; }
+                PermissionInformer.isEntityEditable('story', storyName, (err3, isStoryEditable) => {
+                    if (err3) { Utils.handleError(err3); return; }
+                    PermissionInformer.getEntityNamesArray('character', false, (err4, allCharacters) => {
+                        if (err4) { Utils.handleError(err4); return; }
 
                         const characterNames = R.keys(story.characters);
                         const adaptations = characterNames.map(characterName => ({
                             characterName,
                             storyName
                         }));
-                        PermissionInformer.areAdaptationsEditable(adaptations, (err, areAdaptationsEditable) => {
-                            if (err) { Utils.handleError(err); return; }
-                            story.events.forEach((item, i) => item.index = i);
-                            buildAdaptationInterface(storyName, characterNames, story.events, areAdaptationsEditable, metaInfo);
+                        PermissionInformer.areAdaptationsEditable(adaptations, (err5, areAdaptationsEditable) => {
+                            if (err5) { Utils.handleError(err5); return; }
+                            story.events.forEach((item, i) => (item.index = i));
+                            buildAdaptationInterface(
+                                storyName, characterNames, story.events, areAdaptationsEditable,
+                                metaInfo
+                            );
                             updateAdaptationSelector(story, allCharacters);
                             Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
                             Utils.enable(exports.content, 'notEditable', false);
@@ -215,9 +221,9 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-    };
+    }
 
-    var buildAdaptationInterface = function (storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
+    function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
         let tr, td, div, divContainer, isEditable;
         let divMain, divLeft, divRight;
 
@@ -249,33 +255,34 @@ See the License for the specific language governing permissions and
             td = addClass(makeEl('div'), 'eventMainPanelRow-right');
             divContainer = addClass(makeEl('div'), 'events-eventsContainer');
 
-            addEls(divContainer, characterNames.filter(characterName => event.characters[characterName]).map((characterName) => {
-                div = addClass(makeEl('div'), 'events-singleEventAdaptation');
-                setAttr(div, 'dependent-on-character', characterName);
-                divMain = addClass(makeEl('div'), 'story-events-div-main');
-                divLeft = addClass(makeEl('div'), 'story-events-div-left');
-                divRight = addClass(makeEl('div'), 'story-events-div-right');
-                addEl(div, addEls(divMain, [divLeft, divRight]));
-                isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
+            addEls(divContainer, characterNames.filter(characterName => event.characters[characterName])
+                .map((characterName) => {
+                    div = addClass(makeEl('div'), 'events-singleEventAdaptation');
+                    setAttr(div, 'dependent-on-character', characterName);
+                    divMain = addClass(makeEl('div'), 'story-events-div-main');
+                    divLeft = addClass(makeEl('div'), 'story-events-div-left');
+                    divRight = addClass(makeEl('div'), 'story-events-div-right');
+                    addEl(div, addEls(divMain, [divLeft, divRight]));
+                    isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
 
-                addEl(divLeft, makeText(characterName));
-                addEl(divRight, UI.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
-                addEl(div, makeAdaptationTextInput(storyName, event, characterName, isEditable));
-                addEl(div, UI.makeAdaptationReadyInput(storyName, event, characterName, isEditable));
-                return div;
-            }));
+                    addEl(divLeft, makeText(characterName));
+                    addEl(divRight, UI.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
+                    addEl(div, makeAdaptationTextInput(storyName, event, characterName, isEditable));
+                    addEl(div, UI.makeAdaptationReadyInput(storyName, event, characterName, isEditable));
+                    return div;
+                }));
 
             addEl(tr, addEl(td, divContainer));
             return tr;
         }));
-    };
+    }
 
-    var onChangeDateTimeCreator = R.curry((storyName, myInput) => function (dp, input) {
+    onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
         DBMS.setEventOriginProperty(storyName, myInput.eventIndex, 'time', input.val(), Utils.processError());
         removeClass(myInput, 'defaultDate');
     });
 
-    var makeOriginTextInput = function (storyName, event) {
+    function makeOriginTextInput(storyName, event) {
         const input = makeEl('textarea');
         addClass(input, 'isStoryEditable');
         addClass(input, 'eventPersonalStory');
@@ -283,9 +290,9 @@ See the License for the specific language governing permissions and
         input.dataKey = JSON.stringify([storyName, event.index]);
         listen(input, 'change', onChangeOriginText);
         return input;
-    };
+    }
 
-    var makeAdaptationTextInput = function (storyName, event, characterName, isEditable) {
+    function makeAdaptationTextInput(storyName, event, characterName, isEditable) {
         const input = makeEl('textarea');
         setClassByCondition(input, 'notEditable', !isEditable);
         addClass(input, 'eventPersonalStory');
@@ -293,32 +300,32 @@ See the License for the specific language governing permissions and
         input.dataKey = JSON.stringify([storyName, event.index, characterName]);
         listen(input, 'change', onChangeAdaptationText);
         return input;
-    };
+    }
 
-    var onChangeOriginText = function (event) {
+    function onChangeOriginText(event) {
         const dataKey = JSON.parse(event.target.dataKey);
         const text = event.target.value;
         DBMS.setEventOriginProperty(dataKey[0], dataKey[1], 'text', text, Utils.processError());
-    };
+    }
 
-    var onChangeAdaptationText = function (event) {
+    function onChangeAdaptationText(event) {
         const dataKey = JSON.parse(event.target.dataKey);
         const text = event.target.value;
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'text', text, Utils.processError());
-    };
+    }
 
-    var getSuffix = function (object) {
+    function getSuffix(object) {
         if (object.isEmpty) return constL10n(Constants.emptySuffix);
         if (object.isFinished) return constL10n(Constants.finishedSuffix);
         return '';
-    };
+    }
 
-    var updateSettings = function (name, value) {
+    function updateSettings(name, value) {
         const settings = DBMS.getSettings();
         settings.Adaptations[name] = value;
-    };
+    }
 
-    var getSelectedStoryName = function (storyNames) {
+    function getSelectedStoryName(storyNames) {
         const storyNamesOnly = storyNames.map(R.prop('storyName'));
 
         const settings = DBMS.getSettings();
@@ -330,28 +337,30 @@ See the License for the specific language governing permissions and
                 selectedFilter: 'adaptationFilterByCharacter'
             };
         }
-        let storyName = settings.Adaptations.storyName;
+        let { storyName } = settings.Adaptations;
         if (storyNamesOnly.indexOf(storyName) === -1) {
+            // eslint-disable-next-line prefer-destructuring
             settings.Adaptations.storyName = storyNamesOnly[0];
+            // eslint-disable-next-line prefer-destructuring
             storyName = storyNamesOnly[0];
         }
         return storyName;
-    };
+    }
 
-    const getNames = function (nameObjectArray, nameObjectProperty, settingsProperty) {
+    function getNames(nameObjectArray, nameObjectProperty, settingsProperty) {
         const namesOnly = nameObjectArray.map(R.prop(nameObjectProperty));
         const names = DBMS.getSettings().Adaptations[settingsProperty];
         const existingNames = names.filter(name => namesOnly.indexOf(name) !== -1);
 
         updateSettings(settingsProperty, existingNames);
         return existingNames;
-    };
+    }
 
-    var getCharacterNames = function (characterArray) {
+    function getCharacterNames(characterArray) {
         return getNames(characterArray, 'characterName', 'characterNames');
-    };
+    }
 
-    var getEventIndexes = function (eventArray) {
+    function getEventIndexes(eventArray) {
         return getNames(eventArray, 'index', 'eventIndexes');
-    };
-}(this.Adaptations = {}));
+    }
+})(this.Adaptations = {});

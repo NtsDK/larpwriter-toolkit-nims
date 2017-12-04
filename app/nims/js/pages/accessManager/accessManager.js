@@ -18,12 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
     state.views = {};
     const root = '.access-manager-tab ';
 
-    exports.init = function () {
+    exports.init = () => {
         const containers = {
             root: state,
             navigation: queryEl(`${root} .navigation`),
@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         state.currentView.refresh();
     };
-}(this.AccessManager = {}));
+})(this.AccessManager = {});

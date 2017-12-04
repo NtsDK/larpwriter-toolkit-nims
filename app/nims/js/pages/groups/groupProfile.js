@@ -18,10 +18,10 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         listen(queryEl('.group-profile-tab .entity-selector'), 'change', showProfileInfoDelegate);
 
         const tbody = clearEl(queryEl('.group-profile-tab .entity-profile'));
@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
         exports.content = queryEl('.group-profile-tab');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         PermissionInformer.getEntityNamesArray('group', false, (err, groupNames) => {
             if (err) { Utils.handleError(err); return; }
 
@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var applySettings = function (names, selector) {
+    function applySettings(names, selector) {
         if (names.length > 0) {
             const name = names[0].value;
             const settings = DBMS.getSettings();
@@ -56,7 +56,7 @@ See the License for the specific language governing permissions and
                     groupName: name
                 };
             }
-            let groupName = settings.GroupProfile.groupName;
+            let { groupName } = settings.GroupProfile;
             if (names.map(nameInfo => nameInfo.value).indexOf(groupName) === -1) {
                 settings.GroupProfile.groupName = name;
                 groupName = name;
@@ -64,9 +64,9 @@ See the License for the specific language governing permissions and
             DBMS.getGroup(groupName, showProfileInfoCallback);
             selector.value = groupName;
         }
-    };
+    }
 
-    var makeInput = function (profileItemConfig) {
+    function makeInput(profileItemConfig) {
         const span = setAttr(makeEl('span'), 'l10n-id', `groups-${profileItemConfig.name}`);
         const tr = addEl(makeEl('tr'), addEl(makeEl('td'), addEl(span, makeText(profileItemConfig.displayName))));
         let input;
@@ -93,16 +93,17 @@ See the License for the specific language governing permissions and
         state.inputItems[profileItemConfig.name] = input;
 
         return addEl(tr, addEl(makeEl('td'), input));
-    };
+    }
 
-    var updateFieldValue = function (type) {
-        return function (event) {
+    function updateFieldValue(type) {
+        return (event) => {
             const fieldName = event.target.selfName;
             const groupName = state.name;
 
             let value;
             switch (type) {
             case 'text':
+                // eslint-disable-next-line prefer-destructuring
                 value = event.target.value;
                 break;
             case 'checkbox':
@@ -113,25 +114,25 @@ See the License for the specific language governing permissions and
             }
             DBMS.updateGroupField(groupName, fieldName, value, Utils.processError());
         };
-    };
+    }
 
-    var showProfileInfoDelegate = function (event) {
+    function showProfileInfoDelegate(event) {
         const name = event.target.value.trim();
         DBMS.getGroup(name, showProfileInfoCallback);
-    };
+    }
 
-    var showProfileInfoCallback = function (err, group) {
+    function showProfileInfoCallback(err, group) {
         if (err) { Utils.handleError(err); return; }
-        const name = group.name;
-        FilterConfiguration.makeFilterConfiguration((err, filterConfiguration) => {
-            if (err) { Utils.handleError(err); return; }
+        const { name } = group;
+        FilterConfiguration.makeFilterConfiguration((err1, filterConfiguration) => {
+            if (err1) { Utils.handleError(err1); return; }
 
-            PermissionInformer.isEntityEditable('group', name, (err, isGroupEditable) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.isEntityEditable('group', name, (err2, isGroupEditable) => {
+                if (err2) { Utils.handleError(err2); return; }
                 updateSettings(name);
 
                 state.name = name;
-                const inputItems = state.inputItems;
+                const { inputItems } = state;
                 Object.keys(inputItems).forEach((inputName) => {
                     if (inputItems[inputName].type === 'checkbox') {
                         inputItems[inputName].checked = group[inputName];
@@ -157,21 +158,22 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-    };
+    }
 
-    const getHeaderDisplayName = function (filterConfiguration, name) {
+    function getHeaderDisplayName(filterConfiguration, name) {
         return CommonUtils.arr2map(filterConfiguration.getProfileFilterItems(), 'name')[name].displayName;
-    };
+    }
 
+    // eslint-disable-next-line no-var,vars-on-top
     var makeFilterItemString = R.curry((filterConfiguration, filterItem) => {
         const displayName = getHeaderDisplayName(filterConfiguration, filterItem.name);
-        let condition;
+        let condition, arr;
         switch (filterItem.type) {
         case 'enum':
             condition = strFormat('{0}', [Object.keys(filterItem.selectedOptions).join(', ')]);
             break;
         case 'checkbox':
-            var arr = [];
+            arr = [];
             if (filterItem.selectedOptions.true) { arr.push(getL10n('constant-yes')); }
             if (filterItem.selectedOptions.false) { arr.push(getL10n('constant-no')); }
             condition = strFormat('{0}', [arr.join(', ')]);
@@ -194,8 +196,8 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('tr'), [td1, td2]);
     });
 
-    var updateSettings = function (name) {
+    function updateSettings(name) {
         const settings = DBMS.getSettings();
         settings.GroupProfile.groupName = name;
-    };
-}(this.GroupProfile = {}));
+    }
+})(this.GroupProfile = {});

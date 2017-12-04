@@ -18,12 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
 
     const root = '.investigation-board-tab ';
 
-    exports.init = function () {
+    exports.init = () => {
         listen(queryEl(`${root}.group-add-button`), 'click', addGroup);
         listen(queryEl(`${root}.group-switch-button`), 'click', switchGroup);
         listen(queryEl(`${root}.group-save-notes-button`), 'click', setGroupNotes);
@@ -54,7 +54,7 @@ See the License for the specific language governing permissions and
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function (softRefresh) {
+    exports.refresh = (softRefresh) => {
         PermissionInformer.getEntityNamesArray('group', false, Utils.processError((groupNames) => {
             DBMS.getInvestigationBoardData((err, ibData) => {
                 const allGroupNames = groupNames.map(R.prop('value'));
@@ -74,23 +74,23 @@ See the License for the specific language governing permissions and
         }));
     };
 
-    const addNode = function (node, callback) {
+    function addNode(node, callback) {
         showPopup('.board-add-node-popup', true);
         state.modifyArgs = {
             newNode: node,
             callback
         };
-    };
+    }
 
-    var addGroup = function () {
+    function addGroup() {
         const name = queryEl(`${root}.group-add-select`).value.trim();
         DBMS.addBoardGroup(name, (err) => {
             if (err) { Utils.handleError(err); return; }
             setNode(name, 'groups');
         });
-    };
+    }
 
-    var createResource = function () {
+    function createResource() {
         const input = queryEl(`${root}.create-entity-input`);
         const name = input.value.trim();
         DBMS.createResource(name, (err) => {
@@ -98,9 +98,9 @@ See the License for the specific language governing permissions and
             input.value = '';
             setNode(name, 'resources');
         });
-    };
+    }
 
-    var setNode = function (nodeName, group) {
+    function setNode(nodeName, group) {
         const node = state.modifyArgs.newNode;
         if (group === 'groups') {
             node.originalLabel = nodeName;
@@ -114,9 +114,9 @@ See the License for the specific language governing permissions and
         showPopup('.board-add-node-popup', false);
         exports.refresh(true);
         state.modifyArgs.callback(node);
-    };
+    }
 
-    const editNodeFun = function (node, callback) {
+    function editNodeFun(node, callback) {
         state.modifyArgs = {
             editNode: node,
             callback
@@ -127,18 +127,18 @@ See the License for the specific language governing permissions and
         } else {
             showPopup('.board-edit-resource-popup', true);
         }
-    };
+    }
 
-    var editGroup = function () {
+    function editGroup() {
         showPopup('.board-edit-group-popup', true);
         queryEl(`${root}.group-notes-editor`).value = state.modifyArgs.editNode.originalNotes;
-    };
+    }
 
-    var switchGroup = function () {
+    function switchGroup() {
         const node = state.modifyArgs.editNode;
         const fromName = node.originalLabel;
         const toName = queryEl(`${root}.group-switch-select`).value.trim();
-        const callback = state.modifyArgs.callback;
+        const { callback } = state.modifyArgs;
 
         DBMS.switchGroups(fromName, toName, (err) => {
             if (err) { Utils.handleError(err); return; }
@@ -148,12 +148,12 @@ See the License for the specific language governing permissions and
             callback(node);
             exports.refresh(true);
         });
-    };
+    }
 
-    var setGroupNotes = function () {
+    function setGroupNotes() {
         const node = state.modifyArgs.editNode;
         const notes = queryEl(`${root}.group-notes-editor`).value.trim();
-        const callback = state.modifyArgs.callback;
+        const { callback } = state.modifyArgs;
 
         DBMS.setGroupNotes(node.originalLabel, notes, (err) => {
             if (err) { Utils.handleError(err); return; }
@@ -163,13 +163,13 @@ See the License for the specific language governing permissions and
             callback(node);
             exports.refresh(true);
         });
-    };
+    }
 
-    var renameResource = function () {
+    function renameResource() {
         const node = state.modifyArgs.editNode;
         const fromName = node.label;
         const toName = queryEl(`${root}.rename-entity-input`).value.trim();
-        const callback = state.modifyArgs.callback;
+        const { callback } = state.modifyArgs;
 
         DBMS.renameResource(fromName, toName, (err) => {
             if (err) { Utils.handleError(err); return; }
@@ -178,9 +178,9 @@ See the License for the specific language governing permissions and
             showPopup('.board-edit-resource-popup', false);
             callback(node);
         });
-    };
+    }
 
-    const deleteNode = function (data, callback) {
+    function deleteNode(data, callback) {
         const node = state.nodesDataset.get(data.nodes[0]);
         const funcName = node.group === 'groups' ? 'removeBoardGroup' : 'removeResource';
         const msg = node.group === 'groups' ? getL10n('investigation-board-confirm-group-node-removing') :
@@ -194,21 +194,21 @@ See the License for the specific language governing permissions and
                 callback(data);
             });
         }, callback);
-    };
+    }
 
     function prepareStr(str) {
         return str.split('\n').map(R.splitEvery(20)).map(R.join('\n')).join('\n');
     }
 
-    var makeDisplayLabel = function (label, notes) {
+    function makeDisplayLabel(label, notes) {
         return prepareStr(label) + (notes.trim() === '' ? '' : (`\n\n${prepareStr(notes)}`));
-    };
+    }
 
-    var _makeRelNodeId = function (name, type) {
+    function _makeRelNodeId(name, type) {
         return (type === 'groups' ? 'group-' : 'resource-') + name;
-    };
+    }
 
-    var redrawBoard = function (ibData) {
+    function redrawBoard(ibData) {
         let nodes = [];
         function makeResourceNode(name) {
             return {
@@ -231,9 +231,7 @@ See the License for the specific language governing permissions and
         state.nodesDataset.clear();
         state.nodesDataset.add(nodes);
 
-        var edges = [];
-
-        var edges = R.flatten(R.keys(ibData.relations).map(rel1 => R.keys(ibData.relations[rel1]).map(rel2 => ({
+        const edges = R.flatten(R.keys(ibData.relations).map(rel1 => R.keys(ibData.relations[rel1]).map(rel2 => ({
             from: rel1,
             to: rel2,
             label: ibData.relations[rel1][rel2],
@@ -259,16 +257,16 @@ See the License for the specific language governing permissions and
         });
 
         state.network.setOptions(opts);
-    };
+    }
 
-    var showEdgeLabelEditor = function (params) {
+    function showEdgeLabelEditor(params) {
         if (params.edges.length !== 0 && params.nodes.length === 0) {
             const edge = state.edgesDataset.get(params.edges[0]);
             state.modifyArgs = {
                 edge,
-                callback(edge) {
-                    if (edge) {
-                        state.edgesDataset.update(edge);
+                callback(edge2) {
+                    if (edge2) {
+                        state.edgesDataset.update(edge2);
                     }
                 },
                 editEdge: true
@@ -276,12 +274,12 @@ See the License for the specific language governing permissions and
             queryEl(`${root}.add-edge-label-input`).value = edge.label;
             showPopup('.board-add-edge-popup', true);
         }
-    };
-    var hideEdgeLabelEditor = function (params) {
+    }
+    function hideEdgeLabelEditor(params) {
         showPopup('.board-add-edge-popup', false);
-    };
+    }
 
-    var createEdge = function (data, callback) {
+    function createEdge(data, callback) {
         const fromNode = state.nodesDataset.get(data.from);
         const toNode = state.nodesDataset.get(data.to);
 
@@ -303,12 +301,12 @@ See the License for the specific language governing permissions and
 
             showEdgeLabelEditor({ edges: [items[0].id], nodes: [] });
         });
-    };
+    }
 
-    var updateEdge = function () {
+    function updateEdge() {
         const input = queryEl(`${root}.add-edge-label-input`);
         const label = input.value.trim();
-        const edge = state.modifyArgs.edge;
+        const { edge } = state.modifyArgs;
         DBMS.setEdgeLabel(edge.from, edge.to, label, (err) => {
             if (err) { Utils.handleError(err); return; }
 
@@ -317,24 +315,24 @@ See the License for the specific language governing permissions and
             input.value = '';
             state.modifyArgs.callback(edge);
         });
-    };
+    }
 
-    var deleteEdge = function (data, callback) {
+    function deleteEdge(data, callback) {
         const edge = state.edgesDataset.get(data.edges[0]);
         DBMS.removeEdge(edge.from, edge.to, (err) => {
             if (err) { Utils.handleError(err); callback(); return; }
             callback(data);
         });
-    };
+    }
 
-    var cancel = function (selector) {
-        return function () {
+    function cancel(selector) {
+        return () => {
             showPopup(selector, false);
             state.modifyArgs.callback();
         };
-    };
+    }
 
-    var showPopup = R.curry((selector, show) => {
+    function showPopup(selector, show) {
         setClassByCondition(queryEl(root + selector), 'hidden', !show);
-    });
-}(this.InvestigationBoard = {}));
+    }
+})(this.InvestigationBoard = {});
