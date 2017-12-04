@@ -16,15 +16,13 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
-var About = {};
+((exports) => {
+    exports.init = () => {
+        exports.content = getEl('aboutDiv');
+    };
 
-About.init = function() {
-    "use strict";
-
-    About.content = getEl('aboutDiv');
-};
-
-About.refresh = function() {
-};
+    exports.refresh = () => {
+    };
+})(this.About = {});

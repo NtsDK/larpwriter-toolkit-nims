@@ -18,26 +18,27 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var Briefings = {};
+((exports) => {
+    
+    const state = {};
+    
+    exports.init = () => {
+        var root = state;
+        root.views = {};
+        var nav = "briefingsNavigation";
+        var content = "briefingsContent";
+        var containers = {
+            root: root,
+            navigation: getEl(nav),
+            content: getEl(content)
+        };
+        Utils.addView(containers, "briefing-preview", BriefingPreview, {mainPage:true});
+        Utils.addView(containers, "briefing-export", BriefingExport);
 
-Briefings.init = function () {
-    "use strict";
-    var root = Briefings;
-    root.views = {};
-    var nav = "briefingsNavigation";
-    var content = "briefingsContent";
-    var containers = {
-        root: root,
-        navigation: getEl(nav),
-        content: getEl(content)
+        exports.content = getEl("briefingsDiv");
     };
-    Utils.addView(containers, "briefing-preview", BriefingPreview, {mainPage:true});
-    Utils.addView(containers, "briefing-export", BriefingExport);
 
-    Briefings.content = getEl("briefingsDiv");
-};
-
-Briefings.refresh = function () {
-    "use strict";
-    Briefings.currentView.refresh();
-};
+    exports.refresh = () => {
+        state.currentView.refresh();
+    };
+})(this.Briefings = {});

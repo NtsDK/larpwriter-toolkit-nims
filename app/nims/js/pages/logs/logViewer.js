@@ -18,52 +18,48 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var LogViewer = {};
+((exports) => {
+    exports.init = () => {
+        listen(getEl('logPageSelector'), 'change', (event) => {
+            DBMS.getLog(Number(event.target.value), dataRecieved);
+        });
 
-LogViewer.init = function() {
-    "use strict";
-    listen(getEl('logPageSelector'), 'change', function(event){
-        DBMS.getLog(Number(event.target.value), LogViewer.dataRecieved);
-    });
+        exports.content = getEl('logViewerDiv');
+    };
 
-    LogViewer.content = getEl('logViewerDiv');
-};
+    exports.refresh = () => {
+        getEl('logPageSelector').selectedIndex = 0;
+        DBMS.getLog(0, dataRecieved);
+    };
 
-LogViewer.refresh = function() {
-    "use strict";
-    getEl('logPageSelector').selectedIndex = 0;
-    DBMS.getLog(0, LogViewer.dataRecieved);
-};
+    function dataRecieved(err, data) {
+        if (err) { Utils.handleError(err); return; }
 
-LogViewer.dataRecieved = function(err, data) {
-    "use strict";
-    if(err) {Utils.handleError(err); return;}
-    
-    var sel = getEl('logPageSelector');
-    var selectedIndex = sel.selectedIndex;
-    clearEl(sel);
+        const sel = getEl('logPageSelector');
+        const { selectedIndex } = sel;
+        clearEl(sel);
 
-    var selData = [];
-    for (var i = 0; i < data.logSize; i++) {
-        selData.push({ name: i+1, value: String(i), selected: selectedIndex == i });
+        const selData = [];
+        for (let i = 0; i < data.logSize; i++) {
+            selData.push({ name: i + 1, value: String(i), selected: selectedIndex === i });
+        }
+        fillSelector(sel, selData);
+
+        const container = clearEl(getEl('logData'));
+
+        R.ap([addEl(container)], data.requestedLog.map(makeRow));
     }
-    fillSelector(sel, selData);
-    
-    var container = clearEl(getEl('logData'));
-    
-    R.ap([addEl(container)], data.requestedLog.map(LogViewer.makeRow));
-};
 
-LogViewer.makeRow = function(rowData){
-    "use strict";
-    var tr = makeEl('tr');
-    var addText = function(text){
-        addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'),makeText(text))));
+    function makeRow(rowData) {
+        const tr = makeEl('tr');
+        const addText = (text) => {
+            addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(text))));
+        };
+        addText(rowData[0]);
+        addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss'));
+        addText(rowData[1]);
+        addText(rowData[3]);
+        addText(rowData[4]);
+        return tr;
     }
-    addText(rowData[0]);
-    addText(new Date(rowData[2]).format("yyyy/mm/dd HH:MM:ss"));
-    addText(rowData[1]);
-    addText(rowData[3]);
-    addText(rowData[4]);
-    return tr;
-};
+})(this.LogViewer = {});

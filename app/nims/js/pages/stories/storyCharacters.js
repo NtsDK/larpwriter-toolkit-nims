@@ -18,183 +18,173 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var StoryCharacters = {};
+((exports) => {
 
-StoryCharacters.init = function () {
-    "use strict";
-    var button = getEl("storyCharactersAddButton");
-    button.addEventListener("click", StoryCharacters.addCharacter);
-
-    button = getEl("storyCharactersSwitchButton");
-    button.addEventListener("click", StoryCharacters.switchCharacters);
-
-    button = getEl("storyCharactersRemoveButton");
-    button.addEventListener("click", StoryCharacters.removeCharacter);
-
-    StoryCharacters.ExternalCharacterSelectors = [getEl("storyCharactersAddSelector"), getEl("storyCharactersToSelector")];
-    StoryCharacters.InternalCharacterSelectors = [getEl("storyCharactersRemoveSelector"), getEl("storyCharactersFromSelector")];
+    const state = {};
     
-    StoryCharacters.content = getEl("storyCharactersDiv");
-};
-
-StoryCharacters.refresh = function () {
-    "use strict";
-
-    StoryCharacters.ExternalCharacterSelectors.forEach(clearEl);
-    StoryCharacters.InternalCharacterSelectors.forEach(clearEl);
+    exports.init = function () {
+        var button = getEl("storyCharactersAddButton");
+        button.addEventListener("click", addCharacter);
     
-    clearEl(getEl("story-characterActivityTableHead"));
-    clearEl(getEl("story-characterActivityTable"));
-    clearEl(getEl("storyCharactersTableHead"));
-    clearEl(getEl("storyCharactersTable"));
+        button = getEl("storyCharactersSwitchButton");
+        button.addEventListener("click", switchCharacters);
     
-    if(!Stories.CurrentStoryName){return;}
+        button = getEl("storyCharactersRemoveButton");
+        button.addEventListener("click", removeCharacter);
     
-    PermissionInformer.isEntityEditable('story', Stories.CurrentStoryName, function(err, isStoryEditable){
-        if(err) {Utils.handleError(err); return;}
-        PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacters){
+        state.ExternalCharacterSelectors = [getEl("storyCharactersAddSelector"), getEl("storyCharactersToSelector")];
+        state.InternalCharacterSelectors = [getEl("storyCharactersRemoveSelector"), getEl("storyCharactersFromSelector")];
+        
+        exports.content = getEl("storyCharactersDiv");
+    };
+    
+    exports.refresh = function () {
+        state.ExternalCharacterSelectors.forEach(clearEl);
+        state.InternalCharacterSelectors.forEach(clearEl);
+        
+        clearEl(getEl("story-characterActivityTableHead"));
+        clearEl(getEl("story-characterActivityTable"));
+        clearEl(getEl("storyCharactersTableHead"));
+        clearEl(getEl("storyCharactersTable"));
+        
+        if(!Stories.getCurrentStoryName()){return;}
+        
+        PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), function(err, isStoryEditable){
             if(err) {Utils.handleError(err); return;}
-            DBMS.getStoryCharacters(Stories.CurrentStoryName, function(err, localCharacters){
+            PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacters){
                 if(err) {Utils.handleError(err); return;}
-                StoryCharacters.rebuildInterface(allCharacters, localCharacters);
-                Utils.enable(StoryCharacters.content, "isStoryEditable", isStoryEditable);
-                Stories.chainRefresh();
+                DBMS.getStoryCharacters(Stories.getCurrentStoryName(), function(err, localCharacters){
+                    if(err) {Utils.handleError(err); return;}
+                    rebuildInterface(allCharacters, localCharacters);
+                    Utils.enable(exports.content, "isStoryEditable", isStoryEditable);
+                    Stories.chainRefresh();
+                });
             });
         });
-    });
-};
-
-StoryCharacters.rebuildInterface = function (allCharacters, localCharacters) {
-    "use strict";
+    };
+    
+    var rebuildInterface = function (allCharacters, localCharacters) {
+        var addArray = [];
+        var removeArray = [];
         
-    var addArray = [];
-    var removeArray = [];
+        allCharacters.filter(function(nameInfo){
+            return !localCharacters[nameInfo.value];
+        }).forEach(function(nameInfo){
+            addArray.push(nameInfo);
+        });
+        
+        allCharacters.filter(function(nameInfo){
+            return localCharacters[nameInfo.value];
+        }).forEach(function(nameInfo){
+            removeArray.push(nameInfo);
+        });
+        
+        addArray.sort(Utils.charOrdAObject);
+        removeArray.sort(Utils.charOrdAObject);
+        
+        var addData = getSelect2Data(addArray);
+        var removeData = getSelect2Data(removeArray);
+        
+        state.ExternalCharacterSelectors.forEach(function(selector){
+            $("#" + selector.id).select2(addData);
+        });
+        state.InternalCharacterSelectors.forEach(function(selector){
+            $("#" + selector.id).select2(removeData);
+        });
+        
+        var tableHead = clearEl(getEl("story-characterActivityTableHead"));
+        var table = clearEl(getEl("story-characterActivityTable"));
+        addEl(tableHead, getCharacterHeader([getL10n("stories-name")].concat(Constants.characterActivityTypes.map(constL10n))));
+        removeArray.forEach(function (removeValue) {
+            addEl(table, getCharacterActivity(removeValue, localCharacters[removeValue.value]));
+        });
+        
+        tableHead = clearEl(getEl("storyCharactersTableHead"));
+        table = clearEl(getEl("storyCharactersTable"));
+        addEl(tableHead, getCharacterHeader([getL10n("stories-name"), getL10n("stories-inventory")]));
+        removeArray.forEach(function (removeValue) {
+            addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
+        });
+    };
     
-    allCharacters.filter(function(nameInfo){
-        return !localCharacters[nameInfo.value];
-    }).forEach(function(nameInfo){
-        addArray.push(nameInfo);
-    });
+    var addCharacter = function () {
+        var characterName = getEl("storyCharactersAddSelector").value.trim();
+        DBMS.addStoryCharacter(Stories.getCurrentStoryName(), characterName, Utils.processError(exports.refresh));
+    };
     
-    allCharacters.filter(function(nameInfo){
-        return localCharacters[nameInfo.value];
-    }).forEach(function(nameInfo){
-        removeArray.push(nameInfo);
-    });
+    var switchCharacters = function () {
+        var fromName = getEl("storyCharactersFromSelector").value.trim();
+        var toName = getEl("storyCharactersToSelector").value.trim();
+        DBMS.switchStoryCharacters(Stories.getCurrentStoryName(), fromName, toName, Utils.processError(exports.refresh));
+    };
     
-    addArray.sort(Utils.charOrdAObject);
-    removeArray.sort(Utils.charOrdAObject);
+    var removeCharacter = function () {
+        var characterName = getEl("storyCharactersRemoveSelector").value.trim();
+        Utils.confirm(strFormat(getL10n("stories-remove-character-from-story-warning"),[characterName]), () => {
+            DBMS.removeStoryCharacter(Stories.getCurrentStoryName(), characterName, Utils.processError(exports.refresh));
+        });
+    };
     
-    var addData = getSelect2Data(addArray);
-    var removeData = getSelect2Data(removeArray);
+    var getCharacterHeader = function (values) {
+        var tr = makeEl("tr");
+        values.forEach(function(value){
+            addEl(tr, addEl(makeEl('th'), makeText(value)));
+        });
+        return tr;
+    };
     
-    StoryCharacters.ExternalCharacterSelectors.forEach(function(selector){
-        $("#" + selector.id).select2(addData);
-    });
-    StoryCharacters.InternalCharacterSelectors.forEach(function(selector){
-        $("#" + selector.id).select2(removeData);
-    });
+    var getCharacterInput = function (characterMeta, character) {
+        var tr = makeEl("tr");
+        var td = makeEl("td");
+        td.appendChild(makeText(characterMeta.displayName));
+        tr.appendChild(td);
     
-    var tableHead = clearEl(getEl("story-characterActivityTableHead"));
-    var table = clearEl(getEl("story-characterActivityTable"));
-    addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name")].concat(Constants.characterActivityTypes.map(constL10n))));
-    removeArray.forEach(function (removeValue) {
-        addEl(table, StoryCharacters.getCharacterActivity(removeValue, localCharacters[removeValue.value]));
-    });
-    
-    tableHead = clearEl(getEl("storyCharactersTableHead"));
-    table = clearEl(getEl("storyCharactersTable"));
-    addEl(tableHead, StoryCharacters.getCharacterHeader([getL10n("stories-name"), getL10n("stories-inventory")]));
-    removeArray.forEach(function (removeValue) {
-        addEl(table, StoryCharacters.getCharacterInput(removeValue, localCharacters[removeValue.value]));
-    });
-};
-
-StoryCharacters.addCharacter = function () {
-    "use strict";
-    var characterName = getEl("storyCharactersAddSelector").value.trim();
-    DBMS.addStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
-};
-
-StoryCharacters.switchCharacters = function () {
-    "use strict";
-    var fromName = getEl("storyCharactersFromSelector").value.trim();
-    var toName = getEl("storyCharactersToSelector").value.trim();
-    DBMS.switchStoryCharacters(Stories.CurrentStoryName, fromName, toName, Utils.processError(StoryCharacters.refresh));
-};
-
-StoryCharacters.removeCharacter = function () {
-    "use strict";
-    var characterName = getEl("storyCharactersRemoveSelector").value.trim();
-    Utils.confirm(strFormat(getL10n("stories-remove-character-from-story-warning"),[characterName]), () => {
-        DBMS.removeStoryCharacter(Stories.CurrentStoryName, characterName, Utils.processError(StoryCharacters.refresh));
-    });
-};
-
-StoryCharacters.getCharacterHeader = function (values) {
-    "use strict";
-    var tr = makeEl("tr");
-    values.forEach(function(value){
-        addEl(tr, addEl(makeEl('th'), makeText(value)));
-    });
-    return tr;
-};
-
-StoryCharacters.getCharacterInput = function (characterMeta, character) {
-    "use strict";
-    var tr = makeEl("tr");
-    var td = makeEl("td");
-    td.appendChild(makeText(characterMeta.displayName));
-    tr.appendChild(td);
-
-    td = makeEl("td");
-    var input = makeEl("input");
-    input.value = character.inventory;
-    input.characterName = character.name;
-    addClass(input, "inventoryInput");
-    addClass(input, "isStoryEditable");
-    input.addEventListener("change", StoryCharacters.updateCharacterInventory);
-    td.appendChild(input);
-    tr.appendChild(td);
-    return tr;
-};
-
-StoryCharacters.updateCharacterInventory = function (event) {
-    "use strict";
-    DBMS.updateCharacterInventory(Stories.CurrentStoryName, event.target.characterName, event.target.value, Utils.processError());
-};
-
-StoryCharacters.getCharacterActivity = function (characterMeta, character) {
-    "use strict";
-    var tr = makeEl("tr");
-    var td = makeEl("td");
-    td.appendChild(makeText(characterMeta.displayName));
-    tr.appendChild(td);
-    
-    var input;
-    addEls(tr, Constants.characterActivityTypes.map(function (activityType) {
-        td = addClass(makeEl("td"),'vertical-aligned-td');
-        input = makeEl("input");
-        addClass(input, "isStoryEditable");
-        input.type = "checkbox";
-        if (character.activity[activityType]) {
-            input.checked = true;
-        }
+        td = makeEl("td");
+        var input = makeEl("input");
+        input.value = character.inventory;
         input.characterName = character.name;
-        input.activityType = activityType;
-        input.addEventListener("change", StoryCharacters.onChangeCharacterActivity);
-        setAttr(input, 'id', character.name + activityType);
-        addClass(input, 'hidden')
-        addEl(td, input)
-        var label = addClass(makeEl('label'),'checkbox-label');
-        setAttr(label, 'for', character.name + activityType);
-        return addEl(td, label);
-    }));
-    return tr;
-};
-
-StoryCharacters.onChangeCharacterActivity = function (event) {
-    "use strict";
-    DBMS.onChangeCharacterActivity(Stories.CurrentStoryName, event.target.characterName, 
-            event.target.activityType, event.target.checked, Utils.processError());
-};
+        addClass(input, "inventoryInput");
+        addClass(input, "isStoryEditable");
+        input.addEventListener("change", updateCharacterInventory);
+        td.appendChild(input);
+        tr.appendChild(td);
+        return tr;
+    };
+    
+    var updateCharacterInventory = function (event) {
+        DBMS.updateCharacterInventory(Stories.getCurrentStoryName(), event.target.characterName, event.target.value, Utils.processError());
+    };
+    
+    var getCharacterActivity = function (characterMeta, character) {
+        var tr = makeEl("tr");
+        var td = makeEl("td");
+        td.appendChild(makeText(characterMeta.displayName));
+        tr.appendChild(td);
+        
+        var input;
+        addEls(tr, Constants.characterActivityTypes.map(function (activityType) {
+            td = addClass(makeEl("td"),'vertical-aligned-td');
+            input = makeEl("input");
+            addClass(input, "isStoryEditable");
+            input.type = "checkbox";
+            if (character.activity[activityType]) {
+                input.checked = true;
+            }
+            input.characterName = character.name;
+            input.activityType = activityType;
+            input.addEventListener("change", onChangeCharacterActivity);
+            setAttr(input, 'id', character.name + activityType);
+            addClass(input, 'hidden')
+            addEl(td, input)
+            var label = addClass(makeEl('label'),'checkbox-label');
+            setAttr(label, 'for', character.name + activityType);
+            return addEl(td, label);
+        }));
+        return tr;
+    };
+    
+    var onChangeCharacterActivity = function (event) {
+        DBMS.onChangeCharacterActivity(Stories.getCurrentStoryName(), event.target.characterName, 
+                event.target.activityType, event.target.checked, Utils.processError());
+    };
+})(this.StoryCharacters = {});

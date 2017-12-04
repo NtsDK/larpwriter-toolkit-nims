@@ -18,32 +18,30 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var MasterStory = {};
-
-MasterStory.init = function() {
-    "use strict";
-    listen(getEl('masterStoryArea'), "change", MasterStory.updateMasterStory);
-
-    MasterStory.content = getEl('masterStoryDiv2');
-};
-
-MasterStory.refresh = function() {
-    "use strict";
-    var storyArea = getEl("masterStoryArea");
-    var storyName = Stories.CurrentStoryName;
-
-    if(storyName){
-        DBMS.getMasterStory(storyName, function(err, story){
-            if(err) {Utils.handleError(err); return;}
-            storyArea.value = story;
-        });
-    } else {
-        storyArea.value = "";
-    }
-};
-
-MasterStory.updateMasterStory = function () {
-    "use strict";
-    var storyArea = getEl("masterStoryArea");
-    DBMS.setMasterStory(Stories.CurrentStoryName, storyArea.value, Utils.processError());
-};
+((exports) => {
+    const state = {};
+    
+    exports.init = function() {
+        listen(getEl('masterStoryArea'), "change", updateMasterStory);
+        exports.content = getEl('masterStoryDiv2');
+    };
+    
+    exports.refresh = function() {
+        var storyArea = getEl("masterStoryArea");
+        var storyName = Stories.getCurrentStoryName();
+    
+        if(storyName){
+            DBMS.getMasterStory(storyName, function(err, story){
+                if(err) {Utils.handleError(err); return;}
+                storyArea.value = story;
+            });
+        } else {
+            storyArea.value = "";
+        }
+    };
+    
+    var updateMasterStory = function () {
+        var storyArea = getEl("masterStoryArea");
+        DBMS.setMasterStory(Stories.getCurrentStoryName(), storyArea.value, Utils.processError());
+    };
+})(this.MasterStory = {});

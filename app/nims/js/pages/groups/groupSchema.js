@@ -18,29 +18,31 @@ See the License for the specific language governing permissions and
 
 "use strict";
 
-var GroupSchema = {};
-
-GroupSchema.init = function () {
-    GroupSchema.content = queryEl(".group-schema-tab");
-};
-
-GroupSchema.refresh = function () {
-    DBMS.getGroupSchemas(function(err, schemas){
-        GroupSchema.redrawSchema(schemas.theory);
-    });
-};
-
-GroupSchema.redrawSchema = function (graph) {
-    var container = queryEl('.group-schema-tab .schema-container');
+((exports) => {
+    const state = {};
     
-    if(GroupSchema.network){
-        GroupSchema.network.destroy();
-    }
-    graph.edges = graph.edges.map(function(edge){
-        return R.merge(edge, {
-            'physics' : false,
+    exports.init = function () {
+        exports.content = queryEl(".group-schema-tab");
+    };
+    
+    exports.refresh = function () {
+        DBMS.getGroupSchemas(function(err, schemas){
+            redrawSchema(schemas.theory);
         });
-    });
+    };
     
-    GroupSchema.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
-};
+    var redrawSchema = function (graph) {
+        var container = queryEl('.group-schema-tab .schema-container');
+        
+        if(state.network){
+            state.network.destroy();
+        }
+        graph.edges = graph.edges.map(function(edge){
+            return R.merge(edge, {
+                'physics' : false,
+            });
+        });
+        
+        state.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
+    };
+})(this.GroupSchema = {});
