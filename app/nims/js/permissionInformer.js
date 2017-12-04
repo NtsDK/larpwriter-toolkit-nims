@@ -17,13 +17,13 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports, mode) {
+((exports, mode) => {
     const state = {};
 
     state.summary = {};
 
     if (mode === 'NIMS_Server' && PERMISSION_INFORMER_ENABLED) {
-        exports.refresh = function (callback) {
+        exports.refresh = (callback) => {
             const request = $.ajax({
                 url: '/getPermissionsSummary',
                 dataType: 'text',
@@ -52,7 +52,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        exports.subscribe = function () {
+        exports.subscribe = () => {
             const request = $.ajax({
                 url: '/subscribeOnPermissionsUpdate',
                 dataType: 'text',
@@ -75,19 +75,15 @@ See the License for the specific language governing permissions and
 
         exports.refresh();
 
-        exports.isAdmin = function (callback) {
+        exports.isAdmin = (callback) => {
             callback(null, state.summary.isAdmin);
         };
 
-        exports.isEditor = function (callback) {
+        exports.isEditor = (callback) => {
             callback(null, state.summary.isEditor);
         };
 
-        exports.isEntityEditable = function (type, entityName, callback) {
-            callback(null, isObjectEditableSync(type, entityName));
-        };
-
-        var isObjectEditableSync = function (type, name) {
+        const isObjectEditableSync = (type, name) => {
             if (state.summary.isEditor) {
                 return true;
             }
@@ -95,6 +91,10 @@ See the License for the specific language governing permissions and
                 return false;
             }
             return state.summary.user[type].indexOf(name) !== -1;
+        };
+
+        exports.isEntityEditable = (type, entityName, callback) => {
+            callback(null, isObjectEditableSync(type, entityName));
         };
 
         exports.getEntityNamesArray = R.curry((type, editableOnly, callback) => {
@@ -118,9 +118,9 @@ See the License for the specific language governing permissions and
             callback(null, names);
         });
 
-        exports.areAdaptationsEditable = function (adaptations, callback) {
+        exports.areAdaptationsEditable = (adaptations, callback) => {
             const map = {};
-            const isAdaptationRightsByStory = state.summary.isAdaptationRightsByStory;
+            const { isAdaptationRightsByStory } = state.summary;
 
             adaptations.forEach((elem) => {
                 const key = `${elem.storyName}-${elem.characterName}`;
@@ -134,15 +134,15 @@ See the License for the specific language governing permissions and
             callback(null, map);
         };
     } else if (mode === 'Standalone') {
-        exports.refresh = function (callback) {
+        exports.refresh = (callback) => {
             callback();
         };
 
-        exports.isAdmin = function (callback) {
+        exports.isAdmin = (callback) => {
             callback(null, true);
         };
 
-        exports.isEditor = function (callback) {
+        exports.isEditor = (callback) => {
             callback(null, true);
         };
 
@@ -162,11 +162,11 @@ See the License for the specific language governing permissions and
             DBMS.getEntityNamesArray(type, processNames);
         });
 
-        exports.isEntityEditable = function (type, entityName, callback) {
+        exports.isEntityEditable = (type, entityName, callback) => {
             callback(null, true);
         };
 
-        exports.areAdaptationsEditable = function (adaptations, callback) {
+        exports.areAdaptationsEditable = (adaptations, callback) => {
             const map = {};
             adaptations.forEach((elem) => {
                 map[`${elem.storyName}-${elem.characterName}`] = true;
@@ -175,4 +175,4 @@ See the License for the specific language governing permissions and
             callback(null, map);
         };
     }
-}(this.PermissionInformer = {}, MODE));
+})(this.PermissionInformer = {}, MODE);

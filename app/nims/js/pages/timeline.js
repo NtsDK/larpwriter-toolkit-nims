@@ -18,10 +18,10 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         listen(getEl('timelineStorySelector'), 'change', onStorySelectorChangeDelegate);
 
         state.TimelineDataset = new vis.DataSet();
@@ -56,7 +56,7 @@ See the License for the specific language governing permissions and
         exports.content = getEl('timelineDiv');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         DBMS.getMetaInfo((err, metaInfo) => {
             if (err) { Utils.handleError(err); return; }
 
@@ -73,18 +73,22 @@ See the License for the specific language governing permissions and
                 start: startDate,
             });
 
-            DBMS.getEventsTimeInfo((err, eventsTimeInfo) => {
-                if (err) { Utils.handleError(err); return; }
+            DBMS.getEventsTimeInfo((err1, eventsTimeInfo) => {
+                if (err1) { Utils.handleError(err1); return; }
                 state.eventsTimeInfo = eventsTimeInfo;
                 state.eventsByStories = R.groupBy(R.prop('storyName'), eventsTimeInfo);
                 state.eventsByCharacters = R.uniq(R.flatten(eventsTimeInfo.map(event => event.characters)));
-                state.eventsByCharacters = R.zipObj(state.eventsByCharacters, R.ap([R.clone], R.repeat([], state.eventsByCharacters.length)));
-                eventsTimeInfo.forEach(event => event.characters.forEach(character => state.eventsByCharacters[character].push(event)));
+                state.eventsByCharacters = R.zipObj(
+                    state.eventsByCharacters,
+                    R.ap([R.clone], R.repeat([], state.eventsByCharacters.length))
+                );
+                eventsTimeInfo.forEach(event => event.characters.forEach(character =>
+                    state.eventsByCharacters[character].push(event)));
 
-                PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
-                    if (err) { Utils.handleError(err); return; }
-                    PermissionInformer.getEntityNamesArray('character', false, (err, allCharacterNames) => {
-                        if (err) { Utils.handleError(err); return; }
+                PermissionInformer.getEntityNamesArray('story', false, (err2, allStoryNames) => {
+                    if (err2) { Utils.handleError(err2); return; }
+                    PermissionInformer.getEntityNamesArray('character', false, (err3, allCharacterNames) => {
+                        if (err3) { Utils.handleError(err3); return; }
                         suffixy(allStoryNames, state.eventsByStories);
                         state.allStoryNames = allStoryNames;
                         suffixy(allCharacterNames, state.eventsByCharacters);
@@ -105,32 +109,34 @@ See the License for the specific language governing permissions and
         });
     }
 
-    var refreshTimeline = function () {
+    function refreshTimeline() {
         const selectorValues = getEl('timelineFilterByStory').checked ? state.allStoryNames : state.allCharacterNames;
 
         const selector = clearEl(getEl('timelineStorySelector'));
         fillSelector(selector, selectorValues.map(remapProps4Select));
         setAttr(selector, 'size', selectorValues.length > 15 ? 15 : selectorValues.length);
 
-        if (selectorValues.length != 0) {
+        if (selectorValues.length !== 0) {
             selector.options[0].selected = true;
             onStorySelectorChange([selectorValues[0].value]);
         }
-    };
+    }
 
-    var onStorySelectorChangeDelegate = event => onStorySelectorChange(nl2array(event.target.selectedOptions).map(opt => opt.value));
+    function onStorySelectorChangeDelegate(event) {
+        onStorySelectorChange(nl2array(event.target.selectedOptions).map(opt => opt.value));
+    }
 
     const prepareLabel = label => R.splitEvery(20, label).join('<br>');
 
-    var onStorySelectorChange = function (entityNames) {
+    function onStorySelectorChange(entityNames) {
         state.TagDataset.clear();
         state.TimelineDataset.clear();
 
         state.TagDataset.add(entityNames.map(entityName => R.always({ id: entityName, content: entityName })()));
 
-        function fillTimelines(entityNames, data) {
-            entityNames = R.intersection(entityNames, R.keys(data));
-            state.TimelineDataset.add(R.flatten(R.toPairs(R.pick(entityNames, data)).map((pair) => {
+        function fillTimelines(entityNames2, data) {
+            entityNames2 = R.intersection(entityNames2, R.keys(data));
+            state.TimelineDataset.add(R.flatten(R.toPairs(R.pick(entityNames2, data)).map((pair) => {
                 const entityName = pair[0];
                 return pair[1].map(event => ({
                     content: prepareLabel(event.name),
@@ -159,5 +165,5 @@ See the License for the specific language governing permissions and
                 editable: false
             });
         }
-    };
-}(this.Timeline = {}));
+    }
+})(this.Timeline = {});

@@ -41,6 +41,11 @@ module.exports = {
         ymaps: false,
         saveAs: false,
         CanvasJS: false,
+        vis: false,
+        markdownit: false,
+        JSZip: false,
+        Mustache: false,
+        Chart: false,
         
         // common pages
         About: false,
@@ -55,6 +60,36 @@ module.exports = {
         marriage: false,
         dataByMonth: true,
         Data: false,
+        
+        // NIMS pages
+        AccessManager: false,
+        TextSearch: false,
+        Groups: false,
+        ProfileFilter: false,
+        PermissionInformer: false,
+        Register: false,
+        Enter: false,
+        Player: false,
+        Stories: false,
+        MasterStory: false,
+        MasterManagement: false,
+        PlayerManagement: false,
+        RelationsPreview: false,
+        FilterConfiguration: false,
+        GroupProfile: false,
+        GroupSchema: false,
+        InvestigationBoard: false,
+        NetworkSubsetsSelector: false,
+        ProfileEditorCore: false,
+        ProfileBinding: false,
+        
+        // NIMS utils
+        ProjectUtils: false,
+        
+        // NIMS constants
+        PERMISSION_INFORMER_ENABLED: false,
+        TEXT_TEMPLATE: false,
+        templatesArr: false,
         
         // utility functions
         makeLocalDBMS: false,
@@ -89,6 +124,19 @@ module.exports = {
         nl2array: false,
         constArr2Select: false,
         setImportantStyle: false,
+        remapProps4Select: false,
+        queryElEls: false,
+        listenOnEnter: false,
+        getSelect2Data: false,
+        setProp: false,
+        arr2Select2: false,
+        makeOpt: false,
+        getSelectedRadio: false,
+        arr2Select: false,
+        getSelect2DataCommon: false,
+        remapProps: false,
+        rAddEl: false,
+        rAddClass: false,
         
     },
 //    "extends": "eslint:recommended",

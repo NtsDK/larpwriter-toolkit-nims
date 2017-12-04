@@ -18,7 +18,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
     state.views = {};
 
@@ -27,7 +27,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         className: 'mainNavButton'
     };
 
-    const initPage = function () {
+    const initPage = () => {
         L10n.localizeStatic();
         L10n.onL10nChange(() => state.currentView.refresh());
         UI.initSelectorFilters();
@@ -40,9 +40,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         L10n.onL10nChange(updateDialogs);
     };
 
-    const protoExpander = function (arr) {
+    const protoExpander = (arr) => {
         function protoCarrier() {}
-        arr.forEach(name => protoCarrier.prototype[name] = (() => 1));
+        arr.forEach(name => (protoCarrier.prototype[name] = (() => 1)));
         return protoCarrier;
     };
     const playerArr = [
@@ -53,7 +53,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         'updateProfileField',
         'getRoleGridInfo'];
 
-    exports.onPlayerPageLoad = function () {
+    exports.onPlayerPageLoad = () => {
         initPage();
         const RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
         window.DBMS = new RemoteDBMS();
@@ -67,7 +67,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         state.currentView.refresh();
     };
 
-    exports.onIndexPageLoad = function () {
+    exports.onIndexPageLoad = () => {
         initPage();
         const RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptions', 'getRoleGridInfo']));
         window.DBMS = new RemoteDBMS();
@@ -86,7 +86,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         });
     };
 
-    exports.onMasterPageLoad = function () {
+    exports.onMasterPageLoad = () => {
         initPage();
         const LocalDBMS = makeLocalDBMS(true);
         if (MODE === 'Standalone') {
@@ -102,7 +102,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         }
     };
 
-    var consistencyCheck = function (callback) {
+    function consistencyCheck(callback) {
         DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
             if (err) { Utils.handleError(err); return; }
             consistencyErrors.forEach(CommonUtils.consoleLog);
@@ -113,25 +113,25 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }
             callback();
         });
-    };
+    }
 
-    var stateInit = function () {
+    function stateInit() {
         state.navigation = getEl('navigation');
         state.containers = {
             root: state,
             navigation: state.navigation,
             content: getEl('contentArea')
         };
-    };
+    }
 
-    var onDatabaseLoad = function () {
+    function onDatabaseLoad() {
         PermissionInformer.refresh((err) => {
             if (err) { Utils.handleError(err); return; }
 
-            PermissionInformer.isAdmin((err, isAdmin) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.isAdmin((err2, isAdmin) => {
+                if (err2) { Utils.handleError(err2); return; }
 
-                var button;
+                let button;
                 stateInit();
 
                 Utils.addView(state.containers, 'overview', Overview, { mainPage: true });
@@ -153,7 +153,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
                 if (isAdmin) {
-                    var button = makeButton('dataLoadButton', 'open-database', null, btnOpts);
+                    button = makeButton('dataLoadButton', 'open-database', null, btnOpts);
                     button.addEventListener('change', FileUtils.readSingleFile, false);
 
                     const input = makeEl('input');
@@ -183,8 +183,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     addEl(state.navigation, makeButton('logoutButton', 'logout', postLogout, btnOpts));
                 }
 
-                FileUtils.init((err) => {
-                    if (err) { Utils.handleError(err); return; }
+                FileUtils.init((err3) => {
+                    if (err3) { Utils.handleError(err3); return; }
                     consistencyCheck(state.currentView.refresh);
                 });
 
@@ -194,19 +194,19 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 }
             });
         });
-    };
+    }
 
-    const makeL10nButton = function () {
+    function makeL10nButton() {
         const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
-        const setIcon = function () {
+        const setIcon = () => {
             l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
         };
         L10n.onL10nChange(setIcon);
         setIcon();
         return l10nBtn;
-    };
+    }
 
-    const runTests = function () {
+    function runTests() {
     //    window.RunTests();
         consistencyCheck((err, checkRes) => {
             if (err) { Utils.handleError(err); return; }
@@ -216,17 +216,17 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 Utils.alert(getL10n('overview-consistency-problem-detected'));
             }
         });
-    };
+    }
 
-    var postLogout = function () {
+    function postLogout() {
         document.querySelector('#logoutForm button').click();
-    };
+    }
 
-    var makeButton = function (clazz, name, callback, opts) {
+    function makeButton(clazz, name, callback, opts) {
         const button = makeEl('button');
         addClass(button, clazz);
         if (opts.tooltip) {
-            const delegate = function () {
+            const delegate = () => {
                 $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
             };
             L10n.onL10nChange(delegate);
@@ -243,10 +243,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             listen(button, 'click', callback);
         }
         return button;
-    };
+    }
 
-    var addBeforeUnloadListener = function () {
-        window.onbeforeunload = function (evt) {
+    function addBeforeUnloadListener() {
+        window.onbeforeunload = (evt) => {
             const message = getL10n('utils-close-page-warning');
             if (typeof evt === 'undefined') {
                 evt = window.event;
@@ -256,5 +256,5 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }
             return message;
         };
-    };
-}(this.PageManager = {}));
+    }
+})(this.PageManager = {});
