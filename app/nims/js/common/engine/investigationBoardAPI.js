@@ -12,127 +12,123 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function investigationBoardAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const Constants = opts.Constants;
+        const Errors = opts.Errors;
+        const listeners = opts.listeners;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var Constants     = opts.Constants   ;
-        var Errors        = opts.Errors      ;
-        var listeners     = opts.listeners   ;
+        const resourcesPath = ['InvestigationBoard', 'resources'];
+        const groupsPath = ['InvestigationBoard', 'groups'];
+        const relationsPath = ['InvestigationBoard', 'relations'];
+        const context = 'investigation-board';
 
-        var resourcesPath = ['InvestigationBoard', 'resources'];
-        var groupsPath = ['InvestigationBoard', 'groups'];
-        var relationsPath = ['InvestigationBoard', 'relations'];
-        var context = 'investigation-board';
-
-        LocalDBMS.prototype.getInvestigationBoardData = function(callback) {
+        LocalDBMS.prototype.getInvestigationBoardData = function (callback) {
             callback(null, CU.clone(this.database.InvestigationBoard));
         };
 
-        LocalDBMS.prototype.addBoardGroup = function(groupName, callback) {
-            var container = R.path(groupsPath, this.database);
-            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
-                                        PC.entityIsNotUsed(groupName, R.keys(container))]);
+        LocalDBMS.prototype.addBoardGroup = function (groupName, callback) {
+            const container = R.path(groupsPath, this.database);
+            const chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
+                PC.entityIsNotUsed(groupName, R.keys(container))]);
             PC.precondition(chain, callback, () => {
                 container[groupName] = {
-                        name:groupName,
-                        notes: ""
+                    name: groupName,
+                    notes: ''
                 };
-                this.ee.trigger("nodeAdded", [groupName, 'groups']);
-                if(callback) callback();
-            });
-        };
-
-        LocalDBMS.prototype.switchGroups = function(fromName, toName, callback) {
-            var container = R.path(groupsPath, this.database);
-            var check = PC.switchEntityCheck(fromName, toName, R.keys(this.database.Groups), R.keys(container));
-            PC.precondition(check, callback, () => {
-                var data = container[fromName];
-                data.name = toName;
-                container[toName] = data;
-                delete container[fromName];
-                this.ee.trigger("nodeRenamed", [fromName, toName, 'groups']);
+                this.ee.trigger('nodeAdded', [groupName, 'groups']);
                 if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.setGroupNotes = function(groupName, notes, callback) {
-            var container = R.path(groupsPath, this.database);
-            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
-                                        PC.entityExists(groupName, R.keys(container)), PC.isString(notes)]);
+        LocalDBMS.prototype.switchGroups = function (fromName, toName, callback) {
+            const container = R.path(groupsPath, this.database);
+            const check = PC.switchEntityCheck(fromName, toName, R.keys(this.database.Groups), R.keys(container));
+            PC.precondition(check, callback, () => {
+                const data = container[fromName];
+                data.name = toName;
+                container[toName] = data;
+                delete container[fromName];
+                this.ee.trigger('nodeRenamed', [fromName, toName, 'groups']);
+                if (callback) callback();
+            });
+        };
+
+        LocalDBMS.prototype.setGroupNotes = function (groupName, notes, callback) {
+            const container = R.path(groupsPath, this.database);
+            const chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
+                PC.entityExists(groupName, R.keys(container)), PC.isString(notes)]);
             PC.precondition(chain, callback, () => {
                 container[groupName].notes = notes;
                 if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.removeBoardGroup = function(groupName, callback) {
-            var container = R.path(groupsPath, this.database);
-            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
-                                        PC.entityExists(groupName, R.keys(container))]);
+        LocalDBMS.prototype.removeBoardGroup = function (groupName, callback) {
+            const container = R.path(groupsPath, this.database);
+            const chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
+                PC.entityExists(groupName, R.keys(container))]);
             PC.precondition(chain, callback, () => {
                 delete container[groupName];
-                this.ee.trigger("nodeRemoved", [groupName, 'groups']);
-                if(callback) callback();
-            });
-        };
-
-        LocalDBMS.prototype.createResource = function(resourceName, callback) {
-            var container = R.path(resourcesPath, this.database);
-            PC.precondition(PC.createEntityCheck(resourceName, R.keys(container)), callback, () => {
-                container[resourceName] = {
-                    name : resourceName
-                };
-                this.ee.trigger("nodeAdded", [resourceName, 'resources']);
+                this.ee.trigger('nodeRemoved', [groupName, 'groups']);
                 if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.renameResource = function(fromName, toName, callback) {
-            var container = R.path(resourcesPath, this.database);
+        LocalDBMS.prototype.createResource = function (resourceName, callback) {
+            const container = R.path(resourcesPath, this.database);
+            PC.precondition(PC.createEntityCheck(resourceName, R.keys(container)), callback, () => {
+                container[resourceName] = {
+                    name: resourceName
+                };
+                this.ee.trigger('nodeAdded', [resourceName, 'resources']);
+                if (callback) callback();
+            });
+        };
+
+        LocalDBMS.prototype.renameResource = function (fromName, toName, callback) {
+            const container = R.path(resourcesPath, this.database);
             PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
-                var data = container[fromName];
+                const data = container[fromName];
                 data.name = toName;
                 container[toName] = data;
                 delete container[fromName];
-                this.ee.trigger("nodeRenamed", [fromName, toName, 'resources']);
+                this.ee.trigger('nodeRenamed', [fromName, toName, 'resources']);
                 if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.removeResource = function(resourceName, callback) {
-            var container = R.path(resourcesPath, this.database);
+        LocalDBMS.prototype.removeResource = function (resourceName, callback) {
+            const container = R.path(resourcesPath, this.database);
             PC.precondition(PC.removeEntityCheck(resourceName, R.keys(container)), callback, () => {
                 delete container[resourceName];
-                this.ee.trigger("nodeRemoved", [resourceName, 'resources']);
+                this.ee.trigger('nodeRemoved', [resourceName, 'resources']);
                 if (callback) callback();
             });
         };
 
-        var isNotResource = R.curry(function(id){
-            return () => {
-                var info = _edgeEndId2info(id);
-                return !R.equals('resources', info[0]) ? null : ['investigation-board-resource-node-cant-be-first'];
-            }
+        const isNotResource = R.curry(id => () => {
+            const info = _edgeEndId2info(id);
+            return !R.equals('resources', info[0]) ? null : ['investigation-board-resource-node-cant-be-first'];
         });
 
-        var edgeEndCheck = function(id, database){
-            var info = _edgeEndId2info(id);
-            var container = R.path(info[0] === 'groups' ? groupsPath : resourcesPath, database);
+        const edgeEndCheck = function (id, database) {
+            const info = _edgeEndId2info(id);
+            const container = R.path(info[0] === 'groups' ? groupsPath : resourcesPath, database);
             return PC.entityExists(info[1], R.keys(container));
         };
 
-        LocalDBMS.prototype.addEdge = function(fromId, toId, callback) {
-            var chain = PC.chainCheck([PC.isString(fromId),PC.isString(toId)]);
+        LocalDBMS.prototype.addEdge = function (fromId, toId, callback) {
+            let chain = PC.chainCheck([PC.isString(fromId), PC.isString(toId)]);
             PC.precondition(chain, callback, () => {
-                var container = R.path(relationsPath, this.database);
+                const container = R.path(relationsPath, this.database);
                 chain = PC.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database), edgeEndCheck(toId, this.database),
-                                        edgeNotExistCheck(fromId, toId, container)]);
+                    edgeNotExistCheck(fromId, toId, container)]);
                 PC.precondition(chain, callback, () => {
                     container[fromId][toId] = '';
                     if (callback) callback();
@@ -140,130 +136,128 @@ See the License for the specific language governing permissions and
             });
         };
 
-        var getEdgeList = function(container){
-            return R.flatten(R.toPairs(container).map( pair => R.keys(pair[1]).map(toId2 => pair[0] + '-' + toId2)));
+        const getEdgeList = function (container) {
+            return R.flatten(R.toPairs(container).map(pair => R.keys(pair[1]).map(toId2 => `${pair[0]}-${toId2}`)));
         };
 
-        var edgeExistsCheck = function(fromId, toId, container){
-            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityExists(fromId + '-' + toId, getEdgeList(container))]);
+        const edgeExistsCheck = function (fromId, toId, container) {
+            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityExists(`${fromId}-${toId}`, getEdgeList(container))]);
         };
 
-        var edgeNotExistCheck = function(fromId, toId, container){
-            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityIsNotUsed(fromId + '-' + toId, getEdgeList(container))]);
+        var edgeNotExistCheck = function (fromId, toId, container) {
+            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityIsNotUsed(`${fromId}-${toId}`, getEdgeList(container))]);
         };
 
-        LocalDBMS.prototype.setEdgeLabel = function(fromId, toId, label, callback) {
-            var container = R.path(relationsPath, this.database);
-            var chain = PC.chainCheck([edgeExistsCheck(fromId, toId, container), PC.isString(label)]);
+        LocalDBMS.prototype.setEdgeLabel = function (fromId, toId, label, callback) {
+            const container = R.path(relationsPath, this.database);
+            const chain = PC.chainCheck([edgeExistsCheck(fromId, toId, container), PC.isString(label)]);
             PC.precondition(chain, callback, () => {
                 container[fromId][toId] = label;
                 if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.removeEdge = function(fromId, toId, callback) {
-            var container = R.path(relationsPath, this.database);
+        LocalDBMS.prototype.removeEdge = function (fromId, toId, callback) {
+            const container = R.path(relationsPath, this.database);
             PC.precondition(edgeExistsCheck(fromId, toId, container), callback, () => {
                 delete container[fromId][toId];
                 if (callback) callback();
             });
         };
 
-        var _info2edgeEndId = function(name, type){
+        const _info2edgeEndId = function (name, type) {
             return (type === 'groups' ? 'group-' : 'resource-') + name;
         };
 
-        var _edgeEndId2info = function(id){
-            var info = [];
-            if(CU.startsWith(id , 'resource-')){
+        var _edgeEndId2info = function (id) {
+            const info = [];
+            if (CU.startsWith(id, 'resource-')) {
                 info[0] = 'resources';
                 info[1] = id.substring('resource-'.length);
                 return info;
-            } else if(CU.startsWith(id , 'group-')){
+            } else if (CU.startsWith(id, 'group-')) {
                 info[0] = 'groups';
                 info[1] = id.substring('group-'.length);
                 return info;
             }
-            throw new Error('Unknown type of edge end: ' + id);
-        }
-
-        function _nodeAdded(nodeName, type){
-            if(type === 'resources') return;
-            R.path(relationsPath, this.database)[_info2edgeEndId(nodeName, type)] = {};
+            throw new Error(`Unknown type of edge end: ${id}`);
         };
+
+        function _nodeAdded(nodeName, type) {
+            if (type === 'resources') return;
+            R.path(relationsPath, this.database)[_info2edgeEndId(nodeName, type)] = {};
+        }
 
         listeners.nodeAdded = listeners.nodeAdded || [];
         listeners.nodeAdded.push(_nodeAdded);
 
-        function _nodeRemoved(nodeName, type){
-            var relNodeName = _info2edgeEndId(nodeName, type);
-            var data = R.path(relationsPath, this.database);
+        function _nodeRemoved(nodeName, type) {
+            const relNodeName = _info2edgeEndId(nodeName, type);
+            const data = R.path(relationsPath, this.database);
             delete data[relNodeName];
-            R.values(data).forEach(function(item){
+            R.values(data).forEach((item) => {
                 delete item[relNodeName];
             });
-        };
+        }
 
         listeners.nodeRemoved = listeners.nodeRemoved || [];
         listeners.nodeRemoved.push(_nodeRemoved);
 
-        function _nodeRenamed(fromName, toName, group){
-
-            var container = R.path(relationsPath, this.database);
-            var toId = _info2edgeEndId(toName, group);
-            var fromId  = _info2edgeEndId(fromName, group);
-            if(group === 'groups'){
+        function _nodeRenamed(fromName, toName, group) {
+            const container = R.path(relationsPath, this.database);
+            const toId = _info2edgeEndId(toName, group);
+            const fromId = _info2edgeEndId(fromName, group);
+            if (group === 'groups') {
                 container[toId] = container[fromId];
                 delete container[fromId];
             }
-            R.values(container).forEach(function(item){
-                if(item[fromId] !== undefined){
+            R.values(container).forEach((item) => {
+                if (item[fromId] !== undefined) {
                     item[toId] = item[fromId];
                     delete item[fromId];
                 }
             });
-        };
+        }
 
         listeners.nodeRenamed = listeners.nodeRenamed || [];
         listeners.nodeRenamed.push(_nodeRenamed);
 
-        function _renameGroup(fromName, toName){
-            var container = R.path(groupsPath, this.database);
-            if(container[fromName] !== undefined){
-                var data = container[fromName];
+        function _renameGroup(fromName, toName) {
+            const container = R.path(groupsPath, this.database);
+            if (container[fromName] !== undefined) {
+                const data = container[fromName];
                 data.name = toName;
                 container[toName] = data;
                 delete container[fromName];
 
                 _nodeRenamed.apply(this, [fromName, toName, 'groups']);
             }
-        };
+        }
 
         listeners.renameGroup = listeners.renameGroup || [];
         listeners.renameGroup.push(_renameGroup);
 
-        function _removeGroup(groupName){
-            var container = R.path(groupsPath, this.database);
-            if(container[groupName] !== undefined){
+        function _removeGroup(groupName) {
+            let container = R.path(groupsPath, this.database);
+            if (container[groupName] !== undefined) {
                 delete container[groupName];
 
                 container = R.path(relationsPath, this.database);
-                var nodeId = _info2edgeEndId(groupName, 'groups');
+                const nodeId = _info2edgeEndId(groupName, 'groups');
                 delete container[nodeId];
-                R.values(container).forEach(function(item){
-                    if(item[nodeId] !== undefined){
+                R.values(container).forEach((item) => {
+                    if (item[nodeId] !== undefined) {
                         delete item[nodeId];
                     }
                 });
             }
-        };
+        }
 
         listeners.removeGroup = listeners.removeGroup || [];
         listeners.removeGroup.push(_removeGroup);
-    };
+    }
 
     callback(investigationBoardAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['investigationBoardAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.investigationBoardAPI = api : module.exports = api;
+}));

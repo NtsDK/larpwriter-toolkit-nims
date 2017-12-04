@@ -15,121 +15,125 @@ See the License for the specific language governing permissions and
 /*global
  Utils, Database
  */
-"use strict";
 
-var showNotification = true;
-function makeRemoteDBMS(LocalDBMS){
+'use strict';
 
-    var url = "/";
+const showNotification = true;
+function makeRemoteDBMS(LocalDBMS) {
+    const url = '/';
 
-    function RemoteDBMS(){
+    function RemoteDBMS() {
         this.clearSettings();
-    };
+    }
 
-    RemoteDBMS._simpleGet = function(name, params, callback){
-        "use strict";
-        var paramStr = "";
-        if(params){
-            paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ;
+    RemoteDBMS._simpleGet = function (name, params, callback) {
+        'use strict';
+
+        let paramStr = '';
+        if (params) {
+            paramStr = `?params=${encodeURIComponent(JSON.stringify(params))}`;
         }
 
-        var request = $.ajax({
-            url : url + name + paramStr,
-            dataType : "text",
-            method : "GET",
-            contentType : "application/json;charset=utf-8",
+        const request = $.ajax({
+            url: url + name + paramStr,
+            dataType: 'text',
+            method: 'GET',
+            contentType: 'application/json;charset=utf-8',
             cache: false,
             timeout: Constants.httpTimeout,
         });
 
-        request.done(function(data) {
+        request.done((data) => {
             callback(null, JSON.parse(data));
         });
 
-        request.fail(function(errorInfo, textStatus, errorThrown) {
+        request.fail((errorInfo, textStatus, errorThrown) => {
             try {
                 callback(JSON.parse(errorInfo.responseText));
-            } catch(err){
+            } catch (err) {
                 callback(errorInfo.responseText || textStatus || 'error');
             }
         });
     };
 
-    RemoteDBMS._simplePut = function(name, data, callback){
-        "use strict";
-        var request = $.ajax({
-            url : url + name,
-            dataType : "text",
-            method : "PUT",
-            contentType : "application/json;charset=utf-8",
+    RemoteDBMS._simplePut = function (name, data, callback) {
+        'use strict';
+
+        const request = $.ajax({
+            url: url + name,
+            dataType: 'text',
+            method: 'PUT',
+            contentType: 'application/json;charset=utf-8',
             data: JSON.stringify(data),
             timeout: Constants.httpTimeout
         });
 
-        if(showNotification){
+        if (showNotification) {
             var notificationBox = clearEl(getEl('debugNotification'));
             removeClass(notificationBox, 'hidden');
             removeClass(notificationBox, 'operationOK');
             removeClass(notificationBox, 'operationFail');
-            addEl(notificationBox, makeText(name + ' ' + JSON.stringify(data)));
+            addEl(notificationBox, makeText(`${name} ${JSON.stringify(data)}`));
         }
 
-        request.done(function(data) {
-            if(showNotification){
+        request.done((data) => {
+            if (showNotification) {
                 addClass(notificationBox, 'operationOK');
-                setTimeout(function(){
+                setTimeout(() => {
                     addClass(notificationBox, 'hidden');
                 }, 2000);
             }
-            if(callback) callback();
+            if (callback) callback();
         });
 
-        request.fail(function(errorInfo, textStatus, errorThrown) {
-            if(showNotification){
+        request.fail((errorInfo, textStatus, errorThrown) => {
+            if (showNotification) {
                 addClass(notificationBox, 'operationFail');
-                setTimeout(function(){
+                setTimeout(() => {
                     addClass(notificationBox, 'hidden');
                 }, 2000);
             }
             try {
                 callback(JSON.parse(errorInfo.responseText));
-            } catch(err){
+            } catch (err) {
                 callback(errorInfo.responseText || textStatus || 'error');
             }
         });
     };
 
 
-    Object.keys(LocalDBMS.prototype).forEach(function(name){
-        RemoteDBMS.prototype[name] = function(){
-            var arr = [];
-            for (var i = 0; i < arguments.length-1; i++) {
+    Object.keys(LocalDBMS.prototype).forEach((name) => {
+        RemoteDBMS.prototype[name] = function () {
+            const arr = [];
+            for (let i = 0; i < arguments.length - 1; i++) {
                 arr.push(arguments[i]);
             }
-//            if(CommonUtils.startsWith(name, "_")){
-//                // do nothing for inner functions
-//            } else
-            if(CommonUtils.startsWith(name, "get") || CommonUtils.startsWith(name, "is")){
-                RemoteDBMS._simpleGet(name, arr, arguments[arguments.length-1]);
+            //            if(CommonUtils.startsWith(name, "_")){
+            //                // do nothing for inner functions
+            //            } else
+            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
+                RemoteDBMS._simpleGet(name, arr, arguments[arguments.length - 1]);
             } else {
-                RemoteDBMS._simplePut(name, arr, arguments[arguments.length-1]);
+                RemoteDBMS._simplePut(name, arr, arguments[arguments.length - 1]);
             }
-        }
+        };
     });
 
 
-    RemoteDBMS.prototype.clearSettings = function() {
-        "use strict";
+    RemoteDBMS.prototype.clearSettings = function () {
+        'use strict';
+
         this.Settings = {
-                "BriefingPreview" : {},
-                "Stories" : {},
-                "ProfileEditor" : {}
+            BriefingPreview: {},
+            Stories: {},
+            ProfileEditor: {}
         };
     };
 
-    RemoteDBMS.prototype.getSettings = function(){
-        "use strict";
+    RemoteDBMS.prototype.getSettings = function () {
+        'use strict';
+
         return this.Settings;
     };
     return RemoteDBMS;
-};
+}

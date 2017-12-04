@@ -16,10 +16,9 @@ See the License for the specific language governing permissions and
  // Utils
  */
 
-"use strict";
+'use strict';
 
-(function(exports) {
-
+(function (exports) {
     // argument description
     // add function name to log it
     // ignoreParams - make true if you don't need params in log.
@@ -29,178 +28,178 @@ See the License for the specific language governing permissions and
     // rewrite - make true if you don't want to flood log with some repeated call.
     //     For example auto call of getDatabase will flood everything.
     exports.apiInfo = {
-        "baseAPI" : {
-            "_init" : null,
-            "getDatabase" : {"rewrite" : true},
-            "setDatabase" : {"ignoreParams": true},
-            "getMetaInfo" : null,
-            "setMetaInfo" : {}
+        baseAPI: {
+            _init: null,
+            getDatabase: { rewrite: true },
+            setDatabase: { ignoreParams: true },
+            getMetaInfo: null,
+            setMetaInfo: {}
         },
-        "consistencyCheckAPI" : {
-            "getConsistencyCheckResult" : null
+        consistencyCheckAPI: {
+            getConsistencyCheckResult: null
         },
-        "statisticsAPI" : {
-            "getStatistics" : null
+        statisticsAPI: {
+            getStatistics: null
         },
-        "profilesAPI" : {
-            "getProfileNamesArray" : null,
-            "getProfile" : null,
-            "getAllProfiles" : null,
-            "createProfile" : {},
-            "renameProfile" : {},
-            "removeProfile" : {},
-            "updateProfileField" : {}
+        profilesAPI: {
+            getProfileNamesArray: null,
+            getProfile: null,
+            getAllProfiles: null,
+            createProfile: {},
+            renameProfile: {},
+            removeProfile: {},
+            updateProfileField: {}
         },
-        "profileBindingAPI" : {
-            "getProfileBindings" : null,
-            "getExtendedProfileBindings" : null,
-            "getProfileBinding" : null,
-            "createBinding" : {},
-            "removeBinding" : {}
+        profileBindingAPI: {
+            getProfileBindings: null,
+            getExtendedProfileBindings: null,
+            getProfileBinding: null,
+            createBinding: {},
+            removeBinding: {}
         },
-        "profileViewAPI":{
-            "getRoleGridInfo" : null,
+        profileViewAPI: {
+            getRoleGridInfo: null,
         },
-        "groupsAPI" : {
-            "getGroupNamesArray" : null,
-            "getGroup" : null,
-            "getCharacterGroupTexts" : null,
-            "getAllCharacterGroupTexts" : null,
-            "createGroup" : {},
-            "renameGroup" : {},
-            "removeGroup" : {},
-            "saveFilterToGroup" : {},
-            "updateGroupField" : {},
-            "getProfileFilterInfo" : null,
-            "getGroupCharacterSets" : null
+        groupsAPI: {
+            getGroupNamesArray: null,
+            getGroup: null,
+            getCharacterGroupTexts: null,
+            getAllCharacterGroupTexts: null,
+            createGroup: {},
+            renameGroup: {},
+            removeGroup: {},
+            saveFilterToGroup: {},
+            updateGroupField: {},
+            getProfileFilterInfo: null,
+            getGroupCharacterSets: null
         },
-        "groupSchemaAPI" : {
-            "getGroupSchemas" : null
+        groupSchemaAPI: {
+            getGroupSchemas: null
         },
-        "investigationBoardAPI" : {
-            "getInvestigationBoardData" : null,
-            "addBoardGroup" : {},
-            "switchGroups" : {},
-            "setGroupNotes" : {},
-            "removeBoardGroup" : {},
-            "createResource" : {},
-            "renameResource" : {},
-            "removeResource" : {},
-            "addEdge" : {},
-            "setEdgeLabel" : {},
-            "removeEdge" : {}
+        investigationBoardAPI: {
+            getInvestigationBoardData: null,
+            addBoardGroup: {},
+            switchGroups: {},
+            setGroupNotes: {},
+            removeBoardGroup: {},
+            createResource: {},
+            renameResource: {},
+            removeResource: {},
+            addEdge: {},
+            setEdgeLabel: {},
+            removeEdge: {}
         },
-        "relationsAPI" : {
-            "getRelationsSummary" : null,
-            "setCharacterRelation" : {}
+        relationsAPI: {
+            getRelationsSummary: null,
+            setCharacterRelation: {}
         },
-        "briefingExportAPI" : {
-            "getBriefingData" : {}
+        briefingExportAPI: {
+            getBriefingData: {}
         },
-        "profileConfigurerAPI" : {
-            "getProfileStructure" : null,
-            "createProfileItem" : {},
-            "moveProfileItem" : {},
-            "removeProfileItem" : {},
-            "changeProfileItemType" : {},
-            "changeProfileItemPlayerAccess" : {},
-            "renameProfileItem" : {},
-            "doExportProfileItemChange" : {},
-            "showInRoleGridProfileItemChange": {},
-            "updateDefaultValue" : {}
+        profileConfigurerAPI: {
+            getProfileStructure: null,
+            createProfileItem: {},
+            moveProfileItem: {},
+            removeProfileItem: {},
+            changeProfileItemType: {},
+            changeProfileItemPlayerAccess: {},
+            renameProfileItem: {},
+            doExportProfileItemChange: {},
+            showInRoleGridProfileItemChange: {},
+            updateDefaultValue: {}
         },
-        "entityAPI" : {
-            "getEntityNamesArray" : null
+        entityAPI: {
+            getEntityNamesArray: null
         },
-        "storyBaseAPI" : {
-            "getStoryNamesArray" : null,
-            "getAllStories" : null,
-            "getMasterStory" : null,
-            "setMasterStory" : {},
-            "createStory" : {},
-            "renameStory" : {},
-            "removeStory" : {}
+        storyBaseAPI: {
+            getStoryNamesArray: null,
+            getAllStories: null,
+            getMasterStory: null,
+            setMasterStory: {},
+            createStory: {},
+            renameStory: {},
+            removeStory: {}
         },
-        "storyEventsAPI" : {
-            "getStoryEvents" : null,
-            "createEvent" : {},
-            "moveEvent" : {},
-            "cloneEvent" : {},
-            "mergeEvents" : {},
-            "removeEvent" : {},
-            "setEventOriginProperty" : {}
+        storyEventsAPI: {
+            getStoryEvents: null,
+            createEvent: {},
+            moveEvent: {},
+            cloneEvent: {},
+            mergeEvents: {},
+            removeEvent: {},
+            setEventOriginProperty: {}
         },
-        "storyCharactersAPI" : {
-            "getStoryCharacterNamesArray" : null,
-            "getStoryCharacters" : null,
-            "addStoryCharacter" : {},
-            "switchStoryCharacters" : {},
-            "removeStoryCharacter" : {},
-            "updateCharacterInventory" : {},
-            "onChangeCharacterActivity" : {},
-            "addCharacterToEvent" : {},
-            "removeCharacterFromEvent" : {}
+        storyCharactersAPI: {
+            getStoryCharacterNamesArray: null,
+            getStoryCharacters: null,
+            addStoryCharacter: {},
+            switchStoryCharacters: {},
+            removeStoryCharacter: {},
+            updateCharacterInventory: {},
+            onChangeCharacterActivity: {},
+            addCharacterToEvent: {},
+            removeCharacterFromEvent: {}
         },
-        "storyViewAPI" : {
-            "getAllInventoryLists" : null,
-            "getCharacterEventGroupsByStory" : null,
-            "getCharacterEventsByTime" : null,
-            "getEventsTimeInfo" : null,
-            "getCharactersSummary" : null,
-            "getCharacterReport" : null
+        storyViewAPI: {
+            getAllInventoryLists: null,
+            getCharacterEventGroupsByStory: null,
+            getCharacterEventsByTime: null,
+            getEventsTimeInfo: null,
+            getCharactersSummary: null,
+            getCharacterReport: null
         },
-        "storyAdaptationsAPI" : {
-            "getFilteredStoryNames" : null,
-            "getStory" : null,
-            "setEventAdaptationProperty" : {}
+        storyAdaptationsAPI: {
+            getFilteredStoryNames: null,
+            getStory: null,
+            setEventAdaptationProperty: {}
         },
-        "accessManagerAPI" : {
-            "getManagementInfo" : null,
-            "assignAdmin" : {},
-            "assignEditor" : {},
-            "removeEditor" : {},
-            "changeAdaptationRightsMode" : {},
-            "createMaster" : {"ignoreParams": true},
-            "changeMasterPassword" : {"ignoreParams": true},
-            "removeMaster" : {},
-            "removePermission" : {},
-            "assignPermission" : {},
-            "publishPermissionsUpdate" : null,
-            "getPlayerLoginsArray" : null,
-            "createPlayer" : {"ignoreParams": true},
-            "createPlayerLogin" : {"ignoreParams": true},
-            "changePlayerPassword" : {"ignoreParams": true},
-            "removePlayerLogin" : {},
-            "getWelcomeText" : null,
-            "setWelcomeText" : {},
-            "getPlayersOptions" : null,
-            "setPlayerOption" : {},
-            "getPlayerProfileInfo" : null,
-            "createCharacterByPlayer" : {}
+        accessManagerAPI: {
+            getManagementInfo: null,
+            assignAdmin: {},
+            assignEditor: {},
+            removeEditor: {},
+            changeAdaptationRightsMode: {},
+            createMaster: { ignoreParams: true },
+            changeMasterPassword: { ignoreParams: true },
+            removeMaster: {},
+            removePermission: {},
+            assignPermission: {},
+            publishPermissionsUpdate: null,
+            getPlayerLoginsArray: null,
+            createPlayer: { ignoreParams: true },
+            createPlayerLogin: { ignoreParams: true },
+            changePlayerPassword: { ignoreParams: true },
+            removePlayerLogin: {},
+            getWelcomeText: null,
+            setWelcomeText: {},
+            getPlayersOptions: null,
+            setPlayerOption: {},
+            getPlayerProfileInfo: null,
+            createCharacterByPlayer: {}
         },
-        "textSearchAPI" : {
-            "getTexts" : null
+        textSearchAPI: {
+            getTexts: null
         },
-        "userAPI" : {
-            "getUser" : null,
-            "setPassword" : null,
-            "checkPassword" : null,
-            "login" : null,
-            "register" : null
+        userAPI: {
+            getUser: null,
+            setPassword: null,
+            checkPassword: null,
+            login: null,
+            register: null
         },
-        "accessManagerOverridesAPI" : {},
-        "overridesAPI" : {},
-        "permissionAPI" : {
-            "hasPermission" : null
+        accessManagerOverridesAPI: {},
+        overridesAPI: {},
+        permissionAPI: {
+            hasPermission: null
         },
-        "permissionSummaryAPI" : {
-            "_getOwnerMap" : null,
-            "getPermissionsSummary" : null, // special case
-            "subscribeOnPermissionsUpdate" : null // special case
+        permissionSummaryAPI: {
+            _getOwnerMap: null,
+            getPermissionsSummary: null, // special case
+            subscribeOnPermissionsUpdate: null // special case
         },
-        "logAPI" : {
-            "log" : null,
-            "getLog" : null
+        logAPI: {
+            log: null,
+            getLog: null
         }
     };
 
@@ -208,40 +207,36 @@ See the License for the specific language governing permissions and
     // isServer - used in server mode. If false then user in logs will be named "user".
     // environment - used to disable this.log function in thin client in server version.
     //      I agree it is strange.
-    exports.attachLogCalls = function(LocalDBMS, R, isServer) {
-
-        var apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
-        var filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
+    exports.attachLogCalls = function (LocalDBMS, R, isServer) {
+        const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
+        const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
 
         Object.keys(LocalDBMS.prototype)
-        .filter(R.prop(R.__, filteredApi))
-        .forEach(function(funcName){
-            var oldFun = LocalDBMS.prototype[funcName];
-            LocalDBMS.prototype[funcName] = function(){
-
-                var arr = [];
-                for (var i = 0; i < arguments.length-1; i++) {
-                    arr.push(arguments[i]);
-                }
-
-                var accept = true;
-                if(filteredApi[funcName].filter){
-                    accept = filteredApi[funcName].filter(arr);
-                }
-
-                if(accept){
-                    var userName = "user";
-                    if(isServer){
-                        userName = arguments[arguments.length-1].name;
+            .filter(R.prop(R.__, filteredApi))
+            .forEach((funcName) => {
+                const oldFun = LocalDBMS.prototype[funcName];
+                LocalDBMS.prototype[funcName] = function () {
+                    const arr = [];
+                    for (let i = 0; i < arguments.length - 1; i++) {
+                        arr.push(arguments[i]);
                     }
 
-                    this.log(userName, funcName, !!filteredApi[funcName].rewrite, filteredApi[funcName].ignoreParams ? [] : arr);
-                }
+                    let accept = true;
+                    if (filteredApi[funcName].filter) {
+                        accept = filteredApi[funcName].filter(arr);
+                    }
 
-                return oldFun.apply(this, arguments);
-            }
-        });
+                    if (accept) {
+                        let userName = 'user';
+                        if (isServer) {
+                            userName = arguments[arguments.length - 1].name;
+                        }
 
+                        this.log(userName, funcName, !!filteredApi[funcName].rewrite, filteredApi[funcName].ignoreParams ? [] : arr);
+                    }
+
+                    return oldFun.apply(this, arguments);
+                };
+            });
     };
-
-})(typeof exports === 'undefined' ? this['Logger'] = {} : exports);
+}(typeof exports === 'undefined' ? this.Logger = {} : exports));

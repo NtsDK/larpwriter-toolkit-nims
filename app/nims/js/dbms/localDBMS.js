@@ -15,68 +15,70 @@ See the License for the specific language governing permissions and
 /*global
  Utils, Database, Migrator
  */
-"use strict";
 
-function makeLocalDBMS(fullVersion){
+'use strict';
+
+function makeLocalDBMS(fullVersion) {
 //    if(!fullVersion){
 //        function LocalDBMS(){
 //        };
 //        return LocalDBMS;
 //    }
 
-    var opts = {
-        Migrator     : Migrator    ,
-        CommonUtils  : CommonUtils ,
-        ProjectUtils : ProjectUtils,
-        Precondition : Precondition,
-        EventEmitter : EventEmitter,
-        R            : R           ,
-        Ajv          : Ajv         ,
-        Schema       : Schema      ,
-        Errors       : Errors      ,
-        listeners    : {}          ,
-        Constants    : Constants   ,
-        dbmsUtils    : {}          ,
-        dateFormat   : dateFormat  ,
+    const opts = {
+        Migrator,
+        CommonUtils,
+        ProjectUtils,
+        Precondition,
+        EventEmitter,
+        R,
+        Ajv,
+        Schema,
+        Errors,
+        listeners: {},
+        Constants,
+        dbmsUtils: {},
+        dateFormat,
     };
 
-    function LocalDBMS(){
+    function LocalDBMS() {
         this._init(opts.listeners);
-    };
+    }
 
-    LocalDBMS.prototype.getSettings = function(){
-        "use strict";
+    LocalDBMS.prototype.getSettings = function () {
+        'use strict';
+
         return this.database.Settings;
     };
 
-    var func = (name) => window[name](LocalDBMS, opts);
+    const func = name => window[name](LocalDBMS, opts);
 
-    ["baseAPI"               ,
-    "consistencyCheckAPI"   ,
-    "statisticsAPI"         ,
-    "profilesAPI"           ,
-    "profileBindingAPI"     ,
+    ['baseAPI',
+        'consistencyCheckAPI',
+        'statisticsAPI',
+        'profilesAPI',
+        'profileBindingAPI',
 
-//    "profileViewAPI"        ,
+        //    "profileViewAPI"        ,
 
-    "groupsAPI"             ,
-    "groupSchemaAPI"        ,
-    "investigationBoardAPI" ,
-    "relationsAPI"          ,
-    "briefingExportAPI"     ,
+        'groupsAPI',
+        'groupSchemaAPI',
+        'investigationBoardAPI',
+        'relationsAPI',
+        'briefingExportAPI',
 
-    "profileConfigurerAPI"  ,
-    "entityAPI"             ,
-    "storyBaseAPI"          ,
-    "storyEventsAPI"        ,
-    "storyCharactersAPI"    ,
+        'profileConfigurerAPI',
+        'entityAPI',
+        'storyBaseAPI',
+        'storyEventsAPI',
+        'storyCharactersAPI',
 
-    "storyViewAPI"          ,
-    "storyAdaptationsAPI"   ,
-    "accessManagerAPI"      ,
-    "textSearchAPI"         ,
-    "logAPI"].map(func);
+        'storyViewAPI',
+        'storyAdaptationsAPI',
+        'accessManagerAPI',
+        'textSearchAPI',
+        'logAPI'].map(func);
 
     Logger.attachLogCalls(LocalDBMS, R, false);
     return LocalDBMS;
-};
+}

@@ -79,6 +79,9 @@ This is a simple code checker. Right now it used in js folder only.
     "node_modules/.bin/eslint" app\measurelook\js
     "node_modules/.bin/eslint" app\measurelook\js --fix
     
+    "node_modules/.bin/eslint" app\nims\js
+    "node_modules/.bin/eslint" app\nims\js --fix
+    
     
     
 ### Building NIMS (old instruction in English) ###

@@ -12,54 +12,52 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function accessManagerAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const listeners = opts.listeners;
+        const Errors = opts.Errors;
+        const Constants = opts.Constants;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var listeners     = opts.listeners   ;
-        var Errors        = opts.Errors      ;
-        var Constants     = opts.Constants   ;
-
-        LocalDBMS.prototype.getManagementInfo = function(callback){
-            var ManagementInfo = this.database.ManagementInfo;
-            var usersInfo = CU.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
-                result[user] = R.pick(['characters', 'groups','stories','players'], ManagementInfo.UsersInfo[user]);
+        LocalDBMS.prototype.getManagementInfo = function (callback) {
+            const ManagementInfo = this.database.ManagementInfo;
+            const usersInfo = CU.clone(R.keys(ManagementInfo.UsersInfo).reduce((result, user) => {
+                result[user] = R.pick(['characters', 'groups', 'stories', 'players'], ManagementInfo.UsersInfo[user]);
                 return result;
             }, {}));
             callback(null, {
-                usersInfo : usersInfo,
-                admin : ManagementInfo.admin,
-                editor : ManagementInfo.editor,
-                adaptationRights : ManagementInfo.adaptationRights
+                usersInfo,
+                admin: ManagementInfo.admin,
+                editor: ManagementInfo.editor,
+                adaptationRights: ManagementInfo.adaptationRights
             });
         };
 
-        LocalDBMS.prototype.assignAdmin = function(name, callback){
+        LocalDBMS.prototype.assignAdmin = function (name, callback) {
             PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 this.database.ManagementInfo.admin = name;
                 this.publishPermissionsUpdate();
                 callback();
             });
         };
-        LocalDBMS.prototype.assignEditor = function(name, callback){
+        LocalDBMS.prototype.assignEditor = function (name, callback) {
             PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 this.database.ManagementInfo.editor = name;
                 this.publishPermissionsUpdate();
                 callback();
             });
         };
-        LocalDBMS.prototype.removeEditor = function(callback){
+        LocalDBMS.prototype.removeEditor = function (callback) {
             this.database.ManagementInfo.editor = null;
             this.publishPermissionsUpdate();
             callback();
         };
-        LocalDBMS.prototype.changeAdaptationRightsMode = function(mode, callback){
-            var chain = [PC.isString(mode), PC.elementFromEnum(mode, ['ByStory','ByCharacter'])];
+        LocalDBMS.prototype.changeAdaptationRightsMode = function (mode, callback) {
+            const chain = [PC.isString(mode), PC.elementFromEnum(mode, ['ByStory', 'ByCharacter'])];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.ManagementInfo.adaptationRights = mode;
                 this.publishPermissionsUpdate();
@@ -67,7 +65,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.removeMaster = function(name, callback){
+        LocalDBMS.prototype.removeMaster = function (name, callback) {
             PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 delete this.database.ManagementInfo.UsersInfo[name];
                 this.publishPermissionsUpdate();
@@ -75,38 +73,34 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.removePermission = function(userName, names, callback){
-            var ManagementInfo = this.database.ManagementInfo;
+        LocalDBMS.prototype.removePermission = function (userName, names, callback) {
+            const ManagementInfo = this.database.ManagementInfo;
 
-            for(var entity in names){
-                if(names[entity].length != 0){
-                    ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity].filter(function(charName){
-                        return names[entity].indexOf(charName) === -1;
-                    });
+            for (var entity in names) {
+                if (names[entity].length != 0) {
+                    ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity].filter(charName => names[entity].indexOf(charName) === -1);
                 }
             }
             this.publishPermissionsUpdate();
             callback();
         };
 
-        LocalDBMS.prototype.assignPermission = function(userName, names, callback){
-            var ManagementInfo = this.database.ManagementInfo;
-            for(var entity in names){
-                if(names[entity].length != 0){
-                    names[entity].forEach(function(charName){
-                        if(ManagementInfo.UsersInfo[userName][entity].indexOf(charName) === -1){
+        LocalDBMS.prototype.assignPermission = function (userName, names, callback) {
+            const ManagementInfo = this.database.ManagementInfo;
+            for (var entity in names) {
+                if (names[entity].length != 0) {
+                    names[entity].forEach((charName) => {
+                        if (ManagementInfo.UsersInfo[userName][entity].indexOf(charName) === -1) {
                             ManagementInfo.UsersInfo[userName][entity].push(charName);
                         }
                     });
 
-                    Object.keys(ManagementInfo.UsersInfo).forEach(function(name){
-                        if(name === userName){
+                    Object.keys(ManagementInfo.UsersInfo).forEach((name) => {
+                        if (name === userName) {
                             return;
                         }
 
-                        ManagementInfo.UsersInfo[name][entity] = ManagementInfo.UsersInfo[name][entity].filter(function(charName){
-                            return names[entity].indexOf(charName) === -1;
-                        });
+                        ManagementInfo.UsersInfo[name][entity] = ManagementInfo.UsersInfo[name][entity].filter(charName => names[entity].indexOf(charName) === -1);
                     });
                 }
             }
@@ -114,76 +108,76 @@ See the License for the specific language governing permissions and
             callback();
         };
 
-        LocalDBMS.prototype.getPlayerLoginsArray = function(callback) {
+        LocalDBMS.prototype.getPlayerLoginsArray = function (callback) {
             callback(null, R.keys(this.database.ManagementInfo.PlayersInfo));
         };
 
-        LocalDBMS.prototype.removePlayerLogin = function(userName, callback) {
+        LocalDBMS.prototype.removePlayerLogin = function (userName, callback) {
             PC.precondition(PC.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), callback, () => {
                 delete this.database.ManagementInfo.PlayersInfo[userName];
-                if(callback) callback();
+                if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.getWelcomeText = function(callback){
+        LocalDBMS.prototype.getWelcomeText = function (callback) {
             callback(null, this.database.ManagementInfo.WelcomeText);
         };
 
-        LocalDBMS.prototype.setWelcomeText = function(text, callback){
+        LocalDBMS.prototype.setWelcomeText = function (text, callback) {
             PC.precondition(PC.isString(text), callback, () => {
                 this.database.ManagementInfo.WelcomeText = text;
-                if(callback) callback();
+                if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.getPlayersOptions = function(callback){
+        LocalDBMS.prototype.getPlayersOptions = function (callback) {
             callback(null, CU.clone(this.database.ManagementInfo.PlayersOptions));
         };
 
-        LocalDBMS.prototype.setPlayerOption = function(name, value, callback){
-            var chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes), PC.isBoolean(value)];
+        LocalDBMS.prototype.setPlayerOption = function (name, value, callback) {
+            const chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes), PC.isBoolean(value)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.ManagementInfo.PlayersOptions[name] = value;
-                if(callback) callback();
+                if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.createMaster = function(name, password, callback){
+        LocalDBMS.prototype.createMaster = function (name, password, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMaster']));
         };
 
-        LocalDBMS.prototype.changeMasterPassword = function(userName, newPassword, callback){
+        LocalDBMS.prototype.changeMasterPassword = function (userName, newPassword, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeMasterPassword']));
         };
 
-        LocalDBMS.prototype.publishPermissionsUpdate = function(callback) {
+        LocalDBMS.prototype.publishPermissionsUpdate = function (callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['publishPermissionsUpdate']));
         };
 
-        LocalDBMS.prototype.createPlayer = function(userName, password, callback) {
+        LocalDBMS.prototype.createPlayer = function (userName, password, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayer']));
         };
 
-        LocalDBMS.prototype.createPlayerLogin = function(userName, password, callback) {
+        LocalDBMS.prototype.createPlayerLogin = function (userName, password, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayerLogin']));
         };
 
-        LocalDBMS.prototype.changePlayerPassword = function(userName, password, callback) {
+        LocalDBMS.prototype.changePlayerPassword = function (userName, password, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changePlayerPassword']));
         };
 
-        LocalDBMS.prototype.getPlayerProfileInfo = function(callback){
+        LocalDBMS.prototype.getPlayerProfileInfo = function (callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['getPlayerProfileInfo']));
         };
 
-        LocalDBMS.prototype.createCharacterByPlayer = function(characterName, callback) {
+        LocalDBMS.prototype.createCharacterByPlayer = function (characterName, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createCharacterByPlayer']));
         };
 
-        var _renameProfile = function(type, fromName, toName){
-            if(type === 'character') return;
-            var playersInfo = this.database.ManagementInfo.PlayersInfo;
-            if(playersInfo[fromName] !== undefined){
+        const _renameProfile = function (type, fromName, toName) {
+            if (type === 'character') return;
+            const playersInfo = this.database.ManagementInfo.PlayersInfo;
+            if (playersInfo[fromName] !== undefined) {
                 playersInfo[toName] = playersInfo[fromName];
                 playersInfo[toName].name = toName;
                 delete playersInfo[fromName];
@@ -193,20 +187,19 @@ See the License for the specific language governing permissions and
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameProfile);
 
-        var _removeProfile = function(type, characterName){
-            if(type === 'character') return;
-            var playersInfo = this.database.ManagementInfo.PlayersInfo;
-            if(playersInfo[characterName] !== undefined){
+        const _removeProfile = function (type, characterName) {
+            if (type === 'character') return;
+            const playersInfo = this.database.ManagementInfo.PlayersInfo;
+            if (playersInfo[characterName] !== undefined) {
                 delete playersInfo[characterName];
             }
         };
 
         listeners.removeProfile = listeners.removeProfile || [];
         listeners.removeProfile.push(_removeProfile);
-    };
+    }
 
     callback(accessManagerAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['accessManagerAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.accessManagerAPI = api : module.exports = api;
+}));

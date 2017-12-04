@@ -15,37 +15,36 @@ See the License for the specific language governing permissions and
 /*global
  */
 
-"use strict";
+'use strict';
 
-(function(exports, mode){
-
-    var state = {};
+(function (exports, mode) {
+    const state = {};
 
     state.summary = {};
 
-    if(mode === "NIMS_Server" && PERMISSION_INFORMER_ENABLED){
-        exports.refresh = function(callback) {
-            var request = $.ajax({
-                url : "/getPermissionsSummary",
-                dataType : "text",
-                method : "GET",
-                contentType : "application/json;charset=utf-8",
+    if (mode === 'NIMS_Server' && PERMISSION_INFORMER_ENABLED) {
+        exports.refresh = function (callback) {
+            const request = $.ajax({
+                url: '/getPermissionsSummary',
+                dataType: 'text',
+                method: 'GET',
+                contentType: 'application/json;charset=utf-8',
                 timeout: Constants.httpTimeout
             });
 
-            request.done(function(data) {
+            request.done((data) => {
                 state.summary = JSON.parse(data);
-                if(callback){
+                if (callback) {
                     callback();
                 } else {
                     exports.subscribe();
                 }
-    //        alert(data);
-    //        alert(state.summary);
+                //        alert(data);
+                //        alert(state.summary);
             });
 
-            request.fail(function(errorInfo, textStatus, errorThrown) {
-                if(callback){
+            request.fail((errorInfo, textStatus, errorThrown) => {
+                if (callback) {
                     callback(errorInfo.responseText || 'error');
                 } else {
                     setTimeout(exports.subscribe, 500);
@@ -53,83 +52,79 @@ See the License for the specific language governing permissions and
             });
         };
 
-        exports.subscribe = function() {
-
-            var request = $.ajax({
-                url : "/subscribeOnPermissionsUpdate",
-                dataType : "text",
-                method : "GET",
-                contentType : "application/json;charset=utf-8",
+        exports.subscribe = function () {
+            const request = $.ajax({
+                url: '/subscribeOnPermissionsUpdate',
+                dataType: 'text',
+                method: 'GET',
+                contentType: 'application/json;charset=utf-8',
                 timeout: Constants.httpTimeout
             });
 
-            request.done(function(data) {
+            request.done((data) => {
                 state.summary = JSON.parse(data);
-    //        alert(data);
-    //        alert(state.summary);
+                //        alert(data);
+                //        alert(state.summary);
                 exports.subscribe();
             });
 
-            request.fail(function(errorInfo, textStatus, errorThrown) {
+            request.fail((errorInfo, textStatus, errorThrown) => {
                 setTimeout(exports.subscribe, 500);
             });
         };
 
         exports.refresh();
 
-        exports.isAdmin = function(callback){
+        exports.isAdmin = function (callback) {
             callback(null, state.summary.isAdmin);
         };
 
-        exports.isEditor = function(callback){
+        exports.isEditor = function (callback) {
             callback(null, state.summary.isEditor);
         };
 
-        exports.isEntityEditable = function(type, entityName, callback) {
+        exports.isEntityEditable = function (type, entityName, callback) {
             callback(null, isObjectEditableSync(type, entityName));
         };
 
-        var isObjectEditableSync = function(type, name){
-            if(state.summary.isEditor){
+        var isObjectEditableSync = function (type, name) {
+            if (state.summary.isEditor) {
                 return true;
             }
-            if(state.summary.existEditor){
+            if (state.summary.existEditor) {
                 return false;
             }
             return state.summary.user[type].indexOf(name) !== -1;
         };
 
-        exports.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
-            var userEntities = state.summary.user[type];
-            var allEntities = state.summary.all[type];
-            var ownerMap = state.summary.ownerMaps[type];
-            var names = allEntities.filter(function(name){
-                if(editableOnly){
+        exports.getEntityNamesArray = R.curry((type, editableOnly, callback) => {
+            const userEntities = state.summary.user[type];
+            const allEntities = state.summary.all[type];
+            const ownerMap = state.summary.ownerMaps[type];
+            const names = allEntities.filter((name) => {
+                if (editableOnly) {
                     return isObjectEditableSync(type, name);
-                } else {
-                    return true;
                 }
-            }).map(function(name){
-                return {
-                    displayName : ownerMap[name] + ". " + name,
-                    value : name,
-                    editable : isObjectEditableSync(type, name),
-                    isOwner : userEntities.indexOf(name) !== -1
-                };
-            });
+                return true;
+            }).map(name => ({
+                displayName: `${ownerMap[name]}. ${name}`,
+                value: name,
+                editable: isObjectEditableSync(type, name),
+                isOwner: userEntities.indexOf(name) !== -1
+            }));
 
             names.sort(Utils.charOrdAObject);
 
             callback(null, names);
         });
 
-        exports.areAdaptationsEditable = function(adaptations, callback){
-            var map = {};
-            var isAdaptationRightsByStory = state.summary.isAdaptationRightsByStory;
+        exports.areAdaptationsEditable = function (adaptations, callback) {
+            const map = {};
+            const isAdaptationRightsByStory = state.summary.isAdaptationRightsByStory;
 
-            adaptations.forEach(function(elem){
-                var key = elem.storyName + "-" + elem.characterName;
-                if(isAdaptationRightsByStory){
+            adaptations.forEach((elem) => {
+                const key = `${elem.storyName}-${elem.characterName}`;
+                if (isAdaptationRightsByStory) {
                     map[key] = isObjectEditableSync('story', elem.storyName);
                 } else {
                     map[key] = isObjectEditableSync('character', elem.characterName);
@@ -138,29 +133,27 @@ See the License for the specific language governing permissions and
 
             callback(null, map);
         };
-
-    } else if (mode === "Standalone"){
-
-        exports.refresh = function(callback) {
+    } else if (mode === 'Standalone') {
+        exports.refresh = function (callback) {
             callback();
         };
 
-        exports.isAdmin = function(callback){
+        exports.isAdmin = function (callback) {
             callback(null, true);
         };
 
-        exports.isEditor = function(callback){
+        exports.isEditor = function (callback) {
             callback(null, true);
         };
 
-        exports.getEntityNamesArray = R.curry(function(type, editableOnly, callback){
-            function processNames(err, names){
-                if(err) {Utils.handleError(err); return;}
-                var newNames = [];
-                names.forEach(function(name){
+        exports.getEntityNamesArray = R.curry((type, editableOnly, callback) => {
+            function processNames(err, names) {
+                if (err) { Utils.handleError(err); return; }
+                const newNames = [];
+                names.forEach((name) => {
                     newNames.push({
-                        displayName:name,
-                        value:name,
+                        displayName: name,
+                        value: name,
                         editable: true
                     });
                 });
@@ -169,18 +162,17 @@ See the License for the specific language governing permissions and
             DBMS.getEntityNamesArray(type, processNames);
         });
 
-        exports.isEntityEditable = function(type, entityName, callback) {
+        exports.isEntityEditable = function (type, entityName, callback) {
             callback(null, true);
         };
 
-        exports.areAdaptationsEditable = function(adaptations, callback){
-            var map = {};
-            adaptations.forEach(function(elem){
-                map[elem.storyName + "-" + elem.characterName] = true;
+        exports.areAdaptationsEditable = function (adaptations, callback) {
+            const map = {};
+            adaptations.forEach((elem) => {
+                map[`${elem.storyName}-${elem.characterName}`] = true;
             });
 
             callback(null, map);
         };
     }
-
-})(this['PermissionInformer']={}, MODE);
+}(this.PermissionInformer = {}, MODE));

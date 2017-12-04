@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 /*global
  */
 
-"use strict";
+'use strict';
 
 ((exports) => {
     const state = {};

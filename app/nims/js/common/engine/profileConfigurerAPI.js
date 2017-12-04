@@ -12,75 +12,73 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function profileConfigurerAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const Constants = opts.Constants;
+        const Errors = opts.Errors;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var Constants     = opts.Constants   ;
-        var Errors        = opts.Errors      ;
-
-        function getPath(type){
-            if(type === 'character') return ['CharacterProfileStructure'];
-            if(type === 'player') return ['PlayerProfileStructure'];
+        function getPath(type) {
+            if (type === 'character') return ['CharacterProfileStructure'];
+            if (type === 'player') return ['PlayerProfileStructure'];
             return null;
         }
 
-        var typeCheck = function(type){
+        const typeCheck = function (type) {
             return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
         };
-        var itemTypeCheck = function(type){
+        const itemTypeCheck = function (type) {
             return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, R.keys(Constants.profileFieldTypes))]);
         };
-        var playerAccessCheck = function(type){
+        const playerAccessCheck = function (type) {
             return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.playerAccessTypes)]);
         };
 
-        LocalDBMS.prototype.getProfileStructure = function(type, callback){
+        LocalDBMS.prototype.getProfileStructure = function (type, callback) {
             PC.precondition(typeCheck(type), callback, () => {
                 callback(null, CU.clone(R.path(getPath(type), this.database)));
             });
         };
         // profile configurer
-        LocalDBMS.prototype.createProfileItem = function(type, name, itemType, selectedIndex, callback) {
-            var chain = [typeCheck(type), PC.isString(name), PC.notEquals(name, 'name'),
-                        PC.isNumber(selectedIndex), itemTypeCheck(itemType)];
+        LocalDBMS.prototype.createProfileItem = function (type, name, itemType, selectedIndex, callback) {
+            let chain = [typeCheck(type), PC.isString(name), PC.notEquals(name, 'name'),
+                PC.isNumber(selectedIndex), itemTypeCheck(itemType)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 chain = [PC.createEntityCheck(name, container.map(R.prop('name'))), PC.isInRange(selectedIndex, 0, container.length)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
-                    var value = Constants.profileFieldTypes[itemType].value;
-                    var profileItem = {
-                        name : name,
-                        type : itemType,
-                        value : value,
-                        doExport : true,
+                    const value = Constants.profileFieldTypes[itemType].value;
+                    const profileItem = {
+                        name,
+                        type: itemType,
+                        value,
+                        doExport: true,
                         playerAccess: 'hidden',
                         showInRoleGrid: false
                     };
 
                     container.splice(selectedIndex, 0, profileItem);
-                    this.ee.trigger("createProfileItem", [type, name, itemType, value]);
+                    this.ee.trigger('createProfileItem', [type, name, itemType, value]);
                     callback();
                 });
             });
         };
 
         //profile configurer
-        LocalDBMS.prototype.moveProfileItem = function(type, index, newIndex, callback){
-            var chain = [typeCheck(type),PC.isNumber(index),PC.isNumber(newIndex)];
+        LocalDBMS.prototype.moveProfileItem = function (type, index, newIndex, callback) {
+            let chain = [typeCheck(type), PC.isNumber(index), PC.isNumber(newIndex)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
-                chain = [PC.isInRange(index, 0, container.length-1), PC.isInRange(newIndex, 0, container.length)];
+                const container = R.path(getPath(type), this.database);
+                chain = [PC.isInRange(index, 0, container.length - 1), PC.isInRange(newIndex, 0, container.length)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
-                    if(newIndex > index){
+                    if (newIndex > index) {
                         newIndex--;
                     }
-                    var tmp = container[index];
+                    const tmp = container[index];
                     container.splice(index, 1);
                     container.splice(newIndex, 0, tmp);
                     callback();
@@ -88,40 +86,40 @@ See the License for the specific language governing permissions and
             });
         };
         // profile configurer
-        LocalDBMS.prototype.removeProfileItem = function(type, index, profileItemName, callback) {
-            var chain = [typeCheck(type),PC.isNumber(index),PC.isString(profileItemName)];
+        LocalDBMS.prototype.removeProfileItem = function (type, index, profileItemName, callback) {
+            const chain = [typeCheck(type), PC.isNumber(index), PC.isString(profileItemName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
-                var els = container.map((item, i) => i + '/' +item.name);
-                PC.precondition(PC.entityExists(index + '/' + profileItemName, els), callback, () => {
+                const container = R.path(getPath(type), this.database);
+                const els = container.map((item, i) => `${i}/${item.name}`);
+                PC.precondition(PC.entityExists(`${index}/${profileItemName}`, els), callback, () => {
                     PC.removeFromArrayByIndex(container, index);
-                    this.ee.trigger("removeProfileItem", arguments);
+                    this.ee.trigger('removeProfileItem', arguments);
                     callback();
                 });
             });
         };
         // profile configurer
-        LocalDBMS.prototype.changeProfileItemType = function(type, profileItemName, newType, callback) {
-            var chain = [typeCheck(type),PC.isString(profileItemName),itemTypeCheck(newType)];
+        LocalDBMS.prototype.changeProfileItemType = function (type, profileItemName, newType, callback) {
+            const chain = [typeCheck(type), PC.isString(profileItemName), itemTypeCheck(newType)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
-                    var profileItem = container.filter((elem) => elem.name === profileItemName)[0];
+                    const profileItem = container.filter(elem => elem.name === profileItemName)[0];
                     profileItem.type = newType;
                     profileItem.value = Constants.profileFieldTypes[newType].value;
-                    this.ee.trigger("changeProfileItemType", arguments);
+                    this.ee.trigger('changeProfileItemType', arguments);
                     callback();
                 });
             });
         };
 
-        LocalDBMS.prototype.changeProfileItemPlayerAccess = function(type, profileItemName, playerAccessType, callback) {
-            var chain = [typeCheck(type),PC.isString(profileItemName),playerAccessCheck(playerAccessType)];
+        LocalDBMS.prototype.changeProfileItemPlayerAccess = function (type, profileItemName, playerAccessType, callback) {
+            const chain = [typeCheck(type), PC.isString(profileItemName), playerAccessCheck(playerAccessType)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
-                    var profileStructure = R.path(getPath(type), this.database);
-                    var profileItem = R.find(R.propEq('name', profileItemName), profileStructure);
+                    const profileStructure = R.path(getPath(type), this.database);
+                    const profileItem = R.find(R.propEq('name', profileItemName), profileStructure);
                     profileItem.playerAccess = playerAccessType;
                     callback();
                 });
@@ -129,27 +127,23 @@ See the License for the specific language governing permissions and
         };
 
         // profile configurer
-        LocalDBMS.prototype.renameProfileItem = function(type, newName, oldName, callback) {
+        LocalDBMS.prototype.renameProfileItem = function (type, newName, oldName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.renameEntityCheck(oldName, newName, container.map(R.prop('name'))), callback, () => {
-                    this.ee.trigger("renameProfileItem", [type, newName, oldName]);
-                    container.filter(function(elem) {
-                        return elem.name === oldName;
-                    })[0].name = newName;
+                    this.ee.trigger('renameProfileItem', [type, newName, oldName]);
+                    container.filter(elem => elem.name === oldName)[0].name = newName;
                     callback();
                 });
             });
         };
 
-        LocalDBMS.prototype.doExportProfileItemChange = function(type, profileItemName, checked, callback) {
-            var chain = [typeCheck(type),PC.isString(profileItemName),PC.isBoolean(checked)];
+        LocalDBMS.prototype.doExportProfileItemChange = function (type, profileItemName, checked, callback) {
+            const chain = [typeCheck(type), PC.isString(profileItemName), PC.isBoolean(checked)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
-                    var profileItem = container.filter(function(elem) {
-                        return elem.name === profileItemName;
-                    })[0];
+                    const profileItem = container.filter(elem => elem.name === profileItemName)[0];
 
                     profileItem.doExport = checked;
                     callback();
@@ -157,10 +151,10 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.showInRoleGridProfileItemChange = function(type, profileItemName, checked, callback) {
-            var chain = [typeCheck(type),CU.isString(profileItemName),CU.isBoolean(checked)];
+        LocalDBMS.prototype.showInRoleGridProfileItemChange = function (type, profileItemName, checked, callback) {
+            const chain = [typeCheck(type), CU.isString(profileItemName), CU.isBoolean(checked)];
             CU.precondition(CU.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 CU.precondition(CU.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
                     container.filter(R.pipe(R.prop('name'), R.equals(profileItemName)))[0].showInRoleGrid = checked;
                     callback();
@@ -168,50 +162,50 @@ See the License for the specific language governing permissions and
             });
         };
 
-        var typeSpecificPreconditions = function(itemType, value){
+        const typeSpecificPreconditions = function (itemType, value) {
             switch (itemType) {
-            case "text":
-            case "string":
-            case "checkbox":
-            case "number":
-            case "multiEnum":
+            case 'text':
+            case 'string':
+            case 'checkbox':
+            case 'number':
+            case 'multiEnum':
                 return PC.nil();
-            case "enum":
+            case 'enum':
                 return PC.isNotEmptyString(value);
             }
         };
 
         // profile configurer
-        LocalDBMS.prototype.updateDefaultValue = function(type, profileItemName, value, callback) {
-            var chain = [typeCheck(type),PC.isString(profileItemName)];
+        LocalDBMS.prototype.updateDefaultValue = function (type, profileItemName, value, callback) {
+            let chain = [typeCheck(type), PC.isString(profileItemName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
-                    var info = container.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
-                    chain = [PC.getValueCheck(info.type)(value),typeSpecificPreconditions(info.type, value)];
+                    const info = container.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
+                    chain = [PC.getValueCheck(info.type)(value), typeSpecificPreconditions(info.type, value)];
                     PC.precondition(PC.chainCheck(chain), callback, () => {
-                        var newOptions, newOptionsMap, missedValues;
+                        let newOptions, newOptionsMap, missedValues;
 
                         switch (info.type) {
-                        case "text":
-                        case "string":
-                        case "checkbox":
+                        case 'text':
+                        case 'string':
+                        case 'checkbox':
                             info.value = value;
                             break;
-                        case "number":
+                        case 'number':
                             info.value = Number(value);
                             break;
-                        case "enum":
-                        case "multiEnum":
-                            newOptions = R.uniq(value.split(",").map(R.trim));
-                            missedValues = info.value.trim() === '' ? [] : R.difference(info.value.split(","), newOptions);
+                        case 'enum':
+                        case 'multiEnum':
+                            newOptions = R.uniq(value.split(',').map(R.trim));
+                            missedValues = info.value.trim() === '' ? [] : R.difference(info.value.split(','), newOptions);
                             newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
 
                             if (missedValues.length !== 0) {
-                                this.ee.trigger(info.type === 'enum' ? "replaceEnumValue" : "replaceMultiEnumValue", [type, profileItemName, newOptions[0], newOptionsMap]);
+                                this.ee.trigger(info.type === 'enum' ? 'replaceEnumValue' : 'replaceMultiEnumValue', [type, profileItemName, newOptions[0], newOptionsMap]);
                             }
 
-                            info.value = newOptions.join(",");
+                            info.value = newOptions.join(',');
                             break;
                         default:
                             callback(new Errors.InternalError('errors-unexpected-switch-argument', [info.type]));
@@ -221,9 +215,8 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    };
+    }
     callback(profileConfigurerAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['profileConfigurerAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.profileConfigurerAPI = api : module.exports = api;
+}));

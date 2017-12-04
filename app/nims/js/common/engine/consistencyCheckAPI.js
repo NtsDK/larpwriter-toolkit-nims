@@ -12,21 +12,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function consistencyCheckAPI(LocalDBMS, opts) {
-        var R             = opts.R           ;
-        var CommonUtils   = opts.CommonUtils ;
-        var validatorLib  = opts.Ajv         ;
-        var schemaBuilder = opts.Schema      ;
+        const R = opts.R;
+        const CommonUtils = opts.CommonUtils;
+        const validatorLib = opts.Ajv;
+        const schemaBuilder = opts.Schema;
 
-        LocalDBMS.prototype.getConsistencyCheckResult = function(callback) {
-            var errors = [];
-            var pushError = function(str){
+        LocalDBMS.prototype.getConsistencyCheckResult = function (callback) {
+            let errors = [];
+            const pushError = function (str) {
                 errors.push(str);
-            }
+            };
 
             checkProfileStructureConsistency(this.database, 'character', 'CharacterProfileStructure', pushError);
             checkProfileStructureConsistency(this.database, 'player', 'PlayerProfileStructure', pushError);
@@ -37,15 +36,15 @@ See the License for the specific language governing permissions and
             checkStoryCharactersConsistency(this.database, pushError);
             checkEventsCharactersConsistency(this.database, pushError);
             checkBindingsConsistency(this.database, pushError);
-            if(this.database.ManagementInfo){
+            if (this.database.ManagementInfo) {
                 checkObjectRightsConsistency(this.database, pushError);
                 checkPlayerLoginConsistency(this.database, pushError);
             }
 
-            var schema = schemaBuilder.getSchema(this.database);
-            var validator = validatorLib({allErrors: true}); // options can be passed, e.g. {allErrors: true}
-            var validate = validator.compile(schema);
-            var valid = validate(this.database);
+            const schema = schemaBuilder.getSchema(this.database);
+            const validator = validatorLib({ allErrors: true }); // options can be passed, e.g. {allErrors: true}
+            const validate = validator.compile(schema);
+            const valid = validate(this.database);
             if (!valid) {
                 errors = errors.concat(validate.errors);
             }
@@ -53,154 +52,151 @@ See the License for the specific language governing permissions and
             callback(null, errors);
         };
 
-        var getErrorProcessor = function(callback){
+        const getErrorProcessor = function (callback) {
             return R.curry(R.compose(callback, CommonUtils.strFormat));
-        }
+        };
 
-        var checkObjectRightsConsistency = function(data, callback){
-            var entities = {
-                characters : R.keys(data.Characters),
-                stories : R.keys(data.Stories),
-                groups : R.keys(data.Groups),
-                players : R.keys(data.Players)
+        var checkObjectRightsConsistency = function (data, callback) {
+            const entities = {
+                characters: R.keys(data.Characters),
+                stories: R.keys(data.Stories),
+                groups: R.keys(data.Groups),
+                players: R.keys(data.Players)
             };
-            var types = R.keys(entities);
-            var processError = getErrorProcessor(callback);
+            const types = R.keys(entities);
+            const processError = getErrorProcessor(callback);
 
-            R.values(data.ManagementInfo.UsersInfo).forEach(function(user){
-                types.forEach(type => {
-                    var difference = R.difference(user[type], entities[type]);
-                    if(difference.length != 0){
-                        processError("Object rights inconsistent, user entity is not exist: user {0}, entity {1}, type {2}", [user.name, difference, type]);
-                    }
-                })
-            })
-        };
-
-        var checkPlayerLoginConsistency = function(data, callback){
-            var playerNames = R.values(data.Players).map(R.prop('name'));
-            var loginNames = R.keys(data.ManagementInfo.PlayersInfo);
-            var processError = getErrorProcessor(callback);
-
-            var difference = R.difference(loginNames, playerNames);
-            if(difference.length != 0){
-                processError("Player logins inconsistent, logins which have no player: logins {0}", [difference]);
-            }
-        };
-
-        var checkEventsCharactersConsistency = function(data, callback){
-            var processError = getErrorProcessor(callback);
-            R.values(data.Stories).forEach(function(story){
-                var storyCharacters = R.values(story.characters).map(R.prop('name'));
-                story.events.forEach(function(event, i){
-                    var eventCharacters = R.keys(event.characters);
-                    var difference = R.difference(eventCharacters, storyCharacters);
-                    if(difference.length != 0){
-                        processError("Event characters inconsistent, some character is not exist: story {0}, character {1}", [story.name + ":" + i, difference]);
+            R.values(data.ManagementInfo.UsersInfo).forEach((user) => {
+                types.forEach((type) => {
+                    const difference = R.difference(user[type], entities[type]);
+                    if (difference.length != 0) {
+                        processError('Object rights inconsistent, user entity is not exist: user {0}, entity {1}, type {2}', [user.name, difference, type]);
                     }
                 });
             });
         };
 
-        var checkBindingsConsistency = function(data, callback){
-            var processError = getErrorProcessor(callback);
-            R.toPairs(R.invert(data.ProfileBindings)).filter(function(pair){
-                return pair[1].length > 1;
-            }).map(function(pair){
-                processError("Profile bindings inconsistent, player has multiple characters: player {0}, characters {1}", [pair[0], JSON.stringify(pair[1])]);
+        var checkPlayerLoginConsistency = function (data, callback) {
+            const playerNames = R.values(data.Players).map(R.prop('name'));
+            const loginNames = R.keys(data.ManagementInfo.PlayersInfo);
+            const processError = getErrorProcessor(callback);
+
+            const difference = R.difference(loginNames, playerNames);
+            if (difference.length != 0) {
+                processError('Player logins inconsistent, logins which have no player: logins {0}', [difference]);
+            }
+        };
+
+        var checkEventsCharactersConsistency = function (data, callback) {
+            const processError = getErrorProcessor(callback);
+            R.values(data.Stories).forEach((story) => {
+                const storyCharacters = R.values(story.characters).map(R.prop('name'));
+                story.events.forEach((event, i) => {
+                    const eventCharacters = R.keys(event.characters);
+                    const difference = R.difference(eventCharacters, storyCharacters);
+                    if (difference.length != 0) {
+                        processError('Event characters inconsistent, some character is not exist: story {0}, character {1}', [`${story.name}:${i}`, difference]);
+                    }
+                });
             });
         };
 
-        var checkStoryCharactersConsistency = function(data, callback){
-            var charNames = R.values(data.Characters).map(R.prop('name'));
-            var processError = getErrorProcessor(callback);
+        var checkBindingsConsistency = function (data, callback) {
+            const processError = getErrorProcessor(callback);
+            R.toPairs(R.invert(data.ProfileBindings)).filter(pair => pair[1].length > 1).map((pair) => {
+                processError('Profile bindings inconsistent, player has multiple characters: player {0}, characters {1}', [pair[0], JSON.stringify(pair[1])]);
+            });
+        };
 
-            R.values(data.Stories).forEach(function(story){
-                var storyCharactersInner = R.values(story.characters).map(R.prop('name'));
-                var differenceInner = R.difference(storyCharactersInner, charNames);
-                if(differenceInner.length != 0){
-                    processError("Story characters inconsistent, some character is not exist: story {0}, character {1}", [story.name, differenceInner]);
+        var checkStoryCharactersConsistency = function (data, callback) {
+            const charNames = R.values(data.Characters).map(R.prop('name'));
+            const processError = getErrorProcessor(callback);
+
+            R.values(data.Stories).forEach((story) => {
+                const storyCharactersInner = R.values(story.characters).map(R.prop('name'));
+                const differenceInner = R.difference(storyCharactersInner, charNames);
+                if (differenceInner.length != 0) {
+                    processError('Story characters inconsistent, some character is not exist: story {0}, character {1}', [story.name, differenceInner]);
                 }
-                var storyCharactersOuter = R.keys(story.characters);
-                var differenceOuter = R.symmetricDifference(storyCharactersInner, storyCharactersOuter);
-                if(differenceOuter.length != 0){
-                    processError("Story characters inconsistent, inner and outer character name are inconsistent: story {0}, character {1}", [story.name, differenceOuter]);
+                const storyCharactersOuter = R.keys(story.characters);
+                const differenceOuter = R.symmetricDifference(storyCharactersInner, storyCharactersOuter);
+                if (differenceOuter.length != 0) {
+                    processError('Story characters inconsistent, inner and outer character name are inconsistent: story {0}, character {1}', [story.name, differenceOuter]);
                 }
             });
         };
 
-        var isInconsistent = function(charValue, type, profileItemValue){
-            switch(type){
-            case "text":
-            case "string":
+        const isInconsistent = function (charValue, type, profileItemValue) {
+            switch (type) {
+            case 'text':
+            case 'string':
                 return !R.is(String, charValue);
-            case "enum":
-                if(!R.is(String, charValue)){
+            case 'enum':
+                if (!R.is(String, charValue)) {
                     return true;
-                } else {
-                    var values = profileItemValue.split(',').map(R.trim);
-                    return !R.contains(charValue.trim(), values);
                 }
-            case "multiEnum":
-                if(!R.is(String, charValue)){
+                var values = profileItemValue.split(',').map(R.trim);
+                return !R.contains(charValue.trim(), values);
+
+            case 'multiEnum':
+                if (!R.is(String, charValue)) {
                     return true;
-                } else {
-                    var values = profileItemValue === '' ? [] : profileItemValue.split(',').map(R.trim);
-                    var charValues = charValue === '' ? [] : charValue.split(',').map(R.trim);
-                    return R.difference(charValues, values).length != 0;
                 }
-            case "number":
+                var values = profileItemValue === '' ? [] : profileItemValue.split(',').map(R.trim);
+                var charValues = charValue === '' ? [] : charValue.split(',').map(R.trim);
+                return R.difference(charValues, values).length != 0;
+
+            case 'number':
                 return !R.is(Number, charValue);
-            case "checkbox":
+            case 'checkbox':
                 return !R.is(Boolean, charValue);
             default:
                 return true;
             }
         };
 
-        var checkProfileValueConsistency = function(data, profiles, structure, callback){
-            var processError = getErrorProcessor(callback)('Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}');
+        var checkProfileValueConsistency = function (data, profiles, structure, callback) {
+            const processError = getErrorProcessor(callback)('Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}');
 
-            R.values(data[profiles]).forEach(function(character){
-                data[structure].forEach(function(profileItem){
-                    if(isInconsistent(character[profileItem.name], profileItem.type, profileItem.value)){
+            R.values(data[profiles]).forEach((character) => {
+                data[structure].forEach((profileItem) => {
+                    if (isInconsistent(character[profileItem.name], profileItem.type, profileItem.value)) {
                         processError([character.name, profileItem.name, character[profileItem.name]]);
                     }
-                })
+                });
             });
         };
 
-        var checkProfileConsistency = function(data, profiles, structure, callback){
-            var profileItems = data[structure].map(R.prop('name'));
-            var processError = getErrorProcessor(callback);
+        var checkProfileConsistency = function (data, profiles, structure, callback) {
+            const profileItems = data[structure].map(R.prop('name'));
+            const processError = getErrorProcessor(callback);
 
-            R.values(data[profiles]).forEach(function(profile){
-                var charItems = R.keys(profile).filter(R.compose(R.not, R.equals('name')));
-                var difference = R.symmetricDifference(charItems,profileItems);
-                if(difference.length != 0){
-                    var processCharacterError = processError(R.__, [profile.name,difference]);
-                    if(charItems.length !== profileItems.length){
-                        return processCharacterError("Character profile inconsistent, lengths are different: char {0}, difference [{1}]");
+            R.values(data[profiles]).forEach((profile) => {
+                const charItems = R.keys(profile).filter(R.compose(R.not, R.equals('name')));
+                const difference = R.symmetricDifference(charItems, profileItems);
+                if (difference.length != 0) {
+                    const processCharacterError = processError(R.__, [profile.name, difference]);
+                    if (charItems.length !== profileItems.length) {
+                        return processCharacterError('Character profile inconsistent, lengths are different: char {0}, difference [{1}]');
                     }
-                    if(!R.all(R.contains(R.__, profileItems))(charItems)){
-                        return processCharacterError("Character profile inconsistent, item name inconsistency: char {0}, difference [{1}]");
+                    if (!R.all(R.contains(R.__, profileItems))(charItems)) {
+                        return processCharacterError('Character profile inconsistent, item name inconsistency: char {0}, difference [{1}]');
                     }
                 }
             });
         };
 
-        var checkProfileStructureConsistency = function(data, type, structure, callback){
-            var profileItems = data[structure].map(R.prop('name'));
-            var processError = getErrorProcessor(callback);
-            if(profileItems.length !== R.uniq(profileItems).length){
-                var diff = R.toPairs(R.groupBy((name) => name, profileItems)).filter(pair => pair[1].length > 1).map(pair => pair[0]);
-                processError("Profile structure inconsistent, item names are repeated: type {0}, values {1}", [type, diff]);
+        var checkProfileStructureConsistency = function (data, type, structure, callback) {
+            const profileItems = data[structure].map(R.prop('name'));
+            const processError = getErrorProcessor(callback);
+            if (profileItems.length !== R.uniq(profileItems).length) {
+                const diff = R.toPairs(R.groupBy(name => name, profileItems)).filter(pair => pair[1].length > 1).map(pair => pair[0]);
+                processError('Profile structure inconsistent, item names are repeated: type {0}, values {1}', [type, diff]);
             }
         };
-    };
+    }
 
     callback(consistencyCheckAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['consistencyCheckAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.consistencyCheckAPI = api : module.exports = api;
+}));

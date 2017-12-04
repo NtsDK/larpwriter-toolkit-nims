@@ -12,29 +12,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
+(function (exports) {
     exports.data = {
-        "Meta": {
-            "name" : "",
-            "date" : "",
-            "preGameDate" : "",
-            "description" : ""
+        Meta: {
+            name: '',
+            date: '',
+            preGameDate: '',
+            description: ''
         },
-        "Characters": {},
-        "ProfileSettings" : [],
-        "Stories": {},
-        "Settings" : {
-            "BriefingPreview" : {
+        Characters: {},
+        ProfileSettings: [],
+        Stories: {},
+        Settings: {
+            BriefingPreview: {
             },
-            "Stories" : {
+            Stories: {
             },
-            "CharacterProfile" : {
+            CharacterProfile: {
             }
         },
-        "Version": "0.4.1"
+        Version: '0.4.1'
     };
-
-})(typeof exports === 'undefined'? this['EmptyBase']={}: exports);
+}(typeof exports === 'undefined' ? this.EmptyBase = {} : exports));

@@ -16,52 +16,50 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
-function FilterConfiguration(info){
+function FilterConfiguration(info) {
     this.info = info;
-    function populateProfileItems(item){
-        if(!CommonUtils.startsWith(item.name, Constants.CHAR_PREFIX) &&
-            !CommonUtils.startsWith(item.name, Constants.PLAYER_PREFIX)){
+    function populateProfileItems(item) {
+        if (!CommonUtils.startsWith(item.name, Constants.CHAR_PREFIX) &&
+            !CommonUtils.startsWith(item.name, Constants.PLAYER_PREFIX)) {
             item.displayName = getL10n(item.displayName);
-            item.value = "";
+            item.value = '';
         }
         item.canHide = item.name != Constants.CHAR_NAME && item.name != Constants.PLAYER_NAME;
     }
     this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);
     this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
-};
+}
 
-FilterConfiguration.makeFilterConfiguration = function(callback){
-    DBMS.getProfileFilterInfo(function(err, info){
-        if(err) {Utils.handleError(err); return;}
-        var filterConfiguration = new FilterConfiguration(info);
+FilterConfiguration.makeFilterConfiguration = function (callback) {
+    DBMS.getProfileFilterInfo((err, info) => {
+        if (err) { Utils.handleError(err); return; }
+        const filterConfiguration = new FilterConfiguration(info);
         callback(null, filterConfiguration);
     });
 };
 
-FilterConfiguration.prototype.getProfileFilterItems = function(){
+FilterConfiguration.prototype.getProfileFilterItems = function () {
     return R.flatten(this.groupedProfileFilterItems.map(R.prop('profileFilterItems')));
 };
 
-FilterConfiguration.prototype.getGroupedProfileFilterItems = function(){
+FilterConfiguration.prototype.getGroupedProfileFilterItems = function () {
     return this.groupedProfileFilterItems;
 };
 
-FilterConfiguration.prototype.getBaseProfileSettings = function(){
+FilterConfiguration.prototype.getBaseProfileSettings = function () {
     return {
         characters: this.info.characters.profileStructure,
         players: this.info.players.profileStructure
-    }
+    };
 };
 
-FilterConfiguration.prototype.getDataArrays = function(filterModel) {
+FilterConfiguration.prototype.getDataArrays = function (filterModel) {
     return ProjectUtils.getDataArrays(this.info, filterModel);
 };
 
-FilterConfiguration.prototype.getProfileIds = function(filterModel) {
-    var offset = this.groupedProfileFilterItems[0].profileFilterItems.length;
-    return this.getDataArrays(filterModel).map(function(dataArray){
-        return (dataArray[0].value || '') + '/' + (dataArray[offset].value || '');
-    }).sort();
+FilterConfiguration.prototype.getProfileIds = function (filterModel) {
+    const offset = this.groupedProfileFilterItems[0].profileFilterItems.length;
+    return this.getDataArrays(filterModel).map(dataArray => `${dataArray[0].value || ''}/${dataArray[offset].value || ''}`).sort();
 };

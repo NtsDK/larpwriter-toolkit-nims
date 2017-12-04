@@ -12,63 +12,55 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-(function(callback){
-
+(function (callback) {
     function storyViewAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const dateFormat = opts.dateFormat;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var dateFormat    = opts.dateFormat  ;
-
-        var characterCheck = function(characterName, database){
+        const characterCheck = function (characterName, database) {
             return PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
-        }
+        };
 
         // preview
-        LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
+        LocalDBMS.prototype.getAllInventoryLists = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                var array = R.values(this.database.Stories).filter( story => story.characters[characterName] !== undefined &&
-                        story.characters[characterName].inventory !== "")
-                        .map(story => {
-                    return {
-                        storyName : story.name,
-                        inventory : story.characters[characterName].inventory
-                    }
-                });
+                const array = R.values(this.database.Stories).filter(story => story.characters[characterName] !== undefined &&
+                        story.characters[characterName].inventory !== '')
+                    .map(story => ({
+                        storyName: story.name,
+                        inventory: story.characters[characterName].inventory
+                    }));
                 callback(null, array);
             });
         };
 
         // preview
-        LocalDBMS.prototype.getCharacterEventGroupsByStory = function(characterName, callback) {
+        LocalDBMS.prototype.getCharacterEventGroupsByStory = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                var eventGroups = [];
+                const eventGroups = [];
 
-                var events;
+                let events;
 
-                var that = this;
-                Object.keys(this.database.Stories).filter(function(storyName) {
-                    return that.database.Stories[storyName].characters[characterName];
-                }).forEach(function(storyName) {
+                const that = this;
+                Object.keys(this.database.Stories).filter(storyName => that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
                     events = [];
 
-                    var tmpEvents = CU.clone(that.database.Stories[storyName].events);
-                    tmpEvents.map(function(elem, i) {
+                    const tmpEvents = CU.clone(that.database.Stories[storyName].events);
+                    tmpEvents.map((elem, i) => {
                         elem.index = i;
                         elem.storyName = storyName;
                         elem.isTimeEmpty = elem.time === '';
                         elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
                         return elem;
-                    }).filter(function(event) {
-                        return event.characters[characterName];
-                    }).forEach(function(event) {
+                    }).filter(event => event.characters[characterName]).forEach((event) => {
                         events.push(event);
                     });
 
                     eventGroups.push({
-                        storyName : storyName,
-                        events : events
+                        storyName,
+                        events
                     });
                 });
                 eventGroups.sort(CU.charOrdAFactory(R.prop('storyName')));
@@ -77,24 +69,20 @@ See the License for the specific language governing permissions and
         };
 
         // preview
-        LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback) {
+        LocalDBMS.prototype.getCharacterEventsByTime = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                var allEvents = [];
+                let allEvents = [];
 
-                var that = this;
-                Object.keys(this.database.Stories).filter(function(storyName) {
-                    return that.database.Stories[storyName].characters[characterName];
-                }).forEach(function(storyName) {
-                    var events = CU.clone(that.database.Stories[storyName].events);
-                    allEvents = allEvents.concat(events.map(function(elem, i) {
+                const that = this;
+                Object.keys(this.database.Stories).filter(storyName => that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
+                    const events = CU.clone(that.database.Stories[storyName].events);
+                    allEvents = allEvents.concat(events.map((elem, i) => {
                         elem.index = i;
                         elem.storyName = storyName;
                         elem.isTimeEmpty = elem.time === '';
                         elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
                         return elem;
-                    }).filter(function(event) {
-                        return event.characters[characterName];
-                    }));
+                    }).filter(event => event.characters[characterName]));
                 });
 
                 allEvents.sort(CU.eventsByTime);
@@ -103,58 +91,53 @@ See the License for the specific language governing permissions and
         };
 
         // timeline
-        LocalDBMS.prototype.getEventsTimeInfo = function(callback) {
-            var result = R.flatten(R.values(CU.clone(this.database.Stories)).map(story => {
-                return story.events.map((event, index) => {
-                    return R.merge(R.pick(['name', 'time'], event), {
-                        characters: R.keys(event.characters),
-                        storyName: story.name,
-                        index: index
-                    });
-                });
-            }));
+        LocalDBMS.prototype.getEventsTimeInfo = function (callback) {
+            const result = R.flatten(R.values(CU.clone(this.database.Stories)).map(story => story.events.map((event, index) => R.merge(R.pick(['name', 'time'], event), {
+                characters: R.keys(event.characters),
+                storyName: story.name,
+                index
+            }))));
 
             callback(null, result);
         };
 
         // character filter
-        LocalDBMS.prototype.getCharactersSummary = function(callback){
-
-            var characters = R.keys(this.database.Characters);
-            var charactersInfo = {};
-            characters.forEach(function(character){
+        LocalDBMS.prototype.getCharactersSummary = function (callback) {
+            const characters = R.keys(this.database.Characters);
+            const charactersInfo = {};
+            characters.forEach((character) => {
                 charactersInfo[character] = {
-                    'active':0,
-                    'follower':0,
-                    'defensive':0,
-                    'passive':0,
-                    'totalAdaptations':0,
-                    'finishedAdaptations':0,
-                    'totalStories':0
-                }
+                    active: 0,
+                    follower: 0,
+                    defensive: 0,
+                    passive: 0,
+                    totalAdaptations: 0,
+                    finishedAdaptations: 0,
+                    totalStories: 0
+                };
             });
 
-            R.values(this.database.Stories).forEach(function(story){
-                R.values(story.characters).forEach(function(storyCharacter){
-                    var characterInfo = charactersInfo[storyCharacter.name];
+            R.values(this.database.Stories).forEach((story) => {
+                R.values(story.characters).forEach((storyCharacter) => {
+                    const characterInfo = charactersInfo[storyCharacter.name];
                     characterInfo.totalStories++;
-                    R.toPairs(storyCharacter.activity).forEach(function(activity){
-                        if(activity[1] === true){
+                    R.toPairs(storyCharacter.activity).forEach((activity) => {
+                        if (activity[1] === true) {
                             characterInfo[activity[0]]++;
                         }
                     });
                 });
-                story.events.forEach(function(event){
-                    R.toPairs(event.characters).forEach(function(eventCharacter){
-                        var characterInfo = charactersInfo[eventCharacter[0]];
+                story.events.forEach((event) => {
+                    R.toPairs(event.characters).forEach((eventCharacter) => {
+                        const characterInfo = charactersInfo[eventCharacter[0]];
                         characterInfo.totalAdaptations++;
-                        if(eventCharacter[1].ready){
+                        if (eventCharacter[1].ready) {
                             characterInfo.finishedAdaptations++;
                         }
                     });
                 });
             });
-            R.values(charactersInfo).forEach(function(characterInfo){
+            R.values(charactersInfo).forEach((characterInfo) => {
                 characterInfo.completeness = Math.round(characterInfo.finishedAdaptations * 100 /
                     (characterInfo.totalAdaptations != 0 ? characterInfo.totalAdaptations : 1));
             });
@@ -162,22 +145,16 @@ See the License for the specific language governing permissions and
         };
 
         // character profile
-        LocalDBMS.prototype.getCharacterReport = function(characterName, callback){
+        LocalDBMS.prototype.getCharacterReport = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                var characterReport = R.values(this.database.Stories).filter(function(story){
-                    return story.characters[characterName] !== undefined;
-                }).map(function(story){
-                    var charEvents = story.events.filter(function(event){
-                        return event.characters[characterName] !== undefined;
-                    });
+                const characterReport = R.values(this.database.Stories).filter(story => story.characters[characterName] !== undefined).map((story) => {
+                    const charEvents = story.events.filter(event => event.characters[characterName] !== undefined);
 
-                    var finishedAdaptations = charEvents.filter(function(event){
-                        return event.characters[characterName].ready === true;
-                    }).length;
+                    const finishedAdaptations = charEvents.filter(event => event.characters[characterName].ready === true).length;
 
-                    var meets = {};
-                    charEvents.forEach(function(event){
-                        var chars = R.keys(event.characters);
+                    let meets = {};
+                    charEvents.forEach((event) => {
+                        const chars = R.keys(event.characters);
                         meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
                     });
 
@@ -189,20 +166,18 @@ See the License for the specific language governing permissions and
                         storyName: story.name,
                         inventory: story.characters[characterName].inventory,
                         activity: story.characters[characterName].activity,
-                        meets: meets,
+                        meets,
                         totalAdaptations: charEvents.length,
-                        finishedAdaptations: finishedAdaptations
-                    }
+                        finishedAdaptations
+                    };
                 });
                 characterReport.sort(CU.charOrdAFactory(R.prop('storyName')));
 
                 callback(null, characterReport);
             });
         };
-
-    };
+    }
     callback(storyViewAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['storyViewAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.storyViewAPI = api : module.exports = api;
+}));

@@ -16,32 +16,32 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
 ((exports) => {
     const state = {};
 
-    exports.init = function() {
-        listen(getEl('masterStoryArea'), "change", updateMasterStory);
+    exports.init = function () {
+        listen(getEl('masterStoryArea'), 'change', updateMasterStory);
         exports.content = getEl('masterStoryDiv2');
     };
 
-    exports.refresh = function() {
-        var storyArea = getEl("masterStoryArea");
-        var storyName = Stories.getCurrentStoryName();
+    exports.refresh = function () {
+        const storyArea = getEl('masterStoryArea');
+        const storyName = Stories.getCurrentStoryName();
 
-        if(storyName){
-            DBMS.getMasterStory(storyName, function(err, story){
-                if(err) {Utils.handleError(err); return;}
+        if (storyName) {
+            DBMS.getMasterStory(storyName, (err, story) => {
+                if (err) { Utils.handleError(err); return; }
                 storyArea.value = story;
             });
         } else {
-            storyArea.value = "";
+            storyArea.value = '';
         }
     };
 
     var updateMasterStory = function () {
-        var storyArea = getEl("masterStoryArea");
+        const storyArea = getEl('masterStoryArea');
         DBMS.setMasterStory(Stories.getCurrentStoryName(), storyArea.value, Utils.processError());
     };
 })(this.MasterStory = {});

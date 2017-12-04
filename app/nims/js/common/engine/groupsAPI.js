@@ -12,175 +12,169 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function groupsAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PU = opts.ProjectUtils;
+        const PC = opts.Precondition;
+        const Constants = opts.Constants;
+        const Errors = opts.Errors;
+        const listeners = opts.listeners;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PU            = opts.ProjectUtils;
-        var PC            = opts.Precondition;
-        var Constants     = opts.Constants   ;
-        var Errors        = opts.Errors      ;
-        var listeners     = opts.listeners   ;
-
-        LocalDBMS.prototype.getGroupNamesArray = function(callback) {
+        LocalDBMS.prototype.getGroupNamesArray = function (callback) {
             callback(null, Object.keys(this.database.Groups).sort(CU.charOrdA));
         };
 
-        var groupCheck = function(groupName, database){
+        const groupCheck = function (groupName, database) {
             return PC.chainCheck([PC.isString(groupName), PC.entityExists(groupName, R.keys(database.Groups))]);
         };
 
-        LocalDBMS.prototype.getGroup = function(groupName, callback) {
+        LocalDBMS.prototype.getGroup = function (groupName, callback) {
             PC.precondition(groupCheck(groupName, this.database), callback, () => {
                 callback(null, CU.clone(this.database.Groups[groupName]));
             });
         };
 
-        var _getCharacterGroupTexts = function(groups, info, profileId){
-            var dataArray = PU.getDataArray(info, profileId);
-            var array = R.values(groups).filter(function(group){
-                return group.doExport && PU.acceptDataRow(group.filterModel, dataArray);
-            }).map(function(group){
-                return {
-                    groupName: group.name,
-                    text: group.characterDescription
-                }
-            });
+        const _getCharacterGroupTexts = function (groups, info, profileId) {
+            const dataArray = PU.getDataArray(info, profileId);
+            const array = R.values(groups).filter(group => group.doExport && PU.acceptDataRow(group.filterModel, dataArray)).map(group => ({
+                groupName: group.name,
+                text: group.characterDescription
+            }));
             array.sort(CU.charOrdAFactory(R.prop('groupName')));
             return array;
-        }
+        };
 
         // preview
-        LocalDBMS.prototype.getCharacterGroupTexts = function(characterName, callback) {
-            var that = this;
-            this.getProfileBinding('character', characterName, function(err, profileId){
-                if(err) {callback(err); return;}
-                that.getProfileFilterInfo(function(err, info){
-                    if(err) {callback(err); return;}
+        LocalDBMS.prototype.getCharacterGroupTexts = function (characterName, callback) {
+            const that = this;
+            this.getProfileBinding('character', characterName, (err, profileId) => {
+                if (err) { callback(err); return; }
+                that.getProfileFilterInfo((err, info) => {
+                    if (err) { callback(err); return; }
                     callback(null, _getCharacterGroupTexts(that.database.Groups, info, profileId));
                 });
-            })
+            });
         };
 
         // export
-        LocalDBMS.prototype.getAllCharacterGroupTexts = function(callback) {
-            var that = this;
-            this.getProfileFilterInfo(function(err, info){
-                if(err) {callback(err); return;}
-                that.getProfileBindings(function(err, bindings){
-                    if(err) {callback(err); return;}
-                    var texts = Object.keys(that.database.Characters).reduce(function(result, characterName){
-                        var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
+        LocalDBMS.prototype.getAllCharacterGroupTexts = function (callback) {
+            const that = this;
+            this.getProfileFilterInfo((err, info) => {
+                if (err) { callback(err); return; }
+                that.getProfileBindings((err, bindings) => {
+                    if (err) { callback(err); return; }
+                    const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
+                        const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
                         result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, profileId);
                         return result;
                     }, {});
                     callback(null, texts);
-                })
+                });
             });
         };
 
-        LocalDBMS.prototype.createGroup = function(groupName, callback) {
+        LocalDBMS.prototype.createGroup = function (groupName, callback) {
             PC.precondition(PC.createEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
-                var newGroup = {
-                    name : groupName,
-                    masterDescription : "",
-                    characterDescription : "",
+                const newGroup = {
+                    name: groupName,
+                    masterDescription: '',
+                    characterDescription: '',
                     filterModel: [],
                     doExport: true
                 };
 
                 this.database.Groups[groupName] = newGroup;
-                this.ee.trigger("createGroup", arguments);
-                if(callback) callback();
+                this.ee.trigger('createGroup', arguments);
+                if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.renameGroup = function(fromName, toName, callback) {
+        LocalDBMS.prototype.renameGroup = function (fromName, toName, callback) {
             PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), callback, () => {
-                var data = this.database.Groups[fromName];
+                const data = this.database.Groups[fromName];
                 data.name = toName;
                 this.database.Groups[toName] = data;
                 delete this.database.Groups[fromName];
 
-                this.ee.trigger("renameGroup", arguments);
+                this.ee.trigger('renameGroup', arguments);
 
-                if(callback) callback();
+                if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.removeGroup = function(groupName, callback) {
+        LocalDBMS.prototype.removeGroup = function (groupName, callback) {
             PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
                 delete this.database.Groups[groupName];
-                this.ee.trigger("removeGroup", arguments);
-                if(callback) callback();
+                this.ee.trigger('removeGroup', arguments);
+                if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.saveFilterToGroup = function(groupName, filterModel, callback) {
+        LocalDBMS.prototype.saveFilterToGroup = function (groupName, filterModel, callback) {
             PC.precondition(groupCheck(groupName, this.database), callback, () => {
-                var conflictTypes = PU.isFilterModelCompatibleWithProfiles({
+                const conflictTypes = PU.isFilterModelCompatibleWithProfiles({
                     characters: this.database.CharacterProfileStructure,
                     players: this.database.PlayerProfileStructure
                 }, filterModel);
-                if(conflictTypes.length != 0){
-                    callback(new Errors.ValidationError("groups-page-filter-is-incompatible-with-base-profiles", [conflictTypes.join(',')]));
+                if (conflictTypes.length != 0) {
+                    callback(new Errors.ValidationError('groups-page-filter-is-incompatible-with-base-profiles', [conflictTypes.join(',')]));
                     return;
                 }
                 this.database.Groups[groupName].filterModel = filterModel;
-                if(callback) callback();
+                if (callback) callback();
             });
         };
 
-        LocalDBMS.prototype.updateGroupField = function(groupName, fieldName, value, callback) {
-            var chain = PC.chainCheck([groupCheck(groupName, this.database),
-                                        PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
-                                        fieldName === 'doExport' ? PC.isBoolean(value) : PC.isString(value)]);
+        LocalDBMS.prototype.updateGroupField = function (groupName, fieldName, value, callback) {
+            const chain = PC.chainCheck([groupCheck(groupName, this.database),
+                PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
+                fieldName === 'doExport' ? PC.isBoolean(value) : PC.isString(value)]);
             PC.precondition(chain, callback, () => {
-                var profileInfo = this.database.Groups[groupName];
+                const profileInfo = this.database.Groups[groupName];
                 profileInfo[fieldName] = value;
-                if(callback) callback();
+                if (callback) callback();
             });
         };
 
-        var initProfileInfo = function(that, type, ownerMapType, callback){
-            that.getAllProfiles(type, function(err, profiles){
-                if(err) {callback(err); return;}
-                var owners = R.keys(profiles);
-                if(that._getOwnerMap){
+        const initProfileInfo = function (that, type, ownerMapType, callback) {
+            that.getAllProfiles(type, (err, profiles) => {
+                if (err) { callback(err); return; }
+                let owners = R.keys(profiles);
+                if (that._getOwnerMap) {
                     owners = that._getOwnerMap(ownerMapType);
                 } else {
                     owners = R.zipObj(owners, R.repeat('user', owners.length));
                 }
-                that.getProfileStructure(type, function(err, profileStructure){
-                    if(err) {callback(err); return;}
+                that.getProfileStructure(type, (err, profileStructure) => {
+                    if (err) { callback(err); return; }
                     callback(null, {
-                        'profileStructure':profileStructure,
-                        'owners':owners,
-                        'profiles':profiles
+                        profileStructure,
+                        owners,
+                        profiles
                     });
                 });
             });
         };
 
-        LocalDBMS.prototype.getProfileFilterInfo = function(callback) {
-            var that = this;
-            initProfileInfo(that, 'character', 'Characters', function(err, charactersInfo){
-                if(err) {callback(err); return;}
-                initProfileInfo(that, 'player', 'Players', function(err, playersInfo){
-                    if(err) {callback(err); return;}
-                    that.getCharactersSummary(function(err, charactersSummary){
-                        if(err) {callback(err); return;}
-                        that.getExtendedProfileBindings(function(err, bindingData){
-                            if(err) {callback(err); return;}
-                            var info = PU.makeGroupedProfileFilterInfo({
-                                'characters' : charactersInfo,
-                                'players' : playersInfo,
-                                charactersSummary : charactersSummary,
-                                bindingData : bindingData
+        LocalDBMS.prototype.getProfileFilterInfo = function (callback) {
+            const that = this;
+            initProfileInfo(that, 'character', 'Characters', (err, charactersInfo) => {
+                if (err) { callback(err); return; }
+                initProfileInfo(that, 'player', 'Players', (err, playersInfo) => {
+                    if (err) { callback(err); return; }
+                    that.getCharactersSummary((err, charactersSummary) => {
+                        if (err) { callback(err); return; }
+                        that.getExtendedProfileBindings((err, bindingData) => {
+                            if (err) { callback(err); return; }
+                            const info = PU.makeGroupedProfileFilterInfo({
+                                characters: charactersInfo,
+                                players: playersInfo,
+                                charactersSummary,
+                                bindingData
                             });
                             callback(null, info);
                         });
@@ -189,14 +183,14 @@ See the License for the specific language governing permissions and
             });
         };
 
-        var _getGroupCharacterSets = function(groups, characterNames, bindings, info){
-            var groupNames = R.keys(groups);
-            var groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
-            characterNames.forEach(function(characterName){
-                var profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
-                var dataArray = PU.getDataArray(info, profileId);
-                groupNames.forEach(function(groupName){
-                    if(PU.acceptDataRow(groups[groupName].filterModel, dataArray)){
+        const _getGroupCharacterSets = function (groups, characterNames, bindings, info) {
+            const groupNames = R.keys(groups);
+            const groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
+            characterNames.forEach((characterName) => {
+                const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
+                const dataArray = PU.getDataArray(info, profileId);
+                groupNames.forEach((groupName) => {
+                    if (PU.acceptDataRow(groups[groupName].filterModel, dataArray)) {
                         groupCharacterSets[groupName][characterName] = true;
                     }
                 });
@@ -204,63 +198,61 @@ See the License for the specific language governing permissions and
             return groupCharacterSets;
         };
 
-        LocalDBMS.prototype.getGroupCharacterSets = function(callback) {
-            var that = this;
+        LocalDBMS.prototype.getGroupCharacterSets = function (callback) {
+            const that = this;
 
-            this.getProfileFilterInfo(function(err, info){
-                if(err) {callback(err); return;}
+            this.getProfileFilterInfo((err, info) => {
+                if (err) { callback(err); return; }
                 callback(null, _getGroupCharacterSets(that.database.Groups, R.keys(that.database.Characters), R.clone(that.database.ProfileBindings), info));
             });
         };
 
-        function _removeProfileItem(type, index, profileItemName){
-            let prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
-            let subFilterName = prefix + profileItemName;
-            var that = this;
-            Object.keys(this.database.Groups).forEach(function(groupName) {
-                var group = that.database.Groups[groupName];
-                group.filterModel = group.filterModel.filter(function(filterItem){
-                    return filterItem.name !== subFilterName;
-                });
+        function _removeProfileItem(type, index, profileItemName) {
+            const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
+            const subFilterName = prefix + profileItemName;
+            const that = this;
+            Object.keys(this.database.Groups).forEach((groupName) => {
+                const group = that.database.Groups[groupName];
+                group.filterModel = group.filterModel.filter(filterItem => filterItem.name !== subFilterName);
             });
-        };
+        }
 
         listeners.removeProfileItem = listeners.removeProfileItem || [];
         listeners.removeProfileItem.push(_removeProfileItem);
 
-        function _changeProfileItemType(type, profileItemName, newType){
+        function _changeProfileItemType(type, profileItemName, newType) {
             _removeProfileItem.apply(this, [type, -1, profileItemName]);
-        };
+        }
 
         listeners.changeProfileItemType = listeners.changeProfileItemType || [];
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
-        function _renameProfileItem(type, newName, oldName){
-            let prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
-            let subFilterName = prefix + oldName;
-            var that = this;
-            Object.keys(this.database.Groups).forEach(function(groupName) {
-                var group = that.database.Groups[groupName];
-                group.filterModel = group.filterModel.map(function(filterItem){
-                    if(filterItem.name === subFilterName){
+        function _renameProfileItem(type, newName, oldName) {
+            const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
+            const subFilterName = prefix + oldName;
+            const that = this;
+            Object.keys(this.database.Groups).forEach((groupName) => {
+                const group = that.database.Groups[groupName];
+                group.filterModel = group.filterModel.map((filterItem) => {
+                    if (filterItem.name === subFilterName) {
                         filterItem.name = prefix + newName;
                     }
                     return filterItem;
                 });
             });
-        };
+        }
 
         listeners.renameProfileItem = listeners.renameProfileItem || [];
         listeners.renameProfileItem.push(_renameProfileItem);
 
-        function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
-            var subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) + profileItemName;
-            var that = this;
-            Object.keys(this.database.Groups).forEach(function(groupName) {
-                var group = that.database.Groups[groupName];
-                group.filterModel.forEach(function(filterItem){
-                    if(filterItem.name === subFilterName){
-                        for(var selectedOption in filterItem.selectedOptions){
+        function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
+            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) + profileItemName;
+            const that = this;
+            Object.keys(this.database.Groups).forEach((groupName) => {
+                const group = that.database.Groups[groupName];
+                group.filterModel.forEach((filterItem) => {
+                    if (filterItem.name === subFilterName) {
+                        for (const selectedOption in filterItem.selectedOptions) {
                             if (!newOptionsMap[selectedOption]) {
                                 delete filterItem.selectedOptions[selectedOption];
                             }
@@ -268,26 +260,25 @@ See the License for the specific language governing permissions and
                     }
                 });
             });
-            Object.keys(this.database.Groups).forEach(function(groupName) {
-                var group = that.database.Groups[groupName];
-                group.filterModel = group.filterModel.filter(function(filterItem){
-                    if(filterItem.name !== subFilterName){
+            Object.keys(this.database.Groups).forEach((groupName) => {
+                const group = that.database.Groups[groupName];
+                group.filterModel = group.filterModel.filter((filterItem) => {
+                    if (filterItem.name !== subFilterName) {
                         return true;
                     }
                     return Object.keys(filterItem.selectedOptions).length != 0;
                 });
             });
-        };
+        }
 
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];
         listeners.replaceEnumValue.push(_replaceEnumValue);
 
         listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
         listeners.replaceMultiEnumValue.push(_replaceEnumValue);
-    };
+    }
 
     callback(groupsAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['groupsAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.groupsAPI = api : module.exports = api;
+}));

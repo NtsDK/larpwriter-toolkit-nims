@@ -16,32 +16,30 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
 ((exports) => {
     const state = {};
 
     exports.init = function () {
-        exports.content = queryEl(".group-schema-tab");
+        exports.content = queryEl('.group-schema-tab');
     };
 
     exports.refresh = function () {
-        DBMS.getGroupSchemas(function(err, schemas){
+        DBMS.getGroupSchemas((err, schemas) => {
             redrawSchema(schemas.theory);
         });
     };
 
     var redrawSchema = function (graph) {
-        var container = queryEl('.group-schema-tab .schema-container');
+        const container = queryEl('.group-schema-tab .schema-container');
 
-        if(state.network){
+        if (state.network) {
             state.network.destroy();
         }
-        graph.edges = graph.edges.map(function(edge){
-            return R.merge(edge, {
-                'physics' : false,
-            });
-        });
+        graph.edges = graph.edges.map(edge => R.merge(edge, {
+            physics: false,
+        }));
 
         state.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
     };

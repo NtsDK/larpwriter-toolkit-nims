@@ -12,35 +12,33 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function storyBaseAPI(LocalDBMS, opts) {
-
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var Errors        = opts.Errors      ;
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const Errors = opts.Errors;
 
         // stories, timeline
         LocalDBMS.prototype.getStoryNamesArray = function (callback) {
             callback(null, Object.keys(this.database.Stories).sort(CU.charOrdA));
         };
         // social network
-        LocalDBMS.prototype.getAllStories = function(callback) {
+        LocalDBMS.prototype.getAllStories = function (callback) {
             callback(null, CU.clone(this.database.Stories));
         };
 
         //stories
-        LocalDBMS.prototype.getMasterStory = function(storyName, callback){
+        LocalDBMS.prototype.getMasterStory = function (storyName, callback) {
             PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 callback(null, this.database.Stories[storyName].story);
             });
         };
         //stories
-        LocalDBMS.prototype.setMasterStory = function(storyName, value, callback){
-            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(value)];
+        LocalDBMS.prototype.setMasterStory = function (storyName, value, callback) {
+            const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(value)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.Stories[storyName].story = value;
                 callback();
@@ -48,42 +46,40 @@ See the License for the specific language governing permissions and
         };
 
         // stories
-        LocalDBMS.prototype.createStory = function(storyName, callback){
+        LocalDBMS.prototype.createStory = function (storyName, callback) {
             PC.precondition(PC.createEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 this.database.Stories[storyName] = {
-                        name : storyName,
-                        story : "",
-                        characters : {},
-                        events : []
+                    name: storyName,
+                    story: '',
+                    characters: {},
+                    events: []
                 };
-                this.ee.trigger("createStory", arguments);
+                this.ee.trigger('createStory', arguments);
                 callback();
             });
         };
         // stories
-        LocalDBMS.prototype.renameStory = function(fromName, toName, callback){
+        LocalDBMS.prototype.renameStory = function (fromName, toName, callback) {
             PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Stories)), callback, () => {
-                var data = this.database.Stories[fromName];
+                const data = this.database.Stories[fromName];
                 data.name = toName;
                 this.database.Stories[toName] = data;
                 delete this.database.Stories[fromName];
-                this.ee.trigger("renameStory", arguments);
+                this.ee.trigger('renameStory', arguments);
                 callback();
             });
         };
 
         // stories
-        LocalDBMS.prototype.removeStory = function(storyName, callback){
+        LocalDBMS.prototype.removeStory = function (storyName, callback) {
             PC.precondition(PC.removeEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 delete this.database.Stories[storyName];
-                this.ee.trigger("removeStory", arguments);
+                this.ee.trigger('removeStory', arguments);
                 callback();
             });
         };
-
-    };
+    }
     callback(storyBaseAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['storyBaseAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.storyBaseAPI = api : module.exports = api;
+}));

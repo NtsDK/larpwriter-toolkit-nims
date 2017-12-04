@@ -12,29 +12,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function relationsAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const Constants = opts.Constants;
+        const Errors = opts.Errors;
+        const listeners = opts.listeners;
+        const dbmsUtils = opts.dbmsUtils;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var Constants     = opts.Constants   ;
-        var Errors        = opts.Errors      ;
-        var listeners     = opts.listeners   ;
-        var dbmsUtils     = opts.dbmsUtils   ;
+        const relationsPath = ['Relations'];
 
-        var relationsPath = ['Relations'];
-
-        dbmsUtils._getKnownCharacters = function(database, characterName){
-            var stories = database.Stories;
-            var knownCharacters = {};
-            R.values(stories).forEach(function(story){
-                var filter = R.compose(R.not, R.isNil, R.prop(characterName), R.prop('characters'));
-                story.events.filter(filter).forEach(function(event){
-                    R.keys(event.characters).forEach(function(charName){
+        dbmsUtils._getKnownCharacters = function (database, characterName) {
+            const stories = database.Stories;
+            const knownCharacters = {};
+            R.values(stories).forEach((story) => {
+                const filter = R.compose(R.not, R.isNil, R.prop(characterName), R.prop('characters'));
+                story.events.filter(filter).forEach((event) => {
+                    R.keys(event.characters).forEach((charName) => {
                         knownCharacters[charName] = knownCharacters[charName] || {};
                         knownCharacters[charName][story.name] = true;
                     });
@@ -44,55 +42,55 @@ See the License for the specific language governing permissions and
             return knownCharacters;
         };
 
-        var characterCheck = function(characterName, database){
+        const characterCheck = function (characterName, database) {
             return PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
         };
 
-        LocalDBMS.prototype.getRelationsSummary = function(characterName, callback){
+        LocalDBMS.prototype.getRelationsSummary = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                var relData = R.path(relationsPath, this.database);
-                var reverseRelations = {};
-                R.keys(relData).forEach(function(revCharName){
-                    var rels = relData[revCharName];
-                    if(rels[characterName]){
+                const relData = R.path(relationsPath, this.database);
+                const reverseRelations = {};
+                R.keys(relData).forEach((revCharName) => {
+                    const rels = relData[revCharName];
+                    if (rels[characterName]) {
                         reverseRelations[revCharName] = rels[characterName];
                     }
                 });
 
                 callback(null, {
                     directRelations: relData[characterName] || {},
-                    reverseRelations: reverseRelations,
+                    reverseRelations,
                     knownCharacters: dbmsUtils._getKnownCharacters(this.database, characterName)
                 });
             });
         };
 
-        LocalDBMS.prototype.setCharacterRelation = function(fromCharacter, toCharacter, text, callback){
-            var chain = PC.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), PC.isString(text)]);
+        LocalDBMS.prototype.setCharacterRelation = function (fromCharacter, toCharacter, text, callback) {
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), PC.isString(text)]);
             PC.precondition(chain, callback, () => {
-                var relData = R.path(relationsPath, this.database);
+                const relData = R.path(relationsPath, this.database);
                 text = text.trim();
-                if(text === ''){
-                    if(relData[fromCharacter] !== undefined){
+                if (text === '') {
+                    if (relData[fromCharacter] !== undefined) {
                         delete relData[fromCharacter][toCharacter];
                     }
                 } else {
-                    relData[fromCharacter] = relData[fromCharacter]  || {};
+                    relData[fromCharacter] = relData[fromCharacter] || {};
                     relData[fromCharacter][toCharacter] = text;
                 }
                 if (callback) callback();
             });
         };
 
-        var _renameCharacter = function(type, fromName, toName){
-            if(type === 'player') return;
-            var relData = R.path(relationsPath, this.database);
-            if(relData[fromName] !== undefined){
+        const _renameCharacter = function (type, fromName, toName) {
+            if (type === 'player') return;
+            const relData = R.path(relationsPath, this.database);
+            if (relData[fromName] !== undefined) {
                 relData[toName] = relData[fromName];
                 delete relData[fromName];
             }
-            R.values(relData).forEach(function(rels){
-                if(rels[fromName] !== undefined){
+            R.values(relData).forEach((rels) => {
+                if (rels[fromName] !== undefined) {
                     rels[toName] = rels[fromName];
                     delete rels[fromName];
                 }
@@ -102,14 +100,14 @@ See the License for the specific language governing permissions and
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameCharacter);
 
-        var _removeCharacter = function(type, characterName){
-            if(type === 'player') return;
-            var relData = R.path(relationsPath, this.database);
-            if(relData[characterName] !== undefined){
+        const _removeCharacter = function (type, characterName) {
+            if (type === 'player') return;
+            const relData = R.path(relationsPath, this.database);
+            if (relData[characterName] !== undefined) {
                 delete relData[characterName];
             }
-            R.values(relData).forEach(function(rels){
-                if(rels[characterName] !== undefined){
+            R.values(relData).forEach((rels) => {
+                if (rels[characterName] !== undefined) {
                     delete rels[characterName];
                 }
             });
@@ -117,11 +115,9 @@ See the License for the specific language governing permissions and
 
         listeners.removeProfile = listeners.removeProfile || [];
         listeners.removeProfile.push(_removeCharacter);
-
-    };
+    }
 
     callback(relationsAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['relationsAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.relationsAPI = api : module.exports = api;
+}));

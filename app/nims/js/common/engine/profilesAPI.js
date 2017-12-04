@@ -12,69 +12,67 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function profilesAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const Constants = opts.Constants;
+        const Errors = opts.Errors;
+        const listeners = opts.listeners;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var Constants     = opts.Constants   ;
-        var Errors        = opts.Errors      ;
-        var listeners     = opts.listeners   ;
-
-        function getPath(type){
-            if(type === 'character') return ['Characters'];
-            if(type === 'player') return ['Players'];
+        function getPath(type) {
+            if (type === 'character') return ['Characters'];
+            if (type === 'player') return ['Players'];
             return null;
         }
-        function getStructurePath(type){
-            if(type === 'character') return ['CharacterProfileStructure'];
-            if(type === 'player') return ['PlayerProfileStructure'];
+        function getStructurePath(type) {
+            if (type === 'character') return ['CharacterProfileStructure'];
+            if (type === 'player') return ['PlayerProfileStructure'];
             return null;
         }
 
-        var typeCheck = function(type){
+        const typeCheck = function (type) {
             return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
         };
 
-        LocalDBMS.prototype.getProfileNamesArray = function(type, callback) {
+        LocalDBMS.prototype.getProfileNamesArray = function (type, callback) {
             PC.precondition(typeCheck(type), callback, () => {
                 callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
             });
         };
 
         // profile, preview
-        LocalDBMS.prototype.getProfile = function(type, name, callback) {
+        LocalDBMS.prototype.getProfile = function (type, name, callback) {
             PC.precondition(typeCheck(type), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.entityExistsCheck(name, R.keys(container)), callback, () => {
                     callback(null, CU.clone(container[name]));
                 });
             });
         };
         // social network, character filter
-        LocalDBMS.prototype.getAllProfiles = function(type, callback) {
+        LocalDBMS.prototype.getAllProfiles = function (type, callback) {
             PC.precondition(typeCheck(type), callback, () => {
                 callback(null, CU.clone(R.path(getPath(type), this.database)));
             });
         };
 
         // profiles
-        LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
+        LocalDBMS.prototype.createProfile = function (type, characterName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.createEntityCheck(characterName, R.keys(container)), callback, () => {
-                    var newCharacter = {
-                            name : characterName
+                    const newCharacter = {
+                        name: characterName
                     };
 
-                    R.path(getStructurePath(type), this.database).forEach(function(profileSettings) {
-                        if (profileSettings.type === "enum") {
-                            newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
-                        } else if(profileSettings.type === "multiEnum") {
+                    R.path(getStructurePath(type), this.database).forEach((profileSettings) => {
+                        if (profileSettings.type === 'enum') {
+                            newCharacter[profileSettings.name] = profileSettings.value.split(',')[0];
+                        } else if (profileSettings.type === 'multiEnum') {
                             newCharacter[profileSettings.name] = '';
                         } else {
                             newCharacter[profileSettings.name] = profileSettings.value;
@@ -82,158 +80,157 @@ See the License for the specific language governing permissions and
                     });
 
                     R.path(getPath(type), this.database)[characterName] = newCharacter;
-                    this.ee.trigger("createProfile", arguments);
-                    if(callback) callback();
+                    this.ee.trigger('createProfile', arguments);
+                    if (callback) callback();
                 });
             });
         };
         // profiles
-        LocalDBMS.prototype.renameProfile = function(type, fromName, toName, callback) {
+        LocalDBMS.prototype.renameProfile = function (type, fromName, toName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
-                    var data = container[fromName];
+                    const data = container[fromName];
                     data.name = toName;
                     container[toName] = data;
                     delete container[fromName];
 
-                    this.ee.trigger("renameProfile", arguments);
+                    this.ee.trigger('renameProfile', arguments);
 
-                    if(callback) callback();
+                    if (callback) callback();
                 });
             });
         };
 
         // profiles
-        LocalDBMS.prototype.removeProfile = function(type, characterName, callback) {
+        LocalDBMS.prototype.removeProfile = function (type, characterName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
-                var container = R.path(getPath(type), this.database);
+                const container = R.path(getPath(type), this.database);
                 PC.precondition(PC.removeEntityCheck(characterName, R.keys(container)), callback, () => {
                     delete container[characterName];
-                    this.ee.trigger("removeProfile", arguments);
-                    if(callback) callback();
+                    this.ee.trigger('removeProfile', arguments);
+                    if (callback) callback();
                 });
             });
         };
 
-        var typeSpecificPreconditions = function(itemType, itemDesc, value){
+        const typeSpecificPreconditions = function (itemType, itemDesc, value) {
             switch (itemType) {
-            case "text":
-            case "string":
-            case "checkbox":
-            case "number":
+            case 'text':
+            case 'string':
+            case 'checkbox':
+            case 'number':
                 return PC.nil();
-            case "enum":
+            case 'enum':
                 return PC.elementFromEnum(value, itemDesc.value.split(','));
-            case "multiEnum":
+            case 'multiEnum':
                 return PC.eitherCheck(PC.elementsFromEnum(value.split(','), itemDesc.value.split(',')), PC.isEmptyString(value));
             }
         };
 
         // profile editor
-        LocalDBMS.prototype.updateProfileField = function(type, characterName, fieldName, itemType, value, callback) {
+        LocalDBMS.prototype.updateProfileField = function (type, characterName, fieldName, itemType, value, callback) {
             PC.precondition(typeCheck(type), callback, () => {
-                var container = R.path(getPath(type), this.database);
-                var containerStructure = R.path(getStructurePath(type), this.database);
-                var arr = [PC.entityExistsCheck(characterName, R.keys(container)),
-                            PC.entityExistsCheck(fieldName +'/' + itemType, containerStructure.map(item => item.name + '/' + item.type)),
-                            PC.getValueCheck(itemType)(value)];
+                const container = R.path(getPath(type), this.database);
+                const containerStructure = R.path(getStructurePath(type), this.database);
+                const arr = [PC.entityExistsCheck(characterName, R.keys(container)),
+                    PC.entityExistsCheck(`${fieldName}/${itemType}`, containerStructure.map(item => `${item.name}/${item.type}`)),
+                    PC.getValueCheck(itemType)(value)];
                 PC.precondition(PC.chainCheck(arr), callback, () => {
-                    var itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
+                    const itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
                     PC.precondition(typeSpecificPreconditions(itemType, itemDesc, value), callback, () => {
-                        var profileInfo = container[characterName];
+                        const profileInfo = container[characterName];
                         switch (itemType) {
-                        case "text":
-                        case "string":
-                        case "enum":
-                        case "multiEnum":
-                        case "checkbox":
+                        case 'text':
+                        case 'string':
+                        case 'enum':
+                        case 'multiEnum':
+                        case 'checkbox':
                             profileInfo[fieldName] = value;
                             break;
-                        case "number":
+                        case 'number':
                             profileInfo[fieldName] = Number(value);
                             break;
                         default:
                             callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
                         }
-                        if(callback) callback();
+                        if (callback) callback();
                     });
                 });
             });
         };
 
-        function _createProfileItem(type, name, itemType, value){
-            var profileSet = R.path(getPath(type), this.database);
-            Object.keys(profileSet).forEach(function(characterName) {
+        function _createProfileItem(type, name, itemType, value) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
                 profileSet[characterName][name] = value;
             });
-        };
+        }
 
         listeners.createProfileItem = listeners.createProfileItem || [];
         listeners.createProfileItem.push(_createProfileItem);
 
-        function _removeProfileItem(type, index, profileItemName){
-            var profileSet = R.path(getPath(type), this.database);
-            Object.keys(profileSet).forEach(function(characterName) {
+        function _removeProfileItem(type, index, profileItemName) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
                 delete profileSet[characterName][profileItemName];
             });
-        };
+        }
 
         listeners.removeProfileItem = listeners.removeProfileItem || [];
         listeners.removeProfileItem.push(_removeProfileItem);
 
-        function _changeProfileItemType(type, profileItemName, newType){
-            var profileSet = R.path(getPath(type), this.database);
-            Object.keys(profileSet).forEach(function(characterName) {
+        function _changeProfileItemType(type, profileItemName, newType) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
                 profileSet[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
             });
-        };
+        }
 
         listeners.changeProfileItemType = listeners.changeProfileItemType || [];
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
-        function _renameProfileItem(type, newName, oldName){
-            var profileSet = R.path(getPath(type), this.database);
-            Object.keys(profileSet).forEach(function(characterName) {
-                var tmp = profileSet[characterName][oldName];
+        function _renameProfileItem(type, newName, oldName) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
+                const tmp = profileSet[characterName][oldName];
                 delete profileSet[characterName][oldName];
                 profileSet[characterName][newName] = tmp;
             });
-        };
+        }
 
         listeners.renameProfileItem = listeners.renameProfileItem || [];
         listeners.renameProfileItem.push(_renameProfileItem);
 
-        function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
-            var profileSet = R.path(getPath(type), this.database);
-            Object.keys(profileSet).forEach(function(characterName) {
-                var enumValue = profileSet[characterName][profileItemName];
+        function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
+                const enumValue = profileSet[characterName][profileItemName];
                 if (!newOptionsMap[enumValue]) {
                     profileSet[characterName][profileItemName] = defaultValue;
                 }
             });
-        };
+        }
 
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];
         listeners.replaceEnumValue.push(_replaceEnumValue);
 
-        function _replaceMultiEnumValue(type, profileItemName, defaultValue, newOptionsMap){
-            var profileSet = R.path(getPath(type), this.database);
-            Object.keys(profileSet).forEach(function(characterName) {
-                if(value !== ''){
+        function _replaceMultiEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
+                if (value !== '') {
                     var value = profileSet[characterName][profileItemName];
                     value = R.intersection(value.split(','), R.keys(newOptionsMap));
                     profileSet[characterName][profileItemName] = value.join(',');
                 }
             });
-        };
+        }
 
         listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
         listeners.replaceMultiEnumValue.push(_replaceMultiEnumValue);
-    };
+    }
 
     callback(profilesAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['profilesAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.profilesAPI = api : module.exports = api;
+}));

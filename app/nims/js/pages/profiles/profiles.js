@@ -16,44 +16,43 @@ See the License for the specific language governing permissions and
  Utils, ProfileEditor, ProfileConfigurer, DBMS
  */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
-    var state = {};
-    var root = '.profiles-tab ';
-    var characterRoot = root + '.character-profile-panel ';
-    var playerRoot = root + '.player-profile-panel ';
+(function (exports) {
+    const state = {};
+    const root = '.profiles-tab ';
+    const characterRoot = `${root}.character-profile-panel `;
+    const playerRoot = `${root}.player-profile-panel `;
 
     exports.init = function () {
         state.views = {};
-        var nav = root + ".sub-tab-navigation";
-        var content = root + ".sub-tab-content";
-        var containers = {
+        const nav = `${root}.sub-tab-navigation`;
+        const content = `${root}.sub-tab-content`;
+        const containers = {
             root: state,
             navigation: queryEl(nav),
             content: queryEl(content)
         };
-        Utils.addView(containers, "profile-editor", ProfileEditor,{mainPage:true});
-        Utils.addView(containers, "profile-constructor", ProfileConfigurer);
-        Utils.addView(containers, "profile-binding", ProfileBinding);
+        Utils.addView(containers, 'profile-editor', ProfileEditor, { mainPage: true });
+        Utils.addView(containers, 'profile-constructor', ProfileConfigurer);
+        Utils.addView(containers, 'profile-binding', ProfileBinding);
 
-        listen(queryEl(characterRoot + ".create-entity-button"), "click", createProfile('character', characterRoot));
-        listen(queryEl(characterRoot + ".rename-entity-button"), "click", renameProfile('character', characterRoot));
-        listen(queryEl(characterRoot + ".remove-entity-button"), "click", removeProfile('character', characterRoot));
+        listen(queryEl(`${characterRoot}.create-entity-button`), 'click', createProfile('character', characterRoot));
+        listen(queryEl(`${characterRoot}.rename-entity-button`), 'click', renameProfile('character', characterRoot));
+        listen(queryEl(`${characterRoot}.remove-entity-button`), 'click', removeProfile('character', characterRoot));
 
-        listen(queryEl(playerRoot + ".create-entity-button"), "click", createProfile('player', playerRoot));
-        listen(queryEl(playerRoot + ".rename-entity-button"), "click", renameProfile('player', playerRoot));
-        listen(queryEl(playerRoot + ".remove-entity-button"), "click", removeProfile('player', playerRoot));
+        listen(queryEl(`${playerRoot}.create-entity-button`), 'click', createProfile('player', playerRoot));
+        listen(queryEl(`${playerRoot}.rename-entity-button`), 'click', renameProfile('player', playerRoot));
+        listen(queryEl(`${playerRoot}.remove-entity-button`), 'click', removeProfile('player', playerRoot));
 
         exports.content = queryEl(root);
     };
 
     exports.refresh = function () {
-        PermissionInformer.getEntityNamesArray('character', true, function(err, characterNames){
-            if(err) {Utils.handleError(err); return;}
-            PermissionInformer.getEntityNamesArray('player', true, function(err, playerNames){
-                if(err) {Utils.handleError(err); return;}
+        PermissionInformer.getEntityNamesArray('character', true, (err, characterNames) => {
+            if (err) { Utils.handleError(err); return; }
+            PermissionInformer.getEntityNamesArray('player', true, (err, playerNames) => {
+                if (err) { Utils.handleError(err); return; }
                 rebuildInterface(characterRoot, characterNames);
                 rebuildInterface(playerRoot, playerNames);
                 state.currentView.refresh();
@@ -62,68 +61,67 @@ See the License for the specific language governing permissions and
     };
 
     var rebuildInterface = function (root, names) {
-        var data = getSelect2Data(names);
+        const data = getSelect2Data(names);
 
-        clearEl(queryEl(root + ".rename-entity-select"));
-        $(root + ".rename-entity-select").select2(data);
+        clearEl(queryEl(`${root}.rename-entity-select`));
+        $(`${root}.rename-entity-select`).select2(data);
 
-        clearEl(queryEl(root + ".remove-entity-select"));
-        $(root + ".remove-entity-select").select2(data);
+        clearEl(queryEl(`${root}.remove-entity-select`));
+        $(`${root}.remove-entity-select`).select2(data);
     };
 
     var createProfile = function (type, root) {
-        return function(){
-            var input = queryEl(root + ".create-entity-input");
-            var name = input.value.trim();
+        return function () {
+            const input = queryEl(`${root}.create-entity-input`);
+            const name = input.value.trim();
 
-            DBMS.createProfile(type, name, function(err){
-                if(err) {Utils.handleError(err); return;}
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    if(state.currentView.updateSettings){
+            DBMS.createProfile(type, name, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err) => {
+                    if (err) { Utils.handleError(err); return; }
+                    if (state.currentView.updateSettings) {
                         state.currentView.updateSettings(name);
                     }
                     input.value = '';
                     exports.refresh();
                 });
             });
-        }
+        };
     };
 
     var renameProfile = function (type, root) {
-        return function(){
-            var toInput = queryEl(root + ".rename-entity-input");
-            var fromName = queryEl(root + ".rename-entity-select").value.trim();
-            var toName = toInput.value.trim();
+        return function () {
+            const toInput = queryEl(`${root}.rename-entity-input`);
+            const fromName = queryEl(`${root}.rename-entity-select`).value.trim();
+            const toName = toInput.value.trim();
 
-            DBMS.renameProfile(type, fromName, toName, function(err){
-                if(err) {Utils.handleError(err); return;}
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
+            DBMS.renameProfile(type, fromName, toName, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err) => {
+                    if (err) { Utils.handleError(err); return; }
                     toInput.value = '';
-                    if(state.currentView.updateSettings){
+                    if (state.currentView.updateSettings) {
                         state.currentView.updateSettings(type, toName);
                     }
                     exports.refresh();
                 });
             });
-        }
+        };
     };
 
     var removeProfile = function (type, root) {
-        return function(){
-            var name = queryEl(root + ".remove-entity-select").value.trim();
+        return function () {
+            const name = queryEl(`${root}.remove-entity-select`).value.trim();
 
-            Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-character-removing"),[name]), () => {
-                DBMS.removeProfile(type, name, function(err){
-                    if(err) {Utils.handleError(err); return;}
-                    PermissionInformer.refresh(function(err){
-                        if(err) {Utils.handleError(err); return;}
+            Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-character-removing'), [name]), () => {
+                DBMS.removeProfile(type, name, (err) => {
+                    if (err) { Utils.handleError(err); return; }
+                    PermissionInformer.refresh((err) => {
+                        if (err) { Utils.handleError(err); return; }
                         exports.refresh();
                     });
                 });
             });
-        }
+        };
     };
-
-})(this['Profiles']={});
+}(this.Profiles = {}));

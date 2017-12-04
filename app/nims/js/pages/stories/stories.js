@@ -16,108 +16,107 @@ See the License for the specific language governing permissions and
  Utils, DBMS, StoryEvents, StoryCharacters, EventPresence
  */
 
-"use strict";
+'use strict';
 
 ((exports) => {
     const state = {};
 
     exports.init = function () {
-        state.left = {views:{}};
-        state.right = {views:{}};
-        var containers = {
+        state.left = { views: {} };
+        state.right = { views: {} };
+        let containers = {
             root: state.left,
-            navigation: queryEl(".stories-navigation-container .left-side"),
-            content: queryEl(".stories-content-container .left-side")
+            navigation: queryEl('.stories-navigation-container .left-side'),
+            content: queryEl('.stories-content-container .left-side')
         };
-        Utils.addView(containers, "master-story", MasterStory, {mainPage:true, toggle:true});
-        Utils.addView(containers, "story-events", StoryEvents, {toggle:true});
-        Utils.addView(containers, "story-characters", StoryCharacters, {toggle:true});
-        Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
+        Utils.addView(containers, 'master-story', MasterStory, { mainPage: true, toggle: true });
+        Utils.addView(containers, 'story-events', StoryEvents, { toggle: true });
+        Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
+        Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
         containers = {
             root: state.right,
-            navigation: queryEl(".stories-navigation-container .right-side"),
-            content: queryEl(".stories-content-container .right-side")
+            navigation: queryEl('.stories-navigation-container .right-side'),
+            content: queryEl('.stories-content-container .right-side')
         };
-        Utils.addView(containers, "master-story", MasterStory, {toggle:true});
-        Utils.addView(containers, "story-events", StoryEvents, {mainPage:true, toggle:true});
-        Utils.addView(containers, "story-characters", StoryCharacters, {toggle:true});
-        Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
+        Utils.addView(containers, 'master-story', MasterStory, { toggle: true });
+        Utils.addView(containers, 'story-events', StoryEvents, { mainPage: true, toggle: true });
+        Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
+        Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
 
-        listen(queryEl('#storiesDiv .create-entity-button'), "click", createStory);
-        listen(queryEl('#storiesDiv .rename-entity-button'), "click", renameStory);
-        listen(queryEl('#storiesDiv .remove-entity-button'), "click", removeStory);
+        listen(queryEl('#storiesDiv .create-entity-button'), 'click', createStory);
+        listen(queryEl('#storiesDiv .rename-entity-button'), 'click', renameStory);
+        listen(queryEl('#storiesDiv .remove-entity-button'), 'click', removeStory);
 
-        $("#storySelector").select2().on("change", onStorySelectorChangeDelegate);
+        $('#storySelector').select2().on('change', onStorySelectorChangeDelegate);
 
-        exports.content = getEl("storiesDiv");
+        exports.content = getEl('storiesDiv');
     };
 
-    exports.chainRefresh = function(){
-        if((state.left.currentView && state.left.currentView.name === "EventPresence") ||
-            (state.right.currentView && state.right.currentView.name === "EventPresence")){
+    exports.chainRefresh = function () {
+        if ((state.left.currentView && state.left.currentView.name === 'EventPresence') ||
+            (state.right.currentView && state.right.currentView.name === 'EventPresence')) {
             EventPresence.refresh();
         }
     };
 
     exports.refresh = function () {
-        var selectors = ["#storiesDiv .rename-entity-select", "#storiesDiv .remove-entity-select"];
+        const selectors = ['#storiesDiv .rename-entity-select', '#storiesDiv .remove-entity-select'];
 
-        var storySelector = clearEl(getEl("storySelector"));
+        const storySelector = clearEl(getEl('storySelector'));
         selectors.forEach(R.compose(clearEl, queryEl));
 
-        PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
-            if(err) {Utils.handleError(err); return;}
-            PermissionInformer.getEntityNamesArray('story', true, function(err, userStoryNames){
-                if(err) {Utils.handleError(err); return;}
-                if(userStoryNames.length > 0){
+        PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
+            if (err) { Utils.handleError(err); return; }
+            PermissionInformer.getEntityNamesArray('story', true, (err, userStoryNames) => {
+                if (err) { Utils.handleError(err); return; }
+                if (userStoryNames.length > 0) {
                     var data = getSelect2Data(userStoryNames);
-                    selectors.forEach(function(selector){
+                    selectors.forEach((selector) => {
                         $(selector).select2(data);
                     });
                 }
 
                 if (allStoryNames.length > 0) {
-                    var storyName = getSelectedStoryName(allStoryNames);
+                    const storyName = getSelectedStoryName(allStoryNames);
 
                     var data = getSelect2Data(allStoryNames);
-                    $("#storySelector").select2(data).val(storyName).trigger('change');
+                    $('#storySelector').select2(data).val(storyName).trigger('change');
 
                     onStorySelectorChange(storyName);
                 } else {
                     onStorySelectorChange();
                 }
 
-                if(state.left.currentView)state.left.currentView.refresh();
-                if(state.right.currentView)state.right.currentView.refresh();
+                if (state.left.currentView)state.left.currentView.refresh();
+                if (state.right.currentView)state.right.currentView.refresh();
             });
         });
-
     };
 
-    var getSelectedStoryName = function(storyNames){
-        var settings = DBMS.getSettings();
-        if(!settings["Stories"]){
-            settings["Stories"] = {
-                storyName : storyNames[0].value
+    var getSelectedStoryName = function (storyNames) {
+        const settings = DBMS.getSettings();
+        if (!settings.Stories) {
+            settings.Stories = {
+                storyName: storyNames[0].value
             };
         }
-        var storyName = settings["Stories"].storyName;
-        if(storyNames.map(function(nameInfo){return nameInfo.value;}).indexOf(storyName) === -1){
-            settings["Stories"].storyName = storyNames[0].value;
+        let storyName = settings.Stories.storyName;
+        if (storyNames.map(nameInfo => nameInfo.value).indexOf(storyName) === -1) {
+            settings.Stories.storyName = storyNames[0].value;
             storyName = storyNames[0].value;
         }
         return storyName;
     };
 
     var createStory = function () {
-        var input = queryEl("#storiesDiv .create-entity-input");
-        var storyName = input.value.trim();
+        const input = queryEl('#storiesDiv .create-entity-input');
+        const storyName = input.value.trim();
 
-        DBMS.createStory(storyName, function(err){
-            if(err) {Utils.handleError(err); return;}
+        DBMS.createStory(storyName, (err) => {
+            if (err) { Utils.handleError(err); return; }
             updateSettings(storyName);
-            PermissionInformer.refresh(function(err){
-                if(err) {Utils.handleError(err); return;}
+            PermissionInformer.refresh((err) => {
+                if (err) { Utils.handleError(err); return; }
                 input.value = '';
                 exports.refresh();
             });
@@ -125,15 +124,15 @@ See the License for the specific language governing permissions and
     };
 
     var renameStory = function () {
-        var toInput = queryEl("#storiesDiv .rename-entity-input");
-        var fromName = queryEl("#storiesDiv .rename-entity-select").value.trim();
-        var toName = toInput.value.trim();
+        const toInput = queryEl('#storiesDiv .rename-entity-input');
+        const fromName = queryEl('#storiesDiv .rename-entity-select').value.trim();
+        const toName = toInput.value.trim();
 
-        DBMS.renameStory(fromName, toName, function(err){
-            if(err) {Utils.handleError(err); return;}
+        DBMS.renameStory(fromName, toName, (err) => {
+            if (err) { Utils.handleError(err); return; }
             updateSettings(toName);
-            PermissionInformer.refresh(function(err){
-                if(err) {Utils.handleError(err); return;}
+            PermissionInformer.refresh((err) => {
+                if (err) { Utils.handleError(err); return; }
                 toInput.value = '';
                 exports.refresh();
             });
@@ -141,13 +140,13 @@ See the License for the specific language governing permissions and
     };
 
     var removeStory = function () {
-        var name = queryEl("#storiesDiv .remove-entity-select").value.trim();
+        const name = queryEl('#storiesDiv .remove-entity-select').value.trim();
 
-        Utils.confirm(strFormat(getL10n("stories-are-you-sure-about-story-removing"), [name]), () => {
-            DBMS.removeStory(name, function(err){
-                if(err) {Utils.handleError(err); return;}
-                PermissionInformer.refresh(function(err){
-                    if(err) {Utils.handleError(err); return;}
+        Utils.confirm(strFormat(getL10n('stories-are-you-sure-about-story-removing'), [name]), () => {
+            DBMS.removeStory(name, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err) => {
+                    if (err) { Utils.handleError(err); return; }
                     exports.refresh();
                 });
             });
@@ -155,32 +154,32 @@ See the License for the specific language governing permissions and
     };
 
     var onStorySelectorChangeDelegate = function (event) {
-        var storyName = event.target.value;
+        const storyName = event.target.value;
         onStorySelectorChange(storyName);
     };
 
     var onStorySelectorChange = function (storyName) {
         state.CurrentStoryName = storyName;
 
-        if(storyName){
+        if (storyName) {
             updateSettings(storyName);
-            PermissionInformer.isEntityEditable('story', storyName, function(err, isStoryEditable){
-                if (err) {Utils.handleError(err);return;}
-                if(state.left.currentView)state.left.currentView.refresh();
-                if(state.right.currentView)state.right.currentView.refresh();
-                Utils.enable(exports.content, "isStoryEditable", isStoryEditable);
+            PermissionInformer.isEntityEditable('story', storyName, (err, isStoryEditable) => {
+                if (err) { Utils.handleError(err); return; }
+                if (state.left.currentView)state.left.currentView.refresh();
+                if (state.right.currentView)state.right.currentView.refresh();
+                Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
             });
         } else { // when there are no stories at all
             updateSettings(null);
-            if(state.left.currentView)state.left.currentView.refresh();
-            if(state.right.currentView)state.right.currentView.refresh();
+            if (state.left.currentView)state.left.currentView.refresh();
+            if (state.right.currentView)state.right.currentView.refresh();
         }
     };
 
     exports.getCurrentStoryName = () => state.CurrentStoryName;
 
     var updateSettings = function (storyName) {
-        var settings = DBMS.getSettings();
-        settings["Stories"].storyName = storyName;
+        const settings = DBMS.getSettings();
+        settings.Stories.storyName = storyName;
     };
 })(this.Stories = {});

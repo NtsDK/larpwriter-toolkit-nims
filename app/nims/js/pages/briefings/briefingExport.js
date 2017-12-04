@@ -16,81 +16,80 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
-    var state = {};
+(function (exports) {
+    const state = {};
 
     state.templates = {};
     state.customDocxTemplate = null;
 
     exports.init = function () {
-        listen(getEl("makeDefaultTextBriefings"), "click", function(){
-            resolveTextTemplate(function(textTemplate){
-                makeTextBriefings("txt", generateSingleTxt(textTemplate));
+        listen(getEl('makeDefaultTextBriefings'), 'click', () => {
+            resolveTextTemplate((textTemplate) => {
+                makeTextBriefings('txt', generateSingleTxt(textTemplate));
             });
         });
 
-        listen(getEl("makeCustomTextBriefings"), "click", function(){
-            makeTextBriefings(getEl("textTypeSelector").value, generateSingleTxt(getEl("templateArea").value));
+        listen(getEl('makeCustomTextBriefings'), 'click', () => {
+            makeTextBriefings(getEl('textTypeSelector').value, generateSingleTxt(getEl('templateArea').value));
         });
-        listen(getEl("makeMarkdownBriefings"), "click", function(){
-            makeTextBriefings('html', R.compose((data) => markdownit('commonmark').render(data), generateSingleTxt(getEl("templateArea").value)));
+        listen(getEl('makeMarkdownBriefings'), 'click', () => {
+            makeTextBriefings('html', R.compose(data => markdownit('commonmark').render(data), generateSingleTxt(getEl('templateArea').value)));
         });
 
-        listen(getEl("docxBriefings"), "change", readTemplateFile);
-        listen(getEl("docxBriefings"), "focus", (e)=>{
+        listen(getEl('docxBriefings'), 'change', readTemplateFile);
+        listen(getEl('docxBriefings'), 'focus', (e) => {
             e.target.value = '';
             state.customDocxTemplate = null;
         });
 
-        listen(getEl("makeDocxBriefings"), "click", () => {
-            if(state.customDocxTemplate === null){
-                Utils.alert(getL10n("briefings-custom-docx-template-is-missing"));
+        listen(getEl('makeDocxBriefings'), 'click', () => {
+            if (state.customDocxTemplate === null) {
+                Utils.alert(getL10n('briefings-custom-docx-template-is-missing'));
             } else {
                 exportDocxByTemplate(state.customDocxTemplate);
             }
         });
 
 
-        var els = queryElEls(document, "#briefingExportDiv input[name=exportCharacterSelection]");
-        els.map(listen(R.__, "change", onCharacterSelectionChange));
-        getEl("exportAllCharacters").checked = true;
+        let els = queryElEls(document, '#briefingExportDiv input[name=exportCharacterSelection]');
+        els.map(listen(R.__, 'change', onCharacterSelectionChange));
+        getEl('exportAllCharacters').checked = true;
 
-        els = queryElEls(document, "#briefingExportDiv input[name=exportStorySelection]");
-        els.map(listen(R.__, "change", onStorySelectionChange));
-        getEl("exportAllStories").checked = true;
+        els = queryElEls(document, '#briefingExportDiv input[name=exportStorySelection]');
+        els.map(listen(R.__, 'change', onStorySelectionChange));
+        getEl('exportAllStories').checked = true;
 
-        var el = getEl("briefingNumberSelector");
+        const el = getEl('briefingNumberSelector');
         Constants.briefingNumber.forEach(R.compose(addEl(el), makeOpt));
-        listen(el, "change", refreshCharacterRangeSelect);
+        listen(el, 'change', refreshCharacterRangeSelect);
 
         state.briefingNumberSelector = el;
-        state.briefingIntervalSelector = getEl("briefingIntervalSelector");
-        state.characterSetSelector = getEl("characterSetSelector");
-        state.storySetSelector = getEl("storySetSelector");
+        state.briefingIntervalSelector = getEl('briefingIntervalSelector');
+        state.characterSetSelector = getEl('characterSetSelector');
+        state.storySetSelector = getEl('storySetSelector');
 
-        getEl("makeBriefingsByTime ".trim()).addEventListener("click", makeExport("templateByTime"));
-        getEl("makeBriefingsByStory".trim()).addEventListener("click", makeExport("templateByStory"));
-        getEl("makeInventoryList   ".trim()).addEventListener("click", makeExport("inventoryTemplate"));
+        getEl('makeBriefingsByTime '.trim()).addEventListener('click', makeExport('templateByTime'));
+        getEl('makeBriefingsByStory'.trim()).addEventListener('click', makeExport('templateByStory'));
+        getEl('makeInventoryList   '.trim()).addEventListener('click', makeExport('inventoryTemplate'));
 
-        UI.initTabPanel("exportModeButton", "exportContainer");
+        UI.initTabPanel('exportModeButton', 'exportContainer');
 
-        listen(getEl("previewTextOutput"), "click", previewTextOutput);
-        getEl("textBriefingPreviewArea").value = "";
+        listen(getEl('previewTextOutput'), 'click', previewTextOutput);
+        getEl('textBriefingPreviewArea').value = '';
 
-        listen(getEl("showRawData"), "click", previewTextDataAsIs);
+        listen(getEl('showRawData'), 'click', previewTextDataAsIs);
 
-        listen(getEl("convertToDocxTemplate"), "click", convertToDocxTemplate);
-        listen(getEl("generateByDocxTemplate"), "click", generateByDocxTemplate);
+        listen(getEl('convertToDocxTemplate'), 'click', convertToDocxTemplate);
+        listen(getEl('generateByDocxTemplate'), 'click', generateByDocxTemplate);
 
-        exports.content = getEl("briefingExportDiv");
+        exports.content = getEl('briefingExportDiv');
     };
 
     exports.refresh = function () {
-        resolveTextTemplate(function(textTemplate) {
-            getEl("templateArea").value = textTemplate;
+        resolveTextTemplate((textTemplate) => {
+            getEl('templateArea').value = textTemplate;
             refreshCharacterRangeSelect();
             refreshCharacterSetSelect();
             refreshStorySetSelect();
@@ -98,82 +97,80 @@ See the License for the specific language governing permissions and
     };
 
     var resolveTextTemplate = function (callback) {
-        DBMS.getProfileStructure('character', function(err, profileSettings){
-            if(err) {Utils.handleError(err); return;}
-            var func = R.compose(R.join(''), R.insert(1, R.__, ["{{profileInfo-","}}\n"]), R.prop('name'));
-            var filter = R.compose(R.equals(true), R.prop('doExport'));
-            var value = profileSettings.filter(filter).map(func).join("");
+        DBMS.getProfileStructure('character', (err, profileSettings) => {
+            if (err) { Utils.handleError(err); return; }
+            const func = R.compose(R.join(''), R.insert(1, R.__, ['{{profileInfo-', '}}\n']), R.prop('name'));
+            const filter = R.compose(R.equals(true), R.prop('doExport'));
+            const value = profileSettings.filter(filter).map(func).join('');
 
             callback(R.replace(/\{0\}/g, value, TEXT_TEMPLATE));
         });
     };
 
     var onCharacterSelectionChange = function (event) {
-    var exportCharacterRange = event.target.id === 'exportCharacterRange';
-    var exportCharacterSet = event.target.id === 'exportCharacterSet';
-    setClassByCondition(getEl("characterRangeSelect"), "hidden", !exportCharacterRange);
-    setClassByCondition(getEl("characterSetSelect"), "hidden", !exportCharacterSet);
+        const exportCharacterRange = event.target.id === 'exportCharacterRange';
+        const exportCharacterSet = event.target.id === 'exportCharacterSet';
+        setClassByCondition(getEl('characterRangeSelect'), 'hidden', !exportCharacterRange);
+        setClassByCondition(getEl('characterSetSelect'), 'hidden', !exportCharacterSet);
     };
 
     var onStorySelectionChange = function (event) {
-        var exportStorySet = event.target.id === 'exportStorySet';
-        setClassByCondition(getEl("storySetSelect"), "hidden", !exportStorySet);
+        const exportStorySet = event.target.id === 'exportStorySet';
+        setClassByCondition(getEl('storySetSelect'), 'hidden', !exportStorySet);
     };
 
-    var getSelectedUsers = function () {
-    var id = getSelectedRadio("#briefingExportDiv input[name=exportCharacterSelection]").id;
-    switch(id){
-    case 'exportAllCharacters':
+    const getSelectedUsers = function () {
+        const id = getSelectedRadio('#briefingExportDiv input[name=exportCharacterSelection]').id;
+        switch (id) {
+        case 'exportAllCharacters':
+            return null;
+        case 'exportCharacterRange':
+            return JSON.parse(state.briefingIntervalSelector.selectedOptions[0].value);
+        case 'exportCharacterSet':
+            return nl2array(state.characterSetSelector.selectedOptions).map(opt => opt.value);
+        default:
+            Utils.alert(`unexpected id: ${id}`);
+        }
         return null;
-    case 'exportCharacterRange':
-        return JSON.parse(state.briefingIntervalSelector.selectedOptions[0].value);
-    case 'exportCharacterSet':
-        return nl2array(state.characterSetSelector.selectedOptions).map(opt => opt.value);
-    default:
-        Utils.alert("unexpected id: " + id);
-    }
-    return null;
     };
 
-    var getSelectedStories = function () {
-        var id = getSelectedRadio("#briefingExportDiv input[name=exportStorySelection]").id;
-        switch(id){
+    const getSelectedStories = function () {
+        const id = getSelectedRadio('#briefingExportDiv input[name=exportStorySelection]').id;
+        switch (id) {
         case 'exportAllStories':
             return null;
         case 'exportStorySet':
             return nl2array(state.storySetSelector.selectedOptions).map(opt => opt.value);
         default:
-            Utils.alert("unexpected id: " + id);
+            Utils.alert(`unexpected id: ${id}`);
         }
         return null;
     };
 
     var refreshCharacterRangeSelect = function () {
-        var selector = clearEl(state.briefingIntervalSelector);
-        var num = Number(state.briefingNumberSelector.value);
+        const selector = clearEl(state.briefingIntervalSelector);
+        const num = Number(state.briefingNumberSelector.value);
 
-        var chunks;
-        PermissionInformer.getEntityNamesArray('character', false, function(err, names){
-            if(err) {Utils.handleError(err); return;}
+        let chunks;
+        PermissionInformer.getEntityNamesArray('character', false, (err, names) => {
+            if (err) { Utils.handleError(err); return; }
             if (names.length > 0) {
                 chunks = R.splitEvery(num, names);
-                var data = chunks.map(function (chunk) {
-                    return {
-                        "id":  JSON.stringify(chunk.map(nameInfo => nameInfo.value)),
-                        "text": chunk.length === 1 ? chunk[0].displayName : chunk[0].displayName + " - " + chunk[chunk.length-1].displayName
-                    };
-                });
+                const data = chunks.map(chunk => ({
+                    id: JSON.stringify(chunk.map(nameInfo => nameInfo.value)),
+                    text: chunk.length === 1 ? chunk[0].displayName : `${chunk[0].displayName} - ${chunk[chunk.length - 1].displayName}`
+                }));
 
-                $("#" + state.briefingIntervalSelector.id).select2({data:data});
+                $(`#${state.briefingIntervalSelector.id}`).select2({ data });
             }
         });
     };
 
 
-    var refreshSetSelect = function(entityType, selectorName) {
-        var multiSel = clearEl(state[selectorName]);
-        PermissionInformer.getEntityNamesArray(entityType, false, function(err, names) {
-            if (err) {Utils.handleError(err);return;}
+    const refreshSetSelect = function (entityType, selectorName) {
+        const multiSel = clearEl(state[selectorName]);
+        PermissionInformer.getEntityNamesArray(entityType, false, (err, names) => {
+            if (err) { Utils.handleError(err); return; }
             if (names.length > 0) {
                 fillSelector(multiSel, names.map(remapProps4Select));
                 setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
@@ -185,38 +182,38 @@ See the License for the specific language governing permissions and
     var refreshCharacterSetSelect = () => refreshSetSelect('character', 'characterSetSelector');
 
     var makeExport = function (type) {
-        return function(){
-            if(!state.templates[type]){
+        return function () {
+            if (!state.templates[type]) {
                 state.templates[type] = atob(templatesArr[type]);
             }
             exportDocxByTemplate(state.templates[type]);
         };
     };
 
-    var postprocessCheckboxes = function(briefingData, profileStructure, prefix, arrName){
-        var checkboxNames = profileStructure.filter( (item) => item.type === 'checkbox').map(R.prop('name'));
-        briefingData.briefings.forEach(function(charData){
-            if(charData[arrName] === undefined) return;
-            charData[arrName].forEach(function(element){
-                if(checkboxNames.indexOf(element.itemName) != -1){
+    const postprocessCheckboxes = function (briefingData, profileStructure, prefix, arrName) {
+        const checkboxNames = profileStructure.filter(item => item.type === 'checkbox').map(R.prop('name'));
+        briefingData.briefings.forEach((charData) => {
+            if (charData[arrName] === undefined) return;
+            charData[arrName].forEach((element) => {
+                if (checkboxNames.indexOf(element.itemName) != -1) {
                     element.value = constL10n(Constants[element.value]);
-                    element.splittedText = [{'string':element.value}]
+                    element.splittedText = [{ string: element.value }];
                 }
             });
-            checkboxNames.forEach(function(name){
+            checkboxNames.forEach((name) => {
                 charData[prefix + name] = constL10n(Constants[charData[prefix + name]]);
             });
         });
     };
 
-    var getBriefingData = function(callback){
-        DBMS.getBriefingData(getSelectedUsers(), getSelectedStories(), getEl('exportOnlyFinishedStories').checked, function(err, briefingData){
-            if(err) {Utils.handleError(err); return;}
+    const getBriefingData = function (callback) {
+        DBMS.getBriefingData(getSelectedUsers(), getSelectedStories(), getEl('exportOnlyFinishedStories').checked, (err, briefingData) => {
+            if (err) { Utils.handleError(err); return; }
             // some postprocessing
-            DBMS.getProfileStructure('character', function(err, characterProfileStructure){
-                if(err) {Utils.handleError(err); return;}
-                DBMS.getProfileStructure('player', function(err, playerProfileStructure){
-                    if(err) {Utils.handleError(err); return;}
+            DBMS.getProfileStructure('character', (err, characterProfileStructure) => {
+                if (err) { Utils.handleError(err); return; }
+                DBMS.getProfileStructure('player', (err, playerProfileStructure) => {
+                    if (err) { Utils.handleError(err); return; }
                     postprocessCheckboxes(briefingData, characterProfileStructure, 'profileInfo-', 'profileInfoArray');
                     postprocessCheckboxes(briefingData, playerProfileStructure, 'playerInfo-', 'playerInfoArray');
                     callback(null, briefingData);
@@ -225,66 +222,64 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var exportDocxByTemplate = function(template){
-        getBriefingData(function(err, briefingData){
-            if(err) {Utils.handleError(err); return;}
-            generateBriefings(briefingData, "docx", generateSingleDocx("blob", template), generateSingleDocx("Uint8Array", template));
+    var exportDocxByTemplate = function (template) {
+        getBriefingData((err, briefingData) => {
+            if (err) { Utils.handleError(err); return; }
+            generateBriefings(briefingData, 'docx', generateSingleDocx('blob', template), generateSingleDocx('Uint8Array', template));
         });
     };
 
     var convertToDocxTemplate = function () {
-        var docxTemplate = makeDocxTemplate("blob");
-        Utils.confirm(getL10n("briefings-save-file"), () => {
-            saveAs(docxTemplate, "template.docx");
+        const docxTemplate = makeDocxTemplate('blob');
+        Utils.confirm(getL10n('briefings-save-file'), () => {
+            saveAs(docxTemplate, 'template.docx');
         });
     };
 
     var generateByDocxTemplate = function () {
-        exportDocxByTemplate(makeDocxTemplate("Uint8Array"));
+        exportDocxByTemplate(makeDocxTemplate('Uint8Array'));
     };
 
     var makeDocxTemplate = function (type) {
-        var template = getEl('templateArea').value;
+        let template = getEl('templateArea').value;
 
-        var replaceBrackets = R.pipe(R.replace(/{{{/g, '{'),R.replace(/}}}/g, '}'),R.replace(/{{/g, '{'),R.replace(/}}/g, '}'));
-        template = replaceBrackets(template).split('\n').map(function(string){
-            return {string:string}
-        });
+        const replaceBrackets = R.pipe(R.replace(/{{{/g, '{'), R.replace(/}}}/g, '}'), R.replace(/{{/g, '{'), R.replace(/}}/g, '}'));
+        template = replaceBrackets(template).split('\n').map(string => ({ string }));
 
-        if(!state.templates['genericTemplate']){
-            state.templates['genericTemplate'] = atob(templatesArr['genericTemplate']);
+        if (!state.templates.genericTemplate) {
+            state.templates.genericTemplate = atob(templatesArr.genericTemplate);
         }
 
-        var doc = new window.Docxgen(state.templates['genericTemplate']);
+        const doc = new window.Docxgen(state.templates.genericTemplate);
         doc.setData({
             splittedText: template
         });
         doc.render();
         return doc.getZip().generate({
-                type : type
+            type
         });
     };
     var previewTextDataAsIs = function () {
-    getBriefingData(function(err, briefingData){
-        if(err) {Utils.handleError(err); return;}
-        getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, "  ");
-    });
+        getBriefingData((err, briefingData) => {
+            if (err) { Utils.handleError(err); return; }
+            getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, '  ');
+        });
     };
 
     var previewTextOutput = function () {
-        getBriefingData(function(err, data){
-            if(err) {Utils.handleError(err); return;}
-            getEl("textBriefingPreviewArea").value = generateSingleTxt(getEl("templateArea").value, data);
+        getBriefingData((err, data) => {
+            if (err) { Utils.handleError(err); return; }
+            getEl('textBriefingPreviewArea').value = generateSingleTxt(getEl('templateArea').value, data);
         });
     };
 
     var makeTextBriefings = function (fileType, delegate) {
-        getBriefingData(function(err, briefingData){
-            if(err) {Utils.handleError(err); return;}
-            generateBriefings(briefingData, fileType, function(data){
-                var result = delegate(data);
-                return new Blob([ result ], {
-                    type : "text/plain;charset=utf-8"
+        getBriefingData((err, briefingData) => {
+            if (err) { Utils.handleError(err); return; }
+            generateBriefings(briefingData, fileType, (data) => {
+                const result = delegate(data);
+                return new Blob([result], {
+                    type: 'text/plain;charset=utf-8'
                 });
             }, delegate);
         });
@@ -292,96 +287,95 @@ See the License for the specific language governing permissions and
 
     var readTemplateFile = function (evt) {
         // Retrieve the first (and only!) File from the FileList object
-        var f = evt.target.files[0];
+        const f = evt.target.files[0];
 
         if (f) {
-            var r = new FileReader();
+            const r = new FileReader();
             r.onload = function (e) {
                 state.customDocxTemplate = e.target.result;
-                Utils.alert(getL10n("briefings-template-is-loaded"));
-            }
+                Utils.alert(getL10n('briefings-template-is-loaded'));
+            };
             r.readAsBinaryString(f);
         } else {
-            Utils.alert(getL10n("briefings-error-on-template-uploading"));
+            Utils.alert(getL10n('briefings-error-on-template-uploading'));
         }
     };
 
-    var updateStatus = function(text){
-        var exportStatus = getEl("exportStatus");
+    const updateStatus = function (text) {
+        const exportStatus = getEl('exportStatus');
         clearEl(exportStatus);
         exportStatus.appendChild(makeText(text));
     };
 
     var generateBriefings = function (briefingData, fileType, oneFileDelegate, separateFileDelegate) {
-        var toSeparateFiles = getEl("toSeparateFileCheckbox").checked;
+        const toSeparateFiles = getEl('toSeparateFileCheckbox').checked;
 
-        var fileName = "briefings";
+        const fileName = 'briefings';
 
-        var out, archive;
-        updateStatus(getL10n("briefings-save-preparing"));
-        try{
+        let out, archive;
+        updateStatus(getL10n('briefings-save-preparing'));
+        try {
             if (toSeparateFiles) {
-                var zip = new JSZip();
-                var content = zip.generate();
-                updateStatus(getL10n("briefings-start-saving"));
+                const zip = new JSZip();
+                const content = zip.generate();
+                updateStatus(getL10n('briefings-start-saving'));
 
-                var res = makeArchiveData(briefingData, separateFileDelegate);
-                for ( var key in res) {
-                    zip.file(key + "." + fileType, res[key]);
+                const res = makeArchiveData(briefingData, separateFileDelegate);
+                for (const key in res) {
+                    zip.file(`${key}.${fileType}`, res[key]);
                 }
 
-                updateStatus(getL10n("briefings-archiving"));
-                archive = zip.generate({type : "blob"});
-                updateStatus(getL10n("briefings-archive-is-ready"));
-                saveFile("briefings-save-archive", archive, fileName + ".zip");
+                updateStatus(getL10n('briefings-archiving'));
+                archive = zip.generate({ type: 'blob' });
+                updateStatus(getL10n('briefings-archive-is-ready'));
+                saveFile('briefings-save-archive', archive, `${fileName}.zip`);
             } else {
-                updateStatus(getL10n("briefings-start-saving"));
+                updateStatus(getL10n('briefings-start-saving'));
                 out = oneFileDelegate(briefingData);
-                updateStatus(getL10n("briefings-file-is-ready"));
-                saveFile("briefings-save-file", out, fileName + "." + fileType);
+                updateStatus(getL10n('briefings-file-is-ready'));
+                saveFile('briefings-save-file', out, `${fileName}.${fileType}`);
             }
-        } catch (err){
-            Utils.alert(getL10n("briefings-error-on-generating-briefings"));
+        } catch (err) {
+            Utils.alert(getL10n('briefings-error-on-generating-briefings'));
             console.log(err);
         }
     };
 
-    var saveFile = function(msgKey, out, fileName){
+    var saveFile = function (msgKey, out, fileName) {
         Utils.confirm(getL10n(msgKey), () => {
             saveAs(out, fileName);
         });
     };
 
-    var makeArchiveData = function(briefingData, generateSingleDelegate){
-        var res = {};
-        briefingData.briefings.forEach(function (briefing, i) {
-            res[briefing.charName] = generateSingleDelegate( {
+    var makeArchiveData = function (briefingData, generateSingleDelegate) {
+        const res = {};
+        briefingData.briefings.forEach((briefing, i) => {
+            res[briefing.charName] = generateSingleDelegate({
                 gameName: briefingData.gameName,
-                briefings : [ briefing ]
+                briefings: [briefing]
             });
-            updateStatus(strFormat(getL10n("briefings-save-status"),[i+1, briefingData.briefings.length]));
+            updateStatus(strFormat(getL10n('briefings-save-status'), [i + 1, briefingData.briefings.length]));
         });
         return res;
     };
 
-    var generateSingleDocx = R.curry(function (type, template, data) {
-        var doc = new window.Docxgen(template);
+    var generateSingleDocx = R.curry((type, template, data) => {
+        const doc = new window.Docxgen(template);
         doc.setData(data);
-        doc.render() // apply them (replace all occurences of {first_name} by
+        doc.render(); // apply them (replace all occurences of {first_name} by
         // Hipp, ...)
-        var out = doc.getZip().generate({
-            type : type
+        const out = doc.getZip().generate({
+            type
         });
         return out;
     });
 
-    var generateSingleTxt = R.curry(function (template, data) {
-        try{
+    var generateSingleTxt = R.curry((template, data) => {
+        try {
             return Mustache.render(template, data);
-        } catch(err){
+        } catch (err) {
             Utils.alert(strFormat(getL10n('briefings-template-error'), [err.message]));
             throw err;
         }
     });
-
-})(this['BriefingExport']={});
+}(this.BriefingExport = {}));

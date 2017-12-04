@@ -16,23 +16,22 @@ See the License for the specific language governing permissions and
  Utils
  */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
-    var state = {};
+(function (exports) {
+    const state = {};
     state.views = {};
-    var root = '.access-manager-tab '
+    const root = '.access-manager-tab ';
 
     exports.init = function () {
-        var containers = {
+        const containers = {
             root: state,
-            navigation: queryEl(root + ' .navigation'),
-            content: queryEl(root + ' .content')
+            navigation: queryEl(`${root} .navigation`),
+            content: queryEl(`${root} .content`)
         };
 
-        Utils.addView(containers, "masterManagement", MasterManagement, {mainPage:true});
-        Utils.addView(containers, "playerManagement", PlayerManagement);
+        Utils.addView(containers, 'masterManagement', MasterManagement, { mainPage: true });
+        Utils.addView(containers, 'playerManagement', PlayerManagement);
 
         exports.content = queryEl(root);
     };
@@ -40,5 +39,4 @@ See the License for the specific language governing permissions and
     exports.refresh = function () {
         state.currentView.refresh();
     };
-
-})(this['AccessManager']={});
+}(this.AccessManager = {}));

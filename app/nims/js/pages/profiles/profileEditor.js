@@ -16,25 +16,24 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
-    var state = {
-        'character':{},
-        'player':{}
+(function (exports) {
+    const state = {
+        character: {},
+        player: {}
     };
-    var root = ".profile-editor-tab ";
-    var characterSelector = root + ".character-profile-selector";
-    var playerSelector = root + ".player-profile-selector";
-    var characterProfileDiv = root + ".character-profile-div";
-    var playerProfileDiv = root + ".player-profile-div";
-    var characterReportDiv = root + ".character-report-div tbody";
-    var profileEditorCore;
+    const root = '.profile-editor-tab ';
+    const characterSelector = `${root}.character-profile-selector`;
+    const playerSelector = `${root}.player-profile-selector`;
+    const characterProfileDiv = `${root}.character-profile-div`;
+    const playerProfileDiv = `${root}.player-profile-div`;
+    const characterReportDiv = `${root}.character-report-div tbody`;
+    let profileEditorCore;
 
     exports.init = function () {
-        $(characterSelector).select2().on("select2:select", showProfileInfoDelegate2('character'));
-        $(playerSelector).select2().on("select2:select", showProfileInfoDelegate2('player'));
+        $(characterSelector).select2().on('select2:select', showProfileInfoDelegate2('character'));
+        $(playerSelector).select2().on('select2:select', showProfileInfoDelegate2('player'));
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         exports.content = queryEl(root);
     };
@@ -42,87 +41,87 @@ See the License for the specific language governing permissions and
     exports.refresh = function () {
         clearEl(queryEl(characterReportDiv));
         refreshPanel('character', characterSelector, characterProfileDiv, () => {
-            refreshPanel('player', playerSelector, playerProfileDiv, ()=>{
+            refreshPanel('player', playerSelector, playerProfileDiv, () => {
                 applySettings('character', characterSelector, characterProfileDiv);
             });
         });
     };
 
-    var refreshPanel = function(type, selector, profileDiv, callback){
-        PermissionInformer.getEntityNamesArray(type, false, function(err, names){
-            if(err) {Utils.handleError(err); return;}
+    var refreshPanel = function (type, selector, profileDiv, callback) {
+        PermissionInformer.getEntityNamesArray(type, false, (err, names) => {
+            if (err) { Utils.handleError(err); return; }
 
-            names.push({displayName: '', value: '', editable: false});
+            names.push({ displayName: '', value: '', editable: false });
 
             clearEl(queryEl(selector));
             $(selector).select2(getSelect2Data(names));
             state[type].names = names;
 
-            DBMS.getProfileStructure(type, function(err, allProfileSettings){
-                if(err) {Utils.handleError(err); return;}
+            DBMS.getProfileStructure(type, (err, allProfileSettings) => {
+                if (err) { Utils.handleError(err); return; }
                 profileEditorCore.initProfileStructure(profileDiv, type, allProfileSettings, callback);
             });
         });
     };
 
     var applySettings = function (type, selector, profileDiv) {
-        var names = state[type].names;
+        const names = state[type].names;
         if (names.length > 0) {
-            var name = names[0].value;
-            var settings = DBMS.getSettings();
-            if(!settings["ProfileEditor"]){
-                settings["ProfileEditor"] = {};
-                settings["ProfileEditor"][type] = name;
+            const name = names[0].value;
+            const settings = DBMS.getSettings();
+            if (!settings.ProfileEditor) {
+                settings.ProfileEditor = {};
+                settings.ProfileEditor[type] = name;
             }
-            var profileName = settings["ProfileEditor"][type];
-            if(names.map(nameInfo => nameInfo.value).indexOf(profileName) === -1){
-                settings["ProfileEditor"][type] = name;
+            let profileName = settings.ProfileEditor[type];
+            if (names.map(nameInfo => nameInfo.value).indexOf(profileName) === -1) {
+                settings.ProfileEditor[type] = name;
                 profileName = name;
             }
-            showProfileInfoDelegate2(type)({target: {value: profileName}});
+            showProfileInfoDelegate2(type)({ target: { value: profileName } });
         }
     };
 
-    var selectProfiles = function(charName, playerName){
+    const selectProfiles = function (charName, playerName) {
         showProfileInfoDelegate('character', characterProfileDiv, charName);
         showProfileInfoDelegate('player', playerProfileDiv, playerName);
         $(characterSelector).select2().val(charName).trigger('change');
         $(playerSelector).select2().val(playerName).trigger('change');
     };
 
-    var showProfileInfoDelegate2 = function(type){
-        return function(event){
-            var name = event.target.value.trim();
-            if(name === ''){
-                selectProfiles('','');
+    var showProfileInfoDelegate2 = function (type) {
+        return function (event) {
+            const name = event.target.value.trim();
+            if (name === '') {
+                selectProfiles('', '');
                 return;
             }
-            DBMS.getProfileBinding(type, name, function(err, binding){
-                if(err) {Utils.handleError(err); return;}
-                selectProfiles(binding[0],binding[1]);
+            DBMS.getProfileBinding(type, name, (err, binding) => {
+                if (err) { Utils.handleError(err); return; }
+                selectProfiles(binding[0], binding[1]);
             });
         };
-    }
+    };
 
     var showProfileInfoDelegate = function (type, profileDiv, name) {
         updateSettings(type, name);
-        if(name === ''){
-            addClass(queryEl(profileDiv),'hidden');
-            if(type === 'character'){
-                addClass(queryEl(characterReportDiv),'hidden');
+        if (name === '') {
+            addClass(queryEl(profileDiv), 'hidden');
+            if (type === 'character') {
+                addClass(queryEl(characterReportDiv), 'hidden');
             }
             return;
         }
-        DBMS.getProfile(type, name, function(err, profile){
-            if(err) {Utils.handleError(err); return;}
-            PermissionInformer.isEntityEditable(type, name, function(err, isCharacterEditable){
-                if(err) {Utils.handleError(err); return;}
+        DBMS.getProfile(type, name, (err, profile) => {
+            if (err) { Utils.handleError(err); return; }
+            PermissionInformer.isEntityEditable(type, name, (err, isCharacterEditable) => {
+                if (err) { Utils.handleError(err); return; }
                 profileEditorCore.fillProfileInformation(profileDiv, type, profile, () => isCharacterEditable);
 
-                if(type === 'character'){
-                    DBMS.getCharacterReport(name, function(err, characterReport){
-                        if(err) {Utils.handleError(err); return;}
-                        removeClass(queryEl(characterReportDiv),'hidden');
+                if (type === 'character') {
+                    DBMS.getCharacterReport(name, (err, characterReport) => {
+                        if (err) { Utils.handleError(err); return; }
+                        removeClass(queryEl(characterReportDiv), 'hidden');
                         addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(makeReportRow));
                     });
                 }
@@ -130,44 +129,42 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var makeCompletenessLabel = function(value, total) {
-        return strFormat('{0} ({1}/{2})', [total === 0 ? '-': (value / total * 100).toFixed(0) + '%', value, total]);
+    const makeCompletenessLabel = function (value, total) {
+        return strFormat('{0} ({1}/{2})', [total === 0 ? '-' : `${(value / total * 100).toFixed(0)}%`, value, total]);
     };
 
-    var getCompletenessColor = function(value, total) {
-        if(total === 0){return 'transparent';}
-        function calc(b,a,part){
-            return (a*part + (1-part)*b).toFixed(0);
+    const getCompletenessColor = function (value, total) {
+        if (total === 0) { return 'transparent'; }
+        function calc(b, a, part) {
+            return (a * part + (1 - part) * b).toFixed(0);
         }
 
-        var p = value / total;
-        if(p<0.5){
-            p=p*2;
-            return strFormat('rgba({0},{1},{2}, 1)', [calc(251,255,p),calc(126,255,p),calc(129,0,p)]); // red to yellow mapping
-        } else {
-            p=(p-0.5)*2;
-            return strFormat('rgba({0},{1},{2}, 1)', [calc(255,123,p),calc(255,225,p),calc(0,65,p)]); // yellow to green mapping
+        let p = value / total;
+        if (p < 0.5) {
+            p *= 2;
+            return strFormat('rgba({0},{1},{2}, 1)', [calc(251, 255, p), calc(126, 255, p), calc(129, 0, p)]); // red to yellow mapping
         }
+        p = (p - 0.5) * 2;
+        return strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
     };
 
-    var makeReportRow = function(storyInfo){
-        var act = storyInfo.activity;
-        var label = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
-        var color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
-        return addEls(makeEl('tr'), [ addEl(makeEl('td'), makeText(storyInfo.storyName)),
-                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.active   ), makeText(constL10n('active-s'))),
-                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.follower ), makeText(constL10n('follower-s'))),
-                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.defensive), makeText(constL10n('defensive-s'))),
-                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.passive  ), makeText(constL10n('passive-s'))),
-                                    // TODO fix setStyle call here and test
-                                    addEl(addClass(setStyle(makeEl('td'),'backgroundColor', color), 'text-right') , makeText(label)),
-                                    addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))),
-                                    addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);
+    var makeReportRow = function (storyInfo) {
+        const act = storyInfo.activity;
+        const label = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
+        const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
+        return addEls(makeEl('tr'), [addEl(makeEl('td'), makeText(storyInfo.storyName)),
+            addEl(setClassByCondition(makeEl('td'), 'green-back', act.active), makeText(constL10n('active-s'))),
+            addEl(setClassByCondition(makeEl('td'), 'green-back', act.follower), makeText(constL10n('follower-s'))),
+            addEl(setClassByCondition(makeEl('td'), 'green-back', act.defensive), makeText(constL10n('defensive-s'))),
+            addEl(setClassByCondition(makeEl('td'), 'green-back', act.passive), makeText(constL10n('passive-s'))),
+            // TODO fix setStyle call here and test
+            addEl(addClass(setStyle(makeEl('td'), 'backgroundColor', color), 'text-right'), makeText(label)),
+            addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))),
+            addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);
     };
 
     var updateSettings = function (type, name) {
-        var settings = DBMS.getSettings();
-        settings["ProfileEditor"][type] = name;
+        const settings = DBMS.getSettings();
+        settings.ProfileEditor[type] = name;
     };
-
-})(this['ProfileEditor']={});
+}(this.ProfileEditor = {}));

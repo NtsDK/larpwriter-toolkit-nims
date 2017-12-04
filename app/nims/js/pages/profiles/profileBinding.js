@@ -16,69 +16,65 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
-(function(exports){
-
-    var root = ".profile-binding-tab ";
+(function (exports) {
+    const root = '.profile-binding-tab ';
 
     exports.init = function () {
-        listen(queryEl(root+".create-binding-button"), "click", createBinding);
-        listen(queryEl(root+".remove-binding-button"), "click", removeBinding);
+        listen(queryEl(`${root}.create-binding-button`), 'click', createBinding);
+        listen(queryEl(`${root}.remove-binding-button`), 'click', removeBinding);
         exports.content = queryEl(root);
     };
 
     exports.refresh = function () {
-        PermissionInformer.getEntityNamesArray('character', false, function(err, characterNames){
-            if(err) {Utils.handleError(err); return;}
-            PermissionInformer.getEntityNamesArray('player', false, function(err, playerNames){
-                if(err) {Utils.handleError(err); return;}
-                DBMS.getProfileBindings(function(err, profileBindings){
-                    if(err) {Utils.handleError(err); return;}
+        PermissionInformer.getEntityNamesArray('character', false, (err, characterNames) => {
+            if (err) { Utils.handleError(err); return; }
+            PermissionInformer.getEntityNamesArray('player', false, (err, playerNames) => {
+                if (err) { Utils.handleError(err); return; }
+                DBMS.getProfileBindings((err, profileBindings) => {
+                    if (err) { Utils.handleError(err); return; }
 
-                    var bindedCharacterList = R.keys(profileBindings);
-                    var bindedPlayerList = R.values(profileBindings);
-                    var filter = function(list){
+                    const bindedCharacterList = R.keys(profileBindings);
+                    const bindedPlayerList = R.values(profileBindings);
+                    const filter = function (list) {
                         return R.compose(R.not, R.contains(R.__, list), R.prop('value'));
                     };
 
-                    fillSelector(clearEl(queryEl(root +".character-selector")), characterNames.filter(filter(bindedCharacterList)).map(remapProps4Select));
-                    fillSelector(clearEl(queryEl(root +".player-selector")), playerNames.filter(filter(bindedPlayerList)).map(remapProps4Select));
-                    var bindings = R.toPairs(profileBindings).map(function(binding){
-                        return {
-                            name: R.join('/', binding),
-                            value: JSON.stringify(binding)
-                        }
-                    });
+                    fillSelector(clearEl(queryEl(`${root}.character-selector`)), characterNames.filter(filter(bindedCharacterList)).map(remapProps4Select));
+                    fillSelector(clearEl(queryEl(`${root}.player-selector`)), playerNames.filter(filter(bindedPlayerList)).map(remapProps4Select));
+                    const bindings = R.toPairs(profileBindings).map(binding => ({
+                        name: R.join('/', binding),
+                        value: JSON.stringify(binding)
+                    }));
                     bindings.sort(CommonUtils.charOrdAFactory(R.prop('name')));
-                    fillSelector(clearEl(queryEl(root +".binding-selector")), bindings);
+                    fillSelector(clearEl(queryEl(`${root}.binding-selector`)), bindings);
                 });
             });
         });
     };
 
-    var createBinding = function(){
-        var characterName = queryEl(root +".character-selector").value;
-        var playerName = queryEl(root +".player-selector").value;
+    var createBinding = function () {
+        const characterName = queryEl(`${root}.character-selector`).value;
+        const playerName = queryEl(`${root}.player-selector`).value;
 
-        if(characterName === '' || playerName === ''){
+        if (characterName === '' || playerName === '') {
             Utils.alert(getL10n('binding-character-or-player-not-selected'));
             return;
         }
 
         DBMS.createBinding(characterName, playerName, Utils.processError(exports.refresh));
-    }
+    };
 
-    var removeBinding = function(){
-        var bindingVal = queryEl(root +".binding-selector").value;
+    var removeBinding = function () {
+        const bindingVal = queryEl(`${root}.binding-selector`).value;
 
-        if(bindingVal === ''){
+        if (bindingVal === '') {
             Utils.alert(getL10n('binding-binding-is-not-selected'));
             return;
         }
-        var binding = JSON.parse(bindingVal);
+        const binding = JSON.parse(bindingVal);
 
         DBMS.removeBinding(binding[0], binding[1], Utils.processError(exports.refresh));
-    }
-
-})(this['ProfileBinding']={});
+    };
+}(this.ProfileBinding = {}));

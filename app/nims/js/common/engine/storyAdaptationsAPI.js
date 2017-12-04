@@ -12,35 +12,29 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function storyAdaptationsAPI(LocalDBMS, opts) {
-
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var dbmsUtils     = opts.dbmsUtils   ;
-        var Constants     = opts.Constants   ;
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const dbmsUtils = opts.dbmsUtils;
+        const Constants = opts.Constants;
 
         //events
-        LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback){
+        LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback) {
             PC.precondition(PC.isBoolean(showOnlyUnfinishedStories), callback, () => {
-                var storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
-                var that = this;
-                storyArray = storyArray.map(function(elem){
-                    return {
-                        storyName: elem,
-                        isFinished: _isStoryFinished(that.database, elem),
-                        isEmpty: _isStoryEmpty(that.database, elem)
-                    }
-                });
+                let storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
+                const that = this;
+                storyArray = storyArray.map(elem => ({
+                    storyName: elem,
+                    isFinished: _isStoryFinished(that.database, elem),
+                    isEmpty: _isStoryEmpty(that.database, elem)
+                }));
 
-                if(showOnlyUnfinishedStories){
-                    storyArray = storyArray.filter(function(elem){
-                        return !elem.isFinished || elem.isEmpty;
-                    });
+                if (showOnlyUnfinishedStories) {
+                    storyArray = storyArray.filter(elem => !elem.isFinished || elem.isEmpty);
                 }
                 callback(null, storyArray);
             });
@@ -59,33 +53,33 @@ See the License for the specific language governing permissions and
         dbmsUtils._isStoryFinished = _isStoryFinished;
 
         //adaptations
-        LocalDBMS.prototype.getStory = function(storyName, callback){
-            var chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
+        LocalDBMS.prototype.getStory = function (storyName, callback) {
+            const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 callback(null, CU.clone(this.database.Stories[storyName]));
             });
         };
 
-        var getValueCheck = function(type, value){
-            switch(type){
+        const getValueCheck = function (type, value) {
+            switch (type) {
             case 'text':
             case 'time':
                 return PC.isString(value);
             case 'ready':
                 return PC.isBoolean(value);
-            };
-            throw new Error('Unexpected type ' + type);
+            }
+            throw new Error(`Unexpected type ${type}`);
         };
 
         // preview, events
-        LocalDBMS.prototype.setEventAdaptationProperty = function(storyName, eventIndex, characterName, type, value, callback){
-            var chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex),
-                        PC.isString(type), PC.elementFromEnum(type, Constants.adaptationProperties), PC.isString(characterName)];
+        LocalDBMS.prototype.setEventAdaptationProperty = function (storyName, eventIndex, characterName, type, value, callback) {
+            let chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex),
+                PC.isString(type), PC.elementFromEnum(type, Constants.adaptationProperties), PC.isString(characterName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                var story = this.database.Stories[storyName];
-                chain = [PC.entityExists(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length-1), getValueCheck(type, value)];
+                const story = this.database.Stories[storyName];
+                chain = [PC.entityExists(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length - 1), getValueCheck(type, value)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
-                    var event = story.events[eventIndex];
+                    const event = story.events[eventIndex];
                     PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), callback, () => {
                         event.characters[characterName][type] = value;
                         callback();
@@ -93,10 +87,8 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-
-    };
+    }
     callback(storyAdaptationsAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['storyAdaptationsAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.storyAdaptationsAPI = api : module.exports = api;
+}));

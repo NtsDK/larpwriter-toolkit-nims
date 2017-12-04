@@ -12,22 +12,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+(function (callback) {
     function entityAPI(LocalDBMS, opts) {
+        const R = opts.R;
+        const CU = opts.CommonUtils;
+        const PC = opts.Precondition;
+        const Constants = opts.Constants;
+        const Errors = opts.Errors;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var PC            = opts.Precondition;
-        var Constants     = opts.Constants   ;
-        var Errors        = opts.Errors      ;
-
-        LocalDBMS.prototype.getEntityNamesArray = function(type, callback) {
-            var chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
+        LocalDBMS.prototype.getEntityNamesArray = function (type, callback) {
+            const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
             PC.precondition(chain, callback, () => {
-                switch(type){
+                switch (type) {
                 case 'character':
                 case 'player':
                     this.getProfileNamesArray(type, callback);
@@ -43,10 +41,8 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-
-    };
+    }
     callback(entityAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['entityAPI'] = api: module.exports = api;
-}.bind(this));
+}((api) => {
+    typeof exports === 'undefined' ? this.entityAPI = api : module.exports = api;
+}));

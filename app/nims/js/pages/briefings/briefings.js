@@ -16,26 +16,25 @@ See the License for the specific language governing permissions and
  Utils, BriefingPreview, BriefingExport
  */
 
-"use strict";
+'use strict';
 
 ((exports) => {
-
     const state = {};
 
     exports.init = () => {
-        var root = state;
+        const root = state;
         root.views = {};
-        var nav = "briefingsNavigation";
-        var content = "briefingsContent";
-        var containers = {
-            root: root,
+        const nav = 'briefingsNavigation';
+        const content = 'briefingsContent';
+        const containers = {
+            root,
             navigation: getEl(nav),
             content: getEl(content)
         };
-        Utils.addView(containers, "briefing-preview", BriefingPreview, {mainPage:true});
-        Utils.addView(containers, "briefing-export", BriefingExport);
+        Utils.addView(containers, 'briefing-preview', BriefingPreview, { mainPage: true });
+        Utils.addView(containers, 'briefing-export', BriefingExport);
 
-        exports.content = getEl("briefingsDiv");
+        exports.content = getEl('briefingsDiv');
     };
 
     exports.refresh = () => {

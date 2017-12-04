@@ -17,44 +17,43 @@ See the License for the specific language governing permissions and
  */
 
 
-"use strict";
+'use strict';
 
-(function(exports){
-
-    var root = ".register-tab ";
+(function (exports) {
+    const root = '.register-tab ';
 
     exports.init = function () {
         $(document.forms['register-form']).on('submit', submit);
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function() {
+    exports.refresh = function () {
 
     };
 
-    var submit = function() {
-        var form = $(this);
+    var submit = function () {
+        const form = $(this);
 
         $('.error', form).html('');
-        $(":submit", form).button("loading");
+        $(':submit', form).button('loading');
 
-        var request = $.ajax({
-            url : "/register",
-            method : "POST",
-            data : form.serialize(),
-            complete : function() {
-                $(":submit", form).button("reset");
+        const request = $.ajax({
+            url: '/register',
+            method: 'POST',
+            data: form.serialize(),
+            complete() {
+                $(':submit', form).button('reset');
             },
         });
-        request.done(function(data) {
+        request.done((data) => {
             form.html(getL10n('entrance-register-success')).addClass('alert-success');
         });
 
-        request.fail(function(errorInfo, textStatus, errorThrown) {
-            var msg;
+        request.fail((errorInfo, textStatus, errorThrown) => {
+            let msg;
             try {
                 msg = Utils.handleErrorMsg(JSON.parse(errorInfo.responseText));
-            } catch(err){
+            } catch (err) {
                 msg = Utils.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
             }
             $('.error', form).html(msg);
@@ -62,5 +61,4 @@ See the License for the specific language governing permissions and
 
         return false;
     };
-
-})(this['Register']={});
+}(this.Register = {}));

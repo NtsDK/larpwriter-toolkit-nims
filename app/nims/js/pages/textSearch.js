@@ -16,50 +16,46 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
-(function(exports){
+(function (exports) {
+    const root = '.text-search-tab ';
 
-    var root = '.text-search-tab ';
-
-    exports.init = function() {
-        listen(queryEl(root + '.text-search-button'), 'click', findTexts);
-        listenOnEnter(queryEl(root + '.text-search-input'), findTexts);
+    exports.init = function () {
+        listen(queryEl(`${root}.text-search-button`), 'click', findTexts);
+        listenOnEnter(queryEl(`${root}.text-search-input`), findTexts);
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function() {
+    exports.refresh = function () {
     };
 
-    var findTexts = function(){
-        var selectedTextTypes = queryElEls(queryEl(root), root + '.textSearchTypeRadio').filter(el => el.checked).map(el => el.value);
-        var searchStr = queryEl(root + '.text-search-input').value;
-        var caseSensitive = getEl('caseSensitiveTextSearch').checked;
-        DBMS.getTexts(searchStr, selectedTextTypes, caseSensitive, function(err, texts){
-            if(err) {Utils.handleError(err); return;}
+    var findTexts = function () {
+        const selectedTextTypes = queryElEls(queryEl(root), `${root}.textSearchTypeRadio`).filter(el => el.checked).map(el => el.value);
+        const searchStr = queryEl(`${root}.text-search-input`).value;
+        const caseSensitive = getEl('caseSensitiveTextSearch').checked;
+        DBMS.getTexts(searchStr, selectedTextTypes, caseSensitive, (err, texts) => {
+            if (err) { Utils.handleError(err); return; }
 
-            addEls(clearEl(queryEl(root + '.result-panel')), texts.map(text => {
-                return makePanel(makeText(getL10n('text-search-' + text.textType) + ' (' + text.result.length + ')'), makePanelContent(text, searchStr, caseSensitive));
-            }));
+            addEls(clearEl(queryEl(`${root}.result-panel`)), texts.map(text => makePanel(makeText(`${getL10n(`text-search-${text.textType}`)} (${text.result.length})`), makePanelContent(text, searchStr, caseSensitive))));
         });
     };
 
-    var makePanelContent = function(textsInfo, searchStr, caseSensitive){
+    var makePanelContent = function (textsInfo, searchStr, caseSensitive) {
         textsInfo.result.sort(CommonUtils.charOrdAFactory(R.prop('name')));
-        return addEls(makeEl('div'), textsInfo.result.map(textInfo => {
-            var head = addEl(makeEl('div'), makeText(textInfo.name));
-            var body = addClass(makeEl('div'), textInfo.type === 'text' ? 'text-body' : 'string-body');
-            var regex = new RegExp(CommonUtils.escapeRegExp(searchStr), caseSensitive ? 'g' : 'gi');
+        return addEls(makeEl('div'), textsInfo.result.map((textInfo) => {
+            const head = addEl(makeEl('div'), makeText(textInfo.name));
+            const body = addClass(makeEl('div'), textInfo.type === 'text' ? 'text-body' : 'string-body');
+            const regex = new RegExp(CommonUtils.escapeRegExp(searchStr), caseSensitive ? 'g' : 'gi');
             body.innerHTML = textInfo.text.replace(regex, '<span>$&</span>');
             return addEls(addClass(makeEl('div'), 'text-card'), [head, body]);
         }));
     };
 
-    var makePanel = function(title, content){
-        var panelInfo = UI.makePanelCore(title, content);
+    var makePanel = function (title, content) {
+        const panelInfo = UI.makePanelCore(title, content);
         addClass(panelInfo.contentDiv, 'hidden');
-        listen(panelInfo.a, "click", UI.togglePanel(panelInfo.contentDiv));
+        listen(panelInfo.a, 'click', UI.togglePanel(panelInfo.contentDiv));
         return panelInfo.panel;
     };
-
-})(this['TextSearch']={});
+}(this.TextSearch = {}));

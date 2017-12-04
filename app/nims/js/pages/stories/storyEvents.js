@@ -16,99 +16,97 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-"use strict";
+'use strict';
 
 ((exports) => {
     const state = {};
 
     exports.init = function () {
-        var button = getEl("createEventButton");
-        button.addEventListener("click", createEvent);
+        let button = getEl('createEventButton');
+        button.addEventListener('click', createEvent);
 
-        button = getEl("moveEventButton");
-        button.addEventListener("click", moveEvent);
+        button = getEl('moveEventButton');
+        button.addEventListener('click', moveEvent);
 
-        button = getEl("cloneEventButton");
-        button.addEventListener("click", cloneEvent);
+        button = getEl('cloneEventButton');
+        button.addEventListener('click', cloneEvent);
 
-        button = getEl("mergeEventButton");
-        button.addEventListener("click", mergeEvents);
+        button = getEl('mergeEventButton');
+        button.addEventListener('click', mergeEvents);
 
-        button = getEl("removeEventButton");
-        button.addEventListener("click", removeEvent);
+        button = getEl('removeEventButton');
+        button.addEventListener('click', removeEvent);
 
-        exports.content = getEl("storyEventsDiv");
+        exports.content = getEl('storyEventsDiv');
     };
 
     exports.refresh = function () {
         clearInterface();
-        if(Stories.getCurrentStoryName() === undefined){
+        if (Stories.getCurrentStoryName() === undefined) {
             return;
         }
 
-        PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), function(err, isStoryEditable){
-            if(err) {Utils.handleError(err); return;}
-            DBMS.getMetaInfo(function(err, metaInfo){
-                if(err) {Utils.handleError(err); return;}
-                DBMS.getStoryEvents(Stories.getCurrentStoryName(), function(err, events){
-                    if(err) {Utils.handleError(err); return;}
+        PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), (err, isStoryEditable) => {
+            if (err) { Utils.handleError(err); return; }
+            DBMS.getMetaInfo((err, metaInfo) => {
+                if (err) { Utils.handleError(err); return; }
+                DBMS.getStoryEvents(Stories.getCurrentStoryName(), (err, events) => {
+                    if (err) { Utils.handleError(err); return; }
                     rebuildInterface(events, metaInfo);
-                    Utils.enable(exports.content, "isStoryEditable", isStoryEditable);
+                    Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
                     Stories.chainRefresh();
                 });
             });
         });
     };
 
-    var clearInterface = function(){
-        clearEl(getEl("eventBlockHead"));
-        clearEl(getEl("eventBlock"));
-        var positionSelectors = nl2array(document.querySelectorAll(".eventPositionSelector"));
+    var clearInterface = function () {
+        clearEl(getEl('eventBlockHead'));
+        clearEl(getEl('eventBlock'));
+        const positionSelectors = nl2array(document.querySelectorAll('.eventPositionSelector'));
         R.ap([clearEl], positionSelectors);
-        var selectorArr = nl2array(document.querySelectorAll(".eventEditSelector"));
+        const selectorArr = nl2array(document.querySelectorAll('.eventEditSelector'));
         R.ap([clearEl], selectorArr);
     };
 
-    var rebuildInterface = function(events, metaInfo){
+    var rebuildInterface = function (events, metaInfo) {
         // event part
-        var tableHead = clearEl(getEl("eventBlockHead"));
-        var table = clearEl(getEl("eventBlock"));
+        const tableHead = clearEl(getEl('eventBlockHead'));
+        const table = clearEl(getEl('eventBlock'));
 
         addEl(tableHead, getEventHeader());
 
         // refresh position selector
-        var addOpt = R.curry(function(sel, text){
+        const addOpt = R.curry((sel, text) => {
             addEl(sel, addEl(makeEl('option'), makeText(text)));
         });
 
-        var option, addOptLoc;
-        var positionSelectors = nl2array(document.querySelectorAll(".eventPositionSelector"));
+        let option, addOptLoc;
+        const positionSelectors = nl2array(document.querySelectorAll('.eventPositionSelector'));
         R.ap([clearEl], positionSelectors);
-        positionSelectors.forEach(function (positionSelector) {
+        positionSelectors.forEach((positionSelector) => {
             addOptLoc = addOpt(positionSelector);
 
-            events.forEach(function (event) {
-                addOptLoc(strFormat(getL10n("common-set-item-before"), [event.name]));
+            events.forEach((event) => {
+                addOptLoc(strFormat(getL10n('common-set-item-before'), [event.name]));
             });
 
-            addOptLoc(getL10n("common-set-item-as-last"));
+            addOptLoc(getL10n('common-set-item-as-last'));
 
             positionSelector.selectedIndex = events.length;
         });
 
-        R.ap([addEl(table)], events.map(function (event, i) {
-            return appendEventInput(event, i, metaInfo.date, metaInfo.preGameDate);
-        }));
+        R.ap([addEl(table)], events.map((event, i) => appendEventInput(event, i, metaInfo.date, metaInfo.preGameDate)));
 
         state.eventsLength = events.length;
 
         // refresh swap selector
-        var selectorArr = nl2array(document.querySelectorAll(".eventEditSelector"));
+        const selectorArr = nl2array(document.querySelectorAll('.eventEditSelector'));
         R.ap([clearEl], selectorArr);
 
-        events.forEach(function (event, i) {
-            selectorArr.forEach(function (selector) {
-                option = makeEl("option");
+        events.forEach((event, i) => {
+            selectorArr.forEach((selector) => {
+                option = makeEl('option');
                 option.appendChild(makeText(event.name));
                 option.eventIndex = i;
                 selector.appendChild(option);
@@ -117,36 +115,36 @@ See the License for the specific language governing permissions and
     };
 
     var createEvent = function () {
-        var eventNameInput = getEl("eventNameInput");
-        var eventName = eventNameInput.value.trim();
-        var eventTextInput = getEl("eventTextInput");
-        var positionSelector = getEl("positionSelector");
-        var eventText = eventTextInput.value.trim();
+        const eventNameInput = getEl('eventNameInput');
+        const eventName = eventNameInput.value.trim();
+        const eventTextInput = getEl('eventTextInput');
+        const positionSelector = getEl('positionSelector');
+        const eventText = eventTextInput.value.trim();
 
-        DBMS.createEvent(Stories.getCurrentStoryName(), eventName, eventText, positionSelector.selectedIndex, function(err){
-            if(err) {Utils.handleError(err); return;}
-            eventNameInput.value = "";
-            eventTextInput.value = "";
+        DBMS.createEvent(Stories.getCurrentStoryName(), eventName, eventText, positionSelector.selectedIndex, (err) => {
+            if (err) { Utils.handleError(err); return; }
+            eventNameInput.value = '';
+            eventTextInput.value = '';
             exports.refresh();
         });
     };
 
     var moveEvent = function () {
-        var index = getEl("moveEventSelector").selectedOptions[0].eventIndex;
-        var newIndex = getEl("movePositionSelector").selectedIndex;
+        const index = getEl('moveEventSelector').selectedOptions[0].eventIndex;
+        const newIndex = getEl('movePositionSelector').selectedIndex;
 
         DBMS.moveEvent(Stories.getCurrentStoryName(), index, newIndex, Utils.processError(exports.refresh));
     };
 
     var cloneEvent = function () {
-        var index = getEl("cloneEventSelector").selectedIndex;
+        const index = getEl('cloneEventSelector').selectedIndex;
         DBMS.cloneEvent(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
     };
 
     var mergeEvents = function () {
-        var index = getEl("mergeEventSelector").selectedIndex;
+        const index = getEl('mergeEventSelector').selectedIndex;
         if (state.eventsLength == index + 1) {
-            Utils.alert(getL10n("stories-cant-merge-last-event"));
+            Utils.alert(getL10n('stories-cant-merge-last-event'));
             return;
         }
 
@@ -154,43 +152,43 @@ See the License for the specific language governing permissions and
     };
 
     var removeEvent = function () {
-        var sel = getEl("removeEventSelector")
-        Utils.confirm(strFormat(getL10n("stories-remove-event-warning"), [sel.value]), () => {
+        const sel = getEl('removeEventSelector');
+        Utils.confirm(strFormat(getL10n('stories-remove-event-warning'), [sel.value]), () => {
             DBMS.removeEvent(Stories.getCurrentStoryName(), sel.selectedIndex, Utils.processError(exports.refresh));
         });
     };
 
     var getEventHeader = function () {
-        var tr = makeEl("tr");
-        addEl(tr, addEl(makeEl('th'), makeText("№")));
-        addEl(tr, addEl(makeEl('th'), makeText(getL10n("stories-event"))));
+        const tr = makeEl('tr');
+        addEl(tr, addEl(makeEl('th'), makeText('№')));
+        addEl(tr, addEl(makeEl('th'), makeText(getL10n('stories-event'))));
         return tr;
     };
 
     var appendEventInput = function (event, index, date, preGameDate) {
-        var tr = makeEl("tr");
+        const tr = makeEl('tr');
 
         // first col - event number
-        addEl(tr, addEl(makeEl("td"), addEl(makeEl("span"), makeText(index+1))));
+        addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(index + 1))));
 
         // second col
-        var td = makeEl("td");
+        const td = makeEl('td');
 
-        var divMain =  addClass(makeEl("div") ,"story-events-div-main");
-        var divLeft =  addClass(makeEl("div") ,"story-events-div-left");
-        var divRight = addClass(makeEl("div"),"story-events-div-right");
+        const divMain = addClass(makeEl('div'), 'story-events-div-main');
+        const divLeft = addClass(makeEl('div'), 'story-events-div-left');
+        const divRight = addClass(makeEl('div'), 'story-events-div-right');
         addEl(divMain, divLeft);
         addEl(divMain, divRight);
         addEl(td, divMain);
 
         addEl(divLeft, makeEventNameInput(event, index));
         addEl(divRight, UI.makeEventTimePicker({
-            eventTime : event.time,
-            index : index,
-            preGameDate : preGameDate,
-            date : date,
-            extraClasses : ["isStoryEditable"],
-            onChangeDateTimeCreator : onChangeDateTimeCreator
+            eventTime: event.time,
+            index,
+            preGameDate,
+            date,
+            extraClasses: ['isStoryEditable'],
+            onChangeDateTimeCreator
         }));
         addEl(td, makeEventTextInput(event, index));
         addEl(tr, td);
@@ -199,39 +197,39 @@ See the License for the specific language governing permissions and
     };
 
     var makeEventNameInput = function (event, index) {
-        var input = makeEl("input");
-        addClass(input, "isStoryEditable");
+        const input = makeEl('input');
+        addClass(input, 'isStoryEditable');
         input.value = event.name;
         input.eventIndex = index;
-        input.addEventListener("change", updateEventName);
+        input.addEventListener('change', updateEventName);
         return input;
     };
 
     var makeEventTextInput = function (event, index) {
-        var input = makeEl("textarea");
-        addClass(input, "isStoryEditable");
-        addClass(input, "eventText");
+        const input = makeEl('textarea');
+        addClass(input, 'isStoryEditable');
+        addClass(input, 'eventText');
         input.value = event.text;
         input.eventIndex = index;
-        input.addEventListener("change", updateEventText);
+        input.addEventListener('change', updateEventText);
         return input;
     };
 
     var onChangeDateTimeCreator = function (myInput) {
         return function (dp, input) {
-            DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), myInput.eventIndex, "time", input.val(), Utils.processError());
-//            StoryEvents.lastDate = input.val();
-            removeClass(myInput, "defaultDate");
-        }
+            DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), myInput.eventIndex, 'time', input.val(), Utils.processError());
+            //            StoryEvents.lastDate = input.val();
+            removeClass(myInput, 'defaultDate');
+        };
     };
 
     var updateEventName = function (event) {
-        var input = event.target;
-        DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, "name", input.value, Utils.processError(exports.refresh));
+        const input = event.target;
+        DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, 'name', input.value, Utils.processError(exports.refresh));
     };
 
     var updateEventText = function (event) {
-        var input = event.target;
-        DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, "text", input.value, Utils.processError());
+        const input = event.target;
+        DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, 'text', input.value, Utils.processError());
     };
 })(this.StoryEvents = {});
