@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         let button = getEl('createEventButton');
         button.addEventListener('click', createEvent);
 
@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
         exports.content = getEl('storyEventsDiv');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         clearInterface();
         if (Stories.getCurrentStoryName() === undefined) {
             return;
@@ -48,10 +48,10 @@ See the License for the specific language governing permissions and
 
         PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), (err, isStoryEditable) => {
             if (err) { Utils.handleError(err); return; }
-            DBMS.getMetaInfo((err, metaInfo) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getStoryEvents(Stories.getCurrentStoryName(), (err, events) => {
-                    if (err) { Utils.handleError(err); return; }
+            DBMS.getMetaInfo((err2, metaInfo) => {
+                if (err2) { Utils.handleError(err2); return; }
+                DBMS.getStoryEvents(Stories.getCurrentStoryName(), (err3, events) => {
+                    if (err3) { Utils.handleError(err3); return; }
                     rebuildInterface(events, metaInfo);
                     Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
                     Stories.chainRefresh();
@@ -60,16 +60,16 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var clearInterface = function () {
+    function clearInterface() {
         clearEl(getEl('eventBlockHead'));
         clearEl(getEl('eventBlock'));
         const positionSelectors = nl2array(document.querySelectorAll('.eventPositionSelector'));
         R.ap([clearEl], positionSelectors);
         const selectorArr = nl2array(document.querySelectorAll('.eventEditSelector'));
         R.ap([clearEl], selectorArr);
-    };
+    }
 
-    var rebuildInterface = function (events, metaInfo) {
+    function rebuildInterface(events, metaInfo) {
         // event part
         const tableHead = clearEl(getEl('eventBlockHead'));
         const table = clearEl(getEl('eventBlock'));
@@ -112,9 +112,9 @@ See the License for the specific language governing permissions and
                 selector.appendChild(option);
             });
         });
-    };
+    }
 
-    var createEvent = function () {
+    function createEvent() {
         const eventNameInput = getEl('eventNameInput');
         const eventName = eventNameInput.value.trim();
         const eventTextInput = getEl('eventTextInput');
@@ -127,45 +127,45 @@ See the License for the specific language governing permissions and
             eventTextInput.value = '';
             exports.refresh();
         });
-    };
+    }
 
-    var moveEvent = function () {
+    function moveEvent() {
         const index = getEl('moveEventSelector').selectedOptions[0].eventIndex;
         const newIndex = getEl('movePositionSelector').selectedIndex;
 
         DBMS.moveEvent(Stories.getCurrentStoryName(), index, newIndex, Utils.processError(exports.refresh));
-    };
+    }
 
-    var cloneEvent = function () {
+    function cloneEvent() {
         const index = getEl('cloneEventSelector').selectedIndex;
         DBMS.cloneEvent(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
-    };
+    }
 
-    var mergeEvents = function () {
+    function mergeEvents() {
         const index = getEl('mergeEventSelector').selectedIndex;
-        if (state.eventsLength == index + 1) {
+        if (state.eventsLength === index + 1) {
             Utils.alert(getL10n('stories-cant-merge-last-event'));
             return;
         }
 
         DBMS.mergeEvents(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
-    };
+    }
 
-    var removeEvent = function () {
+    function removeEvent() {
         const sel = getEl('removeEventSelector');
         Utils.confirm(strFormat(getL10n('stories-remove-event-warning'), [sel.value]), () => {
             DBMS.removeEvent(Stories.getCurrentStoryName(), sel.selectedIndex, Utils.processError(exports.refresh));
         });
-    };
+    }
 
-    var getEventHeader = function () {
+    function getEventHeader() {
         const tr = makeEl('tr');
         addEl(tr, addEl(makeEl('th'), makeText('№')));
         addEl(tr, addEl(makeEl('th'), makeText(getL10n('stories-event'))));
         return tr;
-    };
+    }
 
-    var appendEventInput = function (event, index, date, preGameDate) {
+    function appendEventInput(event, index, date, preGameDate) {
         const tr = makeEl('tr');
 
         // first col - event number
@@ -194,18 +194,18 @@ See the License for the specific language governing permissions and
         addEl(tr, td);
 
         return tr;
-    };
+    }
 
-    var makeEventNameInput = function (event, index) {
+    function makeEventNameInput(event, index) {
         const input = makeEl('input');
         addClass(input, 'isStoryEditable');
         input.value = event.name;
         input.eventIndex = index;
         input.addEventListener('change', updateEventName);
         return input;
-    };
+    }
 
-    var makeEventTextInput = function (event, index) {
+    function makeEventTextInput(event, index) {
         const input = makeEl('textarea');
         addClass(input, 'isStoryEditable');
         addClass(input, 'eventText');
@@ -213,23 +213,23 @@ See the License for the specific language governing permissions and
         input.eventIndex = index;
         input.addEventListener('change', updateEventText);
         return input;
-    };
+    }
 
-    var onChangeDateTimeCreator = function (myInput) {
-        return function (dp, input) {
+    function onChangeDateTimeCreator(myInput) {
+        return (dp, input) => {
             DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), myInput.eventIndex, 'time', input.val(), Utils.processError());
             //            StoryEvents.lastDate = input.val();
             removeClass(myInput, 'defaultDate');
         };
-    };
+    }
 
-    var updateEventName = function (event) {
+    function updateEventName(event) {
         const input = event.target;
         DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, 'name', input.value, Utils.processError(exports.refresh));
-    };
+    }
 
-    var updateEventText = function (event) {
+    function updateEventText(event) {
         const input = event.target;
         DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, 'text', input.value, Utils.processError());
-    };
+    }
 })(this.StoryEvents = {});

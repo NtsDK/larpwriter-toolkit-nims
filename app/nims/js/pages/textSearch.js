@@ -18,30 +18,35 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const root = '.text-search-tab ';
 
-    exports.init = function () {
+    exports.init = () => {
         listen(queryEl(`${root}.text-search-button`), 'click', findTexts);
         listenOnEnter(queryEl(`${root}.text-search-input`), findTexts);
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
     };
 
-    var findTexts = function () {
-        const selectedTextTypes = queryElEls(queryEl(root), `${root}.textSearchTypeRadio`).filter(el => el.checked).map(el => el.value);
+    function findTexts() {
+        const selectedTextTypes = queryElEls(queryEl(root), `${root}.textSearchTypeRadio`)
+            .filter(el => el.checked).map(el => el.value);
         const searchStr = queryEl(`${root}.text-search-input`).value;
         const caseSensitive = getEl('caseSensitiveTextSearch').checked;
         DBMS.getTexts(searchStr, selectedTextTypes, caseSensitive, (err, texts) => {
             if (err) { Utils.handleError(err); return; }
-
-            addEls(clearEl(queryEl(`${root}.result-panel`)), texts.map(text => makePanel(makeText(`${getL10n(`text-search-${text.textType}`)} (${text.result.length})`), makePanelContent(text, searchStr, caseSensitive))));
+            const text2panel = text =>
+                makePanel(
+                    makeText(`${getL10n(`text-search-${text.textType}`)} (${text.result.length})`),
+                    makePanelContent(text, searchStr, caseSensitive)
+                );
+            addEls(clearEl(queryEl(`${root}.result-panel`)), texts.map(text2panel));
         });
-    };
+    }
 
-    var makePanelContent = function (textsInfo, searchStr, caseSensitive) {
+    function makePanelContent(textsInfo, searchStr, caseSensitive) {
         textsInfo.result.sort(CommonUtils.charOrdAFactory(R.prop('name')));
         return addEls(makeEl('div'), textsInfo.result.map((textInfo) => {
             const head = addEl(makeEl('div'), makeText(textInfo.name));
@@ -50,12 +55,12 @@ See the License for the specific language governing permissions and
             body.innerHTML = textInfo.text.replace(regex, '<span>$&</span>');
             return addEls(addClass(makeEl('div'), 'text-card'), [head, body]);
         }));
-    };
+    }
 
-    var makePanel = function (title, content) {
+    function makePanel(title, content) {
         const panelInfo = UI.makePanelCore(title, content);
         addClass(panelInfo.contentDiv, 'hidden');
         listen(panelInfo.a, 'click', UI.togglePanel(panelInfo.contentDiv));
         return panelInfo.panel;
-    };
-}(this.TextSearch = {}));
+    }
+})(this.TextSearch = {});

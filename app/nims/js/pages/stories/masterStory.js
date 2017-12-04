@@ -21,12 +21,12 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         listen(getEl('masterStoryArea'), 'change', updateMasterStory);
         exports.content = getEl('masterStoryDiv2');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         const storyArea = getEl('masterStoryArea');
         const storyName = Stories.getCurrentStoryName();
 
@@ -40,8 +40,8 @@ See the License for the specific language governing permissions and
         }
     };
 
-    var updateMasterStory = function () {
+    function updateMasterStory() {
         const storyArea = getEl('masterStoryArea');
         DBMS.setMasterStory(Stories.getCurrentStoryName(), storyArea.value, Utils.processError());
-    };
+    }
 })(this.MasterStory = {});

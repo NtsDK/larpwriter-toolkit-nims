@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         state.left = { views: {} };
         state.right = { views: {} };
         let containers = {
@@ -52,14 +52,14 @@ See the License for the specific language governing permissions and
         exports.content = getEl('storiesDiv');
     };
 
-    exports.chainRefresh = function () {
+    exports.chainRefresh = () => {
         if ((state.left.currentView && state.left.currentView.name === 'EventPresence') ||
             (state.right.currentView && state.right.currentView.name === 'EventPresence')) {
             EventPresence.refresh();
         }
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         const selectors = ['#storiesDiv .rename-entity-select', '#storiesDiv .remove-entity-select'];
 
         const storySelector = clearEl(getEl('storySelector'));
@@ -67,10 +67,11 @@ See the License for the specific language governing permissions and
 
         PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('story', true, (err, userStoryNames) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.getEntityNamesArray('story', true, (err2, userStoryNames) => {
+                if (err2) { Utils.handleError(err2); return; }
+                let data;
                 if (userStoryNames.length > 0) {
-                    var data = getSelect2Data(userStoryNames);
+                    data = getSelect2Data(userStoryNames);
                     selectors.forEach((selector) => {
                         $(selector).select2(data);
                     });
@@ -78,8 +79,7 @@ See the License for the specific language governing permissions and
 
                 if (allStoryNames.length > 0) {
                     const storyName = getSelectedStoryName(allStoryNames);
-
-                    var data = getSelect2Data(allStoryNames);
+                    data = getSelect2Data(allStoryNames);
                     $('#storySelector').select2(data).val(storyName).trigger('change');
 
                     onStorySelectorChange(storyName);
@@ -93,37 +93,37 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var getSelectedStoryName = function (storyNames) {
+    function getSelectedStoryName(storyNames) {
         const settings = DBMS.getSettings();
         if (!settings.Stories) {
             settings.Stories = {
                 storyName: storyNames[0].value
             };
         }
-        let storyName = settings.Stories.storyName;
+        let { storyName } = settings.Stories;
         if (storyNames.map(nameInfo => nameInfo.value).indexOf(storyName) === -1) {
             settings.Stories.storyName = storyNames[0].value;
             storyName = storyNames[0].value;
         }
         return storyName;
-    };
+    }
 
-    var createStory = function () {
+    function createStory() {
         const input = queryEl('#storiesDiv .create-entity-input');
         const storyName = input.value.trim();
 
         DBMS.createStory(storyName, (err) => {
             if (err) { Utils.handleError(err); return; }
             updateSettings(storyName);
-            PermissionInformer.refresh((err) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.refresh((err2) => {
+                if (err2) { Utils.handleError(err2); return; }
                 input.value = '';
                 exports.refresh();
             });
         });
-    };
+    }
 
-    var renameStory = function () {
+    function renameStory() {
         const toInput = queryEl('#storiesDiv .rename-entity-input');
         const fromName = queryEl('#storiesDiv .rename-entity-select').value.trim();
         const toName = toInput.value.trim();
@@ -131,34 +131,34 @@ See the License for the specific language governing permissions and
         DBMS.renameStory(fromName, toName, (err) => {
             if (err) { Utils.handleError(err); return; }
             updateSettings(toName);
-            PermissionInformer.refresh((err) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.refresh((err2) => {
+                if (err2) { Utils.handleError(err2); return; }
                 toInput.value = '';
                 exports.refresh();
             });
         });
-    };
+    }
 
-    var removeStory = function () {
+    function removeStory() {
         const name = queryEl('#storiesDiv .remove-entity-select').value.trim();
 
         Utils.confirm(strFormat(getL10n('stories-are-you-sure-about-story-removing'), [name]), () => {
             DBMS.removeStory(name, (err) => {
                 if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err) => {
-                    if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
                     exports.refresh();
                 });
             });
         });
-    };
+    }
 
-    var onStorySelectorChangeDelegate = function (event) {
+    function onStorySelectorChangeDelegate(event) {
         const storyName = event.target.value;
         onStorySelectorChange(storyName);
-    };
+    }
 
-    var onStorySelectorChange = function (storyName) {
+    function onStorySelectorChange(storyName) {
         state.CurrentStoryName = storyName;
 
         if (storyName) {
@@ -174,12 +174,12 @@ See the License for the specific language governing permissions and
             if (state.left.currentView)state.left.currentView.refresh();
             if (state.right.currentView)state.right.currentView.refresh();
         }
-    };
+    }
 
     exports.getCurrentStoryName = () => state.CurrentStoryName;
 
-    var updateSettings = function (storyName) {
+    function updateSettings(storyName) {
         const settings = DBMS.getSettings();
         settings.Stories.storyName = storyName;
-    };
+    }
 })(this.Stories = {});

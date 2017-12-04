@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
 
-    exports.init = function () {
+    exports.init = () => {
         let button = getEl('storyCharactersAddButton');
         button.addEventListener('click', addCharacter);
 
@@ -37,7 +37,7 @@ See the License for the specific language governing permissions and
         exports.content = getEl('storyCharactersDiv');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         state.ExternalCharacterSelectors.forEach(clearEl);
         state.InternalCharacterSelectors.forEach(clearEl);
 
@@ -50,10 +50,10 @@ See the License for the specific language governing permissions and
 
         PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), (err, isStoryEditable) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('character', false, (err, allCharacters) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getStoryCharacters(Stories.getCurrentStoryName(), (err, localCharacters) => {
-                    if (err) { Utils.handleError(err); return; }
+            PermissionInformer.getEntityNamesArray('character', false, (err2, allCharacters) => {
+                if (err2) { Utils.handleError(err2); return; }
+                DBMS.getStoryCharacters(Stories.getCurrentStoryName(), (err3, localCharacters) => {
+                    if (err3) { Utils.handleError(err3); return; }
                     rebuildInterface(allCharacters, localCharacters);
                     Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
                     Stories.chainRefresh();
@@ -62,7 +62,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var rebuildInterface = function (allCharacters, localCharacters) {
+    function rebuildInterface(allCharacters, localCharacters) {
         const addArray = [];
         const removeArray = [];
 
@@ -100,35 +100,41 @@ See the License for the specific language governing permissions and
         removeArray.forEach((removeValue) => {
             addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
         });
-    };
+    }
 
-    var addCharacter = function () {
+    function addCharacter() {
         const characterName = getEl('storyCharactersAddSelector').value.trim();
         DBMS.addStoryCharacter(Stories.getCurrentStoryName(), characterName, Utils.processError(exports.refresh));
-    };
+    }
 
-    var switchCharacters = function () {
+    function switchCharacters() {
         const fromName = getEl('storyCharactersFromSelector').value.trim();
         const toName = getEl('storyCharactersToSelector').value.trim();
-        DBMS.switchStoryCharacters(Stories.getCurrentStoryName(), fromName, toName, Utils.processError(exports.refresh));
-    };
+        DBMS.switchStoryCharacters(
+            Stories.getCurrentStoryName(),
+            fromName, toName, Utils.processError(exports.refresh)
+        );
+    }
 
-    var removeCharacter = function () {
+    function removeCharacter() {
         const characterName = getEl('storyCharactersRemoveSelector').value.trim();
         Utils.confirm(strFormat(getL10n('stories-remove-character-from-story-warning'), [characterName]), () => {
-            DBMS.removeStoryCharacter(Stories.getCurrentStoryName(), characterName, Utils.processError(exports.refresh));
+            DBMS.removeStoryCharacter(
+                Stories.getCurrentStoryName(),
+                characterName, Utils.processError(exports.refresh)
+            );
         });
-    };
+    }
 
-    var getCharacterHeader = function (values) {
+    function getCharacterHeader(values) {
         const tr = makeEl('tr');
         values.forEach((value) => {
             addEl(tr, addEl(makeEl('th'), makeText(value)));
         });
         return tr;
-    };
+    }
 
-    var getCharacterInput = function (characterMeta, character) {
+    function getCharacterInput(characterMeta, character) {
         const tr = makeEl('tr');
         let td = makeEl('td');
         td.appendChild(makeText(characterMeta.displayName));
@@ -144,13 +150,16 @@ See the License for the specific language governing permissions and
         td.appendChild(input);
         tr.appendChild(td);
         return tr;
-    };
+    }
 
-    var updateCharacterInventory = function (event) {
-        DBMS.updateCharacterInventory(Stories.getCurrentStoryName(), event.target.characterName, event.target.value, Utils.processError());
-    };
+    function updateCharacterInventory(event) {
+        DBMS.updateCharacterInventory(
+            Stories.getCurrentStoryName(),
+            event.target.characterName, event.target.value, Utils.processError()
+        );
+    }
 
-    var getCharacterActivity = function (characterMeta, character) {
+    function getCharacterActivity(characterMeta, character) {
         const tr = makeEl('tr');
         let td = makeEl('td');
         td.appendChild(makeText(characterMeta.displayName));
@@ -176,12 +185,12 @@ See the License for the specific language governing permissions and
             return addEl(td, label);
         }));
         return tr;
-    };
+    }
 
-    var onChangeCharacterActivity = function (event) {
+    function onChangeCharacterActivity(event) {
         DBMS.onChangeCharacterActivity(
             Stories.getCurrentStoryName(), event.target.characterName,
             event.target.activityType, event.target.checked, Utils.processError()
         );
-    };
+    }
 })(this.StoryCharacters = {});

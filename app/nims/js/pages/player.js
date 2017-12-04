@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const root = '.player-tab ';
     const characterProfileDiv = `${root}.character-profile-div`;
     const playerProfileDiv = `${root}.player-profile-div`;
@@ -27,29 +27,29 @@ See the License for the specific language governing permissions and
 
     let profileEditorCore;
 
-    exports.init = function () {
+    exports.init = () => {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         DBMS.getWelcomeText((err, text) => {
             if (err) { Utils.handleError(err); return; }
-            DBMS.getPlayerProfileInfo((err, profileInfo) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getPlayersOptions((err, playersOptions) => {
-                    if (err) { Utils.handleError(err); return; }
+            DBMS.getPlayerProfileInfo((err2, profileInfo) => {
+                if (err2) { Utils.handleError(err2); return; }
+                DBMS.getPlayersOptions((err3, playersOptions) => {
+                    if (err3) { Utils.handleError(err3); return; }
                     buildInterface(text, profileInfo, playersOptions);
                 });
             });
         });
     };
 
-    const isEditable = function (profileName, profileStructure) {
+    function isEditable(profileName, profileStructure) {
         return R.find(R.propEq('name', profileName), profileStructure).playerAccess === 'write';
-    };
+    }
 
-    var buildInterface = function (text, profileInfo, playersOptions) {
+    function buildInterface(text, profileInfo, playersOptions) {
         profileEditorCore.initProfileStructure(playerProfileDiv, 'player', profileInfo.player.profileStructure);
         profileEditorCore.fillProfileInformation(playerProfileDiv, 'player', profileInfo.player.profile, isEditable);
         addEl(clearEl(queryEl(playerHeader)), makeText(strFormat(getL10n('briefings-player-profile'), [profileInfo.player.profile.name])));
@@ -75,5 +75,5 @@ See the License for the specific language governing permissions and
         }
 
         queryEl(`${root}.welcome-text-area`).value = text;
-    };
-}(this.Player = {}));
+    }
+})(this.Player = {});

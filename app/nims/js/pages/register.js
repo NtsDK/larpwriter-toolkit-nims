@@ -19,19 +19,18 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const root = '.register-tab ';
 
-    exports.init = function () {
+    exports.init = () => {
         $(document.forms['register-form']).on('submit', submit);
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
-
+    exports.refresh = () => {
     };
 
-    var submit = function () {
+    function submit() {
         const form = $(this);
 
         $('.error', form).html('');
@@ -60,5 +59,5 @@ See the License for the specific language governing permissions and
         });
 
         return false;
-    };
-}(this.Register = {}));
+    }
+})(this.Register = {});

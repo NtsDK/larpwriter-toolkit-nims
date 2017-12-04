@@ -242,7 +242,8 @@
 //
 ////            camera.rotateOnAxis(cameraInitPos.normalize() , controls.cameraRotX);
 ////            camera.rotateOnAxis(camera.getWorldDirection().normalize() , controls.cameraRotX);
-////            camera.rotation.copy(new THREE.Vector3(controls.cameraRotX, controls.cameraRotY, controls.cameraRotZ).multiplyScalar(Math.PI));
+////            camera.rotation.copy(new THREE.Vector3(controls.cameraRotX,
+////                controls.cameraRotY, controls.cameraRotZ).multiplyScalar(Math.PI));
 ////            camera.rotation.x = controls.cameraRotX * Math.PI;
 //
 //            // render using requestAnimationFrame

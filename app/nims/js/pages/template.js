@@ -18,12 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
-    exports.init = function () {
+((exports) => {
+    exports.init = () => {
         //        exports.content = queryEl('.Template');
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
 
     };
-}(this.Template = {}));
+})(this.Template = {});

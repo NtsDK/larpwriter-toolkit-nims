@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {
         character: {},
         player: {}
@@ -31,14 +31,14 @@ See the License for the specific language governing permissions and
     const characterReportDiv = `${root}.character-report-div tbody`;
     let profileEditorCore;
 
-    exports.init = function () {
+    exports.init = () => {
         $(characterSelector).select2().on('select2:select', showProfileInfoDelegate2('character'));
         $(playerSelector).select2().on('select2:select', showProfileInfoDelegate2('player'));
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         clearEl(queryEl(characterReportDiv));
         refreshPanel('character', characterSelector, characterProfileDiv, () => {
             refreshPanel('player', playerSelector, playerProfileDiv, () => {
@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var refreshPanel = function (type, selector, profileDiv, callback) {
+    function refreshPanel(type, selector, profileDiv, callback) {
         PermissionInformer.getEntityNamesArray(type, false, (err, names) => {
             if (err) { Utils.handleError(err); return; }
 
@@ -57,15 +57,15 @@ See the License for the specific language governing permissions and
             $(selector).select2(getSelect2Data(names));
             state[type].names = names;
 
-            DBMS.getProfileStructure(type, (err, allProfileSettings) => {
-                if (err) { Utils.handleError(err); return; }
+            DBMS.getProfileStructure(type, (err2, allProfileSettings) => {
+                if (err2) { Utils.handleError(err2); return; }
                 profileEditorCore.initProfileStructure(profileDiv, type, allProfileSettings, callback);
             });
         });
-    };
+    }
 
-    var applySettings = function (type, selector, profileDiv) {
-        const names = state[type].names;
+    function applySettings(type, selector, profileDiv) {
+        const { names } = state[type];
         if (names.length > 0) {
             const name = names[0].value;
             const settings = DBMS.getSettings();
@@ -80,17 +80,17 @@ See the License for the specific language governing permissions and
             }
             showProfileInfoDelegate2(type)({ target: { value: profileName } });
         }
-    };
+    }
 
-    const selectProfiles = function (charName, playerName) {
+    function selectProfiles(charName, playerName) {
         showProfileInfoDelegate('character', characterProfileDiv, charName);
         showProfileInfoDelegate('player', playerProfileDiv, playerName);
         $(characterSelector).select2().val(charName).trigger('change');
         $(playerSelector).select2().val(playerName).trigger('change');
-    };
+    }
 
-    var showProfileInfoDelegate2 = function (type) {
-        return function (event) {
+    function showProfileInfoDelegate2(type) {
+        return (event) => {
             const name = event.target.value.trim();
             if (name === '') {
                 selectProfiles('', '');
@@ -101,9 +101,9 @@ See the License for the specific language governing permissions and
                 selectProfiles(binding[0], binding[1]);
             });
         };
-    };
+    }
 
-    var showProfileInfoDelegate = function (type, profileDiv, name) {
+    function showProfileInfoDelegate(type, profileDiv, name) {
         updateSettings(type, name);
         if (name === '') {
             addClass(queryEl(profileDiv), 'hidden');
@@ -114,29 +114,29 @@ See the License for the specific language governing permissions and
         }
         DBMS.getProfile(type, name, (err, profile) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.isEntityEditable(type, name, (err, isCharacterEditable) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.isEntityEditable(type, name, (err2, isCharacterEditable) => {
+                if (err2) { Utils.handleError(err2); return; }
                 profileEditorCore.fillProfileInformation(profileDiv, type, profile, () => isCharacterEditable);
 
                 if (type === 'character') {
-                    DBMS.getCharacterReport(name, (err, characterReport) => {
-                        if (err) { Utils.handleError(err); return; }
+                    DBMS.getCharacterReport(name, (err3, characterReport) => {
+                        if (err3) { Utils.handleError(err3); return; }
                         removeClass(queryEl(characterReportDiv), 'hidden');
                         addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(makeReportRow));
                     });
                 }
             });
         });
-    };
+    }
 
-    const makeCompletenessLabel = function (value, total) {
-        return strFormat('{0} ({1}/{2})', [total === 0 ? '-' : `${(value / total * 100).toFixed(0)}%`, value, total]);
-    };
+    function makeCompletenessLabel(value, total) {
+        return strFormat('{0} ({1}/{2})', [total === 0 ? '-' : `${((value / total) * 100).toFixed(0)}%`, value, total]);
+    }
 
-    const getCompletenessColor = function (value, total) {
+    function getCompletenessColor(value, total) {
         if (total === 0) { return 'transparent'; }
         function calc(b, a, part) {
-            return (a * part + (1 - part) * b).toFixed(0);
+            return ((a * part) + ((1 - part) * b)).toFixed(0);
         }
 
         let p = value / total;
@@ -146,9 +146,9 @@ See the License for the specific language governing permissions and
         }
         p = (p - 0.5) * 2;
         return strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
-    };
+    }
 
-    var makeReportRow = function (storyInfo) {
+    function makeReportRow(storyInfo) {
         const act = storyInfo.activity;
         const label = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
         const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
@@ -160,11 +160,11 @@ See the License for the specific language governing permissions and
             // TODO fix setStyle call here and test
             addEl(addClass(setStyle(makeEl('td'), 'backgroundColor', color), 'text-right'), makeText(label)),
             addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))),
-            addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);
-    };
+            addEl(makeEl('td'), makeText(storyInfo.inventory))]);
+    }
 
-    var updateSettings = function (type, name) {
+    function updateSettings(type, name) {
         const settings = DBMS.getSettings();
         settings.ProfileEditor[type] = name;
-    };
-}(this.ProfileEditor = {}));
+    }
+})(this.ProfileEditor = {});

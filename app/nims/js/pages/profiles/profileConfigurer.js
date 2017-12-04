@@ -28,18 +28,18 @@ See the License for the specific language governing permissions and
 // 2. - too complex way
 // 3. simple and lesser complexity, I choose this way
 
-(function (exports) {
-    const root = '.profile-configurer-tab ';
-    const characterPanel = `${root}.character-profile-panel `;
-    const playerPanel = `${root}.player-profile-panel `;
+((exports) => {
+    const tabRoot = '.profile-configurer-tab ';
+    const characterPanel = `${tabRoot}.character-profile-panel `;
+    const playerPanel = `${tabRoot}.player-profile-panel `;
 
-    exports.init = function () {
+    exports.init = () => {
         const sel = clearEl(queryEl(`${characterPanel}.create-entity-type-select`));
-        const fillMainSel = function () { fillItemTypesSel(clearEl(sel)); };
+        const fillMainSel = () => { fillItemTypesSel(clearEl(sel)); };
         fillMainSel();
         L10n.onL10nChange(fillMainSel);
         const sel2 = clearEl(queryEl(`${playerPanel}.create-entity-type-select`));
-        const fillMainSel2 = function () { fillItemTypesSel(clearEl(sel2)); };
+        const fillMainSel2 = () => { fillItemTypesSel(clearEl(sel2)); };
         fillMainSel2();
         L10n.onL10nChange(fillMainSel2);
 
@@ -51,43 +51,44 @@ See the License for the specific language governing permissions and
         listen(queryEl(`${playerPanel}.move-entity-button`), 'click', moveProfileItem('player', playerPanel));
         listen(queryEl(`${playerPanel}.remove-entity-button`), 'click', removeProfileItem('player', playerPanel));
 
-        exports.content = queryEl(root);
+        exports.content = queryEl(tabRoot);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         refreshPanel('character', characterPanel);
         refreshPanel('player', playerPanel);
     };
 
-    var refreshPanel = function (type, root) {
+    function refreshPanel(type, root) {
         DBMS.getProfileStructure(type, (err, allProfileSettings) => {
             if (err) { Utils.handleError(err); return; }
 
             const arr = allProfileSettings.map(R.compose(strFormat(getL10n('common-set-item-before')), R.append(R.__, []), R.prop('name')));
             arr.push(getL10n('common-set-item-as-last'));
-            const positionSelectors = [queryEl(`${root}.create-entity-position-select`), queryEl(`${root}.move-entity-position-select`)];
+            const positionSelectors = [queryEl(`${root}.create-entity-position-select`),
+                queryEl(`${root}.move-entity-position-select`)];
             positionSelectors.map(clearEl).map(fillSelector(R.__, arr2Select(arr))).map(setProp(R.__, 'selectedIndex', allProfileSettings.length));
 
             const table = clearEl(queryEl(`${root}.profile-config-container`));
 
             try {
                 addEls(table, allProfileSettings.map(getInput(type)));
-            } catch (err) {
-                Utils.handleError(err); return;
+            } catch (err1) {
+                Utils.handleError(err1); return;
             }
 
-            PermissionInformer.isAdmin((err, isAdmin) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.isAdmin((err2, isAdmin) => {
+                if (err2) { Utils.handleError(err2); return; }
                 Utils.enable(exports.content, 'adminOnly', isAdmin);
             });
 
             const selectorArr = [queryEl(`${root}.move-entity-select`), queryEl(`${root}.remove-entity-select`)];
             selectorArr.map(clearEl).map(fillSelector(R.__, arr2Select(allProfileSettings.map(R.prop('name')))));
         });
-    };
+    }
 
-    var createProfileItem = function (type, root) {
-        return function () {
+    function createProfileItem(type, root) {
+        return () => {
             const input = queryEl(`${root}.create-entity-input`);
             const name = input.value.trim();
             const itemType = queryEl(`${root}.create-entity-type-select`).value.trim();
@@ -98,18 +99,18 @@ See the License for the specific language governing permissions and
                 exports.refresh();
             }));
         };
-    };
+    }
 
-    var moveProfileItem = function (type, root) {
-        return function () {
-            const index = queryEl(`${root}.move-entity-select`).selectedOptions[0].index;
+    function moveProfileItem(type, root) {
+        return () => {
+            const { index } = queryEl(`${root}.move-entity-select`).selectedOptions[0];
             const newIndex = queryEl(`${root}.move-entity-position-select`).selectedIndex;
             DBMS.moveProfileItem(type, index, newIndex, Utils.processError(exports.refresh));
         };
-    };
+    }
 
-    var removeProfileItem = function (type, root) {
-        return function () {
+    function removeProfileItem(type, root) {
+        return () => {
             const selector = queryEl(`${root}.remove-entity-select`);
             const index = selector.selectedIndex;
             const name = selector.value;
@@ -118,18 +119,20 @@ See the License for the specific language governing permissions and
                 DBMS.removeProfileItem(type, index, name, Utils.processError(exports.refresh));
             });
         };
-    };
+    }
 
+    // eslint-disable-next-line no-var,vars-on-top
     var fillItemTypesSel = sel => fillSelector(sel, constArr2Select(R.keys(Constants.profileFieldTypes)));
     const fillPlayerAccessSel = sel => fillSelector(sel, constArr2Select(Constants.playerAccessTypes));
 
+    // eslint-disable-next-line no-var,vars-on-top
     var getInput = R.curry((type, profileSettings, index) => { // throws InternalError
         index++;
         const els = [];
 
         els.push(addEl(makeEl('span'), makeText(index)));
 
-        var input = setProps(makeEl('input'), {
+        let input = setProps(makeEl('input'), {
             value: profileSettings.name,
             info: profileSettings.name
         });
@@ -137,7 +140,7 @@ See the License for the specific language governing permissions and
         addClass(input, 'itemNameInput');
         els.push(input);
 
-        var sel = makeEl('select');
+        let sel = makeEl('select');
         fillItemTypesSel(sel);
         setProps(sel, {
             value: profileSettings.type,
@@ -181,7 +184,7 @@ See the License for the specific language governing permissions and
         listen(input, 'change', updateDefaultValue(type));
         els.push(input);
 
-        var input = setProps(makeEl('input'), {
+        input = setProps(makeEl('input'), {
             checked: profileSettings.doExport,
             info: profileSettings.name,
             type: 'checkbox'
@@ -189,7 +192,7 @@ See the License for the specific language governing permissions and
         listen(input, 'change', doExportChange(type));
         els.push(input);
 
-        var sel = makeEl('select');
+        sel = makeEl('select');
         fillPlayerAccessSel(sel);
         setProps(sel, {
             value: profileSettings.playerAccess,
@@ -210,15 +213,15 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('tr'), els.map(el => addEl(makeEl('td'), addClass(el, 'adminOnly'))));
     });
 
-    var updateDefaultValue = function (type) {
-        return function (event) {
+    function updateDefaultValue(type) {
+        return (event) => {
             const name = event.target.info;
             const itemType = event.target.infoType;
-            const oldValue = event.target.oldValue;
+            const { oldValue } = event.target;
 
             const value = itemType === 'checkbox' ? event.target.checked : event.target.value;
 
-            let newOptions, missedValues, newValue;
+            let newOptions, missedValues, newValue, updateEnum;
 
             switch (itemType) {
             case 'text':
@@ -227,7 +230,7 @@ See the License for the specific language governing permissions and
                 DBMS.updateDefaultValue(type, name, value, Utils.processError());
                 break;
             case 'number':
-                if (isNaN(value)) {
+                if (Number.isNaN(value)) {
                     Utils.alert(getL10n('profiles-not-a-number'));
                     event.target.value = oldValue;
                     return;
@@ -244,7 +247,7 @@ See the License for the specific language governing permissions and
                 newOptions = value.split(',').map(R.trim);
                 missedValues = oldValue.trim() === '' ? [] : R.difference(oldValue.split(','), newOptions);
 
-                var updateEnum = function () {
+                updateEnum = () => {
                     newValue = newOptions.join(',');
                     event.target.value = newValue;
                     event.target.oldValue = newValue;
@@ -263,22 +266,22 @@ See the License for the specific language governing permissions and
                 Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
             }
         };
-    };
+    }
 
-    var doExportChange = function (type) {
-        return function (event) {
+    function doExportChange(type) {
+        return (event) => {
             DBMS.doExportProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
         };
-    };
+    }
 
-    var showInRoleGridChange = function (type) {
-        return function (event) {
+    function showInRoleGridChange(type) {
+        return (event) => {
             DBMS.showInRoleGridProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
         };
-    };
+    }
 
-    var renameProfileItem = function (type) {
-        return function (event) {
+    function renameProfileItem(type) {
+        return (event) => {
             const newName = event.target.value.trim();
             const oldName = event.target.info;
 
@@ -291,10 +294,10 @@ See the License for the specific language governing permissions and
                 exports.refresh();
             });
         };
-    };
+    }
 
-    var changeProfileItemType = function (type) {
-        return function (event) {
+    function changeProfileItemType(type) {
+        return (event) => {
             Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-changing-profile-item-type'), [event.target.info]), () => {
                 const newType = event.target.value;
                 const name = event.target.info;
@@ -303,10 +306,10 @@ See the License for the specific language governing permissions and
                 event.target.value = event.target.oldType;
             });
         };
-    };
+    }
 
-    var changeProfileItemPlayerAccess = function (type) {
-        return function (event) {
+    function changeProfileItemPlayerAccess(type) {
+        return (event) => {
             const playerAccessType = event.target.value;
             const name = event.target.info;
             DBMS.changeProfileItemPlayerAccess(type, name, playerAccessType, (err) => {
@@ -316,5 +319,5 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-    };
-}(this.ProfileConfigurer = {}));
+    }
+})(this.ProfileConfigurer = {});

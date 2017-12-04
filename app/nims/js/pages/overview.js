@@ -19,8 +19,9 @@ See the License for the specific language governing permissions and
 'use strict';
 
 
-(function (exports) {
-    const defaultHists = ['storyEventsHist', 'storyCharactersHist', 'eventCompletenessHist', 'characterSymbolsHist', 'characterStoriesHist'];
+((exports) => {
+    const defaultHists = ['storyEventsHist', 'storyCharactersHist', 'eventCompletenessHist',
+        'characterSymbolsHist', 'characterStoriesHist'];
     const entityCharts = ['characterChart', 'playerChart', 'storyChart', 'groupChart'];
 
     const statisticKeys = [
@@ -40,7 +41,7 @@ See the License for the specific language governing permissions and
 
     state.Charts = {};
 
-    exports.init = function () {
+    exports.init = () => {
         state.name = getEl('gameNameInput');
         state.name.addEventListener('change', updateName);
 
@@ -83,7 +84,7 @@ See the License for the specific language governing permissions and
         exports.content = queryEl(root);
     };
 
-    const makeChart = function (id, canvas, data) {
+    function makeChart(id, canvas, data) {
         if (state.Charts[id]) {
             state.Charts[id].destroy();
         }
@@ -124,10 +125,10 @@ See the License for the specific language governing permissions and
                 }
             },
         });
-    };
+    }
 
-    const makeHistogram = function (place, data) {
-        let min = null, max = null;
+    function makeHistogram(place, data) {
+        let max = null;
         data.forEach((barData) => {
             if (barData) {
                 if (max === null || barData.value > max) {
@@ -139,7 +140,7 @@ See the License for the specific language governing permissions and
             if (barData) {
                 // barData.normValue = (barData.value - min)/(max-min);
                 //      barData.normValue = (barData.value - 0)/(max-0);
-                barData.normValue = (barData.value - 0) / (max - 0) * 0.9 + 0.1;
+                barData.normValue = (((barData.value - 0) / (max - 0)) * 0.9) + 0.1;
             }
         });
 
@@ -156,23 +157,23 @@ See the License for the specific language governing permissions and
 
             addEl(place, div);
         });
-    };
+    }
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         PermissionInformer.isAdmin((err, isAdmin) => {
             if (err) { Utils.handleError(err); return; }
             Utils.enable(exports.content, 'adminOnly', isAdmin);
         });
 
-        DBMS.getMetaInfo((err, info) => {
+        DBMS.getMetaInfo((err, metaInfo) => {
             if (err) { Utils.handleError(err); return; }
-            DBMS.getStatistics((err, statistics) => {
-                if (err) { Utils.handleError(err); return; }
-                state.name.value = info.name;
-                state.date.value = info.date;
-                state.preDate.value = info.preGameDate;
-                state.descr.value = info.description;
-                addEl(clearEl(state.lastSaveTime), makeText(new Date(info.saveTime).format('yyyy/mm/dd HH:MM:ss')));
+            DBMS.getStatistics((err2, statistics) => {
+                if (err2) { Utils.handleError(err2); return; }
+                state.name.value = metaInfo.name;
+                state.date.value = metaInfo.date;
+                state.preDate.value = metaInfo.preGameDate;
+                state.descr.value = metaInfo.description;
+                addEl(clearEl(state.lastSaveTime), makeText(new Date(metaInfo.saveTime).format('yyyy/mm/dd HH:MM:ss')));
 
                 statistics.lastEvent = statistics.lastEvent !== '' ? new Date(statistics.lastEvent).format('yyyy/mm/dd h:MM') : '';
                 statistics.firstEvent = statistics.firstEvent !== '' ? new Date(statistics.firstEvent).format('yyyy/mm/dd h:MM') : '';
@@ -206,38 +207,38 @@ See the License for the specific language governing permissions and
 
                 let barData, barDiv, bar;
 
-                const makeContainer = function (obj) {
+                function makeContainer(obj) {
                     barDiv = makeEl('div');
                     addEl(barDiv, addEl(makeEl('h4'), makeText(obj.name)));
                     addEl(barDiv, obj.bar);
                     return barDiv;
-                };
-                const buildChart = function (info) {
+                }
+                function buildChart(info) {
                     bar = setAttr(setAttr(makeEl('canvas'), 'width', '300'), 'height', '100');
                     const data = R.zipObj(['name', 'bar'], [info.name, bar]);
                     const container = makeContainer(data);
                     makeChart(info.id, bar, info.prepared);
                     return container;
-                };
+                }
 
-                const buildHist = function (info) {
+                function buildHist(info) {
                     bar = addClass(makeEl('div'), 'overviewHist');
                     const data = R.zipObj(['name', 'bar'], [info.name, bar]);
                     const container = makeContainer(data);
                     makeHistogram(bar, info.prepared);
                     return container;
-                };
+                }
 
                 const innerMakeChart = R.compose(buildChart, prepareChart);
                 const innerMakeHist = R.compose(buildHist, prepareHist);
 
-                const localizeCheckboxes = function (info) {
+                function localizeCheckboxes(info) {
                     info.data = R.fromPairs(R.toPairs(info.data).map((val) => {
                         val[0] = constL10n(Constants[val[0]]);
                         return val;
                     }));
                     return info;
-                };
+                }
 
                 const makeCheckboxChart = R.compose(innerMakeChart, localizeCheckboxes);
 
@@ -247,32 +248,31 @@ See the License for the specific language governing permissions and
                     [R.T, innerMakeHist],
                 ]);
 
-                statistics.profileCharts.characterCharts.map(fn).map(addEl(clearEl(queryEl(`${root}.characterProfileDiagrams`))));
-                statistics.profileCharts.playerCharts.map(fn).map(addEl(clearEl(queryEl(`${root}.playerProfileDiagrams`))));
+                statistics.profileCharts.characterCharts.map(fn)
+                    .map(addEl(clearEl(queryEl(`${root}.characterProfileDiagrams`))));
+                statistics.profileCharts.playerCharts.map(fn)
+                    .map(addEl(clearEl(queryEl(`${root}.playerProfileDiagrams`))));
             });
         });
     };
 
-    var localizeConsts = function (info) {
+    function localizeConsts(info) {
         info = R.fromPairs(R.toPairs(info).map((val) => {
             val[0] = constL10n(val[0]);
             return val;
         }));
         return info;
-    };
+    }
 
-    var prepareChart = function (info) {
+    function prepareChart(info) {
         const total = R.sum(R.values(info.data));
-        info.prepared = [];
-        for (const key in info.data) {
-            info.prepared.push(R.zipObj(['value', 'label'], [info.data[key], makeChartLabel(total, key, info.data[key])]));
-        }
+        info.prepared = R.keys(info.data).map(key => R.zipObj(['value', 'label'], [info.data[key], makeChartLabel(total, key, info.data[key])]));
         return info;
-    };
+    }
 
-    var prepareHist = function (info) {
+    function prepareHist(info) {
         info.prepared = [];
-        const step = info.data.step;
+        const { step } = info.data;
         info.data = info.data.groups;
         const min = R.apply(Math.min, R.keys(info.data));
         const max = R.apply(Math.max, R.keys(info.data));
@@ -281,36 +281,38 @@ See the License for the specific language governing permissions and
             if (info.data[i]) {
                 info.prepared.push({
                     value: info.data[i],
-                    label: `${i * step}-${i * step + (step - 1)}`,
-                    tip: `${i * step}-${i * step + (step - 1)}`
+                    label: `${i * step}-${(i * step) + (step - 1)}`,
+                    tip: `${i * step}-${(i * step) + (step - 1)}`
                 });
             } else {
                 info.prepared.push(null);
             }
         }
         return info;
-    };
+    }
 
-    var makeChartLabel = R.curry((total, key, value) => [key, ': ', (value / total * 100).toFixed(0), '% (', value, '/', total, ')'].join(''));
+    // eslint-disable-next-line no-var,vars-on-top
+    var makeChartLabel = R.curry((total, key, value) =>
+        [key, ': ', ((value / total) * 100).toFixed(0), '% (', value, '/', total, ')'].join(''));
 
-    var updateStatisticValue = function (statistics, key) {
+    function updateStatisticValue(statistics, key) {
         addEl(clearEl(getEl(key)), makeText(statistics[key]));
-    };
+    }
 
-    var updateName = function (event) {
+    function updateName(event) {
         DBMS.setMetaInfo('name', event.target.value, Utils.processError());
-    };
-    var updateTime = function (dp, input) {
+    }
+    function updateTime(dp, input) {
         DBMS.setMetaInfo('date', input.val(), Utils.processError());
-    };
-    var updatePreGameDate = function (dp, input) {
+    }
+    function updatePreGameDate(dp, input) {
         DBMS.setMetaInfo('preGameDate', input.val(), Utils.processError());
-    };
-    var updateDescr = function (event) {
+    }
+    function updateDescr(event) {
         DBMS.setMetaInfo('description', event.target.value, Utils.processError());
-    };
+    }
 
-    var customTooltips = function (tooltip) {
+    function customTooltips(tooltip) {
         // Tooltip Element
         let tooltipEl = document.getElementById('chartjs-tooltip');
 
@@ -375,5 +377,5 @@ See the License for the specific language governing permissions and
         //        tooltipEl.style.fontSize = tooltip.fontSize;
         //        tooltipEl.style.fontStyle = tooltip._fontStyle;
         tooltipEl.style.padding = `${tooltip.yPadding}px ${tooltip.xPadding}px`;
-    };
-}(this.Overview = {}));
+    }
+})(this.Overview = {});

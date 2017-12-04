@@ -16,10 +16,12 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+/* eslint-disable func-names */
+
 'use strict';
 
-(function (exports) {
-    exports.makeProfileEditorCore = function () {
+((exports) => {
+    exports.makeProfileEditorCore = () => {
         const innerExports = {};
 
         const state = {
@@ -27,7 +29,7 @@ See the License for the specific language governing permissions and
             player: {}
         };
 
-        innerExports.initProfileStructure = function (profileDiv, type, profileStructure, callback) {
+        innerExports.initProfileStructure = (profileDiv, type, profileStructure, callback) => {
             const tbody = makeEl('tbody');
             addEl(clearEl(queryEl(profileDiv)), addEl(addClasses(makeEl('table'), ['table', 'table-striped']), tbody));
 
@@ -42,13 +44,14 @@ See the License for the specific language governing permissions and
             if (callback) callback();
         };
 
+        // eslint-disable-next-line no-var,vars-on-top
         var appendInput = R.curry((type, profileItemConfig) => {
             const itemInput = new ProfileItemInput(type, profileItemConfig);
             state[type].inputItems[profileItemConfig.name] = itemInput;
             return addEls(makeEl('tr'), [addEl(makeEl('td'), makeText(profileItemConfig.name)), addEl(makeEl('td'), itemInput.dom)]);
         });
 
-        innerExports.fillProfileInformation = function (profileDiv, type, profile, isEditable) {
+        innerExports.fillProfileInformation = (profileDiv, type, profile, isEditable) => {
             removeClass(queryEl(profileDiv), 'hidden');
             R.values(state[type].inputItems).forEach((itemInput) => {
                 if (itemInput.type === 'multiEnum') {
@@ -65,7 +68,7 @@ See the License for the specific language governing permissions and
         };
 
         function ProfileItemInput(profileType, profileItemConfig) {
-            let input;
+            let input, sel;
             switch (profileItemConfig.type) {
             case 'text':
                 input = makeEl('textarea');
@@ -93,11 +96,10 @@ See the License for the specific language governing permissions and
                 setAttr(this.multiEnumSelect[0], 'style', 'width: 400px;');
                 addClass(this.multiEnumSelect[0], 'common-select');
                 addClass(this.multiEnumSelect[0], 'profileStringInput');
-                input = $('<span></span>').append(this.multiEnumSelect)[0];
+                [input] = $('<span></span>').append(this.multiEnumSelect);
                 setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
-                var sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(',')));
-
+                sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(',')));
                 sel.on('change', this.updateFieldValue.bind(this));
                 break;
             default:
@@ -129,18 +131,20 @@ See the License for the specific language governing permissions and
             const fieldName = this.name;
             const profileName = state[this.profileType].name;
             if (this.multiEnumSelect && this.multiEnumSelect.prop('disabled')) {
-                return; // we need to trigger change event on multiEnumSelect to update selection. It may be disabled so it has false positive call.
+                return; // we need to trigger change event on multiEnumSelect to update selection.
+                // It may be disabled so it has false positive call.
             }
 
-            let value;
+            let value, val;
             switch (this.type) {
             case 'text':
             case 'string':
             case 'enum':
-                value = this.dom.value;
+                val = this.dom.value;
+                value = val;
                 break;
             case 'number':
-                if (isNaN(this.dom.value)) {
+                if (Number.isNaN(this.dom.value)) {
                     Utils.alert(getL10n('profiles-not-a-number'));
                     this.dom.value = this.oldValue;
                     return;
@@ -162,4 +166,4 @@ See the License for the specific language governing permissions and
 
         return innerExports;
     };
-}(this.ProfileEditorCore = {}));
+})(this.ProfileEditorCore = {});

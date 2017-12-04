@@ -18,16 +18,16 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const state = {};
-    const root = '.profiles-tab ';
-    const characterRoot = `${root}.character-profile-panel `;
-    const playerRoot = `${root}.player-profile-panel `;
+    const tabRoot = '.profiles-tab ';
+    const characterRoot = `${tabRoot}.character-profile-panel `;
+    const playerRoot = `${tabRoot}.player-profile-panel `;
 
-    exports.init = function () {
+    exports.init = () => {
         state.views = {};
-        const nav = `${root}.sub-tab-navigation`;
-        const content = `${root}.sub-tab-content`;
+        const nav = `${tabRoot}.sub-tab-navigation`;
+        const content = `${tabRoot}.sub-tab-content`;
         const containers = {
             root: state,
             navigation: queryEl(nav),
@@ -45,14 +45,14 @@ See the License for the specific language governing permissions and
         listen(queryEl(`${playerRoot}.rename-entity-button`), 'click', renameProfile('player', playerRoot));
         listen(queryEl(`${playerRoot}.remove-entity-button`), 'click', removeProfile('player', playerRoot));
 
-        exports.content = queryEl(root);
+        exports.content = queryEl(tabRoot);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         PermissionInformer.getEntityNamesArray('character', true, (err, characterNames) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('player', true, (err, playerNames) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.getEntityNamesArray('player', true, (err2, playerNames) => {
+                if (err2) { Utils.handleError(err2); return; }
                 rebuildInterface(characterRoot, characterNames);
                 rebuildInterface(playerRoot, playerNames);
                 state.currentView.refresh();
@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var rebuildInterface = function (root, names) {
+    function rebuildInterface(root, names) {
         const data = getSelect2Data(names);
 
         clearEl(queryEl(`${root}.rename-entity-select`));
@@ -68,17 +68,17 @@ See the License for the specific language governing permissions and
 
         clearEl(queryEl(`${root}.remove-entity-select`));
         $(`${root}.remove-entity-select`).select2(data);
-    };
+    }
 
-    var createProfile = function (type, root) {
-        return function () {
+    function createProfile(type, root) {
+        return () => {
             const input = queryEl(`${root}.create-entity-input`);
             const name = input.value.trim();
 
             DBMS.createProfile(type, name, (err) => {
                 if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err) => {
-                    if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
                     if (state.currentView.updateSettings) {
                         state.currentView.updateSettings(name);
                     }
@@ -87,18 +87,18 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    };
+    }
 
-    var renameProfile = function (type, root) {
-        return function () {
+    function renameProfile(type, root) {
+        return () => {
             const toInput = queryEl(`${root}.rename-entity-input`);
             const fromName = queryEl(`${root}.rename-entity-select`).value.trim();
             const toName = toInput.value.trim();
 
             DBMS.renameProfile(type, fromName, toName, (err) => {
                 if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err) => {
-                    if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
                     toInput.value = '';
                     if (state.currentView.updateSettings) {
                         state.currentView.updateSettings(type, toName);
@@ -107,21 +107,21 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    };
+    }
 
-    var removeProfile = function (type, root) {
-        return function () {
+    function removeProfile(type, root) {
+        return () => {
             const name = queryEl(`${root}.remove-entity-select`).value.trim();
 
             Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-character-removing'), [name]), () => {
                 DBMS.removeProfile(type, name, (err) => {
                     if (err) { Utils.handleError(err); return; }
-                    PermissionInformer.refresh((err) => {
-                        if (err) { Utils.handleError(err); return; }
+                    PermissionInformer.refresh((err2) => {
+                        if (err2) { Utils.handleError(err2); return; }
                         exports.refresh();
                     });
                 });
             });
         };
-    };
-}(this.Profiles = {}));
+    }
+})(this.Profiles = {});

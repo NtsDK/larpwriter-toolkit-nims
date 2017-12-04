@@ -18,31 +18,35 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     const root = '.profile-binding-tab ';
 
-    exports.init = function () {
+    exports.init = () => {
         listen(queryEl(`${root}.create-binding-button`), 'click', createBinding);
         listen(queryEl(`${root}.remove-binding-button`), 'click', removeBinding);
         exports.content = queryEl(root);
     };
 
-    exports.refresh = function () {
+    exports.refresh = () => {
         PermissionInformer.getEntityNamesArray('character', false, (err, characterNames) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('player', false, (err, playerNames) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getProfileBindings((err, profileBindings) => {
-                    if (err) { Utils.handleError(err); return; }
+            PermissionInformer.getEntityNamesArray('player', false, (err2, playerNames) => {
+                if (err2) { Utils.handleError(err2); return; }
+                DBMS.getProfileBindings((err3, profileBindings) => {
+                    if (err3) { Utils.handleError(err3); return; }
 
                     const bindedCharacterList = R.keys(profileBindings);
                     const bindedPlayerList = R.values(profileBindings);
-                    const filter = function (list) {
-                        return R.compose(R.not, R.contains(R.__, list), R.prop('value'));
-                    };
+                    const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
 
-                    fillSelector(clearEl(queryEl(`${root}.character-selector`)), characterNames.filter(filter(bindedCharacterList)).map(remapProps4Select));
-                    fillSelector(clearEl(queryEl(`${root}.player-selector`)), playerNames.filter(filter(bindedPlayerList)).map(remapProps4Select));
+                    fillSelector(
+                        clearEl(queryEl(`${root}.character-selector`)),
+                        characterNames.filter(filter(bindedCharacterList)).map(remapProps4Select)
+                    );
+                    fillSelector(
+                        clearEl(queryEl(`${root}.player-selector`)),
+                        playerNames.filter(filter(bindedPlayerList)).map(remapProps4Select)
+                    );
                     const bindings = R.toPairs(profileBindings).map(binding => ({
                         name: R.join('/', binding),
                         value: JSON.stringify(binding)
@@ -54,7 +58,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    var createBinding = function () {
+    function createBinding() {
         const characterName = queryEl(`${root}.character-selector`).value;
         const playerName = queryEl(`${root}.player-selector`).value;
 
@@ -64,9 +68,9 @@ See the License for the specific language governing permissions and
         }
 
         DBMS.createBinding(characterName, playerName, Utils.processError(exports.refresh));
-    };
+    }
 
-    var removeBinding = function () {
+    function removeBinding() {
         const bindingVal = queryEl(`${root}.binding-selector`).value;
 
         if (bindingVal === '') {
@@ -76,5 +80,5 @@ See the License for the specific language governing permissions and
         const binding = JSON.parse(bindingVal);
 
         DBMS.removeBinding(binding[0], binding[1], Utils.processError(exports.refresh));
-    };
-}(this.ProfileBinding = {}));
+    }
+})(this.ProfileBinding = {});
