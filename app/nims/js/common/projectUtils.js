@@ -10,14 +10,14 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
-        
+
     function ProjectUtils(exports, R, Constants, Errors, CU) {
-        
+
         exports.acceptDataRow = R.curry(function (model, dataString) {
             var value, regex, result;
             var dataMap = CU.arr2map(dataString, 'itemName');
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
                 return result;
             });
         });
-        
+
         exports.makeGroupedProfileFilterInfo = function(opts){
             var groupedProfileFilterItems = [];
             var arr = [];
@@ -106,7 +106,7 @@ See the License for the specific language governing permissions and
                 name: 'characterFilterItems',
                 profileFilterItems: arr
             });
-            
+
             arr = [];
             arr.push({
                 name : Constants.PLAYER_NAME,
@@ -130,7 +130,7 @@ See the License for the specific language governing permissions and
                 name: 'playerFilterItems',
                 profileFilterItems: arr
             });
-            
+
             arr = Constants.summaryStats.map(function(stat){
                 return {
                     name: Constants.SUMMARY_PREFIX + stat[0],
@@ -145,7 +145,7 @@ See the License for the specific language governing permissions and
             opts.groupedProfileFilterItems = groupedProfileFilterItems;
             return opts;
         };
-        
+
         var getCharacterInfoValue = function(info, characterName, profileItemName){
             if(profileItemName == Constants.CHAR_NAME){
                 return characterName;
@@ -160,9 +160,9 @@ See the License for the specific language governing permissions and
             }
         };
         var getCharacterInfoValue2 = function(info, profileId, profileItemName){
-            if (profileItemName == Constants.CHAR_NAME || 
-                    profileItemName == Constants.CHAR_OWNER || 
-                    CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX) || 
+            if (profileItemName == Constants.CHAR_NAME ||
+                    profileItemName == Constants.CHAR_OWNER ||
+                    CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ||
                     CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
                 if(profileId[0] === '') return undefined;
                 var characterName = profileId[0];
@@ -174,9 +174,9 @@ See the License for the specific language governing permissions and
                     return info.charactersSummary[characterName][profileItemName.substring(Constants.SUMMARY_PREFIX.length)];
                 } else if(CU.startsWith(profileItemName, Constants.CHAR_PREFIX) ){
                     return info.characters.profiles[characterName][profileItemName.substring(Constants.CHAR_PREFIX.length)];
-                } 
-            } else if(profileItemName == Constants.PLAYER_NAME || 
-                    profileItemName == Constants.PLAYER_OWNER || 
+                }
+            } else if(profileItemName == Constants.PLAYER_NAME ||
+                    profileItemName == Constants.PLAYER_OWNER ||
                     CU.startsWith(profileItemName, Constants.PLAYER_PREFIX)){
                 if(profileId[1] === '') return undefined;
                 var playerName = profileId[1];
@@ -186,12 +186,12 @@ See the License for the specific language governing permissions and
                     return info.players.owners[playerName];
                 } else if(CU.startsWith(profileItemName, Constants.PLAYER_PREFIX) ){
                     return info.players.profiles[playerName][profileItemName.substring(Constants.PLAYER_PREFIX.length)];
-                } 
+                }
             } else {
                 throw new Error('Unexpected profileItemName: ' + profileItemName);
             }
         };
-        
+
         exports.getDataArray = R.curry(function (info, profileId) {
             return R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map(function(profileItemInfo){
                 var value = getCharacterInfoValue2(info, profileId, profileItemInfo.name);
@@ -202,11 +202,11 @@ See the License for the specific language governing permissions and
                 }
             });
         });
-        
+
         exports.getDataArrays = function(info, filterModel) {
             return info.bindingData.map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
         };
-        
+
         var findProfileStructureConflicts = function(prefix, profileStructure, filterModel){
             var conflictTypes = [];
             var profilePart = filterModel.filter(R.compose(R.test(new RegExp('^' + prefix)), R.prop('name')));
@@ -229,15 +229,15 @@ See the License for the specific language governing permissions and
             });
             return conflictTypes;
         };
-        
+
         exports.isFilterModelCompatibleWithProfiles = function(profileStructure, filterModel){
             var charConflicts = findProfileStructureConflicts(Constants.CHAR_PREFIX, profileStructure.characters, filterModel);
             var playerConflicts = findProfileStructureConflicts(Constants.PLAYER_PREFIX, profileStructure.players, filterModel);
             return charConflicts.concat(playerConflicts);
         };
-        
+
     }
-    
+
     callback(ProjectUtils);
 
 })(function(api){

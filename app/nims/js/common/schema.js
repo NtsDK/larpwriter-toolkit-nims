@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  // Utils
@@ -19,9 +19,9 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(callback){
-    
+
     function Schema(exports, R, CommonUtils, Constants) {
-    
+
         exports.getSchema = function(base) {
             var schema = {
                 "$schema": "http://json-schema.org/draft-04/schema#",
@@ -30,7 +30,7 @@ See the License for the specific language governing permissions and
                 "type": "object",
                 'definitions': {}
             };
-    
+
             var Meta =  getMetaSchema();
             var CharacterProfileStructure =  getProfileSettingsSchema();
             var PlayerProfileStructure =  CharacterProfileStructure;
@@ -46,7 +46,7 @@ See the License for the specific language governing permissions and
             if(base.ManagementInfo){
                 ManagementInfo =  getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups, base.Players);
             }
-    
+
             schema.properties = {
                 Meta : Meta,
                 CharacterProfileStructure : CharacterProfileStructure,
@@ -65,14 +65,14 @@ See the License for the specific language governing permissions and
                 Relations: Relations,
                 ManagementInfo: ManagementInfo
             };
-    
-            schema.required = ["Meta", "CharacterProfileStructure", "PlayerProfileStructure", "Version", "Characters", 
-                               "Players", "ProfileBindings", "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
+
+            schema.required = ["Meta", "CharacterProfileStructure", "PlayerProfileStructure", "Version", "Characters",
+                                "Players", "ProfileBindings", "Stories", "Log", 'Groups', 'InvestigationBoard', 'Relations'];
             schema.additionalProperties = false;
-            
+
             return schema;
         };
-        
+
         function getMetaSchema() {
             return {
                 "title": "Meta",
@@ -104,7 +104,7 @@ See the License for the specific language governing permissions and
                 "additionalProperties": false
             };
         };
-        
+
         function getProfileSettingsSchema() {
             return {
                 "title": "CharacterProfileStructure",
@@ -193,7 +193,7 @@ See the License for the specific language governing permissions and
                 }
             };
         };
-        
+
         function getLogSchema(){
             return {
                 "type" : "array",
@@ -207,9 +207,9 @@ See the License for the specific language governing permissions and
                 }
             };
         };
-        
+
         function getInvestigationBoardSchema(groups, investigationBoard){
-            
+
             var ibGroupNames = Object.keys(investigationBoard.groups);
             var relGroupNames = ibGroupNames.map(function(groupName){
                 return 'group-' + groupName;
@@ -218,7 +218,7 @@ See the License for the specific language governing permissions and
             var relResourceNames = resourceNames.map(function(resourceName){
                 return 'resource-' + resourceName;
             });
-            
+
             var relationSetSchema = {
                 "type" : "object",
                 "properties" : {},
@@ -234,7 +234,7 @@ See the License for the specific language governing permissions and
                     "type" : "string"
                 };
             });
-            
+
             var relationsSchema = {
                 "type" : "object",
                 "properties" : {},
@@ -243,17 +243,17 @@ See the License for the specific language governing permissions and
             if(relGroupNames.length != 0){
                 relationsSchema.required = relGroupNames;
             }
-            
+
             relGroupNames.forEach(function(relGroupNames){
                 relationsSchema.properties[relGroupNames] = relationSetSchema;
             });
-            
+
             var resourcesSchema = {
                 "type" : "object",
                 "properties" : {},
                 "additionalProperties" : false
             };
-            
+
             resourceNames.forEach(function(resourceName){
                 resourcesSchema.properties[resourceName] = {
                     "type" : "object",
@@ -267,7 +267,7 @@ See the License for the specific language governing permissions and
                     "additionalProperties" : false
                 }
             });
-            
+
             var groupsSchema = {
                 "type" : "object",
                 "properties" : {},
@@ -293,16 +293,16 @@ See the License for the specific language governing permissions and
             var schema = {
                 "type" : "object",
                 "properties": {
-                    "groups" : groupsSchema, 
+                    "groups" : groupsSchema,
                     "resources" : resourcesSchema,
                     "relations" : relationsSchema
-                }, 
+                },
                 "required" : [ "groups", "resources", "relations"],
                 "additionalProperties" : false
             };
             return schema;
         };
-        
+
         function getGroupsSchema(characterProfileSettings, playerProfileSettings) {
             var filterItems = [];
             var staticStringTemplate = {
@@ -311,7 +311,7 @@ See the License for the specific language governing permissions and
                     "name" : {
                         "type" : "string",
                         "enum": [] // enum can't be empty, it is necessary to populate it
-                    }, 
+                    },
                     "type" :{
                         "type" : "string",
                         "enum": ["string"]
@@ -320,20 +320,20 @@ See the License for the specific language governing permissions and
                         "type" : "string",
                         "minLength": 0
                     }
-                }, 
+                },
                 "required" : [ "name", "type", "regexString"],
                 "additionalProperties" : false
             };
-            
+
             let assocFunc = R.assocPath(['properties', 'name', 'enum']);
             filterItems.push(assocFunc([Constants.CHAR_NAME], R.clone(staticStringTemplate)));
             filterItems.push(assocFunc([Constants.CHAR_OWNER], R.clone(staticStringTemplate)));
             filterItems.push(assocFunc([Constants.PLAYER_NAME], R.clone(staticStringTemplate)));
             filterItems.push(assocFunc([Constants.PLAYER_OWNER], R.clone(staticStringTemplate)));
-    
+
             filterItems = filterItems.concat(characterProfileSettings.map(makeProfileStructureItemSchema(Constants.CHAR_PREFIX)));
             filterItems = filterItems.concat(playerProfileSettings.map(makeProfileStructureItemSchema(Constants.PLAYER_PREFIX)));
-            
+
             R.keys(R.fromPairs(Constants.summaryStats)).forEach(function(item){
                 filterItems.push({
                     "type" : "object",
@@ -358,30 +358,30 @@ See the License for the specific language governing permissions and
                     "additionalProperties" : false
                 });
             });
-            
+
             var groupProperties = {
                 "name" : {
                     "type" : "string"
-                }, 
+                },
                 "masterDescription" : {
                     "type" : "string"
-                }, 
+                },
                 "characterDescription" : {
                     "type" : "string"
-                }, 
+                },
                 "filterModel" : {
-                    "type" : "array", 
+                    "type" : "array",
                     "items": {
                         "oneOf" : filterItems
                     }
-                }, 
+                },
                 "doExport" : {
                     "type":"boolean"
                 }
             };
             var schema = {
                 "type" : "object",
-                "additionalProperties": { 
+                "additionalProperties": {
                     "type": "object",
                     "properties": groupProperties,
                     "required": Object.keys(groupProperties),
@@ -390,7 +390,7 @@ See the License for the specific language governing permissions and
             };
             return schema;
         }
-        
+
         var makeProfileStructureItemSchema = R.curry(function(prefix, item){
             var data = {
                 "type" : "object",
@@ -473,7 +473,7 @@ See the License for the specific language governing permissions and
             }
             return data;
         });
-        
+
         function getProfileSchema(profileSettings) {
             var characterProperties = {
                 "name" : {
@@ -513,12 +513,12 @@ See the License for the specific language governing permissions and
                 }
                 characterProperties[item.name] = value;
             });
-            
+
     //        console.log(characterProperties);
-            
+
             var schema = {
                 "type" : "object",
-                "additionalProperties": { 
+                "additionalProperties": {
                     "type": "object",
                     "properties": characterProperties,
                     "required":Object.keys(characterProperties),
@@ -527,13 +527,13 @@ See the License for the specific language governing permissions and
             };
             return schema;
         };
-        
+
         function getProfileBindings(characters, players) {
             var playerNames = Object.keys(players);
             if(playerNames.length == 0){
                 playerNames = ['123'];
             }
-            
+
             var names = '^(' + R.keys(characters).map(CommonUtils.escapeRegExp).join('|') + ')$';
             var schema = {
                 type : 'object',
@@ -544,13 +544,13 @@ See the License for the specific language governing permissions and
                 type: 'string',
                 enum: playerNames
             };
-            
+
             return schema;
         }
-        
+
         function getStoriesSchema(characters) {
             var charNames = Object.keys(characters);
-            
+
             var eventCharacter = {
                     "type" : "object",
                     "properties": {
@@ -567,7 +567,7 @@ See the License for the specific language governing permissions and
                     "required":["text", "time"],
                     "additionalProperties" : false
             };
-            
+
             var eventSchema = {
                 "type" : "object",
                 "properties" : {
@@ -593,8 +593,8 @@ See the License for the specific language governing permissions and
                 "required":["name","text","time","characters"],
                 "additionalProperties" : false
             };
-            
-            
+
+
             var storyCharacterSchema = {
                 "type" : "object",
                 "properties" : {
@@ -627,7 +627,7 @@ See the License for the specific language governing permissions and
                 "required":["name","inventory","activity"],
                 "additionalProperties" : false
             };
-            
+
             var storySchema = {
                 "type" : "object",
                 "properties" : {
@@ -653,24 +653,24 @@ See the License for the specific language governing permissions and
                 "required":["name","story","characters","events"],
                 "additionalProperties" : false
             }
-            
-    
+
+
             var storiesSchema = {
                 "type" : "object",
                 "additionalProperties" : storySchema
             };
-            
+
             return storiesSchema;
         };
-        
-        
+
+
         function getManagementInfoSchema(managementInfo, characters, stories, groups, players) {
             var charNames = Object.keys(characters);
             var storyNames = Object.keys(stories);
             var groupNames = Object.keys(groups);
             var playerNames = Object.keys(players);
             var userNames = Object.keys(managementInfo.UsersInfo);
-            // enum can't be empty, ask about it here 
+            // enum can't be empty, ask about it here
             // http://stackoverflow.com/questions/37635675/how-to-validate-empty-array-of-strings-with-ajv
             if(storyNames.length == 0){
                 storyNames = ['123'];
@@ -684,7 +684,7 @@ See the License for the specific language governing permissions and
             if(playerNames.length == 0){
                 playerNames = ['123'];
             }
-            
+
             var userSchema = {
                 "type" : "object",
                 "properties" : {
@@ -759,7 +759,7 @@ See the License for the specific language governing permissions and
                 "required" : [ "allowPlayerCreation", "allowCharacterCreation" ],
                 "additionalProperties" : false
             };
-            
+
             var managementInfoSchema = {
                 "type" : "object",
                 "properties" :{
@@ -791,10 +791,10 @@ See the License for the specific language governing permissions and
                 "required":["UsersInfo","PlayersInfo","admin","editor","adaptationRights",'WelcomeText', "PlayersOptions"],
                 "additionalProperties" : false
             };
-            
+
             return managementInfoSchema;
         };
-        
+
         function getRelationsSchema(Characters, definitions){
             var names = '^(' + R.keys(Characters).map(CommonUtils.escapeRegExp).join('|') + ')$';
             var schema = {
@@ -811,13 +811,13 @@ See the License for the specific language governing permissions and
                 type: 'string',
                 minLength: 1
             };
-            
+
             return schema;
         };
     };
-    
+
     callback(Schema);
-    
+
 })(function(api){
     typeof exports === 'undefined'? api(this['Schema'] = {}, R, CommonUtils, Constants) : module.exports = api;
 }.bind(this));

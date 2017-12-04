@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, Database
@@ -19,20 +19,20 @@ See the License for the specific language governing permissions and
 
 var showNotification = true;
 function makeRemoteDBMS(LocalDBMS){
-    
+
     var url = "/";
-    
+
     function RemoteDBMS(){
         this.clearSettings();
     };
-    
+
     RemoteDBMS._simpleGet = function(name, params, callback){
         "use strict";
         var paramStr = "";
         if(params){
-            paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ; 
+            paramStr = "?params=" + encodeURIComponent(JSON.stringify(params)); ;
         }
-        
+
         var request = $.ajax({
             url : url + name + paramStr,
             dataType : "text",
@@ -41,11 +41,11 @@ function makeRemoteDBMS(LocalDBMS){
             cache: false,
             timeout: Constants.httpTimeout,
         });
-        
+
         request.done(function(data) {
             callback(null, JSON.parse(data));
         });
-        
+
         request.fail(function(errorInfo, textStatus, errorThrown) {
             try {
                 callback(JSON.parse(errorInfo.responseText));
@@ -54,7 +54,7 @@ function makeRemoteDBMS(LocalDBMS){
             }
         });
     };
-    
+
     RemoteDBMS._simplePut = function(name, data, callback){
         "use strict";
         var request = $.ajax({
@@ -65,7 +65,7 @@ function makeRemoteDBMS(LocalDBMS){
             data: JSON.stringify(data),
             timeout: Constants.httpTimeout
         });
-        
+
         if(showNotification){
             var notificationBox = clearEl(getEl('debugNotification'));
             removeClass(notificationBox, 'hidden');
@@ -73,7 +73,7 @@ function makeRemoteDBMS(LocalDBMS){
             removeClass(notificationBox, 'operationFail');
             addEl(notificationBox, makeText(name + ' ' + JSON.stringify(data)));
         }
-        
+
         request.done(function(data) {
             if(showNotification){
                 addClass(notificationBox, 'operationOK');
@@ -83,7 +83,7 @@ function makeRemoteDBMS(LocalDBMS){
             }
             if(callback) callback();
         });
-        
+
         request.fail(function(errorInfo, textStatus, errorThrown) {
             if(showNotification){
                 addClass(notificationBox, 'operationFail');
@@ -98,8 +98,8 @@ function makeRemoteDBMS(LocalDBMS){
             }
         });
     };
-    
-    
+
+
     Object.keys(LocalDBMS.prototype).forEach(function(name){
         RemoteDBMS.prototype[name] = function(){
             var arr = [];
@@ -108,7 +108,7 @@ function makeRemoteDBMS(LocalDBMS){
             }
 //            if(CommonUtils.startsWith(name, "_")){
 //                // do nothing for inner functions
-//            } else 
+//            } else
             if(CommonUtils.startsWith(name, "get") || CommonUtils.startsWith(name, "is")){
                 RemoteDBMS._simpleGet(name, arr, arguments[arguments.length-1]);
             } else {
@@ -116,8 +116,8 @@ function makeRemoteDBMS(LocalDBMS){
             }
         }
     });
-    
-    
+
+
     RemoteDBMS.prototype.clearSettings = function() {
         "use strict";
         this.Settings = {
@@ -126,12 +126,10 @@ function makeRemoteDBMS(LocalDBMS){
                 "ProfileEditor" : {}
         };
     };
-    
+
     RemoteDBMS.prototype.getSettings = function(){
         "use strict";
         return this.Settings;
     };
     return RemoteDBMS;
 };
-
-

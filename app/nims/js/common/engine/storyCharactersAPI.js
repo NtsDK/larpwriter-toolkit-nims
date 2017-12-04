@@ -10,21 +10,21 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function storyCharactersAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
         var Constants     = opts.Constants   ;
-        
+
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
             PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
@@ -32,14 +32,14 @@ See the License for the specific language governing permissions and
                 callback(null,  Object.keys(localCharacters).sort(CU.charOrdA));
             });
         };
-    
+
         //story characters
         LocalDBMS.prototype.getStoryCharacters = function(storyName, callback){
             PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 callback(null,  CU.clone(this.database.Stories[storyName].characters));
             });
         };
-    
+
         //story characters
         LocalDBMS.prototype.addStoryCharacter = function(storyName, characterName, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.entityExistsCheck(characterName, R.keys(this.database.Characters))];
@@ -51,12 +51,12 @@ See the License for the specific language governing permissions and
                             inventory : "",
                             activity: {}
                     };
-                    
+
                     callback();
                 });
             });
         };
-    
+
         //story characters
         LocalDBMS.prototype.switchStoryCharacters = function(storyName, fromName, toName, callback){
             var cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
@@ -64,23 +64,23 @@ See the License for the specific language governing permissions and
                 var story = this.database.Stories[storyName];
                 cond = PC.switchEntityCheck(fromName, toName, R.keys(this.database.Characters), R.keys(story.characters))
                 PC.precondition(cond, callback, () => {
-                    
+
                     story.characters[toName] = story.characters[fromName];
                     story.characters[toName].name = toName;
                     delete story.characters[fromName];
-                    
+
                     story.events.forEach(function (event) {
                         if (event.characters[fromName]) {
                             event.characters[toName] = event.characters[fromName];
                             delete event.characters[fromName];
                         }
                     });
-                    
+
                     callback();
                 });
             });
         };
-    
+
         //story characters
         LocalDBMS.prototype.removeStoryCharacter = function(storyName, characterName, callback){
             var cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
@@ -95,7 +95,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         // story characters
         LocalDBMS.prototype.updateCharacterInventory = function(storyName, characterName, inventory, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(inventory)];
@@ -107,11 +107,11 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    
+
         //story characters
         LocalDBMS.prototype.onChangeCharacterActivity = function(storyName, characterName, activityType, checked, callback){
-            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(activityType), 
-                         PC.elementFromEnum(activityType, Constants.characterActivityTypes) , PC.isBoolean(checked)];
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(activityType),
+                        PC.elementFromEnum(activityType, Constants.characterActivityTypes) , PC.isBoolean(checked)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
                 PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
@@ -125,7 +125,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         //event presence
         LocalDBMS.prototype.addCharacterToEvent = function(storyName, eventIndex, characterName, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
@@ -144,7 +144,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    
+
         // event presence
         LocalDBMS.prototype.removeCharacterFromEvent = function(storyName, eventIndex, characterName, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
@@ -160,7 +160,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         var _renameCharacterInStories = function(type, fromName, toName){
             if(type === 'player') return;
             var storyName, story, data;
@@ -185,10 +185,10 @@ See the License for the specific language governing permissions and
                 }
             }
         };
-        
+
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameCharacterInStories);
-        
+
         var _removeCharacterFromStories = function(type, characterName){
             if(type === 'player') return;
             var storyName, story;
@@ -207,7 +207,7 @@ See the License for the specific language governing permissions and
                 }
             }
         };
-        
+
         listeners.removeProfile = listeners.removeProfile || [];
         listeners.removeProfile.push(_removeCharacterFromStories);
     };
@@ -216,4 +216,3 @@ See the License for the specific language governing permissions and
 })(function(api){
     typeof exports === 'undefined'? this['storyCharactersAPI'] = api: module.exports = api;
 }.bind(this));
-

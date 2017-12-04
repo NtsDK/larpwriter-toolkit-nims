@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -19,19 +19,19 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports){
-    
+
     exports.makeProfileEditorCore = function(){
         var innerExports = {};
-        
+
         var state = {
             'character':{},
             'player':{}
         };
-        
+
         innerExports.initProfileStructure = function(profileDiv, type, profileStructure, callback){
             var tbody = makeEl("tbody");
             addEl(clearEl(queryEl(profileDiv)), addEl(addClasses(makeEl("table"), ["table", 'table-striped']), tbody))
-            
+
             state[type].inputItems = {};
             state[type].profileStructure = profileStructure;
             try {
@@ -39,16 +39,16 @@ See the License for the specific language governing permissions and
             } catch (err) {
                 Utils.handleError(err); return;
             }
-            
+
             if(callback) callback();
         };
-        
+
         var appendInput = R.curry(function (type, profileItemConfig) {
             var itemInput = new ProfileItemInput(type, profileItemConfig);
             state[type].inputItems[profileItemConfig.name] = itemInput;
             return addEls(makeEl("tr"), [addEl(makeEl("td"), makeText(profileItemConfig.name)), addEl(makeEl("td"), itemInput.dom)]);
         });
-        
+
         innerExports.fillProfileInformation = function(profileDiv, type, profile, isEditable){
             removeClass(queryEl(profileDiv),'hidden');
             R.values(state[type].inputItems).forEach(itemInput => {
@@ -58,13 +58,13 @@ See the License for the specific language governing permissions and
                     Utils.enableEl(itemInput.dom, isEditable(itemInput.name, state[type].profileStructure));
                 }
             });
-            
+
             state[type].name = profile.name;
             Object.values(state[type].inputItems).forEach(function(item){
                 item.showFieldValue(profile);
             });
         };
-        
+
         function ProfileItemInput(profileType, profileItemConfig){
             var input;
             switch (profileItemConfig.type) {
@@ -98,23 +98,23 @@ See the License for the specific language governing permissions and
                 setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
                 var sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(",")));
-                
+
                 sel.on('change', this.updateFieldValue.bind(this));
                 break;
             default:
                 throw new Errors.InternalError('errors-unexpected-switch-argument', [profileItemConfig.type]);
             }
-            
+
             if(profileItemConfig.type !== 'multiEnum'){
                 listen(input, "change", this.updateFieldValue.bind(this));
             }
-            
+
             this.dom = input;
             this.type = profileItemConfig.type;
             this.profileType = profileType;
             this.name = profileItemConfig.name;
         };
-        
+
         ProfileItemInput.prototype.showFieldValue = function(profile){
             if (this.type === "checkbox") {
                 this.dom.checked = profile[this.name];
@@ -125,14 +125,14 @@ See the License for the specific language governing permissions and
             }
             this.oldValue = profile[this.name];
         };
-        
+
         ProfileItemInput.prototype.updateFieldValue = function(event){
             var fieldName = this.name;
             var profileName = state[this.profileType].name;
             if(this.multiEnumSelect && this.multiEnumSelect.prop("disabled")){
                 return; // we need to trigger change event on multiEnumSelect to update selection. It may be disabled so it has false positive call.
             }
-            
+
             var value;
             switch(this.type){
             case "text":
@@ -155,13 +155,13 @@ See the License for the specific language governing permissions and
                 value = this.multiEnumSelect.val().join(',');
                 break;
             default:
-                Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type])); 
+                Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type]));
                 return;
             }
             DBMS.updateProfileField(this.profileType, profileName, fieldName, this.type, value, Utils.processError());
         };
-        
+
         return innerExports;
     }
-    
+
 })(this['ProfileEditorCore']={});

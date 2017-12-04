@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, ProfileEditor, ProfileConfigurer, DBMS
@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
     var root = '.profiles-tab ';
     var characterRoot = root + '.character-profile-panel ';
     var playerRoot = root + '.player-profile-panel ';
-    
+
     exports.init = function () {
         state.views = {};
         var nav = root + ".sub-tab-navigation";
@@ -37,7 +37,7 @@ See the License for the specific language governing permissions and
         Utils.addView(containers, "profile-editor", ProfileEditor,{mainPage:true});
         Utils.addView(containers, "profile-constructor", ProfileConfigurer);
         Utils.addView(containers, "profile-binding", ProfileBinding);
-    
+
         listen(queryEl(characterRoot + ".create-entity-button"), "click", createProfile('character', characterRoot));
         listen(queryEl(characterRoot + ".rename-entity-button"), "click", renameProfile('character', characterRoot));
         listen(queryEl(characterRoot + ".remove-entity-button"), "click", removeProfile('character', characterRoot));
@@ -45,10 +45,10 @@ See the License for the specific language governing permissions and
         listen(queryEl(playerRoot + ".create-entity-button"), "click", createProfile('player', playerRoot));
         listen(queryEl(playerRoot + ".rename-entity-button"), "click", renameProfile('player', playerRoot));
         listen(queryEl(playerRoot + ".remove-entity-button"), "click", removeProfile('player', playerRoot));
-    
+
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function () {
         PermissionInformer.getEntityNamesArray('character', true, function(err, characterNames){
             if(err) {Utils.handleError(err); return;}
@@ -60,22 +60,22 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var rebuildInterface = function (root, names) {
         var data = getSelect2Data(names);
-        
+
         clearEl(queryEl(root + ".rename-entity-select"));
         $(root + ".rename-entity-select").select2(data);
-        
+
         clearEl(queryEl(root + ".remove-entity-select"));
         $(root + ".remove-entity-select").select2(data);
     };
-    
+
     var createProfile = function (type, root) {
         return function(){
             var input = queryEl(root + ".create-entity-input");
             var name = input.value.trim();
-            
+
             DBMS.createProfile(type, name, function(err){
                 if(err) {Utils.handleError(err); return;}
                 PermissionInformer.refresh(function(err){
@@ -89,13 +89,13 @@ See the License for the specific language governing permissions and
             });
         }
     };
-    
+
     var renameProfile = function (type, root) {
         return function(){
             var toInput = queryEl(root + ".rename-entity-input");
             var fromName = queryEl(root + ".rename-entity-select").value.trim();
             var toName = toInput.value.trim();
-        
+
             DBMS.renameProfile(type, fromName, toName, function(err){
                 if(err) {Utils.handleError(err); return;}
                 PermissionInformer.refresh(function(err){
@@ -109,11 +109,11 @@ See the License for the specific language governing permissions and
             });
         }
     };
-    
+
     var removeProfile = function (type, root) {
         return function(){
             var name = queryEl(root + ".remove-entity-select").value.trim();
-        
+
             Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-character-removing"),[name]), () => {
                 DBMS.removeProfile(type, name, function(err){
                     if(err) {Utils.handleError(err); return;}

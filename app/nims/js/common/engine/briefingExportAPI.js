@@ -10,25 +10,25 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 "use strict";
 
 (function(callback){
 
     function briefingExportAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var dbmsUtils     = opts.dbmsUtils   ;
-        
+
         var check = function(selChars, selStories, exportOnlyFinishedStories, database){
             var charsCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selChars), PC.entitiesExist(selChars, R.keys(database.Characters))]), PC.isNil(selChars));
             var storiesCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selStories), PC.entitiesExist(selStories, R.keys(database.Stories))]), PC.isNil(selStories));
             return PC.chainCheck([charsCheck, storiesCheck, PC.isBoolean(exportOnlyFinishedStories)]);
         };
-        
+
         LocalDBMS.prototype.getBriefingData = function(selCharacters, selStories, exportOnlyFinishedStories, callback) {
             PC.precondition(check(selCharacters, selStories, exportOnlyFinishedStories, this.database), callback, () => {
                 var that = this;
@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         var _getBriefingData = function(database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback) {
             var charArray = selectedCharacters.map(function(charName){
                 groupTexts[charName].forEach(function(groupText){
@@ -55,24 +55,24 @@ See the License for the specific language governing permissions and
                     "groupTexts" : groupTexts[charName],
                     "relations" : _makeRelationsInfo(dbmsUtils._getKnownCharacters(database, charName), database, charName)
                 };
-                
+
                 dataObject = R.merge(dataObject, _makeProfileInfo(charName, 'character', database));
-                
+
                 let playerName = database.ProfileBindings[charName];
                 if(playerName !== undefined){
                     dataObject = R.merge(dataObject, _makeProfileInfo(playerName, 'player', database));
                 }
-                
+
                 return dataObject;
             });
-            
+
             charArray.sort(CU.charOrdAFactory(R.prop('charName')));
             callback(null, {
                 briefings : charArray,
                 gameName : database.Meta.name
             });
         };
-        
+
         var _makeProfileInfo = function(profileName, profileType, database){
             var profileStructure, prefix, profile;
             if(profileType === 'character'){
@@ -93,13 +93,13 @@ See the License for the specific language governing permissions and
             dataObject = R.merge(dataObject, _getProfileInfoNotEmpty(prefix + "-notEmpty-", profile, profileStructure));
             return dataObject;
         };
-        
+
         var _makeRelationsInfo = function(knownCharacters, database, charName){
             var relations = database.Relations[charName];
             var profiles = database.Characters;
             return R.keys(relations).map(function(toCharacter){
                 var obj = {
-                    toCharacter: toCharacter, 
+                    toCharacter: toCharacter,
                     text: relations[toCharacter],
                     splittedText: _splitText(relations[toCharacter]),
                     stories: R.keys(knownCharacters[toCharacter] || {}).join(', ')
@@ -108,22 +108,22 @@ See the License for the specific language governing permissions and
                 return obj;
             }).sort(CU.charOrdAFactory(R.prop('toCharacter')));
         };
-        
+
         var _makeCharInventory = function(database, charName){
             return R.values(database.Stories).filter(story => !R.isNil(story.characters[charName]) && !R.isEmpty(story.characters[charName].inventory))
                 .map(story => story.characters[charName].inventory).join(", ");
         };
-    
+
         var _processProfileInfo = R.curry(function(processor, prefix, profile, profileStructure) {
             return R.fromPairs(profileStructure.map((element) => {
                 return [prefix + element.name, processor(profile[element.name])];
             }));
         });
-        
+
         var _getProfileInfoNotEmpty = _processProfileInfo((el) => String(el).length !== 0);
         var _getSimpleProfileInfoObject = _processProfileInfo((el) => (el));
         var _getSplittedProfileInfoObject = _processProfileInfo((el) => (_splitText(String(el))));
-        
+
         var _getProfileInfoArray = function(profile, profileStructure) {
             var value, splittedText;
             var filter = R.compose(R.equals(true), R.prop('doExport'));
@@ -137,7 +137,7 @@ See the License for the specific language governing permissions and
                 };
             });
         };
-        
+
         var _getStoriesInfo = function(database, charName, selectedStories, exportOnlyFinishedStories) {
             return R.values(database.Stories).filter(function(story){
                 if(!R.contains(story.name, selectedStories)) return false;
@@ -156,7 +156,7 @@ See the License for the specific language governing permissions and
                 return a.storyName.toLowerCase();
             }));
         };
-        
+
         var _getEventsInfo = function(database, charName, selectedStories, exportOnlyFinishedStories) {
             var eventsInfo = R.values(database.Stories).filter(function(story){
                 if(!R.contains(story.name, selectedStories)) return false;
@@ -169,23 +169,23 @@ See the License for the specific language governing permissions and
             }).map(function(story){
                 return _getStoryEventsInfo(story, charName, database.Meta.date);
             });
-                
+
             eventsInfo = eventsInfo.reduce(function(result, array){
                 return result.concat(array);
             }, []);
 
             eventsInfo.sort(CU.eventsByTime);
-    
+
             return eventsInfo;
         };
-        
+
         var _getStoryEventsInfo = function(story, charName, defaultTime){
             "use strict";
             return story.events.filter(function(event) {
                 return event.characters[charName];
             }).map(_makeEventInfo(charName, story.name, defaultTime));
         }
-        
+
         var _makeEventInfo = R.curry(function(charName, storyName, defaultTime, event) {
             "use strict";
             var eventInfo = {};
@@ -205,7 +205,7 @@ See the License for the specific language governing permissions and
             eventInfo.storyName = storyName;
             return eventInfo;
         });
-        
+
         var _splitText = function(text){
             return text.split("\n").map(function(string){
                 return {string:string}

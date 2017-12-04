@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  jQuery, DBMS
@@ -20,10 +20,10 @@ See the License for the specific language governing permissions and
 
 
 (function(exports){
-    
+
     var defaultHists = [ 'storyEventsHist', 'storyCharactersHist', 'eventCompletenessHist', 'characterSymbolsHist', 'characterStoriesHist' ];
     var entityCharts = [ 'characterChart', 'playerChart', 'storyChart', 'groupChart' ];
-    
+
     var statisticKeys = [
         'characterNumber',
         'playerNumber',
@@ -34,39 +34,39 @@ See the License for the specific language governing permissions and
         'textCharacterNumber',
         'lastEvent',
         'firstEvent',
-        ]; 
-    
+        ];
+
     var root = '.overview-tab ';
     var state = {};
-        
+
     state.Charts = {};
-    
+
     exports.init = function () {
         state.name = getEl("gameNameInput");
         state.name.addEventListener("change", updateName);
-    
+
         state.lastSaveTime = getEl("lastSaveTime");
-        
+
         state.date = getEl("gameDatePicker");
-    
+
         var opts = {
             lang : L10n.getLang(),
             mask : true,
             onChangeDateTime : updateTime
         };
-    
+
         jQuery(state.date).datetimepicker(opts);
-    
+
         state.preDate = getEl("preGameDatePicker");
-    
+
         opts = {
             lang : L10n.getLang(),
             mask : true,
             onChangeDateTime : updatePreGameDate
         };
-    
+
         jQuery(state.preDate).datetimepicker(opts);
-        
+
         L10n.onL10nChange(function(){
             jQuery(state.date).datetimepicker({
                 lang : L10n.getLang()
@@ -75,20 +75,20 @@ See the License for the specific language governing permissions and
                 lang : L10n.getLang()
             });
         });
-    
+
         state.descr = queryEl(root + ".game-description-area");
         state.descr.addEventListener("change", updateDescr);
-        
+
         UI.initTabPanel("overviewInfoButton", "overviewContainer");
-        
+
         exports.content = queryEl(root);
     };
-    
+
     var makeChart = function(id, canvas, data){
         if (state.Charts[id]) {
             state.Charts[id].destroy();
         }
-      
+
         var labels = [];
         var dataset = {
             data : [],
@@ -126,73 +126,73 @@ See the License for the specific language governing permissions and
             },
         });
     };
-    
+
     var makeHistogram = function(place, data){
-      var min = null, max = null;
-      data.forEach(function(barData){
+    var min = null, max = null;
+    data.forEach(function(barData){
         if(barData){
-          if(max === null || barData.value > max){
+        if(max === null || barData.value > max){
             max = barData.value;
-          }
         }
-      });
-      data.forEach(function(barData){
+        }
+    });
+    data.forEach(function(barData){
         if(barData){
     // barData.normValue = (barData.value - min)/(max-min);
     //      barData.normValue = (barData.value - 0)/(max-0);
-          barData.normValue = (barData.value - 0)/(max-0)*0.9+0.1;
+        barData.normValue = (barData.value - 0)/(max-0)*0.9+0.1;
         }
-      });
-      
-      var div;
-      data.forEach(function(barData){
+    });
+
+    var div;
+    data.forEach(function(barData){
         div = barData === null ? makeEl('div') : addEl(makeEl('div'), makeText(barData.value));
         addClass(div, "bar");
         if(barData){
-          div.style.height = (barData.normValue*100) + '%';
-          $(div).tooltip({
+        div.style.height = (barData.normValue*100) + '%';
+        $(div).tooltip({
             title : barData.tip,
-          });
+        });
         }
-        
+
         addEl(place, div);
-      });
+    });
     };
-    
+
     exports.refresh = function () {
         PermissionInformer.isAdmin(function(err, isAdmin){
-          if(err) {Utils.handleError(err); return;}
-          Utils.enable(exports.content, "adminOnly", isAdmin);
+        if(err) {Utils.handleError(err); return;}
+        Utils.enable(exports.content, "adminOnly", isAdmin);
         });
-    
+
         DBMS.getMetaInfo(function(err, info){
-          if(err) {Utils.handleError(err); return;}
-          DBMS.getStatistics(function(err, statistics){
+        if(err) {Utils.handleError(err); return;}
+        DBMS.getStatistics(function(err, statistics){
             if(err) {Utils.handleError(err); return;}
             state.name.value = info.name;
             state.date.value = info.date;
             state.preDate.value = info.preGameDate;
             state.descr.value = info.description;
             addEl(clearEl(state.lastSaveTime), makeText(new Date(info.saveTime).format("yyyy/mm/dd HH:MM:ss")));
-            
+
             statistics['lastEvent'] = statistics['lastEvent'] !== "" ? new Date(statistics['lastEvent']).format("yyyy/mm/dd h:MM") : "";
             statistics['firstEvent'] = statistics['firstEvent'] !== "" ? new Date(statistics['firstEvent']).format("yyyy/mm/dd h:MM") : "";
-            
+
             statisticKeys.forEach(function(key){
                 updateStatisticValue(statistics, key);
             });
-            
+
             addEl(clearEl(getEl('generalCompleteness')), makeText(strFormat(getL10n('overview-general-completeness-value'),statistics['generalCompleteness'])));
             addEl(clearEl(getEl('storyCompleteness')), makeText(strFormat(getL10n('overview-story-completeness-value'),statistics['storyCompleteness'])));
-            
+
             defaultHists.forEach(function(histName){
                 makeHistogram(clearEl(queryEl(root + '.' + histName)), statistics[histName]);
             });
-            
+
             entityCharts.forEach(function(entityChart){
                 makeChart(entityChart, queryEl(root + '.' + entityChart), statistics[entityChart]);
             });
-            
+
             var symbolChartData = R.toPairs(localizeConsts(statistics.textCharactersCount)).map(function(pair){
                 return {
                     'value': pair[1],
@@ -200,7 +200,7 @@ See the License for the specific language governing permissions and
                 };
             });
             makeChart("symbolChart", queryEl(root + ".symbolChart"), symbolChartData);
-            
+
             var bindingChartData = R.toPairs(localizeConsts(statistics.bindingStats)).map(function(pair){
                 return {
                     'value': pair[1],
@@ -208,9 +208,9 @@ See the License for the specific language governing permissions and
                 };
             });
             makeChart("bindingChart", queryEl(root + ".bindingChart"), bindingChartData);
-            
+
             var barData, barDiv, bar;
-            
+
             var makeContainer = function(obj){
                 barDiv = makeEl('div');
                 addEl(barDiv, addEl(makeEl('h4'),makeText(obj.name)));
@@ -224,7 +224,7 @@ See the License for the specific language governing permissions and
                 makeChart(info.id, bar, info.prepared);
                 return container;
             };
-            
+
             var buildHist = function(info){
                 bar = addClass(makeEl('div'),"overviewHist");
                 var data = R.zipObj(['name', 'bar'], [info.name, bar]);
@@ -232,10 +232,10 @@ See the License for the specific language governing permissions and
                 makeHistogram(bar, info.prepared);
                 return container;
             };
-            
+
             var innerMakeChart = R.compose(buildChart,prepareChart);
             var innerMakeHist = R.compose(buildHist,prepareHist);
-            
+
             var localizeCheckboxes = function(info){
                 info.data = R.fromPairs(R.toPairs(info.data).map(function(val){
                     val[0] = constL10n(Constants[val[0]]);
@@ -243,22 +243,22 @@ See the License for the specific language governing permissions and
                 }));
                 return info;
             }
-            
+
             var makeCheckboxChart = R.compose(innerMakeChart,localizeCheckboxes);
-            
+
             var fn = R.cond([
                 [R.compose(R.equals('enum'), R.prop('type')),   innerMakeChart],
                 [R.compose(R.equals('checkbox'), R.prop('type')),   makeCheckboxChart],
                 [R.T,   innerMakeHist],
             ]);
-            
+
             statistics.profileCharts.characterCharts.map(fn).map(addEl(clearEl(queryEl(root + '.characterProfileDiagrams'))));
             statistics.profileCharts.playerCharts.map(fn).map(addEl(clearEl(queryEl(root + '.playerProfileDiagrams'))));
-            
-          });
+
+        });
         });
     };
-    
+
     var localizeConsts = function(info){
         info = R.fromPairs(R.toPairs(info).map(function(val){
             val[0] = constL10n(val[0]);
@@ -266,7 +266,7 @@ See the License for the specific language governing permissions and
         }));
         return info;
     };
-    
+
     var prepareChart = function(info){
         var total = R.sum(R.values(info.data));
         info.prepared = [];
@@ -275,14 +275,14 @@ See the License for the specific language governing permissions and
         }
         return info;
     };
-    
+
     var prepareHist = function(info){
         info.prepared = [];
         var step = info.data.step;
         info.data = info.data.groups;
         var min = R.apply(Math.min, R.keys(info.data));
         var max = R.apply(Math.max, R.keys(info.data));
-            
+
         for (var i = min; i < max+1; i++) {
             if (info.data[i]) {
                 info.prepared.push({
@@ -296,15 +296,15 @@ See the License for the specific language governing permissions and
         }
         return info;
     };
-    
+
     var makeChartLabel = R.curry(function(total, key, value) {
         return [ key, ": ", (value / total * 100).toFixed(0), "% (", value, "/", total, ")" ].join("");
     });
-    
+
     var updateStatisticValue = function (statistics, key) {
         addEl(clearEl(getEl(key)), makeText(statistics[key]));
     };
-    
+
     var updateName = function (event) {
         DBMS.setMetaInfo("name", event.target.value, Utils.processError());
     };
@@ -317,11 +317,11 @@ See the License for the specific language governing permissions and
     var updateDescr = function (event) {
         DBMS.setMetaInfo("description", event.target.value, Utils.processError());
     };
-    
+
     var customTooltips = function(tooltip) {
         // Tooltip Element
         var tooltipEl = document.getElementById('chartjs-tooltip');
-        
+
         if (!tooltipEl) {
             tooltipEl = document.createElement('div');
             tooltipEl.id = 'chartjs-tooltip';
@@ -363,7 +363,7 @@ See the License for the specific language governing permissions and
                 var colors = tooltip.labelColors[i];
                 var style = 'background:' + colors.backgroundColor;
                 style += '; border-color:' + colors.borderColor;
-                style += '; border-width: 2px'; 
+                style += '; border-width: 2px';
                 var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
                 innerHtml += '<tr><td>' + span + body + '</td></tr>';
             });

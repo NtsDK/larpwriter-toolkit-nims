@@ -22,6 +22,7 @@
 Далее выполните команды.
 Пример команд сборки в режиме разработки. В этом режиме разрабатываемый вами проект будет собираться в папке dist и обновляться по мере внесения изменений.
 
+	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run nims-dev
 	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run vtmcl-dev
 	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run measurelook-dev
 	
@@ -55,8 +56,12 @@ This is a simple code checker. Right now it used in js folder only.
     eclint check app\vtmcl\js
     eclint fix app\vtmcl\js
     eclint check app\vtmcl\js\capitalApp.js
+    
     eclint check app\measurelook\js
     eclint fix app\measurelook\js
+    
+    eclint check app\nims\js
+    eclint fix app\nims\js
 
 
 # Using eslint

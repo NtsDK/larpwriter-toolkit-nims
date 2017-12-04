@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils
@@ -23,20 +23,20 @@ See the License for the specific language governing permissions and
     var state = {};
     state.views = {};
     var root = '.access-manager-tab '
-    
+
     exports.init = function () {
         var containers = {
             root: state,
             navigation: queryEl(root + ' .navigation'),
             content: queryEl(root + ' .content')
         };
-        
+
         Utils.addView(containers, "masterManagement", MasterManagement, {mainPage:true});
         Utils.addView(containers, "playerManagement", PlayerManagement);
-    
+
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function () {
         state.currentView.refresh();
     };

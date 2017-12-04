@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -20,16 +20,16 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
-    
+
     exports.init = function() {
         listen(getEl('masterStoryArea'), "change", updateMasterStory);
         exports.content = getEl('masterStoryDiv2');
     };
-    
+
     exports.refresh = function() {
         var storyArea = getEl("masterStoryArea");
         var storyName = Stories.getCurrentStoryName();
-    
+
         if(storyName){
             DBMS.getMasterStory(storyName, function(err, story){
                 if(err) {Utils.handleError(err); return;}
@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
             storyArea.value = "";
         }
     };
-    
+
     var updateMasterStory = function () {
         var storyArea = getEl("masterStoryArea");
         DBMS.setMasterStory(Stories.getCurrentStoryName(), storyArea.value, Utils.processError());

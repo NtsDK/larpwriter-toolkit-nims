@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, StoryCharacters
@@ -21,27 +21,27 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     var state = {};
-    
+
     exports.init = function () {
         listen(getEl("networkSubsetsSelector"), "change", onNetworkSubsetsChange);
     };
-    
+
     exports.refresh = function (parent) {
         state.parent = parent;
-        
+
         var selector = fillSelector(clearEl(getEl("networkSubsetsSelector")), constArr2Select(Constants.objectSubsets));
         selector.value = Constants.objectSubsets[0];
         onNetworkSubsetsChange({target: selector});
-        
+
         selector = fillSelector(clearEl(getEl("networkCharacterSelector")), state.parent.characterNames.sort(Utils.charOrdAObject).map(remapProps4Select));
         setAttr(selector, 'size', selector.options.length > 15 ? 15 : selector.options.length);
         selector = fillSelector(clearEl(getEl("networkStorySelector")), state.parent.storyNames.sort(Utils.charOrdAObject).map(remapProps4Select));
         setAttr(selector, 'size', selector.options.length > 15 ? 15 : selector.options.length);
     };
-    
+
     exports.getStoryNames = function () {
         var value = getEl("networkSubsetsSelector").value;
-        
+
         if(Constants.objectSubsets[0] === value){ // all objects
             return state.parent.storyNames.map(obj => obj.value);
         } else if (Constants.objectSubsets[1] === value) { // "selected characters"
@@ -54,10 +54,10 @@ See the License for the specific language governing permissions and
             throw new Error('Unexpected subsets selector: ' + value);
         }
     };
-    
+
     exports.getCharacterNames = function () {
         var value = getEl("networkSubsetsSelector").value;
-        
+
         if(Constants.objectSubsets[0] === value){ // all objects
             return state.parent.characterNames.map(obj => obj.value);
         } else if (Constants.objectSubsets[1] === value) { // "selected characters"
@@ -77,7 +77,7 @@ See the License for the specific language governing permissions and
             throw new Error('Unexpected subsets selector: ' + value);
         }
     };
-    
+
     var onNetworkSubsetsChange = function (event) {
         var selectedSubset = event.target.value;
         setClassByCondition(getEl("networkCharacterDiv"), "hidden", selectedSubset !== Constants.objectSubsets[1]);

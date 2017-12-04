@@ -10,21 +10,21 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function accessManagerAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var listeners     = opts.listeners   ;
         var Errors        = opts.Errors      ;
         var Constants     = opts.Constants   ;
-        
+
         LocalDBMS.prototype.getManagementInfo = function(callback){
             var ManagementInfo = this.database.ManagementInfo;
             var usersInfo = CU.clone(R.keys(ManagementInfo.UsersInfo).reduce(function(result, user){
@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
                 adaptationRights : ManagementInfo.adaptationRights
             });
         };
-        
+
         LocalDBMS.prototype.assignAdmin = function(name, callback){
             PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 this.database.ManagementInfo.admin = name;
@@ -66,7 +66,7 @@ See the License for the specific language governing permissions and
                 callback();
             });
         };
-        
+
         LocalDBMS.prototype.removeMaster = function(name, callback){
             PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
                 delete this.database.ManagementInfo.UsersInfo[name];
@@ -74,10 +74,10 @@ See the License for the specific language governing permissions and
                 callback();
             });
         };
-        
+
         LocalDBMS.prototype.removePermission = function(userName, names, callback){
             var ManagementInfo = this.database.ManagementInfo;
-            
+
             for(var entity in names){
                 if(names[entity].length != 0){
                     ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity].filter(function(charName){
@@ -88,7 +88,7 @@ See the License for the specific language governing permissions and
             this.publishPermissionsUpdate();
             callback();
         };
-        
+
         LocalDBMS.prototype.assignPermission = function(userName, names, callback){
             var ManagementInfo = this.database.ManagementInfo;
             for(var entity in names){
@@ -98,12 +98,12 @@ See the License for the specific language governing permissions and
                             ManagementInfo.UsersInfo[userName][entity].push(charName);
                         }
                     });
-                    
+
                     Object.keys(ManagementInfo.UsersInfo).forEach(function(name){
                         if(name === userName){
                             return;
                         }
-                        
+
                         ManagementInfo.UsersInfo[name][entity] = ManagementInfo.UsersInfo[name][entity].filter(function(charName){
                             return names[entity].indexOf(charName) === -1;
                         });
@@ -113,18 +113,18 @@ See the License for the specific language governing permissions and
             this.publishPermissionsUpdate();
             callback();
         };
-        
+
         LocalDBMS.prototype.getPlayerLoginsArray = function(callback) {
             callback(null, R.keys(this.database.ManagementInfo.PlayersInfo));
         };
-        
+
         LocalDBMS.prototype.removePlayerLogin = function(userName, callback) {
             PC.precondition(PC.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), callback, () => {
                 delete this.database.ManagementInfo.PlayersInfo[userName];
                 if(callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.getWelcomeText = function(callback){
             callback(null, this.database.ManagementInfo.WelcomeText);
         };
@@ -135,11 +135,11 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.getPlayersOptions = function(callback){
             callback(null, CU.clone(this.database.ManagementInfo.PlayersOptions));
         };
-        
+
         LocalDBMS.prototype.setPlayerOption = function(name, value, callback){
             var chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes), PC.isBoolean(value)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
@@ -147,52 +147,52 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.createMaster = function(name, password, callback){
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMaster']));
         };
-        
+
         LocalDBMS.prototype.changeMasterPassword = function(userName, newPassword, callback){
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeMasterPassword']));
         };
-        
+
         LocalDBMS.prototype.publishPermissionsUpdate = function(callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['publishPermissionsUpdate']));
         };
-        
+
         LocalDBMS.prototype.createPlayer = function(userName, password, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayer']));
         };
-        
+
         LocalDBMS.prototype.createPlayerLogin = function(userName, password, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayerLogin']));
         };
-        
+
         LocalDBMS.prototype.changePlayerPassword = function(userName, password, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changePlayerPassword']));
         };
-        
+
         LocalDBMS.prototype.getPlayerProfileInfo = function(callback){
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['getPlayerProfileInfo']));
         };
-        
+
         LocalDBMS.prototype.createCharacterByPlayer = function(characterName, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createCharacterByPlayer']));
         };
-        
+
         var _renameProfile = function(type, fromName, toName){
             if(type === 'character') return;
             var playersInfo = this.database.ManagementInfo.PlayersInfo;
             if(playersInfo[fromName] !== undefined){
-                playersInfo[toName] = playersInfo[fromName];  
+                playersInfo[toName] = playersInfo[fromName];
                 playersInfo[toName].name = toName;
                 delete playersInfo[fromName];
             }
         };
-        
+
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameProfile);
-        
+
         var _removeProfile = function(type, characterName){
             if(type === 'character') return;
             var playersInfo = this.database.ManagementInfo.PlayersInfo;
@@ -200,11 +200,11 @@ See the License for the specific language governing permissions and
                 delete playersInfo[characterName];
             }
         };
-        
+
         listeners.removeProfile = listeners.removeProfile || [];
-        listeners.removeProfile.push(_removeProfile);    
+        listeners.removeProfile.push(_removeProfile);
     };
-    
+
     callback(accessManagerAPI);
 
 })(function(api){

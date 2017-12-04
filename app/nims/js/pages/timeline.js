@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -21,16 +21,16 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     var state = {};
-    
+
     exports.init = function () {
         listen(getEl("timelineStorySelector"), "change", onStorySelectorChangeDelegate);
-    
+
         state.TimelineDataset = new vis.DataSet();
         state.TagDataset = new vis.DataSet();
-        
+
         queryEls("#timelineDiv input[name=timelineFilter]").map(listen(R.__, "change", refreshTimeline));
         getEl("timelineFilterByStory").checked = true;
-    
+
         // specify options
         var options = {
             orientation : 'top',
@@ -48,32 +48,32 @@ See the License for the specific language governing permissions and
     //        },
     //        multiselect : true
         };
-    
+
         var timeline = new vis.Timeline(getEl('timelineContainer'), null, options);
         timeline.setGroups(state.TagDataset);
         timeline.setItems(state.TimelineDataset);
         state.timelineComponent = timeline;
-    
+
         exports.content = getEl("timelineDiv");
     };
-    
+
     exports.refresh = function () {
         DBMS.getMetaInfo(function(err, metaInfo){
             if(err) {Utils.handleError(err); return;}
-            
+
             state.postDate = metaInfo.date;
             state.preDate = metaInfo.preGameDate;
-            
+
             var endDate = new Date(state.postDate);
             var startDate = new Date(state.preDate);
             endDate.setFullYear(endDate.getFullYear() + 1);
             startDate.setFullYear(startDate.getFullYear() - 1)
-            
+
             state.timelineComponent.setOptions({
                 end : endDate,
                 start : startDate,
             });
-            
+
             DBMS.getEventsTimeInfo( function(err, eventsTimeInfo){
                 if(err) {Utils.handleError(err); return;}
                 state.eventsTimeInfo = eventsTimeInfo;
@@ -81,7 +81,7 @@ See the License for the specific language governing permissions and
                 state.eventsByCharacters = R.uniq(R.flatten(eventsTimeInfo.map(event => event.characters)));
                 state.eventsByCharacters = R.zipObj(state.eventsByCharacters, R.ap([R.clone], R.repeat([], state.eventsByCharacters.length)));
                 eventsTimeInfo.forEach(event => event.characters.forEach( character => state.eventsByCharacters[character].push(event)));
-                
+
                 PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
                     if(err) {Utils.handleError(err); return;}
                     PermissionInformer.getEntityNamesArray('character', false, function(err, allCharacterNames){
@@ -96,39 +96,39 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     function suffixy(entityNames, data){
         var emptySuffix = constL10n(Constants.emptySuffix);
         entityNames.forEach(nameInfo => {
             if(data[nameInfo.value] === undefined){
                 nameInfo.displayName += emptySuffix;
-            } 
+            }
         });
     }
-    
+
     var refreshTimeline = function(){
         var selectorValues = getEl("timelineFilterByStory").checked ? state.allStoryNames : state.allCharacterNames;
-        
+
         var selector = clearEl(getEl("timelineStorySelector"));
         fillSelector(selector, selectorValues.map(remapProps4Select));
         setAttr(selector, 'size', selectorValues.length > 15 ? 15 : selectorValues.length);
-        
+
         if(selectorValues.length != 0){
             selector.options[0].selected = true;
             onStorySelectorChange([ selectorValues[0].value ]);
         }
     };
-    
+
     var onStorySelectorChangeDelegate =  (event) => onStorySelectorChange(nl2array(event.target.selectedOptions).map(opt => opt.value));
-    
+
     var prepareLabel = label => R.splitEvery(20, label).join('<br>');
-    
+
     var onStorySelectorChange = function (entityNames) {
         state.TagDataset.clear();
         state.TimelineDataset.clear();
-        
+
         state.TagDataset.add(entityNames.map(entityName => R.always({id : entityName, content : entityName})()));
-        
+
         function fillTimelines(entityNames, data){
             entityNames = R.intersection(entityNames, R.keys(data));
             state.TimelineDataset.add(R.flatten(R.toPairs(R.pick(entityNames, data)).map(pair => {
@@ -142,10 +142,10 @@ See the License for the specific language governing permissions and
                 });
             })));
         }
-        
+
         var byStory = getEl("timelineFilterByStory").checked
         fillTimelines(entityNames, byStory ? state.eventsByStories : state.eventsByCharacters);
-        
+
         if(entityNames[0]){
             state.TimelineDataset.add({
                 content : prepareLabel(L10n.getValue("overview-pre-game-end-date")),

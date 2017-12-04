@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, CharacterFilter, DBMS
@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 ((exports) => {
 
     const state = {};
-    
+
     exports.init = function () {
         var root = state;
         root.views = {};
@@ -35,35 +35,35 @@ See the License for the specific language governing permissions and
         Utils.addView(containers, "group-profile", GroupProfile,{mainPage:true});
         Utils.addView(containers, "group-schema", GroupSchema);
         Utils.addView(containers, "investigation-board", InvestigationBoard);
-    
+
         listen(queryEl(".groups-tab .create-entity-button"), "click", exports.createGroup(".groups-tab", exports.refresh));
         listen(queryEl(".groups-tab .rename-entity-button"), "click", exports.renameGroup(".groups-tab", exports.refresh));
         listen(queryEl(".groups-tab .remove-entity-button"), "click", exports.removeGroup(".groups-tab", exports.refresh));
-    
+
         exports.content = queryEl(".groups-tab");
     };
-    
+
     exports.refresh = function () {
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError(function(names){
             rebuildInterface(".groups-tab", names);
             state.currentView.refresh();
         }));
     };
-    
+
     var rebuildInterface = function (selector, names) {
         var data = getSelect2Data(names);
-        
+
         clearEl(queryEl(selector + " .rename-entity-select"));
         $(selector + " .rename-entity-select").select2(data);
-        
+
         clearEl(queryEl(selector + " .remove-entity-select"));
         $(selector + " .remove-entity-select").select2(data);
     };
-    
+
     exports.createGroup = function (selector, refresh) {
         return function(){
             var input = queryEl(selector + " .create-entity-input");
-            
+
             DBMS.createGroup(input.value.trim(), function(err){
                 if(err) {Utils.handleError(err); return;}
                 PermissionInformer.refresh(function(err){
@@ -77,7 +77,7 @@ See the License for the specific language governing permissions and
             });
         }
     };
-    
+
     exports.renameGroup = function (selector, refresh) {
         return function(){
             var toInput = queryEl(selector + " .rename-entity-input");
@@ -95,7 +95,7 @@ See the License for the specific language governing permissions and
             });
         }
     };
-    
+
     exports.removeGroup = function (selector, refresh) {
         return function(){
             var name = queryEl(selector + " .remove-entity-select").value.trim();

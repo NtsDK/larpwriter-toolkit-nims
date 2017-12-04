@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -19,23 +19,23 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports){
-    
+
     var state = {};
     const root = '.profile-filter-tab ';
-    
+
     exports.init = function () {
         listen(queryEl(root + '.profile-item-selector'), "change", UI.showSelectedEls("-dependent"));
-        
+
         listen(queryEl(root + ".create-entity-button"), "click", Groups.createGroup(root, groupAreaRefresh));
         listen(queryEl(root + ".rename-entity-button"), "click", Groups.renameGroup(root, groupAreaRefresh));
         listen(queryEl(root + ".remove-entity-button"), "click", Groups.removeGroup(root, groupAreaRefresh));
         listen(queryEl(root + ".show-entity-button"), "click", loadFilterFromGroup);
         listen(queryEl(root + ".save-entity-button"), "click", saveFilterToGroup);
         listen(queryEl(root + ".download-filter-table"), "click", downloadFilterTable);
-        
+
         exports.content = queryEl(root);
     };
-    
+
     var groupAreaRefresh = function(){
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError(function(userGroupNames){
             PermissionInformer.getEntityNamesArray('group', false, Utils.processError(function(allGroupNames){
@@ -46,38 +46,38 @@ See the License for the specific language governing permissions and
             }));
         }));
     };
-    
+
     exports.refresh = function () {
         state.sortKey = Constants.CHAR_NAME;
         state.sortDir = "asc";
         state.inputItems = {};
         state.checkboxes = {};
-        
+
         var filterSettingsDiv = clearEl(queryEl(root + ".filter-settings-panel"));
         addEl(filterSettingsDiv, addClass(makeEl('div'), 'separator'));
-        
+
         groupAreaRefresh();
-    
+
         FilterConfiguration.makeFilterConfiguration(function(err, filterConfiguration){
             if(err) {Utils.handleError(err); return;}
-                        
+
             state.filterConfiguration = filterConfiguration;
-            
+
             let groupedProfileFilterItems = filterConfiguration.getGroupedProfileFilterItems();
             addEls(filterSettingsDiv, R.flatten(groupedProfileFilterItems.map(item => {
                 return R.concat(item.profileFilterItems.map(makeInput), [addClass(makeEl('div'), 'filterSeparator')]);
             })));
-            
-            UI.fillShowItemSelector2(clearEl(queryEl(root + '.profile-item-selector')), 
+
+            UI.fillShowItemSelector2(clearEl(queryEl(root + '.profile-item-selector')),
                     getShowProfileItemNames(filterConfiguration.getGroupedProfileFilterItems()));
-    
+
             addEl(clearEl(queryEl(root + '.filter-head')), makeContentHeader(
                     getHeaderProfileItemNames(filterConfiguration.getProfileFilterItems())));
-            
+
             rebuildContent();
         });
     };
-    
+
     var getShowProfileItemNames = function(groups){
         return groups.map(function(group){
             let data = group.profileFilterItems.map(function(item){
@@ -92,14 +92,14 @@ See the License for the specific language governing permissions and
             };
         });
     };
-    
+
     var getHeaderProfileItemNames = function(profileSettings){
         return R.map(R.pick(['name', 'displayName']), profileSettings);
     };
-    
+
     var makePrintData = function (){
         var dataArrays = state.filterConfiguration.getDataArrays(makeFilterModel());
-        
+
         var sortFunc = CommonUtils.charOrdAFactoryBase(state.sortDir, function(a){
             var map = CommonUtils.arr2map(a, 'itemName');
             var item = map[state.sortKey];
@@ -122,14 +122,14 @@ See the License for the specific language governing permissions and
         });
         return dataArrays.sort(sortFunc);
     }
-    
+
     var rebuildContent = function () {
         var dataArrays = makePrintData();
         addEl(clearEl(queryEl(root + ".filter-result-size")), makeText(dataArrays.length));
         addEls(clearEl(queryEl(root + ".filter-content")), dataArrays.map(makeDataString));
         UI.showSelectedEls("-dependent")({target:queryEl(root + '.profile-item-selector')});
     };
-    
+
     var saveFilterToGroup = function(){
         var groupName = queryEl(root + ".save-entity-select").value.trim();
         PermissionInformer.isEntityEditable('group', groupName, function(err, isGroupEditable){
@@ -141,7 +141,7 @@ See the License for the specific language governing permissions and
             DBMS.saveFilterToGroup(groupName, makeFilterModel(), Utils.processError());
         });
     };
-    
+
     var loadFilterFromGroup = function(){
         var groupName = queryEl(root + ".save-entity-select").value.trim();
         DBMS.getGroup(groupName,  function(err, group){
@@ -156,35 +156,35 @@ See the License for the specific language governing permissions and
             rebuildContent();
         });
     };
-    
+
     var downloadFilterTable = function(){
         var el = queryEl(root + '.profile-item-selector');
         var selected = [true];
         for (var i = 0; i < el.options.length; i += 1) {
             selected[i+1] = el.options[i].selected;
         }
-        
+
         var dataArrays = makePrintData();
         var cleanArrays = dataArrays.map(function(dataArray){
             return dataArray.filter(function(item, index){
                 return selected[index];
             }).map(R.prop('value'));
         });
-        
+
         FileUtils.arr2d2Csv(cleanArrays, "table.csv");
     };
-    
+
     var applyFilterModel = function(filterModel){
-        var filterModel = CommonUtils.arr2map(filterModel, 'name'); 
-        
+        var filterModel = CommonUtils.arr2map(filterModel, 'name');
+
         Object.keys(state.inputItems).forEach(function(inputItemName){
             if (inputItemName.endsWith(":numberInput") || inputItemName.endsWith(":multiEnumInput")) {
                 return;
             }
-            
+
             var inputItem = state.inputItems[inputItemName];
             var selectedOptions, regex, num, i, counter;
-            
+
             if(state.checkboxes[inputItemName].checked != (filterModel[inputItemName] != null)){
                 state.checkboxes[inputItemName].click();
             };
@@ -246,9 +246,9 @@ See the License for the specific language governing permissions and
                 }
             }
         });
-        
+
     };
-    
+
     var makeFilterModel = function(){
         var model = [];
         Object.keys(state.inputItems).forEach(function(inputItemName){
@@ -261,7 +261,7 @@ See the License for the specific language governing permissions and
             var inputItem = state.inputItems[inputItemName];
             var selectedOptions, regex, num, i, arr;
             var type = inputItem.selfInfo.type;
-    
+
             switch (type) {
             case "enum":
                 arr = nl2array(inputItem.selectedOptions).map(R.prop('value'));
@@ -295,10 +295,10 @@ See the License for the specific language governing permissions and
         });
         return model;
     };
-    
+
     var makeDataString = function (dataArray) {
         var inputItems = state.inputItems;
-    
+
         var td, regex, pos, value, displayValue;
         return addEls(makeEl("tr"), dataArray.map(function (valueInfo, i) {
             value = valueInfo.value;
@@ -319,7 +319,7 @@ See the License for the specific language governing permissions and
             return td;
         }));
     };
-    
+
     var makeContentHeader = function (profileItemNames) {
         return addEls(makeEl("tr"), profileItemNames.map(function (elem, i) {
             var td = addEls(makeEl("th"), [makeText(elem.displayName), makeEl("span")]);
@@ -329,13 +329,13 @@ See the License for the specific language governing permissions and
             return td;
         }));
     };
-    
+
     var onSortChange = function (event) {
         var target = event.target;
         if(target.tagName.toLowerCase() === "span"){
             target = target.parentElement;
         }
-        
+
         if (state.sortKey === target.info) {
             state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
             setClassByCondition(target, 'sortDesc', state.sortDir === 'desc');
@@ -344,14 +344,14 @@ See the License for the specific language governing permissions and
             var filterHead = queryEl(root + ".filter-head");
             nl2array(filterHead.getElementsByClassName("sortAsc")).forEach(removeClass(R.__, "sortAsc"));
             nl2array(filterHead.getElementsByClassName("sortDesc")).forEach(removeClass(R.__, "sortDesc"));
-            
+
             state.sortKey = target.info;
             state.sortDir = "asc";
             addClass(target, "sortAsc");
         }
         rebuildContent();
     };
-    
+
     var makeInput = function (profileItemConfig) {
         var div = makeEl('div');
         var span = makeEl('label');
@@ -367,18 +367,18 @@ See the License for the specific language governing permissions and
                 rebuildContent();
             };
         };
-        
+
         addEl(div, span);
         var inputContainer = makeEl('div');
         addClass(inputContainer, 'hidden');
         addEl(div, inputContainer);
         listen(checkbox, 'click', toggleContent(div, inputContainer));
         state.checkboxes[profileItemConfig.name] = checkbox;
-        
+
         addEl(inputContainer, makeFilter(profileItemConfig));
         return div;
     };
-    
+
     var makeFilter = function(profileItemConfig){
         switch (profileItemConfig.type) {
         case "text":
@@ -396,7 +396,7 @@ See the License for the specific language governing permissions and
             throw new Error('Unexpected type ' + profileItemConfig.type);
         }
     };
-    
+
     var makeTextFilter = function(profileItemConfig){
         var input = makeEl("input");
         input.selfInfo = profileItemConfig;
@@ -405,13 +405,13 @@ See the License for the specific language governing permissions and
         state.inputItems[profileItemConfig.name] = input;
         return input;
     };
-    
+
     var makeCommonEnumFilter = function(profileItemConfig, values){
         var selector = makeEl("select");
         selector.selfInfo = profileItemConfig;
         selector.multiple = "multiple";
         selector.size = values.length;
-    
+
         fillSelector(selector, values.map(function(value){
             value.selected = true;
             return value;
@@ -420,12 +420,12 @@ See the License for the specific language governing permissions and
         state.inputItems[profileItemConfig.name] = selector;
         return selector;
     };
-    
+
     var makeEnumFilter = function(profileItemConfig){
         var values = arr2Select(profileItemConfig.value.split(","));
         return makeCommonEnumFilter(profileItemConfig, values);
     };
-    
+
     var makeCheckboxFilter = function(profileItemConfig){
         var values = [ {
             value : Constants[true],
@@ -436,11 +436,11 @@ See the License for the specific language governing permissions and
         } ];
         return makeCommonEnumFilter(profileItemConfig, values);
     };
-    
+
     var makeMultiEnumFilter = function(profileItemConfig){
         var selector = makeEl("select");
         selector.selfInfo = profileItemConfig;
-    
+
         Constants.multiEnumFilter.forEach(function (value) {
             var option = makeEl("option");
             option.appendChild(makeText(constL10n(value)));
@@ -450,7 +450,7 @@ See the License for the specific language governing permissions and
         selector.selectedIndex = 0;
         state.inputItems[profileItemConfig.name] = selector;
         selector.addEventListener("change", rebuildContent);
-        
+
         var selector2 = makeEl("select");
         var values = arr2Select(profileItemConfig.value.split(","));
         fillSelector(selector2, values.map(function(value){
@@ -459,16 +459,16 @@ See the License for the specific language governing permissions and
         }));
         selector2.multiple = "multiple";
         selector2.size = values.length;
-        
+
         state.inputItems[profileItemConfig.name + ":multiEnumInput"] = selector2;
         selector2.addEventListener("change", rebuildContent);
         return addEls(makeEl('div'), [selector, makeEl('br'), selector2]);
     };
-    
+
     var makeNumberFilter = function(profileItemConfig){
         var selector = makeEl("select");
         selector.selfInfo = profileItemConfig;
-    
+
         Constants.numberFilter.forEach(function (value) {
             var option = makeEl("option");
             option.appendChild(makeText(constL10n(value)));
@@ -478,7 +478,7 @@ See the License for the specific language governing permissions and
         selector.selectedIndex = 0;
         state.inputItems[profileItemConfig.name] = selector;
         selector.addEventListener("change", rebuildContent);
-    
+
         var input = makeEl("input");
         input.value = 0;
         input.type = "number";

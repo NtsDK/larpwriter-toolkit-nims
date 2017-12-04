@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -20,18 +20,18 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports){
-    
+
     var root = ".enter-tab ";
-    
+
     exports.init = function () {
         $(document.forms['login-form']).on('submit', submit);
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function() {
 
     };
-            
+
     var submit = function() {
         var form = $(this);
 
@@ -59,7 +59,7 @@ See the License for the specific language governing permissions and
 //             window.location.href = "/nims.html";
             window.location.href = "/page.html";
         });
-        
+
         request.fail(function(errorInfo, textStatus, errorThrown) {
             var msg;
             try {
@@ -68,12 +68,12 @@ See the License for the specific language governing permissions and
                 msg = Utils.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
             }
 //             var error = JSON.parse(jqXHR.responseText);
-//             $('.error', form).html(error.message); 
-//            $('.error', form).html(textStatus); 
-            $('.error', form).html(msg); 
+//             $('.error', form).html(error.message);
+//            $('.error', form).html(textStatus);
+            $('.error', form).html(msg);
         });
-        
+
         return false;
     };
-    
+
 })(this['Enter']={});

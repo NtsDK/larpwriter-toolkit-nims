@@ -10,31 +10,31 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function storyEventsAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var Errors        = opts.Errors      ;
         var Constants     = opts.Constants   ;
-        
+
         //story events, event presence
         LocalDBMS.prototype.getStoryEvents = function(storyName, callback){
             PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 callback(null,  CU.clone(this.database.Stories[storyName].events));
             });
         };
-        
+
         //story events
         LocalDBMS.prototype.createEvent = function(storyName, eventName, eventText, selectedIndex, callback){
-            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(selectedIndex), 
-                         PC.isString(eventName), PC.isNotEmptyString(eventName), PC.isString(eventText), PC.isNotEmptyString(eventText)];
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(selectedIndex),
+                        PC.isString(eventName), PC.isNotEmptyString(eventName), PC.isString(eventText), PC.isNotEmptyString(eventText)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
                 PC.precondition(PC.isInRange(selectedIndex, 0, story.events.length), callback, () => {
@@ -49,7 +49,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    
+
         //story events
         LocalDBMS.prototype.moveEvent = function(storyName, index, newIndex, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index),PC.isNumber(newIndex)];
@@ -67,7 +67,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    
+
         //story events
         LocalDBMS.prototype.cloneEvent = function(storyName, index, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index)];
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    
+
         //story events
         LocalDBMS.prototype.mergeEvents = function(storyName, index, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index)];
@@ -90,7 +90,7 @@ See the License for the specific language governing permissions and
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     var event1 = events[index];
                     var event2 = events[index + 1];
-                    
+
                     event1.name += '/' + event2.name;
                     event1.text += '\n\n' + event2.text;
                     for ( var characterName in event2.characters) {
@@ -103,12 +103,12 @@ See the License for the specific language governing permissions and
                         }
                     }
                     CU.removeFromArrayByIndex(events, index + 1);
-                    
+
                     callback();
                 });
             });
         };
-    
+
         //story events
         LocalDBMS.prototype.removeEvent = function(storyName, index, callback){
             var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),PC.isNumber(index)];
@@ -121,11 +121,11 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    
+
         // story events, preview, adaptations
         LocalDBMS.prototype.setEventOriginProperty = function(storyName, index, property, value, callback){
-            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index), 
-                         PC.isString(property), PC.elementFromEnum(property, Constants.originProperties), PC.isString(value)];
+            var chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index),
+                        PC.isString(property), PC.elementFromEnum(property, Constants.originProperties), PC.isString(value)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 var story = this.database.Stories[storyName];
                 chain = [PC.isInRange(index, 0, story.events.length-1)];
@@ -141,4 +141,3 @@ See the License for the specific language governing permissions and
 })(function(api){
     typeof exports === 'undefined'? this['storyEventsAPI'] = api: module.exports = api;
 }.bind(this));
-

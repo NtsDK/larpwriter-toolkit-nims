@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS, StoryCharacters
@@ -21,54 +21,54 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     var state = {};
-    
+
     var STORY_PREFIX = 'St:';
     var CHAR_PREFIX = 'Ch:';
     var PROFILE_GROUP = 'prof-';
     var FILTER_GROUP = 'filter-';
-    
+
     exports.init = function () {
         NetworkSubsetsSelector.init();
-        
+
         listen(getEl("networkNodeGroupSelector"), "change", colorNodes);
         listen(getEl('showPlayerNamesCheckbox'), "change", updateNodeLabels);
         listen(getEl("drawNetworkButton"), "click", onDrawNetwork);
         $("#nodeFocusSelector").select2().on("change", onNodeFocus);
         listen(getEl("networkSelector"), "change", onNetworkSelectorChangeDelegate);
-        
+
         state.network;
         state.highlightActive = false;
-        
+
         initWarning();
         L10n.onL10nChange(initWarning);
-        
+
     //    TimelinedNetwork.init();
-    
+
         exports.content = getEl("socialNetworkDiv");
     };
-    
+
     var initWarning = function(){
         var warning = clearEl(getEl("socialNetworkWarning"));
         var button = addEl(makeEl("button"), makeText(getL10n("social-network-remove-resources-warning")));
         addEls(warning, [makeText(getL10n("social-network-require-resources-warning")), button]);
         listen(button, "click", () => addClass(warning,"hidden"));
     };
-    
+
     var nodeSort = CommonUtils.charOrdAFactory((a) => a.label.toLowerCase());
-    
+
     exports.refresh = function () {
-        
+
         fillSelector(clearEl(getEl("activitySelector")), constArr2Select(Constants.characterActivityTypes).map(obj => {
             obj.className = obj.value + 'Option';
             return obj;
         }));
-        
+
         var selector = fillSelector(clearEl(getEl("networkSelector")), constArr2Select(Constants.networks));
         selector.value = Constants.networks[0];
         onNetworkSelectorChangeDelegate({target: selector});
-        
+
         selector = clearEl(getEl("networkNodeGroupSelector"));
-        
+
         PermissionInformer.getEntityNamesArray('character', false, function(err, characterNames){ // subset selector
             if(err) {Utils.handleError(err); return;}
             PermissionInformer.getEntityNamesArray('story', false, function(err, storyNames){ // subset selector
@@ -76,44 +76,44 @@ See the License for the specific language governing permissions and
                 DBMS.getAllProfiles('character', function(err, profiles){ // node coloring
                     if(err) {Utils.handleError(err); return;}
                     state.Characters = profiles;
-                    
+
                     DBMS.getAllStories(function(err, stories){ // contains most part of SN data
                         if(err) {Utils.handleError(err); return;}
                         state.Stories = stories;
-                        
+
                         DBMS.getProfileStructure('character', function(err, profileStructure){ // node coloring
                             if(err) {Utils.handleError(err); return;}
-                            
+
                             DBMS.getProfileBindings(function(err, profileBindings){ // node coloring
                                 if(err) {Utils.handleError(err); return;}
                                 state.profileBindings = profileBindings;
-                            
+
                                 DBMS.getGroupCharacterSets(function(err, groupCharacterSets){ // node coloring
                                     if(err) {Utils.handleError(err); return;}
                                     state.groupCharacterSets = groupCharacterSets;
-                                    
+
                                     DBMS.getMetaInfo(function(err, metaInfo){ // timelined network
                                         if(err) {Utils.handleError(err); return;}
-                                        
+
                                         state.metaInfo = metaInfo;
-                                    
+
                                         var checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
                                         R.values(profiles).forEach(profile => {
                                             checkboxes.map(item => profile[item.name] = constL10n(Constants[profile[item.name]]));
                                         });
-                                        
+
                                         var colorGroups = profileStructure.filter((element) => R.contains(element.type, ['enum', 'checkbox']));
                                         var defaultColorGroup = {value: Constants.noGroup, name: constL10n(Constants.noGroup)};
-                                        
+
                                         var profileLabel = strFormat(getL10n('social-network-profile-group'));
                                         var filterLabel = strFormat(getL10n('social-network-filter-group'));
-                                        
+
                                         var profileGroups = colorGroups.map(group => group.name).map(name => {return {value: PROFILE_GROUP + name, name: profileLabel([name])};});
                                         var filterGroups = R.keys(groupCharacterSets).map(name => {return {value: FILTER_GROUP + name, name: filterLabel([name])};});
                                         fillSelector(selector, [defaultColorGroup].concat(profileGroups).concat(filterGroups));
-                                        
+
                                         initGroupColors(colorGroups);
-                                        
+
                                         NetworkSubsetsSelector.refresh({
                                             characterNames: characterNames,
                                             storyNames: storyNames,
@@ -129,11 +129,11 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var initGroupColors = function(colorGroups){
         state.groupColors = R.clone(Constants.snFixedColors);
         state.groupLists = {};
-        
+
         colorGroups.forEach(function (group) {
             if(group.type === "enum"){
                 state.groupLists[PROFILE_GROUP + group.name] = group.value.split(",").map(function (subGroupName, i){
@@ -151,18 +151,18 @@ See the License for the specific language governing permissions and
             }
         });
     };
-    
+
     var makeLegendItem = function(label, color){
         var colorDiv = addEl(makeEl("div"), makeText(label));
         colorDiv.style.backgroundColor = color.background;
         colorDiv.style.border = "solid 2px " + color.border;
         return colorDiv;
     };
-    
+
     var refreshLegend = function (groupName) {
         var colorLegend = clearEl(getEl("colorLegend"));
         var els = [];
-        
+
         if(groupName === 'noGroup'){
             els.push(makeLegendItem(constL10n('noGroup'), Constants.snFixedColors["noGroup"].color));
         } else if(CommonUtils.startsWith(groupName, PROFILE_GROUP)){
@@ -175,18 +175,18 @@ See the License for the specific language governing permissions and
         } else {
             throw new Error('Unexpected group name/type: ' + groupName);
         }
-        
+
         if(["characterPresenceInStory", "characterActivityInStory"].indexOf(state.selectedNetwork) !== -1){
             els.push(makeLegendItem(getL10n("social-network-story"), Constants.snFixedColors["storyColor"].color));
         }
         addEls(colorLegend, els);
     };
-    
+
     var colorNodes = function (event) {
         var groupName = event.target.value;
         refreshLegend(groupName);
         if(state.nodesDataset == undefined) return;
-        
+
         NetworkSubsetsSelector.getCharacterNames().forEach(function (characterName) {
             state.nodesDataset.update({
                 id : CHAR_PREFIX + characterName,
@@ -194,7 +194,7 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     function getNodeGroup(characterName, groupName){
         if(groupName === "noGroup"){
             return groupName;
@@ -207,14 +207,14 @@ See the License for the specific language governing permissions and
             throw new Error('Unexpected group name: ' + groupName);
         }
     }
-    
+
     var updateNodeLabels = function () {
         if(state.nodesDataset === undefined) return;
         var showPlayer = getEl('showPlayerNamesCheckbox').checked;
         var allNodes = state.nodesDataset.get({
             returnType : "Object"
         });
-        
+
         R.values(allNodes).filter(node => node.type === 'character').forEach(node => {
             var label = makeCharacterNodeLabel(showPlayer, node.originName);
             if(node.label !== undefined){
@@ -225,29 +225,29 @@ See the License for the specific language governing permissions and
                 console.log('Suspicious node: ' + JSON.stringify(node));
             }
         });
-    
+
         state.nodesDataset.update(R.values(allNodes));
     };
-    
+
     var onNetworkSelectorChangeDelegate = function (event) {
         setClassByCondition(getEl("activityBlock"), "hidden", event.target.value !== "characterActivityInStory");
     };
-    
+
     var onNodeFocus = function (event) {
         state.network.focus(event.target.value, Constants.snFocusOptions);
     };
-    
+
     var onDrawNetwork = function () {
         onNetworkSelectorChange(getEl("networkSelector").value);
-    //    TimelinedNetwork.refresh(state.network, state.nodesDataset, 
+    //    TimelinedNetwork.refresh(state.network, state.nodesDataset,
     //            state.edgesDataset, getEventDetails(), state.metaInfo);
     };
-    
+
     var onNetworkSelectorChange = function (selectedNetwork) {
         state.selectedNetwork = selectedNetwork;
         let nodes = [];
         let edges = [];
-        
+
         switch (selectedNetwork) {
         case "socialRelations":
             nodes = getCharacterNodes();
@@ -264,21 +264,21 @@ See the License for the specific language governing permissions and
         default:
             throw new Error('Unexpected network type: ' + selectedNetwork);
         }
-        
+
         refreshLegend(getEl("networkNodeGroupSelector").value);
-        
+
         clearEl(getEl('nodeFocusSelector'));
         nodes.sort(nodeSort);
-        
+
         var data = getSelect2DataCommon(remapProps(['id','text'], ['id', 'originName']), nodes);
         $("#nodeFocusSelector").select2(data);
-    
+
         state.nodesDataset = new vis.DataSet(nodes);
         state.edgesDataset = new vis.DataSet(edges);
-        
+
         redrawAll();
     };
-    
+
     var makeCharacterNodeLabel = function(showPlayer, characterName){
         var label = characterName.split(" ").join("\n");
         if(showPlayer){
@@ -288,7 +288,7 @@ See the License for the specific language governing permissions and
             return label;
         }
     };
-    
+
     var getCharacterNodes = function () {
         var groupName = getEl("networkNodeGroupSelector").value;
         var showPlayer = getEl('showPlayerNamesCheckbox').checked;
@@ -303,7 +303,7 @@ See the License for the specific language governing permissions and
             };
         });
     };
-    
+
     var getStoryNodes = function () {
         var nodes = NetworkSubsetsSelector.getStoryNames().map(function (name) {
             return {
@@ -318,10 +318,10 @@ See the License for the specific language governing permissions and
         });
         return nodes;
     };
-    
+
     var getActivityEdges = function () {
         var selectedActivities = nl2array(getEl("activitySelector").selectedOptions).map(opt => opt.value);
-        
+
         var edges = [];
         var edgesCheck = {};
         for ( var name in state.Stories) {
@@ -342,7 +342,7 @@ See the License for the specific language governing permissions and
         }
         return edges;
     };
-    
+
     var getStoryEdges = function () {
         var edges = [];
         var edgesCheck = {};
@@ -358,7 +358,7 @@ See the License for the specific language governing permissions and
         }
         return edges;
     };
-    
+
     var getEventDetails = function () {
         return R.flatten(R.values(state.Stories).map(function(story){
             return story.events.map(function(event){
@@ -371,7 +371,7 @@ See the License for the specific language governing permissions and
             });
         }));
     };
-    
+
     var getDetailedEdges = function () {
         var edgesCheck = {};
         R.values(state.Stories).forEach(function(story){
@@ -395,7 +395,7 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-    
+
         return R.values(edgesCheck).map(function (edgeInfo) {
             var title = R.keys(edgeInfo.title).sort().join(", ");
             var value = R.keys(edgeInfo.title).length;
@@ -408,27 +408,27 @@ See the License for the specific language governing permissions and
             };
         });
     };
-    
+
     var redrawAll = function () {
         var container = getEl('socialNetworkContainer');
-    
+
         var data = {
             nodes : state.nodesDataset,
             edges : state.edgesDataset
         } // Note: data is coming from ./datasources/WorldCup2014.js
-    
+
         if(state.network){
             state.network.destroy();
         }
-        
+
         var opts = CommonUtils.clone(Constants.socialNetworkOpts);
         opts.groups = state.groupColors;
-        
+
         state.network = new vis.Network(container, data, opts);
-        
+
         state.network.on("click", neighbourhoodHighlight);
     };
-    
+
     var hideLabel = function(node){
         if (node.hiddenLabel === undefined) {
             node.hiddenLabel = node.label;
@@ -441,7 +441,7 @@ See the License for the specific language governing permissions and
             node.hiddenLabel = undefined;
         }
     };
-    
+
     var highlightNodes = function(network, allNodes, zeroDegreeNodes, firstDegreeNodes){
         // get the second degree nodes
         var secondDegreeNodes = R.uniq(R.flatten(firstDegreeNodes.map(id => network.getConnectedNodes(id))));
@@ -466,13 +466,13 @@ See the License for the specific language governing permissions and
             showLabel(node);
         });
     };
-    
+
     var neighbourhoodHighlight = function (params) {
         // get a JSON object
         var allNodes = state.nodesDataset.get({
             returnType : "Object"
         });
-    
+
         var network = state.network;
         if (params.nodes.length > 0) {
             state.highlightActive = true;
@@ -493,7 +493,7 @@ See the License for the specific language governing permissions and
             });
             state.highlightActive = false;
         }
-    
+
         // transform the object into an array
         state.nodesDataset.update(R.values(allNodes));
     };

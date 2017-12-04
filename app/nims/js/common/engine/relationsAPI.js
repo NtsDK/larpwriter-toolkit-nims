@@ -10,14 +10,14 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function relationsAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
@@ -25,9 +25,9 @@ See the License for the specific language governing permissions and
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
         var dbmsUtils     = opts.dbmsUtils   ;
-        
+
         var relationsPath = ['Relations'];
-        
+
         dbmsUtils._getKnownCharacters = function(database, characterName){
             var stories = database.Stories;
             var knownCharacters = {};
@@ -43,11 +43,11 @@ See the License for the specific language governing permissions and
             delete knownCharacters[characterName];
             return knownCharacters;
         };
-        
+
         var characterCheck = function(characterName, database){
             return PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
         };
-        
+
         LocalDBMS.prototype.getRelationsSummary = function(characterName, callback){
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var relData = R.path(relationsPath, this.database);
@@ -58,7 +58,7 @@ See the License for the specific language governing permissions and
                         reverseRelations[revCharName] = rels[characterName];
                     }
                 });
-                
+
                 callback(null, {
                     directRelations: relData[characterName] || {},
                     reverseRelations: reverseRelations,
@@ -66,7 +66,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         LocalDBMS.prototype.setCharacterRelation = function(fromCharacter, toCharacter, text, callback){
             var chain = PC.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), PC.isString(text)]);
             PC.precondition(chain, callback, () => {
@@ -83,7 +83,7 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         var _renameCharacter = function(type, fromName, toName){
             if(type === 'player') return;
             var relData = R.path(relationsPath, this.database);
@@ -98,10 +98,10 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        
+
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameCharacter);
-        
+
         var _removeCharacter = function(type, characterName){
             if(type === 'player') return;
             var relData = R.path(relationsPath, this.database);
@@ -114,12 +114,12 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        
+
         listeners.removeProfile = listeners.removeProfile || [];
         listeners.removeProfile.push(_removeCharacter);
-        
+
     };
-    
+
     callback(relationsAPI);
 
 })(function(api){

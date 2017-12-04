@@ -10,14 +10,14 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function groupsAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PU            = opts.ProjectUtils;
@@ -25,21 +25,21 @@ See the License for the specific language governing permissions and
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
-        
+
         LocalDBMS.prototype.getGroupNamesArray = function(callback) {
             callback(null, Object.keys(this.database.Groups).sort(CU.charOrdA));
         };
-        
+
         var groupCheck = function(groupName, database){
             return PC.chainCheck([PC.isString(groupName), PC.entityExists(groupName, R.keys(database.Groups))]);
         };
-        
+
         LocalDBMS.prototype.getGroup = function(groupName, callback) {
             PC.precondition(groupCheck(groupName, this.database), callback, () => {
                 callback(null, CU.clone(this.database.Groups[groupName]));
             });
         };
-        
+
         var _getCharacterGroupTexts = function(groups, info, profileId){
             var dataArray = PU.getDataArray(info, profileId);
             var array = R.values(groups).filter(function(group){
@@ -53,7 +53,7 @@ See the License for the specific language governing permissions and
             array.sort(CU.charOrdAFactory(R.prop('groupName')));
             return array;
         }
-        
+
         // preview
         LocalDBMS.prototype.getCharacterGroupTexts = function(characterName, callback) {
             var that = this;
@@ -65,7 +65,7 @@ See the License for the specific language governing permissions and
                 });
             })
         };
-        
+
         // export
         LocalDBMS.prototype.getAllCharacterGroupTexts = function(callback) {
             var that = this;
@@ -82,7 +82,7 @@ See the License for the specific language governing permissions and
                 })
             });
         };
-        
+
         LocalDBMS.prototype.createGroup = function(groupName, callback) {
             PC.precondition(PC.createEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
                 var newGroup = {
@@ -92,7 +92,7 @@ See the License for the specific language governing permissions and
                     filterModel: [],
                     doExport: true
                 };
-        
+
                 this.database.Groups[groupName] = newGroup;
                 this.ee.trigger("createGroup", arguments);
                 if(callback) callback();
@@ -105,13 +105,13 @@ See the License for the specific language governing permissions and
                 data.name = toName;
                 this.database.Groups[toName] = data;
                 delete this.database.Groups[fromName];
-                
+
                 this.ee.trigger("renameGroup", arguments);
-        
+
                 if(callback) callback();
             });
         };
-    
+
         LocalDBMS.prototype.removeGroup = function(groupName, callback) {
             PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
                 delete this.database.Groups[groupName];
@@ -119,7 +119,7 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.saveFilterToGroup = function(groupName, filterModel, callback) {
             PC.precondition(groupCheck(groupName, this.database), callback, () => {
                 var conflictTypes = PU.isFilterModelCompatibleWithProfiles({
@@ -134,18 +134,18 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         };
-    
+
         LocalDBMS.prototype.updateGroupField = function(groupName, fieldName, value, callback) {
-            var chain = PC.chainCheck([groupCheck(groupName, this.database), 
-                                       PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
-                                       fieldName === 'doExport' ? PC.isBoolean(value) : PC.isString(value)]);
+            var chain = PC.chainCheck([groupCheck(groupName, this.database),
+                                        PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
+                                        fieldName === 'doExport' ? PC.isBoolean(value) : PC.isString(value)]);
             PC.precondition(chain, callback, () => {
                 var profileInfo = this.database.Groups[groupName];
                 profileInfo[fieldName] = value;
                 if(callback) callback();
             });
         };
-        
+
         var initProfileInfo = function(that, type, ownerMapType, callback){
             that.getAllProfiles(type, function(err, profiles){
                 if(err) {callback(err); return;}
@@ -165,7 +165,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         LocalDBMS.prototype.getProfileFilterInfo = function(callback) {
             var that = this;
             initProfileInfo(that, 'character', 'Characters', function(err, charactersInfo){
@@ -188,7 +188,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         var _getGroupCharacterSets = function(groups, characterNames, bindings, info){
             var groupNames = R.keys(groups);
             var groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
@@ -203,10 +203,10 @@ See the License for the specific language governing permissions and
             });
             return groupCharacterSets;
         };
-        
+
         LocalDBMS.prototype.getGroupCharacterSets = function(callback) {
             var that = this;
-            
+
             this.getProfileFilterInfo(function(err, info){
                 if(err) {callback(err); return;}
                 callback(null, _getGroupCharacterSets(that.database.Groups, R.keys(that.database.Characters), R.clone(that.database.ProfileBindings), info));
@@ -224,14 +224,14 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         listeners.removeProfileItem = listeners.removeProfileItem || [];
         listeners.removeProfileItem.push(_removeProfileItem);
 
         function _changeProfileItemType(type, profileItemName, newType){
             _removeProfileItem.apply(this, [type, -1, profileItemName]);
         };
-        
+
         listeners.changeProfileItemType = listeners.changeProfileItemType || [];
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
@@ -249,10 +249,10 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         listeners.renameProfileItem = listeners.renameProfileItem || [];
         listeners.renameProfileItem.push(_renameProfileItem);
-        
+
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
             var subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) + profileItemName;
             var that = this;
@@ -278,14 +278,14 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];
         listeners.replaceEnumValue.push(_replaceEnumValue);
-        
+
         listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
         listeners.replaceMultiEnumValue.push(_replaceEnumValue);
     };
-    
+
     callback(groupsAPI);
 
 })(function(api){

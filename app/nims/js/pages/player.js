@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -25,14 +25,14 @@ See the License for the specific language governing permissions and
     var playerProfileDiv = root + ".player-profile-div";
     var playerHeader = root + '.player-profile-header';
     var characterHeader = root + '.character-profile-header';
-    
+
     var profileEditorCore;
-    
+
     exports.init = function() {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function() {
         DBMS.getWelcomeText(function(err, text){
             if(err) {Utils.handleError(err); return;}
@@ -45,16 +45,16 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var isEditable = function(profileName, profileStructure){
         return R.find(R.propEq('name', profileName), profileStructure).playerAccess === 'write';
     };
-    
+
     var buildInterface = function(text, profileInfo, playersOptions){
         profileEditorCore.initProfileStructure(playerProfileDiv, 'player', profileInfo.player.profileStructure);
         profileEditorCore.fillProfileInformation(playerProfileDiv, 'player', profileInfo.player.profile, isEditable);
         addEl(clearEl(queryEl(playerHeader)), makeText(strFormat(getL10n('briefings-player-profile'), [profileInfo.player.profile.name])));
-        
+
         if(profileInfo.character === undefined){
             addEl(clearEl(queryEl(characterHeader)), makeText(strFormat(getL10n('briefings-character-profile'), [''])));
             var el = clearEl(queryEl(characterProfileDiv));
@@ -74,8 +74,8 @@ See the License for the specific language governing permissions and
             profileEditorCore.fillProfileInformation(characterProfileDiv, 'character', profileInfo.character.profile, isEditable);
             addEl(clearEl(queryEl(characterHeader)), makeText(strFormat(getL10n('briefings-character-profile'), [profileInfo.character.profile.name])));
         }
-        
+
         queryEl(root + '.welcome-text-area'     ).value = text;
     };
-    
+
 })(this['Player']={});

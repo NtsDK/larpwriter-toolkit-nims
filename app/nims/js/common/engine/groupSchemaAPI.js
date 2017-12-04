@@ -10,20 +10,20 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function groupSchemaAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CommonUtils   = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
-        
+
         var _isGroupsEqualByFilterModel = function(fm1, fm2){
             var fmMap1 = R.indexBy(R.prop('name'), fm1);
             var fmMap2 = R.indexBy(R.prop('name'), fm2);
@@ -46,7 +46,7 @@ See the License for the specific language governing permissions and
             if(R.difference(superKeys, subKeys).length != 0){
                 return false;
             }
-            
+
             return superKeys.every(function(superKey){
                 var superItem = superMap[superKey];
                 var subItem = subMap[superKey];
@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
                 }
             });
         }
-        
+
         var _removeSuperSuperGroups = function(superGroups){
             R.values(superGroups).forEach(function(superGroupSet){
                 var superGroupKeys = R.keys(superGroupSet);
@@ -118,7 +118,7 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        
+
         var _makeGraph = function(equalGroups, superGroups, groupCharacterSets){
             var levels = {};
             function getLevel(groupName){
@@ -133,18 +133,18 @@ See the License for the specific language governing permissions and
                     return cur > max ? cur : max;
                 }, -1) + 1;
             }
-            
+
             R.keys(superGroups).forEach(function(subGroup){
                 if(!levels[subGroup]){
                     levels[subGroup] = getLevel(subGroup);
                 }
             });
-            
-            
+
+
             var nodes = R.keys(superGroups).map(function(subGroup){
                 return {
                     id: subGroup,
-                    label: [subGroup].concat(equalGroups[subGroup] || []).join(", "), 
+                    label: [subGroup].concat(equalGroups[subGroup] || []).join(", "),
                     level: levels[subGroup],
                     title: R.keys(groupCharacterSets[subGroup]).join(", ")
                 };
@@ -163,12 +163,12 @@ See the License for the specific language governing permissions and
                 edges: edges
             };
         };
-        
+
         var _makeGroupSchema = function(groups, _isGroupsEqual, _isSuperGroup, _extractKeyInfo, groupCharacterSets){
             var groupNames = R.keys(groups);
             var groupNamesSet = R.zipObj(groupNames, R.repeat(true, groupNames.length));
             var equalGroups = {};
-            
+
             for(var i=0; i < groupNames.length; ++i){
                 var groupName1 = groupNames[i];
                 if(groupNamesSet[groupName1]){
@@ -203,31 +203,31 @@ See the License for the specific language governing permissions and
 //            console.log(superGroups);
             _removeSuperSuperGroups(superGroups);
 //            console.log(superGroups);
-            
+
             return _makeGraph(equalGroups, superGroups, groupCharacterSets);
         };
-        
+
         LocalDBMS.prototype.getGroupSchemas = function(callback) {
             var that = this;
-            
+
             this.getGroupCharacterSets(function(err, groupCharacterSets){
                 if(err) {callback(err); return;}
                 var schemas = {};
                 var groups = that.database.Groups;
-                
+
                 schemas.theory = _makeGroupSchema(groups, _isGroupsEqualByFilterModel, _isSuperGroupByFilterModel, function(groupName){
                     return groups[groupName].filterModel;
                 }, groupCharacterSets);
-                
+
                 schemas.practice = _makeGroupSchema(groups, _isGroupsEqualByElements, _isSuperGroupByElements, function(groupName){
                     return groupCharacterSets[groupName];
                 }, groupCharacterSets);
-                
+
                 callback(null, schemas);
             });
         };
     };
-    
+
     callback(groupSchemaAPI);
 
 })(function(api){

@@ -10,18 +10,18 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
-    
+
     function logAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
-        
+
         LocalDBMS.prototype.log = function(userName, funcName, rewrite, params, callback) {
             var chain = PC.chainCheck([PC.isString(userName), PC.isString(funcName), PC.isBoolean(rewrite), PC.isArray(params)]);
             PC.precondition(chain, (err) => console.error(err), () => {
@@ -43,7 +43,7 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.getLog = function(pageNumber, callback) {
             PC.precondition(PC.isNumber(pageNumber), callback, () => {
                 var requestedLog = [];
@@ -52,7 +52,7 @@ See the License for the specific language governing permissions and
                         requestedLog.push([i+1].concat(this.database.Log[i]));
                     }
                 }
-                
+
                 callback(null, {
                     requestedLog: requestedLog,
                     logSize: Math.ceil(this.database.Log.length/100)
@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
             });
         };
     };
-    
+
     callback(logAPI);
 
 })(function(api){

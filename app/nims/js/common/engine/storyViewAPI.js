@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 (function(callback){
 
@@ -20,11 +20,11 @@ See the License for the specific language governing permissions and
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var dateFormat    = opts.dateFormat  ;
-        
+
         var characterCheck = function(characterName, database){
             return PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
-        } 
-        
+        }
+
         // preview
         LocalDBMS.prototype.getAllInventoryLists = function(characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
@@ -39,25 +39,25 @@ See the License for the specific language governing permissions and
                 callback(null, array);
             });
         };
-    
+
         // preview
         LocalDBMS.prototype.getCharacterEventGroupsByStory = function(characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var eventGroups = [];
-        
+
                 var events;
-        
+
                 var that = this;
                 Object.keys(this.database.Stories).filter(function(storyName) {
                     return that.database.Stories[storyName].characters[characterName];
                 }).forEach(function(storyName) {
                     events = [];
-        
+
                     var tmpEvents = CU.clone(that.database.Stories[storyName].events);
                     tmpEvents.map(function(elem, i) {
                         elem.index = i;
                         elem.storyName = storyName;
-                        elem.isTimeEmpty = elem.time === ''; 
+                        elem.isTimeEmpty = elem.time === '';
                         elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
                         return elem;
                     }).filter(function(event) {
@@ -65,7 +65,7 @@ See the License for the specific language governing permissions and
                     }).forEach(function(event) {
                         events.push(event);
                     });
-        
+
                     eventGroups.push({
                         storyName : storyName,
                         events : events
@@ -75,12 +75,12 @@ See the License for the specific language governing permissions and
                 callback(null, eventGroups);
             });
         };
-    
+
         // preview
         LocalDBMS.prototype.getCharacterEventsByTime = function(characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 var allEvents = [];
-        
+
                 var that = this;
                 Object.keys(this.database.Stories).filter(function(storyName) {
                     return that.database.Stories[storyName].characters[characterName];
@@ -89,19 +89,19 @@ See the License for the specific language governing permissions and
                     allEvents = allEvents.concat(events.map(function(elem, i) {
                         elem.index = i;
                         elem.storyName = storyName;
-                        elem.isTimeEmpty = elem.time === ''; 
+                        elem.isTimeEmpty = elem.time === '';
                         elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
                         return elem;
                     }).filter(function(event) {
                         return event.characters[characterName];
                     }));
                 });
-        
+
                 allEvents.sort(CU.eventsByTime);
                 callback(null, allEvents);
             });
         };
-    
+
         // timeline
         LocalDBMS.prototype.getEventsTimeInfo = function(callback) {
             var result = R.flatten(R.values(CU.clone(this.database.Stories)).map(story => {
@@ -113,13 +113,13 @@ See the License for the specific language governing permissions and
                     });
                 });
             }));
-            
+
             callback(null, result);
         };
-        
+
         // character filter
         LocalDBMS.prototype.getCharactersSummary = function(callback){
-            
+
             var characters = R.keys(this.database.Characters);
             var charactersInfo = {};
             characters.forEach(function(character){
@@ -133,7 +133,7 @@ See the License for the specific language governing permissions and
                     'totalStories':0
                 }
             });
-            
+
             R.values(this.database.Stories).forEach(function(story){
                 R.values(story.characters).forEach(function(storyCharacter){
                     var characterInfo = charactersInfo[storyCharacter.name];
@@ -155,12 +155,12 @@ See the License for the specific language governing permissions and
                 });
             });
             R.values(charactersInfo).forEach(function(characterInfo){
-                characterInfo.completeness = Math.round(characterInfo.finishedAdaptations * 100 / 
+                characterInfo.completeness = Math.round(characterInfo.finishedAdaptations * 100 /
                     (characterInfo.totalAdaptations != 0 ? characterInfo.totalAdaptations : 1));
             });
             callback(null, charactersInfo);
         };
-        
+
         // character profile
         LocalDBMS.prototype.getCharacterReport = function(characterName, callback){
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
@@ -170,36 +170,36 @@ See the License for the specific language governing permissions and
                     var charEvents = story.events.filter(function(event){
                         return event.characters[characterName] !== undefined;
                     });
-                    
+
                     var finishedAdaptations = charEvents.filter(function(event){
                         return event.characters[characterName].ready === true;
                     }).length;
-                    
+
                     var meets = {};
                     charEvents.forEach(function(event){
                         var chars = R.keys(event.characters);
                         meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
                     });
-                    
+
                     delete meets[characterName];
                     meets = R.keys(meets).sort();
-                    
-                    
+
+
                     return {
                         storyName: story.name,
-                        inventory: story.characters[characterName].inventory, 
-                        activity: story.characters[characterName].activity, 
+                        inventory: story.characters[characterName].inventory,
+                        activity: story.characters[characterName].activity,
                         meets: meets,
                         totalAdaptations: charEvents.length,
                         finishedAdaptations: finishedAdaptations
                     }
                 });
                 characterReport.sort(CU.charOrdAFactory(R.prop('storyName')));
-                
+
                 callback(null, characterReport);
             });
         };
-    
+
     };
     callback(storyViewAPI);
 

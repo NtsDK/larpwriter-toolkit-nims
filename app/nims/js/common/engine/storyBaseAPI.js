@@ -10,19 +10,19 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function storyBaseAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var Errors        = opts.Errors      ;
-        
+
         // stories, timeline
         LocalDBMS.prototype.getStoryNamesArray = function (callback) {
             callback(null, Object.keys(this.database.Stories).sort(CU.charOrdA));
@@ -31,7 +31,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getAllStories = function(callback) {
             callback(null, CU.clone(this.database.Stories));
         };
-        
+
         //stories
         LocalDBMS.prototype.getMasterStory = function(storyName, callback){
             PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
@@ -46,7 +46,7 @@ See the License for the specific language governing permissions and
                 callback();
             });
         };
-    
+
         // stories
         LocalDBMS.prototype.createStory = function(storyName, callback){
             PC.precondition(PC.createEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
@@ -71,7 +71,7 @@ See the License for the specific language governing permissions and
                 callback();
             });
         };
-    
+
         // stories
         LocalDBMS.prototype.removeStory = function(storyName, callback){
             PC.precondition(PC.removeEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
@@ -80,11 +80,10 @@ See the License for the specific language governing permissions and
                 callback();
             });
         };
-    
+
     };
     callback(storyBaseAPI);
 
 })(function(api){
     typeof exports === 'undefined'? this['storyBaseAPI'] = api: module.exports = api;
 }.bind(this));
-

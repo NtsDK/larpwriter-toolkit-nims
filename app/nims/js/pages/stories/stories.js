@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS, StoryEvents, StoryCharacters, EventPresence
@@ -20,7 +20,7 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
-    
+
     exports.init = function () {
         state.left = {views:{}};
         state.right = {views:{}};
@@ -42,29 +42,29 @@ See the License for the specific language governing permissions and
         Utils.addView(containers, "story-events", StoryEvents, {mainPage:true, toggle:true});
         Utils.addView(containers, "story-characters", StoryCharacters, {toggle:true});
         Utils.addView(containers, "event-presence", EventPresence, {toggle:true});
-    
+
         listen(queryEl('#storiesDiv .create-entity-button'), "click", createStory);
         listen(queryEl('#storiesDiv .rename-entity-button'), "click", renameStory);
         listen(queryEl('#storiesDiv .remove-entity-button'), "click", removeStory);
-        
+
         $("#storySelector").select2().on("change", onStorySelectorChangeDelegate);
-    
+
         exports.content = getEl("storiesDiv");
     };
-    
+
     exports.chainRefresh = function(){
-        if((state.left.currentView && state.left.currentView.name === "EventPresence") || 
-           (state.right.currentView && state.right.currentView.name === "EventPresence")){
+        if((state.left.currentView && state.left.currentView.name === "EventPresence") ||
+            (state.right.currentView && state.right.currentView.name === "EventPresence")){
             EventPresence.refresh();
         }
     };
-    
+
     exports.refresh = function () {
         var selectors = ["#storiesDiv .rename-entity-select", "#storiesDiv .remove-entity-select"];
-        
+
         var storySelector = clearEl(getEl("storySelector"));
         selectors.forEach(R.compose(clearEl, queryEl));
-        
+
         PermissionInformer.getEntityNamesArray('story', false, function(err, allStoryNames){
             if(err) {Utils.handleError(err); return;}
             PermissionInformer.getEntityNamesArray('story', true, function(err, userStoryNames){
@@ -75,25 +75,25 @@ See the License for the specific language governing permissions and
                         $(selector).select2(data);
                     });
                 }
-                
+
                 if (allStoryNames.length > 0) {
                     var storyName = getSelectedStoryName(allStoryNames);
-                    
+
                     var data = getSelect2Data(allStoryNames);
                     $("#storySelector").select2(data).val(storyName).trigger('change');
-                    
+
                     onStorySelectorChange(storyName);
                 } else {
                     onStorySelectorChange();
                 }
-                
+
                 if(state.left.currentView)state.left.currentView.refresh();
                 if(state.right.currentView)state.right.currentView.refresh();
             });
         });
-        
+
     };
-    
+
     var getSelectedStoryName = function(storyNames){
         var settings = DBMS.getSettings();
         if(!settings["Stories"]){
@@ -108,11 +108,11 @@ See the License for the specific language governing permissions and
         }
         return storyName;
     };
-    
+
     var createStory = function () {
         var input = queryEl("#storiesDiv .create-entity-input");
         var storyName = input.value.trim();
-        
+
         DBMS.createStory(storyName, function(err){
             if(err) {Utils.handleError(err); return;}
             updateSettings(storyName);
@@ -123,12 +123,12 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var renameStory = function () {
         var toInput = queryEl("#storiesDiv .rename-entity-input");
         var fromName = queryEl("#storiesDiv .rename-entity-select").value.trim();
         var toName = toInput.value.trim();
-    
+
         DBMS.renameStory(fromName, toName, function(err){
             if(err) {Utils.handleError(err); return;}
             updateSettings(toName);
@@ -139,10 +139,10 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var removeStory = function () {
         var name = queryEl("#storiesDiv .remove-entity-select").value.trim();
-    
+
         Utils.confirm(strFormat(getL10n("stories-are-you-sure-about-story-removing"), [name]), () => {
             DBMS.removeStory(name, function(err){
                 if(err) {Utils.handleError(err); return;}
@@ -153,15 +153,15 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var onStorySelectorChangeDelegate = function (event) {
         var storyName = event.target.value;
         onStorySelectorChange(storyName);
     };
-    
+
     var onStorySelectorChange = function (storyName) {
         state.CurrentStoryName = storyName;
-        
+
         if(storyName){
             updateSettings(storyName);
             PermissionInformer.isEntityEditable('story', storyName, function(err, isStoryEditable){
@@ -176,9 +176,9 @@ See the License for the specific language governing permissions and
             if(state.right.currentView)state.right.currentView.refresh();
         }
     };
-    
+
     exports.getCurrentStoryName = () => state.CurrentStoryName;
-    
+
     var updateSettings = function (storyName) {
         var settings = DBMS.getSettings();
         settings["Stories"].storyName = storyName;

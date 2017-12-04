@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -20,20 +20,20 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
-    
+
     exports.init = function () {
         exports.content = queryEl(".group-schema-tab");
     };
-    
+
     exports.refresh = function () {
         DBMS.getGroupSchemas(function(err, schemas){
             redrawSchema(schemas.theory);
         });
     };
-    
+
     var redrawSchema = function (graph) {
         var container = queryEl('.group-schema-tab .schema-container');
-        
+
         if(state.network){
             state.network.destroy();
         }
@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
                 'physics' : false,
             });
         });
-        
+
         state.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
     };
 })(this.GroupSchema = {});

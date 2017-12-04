@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -21,29 +21,29 @@ See the License for the specific language governing permissions and
 (function(exports){
 
     var root = '.text-search-tab ';
-    
+
     exports.init = function() {
         listen(queryEl(root + '.text-search-button'), 'click', findTexts);
         listenOnEnter(queryEl(root + '.text-search-input'), findTexts);
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function() {
     };
-    
+
     var findTexts = function(){
         var selectedTextTypes = queryElEls(queryEl(root), root + '.textSearchTypeRadio').filter(el => el.checked).map(el => el.value);
         var searchStr = queryEl(root + '.text-search-input').value;
         var caseSensitive = getEl('caseSensitiveTextSearch').checked;
         DBMS.getTexts(searchStr, selectedTextTypes, caseSensitive, function(err, texts){
             if(err) {Utils.handleError(err); return;}
-            
+
             addEls(clearEl(queryEl(root + '.result-panel')), texts.map(text => {
                 return makePanel(makeText(getL10n('text-search-' + text.textType) + ' (' + text.result.length + ')'), makePanelContent(text, searchStr, caseSensitive));
             }));
         });
     };
-    
+
     var makePanelContent = function(textsInfo, searchStr, caseSensitive){
         textsInfo.result.sort(CommonUtils.charOrdAFactory(R.prop('name')));
         return addEls(makeEl('div'), textsInfo.result.map(textInfo => {

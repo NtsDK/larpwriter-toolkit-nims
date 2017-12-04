@@ -10,24 +10,24 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
-    
+
     function consistencyCheckAPI(LocalDBMS, opts) {
         var R             = opts.R           ;
         var CommonUtils   = opts.CommonUtils ;
         var validatorLib  = opts.Ajv         ;
         var schemaBuilder = opts.Schema      ;
-        
+
         LocalDBMS.prototype.getConsistencyCheckResult = function(callback) {
             var errors = [];
             var pushError = function(str){
                 errors.push(str);
             }
-            
+
             checkProfileStructureConsistency(this.database, 'character', 'CharacterProfileStructure', pushError);
             checkProfileStructureConsistency(this.database, 'player', 'PlayerProfileStructure', pushError);
             checkProfileConsistency(this.database, 'Characters', 'CharacterProfileStructure', pushError);
@@ -41,7 +41,7 @@ See the License for the specific language governing permissions and
                 checkObjectRightsConsistency(this.database, pushError);
                 checkPlayerLoginConsistency(this.database, pushError);
             }
-            
+
             var schema = schemaBuilder.getSchema(this.database);
             var validator = validatorLib({allErrors: true}); // options can be passed, e.g. {allErrors: true}
             var validate = validator.compile(schema);
@@ -49,14 +49,14 @@ See the License for the specific language governing permissions and
             if (!valid) {
                 errors = errors.concat(validate.errors);
             }
-            
+
             callback(null, errors);
         };
-        
+
         var getErrorProcessor = function(callback){
             return R.curry(R.compose(callback, CommonUtils.strFormat));
         }
-        
+
         var checkObjectRightsConsistency = function(data, callback){
             var entities = {
                 characters : R.keys(data.Characters),
@@ -66,7 +66,7 @@ See the License for the specific language governing permissions and
             };
             var types = R.keys(entities);
             var processError = getErrorProcessor(callback);
-            
+
             R.values(data.ManagementInfo.UsersInfo).forEach(function(user){
                 types.forEach(type => {
                     var difference = R.difference(user[type], entities[type]);
@@ -76,18 +76,18 @@ See the License for the specific language governing permissions and
                 })
             })
         };
-        
+
         var checkPlayerLoginConsistency = function(data, callback){
             var playerNames = R.values(data.Players).map(R.prop('name'));
             var loginNames = R.keys(data.ManagementInfo.PlayersInfo);
             var processError = getErrorProcessor(callback);
-            
+
             var difference = R.difference(loginNames, playerNames);
             if(difference.length != 0){
                 processError("Player logins inconsistent, logins which have no player: logins {0}", [difference]);
             }
         };
-        
+
         var checkEventsCharactersConsistency = function(data, callback){
             var processError = getErrorProcessor(callback);
             R.values(data.Stories).forEach(function(story){
@@ -101,7 +101,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         var checkBindingsConsistency = function(data, callback){
             var processError = getErrorProcessor(callback);
             R.toPairs(R.invert(data.ProfileBindings)).filter(function(pair){
@@ -110,25 +110,25 @@ See the License for the specific language governing permissions and
                 processError("Profile bindings inconsistent, player has multiple characters: player {0}, characters {1}", [pair[0], JSON.stringify(pair[1])]);
             });
         };
-            
+
         var checkStoryCharactersConsistency = function(data, callback){
             var charNames = R.values(data.Characters).map(R.prop('name'));
             var processError = getErrorProcessor(callback);
-            
+
             R.values(data.Stories).forEach(function(story){
-               var storyCharactersInner = R.values(story.characters).map(R.prop('name'));
-               var differenceInner = R.difference(storyCharactersInner, charNames);
-               if(differenceInner.length != 0){
-                   processError("Story characters inconsistent, some character is not exist: story {0}, character {1}", [story.name, differenceInner]);
-               }
-               var storyCharactersOuter = R.keys(story.characters);
-               var differenceOuter = R.symmetricDifference(storyCharactersInner, storyCharactersOuter);
-               if(differenceOuter.length != 0){
-                   processError("Story characters inconsistent, inner and outer character name are inconsistent: story {0}, character {1}", [story.name, differenceOuter]);
-               }
+                var storyCharactersInner = R.values(story.characters).map(R.prop('name'));
+                var differenceInner = R.difference(storyCharactersInner, charNames);
+                if(differenceInner.length != 0){
+                    processError("Story characters inconsistent, some character is not exist: story {0}, character {1}", [story.name, differenceInner]);
+                }
+                var storyCharactersOuter = R.keys(story.characters);
+                var differenceOuter = R.symmetricDifference(storyCharactersInner, storyCharactersOuter);
+                if(differenceOuter.length != 0){
+                    processError("Story characters inconsistent, inner and outer character name are inconsistent: story {0}, character {1}", [story.name, differenceOuter]);
+                }
             });
         };
-        
+
         var isInconsistent = function(charValue, type, profileItemValue){
             switch(type){
             case "text":
@@ -157,10 +157,10 @@ See the License for the specific language governing permissions and
                 return true;
             }
         };
-        
+
         var checkProfileValueConsistency = function(data, profiles, structure, callback){
             var processError = getErrorProcessor(callback)('Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}');
-            
+
             R.values(data[profiles]).forEach(function(character){
                 data[structure].forEach(function(profileItem){
                     if(isInconsistent(character[profileItem.name], profileItem.type, profileItem.value)){
@@ -169,11 +169,11 @@ See the License for the specific language governing permissions and
                 })
             });
         };
-        
+
         var checkProfileConsistency = function(data, profiles, structure, callback){
             var profileItems = data[structure].map(R.prop('name'));
             var processError = getErrorProcessor(callback);
-            
+
             R.values(data[profiles]).forEach(function(profile){
                 var charItems = R.keys(profile).filter(R.compose(R.not, R.equals('name')));
                 var difference = R.symmetricDifference(charItems,profileItems);
@@ -188,7 +188,7 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        
+
         var checkProfileStructureConsistency = function(data, type, structure, callback){
             var profileItems = data[structure].map(R.prop('name'));
             var processError = getErrorProcessor(callback);
@@ -198,7 +198,7 @@ See the License for the specific language governing permissions and
             }
         };
     };
-    
+
     callback(consistencyCheckAPI);
 
 })(function(api){

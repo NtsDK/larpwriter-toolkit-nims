@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -31,14 +31,14 @@ See the License for the specific language governing permissions and
     var playerProfileDiv = root + ".player-profile-div";
     var characterReportDiv = root + ".character-report-div tbody";
     var profileEditorCore;
-    
+
     exports.init = function () {
         $(characterSelector).select2().on("select2:select", showProfileInfoDelegate2('character'));
         $(playerSelector).select2().on("select2:select", showProfileInfoDelegate2('player'));
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function () {
         clearEl(queryEl(characterReportDiv));
         refreshPanel('character', characterSelector, characterProfileDiv, () => {
@@ -47,24 +47,24 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var refreshPanel = function(type, selector, profileDiv, callback){
         PermissionInformer.getEntityNamesArray(type, false, function(err, names){
             if(err) {Utils.handleError(err); return;}
-            
+
             names.push({displayName: '', value: '', editable: false});
-            
+
             clearEl(queryEl(selector));
             $(selector).select2(getSelect2Data(names));
             state[type].names = names;
-            
+
             DBMS.getProfileStructure(type, function(err, allProfileSettings){
                 if(err) {Utils.handleError(err); return;}
                 profileEditorCore.initProfileStructure(profileDiv, type, allProfileSettings, callback);
             });
         });
     };
-    
+
     var applySettings = function (type, selector, profileDiv) {
         var names = state[type].names;
         if (names.length > 0) {
@@ -82,14 +82,14 @@ See the License for the specific language governing permissions and
             showProfileInfoDelegate2(type)({target: {value: profileName}});
         }
     };
-    
+
     var selectProfiles = function(charName, playerName){
         showProfileInfoDelegate('character', characterProfileDiv, charName);
         showProfileInfoDelegate('player', playerProfileDiv, playerName);
         $(characterSelector).select2().val(charName).trigger('change');
         $(playerSelector).select2().val(playerName).trigger('change');
     };
-    
+
     var showProfileInfoDelegate2 = function(type){
         return function(event){
             var name = event.target.value.trim();
@@ -103,7 +103,7 @@ See the License for the specific language governing permissions and
             });
         };
     }
-    
+
     var showProfileInfoDelegate = function (type, profileDiv, name) {
         updateSettings(type, name);
         if(name === ''){
@@ -118,7 +118,7 @@ See the License for the specific language governing permissions and
             PermissionInformer.isEntityEditable(type, name, function(err, isCharacterEditable){
                 if(err) {Utils.handleError(err); return;}
                 profileEditorCore.fillProfileInformation(profileDiv, type, profile, () => isCharacterEditable);
-                
+
                 if(type === 'character'){
                     DBMS.getCharacterReport(name, function(err, characterReport){
                         if(err) {Utils.handleError(err); return;}
@@ -129,17 +129,17 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     var makeCompletenessLabel = function(value, total) {
         return strFormat('{0} ({1}/{2})', [total === 0 ? '-': (value / total * 100).toFixed(0) + '%', value, total]);
     };
-    
+
     var getCompletenessColor = function(value, total) {
         if(total === 0){return 'transparent';}
         function calc(b,a,part){
             return (a*part + (1-part)*b).toFixed(0);
         }
-        
+
         var p = value / total;
         if(p<0.5){
             p=p*2;
@@ -149,25 +149,25 @@ See the License for the specific language governing permissions and
             return strFormat('rgba({0},{1},{2}, 1)', [calc(255,123,p),calc(255,225,p),calc(0,65,p)]); // yellow to green mapping
         }
     };
-    
+
     var makeReportRow = function(storyInfo){
         var act = storyInfo.activity;
         var label = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
         var color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
-        return addEls(makeEl('tr'), [ addEl(makeEl('td'), makeText(storyInfo.storyName)), 
-                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.active   ), makeText(constL10n('active-s'))), 
-                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.follower ), makeText(constL10n('follower-s'))), 
-                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.defensive), makeText(constL10n('defensive-s'))), 
-                                      addEl(setClassByCondition(makeEl('td'),'green-back',act.passive  ), makeText(constL10n('passive-s'))), 
-                                      // TODO fix setStyle call here and test
-                                      addEl(addClass(setStyle(makeEl('td'),'backgroundColor', color), 'text-right') , makeText(label)), 
-                                      addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))), 
-                                      addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);
+        return addEls(makeEl('tr'), [ addEl(makeEl('td'), makeText(storyInfo.storyName)),
+                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.active   ), makeText(constL10n('active-s'))),
+                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.follower ), makeText(constL10n('follower-s'))),
+                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.defensive), makeText(constL10n('defensive-s'))),
+                                    addEl(setClassByCondition(makeEl('td'),'green-back',act.passive  ), makeText(constL10n('passive-s'))),
+                                    // TODO fix setStyle call here and test
+                                    addEl(addClass(setStyle(makeEl('td'),'backgroundColor', color), 'text-right') , makeText(label)),
+                                    addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))),
+                                    addEl(makeEl('td'), makeText(storyInfo.inventory)), ]);
     };
-    
+
     var updateSettings = function (type, name) {
         var settings = DBMS.getSettings();
         settings["ProfileEditor"][type] = name;
     };
-    
+
 })(this['ProfileEditor']={});

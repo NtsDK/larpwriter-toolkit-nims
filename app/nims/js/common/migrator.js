@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  // Utils
@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports) {
-    
+
     exports.migrate = function(data) {
         if (!data.Version) {
 
@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
         if (data.Version === "0.0.4") { // new versioning rule
             data.Version = "0.4.1";
         }
-        if(data.Version === "0.4.1"){ // new 
+        if(data.Version === "0.4.1"){ // new
             delete data.Settings["Events"];
             data.Version = "0.4.3";
         }
@@ -106,7 +106,7 @@ See the License for the specific language governing permissions and
                     data.ManagementInfo.UsersInfo[userName].groups = [];
                 }
             }
-            
+
             data.Version = "0.5.0";
         }
         if(data.Version === "0.5.0"){
@@ -172,9 +172,9 @@ See the License for the specific language governing permissions and
             });
             data.Version = "0.6.2";
         }
-        
-        
+
+
         return data;
     };
-    
+
 })(typeof exports === 'undefined' ? this['Migrator'] = {} : exports);

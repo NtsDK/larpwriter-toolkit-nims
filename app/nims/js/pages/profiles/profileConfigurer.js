@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -29,7 +29,7 @@ See the License for the specific language governing permissions and
 // 3. simple and lesser complexity, I choose this way
 
 (function(exports){
-    
+
     var root = ".profile-configurer-tab ";
     var characterPanel = root + ".character-profile-panel ";
     var playerPanel = root + ".player-profile-panel ";
@@ -43,64 +43,64 @@ See the License for the specific language governing permissions and
         var fillMainSel2 = function(){fillItemTypesSel(clearEl(sel2));};
         fillMainSel2();
         L10n.onL10nChange(fillMainSel2);
-    
+
         listen(queryEl(characterPanel+".create-entity-button"), "click", createProfileItem('character', characterPanel));
         listen(queryEl(characterPanel+".move-entity-button"), "click", moveProfileItem('character', characterPanel));
         listen(queryEl(characterPanel+".remove-entity-button"), "click", removeProfileItem('character', characterPanel));
-        
+
         listen(queryEl(playerPanel+".create-entity-button"), "click", createProfileItem('player', playerPanel));
         listen(queryEl(playerPanel+".move-entity-button"), "click", moveProfileItem('player', playerPanel));
         listen(queryEl(playerPanel+".remove-entity-button"), "click", removeProfileItem('player', playerPanel));
-    
+
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function () {
         refreshPanel('character', characterPanel);
         refreshPanel('player', playerPanel);
     };
-    
+
     var refreshPanel = function(type, root){
         DBMS.getProfileStructure(type,function(err, allProfileSettings){
             if(err) {Utils.handleError(err); return;}
-            
+
             var arr = allProfileSettings.map(R.compose(strFormat(getL10n("common-set-item-before")), R.append(R.__, []), R.prop('name')));
             arr.push(getL10n("common-set-item-as-last"));
             var positionSelectors = [queryEl(root+".create-entity-position-select"), queryEl(root+".move-entity-position-select")];
             positionSelectors.map(clearEl).map(fillSelector(R.__, arr2Select(arr))).map(setProp(R.__, 'selectedIndex', allProfileSettings.length));
-            
+
             var table = clearEl(queryEl(root+".profile-config-container"));
-            
+
             try {
                 addEls(table, allProfileSettings.map(getInput(type)));
             } catch (err) {
                 Utils.handleError(err); return;
             }
-            
+
             PermissionInformer.isAdmin(function(err, isAdmin){
                 if(err) {Utils.handleError(err); return;}
                 Utils.enable(exports.content, "adminOnly", isAdmin);
             });
-            
+
             var selectorArr = [queryEl(root+".move-entity-select"), queryEl(root+".remove-entity-select")];
             selectorArr.map(clearEl).map(fillSelector(R.__, arr2Select(allProfileSettings.map(R.prop('name')))))
         });
     }
-    
+
     var createProfileItem = function (type, root) {
         return function(){
             var input = queryEl(root+".create-entity-input");
             var name = input.value.trim();
             var itemType = queryEl(root+".create-entity-type-select").value.trim();
             var positionSelector = queryEl(root+".create-entity-position-select");
-            
+
             DBMS.createProfileItem(type, name, itemType, positionSelector.selectedIndex, Utils.processError(function(){
                 input.value = '';
                 exports.refresh();
             }));
         }
     };
-    
+
     var moveProfileItem = function (type, root) {
         return function(){
             var index = queryEl(root+".move-entity-select").selectedOptions[0].index;
@@ -108,28 +108,28 @@ See the License for the specific language governing permissions and
             DBMS.moveProfileItem(type, index, newIndex, Utils.processError(exports.refresh));
         }
     };
-    
+
     var removeProfileItem = function (type, root) {
         return function(){
             var selector = queryEl(root+".remove-entity-select");
             var index = selector.selectedIndex;
             var name = selector.value;
-        
+
             Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-removing-profile-item"), [name]), () => {
                 DBMS.removeProfileItem(type, index, name, Utils.processError(exports.refresh));
             });
         }
     };
-    
+
     var fillItemTypesSel = (sel) => fillSelector(sel, constArr2Select(R.keys(Constants.profileFieldTypes)));
     var fillPlayerAccessSel = (sel) => fillSelector(sel, constArr2Select(Constants.playerAccessTypes));
-    
+
     var getInput = R.curry(function (type, profileSettings, index) { // throws InternalError
         index++;
         var els = [];
 
         els.push(addEl(makeEl("span"),makeText(index)));
-    
+
         var input = setProps(makeEl("input"), {
             value: profileSettings.name,
             info: profileSettings.name
@@ -137,8 +137,8 @@ See the License for the specific language governing permissions and
         listen(input, "change", renameProfileItem(type));
         addClass(input,"itemNameInput");
         els.push(input);
-    
-        var sel = makeEl("select"); 
+
+        var sel = makeEl("select");
         fillItemTypesSel(sel);
         setProps(sel, {
             value: profileSettings.type,
@@ -147,7 +147,7 @@ See the License for the specific language governing permissions and
         });
         listen(sel, "change", changeProfileItemType(type));
         els.push(sel);
-    
+
         switch (profileSettings.type) {
         case "text":
         case "enum":
@@ -172,7 +172,7 @@ See the License for the specific language governing permissions and
         default:
             throw new Errors.InternalError('errors-unexpected-switch-argument', [profileSettings.type]);
         }
-    
+
         setProps(input, {
             info: profileSettings.name,
             infoType: profileSettings.type,
@@ -181,7 +181,7 @@ See the License for the specific language governing permissions and
         addClass(input, "profile-configurer-" + profileSettings.type);
         listen(input, "change", updateDefaultValue(type));
         els.push(input);
-        
+
         var input = setProps(makeEl("input"), {
             checked: profileSettings.doExport,
             info: profileSettings.name,
@@ -189,8 +189,8 @@ See the License for the specific language governing permissions and
         });
         listen(input, "change", doExportChange(type));
         els.push(input);
-        
-        var sel = makeEl("select"); 
+
+        var sel = makeEl("select");
         fillPlayerAccessSel(sel);
         setProps(sel, {
             value: profileSettings.playerAccess,
@@ -199,7 +199,7 @@ See the License for the specific language governing permissions and
         });
         listen(sel, "change", changeProfileItemPlayerAccess(type));
         els.push(sel);
-        
+
         input = setProps(makeEl("input"), {
             checked: profileSettings.showInRoleGrid,
             info: profileSettings.name,
@@ -207,20 +207,20 @@ See the License for the specific language governing permissions and
         });
         listen(input, "change", showInRoleGridChange(type));
         els.push(input);
-        
+
         return addEls(makeEl("tr"), els.map(el => addEl(makeEl("td"), addClass(el, 'adminOnly'))));
     });
-    
+
     var updateDefaultValue = function (type) {
         return function(event){
             var name = event.target.info;
             var itemType = event.target.infoType;
             var oldValue = event.target.oldValue;
-            
+
             var value = itemType === 'checkbox' ? event.target.checked : event.target.value;
-            
+
             var newOptions, missedValues, newValue;
-            
+
             switch (itemType) {
             case "text":
             case "string":
@@ -244,14 +244,14 @@ See the License for the specific language governing permissions and
                 }
                 newOptions = value.split(",").map(R.trim);
                 missedValues = oldValue.trim() === '' ? [] : R.difference(oldValue.split(","), newOptions);
-                
+
                 var updateEnum = function(){
                     newValue = newOptions.join(",");
                     event.target.value = newValue;
                     event.target.oldValue = newValue;
                     DBMS.updateDefaultValue(type, name, newValue, Utils.processError());
                 };
-                
+
                 if (missedValues.length !== 0) {
                     Utils.confirm(strFormat(getL10n("profiles-new-enum-values-remove-some-old-values"),[missedValues.join(",")]), updateEnum, () => {
                         event.target.value = oldValue;
@@ -266,35 +266,35 @@ See the License for the specific language governing permissions and
             }
         }
     };
-    
+
     var doExportChange = function (type) {
         return function(event){
             DBMS.doExportProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
         }
     };
-    
+
     var showInRoleGridChange = function (type) {
         return function(event){
             DBMS.showInRoleGridProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
         }
     };
-    
+
     var renameProfileItem = function (type) {
         return function(event){
             var newName = event.target.value.trim();
             var oldName = event.target.info;
-            
+
             DBMS.renameProfileItem(type, newName, oldName, function(err){
                 if(err){
                     event.target.value = event.target.info;
-                    Utils.handleError(err); 
+                    Utils.handleError(err);
                     return;
                 }
                 exports.refresh();
             });
         }
     };
-    
+
     var changeProfileItemType = function (type) {
         return function(event){
             Utils.confirm(strFormat(getL10n("profiles-are-you-sure-about-changing-profile-item-type"), [event.target.info]), () => {
@@ -306,7 +306,7 @@ See the License for the specific language governing permissions and
             });
         }
     };
-    
+
     var changeProfileItemPlayerAccess = function (type) {
         return function(event){
             var playerAccessType = event.target.value;

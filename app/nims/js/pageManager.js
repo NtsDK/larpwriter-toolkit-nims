@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
 Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetwork, FileUtils
@@ -22,12 +22,12 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     var state = {};
     state.views = {};
-    
+
     var btnOpts = {
         tooltip : true,
         className : 'mainNavButton'
     }
-    
+
     var initPage = function(){
         L10n.localizeStatic();
         L10n.onL10nChange(() => state.currentView.refresh());
@@ -40,7 +40,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         updateDialogs();
         L10n.onL10nChange(updateDialogs);
     }
-    
+
     var protoExpander = function(arr){
         function protoCarrier(){};
         arr.forEach( name => protoCarrier.prototype[name] = (() => 1));
@@ -53,7 +53,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     'createCharacterByPlayer'  ,
                     'updateProfileField'       ,
                     'getRoleGridInfo'          ];
-    
+
     exports.onPlayerPageLoad = function () {
         initPage();
         var RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
@@ -67,7 +67,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
         state.currentView.refresh();
     };
-    
+
     exports.onIndexPageLoad = function () {
         initPage();
         var RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptions','getRoleGridInfo']));
@@ -85,9 +85,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 //            addEl(state.navigation, makeL10nButton());
             state.currentView.refresh();
         });
-        
+
     };
-    
+
     exports.onMasterPageLoad = function () {
         initPage();
         var LocalDBMS = makeLocalDBMS(true);
@@ -103,7 +103,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             consistencyCheck(onDatabaseLoad);
         }
     };
-    
+
     var consistencyCheck = function(callback){
         DBMS.getConsistencyCheckResult(function(err, consistencyErrors){
             if(err) {Utils.handleError(err); return;}
@@ -116,7 +116,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             callback();
         });
     };
-    
+
     var stateInit = function(){
         state.navigation = getEl("navigation");
         state.containers = {
@@ -125,14 +125,14 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 content: getEl("contentArea")
         };
     };
-    
+
     var onDatabaseLoad = function () {
         PermissionInformer.refresh(function(err){
             if(err) {Utils.handleError(err); return;}
-            
+
             PermissionInformer.isAdmin(function(err, isAdmin){
                 if(err) {Utils.handleError(err); return;}
-                
+
                 var button;
                 stateInit();
 
@@ -143,21 +143,21 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 Utils.addView(state.containers, "briefings", Briefings);
 //                Utils.addView(state.containers, "roleGrid", RoleGrid);
     //            Utils.addView(state.containers, "about", About);
-                
+
                 addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-                
+
                 Utils.addView(state.containers, "timeline", Timeline, {clazz:"timelineButton", tooltip:true});
                 Utils.addView(state.containers, "social-network", SocialNetwork, {clazz:"socialNetworkButton", tooltip:true});
                 Utils.addView(state.containers, "profile-filter", ProfileFilter, {clazz:"filterButton", tooltip:true});
                 Utils.addView(state.containers, "groups", Groups, {clazz:"groupsButton", tooltip:true});
                 Utils.addView(state.containers, "textSearch", TextSearch, {clazz:"textSearchButton", tooltip:true});
-                
+
                 addEl(state.navigation, addClass(makeEl("div"), "nav-separator"));
-                
+
                 if(isAdmin){
                     var button = makeButton("dataLoadButton", "open-database", null, btnOpts);
                     button.addEventListener('change', FileUtils.readSingleFile, false);
-                    
+
                     var input = makeEl("input");
                     input.type = "file";
                     addClass(input, 'hidden');
@@ -169,36 +169,36 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     });
                     addEl(state.navigation, button);
                 }
-                
+
                 addEl(state.navigation, makeButton("dataSaveButton", "save-database", FileUtils.saveFile, btnOpts));
                 if(MODE === "Standalone"){
                     addEl(state.navigation, makeButton("newBaseButton", "create-database", FileUtils.makeNewBase, btnOpts));
                 }
                 addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
-                
+
                 //addEl(state.navigation, makeL10nButton());
-                
+
                 Utils.addView(state.containers, "logViewer", LogViewer2, {clazz:"logViewerButton", tooltip:true});
                 //addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
                 if(MODE === "NIMS_Server"){
                     Utils.addView(state.containers, "admins", AccessManager, {clazz:"accessManagerButton", tooltip:true});
                     addEl(state.navigation, makeButton("logoutButton", "logout", postLogout, btnOpts));
                 }
-                
+
                 FileUtils.init(function(err){
                     if(err) {Utils.handleError(err); return;}
                     consistencyCheck(state.currentView.refresh);
                 });
-                
+
                 state.currentView.refresh();
                 if(MODE === "Standalone") {
                     addBeforeUnloadListener();
                 }
             });
         });
-        
+
     };
-    
+
     var makeL10nButton = function(){
         var l10nBtn = makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
         var setIcon = function(){
@@ -208,7 +208,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         setIcon();
         return l10nBtn;
     };
-    
+
     var runTests = function(){
     //    window.RunTests();
         consistencyCheck(function(err, checkRes){
@@ -220,11 +220,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }
         });
     };
-    
+
     var postLogout = function(){
         document.querySelector('#logoutForm button').click();
     };
-    
+
     var makeButton = function(clazz, name, callback, opts){
         var button = makeEl("button");
         addClass(button, clazz);
@@ -247,7 +247,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         }
         return button;
     };
-    
+
     var addBeforeUnloadListener = function(){
         window.onbeforeunload = function (evt) {
             var message = getL10n("utils-close-page-warning");
@@ -260,6 +260,6 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             return message;
         };
     }
-    
+
 
 })(this['PageManager']={});

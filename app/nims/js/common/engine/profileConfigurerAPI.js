@@ -10,26 +10,26 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function profileConfigurerAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
-        
+
         function getPath(type){
             if(type === 'character') return ['CharacterProfileStructure'];
             if(type === 'player') return ['PlayerProfileStructure'];
             return null;
         }
-        
+
         var typeCheck = function(type){
             return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
         };
@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
         var playerAccessCheck = function(type){
             return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.playerAccessTypes)]);
         };
-        
+
         LocalDBMS.prototype.getProfileStructure = function(type, callback){
             PC.precondition(typeCheck(type), callback, () => {
                 callback(null, CU.clone(R.path(getPath(type), this.database)));
@@ -47,8 +47,8 @@ See the License for the specific language governing permissions and
         };
         // profile configurer
         LocalDBMS.prototype.createProfileItem = function(type, name, itemType, selectedIndex, callback) {
-            var chain = [typeCheck(type), PC.isString(name), PC.notEquals(name, 'name'), 
-                         PC.isNumber(selectedIndex), itemTypeCheck(itemType)]; 
+            var chain = [typeCheck(type), PC.isString(name), PC.notEquals(name, 'name'),
+                        PC.isNumber(selectedIndex), itemTypeCheck(itemType)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 var container = R.path(getPath(type), this.database);
                 chain = [PC.createEntityCheck(name, container.map(R.prop('name'))), PC.isInRange(selectedIndex, 0, container.length)];
@@ -62,14 +62,14 @@ See the License for the specific language governing permissions and
                         playerAccess: 'hidden',
                         showInRoleGrid: false
                     };
-                    
+
                     container.splice(selectedIndex, 0, profileItem);
                     this.ee.trigger("createProfileItem", [type, name, itemType, value]);
                     callback();
                 });
             });
         };
-        
+
         //profile configurer
         LocalDBMS.prototype.moveProfileItem = function(type, index, newIndex, callback){
             var chain = [typeCheck(type),PC.isNumber(index),PC.isNumber(newIndex)];
@@ -114,7 +114,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         LocalDBMS.prototype.changeProfileItemPlayerAccess = function(type, profileItemName, playerAccessType, callback) {
             var chain = [typeCheck(type),PC.isString(profileItemName),playerAccessCheck(playerAccessType)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
@@ -127,7 +127,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-    
+
         // profile configurer
         LocalDBMS.prototype.renameProfileItem = function(type, newName, oldName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
@@ -141,7 +141,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         LocalDBMS.prototype.doExportProfileItemChange = function(type, profileItemName, checked, callback) {
             var chain = [typeCheck(type),PC.isString(profileItemName),PC.isBoolean(checked)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
@@ -150,13 +150,13 @@ See the License for the specific language governing permissions and
                     var profileItem = container.filter(function(elem) {
                         return elem.name === profileItemName;
                     })[0];
-                    
+
                     profileItem.doExport = checked;
                     callback();
                 });
             });
         };
-        
+
         LocalDBMS.prototype.showInRoleGridProfileItemChange = function(type, profileItemName, checked, callback) {
             var chain = [typeCheck(type),CU.isString(profileItemName),CU.isBoolean(checked)];
             CU.precondition(CU.chainCheck(chain), callback, () => {
@@ -167,7 +167,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         var typeSpecificPreconditions = function(itemType, value){
             switch (itemType) {
             case "text":
@@ -180,7 +180,7 @@ See the License for the specific language governing permissions and
                 return PC.isNotEmptyString(value);
             }
         };
-    
+
         // profile configurer
         LocalDBMS.prototype.updateDefaultValue = function(type, profileItemName, value, callback) {
             var chain = [typeCheck(type),PC.isString(profileItemName)];
@@ -191,7 +191,7 @@ See the License for the specific language governing permissions and
                     chain = [PC.getValueCheck(info.type)(value),typeSpecificPreconditions(info.type, value)];
                     PC.precondition(PC.chainCheck(chain), callback, () => {
                         var newOptions, newOptionsMap, missedValues;
-                
+
                         switch (info.type) {
                         case "text":
                         case "string":
@@ -206,11 +206,11 @@ See the License for the specific language governing permissions and
                             newOptions = R.uniq(value.split(",").map(R.trim));
                             missedValues = info.value.trim() === '' ? [] : R.difference(info.value.split(","), newOptions);
                             newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
-                
+
                             if (missedValues.length !== 0) {
                                 this.ee.trigger(info.type === 'enum' ? "replaceEnumValue" : "replaceMultiEnumValue", [type, profileItemName, newOptions[0], newOptionsMap]);
                             }
-                
+
                             info.value = newOptions.join(",");
                             break;
                         default:

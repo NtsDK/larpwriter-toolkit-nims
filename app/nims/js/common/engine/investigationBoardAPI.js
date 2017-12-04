@@ -10,34 +10,34 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function investigationBoardAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
-        
+
         var resourcesPath = ['InvestigationBoard', 'resources'];
         var groupsPath = ['InvestigationBoard', 'groups'];
         var relationsPath = ['InvestigationBoard', 'relations'];
         var context = 'investigation-board';
-        
+
         LocalDBMS.prototype.getInvestigationBoardData = function(callback) {
             callback(null, CU.clone(this.database.InvestigationBoard));
         };
-        
+
         LocalDBMS.prototype.addBoardGroup = function(groupName, callback) {
             var container = R.path(groupsPath, this.database);
-            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
-                                       PC.entityIsNotUsed(groupName, R.keys(container))]);
+            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
+                                        PC.entityIsNotUsed(groupName, R.keys(container))]);
             PC.precondition(chain, callback, () => {
                 container[groupName] = {
                         name:groupName,
@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
                 if(callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.switchGroups = function(fromName, toName, callback) {
             var container = R.path(groupsPath, this.database);
             var check = PC.switchEntityCheck(fromName, toName, R.keys(this.database.Groups), R.keys(container));
@@ -63,25 +63,25 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.setGroupNotes = function(groupName, notes, callback) {
             var container = R.path(groupsPath, this.database);
-            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
-                                       PC.entityExists(groupName, R.keys(container)), PC.isString(notes)]);
+            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
+                                        PC.entityExists(groupName, R.keys(container)), PC.isString(notes)]);
             PC.precondition(chain, callback, () => {
                 container[groupName].notes = notes;
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.removeBoardGroup = function(groupName, callback) {
             var container = R.path(groupsPath, this.database);
-            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)), 
-                                       PC.entityExists(groupName, R.keys(container))]);
+            var chain = PC.chainCheck([PC.entityExistsCheck(groupName, R.keys(this.database.Groups)),
+                                        PC.entityExists(groupName, R.keys(container))]);
             PC.precondition(chain, callback, () => {
                 delete container[groupName];
                 this.ee.trigger("nodeRemoved", [groupName, 'groups']);
                 if(callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.createResource = function(resourceName, callback) {
             var container = R.path(resourcesPath, this.database);
             PC.precondition(PC.createEntityCheck(resourceName, R.keys(container)), callback, () => {
@@ -104,7 +104,7 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.removeResource = function(resourceName, callback) {
             var container = R.path(resourcesPath, this.database);
             PC.precondition(PC.removeEntityCheck(resourceName, R.keys(container)), callback, () => {
@@ -113,41 +113,41 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         var isNotResource = R.curry(function(id){
             return () => {
                 var info = _edgeEndId2info(id);
                 return !R.equals('resources', info[0]) ? null : ['investigation-board-resource-node-cant-be-first'];
             }
         });
-        
+
         var edgeEndCheck = function(id, database){
             var info = _edgeEndId2info(id);
             var container = R.path(info[0] === 'groups' ? groupsPath : resourcesPath, database);
             return PC.entityExists(info[1], R.keys(container));
         };
-        
+
         LocalDBMS.prototype.addEdge = function(fromId, toId, callback) {
             var chain = PC.chainCheck([PC.isString(fromId),PC.isString(toId)]);
             PC.precondition(chain, callback, () => {
                 var container = R.path(relationsPath, this.database);
-                chain = PC.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database), edgeEndCheck(toId, this.database), 
-                                       edgeNotExistCheck(fromId, toId, container)]);
+                chain = PC.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database), edgeEndCheck(toId, this.database),
+                                        edgeNotExistCheck(fromId, toId, container)]);
                 PC.precondition(chain, callback, () => {
                     container[fromId][toId] = '';
                     if (callback) callback();
                 });
             });
         };
-        
+
         var getEdgeList = function(container){
             return R.flatten(R.toPairs(container).map( pair => R.keys(pair[1]).map(toId2 => pair[0] + '-' + toId2)));
         };
-        
+
         var edgeExistsCheck = function(fromId, toId, container){
             return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityExists(fromId + '-' + toId, getEdgeList(container))]);
         };
-        
+
         var edgeNotExistCheck = function(fromId, toId, container){
             return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityIsNotUsed(fromId + '-' + toId, getEdgeList(container))]);
         };
@@ -160,7 +160,7 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.removeEdge = function(fromId, toId, callback) {
             var container = R.path(relationsPath, this.database);
             PC.precondition(edgeExistsCheck(fromId, toId, container), callback, () => {
@@ -168,11 +168,11 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         var _info2edgeEndId = function(name, type){
             return (type === 'groups' ? 'group-' : 'resource-') + name;
         };
-        
+
         var _edgeEndId2info = function(id){
             var info = [];
             if(CU.startsWith(id , 'resource-')){
@@ -186,12 +186,12 @@ See the License for the specific language governing permissions and
             }
             throw new Error('Unknown type of edge end: ' + id);
         }
-        
+
         function _nodeAdded(nodeName, type){
             if(type === 'resources') return;
             R.path(relationsPath, this.database)[_info2edgeEndId(nodeName, type)] = {};
         };
-        
+
         listeners.nodeAdded = listeners.nodeAdded || [];
         listeners.nodeAdded.push(_nodeAdded);
 
@@ -203,12 +203,12 @@ See the License for the specific language governing permissions and
                 delete item[relNodeName];
             });
         };
-        
+
         listeners.nodeRemoved = listeners.nodeRemoved || [];
         listeners.nodeRemoved.push(_nodeRemoved);
-        
+
         function _nodeRenamed(fromName, toName, group){
-          
+
             var container = R.path(relationsPath, this.database);
             var toId = _info2edgeEndId(toName, group);
             var fromId  = _info2edgeEndId(fromName, group);
@@ -223,10 +223,10 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        
+
         listeners.nodeRenamed = listeners.nodeRenamed || [];
         listeners.nodeRenamed.push(_nodeRenamed);
-        
+
         function _renameGroup(fromName, toName){
             var container = R.path(groupsPath, this.database);
             if(container[fromName] !== undefined){
@@ -234,19 +234,19 @@ See the License for the specific language governing permissions and
                 data.name = toName;
                 container[toName] = data;
                 delete container[fromName];
-                
+
                 _nodeRenamed.apply(this, [fromName, toName, 'groups']);
             }
         };
-        
+
         listeners.renameGroup = listeners.renameGroup || [];
         listeners.renameGroup.push(_renameGroup);
-        
+
         function _removeGroup(groupName){
             var container = R.path(groupsPath, this.database);
             if(container[groupName] !== undefined){
                 delete container[groupName];
-                
+
                 container = R.path(relationsPath, this.database);
                 var nodeId = _info2edgeEndId(groupName, 'groups');
                 delete container[nodeId];
@@ -257,11 +257,11 @@ See the License for the specific language governing permissions and
                 });
             }
         };
-        
+
         listeners.removeGroup = listeners.removeGroup || [];
         listeners.removeGroup.push(_removeGroup);
     };
-    
+
     callback(investigationBoardAPI);
 
 })(function(api){

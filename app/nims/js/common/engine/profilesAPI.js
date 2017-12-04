@@ -10,21 +10,21 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
 
     function profilesAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var PC            = opts.Precondition;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
-        
+
         function getPath(type){
             if(type === 'character') return ['Characters'];
             if(type === 'player') return ['Players'];
@@ -35,17 +35,17 @@ See the License for the specific language governing permissions and
             if(type === 'player') return ['PlayerProfileStructure'];
             return null;
         }
-        
+
         var typeCheck = function(type){
             return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
         };
-        
+
         LocalDBMS.prototype.getProfileNamesArray = function(type, callback) {
             PC.precondition(typeCheck(type), callback, () => {
                 callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
             });
         };
-        
+
         // profile, preview
         LocalDBMS.prototype.getProfile = function(type, name, callback) {
             PC.precondition(typeCheck(type), callback, () => {
@@ -61,7 +61,7 @@ See the License for the specific language governing permissions and
                 callback(null, CU.clone(R.path(getPath(type), this.database)));
             });
         };
-        
+
         // profiles
         LocalDBMS.prototype.createProfile = function(type, characterName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
@@ -70,7 +70,7 @@ See the License for the specific language governing permissions and
                     var newCharacter = {
                             name : characterName
                     };
-                    
+
                     R.path(getStructurePath(type), this.database).forEach(function(profileSettings) {
                         if (profileSettings.type === "enum") {
                             newCharacter[profileSettings.name] = profileSettings.value.split(",")[0];
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
                             newCharacter[profileSettings.name] = profileSettings.value;
                         }
                     });
-                    
+
                     R.path(getPath(type), this.database)[characterName] = newCharacter;
                     this.ee.trigger("createProfile", arguments);
                     if(callback) callback();
@@ -96,14 +96,14 @@ See the License for the specific language governing permissions and
                     data.name = toName;
                     container[toName] = data;
                     delete container[fromName];
-                    
+
                     this.ee.trigger("renameProfile", arguments);
-                    
+
                     if(callback) callback();
                 });
             });
         };
-    
+
         // profiles
         LocalDBMS.prototype.removeProfile = function(type, characterName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
@@ -115,7 +115,7 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         var typeSpecificPreconditions = function(itemType, itemDesc, value){
             switch (itemType) {
             case "text":
@@ -129,15 +129,15 @@ See the License for the specific language governing permissions and
                 return PC.eitherCheck(PC.elementsFromEnum(value.split(','), itemDesc.value.split(',')), PC.isEmptyString(value));
             }
         };
-        
+
         // profile editor
         LocalDBMS.prototype.updateProfileField = function(type, characterName, fieldName, itemType, value, callback) {
             PC.precondition(typeCheck(type), callback, () => {
                 var container = R.path(getPath(type), this.database);
                 var containerStructure = R.path(getStructurePath(type), this.database);
-                var arr = [PC.entityExistsCheck(characterName, R.keys(container)), 
-                           PC.entityExistsCheck(fieldName +'/' + itemType, containerStructure.map(item => item.name + '/' + item.type)), 
-                           PC.getValueCheck(itemType)(value)];
+                var arr = [PC.entityExistsCheck(characterName, R.keys(container)),
+                            PC.entityExistsCheck(fieldName +'/' + itemType, containerStructure.map(item => item.name + '/' + item.type)),
+                            PC.getValueCheck(itemType)(value)];
                 PC.precondition(PC.chainCheck(arr), callback, () => {
                     var itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
                     PC.precondition(typeSpecificPreconditions(itemType, itemDesc, value), callback, () => {
@@ -161,14 +161,14 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         function _createProfileItem(type, name, itemType, value){
             var profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach(function(characterName) {
                 profileSet[characterName][name] = value;
             });
         };
-        
+
         listeners.createProfileItem = listeners.createProfileItem || [];
         listeners.createProfileItem.push(_createProfileItem);
 
@@ -178,7 +178,7 @@ See the License for the specific language governing permissions and
                 delete profileSet[characterName][profileItemName];
             });
         };
-        
+
         listeners.removeProfileItem = listeners.removeProfileItem || [];
         listeners.removeProfileItem.push(_removeProfileItem);
 
@@ -188,7 +188,7 @@ See the License for the specific language governing permissions and
                 profileSet[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
             });
         };
-        
+
         listeners.changeProfileItemType = listeners.changeProfileItemType || [];
         listeners.changeProfileItemType.push(_changeProfileItemType);
 
@@ -200,10 +200,10 @@ See the License for the specific language governing permissions and
                 profileSet[characterName][newName] = tmp;
             });
         };
-        
+
         listeners.renameProfileItem = listeners.renameProfileItem || [];
         listeners.renameProfileItem.push(_renameProfileItem);
-        
+
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap){
             var profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach(function(characterName) {
@@ -213,10 +213,10 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        
+
         listeners.replaceEnumValue = listeners.replaceEnumValue || [];
         listeners.replaceEnumValue.push(_replaceEnumValue);
-        
+
         function _replaceMultiEnumValue(type, profileItemName, defaultValue, newOptionsMap){
             var profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach(function(characterName) {
@@ -227,11 +227,11 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        
+
         listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
         listeners.replaceMultiEnumValue.push(_replaceMultiEnumValue);
     };
-    
+
     callback(profilesAPI);
 
 })(function(api){
