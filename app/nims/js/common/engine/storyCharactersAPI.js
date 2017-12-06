@@ -14,14 +14,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function storyCharactersAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const {
+            R, Errors, listeners, Constants
+        } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Errors = opts.Errors;
-        const listeners = opts.listeners;
-        const Constants = opts.Constants;
 
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
@@ -40,7 +41,8 @@ See the License for the specific language governing permissions and
 
         //story characters
         LocalDBMS.prototype.addStoryCharacter = function (storyName, characterName, callback) {
-            const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.entityExistsCheck(characterName, R.keys(this.database.Characters))];
+            const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
+                PC.entityExistsCheck(characterName, R.keys(this.database.Characters))];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const story = this.database.Stories[storyName];
                 PC.precondition(PC.entityIsNotUsed(characterName, R.keys(story.characters)), callback, () => {
@@ -60,7 +62,10 @@ See the License for the specific language governing permissions and
             let cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
             PC.precondition(cond, callback, () => {
                 const story = this.database.Stories[storyName];
-                cond = PC.switchEntityCheck(fromName, toName, R.keys(this.database.Characters), R.keys(story.characters));
+                cond = PC.switchEntityCheck(
+                    fromName, toName, R.keys(this.database.Characters),
+                    R.keys(story.characters)
+                );
                 PC.precondition(cond, callback, () => {
                     story.characters[toName] = story.characters[fromName];
                     story.characters[toName].name = toName;
@@ -106,7 +111,10 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.onChangeCharacterActivity = function (storyName, characterName, activityType, checked, callback) {
+        LocalDBMS.prototype.onChangeCharacterActivity = function (
+            storyName, characterName, activityType, checked,
+            callback
+        ) {
             const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(activityType),
                 PC.elementFromEnum(activityType, Constants.characterActivityTypes), PC.isBoolean(checked)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
@@ -128,7 +136,8 @@ See the License for the specific language governing permissions and
             let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const story = this.database.Stories[storyName];
-                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length - 1)];
+                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)),
+                    PC.isInRange(eventIndex, 0, story.events.length - 1)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     const event = story.events[eventIndex];
                     PC.precondition(PC.entityIsNotUsed(characterName, R.keys(event.characters)), callback, () => {
@@ -147,7 +156,8 @@ See the License for the specific language governing permissions and
             let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const story = this.database.Stories[storyName];
-                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length - 1)];
+                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)),
+                    PC.isInRange(eventIndex, 0, story.events.length - 1)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     const event = story.events[eventIndex];
                     PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), callback, () => {
@@ -158,57 +168,47 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _renameCharacterInStories = function (type, fromName, toName) {
+        const _renameCharacterInStories = (type, fromName, toName) => {
             if (type === 'player') return;
-            let storyName, story, data;
-
-            const renameEventCharacter = function (event) {
+            const renameEventCharacter = (event) => {
                 if (event.characters[fromName]) {
-                    data = event.characters[fromName];
+                    const data = event.characters[fromName];
                     event.characters[toName] = data;
                     delete event.characters[fromName];
                 }
             };
 
-            for (storyName in this.database.Stories) {
-                story = this.database.Stories[storyName];
-                if (story.characters[fromName]) {
-                    data = story.characters[fromName];
+            R.values(this.database.Stories).filter(story => story.characters[fromName] !== undefined)
+                .forEach((story) => {
+                    const data = story.characters[fromName];
                     data.name = toName;
                     story.characters[toName] = data;
                     delete story.characters[fromName];
-
                     story.events.forEach(renameEventCharacter);
-                }
-            }
+                });
         };
 
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameCharacterInStories);
 
-        const _removeCharacterFromStories = function (type, characterName) {
+        const _removeCharacterFromStories = (type, characterName) => {
             if (type === 'player') return;
-            let storyName, story;
-
-            const cleanEvent = function (event) {
+            const cleanEvent = (event) => {
                 if (event.characters[characterName]) {
                     delete event.characters[characterName];
                 }
             };
 
-            for (storyName in this.database.Stories) {
-                story = this.database.Stories[storyName];
+            R.values(this.database.Stories).forEach((story) => {
                 if (story.characters[characterName]) {
                     delete story.characters[characterName];
                     story.events.forEach(cleanEvent);
                 }
-            }
+            });
         };
 
         listeners.removeProfile = listeners.removeProfile || [];
         listeners.removeProfile.push(_removeCharacterFromStories);
     }
-    callback(storyCharactersAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.storyCharactersAPI = api : module.exports = api;
-}));
+    callback2(storyCharactersAPI);
+})(api => (typeof exports === 'undefined' ? (this.storyCharactersAPI = api) : (module.exports = api)));

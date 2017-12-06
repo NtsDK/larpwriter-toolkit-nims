@@ -14,18 +14,21 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function logAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
 
         LocalDBMS.prototype.log = function (userName, funcName, rewrite, params, callback) {
-            const chain = PC.chainCheck([PC.isString(userName), PC.isString(funcName), PC.isBoolean(rewrite), PC.isArray(params)]);
+            const chain = PC.chainCheck([PC.isString(userName), PC.isString(funcName), PC.isBoolean(rewrite),
+                PC.isArray(params)]);
             PC.precondition(chain, err => console.error(err), () => {
                 const info = [userName, new Date().toString(), funcName, JSON.stringify(params)];
                 if (this.database) {
-                    if (rewrite && this.database.Log[this.database.Log.length - 1] != undefined) {
+                    if (rewrite && this.database.Log[this.database.Log.length - 1] !== undefined) {
                         if (this.database.Log[this.database.Log.length - 1][2] === funcName) {
                             this.database.Log[this.database.Log.length - 1] = info;
                         }
@@ -59,7 +62,5 @@ See the License for the specific language governing permissions and
         };
     }
 
-    callback(logAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.logAPI = api : module.exports = api;
-}));
+    callback2(logAPI);
+})(api => (typeof exports === 'undefined' ? (this.logAPI = api) : (module.exports = api)));

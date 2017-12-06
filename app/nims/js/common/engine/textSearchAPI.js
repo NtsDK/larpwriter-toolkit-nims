@@ -14,16 +14,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+((callback2) => {
     function textSearchAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R, Constants, Errors } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
 
         const searchers = {};
 
+        const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
         //        LocalDBMS.prototype.getTextsTest = function(searchStr, textTypes, caseSensitive, callback){
         //            var errPrint = function(err){
         //                console.log(err);
@@ -38,16 +37,17 @@ See the License for the specific language governing permissions and
         //            callback('test result');
         //        };
 
+        // eslint-disable-next-line func-names
         LocalDBMS.prototype.getTexts = function (searchStr, textTypes, caseSensitive, callback) {
             const check = PC.chainCheck([PC.isString(searchStr), PC.isArray(textTypes),
                 textTypesPrecondition(textTypes), PC.isBoolean(caseSensitive)]);
             PC.precondition(check, callback, () => {
                 let test;
                 if (caseSensitive) {
-                    test = text => (text.indexOf(searchStr) != -1);
+                    test = text => (text.indexOf(searchStr) !== -1);
                 } else {
                     searchStr = searchStr.toLowerCase();
-                    test = text => (text.toLowerCase().indexOf(searchStr) != -1);
+                    test = text => (text.toLowerCase().indexOf(searchStr) !== -1);
                 }
                 callback(null, textTypes.map(textType => ({
                     textType,
@@ -62,33 +62,41 @@ See the License for the specific language governing permissions and
             text
         });
 
-        searchers.masterStory = function (textType, test, database) {
-            return R.values(database.Stories).filter(story => test(story.story)).map(story => format(story.name, 'text', story.story));
-        };
+        searchers.masterStory = (textType, test, database) => R.values(database.Stories)
+            .filter(story => test(story.story))
+            .map(story => format(story.name, 'text', story.story));
 
-        searchers.eventOrigins = function (textType, test, database) {
-            return R.flatten(R.values(database.Stories).map(story => story.events.filter(event => test(event.text)).map(event => format(`${story.name}/${event.name}`, 'text', event.text))));
-        };
+        searchers.eventOrigins = (textType, test, database) => R.flatten(R.values(database.Stories)
+            .map(story => story.events
+                .filter(event => test(event.text))
+                .map(event => format(`${story.name}/${event.name}`, 'text', event.text))));
 
-        searchers.eventAdaptations = function (textType, test, database) {
-            return R.flatten(R.values(database.Stories).map(story => story.events.map(event => R.keys(event.characters).filter(char => test(event.characters[char].text)).map(char =>
-                format(`${story.name}/${event.name}/${char}`, 'text', event.characters[char].text)))));
-        };
+        searchers.eventAdaptations = (textType, test, database) => R.flatten(R.values(database.Stories)
+            .map(story => story.events
+                .map(event => R.keys(event.characters)
+                    .filter(char => test(event.characters[char].text))
+                    .map(char => format(
+                        `${story.name}/${event.name}/${char}`, 'text',
+                        event.characters[char].text
+                    )))));
 
         const profileSearch = R.curry((profiles, structure, textType, test, database) => {
             const items = database[structure].filter(item => item.type === 'string' || item.type === 'text');
-            return R.flatten(R.values(database[profiles]).map(profile => items.filter(item => test(profile[item.name])).map(item => format(`${profile.name}/${item.name}`, item.type, profile[item.name]))));
+            return R.flatten(R.values(database[profiles])
+                .map(profile => items.filter(item => test(profile[item.name]))
+                    .map(item => format(`${profile.name}/${item.name}`, item.type, profile[item.name]))));
         });
         searchers.characterProfiles = profileSearch('Characters', 'CharacterProfileStructure');
         searchers.playerProfiles = profileSearch('Players', 'PlayerProfileStructure');
 
-        searchers.relations = function (textType, test, database) {
+        searchers.relations = (textType, test, database) => {
             const relations = database.Relations;
-            return R.flatten(R.keys(relations).map(name1 => R.keys(relations[name1]).filter(name2 => test(relations[name1][name2])).map(name2 =>
-                format(`${name1}/${name2}`, 'text', relations[name1][name2]))));
+            return R.flatten(R.keys(relations).map(name1 => R.keys(relations[name1])
+                .filter(name2 => test(relations[name1][name2]))
+                .map(name2 => format(`${name1}/${name2}`, 'text', relations[name1][name2]))));
         };
 
-        searchers.groups = function (textType, test, database) {
+        searchers.groups = (textType, test, database) => {
             const groups = database.Groups;
             return R.flatten(R.values(groups).map((group) => {
                 const arr = [];
@@ -101,10 +109,6 @@ See the License for the specific language governing permissions and
                 return arr;
             }));
         };
-
-        var textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
     }
-    callback(textSearchAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.textSearchAPI = api : module.exports = api;
-}));
+    callback2(textSearchAPI);
+})(api => (typeof exports === 'undefined' ? (this.textSearchAPI = api) : (module.exports = api)));

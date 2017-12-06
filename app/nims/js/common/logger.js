@@ -18,7 +18,9 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+/* eslint-disable func-names,prefer-rest-params */
+
+((exports) => {
     // argument description
     // add function name to log it
     // ignoreParams - make true if you don't need params in log.
@@ -207,7 +209,7 @@ See the License for the specific language governing permissions and
     // isServer - used in server mode. If false then user in logs will be named "user".
     // environment - used to disable this.log function in thin client in server version.
     //      I agree it is strange.
-    exports.attachLogCalls = function (LocalDBMS, R, isServer) {
+    exports.attachLogCalls = (LocalDBMS, R, isServer) => {
         const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
         const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
 
@@ -232,11 +234,14 @@ See the License for the specific language governing permissions and
                             userName = arguments[arguments.length - 1].name;
                         }
 
-                        this.log(userName, funcName, !!filteredApi[funcName].rewrite, filteredApi[funcName].ignoreParams ? [] : arr);
+                        this.log(
+                            userName, funcName, !!filteredApi[funcName].rewrite,
+                            filteredApi[funcName].ignoreParams ? [] : arr
+                        );
                     }
 
                     return oldFun.apply(this, arguments);
                 };
             });
     };
-}(typeof exports === 'undefined' ? this.Logger = {} : exports));
+})(typeof exports === 'undefined' ? this.Logger = {} : exports);

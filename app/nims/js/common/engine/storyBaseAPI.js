@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names,prefer-rest-params */
+
+((callback2) => {
     function storyBaseAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R, Errors } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Errors = opts.Errors;
 
         // stories, timeline
         LocalDBMS.prototype.getStoryNamesArray = function (callback) {
@@ -79,7 +80,5 @@ See the License for the specific language governing permissions and
             });
         };
     }
-    callback(storyBaseAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.storyBaseAPI = api : module.exports = api;
-}));
+    callback2(storyBaseAPI);
+})(api => (typeof exports === 'undefined' ? (this.storyBaseAPI = api) : (module.exports = api)));

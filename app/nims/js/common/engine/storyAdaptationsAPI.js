@@ -14,13 +14,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function storyAdaptationsAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R, dbmsUtils, Constants } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const dbmsUtils = opts.dbmsUtils;
-        const Constants = opts.Constants;
+
+        let _isStoryEmpty, _isStoryFinished;
 
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback) {
@@ -40,15 +42,13 @@ See the License for the specific language governing permissions and
             });
         };
 
-        var _isStoryEmpty = function (database, storyName) {
-            return database.Stories[storyName].events.length == 0;
-        };
+        _isStoryEmpty = (database, storyName) => database.Stories[storyName].events.length === 0;
 
         dbmsUtils._isStoryEmpty = _isStoryEmpty;
 
-        var _isStoryFinished = function (database, storyName) {
-            return database.Stories[storyName].events.every(event => !R.isEmpty(event.characters) && R.values(event.characters).every(adaptation => adaptation.ready));
-        };
+        _isStoryFinished = (database, storyName) =>
+            database.Stories[storyName].events.every(event =>
+                !R.isEmpty(event.characters) && R.values(event.characters).every(adaptation => adaptation.ready));
 
         dbmsUtils._isStoryFinished = _isStoryFinished;
 
@@ -67,17 +67,23 @@ See the License for the specific language governing permissions and
                 return PC.isString(value);
             case 'ready':
                 return PC.isBoolean(value);
+            default:
+                throw new Error(`Unexpected type ${type}`);
             }
-            throw new Error(`Unexpected type ${type}`);
         };
 
         // preview, events
-        LocalDBMS.prototype.setEventAdaptationProperty = function (storyName, eventIndex, characterName, type, value, callback) {
-            let chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex),
-                PC.isString(type), PC.elementFromEnum(type, Constants.adaptationProperties), PC.isString(characterName)];
+        LocalDBMS.prototype.setEventAdaptationProperty = function (
+            storyName, eventIndex, characterName, type, value,
+            callback
+        ) {
+            let chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)),
+                PC.isNumber(eventIndex), PC.isString(type), PC.elementFromEnum(type, Constants.adaptationProperties),
+                PC.isString(characterName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const story = this.database.Stories[storyName];
-                chain = [PC.entityExists(characterName, R.keys(story.characters)), PC.isInRange(eventIndex, 0, story.events.length - 1), getValueCheck(type, value)];
+                chain = [PC.entityExists(characterName, R.keys(story.characters)),
+                    PC.isInRange(eventIndex, 0, story.events.length - 1), getValueCheck(type, value)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     const event = story.events[eventIndex];
                     PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), callback, () => {
@@ -88,7 +94,5 @@ See the License for the specific language governing permissions and
             });
         };
     }
-    callback(storyAdaptationsAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.storyAdaptationsAPI = api : module.exports = api;
-}));
+    callback2(storyAdaptationsAPI);
+})(api => (typeof exports === 'undefined' ? (this.storyAdaptationsAPI = api) : (module.exports = api)));

@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function storyEventsAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R, Errors, Constants } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Errors = opts.Errors;
-        const Constants = opts.Constants;
 
         //story events, event presence
         LocalDBMS.prototype.getStoryEvents = function (storyName, callback) {
@@ -32,7 +32,8 @@ See the License for the specific language governing permissions and
         //story events
         LocalDBMS.prototype.createEvent = function (storyName, eventName, eventText, selectedIndex, callback) {
             const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(selectedIndex),
-                PC.isString(eventName), PC.isNotEmptyString(eventName), PC.isString(eventText), PC.isNotEmptyString(eventText)];
+                PC.isString(eventName), PC.isNotEmptyString(eventName), PC.isString(eventText),
+                PC.isNotEmptyString(eventText)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const story = this.database.Stories[storyName];
                 PC.precondition(PC.isInRange(selectedIndex, 0, story.events.length), callback, () => {
@@ -50,9 +51,10 @@ See the License for the specific language governing permissions and
 
         //story events
         LocalDBMS.prototype.moveEvent = function (storyName, index, newIndex, callback) {
-            let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index), PC.isNumber(newIndex)];
+            let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index),
+                PC.isNumber(newIndex)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                const events = this.database.Stories[storyName].events;
+                const { events } = this.database.Stories[storyName];
                 chain = [PC.isInRange(index, 0, events.length - 1), PC.isInRange(newIndex, 0, events.length)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     if (newIndex > index) {
@@ -70,7 +72,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.cloneEvent = function (storyName, index, callback) {
             let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                const events = this.database.Stories[storyName].events;
+                const { events } = this.database.Stories[storyName];
                 chain = [PC.isInRange(index, 0, events.length - 1)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     events.splice(index, 0, CU.clone(events[index]));
@@ -83,7 +85,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.mergeEvents = function (storyName, index, callback) {
             let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                const events = this.database.Stories[storyName].events;
+                const { events } = this.database.Stories[storyName];
                 chain = [PC.isInRange(index, 0, events.length - 2)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     const event1 = events[index];
@@ -91,7 +93,7 @@ See the License for the specific language governing permissions and
 
                     event1.name += `/${event2.name}`;
                     event1.text += `\n\n${event2.text}`;
-                    for (const characterName in event2.characters) {
+                    R.keys(event2.characters).forEach((characterName) => {
                         if (event1.characters[characterName]) {
                             event1.characters[characterName].text += `\n\n${event2.characters[characterName].text}`;
                             event1.characters[characterName].time += `/${event2.characters[characterName].time}`;
@@ -99,7 +101,7 @@ See the License for the specific language governing permissions and
                         } else {
                             event1.characters[characterName] = event2.characters[characterName];
                         }
-                    }
+                    });
                     CU.removeFromArrayByIndex(events, index + 1);
 
                     callback();
@@ -111,7 +113,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.removeEvent = function (storyName, index, callback) {
             let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
-                const events = this.database.Stories[storyName].events;
+                const { events } = this.database.Stories[storyName];
                 chain = [PC.isInRange(index, 0, events.length - 1)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     CU.removeFromArrayByIndex(events, index);
@@ -134,7 +136,5 @@ See the License for the specific language governing permissions and
             });
         };
     }
-    callback(storyEventsAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.storyEventsAPI = api : module.exports = api;
-}));
+    callback2(storyEventsAPI);
+})(api => (typeof exports === 'undefined' ? (this.storyEventsAPI = api) : (module.exports = api)));

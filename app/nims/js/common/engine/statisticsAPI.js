@@ -14,10 +14,13 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function statisticsAPI(LocalDBMS, opts) {
-        const R = opts.R;
-        const CommonUtils = opts.CommonUtils;
+        const { R, CommonUtils } = opts;
+
+        let _countCharacterSymbols;
 
         LocalDBMS.prototype.getStatistics = function (callback) {
             const that = this;
@@ -27,7 +30,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        var _getStatistics = function (database, groupTexts, callback) {
+        function _getStatistics(database, groupTexts, callback) {
             const statistics = {};
             statistics.storyNumber = Object.keys(database.Stories).length;
             statistics.characterNumber = Object.keys(database.Characters).length;
@@ -69,11 +72,11 @@ See the License for the specific language governing permissions and
             statistics.profileCharts = _getProfileChartData(database);
 
             callback(null, statistics);
-        };
+        }
 
-        const _makeNumberStep = function (array) {
-            const max = array.reduce((max, cur) => (cur > max ? cur : max), array[0]);
-            const min = array.reduce((min, cur) => (cur < min ? cur : min), array[0]);
+        function _makeNumberStep(array) {
+            const max = array.reduce((max2, cur) => (cur > max2 ? cur : max2), array[0]);
+            const min = array.reduce((min3, cur) => (cur < min3 ? cur : min3), array[0]);
             let step = Math.ceil((max - min) / 20);
             step = step === 0 ? 1 : step;
             let base = 1;
@@ -88,11 +91,11 @@ See the License for the specific language governing permissions and
                 }
             }
             return step;
-        };
+        }
 
         const filter = R.compose(R.contains(R.__, ['enum', 'number', 'checkbox']), R.prop('type'));
 
-        var _getProfileChartData = function (database) {
+        function _getProfileChartData(database) {
             const characterCharts = _getProfileChartArray(database, 'Characters', 'CharacterProfileStructure');
             const playerCharts = _getProfileChartArray(database, 'Players', 'PlayerProfileStructure');
             const postProcess = R.curry((prefix, el) => {
@@ -103,18 +106,16 @@ See the License for the specific language governing permissions and
                 characterCharts: characterCharts.map(postProcess('character-')),
                 playerCharts: playerCharts.map(postProcess('player-'))
             };
-        };
+        }
 
-        var _getProfileChartArray = function (database, profileType, profileStructureType) {
+        function _getProfileChartArray(database, profileType, profileStructureType) {
             const profileItems = database[profileStructureType].filter(filter).map(R.pick(['name', 'type']));
 
             const groupProfiles = R.groupBy(R.__, R.values(database[profileType]));
-            const groupReduce = function (group) {
-                return R.fromPairs(R.toPairs(group).map((elem) => {
-                    elem[1] = elem[1].length;
-                    return elem;
-                }));
-            };
+            const groupReduce = group => R.fromPairs(R.toPairs(group).map((elem) => {
+                elem[1] = elem[1].length;
+                return elem;
+            }));
             const groupedValues = profileItems.map((profileItem) => {
                 if (profileItem.type === 'enum' || profileItem.type === 'checkbox') {
                     return groupReduce(groupProfiles(R.prop(profileItem.name)));
@@ -130,19 +131,19 @@ See the License for the specific language governing permissions and
             });
 
             return R.transpose([profileItems, groupedValues]).map(arr => R.assoc('data', arr[1], arr[0]));
-        };
+        }
 
-        const _makeChartLabel = function (key, value, total) {
-            return [key, ': ', (value / total * 100).toFixed(0), '% (', value, '/', total, ')'].join('');
-        };
+        function _makeChartLabel(key, value, total) {
+            return [key, ': ', ((value / total) * 100).toFixed(0), '% (', value, '/', total, ')'].join('');
+        }
 
-        var _getChartData = function (database, objectKey, totalKey) {
+        function _getChartData(database, objectKey, totalKey) {
             const characterChartData = [];
             const total = Object.keys(database[totalKey]).length;
             let sum = 0;
             if (database.ManagementInfo && database.ManagementInfo.UsersInfo) {
                 let userInfo, value;
-                for (const key in database.ManagementInfo.UsersInfo) {
+                R.keys(database.ManagementInfo.UsersInfo).forEach((key) => {
                     userInfo = database.ManagementInfo.UsersInfo[key];
                     value = userInfo[objectKey].length;
                     characterChartData.push({
@@ -150,7 +151,7 @@ See the License for the specific language governing permissions and
                         label: _makeChartLabel(key, value, total),
                     });
                     sum += value;
-                }
+                });
                 if (sum !== total) {
                     characterChartData.push({
                         value: total - sum,
@@ -164,9 +165,9 @@ See the License for the specific language governing permissions and
                 });
             }
             return characterChartData;
-        };
+        }
 
-        const _addToHist = function (hist, value, keyParam, label, startValue, mergeValues) {
+        function _addToHist(hist, value, keyParam, label, startValue, mergeValues) {
             if (hist[keyParam]) {
                 hist[keyParam].value = mergeValues(hist[keyParam].value, value);
                 hist[keyParam].tip.push(label);
@@ -177,42 +178,42 @@ See the License for the specific language governing permissions and
                     tip: [label]
                 };
             }
-        };
+        }
 
-        var _countCharactersInStories = function (database, stats) {
+        function _countCharactersInStories(database, stats) {
             R.values(database.Stories).forEach((story) => {
                 R.keys(story.characters).forEach((characterName) => {
                     stats[characterName]++;
                 });
             });
-        };
+        }
 
-        var _countCharacterSymbols = R.curry((groupTexts, database, stats) => {
+        _countCharacterSymbols = R.curry((groupTexts, database, stats) => {
             R.values(database.Stories).forEach((story) => {
                 story.events.forEach((event) => {
-                    for (const characterName in event.characters) {
-                        if (event.characters[characterName].text.length != 0) {
+                    R.keys(event.characters).forEach((characterName) => {
+                        if (event.characters[characterName].text.length !== 0) {
                             stats[characterName] += _noWhiteSpaceLength(event.characters[characterName].text);
                         } else {
                             stats[characterName] += _noWhiteSpaceLength(event.text);
                         }
-                    }
+                    });
                 });
             });
-            for (const characterName in groupTexts) {
+            R.keys(groupTexts).forEach((characterName) => {
                 stats[characterName] += R.sum(groupTexts[characterName].map(R.pipe(R.prop('text'), _noWhiteSpaceLength)));
-            }
+            });
         });
 
-        const _makeLabel = function (characterName, stat) {
+        function _makeLabel(characterName, stat) {
             return `${characterName} (${stat})`;
-        };
+        }
 
-        const _makeTip = function (keyParam, step, tipData) {
-            return `${keyParam * step}-${(keyParam + 1) * step - 1}: ${tipData.join(', ')}`;
-        };
+        function _makeTip(keyParam, step, tipData) {
+            return `${keyParam * step}-${((keyParam + 1) * step) - 1}: ${tipData.join(', ')}`;
+        }
 
-        var _getCharacterHist = function (database, statsCollector) {
+        function _getCharacterHist(database, statsCollector) {
             const characterList = R.keys(database.Characters);
             const stats = R.zipObj(characterList, R.repeat(0, characterList.length));
 
@@ -221,10 +222,10 @@ See the License for the specific language governing permissions and
             const array = R.values(stats);
             const step = _makeNumberStep(array);
 
-            const hist = R.keys(stats).reduce((hist, characterName) => {
+            const hist = R.keys(stats).reduce((hist2, characterName) => {
                 const keyParam = Math.floor(stats[characterName] / step);
-                _addToHist(hist, 1, keyParam, _makeLabel(characterName, stats[characterName]), R.always(1), R.add);
-                return hist;
+                _addToHist(hist2, 1, keyParam, _makeLabel(characterName, stats[characterName]), R.always(1), R.add);
+                return hist2;
             }, []);
 
             for (let i = 0; i < R.max(hist.length, 10); i++) {
@@ -235,18 +236,16 @@ See the License for the specific language governing permissions and
                 }
             }
             return hist;
-        };
+        }
 
-        var _getEventCompletenessHist = function (database) {
-            let story, hist = [], storyCompleteness;
-            for (const storyName in database.Stories) {
-                story = database.Stories[storyName];
-                storyCompleteness = _calcStoryCompleteness(story);
-
+        function _getEventCompletenessHist(database) {
+            const hist = [];
+            R.values(database.Stories).forEach((story) => {
+                const storyCompleteness = _calcStoryCompleteness(story);
                 const keyParam = Math.floor(10 * storyCompleteness);
                 const label = `${story.name} (${(100 * storyCompleteness).toFixed(0)}%)`;
                 _addToHist(hist, 1, keyParam, label, R.always(1), R.add);
-            }
+            });
             for (let i = 0; i < 11; i++) {
                 if (!hist[i]) {
                     hist[i] = null;
@@ -255,56 +254,51 @@ See the License for the specific language governing permissions and
                 }
             }
             return hist;
-        };
+        }
 
-        const _getStoryAdaptationStats = function (story) {
+        function _getStoryAdaptationStats(story) {
             let finishedAdaptations = 0;
             let allAdaptations = 0;
             story.events.forEach((event) => {
                 allAdaptations += Object.keys(event.characters).length;
-                for (const character in event.characters) {
-                    if (event.characters[character].ready) {
-                        finishedAdaptations++;
-                    }
-                }
+                finishedAdaptations += R.values(event.characters).filter(R.prop('ready')).length;
             });
             return {
                 finishedAdaptations,
                 allAdaptations
             };
-        };
+        }
 
-        var _calcStoryCompleteness = function (story) {
+        function _calcStoryCompleteness(story) {
             const stats = _getStoryAdaptationStats(story);
             return stats.allAdaptations !== 0 ? stats.finishedAdaptations / stats.allAdaptations : 0;
-        };
+        }
 
-        var _getStoryCompleteness = function (database) {
-            let finishedStories = 0, allStories = Object.keys(database.Stories).length;
+        const calcPercent = (part, all) => ((part / (all === 0 ? 1 : all)) * 100).toFixed(1);
 
-            R.values(database.Stories).map(_getStoryAdaptationStats).forEach((stats) => {
-                if (stats.allAdaptations === stats.finishedAdaptations && stats.allAdaptations != 0) {
-                    finishedStories++;
-                }
-            });
-            return [(finishedStories / (allStories === 0 ? 1 : allStories) * 100).toFixed(1), finishedStories, allStories];
-        };
+        function _getStoryCompleteness(database) {
+            const allStories = Object.keys(database.Stories).length;
+            const finishedStories = R.values(database.Stories).map(_getStoryAdaptationStats)
+                .filter(stats => stats.allAdaptations === stats.finishedAdaptations && stats.allAdaptations !== 0)
+                .length;
+            return [calcPercent(finishedStories, allStories), finishedStories, allStories];
+        }
 
-        var _getGeneralCompleteness = function (database) {
+        function _getGeneralCompleteness(database) {
             let finishedAdaptations = 0, allAdaptations = 0;
 
             R.values(database.Stories).map(_getStoryAdaptationStats).forEach((stats) => {
                 finishedAdaptations += stats.finishedAdaptations;
                 allAdaptations += stats.allAdaptations;
             });
-            return [(finishedAdaptations / (allAdaptations === 0 ? 1 : allAdaptations) * 100).toFixed(1), finishedAdaptations, allAdaptations];
-        };
+            return [calcPercent(finishedAdaptations, allAdaptations), finishedAdaptations, allAdaptations];
+        }
 
-        var _noWhiteSpaceLength = function (str) {
+        function _noWhiteSpaceLength(str) {
             return str.replace(/\s/g, '').length;
-        };
+        }
 
-        var _countTextCharacters = function (database) {
+        function _countTextCharacters(database) {
             const counts = {
                 masterStories: 0,
                 eventOrigins: 0,
@@ -324,9 +318,9 @@ See the License for the specific language governing permissions and
             counts.groups = R.sum(R.values(database.Groups).map(R.compose(_noWhiteSpaceLength, R.prop('characterDescription'))));
             counts.relations = R.sum(R.flatten(R.values(database.Relations).map(R.values)).map(_noWhiteSpaceLength));
             return counts;
-        };
+        }
 
-        var _countBindingStats = function (database) {
+        function _countBindingStats(database) {
             const charNum = R.keys(database.Characters).length;
             const playerNum = R.keys(database.Players).length;
             const bindingNum = R.keys(database.ProfileBindings).length;
@@ -336,34 +330,30 @@ See the License for the specific language governing permissions and
                 freePlayers: playerNum - bindingNum,
                 bindingNum,
             };
-        };
+        }
 
-        var _getFirstLastEventTime = function (database) {
-            let story, lastEvent = null, firstEvent = null, date;
-            for (const storyName in database.Stories) {
-                story = database.Stories[storyName];
-                story.events.forEach((event) => {
-                    if (event.time != '') {
-                        date = new Date(event.time);
-                        if (lastEvent === null || date > lastEvent) {
-                            lastEvent = date;
-                        }
-                        if (firstEvent === null || date < firstEvent) {
-                            firstEvent = date;
-                        }
+        function _getFirstLastEventTime(database) {
+            let lastEvent = null, firstEvent = null;
+            R.values(database.Stories).forEach((story) => {
+                story.events.filter(event => event.time !== '').forEach((event) => {
+                    const date = new Date(event.time);
+                    if (lastEvent === null || date > lastEvent) {
+                        lastEvent = date;
+                    }
+                    if (firstEvent === null || date < firstEvent) {
+                        firstEvent = date;
                     }
                 });
-            }
+            });
             return [firstEvent, lastEvent];
-        };
+        }
 
-        var _getHistogram = function (database, keyParamDelegate) {
-            let story, hist = [];
-            for (const storyName in database.Stories) {
-                story = database.Stories[storyName];
+        function _getHistogram(database, keyParamDelegate) {
+            const hist = [];
+            R.values(database.Stories).forEach((story) => {
                 const keyParam = keyParamDelegate(story);
                 _addToHist(hist, 1, keyParam, story.name, R.always(1), R.add);
-            }
+            });
             for (let i = 0; i < hist.length; i++) {
                 if (!hist[i]) {
                     hist[i] = null;
@@ -372,10 +362,8 @@ See the License for the specific language governing permissions and
                 }
             }
             return hist;
-        };
+        }
     }
 
-    callback(statisticsAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.statisticsAPI = api : module.exports = api;
-}));
+    callback2(statisticsAPI);
+})(api => (typeof exports === 'undefined' ? (this.statisticsAPI = api) : (module.exports = api)));

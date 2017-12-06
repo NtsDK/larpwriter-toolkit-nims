@@ -14,14 +14,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function investigationBoardAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const {
+            R, Constants, Errors, listeners
+        } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
-        const listeners = opts.listeners;
 
         const resourcesPath = ['InvestigationBoard', 'resources'];
         const groupsPath = ['InvestigationBoard', 'groups'];
@@ -117,35 +118,32 @@ See the License for the specific language governing permissions and
             return !R.equals('resources', info[0]) ? null : ['investigation-board-resource-node-cant-be-first'];
         });
 
-        const edgeEndCheck = function (id, database) {
+        const edgeEndCheck = (id, database) => {
             const info = _edgeEndId2info(id);
             const container = R.path(info[0] === 'groups' ? groupsPath : resourcesPath, database);
             return PC.entityExists(info[1], R.keys(container));
         };
 
+        const getEdgeList = container => R.flatten(R.toPairs(container).map(pair => R.keys(pair[1])
+            .map(toId2 => `${pair[0]}-${toId2}`)));
+
+        const edgeExistsCheck = (fromId, toId, container) => PC.chainCheck([PC.isString(fromId), PC.isString(toId),
+            PC.entityExists(`${fromId}-${toId}`, getEdgeList(container))]);
+
+        const edgeNotExistCheck = (fromId, toId, container) => PC.chainCheck([PC.isString(fromId), PC.isString(toId),
+            PC.entityIsNotUsed(`${fromId}-${toId}`, getEdgeList(container))]);
+
         LocalDBMS.prototype.addEdge = function (fromId, toId, callback) {
             let chain = PC.chainCheck([PC.isString(fromId), PC.isString(toId)]);
             PC.precondition(chain, callback, () => {
                 const container = R.path(relationsPath, this.database);
-                chain = PC.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database), edgeEndCheck(toId, this.database),
-                    edgeNotExistCheck(fromId, toId, container)]);
+                chain = PC.chainCheck([isNotResource(fromId), edgeEndCheck(fromId, this.database),
+                    edgeEndCheck(toId, this.database), edgeNotExistCheck(fromId, toId, container)]);
                 PC.precondition(chain, callback, () => {
                     container[fromId][toId] = '';
                     if (callback) callback();
                 });
             });
-        };
-
-        const getEdgeList = function (container) {
-            return R.flatten(R.toPairs(container).map(pair => R.keys(pair[1]).map(toId2 => `${pair[0]}-${toId2}`)));
-        };
-
-        const edgeExistsCheck = function (fromId, toId, container) {
-            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityExists(`${fromId}-${toId}`, getEdgeList(container))]);
-        };
-
-        var edgeNotExistCheck = function (fromId, toId, container) {
-            return PC.chainCheck([PC.isString(fromId), PC.isString(toId), PC.entityIsNotUsed(`${fromId}-${toId}`, getEdgeList(container))]);
         };
 
         LocalDBMS.prototype.setEdgeLabel = function (fromId, toId, label, callback) {
@@ -165,11 +163,9 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _info2edgeEndId = function (name, type) {
-            return (type === 'groups' ? 'group-' : 'resource-') + name;
-        };
+        const _info2edgeEndId = (name, type) => (type === 'groups' ? 'group-' : 'resource-') + name;
 
-        var _edgeEndId2info = function (id) {
+        const _edgeEndId2info = (id) => {
             const info = [];
             if (CU.startsWith(id, 'resource-')) {
                 info[0] = 'resources';
@@ -257,7 +253,5 @@ See the License for the specific language governing permissions and
         listeners.removeGroup.push(_removeGroup);
     }
 
-    callback(investigationBoardAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.investigationBoardAPI = api : module.exports = api;
-}));
+    callback2(investigationBoardAPI);
+})(api => (typeof exports === 'undefined' ? (this.investigationBoardAPI = api) : (module.exports = api)));

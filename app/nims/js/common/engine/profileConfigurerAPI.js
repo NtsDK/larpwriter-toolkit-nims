@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names,prefer-rest-params */
+
+((callback2) => {
     function profileConfigurerAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R, Constants, Errors } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
 
         function getPath(type) {
             if (type === 'character') return ['CharacterProfileStructure'];
@@ -28,15 +28,11 @@ See the License for the specific language governing permissions and
             return null;
         }
 
-        const typeCheck = function (type) {
-            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
-        };
-        const itemTypeCheck = function (type) {
-            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, R.keys(Constants.profileFieldTypes))]);
-        };
-        const playerAccessCheck = function (type) {
-            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.playerAccessTypes)]);
-        };
+        const typeCheck = type => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
+        const itemTypeCheck = type => PC.chainCheck([PC.isString(type),
+            PC.elementFromEnum(type, R.keys(Constants.profileFieldTypes))]);
+        const playerAccessCheck = type => PC.chainCheck([PC.isString(type),
+            PC.elementFromEnum(type, Constants.playerAccessTypes)]);
 
         LocalDBMS.prototype.getProfileStructure = function (type, callback) {
             PC.precondition(typeCheck(type), callback, () => {
@@ -51,7 +47,7 @@ See the License for the specific language governing permissions and
                 const container = R.path(getPath(type), this.database);
                 chain = [PC.createEntityCheck(name, container.map(R.prop('name'))), PC.isInRange(selectedIndex, 0, container.length)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
-                    const value = Constants.profileFieldTypes[itemType].value;
+                    const { value } = Constants.profileFieldTypes[itemType];
                     const profileItem = {
                         name,
                         type: itemType,
@@ -113,7 +109,10 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.changeProfileItemPlayerAccess = function (type, profileItemName, playerAccessType, callback) {
+        LocalDBMS.prototype.changeProfileItemPlayerAccess = function (
+            type, profileItemName, playerAccessType,
+            callback
+        ) {
             const chain = [typeCheck(type), PC.isString(profileItemName), playerAccessCheck(playerAccessType)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const container = R.path(getPath(type), this.database);
@@ -162,7 +161,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const typeSpecificPreconditions = function (itemType, value) {
+        const typeSpecificPreconditions = (itemType, value) => {
             switch (itemType) {
             case 'text':
             case 'string':
@@ -172,6 +171,8 @@ See the License for the specific language governing permissions and
                 return PC.nil();
             case 'enum':
                 return PC.isNotEmptyString(value);
+            default:
+                throw new Error(`Unexpected itemType ${itemType}`);
             }
         };
 
@@ -216,7 +217,5 @@ See the License for the specific language governing permissions and
             });
         };
     }
-    callback(profileConfigurerAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.profileConfigurerAPI = api : module.exports = api;
-}));
+    callback2(profileConfigurerAPI);
+})(api => (typeof exports === 'undefined' ? (this.profileConfigurerAPI = api) : (module.exports = api)));

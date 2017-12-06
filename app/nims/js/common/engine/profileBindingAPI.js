@@ -14,15 +14,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function profileBindingAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const {
+            R, Constants, Errors, listeners, dbmsUtils
+        } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
-        const listeners = opts.listeners;
-        const dbmsUtils = opts.dbmsUtils;
 
         const path = ['ProfileBindings'];
         const charPath = ['Characters'];
@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
             callback(null, bindingData);
         };
 
-        const _getProfileBinding = function (type, name, db) {
+        const _getProfileBinding = (type, name, db) => {
             let arr;
             if (type === 'character') {
                 const bindings = R.path(path, db);
@@ -60,8 +60,8 @@ See the License for the specific language governing permissions and
         dbmsUtils._getProfileBinding = _getProfileBinding;
 
         LocalDBMS.prototype.getProfileBinding = function (type, name, callback) {
-            const conditions = [PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes),
-                PC.isString(name), PC.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
+            const conditions = [PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes), PC.isString(name),
+                PC.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
             PC.precondition(PC.chainCheck(conditions), callback, () => {
                 callback(null, _getProfileBinding(type, name, this.database));
             });
@@ -69,9 +69,11 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.createBinding = function (characterName, playerName, callback) {
             const bindings = R.path(path, this.database);
-            const conditions = [PC.isString(characterName), PC.entityExists(characterName, R.keys(this.database.Characters)),
-                PC.isString(playerName), PC.entityExists(playerName, R.keys(this.database.Players)),
-                PC.entityIsNotUsed(characterName, R.keys(bindings)), PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
+            const conditions = [PC.isString(characterName),
+                PC.entityExists(characterName, R.keys(this.database.Characters)), PC.isString(playerName),
+                PC.entityExists(playerName, R.keys(this.database.Players)),
+                PC.entityIsNotUsed(characterName, R.keys(bindings)),
+                PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
             PC.precondition(PC.chainCheck(conditions), callback, () => {
                 bindings[characterName] = playerName;
                 if (callback) callback();
@@ -80,7 +82,8 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.removeBinding = function (characterName, playerName, callback) {
             const bindingArr = R.toPairs(R.path(path, this.database)).map(pair => `${pair[0]}/${pair[1]}`);
-            const conditions = [PC.isString(characterName), PC.entityExists(characterName, R.keys(this.database.Characters)),
+            const conditions = [PC.isString(characterName),
+                PC.entityExists(characterName, R.keys(this.database.Characters)),
                 PC.isString(playerName), PC.entityExists(playerName, R.keys(this.database.Players)),
                 PC.entityExists(`${characterName}/${playerName}`, bindingArr)];
             PC.precondition(PC.chainCheck(conditions), callback, () => {
@@ -89,7 +92,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _renameProfile = function (type, fromName, toName) {
+        const _renameProfile = (type, fromName, toName) => {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
                 const playerName = bindings[fromName];
@@ -111,7 +114,7 @@ See the License for the specific language governing permissions and
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameProfile);
 
-        const _removeProfile = function (type, profileName) {
+        const _removeProfile = (type, profileName) => {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
                 delete bindings[profileName];
@@ -130,7 +133,5 @@ See the License for the specific language governing permissions and
         listeners.removeProfile.push(_removeProfile);
     }
 
-    callback(profileBindingAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.profileBindingAPI = api : module.exports = api;
-}));
+    callback2(profileBindingAPI);
+})(api => (typeof exports === 'undefined' ? (this.profileBindingAPI = api) : (module.exports = api)));

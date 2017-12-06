@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+((callback) => {
     function ProjectUtils(exports, R, Constants, Errors, CU) {
         exports.acceptDataRow = R.curry((model, dataString) => {
-            let value, regex, result;
             const dataMap = CU.arr2map(dataString, 'itemName');
             return model.every((filterItem) => {
+                let regex, result, values;
                 result = true;
-                value = dataMap[filterItem.name].value;
+                const { value } = dataMap[filterItem.name];
                 if (value === undefined) {
                     result = false;
-                    return;
+                    return result;
                 }
                 switch (filterItem.type) {
                 case 'enum':
@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
                     }
                     break;
                 case 'multiEnum':
-                    var values = value === '' ? [] : value.split(',');
+                    values = value === '' ? [] : value.split(',');
                     switch (filterItem.condition) {
                     case 'every':
                         if (R.keys(filterItem.selectedOptions).length === 0) {
@@ -50,7 +50,7 @@ See the License for the specific language governing permissions and
                         result = R.symmetricDifference(values, R.keys(filterItem.selectedOptions)).length === 0;
                         break;
                     default:
-                        throw `Unexpected condition ${filterItem.condition}`;
+                        throw new Error(`Unexpected condition ${filterItem.condition}`);
                     }
                     break;
                 case 'number':
@@ -65,12 +65,12 @@ See the License for the specific language governing permissions and
                         result = value < filterItem.num;
                         break;
                     default:
-                        throw `Unexpected condition ${filterItem.condition}`;
+                        throw new Error(`Unexpected condition ${filterItem.condition}`);
                     }
                     break;
                 case 'text':
                 case 'string':
-                    result = value.toLowerCase().indexOf(filterItem.regexString.toLowerCase()) != -1;
+                    result = value.toLowerCase().indexOf(filterItem.regexString.toLowerCase()) !== -1;
                     break;
                 default:
                     throw new Error(`Unexpected type ${filterItem.type}`);
@@ -79,7 +79,7 @@ See the License for the specific language governing permissions and
             });
         });
 
-        exports.makeGroupedProfileFilterInfo = function (opts) {
+        exports.makeGroupedProfileFilterInfo = (opts) => {
             const groupedProfileFilterItems = [];
             let arr = [];
             arr.push({
@@ -138,49 +138,52 @@ See the License for the specific language governing permissions and
             return opts;
         };
 
-        const getCharacterInfoValue = function (info, characterName, profileItemName) {
-            if (profileItemName == Constants.CHAR_NAME) {
+        const getCharacterInfoValue = (info, characterName, profileItemName) => {
+            if (profileItemName === Constants.CHAR_NAME) {
                 return characterName;
-            } else if (profileItemName == Constants.CHAR_OWNER) {
+            } else if (profileItemName === Constants.CHAR_OWNER) {
                 return info.characters.owners[characterName];
             } else if (CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX)) {
-                return info.charactersSummary[characterName][profileItemName.substring(Constants.SUMMARY_PREFIX.length)];
+                return info.charactersSummary[characterName][profileItemName.substring(Constants
+                    .SUMMARY_PREFIX.length)];
             } else if (CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
-                return info.characters.profiles[characterName][profileItemName.substring(Constants.CHAR_PREFIX.length)];
+                return info.characters.profiles[characterName][profileItemName.substring(Constants
+                    .CHAR_PREFIX.length)];
             }
             throw new Error(`Unexpected profileItemName: ${profileItemName}`);
         };
-        const getCharacterInfoValue2 = function (info, profileId, profileItemName) {
-            if (profileItemName == Constants.CHAR_NAME ||
-                    profileItemName == Constants.CHAR_OWNER ||
+        const getCharacterInfoValue2 = (info, profileId, profileItemName) => {
+            if (profileItemName === Constants.CHAR_NAME ||
+                    profileItemName === Constants.CHAR_OWNER ||
                     CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ||
                     CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
                 if (profileId[0] === '') return undefined;
                 const characterName = profileId[0];
-                if (profileItemName == Constants.CHAR_NAME) {
+                if (profileItemName === Constants.CHAR_NAME) {
                     return characterName;
-                } else if (profileItemName == Constants.CHAR_OWNER) {
+                } else if (profileItemName === Constants.CHAR_OWNER) {
                     return info.characters.owners[characterName];
                 } else if (CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX)) {
-                    return info.charactersSummary[characterName][profileItemName.substring(Constants.SUMMARY_PREFIX.length)];
+                    return info.charactersSummary[characterName][profileItemName.substring(Constants
+                        .SUMMARY_PREFIX.length)];
                 } else if (CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
-                    return info.characters.profiles[characterName][profileItemName.substring(Constants.CHAR_PREFIX.length)];
+                    return info.characters.profiles[characterName][profileItemName.substring(Constants
+                        .CHAR_PREFIX.length)];
                 }
-            } else if (profileItemName == Constants.PLAYER_NAME ||
-                    profileItemName == Constants.PLAYER_OWNER ||
+            } else if (profileItemName === Constants.PLAYER_NAME ||
+                    profileItemName === Constants.PLAYER_OWNER ||
                     CU.startsWith(profileItemName, Constants.PLAYER_PREFIX)) {
                 if (profileId[1] === '') return undefined;
                 const playerName = profileId[1];
-                if (profileItemName == Constants.PLAYER_NAME) {
+                if (profileItemName === Constants.PLAYER_NAME) {
                     return playerName;
-                } else if (profileItemName == Constants.PLAYER_OWNER) {
+                } else if (profileItemName === Constants.PLAYER_OWNER) {
                     return info.players.owners[playerName];
                 } else if (CU.startsWith(profileItemName, Constants.PLAYER_PREFIX)) {
                     return info.players.profiles[playerName][profileItemName.substring(Constants.PLAYER_PREFIX.length)];
                 }
-            } else {
-                throw new Error(`Unexpected profileItemName: ${profileItemName}`);
             }
+            throw new Error(`Unexpected profileItemName: ${profileItemName}`);
         };
 
         exports.getDataArray = R.curry((info, profileId) => R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map((profileItemInfo) => {
@@ -192,11 +195,10 @@ See the License for the specific language governing permissions and
             };
         }));
 
-        exports.getDataArrays = function (info, filterModel) {
-            return info.bindingData.map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
-        };
+        exports.getDataArrays = (info, filterModel) =>
+            info.bindingData.map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
 
-        const findProfileStructureConflicts = function (prefix, profileStructure, filterModel) {
+        const findProfileStructureConflicts = (prefix, profileStructure, filterModel) => {
             const conflictTypes = [];
             const profilePart = filterModel.filter(R.compose(R.test(new RegExp(`^${prefix}`)), R.prop('name')));
             const profileSettingsMap = R.indexBy(R.prop('name'), profileStructure);
@@ -210,7 +212,7 @@ See the License for the specific language governing permissions and
                 if (profileItem.type === 'enum' || profileItem.type === 'multiEnum') {
                     const profileEnum = profileItem.value.split(',');
                     const modelEnum = Object.keys(modelItem.selectedOptions);
-                    if (R.difference(modelEnum, profileEnum).length != 0) {
+                    if (R.difference(modelEnum, profileEnum).length !== 0) {
                         conflictTypes.push(itemName);
                     }
                 }
@@ -218,14 +220,18 @@ See the License for the specific language governing permissions and
             return conflictTypes;
         };
 
-        exports.isFilterModelCompatibleWithProfiles = function (profileStructure, filterModel) {
-            const charConflicts = findProfileStructureConflicts(Constants.CHAR_PREFIX, profileStructure.characters, filterModel);
-            const playerConflicts = findProfileStructureConflicts(Constants.PLAYER_PREFIX, profileStructure.players, filterModel);
+        exports.isFilterModelCompatibleWithProfiles = (profileStructure, filterModel) => {
+            const charConflicts = findProfileStructureConflicts(
+                Constants.CHAR_PREFIX, profileStructure.characters,
+                filterModel
+            );
+            const playerConflicts = findProfileStructureConflicts(
+                Constants.PLAYER_PREFIX, profileStructure.players,
+                filterModel
+            );
             return charConflicts.concat(playerConflicts);
         };
     }
 
     callback(ProjectUtils);
-}((api) => {
-    typeof exports === 'undefined' ? api(this.ProjectUtils = {}, R, Constants, Errors, CommonUtils) : module.exports = api;
-}));
+})(api => ((typeof exports === 'undefined') ? api((this.ProjectUtils = {}), R, Constants, Errors, CommonUtils) : (module.exports = api)));

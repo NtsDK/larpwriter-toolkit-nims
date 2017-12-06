@@ -14,19 +14,19 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function relationsAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const {
+            R, Constants, Errors, listeners, dbmsUtils
+        } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
-        const listeners = opts.listeners;
-        const dbmsUtils = opts.dbmsUtils;
 
         const relationsPath = ['Relations'];
 
-        dbmsUtils._getKnownCharacters = function (database, characterName) {
+        dbmsUtils._getKnownCharacters = (database, characterName) => {
             const stories = database.Stories;
             const knownCharacters = {};
             R.values(stories).forEach((story) => {
@@ -42,9 +42,8 @@ See the License for the specific language governing permissions and
             return knownCharacters;
         };
 
-        const characterCheck = function (characterName, database) {
-            return PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
-        };
+        const characterCheck = (characterName, database) => PC.chainCheck([PC.isString(characterName),
+            PC.entityExists(characterName, R.keys(database.Characters))]);
 
         LocalDBMS.prototype.getRelationsSummary = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
@@ -66,7 +65,8 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.setCharacterRelation = function (fromCharacter, toCharacter, text, callback) {
-            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database), characterCheck(toCharacter, this.database), PC.isString(text)]);
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
+                characterCheck(toCharacter, this.database), PC.isString(text)]);
             PC.precondition(chain, callback, () => {
                 const relData = R.path(relationsPath, this.database);
                 text = text.trim();
@@ -82,7 +82,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _renameCharacter = function (type, fromName, toName) {
+        const _renameCharacter = (type, fromName, toName) => {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             if (relData[fromName] !== undefined) {
@@ -100,7 +100,7 @@ See the License for the specific language governing permissions and
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameCharacter);
 
-        const _removeCharacter = function (type, characterName) {
+        const _removeCharacter = (type, characterName) => {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             if (relData[characterName] !== undefined) {
@@ -117,7 +117,5 @@ See the License for the specific language governing permissions and
         listeners.removeProfile.push(_removeCharacter);
     }
 
-    callback(relationsAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.relationsAPI = api : module.exports = api;
-}));
+    callback2(relationsAPI);
+})(api => (typeof exports === 'undefined' ? (this.relationsAPI = api) : (module.exports = api)));

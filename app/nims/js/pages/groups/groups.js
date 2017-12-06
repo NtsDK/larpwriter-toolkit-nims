@@ -57,7 +57,7 @@ See the License for the specific language governing permissions and
 
         clearEl(queryEl(`${selector} .remove-entity-select`));
         $(`${selector} .remove-entity-select`).select2(data);
-    }
+    };
 
     exports.createGroup = (selector, refresh) => () => {
         const input = queryEl(`${selector} .create-entity-input`);

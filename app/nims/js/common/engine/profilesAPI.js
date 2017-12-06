@@ -14,14 +14,15 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names,prefer-rest-params,prefer-destructuring */
+
+((callback2) => {
     function profilesAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const {
+            R, Constants, Errors, listeners
+        } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
-        const listeners = opts.listeners;
 
         function getPath(type) {
             if (type === 'character') return ['Characters'];
@@ -34,9 +35,7 @@ See the License for the specific language governing permissions and
             return null;
         }
 
-        const typeCheck = function (type) {
-            return PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
-        };
+        const typeCheck = type => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 
         LocalDBMS.prototype.getProfileNamesArray = function (type, callback) {
             PC.precondition(typeCheck(type), callback, () => {
@@ -94,9 +93,7 @@ See the License for the specific language governing permissions and
                     data.name = toName;
                     container[toName] = data;
                     delete container[fromName];
-
                     this.ee.trigger('renameProfile', arguments);
-
                     if (callback) callback();
                 });
             });
@@ -114,7 +111,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const typeSpecificPreconditions = function (itemType, itemDesc, value) {
+        const typeSpecificPreconditions = (itemType, itemDesc, value) => {
             switch (itemType) {
             case 'text':
             case 'string':
@@ -124,7 +121,12 @@ See the License for the specific language governing permissions and
             case 'enum':
                 return PC.elementFromEnum(value, itemDesc.value.split(','));
             case 'multiEnum':
-                return PC.eitherCheck(PC.elementsFromEnum(value.split(','), itemDesc.value.split(',')), PC.isEmptyString(value));
+                return PC.eitherCheck(
+                    PC.elementsFromEnum(value.split(','), itemDesc.value.split(',')),
+                    PC.isEmptyString(value)
+                );
+            default:
+                throw new Error(`Unexpected itemType ${itemType}`);
             }
         };
 
@@ -134,7 +136,10 @@ See the License for the specific language governing permissions and
                 const container = R.path(getPath(type), this.database);
                 const containerStructure = R.path(getStructurePath(type), this.database);
                 const arr = [PC.entityExistsCheck(characterName, R.keys(container)),
-                    PC.entityExistsCheck(`${fieldName}/${itemType}`, containerStructure.map(item => `${item.name}/${item.type}`)),
+                    PC.entityExistsCheck(
+                        `${fieldName}/${itemType}`,
+                        containerStructure.map(item => `${item.name}/${item.type}`)
+                    ),
                     PC.getValueCheck(itemType)(value)];
                 PC.precondition(PC.chainCheck(arr), callback, () => {
                     const itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
@@ -218,8 +223,8 @@ See the License for the specific language governing permissions and
         function _replaceMultiEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
+                let value = profileSet[characterName][profileItemName];
                 if (value !== '') {
-                    var value = profileSet[characterName][profileItemName];
                     value = R.intersection(value.split(','), R.keys(newOptionsMap));
                     profileSet[characterName][profileItemName] = value.join(',');
                 }
@@ -230,7 +235,5 @@ See the License for the specific language governing permissions and
         listeners.replaceMultiEnumValue.push(_replaceMultiEnumValue);
     }
 
-    callback(profilesAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.profilesAPI = api : module.exports = api;
-}));
+    callback2(profilesAPI);
+})(api => (typeof exports === 'undefined' ? (this.profilesAPI = api) : (module.exports = api)));

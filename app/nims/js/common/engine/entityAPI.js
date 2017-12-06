@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function entityAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R, Constants, Errors } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
 
         LocalDBMS.prototype.getEntityNamesArray = function (type, callback) {
             const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
@@ -42,7 +42,5 @@ See the License for the specific language governing permissions and
             });
         };
     }
-    callback(entityAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.entityAPI = api : module.exports = api;
-}));
+    callback2(entityAPI);
+})(api => (typeof exports === 'undefined' ? (this.entityAPI = api) : (module.exports = api)));

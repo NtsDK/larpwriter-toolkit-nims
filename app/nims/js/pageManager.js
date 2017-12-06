@@ -177,7 +177,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 //addEl(state.navigation, makeL10nButton());
 
                 Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
-                //addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
+                addEl(state.navigation, makeButton("testButton", "test", runTests, btnOpts));
                 if (MODE === 'NIMS_Server') {
                     Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton', tooltip: true });
                     addEl(state.navigation, makeButton('logoutButton', 'logout', postLogout, btnOpts));

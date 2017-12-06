@@ -18,6 +18,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
+/* eslint-disable func-names,prefer-rest-params */
+
 const showNotification = true;
 function makeRemoteDBMS(LocalDBMS) {
     const url = '/';
@@ -27,8 +29,6 @@ function makeRemoteDBMS(LocalDBMS) {
     }
 
     RemoteDBMS._simpleGet = function (name, params, callback) {
-        'use strict';
-
         let paramStr = '';
         if (params) {
             paramStr = `?params=${encodeURIComponent(JSON.stringify(params))}`;
@@ -57,8 +57,6 @@ function makeRemoteDBMS(LocalDBMS) {
     };
 
     RemoteDBMS._simplePut = function (name, data, callback) {
-        'use strict';
-
         const request = $.ajax({
             url: url + name,
             dataType: 'text',
@@ -68,15 +66,17 @@ function makeRemoteDBMS(LocalDBMS) {
             timeout: Constants.httpTimeout
         });
 
+        let notificationBox;
+
         if (showNotification) {
-            var notificationBox = clearEl(getEl('debugNotification'));
+            notificationBox = clearEl(getEl('debugNotification'));
             removeClass(notificationBox, 'hidden');
             removeClass(notificationBox, 'operationOK');
             removeClass(notificationBox, 'operationFail');
             addEl(notificationBox, makeText(`${name} ${JSON.stringify(data)}`));
         }
 
-        request.done((data) => {
+        request.done((data2) => {
             if (showNotification) {
                 addClass(notificationBox, 'operationOK');
                 setTimeout(() => {
@@ -121,8 +121,6 @@ function makeRemoteDBMS(LocalDBMS) {
 
 
     RemoteDBMS.prototype.clearSettings = function () {
-        'use strict';
-
         this.Settings = {
             BriefingPreview: {},
             Stories: {},
@@ -131,8 +129,6 @@ function makeRemoteDBMS(LocalDBMS) {
     };
 
     RemoteDBMS.prototype.getSettings = function () {
-        'use strict';
-
         return this.Settings;
     };
     return RemoteDBMS;

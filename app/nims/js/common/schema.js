@@ -18,7 +18,11 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback) => {
+    let makeProfileStructureItemSchema;
+
     function Schema(exports, R, CommonUtils, Constants) {
         exports.getSchema = function (base) {
             const schema = {
@@ -42,7 +46,10 @@ See the License for the specific language governing permissions and
             const Relations = getRelationsSchema(base.Characters, schema.definitions);
             let ManagementInfo = {};
             if (base.ManagementInfo) {
-                ManagementInfo = getManagementInfoSchema(base.ManagementInfo, base.Characters, base.Stories, base.Groups, base.Players);
+                ManagementInfo = getManagementInfoSchema(
+                    base.ManagementInfo, base.Characters, base.Stories,
+                    base.Groups, base.Players
+                );
             }
 
             schema.properties = {
@@ -233,12 +240,12 @@ See the License for the specific language governing permissions and
                 properties: {},
                 additionalProperties: false
             };
-            if (relGroupNames.length != 0) {
+            if (relGroupNames.length !== 0) {
                 relationsSchema.required = relGroupNames;
             }
 
-            relGroupNames.forEach((relGroupNames) => {
-                relationsSchema.properties[relGroupNames] = relationSetSchema;
+            relGroupNames.forEach((relGroupNames2) => {
+                relationsSchema.properties[relGroupNames2] = relationSetSchema;
             });
 
             const resourcesSchema = {
@@ -324,8 +331,10 @@ See the License for the specific language governing permissions and
             filterItems.push(assocFunc([Constants.PLAYER_NAME], R.clone(staticStringTemplate)));
             filterItems.push(assocFunc([Constants.PLAYER_OWNER], R.clone(staticStringTemplate)));
 
-            filterItems = filterItems.concat(characterProfileSettings.map(makeProfileStructureItemSchema(Constants.CHAR_PREFIX)));
-            filterItems = filterItems.concat(playerProfileSettings.map(makeProfileStructureItemSchema(Constants.PLAYER_PREFIX)));
+            filterItems = filterItems.concat(characterProfileSettings
+                .map(makeProfileStructureItemSchema(Constants.CHAR_PREFIX)));
+            filterItems = filterItems.concat(playerProfileSettings
+                .map(makeProfileStructureItemSchema(Constants.PLAYER_PREFIX)));
 
             R.keys(R.fromPairs(Constants.summaryStats)).forEach((item) => {
                 filterItems.push({
@@ -384,7 +393,7 @@ See the License for the specific language governing permissions and
             return schema;
         }
 
-        var makeProfileStructureItemSchema = R.curry((prefix, item) => {
+        makeProfileStructureItemSchema = R.curry((prefix, item) => {
             const data = {
                 type: 'object',
                 properties: {
@@ -401,6 +410,7 @@ See the License for the specific language governing permissions and
                 additionalProperties: false
             };
 
+            let properties;
             switch (item.type) {
             case 'text':
             case 'string':
@@ -433,8 +443,8 @@ See the License for the specific language governing permissions and
                 data.required.push('selectedOptions');
                 break;
             case 'enum':
-                var properties = item.value.split(',').reduce((result, item) => {
-                    result[item] = {};
+                properties = item.value.split(',').reduce((result, item2) => {
+                    result[item2] = {};
                     return result;
                 }, {});
                 data.properties.selectedOptions = {
@@ -449,8 +459,8 @@ See the License for the specific language governing permissions and
                     type: 'string',
                     enum: ['every', 'equal', 'some']
                 };
-                var properties = item.value.split(',').reduce((result, item) => {
-                    result[item] = {};
+                properties = item.value.split(',').reduce((result, item2) => {
+                    result[item2] = {};
                     return result;
                 }, {});
                 data.properties.selectedOptions = {
@@ -496,7 +506,7 @@ See the License for the specific language governing permissions and
                 case 'enum':
                     value = {
                         type: 'string',
-                        enum: item.value.split(',').map(item => item.trim())
+                        enum: item.value.split(',').map(R.trim)
                     };
                     break;
                 default:
@@ -521,7 +531,7 @@ See the License for the specific language governing permissions and
 
         function getProfileBindings(characters, players) {
             let playerNames = Object.keys(players);
-            if (playerNames.length == 0) {
+            if (playerNames.length === 0) {
                 playerNames = ['123'];
             }
 
@@ -663,16 +673,16 @@ See the License for the specific language governing permissions and
             const userNames = Object.keys(managementInfo.UsersInfo);
             // enum can't be empty, ask about it here
             // http://stackoverflow.com/questions/37635675/how-to-validate-empty-array-of-strings-with-ajv
-            if (storyNames.length == 0) {
+            if (storyNames.length === 0) {
                 storyNames = ['123'];
             }
-            if (charNames.length == 0) {
+            if (charNames.length === 0) {
                 charNames = ['123'];
             }
-            if (groupNames.length == 0) {
+            if (groupNames.length === 0) {
                 groupNames = ['123'];
             }
-            if (playerNames.length == 0) {
+            if (playerNames.length === 0) {
                 playerNames = ['123'];
             }
 
@@ -808,6 +818,4 @@ See the License for the specific language governing permissions and
     }
 
     callback(Schema);
-}((api) => {
-    typeof exports === 'undefined' ? api(this.Schema = {}, R, CommonUtils, Constants) : module.exports = api;
-}));
+})(api => ((typeof exports === 'undefined') ? api((this.Schema = {}), R, CommonUtils, Constants) : (module.exports = api)));

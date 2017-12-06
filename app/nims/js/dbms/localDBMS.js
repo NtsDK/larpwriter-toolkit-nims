@@ -18,6 +18,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
+/* eslint-disable func-names */
+
 function makeLocalDBMS(fullVersion) {
 //    if(!fullVersion){
 //        function LocalDBMS(){

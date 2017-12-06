@@ -14,23 +14,23 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names,prefer-rest-params */
+
+((callback2) => {
     function groupsAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const {
+            R, Constants, Errors, listeners
+        } = opts;
         const CU = opts.CommonUtils;
         const PU = opts.ProjectUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const Errors = opts.Errors;
-        const listeners = opts.listeners;
 
         LocalDBMS.prototype.getGroupNamesArray = function (callback) {
             callback(null, Object.keys(this.database.Groups).sort(CU.charOrdA));
         };
 
-        const groupCheck = function (groupName, database) {
-            return PC.chainCheck([PC.isString(groupName), PC.entityExists(groupName, R.keys(database.Groups))]);
-        };
+        const groupCheck = (groupName, database) => PC.chainCheck([PC.isString(groupName),
+            PC.entityExists(groupName, R.keys(database.Groups))]);
 
         LocalDBMS.prototype.getGroup = function (groupName, callback) {
             PC.precondition(groupCheck(groupName, this.database), callback, () => {
@@ -38,12 +38,13 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _getCharacterGroupTexts = function (groups, info, profileId) {
+        const _getCharacterGroupTexts = (groups, info, profileId) => {
             const dataArray = PU.getDataArray(info, profileId);
-            const array = R.values(groups).filter(group => group.doExport && PU.acceptDataRow(group.filterModel, dataArray)).map(group => ({
-                groupName: group.name,
-                text: group.characterDescription
-            }));
+            const array = R.values(groups)
+                .filter(group => group.doExport && PU.acceptDataRow(group.filterModel, dataArray)).map(group => ({
+                    groupName: group.name,
+                    text: group.characterDescription
+                }));
             array.sort(CU.charOrdAFactory(R.prop('groupName')));
             return array;
         };
@@ -53,8 +54,8 @@ See the License for the specific language governing permissions and
             const that = this;
             this.getProfileBinding('character', characterName, (err, profileId) => {
                 if (err) { callback(err); return; }
-                that.getProfileFilterInfo((err, info) => {
-                    if (err) { callback(err); return; }
+                that.getProfileFilterInfo((err2, info) => {
+                    if (err2) { callback(err2); return; }
                     callback(null, _getCharacterGroupTexts(that.database.Groups, info, profileId));
                 });
             });
@@ -65,8 +66,8 @@ See the License for the specific language governing permissions and
             const that = this;
             this.getProfileFilterInfo((err, info) => {
                 if (err) { callback(err); return; }
-                that.getProfileBindings((err, bindings) => {
-                    if (err) { callback(err); return; }
+                that.getProfileBindings((err2, bindings) => {
+                    if (err2) { callback(err2); return; }
                     const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
                         const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
                         result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, profileId);
@@ -99,9 +100,7 @@ See the License for the specific language governing permissions and
                 data.name = toName;
                 this.database.Groups[toName] = data;
                 delete this.database.Groups[fromName];
-
                 this.ee.trigger('renameGroup', arguments);
-
                 if (callback) callback();
             });
         };
@@ -120,7 +119,7 @@ See the License for the specific language governing permissions and
                     characters: this.database.CharacterProfileStructure,
                     players: this.database.PlayerProfileStructure
                 }, filterModel);
-                if (conflictTypes.length != 0) {
+                if (conflictTypes.length !== 0) {
                     callback(new Errors.ValidationError('groups-page-filter-is-incompatible-with-base-profiles', [conflictTypes.join(',')]));
                     return;
                 }
@@ -140,7 +139,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const initProfileInfo = function (that, type, ownerMapType, callback) {
+        const initProfileInfo = (that, type, ownerMapType, callback) => {
             that.getAllProfiles(type, (err, profiles) => {
                 if (err) { callback(err); return; }
                 let owners = R.keys(profiles);
@@ -149,8 +148,8 @@ See the License for the specific language governing permissions and
                 } else {
                     owners = R.zipObj(owners, R.repeat('user', owners.length));
                 }
-                that.getProfileStructure(type, (err, profileStructure) => {
-                    if (err) { callback(err); return; }
+                that.getProfileStructure(type, (err2, profileStructure) => {
+                    if (err2) { callback(err2); return; }
                     callback(null, {
                         profileStructure,
                         owners,
@@ -164,12 +163,12 @@ See the License for the specific language governing permissions and
             const that = this;
             initProfileInfo(that, 'character', 'Characters', (err, charactersInfo) => {
                 if (err) { callback(err); return; }
-                initProfileInfo(that, 'player', 'Players', (err, playersInfo) => {
-                    if (err) { callback(err); return; }
-                    that.getCharactersSummary((err, charactersSummary) => {
-                        if (err) { callback(err); return; }
-                        that.getExtendedProfileBindings((err, bindingData) => {
-                            if (err) { callback(err); return; }
+                initProfileInfo(that, 'player', 'Players', (err2, playersInfo) => {
+                    if (err2) { callback(err2); return; }
+                    that.getCharactersSummary((err3, charactersSummary) => {
+                        if (err3) { callback(err3); return; }
+                        that.getExtendedProfileBindings((err4, bindingData) => {
+                            if (err4) { callback(err4); return; }
                             const info = PU.makeGroupedProfileFilterInfo({
                                 characters: charactersInfo,
                                 players: playersInfo,
@@ -183,7 +182,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _getGroupCharacterSets = function (groups, characterNames, bindings, info) {
+        const _getGroupCharacterSets = (groups, characterNames, bindings, info) => {
             const groupNames = R.keys(groups);
             const groupCharacterSets = R.zipObj(groupNames, R.ap([R.clone], R.repeat({}, groupNames.length)));
             characterNames.forEach((characterName) => {
@@ -200,10 +199,12 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.getGroupCharacterSets = function (callback) {
             const that = this;
-
             this.getProfileFilterInfo((err, info) => {
                 if (err) { callback(err); return; }
-                callback(null, _getGroupCharacterSets(that.database.Groups, R.keys(that.database.Characters), R.clone(that.database.ProfileBindings), info));
+                callback(null, _getGroupCharacterSets(
+                    that.database.Groups, R.keys(that.database.Characters),
+                    R.clone(that.database.ProfileBindings), info
+                ));
             });
         };
 
@@ -246,17 +247,18 @@ See the License for the specific language governing permissions and
         listeners.renameProfileItem.push(_renameProfileItem);
 
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
-            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) + profileItemName;
+            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
+                profileItemName;
             const that = this;
             Object.keys(this.database.Groups).forEach((groupName) => {
                 const group = that.database.Groups[groupName];
                 group.filterModel.forEach((filterItem) => {
                     if (filterItem.name === subFilterName) {
-                        for (const selectedOption in filterItem.selectedOptions) {
+                        R.keys(filterItem.selectedOptions).forEach((selectedOption) => {
                             if (!newOptionsMap[selectedOption]) {
                                 delete filterItem.selectedOptions[selectedOption];
                             }
-                        }
+                        });
                     }
                 });
             });
@@ -266,7 +268,7 @@ See the License for the specific language governing permissions and
                     if (filterItem.name !== subFilterName) {
                         return true;
                     }
-                    return Object.keys(filterItem.selectedOptions).length != 0;
+                    return Object.keys(filterItem.selectedOptions).length !== 0;
                 });
             });
         }
@@ -278,7 +280,5 @@ See the License for the specific language governing permissions and
         listeners.replaceMultiEnumValue.push(_replaceEnumValue);
     }
 
-    callback(groupsAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.groupsAPI = api : module.exports = api;
-}));
+    callback2(groupsAPI);
+})(api => (typeof exports === 'undefined' ? (this.groupsAPI = api) : (module.exports = api)));

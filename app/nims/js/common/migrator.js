@@ -18,12 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
-    exports.migrate = function (data) {
+((exports) => {
+    exports.migrate = (data) => {
         if (!data.Version) {
             data.Settings = {};
 
-            var story, storyCharacters;
+            let story, storyCharacters;
             Object.keys(data.Stories).forEach((storyName) => {
                 story = data.Stories[storyName];
                 storyCharacters = Object.keys(story.characters);
@@ -48,13 +48,12 @@ See the License for the specific language governing permissions and
         }
         if (data.Version === '0.4.4') {
             // see #3
-            var char, story;
             Object.keys(data.Characters).forEach((charName) => {
-                char = data.Characters[charName];
+                const char = data.Characters[charName];
                 delete char.displayName;
             });
             Object.keys(data.Stories).forEach((storyName) => {
-                story = data.Stories[storyName];
+                const story = data.Stories[storyName];
                 delete story.displayName;
             });
             data.Version = '0.4.4u1';
@@ -66,43 +65,43 @@ See the License for the specific language governing permissions and
             });
             data.Meta.saveTime = new Date().toString();
             // see #13
-            for (var storyName in data.Stories) {
-                var story = data.Stories[storyName];
+            Object.keys(data.Stories).forEach((storyName) => {
+                const story = data.Stories[storyName];
                 story.events.forEach((event) => {
                     delete event.index;
                     delete event.storyName;
                 });
-            }
+            });
             // see #17
-            for (var storyName in data.Stories) {
-                var story = data.Stories[storyName];
+            Object.keys(data.Stories).forEach((storyName) => {
+                const story = data.Stories[storyName];
                 story.events.forEach((event) => {
-                    for (const character in event.characters) {
+                    Object.keys(event.characters).forEach((character) => {
                         delete event.characters[character].name;
                         event.characters[character].time = '';
-                    }
+                    });
                 });
-            }
+            });
             data.Version = '0.4.4u2';
         }
         if (data.Version === '0.4.4u2') {
             // see #17 - reopened
-            for (var storyName in data.Stories) {
-                var story = data.Stories[storyName];
+            Object.keys(data.Stories).forEach((storyName) => {
+                const story = data.Stories[storyName];
                 story.events.forEach((event) => {
-                    for (const character in event.characters) {
+                    Object.keys(event.characters).forEach((character) => {
                         delete event.characters[character].name;
-                    }
+                    });
                 });
-            }
+            });
             data.Version = '0.4.4u3';
         }
         if (data.Version === '0.4.4u3') {
             data.Groups = {};
             if (data.ManagementInfo) {
-                for (var userName in data.ManagementInfo.UsersInfo) {
+                Object.keys(data.ManagementInfo.UsersInfo).forEach((userName) => {
                     data.ManagementInfo.UsersInfo[userName].groups = [];
-                }
+                });
             }
 
             data.Version = '0.5.0';
@@ -135,9 +134,9 @@ See the License for the specific language governing permissions and
             data.Players = {};
             data.ProfileBindings = {};
             if (data.ManagementInfo) {
-                for (var userName in data.ManagementInfo.UsersInfo) {
+                Object.keys(data.ManagementInfo.UsersInfo).forEach((userName) => {
                     data.ManagementInfo.UsersInfo[userName].players = [];
-                }
+                });
             }
             data.Version = '0.5.3';
         }
@@ -174,4 +173,4 @@ See the License for the specific language governing permissions and
 
         return data;
     };
-}(typeof exports === 'undefined' ? this.Migrator = {} : exports));
+})(typeof exports === 'undefined' ? this.Migrator = {} : exports);
