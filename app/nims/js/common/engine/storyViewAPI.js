@@ -16,9 +16,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function storyViewAPI(LocalDBMS, opts) {
-        const { R, dateFormat } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const {
+            R, dateFormat, CU, PC
+        } = opts;
 
         const characterCheck = (characterName, database) => PC.chainCheck([PC.isString(characterName),
             PC.entityExists(characterName, R.keys(database.Characters))]);

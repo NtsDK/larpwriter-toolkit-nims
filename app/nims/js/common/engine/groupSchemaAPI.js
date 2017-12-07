@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function groupSchemaAPI(LocalDBMS, opts) {
         const {
-            R, CommonUtils, Constants, Errors, listeners
+            R, CommonUtils, Constants, Errors
         } = opts;
 
         const _isGroupsEqualByFilterModel = (fm1, fm2) => {

@@ -18,11 +18,7 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function baseAPI(LocalDBMS, opts) {
-        const { Migrator } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
-        const { EventEmitter } = opts;
-        const { Constants } = opts;
+        const { Migrator, CU, PC, EventEmitter, Constants } = opts;
 
         LocalDBMS.prototype.getDatabase = function (callback) {
             callback(null, this.bases[0]);

@@ -18,9 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function storyBaseAPI(LocalDBMS, opts) {
-        const { R, Errors } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const {
+            R, Errors, CU, PC
+        } = opts;
 
         // stories, timeline
         LocalDBMS.prototype.getStoryNamesArray = function (callback) {

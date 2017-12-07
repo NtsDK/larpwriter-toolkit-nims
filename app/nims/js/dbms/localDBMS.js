@@ -26,25 +26,34 @@ function makeLocalDBMS(fullVersion) {
 //        };
 //        return LocalDBMS;
 //    }
+    const listeners = {};
+
+    function addListener(eventName, callback) {
+        listeners[eventName] = listeners[eventName] || [];
+        listeners[eventName].push(callback);
+    }
 
     const opts = {
         Migrator,
         CommonUtils,
+        CU: CommonUtils,
         ProjectUtils,
+        PU: ProjectUtils,
         Precondition,
+        PC: Precondition,
         EventEmitter,
         R,
         Ajv,
         Schema,
         Errors,
-        listeners: {},
+        addListener,
         Constants,
         dbmsUtils: {},
         dateFormat,
     };
 
     function LocalDBMS() {
-        this._init(opts.listeners);
+        this._init(listeners);
     }
 
     LocalDBMS.prototype.getSettings = function () {

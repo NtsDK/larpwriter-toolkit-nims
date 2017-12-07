@@ -18,9 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function profileConfigurerAPI(LocalDBMS, opts) {
-        const { R, Constants, Errors } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const {
+            R, Constants, Errors, CU, PC
+        } = opts;
 
         function getPath(type) {
             if (type === 'character') return ['CharacterProfileStructure'];
@@ -88,7 +88,7 @@ See the License for the specific language governing permissions and
                 const container = R.path(getPath(type), this.database);
                 const els = container.map((item, i) => `${i}/${item.name}`);
                 PC.precondition(PC.entityExists(`${index}/${profileItemName}`, els), callback, () => {
-                    PC.removeFromArrayByIndex(container, index);
+                    CU.removeFromArrayByIndex(container, index);
                     this.ee.trigger('removeProfileItem', arguments);
                     callback();
                 });

@@ -18,9 +18,7 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function logAPI(LocalDBMS, opts) {
-        const { R } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const { R, CU, PC } = opts;
 
         LocalDBMS.prototype.log = function (userName, funcName, rewrite, params, callback) {
             const chain = PC.chainCheck([PC.isString(userName), PC.isString(funcName), PC.isBoolean(rewrite),

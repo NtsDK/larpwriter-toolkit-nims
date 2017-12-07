@@ -19,10 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function accessManagerAPI(LocalDBMS, opts) {
         const {
-            R, listeners, Errors, Constants
+            R, addListener, Errors, Constants, CU, PC
         } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
 
         LocalDBMS.prototype.getManagementInfo = function (callback) {
             const { ManagementInfo } = this.database;
@@ -189,7 +187,7 @@ See the License for the specific language governing permissions and
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createCharacterByPlayer']));
         };
 
-        const _renameProfile = (type, fromName, toName) => {
+        function _renameProfile(type, fromName, toName) {
             if (type === 'character') return;
             const playersInfo = this.database.ManagementInfo.PlayersInfo;
             if (playersInfo[fromName] !== undefined) {
@@ -197,21 +195,19 @@ See the License for the specific language governing permissions and
                 playersInfo[toName].name = toName;
                 delete playersInfo[fromName];
             }
-        };
+        }
 
-        listeners.renameProfile = listeners.renameProfile || [];
-        listeners.renameProfile.push(_renameProfile);
+        addListener('renameProfile', _renameProfile);
 
-        const _removeProfile = (type, characterName) => {
+        function _removeProfile(type, characterName) {
             if (type === 'character') return;
             const playersInfo = this.database.ManagementInfo.PlayersInfo;
             if (playersInfo[characterName] !== undefined) {
                 delete playersInfo[characterName];
             }
-        };
+        }
 
-        listeners.removeProfile = listeners.removeProfile || [];
-        listeners.removeProfile.push(_removeProfile);
+        addListener('removeProfile', _removeProfile);
     }
 
     callback2(accessManagerAPI);

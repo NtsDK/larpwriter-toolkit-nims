@@ -19,10 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function profilesAPI(LocalDBMS, opts) {
         const {
-            R, Constants, Errors, listeners
+            R, Constants, Errors, addListener, CU, PC
         } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
 
         function getPath(type) {
             if (type === 'character') return ['Characters'];
@@ -172,8 +170,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.createProfileItem = listeners.createProfileItem || [];
-        listeners.createProfileItem.push(_createProfileItem);
+        addListener('createProfileItem', _createProfileItem);
 
         function _removeProfileItem(type, index, profileItemName) {
             const profileSet = R.path(getPath(type), this.database);
@@ -182,8 +179,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.removeProfileItem = listeners.removeProfileItem || [];
-        listeners.removeProfileItem.push(_removeProfileItem);
+        addListener('removeProfileItem', _removeProfileItem);
 
         function _changeProfileItemType(type, profileItemName, newType) {
             const profileSet = R.path(getPath(type), this.database);
@@ -192,8 +188,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.changeProfileItemType = listeners.changeProfileItemType || [];
-        listeners.changeProfileItemType.push(_changeProfileItemType);
+        addListener('changeProfileItemType', _changeProfileItemType);
 
         function _renameProfileItem(type, newName, oldName) {
             const profileSet = R.path(getPath(type), this.database);
@@ -204,8 +199,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.renameProfileItem = listeners.renameProfileItem || [];
-        listeners.renameProfileItem.push(_renameProfileItem);
+        addListener('renameProfileItem', _renameProfileItem);
 
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
             const profileSet = R.path(getPath(type), this.database);
@@ -217,8 +211,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.replaceEnumValue = listeners.replaceEnumValue || [];
-        listeners.replaceEnumValue.push(_replaceEnumValue);
+        addListener('replaceEnumValue', _replaceEnumValue);
 
         function _replaceMultiEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
             const profileSet = R.path(getPath(type), this.database);
@@ -231,8 +224,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
-        listeners.replaceMultiEnumValue.push(_replaceMultiEnumValue);
+        addListener('replaceMultiEnumValue', _replaceMultiEnumValue);
     }
 
     callback2(profilesAPI);

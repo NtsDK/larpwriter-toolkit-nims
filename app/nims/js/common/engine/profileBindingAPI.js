@@ -19,10 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function profileBindingAPI(LocalDBMS, opts) {
         const {
-            R, Constants, Errors, listeners, dbmsUtils
+            R, Constants, Errors, addListener, dbmsUtils, CU, PC
         } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
 
         const path = ['ProfileBindings'];
         const charPath = ['Characters'];
@@ -92,7 +90,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _renameProfile = (type, fromName, toName) => {
+        function _renameProfile(type, fromName, toName) {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
                 const playerName = bindings[fromName];
@@ -109,12 +107,11 @@ See the License for the specific language governing permissions and
             } else {
                 console.log(`binding._renameProfile: Unexpected type ${type}`);
             }
-        };
+        }
 
-        listeners.renameProfile = listeners.renameProfile || [];
-        listeners.renameProfile.push(_renameProfile);
+        addListener('renameProfile', _renameProfile);
 
-        const _removeProfile = (type, profileName) => {
+        function _removeProfile(type, profileName) {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
                 delete bindings[profileName];
@@ -127,10 +124,9 @@ See the License for the specific language governing permissions and
             } else {
                 console.log(`binding._removeProfile: Unexpected type ${type}`);
             }
-        };
+        }
 
-        listeners.removeProfile = listeners.removeProfile || [];
-        listeners.removeProfile.push(_removeProfile);
+        addListener('removeProfile', _removeProfile);
     }
 
     callback2(profileBindingAPI);

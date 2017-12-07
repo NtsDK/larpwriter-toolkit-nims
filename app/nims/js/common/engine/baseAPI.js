@@ -18,9 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function baseAPI(LocalDBMS, opts) {
-        const { Migrator, EventEmitter, Constants } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const {
+            Migrator, EventEmitter, Constants, CU, PC
+        } = opts;
 
         LocalDBMS.prototype._init = function (listeners) {
             this.ee = new EventEmitter();

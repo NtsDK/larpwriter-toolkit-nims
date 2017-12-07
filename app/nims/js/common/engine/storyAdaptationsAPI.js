@@ -18,9 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function storyAdaptationsAPI(LocalDBMS, opts) {
-        const { R, dbmsUtils, Constants } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const {
+            R, dbmsUtils, Constants, CU, PC
+        } = opts;
 
         let _isStoryEmpty, _isStoryFinished;
 

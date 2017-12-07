@@ -19,10 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function relationsAPI(LocalDBMS, opts) {
         const {
-            R, Constants, Errors, listeners, dbmsUtils
+            R, Constants, Errors, addListener, dbmsUtils, CU, PC
         } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
 
         const relationsPath = ['Relations'];
 
@@ -82,7 +80,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _renameCharacter = (type, fromName, toName) => {
+        function _renameCharacter(type, fromName, toName) {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             if (relData[fromName] !== undefined) {
@@ -95,12 +93,11 @@ See the License for the specific language governing permissions and
                     delete rels[fromName];
                 }
             });
-        };
+        }
 
-        listeners.renameProfile = listeners.renameProfile || [];
-        listeners.renameProfile.push(_renameCharacter);
+        addListener('renameProfile', _renameCharacter);
 
-        const _removeCharacter = (type, characterName) => {
+        function _removeCharacter(type, characterName) {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             if (relData[characterName] !== undefined) {
@@ -111,10 +108,9 @@ See the License for the specific language governing permissions and
                     delete rels[characterName];
                 }
             });
-        };
+        }
 
-        listeners.removeProfile = listeners.removeProfile || [];
-        listeners.removeProfile.push(_removeCharacter);
+        addListener('removeProfile', _removeCharacter);
     }
 
     callback2(relationsAPI);

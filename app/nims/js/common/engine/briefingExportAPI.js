@@ -18,9 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function briefingExportAPI(LocalDBMS, opts) {
-        const { R, Constants, dbmsUtils } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const {
+            R, Constants, dbmsUtils, CU, PC
+        } = opts;
 
         const check = (selChars, selStories, exportOnlyFinishedStories, database) => {
             const charsCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selChars),

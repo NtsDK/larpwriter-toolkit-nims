@@ -19,11 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function groupsAPI(LocalDBMS, opts) {
         const {
-            R, Constants, Errors, listeners
+            R, Constants, Errors, addListener, CU, PC, PU
         } = opts;
-        const CU = opts.CommonUtils;
-        const PU = opts.ProjectUtils;
-        const PC = opts.Precondition;
 
         LocalDBMS.prototype.getGroupNamesArray = function (callback) {
             callback(null, Object.keys(this.database.Groups).sort(CU.charOrdA));
@@ -218,15 +215,13 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.removeProfileItem = listeners.removeProfileItem || [];
-        listeners.removeProfileItem.push(_removeProfileItem);
+        addListener('removeProfileItem', _removeProfileItem);
 
         function _changeProfileItemType(type, profileItemName, newType) {
             _removeProfileItem.apply(this, [type, -1, profileItemName]);
         }
 
-        listeners.changeProfileItemType = listeners.changeProfileItemType || [];
-        listeners.changeProfileItemType.push(_changeProfileItemType);
+        addListener('changeProfileItemType', _changeProfileItemType);
 
         function _renameProfileItem(type, newName, oldName) {
             const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
@@ -243,8 +238,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.renameProfileItem = listeners.renameProfileItem || [];
-        listeners.renameProfileItem.push(_renameProfileItem);
+        addListener('renameProfileItem', _renameProfileItem);
 
         function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
             const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
@@ -273,11 +267,9 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.replaceEnumValue = listeners.replaceEnumValue || [];
-        listeners.replaceEnumValue.push(_replaceEnumValue);
+        addListener('replaceEnumValue', _replaceEnumValue);
 
-        listeners.replaceMultiEnumValue = listeners.replaceMultiEnumValue || [];
-        listeners.replaceMultiEnumValue.push(_replaceEnumValue);
+        addListener('replaceMultiEnumValue', _replaceEnumValue);
     }
 
     callback2(groupsAPI);

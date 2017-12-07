@@ -19,10 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function storyCharactersAPI(LocalDBMS, opts) {
         const {
-            R, Errors, listeners, Constants
+            R, Errors, addListener, Constants, CU, PC
         } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
 
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
@@ -168,7 +166,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const _renameCharacterInStories = (type, fromName, toName) => {
+        function _renameCharacterInStories(type, fromName, toName) {
             if (type === 'player') return;
             const renameEventCharacter = (event) => {
                 if (event.characters[fromName]) {
@@ -186,12 +184,11 @@ See the License for the specific language governing permissions and
                     delete story.characters[fromName];
                     story.events.forEach(renameEventCharacter);
                 });
-        };
+        }
 
-        listeners.renameProfile = listeners.renameProfile || [];
-        listeners.renameProfile.push(_renameCharacterInStories);
+        addListener('renameProfile', _renameCharacterInStories);
 
-        const _removeCharacterFromStories = (type, characterName) => {
+        function _removeCharacterFromStories(type, characterName) {
             if (type === 'player') return;
             const cleanEvent = (event) => {
                 if (event.characters[characterName]) {
@@ -205,10 +202,9 @@ See the License for the specific language governing permissions and
                     story.events.forEach(cleanEvent);
                 }
             });
-        };
+        }
 
-        listeners.removeProfile = listeners.removeProfile || [];
-        listeners.removeProfile.push(_removeCharacterFromStories);
+        addListener('removeProfile', _removeCharacterFromStories);
     }
     callback2(storyCharactersAPI);
 })(api => (typeof exports === 'undefined' ? (this.storyCharactersAPI = api) : (module.exports = api)));

@@ -18,9 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function entityAPI(LocalDBMS, opts) {
-        const { R, Constants, Errors } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
+        const {
+            R, Constants, Errors, CU, PC
+        } = opts;
 
         LocalDBMS.prototype.getEntityNamesArray = function (type, callback) {
             const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);

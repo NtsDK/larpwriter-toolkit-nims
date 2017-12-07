@@ -19,10 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function investigationBoardAPI(LocalDBMS, opts) {
         const {
-            R, Constants, Errors, listeners
+            R, Constants, Errors, addListener, CU, PC
         } = opts;
-        const CU = opts.CommonUtils;
-        const PC = opts.Precondition;
 
         const resourcesPath = ['InvestigationBoard', 'resources'];
         const groupsPath = ['InvestigationBoard', 'groups'];
@@ -184,8 +182,7 @@ See the License for the specific language governing permissions and
             R.path(relationsPath, this.database)[_info2edgeEndId(nodeName, type)] = {};
         }
 
-        listeners.nodeAdded = listeners.nodeAdded || [];
-        listeners.nodeAdded.push(_nodeAdded);
+        addListener('nodeAdded', _nodeAdded);
 
         function _nodeRemoved(nodeName, type) {
             const relNodeName = _info2edgeEndId(nodeName, type);
@@ -196,8 +193,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.nodeRemoved = listeners.nodeRemoved || [];
-        listeners.nodeRemoved.push(_nodeRemoved);
+        addListener('nodeRemoved', _nodeRemoved);
 
         function _nodeRenamed(fromName, toName, group) {
             const container = R.path(relationsPath, this.database);
@@ -215,8 +211,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        listeners.nodeRenamed = listeners.nodeRenamed || [];
-        listeners.nodeRenamed.push(_nodeRenamed);
+        addListener('nodeRenamed', _nodeRenamed);
 
         function _renameGroup(fromName, toName) {
             const container = R.path(groupsPath, this.database);
@@ -230,8 +225,7 @@ See the License for the specific language governing permissions and
             }
         }
 
-        listeners.renameGroup = listeners.renameGroup || [];
-        listeners.renameGroup.push(_renameGroup);
+        addListener('renameGroup', _renameGroup);
 
         function _removeGroup(groupName) {
             let container = R.path(groupsPath, this.database);
@@ -249,8 +243,7 @@ See the License for the specific language governing permissions and
             }
         }
 
-        listeners.removeGroup = listeners.removeGroup || [];
-        listeners.removeGroup.push(_removeGroup);
+        addListener('removeGroup', _removeGroup);
     }
 
     callback2(investigationBoardAPI);
