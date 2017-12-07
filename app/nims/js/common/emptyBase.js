@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     exports.data = {
         Meta: {
             name: '',
@@ -35,4 +35,4 @@ See the License for the specific language governing permissions and
         },
         Version: '0.4.1'
     };
-}(typeof exports === 'undefined' ? this.EmptyBase = {} : exports));
+})(typeof exports === 'undefined' ? this.EmptyBase = {} : exports);

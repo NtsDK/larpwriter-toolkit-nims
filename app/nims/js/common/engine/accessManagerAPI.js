@@ -14,17 +14,18 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function accessManagerAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const {
+            R, listeners, Errors, Constants
+        } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const listeners = opts.listeners;
-        const Errors = opts.Errors;
-        const Constants = opts.Constants;
 
         LocalDBMS.prototype.getManagementInfo = function (callback) {
-            const ManagementInfo = this.database.ManagementInfo;
+            const { ManagementInfo } = this.database;
             const usersInfo = CU.clone(R.keys(ManagementInfo.UsersInfo).reduce((result, user) => {
                 result[user] = R.pick(['characters', 'groups', 'stories', 'players'], ManagementInfo.UsersInfo[user]);
                 return result;
@@ -38,18 +39,24 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.assignAdmin = function (name, callback) {
-            PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
-                this.database.ManagementInfo.admin = name;
-                this.publishPermissionsUpdate();
-                callback();
-            });
+            PC.precondition(
+                PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback,
+                () => {
+                    this.database.ManagementInfo.admin = name;
+                    this.publishPermissionsUpdate();
+                    callback();
+                }
+            );
         };
         LocalDBMS.prototype.assignEditor = function (name, callback) {
-            PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
-                this.database.ManagementInfo.editor = name;
-                this.publishPermissionsUpdate();
-                callback();
-            });
+            PC.precondition(
+                PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback,
+                () => {
+                    this.database.ManagementInfo.editor = name;
+                    this.publishPermissionsUpdate();
+                    callback();
+                }
+            );
         };
         LocalDBMS.prototype.removeEditor = function (callback) {
             this.database.ManagementInfo.editor = null;
@@ -66,29 +73,32 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.removeMaster = function (name, callback) {
-            PC.precondition(PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback, () => {
-                delete this.database.ManagementInfo.UsersInfo[name];
-                this.publishPermissionsUpdate();
-                callback();
-            });
+            PC.precondition(
+                PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback,
+                () => {
+                    delete this.database.ManagementInfo.UsersInfo[name];
+                    this.publishPermissionsUpdate();
+                    callback();
+                }
+            );
         };
 
         LocalDBMS.prototype.removePermission = function (userName, names, callback) {
-            const ManagementInfo = this.database.ManagementInfo;
-
-            for (var entity in names) {
-                if (names[entity].length != 0) {
-                    ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity].filter(charName => names[entity].indexOf(charName) === -1);
+            const { ManagementInfo } = this.database;
+            Object.keys(names).forEach((entity) => {
+                if (names[entity].length !== 0) {
+                    ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity]
+                        .filter(charName => names[entity].indexOf(charName) === -1);
                 }
-            }
+            });
             this.publishPermissionsUpdate();
             callback();
         };
 
         LocalDBMS.prototype.assignPermission = function (userName, names, callback) {
-            const ManagementInfo = this.database.ManagementInfo;
-            for (var entity in names) {
-                if (names[entity].length != 0) {
+            const { ManagementInfo } = this.database;
+            Object.keys(names).forEach((entity) => {
+                if (names[entity].length !== 0) {
                     names[entity].forEach((charName) => {
                         if (ManagementInfo.UsersInfo[userName][entity].indexOf(charName) === -1) {
                             ManagementInfo.UsersInfo[userName][entity].push(charName);
@@ -100,10 +110,11 @@ See the License for the specific language governing permissions and
                             return;
                         }
 
-                        ManagementInfo.UsersInfo[name][entity] = ManagementInfo.UsersInfo[name][entity].filter(charName => names[entity].indexOf(charName) === -1);
+                        ManagementInfo.UsersInfo[name][entity] = ManagementInfo.UsersInfo[name][entity]
+                            .filter(charName => names[entity].indexOf(charName) === -1);
                     });
                 }
-            }
+            });
             this.publishPermissionsUpdate();
             callback();
         };
@@ -113,10 +124,13 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.removePlayerLogin = function (userName, callback) {
-            PC.precondition(PC.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), callback, () => {
-                delete this.database.ManagementInfo.PlayersInfo[userName];
-                if (callback) callback();
-            });
+            PC.precondition(
+                PC.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), callback,
+                () => {
+                    delete this.database.ManagementInfo.PlayersInfo[userName];
+                    if (callback) callback();
+                }
+            );
         };
 
         LocalDBMS.prototype.getWelcomeText = function (callback) {
@@ -135,7 +149,8 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.setPlayerOption = function (name, value, callback) {
-            const chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes), PC.isBoolean(value)];
+            const chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes),
+                PC.isBoolean(value)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.ManagementInfo.PlayersOptions[name] = value;
                 if (callback) callback();
@@ -174,7 +189,7 @@ See the License for the specific language governing permissions and
             callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createCharacterByPlayer']));
         };
 
-        const _renameProfile = function (type, fromName, toName) {
+        const _renameProfile = (type, fromName, toName) => {
             if (type === 'character') return;
             const playersInfo = this.database.ManagementInfo.PlayersInfo;
             if (playersInfo[fromName] !== undefined) {
@@ -187,7 +202,7 @@ See the License for the specific language governing permissions and
         listeners.renameProfile = listeners.renameProfile || [];
         listeners.renameProfile.push(_renameProfile);
 
-        const _removeProfile = function (type, characterName) {
+        const _removeProfile = (type, characterName) => {
             if (type === 'character') return;
             const playersInfo = this.database.ManagementInfo.PlayersInfo;
             if (playersInfo[characterName] !== undefined) {
@@ -199,7 +214,5 @@ See the License for the specific language governing permissions and
         listeners.removeProfile.push(_removeProfile);
     }
 
-    callback(accessManagerAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.accessManagerAPI = api : module.exports = api;
-}));
+    callback2(accessManagerAPI);
+})(api => (typeof exports === 'undefined' ? (this.accessManagerAPI = api) : (module.exports = api)));

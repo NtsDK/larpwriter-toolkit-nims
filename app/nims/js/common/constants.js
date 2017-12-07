@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (exports) {
+((exports) => {
     exports.profileFieldTypes = {
         text: {
             name: 'text',
@@ -126,8 +126,10 @@ See the License for the specific language governing permissions and
     exports.briefingNumber = [1, 5, 10, 20, 50];
 
     exports.colorPalette = [
-    //{color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"}, hover: {border: "#2B7CE9", background: "#D2E5FF"}}}, // 0: blue
-    //{color: {border: "#FFA500", background: "#FFFF00", highlight: {border: "#FFA500", background: "#FFFFA3"}, hover: {border: "#FFA500", background: "#FFFFA3"}}}, // 1: yellow
+    //{color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"},
+        //        hover: {border: "#2B7CE9", background: "#D2E5FF"}}}, // 0: blue
+    //{color: {border: "#FFA500", background: "#FFFF00", highlight: {border: "#FFA500", background: "#FFFFA3"},
+        //        hover: {border: "#FFA500", background: "#FFFFA3"}}}, // 1: yellow
         {
             color: {
                 border: '#FA0A10', background: '#FB7E81', highlight: { border: '#FA0A10', background: '#FFAFB1' }, hover: { border: '#FA0A10', background: '#FFAFB1' }
@@ -471,4 +473,4 @@ See the License for the specific language governing permissions and
     exports.visLocales.ru_RU = exports.visLocales.ru;
 
     exports.httpTimeout = 5000;
-}(typeof exports === 'undefined' ? this.Constants = {} : exports));
+})(typeof exports === 'undefined' ? this.Constants = {} : exports);

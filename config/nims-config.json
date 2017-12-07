@@ -47,5 +47,6 @@
         "profiles/profileEditorCore.js"
     ],
     "serverPages": ["nims.html","index.html","player.html"],
-    "standalonePages": ["nims.html"]
+    "standalonePages": ["nims.html"],
+    "baseFileName" : "nims-base"
 }

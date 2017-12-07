@@ -14,22 +14,22 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function baseAPI(LocalDBMS, opts) {
-        const Migrator = opts.Migrator;
+        const { Migrator, EventEmitter, Constants } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const EventEmitter = opts.EventEmitter;
-        const Constants = opts.Constants;
 
         LocalDBMS.prototype._init = function (listeners) {
             this.ee = new EventEmitter();
             const that = this;
-            for (var triggerName in listeners) {
+            Object.keys(listeners).forEach((triggerName) => {
                 listeners[triggerName].forEach((listener) => {
                     that.ee.on(triggerName, listener.bind(that));
                 });
-            }
+            });
         };
 
         LocalDBMS.prototype.getDatabase = function (callback) {
@@ -41,7 +41,8 @@ See the License for the specific language governing permissions and
             try {
                 this.database = Migrator.migrate(database);
             } catch (err) {
-                return callback(err);
+                callback(err);
+                return;
             }
             if (callback) callback();
         };
@@ -52,7 +53,8 @@ See the License for the specific language governing permissions and
 
         // overview
         LocalDBMS.prototype.setMetaInfo = function (name, value, callback) {
-            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoList), PC.isString(value)]);
+            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoList),
+                PC.isString(value)]);
             PC.precondition(chain, callback, () => {
                 this.database.Meta[name] = value;
                 if (callback) callback();
@@ -60,7 +62,5 @@ See the License for the specific language governing permissions and
         };
     }
 
-    callback(baseAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.baseAPI = api : module.exports = api;
-}));
+    callback2(baseAPI);
+})(api => (typeof exports === 'undefined' ? (this.baseAPI = api) : (module.exports = api)));

@@ -14,33 +14,51 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-(function (callback) {
+/* eslint-disable func-names */
+
+((callback2) => {
     function briefingExportAPI(LocalDBMS, opts) {
-        const R = opts.R;
+        const { R, Constants, dbmsUtils } = opts;
         const CU = opts.CommonUtils;
         const PC = opts.Precondition;
-        const Constants = opts.Constants;
-        const dbmsUtils = opts.dbmsUtils;
 
-        const check = function (selChars, selStories, exportOnlyFinishedStories, database) {
-            const charsCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selChars), PC.entitiesExist(selChars, R.keys(database.Characters))]), PC.isNil(selChars));
-            const storiesCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selStories), PC.entitiesExist(selStories, R.keys(database.Stories))]), PC.isNil(selStories));
+        const check = (selChars, selStories, exportOnlyFinishedStories, database) => {
+            const charsCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selChars),
+                PC.entitiesExist(selChars, R.keys(database.Characters))]), PC.isNil(selChars));
+            const storiesCheck = PC.eitherCheck(PC.chainCheck([PC.isArray(selStories),
+                PC.entitiesExist(selStories, R.keys(database.Stories))]), PC.isNil(selStories));
             return PC.chainCheck([charsCheck, storiesCheck, PC.isBoolean(exportOnlyFinishedStories)]);
         };
 
-        LocalDBMS.prototype.getBriefingData = function (selCharacters, selStories, exportOnlyFinishedStories, callback) {
-            PC.precondition(check(selCharacters, selStories, exportOnlyFinishedStories, this.database), callback, () => {
-                const that = this;
-                selCharacters = selCharacters || R.keys(this.database.Characters);
-                selStories = selStories || R.keys(this.database.Stories);
-                that.getAllCharacterGroupTexts((err, groupTexts) => {
-                    if (err) { callback(err); return; }
-                    _getBriefingData(that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories, callback);
-                });
-            });
+        let _getBriefingData, _makeProfileInfo, _makeRelationsInfo, _makeCharInventory,
+            _getProfileInfoNotEmpty, _getSimpleProfileInfoObject, _getSplittedProfileInfoObject, _getProfileInfoArray,
+            _getStoriesInfo, _getEventsInfo, _getStoryEventsInfo, _makeEventInfo, _splitText;
+
+        LocalDBMS.prototype.getBriefingData = function (
+            selCharacters, selStories, exportOnlyFinishedStories,
+            callback
+        ) {
+            PC.precondition(
+                check(selCharacters, selStories, exportOnlyFinishedStories, this.database), callback,
+                () => {
+                    const that = this;
+                    selCharacters = selCharacters || R.keys(this.database.Characters);
+                    selStories = selStories || R.keys(this.database.Stories);
+                    that.getAllCharacterGroupTexts((err, groupTexts) => {
+                        if (err) { callback(err); return; }
+                        _getBriefingData(
+                            that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories,
+                            callback
+                        );
+                    });
+                }
+            );
         };
 
-        var _getBriefingData = function (database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback) {
+        _getBriefingData = (
+            database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories,
+            callback
+        ) => {
             const charArray = selectedCharacters.map((charName) => {
                 groupTexts[charName].forEach((groupText) => {
                     groupText.splittedText = _splitText(groupText.text);
@@ -72,7 +90,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        var _makeProfileInfo = function (profileName, profileType, database) {
+        _makeProfileInfo = (profileName, profileType, database) => {
             let profileStructure, prefix, profile;
             if (profileType === 'character') {
                 profileStructure = database.CharacterProfileStructure;
@@ -88,12 +106,15 @@ See the License for the specific language governing permissions and
             let dataObject = {};
             dataObject[`${prefix}Array`] = _getProfileInfoArray(profile, profileStructure);
             dataObject = R.merge(dataObject, _getSimpleProfileInfoObject(`${prefix}-`, profile, profileStructure));
-            dataObject = R.merge(dataObject, _getSplittedProfileInfoObject(`${prefix}-splitted-`, profile, profileStructure));
+            dataObject = R.merge(dataObject, _getSplittedProfileInfoObject(
+                `${prefix}-splitted-`, profile,
+                profileStructure
+            ));
             dataObject = R.merge(dataObject, _getProfileInfoNotEmpty(`${prefix}-notEmpty-`, profile, profileStructure));
             return dataObject;
         };
 
-        var _makeRelationsInfo = function (knownCharacters, database, charName) {
+        _makeRelationsInfo = (knownCharacters, database, charName) => {
             const relations = database.Relations[charName];
             const profiles = database.Characters;
             return R.keys(relations).map((toCharacter) => {
@@ -108,18 +129,18 @@ See the License for the specific language governing permissions and
             }).sort(CU.charOrdAFactory(R.prop('toCharacter')));
         };
 
-        var _makeCharInventory = function (database, charName) {
-            return R.values(database.Stories).filter(story => !R.isNil(story.characters[charName]) && !R.isEmpty(story.characters[charName].inventory))
-                .map(story => story.characters[charName].inventory).join(', ');
-        };
+        _makeCharInventory = (database, charName) => R.values(database.Stories)
+            .filter(story => !R.isNil(story.characters[charName]) && !R.isEmpty(story.characters[charName].inventory))
+            .map(story => story.characters[charName].inventory).join(', ');
 
-        const _processProfileInfo = R.curry((processor, prefix, profile, profileStructure) => R.fromPairs(profileStructure.map(element => [prefix + element.name, processor(profile[element.name])])));
+        const _processProfileInfo = R.curry((processor, prefix, profile, profileStructure) =>
+            R.fromPairs(profileStructure.map(element => [prefix + element.name, processor(profile[element.name])])));
 
-        var _getProfileInfoNotEmpty = _processProfileInfo(el => String(el).length !== 0);
-        var _getSimpleProfileInfoObject = _processProfileInfo(el => (el));
-        var _getSplittedProfileInfoObject = _processProfileInfo(el => (_splitText(String(el))));
+        _getProfileInfoNotEmpty = _processProfileInfo(el => String(el).length !== 0);
+        _getSimpleProfileInfoObject = _processProfileInfo(el => (el));
+        _getSplittedProfileInfoObject = _processProfileInfo(el => (_splitText(String(el))));
 
-        var _getProfileInfoArray = function (profile, profileStructure) {
+        _getProfileInfoArray = (profile, profileStructure) => {
             let value, splittedText;
             const filter = R.compose(R.equals(true), R.prop('doExport'));
             return profileStructure.filter(filter).map((element) => {
@@ -133,11 +154,12 @@ See the License for the specific language governing permissions and
             });
         };
 
-        var _getStoriesInfo = function (database, charName, selectedStories, exportOnlyFinishedStories) {
-            return R.values(database.Stories).filter((story) => {
+        _getStoriesInfo = (database, charName, selectedStories, exportOnlyFinishedStories) =>
+            R.values(database.Stories).filter((story) => {
                 if (!R.contains(story.name, selectedStories)) return false;
                 if (exportOnlyFinishedStories) {
-                    if (!dbmsUtils._isStoryFinished(database, story.name) || dbmsUtils._isStoryEmpty(database, story.name)) {
+                    if (!dbmsUtils._isStoryFinished(database, story.name) ||
+                        dbmsUtils._isStoryEmpty(database, story.name)) {
                         return false;
                     }
                 }
@@ -146,13 +168,13 @@ See the License for the specific language governing permissions and
                 storyName: story.name,
                 eventsInfo: _getStoryEventsInfo(story, charName, database.Meta.date)
             })).sort(CU.charOrdAFactory(a => a.storyName.toLowerCase()));
-        };
 
-        var _getEventsInfo = function (database, charName, selectedStories, exportOnlyFinishedStories) {
+        _getEventsInfo = (database, charName, selectedStories, exportOnlyFinishedStories) => {
             let eventsInfo = R.values(database.Stories).filter((story) => {
                 if (!R.contains(story.name, selectedStories)) return false;
                 if (exportOnlyFinishedStories) {
-                    if (!dbmsUtils._isStoryFinished(database, story.name) || dbmsUtils._isStoryEmpty(database, story.name)) {
+                    if (!dbmsUtils._isStoryFinished(database, story.name) ||
+                            dbmsUtils._isStoryEmpty(database, story.name)) {
                         return false;
                     }
                 }
@@ -166,15 +188,11 @@ See the License for the specific language governing permissions and
             return eventsInfo;
         };
 
-        var _getStoryEventsInfo = function (story, charName, defaultTime) {
-            'use strict';
+        _getStoryEventsInfo = (story, charName, defaultTime) =>
+            story.events.filter(event => event.characters[charName])
+                .map(_makeEventInfo(charName, story.name, defaultTime));
 
-            return story.events.filter(event => event.characters[charName]).map(_makeEventInfo(charName, story.name, defaultTime));
-        };
-
-        var _makeEventInfo = R.curry((charName, storyName, defaultTime, event) => {
-            'use strict';
-
+        _makeEventInfo = R.curry((charName, storyName, defaultTime, event) => {
             const eventInfo = {};
             if (event.characters[charName].text !== '') {
                 eventInfo.text = event.characters[charName].text;
@@ -193,11 +211,7 @@ See the License for the specific language governing permissions and
             return eventInfo;
         });
 
-        var _splitText = function (text) {
-            return text.split('\n').map(string => ({ string }));
-        };
+        _splitText = text => text.split('\n').map(string => ({ string }));
     }
-    callback(briefingExportAPI);
-}((api) => {
-    typeof exports === 'undefined' ? this.briefingExportAPI = api : module.exports = api;
-}));
+    callback2(briefingExportAPI);
+})(api => (typeof exports === 'undefined' ? (this.briefingExportAPI = api) : (module.exports = api)));
