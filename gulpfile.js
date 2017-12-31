@@ -251,6 +251,7 @@ gulp.task('watch', function() {
     gulp.watch(styles, gulp.series('styles:nims'));
     gulp.watch(htmls, gulp.series('html'));
     gulp.watch(partials, gulp.series('html'));
+    gulp.watch(specs, gulp.series('tests'));
     
 });
 gulp.task('dev', gulp.series('dist', 'watch'));

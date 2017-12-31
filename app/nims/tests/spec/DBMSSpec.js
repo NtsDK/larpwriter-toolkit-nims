@@ -1,4 +1,110 @@
-//
+describe("baseAPI", function() {
+    let oldBase;
+    
+    beforeAll(function(done) {
+        DBMS.getDatabase(function(err, data){
+            if(err) {throw err; return;}
+            oldBase = data;
+            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), function(err, data){
+                if(err) {throw err; return;}
+//                PageManager.refresh();
+                done();
+            });
+        });
+    });
+    
+    afterAll(function(done) {
+        DBMS.setDatabase(oldBase, function(err, data){
+            if(err) {throw err; return;}
+//            PageManager.refresh();
+            done();
+        });
+    });
+    
+    const funcs = ['getDatabase', 'getMetaInfo'];
+    
+    funcs.forEach((func) => {
+        it(func, function(done) {
+            DBMS[func](function(err, data){
+                expect(err).toBeNull();
+                expect(data).not.toBeNull();
+                done();
+            });
+        });
+    });
+    
+    it("setDatabase(emptyBase) -> ok", function(done) {
+        DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), function(err){
+            expect(err).toBeUndefined();
+            done();
+        });
+    });
+    it("setDatabase({}) -> err", function(done) {
+        DBMS.setDatabase({}, function(err){
+            expect(err).not.toBeNull();
+            done();
+        });
+    });
+    
+//  'name', 'date', 'preGameDate', 'description'
+    let setChecks = [{
+        func:'setMetaInfo',
+        args: ['name', '123']
+    },{
+        func:'setMetaInfo',
+        args: ['date', '123']
+    },{
+        func:'setMetaInfo',
+        args: ['preGameDate', '123']
+    },{
+        func:'setMetaInfo',
+        args: ['description', '123']
+    },{
+        func:'setMetaInfo',
+        args: [654, '123'],
+        errMessageId: "errors-argument-is-not-a-string",
+        errParameters: [654]
+    },{
+        func:'setMetaInfo',
+        args: ['65465654', '123'],
+        errMessageId: "errors-unsupported-type-in-list",
+        errParameters: ["65465654"]
+    },{
+        func:'setMetaInfo',
+        args: ['description', 123],
+        errMessageId: "errors-argument-is-not-a-string",
+        errParameters: [123]
+    }];
+    
+    setChecks = setChecks.map(el => {
+        const args = JSON.stringify(el.args);
+        el.name = el.func + '(' + args.substring(1, args.length-1) + ') -> ';
+        if(el.errMessageId !== undefined){
+            el.name += el.errMessageId + ', ' + JSON.stringify(el.errParameters);
+        } else {
+            el.name += 'ok';
+        }
+        return el;
+    })
+    
+    setChecks.forEach((check) => {
+        it(check.name, function(done) {
+            DBMS[check.func].apply(DBMS, check.args.concat(function(err){
+                if(check.errMessageId === undefined){
+                    expect(err).toBeUndefined();
+                } else {
+                    expect(err).not.toBeUndefined();
+                    expect(err.messageId).toEqual(check.errMessageId);
+                    expect(err.parameters).toEqual(check.errParameters);
+                }
+                done();
+            }));
+        });
+    });
+});
+
+
+
 //describe("LocalDBMS", function(){
 //    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 //    it("обновит мета информацию об игре", function(done){
@@ -147,5 +253,5 @@
 //            done();
 //        });
 //    });
-//    
+    
 //});
