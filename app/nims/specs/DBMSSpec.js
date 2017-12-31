@@ -76,27 +76,38 @@ describe("baseAPI", function() {
         errParameters: [123]
     }];
     
-    setChecks = setChecks.map(el => {
+    const checks = R.groupBy((el) => {
+        return el.errMessageId !== undefined ? 'errChecks' : 'okChecks';
+    }, setChecks);
+    
+    checks.okChecks = checks.okChecks.map(el => {
+        const args = JSON.stringify(el.args);
+        el.name = el.func + '(' + args.substring(1, args.length-1) + ') -> ok';
+        return el;
+    });
+    
+    checks.errChecks = checks.errChecks.map(el => {
         const args = JSON.stringify(el.args);
         el.name = el.func + '(' + args.substring(1, args.length-1) + ') -> ';
-        if(el.errMessageId !== undefined){
-            el.name += el.errMessageId + ', ' + JSON.stringify(el.errParameters);
-        } else {
-            el.name += 'ok';
-        }
+        el.name += el.errMessageId + ', ' + JSON.stringify(el.errParameters);
         return el;
-    })
+    });
     
-    setChecks.forEach((check) => {
+    checks.okChecks.forEach((check) => {
         it(check.name, function(done) {
             DBMS[check.func].apply(DBMS, check.args.concat(function(err){
-                if(check.errMessageId === undefined){
-                    expect(err).toBeUndefined();
-                } else {
-                    expect(err).not.toBeUndefined();
-                    expect(err.messageId).toEqual(check.errMessageId);
-                    expect(err.parameters).toEqual(check.errParameters);
-                }
+                expect(err).toBeUndefined();
+                done();
+            }));
+        });
+    });
+    
+    checks.errChecks.forEach((check) => {
+        it(check.name, function(done) {
+            DBMS[check.func].apply(DBMS, check.args.concat(function(err){
+                expect(err).not.toBeUndefined();
+                expect(err.messageId).toEqual(check.errMessageId);
+                expect(err.parameters).toEqual(check.errParameters);
                 done();
             }));
         });

@@ -170,17 +170,15 @@ gulp.task('clean', function() {
     return del('dist');
 });
 
-var tests = addPrefix(projectDir + "/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]);
-var specs = addPrefix(projectDir + "/tests/spec/",[
-                                        "DBMSSpec.js",
-//                                                "tickets.js"
-                                        ]);
+var tests = addPrefix(coreDir + "/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]);
+var specs = [projectDir + "/specs/*.js"];
+
 if(!isDevelopment){
-    specs = tests = [projectDir + "/tests/empty.js"];
+    specs = tests = [coreDir + "/tests/empty.js"];
 }
 
 gulp.task('tests', function() {
-    gulp.src(isDevelopment ? [projectDir + "/tests/jasmine/jasmine.css"] : [projectDir + "/tests/empty.js"], {base: projectBase})
+    gulp.src(isDevelopment ? [coreDir + "/tests/jasmine/jasmine.css"] : [coreDir + "/tests/empty.js"], {base: projectBase})
     .pipe(concat('tests.min.css'))
     .pipe(cssnano())
     .pipe(gulp.dest('dist/tests'));
