@@ -60,6 +60,7 @@ See the License for the specific language governing permissions and
         addText(rowData[1]);
         addText(rowData[3]);
         addText(rowData[4]);
+        addText(rowData[5]);
         return tr;
     }
 })(this.LogViewer = {});

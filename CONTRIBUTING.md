@@ -62,6 +62,8 @@ This is a simple code checker. Right now it used in js folder only.
     
     eclint check app\nims\js
     eclint fix app\nims\js
+    eclint check app\nims\specs
+    eclint fix app\nims\specs
 
 
 # Using eslint
@@ -81,7 +83,8 @@ This is a simple code checker. Right now it used in js folder only.
     
     "node_modules/.bin/eslint" app\nims\js
     "node_modules/.bin/eslint" app\nims\js --fix
-    
+    "node_modules/.bin/eslint" app\nims\specs
+    "node_modules/.bin/eslint" app\nims\specs --fix
     
     
 ### Building NIMS (old instruction in English) ###

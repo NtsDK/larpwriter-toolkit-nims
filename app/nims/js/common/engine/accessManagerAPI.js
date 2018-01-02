@@ -189,11 +189,13 @@ See the License for the specific language governing permissions and
 
         function _renameProfile(type, fromName, toName) {
             if (type === 'character') return;
-            const playersInfo = this.database.ManagementInfo.PlayersInfo;
-            if (playersInfo[fromName] !== undefined) {
-                playersInfo[toName] = playersInfo[fromName];
-                playersInfo[toName].name = toName;
-                delete playersInfo[fromName];
+            if (this.database.ManagementInfo !== undefined) {
+                const playersInfo = this.database.ManagementInfo.PlayersInfo;
+                if (playersInfo[fromName] !== undefined) {
+                    playersInfo[toName] = playersInfo[fromName];
+                    playersInfo[toName].name = toName;
+                    delete playersInfo[fromName];
+                }
             }
         }
 
@@ -201,9 +203,11 @@ See the License for the specific language governing permissions and
 
         function _removeProfile(type, characterName) {
             if (type === 'character') return;
-            const playersInfo = this.database.ManagementInfo.PlayersInfo;
-            if (playersInfo[characterName] !== undefined) {
-                delete playersInfo[characterName];
+            if (this.database.ManagementInfo !== undefined) {
+                const playersInfo = this.database.ManagementInfo.PlayersInfo;
+                if (playersInfo[characterName] !== undefined) {
+                    delete playersInfo[characterName];
+                }
             }
         }
 

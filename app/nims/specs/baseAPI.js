@@ -1,110 +1,136 @@
-describe("baseAPI", function() {
+describe('baseAPI', () => {
     let oldBase;
-    
-    beforeAll(function(done) {
-        DBMS.getDatabase(function(err, data){
-            if(err) {throw err; return;}
+
+    beforeAll((done) => {
+        DBMS.getDatabase((err, data) => {
+            if (err) { throw err; }
             oldBase = data;
-            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), function(err, data){
-                if(err) {throw err; return;}
-//                PageManager.refresh();
+            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), (err2, data2) => {
+                if (err2) { throw err2; }
+                //                PageManager.refresh();
                 done();
             });
         });
     });
-    
-    afterAll(function(done) {
-        DBMS.setDatabase(oldBase, function(err, data){
-            if(err) {throw err; return;}
-//            PageManager.refresh();
+
+    afterAll((done) => {
+        DBMS.setDatabase(oldBase, (err, data) => {
+            if (err) { throw err; }
+            //            PageManager.refresh();
             done();
         });
     });
-    
+
     const funcs = ['getDatabase', 'getMetaInfo'];
-    
+
     funcs.forEach((func) => {
-        it(func, function(done) {
-            DBMS[func](function(err, data){
+        it(func, (done) => {
+            DBMS[func]((err, data) => {
                 expect(err).toBeNull();
                 expect(data).not.toBeNull();
                 done();
             });
         });
     });
-    
-    it("setDatabase(emptyBase) -> ok", function(done) {
-        DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), function(err){
+
+    it('setDatabase(emptyBase) -> ok', (done) => {
+        DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), (err) => {
             expect(err).toBeUndefined();
             done();
         });
     });
-    it("setDatabase({}) -> err", function(done) {
-        DBMS.setDatabase({}, function(err){
+    it('setDatabase({}) -> err', (done) => {
+        DBMS.setDatabase({}, (err) => {
             expect(err).not.toBeNull();
             done();
         });
     });
-    
-//  'name', 'date', 'preGameDate', 'description'
-    let setChecks = [{
-        func:'setMetaInfo',
-        args: ['name', '123']
-    },{
-        func:'setMetaInfo',
-        args: ['date', '123']
-    },{
-        func:'setMetaInfo',
-        args: ['preGameDate', '123']
-    },{
-        func:'setMetaInfo',
-        args: ['description', '123']
-    },{
-        func:'setMetaInfo',
+
+    //  'name', 'date', 'preGameDate', 'description'
+    const setChecks = [{
+        func: 'setMetaInfo',
+        args: ['name', '123'],
+        getter: 'getMetaInfo',
+        getterArgs: [],
+        getterCheck: (data, done) => {
+            expect(data.name).toEqual('123');
+            done();
+        }
+    }, {
+        func: 'setMetaInfo',
+        args: ['date', '123'],
+        getter: 'getMetaInfo',
+        getterArgs: [],
+        getterCheck: (data, done) => {
+            expect(data.date).toEqual('123');
+            done();
+        }
+    }, {
+        func: 'setMetaInfo',
+        args: ['preGameDate', '123'],
+        getter: 'getMetaInfo',
+        getterArgs: [],
+        getterCheck: (data, done) => {
+            expect(data.preGameDate).toEqual('123');
+            done();
+        }
+    }, {
+        func: 'setMetaInfo',
+        args: ['description', '123'],
+        getter: 'getMetaInfo',
+        getterArgs: [],
+        getterCheck: (data, done) => {
+            expect(data.description).toEqual('123');
+            done();
+        }
+    }, {
+        func: 'setMetaInfo',
         args: [654, '123'],
-        errMessageId: "errors-argument-is-not-a-string",
+        errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [654]
-    },{
-        func:'setMetaInfo',
+    }, {
+        func: 'setMetaInfo',
         args: ['65465654', '123'],
-        errMessageId: "errors-unsupported-type-in-list",
-        errParameters: ["65465654"]
-    },{
-        func:'setMetaInfo',
+        errMessageId: 'errors-unsupported-type-in-list',
+        errParameters: ['65465654']
+    }, {
+        func: 'setMetaInfo',
         args: ['description', 123],
-        errMessageId: "errors-argument-is-not-a-string",
+        errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [123]
     }];
-    
-    const checks = R.groupBy((el) => {
-        return el.errMessageId !== undefined ? 'errChecks' : 'okChecks';
-    }, setChecks);
-    
-    checks.okChecks = checks.okChecks.map(el => {
+
+    const checks = R.groupBy(el => (el.errMessageId !== undefined ? 'errChecks' : 'okChecks'), setChecks);
+
+    checks.okChecks = checks.okChecks.map((el) => {
         const args = JSON.stringify(el.args);
-        el.name = el.func + '(' + args.substring(1, args.length-1) + ') -> ok';
+        el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
         return el;
     });
-    
-    checks.errChecks = checks.errChecks.map(el => {
+
+    checks.errChecks = checks.errChecks.map((el) => {
         const args = JSON.stringify(el.args);
-        el.name = el.func + '(' + args.substring(1, args.length-1) + ') -> ';
-        el.name += el.errMessageId + ', ' + JSON.stringify(el.errParameters);
+        el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> `;
+        el.name += `${el.errMessageId}, ${JSON.stringify(el.errParameters)}`;
         return el;
     });
-    
+
     checks.okChecks.forEach((check) => {
-        it(check.name, function(done) {
-            DBMS[check.func].apply(DBMS, check.args.concat(function(err){
+        it(check.name, (done) => {
+            DBMS[check.func](...check.args.concat((err) => {
                 expect(err).toBeUndefined();
-                done();
+                DBMS[check.getter](...check.getterArgs.concat((err2, data) => {
+                    expect(err2).toBeNull();
+                    check.getterCheck(data, done);
+                    //                    done();
+                }));
             }));
         });
     });
-    
+
     checks.errChecks.forEach((check) => {
-        it(check.name, function(done) {
-            DBMS[check.func].apply(DBMS, check.args.concat(function(err){
+        it(check.name, (done) => {
+            DBMS[check.func](...check.args.concat((err) => {
                 expect(err).not.toBeUndefined();
                 expect(err.messageId).toEqual(check.errMessageId);
                 expect(err.parameters).toEqual(check.errParameters);
@@ -113,7 +139,6 @@ describe("baseAPI", function() {
         });
     });
 });
-
 
 
 //describe("LocalDBMS", function(){
@@ -126,7 +151,7 @@ describe("baseAPI", function() {
 //            });
 //        });
 //    });
-//    
+//
 //    it("вернет profiles-profile-item-name-is-not-specified если имя поля досье пусто", function(done){
 //        var type = "text";
 //        DBMS.createProfileItem("", type, Constants.profileFieldTypes[type].value, true, -1, function(err, message){
@@ -134,30 +159,32 @@ describe("baseAPI", function() {
 //            done();
 //        });
 //    });
-//    
+//
 //    it("вернет profiles-such-name-already-used если имя поля досье уже занято", function(done){
 //        var type = "text";
-//        DBMS.createProfileItem("Игрок", type, Constants.profileFieldTypes[type].value, true, -1, function(err, message){
+//        DBMS.createProfileItem("Игрок", type, Constants.profileFieldTypes[type].value, true, -1,
+//function(err, message){
 //            expect(err.messageId).toEqual("profiles-such-name-already-used");
 //            done();
 //        });
 //    });
-//    
+//
 //    it("вернет profiles-profile-item-name-cant-be-name если имя поля досье равно name", function(done){
 //        var type = "text";
-//        DBMS.createProfileItem("name", type, Constants.profileFieldTypes[type].value, true, -1, function(err, message){
+//        DBMS.createProfileItem("name", type, Constants.profileFieldTypes[type].value, true, -1,
+//function(err, message){
 //            expect(err.messageId).toEqual("profiles-profile-item-name-cant-be-name");
 //            done();
 //        });
 //    });
-//    
+//
 //    it("вернет profiles-such-name-already-used если имя поля досье уже занято", function(done){
 //        DBMS.renameProfileItem('Пол', "Игрок", function(err, message){
 //            expect(err.messageId).toEqual("profiles-such-name-already-used");
 //            done();
 //        });
 //    });
-//    
+//
 //    it("вернет profiles-not-a-number при попытке ввода не числа в числовое поле", function(done){
 //        DBMS.updateDefaultValue('Возраст', "Игрок", function(err, message){
 //            expect(err.messageId).toEqual("profiles-not-a-number");
@@ -183,7 +210,8 @@ describe("baseAPI", function() {
 //            done();
 //        });
 //    });
-//    it("вернет stories-story-name-is-not-specified при попытке переименования в историю с пустым именем", function(done){
+//    it("вернет stories-story-name-is-not-specified при попытке переименования в историю с пустым именем",
+//function(done){
 //        DBMS.renameStory('Репка', '', function(err, message){
 //            expect(err.messageId).toEqual("stories-story-name-is-not-specified");
 //            done();
@@ -202,32 +230,39 @@ describe("baseAPI", function() {
 //            done();
 //        });
 //    });
-//    
-//    it("вернет stories-character-name-is-not-specified когда в историю добавляется персонаж без имени", function(done){
+//
+//    it("вернет stories-character-name-is-not-specified когда в историю добавляется персонаж без имени",
+//function(done){
 //        DBMS.addStoryCharacter('Репка', '', function(err, message){
 //            expect(err.messageId).toEqual("stories-character-name-is-not-specified");
 //            done();
 //        });
 //    });
-//    it("вернет stories-one-of-switch-characters-is-not-specified когда при замене персонажа в истории имя первого не указано", function(done){
+//    it(
+//"вернет stories-one-of-switch-characters-is-not-specified когда при замене персонажа в истории имя первого не указано"
+//, function(done){
 //        DBMS.switchStoryCharacters('Репка', '', 'Колобок', function(err, message){
 //            expect(err.messageId).toEqual("stories-one-of-switch-characters-is-not-specified");
 //            done();
 //        });
 //    });
-//    it("вернет stories-one-of-switch-characters-is-not-specified когда при замене персонажа в истории имя второго не указано", function(done){
+//    it(
+//"вернет stories-one-of-switch-characters-is-not-specified когда при замене персонажа в истории имя второго не указано"
+//, function(done){
 //        DBMS.switchStoryCharacters('Репка', 'Колобок', '', function(err, message){
 //            expect(err.messageId).toEqual("stories-one-of-switch-characters-is-not-specified");
 //            done();
 //        });
 //    });
-//    it("вернет stories-character-name-is-not-specified когда не указано имя персонажа для удаления из истории", function(done){
+//    it("вернет stories-character-name-is-not-specified когда не указано имя персонажа для удаления из истории",
+//function(done){
 //        DBMS.removeStoryCharacter('Репка', '', function(err, message){
 //            expect(err.messageId).toEqual("stories-character-name-is-not-specified");
 //            done();
 //        });
 //    });
-//    it("вернет stories-event-name-is-not-specified когда не указано название события при добавлении в историю", function(done){
+//    it("вернет stories-event-name-is-not-specified когда не указано название события при добавлении в историю",
+//function(done){
 //        DBMS.createEvent('Репка', '', '123', true, -1, function(err, message){
 //            expect(err.messageId).toEqual("stories-event-name-is-not-specified");
 //            done();
@@ -257,12 +292,12 @@ describe("baseAPI", function() {
 //            done();
 //        });
 //    });
-//    
+//
 //    it("получит данные для выгрузки только для одного персонажа", function(done){
 //        DBMS.getBriefingData({'Колобок': true}, function(err, data){
 //            expect(data.briefings.length).toEqual(1);
 //            done();
 //        });
 //    });
-    
+
 //});

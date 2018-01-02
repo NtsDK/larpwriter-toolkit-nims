@@ -47,6 +47,13 @@ module.exports = {
         Mustache: false,
         Chart: false,
         
+        // Jasmine
+        describe: false,
+        beforeAll: false,
+        afterAll: false,
+        it: false,
+        expect: false,
+        
         // common pages
         About: false,
         LogViewer: false,

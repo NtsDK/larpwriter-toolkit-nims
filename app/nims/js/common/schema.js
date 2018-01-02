@@ -207,8 +207,8 @@ See the License for the specific language governing permissions and
                     items: {
                         type: 'string',
                     },
-                    minItems: 4,
-                    maxItems: 4
+                    minItems: 5,
+                    maxItems: 5
                 }
             };
         }

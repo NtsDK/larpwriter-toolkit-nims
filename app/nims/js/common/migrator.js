@@ -167,6 +167,8 @@ See the License for the specific language governing permissions and
             data.PlayerProfileStructure.forEach((item) => {
                 item.showInRoleGrid = false;
             });
+            const beginStr = JSON.stringify(['begin']);
+            data.Log = data.Log.map((el) => { el.push(beginStr); return el; });
             data.Version = '0.6.2';
         }
 

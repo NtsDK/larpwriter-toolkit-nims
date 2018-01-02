@@ -53,6 +53,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         'updateProfileField',
         'getRoleGridInfo'];
 
+    exports.refresh = () => state.currentView.refresh();
+
     exports.onPlayerPageLoad = () => {
         initPage();
         const RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
@@ -178,6 +180,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
                 addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
+                addEl(state.navigation, makeButton('checkConsistencyButton', 'checkConsistency', checkConsistency, btnOpts));
+                addEl(state.navigation, makeButton('clickAllTabsButton', 'clickAllTabs', clickThroughtHeaders, btnOpts));
                 if (MODE === 'NIMS_Server') {
                     Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton', tooltip: true });
                     addEl(state.navigation, makeButton('logoutButton', 'logout', postLogout, btnOpts));
@@ -192,8 +196,31 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 if (MODE === 'Standalone') {
                     addBeforeUnloadListener();
                 }
+                //                runTests();
             });
         });
+    }
+
+    function clickThroughtHeaders() {
+        let tabs = queryEls('#navigation .navigation-button');
+
+        let index = 0;
+        let subTabsNum = 0;
+        function runClicker() {
+            if (index <= tabs.length - 1) {
+                tabs[index].click();
+                if (subTabsNum === 0) {
+                    const subTabs = queryEls('#contentArea .navigation-button');
+                    tabs = R.insertAll(index + 1, subTabs, tabs);
+                    subTabsNum = subTabs.length;
+                } else {
+                    subTabsNum--;
+                }
+                index++;
+                setTimeout(runClicker, 500);
+            }
+        }
+        runClicker();
     }
 
     function makeL10nButton() {
@@ -207,7 +234,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function runTests() {
-    //    window.RunTests();
+        window.RunTests();
+    }
+
+    function checkConsistency() {
         consistencyCheck((err, checkRes) => {
             if (err) { Utils.handleError(err); return; }
             if (checkRes === undefined || checkRes.length === 0) {

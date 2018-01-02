@@ -20,11 +20,11 @@ See the License for the specific language governing permissions and
     function logAPI(LocalDBMS, opts) {
         const { R, CU, PC } = opts;
 
-        LocalDBMS.prototype.log = function (userName, funcName, rewrite, params, callback) {
-            const chain = PC.chainCheck([PC.isString(userName), PC.isString(funcName), PC.isBoolean(rewrite),
-                PC.isArray(params)]);
+        LocalDBMS.prototype.log = function (userName, time, funcName, rewrite, params, status, callback) {
+            const chain = PC.chainCheck([PC.isString(userName), PC.isString(time), PC.isString(funcName),
+                PC.isBoolean(rewrite), PC.isArray(params), PC.isString(status)]);
             PC.precondition(chain, err => console.error(err), () => {
-                const info = [userName, new Date().toString(), funcName, JSON.stringify(params)];
+                const info = [userName, time, funcName, JSON.stringify(params), status];
                 if (this.database) {
                     if (rewrite && this.database.Log[this.database.Log.length - 1] !== undefined) {
                         if (this.database.Log[this.database.Log.length - 1][2] === funcName) {
@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
                     }
                     //                console.log(this.database.Log.length);
                 }
-                console.log(CU.strFormat('{0},{1},{2},{3}', info));
+                console.log(CU.strFormat('{0},{1},{2},{3},{4}', info));
                 if (callback) callback();
             });
         };
@@ -46,7 +46,8 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getLog = function (pageNumber, callback) {
             PC.precondition(PC.isNumber(pageNumber), callback, () => {
                 const requestedLog = [];
-                for (let i = pageNumber * 100; i < (pageNumber + 1) * 100; i++) {
+                const max = this.database.Log.length;
+                for (let i = max - (pageNumber * 100); i > max - ((pageNumber + 1) * 100); i--) {
                     if (this.database.Log[i]) {
                         requestedLog.push([i + 1].concat(this.database.Log[i]));
                     }

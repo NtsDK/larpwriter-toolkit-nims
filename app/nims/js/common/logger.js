@@ -223,6 +223,11 @@ See the License for the specific language governing permissions and
                         arr.push(arguments[i]);
                     }
 
+                    const { length } = arguments;
+                    const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
+                    const callback = arguments[callbackPos];
+
+
                     let accept = true;
                     if (filteredApi[funcName].filter) {
                         accept = filteredApi[funcName].filter(arr);
@@ -234,13 +239,41 @@ See the License for the specific language governing permissions and
                             userName = arguments[arguments.length - 1].name;
                         }
 
+                        const beginTime = new Date().toString();
                         this.log(
-                            userName, funcName, !!filteredApi[funcName].rewrite,
-                            filteredApi[funcName].ignoreParams ? [] : arr
+                            userName, beginTime, funcName, !!filteredApi[funcName].rewrite,
+                            filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify(['begin'])
                         );
+
+                        const callbackOverride = function () {
+                            const endTime = new Date().toString();
+                            this.log(
+                                userName, endTime, funcName, !!filteredApi[funcName].rewrite,
+                                filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify([beginTime,
+                                    (arguments[0] === null || arguments[0] === undefined) ? 'OK' : arguments[0]])
+                            );
+                            callback(...arguments);
+                        }.bind(this);
+                        arguments[callbackPos] = callbackOverride;
                     }
 
                     return oldFun.apply(this, arguments);
+                };
+            });
+
+        Object.keys(LocalDBMS.prototype)
+            .forEach((funcName) => {
+                const oldFun = LocalDBMS.prototype[funcName];
+                LocalDBMS.prototype[funcName] = function () {
+                    try {
+                        return oldFun.apply(this, arguments);
+                    } catch (err) {
+                        const { length } = arguments;
+                        const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
+                        const callback = arguments[callbackPos];
+                        console.error(err);
+                        return callback(err);
+                    }
                 };
             });
     };

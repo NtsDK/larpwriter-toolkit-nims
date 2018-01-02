@@ -1,6 +1,6 @@
 //
 //describe("Ticket testing", function(){
-//    
+//
 //    jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 //    describe("Issue #9 - Saving base doesn't work after creating new base", function(){
 //        it("Save base after creating new base", function(done){
@@ -12,7 +12,7 @@
 //            });
 //        });
 //    });
-//    
+//
 //    describe("Issue #8 - New base is not empty after second creation", function(){
 //        it("is empty after second base creation", function(done){
 //            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), function() {
@@ -29,7 +29,7 @@
 //            });
 //        });
 //    });
-//    
+//
 //    describe("Issue #3 - Base corruption 'extra field displayName' in Characters and Stories", function(){
 //        it("will not create 'displayName' in character", function(done){
 //            DBMS.setDatabase(EmptyBase.data, function(){

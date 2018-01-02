@@ -22,7 +22,6 @@ See the License for the specific language governing permissions and
 
         const searchers = {};
 
-        const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
         //        LocalDBMS.prototype.getTextsTest = function(searchStr, textTypes, caseSensitive, callback){
         //            var errPrint = function(err){
         //                console.log(err);
@@ -39,6 +38,7 @@ See the License for the specific language governing permissions and
 
         // eslint-disable-next-line func-names
         LocalDBMS.prototype.getTexts = function (searchStr, textTypes, caseSensitive, callback) {
+            const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
             const check = PC.chainCheck([PC.isString(searchStr), PC.isArray(textTypes),
                 textTypesPrecondition(textTypes), PC.isBoolean(caseSensitive)]);
             PC.precondition(check, callback, () => {

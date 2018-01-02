@@ -105,7 +105,7 @@ See the License for the specific language governing permissions and
             input.eventIndex = i;
             input.eventName = event.name;
             input.characterName = character;
-            input.hasText = event.characters[character] !== null && event.characters[character].text !== '';
+            input.hasText = event.characters[character] !== undefined && event.characters[character].text !== '';
             input.addEventListener('change', onChangeCharacterCheckbox);
 
             const id = i + character;
