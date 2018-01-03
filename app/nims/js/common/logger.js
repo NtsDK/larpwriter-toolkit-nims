@@ -247,10 +247,22 @@ See the License for the specific language governing permissions and
 
                         const callbackOverride = function () {
                             const endTime = new Date().toString();
+                            const hasError = (arguments[0] !== null && arguments[0] !== undefined);
+                            let text;
+                            if(hasError){
+                                text = 'ERR: '
+                                if(arguments[0].messageId !== undefined){
+                                    text += arguments[0].messageId + ', ' + JSON.stringify(arguments[0].parameters);
+                                } else {
+                                    text += arguments[0];
+                                }
+                            } else {
+                                text = 'OK';
+                            }
                             this.log(
                                 userName, endTime, funcName, !!filteredApi[funcName].rewrite,
                                 filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify([beginTime,
-                                    (arguments[0] === null || arguments[0] === undefined) ? 'OK' : arguments[0]])
+                                    text])
                             );
                             callback(...arguments);
                         }.bind(this);
