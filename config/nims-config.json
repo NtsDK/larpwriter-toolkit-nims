@@ -48,5 +48,6 @@
     ],
     "serverPages": ["nims.html","index.html","player.html"],
     "standalonePages": ["nims.html"],
-    "baseFileName" : "nims-base"
+    "baseFileName" : "nims-base",
+    "fonts": ["glyphicons-halflings-regular.ttf", "glyphicons-halflings-regular.woff", "glyphicons-halflings-regular.woff2"]
 }

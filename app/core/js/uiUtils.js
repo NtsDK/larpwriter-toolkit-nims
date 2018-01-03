@@ -117,18 +117,30 @@ See the License for the specific language governing permissions and
         for (let i = 0; i < elems.length; i++) {
             el = elems[i];
             attr = getAttr(el, 'panel-toggler');
+            addClass(el, 'expanded');
             sel = document.querySelector(attr);
             if (sel == null) {
                 Utils.alert(`Panel toggler is broken: ${attr}`);
             }
-            listen(el, 'click', exports.togglePanel(sel));
+            listen(el, 'click', togglePanel(el, sel));
         }
     };
-
-    exports.togglePanel = sel => (event) => {
-        toggleClass(sel, 'hidden');
+    
+    exports.attachPanelToggler = (header, content, callback) => {
+        addClass(header, 'expanded');
+        listen(header, 'click', (event) => {
+            togglePanel(header, content)(event);
+            if(callback) callback();
+        });
     };
 
+    var togglePanel = (el, sel) => (event) => {
+        const isExpanded = hasClass(el, 'expanded');
+        removeClasses(el, ['expanded', 'collapsed']);
+        addClass(el, isExpanded ? 'collapsed' : 'expanded');
+        toggleClass(sel, 'hidden');
+    };
+    
     exports.makeEventTimePicker = (opts) => {
         const input = makeEl('input');
         R.ap([addClass(input)], opts.extraClasses);

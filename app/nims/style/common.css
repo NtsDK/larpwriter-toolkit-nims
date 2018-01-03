@@ -312,3 +312,7 @@ select[disabled]{
 .inline-panel {
   display: inline-block;
 }
+
+.sorting {
+  cursor: pointer;
+}

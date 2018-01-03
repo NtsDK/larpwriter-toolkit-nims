@@ -251,13 +251,11 @@ See the License for the specific language governing permissions and
 
     function makePanel(title, content, hideAllPanels) {
         const panelInfo = UI.makePanelCore(title, content);
-        setClassByCondition(panelInfo.contentDiv, 'hidden', hideAllPanels);
-        const panelToggler = UI.togglePanel(panelInfo.contentDiv);
-        listen(panelInfo.a, 'click', () => {
-            panelToggler();
-            refreshTextAreas();
-        });
-
+        setAttr(panelInfo.a, 'panel-toggler', '');
+        UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv, refreshTextAreas);
+        if(hideAllPanels) {
+            panelInfo.a.click();
+        }
         return panelInfo.panel;
     }
 

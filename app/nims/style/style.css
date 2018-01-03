@@ -52,18 +52,41 @@ See the License for the specific language governing permissions and
 
 /** profile filter */
 
-.sortAsc span {
-	background: transparent url("../images/sort_ascending.png") no-repeat scroll 0% 0%;
+.sorting {
+  white-space: nowrap;
 }
-.sortDesc span {
-	background: transparent url("../images/sort_descending.png") no-repeat scroll 0% 0%;
+
+.sorting::after {
+  font-family: 'Glyphicons Halflings';
+  content: "\e150";
+  opacity: 0.2;
 }
-.sortAsc span,.sortDesc span {
-	width: 16px;
-	height: 16px;
-	display: inline-block;
-  margin-left: 8px;
-  background-size: 16px;
+.sorting.sortAsc::after {
+  font-family: 'Glyphicons Halflings';
+  content: "\e155";
+  opacity: 1;
+}
+.sorting.sortDesc::after {
+  font-family: 'Glyphicons Halflings';
+  content: "\e156";
+  opacity: 1;
+}
+
+.sorting span.filter-label{
+  padding-right: 8px;
+}
+
+.filter-content th,
+.filter-content td {
+  white-space: nowrap;
+}
+
+.text-align-right{
+    text-align: right;
+}
+
+.text-align-left{
+    text-align: left;
 }
 
 .green-back{
@@ -621,3 +644,16 @@ See the License for the specific language governing permissions and
 }
 
 /* log-viewer2-tab **/
+
+a[panel-toggler].expanded::after{
+  font-family: 'Glyphicons Halflings';
+  content: "\e113";
+}
+a[panel-toggler].collapsed::after{
+  font-family: 'Glyphicons Halflings';
+  content: "\e114";
+}
+a[panel-toggler] h3{
+  display: inline-block;
+  width: calc(100% - 14px);
+}

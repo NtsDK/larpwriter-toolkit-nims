@@ -59,8 +59,9 @@ See the License for the specific language governing permissions and
 
     function makePanel(title, content) {
         const panelInfo = UI.makePanelCore(title, content);
-        addClass(panelInfo.contentDiv, 'hidden');
-        listen(panelInfo.a, 'click', UI.togglePanel(panelInfo.contentDiv));
+        setAttr(panelInfo.a, 'panel-toggler', '');
+        UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv);
+        panelInfo.a.click();
         return panelInfo.panel;
     }
 })(this.TextSearch = {});

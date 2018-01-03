@@ -53,6 +53,12 @@ function hasClass(o, c) {
 const removeClass = R.curry((o, c) => {
     const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
     o.className = o.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+    return o;
+});
+
+const removeClasses = R.curry((o, c) => {
+    R.ap([removeClass(o)], c);
+    return o;
 });
 
 const toggleClass = R.curry((o, c) => {

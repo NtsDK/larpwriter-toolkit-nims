@@ -93,7 +93,7 @@ See the License for the specific language governing permissions and
     }
 
     function getHeaderProfileItemNames(profileSettings) {
-        return R.map(R.pick(['name', 'displayName']), profileSettings);
+        return R.map(R.pick(['name', 'displayName', 'type']), profileSettings);
     }
 
     function makePrintData() {
@@ -161,9 +161,9 @@ See the License for the specific language governing permissions and
 
     function downloadFilterTable() {
         const el = queryEl(`${root}.profile-item-selector`);
-        const selected = [true];
+        const selected = [];
         for (let i = 0; i < el.options.length; i += 1) {
-            selected[i + 1] = el.options[i].selected;
+            selected[i] = el.options[i].selected;
         }
 
         const dataArrays = makePrintData();
@@ -183,7 +183,7 @@ See the License for the specific language governing permissions and
             const inputItem = state.inputItems[inputItemName];
             let selectedOptions, regex, num, i, counter;
 
-            if (state.checkboxes[inputItemName].checked !== (filterModel[inputItemName] !== null)) {
+            if (state.checkboxes[inputItemName].checked !== (filterModel[inputItemName] !== undefined)) {
                 state.checkboxes[inputItemName].click();
             }
             if (!filterModel[inputItemName]) {
@@ -321,16 +321,16 @@ See the License for the specific language governing permissions and
                 throw new Error(`Unexpected valueInfo.type: ${valueInfo.type}`);
             }
             const td = addEl(setClassByCondition(makeEl('td'), 'lightGrey', value === undefined), makeText(displayValue));
-            addClass(td, `${i}-dependent`);
+            addClasses(td, [`${i}-dependent`, valueInfo.type === 'number' ? 'text-align-right' : 'text-align-left']);
             return td;
         }));
     }
-
+    
     function makeContentHeader(profileItemNames) {
         return addEls(makeEl('tr'), profileItemNames.map((elem, i) => {
-            const td = addEls(makeEl('th'), [makeText(elem.displayName), makeEl('span')]);
+            const td = addEls(makeEl('th'), [makeText(elem.displayName+' ')]);
             td.info = elem.name;
-            addClass(td, `${i}-dependent`);
+            addClasses(td, [`${i}-dependent`,'sorting', elem.type === 'number' ? 'text-align-right' : 'text-align-left']);
             listen(td, 'click', onSortChange);
             return td;
         }));
