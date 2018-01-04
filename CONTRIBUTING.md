@@ -11,7 +11,7 @@
 1. Deus Ex Shop (des) - система магазин для ролевой игры Deus Ex Machina
 2. Watches (watches) - система для городской ролевой игры Дозоры
 
-# Сборка оффлайн версии
+# Подготовка среды разработки и сборка
 
 0. Установите node.js
 1. Скачивайте соответствующую ветку из этого репозитория (measurelook, vtmcl)
@@ -23,6 +23,7 @@
 Пример команд сборки в режиме разработки. В этом режиме разрабатываемый вами проект будет собираться в папке dist и обновляться по мере внесения изменений.
 
 	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run nims-dev
+	set NODE_ENV=dev && set MODE=server && set LANG=ru && npm run nims-dev
 	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run vtmcl-dev
 	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run measurelook-dev
 	
