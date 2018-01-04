@@ -1,17 +1,30 @@
-<div id="logViewerDiv">
+<div class="log-viewer-tab">
   <div class="panel panel-default">
     <div class="panel-body">
-      <label l10n-id="log-viewer-page"></label><select id="logPageSelector"></select>
+      <ul class="pagination">
+      </ul><br>
+      <button class="btn btn-primary clear-filter" l10n-id="log-viewer-clear-filter"></button>
+      <label class="result-number"></label>
       <table class="table table-bordered table-striped">
         <thead>
-          <th>№</th>
-          <th l10n-id="log-viewer-date"></th>
-          <th l10n-id="log-viewer-user"></th>
-          <th l10n-id="log-viewer-action"></th>
-          <th l10n-id="log-viewer-params"></th>
-          <th l10n-id="log-viewer-status"></th>
+          <tr>
+            <th>№</th>
+            <th l10n-id="log-viewer-date"></th>
+            <th l10n-id="log-viewer-user"></th>
+            <th l10n-id="log-viewer-action"></th>
+            <th l10n-id="log-viewer-params"></th>
+            <th l10n-id="log-viewer-status"></th>
+          </tr>
+          <tr>
+            <th></th>
+            <th><input class="form-control" filter="date"></th>
+            <th><input class="form-control" filter="user"></th>
+            <th><input class="form-control" filter="action"></th>
+            <th><input class="form-control" filter="params"></th>
+            <th><input class="form-control" filter="status"></th>
+          </tr>
         </thead>
-        <tbody id="logData"></tbody>
+        <tbody class="log-data"></tbody>
       </table>
     </div>
   </div>

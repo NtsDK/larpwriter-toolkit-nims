@@ -325,12 +325,12 @@ See the License for the specific language governing permissions and
             return td;
         }));
     }
-    
+
     function makeContentHeader(profileItemNames) {
         return addEls(makeEl('tr'), profileItemNames.map((elem, i) => {
-            const td = addEls(makeEl('th'), [makeText(elem.displayName+' ')]);
+            const td = addEls(makeEl('th'), [makeText(`${elem.displayName} `)]);
             td.info = elem.name;
-            addClasses(td, [`${i}-dependent`,'sorting', elem.type === 'number' ? 'text-align-right' : 'text-align-left']);
+            addClasses(td, [`${i}-dependent`, 'sorting', elem.type === 'number' ? 'text-align-right' : 'text-align-left']);
             listen(td, 'click', onSortChange);
             return td;
         }));

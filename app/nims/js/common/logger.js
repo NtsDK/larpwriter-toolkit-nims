@@ -249,10 +249,10 @@ See the License for the specific language governing permissions and
                             const endTime = new Date().toString();
                             const hasError = (arguments[0] !== null && arguments[0] !== undefined);
                             let text;
-                            if(hasError){
-                                text = 'ERR: '
-                                if(arguments[0].messageId !== undefined){
-                                    text += arguments[0].messageId + ', ' + JSON.stringify(arguments[0].parameters);
+                            if (hasError) {
+                                text = 'ERR: ';
+                                if (arguments[0].messageId !== undefined) {
+                                    text += `${arguments[0].messageId}, ${JSON.stringify(arguments[0].parameters)}`;
                                 } else {
                                     text += arguments[0];
                                 }

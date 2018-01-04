@@ -125,6 +125,14 @@ See the License for the specific language governing permissions and
 
     exports.briefingNumber = [1, 5, 10, 20, 50];
 
+    exports.logFilterTypes = [
+        'date',
+        'user',
+        'action',
+        'params',
+        'status',
+    ];
+
     exports.colorPalette = [
     //{color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"},
         //        hover: {border: "#2B7CE9", background: "#D2E5FF"}}}, // 0: blue

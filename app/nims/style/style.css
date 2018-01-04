@@ -636,7 +636,7 @@ See the License for the specific language governing permissions and
 /* playerManagement.js **/
 
 /** log-viewer2-tab */
-#logViewerDiv table td:nth-child(5) span{
+.log-viewer-tab table td:nth-child(5) span{
   word-break: break-all;
   max-height: 160px;
   overflow: auto;

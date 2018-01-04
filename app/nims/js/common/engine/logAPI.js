@@ -20,6 +20,14 @@ See the License for the specific language governing permissions and
     function logAPI(LocalDBMS, opts) {
         const { R, CU, PC } = opts;
 
+        const filterMap = [
+            ['date', 1],
+            ['user', 2],
+            ['action', 3],
+            ['params', 4],
+            ['status', 5],
+        ];
+
         LocalDBMS.prototype.log = function (userName, time, funcName, rewrite, params, status, callback) {
             const chain = PC.chainCheck([PC.isString(userName), PC.isString(time), PC.isString(funcName),
                 PC.isBoolean(rewrite), PC.isArray(params), PC.isString(status)]);
@@ -43,19 +51,30 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getLog = function (pageNumber, callback) {
-            PC.precondition(PC.isNumber(pageNumber), callback, () => {
-                const requestedLog = [];
-                const max = this.database.Log.length;
-                for (let i = max - (pageNumber * 100); i > max - ((pageNumber + 1) * 100); i--) {
-                    if (this.database.Log[i]) {
-                        requestedLog.push([i + 1].concat(this.database.Log[i]));
-                    }
-                }
 
-                callback(null, {
-                    requestedLog,
-                    logSize: Math.ceil(this.database.Log.length / 100)
+        LocalDBMS.prototype.getLog = function (pageNumber, filter, callback) {
+            const chain = PC.chainCheck([PC.isNumber(pageNumber), PC.isObject(filter)]);
+            PC.precondition(chain, callback, () => {
+                const chain2 = PC.chainCheck([PC.elementsFromEnum(
+                    R.keys(filter),
+                    Constants.logFilterTypes
+                )].concat(R.values(filter).map(PC.isString)));
+                PC.precondition(chain2, callback, () => {
+                    const tmp = this.database.Log.map((arr, i) => [i + 1].concat(arr))
+                        .filter(arr => filterMap.every((pair) => {
+                            if (filter[pair[0]] === undefined) return true;
+                            return arr[pair[1]].toLowerCase().indexOf(filter[pair[0]].toLowerCase()) !== -1;
+                        }));
+
+                    const max = tmp.length;
+                    const requestedLog = R.slice((pageNumber * 100), ((pageNumber + 1) * 100), R.reverse(tmp));
+
+                    callback(null, {
+                        requestedLog,
+                        pageNumber,
+                        max,
+                        logSize: Math.ceil(max / 100)
+                    });
                 });
             });
         };

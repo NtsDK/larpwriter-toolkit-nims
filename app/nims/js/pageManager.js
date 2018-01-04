@@ -196,7 +196,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 if (MODE === 'Standalone') {
                     addBeforeUnloadListener();
                 }
-                //                runTests();
+                //                                runTests();
             });
         });
     }

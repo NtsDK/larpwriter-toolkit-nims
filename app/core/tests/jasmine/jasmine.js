@@ -1021,6 +1021,12 @@ getJasmineRequireObj().Env = function(j$) {
       if(!currentRunnable()) {
         throw new Error('Spies must be created in a before function or a spec');
       }
+      // by unknown reason I get 'undefined' problem on manual test run.
+      // This is just workaround.
+      if(runnableResources[currentRunnable().id] === undefined){
+          console.log('undefined runnableResource ' + currentRunnable().id);
+          return [];
+      }
       return runnableResources[currentRunnable().id].spies;
     }});
 

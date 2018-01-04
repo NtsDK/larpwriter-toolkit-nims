@@ -28,7 +28,7 @@ function FilterConfiguration(info) {
             item.displayName = getL10n(item.displayName);
             item.value = '';
         }
-//        item.canHide = item.name !== Constants.CHAR_NAME && item.name !== Constants.PLAYER_NAME;
+        //        item.canHide = item.name !== Constants.CHAR_NAME && item.name !== Constants.PLAYER_NAME;
         item.canHide = true;
     }
     this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);

@@ -19,35 +19,52 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
+    const root = '.log-viewer-tab ';
+
     exports.init = () => {
-        listen(getEl('logPageSelector'), 'change', (event) => {
-            DBMS.getLog(Number(event.target.value), dataRecieved);
+        const pagination = clearEl(queryEl(`${root}.pagination`));
+        addEls(pagination, R.range(0, 20).map((num) => {
+            const a = setAttr(makeEl('a'), 'href', '#');
+            const li = addEl(makeEl('li'), a);
+            li.num = num;
+            addEl(a, makeText(num + 1));
+            listen(a, 'click', () => {
+                getData({ target: { value: num } });
+                const prevActive = queryEl(`${root}.pagination li.active`);
+                if (prevActive !== null) {
+                    removeClass(prevActive, 'active');
+                }
+                addClass(li, 'active');
+            });
+            return li;
+        }));
+
+        listen(queryEl(`${root}button.clear-filter`), 'click', () => {
+            queryEls(`${root}input[filter]`).forEach(el => (el.value = ''));
+            exports.refresh();
         });
 
-        exports.content = getEl('logViewerDiv');
+        queryEls(`${root}input[filter]`).forEach(listen(R.__, 'input', exports.refresh));
+
+        exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
-        getEl('logPageSelector').selectedIndex = 0;
-        DBMS.getLog(0, dataRecieved);
+        queryEls(`${root}.pagination li a`)[0].click();
     };
 
     function dataRecieved(err, data) {
         if (err) { Utils.handleError(err); return; }
+        addEl(clearEl(queryEl(`${root}.result-number`)), makeText(L10n.format('log-viewer', 'total', [data.max])));
 
-        const sel = getEl('logPageSelector');
-        const { selectedIndex } = sel;
-        clearEl(sel);
-
-        const selData = [];
-        for (let i = 0; i < data.logSize; i++) {
-            selData.push({ name: i + 1, value: String(i), selected: selectedIndex === i });
-        }
-        fillSelector(sel, selData);
-
-        const container = clearEl(getEl('logData'));
-
+        const container = clearEl(queryEl(`${root}.log-data`));
+        queryEls(`${root}.pagination li`).forEach(li => setClassByCondition(li, 'hidden', li.num > data.logSize - 1));
         R.ap([addEl(container)], data.requestedLog.map(makeRow));
+    }
+
+    function getData(event) {
+        const filter = R.fromPairs(queryEls(`${root}input[filter]`).map(el => [getAttr(el, 'filter'), el.value]));
+        DBMS.getLog(Number(event.target.value), filter, dataRecieved);
     }
 
     function makeRow(rowData) {
