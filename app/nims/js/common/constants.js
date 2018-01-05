@@ -132,6 +132,8 @@ See the License for the specific language governing permissions and
         'params',
         'status',
     ];
+    
+    exports.adaptationRightsModes = ['ByStory', 'ByCharacter'];
 
     exports.colorPalette = [
     //{color: {border: "#2B7CE9", background: "#97C2FC", highlight: {border: "#2B7CE9", background: "#D2E5FF"},

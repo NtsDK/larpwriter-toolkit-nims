@@ -782,7 +782,7 @@ See the License for the specific language governing permissions and
                     },
                     adaptationRights: {
                         type: 'string',
-                        enum: ['ByStory', 'ByCharacter']
+                        enum: Constants.adaptationRightsModes
                     },
                     WelcomeText: {
                         type: 'string',

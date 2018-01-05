@@ -490,6 +490,7 @@ See the License for the specific language governing permissions and
   bottom: 0px;
   background-color: #dedede;
   padding: 2px;
+  max-height:20px;
 }
 
 #debugNotification.operationOK {

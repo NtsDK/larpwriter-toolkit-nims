@@ -62,7 +62,7 @@ See the License for the specific language governing permissions and
             callback();
         };
         LocalDBMS.prototype.changeAdaptationRightsMode = function (mode, callback) {
-            const chain = [PC.isString(mode), PC.elementFromEnum(mode, ['ByStory', 'ByCharacter'])];
+            const chain = [PC.isString(mode), PC.elementFromEnum(mode, Constants.adaptationRightsModes)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.ManagementInfo.adaptationRights = mode;
                 this.publishPermissionsUpdate();
