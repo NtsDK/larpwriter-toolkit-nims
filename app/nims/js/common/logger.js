@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
             removeBinding: {}
         },
         profileViewAPI: {
-//            getRoleGridInfo: null,
+            //            getRoleGridInfo: null,
         },
         groupsAPI: {
             getGroupNamesArray: null,

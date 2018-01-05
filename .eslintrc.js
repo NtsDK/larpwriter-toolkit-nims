@@ -48,6 +48,7 @@ module.exports = {
         Chart: false,
         
         // Jasmine
+        jasmine: false,
         describe: false,
         beforeAll: false,
         afterAll: false,

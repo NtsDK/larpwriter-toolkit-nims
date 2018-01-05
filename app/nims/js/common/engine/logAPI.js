@@ -18,7 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function logAPI(LocalDBMS, opts) {
-        const { R, CU, PC, Constants } = opts;
+        const {
+            R, CU, PC, Constants
+        } = opts;
 
         const filterMap = [
             ['date', 1],

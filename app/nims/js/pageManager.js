@@ -186,7 +186,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton', tooltip: true });
                     addEl(state.navigation, makeButton('logoutButton', 'logout', postLogout, btnOpts));
                 }
-                addEl(state.navigation, makeButton("refreshButton", "refresh", () => state.currentView.refresh(), btnOpts));
+                addEl(state.navigation, makeButton('refreshButton', 'refresh', () => state.currentView.refresh(), btnOpts));
 
                 FileUtils.init((err3) => {
                     if (err3) { Utils.handleError(err3); return; }

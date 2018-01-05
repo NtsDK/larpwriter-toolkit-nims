@@ -549,10 +549,10 @@ describe('smokeTest', () => {
         it(check.name, (done) => {
             DBMS[check.func](...check.args.concat((err) => {
                 expect(err).toBeUndefined();
-//                DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
-//                    expect(err).toBeNull();
-//                    expect(consistencyErrors.length > 0).toBe(false);
-//                });
+                //                DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
+                //                    expect(err).toBeNull();
+                //                    expect(consistencyErrors.length > 0).toBe(false);
+                //                });
                 done();
             }));
         });
