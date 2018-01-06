@@ -253,6 +253,7 @@ See the License for the specific language governing permissions and
         const panel = addClasses(makeEl('div'), ['panel', 'panel-default']);
         const h3 = addClass(addEl(makeEl('h3'), title), 'panel-title');
         const a = setAttr(makeEl('a'), 'href', '#/');
+        setAttr(a, 'panel-toggler', '');
         const headDiv = addClass(makeEl('div'), 'panel-heading');
         addEl(panel, addEl(headDiv, addEl(a, h3)));
         const contentDiv = addClass(makeEl('div'), 'panel-body');

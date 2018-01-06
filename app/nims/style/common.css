@@ -288,8 +288,14 @@ input[type="checkbox"]:checked + .checkbox-label{
   background-size: 27px;
 }
 
-.flexRoot {
+.flexRoot,
+.flex-root {
   display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }
 
 textarea[readonly],

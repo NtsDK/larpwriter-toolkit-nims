@@ -251,7 +251,6 @@ See the License for the specific language governing permissions and
 
     function makePanel(title, content, hideAllPanels) {
         const panelInfo = UI.makePanelCore(title, content);
-        setAttr(panelInfo.a, 'panel-toggler', '');
         UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv, refreshTextAreas);
         if (hideAllPanels) {
             panelInfo.a.click();

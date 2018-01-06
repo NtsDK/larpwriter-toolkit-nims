@@ -36,7 +36,8 @@ See the License for the specific language governing permissions and
         };
         
         var getProfileInfo = function(type, database){
-            var structure = R.path(getStructurePath(type), database).filter(el => el.showInRoleGrid === true);
+//            var structure = R.path(getStructurePath(type), database).filter(el => el.showInRoleGrid === true);
+            var structure = R.path(getStructurePath(type), database);
             return {
                 structure: structure,
                 profiles: R.mapObjIndexed(R.pick(structure.map(R.prop('name'))), R.path(getPath(type), database))

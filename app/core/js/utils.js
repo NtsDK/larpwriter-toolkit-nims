@@ -45,10 +45,11 @@ const addClasses = R.curry((o, c) => {
 
 const rAddClass = R.curry((c, o) => addClass(o, c));
 
-function hasClass(o, c) {
+
+const hasClass = R.curry((o, c) => {
     const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
     return (re.test(o.className));
-}
+});
 
 const removeClass = R.curry((o, c) => {
     const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
@@ -88,6 +89,10 @@ function queryEl(sel) {
 
 function queryEls(sel) {
     return nl2array(document.querySelectorAll(sel));
+}
+
+function queryElEl(el, sel) {
+    return el.querySelector(sel);
 }
 
 function queryElEls(el, sel) {

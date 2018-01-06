@@ -646,6 +646,7 @@ See the License for the specific language governing permissions and
 
 /* log-viewer2-tab **/
 
+/* usual panel toggler */ 
 a[panel-toggler].expanded::after{
   font-family: 'Glyphicons Halflings';
   content: "\e113";
@@ -657,4 +658,30 @@ a[panel-toggler].collapsed::after{
 a[panel-toggler] h3{
   display: inline-block;
   width: calc(100% - 14px);
+}
+
+/* tree panel toggler */ 
+a[tree-panel-toggler].expanded::before{
+  font-family: 'Glyphicons Halflings';
+  content: "\e114";
+  display: inline-block;
+  width: 20px;
+}
+a[tree-panel-toggler].collapsed::before{
+  font-family: 'Glyphicons Halflings';
+  content: "\e080";
+  display: inline-block;
+  width: 20px;
+}
+a[tree-panel-toggler] h3{
+  display: inline-block;
+  width: calc(100% - 20px);
+}
+
+.role-grid-tab .group-content .badge{
+  background-color: #337ab7;
+}
+
+.role-grid-tab .button-container a:before{
+  content: attr(order) ". ";
 }
