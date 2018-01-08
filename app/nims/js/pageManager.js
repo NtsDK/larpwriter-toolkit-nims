@@ -136,26 +136,35 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 let button;
                 stateInit();
 
-                Utils.addView(state.containers, 'overview', Overview, { mainPage: true });
+                Utils.addView(state.containers, 'overview', Overview);
                 Utils.addView(state.containers, 'profiles', Profiles);
                 Utils.addView(state.containers, 'stories', Stories);
                 Utils.addView(state.containers, 'adaptations', Adaptations);
                 Utils.addView(state.containers, 'briefings', Briefings);
-                //                Utils.addView(state.containers, "roleGrid", RoleGrid);
+                
                 //            Utils.addView(state.containers, "about", About);
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
-                Utils.addView(state.containers, 'timeline', Timeline, { clazz: 'timelineButton', tooltip: true });
-                Utils.addView(state.containers, 'social-network', SocialNetwork, { clazz: 'socialNetworkButton', tooltip: true });
-                Utils.addView(state.containers, 'profile-filter', ProfileFilter, { clazz: 'filterButton', tooltip: true });
-                Utils.addView(state.containers, 'groups', Groups, { clazz: 'groupsButton', tooltip: true });
-                Utils.addView(state.containers, 'textSearch', TextSearch, { clazz: 'textSearchButton', tooltip: true });
+                Utils.addView(state.containers, 'timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
+                Utils.addView(state.containers, 'social-network', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
+                Utils.addView(state.containers, 'profile-filter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
+                Utils.addView(state.containers, 'groups', Groups, { clazz: 'groupsButton icon-button', tooltip: true });
+                Utils.addView(state.containers, 'textSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
+                Utils.addView(state.containers, "roleGrid", RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true, mainPage: true });
 
+                addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
+                
+                if (MODE === 'NIMS_Server') {
+                    Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
+//                    addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                }
+                Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
+                
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
                 if (isAdmin) {
-                    button = makeButton('dataLoadButton', 'open-database', null, btnOpts);
+                    button = makeButton('dataLoadButton icon-button', 'open-database', null, btnOpts);
                     button.addEventListener('change', FileUtils.readSingleFile, false);
 
                     const input = makeEl('input');
@@ -170,23 +179,22 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     addEl(state.navigation, button);
                 }
 
-                addEl(state.navigation, makeButton('dataSaveButton', 'save-database', FileUtils.saveFile, btnOpts));
+                addEl(state.navigation, makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
                 if (MODE === 'Standalone') {
-                    addEl(state.navigation, makeButton('newBaseButton', 'create-database', FileUtils.makeNewBase, btnOpts));
+                    addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', FileUtils.makeNewBase, btnOpts));
                 }
-                addEl(state.navigation, makeButton('mainHelpButton', 'docs', FileUtils.openHelp, btnOpts));
+                addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
                 //addEl(state.navigation, makeL10nButton());
 
-                Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
-                addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));
-                addEl(state.navigation, makeButton('checkConsistencyButton', 'checkConsistency', checkConsistency, btnOpts));
-                addEl(state.navigation, makeButton('clickAllTabsButton', 'clickAllTabs', clickThroughtHeaders, btnOpts));
+                addEl(state.navigation, makeButton('testButton icon-button', 'test', runTests, btnOpts));
+                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', clickThroughtHeaders, btnOpts));
                 if (MODE === 'NIMS_Server') {
-                    Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton', tooltip: true });
-                    addEl(state.navigation, makeButton('logoutButton', 'logout', postLogout, btnOpts));
+//                    Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
+                    addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
                 }
-                addEl(state.navigation, makeButton('refreshButton', 'refresh', () => state.currentView.refresh(), btnOpts));
+                addEl(state.navigation, makeButton('refreshButton icon-button', 'refresh', () => state.currentView.refresh(), btnOpts));
 
                 FileUtils.init((err3) => {
                     if (err3) { Utils.handleError(err3); return; }

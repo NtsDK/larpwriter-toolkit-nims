@@ -129,8 +129,13 @@ See the License for the specific language governing permissions and
     exports.attachPanelToggler = (header, content, callback) => {
         addClass(header, 'expanded');
         listen(header, 'click', (event) => {
-            togglePanel(header, content)(event);
-            if(callback) callback();
+            if(callback) {
+                callback(event, () => {
+                    togglePanel(header, content)(event);
+                });
+            } else {
+                togglePanel(header, content)(event);
+            }
         });
     };
 

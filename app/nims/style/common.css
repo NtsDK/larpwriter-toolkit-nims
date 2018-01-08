@@ -40,7 +40,9 @@ body {
 }
 
 #contentArea {
-    margin: 32px 0 0;
+  margin: 32px 0 0;
+  height: calc(100vh - 32px);
+  overflow: auto;
 }
 
 .navigation-button {
@@ -50,6 +52,17 @@ body {
   background-color: rgb(221, 221, 221);
 /*   margin: 0px 2px; */
   border: none;
+}
+
+.icon-button{
+  padding: 0;
+  height: 32px;
+}
+
+.icon-button{
+  font-family: Font Awesome\ 5 Free;
+/*   content: "\f1de"; */
+  font-weight: 900;
 }
 
 .action-button:not(:last-of-type),
@@ -79,7 +92,7 @@ body {
 
 .mainNavButton{
   background-color:  rgb(221, 221, 221) !important;
-  background: transparent url("../images/folder29.svg") no-repeat scroll 50% 50%;
+/*   background: transparent url("../images/folder29.svg") no-repeat scroll 50% 50%; */
 /*   background-size: 40px; */
   width: 44px;
   background-size: 28px;
@@ -89,98 +102,113 @@ body {
   background-color:  #ccc  !important;
 }
 
-.dataLoadButton, 
-.toggleL10nButton{
-  background-image: url("../images/folder29.svg");
+/* .dataLoadButton,  */
+/* .toggleL10nButton{ */
+/*   background-image: url("../images/folder29.svg"); */
+/* } */
+.dataLoadButton::before{
+  content: "\f093";
 }
-.dataSaveButton{
-  background-image: url("../images/download149.svg");
-  
+.dataSaveButton::before{
+  content: "\f019";
 }
-.newBaseButton{
-  background-image: url("../images/file11.svg");
+.newBaseButton::before{
+  content: "\f067";
 }
-.mainHelpButton{
-  background-image: url("../images/question5.svg");
+.mainHelpButton::before{
+  content: "\f059";
 }
-.logoutButton{
-  background-image: url("../images/exit22.svg");
+.logoutButton::before{
+  content: "\f093";
 }
-.testButton{
-  background-image: url("../images/long-checklist.svg");
+.testButton::before,
+.checkConsistencyButton::before,
+.clickAllTabsButton::before
+{
+  content: "\f0f1";
 }
-.aboutButton{
-  background-image: url("../images/copyright.svg");
+/* .aboutButton{ */
+/*   background-image: url("../images/copyright.svg"); */
+/* } */
+
+/* .chatButton{ */
+/*   background: transparent url("../images/chat55.svg") no-repeat scroll 50% 0%; */
+/* } */
+
+.accessManagerButton::before{
+  content: "\f093";
+}
+.timelineButton::before{
+  content: "\f1de";
+}
+.socialNetworkButton::before{
+  content: "\f126";
+}
+.filterButton::before{
+  content: "\f0b0";
+}
+.logViewerButton::before{
+  content: "\f1da";
+}
+.groupsButton::before{
+  content: "\f0c0";
+}
+.textSearchButton::before{
+  content: "\f002";
+}
+.roleGridButton::before{
+  content: "\f1ea";
+}
+.refreshButton::before{
+  content: "\f2f1";
 }
 
-.chatButton{
-  background: transparent url("../images/chat55.svg") no-repeat scroll 50% 0%;
-}
-
-.accessManagerButton{
-  background: transparent url("../images/business20.svg") no-repeat scroll 50% 50%;
-}
-.timelineButton{
-  background: transparent url("../images/time39.svg") no-repeat scroll 50% 50%;
-}
-.socialNetworkButton{
-  background: transparent url("../images/share41.svg") no-repeat scroll 50% 50%;
-}
-.filterButton{
-  background: transparent url("../images/rightarrow7.svg") no-repeat scroll 50% 50%;
-}
-.logViewerButton{
-  background: transparent url("../images/monuments.svg") no-repeat scroll 50% 50%;
-}
-.groupsButton{
-  background: transparent url("../images/shared-folder.svg") no-repeat scroll 50% 50%;
-}
-.textSearchButton{
-  background: transparent url("../images/textSearch.svg") no-repeat scroll 50% 50%;
-}
-
-.accessManagerButton, 
-.chatButton, 
-.timelineButton, 
-.socialNetworkButton, 
-.filterButton, 
-.logViewerButton, 
-.groupsButton,
-.textSearchButton
+/* .accessManagerButton,  */
+/* .chatButton,  */
+/* .timelineButton,  */
+/* .socialNetworkButton,  */
+/* .filterButton,  */
+/* .logViewerButton,  */
+/* .groupsButton, */
+/* .textSearchButton */
+.icon-button
 {
   background-color:  rgb(221, 221, 221);
 /*   width: 50px; */
 /*   background-size: 35px; */
   width: 44px;
   background-size: 28px;
+  font-size: 23px;
 }
 
-.accessManagerButton:hover, 
-.chatButton:hover,
-.timelineButton:hover, 
-.socialNetworkButton:hover, 
-.filterButton:hover, 
-.logViewerButton:hover,
-.groupsButton:hover,
-.textSearchButton:hover
+/* .accessManagerButton:hover,  */
+/* .chatButton:hover, */
+/* .timelineButton:hover,  */
+/* .socialNetworkButton:hover,  */
+/* .filterButton:hover,  */
+/* .logViewerButton:hover, */
+/* .groupsButton:hover, */
+/* .textSearchButton:hover */
+.icon-button:hover
 {
   background-color:  #ccc;
 }
 
-.accessManagerButton.active, 
-.chatButton.active, 
-.timelineButton.active, 
-.socialNetworkButton.active, 
-.filterButton.active, 
-.logViewerButton.active,
-.groupsButton.active,
-.textSearchButton.active
+/* .accessManagerButton.active,  */
+/* .chatButton.active,  */
+/* .timelineButton.active,  */
+/* .socialNetworkButton.active,  */
+/* .filterButton.active,  */
+/* .logViewerButton.active, */
+/* .groupsButton.active, */
+/* .textSearchButton.active */
+.icon-button.active
 {
   color: #FFF;
-/*   background-color: #337AB7; */
-  background-color: rgb(204,133,72);
-  filter: invert(100%);
-  -webkit-filter: invert(100%);
+  background-color: #337AB7;
+/*   background-color: rgb(204,133,72); */
+/*   filter: invert(100%); */
+/*   -webkit-filter: invert(100%); */
 }
 
 .dataLoadButton input {

@@ -35,7 +35,27 @@ See the License for the specific language governing permissions and
             groupingOrder = [];
             buttons = [];
             
+            // hack - dynamically replace checkbox with enum
+            const checkboxes = data2.characterProfileStructure.filter(el => el.type === 'checkbox').map(R.prop('name'));
+            data2.characterProfileStructure = data2.characterProfileStructure.map(el => {
+                if(el.type === 'checkbox'){
+                    return {
+                        doExport: el.doExport, 
+                        name: el.name, 
+                        playerAccess: el.playerAccess, 
+                        showInRoleGrid: el.showInRoleGrid, 
+                        type: 'enum', 
+                        value: [L10n.get('constant','yes'),L10n.get('constant','no')].join(','), 
+                    }
+                }
+                return el;
+            });
             profilesData = data2;
+            data2.profileData.forEach(el => {
+                checkboxes.forEach(name => {
+                    el.character[name] = L10n.get('constant',el.character[name] === true ? 'yes' : 'no');
+                });
+            });
             
             var sorter = CommonUtils.charOrdAFactory((a) => a.toLowerCase());
             var filter = el => el.type === 'enum';
@@ -98,22 +118,26 @@ See the License for the specific language governing permissions and
         groupingOrder = buttons.filter(hasClass(R.__, 'btn-primary')).map(R.prop('item'));
         drawGroupedList((groupingOrder.length > 0) ? getTreeByUserSelect() : getTreeByAlphabet());
 //        (groupingOrder.length > 0) ? drawGroupedList() : drawPlainPanelList();
-//        (groupingOrder.length > 0) ? drawGroupedList() : drawPlainPanelList();
     };
     
     var getTreeByAlphabet = () => {
-        var groups = R.groupBy((profile) => {
-            return profile.characterName[0];
-        }, profilesData.profileData);
-        
-        var structures = R.toPairs(groups).map(pair => ({
-            key: pair[0],
-            lastKeyPart: pair[0],
-            groups: pair[1]
-        }));
-        
-        structures.sort(CommonUtils.charOrdAFactory(R.prop('key')));
-        return structures;
+//        var groups = R.groupBy((profile) => {
+//            return profile.characterName[0];
+//        }, profilesData.profileData);
+//        
+//        var structures = R.toPairs(groups).map(pair => ({
+//            key: pair[0],
+//            lastKeyPart: pair[0],
+//            groups: pair[1]
+//        }));
+//        
+//        structures.sort(CommonUtils.charOrdAFactory(R.prop('key')));
+//        return structures;
+        return [{
+            "key": "Все персонажи",
+            "lastKeyPart": "Все персонажи",
+            "groups": profilesData.profileData
+        }];
     };
     
     var getTreeByUserSelect = () => {
@@ -123,17 +147,21 @@ See the License for the specific language governing permissions and
         
         var groupingItemInfo = R.indexBy(R.prop('name'), profilesData.characterProfileStructure.filter(el => R.contains(el.name, groupingOrder)));
         
-        return makeGroupTree(groups, groupingItemInfo, 0, []);
+        return [{
+            "key": "Все персонажи",
+            "lastKeyPart": "Все персонажи",
+            "children": makeGroupTree(groups, groupingItemInfo, 0, [])
+        }];
     };
     
 //            var filter = el => el.type === 'enum' || el.type === 'checkbox';
     
     var drawGroupedList = (structures) => {
-        structures = [{
-            "key": "Все персонажи",
-            "lastKeyPart": "Все персонажи",
-            "children": structures
-        }];
+//        structures = [{
+//            "key": "Все персонажи",
+//            "lastKeyPart": "Все персонажи",
+//            "children": structures
+//        }];
 //        console.log(JSON.stringify(structures));
         
         structures.forEach(calcSize);
@@ -177,6 +205,7 @@ See the License for the specific language governing permissions and
         } else { // groups
 //            var panelList = makePanelList(el.groups).map(addClasses(R.__,['inline-panel']));
             var panelList = makePanelList(el.groups).map(addClasses(R.__,['inline-panel', 'col-xs-6']));
+//            var panelList = makePanelList(el.groups).map(addClasses(R.__,['inline-panel', 'col-xs-4']));
             var row = addClass(makeEl('div'), 'row');
             var container = addEl(addClass(makeEl('div'), 'list-content-padding container-fluid'), row);
             domChildren = addEls(row, panelList);
@@ -249,7 +278,10 @@ See the License for the specific language governing permissions and
             }
             
             var panelInfo = UI.makePanelCore(makeText(title), addEls(makeEl('div'), tables));
-            UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv);
+            UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv, (event, togglePanel) => {
+                queryEls(root + '.group-content .expanded[panel-toggler]').filter(el => !el.contains(event.target)).forEach(el => el.click());
+                togglePanel();
+            });
             panelInfo.a.click();
             
             return panelInfo.panel;

@@ -149,9 +149,12 @@ gulp.task('html', function() {
 var corePlains = addPrefix(coreDir + "/",['LICENSE','LICENSE_RUS','NOTICE','NOTICE_RUS']);
 var projectPlains = [projectDir + '/' + 'CHANGELOG'];
 var fontPlains = addPrefix(coreDir + "/fonts/",config.get('fonts'));
+var bsIconsPlains = addPrefix(coreDir + "/fonts/",config.get('bsIcons'));
+var faIconsPlains = addPrefix(coreDir + "/webfonts/",config.get('faIcons'));
 
 var copyFiles = (files, base) =>{
-    return function() {
+    return function(done) {
+        if(files.length === 0) return done();
         return gulp.src(files, {base: base}).pipe(gulp.dest('dist'));
     }
 };
@@ -159,6 +162,8 @@ var copyFiles = (files, base) =>{
 gulp.task('corePlains', copyFiles(corePlains, coreDir));
 gulp.task('projectPlains', copyFiles(projectPlains, projectBase));
 gulp.task('fontPlains', copyFiles(fontPlains, coreDir));
+gulp.task('bsIconsPlains', copyFiles(bsIconsPlains, coreDir));
+gulp.task('faIconsPlains', copyFiles(faIconsPlains, coreDir));
 
 gulp.task('assets', function() {
     return gulp.src(projectDir + '/images/*', {base: projectBase, since: gulp.lastRun('assets')})
@@ -233,7 +238,9 @@ gulp.task('zip', function() {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('dist', gulp.series('clean', gulp.parallel('styles','assets','scripts','html','corePlains','projectPlains','fontPlains','tests','server')));
+gulp.task('dist', gulp.series('clean', 
+        gulp.parallel('styles','assets','scripts','html','corePlains','projectPlains',
+                'fontPlains','bsIconsPlains', 'faIconsPlains', 'tests','server')));
 gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
 
 var partials = [projectDir + "/partials/**/*.html"];

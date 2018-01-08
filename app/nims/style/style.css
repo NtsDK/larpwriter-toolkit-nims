@@ -57,18 +57,18 @@ See the License for the specific language governing permissions and
 }
 
 .sorting::after {
-  font-family: 'Glyphicons Halflings';
-  content: "\e150";
+  font-family: "Font Awesome 5 Free"; 
+  content: "\f0dc";
   opacity: 0.2;
 }
 .sorting.sortAsc::after {
-  font-family: 'Glyphicons Halflings';
-  content: "\e155";
+  font-family: "Font Awesome 5 Free"; 
+  content: "\f160";
   opacity: 1;
 }
 .sorting.sortDesc::after {
-  font-family: 'Glyphicons Halflings';
-  content: "\e156";
+  font-family: "Font Awesome 5 Free"; 
+  content: "\f161";
   opacity: 1;
 }
 
@@ -106,7 +106,7 @@ See the License for the specific language governing permissions and
 
 /** briefing preview */
 .briefingTextSpan{
-  width: 700px;
+/*   width: 700px; */
   display: inline-block;
   max-height: 400px;
   overflow-y: scroll;
@@ -648,12 +648,14 @@ See the License for the specific language governing permissions and
 
 /* usual panel toggler */ 
 a[panel-toggler].expanded::after{
-  font-family: 'Glyphicons Halflings';
-  content: "\e113";
+  content: "\f106";
+  font-family: "Font Awesome 5 Free"; 
+  font-weight: 900;
 }
 a[panel-toggler].collapsed::after{
-  font-family: 'Glyphicons Halflings';
-  content: "\e114";
+  font-family: "Font Awesome 5 Free"; 
+  content: "\f107";
+  font-weight: 900;
 }
 a[panel-toggler] h3{
   display: inline-block;
@@ -662,20 +664,27 @@ a[panel-toggler] h3{
 
 /* tree panel toggler */ 
 a[tree-panel-toggler].expanded::before{
-  font-family: 'Glyphicons Halflings';
-  content: "\e114";
+  font-family: "Font Awesome 5 Free"; 
+  content: "\f107";
   display: inline-block;
   width: 20px;
+  font-weight: 900;
 }
 a[tree-panel-toggler].collapsed::before{
-  font-family: 'Glyphicons Halflings';
-  content: "\e080";
+  content: "\f105";
+  font-family: "Font Awesome 5 Free"; 
   display: inline-block;
   width: 20px;
+  font-weight: 900;
 }
 a[tree-panel-toggler] h3{
   display: inline-block;
   width: calc(100% - 20px);
+}
+
+.role-grid-tab .group-content{
+  height: calc(100vh - 32px - 16px);
+  overflow: auto;
 }
 
 .role-grid-tab .group-content .badge{
@@ -684,4 +693,15 @@ a[tree-panel-toggler] h3{
 
 .role-grid-tab .button-container a:before{
   content: attr(order) ". ";
+}
+
+.group-content .panel{
+  margin-bottom: 4px;
+}
+.group-content .panel .panel-heading{
+  padding: 4px 6px;
+}
+.button-container a{
+  margin-bottom: 4px;
+  white-space: normal;
 }
