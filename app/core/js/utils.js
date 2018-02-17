@@ -195,9 +195,9 @@ const listenOnEnter = R.curry((el, callback) => {
 const fillSelector = R.curry((sel, data) => addEls(sel, data.map((item) => {
     const opt = makeEl('option');
     addEl(opt, makeText(item.name));
-    if (item.value) { opt.value = item.value; }
-    if (item.selected) { opt.selected = true; }
-    if (item.className) { addClass(opt, item.className); }
+    if (item.value !== undefined) { opt.value = item.value; }
+    if (item.selected !== undefined) { opt.selected = true; }
+    if (item.className !== undefined) { addClass(opt, item.className); }
     return opt;
 })));
 

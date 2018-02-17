@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 
 body {
   background-color: #ABABAB;
+  overflow-y: hidden;
 }
 
 .block {
@@ -119,7 +120,7 @@ body {
   content: "\f059";
 }
 .logoutButton::before{
-  content: "\f093";
+  content: "\f2f5";
 }
 .testButton::before,
 .checkConsistencyButton::before,
@@ -136,7 +137,7 @@ body {
 /* } */
 
 .accessManagerButton::before{
-  content: "\f093";
+  content: "\f2bb";
 }
 .timelineButton::before{
   content: "\f1de";

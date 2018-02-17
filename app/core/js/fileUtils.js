@@ -83,6 +83,6 @@ See the License for the specific language governing permissions and
         const out = new Blob([csv], {
             type: 'text/csv;charset=utf-8;'
         });
-        saveAs(out, 'table.csv');
+        saveAs(out, fileName);
     };
 })(this.FileUtils = {});
