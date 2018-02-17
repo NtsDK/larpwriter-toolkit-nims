@@ -21,15 +21,16 @@ See the License for the specific language governing permissions and
 
     exports.init = () => {
         listen(getEl('chartDataSelector'), 'change', onSettingsChange);
-        listen(getEl('showRawData'), 'change', onSettingsChange);
-        listen(getEl('showAvgData'), 'change', onSettingsChange);
-        listen(getEl('showMedianData'), 'change', onSettingsChange);
-        listen(getEl('showYLogData'), 'change', onSettingsChange);
-        getEl('showRawData').checked = true;
-        getEl('showAvgData').checked = false;
-        getEl('showMedianData').checked = false;
-        getEl('showYLogData').checked = false;
+        const checkboxes = ['showRawData', 'showAvgData', 'showMedianData', 'showYLogData', 'showXLogData', 
+            'maxXEnabled', 'minXEnabled', 'maxYEnabled', 'minYEnabled'];
+        
+        checkboxes.forEach(R.pipe(getEl, listen(R.__, 'change', onSettingsChange)));
+        checkboxes.forEach(R.pipe(getEl, setProp(R.__, 'checked', false)));
+        getEl('showMedianData').checked = true;
         listen(queryEl(`${root}.download-csv-button`), 'click', () => FileUtils.arr2d2Csv(state.data, 'table.csv'));
+        
+        const inputs = ['maxX', 'minX', 'maxY', 'minY'];
+        inputs.forEach(R.pipe(getEl, listen(R.__, 'input', onSettingsChange)));
 
         exports.content = queryEl(root);
     };
@@ -38,41 +39,33 @@ See the License for the specific language governing permissions and
         return `${param.name}, ${param.units}`;
     }
 
-    const makeRow = R.curry((title, getName, getValue, key, i, arr) => {
-        let els = [addEl(makeEl('td'), makeText(getName(key))), addEl(makeEl('td'), makeText(getValue(key)))];
-        if (i === 0) {
-            const el = addEl(makeEl('th'), makeText(title));
-            setAttr(el, 'rowspan', arr.length);
-            els = [el].concat(els);
-        }
-        return addEls(makeEl('tr'), els);
+    const makeRow = R.curry((arr) => {
+        const str2el = (value) => addEl(makeEl('td'), makeText(value || ''));
+        return addEls(makeEl('tr'), arr.map(str2el));
     });
 
+    const metaComparator = CommonUtils.charOrdAFactory(a => a[0].toLowerCase());
+    const paramComparator = CommonUtils.charOrdAFactory(a => a.name.toLowerCase());
+    
     exports.refresh = () => {
-        const table = clearEl(queryEl('#benchmark-description tbody'));
-
         DBMS.getDatabase((err, database) => {
             if (err) { Utils.handleError(err); return; }
 
-            addEls(
-                table,
-                Object.keys(database.meta)
-                    .sort()
-                    .map(makeRow(
-                        l10n('metainformation'), key => key,
-                        key => database.meta[key]
-                    ))
-            );
-            addEls(table, database.constantParams.map(makeRow(l10n('constants'), item => paramTitle(item), item => item.value)));
-            addEls(table, database.changedParams.map(makeRow(l10n('changed-params'), item => paramTitle(item), item => '')));
-            addEls(table, database.measuredParams.map(makeRow(l10n('measured-params'), item => paramTitle(item), item => '')));
+            addEls(clearEl(queryEl(root + '#metainformation-table tbody')), 
+                    R.toPairs(database.meta).sort(metaComparator).map(makeRow));
+            addEls(clearEl(queryEl(root + '#constants-table tbody')), database.constantParams.sort(paramComparator)
+                    .map(R.pipe(R.props(['name', 'units', 'value']), makeRow)));
+            addEls(clearEl(queryEl(root + '#changed-params-table tbody')), database.changedParams.sort(paramComparator)
+                    .map(R.pipe(R.props(['name', 'units']), makeRow)));
+            addEls(clearEl(queryEl(root + '#measured-params-table tbody')), database.measuredParams.sort(paramComparator)
+                    .map(R.pipe(R.props(['name', 'units', 'type', 'sumOf']), makeRow)));
 
-            fillSelector(clearEl(getEl('chartDataSelector')), database.measuredParams.map(val => ({
+            fillSelector(clearEl(getEl('chartDataSelector')), database.measuredParams.sort(paramComparator).map(val => ({
                 name: val.name,
                 value: val.name,
                 selected: true
             })));
-            setAttr(getEl('chartDataSelector'), 'size', database.measuredParams.length);
+            setAttr(getEl('chartDataSelector'), 'size', Math.min(20, database.measuredParams.length));
 
             onSettingsChange();
         });
@@ -86,7 +79,12 @@ See the License for the specific language governing permissions and
                 drawRaw: getEl('showRawData').checked,
                 drawAvg: getEl('showAvgData').checked,
                 drawMedian: getEl('showMedianData').checked,
-                drawYLog: getEl('showYLogData').checked
+                drawYLog: getEl('showYLogData').checked,
+                drawXLog: getEl('showXLogData').checked,
+                maxX: getEl('maxXEnabled').checked ? Number(getEl('maxX').value) : null,
+                minX: getEl('minXEnabled').checked ? Number(getEl('minX').value) : null,
+                maxY: getEl('maxYEnabled').checked ? Number(getEl('maxY').value) : null,
+                minY: getEl('minYEnabled').checked ? Number(getEl('minY').value) : null,
             });
         });
     }
@@ -94,33 +92,43 @@ See the License for the specific language governing permissions and
     function drawChart(database, measuredParamsList, opts) {
         const changedParam = database.changedParams[0];
         let data = [];
-        const scaler = opts.drawYLog ? Math.log : R.identity;
+//        const xScaler = opts.drawXLog ? Math.log : R.identity;
+        const xScaler = R.identity;
+        const yScaler = opts.drawYLog ? Math.log : R.identity;
 
         const measuredParams = R.filter(R.compose(R.contains(R.__, measuredParamsList), R.prop('name')), database.measuredParams);
 
         if (opts.drawRaw) {
-            const rawData = R.flatten(measuredParams.map(makeRawDataLines(scaler, database, changedParam)));
+            const rawData = R.flatten(measuredParams.map(makeRawDataLines(xScaler, yScaler, database, changedParam)));
             data = data.concat(rawData);
         }
 
         if (opts.drawAvg) {
-            const avgData = R.flatten(measuredParams.map(makeAvgDataLines(scaler, database, changedParam)));
+            const avgData = R.flatten(measuredParams.map(makeAvgDataLines(xScaler, yScaler, database, changedParam)));
             data = data.concat(avgData);
         }
 
         if (opts.drawMedian) {
-            data = data.concat(R.flatten(measuredParams.map(makeMedianDataLines(scaler, database, changedParam))));
+            data = data.concat(R.flatten(measuredParams.map(makeMedianDataLines(xScaler, yScaler, database, changedParam))));
         }
 
 
         const chart = new CanvasJS.Chart('chartContainer', {
+            zoomEnabled: true, 
+            zoomType: "xy",
+            exportEnabled: true,
+//            interactivityEnabled: true,
             axisX: {
                 title: paramTitle(changedParam),
-                titleFontSize: 18
+                titleFontSize: 18,
+                minimum: opts.minX,
+                maximum: opts.maxX,
             },
             axisY: {
                 title: paramTitle(database.measuredParams[0]),
-                titleFontSize: 16
+                titleFontSize: 16,
+                minimum: opts.minY,
+                maximum: opts.maxY,
             },
             legend: {
                 verticalAlign: 'bottom',
@@ -155,12 +163,12 @@ See the License for the specific language governing permissions and
 
 
     // eslint-disable-next-line no-var,vars-on-top
-    var makeRawDataLines = R.curry((scaler, database, changedParam, measuredParam) => {
+    var makeRawDataLines = R.curry((xScaler, yScaler, database, changedParam, measuredParam) => {
         const passes = R.groupBy(item => item.passId, R.values(database.measures));
 
         const dataPoints = R.map(passArray => passArray.map(item => ({
-            x: item[changedParam.name],
-            y: scaler(item[measuredParam.name]),
+            x: xScaler(item[changedParam.name]),
+            y: yScaler(item[measuredParam.name]),
             toolTipContent: L10n.format(
                 'performance', 'tooltip-schema',
                 [
@@ -188,13 +196,16 @@ See the License for the specific language governing permissions and
     });
 
     const makeAggregatedDataLines =
-        R.curry((label, aggregationFunction, scaler, database, changedParam, measuredParam) => {
+        R.curry((label, aggregationFunction, xScaler, yScaler, database, changedParam, measuredParam) => {
             const pointed = R.groupBy(item => item[changedParam.name], R.values(database.measures));
 
             let avg = R.map((value) => {
                 const clone = R.clone(value[0]);
                 const rawValues = R.ap([R.prop(measuredParam.name)], value).sort();
-                clone[measuredParam.name] = scaler(aggregationFunction(rawValues));
+                clone[measuredParam.name] = yScaler(aggregationFunction(rawValues));
+                clone.yDisplayName = aggregationFunction(rawValues);
+                clone[changedParam.name] = xScaler(value[0][changedParam.name]);
+                clone.xDisplayName = value[0][changedParam.name];
                 return clone;
             }, pointed);
 
@@ -204,9 +215,9 @@ See the License for the specific language governing permissions and
                 toolTipContent: strFormat(
                     '{0}: {1}<br/>{2}: {3}',
                     [paramTitle(changedParam),
-                        item[changedParam.name],
+                        item[changedParam.name] + ' (raw value ' + item.xDisplayName + ')',
                         paramTitle(measuredParam),
-                        item[measuredParam.name]]
+                        item[measuredParam.name] + ' (raw value ' + item.yDisplayName + ')']
                 )
             }));
 

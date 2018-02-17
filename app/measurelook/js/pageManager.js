@@ -74,7 +74,7 @@ See the License for the specific language governing permissions and
         //}
         //addEl(state.navigation, makeButton("mainHelpButton", "docs", FileUtils.openHelp, btnOpts));
 
-        //        addEl(state.navigation, makeL10nButton());
+        addEl(state.navigation, makeL10nButton());
 
         //        Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton', tooltip: true });
         //        addEl(state.navigation, makeButton('testButton', 'test', runTests, btnOpts));

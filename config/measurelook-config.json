@@ -37,5 +37,30 @@
     ],
     "serverPages": [],
     "standalonePages": ["index.html"],
-    "baseFileName" : "measurelook"
+    "baseFileName" : "measurelook",
+    "fonts":[],
+    "bsIcons": [
+        "glyphicons-halflings-regular.eot", 
+        "glyphicons-halflings-regular.svg", 
+        "glyphicons-halflings-regular.ttf", 
+        "glyphicons-halflings-regular.woff", 
+        "glyphicons-halflings-regular.woff2"
+    ],
+    "faIcons": [
+        "fa-brands-400.ttf"   ,
+        "fa-brands-400.woff"  ,
+        "fa-brands-400.woff2" ,
+        "fa-regular-400.ttf"  ,
+        "fa-regular-400.woff" ,
+        "fa-regular-400.woff2",
+        "fa-solid-900.ttf"    ,
+        "fa-solid-900.woff"   ,
+        "fa-solid-900.woff2"  ,
+        "fa-brands-400.eot",
+        "fa-brands-400.svg",
+        "fa-regular-400.eot",
+        "fa-regular-400.svg",
+        "fa-solid-900.eot",
+        "fa-solid-900.svg"
+    ]
 }

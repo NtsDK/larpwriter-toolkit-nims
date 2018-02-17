@@ -673,3 +673,13 @@ See the License for the specific language governing permissions and
 .zero-padding{
   padding: 0;
 }
+
+.performance-tab #benchmark-description .tab-content {
+  height: 400px;
+  overflow: auto;
+  resize: vertical;
+}
+
+#benchmark-settings label {
+  display: inline;
+}
