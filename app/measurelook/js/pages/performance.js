@@ -92,8 +92,8 @@ See the License for the specific language governing permissions and
     function drawChart(database, measuredParamsList, opts) {
         const changedParam = database.changedParams[0];
         let data = [];
-//        const xScaler = opts.drawXLog ? Math.log : R.identity;
-        const xScaler = R.identity;
+        const xScaler = opts.drawXLog ? Math.log : R.identity;
+//        const xScaler = R.identity;
         const yScaler = opts.drawYLog ? Math.log : R.identity;
 
         const measuredParams = R.filter(R.compose(R.contains(R.__, measuredParamsList), R.prop('name')), database.measuredParams);
