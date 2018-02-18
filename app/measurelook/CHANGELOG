@@ -1,3 +1,10 @@
+Version 0.3.1 (18 Feb 2018) 
+
+  Design improvements. 
+  Enabled more CanvasJS chart functions.
+  Added more chart options. 
+  Added English translation.
+
 version 0.3.0 (26 Nov 2017)
 
   Added name and timestamp in schema.
