@@ -173,6 +173,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     setAttr(input, 'tabindex', -1);
                     button.appendChild(input);
                     button.addEventListener('click', (e) => {
+                        input.value = '';
                         input.click();
                         //                    e.preventDefault(); // prevent navigation to "#"
                     });
