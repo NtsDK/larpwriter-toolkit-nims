@@ -178,6 +178,7 @@ See the License for the specific language governing permissions and
                         acc[key] = {
                             [triplet[0]] : triplet[2],
                             [triplet[1]] : '',
+                            'starter' : triplet[0]
                         }
                     } else {
                         acc[key][triplet[0]] = triplet[2];

@@ -797,22 +797,43 @@ See the License for the specific language governing permissions and
         }
 
         function getRelationsSchema(Characters, definitions) {
+            let chars = R.keys(Characters);
             const names = `^(${R.keys(Characters).map(CommonUtils.escapeRegExp).join('|')})$`;
+            if(chars.length === 0){
+                chars = ['123'];
+            }
+            
             const schema = {
-                type: 'object',
-                additionalProperties: false,
-                patternProperties: {}
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        origin: {
+                            type: 'string'
+                        },
+                        ready: {
+                            type: 'boolean'
+                        },
+                        essence: {
+                            type: 'string',
+                            enum: Constants.relationEssences
+                        },
+                        starter: {
+                            type: 'string',
+                            enum: chars
+                        },
+                    },
+                    required: ['origin', 'ready', 'essence', 'starter'],
+                    patternProperties:{
+                        [names] : {
+                            type: 'string',
+                        }
+                    },
+                    additionalProperties: false,
+                    "minProperties": 6,
+                    "maxProperties": 6
+                }
             };
-            schema.patternProperties[names] = {
-                type: 'object',
-                additionalProperties: false,
-                patternProperties: {}
-            };
-            schema.patternProperties[names].patternProperties[names] = {
-                type: 'string',
-                minLength: 1
-            };
-
             return schema;
         }
     }
