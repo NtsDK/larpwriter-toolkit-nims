@@ -95,6 +95,11 @@ describe('smokeTest', () => {
             func: 'getAllProfiles',
             args: ['character'],
         },
+        // profileViewAPI
+        {
+            func: 'getRoleGridInfo',
+            args: [],
+        },
         // relationsAPI
         {
             func: 'getRelationsSummary',
@@ -331,6 +336,10 @@ describe('smokeTest', () => {
             args: ['character', 'testProfileItem2', false],
         },
         {
+            func: 'showInRoleGridProfileItemChange',
+            args: ['character', 'testProfileItem2', false],
+        },
+        {
             func: 'updateDefaultValue',
             args: ['character', 'testProfileItem2', '223322'],
         },
@@ -556,5 +565,36 @@ describe('smokeTest', () => {
                 done();
             }));
         });
+    });
+    
+    const customIgnore = ['setDatabase'];
+    
+    it('Core smoke test coverage check', () => {
+        const funcArr = R.uniq(R.concat(getChecks.map(R.prop('func')), setChecks.map(R.prop('func'))));
+        
+        const serverSpecificFunctions = Constants.serverSpecificFunctions;
+        const intersection = R.intersection(serverSpecificFunctions, funcArr);
+        if(intersection.length > 0){
+            console.log(intersection);
+        }
+        expect(intersection.length).toBe(0);
+        
+        const commonIgnoreList = Constants.commonIgnoreList;
+        const intersection2 = R.intersection(commonIgnoreList, funcArr);
+        if(intersection2.length > 0){
+            console.log(intersection2);
+        }
+        expect(intersection2.length).toBe(0);
+        
+        const allFuncs = Object.keys(DBMS.__proto__);
+        const sum = [funcArr, serverSpecificFunctions, commonIgnoreList, customIgnore].reduce( (acc, el) => {
+            acc = R.concat(acc, el);
+            return acc;
+        }, [])
+        const diff = R.difference(allFuncs, sum);
+        if(diff.length > 0){
+            console.log(diff);
+        }
+        expect(diff.length).toBe(0);
     });
 });

@@ -44,6 +44,8 @@ See the License for the specific language governing permissions and
             value: ''
         }
     };
+    
+    exports.relationEssences = ['starterToEnder', 'enderToStarter', 'allies', 'known'];
 
     exports.playerAccessTypes = ['write', 'readonly', 'hidden'];
 
@@ -481,6 +483,15 @@ See the License for the specific language governing permissions and
     exports.visLocales.en_EN = exports.visLocales.en;
     exports.visLocales.en_US = exports.visLocales.en;
     exports.visLocales.ru_RU = exports.visLocales.ru;
+    
+    exports.serverSpecificFunctions = [ "getManagementInfo", "assignAdmin", "assignEditor", "removeEditor", 
+        "changeAdaptationRightsMode", 
+        "removeMaster", "removePermission", "assignPermission", "getPlayerLoginsArray", "removePlayerLogin", 
+        "getWelcomeText", "setWelcomeText", "getPlayersOptions", "setPlayerOption", "createMaster", 
+        "changeMasterPassword", "createPlayer", "createPlayerLogin", "changePlayerPassword", 
+        "getPlayerProfileInfo", "createCharacterByPlayer", "publishPermissionsUpdate"];
+    
+    exports.commonIgnoreList = ["getSettings", "_init", "clearSettings", "log"];
 
     exports.httpTimeout = 5000;
 })(typeof exports === 'undefined' ? this.Constants = {} : exports);

@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 
 body {
   background-color: #ABABAB;
-  overflow-y: hidden;
+/*   1. if auto on some pages show scroll when not necessary */
+/*   2. if hidden can't see result of Jasmine tests */
+/*   overflow-y: hidden; */
 }
 
 .block {
