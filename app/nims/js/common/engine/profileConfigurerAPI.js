@@ -151,10 +151,10 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.showInRoleGridProfileItemChange = function (type, profileItemName, checked, callback) {
-            const chain = [typeCheck(type), CU.isString(profileItemName), CU.isBoolean(checked)];
-            CU.precondition(CU.chainCheck(chain), callback, () => {
+            const chain = [typeCheck(type), PC.isString(profileItemName), PC.isBoolean(checked)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
                 const container = R.path(getPath(type), this.database);
-                CU.precondition(CU.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
+                PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
                     container.filter(R.pipe(R.prop('name'), R.equals(profileItemName)))[0].showInRoleGrid = checked;
                     callback();
                 });
