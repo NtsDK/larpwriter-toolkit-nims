@@ -705,3 +705,14 @@ a[tree-panel-toggler] h3{
   margin-bottom: 4px;
   white-space: normal;
 }
+
+.log-diff.added {
+  color: green;
+}
+.log-diff.removed {
+  color: red;
+  text-decoration: line-through;
+}
+.log-diff.same {
+  
+}

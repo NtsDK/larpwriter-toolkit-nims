@@ -36,7 +36,8 @@
             "ajv-4.1.1.js",
             "Chart.min.js",
             "vis-custom.min.js",
-            "markdown-it.min.js"
+            "markdown-it.min.js",
+            "diff.js"
         ]
     },
     "pagesLight" :[
