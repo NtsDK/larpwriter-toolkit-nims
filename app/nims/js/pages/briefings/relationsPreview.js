@@ -31,8 +31,8 @@ See the License for the specific language governing permissions and
         let { characterNamesArray } = data;
 
         characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName), R.prop('value')));
-        const showCharacters =
-            R.union(R.keys(relationsSummary.directRelations), R.keys(relationsSummary.reverseRelations)).sort();
+        const get2ndCharName = R.compose(el => R.keys(el)[0], R.omit(R.concat(Constants.relationFields, characterName)));
+        const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CommonUtils.charOrdA);
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
         const knownNoRels = noRelsList.filter(R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value')));
         const unknownNoRels = noRelsList.filter(R.compose(R.not, R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value')));
@@ -71,8 +71,9 @@ See the License for the specific language governing permissions and
         const table = addEls(addClasses(makeEl('table'), ['table']), [head, body]);
 
         // filling table
-        addEls(body, showCharacters.filter(toCharacter =>
-            (isAdaptationsMode ? true : relationsSummary.directRelations[toCharacter] !== undefined)).map(makeRow));
+        const toCharacterFilter = toCharacter => (isAdaptationsMode ? true : 
+            !R.isEmpty(findRel(characterName, toCharacter, relationsSummary.relations)[characterName]));
+        addEls(body, showCharacters.filter(toCharacterFilter).map(makeRow));
         return addEls(makeEl('div'), [charSelectors, table]);
     };
 
@@ -95,20 +96,27 @@ See the License for the specific language governing permissions and
             select: select1[0]
         };
     }
+    
+    function findRel(fromCharacter, toCharacter, relations){
+        const findFunc = R.curry((fromCharacter, toCharacter, rel) => 
+        rel[fromCharacter] !== undefined && rel[toCharacter] !== undefined);
+        return R.find(findFunc(fromCharacter, toCharacter), relations);
+    }
 
     makeNewRow = R.curry((
         profiles, profileItemSelect, isAdaptationsMode, relationsSummary, profileBindings,
         fromCharacter, toCharacter
     ) => {
         const direct = addClass(makeEl('textarea'), 'briefing-relation-area');
-        direct.value = relationsSummary.directRelations[toCharacter] || '';
+        const rel = findRel(fromCharacter, toCharacter, relationsSummary.relations);
+        direct.value = rel[fromCharacter];
         listen(direct, 'change', (event) => {
             DBMS.setCharacterRelation(fromCharacter, toCharacter, event.target.value, Utils.processError());
         });
         let reverse;
         if (isAdaptationsMode) {
             reverse = addClass(makeEl('textarea'), 'briefing-relation-area');
-            reverse.value = relationsSummary.reverseRelations[toCharacter] || '';
+            reverse.value = rel[toCharacter];
             listen(reverse, 'change', (event) => {
                 DBMS.setCharacterRelation(toCharacter, fromCharacter, event.target.value, Utils.processError());
             });

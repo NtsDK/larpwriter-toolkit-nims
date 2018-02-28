@@ -221,7 +221,7 @@ See the License for the specific language governing permissions and
             });
         },
         make(el, data) {
-            const label = `${getL10n('header-relations')} (${R.keys(data.relationsSummary.directRelations).length})`;
+            const label = `${getL10n('header-relations')} (${data.relationsSummary.relations.length})`;
             const content = RelationsPreview.makeRelationsContent(data, getFlags(), state.characterProfileStructure);
             addEl(el, makePanel(makeText(label), content, getFlags().hideAllPanels));
         }

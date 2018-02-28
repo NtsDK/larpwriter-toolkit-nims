@@ -140,7 +140,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 Utils.addView(state.containers, 'profiles', Profiles);
                 Utils.addView(state.containers, 'stories', Stories);
                 Utils.addView(state.containers, 'adaptations', Adaptations);
-                Utils.addView(state.containers, 'briefings', Briefings);
+                Utils.addView(state.containers, 'briefings', Briefings, {mainPage: true});
                 
                 //            Utils.addView(state.containers, "about", About);
 
@@ -151,7 +151,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 Utils.addView(state.containers, 'profile-filter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
                 Utils.addView(state.containers, 'groups', Groups, { clazz: 'groupsButton icon-button', tooltip: true });
                 Utils.addView(state.containers, 'textSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
-                Utils.addView(state.containers, "roleGrid", RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true, mainPage: true });
+                Utils.addView(state.containers, "roleGrid", RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
                 

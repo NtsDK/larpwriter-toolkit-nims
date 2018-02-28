@@ -316,7 +316,7 @@ See the License for the specific language governing permissions and
                 });
             });
             counts.groups = R.sum(R.values(database.Groups).map(R.compose(_noWhiteSpaceLength, R.prop('characterDescription'))));
-            counts.relations = R.sum(R.flatten(R.values(database.Relations).map(R.values)).map(_noWhiteSpaceLength));
+            counts.relations = R.sum(R.flatten(database.Relations.map(R.pipe(R.omit(['essence', 'ready']), R.values))).map(_noWhiteSpaceLength));
             return counts;
         }
 

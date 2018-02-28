@@ -35,6 +35,7 @@ See the License for the specific language governing permissions and
             checkStoryCharactersConsistency(this.database, pushError);
             checkEventsCharactersConsistency(this.database, pushError);
             checkBindingsConsistency(this.database, pushError);
+            checkRelationsConsistency(this.database, pushError);
             if (this.database.ManagementInfo) {
                 checkObjectRightsConsistency(this.database, pushError);
                 checkPlayerLoginConsistency(this.database, pushError);
@@ -102,6 +103,13 @@ See the License for the specific language governing permissions and
             const processError = getErrorProcessor(callback);
             R.toPairs(R.invert(data.ProfileBindings)).filter(pair => pair[1].length > 1).forEach((pair) => {
                 processError('Profile bindings inconsistent, player has multiple characters: player {0}, characters {1}', [pair[0], JSON.stringify(pair[1])]);
+            });
+        }
+        
+        function checkRelationsConsistency(data, callback) {
+            const processError = getErrorProcessor(callback);
+            data.Relations.filter(rel => rel[rel.starter] === undefined).forEach( rel => {
+                processError('Relation inconsistent, starter is not from relation: starter {0}, relation {1}', [rel.starter, JSON.stringify(rel)]);
             });
         }
 

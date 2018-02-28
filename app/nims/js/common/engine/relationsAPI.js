@@ -45,18 +45,11 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.getRelationsSummary = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                const relData = R.path(relationsPath, this.database);
-                const reverseRelations = {};
-                R.keys(relData).forEach((revCharName) => {
-                    const rels = relData[revCharName];
-                    if (rels[characterName]) {
-                        reverseRelations[revCharName] = rels[characterName];
-                    }
-                });
+                const relData = R.clone(R.path(relationsPath, this.database));
+                const relations = R.filter(rel => rel[characterName] !== undefined, relData);
 
                 callback(null, {
-                    directRelations: relData[characterName] || {},
-                    reverseRelations,
+                    relations,
                     knownCharacters: dbmsUtils._getKnownCharacters(this.database, characterName)
                 });
             });
@@ -66,16 +59,16 @@ See the License for the specific language governing permissions and
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
                 characterCheck(toCharacter, this.database), PC.isString(text)]);
             PC.precondition(chain, callback, () => {
-                const relData = R.path(relationsPath, this.database);
-                text = text.trim();
-                if (text === '') {
-                    if (relData[fromCharacter] !== undefined) {
-                        delete relData[fromCharacter][toCharacter];
-                    }
-                } else {
-                    relData[fromCharacter] = relData[fromCharacter] || {};
-                    relData[fromCharacter][toCharacter] = text;
-                }
+//                const relData = R.path(relationsPath, this.database);
+//                text = text.trim();
+//                if (text === '') {
+//                    if (relData[fromCharacter] !== undefined) {
+//                        delete relData[fromCharacter][toCharacter];
+//                    }
+//                } else {
+//                    relData[fromCharacter] = relData[fromCharacter] || {};
+//                    relData[fromCharacter][toCharacter] = text;
+//                }
                 if (callback) callback();
             });
         };
