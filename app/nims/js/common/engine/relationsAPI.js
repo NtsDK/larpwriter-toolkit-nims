@@ -73,37 +73,37 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameCharacter(type, fromName, toName) {
-            if (type === 'player') return;
-            const relData = R.path(relationsPath, this.database);
-            if (relData[fromName] !== undefined) {
-                relData[toName] = relData[fromName];
-                delete relData[fromName];
-            }
-            R.values(relData).forEach((rels) => {
-                if (rels[fromName] !== undefined) {
-                    rels[toName] = rels[fromName];
-                    delete rels[fromName];
-                }
-            });
-        }
-
-        addListener('renameProfile', _renameCharacter);
-
-        function _removeCharacter(type, characterName) {
-            if (type === 'player') return;
-            const relData = R.path(relationsPath, this.database);
-            if (relData[characterName] !== undefined) {
-                delete relData[characterName];
-            }
-            R.values(relData).forEach((rels) => {
-                if (rels[characterName] !== undefined) {
-                    delete rels[characterName];
-                }
-            });
-        }
-
-        addListener('removeProfile', _removeCharacter);
+//        function _renameCharacter(type, fromName, toName) {
+//            if (type === 'player') return;
+//            const relData = R.path(relationsPath, this.database);
+//            if (relData[fromName] !== undefined) {
+//                relData[toName] = relData[fromName];
+//                delete relData[fromName];
+//            }
+//            R.values(relData).forEach((rels) => {
+//                if (rels[fromName] !== undefined) {
+//                    rels[toName] = rels[fromName];
+//                    delete rels[fromName];
+//                }
+//            });
+//        }
+//
+//        addListener('renameProfile', _renameCharacter);
+//
+//        function _removeCharacter(type, characterName) {
+//            if (type === 'player') return;
+//            const relData = R.path(relationsPath, this.database);
+//            if (relData[characterName] !== undefined) {
+//                delete relData[characterName];
+//            }
+//            R.values(relData).forEach((rels) => {
+//                if (rels[characterName] !== undefined) {
+//                    delete rels[characterName];
+//                }
+//            });
+//        }
+//
+//        addListener('removeProfile', _removeCharacter);
     }
 
     callback2(relationsAPI);

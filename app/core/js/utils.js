@@ -107,6 +107,14 @@ function makeEl(elTag) {
     return document.createElement(elTag);
 }
 
+const wrapEl = R.curry((elTag, el) => {
+    return addEl(makeEl(elTag), el);
+})
+
+const wrapEls = R.curry((elTag, els) => {
+    return addEls(makeEl(elTag), els);
+})
+
 function makeText(text) {
     return document.createTextNode(text);
 }

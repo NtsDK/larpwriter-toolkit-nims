@@ -19,10 +19,12 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    const relationTableHeader = ['character-name', 'direct-relation', 'reverse-relation', 'extra-info'];
-    const partialTableHeader = ['character-name', 'direct-relation', 'extra-info'];
+    const relationTableHeader = ['character-name', 'direct-relation', 'relation-origin', 'reverse-relation', 'extra-info', ''];
+    const partialTableHeader = ['character-name', 'direct-relation', 'extra-info', ''];
+    const displayedEssences = ['enderToStarter', 'allies', 'starterToEnder'];
 
     let makeNewRow;
+    const l10n = L10n.get('briefings');
 
     exports.makeRelationsContent = (data, flags, profileSettings) => {
         const {
@@ -34,8 +36,8 @@ See the License for the specific language governing permissions and
         const get2ndCharName = R.compose(el => R.keys(el)[0], R.omit(R.concat(Constants.relationFields, characterName)));
         const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CommonUtils.charOrdA);
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
-        const knownNoRels = noRelsList.filter(R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value')));
-        const unknownNoRels = noRelsList.filter(R.compose(R.not, R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value')));
+        const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value'));
+        const [knownNoRels, unknownNoRels] = R.partition(predicate, noRelsList);
         const { isAdaptationsMode } = flags;
 
         const body = makeEl('tbody');
@@ -56,19 +58,18 @@ See the License for the specific language governing permissions and
         const makeRowCallback = R.compose(addEl(body), makeRow);
         const charSelectors = addEls(
             addClass(makeEl('div'), 'entity-management relations-management'),
-            [makeSelector(getL10n('briefings-known-characters'), knownNoRels, makeRowCallback),
-                makeSelector(getL10n('briefings-unknown-characters'), unknownNoRels, makeRowCallback),
+            [makeSelector(l10n('known-characters'), knownNoRels, makeRowCallback),
+                makeSelector(l10n('unknown-characters'), unknownNoRels, makeRowCallback),
                 selectInfo.el]
         );
 
         // making table
         const array = isAdaptationsMode ? relationTableHeader : partialTableHeader;
-        const head = addEl(makeEl('thead'), addEls(
-            makeEl('tr'),
-            array.map(name => addEl(makeEl('th'), makeText(getL10n(`briefings-${name}`))))
-        ));
+        const headThs = R.map(R.pipe(l10n, makeText, wrapEl('th')), array);
+        const head = R.compose(wrapEl('thead'), wrapEls('tr'))(headThs);
 
-        const table = addEls(addClasses(makeEl('table'), ['table']), [head, body]);
+//        const table = addEls(addClasses(makeEl('table'), ['table']), [head, body]);
+        const table = addClasses(wrapEls('table', [head, body]), ['table']);
 
         // filling table
         const toCharacterFilter = toCharacter => (isAdaptationsMode ? true : 
@@ -91,7 +92,7 @@ See the License for the specific language governing permissions and
         return {
             el: addEls(
                 makeEl('div'),
-                [addEl(makeEl('span'), makeText(getL10n('briefings-profile-item'))), tmpContainer1[0]]
+                [addEl(makeEl('span'), makeText(l10n('profile-item'))), tmpContainer1[0]]
             ),
             select: select1[0]
         };
@@ -113,24 +114,32 @@ See the License for the specific language governing permissions and
         listen(direct, 'change', (event) => {
             DBMS.setCharacterRelation(fromCharacter, toCharacter, event.target.value, Utils.processError());
         });
-        let reverse;
-        if (isAdaptationsMode) {
-            reverse = addClass(makeEl('textarea'), 'briefing-relation-area');
+        
+        const arr = [ makeText(`${toCharacter}/${profileBindings[toCharacter]}`), direct];
+        if(isAdaptationsMode){
+            const origin = addClass(makeEl('textarea'), 'briefing-relation-area');
+            origin.value = rel.origin;
+            
+            const btns = displayedEssences.map(name => addClasses(makeEl('button'), ['btn', 'btn-default', name] ));
+            const group = addClass(wrapEls('div', btns), 'btn-group');
+//            <div class="btn-group" role="group">
+//            <button type="button" class="btn btn-default">Thailand</button>
+//            <button type="button" class="btn btn-default">Cambodia</button>
+//            <button type="button" class="btn btn-default">Vietnam</button>
+//            </div>
+            
+            const reverse = addClass(makeEl('textarea'), 'briefing-relation-area');
             reverse.value = rel[toCharacter];
             listen(reverse, 'change', (event) => {
                 DBMS.setCharacterRelation(toCharacter, fromCharacter, event.target.value, Utils.processError());
             });
-        } else {
-            reverse = makeEl('span');
+//            arr.push(setClassByCondition(addEl(makeEl('td'), reverse), 'hidden', !isAdaptationsMode));
+            arr.push(wrapEls('div', [group, origin]));
+            arr.push(reverse);
         }
+        
         const stories = relationsSummary.knownCharacters[toCharacter];
-
-        const arr = [addEl(makeEl('td'), makeText(`${toCharacter}/${profileBindings[toCharacter]}`)),
-            addEl(makeEl('td'), direct)];
-        if (isAdaptationsMode) {
-            arr.push(addEl(makeEl('td'), reverse));
-        }
-        const subArr = [addClass(addEl(makeEl('div'), makeText(getL10n('briefings-where-meets'))), 'bold-cursive'),
+        const subArr = [addClass(addEl(makeEl('div'), makeText(l10n('where-meets'))), 'bold-cursive'),
             addEl(makeEl('div'), makeText(stories === undefined ? '' : R.keys(stories).join(', '))),
             makeEl('br'),
             addEls(
@@ -139,9 +148,9 @@ See the License for the specific language governing permissions and
             ),
         ];
 
-        arr.push(addEls(makeEl('td'), subArr));
+        arr.push(addEls(makeEl('div'), subArr));
 
-        return addEls(makeEl('tr'), arr);
+        return addEls(makeEl('tr'), arr.map(el => addEl(makeEl('td'), el)));
     });
 
     function makeProfileItemContent(profileItemName, profileItemValue) {

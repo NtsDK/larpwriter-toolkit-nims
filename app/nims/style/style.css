@@ -716,3 +716,19 @@ a[tree-panel-toggler] h3{
 .log-diff.same {
   
 }
+
+.starterToEnder:before {
+  content: "\f061";
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 900;
+}
+.enderToStarter:before {
+  content: "\f060";
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 900;
+}
+.allies:before {
+  content: "\f2b5";
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 900;
+}
