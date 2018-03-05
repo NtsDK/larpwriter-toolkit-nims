@@ -188,8 +188,9 @@ See the License for the specific language governing permissions and
     
                 data.Relations = R.values(acc).map(R.merge({
                     origin: '',
-                    ready: false,
-                    essence: 'known'
+                    starterTextReady: false,
+                    enderTextReady: false,
+                    essence: []
                 }));
                 
                 data.Version = '0.6.2';

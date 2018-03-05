@@ -268,7 +268,9 @@ See the License for the specific language governing permissions and
                     addEl(divLeft, makeText(characterName));
                     addEl(divRight, UI.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
                     addEl(div, makeAdaptationTextInput(storyName, event, characterName, isEditable));
-                    addEl(div, UI.makeAdaptationReadyInput(storyName, event, characterName, isEditable));
+                    const id = JSON.stringify([storyName, event.index, characterName]);
+                    addEl(div, UI.makeReadyCheckbox(id, event.characters[characterName].ready, isEditable, 
+                            UI.onChangeAdaptationReadyStatus));
                     return div;
                 }));
 

@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function consistencyCheckAPI(LocalDBMS, opts) {
-        const { R, CommonUtils } = opts;
+        const { R, CommonUtils, Constants, dbmsUtils } = opts;
         const validatorLib = opts.Ajv;
         const schemaBuilder = opts.Schema;
 
@@ -110,6 +110,12 @@ See the License for the specific language governing permissions and
             const processError = getErrorProcessor(callback);
             data.Relations.filter(rel => rel[rel.starter] === undefined).forEach( rel => {
                 processError('Relation inconsistent, starter is not from relation: starter {0}, relation {1}', [rel.starter, JSON.stringify(rel)]);
+            });
+            
+            const keys = data.Relations.map(dbmsUtils._rel2RelKey);
+            const groups = R.groupBy(str => str, keys);
+            R.values(groups).filter(R.pipe(R.length, R.gt(R.__, 1))).forEach( group => {
+                processError('Relations inconsistent, duplicated relations with key: key {0}', [group[0]]);
             });
         }
 

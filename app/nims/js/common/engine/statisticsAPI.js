@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function statisticsAPI(LocalDBMS, opts) {
-        const { R, CommonUtils } = opts;
+        const { R, CommonUtils, Constants } = opts;
 
         let _countCharacterSymbols;
 
@@ -316,7 +316,8 @@ See the License for the specific language governing permissions and
                 });
             });
             counts.groups = R.sum(R.values(database.Groups).map(R.compose(_noWhiteSpaceLength, R.prop('characterDescription'))));
-            counts.relations = R.sum(R.flatten(database.Relations.map(R.pipe(R.omit(['essence', 'ready']), R.values))).map(_noWhiteSpaceLength));
+            const extraFields = R.difference(Constants.relationFields, ['origin']);
+            counts.relations = R.sum(R.flatten(database.Relations.map(R.pipe(R.omit(extraFields), R.values))).map(_noWhiteSpaceLength));
             return counts;
         }
 

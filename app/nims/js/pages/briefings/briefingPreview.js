@@ -429,7 +429,9 @@ See the License for the specific language governing permissions and
         }
 
         if (isAdaptationsMode) {
-            els.push(UI.makeAdaptationReadyInput(event.storyName, event, characterName, isAdaptationEditable));
+            const id = JSON.stringify([event.storyName, event.index, characterName]);
+            els.push(UI.makeReadyCheckbox(id, event.characters[characterName].ready, isAdaptationEditable, 
+                    UI.onChangeAdaptationReadyStatus));
         }
         els.push(makeEl('br'));
 

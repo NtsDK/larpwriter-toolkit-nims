@@ -220,6 +220,71 @@ describe('smokeTest', () => {
             func: 'removeGroup',
             args: ['testGroup2'],
         },
+        {
+            func: 'createGroup',
+            args: ['testGroup'],
+        },
+        {
+            func: 'createProfileItem',
+            args: ['character', 'testProfileItem', 'enum', 0],
+        },
+        {
+            func: 'saveFilterToGroup',
+            args: ['testGroup', [{"type":"enum","name":"profile-testProfileItem","selectedOptions":{"_":true}}]],
+            forInconsistency: true,
+        },
+        {
+            func: 'updateDefaultValue',
+            args: ['character', 'testProfileItem', 'test1,test2,test3'],
+            forInconsistency: true,
+        },
+        {
+            func: 'renameProfileItem',
+            args: ['character', 'testProfileItem2', 'testProfileItem'],
+            forInconsistency: true,
+        },
+        {
+            func: 'saveFilterToGroup',
+            args: ['testGroup', [{"type":"enum","name":"profile-testProfileItem2","selectedOptions":{"test1":true}}]],
+            forInconsistency: true,
+        },
+        {
+            func: 'changeProfileItemType',
+            args: ['character', 'testProfileItem2', 'multiEnum'],
+            forInconsistency: true,
+        },
+        {
+            func: 'updateDefaultValue',
+            args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+            forInconsistency: true,
+        },
+        {
+            func: 'saveFilterToGroup',
+            args: ['testGroup', [{"type":"multiEnum","name":"profile-testProfileItem2","condition":"every","selectedOptions":{"test1":true,"test2":true}}]],
+            forInconsistency: true,
+        },
+        {
+            func: 'updateDefaultValue',
+            args: ['character', 'testProfileItem2', 'test2,test3'],
+            forInconsistency: true,
+        },
+        {
+            func: 'removeProfileItem',
+            args: ['character', 0, 'testProfileItem2'],
+            forInconsistency: true,
+        },
+//        {
+//            func: 'renameGroup',
+//            args: ['testGroup', 'testGroup155'],
+//        },
+//        {
+//            func: 'updateGroupField',
+//            args: ['testGroup2', 'masterDescription', '654654654'],
+//        },
+        {
+            func: 'removeGroup',
+            args: ['testGroup'],
+        },
         // investigationBoardAPI
         {
             func: 'createGroup',
@@ -303,8 +368,18 @@ describe('smokeTest', () => {
             args: ['testCharacter', 'testPlayer'],
         },
         {
+            func: 'createBinding',
+            args: ['testCharacter', 'testPlayer'],
+        },
+        {
+            func: 'renameProfile',
+            args: ['character', 'testCharacter', 'testCharacter3'],
+            forInconsistency: true,
+        },
+        {
             func: 'removeProfile',
-            args: ['character', 'testCharacter'],
+            args: ['character', 'testCharacter3'],
+            forInconsistency: true,
         },
         {
             func: 'removeProfile',
@@ -355,14 +430,50 @@ describe('smokeTest', () => {
         {
             func: 'createProfileItem',
             args: ['character', 'testProfileItem', 'text', 0],
+            forInconsistency: true,
         },
         {
             func: 'updateProfileField',
             args: ['character', 'testCharacter', 'testProfileItem', 'text', 'test updateProfileField'],
         },
         {
+            func: 'renameProfileItem',
+            args: ['character', 'testProfileItem2', 'testProfileItem'],
+            forInconsistency: true,
+        },
+        {
+            func: 'changeProfileItemType',
+            args: ['character', 'testProfileItem2', 'enum'],
+            forInconsistency: true,
+        },
+        {
+            func: 'updateDefaultValue',
+            args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+            forInconsistency: true,
+        },
+        {
+            func: 'changeProfileItemType',
+            args: ['character', 'testProfileItem2', 'multiEnum'],
+            forInconsistency: true,
+        },
+        {
+            func: 'updateDefaultValue',
+            args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+            forInconsistency: true,
+        },
+        {
+            func: 'updateProfileField',
+            args: ['character', 'testCharacter', 'testProfileItem2', 'multiEnum', 'test1'],
+        },
+        {
+            func: 'updateDefaultValue',
+            args: ['character', 'testProfileItem2', 'test2,test3'],
+            forInconsistency: true,
+        },
+        {
             func: 'removeProfileItem',
-            args: ['character', 0, 'testProfileItem'],
+            args: ['character', 0, 'testProfileItem2'],
+            forInconsistency: true,
         },
         {
             func: 'renameProfile',
@@ -382,20 +493,69 @@ describe('smokeTest', () => {
             args: ['character', 'testCharacter2'],
         },
         {
-            func: 'setCharacterRelation',
-            args: ['testCharacter', 'testCharacter2', 'testCharacterRelation'],
+            func: 'createCharacterRelation',
+            args: ['testCharacter', 'testCharacter2'],
         },
         {
-            func: 'setCharacterRelation',
-            args: ['testCharacter', 'testCharacter2', ''],
+            func: 'getCharacterRelation',
+            args: ['testCharacter', 'testCharacter2'],
+            gettable: true,
+        },
+        {
+            func: 'getCharacterRelation',
+            args: ['testCharacter2', 'testCharacter'],
+            gettable: true,
+        },
+        {
+            func: 'setCharacterRelationText',
+            args: ['testCharacter', 'testCharacter2', 'testCharacter', 'setCharacterRelationText check'],
+        },
+        {
+            func: 'setCharacterRelationText',
+            args: ['testCharacter', 'testCharacter2', 'testCharacter2', 'setCharacterRelationText check 2'],
+        },
+        {
+            func: 'setRelationReadyStatus',
+            args: ['testCharacter', 'testCharacter2', 'testCharacter', true],
+        },
+        {
+            func: 'setRelationReadyStatus',
+            args: ['testCharacter2', 'testCharacter', 'testCharacter2', true],
+        },
+        {
+            func: 'setRelationEssenceStatus',
+            args: ['testCharacter', 'testCharacter2', 'allies', true],
+        },
+        {
+            func: 'setOriginRelationText',
+            args: ['testCharacter', 'testCharacter2', 'setOriginRelationText check'],
+        },
+        {
+            func: 'setOriginRelationText',
+            args: ['testCharacter2', 'testCharacter', 'setOriginRelationText check 2'],
+        },
+        {
+            func: 'removeCharacterRelation',
+            args: ['testCharacter2', 'testCharacter'],
+        },
+        {
+            func: 'createCharacterRelation',
+            args: ['testCharacter', 'testCharacter2'],
+        },
+        {
+            func: 'renameProfile',
+            args: ['character', 'testCharacter', 'testCharacter3'],
+            forInconsistency: true,
         },
         {
             func: 'removeProfile',
-            args: ['character', 'testCharacter'],
+            args: ['character', 'testCharacter3'],
+            forInconsistency: true,
         },
         {
             func: 'removeProfile',
             args: ['character', 'testCharacter2'],
+            forInconsistency: true,
         },
 
         // storyAdaptationsAPI
@@ -450,7 +610,7 @@ describe('smokeTest', () => {
             args: ['testStory2'],
         },
 
-        // storyEventsAPI
+        // storyCharactersAPI
         {
             func: 'createStory',
             args: ['testStory'],
@@ -480,28 +640,42 @@ describe('smokeTest', () => {
             args: ['testStory', 'testEventName', 'testEventText', 0],
         },
         {
+            func: 'addStoryCharacter',
+            args: ['testStory', 'testCharacter'],
+        },
+        {
+            func: 'addCharacterToEvent',
+            args: ['testStory', 0, 'testCharacter'],
+        },
+        {
             func: 'addCharacterToEvent',
             args: ['testStory', 0, 'testCharacter2'],
         },
         {
+            func: 'renameProfile',
+            args: ['character', 'testCharacter2', 'testCharacter3'],
+            forInconsistency: true,
+        },
+        {
             func: 'removeCharacterFromEvent',
-            args: ['testStory', 0, 'testCharacter2'],
+            args: ['testStory', 0, 'testCharacter3'],
         },
         {
             func: 'onChangeCharacterActivity',
-            args: ['testStory', 'testCharacter2', 'active', true],
+            args: ['testStory', 'testCharacter3', 'active', true],
         },
         {
             func: 'removeStoryCharacter',
-            args: ['testStory', 'testCharacter2'],
+            args: ['testStory', 'testCharacter3'],
         },
         {
             func: 'removeProfile',
             args: ['character', 'testCharacter'],
+            forInconsistency: true,
         },
         {
             func: 'removeProfile',
-            args: ['character', 'testCharacter2'],
+            args: ['character', 'testCharacter3'],
         },
         {
             func: 'removeStory',
@@ -557,11 +731,22 @@ describe('smokeTest', () => {
     setChecks.forEach((check) => {
         it(check.name, (done) => {
             DBMS[check.func](...check.args.concat((err) => {
-                expect(err).toBeUndefined();
-                //                DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
-                //                    expect(err).toBeNull();
-                //                    expect(consistencyErrors.length > 0).toBe(false);
-                //                });
+                if(err) console.error(err);
+                if(check.gettable === true){
+                    expect(err).toBeNull();
+                } else {
+                    expect(err).toBeUndefined();
+                }
+                if(check.forInconsistency === true){
+                    DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
+                        expect(err).toBeNull();
+                        if(consistencyErrors.length > 0){
+                            console.error(check.name);
+                            consistencyErrors.forEach(console.error);
+                        }
+                        expect(consistencyErrors.length > 0).toBe(false);
+                    });
+                }
                 done();
             }));
         });

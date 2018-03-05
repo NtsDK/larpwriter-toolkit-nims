@@ -233,23 +233,21 @@ See the License for the specific language governing permissions and
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'time', time, Utils.processError());
     };
 
-    exports.makeAdaptationReadyInput = (storyName, event, characterName, isEditable) => {
+    exports.makeReadyCheckbox = (id, checked, isEditable, callback) => {
         const div = makeEl('div');
         const input = makeEl('input');
         setClassByCondition(input, 'notEditable', !isEditable);
         input.type = 'checkbox';
-        input.checked = event.characters[characterName].ready;
-        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-        input.id = `${event.index}-${storyName}-${characterName}`;
-        listen(input, 'change', onChangeReadyStatus);
+        input.checked = checked;
+        input.id = id;
+        listen(input, 'change', callback);
         addEl(div, input);
-
         addEl(div, setAttr(addEl(makeEl('label'), makeText(constL10n(Constants.finishedText))), 'for', input.id));
         return div;
     };
 
-    var onChangeReadyStatus = (event) => {
-        const dataKey = JSON.parse(event.target.dataKey);
+    exports.onChangeAdaptationReadyStatus = (event) => {
+        const dataKey = JSON.parse(event.target.id);
         const value = event.target.checked;
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, Utils.processError());
     };

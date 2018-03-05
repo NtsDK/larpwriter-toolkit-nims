@@ -107,7 +107,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     function consistencyCheck(callback) {
         DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
             if (err) { Utils.handleError(err); return; }
-            consistencyErrors.forEach(CommonUtils.consoleLog);
+            consistencyErrors.forEach(CommonUtils.consoleErr);
             if (consistencyErrors.length > 0) {
                 Utils.alert(getL10n('overview-consistency-problem-detected'));
             } else {

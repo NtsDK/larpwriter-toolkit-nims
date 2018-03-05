@@ -811,27 +811,33 @@ See the License for the specific language governing permissions and
                         origin: {
                             type: 'string'
                         },
-                        ready: {
+                        starterTextReady: {
+                            type: 'boolean'
+                        },
+                        enderTextReady: {
                             type: 'boolean'
                         },
                         essence: {
-                            type: 'string',
-                            enum: Constants.relationEssences
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                enum: Constants.relationEssences
+                            }
                         },
                         starter: {
                             type: 'string',
                             enum: chars
                         },
                     },
-                    required: ['origin', 'ready', 'essence', 'starter'],
+                    required: ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter'],
                     patternProperties:{
                         [names] : {
                             type: 'string',
                         }
                     },
                     additionalProperties: false,
-                    "minProperties": 6,
-                    "maxProperties": 6
+                    "minProperties": 7,
+                    "maxProperties": 7
                 }
             };
             return schema;

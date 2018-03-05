@@ -47,9 +47,8 @@ See the License for the specific language governing permissions and
             return vals[n];
         });
 
-        exports.consoleLog = (str) => {
-            console.log(str);
-        };
+        exports.consoleLog = (str) => console.log(str);
+        exports.consoleErr = (str) => console.error(str);
 
         exports.clone = R.clone;
 

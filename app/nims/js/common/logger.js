@@ -21,6 +21,17 @@ See the License for the specific language governing permissions and
 /* eslint-disable func-names,prefer-rest-params */
 
 ((exports) => {
+    
+    exports.offlineIgnoreList = [ 'getUser',
+        'setPassword',
+        'checkPassword',
+        'login',
+        'register',
+        'hasPermission',
+        '_getOwnerMap',
+        'getPermissionsSummary',
+        'subscribeOnPermissionsUpdate' ];
+
     // argument description
     // add function name to log it
     // ignoreParams - make true if you don't need params in log.
@@ -92,8 +103,14 @@ See the License for the specific language governing permissions and
             removeEdge: {}
         },
         relationsAPI: {
+            getCharacterRelation: null,
+            createCharacterRelation: {},
+            removeCharacterRelation: {},
+            setCharacterRelationText: {},
+            setRelationReadyStatus: {},
+            setRelationEssenceStatus: {},
+            setOriginRelationText: {},
             getRelationsSummary: null,
-            setCharacterRelation: {}
         },
         briefingExportAPI: {
             getBriefingData: {}

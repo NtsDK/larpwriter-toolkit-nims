@@ -45,9 +45,9 @@ See the License for the specific language governing permissions and
         }
     };
     
-    exports.relationFields = ['origin', 'ready', 'essence', 'starter'];
+    exports.relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter'];
     
-    exports.relationEssences = ['starterToEnder', 'enderToStarter', 'allies', 'known'];
+    exports.relationEssences = ['starterToEnder', 'allies', 'enderToStarter'];
 
     exports.playerAccessTypes = ['write', 'readonly', 'hidden'];
 

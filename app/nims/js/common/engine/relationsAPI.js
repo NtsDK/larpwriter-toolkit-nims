@@ -23,6 +23,17 @@ See the License for the specific language governing permissions and
         } = opts;
 
         const relationsPath = ['Relations'];
+        
+        const rel2RelKey = R.pipe(R.omit(Constants.relationFields), R.keys, R.sort(CommonUtils.charOrdA), JSON.stringify);
+        dbmsUtils._rel2RelKey = rel2RelKey;
+        const arr2RelKey = R.pipe(R.sort(CommonUtils.charOrdA), JSON.stringify);
+        dbmsUtils._arr2RelKey = arr2RelKey;
+        
+        const findRel = R.curry((fromCharacter, toCharacter, relations) => {
+            const findFunc = R.curry((fromCharacter, toCharacter, rel) => 
+                rel[fromCharacter] !== undefined && rel[toCharacter] !== undefined);
+            return R.find(findFunc(fromCharacter, toCharacter), relations);
+        });
 
         dbmsUtils._getKnownCharacters = (database, characterName) => {
             const stories = database.Stories;
@@ -42,11 +53,13 @@ See the License for the specific language governing permissions and
 
         const characterCheck = (characterName, database) => PC.chainCheck([PC.isString(characterName),
             PC.entityExists(characterName, R.keys(database.Characters))]);
+        
+        const charFilter = R.curry((char, data) => R.filter(rel => rel[char] !== undefined, data));
 
         LocalDBMS.prototype.getRelationsSummary = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {
                 const relData = R.clone(R.path(relationsPath, this.database));
-                const relations = R.filter(rel => rel[characterName] !== undefined, relData);
+                const relations = charFilter(characterName, relData);
 
                 callback(null, {
                     relations,
@@ -55,55 +68,132 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setCharacterRelation = function (fromCharacter, toCharacter, text, callback) {
+        LocalDBMS.prototype.getCharacterRelation = function (fromCharacter, toCharacter, callback) {
+            const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
-                characterCheck(toCharacter, this.database), PC.isString(text)]);
+                characterCheck(toCharacter, this.database), 
+                PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
             PC.precondition(chain, callback, () => {
-//                const relData = R.path(relationsPath, this.database);
-//                text = text.trim();
-//                if (text === '') {
-//                    if (relData[fromCharacter] !== undefined) {
-//                        delete relData[fromCharacter][toCharacter];
-//                    }
-//                } else {
-//                    relData[fromCharacter] = relData[fromCharacter] || {};
-//                    relData[fromCharacter][toCharacter] = text;
-//                }
+                callback(null, R.clone(findRel(fromCharacter, toCharacter, relData)));
+            });
+        };
+        
+        LocalDBMS.prototype.createCharacterRelation = function (fromCharacter, toCharacter, callback) {
+            const relData = R.path(relationsPath, this.database);
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
+                characterCheck(toCharacter, this.database), 
+                PC.createEntityCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
+            PC.precondition(chain, callback, () => {
+                relData.push({
+                    "origin": "",
+                    "starterTextReady": false,
+                    "enderTextReady": false,
+                    "essence": [],
+                    [fromCharacter]: "",
+                    [toCharacter]: "",
+                    "starter": fromCharacter
+                })
+                if (callback) callback();
+            });
+        };
+        
+        LocalDBMS.prototype.removeCharacterRelation = function (fromCharacter, toCharacter, callback) {
+            const relData = R.path(relationsPath, this.database);
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
+                characterCheck(toCharacter, this.database), 
+                PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
+            PC.precondition(chain, callback, () => {
+                const rel = findRel(fromCharacter, toCharacter, relData);
+                relData.splice(R.indexOf(rel, relData), 1);
+                if (callback) callback();
+            });
+        };
+        
+        LocalDBMS.prototype.setCharacterRelationText = function (fromCharacter, toCharacter, character, text, callback) {
+            const relData = R.path(relationsPath, this.database);
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
+                characterCheck(toCharacter, this.database), 
+                PC.isString(character), PC.elementFromEnum(character, [fromCharacter, toCharacter]),
+                PC.isString(text),
+                PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
+            PC.precondition(chain, callback, () => {
+                const rel = findRel(fromCharacter, toCharacter, relData);
+                text = text.trim();
+                rel[character] = text;
+                if (callback) callback();
+            });
+        };
+        
+        LocalDBMS.prototype.setRelationReadyStatus = function (fromCharacter, toCharacter, character, ready, callback) {
+            const relData = R.path(relationsPath, this.database);
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
+                characterCheck(toCharacter, this.database), 
+                PC.isString(character), PC.elementFromEnum(character, [fromCharacter, toCharacter]),
+                PC.isBoolean(ready),
+                PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
+            PC.precondition(chain, callback, () => {
+                const rel = findRel(fromCharacter, toCharacter, relData);
+                if(rel.starter === character) {
+                    rel.starterTextReady = ready;
+                } else {
+                    rel.enderTextReady = ready;
+                }
+                if (callback) callback();
+            });
+        };
+        
+        LocalDBMS.prototype.setRelationEssenceStatus = function (fromCharacter, toCharacter, essence, flag, callback) {
+            const relData = R.path(relationsPath, this.database);
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
+                characterCheck(toCharacter, this.database), 
+                PC.isString(essence), PC.elementFromEnum(essence, Constants.relationEssences),
+                PC.isBoolean(flag),
+                PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
+            PC.precondition(chain, callback, () => {
+                const rel = findRel(fromCharacter, toCharacter, relData);
+                if(flag === true){
+                    rel.essence = R.uniq(R.append(essence, rel.essence));
+                } else {
+                    rel.essence.splice(R.indexOf(essence, rel.essence), 1);
+                }
+                if (callback) callback();
+            });
+        };
+        
+        LocalDBMS.prototype.setOriginRelationText = function (fromCharacter, toCharacter, text, callback) {
+            const relData = R.path(relationsPath, this.database);
+            const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
+                characterCheck(toCharacter, this.database), PC.isString(text),
+                PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
+            PC.precondition(chain, callback, () => {
+                const rel = findRel(fromCharacter, toCharacter, relData);
+                text = text.trim();
+                rel.origin = text;
                 if (callback) callback();
             });
         };
 
-//        function _renameCharacter(type, fromName, toName) {
-//            if (type === 'player') return;
-//            const relData = R.path(relationsPath, this.database);
-//            if (relData[fromName] !== undefined) {
-//                relData[toName] = relData[fromName];
-//                delete relData[fromName];
-//            }
-//            R.values(relData).forEach((rels) => {
-//                if (rels[fromName] !== undefined) {
-//                    rels[toName] = rels[fromName];
-//                    delete rels[fromName];
-//                }
-//            });
-//        }
-//
-//        addListener('renameProfile', _renameCharacter);
-//
-//        function _removeCharacter(type, characterName) {
-//            if (type === 'player') return;
-//            const relData = R.path(relationsPath, this.database);
-//            if (relData[characterName] !== undefined) {
-//                delete relData[characterName];
-//            }
-//            R.values(relData).forEach((rels) => {
-//                if (rels[characterName] !== undefined) {
-//                    delete rels[characterName];
-//                }
-//            });
-//        }
-//
-//        addListener('removeProfile', _removeCharacter);
+        function _renameCharacter(type, fromName, toName) {
+            if (type === 'player') return;
+            const relData = R.path(relationsPath, this.database);
+            this.database.Relations = R.filter(R.pipe(R.prop(fromName)), relData).map( rel => {
+                rel[toName] = rel[fromName];
+                delete rel[fromName];
+                if(rel.starter === fromName){
+                    rel.starter = toName;
+                }
+            });
+        }
+
+        addListener('renameProfile', _renameCharacter);
+
+        function _removeCharacter(type, characterName) {
+            if (type === 'player') return;
+            const relData = R.path(relationsPath, this.database);
+            this.database.Relations = R.filter(R.pipe(R.prop(characterName), R.isNil), relData);
+        }
+
+        addListener('removeProfile', _removeCharacter);
     }
 
     callback2(relationsAPI);

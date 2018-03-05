@@ -62,7 +62,15 @@ function makeLocalDBMS(fullVersion) {
         return this.database.Settings;
     };
 
-    const func = name => window[name](LocalDBMS, opts);
+    const funcList = {};
+    const func = R.curry((name) => {
+        const before = R.keys(LocalDBMS.prototype);
+        window[name](LocalDBMS, opts);
+        const after = R.keys(LocalDBMS.prototype);
+        const diff = R.difference(after, before);
+//        console.log(`${name} ${diff}`);
+        funcList[name] = R.zipObj(diff, R.repeat(true, diff.length));
+    });
 
     ['baseAPI',
         'consistencyCheckAPI',
@@ -91,5 +99,17 @@ function makeLocalDBMS(fullVersion) {
         'logAPI'].map(func);
 
     Logger.attachLogCalls(LocalDBMS, R, false);
+    
+    const baseAPIList = R.keys(R.mergeAll(R.values(funcList)));
+    const loggerAPIList = R.difference(R.keys(R.mergeAll(R.values(Logger.apiInfo))), Logger.offlineIgnoreList);
+
+    const loggerDiff = R.symmetricDifference(loggerAPIList, baseAPIList);
+    if (loggerDiff.length > 0) {
+        console.error(`Logger diff: ${loggerDiff}`);
+        console.error(`Logged but not in base: ${R.difference(loggerAPIList, baseAPIList)}`);
+        console.error(`In base but not logged: ${R.difference(baseAPIList, loggerAPIList)}`);
+        throw new Error('API processors are inconsistent');
+    }
+    
     return LocalDBMS;
 }
