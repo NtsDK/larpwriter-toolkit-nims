@@ -63,6 +63,7 @@ See the License for the specific language governing permissions and
 
             statistics.generalCompleteness = _getGeneralCompleteness(database);
             statistics.storyCompleteness = _getStoryCompleteness(database);
+            statistics.relationCompleteness = _getRelationCompleteness(database);
 
             statistics.characterChart = _getChartData(database, 'characters', 'Characters');
             statistics.storyChart = _getChartData(database, 'stories', 'Stories');
@@ -292,6 +293,15 @@ See the License for the specific language governing permissions and
                 allAdaptations += stats.allAdaptations;
             });
             return [calcPercent(finishedAdaptations, allAdaptations), finishedAdaptations, allAdaptations];
+        }
+        
+        const rel2bools = R.pipe(R.pick(['starterTextReady', 'enderTextReady']), R.values, R.filter(R.identity));
+            
+        function _getRelationCompleteness(database) {
+            let finishedRelations = 0, allRelations = 0;
+            allRelations = database.Relations.length * 2;
+            finishedRelations = R.flatten(database.Relations.map(rel2bools)).length;
+            return [calcPercent(finishedRelations, allRelations), finishedRelations, allRelations];
         }
 
         function _noWhiteSpaceLength(str) {

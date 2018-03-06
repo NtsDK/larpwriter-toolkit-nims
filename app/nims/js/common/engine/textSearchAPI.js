@@ -90,10 +90,18 @@ See the License for the specific language governing permissions and
         searchers.playerProfiles = profileSearch('Players', 'PlayerProfileStructure');
 
         searchers.relations = (textType, test, database) => {
-            const relations = database.Relations;
-            return R.flatten(R.keys(relations).map(name1 => R.keys(relations[name1])
-                .filter(name2 => test(relations[name1][name2]))
-                .map(name2 => format(`${name1}/${name2}`, 'text', relations[name1][name2]))));
+            let relations = R.clone(database.Relations);
+            relations = relations.map(R.omit(R.difference(Constants.relationFields, ['origin']))).map(rel => {
+                R.difference(R.keys(rel), ['origin']).forEach( (key, i) => {
+                    rel['char' + i] = key;
+                });
+                return rel;
+            });
+            return R.flatten(relations.map( rel => [
+                format(`${rel.char0}/${rel.char1}`, 'text', rel[rel.char0]),
+                format(`${rel.char0} ? ${rel.char1}`, 'text', rel.origin),
+                format(`${rel.char1}/${rel.char0}`, 'text', rel[rel.char1]),
+            ])).filter( obj => test(obj.text));
         };
 
         searchers.groups = (textType, test, database) => {

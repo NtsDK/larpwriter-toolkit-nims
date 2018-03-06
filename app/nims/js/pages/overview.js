@@ -184,6 +184,7 @@ See the License for the specific language governing permissions and
 
                 addEl(clearEl(getEl('generalCompleteness')), makeText(strFormat(getL10n('overview-general-completeness-value'), statistics.generalCompleteness)));
                 addEl(clearEl(getEl('storyCompleteness')), makeText(strFormat(getL10n('overview-story-completeness-value'), statistics.storyCompleteness)));
+                addEl(clearEl(getEl('relationCompleteness')), makeText(strFormat(getL10n('overview-relation-completeness-value'), statistics.relationCompleteness)));
 
                 defaultHists.forEach((histName) => {
                     makeHistogram(clearEl(queryEl(`${root}.${histName}`)), statistics[histName]);

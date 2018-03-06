@@ -174,7 +174,8 @@ describe('smokeTest', () => {
         // textSearchAPI
         {
             func: 'getTexts',
-            args: ['Арагорн', ['masterStory'], false],
+            args: ['Арагорн', ["characterProfiles","playerProfiles","groups","relations","masterStory","eventOrigins",
+                "eventAdaptations"], false],
         },
     ];
 
