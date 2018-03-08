@@ -87,6 +87,10 @@ function queryEl(sel) {
     return document.querySelector(sel);
 }
 
+function qte(sel){
+    return document.querySelector(sel).content.cloneNode(true);
+}
+
 function queryEls(sel) {
     return nl2array(document.querySelectorAll(sel));
 }
@@ -94,6 +98,8 @@ function queryEls(sel) {
 function queryElEl(el, sel) {
     return el.querySelector(sel);
 }
+
+const qee = R.curry(queryElEl);
 
 function queryElEls(el, sel) {
     return nl2array(el.querySelectorAll(sel));

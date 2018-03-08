@@ -210,8 +210,29 @@ See the License for the specific language governing permissions and
 .briefing-relation-area{
   height: 120px;
   display: block;
-  width:320px;
+/*   width:320px; */
 }
+.pre-text-area{
+  height: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.text-column > * {
+  margin: 8px 0;
+} 
+.to-character-data > *{
+  margin: 16px 0;
+}
+
+.relation-content .row:nth-child(2n+1) {
+    background-color: #dee2e4;
+}
+
+.relation-content .row{
+  padding: 16px 0;
+}
+
 .eventPersonalStory {
 	height: 160px;
 	display: block;
@@ -582,6 +603,10 @@ See the License for the specific language governing permissions and
   text-align: right;
 }
 
+.relations-management {
+  margin: 0 0 16px 0;
+}
+
 /* **/
 
 /** text-search-tab */
@@ -732,4 +757,8 @@ a[tree-panel-toggler] h3{
 }
 .remove:before {
   content: "\f2ed";
+}
+
+.btn-reduced{
+  padding: 4px 8px;
 }

@@ -45,157 +45,149 @@ See the License for the specific language governing permissions and
         const [knownNoRels, unknownNoRels] = R.partition(predicate, noRelsList);
         const { isAdaptationsMode } = flags;
 
-        const body = makeEl('tbody');
-        const selectInfo = makeProfileItemSelector(profileSettings, (event) => {
-            const dataArr = queryElEls(body, '[toCharacter]');
-            dataArr.map(clearEl).forEach((el) => {
-                const char = getAttr(el, 'toCharacter');
-                const selectedName = event.target.value;
-                addEls(el, makeProfileItemContent(selectedName, profiles[char][selectedName]));
-            });
-        });
+        const relationTmpl = wrapEl('div', qte('.relation-tmpl'));
+        const qe = qee(relationTmpl);
+        const content = qe('.relation-content');
+        const getProfileItemSelect = () => qe('.profile-item-select');
+        
+        makeProfileItemSelector(qe('.profile-item-select'), profileSettings, refreshProfileItem(content, profiles));
+        
         const makeRow = makeNewRow(
-            profiles, selectInfo.select, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
+            profiles, getProfileItemSelect, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
             characterName
         );
 
         // filling header - need table body for callbacks
-        const makeRowCallback = R.compose(addEl(body), makeRow);
-        const charSelectors = addEls(
-            addClass(makeEl('div'), 'entity-management relations-management'),
-            [makeSelector(l10n('known-characters'), knownNoRels, characterName, makeRowCallback),
-                makeSelector(l10n('unknown-characters'), unknownNoRels, characterName, makeRowCallback),
-                selectInfo.el]
-        );
-
-        // making table
-        const array = isAdaptationsMode ? relationTableHeader : partialTableHeader;
-        const headThs = R.map(R.pipe(l10n, makeText, wrapEl('th')), array);
-        const head = R.compose(wrapEl('thead'), wrapEls('tr'))(headThs);
-
-//        const table = addEls(addClasses(makeEl('table'), ['table']), [head, body]);
-        const table = addClasses(wrapEls('table', [head, body]), ['table']);
+        const makeRowCallback = R.compose(addEl(content), makeRow);
+        addEl(qe('.known-characters-label'), makeText(l10n('known-characters')));
+        const knownBtn = addEl(qe('.add-known-character-relation'), makeText(getL10n('common-add')));
+        addEl(qe('.unknown-characters-label'), makeText(l10n('unknown-characters')));
+        const unknownBtn = addEl(qe('.add-unknown-character-relation'), makeText(getL10n('common-add')));
+        addEl(qe('.profile-item-label'), makeText(l10n('profile-item')));
+        fillCharSelector(qe('.known-characters-select'), knownBtn, knownNoRels, characterName, makeRowCallback);
+        fillCharSelector(qe('.unknown-characters-select'), unknownBtn, unknownNoRels, characterName, makeRowCallback);
 
         // filling table
         const toCharacterFilter = toCharacter => (isAdaptationsMode ? true : 
             !R.isEmpty(findRel(characterName, toCharacter, relationsSummary.relations)[characterName]));
         const findRelTmp = findRel(characterName, R.__, relationsSummary.relations);
-        addEls(body, showCharacters.filter(toCharacterFilter).map(toChar => makeRow(toChar, findRelTmp(toChar))));
-        return addEls(makeEl('div'), [charSelectors, table]);
+        addEls(content, showCharacters.filter(toCharacterFilter).map(toChar => makeRow(toChar, findRelTmp(toChar))));
+        return relationTmpl;
     };
+    
+    function refreshProfileItem(content, profiles){
+        return (event) => {
+            const dataArr = queryElEls(content, '[toCharacter]');
+            dataArr.forEach((el) => {
+                const char = getAttr(el, 'toCharacter');
+                const selectedName = event.target.value;
+                fillProfileItemContent(el, selectedName, profiles[char][selectedName]);
+            });
+        }
+    }
 
-    function makeProfileItemSelector(profileSettings, refresh) {
-        const select1 = $('<select></select>');
-        const tmpContainer1 = $('<span></span>').append(select1);
-        addClasses(select1[0], ['common-select', 'profile-item-select']);
+    function makeProfileItemSelector(select1, profileSettings, refresh) {
+        select1 = $(select1);
         const tmpSelect = select1.select2(arr2Select2(profileSettings.map(R.prop('name')).sort()));
 
+        select1.select2({width: 'style'});
         tmpSelect.on('change', refresh);
         if (profileSettings[0]) {
             tmpSelect.val(profileSettings[0].name).trigger('change');
         }
-
-        return {
-            el: addEls(
-                makeEl('div'),
-                [addEl(makeEl('span'), makeText(l10n('profile-item'))), tmpContainer1[0]]
-            ),
-            select: select1[0]
-        };
     }
     
     makeNewRow = R.curry((
-        profiles, profileItemSelect, isAdaptationsMode, knownCharacters, profileBindings,
+        profiles, getProfileItemSelect, isAdaptationsMode, knownCharacters, profileBindings,
         fromCharacter, toCharacter, rel
     ) => {
-        const direct = addClass(makeEl('textarea'), 'briefing-relation-area');
-        direct.value = rel[fromCharacter];
-        listen(direct, 'change', (event) => {
+        const stories = knownCharacters[toCharacter];
+        const row = qte('.relation-row-tmpl');
+        const qe = qee(row);
+        addEl(qe('.to-character-name'), makeText(`${toCharacter}/${profileBindings[toCharacter]}`));
+        addEl(qe('.where-meets-label'), makeText(l10n('where-meets')));
+        addEl(qe('.where-meets-content'), makeText(stories === undefined ? '' : R.keys(stories).join(', ')));
+        setAttr(qe('[toCharacter]'), 'toCharacter', toCharacter);
+        fillProfileItemContent(row, getProfileItemSelect().value, profiles[toCharacter][getProfileItemSelect().value]);
+        listen(qe('button.remove'), 'click', (event) => {
+            Utils.confirm(strFormat(l10n('are-you-sure-about-relation-removing'), [`${fromCharacter + '-' + toCharacter}`]), () => {
+                DBMS.removeCharacterRelation(fromCharacter, toCharacter, Utils.processError());
+//                clearEl(row);
+//                addClass(row, 'hidden');
+            });
+        });
+        
+        qe('.direct textarea').value = rel[fromCharacter];
+        setAttr(qe('.direct textarea'), 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
+        listen(qe('.direct textarea'), 'change', (event) => {
             DBMS.setCharacterRelationText(fromCharacter, toCharacter, fromCharacter, event.target.value, Utils.processError());
         });
         
-        const stories = knownCharacters[toCharacter];
-        const removeButton = addClasses(makeEl('button'), ['btn', 'btn-default', 'fa-icon', 'remove'] );
-        listen(removeButton, 'click', (event) => {
-            Utils.confirm(strFormat(l10n('are-you-sure-about-relation-removing'), [fromCharacter, toCharacter]), () => {
-                DBMS.removeCharacterRelation(fromCharacter, toCharacter, Utils.processError());
-            });
-        });
-        
-        const subArr = [ wrapEl('div', makeText(`${toCharacter}/${profileBindings[toCharacter]}`)),
-            addClass(addEl(makeEl('div'), makeText(l10n('where-meets'))), 'bold-cursive'),
-            addEl(makeEl('div'), makeText(stories === undefined ? '' : R.keys(stories).join(', '))),
-            makeEl('br'),
-            addEls(
-                    setAttr(makeEl('div'), 'toCharacter', toCharacter),
-                    makeProfileItemContent(profileItemSelect.value, profiles[toCharacter][profileItemSelect.value])
-            ),
-            removeButton
-        ];
-        
         const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
-        const directCheckbox = UI.makeReadyCheckbox(JSON.stringify([fromCharacter, toCharacter]), directChecked, true, (event) => {
-            const value = event.target.checked;
-            DBMS.setRelationReadyStatus(fromCharacter, toCharacter, fromCharacter, value, Utils.processError());
-        });
-        const arr = [ wrapEls('div', subArr), wrapEls('div', [direct, directCheckbox])];
+        fillFinishedCheckbox(qe, 'direct', JSON.stringify([fromCharacter, toCharacter]), fromCharacter, toCharacter, fromCharacter, directChecked);
+        const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
+        fillFinishedCheckbox(qe, 'reverse', JSON.stringify([toCharacter, fromCharacter]), fromCharacter, toCharacter, toCharacter, reverseChecked);
         
-        if(isAdaptationsMode){
-            const origin = addClass(makeEl('textarea'), 'briefing-relation-area');
-            origin.value = rel.origin;
-            listen(origin, 'change', (event) => {
-                DBMS.setOriginRelationText(fromCharacter, toCharacter, event.target.value, Utils.processError());
+        Constants.relationEssences.forEach(name => {
+            const btn = qe(`.${name}`);
+            $(btn).tooltip({
+                title: l10n(`${name}`),
+                placement: 'top'
             });
-            
-            const btns = Constants.relationEssences.map(name => {
-                const btn = addClasses(makeEl('button'), ['btn', 'btn-default', 'fa-icon', name]);
-                let attrName = name;
-                if(rel.starter !== fromCharacter){
-                    if(name === 'starterToEnder') attrName = 'enderToStarter';
-                    if(name === 'enderToStarter') attrName = 'starterToEnder';
-                }
-                setAttr(btn, 'essence', attrName);
-                setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) != -1);
-                listen(btn, 'click', event => {
-                    DBMS.setRelationEssenceStatus(fromCharacter, toCharacter, attrName, !hasClass(event.target, 'btn-primary'), err => {
-                        if (err) { Utils.handleError(err); return; }
-                        toggleClass(event.target, 'btn-primary');
-                    });
+            let attrName = name;
+            if(rel.starter !== fromCharacter){
+                if(name === 'starterToEnder') attrName = 'enderToStarter';
+                if(name === 'enderToStarter') attrName = 'starterToEnder';
+            }
+            setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) != -1);
+            listen(btn, 'click', event => {
+                DBMS.setRelationEssenceStatus(fromCharacter, toCharacter, attrName, !hasClass(event.target, 'btn-primary'), err => {
+                    if (err) { Utils.handleError(err); return; }
+                    toggleClass(event.target, 'btn-primary');
                 });
-                return btn;
             });
-            const group = addClass(wrapEls('div', btns), 'btn-group');
-            
-            const reverse = addClass(makeEl('textarea'), 'briefing-relation-area');
-            reverse.value = rel[toCharacter];
-            listen(reverse, 'change', (event) => {
-                DBMS.setCharacterRelationText(fromCharacter, toCharacter, toCharacter, event.target.value, Utils.processError());
-            });
-//            arr.push(setClassByCondition(addEl(makeEl('td'), reverse), 'hidden', !isAdaptationsMode));
-            arr.push(wrapEls('div', [group, origin]));
-            const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
-            const reverseCheckbox = UI.makeReadyCheckbox(JSON.stringify([toCharacter, fromCharacter]), reverseChecked, true, (event) => {
-                const value = event.target.checked;
-                DBMS.setRelationReadyStatus(fromCharacter, toCharacter, toCharacter, value, Utils.processError());
-            });
-            
-            arr.push(wrapEls('div', [reverse, reverseCheckbox]));
+        });
+        qe('.origin textarea').value = rel.origin;
+        setAttr(qe('.origin textarea'), 'placeholder', l10n('relation-origin'));
+        listen(qe('.origin textarea'), 'change', (event) => {
+            DBMS.setOriginRelationText(fromCharacter, toCharacter, event.target.value, Utils.processError());
+        });
+        qe('.reverse textarea').value = rel[toCharacter];
+        setAttr(qe('.reverse textarea'), 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
+        listen(qe('.reverse textarea'), 'change', (event) => {
+            DBMS.setCharacterRelationText(fromCharacter, toCharacter, toCharacter, event.target.value, Utils.processError());
+        });
+        if(isAdaptationsMode){
+        } else {
+            removeClass(qe('.direct'), 'col-xs-3');
+            addClass(qe('.direct'), 'col-xs-9');
+            addClass(qe('.origin'), 'hidden');
+            addClass(qe('.reverse'), 'hidden');
         }
         
-
-        return addEls(makeEl('tr'), arr.map(el => addEl(makeEl('td'), el)));
+        return row;
     });
-
-    function makeProfileItemContent(profileItemName, profileItemValue) {
-        return [addEl(addClass(makeEl('div'), 'bold-cursive'), makeText(profileItemName)), makeText(profileItemValue)];
+    
+    function fillFinishedCheckbox(qe, clazz, id, fromCharacter, toCharacter, character, checked){
+        qe(`.${clazz} input`).id = id;
+        qe(`.${clazz} input`).checked = checked;
+        listen(qe(`.${clazz} input`), 'change', (event) => {
+            const value = event.target.checked;
+            DBMS.setRelationReadyStatus(fromCharacter, toCharacter, character, value, Utils.processError());
+        });
+        setAttr(qe(`.${clazz} label`), 'for', id);
+        addEl(qe(`.${clazz} label`), makeText(constL10n(Constants.finishedText)));
     }
 
-    function makeSelector(text, data, fromCharacter, makeRowCallback) {
-        const select1 = $('<select></select>');
-        const tmpContainer1 = $('<span></span>').append(select1);
-        addClass(select1[0], 'common-select');
+    function fillProfileItemContent(el, profileItemName, profileItemValue) {
+        addEl(clearEl(qee(el, '.profile-item-name')), makeText(profileItemName));
+        addEl(clearEl(qee(el, '.profile-item-value')), makeText(profileItemValue));
+    }
+
+    function fillCharSelector(select1, button, data, fromCharacter, makeRowCallback) {
+        select1 = $(select1);
         const tmpSelect = select1.select2(getSelect2Data(data));
-        const button = addEl(makeEl('button'), makeText(getL10n('common-add')));
+        select1.select2({width: 'style'});
         listen(button, 'click', () => {
             const toCharacter = select1[0].value;
             DBMS.createCharacterRelation(fromCharacter, toCharacter, (err) => {
@@ -209,7 +201,5 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-
-        return addEls(makeEl('div'), [addEl(makeEl('span'), makeText(text)), tmpContainer1[0], button]);
     }
 })(this.RelationsPreview = {});
