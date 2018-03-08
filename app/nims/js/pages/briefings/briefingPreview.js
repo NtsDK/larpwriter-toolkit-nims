@@ -20,6 +20,8 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
+    const root = '#briefingPreviewDiv ';
+    const settingsPath = 'BriefingPreview';
 
     exports.init = () => {
         $('#briefingCharacter').select2().on('change', buildContentDelegate);
@@ -36,6 +38,8 @@ See the License for the specific language governing permissions and
         listen(getEl('proofreadingModeRadio'), 'change', exports.refresh);
         listen(getEl('hideAllPanelsCheckbox'), 'change', exports.refresh);
         listen(getEl('disableHeadersCheckbox'), 'change', exports.refresh);
+        
+        getEl('hideAllPanelsCheckbox').checked = true;
 
         exports.content = getEl('briefingPreviewDiv');
     };
@@ -53,39 +57,22 @@ See the License for the specific language governing permissions and
                 PermissionInformer.getEntityNamesArray('character', false, (err3, names) => {
                     if (err3) { Utils.handleError(err3); return; }
                     if (names.length > 0) {
-                        const settings = DBMS.getSettings();
-                        if (!settings.BriefingPreview) {
-                            settings.BriefingPreview = {
-                                characterName: names[0].value
-                            };
-                        }
-                        let { characterName } = settings.BriefingPreview;
-                        const rawNames = names.map(R.prop('value'));
-                        if (rawNames.indexOf(characterName) === -1) {
-                            settings.BriefingPreview.characterName = names[0].value;
-                            characterName = names[0].value;
-                        }
-
+                        const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
                         const data = getSelect2Data(names);
-                        // this call trigger BriefingPreview.buildContent
+                        // this call trigger buildContent
                         $('#briefingCharacter').select2(data).val(characterName).trigger('change');
                     }
                 });
             });
         });
     };
-
+    
     function buildContentDelegate(event) {
         buildContent(event.target.value);
     }
 
-    function updateSettings(characterName) {
-        const settings = DBMS.getSettings();
-        settings.BriefingPreview.characterName = characterName;
-    }
-
     function buildContent(characterName) {
-        updateSettings(characterName);
+        UI.updateEntitySetting(settingsPath, characterName);
         const content = clearEl(getEl('briefingContent'));
         let index = 0;
         const data = {
@@ -201,28 +188,11 @@ See the License for the specific language governing permissions and
         }
     }, {
         name: 'relations',
-        load(data, callback) {
-            DBMS.getAllProfiles('character', (err, profiles) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getRelationsSummary(data.characterName, (err2, relationsSummary) => {
-                    if (err2) { Utils.handleError(err2); return; }
-                    DBMS.getExtendedProfileBindings((err3, profileBindings) => {
-                        if (err3) { Utils.handleError(err3); return; }
-                        PermissionInformer.getEntityNamesArray('character', false, (err4, characterNamesArray) => {
-                            if (err4) { Utils.handleError(err4); return; }
-                            data.relationsSummary = relationsSummary;
-                            data.characterNamesArray = characterNamesArray;
-                            data.profiles = profiles;
-                            data.profileBindings = R.fromPairs(profileBindings);
-                            callback();
-                        });
-                    });
-                });
-            });
-        },
+        load: Relations.load,
         make(el, data) {
             const label = `${getL10n('header-relations')} (${data.relationsSummary.relations.length})`;
-            const content = RelationsPreview.makeRelationsContent(data, getFlags(), state.characterProfileStructure);
+            const content = RelationsPreview.makeRelationsContent(data, getFlags().isAdaptationsMode, 
+                    state.characterProfileStructure, exports.refresh);
             addEl(el, makePanel(makeText(label), content, getFlags().hideAllPanels));
         }
     }, {
@@ -241,19 +211,17 @@ See the License for the specific language governing permissions and
     }];
 
     function onBuildContentFinish() {
-        refreshTextAreas();
+        UI.initTextAreas(`${root} #briefingContent textarea`);
+        UI.refreshTextAreas(`${root} #briefingContent textarea`);
         Utils.enable(exports.content, 'notEditable', false);
     }
 
-    function refreshTextAreas() {
-        R.ap([UI.resizeTextarea], nl2array(getEl('briefingContent').getElementsByTagName('textarea')).map(el => ({ target: el })));
-    }
 
     function makePanel(title, content, hideAllPanels) {
         const panelInfo = UI.makePanelCore(title, content);
         UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv, (event, togglePanel) => {
             togglePanel();
-            refreshTextAreas();
+            UI.refreshTextAreas(`${root} #briefingContent textarea`);
         });
         if (hideAllPanels) {
             panelInfo.a.click();
@@ -403,7 +371,7 @@ See the License for the specific language governing permissions and
             input.eventIndex = event.index;
             input.storyName = event.storyName;
             listen(input, 'change', onChangeOriginText);
-            attachTextareaResizer(input);
+//            UI.attachTextareaResizer(input);
 
             const unlockButton = makeUnlockEventSourceButton(input, isOriginEditable);
             const originHolder = makeEl('div');
@@ -421,7 +389,7 @@ See the License for the specific language governing permissions and
             input.eventIndex = event.index;
             input.storyName = event.storyName;
             listen(input, 'change', onChangeAdaptationText);
-            attachTextareaResizer(input);
+//            UI.attachTextareaResizer(input);
 
             const adaptationHolder = makeEl('div');
             addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input]);
@@ -437,14 +405,6 @@ See the License for the specific language governing permissions and
 
         addEls(eventDiv, els);
         return eventDiv;
-    }
-
-    function attachTextareaResizer(input) {
-        listen(input, 'keydown', UI.resizeTextarea);
-        listen(input, 'paste', UI.resizeTextarea);
-        listen(input, 'cut', UI.resizeTextarea);
-        listen(input, 'change', UI.resizeTextarea);
-        listen(input, 'drop', UI.resizeTextarea);
     }
 
     function makeUnlockEventSourceButton(input, isEditable) {
@@ -473,8 +433,8 @@ See the License for the specific language governing permissions and
 
     function onChangeAdaptationText(event) {
         const {
-            storyName, eventIndex, characterName, text
+            storyName, eventIndex, characterName, value
         } = event.target;
-        DBMS.setEventAdaptationProperty(storyName, eventIndex, characterName, 'text', text, Utils.processError());
+        DBMS.setEventAdaptationProperty(storyName, eventIndex, characterName, 'text', value, Utils.processError());
     }
 })(this.BriefingPreview = {});

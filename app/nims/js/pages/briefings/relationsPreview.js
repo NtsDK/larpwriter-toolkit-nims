@@ -31,7 +31,7 @@ See the License for the specific language governing permissions and
         return R.find(findFunc(fromCharacter, toCharacter), relations);
     });
 
-    exports.makeRelationsContent = (data, flags, profileSettings) => {
+    exports.makeRelationsContent = (data, isAdaptationsMode, profileSettings, externalRefresh) => {
         const {
             characterName, relationsSummary, profiles, profileBindings
         } = data;
@@ -43,7 +43,6 @@ See the License for the specific language governing permissions and
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
         const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value'));
         const [knownNoRels, unknownNoRels] = R.partition(predicate, noRelsList);
-        const { isAdaptationsMode } = flags;
 
         const relationTmpl = wrapEl('div', qte('.relation-tmpl'));
         const qe = qee(relationTmpl);
@@ -54,7 +53,7 @@ See the License for the specific language governing permissions and
         
         const makeRow = makeNewRow(
             profiles, getProfileItemSelect, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
-            characterName
+            externalRefresh, characterName
         );
 
         // filling header - need table body for callbacks
@@ -99,7 +98,7 @@ See the License for the specific language governing permissions and
     
     makeNewRow = R.curry((
         profiles, getProfileItemSelect, isAdaptationsMode, knownCharacters, profileBindings,
-        fromCharacter, toCharacter, rel
+        externalRefresh, fromCharacter, toCharacter, rel
     ) => {
         const stories = knownCharacters[toCharacter];
         const row = qte('.relation-row-tmpl');
@@ -111,9 +110,10 @@ See the License for the specific language governing permissions and
         fillProfileItemContent(row, getProfileItemSelect().value, profiles[toCharacter][getProfileItemSelect().value]);
         listen(qe('button.remove'), 'click', (event) => {
             Utils.confirm(strFormat(l10n('are-you-sure-about-relation-removing'), [`${fromCharacter + '-' + toCharacter}`]), () => {
-                DBMS.removeCharacterRelation(fromCharacter, toCharacter, Utils.processError());
-//                clearEl(row);
-//                addClass(row, 'hidden');
+                DBMS.removeCharacterRelation(fromCharacter, toCharacter, (err) => {
+                    if (err) { Utils.handleError(err); return; }
+                    externalRefresh();
+                });
             });
         });
         

@@ -205,6 +205,22 @@ See the License for the specific language governing permissions and
     //
     //      return input;
     //  };
+    
+    exports.initTextAreas = (sel) => {
+        R.ap([exports.attachTextareaResizer], queryEls(sel));
+    }
+    
+    exports.refreshTextAreas = (sel) => {
+        R.ap([exports.resizeTextarea], queryEls(sel).map(el => ({ target: el })));
+    }
+    
+    exports.attachTextareaResizer = (input) => {
+        listen(input, 'keydown', exports.resizeTextarea);
+        listen(input, 'paste', exports.resizeTextarea);
+        listen(input, 'cut', exports.resizeTextarea);
+        listen(input, 'change', exports.resizeTextarea);
+        listen(input, 'drop', exports.resizeTextarea);
+    };
 
     exports.resizeTextarea = (ev) => {
         const that = ev.target;
@@ -294,4 +310,26 @@ See the License for the specific language governing permissions and
     };
 
     exports.makeTableRow = (col1, col2) => addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);
+    
+    exports.checkAndGetEntitySetting = (settingsPath, names) => {
+        if(names.length === 0) throw new Error('names are empty');
+        const settings = DBMS.getSettings();
+        if (!settings[settingsPath]) {
+            settings[settingsPath] = {
+                name: names[0].value
+            };
+        }
+        let { name } = settings[settingsPath];
+        const rawNames = names.map(R.prop('value'));
+        if (rawNames.indexOf(name) === -1) {
+            settings[settingsPath].name = names[0].value;
+            name = names[0].value;
+        }
+        return name;
+    }
+    
+    exports.updateEntitySetting = (settingsPath, name) => {
+        const settings = DBMS.getSettings();
+        settings[settingsPath].name = name;
+    }
 })(this.UI = {});
