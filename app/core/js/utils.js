@@ -255,7 +255,7 @@ const Utils = {};
 /** opts
     tooltip - add tooltip to button, used for iconic buttons
     id - set button id
-    mainPage - enable view as first page
+    mainPage - enable view as first page - deprecated. Use Utils.setFirstTab instead
     toggle - toggle content, associated with button
 */
 Utils.addView = function (containers, name, view, opts2) {
@@ -323,12 +323,19 @@ Utils.addView = function (containers, name, view, opts2) {
     };
 
     button.addEventListener('click', onClickDelegate(view));
+    
+    // deprecated. Use Utils.setFirstTab instead
     if (opts.mainPage) {
-        addClass(button, 'active');
-        containers.content.appendChild(view.content);
-        containers.root.currentView = view;
+        Utils.setFirstTab(containers, {button, view});
     }
+    return {button, view};
 };
+
+Utils.setFirstTab = function(containers, opts){
+    addClass(opts.button, 'active');
+    containers.content.appendChild(opts.view.content);
+    containers.root.currentView = opts.view;
+}
 
 Utils.alert = function (message) {
     vex.dialog.alert(message);

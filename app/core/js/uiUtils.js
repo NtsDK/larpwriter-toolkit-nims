@@ -110,21 +110,18 @@ See the License for the specific language governing permissions and
         }
         sel.dispatchEvent(new Event('change'));
     };
-
-    exports.initPanelTogglers = () => {
-        const elems = document.querySelectorAll('[panel-toggler]');
-        let el, sel, attr;
-        for (let i = 0; i < elems.length; i++) {
-            el = elems[i];
-            attr = getAttr(el, 'panel-toggler');
-            addClass(el, 'expanded');
-            sel = document.querySelector(attr);
-            if (sel == null) {
-                Utils.alert(`Panel toggler is broken: ${attr}`);
-            }
-            listen(el, 'click', togglePanel(el, sel));
+    
+    exports.initPanelToggler = (el) => {
+        const attr = getAttr(el, 'panel-toggler');
+        addClass(el, 'expanded');
+        const sel = document.querySelector(attr);
+        if (sel == null) {
+            Utils.alert(`Panel toggler is broken: ${attr}`);
         }
-    };
+        listen(el, 'click', togglePanel(el, sel));
+    }
+
+    exports.initPanelTogglers = () => queryEls('[panel-toggler]').forEach(exports.initPanelToggler);
     
     exports.attachPanelToggler = (header, content, callback) => {
         addClass(header, 'expanded');

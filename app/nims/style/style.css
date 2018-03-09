@@ -784,12 +784,12 @@ a[tree-panel-toggler] h3{
 }
 
 .panel.entity-select .entity-list {
-  max-height: calc(100vh - 32px - 84px);
+  max-height: calc(100vh - 32px - 116px);
   overflow: auto;
 }
 
-.characters-tab .content-column {
-  max-height: calc(100vh - 32px - 24px);
+.profile-editor2-tab .content-column {
+  max-height: calc(100vh - 32px - 54px);
   overflow: auto;
 }
 
@@ -804,7 +804,6 @@ a[tree-panel-toggler] h3{
 .entity-toolbar > * + * {
   margin-left: 8px;
 }
-
 
 .white-space-normal {
   white-space: normal;

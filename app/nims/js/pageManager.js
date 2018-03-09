@@ -139,6 +139,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 Utils.addView(state.containers, 'overview', Overview);
                 Utils.addView(state.containers, 'profiles', Profiles);
                 Utils.addView(state.containers, 'characters', Characters, {mainPage: true});
+                Utils.addView(state.containers, 'players', Players);
+//                Utils.addView(state.containers, 'characters', CharacterEditor);
+//                Utils.addView(state.containers, 'players', PlayerEditor);
                 Utils.addView(state.containers, 'stories', Stories);
                 Utils.addView(state.containers, 'adaptations', Adaptations);
                 Utils.addView(state.containers, 'briefings', Briefings);
@@ -188,7 +191,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 }
                 addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
-                //addEl(state.navigation, makeL10nButton());
+//                addEl(state.navigation, makeL10nButton());
 
                 addEl(state.navigation, makeButton('testButton icon-button', 'test', runTests, btnOpts));
                 addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));

@@ -50,14 +50,13 @@ See the License for the specific language governing permissions and
 
   <div class="block" id="contentArea"></div>
 
-  <div class="hidden">
+  <div class="hidden tab-container">
     @@include('./accessManager/access-manager-tab.html')
     @@include('./accessManager/master-management-tab.html')
     @@include('./accessManager/player-management-tab.html')
     
     @@include('./briefings/briefing-export-tab.html')
     @@include('./briefings/briefing-preview-tab.html')
-    @@include('./briefings/briefings-tab.html')
     @@include('./briefings/relation-template.html')
     @@include('./briefings/relations-tab.html')
     
@@ -78,7 +77,9 @@ See the License for the specific language governing permissions and
     @@include('./profiles/profile-editor-tab.html')
     @@include('./profiles/profiles-tab.html')
     @@include('./profiles/role-grid-tab.html')
-    @@include('./profiles/characters-tab.html')
+    
+    @@include('./tab-routing-tmpl.html')
+    @@include('./profiles/profile-editor2-tab.html')
     
     @@include('./stories/event-presence-tab.html')
     @@include('./stories/master-story-tab.html')

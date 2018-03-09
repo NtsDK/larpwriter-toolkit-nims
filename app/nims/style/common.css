@@ -222,7 +222,7 @@ body {
 }
 
 #storiesNavigationLeft, 
-#storiesNavigationRight, #briefingsNavigation,
+#storiesNavigationRight,
 .sub-tab-navigation
 {
   display: flex;
