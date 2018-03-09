@@ -108,6 +108,7 @@ See the License for the specific language governing permissions and
 
             if (profileItemConfig.type !== 'multiEnum') {
                 listen(input, 'change', this.updateFieldValue.bind(this));
+//                addClass(input, 'form-control');
             }
 
             this.dom = input;

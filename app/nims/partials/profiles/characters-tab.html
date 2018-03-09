@@ -1,0 +1,58 @@
+<div class="characters-tab container-fluid">
+  <div class="row">
+    <div class="col-xs-3">
+      <div class="panel panel-default  entity-select">
+        <div class="panel-body">
+          <div class="flex-root entity-toolbar">
+            <button class="btn btn-default btn-reduced fa-icon create flex-0-0-auto"></button>
+            <input class="form-control entity-filter flex-1-1-auto" l10n-placeholder-id="profiles-find-character" type="search" >
+          </div>
+          <div class="entity-list">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-9 content-column">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="#" panel-toggler=".characters-tab .character-report-div">
+            <h3 class="panel-title" l10n-id="profiles-character-report"></h3>
+          </a>
+        </div>
+        <div class="panel-body character-report-div">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <th l10n-id="profiles-story"></th>
+              <th l10n-id="profiles-activity" colspan="4"></th>
+              <th l10n-id="profiles-completness"></th>
+              <th l10n-id="profiles-meets"></th>
+              <th l10n-id="profiles-inventory"></th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="#" panel-toggler=".characters-tab .character-profile-div">
+            <h3 class="panel-title" l10n-id="profiles-character-profile"></h3>
+          </a>
+        </div>
+        <div class="panel-body character-profile-div">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <template class="entity-item-tmpl">
+    <div class="btn-group flex-root">
+      <button class="btn btn-default btn-reduced fa-icon remove flex-0-0-auto transparent"></button>
+      <button class="btn btn-default btn-reduced fa-icon rename flex-0-0-auto transparent"></button>
+      <button type="button" class="select-button btn btn-default btn-reduced flex-1-1-auto text-align-left white-space-normal">
+        <span class="primary-name"></span>
+        <small><div class="secondary-name"></div></small>
+      </button>
+    </div>
+  </template>
+</div>

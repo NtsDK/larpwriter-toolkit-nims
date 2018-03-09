@@ -1,3 +1,27 @@
+<template class="relation-tmpl">
+  <div>
+    <div class="entity-management relations-management">
+      <div>
+        <span class="known-characters-label"></span>
+        <span><select class="common-select known-characters-select" style="width: 200px;"></select></span>
+        <button class="add-known-character-relation btn btn-default btn-reduced"></button>
+      </div>
+      <div>
+        <span class="unknown-characters-label"></span>
+        <span><select class="common-select unknown-characters-select" style="width: 200px;"></select></span>
+        <button class="add-unknown-character-relation btn btn-default btn-reduced"></button>
+      </div>
+      <div>
+        <span class="profile-item-label"></span>
+        <span><select class="common-select profile-item-select" style="width: 200px;"></select></span>
+      </div>
+    </div>
+    
+    <div class="relation-content container-fluid">
+    </div>
+  </div>
+</template>
+
 <template class="relation-row-tmpl">
   <div class="row">
     <div class="to-character-data col-xs-3">
@@ -35,30 +59,6 @@
       <div>
         <input class="" type="checkbox"><label></label>
       </div>
-    </div>
-  </div>
-</template>
-
-<template class="relation-tmpl">
-  <div>
-    <div class="entity-management relations-management">
-      <div>
-        <span class="known-characters-label"></span>
-        <span><select class="common-select known-characters-select" style="width: 200px;"></select></span>
-        <button class="add-known-character-relation btn btn-default btn-reduced"></button>
-      </div>
-      <div>
-        <span class="unknown-characters-label"></span>
-        <span><select class="common-select unknown-characters-select" style="width: 200px;"></select></span>
-        <button class="add-unknown-character-relation btn btn-default btn-reduced"></button>
-      </div>
-      <div>
-        <span class="profile-item-label"></span>
-        <span><select class="common-select profile-item-select" style="width: 200px;"></select></span>
-      </div>
-    </div>
-    
-    <div class="relation-content container-fluid">
     </div>
   </div>
 </template>

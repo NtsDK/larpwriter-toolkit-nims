@@ -138,10 +138,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 Utils.addView(state.containers, 'overview', Overview);
                 Utils.addView(state.containers, 'profiles', Profiles);
+                Utils.addView(state.containers, 'characters', Characters, {mainPage: true});
                 Utils.addView(state.containers, 'stories', Stories);
                 Utils.addView(state.containers, 'adaptations', Adaptations);
                 Utils.addView(state.containers, 'briefings', Briefings);
-                Utils.addView(state.containers, 'relations', Relations, {mainPage: true});
+                Utils.addView(state.containers, 'relations', Relations);
                 
                 //            Utils.addView(state.containers, "about", About);
 

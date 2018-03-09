@@ -182,6 +182,7 @@ See the License for the specific language governing permissions and
                 if(rel.starter === fromName){
                     rel.starter = toName;
                 }
+                return rel;
             });
         }
 

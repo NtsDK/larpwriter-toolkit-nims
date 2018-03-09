@@ -7,7 +7,7 @@
     },
     "styles" : {
         "customStyles":["common.css", "style.css", "experimental.css"],
-        "libCore": ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", "vex-theme-default.css", "vex.css", "fontawesome-all.min.css"],
+        "libCore": ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", "vex-theme-default41.css", "vex41.css", "fontawesome-all.min.css"],
         "lib" : ["vis.min.css"]
     },
     "scripts" : {
@@ -25,7 +25,7 @@
             "jquery.datetimepicker.js",
             "ramda.min.js",
             "select2.min.js",
-            "vex.combined.min.js"
+            "vex.combined41.js"
         ],
         "libs" : [
             "docxgen-121.min.js",

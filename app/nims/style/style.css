@@ -755,10 +755,59 @@ a[tree-panel-toggler] h3{
 .allies:before {
   content: "\f2b5";
 }
+.create:before {
+  content: "\f055";
+}
 .remove:before {
   content: "\f2ed";
 }
+.rename:before {
+  content: "\f044";
+}
+.transparent{
+  color: rgba(0,0,0,0);
+  transition-property: color;
+  transition-duration: .2s;
+}
+.fa-icon:hover {
+  transition-property: color;
+  transition-duration: .2s;
+}
+
 
 .btn-reduced{
   padding: 4px 8px;
+}
+
+.panel.entity-select .entity-toolbar{
+  margin-bottom: 8px;
+}
+
+.panel.entity-select .entity-list {
+  max-height: calc(100vh - 32px - 84px);
+  overflow: auto;
+}
+
+.characters-tab .content-column {
+  max-height: calc(100vh - 32px - 24px);
+  overflow: auto;
+}
+
+.flex-1-1-auto {
+  flex: 1 1 auto;
+}
+
+.flex-0-0-auto {
+  flex: 0 0 auto;
+}
+
+.entity-toolbar > * + * {
+  margin-left: 8px;
+}
+
+
+.white-space-normal {
+  white-space: normal;
+  overflow: hidden;
+  word-wrap: break-word;
 }

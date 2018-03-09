@@ -122,7 +122,7 @@ See the License for the specific language governing permissions and
                     DBMS.getCharacterReport(name, (err3, characterReport) => {
                         if (err3) { Utils.handleError(err3); return; }
                         removeClass(queryEl(characterReportDiv), 'hidden');
-                        addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(makeReportRow));
+                        addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(exports.makeReportRow));
                     });
                 }
             });
@@ -148,7 +148,7 @@ See the License for the specific language governing permissions and
         return strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
     }
 
-    function makeReportRow(storyInfo) {
+    exports.makeReportRow = (storyInfo) => {
         const act = storyInfo.activity;
         const label = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
         const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
@@ -157,8 +157,7 @@ See the License for the specific language governing permissions and
             addEl(setClassByCondition(makeEl('td'), 'green-back', act.follower), makeText(constL10n('follower-s'))),
             addEl(setClassByCondition(makeEl('td'), 'green-back', act.defensive), makeText(constL10n('defensive-s'))),
             addEl(setClassByCondition(makeEl('td'), 'green-back', act.passive), makeText(constL10n('passive-s'))),
-            // TODO fix setStyle call here and test
-            addEl(addClass(setStyle(makeEl('td'), 'backgroundColor', color), 'text-right'), makeText(label)),
+            addEl(addClass(setStyle(makeEl('td'), 'background-color', color), 'text-right'), makeText(label)),
             addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))),
             addEl(makeEl('td'), makeText(storyInfo.inventory))]);
     }
