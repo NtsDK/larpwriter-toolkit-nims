@@ -59,6 +59,7 @@ ProfileTmpl(this.Briefings = {}, {
         viewName: 'BriefingExport'
     }]
 });
+
 ProfileTmpl(this.Characters = {}, {
     firstTab: 'CharacterEditor',
     tabs: [{
@@ -66,10 +67,22 @@ ProfileTmpl(this.Characters = {}, {
         viewName: 'CharacterEditor'
     }]
 });
+
 ProfileTmpl(this.Players = {}, {
     firstTab: 'PlayerEditor',
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'PlayerEditor'
+    }]
+});
+
+ProfileTmpl(this.LogViewer2 = {}, {
+    firstTab: 'LogViewer',
+    tabs: [{
+        btnName: 'logViewer',
+        viewName: 'LogViewer'
+    },{
+        btnName: 'about',
+        viewName: 'About'
     }]
 });

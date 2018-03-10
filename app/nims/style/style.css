@@ -784,12 +784,12 @@ a[tree-panel-toggler] h3{
 }
 
 .panel.entity-select .entity-list {
-  max-height: calc(100vh - 32px - 116px);
+  max-height: calc(100vh - 36px - 120px);
   overflow: auto;
 }
 
 .profile-editor2-tab .content-column {
-  max-height: calc(100vh - 32px - 54px);
+  max-height: calc(100vh - 36px - 54px);
   overflow: auto;
 }
 
