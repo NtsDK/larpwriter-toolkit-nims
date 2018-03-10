@@ -87,6 +87,7 @@ function queryEl(sel) {
     return document.querySelector(sel);
 }
 
+// query template element
 function qte(sel){
     return document.querySelector(sel).content.cloneNode(true);
 }
@@ -104,6 +105,8 @@ const qee = R.curry(queryElEl);
 function queryElEls(el, sel) {
     return nl2array(el.querySelectorAll(sel));
 }
+
+const qees = R.curry(queryElEls);
 
 function getEls(clazz) {
     return document.getElementsByClassName(clazz);

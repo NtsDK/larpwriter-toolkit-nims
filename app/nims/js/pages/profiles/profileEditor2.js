@@ -33,20 +33,19 @@ function ProfileEditorTmpl(exports, opts) {
     exports.init = () => {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         const el = queryEl(tmplRoot).cloneNode(true);
+        
         addClasses(el, ['profile-editor2-tab', `${firstType + '-type'}`]);
         removeClass(el, 'profile-editor2-tab-tmpl');
         addEl(queryEl('.tab-container'), el);
+        
         setClassByCondition(qee(el, '.report'), 'hidden', firstType === 'player');
         setAttr(qee(el, '.entity-filter'), 'l10n-placeholder-id', 'profiles-' + opts.filterPlaceholder);
-        setAttr(qee(el, '.entity-filter'), 'placeholder', l10n(opts.filterPlaceholder));
         setAttr(qee(el, '.profile-panel h3'), 'l10n-id', 'profiles-' + opts.panelName);
-        addEl(qee(el, '.profile-panel h3'), makeText(l10n(opts.panelName)));
-        let a = qee(el,'.report a');
-        setAttr(a , 'panel-toggler', root + ".report-div");
-        UI.initPanelToggler(a);
-        a = qee(el,'.profile-panel a');
-        setAttr(a , 'panel-toggler', root + ".profile-div");
-        UI.initPanelToggler(a);
+        L10n.localizeStatic(el);
+
+        setAttr(qee(el,'.report a') , 'panel-toggler', root + ".report-div");
+        setAttr(qee(el,'.profile-panel a') , 'panel-toggler', root + ".profile-div");
+        UI.initPanelTogglers(el);
         
         exports.content = el;
         listen(queryEl(`${root} .entity-filter`), 'input', filterOptions);

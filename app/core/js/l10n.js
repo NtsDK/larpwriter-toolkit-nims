@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
     state.dictionaries = {};
     state.lang = defaultLang;
 
-    const init = () => {
+    exports.init = () => {
         if (state.initialized) {
             return;
         }
@@ -94,9 +94,9 @@ See the License for the specific language governing permissions and
         state.l10nDelegates.push(delegate);
     };
 
-    exports.localizeStatic = () => {
-        init();
-        nl2array(document.querySelectorAll('[l10n-id]')).map(el => addEl(clearEl(el), makeText(exports.getValue(getAttr(el, 'l10n-id')))));
-        nl2array(document.querySelectorAll('[l10n-placeholder-id]')).map(el => setAttr(el, 'placeholder', exports.getValue(getAttr(el, 'l10n-placeholder-id'))));
+    exports.localizeStatic = (el) => {
+        el = el || document;
+        nl2array(qees(el, '[l10n-id]')).map(el => addEl(clearEl(el), makeText(exports.getValue(getAttr(el, 'l10n-id')))));
+        nl2array(qees(el, '[l10n-placeholder-id]')).map(el => setAttr(el, 'placeholder', exports.getValue(getAttr(el, 'l10n-placeholder-id'))));
     };
 })(this.L10n = {}, Dictionaries);

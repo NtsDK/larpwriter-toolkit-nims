@@ -1,4 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+/*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-function ProfileTmpl(exports, opts) {
+function RoutingTabTmpl(exports, opts) {
     
     const state = {};
     const tmplRoot = '.tab-routing-tmpl';
@@ -49,7 +49,7 @@ function ProfileTmpl(exports, opts) {
     };
 }
 
-ProfileTmpl(this.Briefings = {}, {
+RoutingTabTmpl(this.Briefings = {}, {
     firstTab: 'BriefingPreview',
     tabs: [{
         btnName: 'briefing-preview',
@@ -60,23 +60,29 @@ ProfileTmpl(this.Briefings = {}, {
     }]
 });
 
-ProfileTmpl(this.Characters = {}, {
-    firstTab: 'CharacterEditor',
+RoutingTabTmpl(this.Characters = {}, {
+    firstTab: 'CharacterConfigurer',
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'CharacterEditor'
+    },{
+        btnName: 'changing-profile-structure', 
+        viewName: 'CharacterConfigurer'
     }]
 });
 
-ProfileTmpl(this.Players = {}, {
+RoutingTabTmpl(this.Players = {}, {
     firstTab: 'PlayerEditor',
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'PlayerEditor'
+    },{
+        btnName: 'changing-profile-structure', 
+        viewName: 'PlayerConfigurer'
     }]
 });
 
-ProfileTmpl(this.LogViewer2 = {}, {
+RoutingTabTmpl(this.LogViewer2 = {}, {
     firstTab: 'LogViewer',
     tabs: [{
         btnName: 'logViewer',

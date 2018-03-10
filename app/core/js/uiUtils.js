@@ -121,7 +121,7 @@ See the License for the specific language governing permissions and
         listen(el, 'click', togglePanel(el, sel));
     }
 
-    exports.initPanelTogglers = () => queryEls('[panel-toggler]').forEach(exports.initPanelToggler);
+    exports.initPanelTogglers = (el) => qees(el || document, '[panel-toggler]').forEach(exports.initPanelToggler);
     
     exports.attachPanelToggler = (header, content, callback) => {
         addClass(header, 'expanded');

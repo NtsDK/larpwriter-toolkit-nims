@@ -28,6 +28,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     };
 
     const initPage = () => {
+        L10n.init();
         L10n.localizeStatic();
         L10n.onL10nChange(() => state.currentView.refresh());
         UI.initSelectorFilters();
