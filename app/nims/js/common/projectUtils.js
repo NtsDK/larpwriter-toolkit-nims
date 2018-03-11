@@ -232,7 +232,9 @@ See the License for the specific language governing permissions and
             return charConflicts.concat(playerConflicts);
         };
         
-        exports.rel2charArr = R.pipe(R.omit(Constants.relationFields), R.keys)
+        exports.rel2charArr = R.pipe(R.omit(Constants.relationFields), R.keys);
+        exports.get2ndRelChar = R.curry((char1, rel) => 
+            R.compose(el => R.keys(el)[0], R.omit(R.concat(Constants.relationFields, [char1])))(rel)); 
     }
 
     callback(ProjectUtils);

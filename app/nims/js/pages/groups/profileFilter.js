@@ -99,7 +99,7 @@ See the License for the specific language governing permissions and
     function makePrintData() {
         const dataArrays = state.filterConfiguration.getDataArrays(makeFilterModel());
 
-        const sortFunc = CommonUtils.charOrdAFactoryBase(state.sortDir, (a) => {
+        const sortFunc = CommonUtils.charOrdAFactoryBase(state.sortDir, (a,b) => a > b, (a) => {
             const map = CommonUtils.arr2map(a, 'itemName');
             const item = map[state.sortKey];
             let { value } = item;

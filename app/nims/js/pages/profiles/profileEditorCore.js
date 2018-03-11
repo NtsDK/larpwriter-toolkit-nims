@@ -23,6 +23,8 @@ See the License for the specific language governing permissions and
 ((exports) => {
     exports.makeProfileEditorCore = () => {
         const innerExports = {};
+        
+        const root = '.profile-editor-core-tmpl';
 
         const state = {
             character: {},
@@ -30,13 +32,13 @@ See the License for the specific language governing permissions and
         };
 
         innerExports.initProfileStructure = (profileDiv, type, profileStructure, callback) => {
-            const tbody = makeEl('tbody');
-            addEl(clearEl(queryEl(profileDiv)), addEl(addClasses(makeEl('table'), ['table', 'table-striped']), tbody));
+            const container = qte(`${root} .profile-editor-container-tmpl`);
+            addEl(clearEl(queryEl(profileDiv)), container);
 
             state[type].inputItems = {};
             state[type].profileStructure = profileStructure;
             try {
-                addEls(tbody, profileStructure.map(appendInput(type)));
+                addEls(qee(queryEl(profileDiv), '.insertion-point'), profileStructure.map(appendInput(type)));
             } catch (err) {
                 Utils.handleError(err); return;
             }
@@ -48,7 +50,10 @@ See the License for the specific language governing permissions and
         var appendInput = R.curry((type, profileItemConfig) => {
             const itemInput = new ProfileItemInput(type, profileItemConfig);
             state[type].inputItems[profileItemConfig.name] = itemInput;
-            return addEls(makeEl('tr'), [addEl(makeEl('td'), makeText(profileItemConfig.name)), addEl(makeEl('td'), itemInput.dom)]);
+            const row = qte(`${root} .profile-editor-row-tmpl`);
+            addEl(qee(row, '.profile-item-name'), makeText(profileItemConfig.name));
+            addEl(qee(row, '.profile-item-input'), itemInput.dom);
+            return row;
         });
 
         innerExports.fillProfileInformation = (profileDiv, type, profile, isEditable) => {
@@ -108,7 +113,7 @@ See the License for the specific language governing permissions and
 
             if (profileItemConfig.type !== 'multiEnum') {
                 listen(input, 'change', this.updateFieldValue.bind(this));
-//                addClass(input, 'form-control');
+                addClass(input, 'form-control');
             }
 
             this.dom = input;

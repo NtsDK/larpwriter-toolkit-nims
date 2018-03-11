@@ -24,18 +24,28 @@ See the License for the specific language governing permissions and
             return array.push(...rest);
         };
 
-        exports.charOrdAFactoryBase = R.curry((sortDir, prepare) => function cmp(a, b) {
+        exports.charOrdAFactoryBase = R.curry((sortDir, greater, prepare) => function cmp(a, b) {
             a = prepare(a);
             b = prepare(b);
             if (R.isNil(a) && R.isNil(b)) return 0;
             if (R.isNil(a)) return 1;
             if (R.isNil(b)) return -1;
-            if (a > b) { return sortDir === 'asc' ? 1 : -1; }
-            if (a < b) { return sortDir === 'asc' ? -1 : 1; }
+            if (greater(a,b)) { return sortDir === 'asc' ? 1 : -1; }
+            if (greater(b,a)) { return sortDir === 'asc' ? -1 : 1; }
             return 0;
         });
+//        exports.charOrdAFactoryBase = R.curry((sortDir, prepare) => function cmp(a, b) {
+//            a = prepare(a);
+//            b = prepare(b);
+//            if (R.isNil(a) && R.isNil(b)) return 0;
+//            if (R.isNil(a)) return 1;
+//            if (R.isNil(b)) return -1;
+//            if (a > b) { return sortDir === 'asc' ? 1 : -1; }
+//            if (a < b) { return sortDir === 'asc' ? -1 : 1; }
+//            return 0;
+//        });
 
-        exports.charOrdAFactory = exports.charOrdAFactoryBase('asc');
+        exports.charOrdAFactory = exports.charOrdAFactoryBase('asc', (a,b) => a > b);
 
         exports.charOrdA = exports.charOrdAFactory(a => a.toLowerCase());
 

@@ -122,44 +122,11 @@ See the License for the specific language governing permissions and
                     DBMS.getCharacterReport(name, (err3, characterReport) => {
                         if (err3) { Utils.handleError(err3); return; }
                         removeClass(queryEl(characterReportDiv), 'hidden');
-                        addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(exports.makeReportRow));
+                        addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(CharacterReports.makeStoryReportRow));
                     });
                 }
             });
         });
-    }
-
-    function makeCompletenessLabel(value, total) {
-        return strFormat('{0} ({1}/{2})', [total === 0 ? '-' : `${((value / total) * 100).toFixed(0)}%`, value, total]);
-    }
-
-    function getCompletenessColor(value, total) {
-        if (total === 0) { return 'transparent'; }
-        function calc(b, a, part) {
-            return ((a * part) + ((1 - part) * b)).toFixed(0);
-        }
-
-        let p = value / total;
-        if (p < 0.5) {
-            p *= 2;
-            return strFormat('rgba({0},{1},{2}, 1)', [calc(251, 255, p), calc(126, 255, p), calc(129, 0, p)]); // red to yellow mapping
-        }
-        p = (p - 0.5) * 2;
-        return strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
-    }
-
-    exports.makeReportRow = (storyInfo) => {
-        const act = storyInfo.activity;
-        const label = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
-        const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
-        return addEls(makeEl('tr'), [addEl(makeEl('td'), makeText(storyInfo.storyName)),
-            addEl(setClassByCondition(makeEl('td'), 'green-back', act.active), makeText(constL10n('active-s'))),
-            addEl(setClassByCondition(makeEl('td'), 'green-back', act.follower), makeText(constL10n('follower-s'))),
-            addEl(setClassByCondition(makeEl('td'), 'green-back', act.defensive), makeText(constL10n('defensive-s'))),
-            addEl(setClassByCondition(makeEl('td'), 'green-back', act.passive), makeText(constL10n('passive-s'))),
-            addEl(addClass(setStyle(makeEl('td'), 'background-color', color), 'text-right'), makeText(label)),
-            addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))),
-            addEl(makeEl('td'), makeText(storyInfo.inventory))]);
     }
 
     function updateSettings(type, name) {

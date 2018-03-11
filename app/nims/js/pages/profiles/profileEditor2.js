@@ -28,7 +28,8 @@ function ProfileEditorTmpl(exports, opts) {
     const l10n = L10n.get('profiles');
     let profileEditorCore;
     const profileDiv = `${root}.profile-div`;
-    const reportDiv = `${root}.report-div tbody`;
+    const reportByStoriesDiv = `${root}.report-by-stories-div tbody`;
+    const reportByRelationsDiv = `${root}.report-by-relations-div tbody`;
     
     exports.init = () => {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
@@ -38,13 +39,15 @@ function ProfileEditorTmpl(exports, opts) {
         removeClass(el, 'profile-editor2-tab-tmpl');
         addEl(queryEl('.tab-container'), el);
         
-        setClassByCondition(qee(el, '.report'), 'hidden', firstType === 'player');
+        setClassByCondition(qee(el, '.report-by-stories'), 'hidden', firstType === 'player');
+        setClassByCondition(qee(el, '.report-by-relations'), 'hidden', firstType === 'player');
         setAttr(qee(el, '.entity-filter'), 'l10n-placeholder-id', 'profiles-' + opts.filterPlaceholder);
         setAttr(qee(el, '.profile-panel h3'), 'l10n-id', 'profiles-' + opts.panelName);
         setAttr(qee(el, '.create'), 'l10n-title', 'profiles-' + opts.createProfile);
         L10n.localizeStatic(el);
 
-        setAttr(qee(el,'.report a') , 'panel-toggler', root + ".report-div");
+        setAttr(qee(el,'.report-by-stories a') , 'panel-toggler', root + ".report-by-stories-div");
+        setAttr(qee(el,'.report-by-relations a') , 'panel-toggler', root + ".report-by-relations-div");
         setAttr(qee(el,'.profile-panel a') , 'panel-toggler', root + ".profile-div");
         UI.initPanelTogglers(el);
         
@@ -72,7 +75,8 @@ function ProfileEditorTmpl(exports, opts) {
         addEls(clearEl(queryEl(`${root} .entity-list`)), primaryNames.map( name => {
             const el = wrapEl('div', qte(`${root} .entity-item-tmpl` ));
             addEl(qee(el, '.primary-name'), makeText(name.displayName));
-            setAttr(el, 'primary-name', name.value);
+            setAttr(el, 'primary-name', name.displayName);
+            setAttr(el, 'profile-name', name.value);
             if(profileBindings[name.value] !== undefined){
                 const secondaryName = secDict[profileBindings[name.value]].displayName;
                 addEl(qee(el, '.secondary-name'), makeText(secondaryName));
@@ -107,8 +111,8 @@ function ProfileEditorTmpl(exports, opts) {
     
     function selectProfile(name){
         UI.updateEntitySetting(settingsPath, name);
-        queryEls(`${root} [primary-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
-        const el = queryEl(`${root} [primary-name="${name}"] .select-button`);
+        queryEls(`${root} [profile-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
+        const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
         addClass(el, 'btn-primary');
         el.scrollIntoView();
         
@@ -121,8 +125,17 @@ function ProfileEditorTmpl(exports, opts) {
                 if (firstType === 'character') {
                     DBMS.getCharacterReport(name, (err3, characterReport) => {
                         if (err3) { Utils.handleError(err3); return; }
-                        removeClass(queryEl(reportDiv), 'hidden');
-                        addEls(clearEl(queryEl(reportDiv)), characterReport.map(ProfileEditor.makeReportRow));
+                        DBMS.getRelationsSummary(name, (err4, relationsSummary) => {
+                            if (err4) { Utils.handleError(err4); return; }
+                            removeClass(queryEl(reportByStoriesDiv), 'hidden');
+                            addEls(clearEl(queryEl(reportByStoriesDiv)), characterReport.map(CharacterReports.makeStoryReportRow));
+                            removeClass(queryEl(reportByRelationsDiv), 'hidden');
+                            relationsSummary.relations.sort(CommonUtils.charOrdAFactory(rel => 
+                                ProjectUtils.get2ndRelChar(name, rel).toLowerCase()));
+                            
+                            addEls(clearEl(queryEl(reportByRelationsDiv)), relationsSummary.relations
+                                .map(CharacterReports.makeRelationReportRow(name)));
+                        });
                     });
                 }
             });
@@ -144,7 +157,9 @@ function ProfileEditorTmpl(exports, opts) {
         if(queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null || 
             queryEl(`${root} [primary-name] .select-button.btn-primary`) === null) {
             const els = queryEls(`${root} [primary-name]`).filter(R.pipe(hasClass(R.__, 'hidden'), R.not));
-            selectProfile(els.length > 0 ? getAttr(els[0], 'primary-name') : null);
+            selectProfile(els.length > 0 ? getAttr(els[0], 'profile-name') : null);
+        } else {
+//            queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
         }
     }
     

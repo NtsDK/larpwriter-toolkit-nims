@@ -63,7 +63,6 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         stateInit();
         Utils.addView(state.containers, 'player', Player, { mainPage: true });
         addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
-        //        Utils.addView(state.containers, "roleGrid", RoleGrid);
         Utils.addView(state.containers, 'about', About);
         //        addEl(state.navigation, makeL10nButton());
         addEl(state.navigation, makeButton('logoutButton', 'logout', postLogout, btnOpts));
@@ -82,7 +81,6 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             if (playersOptions.allowPlayerCreation) {
                 Utils.addView(state.containers, 'register', Register);
             }
-            //            Utils.addView(state.containers, "roleGrid", RoleGrid, {mainPage:true});
             Utils.addView(state.containers, 'about', About);
             //            addEl(state.navigation, makeL10nButton());
             state.currentView.refresh();
@@ -136,36 +134,41 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 let button;
                 stateInit();
-
-                Utils.addView(state.containers, 'overview', Overview);
-                Utils.addView(state.containers, 'profiles', Profiles);
-                Utils.addView(state.containers, 'characters', Characters);
-                Utils.addView(state.containers, 'players', Players);
-//                Utils.addView(state.containers, 'characters', CharacterEditor);
-//                Utils.addView(state.containers, 'players', PlayerEditor);
-                Utils.addView(state.containers, 'stories', Stories);
-                Utils.addView(state.containers, 'adaptations', Adaptations);
-                Utils.addView(state.containers, 'briefings', Briefings);
-                Utils.addView(state.containers, 'relations', Relations);
                 
-                //            Utils.addView(state.containers, "about", About);
+                const tabs = {};
+                const firstTab = 'Characters';
+                
+                const addView = (containers, btnName, viewName, opts) => {
+                    tabs[viewName] = {
+                        viewName: viewName,
+                        viewRes: Utils.addView(containers, btnName, window[viewName], opts)
+                    }
+                };
+                
+                addView(state.containers, 'overview', 'Overview');
+                addView(state.containers, 'profiles', 'Profiles');
+                addView(state.containers, 'characters', 'Characters');
+                addView(state.containers, 'players', 'Players');
+                addView(state.containers, 'stories', 'Stories');
+                addView(state.containers, 'adaptations', 'Adaptations');
+                addView(state.containers, 'briefings', 'Briefings');
+                addView(state.containers, 'relations', 'Relations');
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
-                Utils.addView(state.containers, 'timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
-                Utils.addView(state.containers, 'social-network', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true, mainPage: true });
-                Utils.addView(state.containers, 'profile-filter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
-                Utils.addView(state.containers, 'groups', Groups, { clazz: 'groupsButton icon-button', tooltip: true });
-                Utils.addView(state.containers, 'textSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
-                Utils.addView(state.containers, "roleGrid", RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
+                addView(state.containers, 'timeline', 'Timeline', { clazz: 'timelineButton icon-button', tooltip: true });
+                addView(state.containers, 'social-network', 'SocialNetwork', { clazz: 'socialNetworkButton icon-button', tooltip: true });
+                addView(state.containers, 'profile-filter', 'ProfileFilter', { clazz: 'filterButton icon-button', tooltip: true });
+                addView(state.containers, 'groups', 'Groups', { clazz: 'groupsButton icon-button', tooltip: true });
+                addView(state.containers, 'textSearch', 'TextSearch', { clazz: 'textSearchButton icon-button', tooltip: true });
+                addView(state.containers, "roleGrid", 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
                 
                 if (MODE === 'NIMS_Server') {
-                    Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
-//                    addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                    addView(state.containers, 'admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
                 }
-                Utils.addView(state.containers, 'logViewer', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
+                addView(state.containers, 'logViewer', 'LogViewer2', { clazz: 'logViewerButton icon-button', tooltip: true });
                 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
@@ -198,7 +201,6 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
                 addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', clickThroughtHeaders, btnOpts));
                 if (MODE === 'NIMS_Server') {
-//                    Utils.addView(state.containers, 'admins', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
                     addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
                 }
                 addEl(state.navigation, makeButton('refreshButton icon-button', 'refresh', () => state.currentView.refresh(), btnOpts));
@@ -207,6 +209,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     if (err3) { Utils.handleError(err3); return; }
                     consistencyCheck(state.currentView.refresh);
                 });
+                
+                Utils.setFirstTab(state.containers, tabs[firstTab].viewRes);
 
                 state.currentView.refresh();
                 if (MODE === 'Standalone') {

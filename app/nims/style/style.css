@@ -89,6 +89,12 @@ See the License for the specific language governing permissions and
 .text-right{
   text-align: right;
 }
+.text-center{
+  text-align: center;
+}
+.text-left{
+  text-align: left;
+}
 .lightGrey{
   color: rgb(184,184,184);
 }
@@ -144,14 +150,14 @@ See the License for the specific language governing permissions and
 /* story common **/
 
 /** profileEditor.js */
-.profileTextInput {
+textarea.profileTextInput {
 	height: 240px;
-	width: 560px;
+/* 	width: 560px; */
 }
 
 .profileStringInput, 
 .profileSelectInput {
-	width: 400px;
+/* 	width: 400px; */
 }
 /* profileEditor.js **/
 
@@ -768,6 +774,18 @@ a[tree-panel-toggler] h3{
 .rename:before {
   content: "\f044";
 }
+.activity-icon-active:before {
+  content: "\f135";
+}
+.activity-icon-follower:before {
+  content: "\f234";
+}
+.activity-icon-defensive:before {
+  content: "\f21b";
+}
+.activity-icon-passive:before {
+  content: "\f236";
+}
 .unlink:before {
   content: "\f127";
 }
@@ -779,6 +797,9 @@ a[tree-panel-toggler] h3{
 .fa-icon:hover {
   transition-property: color;
   transition-duration: .2s;
+}
+.story-report-row .fa-icon{
+  font-size: 1.5em;
 }
 
 
@@ -857,4 +878,11 @@ a[tree-panel-toggler] h3{
 
 .overflow-auto {
   overflow: auto;
+}
+
+.relation-finished{
+  background-color: rgb(123, 225, 65);
+}
+.relation-unfinished{
+  background-color: rgb(251, 126, 129);
 }
