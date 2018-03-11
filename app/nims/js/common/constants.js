@@ -67,6 +67,7 @@ See the License for the specific language governing permissions and
         'socialRelations',
         'characterPresenceInStory',
         'characterActivityInStory',
+        'characterRelations',
     ];
 
     exports.ownedEntityTypes = ['character', 'player', 'story', 'group'];
@@ -102,6 +103,12 @@ See the License for the specific language governing permissions and
         'follower',
         'defensive',
         'passive',
+    ];
+    
+    exports.characterRelationTypes = [
+        'allies',
+        'directional',
+        'neutral',
     ];
 
     exports.numberFilter = [
@@ -395,6 +402,13 @@ See the License for the specific language governing permissions and
         follower: 'blue',
         defensive: 'green',
         passive: 'grey'
+    };
+    
+    exports.snRelationColors = {
+        starterToEnder: 'red',
+        enderToStarter: 'red',
+        allies: 'green',
+        neutral: 'grey'
     };
 
     exports.snFocusOptions = {

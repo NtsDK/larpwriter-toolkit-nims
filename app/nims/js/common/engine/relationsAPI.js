@@ -55,6 +55,10 @@ See the License for the specific language governing permissions and
             PC.entityExists(characterName, R.keys(database.Characters))]);
         
         const charFilter = R.curry((char, data) => R.filter(rel => rel[char] !== undefined, data));
+        
+        LocalDBMS.prototype.getRelations = function (callback) {
+            callback(null, R.clone(R.path(relationsPath, this.database)));
+        };
 
         LocalDBMS.prototype.getRelationsSummary = function (characterName, callback) {
             PC.precondition(characterCheck(characterName, this.database), callback, () => {

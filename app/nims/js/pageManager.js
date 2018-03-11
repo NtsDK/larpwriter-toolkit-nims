@@ -139,7 +139,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 Utils.addView(state.containers, 'overview', Overview);
                 Utils.addView(state.containers, 'profiles', Profiles);
-                Utils.addView(state.containers, 'characters', Characters, {mainPage: true});
+                Utils.addView(state.containers, 'characters', Characters);
                 Utils.addView(state.containers, 'players', Players);
 //                Utils.addView(state.containers, 'characters', CharacterEditor);
 //                Utils.addView(state.containers, 'players', PlayerEditor);
@@ -153,7 +153,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
                 Utils.addView(state.containers, 'timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
-                Utils.addView(state.containers, 'social-network', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
+                Utils.addView(state.containers, 'social-network', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true, mainPage: true });
                 Utils.addView(state.containers, 'profile-filter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
                 Utils.addView(state.containers, 'groups', Groups, { clazz: 'groupsButton icon-button', tooltip: true });
                 Utils.addView(state.containers, 'textSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });

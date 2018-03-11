@@ -387,6 +387,16 @@ See the License for the specific language governing permissions and
   color: grey;
 }
 
+.alliesOption {
+  color: green;
+}
+.neutralOption {
+  color: grey;
+}
+.directionalOption {
+  color: red;
+}
+
 /* briefing export */
 #advancedTextExportContainer {
 	display: flex;

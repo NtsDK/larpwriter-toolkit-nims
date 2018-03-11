@@ -60,6 +60,10 @@ See the License for the specific language governing permissions and
             obj.className = `${obj.value}Option`;
             return obj;
         }));
+        fillSelector(clearEl(getEl('relationSelector')), constArr2Select(Constants.characterRelationTypes).map((obj) => {
+            obj.className = `${obj.value}Option`;
+            return obj;
+        }));
 
         let selector = fillSelector(clearEl(getEl('networkSelector')), constArr2Select(Constants.networks));
         [selector.value] = Constants.networks;
@@ -73,62 +77,61 @@ See the License for the specific language governing permissions and
                 if (err2) { Utils.handleError(err2); return; }
                 DBMS.getAllProfiles('character', (err3, profiles) => { // node coloring
                     if (err3) { Utils.handleError(err3); return; }
-                    state.Characters = profiles;
-
                     DBMS.getAllStories((err4, stories) => { // contains most part of SN data
                         if (err4) { Utils.handleError(err4); return; }
-                        state.Stories = stories;
-
                         DBMS.getProfileStructure('character', (err5, profileStructure) => { // node coloring
                             if (err5) { Utils.handleError(err5); return; }
-
                             DBMS.getProfileBindings((err6, profileBindings) => { // node coloring
                                 if (err6) { Utils.handleError(err6); return; }
-                                state.profileBindings = profileBindings;
-
                                 DBMS.getGroupCharacterSets((err7, groupCharacterSets) => { // node coloring
                                     if (err7) { Utils.handleError(err7); return; }
-                                    state.groupCharacterSets = groupCharacterSets;
-
                                     DBMS.getMetaInfo((err8, metaInfo) => { // timelined network
                                         if (err8) { Utils.handleError(err8); return; }
-
-                                        state.metaInfo = metaInfo;
-
-                                        const checkboxes = profileStructure.filter(element =>
-                                            R.equals(element.type, 'checkbox'));
-                                        R.values(profiles).forEach((profile) => {
-                                            checkboxes.map(item => (profile[item.name] =
-                                                constL10n(Constants[profile[item.name]])));
+                                        DBMS.getRelations((err9, relations) => { // relations
+                                            if (err9) { Utils.handleError(err9); return; }
+                                            
+                                            state.Stories = stories;
+                                            state.Characters = profiles;
+                                            state.profileBindings = profileBindings;
+                                            state.groupCharacterSets = groupCharacterSets;
+                                            state.metaInfo = metaInfo;
+                                            state.relations = relations;
+    
+                                            const checkboxes = profileStructure.filter(element =>
+                                                R.equals(element.type, 'checkbox'));
+                                            R.values(profiles).forEach((profile) => {
+                                                checkboxes.map(item => (profile[item.name] =
+                                                    constL10n(Constants[profile[item.name]])));
+                                            });
+    
+                                            const colorGroups = profileStructure.filter(element =>
+                                                R.contains(element.type, ['enum', 'checkbox']));
+                                            const defaultColorGroup = {
+                                                value: Constants.noGroup,
+                                                name: constL10n(Constants.noGroup)
+                                            };
+    
+                                            const profileLabel = strFormat(getL10n('social-network-profile-group'));
+                                            const filterLabel = strFormat(getL10n('social-network-filter-group'));
+    
+                                            const profileGroups = colorGroups.map(group => group.name).map(name =>
+                                                ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
+                                            const filterGroups = R.keys(groupCharacterSets).map(name =>
+                                                ({ value: FILTER_GROUP + name, name: filterLabel([name]) }));
+                                            fillSelector(
+                                                selector,
+                                                [defaultColorGroup].concat(profileGroups).concat(filterGroups)
+                                            );
+    
+                                            initGroupColors(colorGroups);
+    
+                                            NetworkSubsetsSelector.refresh({
+                                                characterNames,
+                                                storyNames,
+                                                Stories: stories
+                                            });
+                                            //                            onDrawNetwork();
                                         });
-
-                                        const colorGroups = profileStructure.filter(element =>
-                                            R.contains(element.type, ['enum', 'checkbox']));
-                                        const defaultColorGroup = {
-                                            value: Constants.noGroup,
-                                            name: constL10n(Constants.noGroup)
-                                        };
-
-                                        const profileLabel = strFormat(getL10n('social-network-profile-group'));
-                                        const filterLabel = strFormat(getL10n('social-network-filter-group'));
-
-                                        const profileGroups = colorGroups.map(group => group.name).map(name =>
-                                            ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
-                                        const filterGroups = R.keys(groupCharacterSets).map(name =>
-                                            ({ value: FILTER_GROUP + name, name: filterLabel([name]) }));
-                                        fillSelector(
-                                            selector,
-                                            [defaultColorGroup].concat(profileGroups).concat(filterGroups)
-                                        );
-
-                                        initGroupColors(colorGroups);
-
-                                        NetworkSubsetsSelector.refresh({
-                                            characterNames,
-                                            storyNames,
-                                            Stories: stories
-                                        });
-                                        //                            onDrawNetwork();
                                     });
                                 });
                             });
@@ -242,6 +245,7 @@ See the License for the specific language governing permissions and
 
     function onNetworkSelectorChangeDelegate(event) {
         setClassByCondition(getEl('activityBlock'), 'hidden', event.target.value !== 'characterActivityInStory');
+        setClassByCondition(getEl('relationsBlock'), 'hidden', event.target.value !== 'characterRelations');
     }
 
     function onNodeFocus(event) {
@@ -271,6 +275,10 @@ See the License for the specific language governing permissions and
         case 'characterActivityInStory':
             nodes = getCharacterNodes().concat(getStoryNodes());
             edges = getActivityEdges();
+            break;
+        case 'characterRelations':
+            nodes = getCharacterNodes();
+            edges = getRelationEdges();
             break;
         default:
             throw new Error(`Unexpected network type: ${selectedNetwork}`);
@@ -339,6 +347,51 @@ See the License for the specific language governing permissions and
                     width: 2,
                     hoverWidth: 4
                 })))));
+    }
+    
+    function getRelationEdges() {
+        const selectedRelations = nl2array(getEl('relationSelector').selectedOptions).map(opt => opt.value);
+        const relations = state.relations;
+        const checked = R.contains(R.__, selectedRelations);
+        return R.flatten(relations.map(rel => {
+            const arr = [];
+            const charArr = ProjectUtils.rel2charArr(rel);
+            const starter = rel.starter;
+            const ender = R.difference(charArr, [starter]);
+            const edgeTmpl = {
+                from: CHAR_PREFIX + starter,
+                to: CHAR_PREFIX + ender,
+                color: Constants.snRelationColors.neutral,
+                width: 2,
+                hoverWidth: 4
+            };
+            if(rel.essence.length === 0){
+                if(checked('neutral')){
+                    arr.push(R.merge(edgeTmpl,{
+                        color: Constants.snRelationColors.neutral,
+                    }));
+                }
+            } else {
+                if(checked('allies') && R.contains('allies', rel.essence)){
+                    arr.push(R.merge(edgeTmpl,{
+                        color: Constants.snRelationColors.allies,
+                    }));
+                }
+                if(checked('directional') && R.contains('starterToEnder', rel.essence)){
+                    arr.push(R.merge(edgeTmpl,{
+                        color: Constants.snRelationColors.starterToEnder,
+                        arrows:'to'
+                    }));
+                }
+                if(checked('directional') && R.contains('enderToStarter', rel.essence)){
+                    arr.push(R.merge(edgeTmpl,{
+                        color: Constants.snRelationColors.enderToStarter,
+                        arrows:'from'
+                    }));
+                }
+            }
+            return arr;
+        }));
     }
 
     function getStoryEdges() {

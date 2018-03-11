@@ -231,6 +231,8 @@ See the License for the specific language governing permissions and
             );
             return charConflicts.concat(playerConflicts);
         };
+        
+        exports.rel2charArr = R.pipe(R.omit(Constants.relationFields), R.keys)
     }
 
     callback(ProjectUtils);

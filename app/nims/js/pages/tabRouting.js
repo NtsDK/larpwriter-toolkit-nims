@@ -98,3 +98,15 @@ RoutingTabTmpl(this.LogViewer2 = {}, {
         viewName: 'About'
     }]
 });
+
+RoutingTabTmpl(this.AccessManager = {}, {
+    firstTab: 'MasterManagement',
+    tabs: [{
+        btnName: 'masterManagement',
+        viewName: 'MasterManagement'
+    },{
+        btnName: 'playerManagement',
+        viewName: 'PlayerManagement'
+    }]
+});
+
