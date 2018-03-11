@@ -98,7 +98,9 @@ function ProfileEditorTmpl(exports, opts) {
     function selectProfile(name){
         UI.updateEntitySetting(settingsPath, name);
         queryEls(`${root} [primary-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
-        addClass(queryEl(`${root} [primary-name="${name}"] .select-button`), 'btn-primary');
+        const el = queryEl(`${root} [primary-name="${name}"] .select-button`);
+        addClass(el, 'btn-primary');
+        el.scrollIntoView();
         
         DBMS.getProfile(firstType, name, (err, profile) => {
             if (err) { Utils.handleError(err); return; }

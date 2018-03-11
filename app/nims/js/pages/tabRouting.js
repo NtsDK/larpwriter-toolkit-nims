@@ -61,13 +61,16 @@ RoutingTabTmpl(this.Briefings = {}, {
 });
 
 RoutingTabTmpl(this.Characters = {}, {
-    firstTab: 'CharacterConfigurer',
+    firstTab: 'ProfileBinding2',
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'CharacterEditor'
     },{
         btnName: 'changing-profile-structure', 
         viewName: 'CharacterConfigurer'
+    },{
+        btnName: 'binding-characters-and-players', 
+        viewName: 'ProfileBinding2'
     }]
 });
 
@@ -79,6 +82,9 @@ RoutingTabTmpl(this.Players = {}, {
     },{
         btnName: 'changing-profile-structure', 
         viewName: 'PlayerConfigurer'
+    },{
+        btnName: 'binding-characters-and-players', 
+        viewName: 'ProfileBinding2'
     }]
 });
 

@@ -21,12 +21,6 @@ See the License for the specific language governing permissions and
 	width:360px;
 }
 
-/* profile configurer **/
-
-.profile-binding-tab .panel-body{
-  display: flex;
-}
-
 /** story events */
 
 .story-events-div-main{
@@ -764,6 +758,9 @@ a[tree-panel-toggler] h3{
 .rename:before {
   content: "\f044";
 }
+.unlink:before {
+  content: "\f127";
+}
 .transparent{
   color: rgba(0,0,0,0);
   transition-property: color;
@@ -784,13 +781,34 @@ a[tree-panel-toggler] h3{
 }
 
 .panel.entity-select .entity-list {
-  max-height: calc(100vh - 36px - 120px);
+/*   max-height: calc(100vh - 36px - 120px); */
   overflow: auto;
+  position: absolute;
+  top: 52px;
+  bottom: 12px;
+  right: 24px;
+  left: 24px;
+}
+
+.profile-binding2-tab .entity-list {
+/*   max-height: calc(100vh - 36px - 120px); */
+  overflow: auto;
+  position: absolute;
+  top: 44px;
+  bottom: 24px;
+  right: 16px;
+  left: 16px;
 }
 
 .profile-editor2-tab .content-column {
-  max-height: calc(100vh - 36px - 54px);
+/*   max-height: calc(100vh - 36px - 54px); */
   overflow: auto;
+}
+
+.fixed-tab {
+  height: calc(100vh - 76px);
+  padding-top: 8px;
+  overflow: hidden;
 }
 
 .flex-1-1-auto {
@@ -809,4 +827,24 @@ a[tree-panel-toggler] h3{
   white-space: normal;
   overflow: hidden;
   word-wrap: break-word;
+}
+
+[draggable="true"]{
+  cursor: move;
+}
+
+.over {
+  border: 2px dashed #000;
+}
+
+.height-100p{
+  height: 100%;
+}
+
+.max-height-100p{
+  max-height: 100%;
+}
+
+.overflow-auto {
+  overflow: auto;
 }

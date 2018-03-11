@@ -73,6 +73,8 @@ See the License for the specific language governing permissions and
                 listen(button, 'dragstart', onDragStart);
                 listen(button, 'drop', onDrop);
                 listen(button, 'dragover', allowDrop);
+                listen(button, 'dragenter', handleDragEnter);
+                listen(button, 'dragleave', handleDragLeave);
                 listen(button, 'click', () => {
                     toggleClass(button, 'btn-primary');
                     drawList();
@@ -102,6 +104,15 @@ See the License for the specific language governing permissions and
         console.log('allowDrop ' + this.item);
         event.preventDefault();
     };
+    
+    function handleDragEnter(event) {
+        addClass(this, 'over');
+    }
+
+    function handleDragLeave(event) {
+        removeClass(this, 'over');
+    }
+    
     var updateButtons = (dragStarter, dragReceiver) => {
         const startOrder = Number(dragStarter.order)-1;
         const receiveOrder = Number(dragReceiver.order)-1;
