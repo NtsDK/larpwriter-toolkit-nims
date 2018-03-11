@@ -24,9 +24,9 @@ See the License for the specific language governing permissions and
 
         const relationsPath = ['Relations'];
         
-        const rel2RelKey = R.pipe(R.omit(Constants.relationFields), R.keys, R.sort(CommonUtils.charOrdA), JSON.stringify);
+        const rel2RelKey = R.pipe(R.omit(Constants.relationFields), R.keys, R.sort(CU.charOrdA), JSON.stringify);
         dbmsUtils._rel2RelKey = rel2RelKey;
-        const arr2RelKey = R.pipe(R.sort(CommonUtils.charOrdA), JSON.stringify);
+        const arr2RelKey = R.pipe(R.sort(CU.charOrdA), JSON.stringify);
         dbmsUtils._arr2RelKey = arr2RelKey;
         
         const findRel = R.curry((fromCharacter, toCharacter, relations) => {

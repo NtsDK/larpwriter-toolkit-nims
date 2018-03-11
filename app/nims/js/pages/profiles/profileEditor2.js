@@ -1,4 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+/*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ function ProfileEditorTmpl(exports, opts) {
         setClassByCondition(qee(el, '.report'), 'hidden', firstType === 'player');
         setAttr(qee(el, '.entity-filter'), 'l10n-placeholder-id', 'profiles-' + opts.filterPlaceholder);
         setAttr(qee(el, '.profile-panel h3'), 'l10n-id', 'profiles-' + opts.panelName);
+        setAttr(qee(el, '.create'), 'l10n-title', 'profiles-' + opts.createProfile);
         L10n.localizeStatic(el);
 
         setAttr(qee(el,'.report a') , 'panel-toggler', root + ".report-div");
@@ -53,9 +54,9 @@ function ProfileEditorTmpl(exports, opts) {
     };
 
     exports.refresh = () => {
-        PermissionInformer.getEntityNamesArray(firstType, true, (err, primaryNames) => {
+        PermissionInformer.getEntityNamesArray(firstType, false, (err, primaryNames) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray(secondType, true, (err2, secondaryNames) => {
+            PermissionInformer.getEntityNamesArray(secondType, false, (err2, secondaryNames) => {
                 if (err2) { Utils.handleError(err2); return; }
                 DBMS.getProfileBindings((err3, profileBindings) => {
                     if (err3) { Utils.handleError(err3); return; }
@@ -67,21 +68,30 @@ function ProfileEditorTmpl(exports, opts) {
     };
     
     function rebuildInterface(primaryNames, secondaryNames, profileBindings){
+        const secDict = R.indexBy(R.prop('value'), secondaryNames);
         addEls(clearEl(queryEl(`${root} .entity-list`)), primaryNames.map( name => {
             const el = wrapEl('div', qte(`${root} .entity-item-tmpl` ));
-            addEl(qee(el, '.primary-name'), makeText(name.value));
+            addEl(qee(el, '.primary-name'), makeText(name.displayName));
             setAttr(el, 'primary-name', name.value);
             if(profileBindings[name.value] !== undefined){
-                addEl(qee(el, '.secondary-name'), makeText(profileBindings[name.value]));
-                setAttr(el, 'secondary-name', profileBindings[name.value]);
+                const secondaryName = secDict[profileBindings[name.value]].displayName;
+                addEl(qee(el, '.secondary-name'), makeText(secondaryName));
+                setAttr(el, 'secondary-name', secondaryName);
             }
             listen(qee(el, '.select-button'), 'click', () => selectProfile(name.value));
-            listen(qee(el, '.rename'), 'click', () => {
-                Utils.prompt(l10n(opts.renameMsg), renameProfile(name.value), {
-                    value: name.value
-                })
-            });
-            listen(qee(el, '.remove'), 'click', removeProfile(firstType, name.value));
+            setAttr(qee(el, '.rename'), 'title', l10n(opts.renameProfile));
+            setAttr(qee(el, '.remove'), 'title', l10n(opts.removeProfile));
+            if(name.editable){
+                listen(qee(el, '.rename'), 'click', () => {
+                    Utils.prompt(l10n(opts.renameMsg), renameProfile(name.value), {
+                        value: name.value
+                    })
+                });
+                listen(qee(el, '.remove'), 'click', removeProfile(firstType, name.value));
+            } else {
+                setAttr(qee(el, '.rename'), 'disabled', 'disabled');
+                setAttr(qee(el, '.remove'), 'disabled', 'disabled');
+            }
             return el;
         }));
         
@@ -187,6 +197,9 @@ ProfileEditorTmpl(this.CharacterEditor = {}, {
     removeMsg: 'are-you-sure-about-character-removing',
     filterPlaceholder: 'find-character',
     panelName: 'character-profile',
+    createProfile: 'create-character',
+    renameProfile: 'rename-character',
+    removeProfile: 'remove-character',
 });
 
 ProfileEditorTmpl(this.PlayerEditor = {}, {
@@ -199,4 +212,7 @@ ProfileEditorTmpl(this.PlayerEditor = {}, {
     removeMsg: 'are-you-sure-about-player-removing',
     filterPlaceholder: 'find-player',
     panelName: 'player-profile',
+    createProfile: 'create-player',
+    renameProfile: 'rename-player',
+    removeProfile: 'remove-player',
 });

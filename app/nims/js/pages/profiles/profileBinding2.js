@@ -20,8 +20,13 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const root = '.profile-binding2-tab ';
+    const l10n = L10n.get('binding');
 
     exports.init = () => {
+        listen(queryEl(`${root} .character-filter`), 'input', filterList('.character-list'));
+        listen(queryEl(`${root} .player-filter`), 'input', filterList('.player-list'));
+        listen(queryEl(`${root} .binding-filter`), 'input', filterList('.binding-list'));
+        
         exports.content = queryEl(root);
     };
 
@@ -61,8 +66,9 @@ See the License for the specific language governing permissions and
     const profile2el = R.curry((type, name) => {
         const el = wrapEl('div', qte(`${root} .profile-item-tmpl` ));
         el.profileName = name.value;
-        addEl(qee(el, '.primary-name'), makeText(name.value));
+        addEl(qee(el, '.primary-name'), makeText(name.displayName));
         setAttr(el, 'profile-name', name.value);
+        setAttr(el, 'primary-name', name.displayName);
         setAttr(el, 'profile-type', type);
         listen(el, 'dragstart', onDragStart);
         listen(el, 'drop', onDrop);
@@ -113,8 +119,19 @@ See the License for the specific language governing permissions and
         const el = wrapEl('div', qte(`${root} .binding-item-tmpl` ));
         addEl(qee(el, '.primary-name'), makeText(binding.name));
         setAttr(el, 'primary-name', binding.name);
+        setAttr(qee(el, '.unlink'), 'title', l10n('unlink-binding'));
         listen(qee(el, '.unlink'), 'click', () => removeBinding(binding.value));
         return el;
+    }
+    
+    var filterList = (sel) => (event) => {
+        const str = event.target.value.toLowerCase();
+        
+        const els = queryEls(`${root} ${sel} [primary-name]`);
+        els.forEach(el => {
+            let isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
+            setClassByCondition(el, 'hidden', !isVisible);
+        });
     }
 
     function createBinding(pair) {
