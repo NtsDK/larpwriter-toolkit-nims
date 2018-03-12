@@ -98,7 +98,7 @@ See the License for the specific language governing permissions and
                 break;
             case 'multiEnum':
                 this.multiEnumSelect = $('<select></select>');
-                setAttr(this.multiEnumSelect[0], 'style', 'width: 400px;');
+                setAttr(this.multiEnumSelect[0], 'style', 'width: 100%;');
                 addClass(this.multiEnumSelect[0], 'common-select');
                 addClass(this.multiEnumSelect[0], 'profileStringInput');
                 [input] = $('<span></span>').append(this.multiEnumSelect);

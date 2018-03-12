@@ -30,36 +30,41 @@ See the License for the specific language governing permissions and
         const qe = qee(row);
         L10n.localizeStatic(row);
         addEl(qe('.story-name'), makeText(storyInfo.storyName));
-        setClassByCondition(qe('.activity-active'), 'green-back', act.active);
-        setClassByCondition(qe('.activity-follower'), 'green-back', act.follower);
-        setClassByCondition(qe('.activity-defensive'), 'green-back', act.defensive);
-        setClassByCondition(qe('.activity-passive'), 'green-back', act.passive);
+        setClassByCondition(qe('.activity-active'), 'active-item-in-report', act.active);
+        setClassByCondition(qe('.activity-follower'), 'active-item-in-report', act.follower);
+        setClassByCondition(qe('.activity-defensive'), 'active-item-in-report', act.defensive);
+        setClassByCondition(qe('.activity-passive'), 'active-item-in-report', act.passive);
         addEl(qe('.completness'), makeText(completness));
         setStyle(qe('.completness'), 'background-color', color);
         addEl(qe('.meets'), makeText(storyInfo.meets.join(', ')));
         addEl(qe('.inventory'), makeText(storyInfo.inventory));
         return row;
-//        return addEls(makeEl('tr'), [addEl(makeEl('td'), makeText(storyInfo.storyName)),
-//            addEl(setClassByCondition(makeEl('td'), 'green-back', act.active), makeText(constL10n('active-s'))),
-//            addEl(setClassByCondition(makeEl('td'), 'green-back', act.follower), makeText(constL10n('follower-s'))),
-//            addEl(setClassByCondition(makeEl('td'), 'green-back', act.defensive), makeText(constL10n('defensive-s'))),
-//            addEl(setClassByCondition(makeEl('td'), 'green-back', act.passive), makeText(constL10n('passive-s'))),
-//            addEl(addClass(setStyle(makeEl('td'), 'background-color', color), 'text-right'), makeText(label)),
-//            addEl(makeEl('td'), makeText(storyInfo.meets.join(', '))),
-//            addEl(makeEl('td'), makeText(storyInfo.inventory))]);
     }
     
     exports.makeRelationReportRow = R.curry((characterName, rel) => {
         const row = qte(`${root} .relation-report-row-tmpl` );
         const qe = qee(row);
         L10n.localizeStatic(row);
-        addEl(qe('.character-name'), makeText(ProjectUtils.get2ndRelChar(characterName, rel)));
+        const secondCharacter = ProjectUtils.get2ndRelChar(characterName, rel);
+        addEl(qe('.character-name'), makeText(secondCharacter));
         const isStarter = rel.starter === characterName;
         
-        setClassByCondition(qe('.direction-starterToEnder'), 'green-back', 
+        if(isStarter){
+            setAttr(qe('.direction-starterToEnder'), 'title', 
+                L10n.format('briefings', 'starterToEnder', [characterName, secondCharacter]));
+            setAttr(qe('.direction-enderToStarter'), 'title', 
+                L10n.format('briefings', 'enderToStarter', [secondCharacter, characterName]));
+        } else {
+            setAttr(qe('.direction-starterToEnder'), 'title', 
+                    L10n.format('briefings', 'starterToEnder', [secondCharacter, characterName]));
+            setAttr(qe('.direction-enderToStarter'), 'title', 
+                    L10n.format('briefings', 'enderToStarter', [characterName, secondCharacter]));
+        }
+        
+        setClassByCondition(qe('.direction-starterToEnder'), 'active-item-in-report', 
             R.contains(isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence));
-        setClassByCondition(qe('.direction-allies'), 'green-back', R.contains('allies', rel.essence));
-        setClassByCondition(qe('.direction-enderToStarter'), 'green-back', 
+        setClassByCondition(qe('.direction-allies'), 'active-item-in-report', R.contains('allies', rel.essence));
+        setClassByCondition(qe('.direction-enderToStarter'), 'active-item-in-report', 
             R.contains(!isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence));
         
         const finished = isStarter ? rel.starterTextReady : rel.enderTextReady;

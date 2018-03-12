@@ -35,7 +35,7 @@
           <th l10n-id="profiles-profile-item-default-value"></th>
           <th l10n-id="profiles-profile-item-do-export"></th>
           <th l10n-id="profiles-profile-item-player-access"></th>
-          <th l10n-id="profiles-show-in-role-grid"></th>
+          <th l10n-id="profiles-show-in-role-grid" class="hidden"></th>
         </tr>
       </thead>
       <tbody class="profile-config-container"></tbody>
@@ -47,18 +47,14 @@
     <tr>
       <td><span class="item-position adminOnly"></span></td>
       <td><span class="item-name adminOnly"></span></td>
-<!--       <td><input class="item-name itemNameInput adminOnly"> -->
-<!--       </td> -->
       <td><select class="item-type adminOnly form-control"></select></td>
       <td class="item-default-value-container"></td>
       <td><input type="checkbox" class="print-in-handout adminOnly form-control"></td>
       <td><select class="player-access adminOnly form-control"></select></td>
-      <td><input type="checkbox" class="show-in-role-grid adminOnly form-control"></td>
+      <td class="hidden"><input type="checkbox" class="show-in-role-grid adminOnly form-control"></td>
       <td>
-<!--         <div class="btn-group flex-root"> -->
         <button class="btn btn-default btn-reduced fa-icon rename flex-0-0-auto"></button>
         <button class="btn btn-default btn-reduced fa-icon remove flex-0-0-auto"></button>
-<!--         </div> -->
       </td>
     </tr>
   </template>

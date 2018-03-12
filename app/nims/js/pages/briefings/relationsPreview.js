@@ -131,7 +131,7 @@ See the License for the specific language governing permissions and
         Constants.relationEssences.forEach(name => {
             const btn = qe(`.${name}`);
             $(btn).tooltip({
-                title: l10n(`${name}`),
+                title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
                 placement: 'top'
             });
             let attrName = name;

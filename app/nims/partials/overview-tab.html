@@ -3,24 +3,32 @@
     <div style="flex-grow:1;margin-right: 8px;">
       <div class="panel panel-default common-info-div">
         <div class="panel-body">
-          <table class="table table-bordered" style="width: auto;">
-            <tr>
-              <td><span l10n-id="overview-name"></span></td>
-              <td><input id="gameNameInput" class="adminOnly"></input></td>
-            </tr>
-            <tr>
-              <td><span l10n-id="overview-pre-game-start-date"></span></td>
-              <td><input id="preGameDatePicker" class="adminOnly"></input></td>
-            </tr>
-            <tr>
-              <td><span l10n-id="overview-pre-game-end-date"></span></td>
-              <td><input id="gameDatePicker" class="adminOnly"></input></td>
-            </tr>
-            <tr>
-              <td><span l10n-id="overview-last-save-time"></span></td>
-              <td id="lastSaveTime"></td>
-            </tr>
-          </table>
+          <div class="form-horizontal ">
+            <div class="form-group">
+              <label class="col-xs-6 control-label" l10n-id="overview-name"></label>
+              <div class="col-xs-6">
+                <input id="gameNameInput" class="adminOnly form-control"></input>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-6 control-label" l10n-id="overview-pre-game-start-date"></label>
+              <div class="col-xs-6">
+                <input id="preGameDatePicker" class="adminOnly form-control"></input>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-6 control-label" l10n-id="overview-pre-game-end-date"></label>
+              <div class="col-xs-6">
+                <input id="gameDatePicker" class="adminOnly form-control"></input>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-6 control-label" l10n-id="overview-last-save-time"></label>
+              <div class="col-xs-6">
+                <p  id="lastSaveTime" class="form-control-static" l10n-id="overview-last-save-time"></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -32,7 +40,7 @@
       <div class="panel panel-default" >
         <div class="panel-body">
           <div  id="descriptionPanelContainer" class="overviewContainer">
-            <textarea class="adminOnly game-description-area"></textarea>
+            <textarea class="adminOnly game-description-area form-control"></textarea>
           </div>
           <div id="diagramsPanelContainer" class="overviewContainer">
             <div class="diagram-container">
