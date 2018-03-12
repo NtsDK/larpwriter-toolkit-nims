@@ -346,6 +346,11 @@ Utils.alert = function (message) {
     vex.dialog.alert(message);
 };
 
+/*
+ * opts
+ *  placeholder - optional placeholder for input
+ *  value - optional value for input
+ */
 Utils.prompt = function (message, callback, opts) {
     let dialog;
     let condition = false;
@@ -358,7 +363,9 @@ Utils.prompt = function (message, callback, opts) {
     dialog = vex.dialog.prompt({
         message,
         input: `<input name="vex" type="text" class="vex-dialog-prompt-input" placeholder="${opts.placeholder || ''}" value="${opts.value || ''}">
-        <div class="form-group has-error"><span class="help-block error-msg"></span></div>`,
+            <div class="form-group has-error">
+                <span class="help-block error-msg"></span>
+            </div>`,
         callback: function (value) {
             console.log('callback' + value)
             if(condition === true){
@@ -370,6 +377,48 @@ Utils.prompt = function (message, callback, opts) {
             callback(value, onOk, onError);
             return false;
         }
+    });
+};
+
+/*
+ * opts
+ *  customInput - required input template
+ *  extractData(formEl) - optional function to get data from customInput
+ *  hideDefaultInput - optional flag to hide default input 
+ */
+Utils.customPrompt = function (message, callback, opts) {
+    let dialog;
+    let condition = false;
+    opts = opts || {};
+    const onOk = () => {
+        condition = true; 
+        dialog.close();
+    };
+    const onError = (err) => addEl(clearEl(qee(dialog.form, '.error-msg')), makeText(Utils.handleErrorMsg(err)));
+    dialog = vex.dialog.prompt({
+        message,
+        input: `<input name="vex" 
+                       type="text" 
+                       class="vex-dialog-prompt-input ${opts.hideDefaultInput ? 'hidden' : ''}" 
+                       placeholder="${opts.placeholder || ''}" 
+                       value="${opts.value || ''}">
+            ${opts.customInput}
+            <div class="form-group has-error"><span class="help-block error-msg"></span></div>`,
+            callback: function (value) {
+                console.log('callback' + value)
+                if(condition === true){
+                    return true;
+                }
+                if(value === false) {
+                    return true;
+                }
+                if(opts.extractData !== undefined){
+                    callback(opts.extractData(dialog.form), onOk, onError);
+                } else {
+                    callback(value, onOk, onError);
+                }
+                return false;
+            }
     });
 };
 

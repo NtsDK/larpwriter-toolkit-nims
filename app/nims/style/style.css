@@ -798,6 +798,10 @@ a[tree-panel-toggler] h3{
 .print:before {
   content: "\f02f";
 }
+.move:before {
+/*   content: "\f338"; */
+  content: "\f30c\f309";
+}
 .transparent{
   color: rgba(0,0,0,0);
   transition-property: color;

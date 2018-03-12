@@ -8,19 +8,22 @@
     <div class="panel-body profile-panel">
       <div class="entity-management">
         <div>
-          <input class="adminOnly create-entity-input" l10n-placeholder-id="profiles-profile-item-name"></input> 
-          <span l10n-id="profiles-profile-item-position"></span>
-          <select class="adminOnly create-entity-position-select"></select>
-          <span l10n-id="profiles-profile-item-type"></span>
-          <select class="adminOnly create-entity-type-select"></select> 
-          <button class="adminOnly create-entity-button" l10n-id="common-create"></button>
+          <button class="btn btn-default btn-reduced fa-icon create adminOnly" l10n-title="profiles-create-profile-item"></button>
         </div>
-        <div>
-          <select class="adminOnly move-entity-select"></select> 
-          <span l10n-id="profiles-profile-item-position"></span>
-          <select class="adminOnly move-entity-position-select"></select>
-          <button class="adminOnly move-entity-button" l10n-id="profiles-move-item"></button>
-        </div>
+<!--         <div> -->
+<!--           <input class="adminOnly create-entity-input" l10n-placeholder-id="profiles-profile-item-name"></input>  -->
+<!--           <span l10n-id="profiles-profile-item-position"></span> -->
+<!--           <select class="adminOnly create-entity-position-select"></select> -->
+<!--           <span l10n-id="profiles-profile-item-type"></span> -->
+<!--           <select class="adminOnly create-entity-type-select"></select>  -->
+<!--           <button class="adminOnly create-entity-button" l10n-id="common-create"></button> -->
+<!--         </div> -->
+<!--         <div> -->
+<!--           <select class="adminOnly move-entity-select"></select>  -->
+<!--           <span l10n-id="profiles-profile-item-position"></span> -->
+<!--           <select class="adminOnly move-entity-position-select"></select> -->
+<!--           <button class="adminOnly move-entity-button" l10n-id="profiles-move-item"></button> -->
+<!--         </div> -->
 <!--         <div> -->
 <!--           <select class="adminOnly remove-entity-select"></select> -->
 <!--           <button class="adminOnly remove-entity-button" l10n-id="common-remove"></button> -->
@@ -56,8 +59,9 @@
       </td>
       <td class="hidden"><input type="checkbox" class="show-in-role-grid adminOnly form-control"></td>
       <td>
-        <button class="btn btn-default btn-reduced fa-icon rename flex-0-0-auto" l10n-title="profiles-rename-profile-item"></button>
-        <button class="btn btn-default btn-reduced fa-icon remove flex-0-0-auto" l10n-title="profiles-remove-profile-item"></button>
+        <button class="btn btn-default btn-reduced fa-icon move flex-0-0-auto adminOnly" l10n-title="profiles-move-profile-item"></button>
+        <button class="btn btn-default btn-reduced fa-icon rename flex-0-0-auto adminOnly" l10n-title="profiles-rename-profile-item"></button>
+        <button class="btn btn-default btn-reduced fa-icon remove flex-0-0-auto adminOnly" l10n-title="profiles-remove-profile-item"></button>
       </td>
     </tr>
   </template>
