@@ -61,7 +61,7 @@ RoutingTabTmpl(this.Briefings = {}, {
 });
 
 RoutingTabTmpl(this.Characters = {}, {
-    firstTab: 'CharacterEditor',
+    firstTab: 'CharacterConfigurer',
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'CharacterEditor'

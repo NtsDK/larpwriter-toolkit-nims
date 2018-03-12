@@ -35,6 +35,7 @@ function ProfileConfigurerTmpl(exports, opts) {
     const tmplRoot = '.profile-configurer2-tab-tmpl';
     const tabRoot = `.profile-configurer2-tab.${tabType + '-type'} `;
     const profilePanel = `${tabRoot}.profile-panel `;
+    const l10n = L10n.get('profiles');
 
     exports.init = () => {
         const el = queryEl(tmplRoot).cloneNode(true);
@@ -133,29 +134,29 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     // eslint-disable-next-line no-var,vars-on-top
     var getInput = R.curry((type, profileSettings, index) => { // throws InternalError
-        index++;
-        const els = [];
+        const row = qte(`${tabRoot} .profile-configurer-row-tmpl`);
+        addEl(qee(row, '.item-position'), makeText(index+1));
+        addEl(qee(row, '.item-name'), makeText(profileSettings.name));
 
-        els.push(addEl(makeEl('span'), makeText(index)));
-
-        let input = setProps(makeEl('input'), {
-            value: profileSettings.name,
-            info: profileSettings.name
+//        const itemName = qee(row, '.item-name');
+//        itemName.value = profileSettings.name;
+//        itemName.info = profileSettings.name;
+//        listen(itemName, 'change', renameProfileItem(type));
+        
+        listen(qee(row, '.rename'), 'click', () => {
+            Utils.prompt(l10n('Введите новое имя элемента досье'), renameProfileItem2(type, profileSettings.name), {
+                value: profileSettings.name
+            })
         });
-        listen(input, 'change', renameProfileItem(type));
-        addClass(input, 'itemNameInput');
-        els.push(input);
+        
+        const itemType = qee(row, '.item-type');
+        fillItemTypesSel(itemType);
+        itemType.value = profileSettings.type;
+        itemType.info = profileSettings.name;
+        itemType.oldType = profileSettings.type;
+        listen(itemType, 'change', changeProfileItemType(type));
 
-        let sel = makeEl('select');
-        fillItemTypesSel(sel);
-        setProps(sel, {
-            value: profileSettings.type,
-            info: profileSettings.name,
-            oldType: profileSettings.type
-        });
-        listen(sel, 'change', changeProfileItemType(type));
-        els.push(sel);
-
+        let input;
         switch (profileSettings.type) {
         case 'text':
         case 'enum':
@@ -186,37 +187,28 @@ function ProfileConfigurerTmpl(exports, opts) {
             infoType: profileSettings.type,
             oldValue: profileSettings.value
         });
-        addClass(input, `profile-configurer-${profileSettings.type}`);
+        addClasses(input, [`profile-configurer-${profileSettings.type}`, 'adminOnly', 'form-control']);
         listen(input, 'change', updateDefaultValue(type));
-        els.push(input);
+        addEl(qee(row, '.item-default-value-container'), input);
+        
+        const printInHandout = qee(row, '.print-in-handout');
+        printInHandout.checked = profileSettings.doExport;
+        printInHandout.info = profileSettings.name;
+        listen(printInHandout, 'change', doExportChange(type));
+        
+        const playerAccess = qee(row, '.player-access');
+        fillPlayerAccessSel(playerAccess);
+        playerAccess.value = profileSettings.playerAccess;
+        playerAccess.info = profileSettings.name;
+        playerAccess.oldType = profileSettings.playerAccess;
+        listen(playerAccess, 'change', changeProfileItemPlayerAccess(type));
 
-        input = setProps(makeEl('input'), {
-            checked: profileSettings.doExport,
-            info: profileSettings.name,
-            type: 'checkbox'
-        });
-        listen(input, 'change', doExportChange(type));
-        els.push(input);
+        const showInRoleGrid = qee(row, '.show-in-role-grid');
+        showInRoleGrid.checked = profileSettings.showInRoleGrid;
+        showInRoleGrid.info = profileSettings.name;
+        listen(showInRoleGrid, 'change', showInRoleGridChange(type));
 
-        sel = makeEl('select');
-        fillPlayerAccessSel(sel);
-        setProps(sel, {
-            value: profileSettings.playerAccess,
-            info: profileSettings.name,
-            oldValue: profileSettings.playerAccess,
-        });
-        listen(sel, 'change', changeProfileItemPlayerAccess(type));
-        els.push(sel);
-
-        input = setProps(makeEl('input'), {
-            checked: profileSettings.showInRoleGrid,
-            info: profileSettings.name,
-            type: 'checkbox'
-        });
-        listen(input, 'change', showInRoleGridChange(type));
-        els.push(input);
-
-        return addEls(makeEl('tr'), els.map(el => addEl(makeEl('td'), addClass(el, 'adminOnly'))));
+        return row;
     });
 
     function updateDefaultValue(type) {
@@ -301,6 +293,26 @@ function ProfileConfigurerTmpl(exports, opts) {
             });
         };
     }
+    
+    var renameProfileItem2 = R.curry((type, oldName, newName, onOk, onError) => {
+        DBMS.renameProfileItem(type, newName, oldName, (err) => {
+            if (err) {
+                onError(err);
+            } else {
+                onOk();
+                exports.refresh();
+            }
+        });
+//        DBMS.renameProfile(firstType, fromName, toName, (err) => {
+//            if (err) {
+//                onError(err);
+//            } else {
+//                onOk();
+//                UI.updateEntitySetting(settingsPath, toName);
+//                exports.refresh();
+//            }
+//        });
+    });
 
     function changeProfileItemType(type) {
         return (event) => {
