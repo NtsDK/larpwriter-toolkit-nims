@@ -124,6 +124,7 @@ function ProfileConfigurerTmpl(exports, opts) {
     // eslint-disable-next-line no-var,vars-on-top
     var getInput = R.curry((type, profileSettings, index) => { // throws InternalError
         const row = qte(`${tabRoot} .profile-configurer-row-tmpl`);
+        L10n.localizeStatic(row);
         addEl(qee(row, '.item-position'), makeText(index+1));
         addEl(qee(row, '.item-name'), makeText(profileSettings.name));
 
@@ -174,7 +175,6 @@ function ProfileConfigurerTmpl(exports, opts) {
 //        printInHandout.info = profileSettings.name;
 //        listen(printInHandout, 'change', doExportChange(type));
         
-        setAttr(qee(row, '.print'), 'title', l10n("profile-item-do-export"));
         setClassIf(qee(row, '.print'), 'btn-primary', profileSettings.doExport);
         listen(qee(row, '.print'), 'click', (e) => {
             DBMS.doExportProfileItemChange(type, profileSettings.name, !hasClass(e.target, 'btn-primary'), (err) => {
