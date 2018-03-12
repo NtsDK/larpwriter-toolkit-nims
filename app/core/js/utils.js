@@ -79,6 +79,8 @@ function setClassByCondition(o, c, condition) {
     return o;
 }
 
+const setClassIf = setClassByCondition; 
+
 function getEl(id) {
     return document.getElementById(id);
 }

@@ -795,6 +795,9 @@ a[tree-panel-toggler] h3{
 .unlink:before {
   content: "\f127";
 }
+.print:before {
+  content: "\f02f";
+}
 .transparent{
   color: rgba(0,0,0,0);
   transition-property: color;

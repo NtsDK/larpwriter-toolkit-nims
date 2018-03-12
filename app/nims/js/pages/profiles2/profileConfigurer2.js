@@ -57,7 +57,7 @@ function ProfileConfigurerTmpl(exports, opts) {
 
         listen(qee(el, `${profilePanel}.create-entity-button`), 'click', createProfileItem(tabType, profilePanel));
         listen(qee(el, `${profilePanel}.move-entity-button`), 'click', moveProfileItem(tabType, profilePanel));
-        listen(qee(el, `${profilePanel}.remove-entity-button`), 'click', removeProfileItem(tabType, profilePanel));
+//        listen(qee(el, `${profilePanel}.remove-entity-button`), 'click', removeProfileItem(tabType, profilePanel));
 
         exports.content = el;
     };
@@ -89,7 +89,8 @@ function ProfileConfigurerTmpl(exports, opts) {
                 Utils.enable(exports.content, 'adminOnly', isAdmin);
             });
 
-            const selectorArr = [queryEl(`${root}.move-entity-select`), queryEl(`${root}.remove-entity-select`)];
+//            const selectorArr = [queryEl(`${root}.move-entity-select`), queryEl(`${root}.remove-entity-select`)];
+            const selectorArr = [queryEl(`${root}.move-entity-select`)];
             selectorArr.map(clearEl).map(fillSelector(R.__, arr2Select(allProfileSettings.map(R.prop('name')))));
         });
     }
@@ -116,18 +117,6 @@ function ProfileConfigurerTmpl(exports, opts) {
         };
     }
 
-    function removeProfileItem(type, root) {
-        return () => {
-            const selector = queryEl(`${root}.remove-entity-select`);
-            const index = selector.selectedIndex;
-            const name = selector.value;
-
-            Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-removing-profile-item'), [name]), () => {
-                DBMS.removeProfileItem(type, index, name, Utils.processError(exports.refresh));
-            });
-        };
-    }
-
     // eslint-disable-next-line no-var,vars-on-top
     var fillItemTypesSel = sel => fillSelector(sel, constArr2Select(R.keys(Constants.profileFieldTypes)));
     const fillPlayerAccessSel = sel => fillSelector(sel, constArr2Select(Constants.playerAccessTypes));
@@ -138,17 +127,6 @@ function ProfileConfigurerTmpl(exports, opts) {
         addEl(qee(row, '.item-position'), makeText(index+1));
         addEl(qee(row, '.item-name'), makeText(profileSettings.name));
 
-//        const itemName = qee(row, '.item-name');
-//        itemName.value = profileSettings.name;
-//        itemName.info = profileSettings.name;
-//        listen(itemName, 'change', renameProfileItem(type));
-        
-        listen(qee(row, '.rename'), 'click', () => {
-            Utils.prompt(l10n('Введите новое имя элемента досье'), renameProfileItem2(type, profileSettings.name), {
-                value: profileSettings.name
-            })
-        });
-        
         const itemType = qee(row, '.item-type');
         fillItemTypesSel(itemType);
         itemType.value = profileSettings.type;
@@ -191,10 +169,19 @@ function ProfileConfigurerTmpl(exports, opts) {
         listen(input, 'change', updateDefaultValue(type));
         addEl(qee(row, '.item-default-value-container'), input);
         
-        const printInHandout = qee(row, '.print-in-handout');
-        printInHandout.checked = profileSettings.doExport;
-        printInHandout.info = profileSettings.name;
-        listen(printInHandout, 'change', doExportChange(type));
+//        const printInHandout = qee(row, '.print-in-handout');
+//        printInHandout.checked = profileSettings.doExport;
+//        printInHandout.info = profileSettings.name;
+//        listen(printInHandout, 'change', doExportChange(type));
+        
+        setAttr(qee(row, '.print'), 'title', l10n("profile-item-do-export"));
+        setClassIf(qee(row, '.print'), 'btn-primary', profileSettings.doExport);
+        listen(qee(row, '.print'), 'click', (e) => {
+            DBMS.doExportProfileItemChange(type, profileSettings.name, !hasClass(e.target, 'btn-primary'), (err) => {
+                if (err) { Utils.handleError(err); return; }
+                toggleClass(e.target, 'btn-primary');
+            });
+        });
         
         const playerAccess = qee(row, '.player-access');
         fillPlayerAccessSel(playerAccess);
@@ -207,6 +194,18 @@ function ProfileConfigurerTmpl(exports, opts) {
         showInRoleGrid.checked = profileSettings.showInRoleGrid;
         showInRoleGrid.info = profileSettings.name;
         listen(showInRoleGrid, 'change', showInRoleGridChange(type));
+        
+        listen(qee(row, '.rename'), 'click', () => {
+            Utils.prompt(l10n('enter-new-profile-item-name'), renameProfileItem2(type, profileSettings.name), {
+                value: profileSettings.name
+            })
+        });
+        
+        listen(qee(row, '.remove'), 'click', () => {
+            Utils.confirm(L10n.format('profiles', 'are-you-sure-about-removing-profile-item', [profileSettings.name]), () => {
+                DBMS.removeProfileItem(type, index, profileSettings.name, Utils.processError(exports.refresh));
+            });
+        });
 
         return row;
     });
@@ -266,11 +265,11 @@ function ProfileConfigurerTmpl(exports, opts) {
         };
     }
 
-    function doExportChange(type) {
-        return (event) => {
-            DBMS.doExportProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
-        };
-    }
+//    function doExportChange(type) {
+//        return (event) => {
+//            DBMS.doExportProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
+//        };
+//    }
 
     function showInRoleGridChange(type) {
         return (event) => {
@@ -303,16 +302,19 @@ function ProfileConfigurerTmpl(exports, opts) {
                 exports.refresh();
             }
         });
-//        DBMS.renameProfile(firstType, fromName, toName, (err) => {
-//            if (err) {
-//                onError(err);
-//            } else {
-//                onOk();
-//                UI.updateEntitySetting(settingsPath, toName);
-//                exports.refresh();
-//            }
-//        });
     });
+    
+//    function removeProfileItem(type, root) {
+//        return () => {
+//            const selector = queryEl(`${root}.remove-entity-select`);
+//            const index = selector.selectedIndex;
+//            const name = selector.value;
+//
+//            Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-removing-profile-item'), [name]), () => {
+//                DBMS.removeProfileItem(type, index, name, Utils.processError(exports.refresh));
+//            });
+//        };
+//    }
 
     function changeProfileItemType(type) {
         return (event) => {
