@@ -380,6 +380,8 @@ Utils.prompt = function (message, callback, opts) {
     });
 };
 
+const setError = (el, err) => addEl(clearEl(qee(el, '.error-msg')), makeText(Utils.handleErrorMsg(err)));
+
 /*
  * opts
  *  customInput - required input template

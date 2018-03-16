@@ -10,24 +10,6 @@
         <div>
           <button class="btn btn-default btn-reduced fa-icon create adminOnly" l10n-title="profiles-create-profile-item"></button>
         </div>
-<!--         <div> -->
-<!--           <input class="adminOnly create-entity-input" l10n-placeholder-id="profiles-profile-item-name"></input>  -->
-<!--           <span l10n-id="profiles-profile-item-position"></span> -->
-<!--           <select class="adminOnly create-entity-position-select"></select> -->
-<!--           <span l10n-id="profiles-profile-item-type"></span> -->
-<!--           <select class="adminOnly create-entity-type-select"></select>  -->
-<!--           <button class="adminOnly create-entity-button" l10n-id="common-create"></button> -->
-<!--         </div> -->
-<!--         <div> -->
-<!--           <select class="adminOnly move-entity-select"></select>  -->
-<!--           <span l10n-id="profiles-profile-item-position"></span> -->
-<!--           <select class="adminOnly move-entity-position-select"></select> -->
-<!--           <button class="adminOnly move-entity-button" l10n-id="profiles-move-item"></button> -->
-<!--         </div> -->
-<!--         <div> -->
-<!--           <select class="adminOnly remove-entity-select"></select> -->
-<!--           <button class="adminOnly remove-entity-button" l10n-id="common-remove"></button> -->
-<!--         </div> -->
       </div>
       <table class="table table-bordered" style="width: auto;">
       <thead>
@@ -37,7 +19,6 @@
           <th l10n-id="profiles-profile-item-type"></th>
           <th l10n-id="profiles-profile-item-default-value"></th>
           <th l10n-id="profiles-profile-item-player-access"></th>
-<!--           <th l10n-id="profiles-profile-item-do-export"></th> -->
           <th l10n-id="profiles-show-in-role-grid" class="hidden"></th>
         </tr>
       </thead>
@@ -54,7 +35,6 @@
       <td class="item-default-value-container"></td>
       <td><select class="player-access adminOnly form-control"></select></td>
       <td>
-<!--         <input type="checkbox" class="print-in-handout adminOnly form-control"> -->
         <button class="btn btn-default btn-reduced fa-icon print flex-0-0-auto" l10n-title="profiles-profile-item-do-export"></button>
       </td>
       <td class="hidden"><input type="checkbox" class="show-in-role-grid adminOnly form-control"></td>
@@ -65,4 +45,65 @@
       </td>
     </tr>
   </template>
+  
+  <div class="modal fade create-profile-item-dialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" l10n-id="profiles-create-profile-item"></h4>
+        </div>
+        <div class="modal-body">
+          <div>
+            <div class="form-group">
+              <label class="control-label" l10n-id="profiles-profile-item-name"></label>
+              <input class="form-control create-entity-name-input" ></input> 
+            </div>
+            <div class="form-group">
+              <label class="control-label" l10n-id="profiles-profile-item-position"></label>
+              <select class="adminOnly form-control create-entity-position-select">
+              </select> 
+            </div>
+            <div class="form-group">
+              <label class="control-label" l10n-id="profiles-profile-item-type"></label>
+              <select class="adminOnly form-control create-entity-type-select"></select> 
+            </div>
+            <div class="form-group has-error">
+              <span class="help-block error-msg"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" l10n-id="common-cancel"></button>
+          <button type="button" class="btn btn-primary create-entity-button" l10n-id="common-create"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade move-profile-item-dialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" l10n-id="profiles-move-profile-item"></h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="control-label" l10n-id="profiles-new-profile-item-position"></label>
+            <select class="adminOnly form-control move-entity-position-select">
+            </select> 
+          </div>
+          <div class="form-group has-error">
+            <span class="help-block error-msg"></span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" l10n-id="common-cancel"></button>
+          <button type="button" class="btn btn-primary move-entity-button" l10n-id="common-move"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </div>
