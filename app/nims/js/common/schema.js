@@ -74,6 +74,24 @@ See the License for the specific language governing permissions and
             schema.required = ['Meta', 'CharacterProfileStructure', 'PlayerProfileStructure', 'Version', 'Characters',
                 'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations'];
             schema.additionalProperties = false;
+            
+            schema.moduleDeps = [
+                ['InvestigationBoard', 'Groups'],
+                ['Groups', 'CharacterProfileStructure'],
+                ['Groups', 'PlayerProfileStructure'],
+                ['Players', 'PlayerProfileStructure'],
+                ['Characters', 'CharacterProfileStructure'],
+                
+                ['ManagementInfo', 'Groups'],
+                ['ManagementInfo', 'Players'],
+                ['ManagementInfo', 'Stories'],
+                ['ManagementInfo', 'Characters'],
+                ['ProfileBindings', 'Players'],
+                
+                ['ProfileBindings', 'Characters'],
+                ['Relations', 'Characters'],
+                ['Stories', 'Characters'],
+            ];
 
             return schema;
         };

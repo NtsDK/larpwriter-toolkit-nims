@@ -137,9 +137,9 @@ if (MODE === 'NIMS_Server') {
             it(check.name, (done) => {
                 DBMS[check.func](...check.args.concat((err) => {
                     expect(err).toBeUndefined();
-                    DBMS.getConsistencyCheckResult((err2, consistencyErrors) => {
+                    DBMS.getConsistencyCheckResult((err2, checkResult) => {
                         expect(err2).toBeNull();
-                        expect(consistencyErrors.length > 0).toBe(false);
+                        expect(checkResult.errors.length > 0).toBe(false);
                     });
                     done();
                 }));

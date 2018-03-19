@@ -750,13 +750,13 @@ R.keys(setChecks).forEach(apiName => {
                         expect(err).toBeUndefined();
                     }
                     if(check.forInconsistency === true){
-                        DBMS.getConsistencyCheckResult((err, consistencyErrors) => {
+                        DBMS.getConsistencyCheckResult((err, checkResult) => {
                             expect(err).toBeNull();
-                            if(consistencyErrors.length > 0){
+                            if(checkResult.errors.length > 0){
                                 console.error(check.name);
-                                consistencyErrors.forEach(console.error);
+                                checkResult.errors.forEach(console.error);
                             }
-                            expect(consistencyErrors.length > 0).toBe(false);
+                            expect(checkResult.errors.length > 0).toBe(false);
                         });
                     }
                     done();
