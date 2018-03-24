@@ -75,6 +75,7 @@ See the License for the specific language governing permissions and
                 'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations'];
             schema.additionalProperties = false;
             
+            schema.moduleList = R.keys(schema.properties);
             schema.moduleDeps = [
                 ['InvestigationBoard', 'Groups'],
                 ['Groups', 'CharacterProfileStructure'],

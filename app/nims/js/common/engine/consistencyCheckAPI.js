@@ -72,7 +72,7 @@ See the License for the specific language governing permissions and
             callback(null, {
                 errors,
                 details,
-                nodes: R.clone(schema.required),
+                nodes: R.clone(schema.moduleList),
                 edges: R.clone(schema.moduleDeps),
             });
         };
