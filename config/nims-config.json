@@ -38,8 +38,9 @@
             "vis-custom.min.js",
             "markdown-it.min.js",
             "diff.js",
-            "d3.min.js",
-            "dagre-d3.js"
+            "klay.js",
+            "klayjs.d3.js",
+            "klayjs.bridge.js"
         ]
     },
     "pagesLight" :[
