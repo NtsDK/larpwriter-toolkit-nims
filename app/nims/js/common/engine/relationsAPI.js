@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
 
         const relationsPath = ['Relations'];
         
-        const rel2RelKey = R.pipe(R.omit(Constants.relationFields), R.keys, R.sort(CU.charOrdA), JSON.stringify);
+        const rel2RelKey = R.pipe(R.props(['starter', 'ender']), R.sort(CU.charOrdA), JSON.stringify);
         dbmsUtils._rel2RelKey = rel2RelKey;
         const arr2RelKey = R.pipe(R.sort(CU.charOrdA), JSON.stringify);
         dbmsUtils._arr2RelKey = arr2RelKey;
@@ -95,7 +95,8 @@ See the License for the specific language governing permissions and
                     "essence": [],
                     [fromCharacter]: "",
                     [toCharacter]: "",
-                    "starter": fromCharacter
+                    "starter": fromCharacter,
+                    "ender": toCharacter
                 })
                 if (callback) callback();
             });
@@ -180,14 +181,19 @@ See the License for the specific language governing permissions and
         function _renameCharacter(type, fromName, toName) {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
-            this.database.Relations = R.filter(R.pipe(R.prop(fromName)), relData).map( rel => {
+            const arrPair = R.partition(R.pipe(R.prop(fromName), R.isNil), relData);
+            arrPair[1] = arrPair[1].map( rel => {
                 rel[toName] = rel[fromName];
                 delete rel[fromName];
                 if(rel.starter === fromName){
                     rel.starter = toName;
                 }
+                if(rel.ender === fromName){
+                    rel.ender = toName;
+                }
                 return rel;
             });
+            this.database.Relations = R.concat(arrPair[0], arrPair[1]);
         }
 
         addListener('renameProfile', _renameCharacter);

@@ -38,7 +38,8 @@ See the License for the specific language governing permissions and
         let { characterNamesArray } = data;
 
         characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName), R.prop('value')));
-        const get2ndCharName = R.compose(el => R.keys(el)[0], R.omit(R.concat(Constants.relationFields, characterName)));
+        
+        const get2ndCharName = ProjectUtils.get2ndRelChar(characterName)
         const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CommonUtils.charOrdA);
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
         const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value'));

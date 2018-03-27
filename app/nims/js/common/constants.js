@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
         }
     };
     
-    exports.relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter'];
+    exports.relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'];
     
     exports.relationEssences = ['starterToEnder', 'allies', 'enderToStarter'];
 

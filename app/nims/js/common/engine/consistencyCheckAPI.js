@@ -158,6 +158,10 @@ See the License for the specific language governing permissions and
                 const msg = 'Relation inconsistent, starter is not from relation: starter {0}, relation {1}';
                 errors.push([msg, [rel.starter, JSON.stringify(rel)]]);
             });
+            data.Relations.filter(rel => rel[rel.ender] === undefined).forEach( rel => {
+                const msg = 'Relation inconsistent, ender is not from relation: ender {0}, relation {1}';
+                errors.push([msg, [rel.ender, JSON.stringify(rel)]]);
+            });
             
             const keys = data.Relations.map(dbmsUtils._rel2RelKey);
             const groups = R.groupBy(str => str, keys);

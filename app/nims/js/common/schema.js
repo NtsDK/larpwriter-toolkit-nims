@@ -847,16 +847,20 @@ See the License for the specific language governing permissions and
                             type: 'string',
                             enum: chars
                         },
+                        ender: {
+                            type: 'string',
+                            enum: chars
+                        },
                     },
-                    required: ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter'],
+                    required: ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'],
                     patternProperties:{
                         [names] : {
                             type: 'string',
                         }
                     },
                     additionalProperties: false,
-                    "minProperties": 7,
-                    "maxProperties": 7
+                    "minProperties": 8,
+                    "maxProperties": 8
                 }
             };
             return schema;

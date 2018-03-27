@@ -483,6 +483,7 @@ const setChecks = {
     {
         func: 'createCharacterRelation',
         args: ['testCharacter', 'testCharacter2'],
+        forInconsistency: true,
     },
     {
         func: 'getCharacterRelation',
@@ -536,13 +537,18 @@ const setChecks = {
         forInconsistency: true,
     },
     {
+        func: 'renameProfile',
+        args: ['character', 'testCharacter2', 'testCharacter4'],
+        forInconsistency: true,
+    },
+    {
         func: 'removeProfile',
         args: ['character', 'testCharacter3'],
         forInconsistency: true,
     },
     {
         func: 'removeProfile',
-        args: ['character', 'testCharacter2'],
+        args: ['character', 'testCharacter4'],
         forInconsistency: true,
     }],
     

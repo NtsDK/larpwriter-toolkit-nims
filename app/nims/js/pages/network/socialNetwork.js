@@ -355,9 +355,8 @@ See the License for the specific language governing permissions and
         const checked = R.contains(R.__, selectedRelations);
         return R.flatten(relations.map(rel => {
             const arr = [];
-            const charArr = ProjectUtils.rel2charArr(rel);
             const starter = rel.starter;
-            const ender = R.difference(charArr, [starter]);
+            const ender = rel.ender;
             const edgeTmpl = {
                 from: CHAR_PREFIX + starter,
                 to: CHAR_PREFIX + ender,
