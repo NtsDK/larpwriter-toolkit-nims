@@ -179,7 +179,7 @@ See the License for the specific language governing permissions and
             setAttr(input, 'id', character.name + activityType);
             addClass(input, 'hidden');
             addEl(td, input);
-            const label = addClass(makeEl('label'), 'checkbox-label');
+            const label = addClass(makeEl('label'), `checkbox-label activity-icon-${activityType} fa-icon`);
             setAttr(label, 'for', character.name + activityType);
             return addEl(td, label);
         }));

@@ -155,7 +155,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 };
                 
                 addView(state.containers, 'overview', 'Overview');
-                addView(state.containers, 'profiles', 'Profiles');
+//                addView(state.containers, 'profiles', 'Profiles');
                 addView(state.containers, 'characters', 'Characters');
                 addView(state.containers, 'players', 'Players');
                 addView(state.containers, 'stories', 'Stories');
