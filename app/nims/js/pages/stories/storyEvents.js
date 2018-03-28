@@ -20,7 +20,8 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
-
+    const root = '.story-events-tab '; 
+        
     exports.init = () => {
         let button = getEl('createEventButton');
         button.addEventListener('click', createEvent);
@@ -37,7 +38,7 @@ See the License for the specific language governing permissions and
         button = getEl('removeEventButton');
         button.addEventListener('click', removeEvent);
 
-        exports.content = getEl('storyEventsDiv');
+        exports.content = qe(root);
     };
 
     exports.refresh = () => {
@@ -166,53 +167,28 @@ See the License for the specific language governing permissions and
     }
 
     function appendEventInput(event, index, date, preGameDate) {
-        const tr = makeEl('tr');
-
-        // first col - event number
-        addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(index + 1))));
-
-        // second col
-        const td = makeEl('td');
-
-        const divMain = addClass(makeEl('div'), 'story-events-div-main');
-        const divLeft = addClass(makeEl('div'), 'story-events-div-left');
-        const divRight = addClass(makeEl('div'), 'story-events-div-right');
-        addEl(divMain, divLeft);
-        addEl(divMain, divRight);
-        addEl(td, divMain);
-
-        addEl(divLeft, makeEventNameInput(event, index));
-        addEl(divRight, UI.makeEventTimePicker({
+        const el = wrapEl('tr', qte(`${root} .event-tmpl` ));
+        const qe = qee(el);
+        addEl(qe('.event-number'), makeText(index + 1));
+        const nameInput = qe('.event-name-input');
+        nameInput.value = event.name;
+        nameInput.eventIndex = index;
+        listen(nameInput, 'change', updateEventName);
+        
+        const textInput = qe('.event-text');
+        textInput.value = event.text;
+        textInput.eventIndex = index;
+        listen(textInput, 'change', updateEventText);
+        
+        UI.makeEventTimePicker2(qe('.event-time'), {
             eventTime: event.time,
             index,
             preGameDate,
             date,
-            extraClasses: ['isStoryEditable'],
             onChangeDateTimeCreator
-        }));
-        addEl(td, makeEventTextInput(event, index));
-        addEl(tr, td);
-
-        return tr;
-    }
-
-    function makeEventNameInput(event, index) {
-        const input = makeEl('input');
-        addClass(input, 'isStoryEditable');
-        input.value = event.name;
-        input.eventIndex = index;
-        input.addEventListener('change', updateEventName);
-        return input;
-    }
-
-    function makeEventTextInput(event, index) {
-        const input = makeEl('textarea');
-        addClass(input, 'isStoryEditable');
-        addClass(input, 'eventText');
-        input.value = event.text;
-        input.eventIndex = index;
-        input.addEventListener('change', updateEventText);
-        return input;
+        });
+        
+        return el;
     }
 
     function onChangeDateTimeCreator(myInput) {

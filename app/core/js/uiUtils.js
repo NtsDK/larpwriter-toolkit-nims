@@ -169,6 +169,30 @@ See the License for the specific language governing permissions and
         jQuery(input).datetimepicker(pickerOpts);
         return input;
     };
+    
+    exports.makeEventTimePicker2 = (input, opts) => {
+        input.value = opts.eventTime;
+        
+        input.eventIndex = opts.index;
+        
+        const pickerOpts = {
+            lang: L10n.getLang(),
+            mask: true,
+            startDate: new Date(opts.preGameDate),
+            endDate: new Date(opts.date),
+            onChangeDateTime: opts.onChangeDateTimeCreator(input),
+        };
+        
+        if (opts.eventTime !== '') {
+            pickerOpts.value = opts.eventTime;
+        } else {
+            pickerOpts.value = opts.date;
+            addClass(input, 'defaultDate');
+        }
+        
+        jQuery(input).datetimepicker(pickerOpts);
+        return input;
+    };
 
     // bug about setting 0900 years in Braavos game is event date. Fixed in production.
     //  exports.makeEventTimePicker = function (opts) {

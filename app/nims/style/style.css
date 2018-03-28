@@ -129,7 +129,7 @@ See the License for the specific language governing permissions and
 	height: 500px;
 }
 
-.eventText {
+textarea.event-text {
 	width: 100%;
 	height: 160px;
 }

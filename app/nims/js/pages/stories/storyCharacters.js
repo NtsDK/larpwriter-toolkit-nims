@@ -144,8 +144,7 @@ See the License for the specific language governing permissions and
         const input = makeEl('input');
         input.value = character.inventory;
         input.characterName = character.name;
-        addClass(input, 'inventoryInput');
-        addClass(input, 'isStoryEditable');
+        addClasses(input, ['inventoryInput', 'isStoryEditable', 'form-control']);
         input.addEventListener('change', updateCharacterInventory);
         td.appendChild(input);
         tr.appendChild(td);

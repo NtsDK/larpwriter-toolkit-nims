@@ -89,6 +89,8 @@ function queryEl(sel) {
     return document.querySelector(sel);
 }
 
+const qe = queryEl;
+
 // query template element
 function qte(sel){
     return document.querySelector(sel).content.cloneNode(true);

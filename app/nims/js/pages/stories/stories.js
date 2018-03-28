@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
+    const root = '.stories-tab ';
 
     exports.init = () => {
         state.left = { views: {} };
@@ -43,13 +44,20 @@ See the License for the specific language governing permissions and
         Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
         Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
 
-        listen(queryEl('#storiesDiv .create-entity-button'), 'click', createStory);
-        listen(queryEl('#storiesDiv .rename-entity-button'), 'click', renameStory);
-        listen(queryEl('#storiesDiv .remove-entity-button'), 'click', removeStory);
+        listen(queryEl(`${root}.create-entity-button`), 'click', createStory);
+        listen(queryEl(`${root}.rename-entity-button`), 'click', renameStory);
+        listen(queryEl(`${root}.remove.story`), 'click', removeStory);
+        
+        listen(qe(`${root}.create.story`), 'click', () => 
+            $(qe(`${root} .create-story-dialog`)).modal('show'));
+        listen(qe(`${root}.rename.story`), 'click', () => {
+            queryEl(`${root}.rename-entity-input`).value = queryEl(`${root}#storySelector`).value.trim();
+            $(qe(`${root} .rename-story-dialog`)).modal('show')
+        });
 
         $('#storySelector').select2().on('change', onStorySelectorChangeDelegate);
 
-        exports.content = getEl('storiesDiv');
+        exports.content = queryEl(root);
     };
 
     exports.chainRefresh = () => {
@@ -60,7 +68,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        const selectors = ['#storiesDiv .rename-entity-select', '#storiesDiv .remove-entity-select'];
+        const selectors = [`${root}.rename-entity-select`, `${root}.remove-entity-select`];
 
         const storySelector = clearEl(getEl('storySelector'));
         selectors.forEach(R.compose(clearEl, queryEl));
@@ -109,38 +117,46 @@ See the License for the specific language governing permissions and
     }
 
     function createStory() {
-        const input = queryEl('#storiesDiv .create-entity-input');
+        const input = queryEl(`${root}.create-entity-input`);
         const storyName = input.value.trim();
 
         DBMS.createStory(storyName, (err) => {
-            if (err) { Utils.handleError(err); return; }
-            updateSettings(storyName);
-            PermissionInformer.refresh((err2) => {
-                if (err2) { Utils.handleError(err2); return; }
-                input.value = '';
-                exports.refresh();
-            });
+            if(err){
+                setError(queryEl(`${root} .create-story-dialog`), err);
+            } else {
+                updateSettings(storyName);
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
+                    input.value = '';
+                    $(queryEl(`${root} .create-story-dialog`)).modal('hide');
+                    exports.refresh();
+                });
+            }
         });
     }
 
     function renameStory() {
-        const toInput = queryEl('#storiesDiv .rename-entity-input');
-        const fromName = queryEl('#storiesDiv .rename-entity-select').value.trim();
+        const toInput = queryEl(`${root}.rename-entity-input`);
+        const fromName = queryEl(`${root}#storySelector`).value.trim();
         const toName = toInput.value.trim();
 
         DBMS.renameStory(fromName, toName, (err) => {
-            if (err) { Utils.handleError(err); return; }
-            updateSettings(toName);
-            PermissionInformer.refresh((err2) => {
-                if (err2) { Utils.handleError(err2); return; }
-                toInput.value = '';
-                exports.refresh();
-            });
+            if(err){
+                setError(queryEl(`${root} .rename-story-dialog`), err);
+            } else {
+                updateSettings(toName);
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
+                    toInput.value = '';
+                    $(queryEl(`${root} .rename-story-dialog`)).modal('hide');
+                    exports.refresh();
+                });
+            }
         });
     }
 
     function removeStory() {
-        const name = queryEl('#storiesDiv .remove-entity-select').value.trim();
+        const name = queryEl(`${root}#storySelector`).value.trim();
 
         Utils.confirm(strFormat(getL10n('stories-are-you-sure-about-story-removing'), [name]), () => {
             DBMS.removeStory(name, (err) => {
