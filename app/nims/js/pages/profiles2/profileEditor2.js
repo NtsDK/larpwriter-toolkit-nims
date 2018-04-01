@@ -39,6 +39,18 @@ function ProfileEditorTmpl(exports, opts) {
         removeClass(el, 'profile-editor2-tab-tmpl');
         addEl(queryEl('.tab-container'), el);
         
+        const createCharacterDialog = UI.createModalDialog(`.profile-editor2-tab.${firstType + '-type'}`, createProfile, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'profiles-' + opts.createMsg, 
+            actionButtonTitle: 'common-create',
+        });
+        listen(queryEl(`${root} .create`), 'click', () => createCharacterDialog.showDlg());
+        state.renameCharacterDialog = UI.createModalDialog(`.${firstType + '-type'}`, renameProfile, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'profiles-' + opts.renameMsg, 
+            actionButtonTitle: 'common-rename',
+        });
+        
         setClassByCondition(qee(el, '.report-by-stories'), 'hidden', firstType === 'player');
         setClassByCondition(qee(el, '.report-by-relations'), 'hidden', firstType === 'player');
         setAttr(qee(el, '.entity-filter'), 'l10n-placeholder-id', 'profiles-' + opts.filterPlaceholder);
@@ -53,7 +65,6 @@ function ProfileEditorTmpl(exports, opts) {
         
         exports.content = el;
         listen(queryEl(`${root} .entity-filter`), 'input', filterOptions);
-        listen(queryEl(`${root} .create`), 'click', () => Utils.prompt(l10n(opts.createMsg), createProfile));
     };
 
     exports.refresh = () => {
@@ -87,9 +98,9 @@ function ProfileEditorTmpl(exports, opts) {
             setAttr(qee(el, '.remove'), 'title', l10n(opts.removeProfile));
             if(name.editable){
                 listen(qee(el, '.rename'), 'click', () => {
-                    Utils.prompt(l10n(opts.renameMsg), renameProfile(name.value), {
-                        value: name.value
-                    })
+                    qee(state.renameCharacterDialog, '.entity-input').value = name.value;
+                    state.renameCharacterDialog.fromName = name.value;
+                    state.renameCharacterDialog.showDlg();
                 });
                 listen(qee(el, '.remove'), 'click', removeProfile(firstType, name.value));
             } else {
@@ -163,29 +174,45 @@ function ProfileEditorTmpl(exports, opts) {
         }
     }
     
-    function createProfile (value, onOk, onError){
-        DBMS.createProfile(firstType, value, (err) => {
-            if (err) {
-                onError(err);
-            } else {
-                onOk();
-                UI.updateEntitySetting(settingsPath, value);
-                exports.refresh();
-            }
-        });
+    function createProfile (dialog){
+        return () => {
+            const input = qee(dialog, '.entity-input');
+            const value = input.value.trim();
+            
+            DBMS.createProfile(firstType, value, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    UI.updateEntitySetting(settingsPath, value);
+                    PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
+                        input.value = '';
+                        dialog.hideDlg();
+                        exports.refresh();
+                    });
+                }
+            });
+        }
     };
     
-    var renameProfile = R.curry((fromName, toName, onOk, onError) => {
-        DBMS.renameProfile(firstType, fromName, toName, (err) => {
-            if (err) {
-                onError(err);
-            } else {
-                onOk();
-                UI.updateEntitySetting(settingsPath, toName);
-                exports.refresh();
-            }
-        });
-    });
+    function renameProfile (dialog){
+        return () => {
+            const toInput = qee(dialog, '.entity-input');
+            const fromName = dialog.fromName;
+            const toName = toInput.value.trim();
+            
+            DBMS.renameProfile(firstType, fromName, toName, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    UI.updateEntitySetting(settingsPath, toName);
+                    toInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        }
+    };
     
     function removeProfile(type, name) {
         return () => {

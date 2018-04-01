@@ -45,23 +45,37 @@ function ProfileConfigurerTmpl(exports, opts) {
         removeClass(el, 'profile-configurer2-tab-tmpl');
         addEl(queryEl('.tab-container'), el);
         
+        const createProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, createProfileItem, {
+            bodySelector: 'create-profile-item-body',
+            dialogTitle: 'profiles-create-profile-item', 
+            actionButtonTitle: 'common-create',
+            initBody: (body) => {
+                const sel = clearEl(qee(body, `.create-entity-type-select`));
+                const fillMainSel = () => { fillItemTypesSel(clearEl(sel)); };
+                fillMainSel();
+                L10n.onL10nChange(fillMainSel);
+            }
+        });
+        
+        state.renameProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, renameProfileItem, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'profiles-enter-new-profile-item-name', 
+            actionButtonTitle: 'common-rename',
+        });
+        
+        state.moveProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, moveProfileItem, {
+            bodySelector: 'move-profile-item-body',
+            dialogTitle: 'profiles-new-profile-item-position', 
+            actionButtonTitle: 'common-move',
+        });
+        
         setAttr(qee(el, '.panel h3'), 'l10n-id', 'profiles-' + opts.panelName);
         L10n.localizeStatic(el);
         
         setAttr(qee(el,'.panel a') , 'panel-toggler', tabRoot + ".profile-panel");
         UI.initPanelTogglers(el);
         
-        const sel = clearEl(qee(el, `${tabRoot}.create-entity-type-select`));
-        const fillMainSel = () => { fillItemTypesSel(clearEl(sel)); };
-        fillMainSel();
-        L10n.onL10nChange(fillMainSel);
-
-        listen(qee(el, `${tabRoot}.create`), 'click', () => 
-            $(queryEl(`${tabRoot} .create-profile-item-dialog`)).modal('show'));
-        
-        listen(qee(el, `${tabRoot}.create-entity-button`), 'click', createProfileItem(tabType));
-        listen(qee(el, `${tabRoot}.move-entity-button`), 'click', moveProfileItem(tabType));
-
+        listen(qe(`${tabRoot}.create`), 'click', () => createProfileItemDialog.showDlg());
         exports.content = el;
     };
 
@@ -95,40 +109,25 @@ function ProfileConfigurerTmpl(exports, opts) {
         });
     }
 
-    function createProfileItem(type) {
+    function createProfileItem(dialog) {
         return () => {
-            const input = queryEl(`${tabRoot}.create-entity-name-input`);
+            const input = qee(dialog, `.create-entity-name-input`);
             const name = input.value.trim();
-            const itemType = queryEl(`${tabRoot}.create-entity-type-select`).value.trim();
-            const selectedIndex = queryEl(`${tabRoot}.create-entity-position-select`).selectedIndex;
+            const itemType = qee(dialog, `.create-entity-type-select`).value.trim();
+            const selectedIndex = qee(dialog, `.create-entity-position-select`).selectedIndex;
             
-            DBMS.createProfileItem(type, name, itemType, selectedIndex, (err) => {
+            DBMS.createProfileItem(tabType, name, itemType, selectedIndex, (err) => {
                 if(err){
-                    setError(queryEl(`${tabRoot} .create-profile-item-dialog`), err);
+                    setError(dialog, err);
                 } else {
-                    $(queryEl(`${tabRoot} .create-profile-item-dialog`)).modal('hide');
                     input.value = '';
-                    exports.refresh();
-                }
-            }); 
-        };
-    }
-    
-    function moveProfileItem(type) {
-        return () => {
-            const index = state.currentIndex;
-            const newIndex = queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
-            DBMS.moveProfileItem(type, index, newIndex, (err) => {
-                if(err){
-                    setError(queryEl(`${tabRoot} .move-profile-item-dialog`), err);
-                } else {
-                    $(queryEl(`${tabRoot} .move-profile-item-dialog`)).modal('hide');
+                    dialog.hideDlg();
                     exports.refresh();
                 }
             });
         };
     }
-
+    
     // eslint-disable-next-line no-var,vars-on-top
     var fillItemTypesSel = sel => fillSelector(sel, constArr2Select(R.keys(Constants.profileFieldTypes)));
     const fillPlayerAccessSel = sel => fillSelector(sel, constArr2Select(Constants.playerAccessTypes));
@@ -204,13 +203,13 @@ function ProfileConfigurerTmpl(exports, opts) {
         
         listen(qee(row, '.move'), 'click', () => {
             state.currentIndex = index;
-            $(queryEl(`${tabRoot} .move-profile-item-dialog`)).modal('show');
+            state.moveProfileItemDialog.showDlg();
         });
         
         listen(qee(row, '.rename'), 'click', () => {
-            Utils.prompt(l10n('enter-new-profile-item-name'), renameProfileItem2(type, profileSettings.name), {
-                value: profileSettings.name
-            })
+            qee(state.renameProfileItemDialog, '.entity-input').value = profileSettings.name;
+            state.renameProfileItemDialog.fromName = profileSettings.name;
+            state.renameProfileItemDialog.showDlg();
         });
         
         listen(qee(row, '.remove'), 'click', () => {
@@ -282,33 +281,39 @@ function ProfileConfigurerTmpl(exports, opts) {
             DBMS.showInRoleGridProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
         };
     }
-
-    function renameProfileItem(type) {
-        return (event) => {
-            const newName = event.target.value.trim();
-            const oldName = event.target.info;
-
-            DBMS.renameProfileItem(type, newName, oldName, (err) => {
+    
+    function renameProfileItem (dialog) {
+        return () => {
+            const toInput = qee(dialog, '.entity-input');
+            const oldName = dialog.fromName;
+            const newName = toInput.value.trim();
+            
+            DBMS.renameProfileItem(tabType, newName, oldName, (err) => {
                 if (err) {
-                    event.target.value = event.target.info;
-                    Utils.handleError(err);
-                    return;
+                    setError(dialog, err);
+                } else {
+                    toInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
                 }
-                exports.refresh();
+            });
+        }
+    };
+    
+    function moveProfileItem(dialog) {
+        return () => {
+            const index = state.currentIndex;
+            const newIndex = queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
+            DBMS.moveProfileItem(tabType, index, newIndex, (err) => {
+                if(err){
+                    setError(dialog, err);
+                } else {
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
             });
         };
     }
-    
-    var renameProfileItem2 = R.curry((type, oldName, newName, onOk, onError) => {
-        DBMS.renameProfileItem(type, newName, oldName, (err) => {
-            if (err) {
-                onError(err);
-            } else {
-                onOk();
-                exports.refresh();
-            }
-        });
-    });
 
     function changeProfileItemType(type) {
         return (event) => {

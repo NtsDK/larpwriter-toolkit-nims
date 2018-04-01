@@ -17,6 +17,35 @@ See the License for the specific language governing permissions and
 /* eslint-disable no-var,vars-on-top */
 
 ((exports) => {
+    exports.createModalDialog = (root, onAction, opts) => {
+        const commons = '.dialog-commons ';
+        const el2 = wrapEl('div', qte(`${commons} .request-data-dialog-tmpl` ));
+        const el = qee(el2, '.modal');
+        if(opts.dialogClass !== undefined){
+            addClass(el, opts.dialogClass);
+        }
+        const body = qee(el, '.modal-body');
+        addEl(body, qte(`${commons} .${opts.bodySelector}`));
+        if(opts.body !== undefined){
+            R.toPairs(opts.body).map(pair => setAttr(qee(body, pair[0]), 'l10n-id', pair[1]));
+        }
+        if(opts.initBody !== undefined){
+            opts.initBody(body);
+        }
+        addEl(body, qte(`${commons} .modal-error-block`));
+        setAttr(qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
+        setAttr(qee(el, '.on-action-button'), 'l10n-id', opts.actionButtonTitle);
+        L10n.localizeStatic(el);
+        listen(qee(el, '.on-action-button'), 'click', onAction(el));
+        el.showDlg = () => {
+            clearError(el);
+            $(el).modal('show');
+        }
+        el.hideDlg = () => $(el).modal('hide');
+        addEl(qe(root), el);
+        return el;
+    };
+    
     exports.initTabPanel = (tabClazz, containerClazz) => {
         const containers = getEls(containerClazz);
 

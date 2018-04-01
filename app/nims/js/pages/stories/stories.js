@@ -23,23 +23,17 @@ See the License for the specific language governing permissions and
     const root = '.stories-tab ';
     
     exports.init = () => {
-        const createStoryDialog = createModalDialog(createStory, {
-            dialogTitle: 'stories-create-entity', 
+        const createStoryDialog = UI.createModalDialog(root, createStory, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'stories-enter-story-name', 
             actionButtonTitle: 'common-create',
-            body: {
-                ".control-label": "stories-enter-story-name"
-            }
         });
-        addEl(qe(root), createStoryDialog);
         
-        const renameStoryDialog = createModalDialog(renameStory, {
-            dialogTitle: 'stories-rename-entity', 
+        const renameStoryDialog = UI.createModalDialog(root, renameStory, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'stories-enter-new-story-name', 
             actionButtonTitle: 'common-rename',
-            body: {
-                ".control-label": "stories-enter-new-story-name"
-            }
         });
-        addEl(qe(root), renameStoryDialog);
         
         state.left = { views: {} };
         state.right = { views: {} };
@@ -64,11 +58,10 @@ See the License for the specific language governing permissions and
 
         listen(queryEl(`${root}.remove.story`), 'click', removeStory);
         
-        listen(qe(`${root}.create.story`), 'click', () => 
-            $(createStoryDialog).modal('show'));
+        listen(qe(`${root}.create.story`), 'click', () => createStoryDialog.showDlg());
         listen(qe(`${root}.rename.story`), 'click', () => {
             qee(renameStoryDialog, '.entity-input').value = queryEl(`${root}#storySelector`).value.trim();
-            $(renameStoryDialog).modal('show')
+            renameStoryDialog.showDlg();
         });
 
         $('#storySelector').select2().on('change', onStorySelectorChangeDelegate);
@@ -84,26 +77,15 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        const selectors = [`${root}.rename-entity-select`, `${root}.remove-entity-select`];
-
         const storySelector = clearEl(getEl('storySelector'));
-        selectors.forEach(R.compose(clearEl, queryEl));
 
         PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
             if (err) { Utils.handleError(err); return; }
             PermissionInformer.getEntityNamesArray('story', true, (err2, userStoryNames) => {
                 if (err2) { Utils.handleError(err2); return; }
-                let data;
-                if (userStoryNames.length > 0) {
-                    data = getSelect2Data(userStoryNames);
-                    selectors.forEach((selector) => {
-                        $(selector).select2(data);
-                    });
-                }
-
                 if (allStoryNames.length > 0) {
                     const storyName = getSelectedStoryName(allStoryNames);
-                    data = getSelect2Data(allStoryNames);
+                    const data = getSelect2Data(allStoryNames);
                     $('#storySelector').select2(data).val(storyName).trigger('change');
 
                     onStorySelectorChange(storyName);
@@ -117,26 +99,6 @@ See the License for the specific language governing permissions and
         });
     };
     
-    function createModalDialog(onAction, opts){
-        const el2 = wrapEl('div', qte(`${root} .request-data-dialog-tmpl` ));
-        const el = qee(el2, '.modal');
-        if(opts.dialogClass !== undefined){
-            addClass(el, opts.dialogClass);
-        }
-        const body = qee(el, '.modal-body');
-        addEl(body, qte(`${root} .modal-prompt-body`));
-        if(opts.body !== undefined){
-            R.toPairs(opts.body).map(pair => setAttr(qee(body, pair[0]), 'l10n-id', pair[1]));
-        }
-        
-        addEl(body, qte(`${root} .modal-error-block`));
-        setAttr(qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
-        setAttr(qee(el, '.on-action-button'), 'l10n-id', opts.actionButtonTitle);
-        L10n.localizeStatic(el);
-        listen(qee(el, '.on-action-button'), 'click', onAction(el));
-        return el;
-    }
-
     function getSelectedStoryName(storyNames) {
         const settings = DBMS.getSettings();
         if (!settings.Stories) {
@@ -165,7 +127,7 @@ See the License for the specific language governing permissions and
                     PermissionInformer.refresh((err2) => {
                         if (err2) { Utils.handleError(err2); return; }
                         input.value = '';
-                        $(dialog).modal('hide');
+                        dialog.hideDlg();
                         exports.refresh();
                     });
                 }
@@ -187,7 +149,7 @@ See the License for the specific language governing permissions and
                     PermissionInformer.refresh((err2) => {
                         if (err2) { Utils.handleError(err2); return; }
                         toInput.value = '';
-                        $(dialog).modal('hide');
+                        dialog.hideDlg();
                         exports.refresh();
                     });
                 }
