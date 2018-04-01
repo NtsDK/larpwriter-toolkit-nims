@@ -21,8 +21,26 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
     const root = '.stories-tab ';
-
+    
     exports.init = () => {
+        const createStoryDialog = createModalDialog(createStory, {
+            dialogTitle: 'stories-create-entity', 
+            actionButtonTitle: 'common-create',
+            body: {
+                ".control-label": "stories-enter-story-name"
+            }
+        });
+        addEl(qe(root), createStoryDialog);
+        
+        const renameStoryDialog = createModalDialog(renameStory, {
+            dialogTitle: 'stories-rename-entity', 
+            actionButtonTitle: 'common-rename',
+            body: {
+                ".control-label": "stories-enter-new-story-name"
+            }
+        });
+        addEl(qe(root), renameStoryDialog);
+        
         state.left = { views: {} };
         state.right = { views: {} };
         let containers = {
@@ -44,15 +62,13 @@ See the License for the specific language governing permissions and
         Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
         Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
 
-        listen(queryEl(`${root}.create-entity-button`), 'click', createStory);
-        listen(queryEl(`${root}.rename-entity-button`), 'click', renameStory);
         listen(queryEl(`${root}.remove.story`), 'click', removeStory);
         
         listen(qe(`${root}.create.story`), 'click', () => 
-            $(qe(`${root} .create-story-dialog`)).modal('show'));
+            $(createStoryDialog).modal('show'));
         listen(qe(`${root}.rename.story`), 'click', () => {
-            queryEl(`${root}.rename-entity-input`).value = queryEl(`${root}#storySelector`).value.trim();
-            $(qe(`${root} .rename-story-dialog`)).modal('show')
+            qee(renameStoryDialog, '.entity-input').value = queryEl(`${root}#storySelector`).value.trim();
+            $(renameStoryDialog).modal('show')
         });
 
         $('#storySelector').select2().on('change', onStorySelectorChangeDelegate);
@@ -100,6 +116,26 @@ See the License for the specific language governing permissions and
             });
         });
     };
+    
+    function createModalDialog(onAction, opts){
+        const el2 = wrapEl('div', qte(`${root} .request-data-dialog-tmpl` ));
+        const el = qee(el2, '.modal');
+        if(opts.dialogClass !== undefined){
+            addClass(el, opts.dialogClass);
+        }
+        const body = qee(el, '.modal-body');
+        addEl(body, qte(`${root} .modal-prompt-body`));
+        if(opts.body !== undefined){
+            R.toPairs(opts.body).map(pair => setAttr(qee(body, pair[0]), 'l10n-id', pair[1]));
+        }
+        
+        addEl(body, qte(`${root} .modal-error-block`));
+        setAttr(qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
+        setAttr(qee(el, '.on-action-button'), 'l10n-id', opts.actionButtonTitle);
+        L10n.localizeStatic(el);
+        listen(qee(el, '.on-action-button'), 'click', onAction(el));
+        return el;
+    }
 
     function getSelectedStoryName(storyNames) {
         const settings = DBMS.getSettings();
@@ -116,43 +152,47 @@ See the License for the specific language governing permissions and
         return storyName;
     }
 
-    function createStory() {
-        const input = queryEl(`${root}.create-entity-input`);
-        const storyName = input.value.trim();
-
-        DBMS.createStory(storyName, (err) => {
-            if(err){
-                setError(queryEl(`${root} .create-story-dialog`), err);
-            } else {
-                updateSettings(storyName);
-                PermissionInformer.refresh((err2) => {
-                    if (err2) { Utils.handleError(err2); return; }
-                    input.value = '';
-                    $(queryEl(`${root} .create-story-dialog`)).modal('hide');
-                    exports.refresh();
-                });
-            }
-        });
+    function createStory(dialog) {
+        return () => {
+            const input = qee(dialog, '.entity-input');
+            const storyName = input.value.trim();
+            
+            DBMS.createStory(storyName, (err) => {
+                if(err){
+                    setError(dialog, err);
+                } else {
+                    updateSettings(storyName);
+                    PermissionInformer.refresh((err2) => {
+                        if (err2) { Utils.handleError(err2); return; }
+                        input.value = '';
+                        $(dialog).modal('hide');
+                        exports.refresh();
+                    });
+                }
+            });
+        }
     }
 
-    function renameStory() {
-        const toInput = queryEl(`${root}.rename-entity-input`);
-        const fromName = queryEl(`${root}#storySelector`).value.trim();
-        const toName = toInput.value.trim();
-
-        DBMS.renameStory(fromName, toName, (err) => {
-            if(err){
-                setError(queryEl(`${root} .rename-story-dialog`), err);
-            } else {
-                updateSettings(toName);
-                PermissionInformer.refresh((err2) => {
-                    if (err2) { Utils.handleError(err2); return; }
-                    toInput.value = '';
-                    $(queryEl(`${root} .rename-story-dialog`)).modal('hide');
-                    exports.refresh();
-                });
-            }
-        });
+    function renameStory(dialog) {
+        return () => {
+            const toInput = qee(dialog, '.entity-input');
+            const fromName = queryEl(`${root}#storySelector`).value.trim();
+            const toName = toInput.value.trim();
+    
+            DBMS.renameStory(fromName, toName, (err) => {
+                if(err){
+                    setError(dialog, err);
+                } else {
+                    updateSettings(toName);
+                    PermissionInformer.refresh((err2) => {
+                        if (err2) { Utils.handleError(err2); return; }
+                        toInput.value = '';
+                        $(dialog).modal('hide');
+                        exports.refresh();
+                    });
+                }
+            });
+        }
     }
 
     function removeStory() {

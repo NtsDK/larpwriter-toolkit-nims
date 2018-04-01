@@ -321,6 +321,11 @@ input[selector-filter]{
   font-size: 24px;
   cursor: pointer;
 }
+.checkbox-label:before {
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 500;
+  content: "\f0c8";
+}
 
 #eventPresenceTable .vertical-aligned-td,
 #story-characterActivityTable .vertical-aligned-td{
@@ -329,6 +334,10 @@ input[selector-filter]{
 
 input[type="checkbox"]:checked + .checkbox-label{
   color: #228B22;
+}
+
+input[type="checkbox"]:checked + .checkbox-label:before{
+  content: "\f14a";
 }
 
 .flexRoot,
