@@ -20,31 +20,30 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
+    const root = '.story-characters-tab ';
 
     exports.init = () => {
-        let button = getEl('storyCharactersAddButton');
+        let button = queryEl(root + '.storyCharactersAddButton');
         button.addEventListener('click', addCharacter);
 
-        button = getEl('storyCharactersSwitchButton');
+        button = queryEl(root + '.storyCharactersSwitchButton');
         button.addEventListener('click', switchCharacters);
 
-        button = getEl('storyCharactersRemoveButton');
+        button = queryEl(root + '.storyCharactersRemoveButton');
         button.addEventListener('click', removeCharacter);
 
-        state.ExternalCharacterSelectors = [getEl('storyCharactersAddSelector'), getEl('storyCharactersToSelector')];
-        state.InternalCharacterSelectors = [getEl('storyCharactersRemoveSelector'), getEl('storyCharactersFromSelector')];
+        state.ExternalCharacterSelectors = [queryEl(root + '.storyCharactersAddSelector'), queryEl(root + '.storyCharactersToSelector')];
+        state.InternalCharacterSelectors = [queryEl(root + '.storyCharactersRemoveSelector'), queryEl(root + '.storyCharactersFromSelector')];
 
-        exports.content = getEl('storyCharactersDiv');
+        exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
         state.ExternalCharacterSelectors.forEach(clearEl);
         state.InternalCharacterSelectors.forEach(clearEl);
 
-        clearEl(getEl('story-characterActivityTableHead'));
-        clearEl(getEl('story-characterActivityTable'));
-        clearEl(getEl('storyCharactersTableHead'));
-        clearEl(getEl('storyCharactersTable'));
+        clearEl(queryEl(root + '.story-characterActivityTable'));
+        clearEl(queryEl(root + '.storyCharactersTable'));
 
         if (!Stories.getCurrentStoryName()) { return; }
 
@@ -81,35 +80,26 @@ See the License for the specific language governing permissions and
         const removeData = getSelect2Data(removeArray);
 
         state.ExternalCharacterSelectors.forEach((selector) => {
-            $(`#${selector.id}`).select2(addData);
+            $(selector).select2(addData);
         });
         state.InternalCharacterSelectors.forEach((selector) => {
-            $(`#${selector.id}`).select2(removeData);
+            $(selector).select2(removeData);
         });
 
-        let tableHead = clearEl(getEl('story-characterActivityTableHead'));
-        let table = clearEl(getEl('story-characterActivityTable'));
-        addEl(tableHead, getCharacterHeader([getL10n('stories-name')].concat(Constants.characterActivityTypes.map(constL10n))));
-        removeArray.forEach((removeValue) => {
-            addEl(table, getCharacterActivity(removeValue, localCharacters[removeValue.value]));
-        });
-
-        tableHead = clearEl(getEl('storyCharactersTableHead'));
-        table = clearEl(getEl('storyCharactersTable'));
-        addEl(tableHead, getCharacterHeader([getL10n('stories-name'), getL10n('stories-inventory')]));
+        let table = clearEl(queryEl(root + '.storyCharactersTable'));
         removeArray.forEach((removeValue) => {
             addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
         });
     }
 
     function addCharacter() {
-        const characterName = getEl('storyCharactersAddSelector').value.trim();
+        const characterName = queryEl(root + '.storyCharactersAddSelector').value.trim();
         DBMS.addStoryCharacter(Stories.getCurrentStoryName(), characterName, Utils.processError(exports.refresh));
     }
 
     function switchCharacters() {
-        const fromName = getEl('storyCharactersFromSelector').value.trim();
-        const toName = getEl('storyCharactersToSelector').value.trim();
+        const fromName = queryEl(root + '.storyCharactersFromSelector').value.trim();
+        const toName = queryEl(root + '.storyCharactersToSelector').value.trim();
         DBMS.switchStoryCharacters(
             Stories.getCurrentStoryName(),
             fromName, toName, Utils.processError(exports.refresh)
@@ -117,7 +107,7 @@ See the License for the specific language governing permissions and
     }
 
     function removeCharacter() {
-        const characterName = getEl('storyCharactersRemoveSelector').value.trim();
+        const characterName = queryEl(root + '.storyCharactersRemoveSelector').value.trim();
         Utils.confirm(strFormat(getL10n('stories-remove-character-from-story-warning'), [characterName]), () => {
             DBMS.removeStoryCharacter(
                 Stories.getCurrentStoryName(),
@@ -126,29 +116,30 @@ See the License for the specific language governing permissions and
         });
     }
 
-    function getCharacterHeader(values) {
-        const tr = makeEl('tr');
-        values.forEach((value) => {
-            addEl(tr, addEl(makeEl('th'), makeText(value)));
-        });
-        return tr;
-    }
-
     function getCharacterInput(characterMeta, character) {
-        const tr = makeEl('tr');
-        let td = makeEl('td');
-        td.appendChild(makeText(characterMeta.displayName));
-        tr.appendChild(td);
-
-        td = makeEl('td');
-        const input = makeEl('input');
+        const el = wrapEl('tr', qte(`${root} .story-character-row-tmpl` ));
+        L10n.localizeStatic(el);
+        const qe = qee(el);
+        
+        addEl(qe('.character-name'), makeText(characterMeta.displayName));
+        
+        let input = qe('.inventoryInput');
         input.value = character.inventory;
         input.characterName = character.name;
-        addClasses(input, ['inventoryInput', 'isStoryEditable', 'form-control']);
-        input.addEventListener('change', updateCharacterInventory);
-        td.appendChild(input);
-        tr.appendChild(td);
-        return tr;
+        listen(input, 'change', updateCharacterInventory);
+        
+        Constants.characterActivityTypes.map((activityType) => {
+            input = qe('.' + activityType + ' input');
+            if (character.activity[activityType]) {
+                input.checked = true;
+            }
+            input.characterName = character.name;
+            input.activityType = activityType;
+            listen(input, 'change', onChangeCharacterActivity);
+            setAttr(input, 'id', character.name + activityType);
+            setAttr(qe('.' + activityType + ' label'), 'for', character.name + activityType);
+        }); 
+        return el;
     }
 
     function updateCharacterInventory(event) {
@@ -156,34 +147,6 @@ See the License for the specific language governing permissions and
             Stories.getCurrentStoryName(),
             event.target.characterName, event.target.value, Utils.processError()
         );
-    }
-
-    function getCharacterActivity(characterMeta, character) {
-        const tr = makeEl('tr');
-        let td = makeEl('td');
-        td.appendChild(makeText(characterMeta.displayName));
-        tr.appendChild(td);
-
-        let input;
-        addEls(tr, Constants.characterActivityTypes.map((activityType) => {
-            td = addClass(makeEl('td'), 'vertical-aligned-td');
-            input = makeEl('input');
-            addClass(input, 'isStoryEditable');
-            input.type = 'checkbox';
-            if (character.activity[activityType]) {
-                input.checked = true;
-            }
-            input.characterName = character.name;
-            input.activityType = activityType;
-            input.addEventListener('change', onChangeCharacterActivity);
-            setAttr(input, 'id', character.name + activityType);
-            addClass(input, 'hidden');
-            addEl(td, input);
-            const label = addClass(makeEl('label'), `checkbox-label activity-icon-${activityType} fa-icon`);
-            setAttr(label, 'for', character.name + activityType);
-            return addEl(td, label);
-        }));
-        return tr;
     }
 
     function onChangeCharacterActivity(event) {

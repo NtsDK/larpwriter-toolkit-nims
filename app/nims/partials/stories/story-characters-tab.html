@@ -1,48 +1,58 @@
-<div id="storyCharactersDiv" class="">
+<div class="story-characters-tab">
   <div class="panel panel-default">
     <div class="panel-body">
-      <a href="#" panel-toggler="#storyCharactersDiv div.character-management-area">
+      <a href="#" panel-toggler=".story-characters-tab div.character-management-area">
         <h3 l10n-id="stories-story-character-management"></h3>
       </a>
       <div class="character-management-area">
         <div class="entity-management">
           <div>
-            <select id="storyCharactersAddSelector" class="isStoryEditable"></select>
-            <button id="storyCharactersAddButton" class="isStoryEditable" l10n-id="common-add"></button>
+            <select class="isStoryEditable storyCharactersAddSelector"></select>
+            <button class="isStoryEditable storyCharactersAddButton" l10n-id="common-add"></button>
           </div>
           <div>
-            <select id="storyCharactersFromSelector" class="isStoryEditable"></select>
-            <span l10n-id="common-on"></span> <select id="storyCharactersToSelector" class="isStoryEditable"></select>
-            <button id="storyCharactersSwitchButton" class="isStoryEditable" l10n-id="common-replace"></button>
+            <select class="isStoryEditable storyCharactersFromSelector"></select>
+            <span l10n-id="common-on"></span> <select class="isStoryEditable storyCharactersToSelector"></select>
+            <button class="isStoryEditable storyCharactersSwitchButton" l10n-id="common-replace"></button>
           </div>
           <div>
-            <select id="storyCharactersRemoveSelector" class="isStoryEditable"></select>
-            <button id="storyCharactersRemoveButton" class="isStoryEditable" l10n-id="common-remove"></button>
+            <select class="isStoryEditable storyCharactersRemoveSelector"></select>
+            <button class="isStoryEditable storyCharactersRemoveButton" l10n-id="common-remove"></button>
           </div>
         </div>
       </div>
       <br>
 
-      <div style="display:flex;flex-wrap: wrap; justify-content:space-around;">
-        <div style="flex-grow:0;margin-right:8px;max-width: 440px;">
-          <a href="#" panel-toggler="#storyCharactersDiv table.character-inventory-area">
-            <h3 l10n-id="stories-inventory"></h3>
-          </a>
-          <table class="table table-bordered character-inventory-area">
-            <thead id="storyCharactersTableHead"></thead>
-            <tbody id="storyCharactersTable"></tbody>
-          </table>
-        </div>
-        <div style="flex-grow:1;max-width: 440px;">
-          <a href="#" panel-toggler="#storyCharactersDiv table.character-activity-area">
-            <h3 l10n-id="stories-activity"></h3>
-          </a>
-          <table class="table table-bordered table-striped character-activity-area">
-            <thead id="story-characterActivityTableHead"></thead>
-            <tbody id="story-characterActivityTable"></tbody>
-          </table>
-        </div>
-      </div>
+      <table class="table table-bordered character-inventory-area">
+        <thead>
+          <tr>
+            <th l10n-id="stories-name"></th>
+            <th l10n-id="stories-inventory"></th>
+            <th l10n-id="constant-active"></th>
+            <th l10n-id="constant-follower"></th>
+            <th l10n-id="constant-defensive"></th>
+            <th l10n-id="constant-passive"></th>
+          </tr>
+        </thead>
+        <tbody class="storyCharactersTable"></tbody>
+      </table>
     </div>
   </div>
+  
+  <template class="story-character-row-tmpl">
+    <td class="character-name"></td>
+    <td><input class="inventoryInput isStoryEditable form-control"></td>
+    <td class="vertical-aligned-td active"><input
+      class="isStoryEditable hidden" type="checkbox"><label
+      class="checkbox-label activity-icon-active fa-icon"></label></td>
+    <td class="vertical-aligned-td follower"><input
+      class="isStoryEditable hidden" type="checkbox"><label
+      class="checkbox-label activity-icon-follower fa-icon"></label></td>
+    <td class="vertical-aligned-td defensive"><input
+      class="isStoryEditable hidden" type="checkbox"><label
+      class="checkbox-label activity-icon-defensive fa-icon"></label></td>
+    <td class="vertical-aligned-td passive"><input
+      class="isStoryEditable hidden" type="checkbox"><label
+      class="checkbox-label activity-icon-passive fa-icon"></label></td>
+  </template>
 </div>

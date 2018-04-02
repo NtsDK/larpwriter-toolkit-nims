@@ -277,7 +277,7 @@ textarea.profileTextInput {
 /* events.js **/
 
 .inventoryInput {
-	width: 300px;
+/* 	width: 300px; */
 }
 #briefingPreviewDiv .inventoryInput {
 	width: 500px;
