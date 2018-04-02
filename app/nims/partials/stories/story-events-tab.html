@@ -1,56 +1,8 @@
 <div class="story-events-tab">
   <div class="panel panel-default">
     <div class="panel-body">
-      <div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
-        <div style="flex-grow:1;margin-right:8px;">
-          <a href="#" panel-toggler=".story-events-tab div.event-creation-area">
-            <h3 style="margin-top:8px;"  l10n-id="stories-event-creation"></h3>
-          </a>
-          <div class="event-creation-area">
-            <div class="entity-management">
-              <div>
-                <input id="eventNameInput" class="isStoryEditable " l10n-placeholder-id="stories-event-name"></input>
-              </div>
-              <div>
-                <textarea id="eventTextInput" class="event-text isStoryEditable " l10n-placeholder-id="stories-event-descr"></textarea>
-              </div>
-              <div>
-                <span l10n-id="stories-event-position"></span>
-                <select id="positionSelector" class="isStoryEditable eventPositionSelector "></select>
-                <button id="createEventButton" class="isStoryEditable" l10n-id="common-create"></button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style="flex-grow:1;">
-          <a href="#" panel-toggler=".story-events-tab div.event-management-area">
-            <h3 style="margin-top:8px;" l10n-id="stories-event-management"></h3>
-          </a>
-          <div class="event-management-area">
-            <div class="entity-management">
-              <div>
-                <select id="moveEventSelector" class="isStoryEditable eventEditSelector "></select> 
-                <span l10n-id="stories-event-position"></span>
-                <select id="movePositionSelector" class="isStoryEditable eventPositionSelector "></select>
-                <button id="moveEventButton" class="isStoryEditable" l10n-id="stories-move-event"></button>
-              </div>
-              <div>
-                <select id="cloneEventSelector" class="isStoryEditable eventEditSelector "></select>
-                <button id="cloneEventButton" class="isStoryEditable" l10n-id="stories-clone-event"></button>
-              </div>
-              <div>
-                <select id="mergeEventSelector" class="isStoryEditable eventEditSelector "></select>
-                <button id="mergeEventButton" class="isStoryEditable" l10n-id="stories-merge-events"></button>
-              </div>
-              <div>
-                <select id="removeEventSelector" class="isStoryEditable eventEditSelector "></select>
-                <button id="removeEventButton" class="isStoryEditable" l10n-id="common-remove"></button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
+      <button class="btn btn-default btn-reduced fa-icon create event flex-0-0-auto" 
+          l10n-title="stories-create-event"></button>
     </div>
   </div>
 
@@ -74,5 +26,17 @@
         </div>
       </div>
       <textarea class="isStoryEditable  form-control event-text "></textarea></td>
+    <td>
+      <div class="flex-column">
+        <button class="btn btn-default btn-reduced fa-icon move event flex-0-0-auto"
+            l10n-title="stories-move-event"></button>
+        <button class="btn btn-default btn-reduced fa-icon clone event flex-0-0-auto"
+            l10n-title="stories-clone-event"></button>
+        <button class="btn btn-default btn-reduced fa-icon merge event flex-0-0-auto"
+            l10n-title="stories-merge-events"></button>
+        <button class="btn btn-default btn-reduced fa-icon remove event flex-0-0-auto"
+            l10n-title="stories-remove-event"></button>
+      </div>
+    </td>
   </template>
 </div>

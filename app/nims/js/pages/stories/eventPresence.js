@@ -112,7 +112,7 @@ See the License for the specific language governing permissions and
             setAttr(input, 'id', id);
             addClass(input, 'hidden');
             addEl(td, input);
-            const label = addClass(makeEl('label'), 'checkbox-label');
+            const label = addClass(makeEl('label'), 'checkbox-label checkbox-label-icon');
             setAttr(label, 'for', id);
             addEl(td, label);
 

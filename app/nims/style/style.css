@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
 	flex-grow:0;
 }
 
-#eventNameInput{
+.eventNameInput{
 	width:100%;
 }
 /* story events **/
@@ -776,9 +776,13 @@ a[tree-panel-toggler] h3{
 }
 .remove:before {
   content: "\f2ed";
+  font-weight: 500;
 }
 .rename:before {
   content: "\f044";
+}
+.merge:before {
+  content: "\f061\f060";
 }
 .activity-icon-active:before {
   content: "\f135";
@@ -801,6 +805,10 @@ a[tree-panel-toggler] h3{
 .move:before {
 /*   content: "\f338"; */
   content: "\f30c\f309";
+}
+.clone:before {
+  font-weight: 500;
+  content: "\f24d";
 }
 .transparent{
   color: rgba(0,0,0,0);

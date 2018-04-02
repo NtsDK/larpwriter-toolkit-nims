@@ -321,7 +321,7 @@ input[selector-filter]{
   font-size: 24px;
   cursor: pointer;
 }
-.checkbox-label:before {
+.checkbox-label-icon:before {
   font-family: Font Awesome\ 5 Free;
   font-weight: 500;
   content: "\f0c8";
@@ -336,7 +336,7 @@ input[type="checkbox"]:checked + .checkbox-label{
   color: #228B22;
 }
 
-input[type="checkbox"]:checked + .checkbox-label:before{
+input[type="checkbox"]:checked + .checkbox-label-icon:before{
   content: "\f14a";
 }
 

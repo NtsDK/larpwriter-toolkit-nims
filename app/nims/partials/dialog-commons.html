@@ -37,6 +37,12 @@
     </div>
   </template>
   
+  <template class="move-event-body">
+    <div class="form-group">
+      <select class="isStoryEditable eventPositionSelector movePositionSelector form-control"></select>
+    </div>
+  </template>
+  
   <template class="create-profile-item-body">
     <div class="form-group">
       <label class="control-label" l10n-id="profiles-profile-item-name"></label>
@@ -50,6 +56,21 @@
     <div class="form-group">
       <label class="control-label" l10n-id="profiles-profile-item-type"></label>
       <select class="adminOnly form-control create-entity-type-select"></select> 
+    </div>
+  </template>
+  
+  <template class="create-event-body">
+    <div class="form-group">
+      <label class="control-label" l10n-id="stories-event-name"></label>
+      <input class="isStoryEditable form-control eventNameInput"></input>
+    </div>
+    <div class="form-group">
+      <label class="control-label" l10n-id="stories-event-descr"></label>
+      <textarea class="event-text isStoryEditable form-control eventTextInput"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="control-label" l10n-id="stories-event-position"></label>
+      <select class="isStoryEditable eventPositionSelector positionSelector form-control"></select>
     </div>
   </template>
 </div>
