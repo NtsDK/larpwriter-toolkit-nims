@@ -1,28 +1,13 @@
 <div class="story-characters-tab">
   <div class="panel panel-default">
     <div class="panel-body">
-      <a href="#" panel-toggler=".story-characters-tab div.character-management-area">
-        <h3 l10n-id="stories-story-character-management"></h3>
-      </a>
-      <div class="character-management-area">
-        <div class="entity-management">
-          <div>
-            <select class="isStoryEditable storyCharactersAddSelector"></select>
-            <button class="isStoryEditable storyCharactersAddButton" l10n-id="common-add"></button>
-          </div>
-          <div>
-            <select class="isStoryEditable storyCharactersFromSelector"></select>
-            <span l10n-id="common-on"></span> <select class="isStoryEditable storyCharactersToSelector"></select>
-            <button class="isStoryEditable storyCharactersSwitchButton" l10n-id="common-replace"></button>
-          </div>
-          <div>
-            <select class="isStoryEditable storyCharactersRemoveSelector"></select>
-            <button class="isStoryEditable storyCharactersRemoveButton" l10n-id="common-remove"></button>
-          </div>
-        </div>
-      </div>
-      <br>
-
+      <button class="btn btn-default btn-reduced fa-icon add character flex-0-0-auto" 
+          l10n-title="stories-add-character"></button>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-body">
       <table class="table table-bordered character-inventory-area">
         <thead>
           <tr>
@@ -54,5 +39,13 @@
     <td class="vertical-aligned-td passive"><input
       class="isStoryEditable hidden" type="checkbox"><label
       class="checkbox-label activity-icon-passive fa-icon"></label></td>
+    <td>
+      <button
+        class="btn btn-default btn-reduced fa-icon replace character flex-0-0-auto"
+        l10n-title="stories-replace-character"></button>
+      <button
+        class="btn btn-default btn-reduced fa-icon remove character flex-0-0-auto"
+        l10n-title="stories-remove-character"></button>
+    </td>
   </template>
 </div>

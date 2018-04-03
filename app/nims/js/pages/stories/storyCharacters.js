@@ -1,4 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+/*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,28 +21,32 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
     const root = '.story-characters-tab ';
+    let initialized = false;
 
     exports.init = () => {
-        let button = queryEl(root + '.storyCharactersAddButton');
-        button.addEventListener('click', addCharacter);
-
-        button = queryEl(root + '.storyCharactersSwitchButton');
-        button.addEventListener('click', switchCharacters);
-
-        button = queryEl(root + '.storyCharactersRemoveButton');
-        button.addEventListener('click', removeCharacter);
-
+        if(initialized) return;
+        const addCharacterDialog = UI.createModalDialog(root, addCharacter, {
+            bodySelector: 'modal-add-character-body',
+            dialogTitle: 'stories-add-character-title', 
+            actionButtonTitle: 'common-add',
+        });
+        
+        listen(qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
+        
+        state.switchCharacterDialog = UI.createModalDialog(root, switchCharacters, {
+            bodySelector: 'modal-switch-event-body',
+            dialogTitle: 'stories-switch-character-title', 
+            actionButtonTitle: 'common-replace',
+        });
         state.ExternalCharacterSelectors = [queryEl(root + '.storyCharactersAddSelector'), queryEl(root + '.storyCharactersToSelector')];
-        state.InternalCharacterSelectors = [queryEl(root + '.storyCharactersRemoveSelector'), queryEl(root + '.storyCharactersFromSelector')];
 
         exports.content = queryEl(root);
+        initialized = true;
     };
 
     exports.refresh = () => {
         state.ExternalCharacterSelectors.forEach(clearEl);
-        state.InternalCharacterSelectors.forEach(clearEl);
 
-        clearEl(queryEl(root + '.story-characterActivityTable'));
         clearEl(queryEl(root + '.storyCharactersTable'));
 
         if (!Stories.getCurrentStoryName()) { return; }
@@ -82,9 +86,6 @@ See the License for the specific language governing permissions and
         state.ExternalCharacterSelectors.forEach((selector) => {
             $(selector).select2(addData);
         });
-        state.InternalCharacterSelectors.forEach((selector) => {
-            $(selector).select2(removeData);
-        });
 
         let table = clearEl(queryEl(root + '.storyCharactersTable'));
         removeArray.forEach((removeValue) => {
@@ -92,28 +93,43 @@ See the License for the specific language governing permissions and
         });
     }
 
-    function addCharacter() {
-        const characterName = queryEl(root + '.storyCharactersAddSelector').value.trim();
-        DBMS.addStoryCharacter(Stories.getCurrentStoryName(), characterName, Utils.processError(exports.refresh));
+    function addCharacter(dialog) {
+        return () => {
+            const characterName = queryEl(root + '.storyCharactersAddSelector').value.trim();
+            DBMS.addStoryCharacter(Stories.getCurrentStoryName(), characterName, (err) => {
+                if(err){
+                    setError(dialog, err);
+                } else {
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        }
     }
 
-    function switchCharacters() {
-        const fromName = queryEl(root + '.storyCharactersFromSelector').value.trim();
-        const toName = queryEl(root + '.storyCharactersToSelector').value.trim();
-        DBMS.switchStoryCharacters(
-            Stories.getCurrentStoryName(),
-            fromName, toName, Utils.processError(exports.refresh)
-        );
+    function switchCharacters(dialog) {
+        return () => {
+            const toName = queryEl(root + '.storyCharactersToSelector').value.trim();
+            DBMS.switchStoryCharacters(Stories.getCurrentStoryName(), dialog.characterName, toName, (err) => {
+                if(err){
+                    setError(dialog, err);
+                } else {
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        }
     }
 
-    function removeCharacter() {
-        const characterName = queryEl(root + '.storyCharactersRemoveSelector').value.trim();
-        Utils.confirm(strFormat(getL10n('stories-remove-character-from-story-warning'), [characterName]), () => {
-            DBMS.removeStoryCharacter(
-                Stories.getCurrentStoryName(),
-                characterName, Utils.processError(exports.refresh)
-            );
-        });
+    function removeCharacter(characterName) {
+        return () => {
+            Utils.confirm(strFormat(getL10n('stories-remove-character-from-story-warning'), [characterName]), () => {
+                DBMS.removeStoryCharacter(
+                    Stories.getCurrentStoryName(),
+                    characterName, Utils.processError(exports.refresh)
+                );
+            });
+        }
     }
 
     function getCharacterInput(characterMeta, character) {
@@ -138,7 +154,13 @@ See the License for the specific language governing permissions and
             listen(input, 'change', onChangeCharacterActivity);
             setAttr(input, 'id', character.name + activityType);
             setAttr(qe('.' + activityType + ' label'), 'for', character.name + activityType);
-        }); 
+        });
+        
+        listen(qe('.replace.character'), 'click', () => {
+            state.switchCharacterDialog.characterName = character.name;
+            state.switchCharacterDialog.showDlg();
+        });
+        listen(qe('.remove.character'), 'click', removeCharacter(character.name));
         return el;
     }
 

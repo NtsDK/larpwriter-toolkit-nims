@@ -175,6 +175,10 @@ textarea.profileTextInput {
 	background-color: rgba(222, 226, 228, 0.5);
 }
 
+#eventPresenceSelector{
+  min-width: 200px;
+}
+
 /** events */
 
 .eventMainPanelRow{
@@ -771,7 +775,8 @@ a[tree-panel-toggler] h3{
 .allies:before {
   content: "\f2b5";
 }
-.create:before {
+.create:before,
+.add:before {
   content: "\f055";
 }
 .remove:before {
@@ -780,6 +785,9 @@ a[tree-panel-toggler] h3{
 }
 .rename:before {
   content: "\f044";
+}
+.replace:before {
+  content: "\f362";
 }
 .merge:before {
   content: "\f061\f060";
