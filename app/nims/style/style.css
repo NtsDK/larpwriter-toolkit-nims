@@ -818,7 +818,7 @@ a[tree-panel-toggler] h3{
   content: "\f02f";
 }
 .finished:before {
-  content: "\f023";
+  content: "\f11e";
 }
 .unfinished:before {
   content: "\f3c1";

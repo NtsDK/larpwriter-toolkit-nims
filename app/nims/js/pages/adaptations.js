@@ -72,8 +72,8 @@ See the License for the specific language governing permissions and
         clearEl(getEl('personalStories'));
         const storyName = event.target.selectedOptions[0].storyInfo;
         updateSettings('storyName', storyName);
-        updateSettings('characterNames', []);
-        updateSettings('eventIndexes', []);
+        updateSettings('characterNames', null);
+        updateSettings('eventIndexes', null);
         showPersonalStories(storyName);
     }
 
@@ -312,8 +312,8 @@ See the License for the specific language governing permissions and
         if (!settings.Adaptations) {
             settings.Adaptations = {
                 storyName: storyNamesOnly[0],
-                characterNames: [],
-                eventIndexes: [],
+                characterNames: null,
+                eventIndexes: null,
                 selectedFilter: 'adaptationFilterByCharacter'
             };
         }
@@ -330,7 +330,12 @@ See the License for the specific language governing permissions and
     function getNames(nameObjectArray, nameObjectProperty, settingsProperty) {
         const namesOnly = nameObjectArray.map(R.prop(nameObjectProperty));
         const names = DBMS.getSettings().Adaptations[settingsProperty];
-        const existingNames = names.filter(name => namesOnly.indexOf(name) !== -1);
+        let existingNames;
+        if(names === null){
+            existingNames = namesOnly;
+        } else {
+            existingNames = names.filter(name => namesOnly.indexOf(name) !== -1);
+        }
 
         updateSettings(settingsProperty, existingNames);
         return existingNames;
