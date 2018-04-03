@@ -43,62 +43,107 @@
         </div>
       </div>
     </div>
-    <div class="panel panel-default" style="flex-grow:1;">
-      <div class="panel-heading">
-        <h3 class="panel-title" l10n-id="adaptations-adaptations"></h3>
-      </div>
-      <div class="panel-body">
-         <div class="eventMainPanelRow" style="margin:0;">
-           <div class="eventMainPanelRow-left">
-             <h3 l10n-id="adaptations-origin"></h3>
-           </div>
-           <div class="eventMainPanelRow-right">
-             <h3 l10n-id="adaptations-adaptation"></h3>
-           </div>
-         </div>
-         <div id="personalStories">
-         </div>
-      </div>
+    <div id="personalStories" style="flex-grow:1;">
     </div>
+<!--     <div class="panel panel-default" style="flex-grow:1;"> -->
+<!--       <div class="panel-heading"> -->
+<!--         <h3 class="panel-title" l10n-id="adaptations-adaptations"></h3> -->
+<!--       </div> -->
+<!--       <div class="panel-body"> -->
+<!--          <div class="eventMainPanelRow" style="margin:0;"> -->
+<!--            <div class="eventMainPanelRow-left"> -->
+<!--              <h3 l10n-id="adaptations-origin"></h3> -->
+<!--            </div> -->
+<!--            <div class="eventMainPanelRow-right"> -->
+<!--              <h3 l10n-id="adaptations-adaptation"></h3> -->
+<!--            </div> -->
+<!--          </div> -->
+<!--          <div id="personalStories"> -->
+<!--          </div> -->
+<!--       </div> -->
+<!--     </div> -->
   </div>
   
   <template class="adaptation-row-tmpl">
-    <div class="eventMainPanelRow eventRow-dependent">
-      <div class="eventMainPanelRow-left">
-      </div>
-      <div class="eventMainPanelRow-right">
-        <div class="events-eventsContainer">
-        </div>
+    <div class="container-fluid eventRow-dependent">
+      <div class="row eventMainPanelRow-left events-eventsContainer">
       </div>
     </div>
+    
+<!--     <div class="eventMainPanelRow eventRow-dependent"> -->
+<!--       <div class="eventMainPanelRow-left"> -->
+<!--       </div> -->
+<!--       <div class="eventMainPanelRow-right"> -->
+<!--         <div class="events-eventsContainer"> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--     </div> -->
+
+<!--     <div class="eventMainPanelRow eventRow-dependent"> -->
+<!--       <div class="eventMainPanelRow-left"> -->
+<!--       </div> -->
+<!--       <div class="eventMainPanelRow-right"> -->
+<!--         <div class="events-eventsContainer"> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--     </div> -->
   </template>
   
   <template class="origin-tmpl">
-    <div>
-      <div class="story-events-div-main">
-        <div class="story-events-div-left">
-          <div class="event-name"></div>
+    <div class="col-xs-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading flex-root">
+          <h1 class="panel-title event-name flex-1-1-auto"></h1>
+          <input class="isStoryEditable event-time form-control flex-0-0-auto">
         </div>
-        <div class="story-events-div-right">
-          <input class="isStoryEditable event-time form-control">
+        <div class="panel-body">
+          <textarea class="isStoryEditable eventPersonalStory form-control"></textarea>
         </div>
       </div>
-      <textarea class="isStoryEditable eventPersonalStory form-control"></textarea>
     </div>
+<!--     <div> -->
+<!--       <div class="story-events-div-main"> -->
+<!--         <div class="story-events-div-left"> -->
+<!--           <div class="event-name"></div> -->
+<!--         </div> -->
+<!--         <div class="story-events-div-right"> -->
+<!--           <input class="isStoryEditable event-time form-control"> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--       <textarea class="isStoryEditable eventPersonalStory form-control"></textarea> -->
+<!--     </div> -->
+    
+    
   </template>
   
   <template class="adaptation-tmpl">
-    <div class="events-singleEventAdaptation">
-      <div class="story-events-div-main">
-        <div class="story-events-div-left characterName"></div>
-        <div class="story-events-div-right">
-          <input class="adaptationTimeInput form-control">
+    <div class="col-xs-6">
+<!--       <div class="panel panel-primary custom-adaptations-panel"> -->
+      <div class="panel panel-default">
+        <div class="panel-heading flex-root">
+          <h1 class="panel-title characterName flex-1-1-auto"></h1>
+          <input class="isStoryEditable adaptationTimeInput form-control flex-0-0-auto" l10n-placeholder-id="adaptations-subjective-time">
+          <button class="btn btn-default btn-reduced fa-icon finished flex-0-0-auto" l10n-title="profiles-create-character"></button>
+        </div>
+        <div class="panel-body">
+          <textarea class="eventPersonalStory form-control"></textarea>
+        </div>
+        <div class="checkbox-area hidden">
+          <input class="" type="checkbox"><label l10n-id="constant-finishedText"></label>
         </div>
       </div>
-      <textarea class="eventPersonalStory form-control"></textarea>
-      <div class="checkbox-area">
-        <input class="" type="checkbox"><label l10n-id="constant-finishedText"></label>
-      </div>
     </div>
+<!--     <div class="events-singleEventAdaptation"> -->
+<!--       <div class="story-events-div-main"> -->
+<!--         <div class="story-events-div-left characterName"></div> -->
+<!--         <div class="story-events-div-right"> -->
+<!--           <input class="adaptationTimeInput form-control"> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--       <textarea class="eventPersonalStory form-control"></textarea> -->
+<!--       <div class="checkbox-area"> -->
+<!--         <input class="" type="checkbox"><label l10n-id="constant-finishedText"></label> -->
+<!--       </div> -->
+<!--     </div> -->
   </template>
 </div>

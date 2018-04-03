@@ -197,12 +197,12 @@ textarea.profileTextInput {
 }
 
 .eventMainPanelRow-left{
-  flex-grow:0;
-  margin-right: 20px;
-  flex-basis: 360px;
+/*   flex-grow:0; */
+/*   margin-right: 20px; */
+/*   flex-basis: 360px; */
 }
 .eventMainPanelRow-right{
-  flex-grow:1;
+/*   flex-grow:1; */
 }
 
 /* events **/
@@ -246,8 +246,9 @@ textarea.profileTextInput {
 
 textarea.eventPersonalStory {
 	height: 160px;
-	display: block;
-	width:360px;
+    resize: vertical;
+/* 	display: block; */
+/* 	width:360px; */
 }
 
 #personalStoriesCharacterContainer{
@@ -521,6 +522,11 @@ textarea.game-description-area {
 .previewEventTime{
   width: 160px;
   display: inline-block;
+}
+
+.event-time, .adaptationTimeInput{
+  width: 160px;
+/*   display: inline-block; */
 }
 
 #briefingPreviewDiv .adaptationTimeInput{
@@ -811,6 +817,12 @@ a[tree-panel-toggler] h3{
 .print:before {
   content: "\f02f";
 }
+.finished:before {
+  content: "\f023";
+}
+.unfinished:before {
+  content: "\f3c1";
+}
 .move:before {
 /*   content: "\f338"; */
   content: "\f30c\f309";
@@ -920,4 +932,22 @@ a[tree-panel-toggler] h3{
 
 .icon-padding:before {
   padding-right: 6px;
+}
+
+.custom-adaptations-panel {
+/*   background-color: rgb(37, 92, 3); */
+/*   border-color: rgb(57, 150, 5); */
+  background-color: rgb(57, 150, 5);
+  border-color: rgb(37, 92, 3);
+}
+
+.custom-adaptations-panel>.panel-heading {
+  background-color: rgb(57, 150, 5);
+  border-color: rgb(37, 92, 3);
+/*   background-color: rgb(37, 92, 3); */
+/*   border-color: rgb(57, 150, 5); */
+}
+
+#personalStories .row {
+  margin-bottom: 30px;
 }
