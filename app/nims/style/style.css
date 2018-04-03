@@ -175,7 +175,8 @@ textarea.profileTextInput {
 	background-color: rgba(222, 226, 228, 0.5);
 }
 
-#eventPresenceSelector{
+#eventPresenceSelector,
+#personalStoriesCharacterContainer{
   min-width: 200px;
 }
 
@@ -243,7 +244,7 @@ textarea.profileTextInput {
   padding: 16px 0;
 }
 
-.eventPersonalStory {
+textarea.eventPersonalStory {
 	height: 160px;
 	display: block;
 	width:360px;
@@ -915,4 +916,8 @@ a[tree-panel-toggler] h3{
 }
 .relation-unfinished{
   background-color: rgb(251, 126, 129);
+}
+
+.icon-padding:before {
+  padding-right: 6px;
 }

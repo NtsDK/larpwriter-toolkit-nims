@@ -25,13 +25,13 @@ See the License for the specific language governing permissions and
         
     exports.init = () => {
         if(initialized) return;
-        const createEventDialog = UI.createModalDialog(root, createEvent, {
+        exports.createEventDialog = UI.createModalDialog('.stories-tab ', createEvent, {
             bodySelector: 'create-event-body',
             dialogTitle: 'stories-event-creation', 
             actionButtonTitle: 'common-create',
         });
         
-        listen(qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
+//        listen(qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
         
         state.moveEventDialog = UI.createModalDialog(root, moveEvent, {
             bodySelector: 'move-event-body',

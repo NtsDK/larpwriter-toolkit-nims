@@ -29,10 +29,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     const initPage = () => {
         L10n.init();
-        L10n.localizeStatic();
         L10n.onL10nChange(() => state.currentView.refresh());
         UI.initSelectorFilters();
         UI.initPanelTogglers();
+        L10n.localizeStatic();
         function updateDialogs() {
             vex.dialog.buttons.YES.text = getL10n('common-ok');
             vex.dialog.buttons.NO.text = getL10n('common-cancel');
@@ -145,7 +145,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
                 
                 const tabs = {};
-                const firstTab = 'Stories';
+                const firstTab = 'Adaptations';
                 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {

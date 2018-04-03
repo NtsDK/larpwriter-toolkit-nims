@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     let onChangeDateTimeCreator;
+    const root = '.adaptations-tab ';
 
     exports.init = () => {
         listen(getEl('events-storySelector'), 'change', updateAdaptationSelectorDelegate);
@@ -28,7 +29,7 @@ See the License for the specific language governing permissions and
         listen(getEl('events-eventSelector'), 'change', showPersonalStoriesByEvents);
         listen(getEl('finishedStoryCheckbox'), 'change', exports.refresh);
         queryEls('.adaptations-tab input[name=adaptationFilter]').map(listen(R.__, 'change', updateFilter));
-        exports.content = queryEl('.adaptations-tab');
+        exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
@@ -61,6 +62,7 @@ See the License for the specific language governing permissions and
                     setProp(option, 'storyInfo', storyName.value);
                     addEl(selector, option);
                 });
+                setAttr(selector, 'size', Math.min(storyNames.length, 10));
                 showPersonalStories(selectedStoryName);
             });
         });
@@ -257,20 +259,22 @@ See the License for the specific language governing permissions and
 
             addEls(divContainer, characterNames.filter(characterName => event.characters[characterName])
                 .map((characterName) => {
-                    div = addClass(makeEl('div'), 'events-singleEventAdaptation');
-                    setAttr(div, 'dependent-on-character', characterName);
-                    divMain = addClass(makeEl('div'), 'story-events-div-main');
-                    divLeft = addClass(makeEl('div'), 'story-events-div-left');
-                    divRight = addClass(makeEl('div'), 'story-events-div-right');
-                    addEl(div, addEls(divMain, [divLeft, divRight]));
                     isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
-
-                    addEl(divLeft, makeText(characterName));
-                    addEl(divRight, UI.makeAdaptationTimeInput(storyName, event, characterName, isEditable));
-                    addEl(div, makeAdaptationTextInput(storyName, event, characterName, isEditable));
+                    const div = qmte(`${root} .adaptation-tmpl` );
+                    setAttr(div, 'dependent-on-character', characterName);
+                    addEl(qee(div, '.characterName'), makeText(characterName));
+                    
                     const id = JSON.stringify([storyName, event.index, characterName]);
-                    addEl(div, UI.makeReadyCheckbox(id, event.characters[characterName].ready, isEditable, 
-                            UI.onChangeAdaptationReadyStatus));
+                    UI.populateAdaptationTimeInput(qee(div, '.adaptationTimeInput'), storyName, event, characterName, isEditable);
+                    UI.populateReadyCheckbox(qee(div, '.checkbox-area'), id, event.characters[characterName].ready, isEditable, 
+                          UI.onChangeAdaptationReadyStatus)
+                    
+                    const input = qee(div, 'textarea');
+                    setClassByCondition(input, 'notEditable', !isEditable);
+                    input.value = event.characters[characterName].text;
+                    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+                    listen(input, 'change', onChangeAdaptationText);
+                    L10n.localizeStatic(div);
                     return div;
                 }));
 
@@ -291,16 +295,6 @@ See the License for the specific language governing permissions and
         input.value = event.text;
         input.dataKey = JSON.stringify([storyName, event.index]);
         listen(input, 'change', onChangeOriginText);
-        return input;
-    }
-
-    function makeAdaptationTextInput(storyName, event, characterName, isEditable) {
-        const input = makeEl('textarea');
-        setClassByCondition(input, 'notEditable', !isEditable);
-        addClass(input, 'eventPersonalStory');
-        input.value = event.characters[characterName].text;
-        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-        listen(input, 'change', onChangeAdaptationText);
         return input;
     }
 

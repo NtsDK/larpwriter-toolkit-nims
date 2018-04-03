@@ -96,6 +96,10 @@ function qte(sel){
     return document.querySelector(sel).content.cloneNode(true);
 }
 
+function qmte(sel){
+    return addEl(makeEl('div'), qte(sel)).firstChild;
+}
+
 function queryEls(sel) {
     return nl2array(document.querySelectorAll(sel));
 }

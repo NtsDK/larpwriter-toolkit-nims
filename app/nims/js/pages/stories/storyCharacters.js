@@ -25,13 +25,13 @@ See the License for the specific language governing permissions and
 
     exports.init = () => {
         if(initialized) return;
-        const addCharacterDialog = UI.createModalDialog(root, addCharacter, {
+        exports.addCharacterDialog = UI.createModalDialog('.stories-tab ', addCharacter, {
             bodySelector: 'modal-add-character-body',
             dialogTitle: 'stories-add-character-title', 
             actionButtonTitle: 'common-add',
         });
         
-        listen(qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
+//        listen(qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
         
         state.switchCharacterDialog = UI.createModalDialog(root, switchCharacters, {
             bodySelector: 'modal-switch-event-body',

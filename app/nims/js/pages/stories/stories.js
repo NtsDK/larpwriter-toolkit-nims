@@ -63,6 +63,9 @@ See the License for the specific language governing permissions and
             qee(renameStoryDialog, '.entity-input').value = queryEl(`${root}#storySelector`).value.trim();
             renameStoryDialog.showDlg();
         });
+        
+        listen(qe(`${root}.create.event`), 'click', () => StoryEvents.createEventDialog.showDlg());
+        listen(qe(`${root}.add.character`), 'click', () => StoryCharacters.addCharacterDialog.showDlg());
 
         $('#storySelector').select2().on('change', onStorySelectorChangeDelegate);
 

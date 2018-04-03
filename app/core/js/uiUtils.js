@@ -114,14 +114,13 @@ See the License for the specific language governing permissions and
     };
 
     exports.initSelectorFilters = () => {
-        const elems = document.querySelectorAll('[selector-filter]');
-        let el, sel;
-        for (let i = 0; i < elems.length; i++) {
-            el = elems[i];
-            sel = queryEl(getAttr(el, 'selector-filter'));
+        queryEls('[selector-filter]').forEach( el => {
+            const sel = queryEl(getAttr(el, 'selector-filter'));
             el.value = '';
+            setAttr(el, 'l10n-placeholder-id', 'constant-filter');
+            addClass(el, 'form-control');
             listen(el, 'input', filterOptions(sel));
-        }
+        });
     };
 
     var filterOptions = sel => (event) => {
@@ -292,6 +291,14 @@ See the License for the specific language governing permissions and
         listen(input, 'change', onChangePersonalTimeDelegate);
         return input;
     };
+    
+    exports.populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
+        setClassByCondition(input, 'notEditable', !isEditable);
+        input.value = event.characters[characterName].time;
+        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+        listen(input, 'change', onChangePersonalTimeDelegate);
+        return input;
+    };
 
     var onChangePersonalTimeDelegate = (event) => {
         const dataKey = JSON.parse(event.target.dataKey);
@@ -309,6 +316,16 @@ See the License for the specific language governing permissions and
         listen(input, 'change', callback);
         addEl(div, input);
         addEl(div, setAttr(addEl(makeEl('label'), makeText(constL10n(Constants.finishedText))), 'for', input.id));
+        return div;
+    };
+    
+    exports.populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
+        const input = qee(div, 'input');
+        setClassByCondition(input, 'notEditable', !isEditable);
+        input.checked = checked;
+        input.id = id;
+        listen(input, 'change', callback);
+        setAttr(qee(div, 'label'), 'for', input.id);
         return div;
     };
 
