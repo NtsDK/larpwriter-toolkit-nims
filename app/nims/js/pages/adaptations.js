@@ -226,77 +226,61 @@ See the License for the specific language governing permissions and
     }
 
     function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
-        let tr, td, div, divContainer, isEditable;
-        let divMain, divLeft, divRight;
-
         addEls(clearEl(getEl('personalStories')), events.map((event) => {
-            tr = makeEl('div');
-            addClasses(tr, ['eventMainPanelRow', `${event.index}-dependent`, 'eventRow-dependent']);
-
+            const tr = qmte(`${root} .adaptation-row-tmpl`);
+            addClass(tr, `${event.index}-dependent`);
             tr.dependsOnCharacters = R.keys(event.characters);
+            addEl(qee(tr, '.eventMainPanelRow-left'), makeOriginCard(event, metaInfo, storyName));
+            addEls(qee(tr, '.events-eventsContainer'), characterNames.filter(characterName => event.characters[characterName])
+                .map(makeAdaptationCard(areAdaptationsEditable, event, storyName)));
 
-            td = addClass(makeEl('div'), 'eventMainPanelRow-left');
-
-            divMain = addClass(makeEl('div'), 'story-events-div-main');
-            divLeft = addClass(makeEl('div'), 'story-events-div-left');
-            divRight = addClass(makeEl('div'), 'story-events-div-right');
-            addEl(td, addEls(divMain, [divLeft, divRight]));
-
-            addEl(divLeft, addEl(makeEl('div'), makeText(event.name)));
-            addEl(divRight, UI.makeEventTimePicker({
-                eventTime: event.time,
-                index: event.index,
-                preGameDate: metaInfo.preGameDate,
-                date: metaInfo.date,
-                extraClasses: ['isStoryEditable'],
-                onChangeDateTimeCreator: onChangeDateTimeCreator(storyName)
-            }));
-            addEl(td, makeOriginTextInput(storyName, event));
-            addEl(tr, td);
-
-            td = addClass(makeEl('div'), 'eventMainPanelRow-right');
-            divContainer = addClass(makeEl('div'), 'events-eventsContainer');
-
-            addEls(divContainer, characterNames.filter(characterName => event.characters[characterName])
-                .map((characterName) => {
-                    isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
-                    const div = qmte(`${root} .adaptation-tmpl` );
-                    setAttr(div, 'dependent-on-character', characterName);
-                    addEl(qee(div, '.characterName'), makeText(characterName));
-                    
-                    const id = JSON.stringify([storyName, event.index, characterName]);
-                    UI.populateAdaptationTimeInput(qee(div, '.adaptationTimeInput'), storyName, event, characterName, isEditable);
-                    UI.populateReadyCheckbox(qee(div, '.checkbox-area'), id, event.characters[characterName].ready, isEditable, 
-                          UI.onChangeAdaptationReadyStatus)
-                    
-                    const input = qee(div, 'textarea');
-                    setClassByCondition(input, 'notEditable', !isEditable);
-                    input.value = event.characters[characterName].text;
-                    input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-                    listen(input, 'change', onChangeAdaptationText);
-                    L10n.localizeStatic(div);
-                    return div;
-                }));
-
-            addEl(tr, addEl(td, divContainer));
             return tr;
         }));
     }
+    
+    function makeOriginCard(event, metaInfo, storyName){
+        const td = qmte(`${root} .origin-tmpl`);
+        addEl(qee(td, '.event-name'), makeText(event.name));
+        
+        UI.makeEventTimePicker2(qee(td, '.event-time'), {
+            eventTime: event.time,
+            index: event.index,
+            preGameDate: metaInfo.preGameDate,
+            date: metaInfo.date,
+            onChangeDateTimeCreator: onChangeDateTimeCreator(storyName)
+        });
+        
+        const input = qee(td, 'textarea');
+        input.value = event.text;
+        input.dataKey = JSON.stringify([storyName, event.index]);
+        listen(input, 'change', onChangeOriginText);
+        return td;
+    }
+    
+    var makeAdaptationCard = R.curry((areAdaptationsEditable, event, storyName, characterName) => {
+        const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
+        const div = qmte(`${root} .adaptation-tmpl` );
+        setAttr(div, 'dependent-on-character', characterName);
+        addEl(qee(div, '.characterName'), makeText(characterName));
+        
+        const id = JSON.stringify([storyName, event.index, characterName]);
+        UI.populateAdaptationTimeInput(qee(div, '.adaptationTimeInput'), storyName, event, characterName, isEditable);
+        UI.populateReadyCheckbox(qee(div, '.checkbox-area'), id, event.characters[characterName].ready, isEditable, 
+              UI.onChangeAdaptationReadyStatus)
+        
+        const input = qee(div, 'textarea');
+        setClassByCondition(input, 'notEditable', !isEditable);
+        input.value = event.characters[characterName].text;
+        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
+        listen(input, 'change', onChangeAdaptationText);
+        L10n.localizeStatic(div);
+        return div;
+    });
 
     onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
         DBMS.setEventOriginProperty(storyName, myInput.eventIndex, 'time', input.val(), Utils.processError());
         removeClass(myInput, 'defaultDate');
     });
-
-    function makeOriginTextInput(storyName, event) {
-        const input = makeEl('textarea');
-        addClass(input, 'isStoryEditable');
-        addClass(input, 'eventPersonalStory');
-        input.value = event.text;
-        input.dataKey = JSON.stringify([storyName, event.index]);
-        listen(input, 'change', onChangeOriginText);
-        return input;
-    }
 
     function onChangeOriginText(event) {
         const dataKey = JSON.parse(event.target.dataKey);

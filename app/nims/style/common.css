@@ -157,7 +157,8 @@ body {
   content: "\f2bb";
 }
 .timelineButton::before{
-  content: "\f1de";
+  content: "\f073";
+  font-weight: 500;
 }
 .socialNetworkButton::before{
   content: "\f126";
