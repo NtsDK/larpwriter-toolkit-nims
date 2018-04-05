@@ -1,4 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+/*Copyright 2015, 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -264,15 +264,36 @@ See the License for the specific language governing permissions and
         addEl(qee(div, '.characterName'), makeText(characterName));
         
         const id = JSON.stringify([storyName, event.index, characterName]);
-        UI.populateAdaptationTimeInput(qee(div, '.adaptationTimeInput'), storyName, event, characterName, isEditable);
-        UI.populateReadyCheckbox(qee(div, '.checkbox-area'), id, event.characters[characterName].ready, isEditable, 
-              UI.onChangeAdaptationReadyStatus)
+        const timeInput = qee(div, '.adaptationTimeInput');
+        UI.populateAdaptationTimeInput(timeInput, storyName, event, characterName, isEditable);
+//        UI.populateReadyCheckbox(qee(div, '.checkbox-area'), id, event.characters[characterName].ready, isEditable, 
+//              UI.onChangeAdaptationReadyStatus)
+              
         
         const input = qee(div, 'textarea');
         setClassByCondition(input, 'notEditable', !isEditable);
         input.value = event.characters[characterName].text;
         input.dataKey = JSON.stringify([storyName, event.index, characterName]);
         listen(input, 'change', onChangeAdaptationText);
+        
+        const finishedBtn = qee(div, '.finished');
+        const isFinished = event.characters[characterName].ready;
+        setClassIf(finishedBtn, 'btn-primary', isFinished);
+        finishedBtn.id = id;
+        const enableInputs = (value) => {
+            Utils.enableEl(input, !value);
+            Utils.enableEl(timeInput, !value);
+        };
+        enableInputs(isFinished);
+        
+        listen(finishedBtn, 'click', UI.onChangeAdaptationReadyStatus2(enableInputs));
+//        listen(finishedBtn, 'click', (e) => {
+////            DBMS.doExportProfileItemChange(type, profileSettings.name, !hasClass(e.target, 'btn-primary'), (err) => {
+////                if (err) { Utils.handleError(err); return; }
+////                toggleClass(e.target, 'btn-primary');
+////            });
+//        });
+        
         L10n.localizeStatic(div);
         return div;
     });

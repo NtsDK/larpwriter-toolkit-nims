@@ -96,6 +96,7 @@ See the License for the specific language governing permissions and
                     onStorySelectorChange();
                 }
 
+                R.values(state.left.views).forEach(view => view.refresh());
                 if (state.left.currentView)state.left.currentView.refresh();
                 if (state.right.currentView)state.right.currentView.refresh();
             });

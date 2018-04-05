@@ -63,7 +63,6 @@ See the License for the specific language governing permissions and
     };
 
     function clearInterface() {
-        clearEl(getEl('eventBlockHead'));
         clearEl(getEl('eventBlock'));
         const positionSelectors = nl2array(document.querySelectorAll('.eventPositionSelector'));
         R.ap([clearEl], positionSelectors);
@@ -73,10 +72,7 @@ See the License for the specific language governing permissions and
 
     function rebuildInterface(events, metaInfo) {
         // event part
-        const tableHead = clearEl(getEl('eventBlockHead'));
         const table = clearEl(getEl('eventBlock'));
-
-        addEl(tableHead, getEventHeader());
 
         // refresh position selector
         const addOpt = R.curry((sel, text) => {

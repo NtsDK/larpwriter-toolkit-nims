@@ -334,6 +334,18 @@ See the License for the specific language governing permissions and
         const value = event.target.checked;
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, Utils.processError());
     };
+    
+    exports.onChangeAdaptationReadyStatus2 = (callback) => {
+        return (event) => {
+            const dataKey = JSON.parse(event.target.id);
+            const value = !hasClass(event.target, 'btn-primary');
+            DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, (err) => {
+                if (err) { Utils.handleError(err); return; } 
+                setClassByCondition(event.target, 'btn-primary', value);
+                callback(value);
+            });
+        };
+    }; 
 
     exports.makePanelCore = (title, content) => {
         const panel = addClasses(makeEl('div'), ['panel', 'panel-default']);

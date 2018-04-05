@@ -21,11 +21,12 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
     const root = '.story-characters-tab ';
+    const superRoot = '.stories-tab ';
     let initialized = false;
 
     exports.init = () => {
         if(initialized) return;
-        exports.addCharacterDialog = UI.createModalDialog('.stories-tab ', addCharacter, {
+        exports.addCharacterDialog = UI.createModalDialog(superRoot, addCharacter, {
             bodySelector: 'modal-add-character-body',
             dialogTitle: 'stories-add-character-title', 
             actionButtonTitle: 'common-add',
@@ -38,7 +39,7 @@ See the License for the specific language governing permissions and
             dialogTitle: 'stories-switch-character-title', 
             actionButtonTitle: 'common-replace',
         });
-        state.ExternalCharacterSelectors = [queryEl(root + '.storyCharactersAddSelector'), queryEl(root + '.storyCharactersToSelector')];
+        state.ExternalCharacterSelectors = [queryEl(superRoot + '.storyCharactersAddSelector'), queryEl(root + '.storyCharactersToSelector')];
 
         exports.content = queryEl(root);
         initialized = true;
@@ -95,7 +96,7 @@ See the License for the specific language governing permissions and
 
     function addCharacter(dialog) {
         return () => {
-            const characterName = queryEl(root + '.storyCharactersAddSelector').value.trim();
+            const characterName = queryEl(superRoot + '.storyCharactersAddSelector').value.trim();
             DBMS.addStoryCharacter(Stories.getCurrentStoryName(), characterName, (err) => {
                 if(err){
                     setError(dialog, err);
