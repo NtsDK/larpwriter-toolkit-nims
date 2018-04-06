@@ -230,15 +230,15 @@ See the License for the specific language governing permissions and
             const tr = qmte(`${root} .adaptation-row-tmpl`);
             addClass(tr, `${event.index}-dependent`);
             tr.dependsOnCharacters = R.keys(event.characters);
-            addEl(qee(tr, '.eventMainPanelRow-left'), makeOriginCard(event, metaInfo, storyName));
+            addEl(qee(tr, '.eventMainPanelRow-left'), exports.makeOriginCard(event, metaInfo, storyName));
             addEls(qee(tr, '.events-eventsContainer'), characterNames.filter(characterName => event.characters[characterName])
-                .map(makeAdaptationCard(areAdaptationsEditable, event, storyName)));
+                .map(exports.makeAdaptationCard(areAdaptationsEditable, event, storyName)));
 
             return tr;
         }));
     }
     
-    function makeOriginCard(event, metaInfo, storyName){
+    exports.makeOriginCard = (event, metaInfo, storyName) => {
         const td = qmte(`${root} .origin-tmpl`);
         addEl(qee(td, '.event-name'), makeText(event.name));
         
@@ -257,7 +257,7 @@ See the License for the specific language governing permissions and
         return td;
     }
     
-    var makeAdaptationCard = R.curry((areAdaptationsEditable, event, storyName, characterName) => {
+    exports.makeAdaptationCard = R.curry((areAdaptationsEditable, event, storyName, characterName) => {
         const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
         const div = qmte(`${root} .adaptation-tmpl` );
         setAttr(div, 'dependent-on-character', characterName);

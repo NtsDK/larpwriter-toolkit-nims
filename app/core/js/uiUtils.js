@@ -364,8 +364,10 @@ See the License for the specific language governing permissions and
     };
 
     exports.makeProfileTable = (profileStructure, profile) => {
+        const container = qmte(`.profile-editor-container-tmpl`);
+        addClass(container, 'profile-table');
         let value;
-        const profileDiv = addEls(makeEl('tbody'), profileStructure.filter(element => element.doExport).map((element) => {
+        return addEls(container, profileStructure.filter(element => element.doExport).map((element) => {
             switch (element.type) {
             case 'text':
                 value = addClass(makeEl('span'), 'briefingTextSpan');
@@ -383,9 +385,11 @@ See the License for the specific language governing permissions and
             default:
                 throw new Error(`Unexpected type ${element.type}`);
             }
-            return exports.makeTableRow(makeText(element.name), value);
+            const row = qmte(`.profile-editor-row-tmpl`);
+            addEl(qee(row, '.profile-item-name'), makeText(element.name));
+            addEl(qee(row, '.profile-item-input'), value);
+            return row;
         }));
-        return addEl(addClasses(makeEl('table'), ['table', 'table-striped']), profileDiv);
     };
 
     exports.makeTableRow = (col1, col2) => addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);

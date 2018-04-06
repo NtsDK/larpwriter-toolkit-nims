@@ -235,28 +235,29 @@ See the License for the specific language governing permissions and
             addEl(div, addEl(makeEl('h4'), makeText(groupText.groupName)));
             const span = addEl(makeEl('textarea'), makeText(groupText.text));
             setAttr(span, 'disabled', 'disabled');
-            addClass(span, 'briefingTextSpan');
+            addClasses(span, ['briefingTextSpan','form-control']);
             return addEl(div, span);
         }));
     }
 
     function makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap) {
-        const inventoryDiv = makeEl('tbody');
-
-        allInventoryLists.forEach((elem) => {
+        const container = qmte(`.profile-editor-container-tmpl`);
+        return addEls(container, allInventoryLists.map((elem) => {
             const input = makeEl('input');
             input.value = elem.inventory;
             input.storyName = elem.storyName;
             input.characterName = characterName;
-            addClass(input, 'inventoryInput');
+            addClasses(input, ['inventoryInput','form-control']);
             if (!userStoryNamesMap[elem.storyName]) {
                 addClass(input, 'notEditable');
             }
             input.addEventListener('change', updateCharacterInventory);
-
-            addEl(inventoryDiv, UI.makeTableRow(makeText(elem.storyName), input));
-        });
-        return addEl(addClasses(makeEl('table'), ['table', 'table-striped']), inventoryDiv);
+            
+            const row = qmte(`.profile-editor-row-tmpl`);
+            addEl(qee(row, '.profile-item-name'), makeText(elem.storyName));
+            addEl(qee(row, '.profile-item-input'), input);
+            return row;
+        }));
     }
 
     function showEventsByTime(content, characterName, userStoryNamesMap, flags) {
@@ -269,30 +270,35 @@ See the License for the specific language governing permissions and
 
             PermissionInformer.areAdaptationsEditable(adaptations, (err2, areAdaptationsEditable) => {
                 if (err2) { Utils.handleError(err2); return; }
+                
+                DBMS.getMetaInfo((err3, metaInfo) => {
+                    if (err3) { Utils.handleError(err3); return; }
 
-                const opts = {
-                    userStoryNamesMap,
-                    areAdaptationsEditable,
-                    showStoryName: true
-                };
-
-                const splitConstant = 5;
-
-                addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
-                    const eventContent = addEls(makeEl('div'), subPart.map((event, j) => {
-                        opts.index = (i * splitConstant) + 1 + j;
-                        return showEvent(event, characterName, opts, flags);
+                    const opts = {
+                        userStoryNamesMap,
+                        areAdaptationsEditable,
+                        showStoryName: true,
+                        metaInfo
+                    };
+    
+                    const splitConstant = 5;
+    
+                    addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
+                        const eventContent = addEls(makeEl('div'), subPart.map((event, j) => {
+                            opts.index = (i * splitConstant) + 1 + j;
+                            return showEvent(event, characterName, opts, flags);
+                        }));
+    
+                        let name;
+                        if (flags.disableHeaders) {
+                            name = makeText(strFormat(getL10n('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
+                        } else {
+                            name = addEls(makeEl('div'), subPart.map(event => getEventHeaderDiv(event, true)));
+                        }
+                        return makePanel(name, eventContent, flags.hideAllPanels);
                     }));
-
-                    let name;
-                    if (flags.disableHeaders) {
-                        name = makeText(strFormat(getL10n('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
-                    } else {
-                        name = addEls(makeEl('div'), subPart.map(event => getEventHeaderDiv(event, true)));
-                    }
-                    return makePanel(name, eventContent, flags.hideAllPanels);
-                }));
-                onBuildContentFinish();
+                    onBuildContentFinish();
+                });
             });
         });
     }
@@ -316,20 +322,24 @@ See the License for the specific language governing permissions and
             }));
             PermissionInformer.areAdaptationsEditable(adaptations, (err2, areAdaptationsEditable) => {
                 if (err2) { Utils.handleError(err2); return; }
-                const opts = {
-                    userStoryNamesMap,
-                    areAdaptationsEditable,
-                    showStoryName: false
-                };
-
-                addEls(content, eventGroups.map((elem, i) => {
-                    const storyContent = addEls(makeEl('div'), elem.events.map((event, j) => {
-                        opts.index = j + 1;
-                        return showEvent(event, characterName, opts, flags);
+                DBMS.getMetaInfo((err3, metaInfo) => {
+                    if (err3) { Utils.handleError(err3); return; }
+                    const opts = {
+                        userStoryNamesMap,
+                        areAdaptationsEditable,
+                        showStoryName: false,
+                        metaInfo
+                    };
+    
+                    addEls(content, eventGroups.map((elem, i) => {
+                        const storyContent = addEls(makeEl('div'), elem.events.map((event, j) => {
+                            opts.index = j + 1;
+                            return showEvent(event, characterName, opts, flags);
+                        }));
+                        return makePanel(getStoryHeader(elem, i, flags.disableHeaders), storyContent, flags.hideAllPanels);
                     }));
-                    return makePanel(getStoryHeader(elem, i, flags.disableHeaders), storyContent, flags.hideAllPanels);
-                }));
-                onBuildContentFinish();
+                    onBuildContentFinish();
+                });
             });
         });
     }
@@ -348,63 +358,73 @@ See the License for the specific language governing permissions and
     }
 
     function showEvent(event, characterName, opts, flags) {
-        const eventDiv = makeEl('div');
-        const { isAdaptationsMode } = flags;
-        const originText = event.text;
-        const adaptationText = event.characters[characterName].text;
-        const isOriginEditable = !!opts.userStoryNamesMap[event.storyName];
-        const isAdaptationEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
-        const isAdaptationEmpty = adaptationText === '';
-        const els = [];
-
-        els.push(getEventLabelText(event, opts.showStoryName, opts.index, flags.disableHeaders));
-        els.push(makeText(getL10n('briefings-subjective-time')));
-        els.push(UI.makeAdaptationTimeInput(event.storyName, event, characterName, isAdaptationEditable));
-
-        let input;
-        if (isAdaptationsMode || isAdaptationEmpty) {
-            // origin input
-            input = makeEl('textarea');
-            addClass(input, 'briefingPersonalStory');
-            setClassByCondition(input, 'notEditable', !isOriginEditable);
-            input.value = event.text;
-            input.eventIndex = event.index;
-            input.storyName = event.storyName;
-            listen(input, 'change', onChangeOriginText);
-//            UI.attachTextareaResizer(input);
-
-            const unlockButton = makeUnlockEventSourceButton(input, isOriginEditable);
-            const originHolder = makeEl('div');
-            addEls(originHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-origin'))), unlockButton, input]);
-            els.push(originHolder);
-        }
-
-        if (isAdaptationsMode || !isAdaptationEmpty) {
-            // adaptation input
-            input = makeEl('textarea');
-            addClass(input, 'briefingPersonalStory');
-            setClassByCondition(input, 'notEditable', !isAdaptationEditable);
-            input.value = event.characters[characterName].text;
-            input.characterName = characterName;
-            input.eventIndex = event.index;
-            input.storyName = event.storyName;
-            listen(input, 'change', onChangeAdaptationText);
-//            UI.attachTextareaResizer(input);
-
-            const adaptationHolder = makeEl('div');
-            addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input]);
-            els.push(adaptationHolder);
-        }
-
-        if (isAdaptationsMode) {
-            const id = JSON.stringify([event.storyName, event.index, characterName]);
-            els.push(UI.makeReadyCheckbox(id, event.characters[characterName].ready, isAdaptationEditable, 
-                    UI.onChangeAdaptationReadyStatus));
-        }
-        els.push(makeEl('br'));
-
-        addEls(eventDiv, els);
+        
+        const eventDiv = qmte(`.adaptation-row-tmpl`);
+        const originCard = Adaptations.makeOriginCard(event, opts.metaInfo, event.storyName);
+        addEl(qee(eventDiv, '.eventMainPanelRow-left'), originCard);
+        const adaptationsCard = Adaptations.makeAdaptationCard(opts.areAdaptationsEditable, event, 
+            event.storyName, characterName)
+        addEl(qee(eventDiv, '.eventMainPanelRow-left'), adaptationsCard);
         return eventDiv;
+        
+        
+//        const eventDiv = makeEl('div');
+//        const { isAdaptationsMode } = flags;
+//        const originText = event.text;
+//        const adaptationText = event.characters[characterName].text;
+//        const isOriginEditable = !!opts.userStoryNamesMap[event.storyName];
+//        const isAdaptationEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
+//        const isAdaptationEmpty = adaptationText === '';
+//        const els = [];
+//
+//        els.push(getEventLabelText(event, opts.showStoryName, opts.index, flags.disableHeaders));
+//        els.push(makeText(getL10n('briefings-subjective-time')));
+//        els.push(UI.makeAdaptationTimeInput(event.storyName, event, characterName, isAdaptationEditable));
+//
+//        let input;
+//        if (isAdaptationsMode || isAdaptationEmpty) {
+//            // origin input
+//            input = makeEl('textarea');
+//            addClass(input, 'briefingPersonalStory');
+//            setClassByCondition(input, 'notEditable', !isOriginEditable);
+//            input.value = event.text;
+//            input.eventIndex = event.index;
+//            input.storyName = event.storyName;
+//            listen(input, 'change', onChangeOriginText);
+////            UI.attachTextareaResizer(input);
+//
+//            const unlockButton = makeUnlockEventSourceButton(input, isOriginEditable);
+//            const originHolder = makeEl('div');
+//            addEls(originHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-origin'))), unlockButton, input]);
+//            els.push(originHolder);
+//        }
+//
+//        if (isAdaptationsMode || !isAdaptationEmpty) {
+//            // adaptation input
+//            input = makeEl('textarea');
+//            addClass(input, 'briefingPersonalStory');
+//            setClassByCondition(input, 'notEditable', !isAdaptationEditable);
+//            input.value = event.characters[characterName].text;
+//            input.characterName = characterName;
+//            input.eventIndex = event.index;
+//            input.storyName = event.storyName;
+//            listen(input, 'change', onChangeAdaptationText);
+////            UI.attachTextareaResizer(input);
+//
+//            const adaptationHolder = makeEl('div');
+//            addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input]);
+//            els.push(adaptationHolder);
+//        }
+//
+//        if (isAdaptationsMode) {
+//            const id = JSON.stringify([event.storyName, event.index, characterName]);
+//            els.push(UI.makeReadyCheckbox(id, event.characters[characterName].ready, isAdaptationEditable, 
+//                    UI.onChangeAdaptationReadyStatus));
+//        }
+//        els.push(makeEl('br'));
+//
+//        addEls(eventDiv, els);
+//        return eventDiv;
     }
 
     function makeUnlockEventSourceButton(input, isEditable) {

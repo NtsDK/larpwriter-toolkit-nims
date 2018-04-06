@@ -36,14 +36,14 @@
         
         <div id="characterRangeSelect" class="hidden">
           <span l10n-id="briefings-briefings-amount"></span> 
-          <select id="briefingNumberSelector"></select><br>
+          <select id="briefingNumberSelector" class="form-control"></select><br>
           <span l10n-id="briefings-briefings-range"></span>
-          <select id="briefingIntervalSelector"></select>
+          <select id="briefingIntervalSelector" class="form-control"></select>
         </div>
         
         <div id="characterSetSelect" class="hidden">
           <input selector-filter="#characterSetSelector"><br>
-          <select id="characterSetSelector" multiple size=15 ></select>
+          <select id="characterSetSelector" multiple size=15  class="form-control"></select>
         </div>
       </fieldset>
       
@@ -60,7 +60,7 @@
         
         <div id="storySetSelect" class="hidden">
           <input selector-filter="#storySetSelector"><br>
-          <select id="storySetSelector" multiple size=15 ></select>
+          <select id="storySetSelector" multiple size=15  class="form-control"></select>
         </div>
       </fieldset>
     </div>
@@ -75,34 +75,37 @@
   <div class="panel panel-default">
     <div class="panel-body">
       <div id="simpleExportContainer" class="exportContainer">
-        <button id="makeBriefingsByTime" l10n-id="briefings-make-docx-by-time"></button><br>
-        <button id="makeBriefingsByStory" l10n-id="briefings-make-docx-by-stories"></button><br>
-        <button id="makeDefaultTextBriefings" l10n-id="briefings-make-txt"></button><br><br>
+        <button class="btn btn-default btn-reduced" id="makeBriefingsByTime" l10n-id="briefings-make-docx-by-time"></button><br>
+        <button class="btn btn-default btn-reduced" id="makeBriefingsByStory" l10n-id="briefings-make-docx-by-stories"></button><br>
+        <button class="btn btn-default btn-reduced" id="makeDefaultTextBriefings" l10n-id="briefings-make-txt"></button><br><br>
         
-        <button id="makeInventoryList" l10n-id="briefings-make-inventory"></button><br>
+        <button class="btn btn-default btn-reduced" id="makeInventoryList" l10n-id="briefings-make-inventory"></button><br>
       </div>
       
       <div id="advancedWordExportContainer" class="exportContainer">
-        <span l10n-id="briefings-upload-template"></span> <input type="file" name="file" id="docxBriefings"> 
-        <button id="makeDocxBriefings" l10n-id="briefings-make-export"></button>
+        <span l10n-id="briefings-upload-template"></span> 
+        <input type="file" name="file" id="docxBriefings" class="form-control"> 
+        <button class="btn btn-default btn-reduced" id="makeDocxBriefings" l10n-id="briefings-make-export"></button>
       </div>
       
-      <div id="advancedTextExportContainer" class="exportContainer">
-        <div >
-          <h3 l10n-id="briefings-template"></h3>
-          <textarea id="templateArea"></textarea><br>
-          <label l10n-id="briefings-enter-text-file-type"></label>
-          <input id="textTypeSelector" value="txt"/>
-          <button id="previewTextOutput" l10n-id="briefings-preview"></button><br>
-          <button id="showRawData" class="hidden" l10n-id="briefings-raw-data"></button>
-          <button id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template"></button>
-          <button id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template"></button>
-          <button id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
-          <button id="makeMarkdownBriefings" l10n-id="briefings-markdown-export"></button>
-        </div>
-        <div >
-          <h3 l10n-id="briefings-exported-text"></h3>
-          <textarea id="textBriefingPreviewArea"></textarea>
+      <div id="advancedTextExportContainer" class="exportContainer container-fluid">
+        <div class="row">
+          <div class="col-xs-6">
+            <h3 l10n-id="briefings-template"></h3>
+            <textarea id="templateArea" class="form-control"></textarea><br>
+            <label l10n-id="briefings-enter-text-file-type"></label>
+            <input id="textTypeSelector" value="txt" class="form-control"/>
+            <button class="btn btn-default btn-reduced" id="previewTextOutput" l10n-id="briefings-preview"></button>
+            <button class="btn btn-default btn-reduced" id="showRawData" l10n-id="briefings-raw-data"></button>
+            <button class="btn btn-default btn-reduced" id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template"></button>
+            <button class="btn btn-default btn-reduced" id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template"></button>
+            <button class="btn btn-default btn-reduced" id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
+            <button class="btn btn-default btn-reduced" id="makeMarkdownBriefings" l10n-id="briefings-markdown-export"></button>
+          </div>
+          <div class="col-xs-6">
+            <h3 l10n-id="briefings-exported-text"></h3>
+            <textarea id="textBriefingPreviewArea" class="form-control"></textarea>
+          </div>
         </div>
       </div>
           

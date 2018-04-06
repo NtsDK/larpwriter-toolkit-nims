@@ -96,6 +96,7 @@ function qte(sel){
     return document.querySelector(sel).content.cloneNode(true);
 }
 
+// query materialize template element
 function qmte(sel){
     return addEl(makeEl('div'), qte(sel)).firstChild;
 }

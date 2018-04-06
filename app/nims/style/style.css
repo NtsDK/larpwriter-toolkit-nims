@@ -286,7 +286,7 @@ textarea.eventPersonalStory {
 /* 	width: 300px; */
 }
 #briefingPreviewDiv .inventoryInput {
-	width: 500px;
+/* 	width: 500px; */
 }
 
 .defaultDate {
@@ -416,14 +416,14 @@ textarea.game-description-area {
 }
 
 /* briefing export */
-#advancedTextExportContainer {
-	display: flex;
-}
+/* #advancedTextExportContainer { */
+/* 	display: flex; */
+/* } */
 
-#advancedTextExportContainer div {
-	flex-basis: 0px;
-	flex-grow: 1;
-}
+/* #advancedTextExportContainer div { */
+/* 	flex-basis: 0px; */
+/* 	flex-grow: 1; */
+/* } */
 
 #advancedTextExportContainer div textarea {
 	width: 100%;
@@ -530,7 +530,7 @@ textarea.game-description-area {
 }
 
 #briefingPreviewDiv .adaptationTimeInput{
-  width: 300px;
+/*   width: 300px; */
 }
 
 #debugNotification{
@@ -951,3 +951,12 @@ a[tree-panel-toggler] h3{
 #personalStories .row {
   margin-bottom: 30px;
 }
+
+#briefingPreviewDiv .profile-table .profile-item-input {
+  padding: 7px 15px 0 15px;
+}
+
+#templateArea, 
+#textBriefingPreviewArea{
+  resize: vertical;
+} 
