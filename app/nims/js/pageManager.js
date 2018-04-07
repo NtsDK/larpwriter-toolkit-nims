@@ -145,7 +145,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
                 
                 const tabs = {};
-                const firstTab = 'GroupProfile';
+                const firstTab = 'TextSearch';
                 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {

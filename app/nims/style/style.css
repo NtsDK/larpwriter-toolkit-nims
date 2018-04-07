@@ -668,7 +668,7 @@ textarea.game-description-area {
   border: 1px solid grey;
   height: 160px;
   overflow: auto;
-  resize: both;
+  resize: vertical;
   white-space: pre-line
 }
 .text-search-tab .string-body{
