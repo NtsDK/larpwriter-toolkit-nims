@@ -5,7 +5,7 @@
       <div class="panel panel-default">
         <div class="panel-body">
           <span l10n-id="social-network-show-node"></span><br>
-          <select id="nodeFocusSelector"></select>
+          <select id="nodeFocusSelector" class="common-select"></select>
           <div>
             <input id="showPlayerNamesCheckbox" type="checkbox"></input><label for="showPlayerNamesCheckbox"  l10n-id="social-network-show-player-names"></label>
           </div>
@@ -69,17 +69,22 @@
               </a>
             </h3>
           </div>
-          <div id="answerThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false">
+          <div id="answerThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="" aria-expanded="false">
             <div class="panel-body">
               <div class="network-type-area">
                 <select size=4 id="networkSelector" class="form-control"></select>
       
                 <div id="activityBlock" class="hidden">
-                  <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple class="form-control"></select>
+                  <button class="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-active" data-value="active" l10n-title="constant-active"></button>
+                  <button class="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-follower" data-value="follower" l10n-title="constant-follower"></button>
+                  <button class="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-defensive" data-value="defensive" l10n-title="constant-defensive"></button>
+                  <button class="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-passive" data-value="passive" l10n-title="constant-passive"></button>
                 </div>
                 
                 <div id="relationsBlock" class="hidden">
-                  <h4 l10n-id="social-network-relations"></h4> <select size=3 id="relationSelector" multiple class="form-control"></select>
+                  <button class="btn btn-default btn-reduced fa-icon flex-0-0-auto allies" data-value="allies" l10n-title="briefings-allies"></button>
+                  <button class="btn btn-default btn-reduced fa-icon flex-0-0-auto directional" data-value="directional" l10n-title="briefings-directional"></button>
+                  <button class="btn btn-default btn-reduced fa-icon flex-0-0-auto neutral" data-value="neutral" l10n-title="briefings-neutral"></button>
                 </div>
               </div>
             </div>
@@ -87,87 +92,8 @@
         </div>
         
         <button id="drawNetworkButton" l10n-id="social-network-draw" class="btn btn-default width-100p"></button>
-        
-      </div>
-    
-    
-<!--       <div class="panel panel-default "> -->
-<!--         <div class="panel-heading"> -->
-<!--           <a href="#" panel-toggler="#socialNetworkDiv div.storySelectorContainer div:nth-child(3)"> -->
-<!--             <h3 class="panel-title" l10n-id="briefings-settings"></h3> -->
-<!--           </a> -->
-<!--         </div> -->
-<!--       </div> -->
-      <div class="hidden">
-        
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title" l10n-id="social-network-common-settings"></h3>
-          </div>
-          <div class="panel-body">
-            <a href="#" panel-toggler="#socialNetworkDiv div.network-coloring-area">
-              <h4 l10n-id="social-network-color-nodes"></h4>
-            </a> 
-<!--             <div class="network-coloring-area"> -->
-<!--               <select id="networkNodeGroupSelector"></select> <br> -->
-<!--               <span l10n-id="social-network-legend"></span> -->
-<!--               <div id="colorLegend"></div> -->
-<!--             </div> -->
-  
-            <a href="#" panel-toggler="#socialNetworkDiv div.network-filter-area">
-              <h4 l10n-id="social-network-selection"></h4> 
-            </a>
-            
-<!--             <div class="network-filter-area"> -->
-<!--               <select size=3 id="networkSubsetsSelector"></select> -->
-              
-<!--               <div id="networkCharacterDiv" class="hidden"> -->
-<!--                 <h4 l10n-id="social-network-characters"></h4>  -->
-<!--                 <input selector-filter="#networkCharacterSelector"><br> -->
-<!--                 <select id="networkCharacterSelector" multiple></select> -->
-<!--               </div> -->
-    
-<!--               <div id="networkStoryDiv" class="hidden"> -->
-<!--                 <h4 l10n-id="social-network-stories"></h4>  -->
-<!--                 <input selector-filter="#networkStorySelector"><br> -->
-<!--                 <select id="networkStorySelector" multiple></select> -->
-<!--               </div> -->
-<!--             </div> -->
-          </div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title" l10n-id="social-network-private-settings"></h3>
-          </div>
-          <div class="panel-body">
-            <a href="#" panel-toggler="#socialNetworkDiv div.network-type-area">
-              <h4 l10n-id="social-network-social-network"></h4> 
-            </a>
-            
-<!--             <div class="network-type-area"> -->
-<!--               <select size=4 id="networkSelector"></select> -->
-    
-<!--               <div id="activityBlock" class="hidden"> -->
-<!--                 <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple></select> -->
-<!--               </div> -->
-              
-<!--               <div id="relationsBlock" class="hidden"> -->
-<!--                 <h4 l10n-id="social-network-relations"></h4> <select size=3 id="relationSelector" multiple></select> -->
-<!--               </div> -->
-<!--             </div> -->
-  
-<!--             <button id="drawNetworkButton" l10n-id="social-network-draw"></button><br> -->
-<!--               <button id="hideNetworkSettingsButton" l10n-id="social-network-hide-panel"></button> -->
-          </div>
-        </div>
       </div>
     </div>
-
-<!--         <div class="storySelectorContainer2 hidden" -->
-<!--           id="showSettingsButtonContainer"> -->
-<!--           <button id="showNetworkSettingsButton">+</button> -->
-<!--         </div> -->
 
     <div class="visualObjectContainer full-screen-elem" id="socialNetworkContainer"></div>
   </div>

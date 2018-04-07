@@ -180,9 +180,9 @@ function delAttr(el, name) {
     return el;
 }
 
-function getAttr(el, name) {
+const getAttr = R.curry((el, name) => {
     return el.getAttribute(name);
-}
+});
 
 const setProp = R.curry((el, key, value) => {
     el[key] = value;

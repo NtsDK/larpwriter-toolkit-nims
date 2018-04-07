@@ -101,11 +101,8 @@ See the License for the specific language governing permissions and
     };
 
     function suffixy(entityNames, data) {
-        const emptySuffix = constL10n(Constants.emptySuffix);
         entityNames.forEach((nameInfo) => {
-            if (data[nameInfo.value] === undefined) {
-                nameInfo.displayName += emptySuffix;
-            }
+            nameInfo.hasEvents = data[nameInfo.value] !== undefined;
         });
     }
 
@@ -113,7 +110,13 @@ See the License for the specific language governing permissions and
         const selectorValues = getEl('timelineFilterByStory').checked ? state.allStoryNames : state.allCharacterNames;
 
         const selector = clearEl(getEl('timelineStorySelector'));
-        fillSelector(selector, selectorValues.map(remapProps4Select));
+        fillSelector(selector, selectorValues.map(obj => ({
+            name: obj.displayName,
+            value: obj.value,
+            className: obj.hasEvents ? 
+                    'fa-icon finished transparent-icon select-icon-padding' : 
+                    'fa-icon empty icon-padding select-icon-padding'
+        })));
         setAttr(selector, 'size', selectorValues.length > 15 ? 15 : selectorValues.length);
 
         if (selectorValues.length !== 0) {

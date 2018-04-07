@@ -34,6 +34,9 @@ See the License for the specific language governing permissions and
         listen(getEl('drawNetworkButton'), 'click', onDrawNetwork);
         $('#nodeFocusSelector').select2().on('change', onNodeFocus);
         listen(getEl('networkSelector'), 'change', onNetworkSelectorChangeDelegate);
+        
+        queryEls('#activityBlock button').forEach( listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
+        queryEls('#relationsBlock button').forEach( listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
 
         //        state.network;
         state.highlightActive = false;
@@ -56,15 +59,6 @@ See the License for the specific language governing permissions and
     const nodeSort = CommonUtils.charOrdAFactory(a => a.label.toLowerCase());
 
     exports.refresh = () => {
-        fillSelector(clearEl(getEl('activitySelector')), constArr2Select(Constants.characterActivityTypes).map((obj) => {
-            obj.className = `${obj.value}Option`;
-            return obj;
-        }));
-        fillSelector(clearEl(getEl('relationSelector')), constArr2Select(Constants.characterRelationTypes).map((obj) => {
-            obj.className = `${obj.value}Option`;
-            return obj;
-        }));
-
         let selector = fillSelector(clearEl(getEl('networkSelector')), constArr2Select(Constants.networks));
         [selector.value] = Constants.networks;
         onNetworkSelectorChangeDelegate({ target: selector });
@@ -245,9 +239,9 @@ See the License for the specific language governing permissions and
 
     function onNetworkSelectorChangeDelegate(event) {
         setClassByCondition(getEl('activityBlock'), 'hidden', event.target.value !== 'characterActivityInStory');
-        qes('#activityBlock option').forEach(opt => opt.selected = true);
+        queryEls('#activityBlock button').forEach(el => addClass(el, 'btn-primary'));
         setClassByCondition(getEl('relationsBlock'), 'hidden', event.target.value !== 'characterRelations');
-        qes('#relationsBlock option').forEach(opt => opt.selected = true);
+        queryEls('#relationsBlock button').forEach(el => addClass(el, 'btn-primary'));
     }
 
     function onNodeFocus(event) {
@@ -338,7 +332,7 @@ See the License for the specific language governing permissions and
     }
 
     function getActivityEdges() {
-        const selectedActivities = nl2array(getEl('activitySelector').selectedOptions).map(opt => opt.value);
+        const selectedActivities = queryEls('#activityBlock button.btn-primary').map(getAttr(R.__, 'data-value'));
         const stories = state.Stories;
         return R.flatten(R.keys(stories).map(name => R.keys(stories[name].characters)
             .map(char1 => R.keys(stories[name].characters[char1].activity).filter(R.contains(R.__, selectedActivities))
@@ -352,7 +346,7 @@ See the License for the specific language governing permissions and
     }
     
     function getRelationEdges() {
-        const selectedRelations = nl2array(getEl('relationSelector').selectedOptions).map(opt => opt.value);
+        const selectedRelations = queryEls('#relationsBlock button.btn-primary').map(getAttr(R.__, 'data-value'));
         const relations = state.relations;
         const checked = R.contains(R.__, selectedRelations);
         return R.flatten(relations.map(rel => {

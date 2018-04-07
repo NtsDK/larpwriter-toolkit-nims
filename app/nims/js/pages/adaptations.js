@@ -56,7 +56,8 @@ See the License for the specific language governing permissions and
 
                 let option;
                 storyNames.forEach((storyName) => {
-                    option = addEl(makeEl('option'), (makeText(storyName.displayName + getSuffix(storyName))));
+                    option = addEl(makeEl('option'), (makeText(storyName.displayName)));
+                    addClass(option, getIconClass(storyName));
                     setProp(option, 'selected', storyName.value === selectedStoryName);
                     setProp(option, 'storyInfo', storyName.value);
                     addEl(selector, option);
@@ -103,7 +104,8 @@ See the License for the specific language governing permissions and
 
         let option;
         characterArray.forEach((elem) => {
-            option = addEl(makeEl('option'), (makeText(elem.displayName + getSuffix(elem))));
+            option = addEl(makeEl('option'), (makeText(elem.displayName)));
+            addClass(option, getIconClass(elem));
             setProp(option, 'selected', characterNames.indexOf(elem.value) !== -1);
             setProp(option, 'storyInfo', story.name);
             setProp(option, 'characterName', elem.value);
@@ -112,7 +114,8 @@ See the License for the specific language governing permissions and
         setAttr(characterSelector, 'size', characterArray.length);
 
         eventArray.forEach((elem) => {
-            option = addEl(makeEl('option'), (makeText(elem.name + getSuffix(elem))));
+            option = addEl(makeEl('option'), (makeText(elem.name)));
+            addClass(option, getIconClass(elem));
             setProp(option, 'selected', eventIndexes.indexOf(elem.index) !== -1);
             setProp(option, 'storyInfo', story.name);
             setProp(option, 'eventIndex222', elem.index);
@@ -361,11 +364,11 @@ See the License for the specific language governing permissions and
         const text = event.target.value;
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'text', text, Utils.processError());
     }
-
-    function getSuffix(object) {
-        if (object.isEmpty) return constL10n(Constants.emptySuffix);
-        if (object.isFinished) return constL10n(Constants.finishedSuffix);
-        return '';
+    
+    function getIconClass(object) {
+        if (object.isEmpty) return 'fa-icon empty select-icon-padding';
+        if (object.isFinished) return 'fa-icon finished select-icon-padding';
+        return 'fa-icon finished transparent-icon select-icon-padding';
     }
 
     function updateSettings(name, value) {
