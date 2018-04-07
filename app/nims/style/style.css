@@ -820,6 +820,12 @@ a[tree-panel-toggler] h3{
   overflow: hidden;
 }
 
+.group-profile-tab.fixed-tab {
+  height: calc(100vh - 36px);
+  padding-top: 8px;
+  overflow: hidden;
+}
+
 .flex-1-1-auto {
   flex: 1 1 auto;
 }

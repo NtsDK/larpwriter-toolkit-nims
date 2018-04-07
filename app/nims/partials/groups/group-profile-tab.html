@@ -1,22 +1,29 @@
-<div class="group-profile-tab">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <table>
-        <tr>
-          <th l10n-id="groups-groups"></th>
-        </tr>
-        <tr>
-          <td><input selector-filter=".group-profile-tab .entity-selector"><br>
-          <select size=20 class="entity-selector"></select></td>
-          <td>
-            <div>
-              <table class="table">
-                <tbody class="entity-profile"></tbody>
-              </table>
+<div class="group-profile-tab block fixed-tab">
+
+  <div class="container-fluid height-100p">
+    <div class="row height-100p">
+      <div class="col-xs-3 height-100p">
+        <div class="panel panel-default entity-select height-100p">
+          <div class="panel-body height-100p">
+          
+            <div class="flex-root entity-toolbar">
+              <button class="btn btn-default btn-reduced fa-icon create flex-0-0-auto"></button>
+              <input class="form-control entity-filter flex-1-1-auto" type="search" >
             </div>
-          </td>
-        </tr>
-      </table>
+            <div class="entity-list">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-9 height-100p" style="overflow: auto;">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <table class="table">
+              <tbody class="entity-profile"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

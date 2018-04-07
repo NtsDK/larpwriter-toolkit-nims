@@ -145,7 +145,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
                 
                 const tabs = {};
-                const firstTab = 'ProfileFilter';
+                const firstTab = 'GroupProfile';
                 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
@@ -168,7 +168,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addView(state.containers, 'timeline', 'Timeline', { clazz: 'timelineButton icon-button', tooltip: true });
                 addView(state.containers, 'social-network', 'SocialNetwork', { clazz: 'socialNetworkButton icon-button', tooltip: true });
                 addView(state.containers, 'profile-filter', 'ProfileFilter', { clazz: 'filterButton icon-button', tooltip: true });
-                addView(state.containers, 'groups', 'Groups', { clazz: 'groupsButton icon-button', tooltip: true });
+                addView(state.containers, 'groups', 'GroupProfile', { clazz: 'groupsButton icon-button', tooltip: true });
                 addView(state.containers, 'textSearch', 'TextSearch', { clazz: 'textSearchButton icon-button', tooltip: true });
                 addView(state.containers, "roleGrid", 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
 

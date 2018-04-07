@@ -22,92 +22,31 @@ See the License for the specific language governing permissions and
     const state = {};
     const root = '.profile-filter-tab ';
     
-    function createGroup(dialog) {
-        return () => {
-            const input = qee(dialog, '.entity-input');
-            const name = input.value.trim();
-            
-            DBMS.createGroup(name, (err) => {
-                if(err){
-                    setError(dialog, err);
-                } else {
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        input.value = '';
-                        dialog.hideDlg();
-                        exports.refresh();
-                    });
-                }
-            });
-        }
-    }
-    
-    function renameGroup(selector) {
-        return (dialog) => {
-            return () => {
-                const toInput = qee(dialog, '.entity-input');
-                const fromName = queryEl(selector).value.trim();
-                const toName = toInput.value.trim();
-        
-                DBMS.renameGroup(fromName, toName, (err) => {
-                    if(err){
-                        setError(dialog, err);
-                    } else {
-                        PermissionInformer.refresh((err2) => {
-                            if (err2) { Utils.handleError(err2); return; }
-                            toInput.value = '';
-                            dialog.hideDlg();
-                            exports.refresh();
-                        });
-                    }
-                });
-            }
-        }
-    }
-    
-    function removeGroup() {
-        const name = queryEl(`${root}.save-entity-select`).value.trim();
-
-        Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
-            DBMS.removeGroup(name, (err) => {
-                if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err2) => {
-                    if (err2) { Utils.handleError(err2); return; }
-                    exports.refresh();
-                });
-            });
-        });
-    }
-
     exports.init = () => {
-        const createStoryDialog = UI.createModalDialog(root, createGroup, {
+        const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false), {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'groups-enter-group-name', 
             actionButtonTitle: 'common-create',
         });
         
-        const renameStoryDialog = UI.createModalDialog(root, renameGroup(`${root}.save-entity-select`), {
+        const renameGroupDialog = UI.createModalDialog(root, renameGroup(`${root}.save-entity-select`), {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'groups-enter-new-group-name', 
             actionButtonTitle: 'common-rename',
         });
         
-        
         listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls('-dependent'));
 
-//        listen(queryEl(`${root}.create-entity-button`), 'click', Groups.createGroup(root, groupAreaRefresh));
-//        listen(queryEl(`${root}.rename-entity-button`), 'click', Groups.renameGroup(root, groupAreaRefresh));
-//        listen(queryEl(`${root}.remove-entity-button`), 'click', Groups.removeGroup(root, groupAreaRefresh));
         listen(queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
         listen(queryEl(`${root}.save-entity-button`), 'click', saveFilterToGroup);
         listen(queryEl(`${root}.download-filter-table`), 'click', downloadFilterTable);
 
-        listen(qe(`${root}.create.group`), 'click', () => createStoryDialog.showDlg());
+        listen(qe(`${root}.create.group`), 'click', () => createGroupDialog.showDlg());
         listen(qe(`${root}.rename.group`), 'click', () => {
-            qee(renameStoryDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value.trim();
-            renameStoryDialog.showDlg();
+            qee(renameGroupDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value.trim();
+            renameGroupDialog.showDlg();
         });
-        listen(queryEl(`${root}.remove.group`), 'click', removeGroup);
+        listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => queryEl(`${root}.save-entity-select`).value.trim()));
         
         exports.content = queryEl(root);
     };
@@ -115,7 +54,6 @@ See the License for the specific language governing permissions and
     function groupAreaRefresh() {
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError((userGroupNames) => {
             PermissionInformer.getEntityNamesArray('group', false, Utils.processError((allGroupNames) => {
-                Groups.rebuildInterface(root, userGroupNames);
                 const data = getSelect2Data(allGroupNames);
                 clearEl(queryEl(`${root}.save-entity-select`));
                 $(`${root}.save-entity-select`).select2(data);
@@ -567,5 +505,28 @@ See the License for the specific language governing permissions and
         state.inputItems[`${profileItemConfig.name}:numberInput`] = input;
         input.addEventListener('input', rebuildContent);
         return filter;
+    }
+    
+    function renameGroup(selector) {
+        return (dialog) => {
+            return () => {
+                const toInput = qee(dialog, '.entity-input');
+                const fromName = queryEl(selector).value.trim();
+                const toName = toInput.value.trim();
+        
+                DBMS.renameGroup(fromName, toName, (err) => {
+                    if(err){
+                        setError(dialog, err);
+                    } else {
+                        PermissionInformer.refresh((err2) => {
+                            if (err2) { Utils.handleError(err2); return; }
+                            toInput.value = '';
+                            dialog.hideDlg();
+                            exports.refresh();
+                        });
+                    }
+                });
+            }
+        }
     }
 })(this.ProfileFilter = {});
