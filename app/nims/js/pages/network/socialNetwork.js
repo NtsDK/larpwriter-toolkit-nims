@@ -245,7 +245,9 @@ See the License for the specific language governing permissions and
 
     function onNetworkSelectorChangeDelegate(event) {
         setClassByCondition(getEl('activityBlock'), 'hidden', event.target.value !== 'characterActivityInStory');
+        qes('#activityBlock option').forEach(opt => opt.selected = true);
         setClassByCondition(getEl('relationsBlock'), 'hidden', event.target.value !== 'characterRelations');
+        qes('#relationsBlock option').forEach(opt => opt.selected = true);
     }
 
     function onNodeFocus(event) {

@@ -1,14 +1,7 @@
 <div id="socialNetworkDiv" class="block">
   <div id="socialNetworkWarning" class="alert alert-warning"></div>
   <div>
-    <div class="storySelectorContainer" id="commonSettingsContainer">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <a href="#" panel-toggler="#socialNetworkDiv div.storySelectorContainer div:nth-child(3)">
-            <h3 class="panel-title" l10n-id="briefings-settings"></h3>
-          </a>
-        </div>
-      </div>
+    <div class="storySelectorContainer sn-navigation-container">
       <div class="panel panel-default">
         <div class="panel-body">
           <span l10n-id="social-network-show-node"></span><br>
@@ -18,7 +11,94 @@
           </div>
         </div>
       </div>
-      <div>
+    </div>
+    
+    <div class="storySelectorContainer" id="commonSettingsContainer">
+      <div id="faq" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="">
+            <h3 class="panel-title">
+              <a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerOne" class="collapsed"
+                l10n-id="social-network-color-nodes">
+              </a>
+            </h3>
+          </div>
+          <div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false" style="height: 0px;">
+            <div class="panel-body">
+              <div class="network-coloring-area">
+                <select id="networkNodeGroupSelector" class="form-control"></select> <br>
+                <span l10n-id="social-network-legend"></span>
+                <div id="colorLegend"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="">
+            <h3 class="panel-title">
+              <a data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo" class="collapsed"
+              l10n-id="social-network-selection">
+              </a>
+            </h3>
+          </div>
+          <div id="answerTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false">
+            <div class="panel-body">
+              <div class="network-filter-area">
+                <select size=3 id="networkSubsetsSelector" class="form-control"></select>
+                <div id="networkCharacterDiv" class="hidden">
+                  <h4 l10n-id="social-network-characters"></h4> 
+                  <input selector-filter="#networkCharacterSelector"><br>
+                  <select id="networkCharacterSelector" multiple class="form-control"></select>
+                </div>
+                <div id="networkStoryDiv" class="hidden">
+                  <h4 l10n-id="social-network-stories"></h4> 
+                  <input selector-filter="#networkStorySelector"><br>
+                  <select id="networkStorySelector" multiple class="form-control"></select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="">
+            <h3 class="panel-title">
+              <a data-toggle="collapse" data-parent="#faq" href="#answerThree" aria-expanded="false" aria-controls="answerThree" class="collapsed"
+              l10n-id="social-network-social-network">
+              </a>
+            </h3>
+          </div>
+          <div id="answerThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false">
+            <div class="panel-body">
+              <div class="network-type-area">
+                <select size=4 id="networkSelector" class="form-control"></select>
+      
+                <div id="activityBlock" class="hidden">
+                  <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple class="form-control"></select>
+                </div>
+                
+                <div id="relationsBlock" class="hidden">
+                  <h4 l10n-id="social-network-relations"></h4> <select size=3 id="relationSelector" multiple class="form-control"></select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button id="drawNetworkButton" l10n-id="social-network-draw" class="btn btn-default width-100p"></button>
+        
+      </div>
+    
+    
+<!--       <div class="panel panel-default "> -->
+<!--         <div class="panel-heading"> -->
+<!--           <a href="#" panel-toggler="#socialNetworkDiv div.storySelectorContainer div:nth-child(3)"> -->
+<!--             <h3 class="panel-title" l10n-id="briefings-settings"></h3> -->
+<!--           </a> -->
+<!--         </div> -->
+<!--       </div> -->
+      <div class="hidden">
         
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -28,31 +108,31 @@
             <a href="#" panel-toggler="#socialNetworkDiv div.network-coloring-area">
               <h4 l10n-id="social-network-color-nodes"></h4>
             </a> 
-            <div class="network-coloring-area">
-              <select id="networkNodeGroupSelector"></select> <br>
-              <span l10n-id="social-network-legend"></span>
-              <div id="colorLegend"></div>
-            </div>
+<!--             <div class="network-coloring-area"> -->
+<!--               <select id="networkNodeGroupSelector"></select> <br> -->
+<!--               <span l10n-id="social-network-legend"></span> -->
+<!--               <div id="colorLegend"></div> -->
+<!--             </div> -->
   
             <a href="#" panel-toggler="#socialNetworkDiv div.network-filter-area">
               <h4 l10n-id="social-network-selection"></h4> 
             </a>
             
-            <div class="network-filter-area">
-              <select size=3 id="networkSubsetsSelector"></select>
+<!--             <div class="network-filter-area"> -->
+<!--               <select size=3 id="networkSubsetsSelector"></select> -->
               
-              <div id="networkCharacterDiv" class="hidden">
-                <h4 l10n-id="social-network-characters"></h4> 
-                <input selector-filter="#networkCharacterSelector"><br>
-                <select id="networkCharacterSelector" multiple></select>
-              </div>
+<!--               <div id="networkCharacterDiv" class="hidden"> -->
+<!--                 <h4 l10n-id="social-network-characters"></h4>  -->
+<!--                 <input selector-filter="#networkCharacterSelector"><br> -->
+<!--                 <select id="networkCharacterSelector" multiple></select> -->
+<!--               </div> -->
     
-              <div id="networkStoryDiv" class="hidden">
-                <h4 l10n-id="social-network-stories"></h4> 
-                <input selector-filter="#networkStorySelector"><br>
-                <select id="networkStorySelector" multiple></select>
-              </div>
-            </div>
+<!--               <div id="networkStoryDiv" class="hidden"> -->
+<!--                 <h4 l10n-id="social-network-stories"></h4>  -->
+<!--                 <input selector-filter="#networkStorySelector"><br> -->
+<!--                 <select id="networkStorySelector" multiple></select> -->
+<!--               </div> -->
+<!--             </div> -->
           </div>
         </div>
 
@@ -65,19 +145,19 @@
               <h4 l10n-id="social-network-social-network"></h4> 
             </a>
             
-            <div class="network-type-area">
-              <select size=4 id="networkSelector"></select>
+<!--             <div class="network-type-area"> -->
+<!--               <select size=4 id="networkSelector"></select> -->
     
-              <div id="activityBlock" class="hidden">
-                <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple></select>
-              </div>
+<!--               <div id="activityBlock" class="hidden"> -->
+<!--                 <h4 l10n-id="social-network-activity"></h4> <select size=4 id="activitySelector" multiple></select> -->
+<!--               </div> -->
               
-              <div id="relationsBlock" class="hidden">
-                <h4 l10n-id="social-network-relations"></h4> <select size=3 id="relationSelector" multiple></select>
-              </div>
-            </div>
+<!--               <div id="relationsBlock" class="hidden"> -->
+<!--                 <h4 l10n-id="social-network-relations"></h4> <select size=3 id="relationSelector" multiple></select> -->
+<!--               </div> -->
+<!--             </div> -->
   
-            <button id="drawNetworkButton" l10n-id="social-network-draw"></button><br>
+<!--             <button id="drawNetworkButton" l10n-id="social-network-draw"></button><br> -->
 <!--               <button id="hideNetworkSettingsButton" l10n-id="social-network-hide-panel"></button> -->
           </div>
         </div>

@@ -105,6 +105,8 @@ function queryEls(sel) {
     return nl2array(document.querySelectorAll(sel));
 }
 
+const qes = queryEls;
+
 function queryElEl(el, sel) {
     return el.querySelector(sel);
 }

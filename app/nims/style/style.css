@@ -361,6 +361,15 @@ textarea.game-description-area {
   overflow-y: auto;
 }
 
+.sn-navigation-container {
+  position: absolute;
+  z-index: 1;
+  height: calc(100vh - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  right: 0;
+}
+
 #WebGL-output{
 /*   height: calc(100vh - 60px); */
 }
@@ -970,3 +979,7 @@ a[tree-panel-toggler] h3{
 #textBriefingPreviewArea{
   resize: vertical;
 } 
+
+.width-100p{
+  width: 100%;
+}
