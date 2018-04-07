@@ -1,4 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+/*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,17 +21,94 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
     const root = '.profile-filter-tab ';
+    
+    function createGroup(dialog) {
+        return () => {
+            const input = qee(dialog, '.entity-input');
+            const name = input.value.trim();
+            
+            DBMS.createGroup(name, (err) => {
+                if(err){
+                    setError(dialog, err);
+                } else {
+                    PermissionInformer.refresh((err2) => {
+                        if (err2) { Utils.handleError(err2); return; }
+                        input.value = '';
+                        dialog.hideDlg();
+                        exports.refresh();
+                    });
+                }
+            });
+        }
+    }
+    
+    function renameGroup(selector) {
+        return (dialog) => {
+            return () => {
+                const toInput = qee(dialog, '.entity-input');
+                const fromName = queryEl(selector).value.trim();
+                const toName = toInput.value.trim();
+        
+                DBMS.renameGroup(fromName, toName, (err) => {
+                    if(err){
+                        setError(dialog, err);
+                    } else {
+                        PermissionInformer.refresh((err2) => {
+                            if (err2) { Utils.handleError(err2); return; }
+                            toInput.value = '';
+                            dialog.hideDlg();
+                            exports.refresh();
+                        });
+                    }
+                });
+            }
+        }
+    }
+    
+    function removeGroup() {
+        const name = queryEl(`${root}.save-entity-select`).value.trim();
+
+        Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
+            DBMS.removeGroup(name, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
+                    exports.refresh();
+                });
+            });
+        });
+    }
 
     exports.init = () => {
+        const createStoryDialog = UI.createModalDialog(root, createGroup, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'groups-enter-group-name', 
+            actionButtonTitle: 'common-create',
+        });
+        
+        const renameStoryDialog = UI.createModalDialog(root, renameGroup(`${root}.save-entity-select`), {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'groups-enter-new-group-name', 
+            actionButtonTitle: 'common-rename',
+        });
+        
+        
         listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls('-dependent'));
 
-        listen(queryEl(`${root}.create-entity-button`), 'click', Groups.createGroup(root, groupAreaRefresh));
-        listen(queryEl(`${root}.rename-entity-button`), 'click', Groups.renameGroup(root, groupAreaRefresh));
-        listen(queryEl(`${root}.remove-entity-button`), 'click', Groups.removeGroup(root, groupAreaRefresh));
+//        listen(queryEl(`${root}.create-entity-button`), 'click', Groups.createGroup(root, groupAreaRefresh));
+//        listen(queryEl(`${root}.rename-entity-button`), 'click', Groups.renameGroup(root, groupAreaRefresh));
+//        listen(queryEl(`${root}.remove-entity-button`), 'click', Groups.removeGroup(root, groupAreaRefresh));
         listen(queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
         listen(queryEl(`${root}.save-entity-button`), 'click', saveFilterToGroup);
         listen(queryEl(`${root}.download-filter-table`), 'click', downloadFilterTable);
 
+        listen(qe(`${root}.create.group`), 'click', () => createStoryDialog.showDlg());
+        listen(qe(`${root}.rename.group`), 'click', () => {
+            qee(renameStoryDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value.trim();
+            renameStoryDialog.showDlg();
+        });
+        listen(queryEl(`${root}.remove.group`), 'click', removeGroup);
+        
         exports.content = queryEl(root);
     };
 
@@ -124,7 +201,7 @@ See the License for the specific language governing permissions and
 
     function rebuildContent() {
         const dataArrays = makePrintData();
-        addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
+//        addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
         addEls(clearEl(queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
         UI.showSelectedEls('-dependent')({ target: queryEl(`${root}.profile-item-selector`) });
     }
@@ -404,7 +481,7 @@ See the License for the specific language governing permissions and
     }
 
     function makeTextFilter(profileItemConfig) {
-        const input = makeEl('input');
+        const input = qmte(`${root} .text-filter-tmpl`);
         input.selfInfo = profileItemConfig;
         input.value = '';
         input.addEventListener('input', rebuildContent);
@@ -413,9 +490,8 @@ See the License for the specific language governing permissions and
     }
 
     function makeCommonEnumFilter(profileItemConfig, values) {
-        const selector = makeEl('select');
+        const selector = qmte(`${root} .common-enum-filter-tmpl`);
         selector.selfInfo = profileItemConfig;
-        selector.multiple = 'multiple';
         selector.size = values.length;
 
         fillSelector(selector, values.map((value) => {
@@ -444,7 +520,8 @@ See the License for the specific language governing permissions and
     }
 
     function makeMultiEnumFilter(profileItemConfig) {
-        const selector = makeEl('select');
+        const filter = qmte(`${root} .multi-enum-filter-tmpl`);
+        const selector = qee(filter, '.multi-enum-filter-type');
         selector.selfInfo = profileItemConfig;
 
         Constants.multiEnumFilter.forEach((value) => {
@@ -457,22 +534,22 @@ See the License for the specific language governing permissions and
         state.inputItems[profileItemConfig.name] = selector;
         selector.addEventListener('change', rebuildContent);
 
-        const selector2 = makeEl('select');
+        const selector2 = qee(filter, '.multi-enum-filter-content');
         const values = arr2Select(profileItemConfig.value.split(','));
         fillSelector(selector2, values.map((value) => {
             value.selected = true;
             return value;
         }));
-        selector2.multiple = 'multiple';
         selector2.size = values.length;
 
         state.inputItems[`${profileItemConfig.name}:multiEnumInput`] = selector2;
         selector2.addEventListener('change', rebuildContent);
-        return addEls(makeEl('div'), [selector, makeEl('br'), selector2]);
+        return filter;
     }
 
     function makeNumberFilter(profileItemConfig) {
-        const selector = makeEl('select');
+        const filter = qmte(`${root} .number-filter-tmpl`);
+        const selector = qee(filter, 'select');
         selector.selfInfo = profileItemConfig;
 
         Constants.numberFilter.forEach((value) => {
@@ -485,11 +562,10 @@ See the License for the specific language governing permissions and
         state.inputItems[profileItemConfig.name] = selector;
         selector.addEventListener('change', rebuildContent);
 
-        const input = makeEl('input');
+        const input = qee(filter, 'input');
         input.value = 0;
-        input.type = 'number';
         state.inputItems[`${profileItemConfig.name}:numberInput`] = input;
         input.addEventListener('input', rebuildContent);
-        return addEls(makeEl('div'), [selector, input]);
+        return filter;
     }
 })(this.ProfileFilter = {});

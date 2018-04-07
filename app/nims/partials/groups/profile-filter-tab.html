@@ -1,88 +1,82 @@
 <div class="profile-filter-tab block">
 
   <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href="#" panel-toggler=".profile-filter-tab .group-control-area">
-        <h3 class="panel-title" l10n-id="groups-groups"></h3>
-      </a>
-    </div>
-    <div class="panel-body group-control-area">
-
-      <div class="group-editing-area">
-        <h3 class="panel-title" l10n-id="groups-show-groups"></h3>
-        <div class="entity-management">
-          <div>
-            <select class="save-entity-select" class="select2-mono-selector">
-            </select>
-          </div>
-          <div>
-            <button class="show-entity-button" l10n-id="groups-show-group-filter"></button>
-          </div>
-          <div>
-            <button class="save-entity-button" l10n-id="groups-save-group-filter"></button>
-          </div>
-        </div>
+    <div class="panel-body first-panel">
+      <div class="flex-root entity-toolbar">
+        <button class="btn btn-default btn-reduced fa-icon create group flex-0-0-auto icon-padding" 
+          l10n-title="groups-create-entity"><span l10n-id="groups-group"></span></button>
+        <select class="common-select save-entity-select"></select>
+        <button class="btn btn-default btn-reduced fa-icon rename group flex-0-0-auto"
+          l10n-title="groups-rename-entity"></button>
+        <button class="btn btn-default btn-reduced fa-icon remove group flex-0-0-auto"
+          l10n-title="groups-remove-entity"></button>
+        <button class="btn btn-default btn-reduced fa-icon group-to-filter flex-0-0-auto show-entity-button"
+          l10n-title="groups-show-group-filter"></button>
+        <button class="btn btn-default btn-reduced fa-icon filter-to-group flex-0-0-auto save-entity-button"
+          l10n-title="groups-save-group-filter"></button>
+        <button class="btn btn-default btn-reduced fa-icon download-table download-filter-table" 
+          l10n-title="profile-filter-download-filter-table"></button>
+          
+<!--         <span l10n-id="profile-filter-results"></span> <span class="filter-result-size"></span> -->
       </div>
-
-      <div class="group-management-area">
-        <h3 class="panel-title" l10n-id="groups-manage-groups"></h3>
-        <div class="entity-management">
-          <div>
-            <input class="create-entity-input" l10n-placeholder-id="groups-group-name"></input>
-            <button class="create-entity-button" l10n-id="common-create"></button>
-          </div>
-          <div>
-            <select class="rename-entity-select select2-mono-selector">
-            </select> <span l10n-id="common-to"></span>
-            <input class="rename-entity-input" l10n-placeholder-id="groups-new-group-name"></input>
-            <button class="rename-entity-button" l10n-id="common-rename"></button>
-          </div>
-          <div>
-            <select class="remove-entity-select select2-mono-selector">
-            </select>
-            <button class="remove-entity-button" l10n-id="common-remove"></button>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
-  <table>
-    <tr>
-      <td>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <a href="#" panel-toggler=".profile-filter-tab div.column-select-area">
-              <h3 class="panel-title" l10n-id="profile-filter-show-profile-item"></h3>
-            </a>
-          </div>
-          <div class="panel-body column-select-area">
-            <select multiple class="profile-item-selector"></select>
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <a href="#" panel-toggler=".profile-filter-tab div.filter-settings-area">
-              <h3 class="panel-title" l10n-id="profile-filter-filter"></h3>
-            </a>
-          </div>
-          <div class="panel-body filter-settings-area panel-resizable">
-            <span l10n-id="profile-filter-results"></span> <span class="filter-result-size"></span><br>
-            <button class="download-filter-table" l10n-id="profile-filter-download-filter-table"></button>
-            <br><br>
-            
-            <div class="filter-settings-panel"></div>
+
+  <div class="flex-root">
+    <div class="flex-0-0-auto" style="margin-right: 8px; min-width: 300px;">
+    
+      <div id="exTab3" class="panel panel-default">
+        <div class="panel-body">
+        
+          <ul class="nav nav-pills">
+            <li class="btn-default active"><a href="#1b" data-toggle="tab">Строки</a>
+            </li>
+            <li class="btn-default"><a href="#2b" data-toggle="tab">Колонки</a></li>
+          </ul>
+        
+          <div class="tab-content clearfix">
+            <div class="tab-pane active" id="1b">
+              <div class="panel-resizable">
+                <div class="filter-settings-panel"></div>
+              </div>
+            </div>
+            <div class="tab-pane" id="2b">
+              <select multiple class="profile-item-selector form-control"></select>
+            </div>
           </div>
         </div>
-      </td>
-      <td>
-        <div class="panel panel-default">
-          <table  class="table table-striped table-bordered">
-            <thead class="filter-head"></thead>
-            <tbody class="filter-content"></tbody>
-          </table>
-        </div>
-      </td>
-    </tr>
-  </table>
+      </div>
+    </div>
+    <div class="flex-0-0-auto">
+      <div class="panel panel-default">
+        <table  class="table table-striped table-bordered">
+          <thead class="filter-head"></thead>
+          <tbody class="filter-content"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <template class="text-filter-tmpl">
+    <input class="form-control"/>
+  </template>
+  
+  <template class="number-filter-tmpl">
+    <div>
+      <select class="form-control"></select>
+      <input class="form-control" type="number"/>
+    </div>
+  </template>
+  
+  <template class="common-enum-filter-tmpl">
+    <select class="form-control" multiple></select>
+  </template>
+  
+  <template class="multi-enum-filter-tmpl">
+    <div>
+      <select class="form-control multi-enum-filter-type"></select>
+      <select class="form-control multi-enum-filter-content" multiple></select>
+    </div>
+  </template>
 </div>
+

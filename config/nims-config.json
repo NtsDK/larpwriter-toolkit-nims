@@ -6,7 +6,7 @@
         "files": ["templatesArr.js","genericTemplate.js","inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]
     },
     "styles" : {
-        "customStyles":["common.css", "style.css", "experimental.css"],
+        "customStyles":["common.css", "style.css", "icons.css", "experimental.css"],
         "libCore": ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", "vex-theme-default41.css", "vex41.css", "fontawesome-all.min.css"],
         "lib" : ["vis.min.css"]
     },
