@@ -281,16 +281,6 @@ See the License for the specific language governing permissions and
         that.style.height = '24px';
         that.style.height = `${that.scrollHeight + 12}px`;
     };
-
-//    exports.makeAdaptationTimeInput = (storyName, event, characterName, isEditable) => {
-//        const input = makeEl('input');
-//        setClassByCondition(input, 'notEditable', !isEditable);
-//        addClass(input, 'adaptationTimeInput');
-//        input.value = event.characters[characterName].time;
-//        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-//        listen(input, 'change', onChangePersonalTimeDelegate);
-//        return input;
-//    };
     
     exports.populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
         setClassByCondition(input, 'notEditable', !isEditable);
@@ -306,19 +296,6 @@ See the License for the specific language governing permissions and
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'time', time, Utils.processError());
     };
 
-//    exports.makeReadyCheckbox = (id, checked, isEditable, callback) => {
-//        const div = makeEl('div');
-//        const input = makeEl('input');
-//        setClassByCondition(input, 'notEditable', !isEditable);
-//        input.type = 'checkbox';
-//        input.checked = checked;
-//        input.id = id;
-//        listen(input, 'change', callback);
-//        addEl(div, input);
-//        addEl(div, setAttr(addEl(makeEl('label'), makeText(constL10n(Constants.finishedText))), 'for', input.id));
-//        return div;
-//    };
-    
     exports.populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
         const input = qee(div, 'input');
         setClassByCondition(input, 'notEditable', !isEditable);
@@ -329,12 +306,6 @@ See the License for the specific language governing permissions and
         return div;
     };
 
-//    exports.onChangeAdaptationReadyStatus = (event) => {
-//        const dataKey = JSON.parse(event.target.id);
-//        const value = event.target.checked;
-//        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, Utils.processError());
-//    };
-    
     exports.onChangeAdaptationReadyStatus2 = (callback) => {
         return (event) => {
             const dataKey = JSON.parse(event.target.id);

@@ -351,13 +351,6 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('div'), [eventTime, eventName]);
     }
 
-//    function getEventLabelText(event, showStoryName, index, disableHeaders) {
-//        if (disableHeaders) {
-//            return addEl(makeEl('h4'), makeText(strFormat(getL10n('briefings-event-header'), [index])));
-//        }
-//        return addEl(makeEl('h4'), getEventHeaderDiv(event, showStoryName));
-//    }
-
     function showEvent(event, characterName, opts, flags) {
         
         const { isAdaptationsMode } = flags;
@@ -383,76 +376,7 @@ See the License for the specific language governing permissions and
             });
         addEl(qee(eventDiv, '.eventMainPanelRow-left'), adaptationsCard);
         return eventDiv;
-        
-        
-//        const eventDiv = makeEl('div');
-//        const { isAdaptationsMode } = flags;
-//        const originText = event.text;
-//        const adaptationText = event.characters[characterName].text;
-//        const isOriginEditable = !!opts.userStoryNamesMap[event.storyName];
-//        const isAdaptationEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
-//        const isAdaptationEmpty = adaptationText === '';
-//        const els = [];
-//
-//        els.push(getEventLabelText(event, opts.showStoryName, opts.index, flags.disableHeaders));
-//        els.push(makeText(getL10n('briefings-subjective-time')));
-//        els.push(UI.makeAdaptationTimeInput(event.storyName, event, characterName, isAdaptationEditable));
-//
-//        let input;
-//        if (isAdaptationsMode || isAdaptationEmpty) {
-//            // origin input
-//            input = makeEl('textarea');
-//            addClass(input, 'briefingPersonalStory');
-//            setClassByCondition(input, 'notEditable', !isOriginEditable);
-//            input.value = event.text;
-//            input.eventIndex = event.index;
-//            input.storyName = event.storyName;
-//            listen(input, 'change', onChangeOriginText);
-////            UI.attachTextareaResizer(input);
-//
-//            const unlockButton = makeUnlockEventSourceButton(input, isOriginEditable);
-//            const originHolder = makeEl('div');
-//            addEls(originHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-origin'))), unlockButton, input]);
-//            els.push(originHolder);
-//        }
-//
-//        if (isAdaptationsMode || !isAdaptationEmpty) {
-//            // adaptation input
-//            input = makeEl('textarea');
-//            addClass(input, 'briefingPersonalStory');
-//            setClassByCondition(input, 'notEditable', !isAdaptationEditable);
-//            input.value = event.characters[characterName].text;
-//            input.characterName = characterName;
-//            input.eventIndex = event.index;
-//            input.storyName = event.storyName;
-//            listen(input, 'change', onChangeAdaptationText);
-////            UI.attachTextareaResizer(input);
-//
-//            const adaptationHolder = makeEl('div');
-//            addEls(adaptationHolder, [addEl(makeEl('h5'), makeText(getL10n('briefings-adaptation'))), input]);
-//            els.push(adaptationHolder);
-//        }
-//
-//        if (isAdaptationsMode) {
-//            const id = JSON.stringify([event.storyName, event.index, characterName]);
-//            els.push(UI.makeReadyCheckbox(id, event.characters[characterName].ready, isAdaptationEditable, 
-//                    UI.onChangeAdaptationReadyStatus));
-//        }
-//        els.push(makeEl('br'));
-//
-//        addEls(eventDiv, els);
-//        return eventDiv;
     }
-
-//    function makeUnlockEventSourceButton(input, isEditable) {
-//        input.setAttribute('disabled', 'disabled');
-//        const button = addEl(makeEl('button'), makeText(getL10n('briefings-unlock-event-source')));
-//        setClassByCondition(button, 'notEditable', !isEditable);
-//        listen(button, 'click', () => {
-//            input.removeAttribute('disabled');
-//        });
-//        return button;
-//    }
 
     function updateCharacterInventory(event) {
         const {
@@ -460,18 +384,4 @@ See the License for the specific language governing permissions and
         } = event.target;
         DBMS.updateCharacterInventory(storyName, characterName, value, Utils.processError());
     }
-
-//    function onChangeOriginText(event) {
-//        const {
-//            storyName, eventIndex, value
-//        } = event.target;
-//        DBMS.setEventOriginProperty(storyName, eventIndex, 'text', value, Utils.processError());
-//    }
-
-//    function onChangeAdaptationText(event) {
-//        const {
-//            storyName, eventIndex, characterName, value
-//        } = event.target;
-//        DBMS.setEventAdaptationProperty(storyName, eventIndex, characterName, 'text', value, Utils.processError());
-//    }
 })(this.BriefingPreview = {});
