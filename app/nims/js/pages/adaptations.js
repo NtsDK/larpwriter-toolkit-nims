@@ -20,7 +20,6 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    let onChangeDateTimeCreator;
     const root = '.adaptations-tab ';
 
     exports.init = () => {
@@ -227,78 +226,126 @@ See the License for the specific language governing permissions and
 
     function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
         addEls(clearEl(getEl('personalStories')), events.map((event) => {
-            const tr = qmte(`${root} .adaptation-row-tmpl`);
-            addClass(tr, `${event.index}-dependent`);
-            tr.dependsOnCharacters = R.keys(event.characters);
-            addEl(qee(tr, '.eventMainPanelRow-left'), exports.makeOriginCard(event, metaInfo, storyName));
-            addEls(qee(tr, '.events-eventsContainer'), characterNames.filter(characterName => event.characters[characterName])
-                .map(exports.makeAdaptationCard(areAdaptationsEditable, event, storyName)));
+            const row = qmte(`${root} .adaptation-row-tmpl`);
+            addClass(row, `${event.index}-dependent`);
+            row.dependsOnCharacters = R.keys(event.characters);
+            addEl(qee(row, '.eventMainPanelRow-left'), exports.makeOriginCard(event, metaInfo, storyName, {
+                
+                showTimeInput: true,
+                showTextInput: true,
+                cardTitle: event.name
+            }));
+            addEls(qee(row, '.events-eventsContainer'), characterNames
+                .filter(characterName => event.characters[characterName])
+                .map(characterName => {
+                    const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
+                    return exports.makeAdaptationCard(isEditable, event, storyName, characterName, {
+                        showFinishedButton: true,
+                        showTimeInput: true,
+                        showTextInput: true,
+                        cardTitle: characterName
+                    })
+                }));
 
-            return tr;
+            return row;
         }));
     }
     
-    exports.makeOriginCard = (event, metaInfo, storyName) => {
-        const td = qmte(`${root} .origin-tmpl`);
-        addEl(qee(td, '.event-name'), makeText(event.name));
+    exports.makeOriginCard = (event, metaInfo, storyName, opts) => {
+        const card = qmte(`${root} .origin-tmpl`);
+        addEl(qee(card, '.card-title'), makeText(opts.cardTitle));
+        const textInput = qee(card, '.text-input');
+        const timeInput = qee(card, '.time-input');
+        const lockButton = qee(card, 'button.locked');
         
-        UI.makeEventTimePicker2(qee(td, '.event-time'), {
-            eventTime: event.time,
-            index: event.index,
-            preGameDate: metaInfo.preGameDate,
-            date: metaInfo.date,
-            onChangeDateTimeCreator: onChangeDateTimeCreator(storyName)
-        });
+        if(opts.showTimeInput === true){
+            UI.makeEventTimePicker2(timeInput, {
+                eventTime: event.time,
+                index: event.index,
+                preGameDate: metaInfo.preGameDate,
+                date: metaInfo.date,
+                onChangeDateTimeCreator: onChangeDateTimeCreator(storyName)
+            });
+        } else {
+            addClass(timeInput, 'hidden');
+        }
         
-        const input = qee(td, 'textarea');
-        input.value = event.text;
-        input.dataKey = JSON.stringify([storyName, event.index]);
-        listen(input, 'change', onChangeOriginText);
-        return td;
+        if(opts.showTextInput === true){
+            textInput.value = event.text;
+            textInput.dataKey = JSON.stringify([storyName, event.index]);
+            listen(textInput, 'change', onChangeOriginText);
+        } else {
+            addClass(textInput, 'hidden');
+        }
+        
+        if(opts.showLockButton === true){
+            listen(lockButton, 'click', onOriginLockClick(timeInput, textInput));
+            Utils.enableEl(timeInput, false);
+            Utils.enableEl(textInput, false);
+            L10n.localizeStatic(card);
+        } else {
+            addClass(lockButton, 'hidden');
+        }
+        
+        return card;
     }
     
-    exports.makeAdaptationCard = R.curry((areAdaptationsEditable, event, storyName, characterName) => {
-        const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
-        const div = qmte(`${root} .adaptation-tmpl` );
-        setAttr(div, 'dependent-on-character', characterName);
-        addEl(qee(div, '.characterName'), makeText(characterName));
+    function onOriginLockClick(timeInput, textInput){
+        return (event) => {
+            const {target} = event;
+            const isLocked = hasClass(target, 'btn-primary');
+            setClassByCondition(target, 'btn-primary', !isLocked);
+            setClassByCondition(target, 'locked', !isLocked);
+            setClassByCondition(target, 'unlocked', isLocked);
+            Utils.enableEl(timeInput, isLocked);
+            Utils.enableEl(textInput, isLocked);
+        }
+    } 
+    
+    exports.makeAdaptationCard = R.curry((isEditable, event, storyName, characterName, opts) => {
+        const card = qmte(`${root} .adaptation-tmpl` );
+        setAttr(card, 'dependent-on-character', characterName);
         
+        addEl(qee(card, '.card-title'), makeText(opts.cardTitle));
+        const textInput = qee(card, '.text-input');
+        const timeInput = qee(card, '.time-input');
+        const finishedButton = qee(card, 'button.finished');
         const id = JSON.stringify([storyName, event.index, characterName]);
-        const timeInput = qee(div, '.adaptationTimeInput');
-        UI.populateAdaptationTimeInput(timeInput, storyName, event, characterName, isEditable);
-//        UI.populateReadyCheckbox(qee(div, '.checkbox-area'), id, event.characters[characterName].ready, isEditable, 
-//              UI.onChangeAdaptationReadyStatus)
-              
         
-        const input = qee(div, 'textarea');
-        setClassByCondition(input, 'notEditable', !isEditable);
-        input.value = event.characters[characterName].text;
-        input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-        listen(input, 'change', onChangeAdaptationText);
+        if(opts.showTimeInput === true){
+            UI.populateAdaptationTimeInput(timeInput, storyName, event, characterName, isEditable);
+        } else {
+            addClass(timeInput, 'hidden');
+        }
         
-        const finishedBtn = qee(div, '.finished');
-        const isFinished = event.characters[characterName].ready;
-        setClassIf(finishedBtn, 'btn-primary', isFinished);
-        finishedBtn.id = id;
-        const enableInputs = (value) => {
-            Utils.enableEl(input, !value);
-            Utils.enableEl(timeInput, !value);
-        };
-        enableInputs(isFinished);
+        if(opts.showTextInput === true){
+            setClassByCondition(textInput, 'notEditable', !isEditable);
+            textInput.value = event.characters[characterName].text;
+            textInput.dataKey = JSON.stringify([storyName, event.index, characterName]);
+            listen(textInput, 'change', onChangeAdaptationText);
+        } else {
+            addClass(textInput, 'hidden');
+        }
         
-        listen(finishedBtn, 'click', UI.onChangeAdaptationReadyStatus2(enableInputs));
-//        listen(finishedBtn, 'click', (e) => {
-////            DBMS.doExportProfileItemChange(type, profileSettings.name, !hasClass(e.target, 'btn-primary'), (err) => {
-////                if (err) { Utils.handleError(err); return; }
-////                toggleClass(e.target, 'btn-primary');
-////            });
-//        });
+        if(opts.showFinishedButton === true){
+            const isFinished = event.characters[characterName].ready;
+            setClassIf(finishedButton, 'btn-primary', isFinished);
+            finishedButton.id = id;
+            const enableInputs = (value) => {
+                Utils.enableEl(textInput, !value);
+                Utils.enableEl(timeInput, !value);
+            };
+            enableInputs(isFinished);
+            listen(finishedButton, 'click', UI.onChangeAdaptationReadyStatus2(enableInputs));
+            L10n.localizeStatic(card);
+        } else {
+            addClass(lockButton, 'hidden');
+        }
         
-        L10n.localizeStatic(div);
-        return div;
+        return card;
     });
 
-    onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
+    var onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
         DBMS.setEventOriginProperty(storyName, myInput.eventIndex, 'time', input.val(), Utils.processError());
         removeClass(myInput, 'defaultDate');
     });

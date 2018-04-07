@@ -524,7 +524,8 @@ textarea.game-description-area {
   display: inline-block;
 }
 
-.event-time, .adaptationTimeInput{
+.event-time, .adaptationTimeInput,
+.time-input{
   width: 180px;
 /*   display: inline-block; */
 }
@@ -831,6 +832,12 @@ a[tree-panel-toggler] h3{
   font-weight: 500;
   content: "\f24d";
 }
+.locked:before {
+  content: "\f023";
+}
+.unlocked:before {
+  content: "\f3c1";
+}
 .transparent{
   color: rgba(0,0,0,0);
   transition-property: color;
@@ -954,6 +961,9 @@ a[tree-panel-toggler] h3{
 
 #briefingPreviewDiv .profile-table .profile-item-input {
   padding: 7px 15px 0 15px;
+}
+.card-title {
+  padding: 7px 0 0 0;
 }
 
 #templateArea, 

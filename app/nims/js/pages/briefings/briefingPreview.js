@@ -22,6 +22,7 @@ See the License for the specific language governing permissions and
     const state = {};
     const root = '#briefingPreviewDiv ';
     const settingsPath = 'BriefingPreview';
+    const l10n = L10n.get('briefings');
 
     exports.init = () => {
         $('#briefingCharacter').select2().on('change', buildContentDelegate);
@@ -251,7 +252,7 @@ See the License for the specific language governing permissions and
             if (!userStoryNamesMap[elem.storyName]) {
                 addClass(input, 'notEditable');
             }
-            input.addEventListener('change', updateCharacterInventory);
+            listen(input, 'change', updateCharacterInventory);
             
             const row = qmte(`.profile-editor-row-tmpl`);
             addEl(qee(row, '.profile-item-name'), makeText(elem.storyName));
@@ -350,20 +351,36 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('div'), [eventTime, eventName]);
     }
 
-    function getEventLabelText(event, showStoryName, index, disableHeaders) {
-        if (disableHeaders) {
-            return addEl(makeEl('h4'), makeText(strFormat(getL10n('briefings-event-header'), [index])));
-        }
-        return addEl(makeEl('h4'), getEventHeaderDiv(event, showStoryName));
-    }
+//    function getEventLabelText(event, showStoryName, index, disableHeaders) {
+//        if (disableHeaders) {
+//            return addEl(makeEl('h4'), makeText(strFormat(getL10n('briefings-event-header'), [index])));
+//        }
+//        return addEl(makeEl('h4'), getEventHeaderDiv(event, showStoryName));
+//    }
 
     function showEvent(event, characterName, opts, flags) {
         
+        const { isAdaptationsMode } = flags;
+        const showAll = isAdaptationsMode;
+        const showAdaptationText = event.characters[characterName].text !== '';
+        const showSubjectiveTime = event.characters[characterName].time !== '';
+        
         const eventDiv = qmte(`.adaptation-row-tmpl`);
-        const originCard = Adaptations.makeOriginCard(event, opts.metaInfo, event.storyName);
+        const originCard = Adaptations.makeOriginCard(event, opts.metaInfo, event.storyName, {
+            cardTitle: flags.disableHeaders ? L10n.format('briefings', 'event-header', [opts.index]) : event.name,
+            showTimeInput: showAll || !showSubjectiveTime,
+            showLockButton: true,
+            showTextInput: showAll || !showAdaptationText
+        });
         addEl(qee(eventDiv, '.eventMainPanelRow-left'), originCard);
-        const adaptationsCard = Adaptations.makeAdaptationCard(opts.areAdaptationsEditable, event, 
-            event.storyName, characterName)
+        const isEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
+        const adaptationsCard = Adaptations.makeAdaptationCard(isEditable, event, 
+            event.storyName, characterName, {
+                cardTitle: '',
+                showTimeInput: showAll || showSubjectiveTime,
+                showFinishedButton: true,
+                showTextInput: showAll || showAdaptationText
+            });
         addEl(qee(eventDiv, '.eventMainPanelRow-left'), adaptationsCard);
         return eventDiv;
         
@@ -427,15 +444,15 @@ See the License for the specific language governing permissions and
 //        return eventDiv;
     }
 
-    function makeUnlockEventSourceButton(input, isEditable) {
-        input.setAttribute('disabled', 'disabled');
-        const button = addEl(makeEl('button'), makeText(getL10n('briefings-unlock-event-source')));
-        setClassByCondition(button, 'notEditable', !isEditable);
-        listen(button, 'click', () => {
-            input.removeAttribute('disabled');
-        });
-        return button;
-    }
+//    function makeUnlockEventSourceButton(input, isEditable) {
+//        input.setAttribute('disabled', 'disabled');
+//        const button = addEl(makeEl('button'), makeText(getL10n('briefings-unlock-event-source')));
+//        setClassByCondition(button, 'notEditable', !isEditable);
+//        listen(button, 'click', () => {
+//            input.removeAttribute('disabled');
+//        });
+//        return button;
+//    }
 
     function updateCharacterInventory(event) {
         const {
@@ -444,17 +461,17 @@ See the License for the specific language governing permissions and
         DBMS.updateCharacterInventory(storyName, characterName, value, Utils.processError());
     }
 
-    function onChangeOriginText(event) {
-        const {
-            storyName, eventIndex, value
-        } = event.target;
-        DBMS.setEventOriginProperty(storyName, eventIndex, 'text', value, Utils.processError());
-    }
+//    function onChangeOriginText(event) {
+//        const {
+//            storyName, eventIndex, value
+//        } = event.target;
+//        DBMS.setEventOriginProperty(storyName, eventIndex, 'text', value, Utils.processError());
+//    }
 
-    function onChangeAdaptationText(event) {
-        const {
-            storyName, eventIndex, characterName, value
-        } = event.target;
-        DBMS.setEventAdaptationProperty(storyName, eventIndex, characterName, 'text', value, Utils.processError());
-    }
+//    function onChangeAdaptationText(event) {
+//        const {
+//            storyName, eventIndex, characterName, value
+//        } = event.target;
+//        DBMS.setEventAdaptationProperty(storyName, eventIndex, characterName, 'text', value, Utils.processError());
+//    }
 })(this.BriefingPreview = {});
