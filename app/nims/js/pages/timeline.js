@@ -129,7 +129,7 @@ See the License for the specific language governing permissions and
         onStorySelectorChange(nl2array(event.target.selectedOptions).map(opt => opt.value));
     }
 
-    const prepareLabel = label => R.splitEvery(20, label).join('<br>');
+    const prepareLabel = label => `<span class="timeline-label">${label}</span>`;
 
     function onStorySelectorChange(entityNames) {
         state.TagDataset.clear();

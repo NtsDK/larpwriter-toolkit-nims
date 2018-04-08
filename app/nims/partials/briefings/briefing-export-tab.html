@@ -5,9 +5,9 @@
         <h3 class="panel-title" l10n-id="briefings-export-settings"></h3>
       </a>
     </div>
-    <div class="panel-body export-panel-body" style="display:flex;justify-content:space-around;">
+    <div class="panel-body export-panel-body flex-root">
       
-      <fieldset>
+      <fieldset class="margin-right-16">
         <legend l10n-id="briefings-export-mode"></legend>
         <div>
           <input type="checkbox" id="toSeparateFileCheckbox"/> 
@@ -19,49 +19,63 @@
         </div>
       </fieldset>
     
-      <fieldset>
+      <fieldset class="margin-right-16">
         <legend l10n-id="briefings-briefing-selection"></legend>
-        <div>
-          <input type="radio" name="exportCharacterSelection" id="exportAllCharacters"/>
-          <label for="exportAllCharacters" l10n-id="briefings-print-all"></label> <br> 
-        </div>
-        <div>
-          <input type="radio" name="exportCharacterSelection" id="exportCharacterRange"/>
-          <label for="exportCharacterRange" l10n-id="briefings-print-partly"></label> <br> 
-        </div>
-        <div>
-          <input type="radio" name="exportCharacterSelection" id="exportCharacterSet"/>
-          <label for="exportCharacterSet" l10n-id="briefings-exact-multiselect"></label> <br> 
-        </div>
-        
-        <div id="characterRangeSelect" class="hidden">
-          <span l10n-id="briefings-briefings-amount"></span> 
-          <select id="briefingNumberSelector" class="form-control"></select><br>
-          <span l10n-id="briefings-briefings-range"></span>
-          <select id="briefingIntervalSelector" class="form-control"></select>
-        </div>
-        
-        <div id="characterSetSelect" class="hidden">
-          <input selector-filter="#characterSetSelector"><br>
-          <select id="characterSetSelector" multiple size=15  class="form-control"></select>
+        <div class="flex-root">
+          <div class="flex-0-0-auto margin-right-16">
+            <div>
+              <input type="radio" name="exportCharacterSelection" id="exportAllCharacters"/>
+              <label for="exportAllCharacters" l10n-id="briefings-print-all"></label>
+            </div>
+            <div>
+              <input type="radio" name="exportCharacterSelection" id="exportCharacterRange"/>
+              <label for="exportCharacterRange" l10n-id="briefings-print-partly"></label>
+            </div>
+            <div>
+              <input type="radio" name="exportCharacterSelection" id="exportCharacterSet"/>
+              <label for="exportCharacterSet" l10n-id="briefings-exact-multiselect"></label>
+            </div>
+          </div>
+          <div class="flex-0-0-auto">
+            <div id="characterRangeSelect" class="hidden">
+              <div>
+                <span l10n-id="briefings-briefings-amount"></span> 
+                <select id="briefingNumberSelector" class="form-control"></select>
+              </div>
+              <div>
+                <span l10n-id="briefings-briefings-range" class="display-block"></span>
+                <select id="briefingIntervalSelector" class="form-control common-select"></select>
+              </div>
+            </div>
+            <div id="characterSetSelect" class="hidden">
+              <input selector-filter="#characterSetSelector">
+              <select id="characterSetSelector" multiple size=15  class="form-control"></select>
+            </div>
+          </div>
         </div>
       </fieldset>
       
       <fieldset>
         <legend l10n-id="briefings-story-selection"></legend>
-        <div>
-          <input type="radio" name="exportStorySelection" value="all" id="exportAllStories"/>
-          <label for="exportAllStories" l10n-id="briefings-export-all-stories"></label> <br> 
-        </div>
-        <div>
-          <input type="radio" name="exportStorySelection" value="multiple" id="exportStorySet"/>
-          <label for="exportStorySet" l10n-id="briefings-exact-multiselect"></label> <br> 
+        <div class="flex-root">
+          <div class="flex-0-0-auto margin-right-16">
+            <div>
+              <input type="radio" name="exportStorySelection" value="all" id="exportAllStories"/>
+              <label for="exportAllStories" l10n-id="briefings-export-all-stories"></label>
+            </div>
+            <div>
+              <input type="radio" name="exportStorySelection" value="multiple" id="exportStorySet"/>
+              <label for="exportStorySet" l10n-id="briefings-exact-multiselect"></label>
+            </div>
+          </div>
+          <div class="flex-0-0-auto">
+            <div id="storySetSelect" class="hidden">
+              <input selector-filter="#storySetSelector">
+              <select id="storySetSelector" multiple size=15  class="form-control"></select>
+            </div>
+          </div>
         </div>
         
-        <div id="storySetSelect" class="hidden">
-          <input selector-filter="#storySetSelector"><br>
-          <select id="storySetSelector" multiple size=15  class="form-control"></select>
-        </div>
       </fieldset>
     </div>
   </div>
@@ -75,11 +89,11 @@
   <div class="panel panel-default">
     <div class="panel-body">
       <div id="simpleExportContainer" class="exportContainer">
-        <button class="btn btn-default btn-reduced" id="makeBriefingsByTime" l10n-id="briefings-make-docx-by-time"></button><br>
-        <button class="btn btn-default btn-reduced" id="makeBriefingsByStory" l10n-id="briefings-make-docx-by-stories"></button><br>
-        <button class="btn btn-default btn-reduced" id="makeDefaultTextBriefings" l10n-id="briefings-make-txt"></button><br><br>
+        <button class="btn btn-default btn-reduced" id="makeBriefingsByTime" l10n-id="briefings-make-docx-by-time"></button>
+        <button class="btn btn-default btn-reduced" id="makeBriefingsByStory" l10n-id="briefings-make-docx-by-stories"></button>
+        <button class="btn btn-default btn-reduced" id="makeDefaultTextBriefings" l10n-id="briefings-make-txt"></button>
         
-        <button class="btn btn-default btn-reduced" id="makeInventoryList" l10n-id="briefings-make-inventory"></button><br>
+        <button class="btn btn-default btn-reduced" id="makeInventoryList" l10n-id="briefings-make-inventory"></button>
       </div>
       
       <div id="advancedWordExportContainer" class="exportContainer">
@@ -90,19 +104,27 @@
       
       <div id="advancedTextExportContainer" class="exportContainer container-fluid">
         <div class="row">
-          <div class="col-xs-6">
-            <h3 l10n-id="briefings-template"></h3>
-            <textarea id="templateArea" class="form-control"></textarea><br>
-            <label l10n-id="briefings-enter-text-file-type"></label>
-            <input id="textTypeSelector" value="txt" class="form-control"/>
-            <button class="btn btn-default btn-reduced" id="previewTextOutput" l10n-id="briefings-preview"></button>
-            <button class="btn btn-default btn-reduced" id="showRawData" l10n-id="briefings-raw-data"></button>
-            <button class="btn btn-default btn-reduced" id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template"></button>
-            <button class="btn btn-default btn-reduced" id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template"></button>
-            <button class="btn btn-default btn-reduced" id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
-            <button class="btn btn-default btn-reduced" id="makeMarkdownBriefings" l10n-id="briefings-markdown-export"></button>
+          <div class="col-xs-2">
+            <div class="margin-bottom-16">
+              <button class="btn btn-default btn-reduced white-space-normal" id="previewTextOutput" l10n-id="briefings-preview"></button>
+              <button class="btn btn-default btn-reduced white-space-normal" id="showRawData" l10n-id="briefings-raw-data"></button>
+              <button class="btn btn-default btn-reduced white-space-normal" id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template"></button>
+              <button class="btn btn-default btn-reduced white-space-normal" id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template"></button>
+              <button class="btn btn-default btn-reduced white-space-normal" id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
+              <button class="btn btn-default btn-reduced white-space-normal" id="makeMarkdownBriefings" l10n-id="briefings-markdown-export"></button>
+            </div>
+            <div>
+              <label l10n-id="briefings-enter-text-file-type"></label>
+              <input id="textTypeSelector" value="txt" class="form-control"/>
+            </div>
           </div>
-          <div class="col-xs-6">
+          <div class="col-xs-5">
+            <div>
+              <h3 l10n-id="briefings-template"></h3>
+              <textarea id="templateArea" class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="col-xs-5">
             <h3 l10n-id="briefings-exported-text"></h3>
             <textarea id="textBriefingPreviewArea" class="form-control"></textarea>
           </div>

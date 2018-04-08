@@ -145,7 +145,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
                 
                 const tabs = {};
-                const firstTab = 'Relations';
+                const firstTab = 'Briefings';
                 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {

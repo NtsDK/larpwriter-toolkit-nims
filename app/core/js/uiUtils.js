@@ -118,7 +118,7 @@ See the License for the specific language governing permissions and
             const sel = queryEl(getAttr(el, 'selector-filter'));
             el.value = '';
             setAttr(el, 'l10n-placeholder-id', 'constant-filter');
-            addClass(el, 'form-control');
+            addClass(el, 'form-control margin-bottom-8');
             listen(el, 'input', filterOptions(sel));
         });
     };

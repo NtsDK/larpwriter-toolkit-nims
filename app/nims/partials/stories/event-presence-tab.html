@@ -1,20 +1,16 @@
 <div id="eventPresenceDiv" class="">
   <div class="panel panel-default">
-    <div class="panel-body" style="overflow-x:auto;">
-      <table cellspacing=0 cellpadding=0 style="width: 100%;">
-        <tr>
-          <td>
-            <span l10n-id="stories-show-characters"></span><br>
-            <select multiple id="eventPresenceSelector" class="form-control"></select>
-          </td>
-          <td>
-            <table  cellspacing=0 cellpadding=0 class="table table-bordered">
-              <thead id="eventPresenceTableHead"></thead>
-              <tbody id="eventPresenceTable"></tbody>
-            </table>
-          </td>
-        </tr>
-      </table>
+    <div class="panel-body flex-root" style="overflow-x:auto;">
+      <div class="flex-0-0-auto margin-right-8">
+<!--           <span l10n-id="stories-show-characters" class="margin-bottom-8 inline-block"></span> -->
+        <select multiple id="eventPresenceSelector" class="form-control"></select>
+      </div>
+      <div class="flex-1-1-auto">
+        <table  cellspacing=0 cellpadding=0 class="table table-bordered">
+          <thead id="eventPresenceTableHead"></thead>
+          <tbody id="eventPresenceTable"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

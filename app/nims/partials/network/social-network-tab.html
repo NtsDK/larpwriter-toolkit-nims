@@ -4,8 +4,10 @@
     <div class="storySelectorContainer sn-navigation-container">
       <div class="panel panel-default">
         <div class="panel-body">
-          <span l10n-id="social-network-show-node"></span><br>
-          <select id="nodeFocusSelector" class="common-select"></select>
+          <span l10n-id="social-network-show-node" class="display-block"></span>
+          <div class="margin-bottom-8">
+            <select id="nodeFocusSelector" class="common-select "></select>
+          </div>
           <div>
             <input id="showPlayerNamesCheckbox" type="checkbox"></input><label for="showPlayerNamesCheckbox"  l10n-id="social-network-show-player-names"></label>
           </div>
@@ -26,8 +28,10 @@
           <div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false" style="height: 0px;">
             <div class="panel-body">
               <div class="network-coloring-area">
-                <select id="networkNodeGroupSelector" class="form-control"></select> <br>
-                <span l10n-id="social-network-legend"></span>
+                <div class="margin-bottom-16">
+                  <select id="networkNodeGroupSelector" class="form-control"></select>
+                </div>
+                <span l10n-id="social-network-legend" class="margin-bottom-8 inline-block"></span>
                 <div id="colorLegend"></div>
               </div>
             </div>
@@ -48,12 +52,12 @@
                 <select size=3 id="networkSubsetsSelector" class="form-control"></select>
                 <div id="networkCharacterDiv" class="hidden">
                   <h4 l10n-id="social-network-characters"></h4> 
-                  <input selector-filter="#networkCharacterSelector"><br>
+                  <input selector-filter="#networkCharacterSelector">
                   <select id="networkCharacterSelector" multiple class="form-control"></select>
                 </div>
                 <div id="networkStoryDiv" class="hidden">
                   <h4 l10n-id="social-network-stories"></h4> 
-                  <input selector-filter="#networkStorySelector"><br>
+                  <input selector-filter="#networkStorySelector">
                   <select id="networkStorySelector" multiple class="form-control"></select>
                 </div>
               </div>
