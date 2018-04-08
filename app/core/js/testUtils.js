@@ -45,30 +45,30 @@ See the License for the specific language governing permissions and
             }
         }
         runClicker();
-    }
+    };
 
     exports.showModuleSchema = (checkRes) => {
-        addEl(queryEl('body'), queryEl(`.consistency-check-result-dialog`));
-        $(queryEl(`.consistency-check-result-dialog`)).modal('show');
+        addEl(queryEl('body'), queryEl('.consistency-check-result-dialog'));
+        $(queryEl('.consistency-check-result-dialog')).modal('show');
 
-        const svg = d3.select(".image-place svg");
-        const svgGroup = svg.append("g");
-        const root = svgGroup.append("g");
+        const svg = d3.select('.image-place svg');
+        const svgGroup = svg.append('g');
+        const root = svgGroup.append('g');
 
         // define an arrow head
-        svg.append("svg:defs")
-            .append("svg:marker")
-            .attr("id", "end")
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 10)
-            .attr("refY", 0)
-            .attr("markerWidth", 3)        // marker settings
-            .attr("markerHeight", 5)
-            .attr("orient", "auto")
-            .style("fill", "#999")
-            .style("stroke-opacity", 0.6)  // arrowhead color
-            .append("svg:path")
-            .attr("d", "M0,-5L10,0L0,5");
+        svg.append('svg:defs')
+            .append('svg:marker')
+            .attr('id', 'end')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 10)
+            .attr('refY', 0)
+            .attr('markerWidth', 3) // marker settings
+            .attr('markerHeight', 5)
+            .attr('orient', 'auto')
+            .style('fill', '#999')
+            .style('stroke-opacity', 0.6) // arrowhead color
+            .append('svg:path')
+            .attr('d', 'M0,-5L10,0L0,5');
 
         const nodeDict = checkRes.nodes.reduce((dict, name, i) => {
             dict[name] = i;
@@ -78,7 +78,7 @@ See the License for the specific language governing permissions and
         const nodeWidth = 170;
         const nodeHeight = 30;
 
-        const name2Node = (name) => ({
+        const name2Node = name => ({
             id: nodeDict[name],
             name,
             width: nodeWidth,
@@ -89,12 +89,12 @@ See the License for the specific language governing permissions and
             id: i + checkRes.nodes.length,
             source: nodeDict[pair[0]],
             target: nodeDict[pair[1]]
-        }) ;
+        });
 
         const graph = {
-        nodes: checkRes.nodes.map(name2Node),
-        links: checkRes.edges.map(pair2Edge)
-        }
+            nodes: checkRes.nodes.map(name2Node),
+            links: checkRes.edges.map(pair2Edge)
+        };
 
         const layouter = klay.d3adapter();
         const width = 960;
@@ -106,85 +106,83 @@ See the License for the specific language governing permissions and
             .size([width, height])
             .transformGroup(root)
             .options({
-            edgeRouting: "ORTHOGONAL",
-            intCoordinates: false
+                edgeRouting: 'ORTHOGONAL',
+                intCoordinates: false
             })
             .defaultPortSize([2, 2])
             .start();
 
-        const link = root.selectAll(".link")
+        const link = root.selectAll('.link')
             .data(graph.links)
             .enter()
-            .append("path")
-            .attr("class", "link")
-            .attr("d", "M0 0")
-            .attr("marker-end", "url(#end)");
+            .append('path')
+            .attr('class', 'link')
+            .attr('d', 'M0 0')
+            .attr('marker-end', 'url(#end)');
 
         // we group nodes along with their ports
-        const node = root.selectAll(".node")
+        const node = root.selectAll('.node')
             .data(graph.nodes)
             .enter()
-            .append("g");
+            .append('g');
 
-        node.append("rect")
-            .attr("class", (d)=> {
+        node.append('rect')
+            .attr('class', (d) => {
                 const details = checkRes.details[d.name];
-                if(details === undefined || details.length === 0){
-                    return "node valid";
+                if (details === undefined || details.length === 0) {
+                    return 'node valid';
                 }
-                return "node invalid";
+                return 'node invalid';
             })
-            .attr("width", nodeWidth)
-            .attr("height", nodeHeight)
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("x", 0)
-            .attr("y", 0);
+            .attr('width', nodeWidth)
+            .attr('height', nodeHeight)
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('x', 0)
+            .attr('y', 0);
 
-        node.append("text")
-            .attr("x", nodeWidth/2)
-            .attr("y", nodeHeight/2)
-            .attr("alignment-baseline", "middle")
-            .attr("text-anchor", "middle")
-            .text(function(d) { return d.name; })
-            .attr("font-size", "4px");
+        node.append('text')
+            .attr('x', nodeWidth / 2)
+            .attr('y', nodeHeight / 2)
+            .attr('alignment-baseline', 'middle')
+            .attr('text-anchor', 'middle')
+            .text(d => d.name)
+            .attr('font-size', '4px');
 
         // ports
-        const port = node.selectAll(".port")
-        .data(function(d) { return d.ports; })
-        .enter()
-        .append("rect")
-        .attr("class", "port")
-        .attr("width", 2)
-        .attr("height", 2)
-        .attr("x", 0)
-        .attr("y", 0);
+        const port = node.selectAll('.port')
+            .data(d => d.ports)
+            .enter()
+            .append('rect')
+            .attr('class', 'port')
+            .attr('width', 2)
+            .attr('height', 2)
+            .attr('x', 0)
+            .attr('y', 0);
 
         // apply layout
-        layouter.on("finish", function(d) {
-
+        layouter.on('finish', (d2) => {
         // apply edge routes
-        link.transition().attr("d", function(d) {
-            let path = "";
-            path += "M" + d.sourcePoint.x + " " + d.sourcePoint.y + " ";
-            d.bendPoints.forEach(function(bp, i) {
-            path += "L" + bp.x + " " + bp.y + " ";
+            link.transition().attr('d', (d) => {
+                let path = '';
+                path += `M${d.sourcePoint.x} ${d.sourcePoint.y} `;
+                d.bendPoints.forEach((bp, i) => {
+                    path += `L${bp.x} ${bp.y} `;
+                });
+                path += `L${d.targetPoint.x} ${d.targetPoint.y} `;
+                return path;
             });
-            path += "L" + d.targetPoint.x + " " + d.targetPoint.y + " ";
-            return path;
-        });
 
-        // apply node positions
-        node.transition()
-            .attr("transform", function(d) { return "translate(" + d.x + " " + d.y + ")"});
+            // apply node positions
+            node.transition()
+                .attr('transform', d => `translate(${d.x} ${d.y})`);
 
-        // apply port positions
-        port.transition()
-            .attr("x", function(d) { return d.x; })
-            .attr("y", function(d) { return d.y; });
-
+            // apply port positions
+            port.transition()
+                .attr('x', d => d.x)
+                .attr('y', d => d.y);
         });
 
         layouter.start();
-    }
+    };
 })(this.TestUtils = {});

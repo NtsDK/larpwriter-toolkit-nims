@@ -46,6 +46,8 @@ module.exports = {
         JSZip: false,
         Mustache: false,
         Chart: false,
+        d3: false,
+        klay: false,
         
         // Jasmine
         jasmine: false,
@@ -145,6 +147,14 @@ module.exports = {
         remapProps: false,
         rAddEl: false,
         rAddClass: false,
+        qte: false,
+        qmte: false,
+        qee: false,
+        qe: false,
+        qees: false,
+        wrapEl: false,
+        clearError: false,
+        removeClasses: false,
         
     },
 //    "extends": "eslint:recommended",

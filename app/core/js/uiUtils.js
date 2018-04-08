@@ -19,17 +19,17 @@ See the License for the specific language governing permissions and
 ((exports) => {
     exports.createModalDialog = (root, onAction, opts) => {
         const commons = '.dialog-commons ';
-        const el2 = wrapEl('div', qte(`${commons} .request-data-dialog-tmpl` ));
+        const el2 = wrapEl('div', qte(`${commons} .request-data-dialog-tmpl`));
         const el = qee(el2, '.modal');
-        if(opts.dialogClass !== undefined){
+        if (opts.dialogClass !== undefined) {
             addClass(el, opts.dialogClass);
         }
         const body = qee(el, '.modal-body');
         addEl(body, qte(`${commons} .${opts.bodySelector}`));
-        if(opts.body !== undefined){
+        if (opts.body !== undefined) {
             R.toPairs(opts.body).map(pair => setAttr(qee(body, pair[0]), 'l10n-id', pair[1]));
         }
-        if(opts.initBody !== undefined){
+        if (opts.initBody !== undefined) {
             opts.initBody(body);
         }
         addEl(body, qte(`${commons} .modal-error-block`));
@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
         el.showDlg = () => {
             clearError(el);
             $(el).modal('show');
-        }
+        };
         el.hideDlg = () => $(el).modal('hide');
         addEl(qe(root), el);
         return el;
@@ -114,7 +114,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.initSelectorFilters = () => {
-        queryEls('[selector-filter]').forEach( el => {
+        queryEls('[selector-filter]').forEach((el) => {
             const sel = queryEl(getAttr(el, 'selector-filter'));
             el.value = '';
             setAttr(el, 'l10n-placeholder-id', 'constant-filter');
@@ -147,14 +147,14 @@ See the License for the specific language governing permissions and
             Utils.alert(`Panel toggler is broken: ${attr}`);
         }
         listen(el, 'click', togglePanel(el, sel));
-    }
+    };
 
-    exports.initPanelTogglers = (el) => qees(el || document, '[panel-toggler]').forEach(exports.initPanelToggler);
+    exports.initPanelTogglers = el => qees(el || document, '[panel-toggler]').forEach(exports.initPanelToggler);
 
     exports.attachPanelToggler = (header, content, callback) => {
         addClass(header, 'expanded');
         listen(header, 'click', (event) => {
-            if(callback) {
+            if (callback) {
                 callback(event, () => {
                     togglePanel(header, content)(event);
                 });
@@ -257,11 +257,11 @@ See the License for the specific language governing permissions and
 
     exports.initTextAreas = (sel) => {
         R.ap([exports.attachTextareaResizer], queryEls(sel));
-    }
+    };
 
     exports.refreshTextAreas = (sel) => {
         R.ap([exports.resizeTextarea], queryEls(sel).map(el => ({ target: el })));
-    }
+    };
 
     exports.attachTextareaResizer = (input) => {
         listen(input, 'keydown', exports.resizeTextarea);
@@ -306,16 +306,14 @@ See the License for the specific language governing permissions and
         return div;
     };
 
-    exports.onChangeAdaptationReadyStatus2 = (callback) => {
-        return (event) => {
-            const dataKey = JSON.parse(event.target.id);
-            const value = !hasClass(event.target, 'btn-primary');
-            DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, (err) => {
-                if (err) { Utils.handleError(err); return; }
-                setClassByCondition(event.target, 'btn-primary', value);
-                callback(value);
-            });
-        };
+    exports.onChangeAdaptationReadyStatus2 = callback => (event) => {
+        const dataKey = JSON.parse(event.target.id);
+        const value = !hasClass(event.target, 'btn-primary');
+        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, (err) => {
+            if (err) { Utils.handleError(err); return; }
+            setClassByCondition(event.target, 'btn-primary', value);
+            callback(value);
+        });
     };
 
     exports.makePanelCore = (title, content) => {
@@ -335,7 +333,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.makeProfileTable = (profileStructure, profile) => {
-        const container = qmte(`.profile-editor-container-tmpl`);
+        const container = qmte('.profile-editor-container-tmpl');
         addClass(container, 'profile-table');
         let value;
         return addEls(container, profileStructure.filter(element => element.doExport).map((element) => {
@@ -356,7 +354,7 @@ See the License for the specific language governing permissions and
             default:
                 throw new Error(`Unexpected type ${element.type}`);
             }
-            const row = qmte(`.profile-editor-row-tmpl`);
+            const row = qmte('.profile-editor-row-tmpl');
             addEl(qee(row, '.profile-item-name'), makeText(element.name));
             addEl(qee(row, '.profile-item-input'), value);
             return row;
@@ -366,7 +364,7 @@ See the License for the specific language governing permissions and
     exports.makeTableRow = (col1, col2) => addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);
 
     exports.checkAndGetEntitySetting = (settingsPath, names) => {
-        if(names.length === 0) throw new Error('names are empty');
+        if (names.length === 0) throw new Error('names are empty');
         const settings = DBMS.getSettings();
         if (!settings[settingsPath]) {
             settings[settingsPath] = {
@@ -380,10 +378,10 @@ See the License for the specific language governing permissions and
             name = names[0].value;
         }
         return name;
-    }
+    };
 
     exports.updateEntitySetting = (settingsPath, name) => {
         const settings = DBMS.getSettings();
         settings[settingsPath].name = name;
-    }
+    };
 })(this.UI = {});
