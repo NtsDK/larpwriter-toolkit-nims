@@ -30,8 +30,8 @@ See the License for the specific language governing permissions and
         dbmsUtils._arr2RelKey = arr2RelKey;
 
         const findRel = R.curry((fromCharacter, toCharacter, relations) => {
-            const findFunc = R.curry((fromCharacter, toCharacter, rel) =>
-                rel[fromCharacter] !== undefined && rel[toCharacter] !== undefined);
+            const findFunc = R.curry((fromCharacter2, toCharacter2, rel) =>
+                rel[fromCharacter2] !== undefined && rel[toCharacter2] !== undefined);
             return R.find(findFunc(fromCharacter, toCharacter), relations);
         });
 
@@ -89,15 +89,15 @@ See the License for the specific language governing permissions and
                 PC.createEntityCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
             PC.precondition(chain, callback, () => {
                 relData.push({
-                    "origin": "",
-                    "starterTextReady": false,
-                    "enderTextReady": false,
-                    "essence": [],
-                    [fromCharacter]: "",
-                    [toCharacter]: "",
-                    "starter": fromCharacter,
-                    "ender": toCharacter
-                })
+                    origin: '',
+                    starterTextReady: false,
+                    enderTextReady: false,
+                    essence: [],
+                    [fromCharacter]: '',
+                    [toCharacter]: '',
+                    starter: fromCharacter,
+                    ender: toCharacter
+                });
                 if (callback) callback();
             });
         };
@@ -114,7 +114,10 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setCharacterRelationText = function (fromCharacter, toCharacter, character, text, callback) {
+        LocalDBMS.prototype.setCharacterRelationText = function (
+            fromCharacter, toCharacter, character, text,
+            callback
+        ) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
                 characterCheck(toCharacter, this.database),
@@ -138,7 +141,7 @@ See the License for the specific language governing permissions and
                 PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
             PC.precondition(chain, callback, () => {
                 const rel = findRel(fromCharacter, toCharacter, relData);
-                if(rel.starter === character) {
+                if (rel.starter === character) {
                     rel.starterTextReady = ready;
                 } else {
                     rel.enderTextReady = ready;
@@ -156,7 +159,7 @@ See the License for the specific language governing permissions and
                 PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
             PC.precondition(chain, callback, () => {
                 const rel = findRel(fromCharacter, toCharacter, relData);
-                if(flag === true){
+                if (flag === true) {
                     rel.essence = R.uniq(R.append(essence, rel.essence));
                 } else {
                     rel.essence.splice(R.indexOf(essence, rel.essence), 1);
@@ -182,13 +185,13 @@ See the License for the specific language governing permissions and
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             const arrPair = R.partition(R.pipe(R.prop(fromName), R.isNil), relData);
-            arrPair[1] = arrPair[1].map( rel => {
+            arrPair[1] = arrPair[1].map((rel) => {
                 rel[toName] = rel[fromName];
                 delete rel[fromName];
-                if(rel.starter === fromName){
+                if (rel.starter === fromName) {
                     rel.starter = toName;
                 }
-                if(rel.ender === fromName){
+                if (rel.ender === fromName) {
                     rel.ender = toName;
                 }
                 return rel;

@@ -92,6 +92,10 @@ module.exports = {
         NetworkSubsetsSelector: false,
         ProfileEditorCore: false,
         ProfileBinding: false,
+        CharacterReports: false,
+        Adaptations: false,
+        Relations: false,
+        TestUtils: false,
         
         // NIMS utils
         ProjectUtils: false,
@@ -153,8 +157,10 @@ module.exports = {
         qe: false,
         qees: false,
         wrapEl: false,
+        setError: false,
         clearError: false,
         removeClasses: false,
+        setClassIf: false,
         
     },
 //    "extends": "eslint:recommended",

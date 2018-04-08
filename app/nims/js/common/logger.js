@@ -21,8 +21,7 @@ See the License for the specific language governing permissions and
 /* eslint-disable func-names,prefer-rest-params */
 
 ((exports) => {
-
-    exports.offlineIgnoreList = [ 'getUser',
+    exports.offlineIgnoreList = ['getUser',
         'setPassword',
         'checkPassword',
         'login',
@@ -30,7 +29,7 @@ See the License for the specific language governing permissions and
         'hasPermission',
         '_getOwnerMap',
         'getPermissionsSummary',
-        'subscribeOnPermissionsUpdate' ];
+        'subscribeOnPermissionsUpdate'];
 
     // argument description
     // add function name to log it

@@ -818,7 +818,7 @@ See the License for the specific language governing permissions and
         function getRelationsSchema(Characters, definitions) {
             let chars = R.keys(Characters);
             const names = `^(${R.keys(Characters).map(CommonUtils.escapeRegExp).join('|')})$`;
-            if(chars.length === 0){
+            if (chars.length === 0) {
                 chars = ['123'];
             }
 
@@ -853,14 +853,14 @@ See the License for the specific language governing permissions and
                         },
                     },
                     required: ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'],
-                    patternProperties:{
-                        [names] : {
+                    patternProperties: {
+                        [names]: {
                             type: 'string',
                         }
                     },
                     additionalProperties: false,
-                    "minProperties": 8,
-                    "maxProperties": 8
+                    minProperties: 8,
+                    maxProperties: 8
                 }
             };
             return schema;

@@ -19,7 +19,6 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-
     const root = '.relations-tab ';
     const state = {};
     const settingsPath = 'Relations';
@@ -57,9 +56,11 @@ See the License for the specific language governing permissions and
         exports.load(state.data, buildContentInner);
     }
 
-    function buildContentInner(){
-        const content = RelationsPreview.makeRelationsContent(state.data, true, state.characterProfileStructure,
-            exports.refresh);
+    function buildContentInner() {
+        const content = RelationsPreview.makeRelationsContent(
+            state.data, true, state.characterProfileStructure,
+            exports.refresh
+        );
         addEl(queryEl(`${root} .panel-body`), content);
         UI.initTextAreas(`${root} .panel-body textarea`);
         UI.refreshTextAreas(`${root} .panel-body textarea`);
@@ -83,5 +84,5 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-    }
+    };
 })(this.Relations = {});

@@ -114,7 +114,7 @@ See the License for the specific language governing permissions and
     function makePrintData() {
         const dataArrays = state.filterConfiguration.getDataArrays(makeFilterModel());
 
-        const sortFunc = CommonUtils.charOrdAFactoryBase(state.sortDir, (a,b) => a > b, (a) => {
+        const sortFunc = CommonUtils.charOrdAFactoryBase(state.sortDir, (a, b) => a > b, (a) => {
             const map = CommonUtils.arr2map(a, 'itemName');
             const item = map[state.sortKey];
             let { value } = item;
@@ -139,7 +139,7 @@ See the License for the specific language governing permissions and
 
     function rebuildContent() {
         const dataArrays = makePrintData();
-//        addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
+        //        addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
         addEls(clearEl(queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
         UI.showSelectedEls('-dependent')({ target: queryEl(`${root}.profile-item-selector`) });
     }
@@ -508,25 +508,23 @@ See the License for the specific language governing permissions and
     }
 
     function renameGroup(selector) {
-        return (dialog) => {
-            return () => {
-                const toInput = qee(dialog, '.entity-input');
-                const fromName = queryEl(selector).value.trim();
-                const toName = toInput.value.trim();
+        return dialog => () => {
+            const toInput = qee(dialog, '.entity-input');
+            const fromName = queryEl(selector).value.trim();
+            const toName = toInput.value.trim();
 
-                DBMS.renameGroup(fromName, toName, (err) => {
-                    if(err){
-                        setError(dialog, err);
-                    } else {
-                        PermissionInformer.refresh((err2) => {
-                            if (err2) { Utils.handleError(err2); return; }
-                            toInput.value = '';
-                            dialog.hideDlg();
-                            exports.refresh();
-                        });
-                    }
-                });
-            }
-        }
+            DBMS.renameGroup(fromName, toName, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    PermissionInformer.refresh((err2) => {
+                        if (err2) { Utils.handleError(err2); return; }
+                        toInput.value = '';
+                        dialog.hideDlg();
+                        exports.refresh();
+                    });
+                }
+            });
+        };
     }
 })(this.ProfileFilter = {});

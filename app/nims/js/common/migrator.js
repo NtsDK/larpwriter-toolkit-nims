@@ -172,22 +172,23 @@ See the License for the specific language governing permissions and
                 data.Log = data.Log.map((el) => { el.push(beginStr); return el; });
                 const oldRelations = data.Relations;
                 const triplets = R.toPairs(oldRelations).map(pair => R.toPairs(pair[1]).map(R.prepend(pair[0])));
-                const acc = R.unnest(triplets).reduce((acc, triplet) => {
+                const acc2 = R.unnest(triplets).reduce((acc, triplet) => {
                     const key = JSON.stringify([triplet[0], triplet[1]].sort());
-                    if(acc[key] === undefined){
+                    if (acc[key] === undefined) {
                         acc[key] = {
-                            [triplet[0]] : triplet[2],
-                            [triplet[1]] : '',
-                            'starter' : triplet[0],
-                            'ender' : triplet[1],
-                        }
+                            [triplet[0]]: triplet[2],
+                            [triplet[1]]: '',
+                            starter: triplet[0],
+                            ender: triplet[1],
+                        };
                     } else {
+                        // eslint-disable-next-line prefer-destructuring
                         acc[key][triplet[0]] = triplet[2];
                     }
                     return acc;
-                }, {})
+                }, {});
 
-                data.Relations = R.values(acc).map(R.merge({
+                data.Relations = R.values(acc2).map(R.merge({
                     origin: '',
                     starterTextReady: false,
                     enderTextReady: false,
@@ -196,11 +197,11 @@ See the License for the specific language governing permissions and
 
                 data.Version = '0.6.2';
             }
-            console.log('data ' + data);
+            console.log(`data ${data}`);
 
 
             return data;
         };
-    };
+    }
     callback(Migrator);
 })(api => ((typeof exports === 'undefined') ? api((this.Migrator = {}), R) : (module.exports = api)));

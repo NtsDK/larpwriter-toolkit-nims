@@ -192,8 +192,10 @@ See the License for the specific language governing permissions and
         load: Relations.load,
         make(el, data) {
             const label = `${getL10n('header-relations')} (${data.relationsSummary.relations.length})`;
-            const content = RelationsPreview.makeRelationsContent(data, getFlags().isAdaptationsMode,
-                    state.characterProfileStructure, exports.refresh);
+            const content = RelationsPreview.makeRelationsContent(
+                data, getFlags().isAdaptationsMode,
+                state.characterProfileStructure, exports.refresh
+            );
             addEl(el, makePanel(makeText(label), content, getFlags().hideAllPanels));
         }
     }, {
@@ -236,25 +238,25 @@ See the License for the specific language governing permissions and
             addEl(div, addEl(makeEl('h4'), makeText(groupText.groupName)));
             const span = addEl(makeEl('textarea'), makeText(groupText.text));
             setAttr(span, 'disabled', 'disabled');
-            addClasses(span, ['briefingTextSpan','form-control']);
+            addClasses(span, ['briefingTextSpan', 'form-control']);
             return addEl(div, span);
         }));
     }
 
     function makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap) {
-        const container = qmte(`.profile-editor-container-tmpl`);
+        const container = qmte('.profile-editor-container-tmpl');
         return addEls(container, allInventoryLists.map((elem) => {
             const input = makeEl('input');
             input.value = elem.inventory;
             input.storyName = elem.storyName;
             input.characterName = characterName;
-            addClasses(input, ['inventoryInput','form-control']);
+            addClasses(input, ['inventoryInput', 'form-control']);
             if (!userStoryNamesMap[elem.storyName]) {
                 addClass(input, 'notEditable');
             }
             listen(input, 'change', updateCharacterInventory);
 
-            const row = qmte(`.profile-editor-row-tmpl`);
+            const row = qmte('.profile-editor-row-tmpl');
             addEl(qee(row, '.profile-item-name'), makeText(elem.storyName));
             addEl(qee(row, '.profile-item-input'), input);
             return row;
@@ -337,7 +339,10 @@ See the License for the specific language governing permissions and
                             opts.index = j + 1;
                             return showEvent(event, characterName, opts, flags);
                         }));
-                        return makePanel(getStoryHeader(elem, i, flags.disableHeaders), storyContent, flags.hideAllPanels);
+                        return makePanel(
+                            getStoryHeader(elem, i, flags.disableHeaders), storyContent,
+                            flags.hideAllPanels
+                        );
                     }));
                     onBuildContentFinish();
                 });
@@ -352,13 +357,12 @@ See the License for the specific language governing permissions and
     }
 
     function showEvent(event, characterName, opts, flags) {
-
         const { isAdaptationsMode } = flags;
         const showAll = isAdaptationsMode;
         const showAdaptationText = event.characters[characterName].text !== '';
         const showSubjectiveTime = event.characters[characterName].time !== '';
 
-        const eventDiv = qmte(`.adaptation-row-tmpl`);
+        const eventDiv = qmte('.adaptation-row-tmpl');
         const originCard = Adaptations.makeOriginCard(event, opts.metaInfo, event.storyName, {
             cardTitle: flags.disableHeaders ? L10n.format('briefings', 'event-header', [opts.index]) : event.name,
             showTimeInput: showAll || !showSubjectiveTime,
@@ -367,13 +371,15 @@ See the License for the specific language governing permissions and
         });
         addEl(qee(eventDiv, '.eventMainPanelRow-left'), originCard);
         const isEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
-        const adaptationsCard = Adaptations.makeAdaptationCard(isEditable, event,
+        const adaptationsCard = Adaptations.makeAdaptationCard(
+            isEditable, event,
             event.storyName, characterName, {
                 cardTitle: '',
                 showTimeInput: showAll || showSubjectiveTime,
                 showFinishedButton: true,
                 showTextInput: showAll || showAdaptationText
-            });
+            }
+        );
         addEl(qee(eventDiv, '.eventMainPanelRow-left'), adaptationsCard);
         return eventDiv;
     }

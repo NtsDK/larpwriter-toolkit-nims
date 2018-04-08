@@ -73,20 +73,21 @@ See the License for the specific language governing permissions and
         const addText = (text) => {
             addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(text))));
         };
-        addText(rowData[0] + ' ' + prevData[0]);
+        addText(`${rowData[0]} ${prevData[0]}`);
         addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss'));
         addText(rowData[1]);
         addText(rowData[3]);
         addText(rowData[4]);
-////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
-////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
-//        const diff = JsDiff.diffWordsWithSpace(prevData[4] || '', rowData[4]);
-//        const els = diff.map( part => [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => {
-//            return addClasses(addEl(makeEl('span'), makeText(pair[0])), ['log-diff', pair[1]]);
-//        });
-//
-//        const dataSpan = addEl(makeEl('span'), makeText(rowData[4]));
-//        addEl(tr, addEls(makeEl('td'), [dataSpan, addEls(makeEl('span'), els)]));
+        ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
+        ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
+        //        const diff = JsDiff.diffWordsWithSpace(prevData[4] || '', rowData[4]);
+        //        const els = diff.map( part =>
+        // [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => {
+        //            return addClasses(addEl(makeEl('span'), makeText(pair[0])), ['log-diff', pair[1]]);
+        //        });
+        //
+        //        const dataSpan = addEl(makeEl('span'), makeText(rowData[4]));
+        //        addEl(tr, addEls(makeEl('td'), [dataSpan, addEls(makeEl('span'), els)]));
         addText(rowData[5]);
         return tr;
     }

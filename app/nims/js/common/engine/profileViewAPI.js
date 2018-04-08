@@ -12,64 +12,56 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-"use strict";
+'use strict';
 
-(function(callback){
-
+((callback2) => {
     function profileViewAPI(LocalDBMS, opts) {
+        const {
+            R, CU, Constants, Errors
+        } = opts;
 
-        var R             = opts.R           ;
-        var CU            = opts.CommonUtils ;
-        var Constants     = opts.Constants   ;
-        var Errors        = opts.Errors      ;
-        var listeners     = opts.listeners   ;
-
-        function getPath(type){
-            if(type === 'character') return ['Characters'];
-            if(type === 'player') return ['Players'];
+        function getPath(type) {
+            if (type === 'character') return ['Characters'];
+            if (type === 'player') return ['Players'];
             return null;
-        };
-        function getStructurePath(type){
-            if(type === 'character') return ['CharacterProfileStructure'];
-            if(type === 'player') return ['PlayerProfileStructure'];
+        }
+        function getStructurePath(type) {
+            if (type === 'character') return ['CharacterProfileStructure'];
+            if (type === 'player') return ['PlayerProfileStructure'];
             return null;
-        };
+        }
 
-        var getProfileInfo = function(type, database){
-//            var structure = R.path(getStructurePath(type), database).filter(el => el.showInRoleGrid === true);
-            var structure = R.path(getStructurePath(type), database);
+        const getProfileInfo = (type, database) => {
+            // var structure = R.path(getStructurePath(type), database).filter(el => el.showInRoleGrid === true);
+            const structure = R.path(getStructurePath(type), database);
             return {
-                structure: structure,
+                structure,
                 profiles: R.mapObjIndexed(R.pick(structure.map(R.prop('name'))), R.path(getPath(type), database))
             };
         };
 
-        LocalDBMS.prototype.getRoleGridInfo = function(callback) {
-            var characters = getProfileInfo('character', this.database);
-            var players = getProfileInfo('player', this.database);
+        LocalDBMS.prototype.getRoleGridInfo = (callback) => {
+            const characters = getProfileInfo('character', this.database);
+            const players = getProfileInfo('player', this.database);
 
-            var bindings = this.database.ProfileBindings;
-            var profileData = R.keys(characters.profiles).map(characterName => {
-                var playerName = bindings[characterName];
+            const bindings = this.database.ProfileBindings;
+            const profileData = R.keys(characters.profiles).map((characterName) => {
+                const playerName = bindings[characterName];
                 return {
                     character: characters.profiles[characterName],
-                    player: playerName === undefined ? undefined :  players.profiles[playerName],
-                    characterName: characterName,
-                    playerName: playerName,
-                }
+                    player: playerName === undefined ? undefined : players.profiles[playerName],
+                    characterName,
+                    playerName,
+                };
             });
 
             callback(null, {
-                profileData:profileData,
+                profileData,
                 characterProfileStructure: characters.structure,
                 playerProfileStructure: players.structure
             });
         };
+    }
 
-    };
-
-    callback(profileViewAPI);
-
-})(function(api){
-    typeof exports === 'undefined'? this['profileViewAPI'] = api: module.exports = api;
-}.bind(this));
+    callback2(profileViewAPI);
+})(api => (typeof exports === 'undefined' ? (this.profileViewAPI = api) : (module.exports = api)));

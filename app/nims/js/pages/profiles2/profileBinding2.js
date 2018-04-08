@@ -43,16 +43,20 @@ See the License for the specific language governing permissions and
         });
     };
 
-    function rebuildInterface(characterNames, playerNames, profileBindings){
+    function rebuildInterface(characterNames, playerNames, profileBindings) {
         const bindedCharacterList = R.keys(profileBindings);
         const bindedPlayerList = R.values(profileBindings);
         const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
 
-        addEls(clearEl(queryEl(`${root} .entity-list.character-list`)),
-            characterNames.filter(filter(bindedCharacterList)).map(profile2el('character')));
+        addEls(
+            clearEl(queryEl(`${root} .entity-list.character-list`)),
+            characterNames.filter(filter(bindedCharacterList)).map(profile2el('character'))
+        );
 
-        addEls(clearEl(queryEl(`${root} .entity-list.player-list`)),
-            playerNames.filter(filter(bindedPlayerList)).map(profile2el('player')));
+        addEls(
+            clearEl(queryEl(`${root} .entity-list.player-list`)),
+            playerNames.filter(filter(bindedPlayerList)).map(profile2el('player'))
+        );
 
         const bindings = R.toPairs(profileBindings).map(binding => ({
             name: R.join('/', binding),
@@ -64,7 +68,7 @@ See the License for the specific language governing permissions and
     }
 
     const profile2el = R.curry((type, name) => {
-        const el = wrapEl('div', qte(`${root} .profile-item-tmpl` ));
+        const el = wrapEl('div', qte(`${root} .profile-item-tmpl`));
         el.profileName = name.value;
         addEl(qee(el, '.primary-name'), makeText(name.displayName));
         setAttr(el, 'profile-name', name.value);
@@ -76,24 +80,27 @@ See the License for the specific language governing permissions and
         listen(el, 'dragenter', handleDragEnter);
         listen(el, 'dragleave', handleDragLeave);
         return el;
-    })
+    });
 
-    var onDragStart = function(event){
-        console.log('onDragStart ' + this.profileName);
+    // eslint-disable-next-line no-var,vars-on-top
+    var onDragStart = (event) => {
+        console.log(`onDragStart ${this.profileName}`);
         event.dataTransfer.setData('data', JSON.stringify({
             name: getAttr(this, 'profile-name'),
             type: getAttr(this, 'profile-type'),
         }));
         event.dataTransfer.effectAllowed = 'move';
     };
-    var onDrop = function(event){
+
+    // eslint-disable-next-line no-var,vars-on-top
+    var onDrop = (event) => {
         removeClass(this, 'over');
-        console.log('onDrop ' + this.profileName + event.dataTransfer.getData('data'));
+        console.log(`onDrop ${this.profileName}${event.dataTransfer.getData('data')}`);
         if (event.stopPropagation) {
             event.stopPropagation(); // stops the browser from redirecting.
         }
         const thatData = JSON.parse(event.dataTransfer.getData('data'));
-        if(thatData.type === getAttr(this, 'profile-type')){
+        if (thatData.type === getAttr(this, 'profile-type')) {
             return;
         }
 
@@ -102,8 +109,10 @@ See the License for the specific language governing permissions and
             type: getAttr(this, 'profile-type'),
         }]);
     };
-    var allowDrop = function(event){
-        console.log('allowDrop ' + this.profileName);
+
+    // eslint-disable-next-line no-var,vars-on-top
+    var allowDrop = (event) => {
+        console.log(`allowDrop ${this.profileName}`);
         event.preventDefault();
     };
 
@@ -115,8 +124,8 @@ See the License for the specific language governing permissions and
         removeClass(this, 'over');
     }
 
-    function binding2el(binding){
-        const el = wrapEl('div', qte(`${root} .binding-item-tmpl` ));
+    function binding2el(binding) {
+        const el = wrapEl('div', qte(`${root} .binding-item-tmpl`));
         addEl(qee(el, '.primary-name'), makeText(binding.name));
         setAttr(el, 'primary-name', binding.name);
         setAttr(qee(el, '.unlink'), 'title', l10n('unlink-binding'));
@@ -124,15 +133,16 @@ See the License for the specific language governing permissions and
         return el;
     }
 
-    var filterList = (sel) => (event) => {
+    // eslint-disable-next-line no-var,vars-on-top
+    var filterList = sel => (event) => {
         const str = event.target.value.toLowerCase();
 
         const els = queryEls(`${root} ${sel} [primary-name]`);
-        els.forEach(el => {
-            let isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
+        els.forEach((el) => {
+            const isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
             setClassByCondition(el, 'hidden', !isVisible);
         });
-    }
+    };
 
     function createBinding(pair) {
         const characterName = pair[0].type === 'character' ? pair[0].name : pair[1].name;

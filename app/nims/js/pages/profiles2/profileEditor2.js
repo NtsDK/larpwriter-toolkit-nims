@@ -19,11 +19,10 @@ See the License for the specific language governing permissions and
 'use strict';
 
 function ProfileEditorTmpl(exports, opts) {
-
     const { firstType, secondType, settingsPath } = opts;
 
     const tmplRoot = '.profile-editor2-tab-tmpl';
-    const root = `.profile-editor2-tab.${firstType + '-type'} `;
+    const root = `.profile-editor2-tab.${`${firstType}-type`} `;
     const state = {};
     const l10n = L10n.get('profiles');
     let profileEditorCore;
@@ -35,32 +34,35 @@ function ProfileEditorTmpl(exports, opts) {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         const el = queryEl(tmplRoot).cloneNode(true);
 
-        addClasses(el, ['profile-editor2-tab', `${firstType + '-type'}`]);
+        addClasses(el, ['profile-editor2-tab', `${`${firstType}-type`}`]);
         removeClass(el, 'profile-editor2-tab-tmpl');
         addEl(queryEl('.tab-container'), el);
 
-        const createCharacterDialog = UI.createModalDialog(`.profile-editor2-tab.${firstType + '-type'}`, createProfile, {
-            bodySelector: 'modal-prompt-body',
-            dialogTitle: 'profiles-' + opts.createMsg,
-            actionButtonTitle: 'common-create',
-        });
+        const createCharacterDialog = UI.createModalDialog(
+            `.profile-editor2-tab.${`${firstType}-type`}`,
+            createProfile, {
+                bodySelector: 'modal-prompt-body',
+                dialogTitle: `profiles-${opts.createMsg}`,
+                actionButtonTitle: 'common-create',
+            }
+        );
         listen(queryEl(`${root} .create`), 'click', () => createCharacterDialog.showDlg());
-        state.renameCharacterDialog = UI.createModalDialog(`.${firstType + '-type'}`, renameProfile, {
+        state.renameCharacterDialog = UI.createModalDialog(`.${`${firstType}-type`}`, renameProfile, {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'profiles-' + opts.renameMsg,
+            dialogTitle: `profiles-${opts.renameMsg}`,
             actionButtonTitle: 'common-rename',
         });
 
         setClassByCondition(qee(el, '.report-by-stories'), 'hidden', firstType === 'player');
         setClassByCondition(qee(el, '.report-by-relations'), 'hidden', firstType === 'player');
-        setAttr(qee(el, '.entity-filter'), 'l10n-placeholder-id', 'profiles-' + opts.filterPlaceholder);
-        setAttr(qee(el, '.profile-panel h3'), 'l10n-id', 'profiles-' + opts.panelName);
-        setAttr(qee(el, '.create'), 'l10n-title', 'profiles-' + opts.createProfile);
+        setAttr(qee(el, '.entity-filter'), 'l10n-placeholder-id', `profiles-${opts.filterPlaceholder}`);
+        setAttr(qee(el, '.profile-panel h3'), 'l10n-id', `profiles-${opts.panelName}`);
+        setAttr(qee(el, '.create'), 'l10n-title', `profiles-${opts.createProfile}`);
         L10n.localizeStatic(el);
 
-        setAttr(qee(el,'.report-by-stories a') , 'panel-toggler', root + ".report-by-stories-div");
-        setAttr(qee(el,'.report-by-relations a') , 'panel-toggler', root + ".report-by-relations-div");
-        setAttr(qee(el,'.profile-panel a') , 'panel-toggler', root + ".profile-div");
+        setAttr(qee(el, '.report-by-stories a'), 'panel-toggler', `${root}.report-by-stories-div`);
+        setAttr(qee(el, '.report-by-relations a'), 'panel-toggler', `${root}.report-by-relations-div`);
+        setAttr(qee(el, '.profile-panel a'), 'panel-toggler', `${root}.profile-div`);
         UI.initPanelTogglers(el);
 
         exports.content = el;
@@ -81,14 +83,14 @@ function ProfileEditorTmpl(exports, opts) {
         });
     };
 
-    function rebuildInterface(primaryNames, secondaryNames, profileBindings){
+    function rebuildInterface(primaryNames, secondaryNames, profileBindings) {
         const secDict = R.indexBy(R.prop('value'), secondaryNames);
-        addEls(clearEl(queryEl(`${root} .entity-list`)), primaryNames.map( name => {
-            const el = wrapEl('div', qte(`${root} .entity-item-tmpl` ));
+        addEls(clearEl(queryEl(`${root} .entity-list`)), primaryNames.map((name) => {
+            const el = wrapEl('div', qte(`${root} .entity-item-tmpl`));
             addEl(qee(el, '.primary-name'), makeText(name.displayName));
             setAttr(el, 'primary-name', name.displayName);
             setAttr(el, 'profile-name', name.value);
-            if(profileBindings[name.value] !== undefined){
+            if (profileBindings[name.value] !== undefined) {
                 const secondaryName = secDict[profileBindings[name.value]].displayName;
                 addEl(qee(el, '.secondary-name'), makeText(secondaryName));
                 setAttr(el, 'secondary-name', secondaryName);
@@ -96,7 +98,7 @@ function ProfileEditorTmpl(exports, opts) {
             listen(qee(el, '.select-button'), 'click', () => selectProfile(name.value));
             setAttr(qee(el, '.rename'), 'title', l10n(opts.renameProfile));
             setAttr(qee(el, '.remove'), 'title', l10n(opts.removeProfile));
-            if(name.editable){
+            if (name.editable) {
                 listen(qee(el, '.rename'), 'click', () => {
                     qee(state.renameCharacterDialog, '.entity-input').value = name.value;
                     state.renameCharacterDialog.fromName = name.value;
@@ -112,15 +114,14 @@ function ProfileEditorTmpl(exports, opts) {
 
         const callback = () => {
             selectProfile(UI.checkAndGetEntitySetting(settingsPath, primaryNames));
-        }
+        };
         DBMS.getProfileStructure(firstType, (err2, allProfileSettings) => {
             if (err2) { Utils.handleError(err2); return; }
             profileEditorCore.initProfileStructure(profileDiv, firstType, allProfileSettings, callback);
         });
-
     }
 
-    function selectProfile(name){
+    function selectProfile(name) {
         UI.updateEntitySetting(settingsPath, name);
         queryEls(`${root} [profile-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
         const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
@@ -139,7 +140,10 @@ function ProfileEditorTmpl(exports, opts) {
                         DBMS.getRelationsSummary(name, (err4, relationsSummary) => {
                             if (err4) { Utils.handleError(err4); return; }
                             removeClass(queryEl(reportByStoriesDiv), 'hidden');
-                            addEls(clearEl(queryEl(reportByStoriesDiv)), characterReport.map(CharacterReports.makeStoryReportRow));
+                            addEls(
+                                clearEl(queryEl(reportByStoriesDiv)),
+                                characterReport.map(CharacterReports.makeStoryReportRow)
+                            );
                             removeClass(queryEl(reportByRelationsDiv), 'hidden');
                             relationsSummary.relations.sort(CommonUtils.charOrdAFactory(rel =>
                                 ProjectUtils.get2ndRelChar(name, rel).toLowerCase()));
@@ -153,28 +157,28 @@ function ProfileEditorTmpl(exports, opts) {
         });
     }
 
-    function filterOptions(event){
+    function filterOptions(event) {
         const str = event.target.value.toLowerCase();
 
         const els = queryEls(`${root} [primary-name]`);
-        els.forEach(el => {
+        els.forEach((el) => {
             let isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
-            if(!isVisible && getAttr(el, 'secondary-name') !== null){
+            if (!isVisible && getAttr(el, 'secondary-name') !== null) {
                 isVisible = getAttr(el, 'secondary-name').toLowerCase().search(str) !== -1;
             }
             setClassByCondition(el, 'hidden', !isVisible);
         });
 
-        if(queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
+        if (queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
             queryEl(`${root} [primary-name] .select-button.btn-primary`) === null) {
-            const els = queryEls(`${root} [primary-name]`).filter(R.pipe(hasClass(R.__, 'hidden'), R.not));
-            selectProfile(els.length > 0 ? getAttr(els[0], 'profile-name') : null);
+            const els2 = queryEls(`${root} [primary-name]`).filter(R.pipe(hasClass(R.__, 'hidden'), R.not));
+            selectProfile(els2.length > 0 ? getAttr(els2[0], 'profile-name') : null);
         } else {
-//            queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
+            //            queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
         }
     }
 
-    function createProfile (dialog){
+    function createProfile(dialog) {
         return () => {
             const input = qee(dialog, '.entity-input');
             const value = input.value.trim();
@@ -185,20 +189,20 @@ function ProfileEditorTmpl(exports, opts) {
                 } else {
                     UI.updateEntitySetting(settingsPath, value);
                     PermissionInformer.refresh((err2) => {
-                    if (err2) { Utils.handleError(err2); return; }
+                        if (err2) { Utils.handleError(err2); return; }
                         input.value = '';
                         dialog.hideDlg();
                         exports.refresh();
                     });
                 }
             });
-        }
-    };
+        };
+    }
 
-    function renameProfile (dialog){
+    function renameProfile(dialog) {
         return () => {
             const toInput = qee(dialog, '.entity-input');
-            const fromName = dialog.fromName;
+            const { fromName } = dialog;
             const toName = toInput.value.trim();
 
             DBMS.renameProfile(firstType, fromName, toName, (err) => {
@@ -211,8 +215,8 @@ function ProfileEditorTmpl(exports, opts) {
                     exports.refresh();
                 }
             });
-        }
-    };
+        };
+    }
 
     function removeProfile(type, name) {
         return () => {
@@ -245,7 +249,7 @@ ProfileEditorTmpl(this.CharacterEditor = {}, {
 });
 
 ProfileEditorTmpl(this.PlayerEditor = {}, {
-    firstType:  'player',
+    firstType: 'player',
     secondType: 'character',
     settingsPath: 'Players',
     processBindings: R.invertObj,

@@ -124,7 +124,7 @@ See the License for the specific language governing permissions and
             const storyName = input.value.trim();
 
             DBMS.createStory(storyName, (err) => {
-                if(err){
+                if (err) {
                     setError(dialog, err);
                 } else {
                     updateSettings(storyName);
@@ -136,7 +136,7 @@ See the License for the specific language governing permissions and
                     });
                 }
             });
-        }
+        };
     }
 
     function renameStory(dialog) {
@@ -146,7 +146,7 @@ See the License for the specific language governing permissions and
             const toName = toInput.value.trim();
 
             DBMS.renameStory(fromName, toName, (err) => {
-                if(err){
+                if (err) {
                     setError(dialog, err);
                 } else {
                     updateSettings(toName);
@@ -158,7 +158,7 @@ See the License for the specific language governing permissions and
                     });
                 }
             });
-        }
+        };
     }
 
     function removeStory() {

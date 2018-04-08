@@ -122,7 +122,10 @@ See the License for the specific language governing permissions and
                     DBMS.getCharacterReport(name, (err3, characterReport) => {
                         if (err3) { Utils.handleError(err3); return; }
                         removeClass(queryEl(characterReportDiv), 'hidden');
-                        addEls(clearEl(queryEl(characterReportDiv)), characterReport.map(CharacterReports.makeStoryReportRow));
+                        addEls(
+                            clearEl(queryEl(characterReportDiv)),
+                            characterReport.map(CharacterReports.makeStoryReportRow)
+                        );
                     });
                 }
             });

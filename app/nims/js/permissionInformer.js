@@ -116,7 +116,7 @@ See the License for the specific language governing permissions and
 
             const name2str = a => a.displayName.toLowerCase();
 
-            const entityCmp = CommonUtils.charOrdAFactoryBase('asc', (a,b) => {
+            const entityCmp = CommonUtils.charOrdAFactoryBase('asc', (a, b) => {
                 if (a.isOwner && b.isOwner) return name2str(a) > name2str(b);
                 if (a.isOwner) return false;
                 if (b.isOwner) return true;
@@ -128,7 +128,7 @@ See the License for the specific language governing permissions and
                 return name2str(a) > name2str(b);
             }, R.identity);
 
-//            names.sort(Utils.charOrdAObject);
+            //            names.sort(Utils.charOrdAObject);
             names.sort(entityCmp);
 
             callback(null, names);

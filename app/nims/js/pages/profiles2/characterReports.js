@@ -19,14 +19,13 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-
     const root = '.character-reports-tmpl';
 
     exports.makeStoryReportRow = (storyInfo) => {
         const act = storyInfo.activity;
         const completness = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
         const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
-        const row = qte(`${root} .story-report-row-tmpl` );
+        const row = qte(`${root} .story-report-row-tmpl`);
         const qe = qee(row);
         L10n.localizeStatic(row);
         addEl(qe('.story-name'), makeText(storyInfo.storyName));
@@ -39,33 +38,45 @@ See the License for the specific language governing permissions and
         addEl(qe('.meets'), makeText(storyInfo.meets.join(', ')));
         addEl(qe('.inventory'), makeText(storyInfo.inventory));
         return row;
-    }
+    };
 
     exports.makeRelationReportRow = R.curry((characterName, rel) => {
-        const row = qte(`${root} .relation-report-row-tmpl` );
+        const row = qte(`${root} .relation-report-row-tmpl`);
         const qe = qee(row);
         L10n.localizeStatic(row);
         const secondCharacter = ProjectUtils.get2ndRelChar(characterName, rel);
         addEl(qe('.character-name'), makeText(secondCharacter));
         const isStarter = rel.starter === characterName;
 
-        if(isStarter){
-            setAttr(qe('.direction-starterToEnder'), 'title',
-                L10n.format('briefings', 'starterToEnder', [characterName, secondCharacter]));
-            setAttr(qe('.direction-enderToStarter'), 'title',
-                L10n.format('briefings', 'enderToStarter', [secondCharacter, characterName]));
+        if (isStarter) {
+            setAttr(
+                qe('.direction-starterToEnder'), 'title',
+                L10n.format('briefings', 'starterToEnder', [characterName, secondCharacter])
+            );
+            setAttr(
+                qe('.direction-enderToStarter'), 'title',
+                L10n.format('briefings', 'enderToStarter', [secondCharacter, characterName])
+            );
         } else {
-            setAttr(qe('.direction-starterToEnder'), 'title',
-                    L10n.format('briefings', 'starterToEnder', [secondCharacter, characterName]));
-            setAttr(qe('.direction-enderToStarter'), 'title',
-                    L10n.format('briefings', 'enderToStarter', [characterName, secondCharacter]));
+            setAttr(
+                qe('.direction-starterToEnder'), 'title',
+                L10n.format('briefings', 'starterToEnder', [secondCharacter, characterName])
+            );
+            setAttr(
+                qe('.direction-enderToStarter'), 'title',
+                L10n.format('briefings', 'enderToStarter', [characterName, secondCharacter])
+            );
         }
 
-        setClassByCondition(qe('.direction-starterToEnder'), 'active-item-in-report',
-            R.contains(isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence));
+        setClassByCondition(
+            qe('.direction-starterToEnder'), 'active-item-in-report',
+            R.contains(isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence)
+        );
         setClassByCondition(qe('.direction-allies'), 'active-item-in-report', R.contains('allies', rel.essence));
-        setClassByCondition(qe('.direction-enderToStarter'), 'active-item-in-report',
-            R.contains(!isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence));
+        setClassByCondition(
+            qe('.direction-enderToStarter'), 'active-item-in-report',
+            R.contains(!isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence)
+        );
 
         const finished = isStarter ? rel.starterTextReady : rel.enderTextReady;
 

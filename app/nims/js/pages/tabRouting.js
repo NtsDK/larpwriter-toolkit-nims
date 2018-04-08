@@ -19,7 +19,6 @@ See the License for the specific language governing permissions and
 'use strict';
 
 function RoutingTabTmpl(exports, opts) {
-
     const state = {};
     const tmplRoot = '.tab-routing-tmpl';
 
@@ -33,12 +32,10 @@ function RoutingTabTmpl(exports, opts) {
             navigation: qee(el, '.sub-tab-navigation'),
             content: qee(el, '.sub-tab-content')
         };
-        const tabs = R.indexBy(R.prop('viewName'), opts.tabs.map(tab => {
-            return {
-                viewName: tab.viewName,
-                viewRes: Utils.addView(containers, tab.btnName, window[tab.viewName])
-            }
-        }));
+        const tabs = R.indexBy(R.prop('viewName'), opts.tabs.map(tab => ({
+            viewName: tab.viewName,
+            viewRes: Utils.addView(containers, tab.btnName, window[tab.viewName])
+        })));
 
         Utils.setFirstTab(containers, tabs[opts.firstTab].viewRes);
         exports.content = el;
@@ -54,7 +51,7 @@ RoutingTabTmpl(this.Briefings = {}, {
     tabs: [{
         btnName: 'briefing-preview',
         viewName: 'BriefingPreview'
-    },{
+    }, {
         btnName: 'briefing-export',
         viewName: 'BriefingExport'
     }]
@@ -65,10 +62,10 @@ RoutingTabTmpl(this.Characters = {}, {
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'CharacterEditor'
-    },{
+    }, {
         btnName: 'changing-profile-structure',
         viewName: 'CharacterConfigurer'
-    },{
+    }, {
         btnName: 'binding-characters-and-players',
         viewName: 'ProfileBinding2'
     }]
@@ -79,10 +76,10 @@ RoutingTabTmpl(this.Players = {}, {
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'PlayerEditor'
-    },{
+    }, {
         btnName: 'changing-profile-structure',
         viewName: 'PlayerConfigurer'
-    },{
+    }, {
         btnName: 'binding-characters-and-players',
         viewName: 'ProfileBinding2'
     }]
@@ -93,13 +90,13 @@ RoutingTabTmpl(this.LogViewer2 = {}, {
     tabs: [{
         btnName: 'logViewer',
         viewName: 'LogViewer'
-    },{
+    }, {
         btnName: 'group-schema',
         viewName: 'GroupSchema'
-    },{
+    }, {
         btnName: 'investigation-board',
         viewName: 'InvestigationBoard'
-    },{
+    }, {
         btnName: 'about',
         viewName: 'About'
     }]
@@ -110,7 +107,7 @@ RoutingTabTmpl(this.AccessManager = {}, {
     tabs: [{
         btnName: 'masterManagement',
         viewName: 'MasterManagement'
-    },{
+    }, {
         btnName: 'playerManagement',
         viewName: 'PlayerManagement'
     }]

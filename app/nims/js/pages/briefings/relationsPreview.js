@@ -26,8 +26,8 @@ See the License for the specific language governing permissions and
     const l10n = L10n.get('briefings');
 
     const findRel = R.curry((fromCharacter, toCharacter, relations) => {
-        const findFunc = R.curry((fromCharacter, toCharacter, rel) =>
-            rel[fromCharacter] !== undefined && rel[toCharacter] !== undefined);
+        const findFunc = R.curry((fromCharacter2, toCharacter2, rel) =>
+            rel[fromCharacter2] !== undefined && rel[toCharacter2] !== undefined);
         return R.find(findFunc(fromCharacter, toCharacter), relations);
     });
 
@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
 
         characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName), R.prop('value')));
 
-        const get2ndCharName = ProjectUtils.get2ndRelChar(characterName)
+        const get2ndCharName = ProjectUtils.get2ndRelChar(characterName);
         const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CommonUtils.charOrdA);
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
         const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value'));
@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
         return relationTmpl;
     };
 
-    function refreshProfileItem(content, profiles){
+    function refreshProfileItem(content, profiles) {
         return (event) => {
             const dataArr = queryElEls(content, '[toCharacter]');
             dataArr.forEach((el) => {
@@ -83,14 +83,14 @@ See the License for the specific language governing permissions and
                 const selectedName = event.target.value;
                 fillProfileItemContent(el, selectedName, profiles[char][selectedName]);
             });
-        }
+        };
     }
 
     function makeProfileItemSelector(select1, profileSettings, refresh) {
         select1 = $(select1);
         const tmpSelect = select1.select2(arr2Select2(profileSettings.map(R.prop('name')).sort()));
 
-        select1.select2({width: 'style'});
+        select1.select2({ width: 'style' });
         tmpSelect.on('change', refresh);
         if (profileSettings[0]) {
             tmpSelect.val(profileSettings[0].name).trigger('change');
@@ -110,7 +110,7 @@ See the License for the specific language governing permissions and
         setAttr(qe('[toCharacter]'), 'toCharacter', toCharacter);
         fillProfileItemContent(row, getProfileItemSelect().value, profiles[toCharacter][getProfileItemSelect().value]);
         listen(qe('button.remove'), 'click', (event) => {
-            Utils.confirm(strFormat(l10n('are-you-sure-about-relation-removing'), [`${fromCharacter + '-' + toCharacter}`]), () => {
+            Utils.confirm(strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
                 DBMS.removeCharacterRelation(fromCharacter, toCharacter, (err) => {
                     if (err) { Utils.handleError(err); return; }
                     externalRefresh();
@@ -122,23 +122,26 @@ See the License for the specific language governing permissions and
         directText.value = rel[fromCharacter];
         setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
         listen(directText, 'change', (event) => {
-            DBMS.setCharacterRelationText(fromCharacter, toCharacter, fromCharacter, event.target.value, Utils.processError());
+            DBMS.setCharacterRelationText(
+                fromCharacter, toCharacter, fromCharacter, event.target.value,
+                Utils.processError()
+            );
         });
 
-        Constants.relationEssences.forEach(name => {
+        Constants.relationEssences.forEach((name) => {
             const btn = qe(`.${name}`);
             $(btn).tooltip({
                 title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
                 placement: 'top'
             });
             let attrName = name;
-            if(rel.starter !== fromCharacter){
-                if(name === 'starterToEnder') attrName = 'enderToStarter';
-                if(name === 'enderToStarter') attrName = 'starterToEnder';
+            if (rel.starter !== fromCharacter) {
+                if (name === 'starterToEnder') attrName = 'enderToStarter';
+                if (name === 'enderToStarter') attrName = 'starterToEnder';
             }
-            setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) != -1);
-            listen(btn, 'click', event => {
-                DBMS.setRelationEssenceStatus(fromCharacter, toCharacter, attrName, !hasClass(event.target, 'btn-primary'), err => {
+            setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
+            listen(btn, 'click', (event) => {
+                DBMS.setRelationEssenceStatus(fromCharacter, toCharacter, attrName, !hasClass(event.target, 'btn-primary'), (err) => {
                     if (err) { Utils.handleError(err); return; }
                     toggleClass(event.target, 'btn-primary');
                 });
@@ -156,19 +159,25 @@ See the License for the specific language governing permissions and
         reverseText.value = rel[toCharacter];
         setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
         listen(reverseText, 'change', (event) => {
-            DBMS.setCharacterRelationText(fromCharacter, toCharacter, toCharacter, event.target.value, Utils.processError());
+            DBMS.setCharacterRelationText(
+                fromCharacter, toCharacter, toCharacter,
+                event.target.value, Utils.processError()
+            );
         });
 
         const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
-        fillFinishedButton(qe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
-            toCharacter, fromCharacter, directChecked, directText);
+        fillFinishedButton(
+            qe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
+            toCharacter, fromCharacter, directChecked, directText
+        );
 
         const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
-        fillFinishedButton(qe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
-            toCharacter, toCharacter, reverseChecked, reverseText);
+        fillFinishedButton(
+            qe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
+            toCharacter, toCharacter, reverseChecked, reverseText
+        );
 
-        if(isAdaptationsMode){
-        } else {
+        if (!isAdaptationsMode) {
             removeClass(qe('.direct'), 'col-xs-3');
             addClass(qe('.direct'), 'col-xs-9');
             addClass(qe('.origin'), 'hidden');
@@ -179,7 +188,7 @@ See the License for the specific language governing permissions and
         return row;
     });
 
-    function fillFinishedButton(button, id, fromCharacter, toCharacter, character, checked, textarea){
+    function fillFinishedButton(button, id, fromCharacter, toCharacter, character, checked, textarea) {
         setClassIf(button, 'btn-primary', checked);
         Utils.enableEl(textarea, !checked);
         button.id = id;
@@ -199,7 +208,7 @@ See the License for the specific language governing permissions and
     function fillCharSelector(select1, button, data, fromCharacter, makeRowCallback) {
         select1 = $(select1);
         const tmpSelect = select1.select2(getSelect2Data(data));
-        select1.select2({width: 'style'});
+        select1.select2({ width: 'style' });
         listen(button, 'click', () => {
             const toCharacter = select1[0].value;
             DBMS.createCharacterRelation(fromCharacter, toCharacter, (err) => {

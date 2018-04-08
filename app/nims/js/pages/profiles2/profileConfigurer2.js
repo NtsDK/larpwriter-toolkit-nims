@@ -29,11 +29,10 @@ See the License for the specific language governing permissions and
 // 3. simple and lesser complexity, I choose this way
 
 function ProfileConfigurerTmpl(exports, opts) {
-
     const { tabType } = opts;
 
     const tmplRoot = '.profile-configurer2-tab-tmpl';
-    const tabRoot = `.profile-configurer2-tab.${tabType + '-type'} `;
+    const tabRoot = `.profile-configurer2-tab.${`${tabType}-type`} `;
     const profilePanel = `${tabRoot}.profile-panel `;
     const l10n = L10n.get('profiles');
     const state = {};
@@ -41,38 +40,47 @@ function ProfileConfigurerTmpl(exports, opts) {
     exports.init = () => {
         const el = queryEl(tmplRoot).cloneNode(true);
 
-        addClasses(el, ['profile-configurer2-tab', `${tabType + '-type'}`]);
+        addClasses(el, ['profile-configurer2-tab', `${`${tabType}-type`}`]);
         removeClass(el, 'profile-configurer2-tab-tmpl');
         addEl(queryEl('.tab-container'), el);
 
-        const createProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, createProfileItem, {
-            bodySelector: 'create-profile-item-body',
-            dialogTitle: 'profiles-create-profile-item',
-            actionButtonTitle: 'common-create',
-            initBody: (body) => {
-                const sel = clearEl(qee(body, `.create-entity-type-select`));
-                const fillMainSel = () => { fillItemTypesSel(clearEl(sel)); };
-                fillMainSel();
-                L10n.onL10nChange(fillMainSel);
+        const createProfileItemDialog = UI.createModalDialog(
+            `.profile-configurer2-tab.${`${tabType}-type`}`,
+            createProfileItem, {
+                bodySelector: 'create-profile-item-body',
+                dialogTitle: 'profiles-create-profile-item',
+                actionButtonTitle: 'common-create',
+                initBody: (body) => {
+                    const sel = clearEl(qee(body, '.create-entity-type-select'));
+                    const fillMainSel = () => { fillItemTypesSel(clearEl(sel)); };
+                    fillMainSel();
+                    L10n.onL10nChange(fillMainSel);
+                }
             }
-        });
+        );
 
-        state.renameProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, renameProfileItem, {
-            bodySelector: 'modal-prompt-body',
-            dialogTitle: 'profiles-enter-new-profile-item-name',
-            actionButtonTitle: 'common-rename',
-        });
+        state.renameProfileItemDialog = UI.createModalDialog(
+            `.profile-configurer2-tab.${`${tabType}-type`}`,
+            renameProfileItem, {
+                bodySelector: 'modal-prompt-body',
+                dialogTitle: 'profiles-enter-new-profile-item-name',
+                actionButtonTitle: 'common-rename',
+            }
+        );
 
-        state.moveProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, moveProfileItem, {
-            bodySelector: 'move-profile-item-body',
-            dialogTitle: 'profiles-new-profile-item-position',
-            actionButtonTitle: 'common-move',
-        });
+        state.moveProfileItemDialog = UI.createModalDialog(
+            `.profile-configurer2-tab.${`${tabType}-type`}`,
+            moveProfileItem, {
+                bodySelector: 'move-profile-item-body',
+                dialogTitle: 'profiles-new-profile-item-position',
+                actionButtonTitle: 'common-move',
+            }
+        );
 
-        setAttr(qee(el, '.panel h3'), 'l10n-id', 'profiles-' + opts.panelName);
+        setAttr(qee(el, '.panel h3'), 'l10n-id', `profiles-${opts.panelName}`);
         L10n.localizeStatic(el);
 
-        setAttr(qee(el,'.panel a') , 'panel-toggler', tabRoot + ".profile-panel");
+        setAttr(qee(el, '.panel a'), 'panel-toggler', `${tabRoot}.profile-panel`);
         UI.initPanelTogglers(el);
 
         listen(qe(`${tabRoot}.create`), 'click', () => createProfileItemDialog.showDlg());
@@ -111,13 +119,13 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function createProfileItem(dialog) {
         return () => {
-            const input = qee(dialog, `.create-entity-name-input`);
+            const input = qee(dialog, '.create-entity-name-input');
             const name = input.value.trim();
-            const itemType = qee(dialog, `.create-entity-type-select`).value.trim();
-            const selectedIndex = qee(dialog, `.create-entity-position-select`).selectedIndex;
+            const itemType = qee(dialog, '.create-entity-type-select').value.trim();
+            const { selectedIndex } = qee(dialog, '.create-entity-position-select');
 
             DBMS.createProfileItem(tabType, name, itemType, selectedIndex, (err) => {
-                if(err){
+                if (err) {
                     setError(dialog, err);
                 } else {
                     input.value = '';
@@ -136,7 +144,7 @@ function ProfileConfigurerTmpl(exports, opts) {
     var getInput = R.curry((type, profileSettings, index) => { // throws InternalError
         const row = qte(`${tabRoot} .profile-configurer-row-tmpl`);
         L10n.localizeStatic(row);
-        addEl(qee(row, '.item-position'), makeText(index+1));
+        addEl(qee(row, '.item-position'), makeText(index + 1));
         addEl(qee(row, '.item-name'), makeText(profileSettings.name));
 
         const itemType = qee(row, '.item-type');
@@ -282,7 +290,7 @@ function ProfileConfigurerTmpl(exports, opts) {
         };
     }
 
-    function renameProfileItem (dialog) {
+    function renameProfileItem(dialog) {
         return () => {
             const toInput = qee(dialog, '.entity-input');
             const oldName = dialog.fromName;
@@ -297,15 +305,15 @@ function ProfileConfigurerTmpl(exports, opts) {
                     exports.refresh();
                 }
             });
-        }
-    };
+        };
+    }
 
     function moveProfileItem(dialog) {
         return () => {
             const index = state.currentIndex;
             const newIndex = queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
             DBMS.moveProfileItem(tabType, index, newIndex, (err) => {
-                if(err){
+                if (err) {
                     setError(dialog, err);
                 } else {
                     dialog.hideDlg();

@@ -18,7 +18,9 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function consistencyCheckAPI(LocalDBMS, opts) {
-        const { R, CommonUtils, Constants, dbmsUtils } = opts;
+        const {
+            R, CommonUtils, Constants, dbmsUtils
+        } = opts;
         const CU = CommonUtils;
         const validatorLib = opts.Ajv;
         const schemaBuilder = opts.Schema;
@@ -43,7 +45,7 @@ See the License for the specific language governing permissions and
                 errors2.push(checkPlayerLoginConsistency(this.database));
             }
 
-            errors2.forEach(module => {
+            errors2.forEach((module) => {
                 module.errors = module.errors.map(R.apply(CU.strFormat));
             });
             errors = errors.concat(R.flatten(errors2.map(R.prop('errors'))));
@@ -55,19 +57,17 @@ See the License for the specific language governing permissions and
             if (!valid) {
                 errors = errors.concat(validate.errors);
 
-                errors2 = R.concat(errors2, schema.required.map( moduleName => {
+                errors2 = R.concat(errors2, schema.required.map((moduleName) => {
                     const validate2 = validator.compile(schema.properties[moduleName]);
                     const valid2 = validate2(this.database[moduleName]);
                     return {
                         module: moduleName,
                         errors: valid2 ? [] : validate2.errors
-                    }
+                    };
                 }));
             }
 
-            const details = R.mapObjIndexed(arr =>{
-                return R.flatten(arr.map(R.prop('errors')));
-            }, R.groupBy(R.prop('module'), errors2));
+            const details = R.mapObjIndexed(arr => R.flatten(arr.map(R.prop('errors'))), R.groupBy(R.prop('module'), errors2));
 
             callback(null, {
                 errors,
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
         const getErrorProcessor = callback => R.curry(R.compose(callback, CommonUtils.strFormat));
 
         function checkObjectRightsConsistency(data) {
-            let errors = [];
+            const errors = [];
             const entities = {
                 characters: R.keys(data.Characters),
                 stories: R.keys(data.Stories),
@@ -101,12 +101,11 @@ See the License for the specific language governing permissions and
             return {
                 module: 'ManagementInfo',
                 errors
-            }
-
+            };
         }
 
         function checkPlayerLoginConsistency(data) {
-            let errors = [];
+            const errors = [];
             const playerNames = R.values(data.Players).map(R.prop('name'));
             const loginNames = R.keys(data.ManagementInfo.PlayersInfo);
 
@@ -118,11 +117,11 @@ See the License for the specific language governing permissions and
             return {
                 module: 'ManagementInfo',
                 errors
-            }
+            };
         }
 
         function checkEventsCharactersConsistency(data) {
-            let errors = [];
+            const errors = [];
             R.values(data.Stories).forEach((story) => {
                 const storyCharacters = R.values(story.characters).map(R.prop('name'));
                 story.events.forEach((event, i) => {
@@ -137,11 +136,11 @@ See the License for the specific language governing permissions and
             return {
                 module: 'Stories',
                 errors
-            }
+            };
         }
 
         function checkBindingsConsistency(data) {
-            let errors = [];
+            const errors = [];
             R.toPairs(R.invert(data.ProfileBindings)).filter(pair => pair[1].length > 1).forEach((pair) => {
                 const msg = 'Profile bindings inconsistent, player has multiple characters: player {0}, characters {1}';
                 errors.push([msg, [pair[0], JSON.stringify(pair[1])]]);
@@ -149,35 +148,35 @@ See the License for the specific language governing permissions and
             return {
                 module: 'ProfileBindings',
                 errors
-            }
+            };
         }
 
         function checkRelationsConsistency(data, callback) {
-            let errors = [];
-            data.Relations.filter(rel => rel[rel.starter] === undefined).forEach( rel => {
+            const errors = [];
+            data.Relations.filter(rel => rel[rel.starter] === undefined).forEach((rel) => {
                 const msg = 'Relation inconsistent, starter is not from relation: starter {0}, relation {1}';
                 errors.push([msg, [rel.starter, JSON.stringify(rel)]]);
             });
-            data.Relations.filter(rel => rel[rel.ender] === undefined).forEach( rel => {
+            data.Relations.filter(rel => rel[rel.ender] === undefined).forEach((rel) => {
                 const msg = 'Relation inconsistent, ender is not from relation: ender {0}, relation {1}';
                 errors.push([msg, [rel.ender, JSON.stringify(rel)]]);
             });
 
             const keys = data.Relations.map(dbmsUtils._rel2RelKey);
             const groups = R.groupBy(str => str, keys);
-            R.values(groups).filter(R.pipe(R.length, R.gt(R.__, 1))).forEach( group => {
+            R.values(groups).filter(R.pipe(R.length, R.gt(R.__, 1))).forEach((group) => {
                 const msg = 'Relations inconsistent, duplicated relations with key: key {0}';
                 errors.push([msg, [group[0]]]);
             });
             return {
                 module: 'Relations',
                 errors
-            }
+            };
         }
 
         function checkStoryCharactersConsistency(data, callback) {
             const charNames = R.values(data.Characters).map(R.prop('name'));
-            let errors = [];
+            const errors = [];
 
             R.values(data.Stories).forEach((story) => {
                 const storyCharactersInner = R.values(story.characters).map(R.prop('name'));
@@ -196,7 +195,7 @@ See the License for the specific language governing permissions and
             return {
                 module: 'Stories',
                 errors
-            }
+            };
         }
 
         const isInconsistent = (charValue, type, profileItemValue) => {
@@ -231,7 +230,7 @@ See the License for the specific language governing permissions and
 
         function checkProfileValueConsistency(data, profiles, structure, callback) {
             const msg = 'Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}';
-            let errors = [];
+            const errors = [];
 
             R.values(data[profiles]).forEach((character) => {
                 data[structure].forEach((profileItem) => {
@@ -243,12 +242,12 @@ See the License for the specific language governing permissions and
             return {
                 module: profiles,
                 errors
-            }
+            };
         }
 
         function checkProfileConsistency(data, profiles, structure) {
             const profileItems = data[structure].map(R.prop('name'));
-            let errors = [];
+            const errors = [];
 
             R.values(data[profiles]).forEach((profile) => {
                 const charItems = R.keys(profile).filter(R.compose(R.not, R.equals('name')));
@@ -268,12 +267,12 @@ See the License for the specific language governing permissions and
             return {
                 module: profiles,
                 errors
-            }
+            };
         }
 
         function checkProfileStructureConsistency(data, type, structure) {
             const profileItems = data[structure].map(R.prop('name'));
-            let errors = [];
+            const errors = [];
             if (profileItems.length !== R.uniq(profileItems).length) {
                 const diff = R.toPairs(R.groupBy(name => name, profileItems))
                     .filter(pair => pair[1].length > 1).map(pair => pair[0]);
@@ -283,7 +282,7 @@ See the License for the specific language governing permissions and
             return {
                 module: structure,
                 errors
-            }
+            };
         }
     }
 

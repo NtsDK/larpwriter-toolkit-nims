@@ -109,7 +109,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         }
     };
 
-    function consistencyCheckAlert(checkResult){
+    function consistencyCheckAlert(checkResult) {
         if (checkResult.errors.length > 0) {
             Utils.alert(getL10n('overview-consistency-problem-detected'));
         } else {
@@ -149,13 +149,13 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
-                        viewName: viewName,
+                        viewName,
                         viewRes: Utils.addView(containers, btnName, window[viewName], opts)
-                    }
+                    };
                 };
 
                 addView(state.containers, 'overview', 'Overview');
-//                addView(state.containers, 'profiles', 'Profiles');
+                //                addView(state.containers, 'profiles', 'Profiles');
                 addView(state.containers, 'characters', 'Characters');
                 addView(state.containers, 'players', 'Players');
                 addView(state.containers, 'stories', 'Stories');
@@ -170,7 +170,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addView(state.containers, 'profile-filter', 'ProfileFilter', { clazz: 'filterButton icon-button', tooltip: true });
                 addView(state.containers, 'groups', 'GroupProfile', { clazz: 'groupsButton icon-button', tooltip: true });
                 addView(state.containers, 'textSearch', 'TextSearch', { clazz: 'textSearchButton icon-button', tooltip: true });
-                addView(state.containers, "roleGrid", 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
+                addView(state.containers, 'roleGrid', 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
@@ -204,7 +204,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 }
                 addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
-//                addEl(state.navigation, makeL10nButton());
+                //                addEl(state.navigation, makeL10nButton());
 
                 addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
                 addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
@@ -245,11 +245,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function showDbmsConsistencyState() {
-        consistencyCheck((checkRes) => TestUtils.showModuleSchema(checkRes));
+        consistencyCheck(checkRes => TestUtils.showModuleSchema(checkRes));
     }
 
     function checkConsistency() {
-        consistencyCheck((checkRes) => TestUtils.showConsistencyCheckAlert(checkRes));
+        consistencyCheck(checkRes => TestUtils.showConsistencyCheckAlert(checkRes));
     }
 
     function postLogout() {

@@ -35,8 +35,8 @@ See the License for the specific language governing permissions and
         $('#nodeFocusSelector').select2().on('change', onNodeFocus);
         listen(getEl('networkSelector'), 'change', onNetworkSelectorChangeDelegate);
 
-        queryEls('#activityBlock button').forEach( listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
-        queryEls('#relationsBlock button').forEach( listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
+        queryEls('#activityBlock button').forEach(listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
+        queryEls('#relationsBlock button').forEach(listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
 
         //        state.network;
         state.highlightActive = false;
@@ -347,12 +347,12 @@ See the License for the specific language governing permissions and
 
     function getRelationEdges() {
         const selectedRelations = queryEls('#relationsBlock button.btn-primary').map(getAttr(R.__, 'data-value'));
-        const relations = state.relations;
+        const { relations } = state;
         const checked = R.contains(R.__, selectedRelations);
-        return R.flatten(relations.map(rel => {
+        return R.flatten(relations.map((rel) => {
             const arr = [];
-            const starter = rel.starter;
-            const ender = rel.ender;
+            const { starter } = rel;
+            const { ender } = rel;
             const edgeTmpl = {
                 from: CHAR_PREFIX + starter,
                 to: CHAR_PREFIX + ender,
@@ -360,28 +360,28 @@ See the License for the specific language governing permissions and
                 width: 2,
                 hoverWidth: 4
             };
-            if(rel.essence.length === 0){
-                if(checked('neutral')){
-                    arr.push(R.merge(edgeTmpl,{
+            if (rel.essence.length === 0) {
+                if (checked('neutral')) {
+                    arr.push(R.merge(edgeTmpl, {
                         color: Constants.snRelationColors.neutral,
                     }));
                 }
             } else {
-                if(checked('allies') && R.contains('allies', rel.essence)){
-                    arr.push(R.merge(edgeTmpl,{
+                if (checked('allies') && R.contains('allies', rel.essence)) {
+                    arr.push(R.merge(edgeTmpl, {
                         color: Constants.snRelationColors.allies,
                     }));
                 }
-                if(checked('directional') && R.contains('starterToEnder', rel.essence)){
-                    arr.push(R.merge(edgeTmpl,{
+                if (checked('directional') && R.contains('starterToEnder', rel.essence)) {
+                    arr.push(R.merge(edgeTmpl, {
                         color: Constants.snRelationColors.starterToEnder,
-                        arrows:'to'
+                        arrows: 'to'
                     }));
                 }
-                if(checked('directional') && R.contains('enderToStarter', rel.essence)){
-                    arr.push(R.merge(edgeTmpl,{
+                if (checked('directional') && R.contains('enderToStarter', rel.essence)) {
+                    arr.push(R.merge(edgeTmpl, {
                         color: Constants.snRelationColors.enderToStarter,
-                        arrows:'from'
+                        arrows: 'from'
                     }));
                 }
             }

@@ -240,14 +240,14 @@ See the License for the specific language governing permissions and
             }));
             addEls(qee(row, '.events-eventsContainer'), characterNames
                 .filter(characterName => event.characters[characterName])
-                .map(characterName => {
+                .map((characterName) => {
                     const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
                     return exports.makeAdaptationCard(isEditable, event, storyName, characterName, {
                         showFinishedButton: true,
                         showTimeInput: true,
                         showTextInput: true,
                         cardTitle: characterName
-                    })
+                    });
                 }));
 
             return row;
@@ -261,7 +261,7 @@ See the License for the specific language governing permissions and
         const timeInput = qee(card, '.time-input');
         const lockButton = qee(card, 'button.locked');
 
-        if(opts.showTimeInput === true){
+        if (opts.showTimeInput === true) {
             UI.makeEventTimePicker2(timeInput, {
                 eventTime: event.time,
                 index: event.index,
@@ -273,7 +273,7 @@ See the License for the specific language governing permissions and
             addClass(timeInput, 'hidden');
         }
 
-        if(opts.showTextInput === true){
+        if (opts.showTextInput === true) {
             textInput.value = event.text;
             textInput.dataKey = JSON.stringify([storyName, event.index]);
             listen(textInput, 'change', onChangeOriginText);
@@ -281,7 +281,7 @@ See the License for the specific language governing permissions and
             addClass(textInput, 'hidden');
         }
 
-        if(opts.showLockButton === true){
+        if (opts.showLockButton === true) {
             listen(lockButton, 'click', onOriginLockClick(timeInput, textInput));
             Utils.enableEl(timeInput, false);
             Utils.enableEl(textInput, false);
@@ -291,22 +291,22 @@ See the License for the specific language governing permissions and
         }
 
         return card;
-    }
+    };
 
-    function onOriginLockClick(timeInput, textInput){
+    function onOriginLockClick(timeInput, textInput) {
         return (event) => {
-            const {target} = event;
+            const { target } = event;
             const isLocked = hasClass(target, 'btn-primary');
             setClassByCondition(target, 'btn-primary', !isLocked);
             setClassByCondition(target, 'locked', !isLocked);
             setClassByCondition(target, 'unlocked', isLocked);
             Utils.enableEl(timeInput, isLocked);
             Utils.enableEl(textInput, isLocked);
-        }
+        };
     }
 
     exports.makeAdaptationCard = R.curry((isEditable, event, storyName, characterName, opts) => {
-        const card = qmte(`${root} .adaptation-tmpl` );
+        const card = qmte(`${root} .adaptation-tmpl`);
         setAttr(card, 'dependent-on-character', characterName);
 
         addEl(qee(card, '.card-title'), makeText(opts.cardTitle));
@@ -315,13 +315,13 @@ See the License for the specific language governing permissions and
         const finishedButton = qee(card, 'button.finished');
         const id = JSON.stringify([storyName, event.index, characterName]);
 
-        if(opts.showTimeInput === true){
+        if (opts.showTimeInput === true) {
             UI.populateAdaptationTimeInput(timeInput, storyName, event, characterName, isEditable);
         } else {
             addClass(timeInput, 'hidden');
         }
 
-        if(opts.showTextInput === true){
+        if (opts.showTextInput === true) {
             setClassByCondition(textInput, 'notEditable', !isEditable);
             textInput.value = event.characters[characterName].text;
             textInput.dataKey = JSON.stringify([storyName, event.index, characterName]);
@@ -330,7 +330,7 @@ See the License for the specific language governing permissions and
             addClass(textInput, 'hidden');
         }
 
-        if(opts.showFinishedButton === true){
+        if (opts.showFinishedButton === true) {
             const isFinished = event.characters[characterName].ready;
             setClassIf(finishedButton, 'btn-primary', isFinished);
             finishedButton.id = id;
@@ -342,12 +342,13 @@ See the License for the specific language governing permissions and
             listen(finishedButton, 'click', UI.onChangeAdaptationReadyStatus2(enableInputs));
             L10n.localizeStatic(card);
         } else {
-            addClass(lockButton, 'hidden');
+            addClass(finishedButton, 'hidden');
         }
 
         return card;
     });
 
+    // eslint-disable-next-line no-var,vars-on-top
     var onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
         DBMS.setEventOriginProperty(storyName, myInput.eventIndex, 'time', input.val(), Utils.processError());
         removeClass(myInput, 'defaultDate');
@@ -402,7 +403,7 @@ See the License for the specific language governing permissions and
         const namesOnly = nameObjectArray.map(R.prop(nameObjectProperty));
         const names = DBMS.getSettings().Adaptations[settingsProperty];
         let existingNames;
-        if(names === null){
+        if (names === null) {
             existingNames = namesOnly;
         } else {
             existingNames = names.filter(name => namesOnly.indexOf(name) !== -1);

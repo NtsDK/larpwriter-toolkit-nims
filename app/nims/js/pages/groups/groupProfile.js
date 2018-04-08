@@ -56,15 +56,15 @@ See the License for the specific language governing permissions and
         PermissionInformer.getEntityNamesArray('group', false, (err, groupNames) => {
             if (err) { Utils.handleError(err); return; }
 
-            addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map( name => {
-                const el = wrapEl('div', qte(`.entity-item-tmpl` ));
+            addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map((name) => {
+                const el = wrapEl('div', qte('.entity-item-tmpl'));
                 addEl(qee(el, '.primary-name'), makeText(name.displayName));
                 setAttr(el, 'primary-name', name.displayName);
                 setAttr(el, 'profile-name', name.value);
                 listen(qee(el, '.select-button'), 'click', showProfileInfoDelegate2(name.value));
                 setAttr(qee(el, '.rename'), 'title', l10n('rename-entity'));
                 setAttr(qee(el, '.remove'), 'title', l10n('remove-entity'));
-                if(name.editable){
+                if (name.editable) {
                     listen(qee(el, '.rename'), 'click', () => {
                         qee(state.renameGroupDialog, '.entity-input').value = name.value;
                         state.renameGroupDialog.fromName = name.value;
@@ -107,7 +107,7 @@ See the License for the specific language governing permissions and
         addClass(input, 'isGroupEditable');
         state.inputItems[profileItemConfig.name] = input;
 
-        const row = qmte(`.profile-editor-row-tmpl`);
+        const row = qmte('.profile-editor-row-tmpl');
         addEl(qee(row, '.profile-item-name'), makeText(profileItemConfig.displayName));
         setAttr(qee(row, '.profile-item-name'), 'l10n-id', `groups-${profileItemConfig.name}`);
         addEl(qee(row, '.profile-item-input'), input);
@@ -142,7 +142,7 @@ See the License for the specific language governing permissions and
             const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
             addClass(el, 'btn-primary');
             DBMS.getGroup(name, showProfileInfoCallback);
-        }
+        };
     }
 
     function showProfileInfoCallback(err, group) {
@@ -225,53 +225,49 @@ See the License for the specific language governing permissions and
         settings.GroupProfile.groupName = name;
     }
 
-    function filterOptions(event){
+    function filterOptions(event) {
         const str = event.target.value.toLowerCase();
 
         const els = queryEls(`${root} [primary-name]`);
-        els.forEach(el => {
-            let isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
+        els.forEach((el) => {
+            const isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
             setClassByCondition(el, 'hidden', !isVisible);
         });
 
-        if(queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
+        if (queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
             queryEl(`${root} [primary-name] .select-button.btn-primary`) === null) {
-            const els = queryEls(`${root} [primary-name]`).filter(R.pipe(hasClass(R.__, 'hidden'), R.not));
-            selectProfile(els.length > 0 ? getAttr(els[0], 'profile-name') : null);
+            const els2 = queryEls(`${root} [primary-name]`).filter(R.pipe(hasClass(R.__, 'hidden'), R.not));
+            showProfileInfoDelegate2(els2.length > 0 ? getAttr(els2[0], 'profile-name') : null)();
         } else {
-//            queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
+            //            queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
         }
     }
 
-    exports.createGroup = (updateSettings) => {
-        return (dialog) => {
-            return () => {
-                const input = qee(dialog, '.entity-input');
-                const name = input.value.trim();
+    exports.createGroup = updateSettingsFlag => dialog => () => {
+        const input = qee(dialog, '.entity-input');
+        const name = input.value.trim();
 
-                DBMS.createGroup(name, (err) => {
-                    if(err){
-                        setError(dialog, err);
-                    } else {
-                        if(updateSettings){
-                            UI.updateEntitySetting(settingsPath, name);
-                        }
-                        PermissionInformer.refresh((err2) => {
-                            if (err2) { Utils.handleError(err2); return; }
-                            input.value = '';
-                            dialog.hideDlg();
-                            exports.refresh();
-                        });
-                    }
+        DBMS.createGroup(name, (err) => {
+            if (err) {
+                setError(dialog, err);
+            } else {
+                if (updateSettingsFlag) {
+                    UI.updateEntitySetting(settingsPath, name);
+                }
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
+                    input.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
                 });
             }
-        }
-    }
+        });
+    };
 
-    function renameGroup (dialog){
+    function renameGroup(dialog) {
         return () => {
             const toInput = qee(dialog, '.entity-input');
-            const fromName = dialog.fromName;
+            const { fromName } = dialog;
             const toName = toInput.value.trim();
 
             DBMS.renameGroup(fromName, toName, (err) => {
@@ -284,22 +280,20 @@ See the License for the specific language governing permissions and
                     exports.refresh();
                 }
             });
-        }
-    };
+        };
+    }
 
-    exports.removeGroup = (callback) => {
-        return () => {
-            const name = callback();
+    exports.removeGroup = callback => () => {
+        const name = callback();
 
-            Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
-                DBMS.removeGroup(name, (err) => {
-                    if (err) { Utils.handleError(err); return; }
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        exports.refresh();
-                    });
+        Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
+            DBMS.removeGroup(name, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                PermissionInformer.refresh((err2) => {
+                    if (err2) { Utils.handleError(err2); return; }
+                    exports.refresh();
                 });
             });
-        }
-    }
+        });
+    };
 })(this.GroupProfile = {});

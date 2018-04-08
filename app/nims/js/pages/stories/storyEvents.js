@@ -24,14 +24,14 @@ See the License for the specific language governing permissions and
     let initialized = false;
 
     exports.init = () => {
-        if(initialized) return;
+        if (initialized) return;
         exports.createEventDialog = UI.createModalDialog('.stories-tab ', createEvent, {
             bodySelector: 'create-event-body',
             dialogTitle: 'stories-event-creation',
             actionButtonTitle: 'common-create',
         });
 
-//        listen(qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
+        //        listen(qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
 
         state.moveEventDialog = UI.createModalDialog(root, moveEvent, {
             bodySelector: 'move-event-body',
@@ -96,7 +96,8 @@ See the License for the specific language governing permissions and
 
         state.eventsLength = events.length;
 
-        R.ap([addEl(table)], events.map((event, i, events) => appendEventInput(event, i, events, metaInfo.date, metaInfo.preGameDate)));
+        R.ap([addEl(table)], events.map((event, i, events2) =>
+            appendEventInput(event, i, events2, metaInfo.date, metaInfo.preGameDate)));
 
         // refresh swap selector
         const selectorArr = nl2array(document.querySelectorAll('.eventEditSelector'));
@@ -120,21 +121,24 @@ See the License for the specific language governing permissions and
             const positionSelector = qee(dialog, '.positionSelector');
             const eventText = eventTextInput.value.trim();
 
-            DBMS.createEvent(Stories.getCurrentStoryName(), eventName, eventText, positionSelector.selectedIndex, (err) => {
-                if(err){
-                    setError(dialog, err);
-                } else {
-                    eventNameInput.value = '';
-                    eventTextInput.value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
+            DBMS.createEvent(
+                Stories.getCurrentStoryName(), eventName, eventText, positionSelector.selectedIndex,
+                (err) => {
+                    if (err) {
+                        setError(dialog, err);
+                    } else {
+                        eventNameInput.value = '';
+                        eventTextInput.value = '';
+                        dialog.hideDlg();
+                        exports.refresh();
+                    }
                 }
-            });
-        }
+            );
+        };
     }
 
     function appendEventInput(event, index, events, date, preGameDate) {
-        const el = wrapEl('tr', qte(`${root} .event-tmpl` ));
+        const el = wrapEl('tr', qte(`${root} .event-tmpl`));
         L10n.localizeStatic(el);
         const qe = qee(el);
         addEl(qe('.event-number'), makeText(index + 1));
@@ -165,7 +169,7 @@ See the License for the specific language governing permissions and
         if (state.eventsLength === index + 1) {
             setAttr(qee(el, '.merge'), 'disabled', 'disabled');
         } else {
-            listen(qee(el, '.merge'), 'click', mergeEvents(index, event.name, events[index+1].name));
+            listen(qee(el, '.merge'), 'click', mergeEvents(index, event.name, events[index + 1].name));
         }
         listen(qee(el, '.remove'), 'click', removeEvent(event.name, index));
 
@@ -176,22 +180,22 @@ See the License for the specific language governing permissions and
         return () => {
             const newIndex = queryEl('.movePositionSelector').selectedIndex;
 
-            Utils.processError(exports.refresh)
+            Utils.processError(exports.refresh);
             DBMS.moveEvent(Stories.getCurrentStoryName(), dialog.index, newIndex, (err) => {
-                if(err){
+                if (err) {
                     setError(dialog, err);
                 } else {
                     dialog.hideDlg();
                     exports.refresh();
                 }
             });
-        }
+        };
     }
 
     function cloneEvent(index) {
         return () => {
             DBMS.cloneEvent(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
-        }
+        };
     }
 
     function mergeEvents(index, firstName, secondName) {
@@ -204,7 +208,7 @@ See the License for the specific language governing permissions and
             Utils.confirm(L10n.format('stories', 'confirm-event-merge', [firstName, secondName]), () => {
                 DBMS.mergeEvents(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
             });
-        }
+        };
     }
 
     function removeEvent(name, index) {
@@ -212,7 +216,7 @@ See the License for the specific language governing permissions and
             Utils.confirm(strFormat(getL10n('stories-remove-event-warning'), [name]), () => {
                 DBMS.removeEvent(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
             });
-        }
+        };
     }
 
     function getEventHeader() {

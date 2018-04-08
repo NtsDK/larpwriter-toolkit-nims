@@ -68,7 +68,7 @@ function makeLocalDBMS(fullVersion) {
         window[name](LocalDBMS, opts);
         const after = R.keys(LocalDBMS.prototype);
         const diff = R.difference(after, before);
-//        console.log(`${name} ${diff}`);
+        //        console.log(`${name} ${diff}`);
         funcList[name] = R.zipObj(diff, R.repeat(true, diff.length));
     });
 
@@ -78,7 +78,7 @@ function makeLocalDBMS(fullVersion) {
         'profilesAPI',
         'profileBindingAPI',
 
-        "profileViewAPI"        ,
+        'profileViewAPI',
 
         'groupsAPI',
         'groupSchemaAPI',
