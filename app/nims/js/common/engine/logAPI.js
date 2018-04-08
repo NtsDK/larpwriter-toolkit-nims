@@ -23,8 +23,8 @@ See the License for the specific language governing permissions and
         } = opts;
 
         const filterMap = [
-            ['date', 1],
-            ['user', 2],
+            ['user', 1],
+            ['date', 2],
             ['action', 3],
             ['params', 4],
             ['status', 5],
