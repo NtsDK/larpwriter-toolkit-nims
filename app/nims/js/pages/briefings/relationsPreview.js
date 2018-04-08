@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
         externalRefresh, fromCharacter, toCharacter, rel
     ) => {
         const stories = knownCharacters[toCharacter];
-        const row = qte('.relation-row-tmpl');
+        const row = qmte('.relation-row-tmpl');
         const qe = qee(row);
         addEl(qe('.to-character-name'), makeText(`${toCharacter}/${profileBindings[toCharacter]}`));
         addEl(qe('.where-meets-label'), makeText(l10n('where-meets')));
@@ -118,16 +118,12 @@ See the License for the specific language governing permissions and
             });
         });
         
-        qe('.direct textarea').value = rel[fromCharacter];
-        setAttr(qe('.direct textarea'), 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
-        listen(qe('.direct textarea'), 'change', (event) => {
+        const directText = qe('.direct textarea');
+        directText.value = rel[fromCharacter];
+        setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
+        listen(directText, 'change', (event) => {
             DBMS.setCharacterRelationText(fromCharacter, toCharacter, fromCharacter, event.target.value, Utils.processError());
         });
-        
-        const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
-        fillFinishedCheckbox(qe, 'direct', JSON.stringify([fromCharacter, toCharacter]), fromCharacter, toCharacter, fromCharacter, directChecked);
-        const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
-        fillFinishedCheckbox(qe, 'reverse', JSON.stringify([toCharacter, fromCharacter]), fromCharacter, toCharacter, toCharacter, reverseChecked);
         
         Constants.relationEssences.forEach(name => {
             const btn = qe(`.${name}`);
@@ -148,16 +144,29 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-        qe('.origin textarea').value = rel.origin;
-        setAttr(qe('.origin textarea'), 'placeholder', l10n('relation-origin'));
-        listen(qe('.origin textarea'), 'change', (event) => {
+        
+        const originText = qe('.origin textarea');
+        originText.value = rel.origin;
+        setAttr(originText, 'placeholder', l10n('relation-origin'));
+        listen(originText, 'change', (event) => {
             DBMS.setOriginRelationText(fromCharacter, toCharacter, event.target.value, Utils.processError());
         });
-        qe('.reverse textarea').value = rel[toCharacter];
-        setAttr(qe('.reverse textarea'), 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
-        listen(qe('.reverse textarea'), 'change', (event) => {
+        
+        const reverseText = qe('.reverse textarea');
+        reverseText.value = rel[toCharacter];
+        setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
+        listen(reverseText, 'change', (event) => {
             DBMS.setCharacterRelationText(fromCharacter, toCharacter, toCharacter, event.target.value, Utils.processError());
         });
+        
+        const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
+        fillFinishedButton(qe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter, 
+            toCharacter, fromCharacter, directChecked, directText);
+        
+        const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
+        fillFinishedButton(qe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter, 
+            toCharacter, toCharacter, reverseChecked, reverseText);
+        
         if(isAdaptationsMode){
         } else {
             removeClass(qe('.direct'), 'col-xs-3');
@@ -165,19 +174,21 @@ See the License for the specific language governing permissions and
             addClass(qe('.origin'), 'hidden');
             addClass(qe('.reverse'), 'hidden');
         }
+        L10n.localizeStatic(row);
         
         return row;
     });
     
-    function fillFinishedCheckbox(qe, clazz, id, fromCharacter, toCharacter, character, checked){
-        qe(`.${clazz} input`).id = id;
-        qe(`.${clazz} input`).checked = checked;
-        listen(qe(`.${clazz} input`), 'change', (event) => {
-            const value = event.target.checked;
-            DBMS.setRelationReadyStatus(fromCharacter, toCharacter, character, value, Utils.processError());
+    function fillFinishedButton(button, id, fromCharacter, toCharacter, character, checked, textarea){
+        setClassIf(button, 'btn-primary', checked);
+        Utils.enableEl(textarea, !checked);
+        button.id = id;
+        listen(button, 'click', (event) => {
+            const newValue = !hasClass(button, 'btn-primary');
+            setClassByCondition(button, 'btn-primary', newValue);
+            Utils.enableEl(textarea, !newValue);
+            DBMS.setRelationReadyStatus(fromCharacter, toCharacter, character, newValue, Utils.processError());
         });
-        setAttr(qe(`.${clazz} label`), 'for', id);
-        addEl(qe(`.${clazz} label`), makeText(constL10n(Constants.finishedText)));
     }
 
     function fillProfileItemContent(el, profileItemName, profileItemValue) {
