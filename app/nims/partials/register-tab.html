@@ -6,21 +6,12 @@
     <div class="panel-body group-control-area">
 
       <form class="register-form entity-management" name="register-form">
-        <div class="">
-          <label for="input-username" class="" style="" l10n-id="entrance-login"></label>
-          <input name="username" value="admin" type="text" class="common-input" id="input-username" l10n-placeholder-id="entrance-user-name">
-        </div>
-        <div class="">
-          <label for="input-password" class="" style="" l10n-id="entrance-password"></label>
-          <input name="password" type="password" class="common-input" id="input-password" l10n-placeholder-id="entrance-password">
-        </div>
-        <div class="">
-          <label for="confirm-password" class="" style="" l10n-id="entrance-confirmation"></label>
-          <input name="confirmPassword" type="password" class="common-input" id="confirm-password" l10n-placeholder-id="entrance-confirm-password">
-        </div>
-        <div class="">
-          <span class="help-block error"></span>
-          <button type="submit" class="" style="float: right;" l10n-id="entrance-register"></button>
+        <div class="input-group">
+          <input name="username" value="admin" type="text" id="input-username" class="form-control" l10n-placeholder-id="entrance-login" type="text">
+          <input name="password" type="password" id="input-password" class="form-control" l10n-placeholder-id="entrance-password">
+          <input name="confirmPassword" type="password" id="confirm-password" class="form-control" l10n-placeholder-id="entrance-confirm-password">
+          <span class="help-block error" style="flex-grow: 1;"></span>
+          <button type="submit" class="form-control" style="" l10n-id="entrance-register"></button>
         </div>
       </form>
     </div>

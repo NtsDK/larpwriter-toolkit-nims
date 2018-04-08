@@ -682,12 +682,12 @@ textarea.game-description-area {
 /* text-search-tab **/
 
 /** register.js */
-.register-form > div > :first-child{
-  width: 120px;;
-  text-align: right;
-  padding: 0 10px 0 0;
-  display: inline-block;
-}
+/* .register-form > div > :first-child{ */
+/*   width: 120px;; */
+/*   text-align: right; */
+/*   padding: 0 10px 0 0; */
+/*   display: inline-block; */
+/* } */
 
 /* register.js **/
 

@@ -4,19 +4,12 @@
       <h3 class="panel-title" l10n-id="entrance-enter-user-name-and-password"></h3>
     </div>
     <div class="panel-body group-control-area">
-
       <form class="login-form entity-management" name="login-form">
-        <div class="">
-          <label for="input-username" class="" style="width: 80px; text-align: right; padding: 0 10px 0 0;" l10n-id="entrance-login"></label>
-          <input name="username" value="admin" type="text" class="common-input" id="input-username" l10n-placeholder-id="entrance-login">
-        </div>
-        <div class="">
-          <label for="input-password" class="" style="width: 80px; text-align: right; padding: 0 10px 0 0;" l10n-id="entrance-password"></label>
-          <input name="password" type="password" class="common-input" id="input-password" l10n-placeholder-id="entrance-password">
-        </div>
-        <div class="" style="display:flex;">
-          <span class="help-block error" style="flex-grow: 1;"></span>
-          <button type="submit" class="" style="" l10n-id="entrance-enter"></button>
+        <div class="input-group">
+            <input name="username" value="admin" type="text" id="input-username" class="form-control" l10n-placeholder-id="entrance-login">
+            <input name="password" type="password" id="input-password" class="form-control" l10n-placeholder-id="entrance-password">
+            <span class="help-block error" style="flex-grow: 1;"></span>
+            <button type="submit" class="form-control" style="" l10n-id="entrance-enter"></button>
         </div>
       </form>
     </div>
