@@ -176,8 +176,8 @@ const getChecks = {
     textSearchAPI:
     [{
         func: 'getTexts',
-        args: ['Арагорн', ["characterProfiles","playerProfiles","groups","relations","masterStory","eventOrigins",
-            "eventAdaptations"], false],
+        args: ['Арагорн', ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'masterStory', 'eventOrigins',
+            'eventAdaptations'], false],
     }],
 };
 
@@ -218,7 +218,7 @@ const setChecks = {
     },
     {
         func: 'saveFilterToGroup',
-        args: ['testGroup', [{"type":"enum","name":"profile-testProfileItem","selectedOptions":{"_":true}}]],
+        args: ['testGroup', [{ type: 'enum', name: 'profile-testProfileItem', selectedOptions: { _: true } }]],
         forInconsistency: true,
     },
     {
@@ -233,7 +233,7 @@ const setChecks = {
     },
     {
         func: 'saveFilterToGroup',
-        args: ['testGroup', [{"type":"enum","name":"profile-testProfileItem2","selectedOptions":{"test1":true}}]],
+        args: ['testGroup', [{ type: 'enum', name: 'profile-testProfileItem2', selectedOptions: { test1: true } }]],
         forInconsistency: true,
     },
     {
@@ -248,7 +248,9 @@ const setChecks = {
     },
     {
         func: 'saveFilterToGroup',
-        args: ['testGroup', [{"type":"multiEnum","name":"profile-testProfileItem2","condition":"every","selectedOptions":{"test1":true,"test2":true}}]],
+        args: ['testGroup', [{
+            type: 'multiEnum', name: 'profile-testProfileItem2', condition: 'every', selectedOptions: { test1: true, test2: true }
+        }]],
         forInconsistency: true,
     },
     {
@@ -261,14 +263,14 @@ const setChecks = {
         args: ['character', 0, 'testProfileItem2'],
         forInconsistency: true,
     },
-//        {
-//            func: 'renameGroup',
-//            args: ['testGroup', 'testGroup155'],
-//        },
-//        {
-//            func: 'updateGroupField',
-//            args: ['testGroup2', 'masterDescription', '654654654'],
-//        },
+        //        {
+        //            func: 'renameGroup',
+        //            args: ['testGroup', 'testGroup155'],
+        //        },
+        //        {
+        //            func: 'updateGroupField',
+        //            args: ['testGroup2', 'masterDescription', '654654654'],
+        //        },
     {
         func: 'removeGroup',
         args: ['testGroup'],
@@ -715,8 +717,8 @@ const setChecks = {
     }],
 };
 
-R.keys(getChecks).forEach(apiName => {
-    describe(apiName + ' getter tests', () => {
+R.keys(getChecks).forEach((apiName) => {
+    describe(`${apiName} getter tests`, () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
         const checks = getChecks[apiName].map((el) => {
@@ -736,8 +738,8 @@ R.keys(getChecks).forEach(apiName => {
     });
 });
 
-R.keys(setChecks).forEach(apiName => {
-    describe(apiName + ' setter tests', () => {
+R.keys(setChecks).forEach((apiName) => {
+    describe(`${apiName} setter tests`, () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
         const checks = setChecks[apiName].map((el) => {
@@ -749,16 +751,16 @@ R.keys(setChecks).forEach(apiName => {
         checks.forEach((check) => {
             it(check.name, (done) => {
                 DBMS[check.func](...check.args.concat((err) => {
-                    if(err) console.error(err);
-                    if(check.gettable === true){
+                    if (err) console.error(err);
+                    if (check.gettable === true) {
                         expect(err).toBeNull();
                     } else {
                         expect(err).toBeUndefined();
                     }
-                    if(check.forInconsistency === true){
-                        DBMS.getConsistencyCheckResult((err, checkResult) => {
-                            expect(err).toBeNull();
-                            if(checkResult.errors.length > 0){
+                    if (check.forInconsistency === true) {
+                        DBMS.getConsistencyCheckResult((err2, checkResult) => {
+                            expect(err2).toBeNull();
+                            if (checkResult.errors.length > 0) {
                                 console.error(check.name);
                                 checkResult.errors.forEach(console.error);
                             }
@@ -778,27 +780,27 @@ describe('Core smoke test coverage check', () => {
     it('Core smoke test coverage check', () => {
         const funcArr = R.uniq(R.concat(R.flatten(R.values(getChecks)).map(R.prop('func')), R.flatten(R.values(setChecks)).map(R.prop('func'))));
 
-        const serverSpecificFunctions = Constants.serverSpecificFunctions;
+        const { serverSpecificFunctions } = Constants;
         const intersection = R.intersection(serverSpecificFunctions, funcArr);
-        if(intersection.length > 0){
+        if (intersection.length > 0) {
             console.log(intersection);
         }
         expect(intersection.length).toBe(0);
 
-        const commonIgnoreList = Constants.commonIgnoreList;
+        const { commonIgnoreList } = Constants;
         const intersection2 = R.intersection(commonIgnoreList, funcArr);
-        if(intersection2.length > 0){
+        if (intersection2.length > 0) {
             console.log(intersection2);
         }
         expect(intersection2.length).toBe(0);
 
-        const allFuncs = Object.keys(DBMS.__proto__);
-        const sum = [funcArr, serverSpecificFunctions, commonIgnoreList, customIgnore].reduce( (acc, el) => {
+        const allFuncs = Object.keys(Object.getPrototypeOf(DBMS));
+        const sum = [funcArr, serverSpecificFunctions, commonIgnoreList, customIgnore].reduce((acc, el) => {
             acc = R.concat(acc, el);
             return acc;
-        }, [])
+        }, []);
         const diff = R.difference(allFuncs, sum);
-        if(diff.length > 0){
+        if (diff.length > 0) {
             console.log(diff);
         }
         expect(diff.length).toBe(0);

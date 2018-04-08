@@ -157,15 +157,14 @@ if (MODE === 'NIMS_Server') {
 
         it('Core smoke test coverage check', () => {
             const funcArr = R.uniq(R.concat(getChecks.map(R.prop('func')), setChecks.map(R.prop('func'))));
-            const serverSpecificFunctions = Constants.serverSpecificFunctions;
-            const commonIgnoreList = Constants.commonIgnoreList;
+            const { serverSpecificFunctions, commonIgnoreList } = Constants;
 
-            const sum = [funcArr, commonIgnoreList, customIgnore].reduce( (acc, el) => {
+            const sum = [funcArr, commonIgnoreList, customIgnore].reduce((acc, el) => {
                 acc = R.concat(acc, el);
                 return acc;
-            }, [])
+            }, []);
             const diff = R.difference(serverSpecificFunctions, sum);
-            if(diff.length > 0){
+            if (diff.length > 0) {
                 console.log(diff);
             }
             expect(diff.length).toBe(0);
