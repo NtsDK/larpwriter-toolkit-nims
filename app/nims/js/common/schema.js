@@ -74,7 +74,7 @@ See the License for the specific language governing permissions and
             schema.required = ['Meta', 'CharacterProfileStructure', 'PlayerProfileStructure', 'Version', 'Characters',
                 'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations'];
             schema.additionalProperties = false;
-            
+
             schema.moduleList = R.keys(schema.properties);
             schema.moduleDeps = [
                 ['InvestigationBoard', 'Groups'],
@@ -82,13 +82,13 @@ See the License for the specific language governing permissions and
                 ['Groups', 'PlayerProfileStructure'],
                 ['Players', 'PlayerProfileStructure'],
                 ['Characters', 'CharacterProfileStructure'],
-                
+
                 ['ManagementInfo', 'Groups'],
                 ['ManagementInfo', 'Players'],
                 ['ManagementInfo', 'Stories'],
                 ['ManagementInfo', 'Characters'],
                 ['ProfileBindings', 'Players'],
-                
+
                 ['ProfileBindings', 'Characters'],
                 ['Relations', 'Characters'],
                 ['Stories', 'Characters'],
@@ -821,7 +821,7 @@ See the License for the specific language governing permissions and
             if(chars.length === 0){
                 chars = ['123'];
             }
-            
+
             const schema = {
                 type: 'array',
                 items: {

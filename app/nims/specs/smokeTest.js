@@ -1,5 +1,5 @@
 const getChecks = {
-     baseAPI:
+    baseAPI:
     [{
         func: 'getMetaInfo',
         args: [],
@@ -7,22 +7,22 @@ const getChecks = {
         func: 'getDatabase',
         args: [],
     }],
-     briefingExportAPI:
+    briefingExportAPI:
     [{
         func: 'getBriefingData',
         args: [null, null, false],
     }],
-     consistencyCheckAPI:
+    consistencyCheckAPI:
     [{
         func: 'getConsistencyCheckResult',
         args: [],
     }],
-     entityAPI:
+    entityAPI:
     [{
         func: 'getEntityNamesArray',
         args: ['character'],
     }],
-     groupsAPI:
+    groupsAPI:
     [{
         func: 'getGroupNamesArray',
         args: [],
@@ -47,22 +47,22 @@ const getChecks = {
         func: 'getCharacterGroupTexts',
         args: ['Арагорн'],
     }],
-     groupSchemaAPI:
+    groupSchemaAPI:
     [{
         func: 'getGroupSchemas',
         args: [],
     }],
-     investigationBoardAPI:
+    investigationBoardAPI:
     [{
         func: 'getInvestigationBoardData',
         args: [],
     }],
-     logAPI:
+    logAPI:
     [{
         func: 'getLog',
         args: [0, {}],
     }],
-     profileBindingAPI:
+    profileBindingAPI:
     [{
         func: 'getProfileBindings',
         args: [],
@@ -75,12 +75,12 @@ const getChecks = {
         func: 'getProfileBinding',
         args: ['character', 'Арагорн'],
     }],
-     profileConfigurerAPI:
+    profileConfigurerAPI:
     [{
         func: 'getProfileStructure',
         args: ['character'],
     }],
-     profilesAPI:
+    profilesAPI:
     [{
         func: 'getProfileNamesArray',
         args: ['character'],
@@ -93,17 +93,17 @@ const getChecks = {
         func: 'getAllProfiles',
         args: ['character'],
     }],
-     profileViewAPI:
+    profileViewAPI:
     [{
         func: 'getRoleGridInfo',
         args: [],
     }],
-     relationsAPI:
+    relationsAPI:
     [{
         func: 'getRelationsSummary',
         args: ['Арагорн'],
     }],
-     statisticsAPI:
+    statisticsAPI:
     [{
         func: 'getStatistics',
         args: [],
@@ -112,7 +112,7 @@ const getChecks = {
         func: 'getRelations',
         args: [],
     }],
-     storyAdaptationsAPI:
+    storyAdaptationsAPI:
     [{
         func: 'getFilteredStoryNames',
         args: [true],
@@ -121,7 +121,7 @@ const getChecks = {
         func: 'getStory',
         args: ['Начало пути'],
     }],
-     storyBaseAPI:
+    storyBaseAPI:
     [{
         func: 'getStoryNamesArray',
         args: [],
@@ -134,7 +134,7 @@ const getChecks = {
         func: 'getMasterStory',
         args: ['Начало пути'],
     }],
-     storyCharactersAPI:
+    storyCharactersAPI:
     [{
         func: 'getStoryCharacterNamesArray',
         args: ['Начало пути'],
@@ -143,12 +143,12 @@ const getChecks = {
         func: 'getStoryCharacters',
         args: ['Начало пути'],
     }],
-     storyEventsAPI:
+    storyEventsAPI:
     [{
         func: 'getStoryEvents',
         args: ['Начало пути'],
     }],
-     storyViewAPI:
+    storyViewAPI:
     [{
         func: 'getAllInventoryLists',
         args: ['Арагорн'],
@@ -182,12 +182,12 @@ const getChecks = {
 };
 
 const setChecks = {
-     baseAPI:
+    baseAPI:
     [{
         func: 'setMetaInfo',
         args: ['name', '123'],
     }],
-     groupsAPI:
+    groupsAPI:
     [{
         func: 'createGroup',
         args: ['testGroup'],
@@ -273,7 +273,7 @@ const setChecks = {
         func: 'removeGroup',
         args: ['testGroup'],
     }],
-     investigationBoardAPI:
+    investigationBoardAPI:
     [{
         func: 'createGroup',
         args: ['testGroup'],
@@ -338,7 +338,7 @@ const setChecks = {
         func: 'removeGroup',
         args: ['testGroup2'],
     }],
-     profileBindingAPI:
+    profileBindingAPI:
     [{
         func: 'createProfile',
         args: ['character', 'testCharacter'],
@@ -373,7 +373,7 @@ const setChecks = {
         func: 'removeProfile',
         args: ['player', 'testPlayer'],
     }],
-     profileConfigurerAPI:
+    profileConfigurerAPI:
     [{
         func: 'createProfileItem',
         args: ['character', 'testProfileItem', 'text', 0],
@@ -410,7 +410,7 @@ const setChecks = {
         func: 'removeProfileItem',
         args: ['character', 0, 'testProfileItem2'],
     }],
-     profilesAPI:
+    profilesAPI:
     [{
         func: 'createProfile',
         args: ['character', 'testCharacter'],
@@ -471,7 +471,7 @@ const setChecks = {
         func: 'removeProfile',
         args: ['character', 'testCharacter2'],
     }],
-     relationsAPI:
+    relationsAPI:
     [{
         func: 'createProfile',
         args: ['character', 'testCharacter'],
@@ -551,8 +551,8 @@ const setChecks = {
         args: ['character', 'testCharacter4'],
         forInconsistency: true,
     }],
-    
-     storyAdaptationsAPI:
+
+    storyAdaptationsAPI:
     [{
         func: 'createStory',
         args: ['testStory'],
@@ -585,8 +585,8 @@ const setChecks = {
         func: 'removeStory',
         args: ['testStory'],
     }],
-    
-     storyBaseAPI:
+
+    storyBaseAPI:
     [{
         func: 'createStory',
         args: ['testStory'],
@@ -603,8 +603,8 @@ const setChecks = {
         func: 'removeStory',
         args: ['testStory2'],
     }],
-    
-     storyCharactersAPI:
+
+    storyCharactersAPI:
     [{
         func: 'createStory',
         args: ['testStory'],
@@ -675,8 +675,8 @@ const setChecks = {
         func: 'removeStory',
         args: ['testStory'],
     }],
-    
-     storyEventsAPI:
+
+    storyEventsAPI:
     [{
         func: 'createStory',
         args: ['testStory'],
@@ -718,13 +718,13 @@ const setChecks = {
 R.keys(getChecks).forEach(apiName => {
     describe(apiName + ' getter tests', () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-        
+
         const checks = getChecks[apiName].map((el) => {
             const args = JSON.stringify(el.args);
             el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
             return el;
         });
-        
+
         checks.forEach((check) => {
             it(check.name, (done) => {
                 DBMS[check.func](...check.args.concat((err) => {
@@ -739,13 +739,13 @@ R.keys(getChecks).forEach(apiName => {
 R.keys(setChecks).forEach(apiName => {
     describe(apiName + ' setter tests', () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-    
+
         const checks = setChecks[apiName].map((el) => {
             const args = JSON.stringify(el.args);
             el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
             return el;
         });
-    
+
         checks.forEach((check) => {
             it(check.name, (done) => {
                 DBMS[check.func](...check.args.concat((err) => {
@@ -774,24 +774,24 @@ R.keys(setChecks).forEach(apiName => {
 
 describe('Core smoke test coverage check', () => {
     const customIgnore = ['setDatabase'];
-    
+
     it('Core smoke test coverage check', () => {
         const funcArr = R.uniq(R.concat(R.flatten(R.values(getChecks)).map(R.prop('func')), R.flatten(R.values(setChecks)).map(R.prop('func'))));
-        
+
         const serverSpecificFunctions = Constants.serverSpecificFunctions;
         const intersection = R.intersection(serverSpecificFunctions, funcArr);
         if(intersection.length > 0){
             console.log(intersection);
         }
         expect(intersection.length).toBe(0);
-        
+
         const commonIgnoreList = Constants.commonIgnoreList;
         const intersection2 = R.intersection(commonIgnoreList, funcArr);
         if(intersection2.length > 0){
             console.log(intersection2);
         }
         expect(intersection2.length).toBe(0);
-        
+
         const allFuncs = Object.keys(DBMS.__proto__);
         const sum = [funcArr, serverSpecificFunctions, commonIgnoreList, customIgnore].reduce( (acc, el) => {
             acc = R.concat(acc, el);

@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
 ((exports) => {
     exports.makeProfileEditorCore = () => {
         const innerExports = {};
-        
+
         const root = '.profile-editor-core-tmpl';
 
         const state = {

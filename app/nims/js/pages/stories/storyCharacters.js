@@ -28,15 +28,15 @@ See the License for the specific language governing permissions and
         if(initialized) return;
         exports.addCharacterDialog = UI.createModalDialog(superRoot, addCharacter, {
             bodySelector: 'modal-add-character-body',
-            dialogTitle: 'stories-add-character-title', 
+            dialogTitle: 'stories-add-character-title',
             actionButtonTitle: 'common-add',
         });
-        
+
 //        listen(qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
-        
+
         state.switchCharacterDialog = UI.createModalDialog(root, switchCharacters, {
             bodySelector: 'modal-switch-event-body',
-            dialogTitle: 'stories-switch-character-title', 
+            dialogTitle: 'stories-switch-character-title',
             actionButtonTitle: 'common-replace',
         });
         state.ExternalCharacterSelectors = [queryEl(superRoot + '.storyCharactersAddSelector'), queryEl(root + '.storyCharactersToSelector')];
@@ -137,14 +137,14 @@ See the License for the specific language governing permissions and
         const el = wrapEl('tr', qte(`${root} .story-character-row-tmpl` ));
         L10n.localizeStatic(el);
         const qe = qee(el);
-        
+
         addEl(qe('.character-name'), makeText(characterMeta.displayName));
-        
+
         let input = qe('.inventoryInput');
         input.value = character.inventory;
         input.characterName = character.name;
         listen(input, 'change', updateCharacterInventory);
-        
+
         Constants.characterActivityTypes.map((activityType) => {
             input = qe('.' + activityType + ' input');
             if (character.activity[activityType]) {
@@ -156,7 +156,7 @@ See the License for the specific language governing permissions and
             setAttr(input, 'id', character.name + activityType);
             setAttr(qe('.' + activityType + ' label'), 'for', character.name + activityType);
         });
-        
+
         listen(qe('.replace.character'), 'click', () => {
             state.switchCharacterDialog.characterName = character.name;
             state.switchCharacterDialog.showDlg();

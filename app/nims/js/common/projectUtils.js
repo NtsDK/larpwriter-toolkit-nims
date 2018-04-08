@@ -231,7 +231,7 @@ See the License for the specific language governing permissions and
             );
             return charConflicts.concat(playerConflicts);
         };
-        
+
         exports.rel2charArr = R.props(['starter', 'ender']);
         exports.get2ndRelChar = R.curry((char1, rel) => rel.starter === char1 ? rel.ender : rel.starter);
     }

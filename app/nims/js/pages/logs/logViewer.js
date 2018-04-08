@@ -84,7 +84,7 @@ See the License for the specific language governing permissions and
 //        const els = diff.map( part => [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => {
 //            return addClasses(addEl(makeEl('span'), makeText(pair[0])), ['log-diff', pair[1]]);
 //        });
-//        
+//
 //        const dataSpan = addEl(makeEl('span'), makeText(rowData[4]));
 //        addEl(tr, addEls(makeEl('td'), [dataSpan, addEls(makeEl('span'), els)]));
         addText(rowData[5]);

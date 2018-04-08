@@ -23,14 +23,14 @@ See the License for the specific language governing permissions and
         } = opts;
 
         const relationsPath = ['Relations'];
-        
+
         const rel2RelKey = R.pipe(R.props(['starter', 'ender']), R.sort(CU.charOrdA), JSON.stringify);
         dbmsUtils._rel2RelKey = rel2RelKey;
         const arr2RelKey = R.pipe(R.sort(CU.charOrdA), JSON.stringify);
         dbmsUtils._arr2RelKey = arr2RelKey;
-        
+
         const findRel = R.curry((fromCharacter, toCharacter, relations) => {
-            const findFunc = R.curry((fromCharacter, toCharacter, rel) => 
+            const findFunc = R.curry((fromCharacter, toCharacter, rel) =>
                 rel[fromCharacter] !== undefined && rel[toCharacter] !== undefined);
             return R.find(findFunc(fromCharacter, toCharacter), relations);
         });
@@ -53,9 +53,9 @@ See the License for the specific language governing permissions and
 
         const characterCheck = (characterName, database) => PC.chainCheck([PC.isString(characterName),
             PC.entityExists(characterName, R.keys(database.Characters))]);
-        
+
         const charFilter = R.curry((char, data) => R.filter(rel => rel[char] !== undefined, data));
-        
+
         LocalDBMS.prototype.getRelations = function (callback) {
             callback(null, R.clone(R.path(relationsPath, this.database)));
         };
@@ -75,17 +75,17 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getCharacterRelation = function (fromCharacter, toCharacter, callback) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
-                characterCheck(toCharacter, this.database), 
+                characterCheck(toCharacter, this.database),
                 PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
             PC.precondition(chain, callback, () => {
                 callback(null, R.clone(findRel(fromCharacter, toCharacter, relData)));
             });
         };
-        
+
         LocalDBMS.prototype.createCharacterRelation = function (fromCharacter, toCharacter, callback) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
-                characterCheck(toCharacter, this.database), 
+                characterCheck(toCharacter, this.database),
                 PC.createEntityCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
             PC.precondition(chain, callback, () => {
                 relData.push({
@@ -101,11 +101,11 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.removeCharacterRelation = function (fromCharacter, toCharacter, callback) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
-                characterCheck(toCharacter, this.database), 
+                characterCheck(toCharacter, this.database),
                 PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
             PC.precondition(chain, callback, () => {
                 const rel = findRel(fromCharacter, toCharacter, relData);
@@ -113,11 +113,11 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.setCharacterRelationText = function (fromCharacter, toCharacter, character, text, callback) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
-                characterCheck(toCharacter, this.database), 
+                characterCheck(toCharacter, this.database),
                 PC.isString(character), PC.elementFromEnum(character, [fromCharacter, toCharacter]),
                 PC.isString(text),
                 PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
@@ -128,11 +128,11 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.setRelationReadyStatus = function (fromCharacter, toCharacter, character, ready, callback) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
-                characterCheck(toCharacter, this.database), 
+                characterCheck(toCharacter, this.database),
                 PC.isString(character), PC.elementFromEnum(character, [fromCharacter, toCharacter]),
                 PC.isBoolean(ready),
                 PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
@@ -146,11 +146,11 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.setRelationEssenceStatus = function (fromCharacter, toCharacter, essence, flag, callback) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
-                characterCheck(toCharacter, this.database), 
+                characterCheck(toCharacter, this.database),
                 PC.isString(essence), PC.elementFromEnum(essence, Constants.relationEssences),
                 PC.isBoolean(flag),
                 PC.entityExistsCheck(arr2RelKey([fromCharacter, toCharacter]), relData.map(rel2RelKey))]);
@@ -164,7 +164,7 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-        
+
         LocalDBMS.prototype.setOriginRelationText = function (fromCharacter, toCharacter, text, callback) {
             const relData = R.path(relationsPath, this.database);
             const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),

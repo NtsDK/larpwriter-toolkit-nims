@@ -21,20 +21,20 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
     const root = '.stories-tab ';
-    
+
     exports.init = () => {
         const createStoryDialog = UI.createModalDialog(root, createStory, {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'stories-enter-story-name', 
+            dialogTitle: 'stories-enter-story-name',
             actionButtonTitle: 'common-create',
         });
-        
+
         const renameStoryDialog = UI.createModalDialog(root, renameStory, {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'stories-enter-new-story-name', 
+            dialogTitle: 'stories-enter-new-story-name',
             actionButtonTitle: 'common-rename',
         });
-        
+
         state.left = { views: {} };
         state.right = { views: {} };
         let containers = {
@@ -57,13 +57,13 @@ See the License for the specific language governing permissions and
         Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
 
         listen(queryEl(`${root}.remove.story`), 'click', removeStory);
-        
+
         listen(qe(`${root}.create.story`), 'click', () => createStoryDialog.showDlg());
         listen(qe(`${root}.rename.story`), 'click', () => {
             qee(renameStoryDialog, '.entity-input').value = queryEl(`${root}#storySelector`).value.trim();
             renameStoryDialog.showDlg();
         });
-        
+
         listen(qe(`${root}.create.event`), 'click', () => StoryEvents.createEventDialog.showDlg());
         listen(qe(`${root}.add.character`), 'click', () => StoryCharacters.addCharacterDialog.showDlg());
 
@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     function getSelectedStoryName(storyNames) {
         const settings = DBMS.getSettings();
         if (!settings.Stories) {
@@ -122,7 +122,7 @@ See the License for the specific language governing permissions and
         return () => {
             const input = qee(dialog, '.entity-input');
             const storyName = input.value.trim();
-            
+
             DBMS.createStory(storyName, (err) => {
                 if(err){
                     setError(dialog, err);
@@ -144,7 +144,7 @@ See the License for the specific language governing permissions and
             const toInput = qee(dialog, '.entity-input');
             const fromName = queryEl(`${root}#storySelector`).value.trim();
             const toName = toInput.value.trim();
-    
+
             DBMS.renameStory(fromName, toName, (err) => {
                 if(err){
                     setError(dialog, err);

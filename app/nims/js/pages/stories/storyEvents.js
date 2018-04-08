@@ -22,20 +22,20 @@ See the License for the specific language governing permissions and
     const state = {};
     const root = '.story-events-tab ';
     let initialized = false;
-        
+
     exports.init = () => {
         if(initialized) return;
         exports.createEventDialog = UI.createModalDialog('.stories-tab ', createEvent, {
             bodySelector: 'create-event-body',
-            dialogTitle: 'stories-event-creation', 
+            dialogTitle: 'stories-event-creation',
             actionButtonTitle: 'common-create',
         });
-        
+
 //        listen(qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
-        
+
         state.moveEventDialog = UI.createModalDialog(root, moveEvent, {
             bodySelector: 'move-event-body',
-            dialogTitle: 'stories-move-event', 
+            dialogTitle: 'stories-move-event',
             actionButtonTitle: 'common-move',
         });
         exports.content = qe(root);
@@ -119,7 +119,7 @@ See the License for the specific language governing permissions and
             const eventTextInput = qee(dialog, '.eventTextInput');
             const positionSelector = qee(dialog, '.positionSelector');
             const eventText = eventTextInput.value.trim();
-            
+
             DBMS.createEvent(Stories.getCurrentStoryName(), eventName, eventText, positionSelector.selectedIndex, (err) => {
                 if(err){
                     setError(dialog, err);
@@ -132,7 +132,7 @@ See the License for the specific language governing permissions and
             });
         }
     }
-    
+
     function appendEventInput(event, index, events, date, preGameDate) {
         const el = wrapEl('tr', qte(`${root} .event-tmpl` ));
         L10n.localizeStatic(el);
@@ -142,12 +142,12 @@ See the License for the specific language governing permissions and
         nameInput.value = event.name;
         nameInput.eventIndex = index;
         listen(nameInput, 'change', updateEventName);
-        
+
         const textInput = qe('.event-text');
         textInput.value = event.text;
         textInput.eventIndex = index;
         listen(textInput, 'change', updateEventText);
-        
+
         UI.makeEventTimePicker2(qe('.event-time'), {
             eventTime: event.time,
             index,
@@ -155,12 +155,12 @@ See the License for the specific language governing permissions and
             date,
             onChangeDateTimeCreator
         });
-        
+
         listen(qee(el, '.move'), 'click', () => {
             state.moveEventDialog.index = index;
             state.moveEventDialog.showDlg();
         });
-        
+
         listen(qee(el, '.clone'), 'click', cloneEvent(index));
         if (state.eventsLength === index + 1) {
             setAttr(qee(el, '.merge'), 'disabled', 'disabled');
@@ -168,14 +168,14 @@ See the License for the specific language governing permissions and
             listen(qee(el, '.merge'), 'click', mergeEvents(index, event.name, events[index+1].name));
         }
         listen(qee(el, '.remove'), 'click', removeEvent(event.name, index));
-        
+
         return el;
     }
 
     function moveEvent(dialog) {
         return () => {
             const newIndex = queryEl('.movePositionSelector').selectedIndex;
-            
+
             Utils.processError(exports.refresh)
             DBMS.moveEvent(Stories.getCurrentStoryName(), dialog.index, newIndex, (err) => {
                 if(err){
@@ -200,7 +200,7 @@ See the License for the specific language governing permissions and
                 Utils.alert(getL10n('stories-cant-merge-last-event'));
                 return;
             }
-            
+
             Utils.confirm(L10n.format('stories', 'confirm-event-merge', [firstName, secondName]), () => {
                 DBMS.mergeEvents(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
             });

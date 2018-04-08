@@ -21,20 +21,20 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
     const root = '.profile-filter-tab ';
-    
+
     exports.init = () => {
         const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false), {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'groups-enter-group-name', 
+            dialogTitle: 'groups-enter-group-name',
             actionButtonTitle: 'common-create',
         });
-        
+
         const renameGroupDialog = UI.createModalDialog(root, renameGroup(`${root}.save-entity-select`), {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'groups-enter-new-group-name', 
+            dialogTitle: 'groups-enter-new-group-name',
             actionButtonTitle: 'common-rename',
         });
-        
+
         listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls('-dependent'));
 
         listen(queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
             renameGroupDialog.showDlg();
         });
         listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => queryEl(`${root}.save-entity-select`).value.trim()));
-        
+
         exports.content = queryEl(root);
     };
 
@@ -506,14 +506,14 @@ See the License for the specific language governing permissions and
         input.addEventListener('input', rebuildContent);
         return filter;
     }
-    
+
     function renameGroup(selector) {
         return (dialog) => {
             return () => {
                 const toInput = qee(dialog, '.entity-input');
                 const fromName = queryEl(selector).value.trim();
                 const toName = toInput.value.trim();
-        
+
                 DBMS.renameGroup(fromName, toName, (err) => {
                     if(err){
                         setError(dialog, err);

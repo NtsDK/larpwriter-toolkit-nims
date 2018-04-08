@@ -10,20 +10,20 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 "use strict";
 
 (function(callback){
-    
+
     function profileViewAPI(LocalDBMS, opts) {
-        
+
         var R             = opts.R           ;
         var CU            = opts.CommonUtils ;
         var Constants     = opts.Constants   ;
         var Errors        = opts.Errors      ;
         var listeners     = opts.listeners   ;
-        
+
         function getPath(type){
             if(type === 'character') return ['Characters'];
             if(type === 'player') return ['Players'];
@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
             if(type === 'player') return ['PlayerProfileStructure'];
             return null;
         };
-        
+
         var getProfileInfo = function(type, database){
 //            var structure = R.path(getStructurePath(type), database).filter(el => el.showInRoleGrid === true);
             var structure = R.path(getStructurePath(type), database);
@@ -43,11 +43,11 @@ See the License for the specific language governing permissions and
                 profiles: R.mapObjIndexed(R.pick(structure.map(R.prop('name'))), R.path(getPath(type), database))
             };
         };
-        
+
         LocalDBMS.prototype.getRoleGridInfo = function(callback) {
             var characters = getProfileInfo('character', this.database);
             var players = getProfileInfo('player', this.database);
-            
+
             var bindings = this.database.ProfileBindings;
             var profileData = R.keys(characters.profiles).map(characterName => {
                 var playerName = bindings[characterName];
@@ -58,16 +58,16 @@ See the License for the specific language governing permissions and
                     playerName: playerName,
                 }
             });
-            
+
             callback(null, {
                 profileData:profileData,
                 characterProfileStructure: characters.structure,
                 playerProfileStructure: players.structure
             });
         };
-        
+
     };
-    
+
     callback(profileViewAPI);
 
 })(function(api){

@@ -96,11 +96,11 @@ See the License for the specific language governing permissions and
 
     exports.localizeStatic = (el) => {
         el = el || document;
-        nl2array(qees(el, '[l10n-id]')).map(el => 
+        nl2array(qees(el, '[l10n-id]')).map(el =>
             addEl(clearEl(el), makeText(exports.getValue(getAttr(el, 'l10n-id')))));
-        nl2array(qees(el, '[l10n-placeholder-id]')).map(el => 
+        nl2array(qees(el, '[l10n-placeholder-id]')).map(el =>
             setAttr(el, 'placeholder', exports.getValue(getAttr(el, 'l10n-placeholder-id'))));
-        nl2array(qees(el, '[l10n-title]')).map(el => 
+        nl2array(qees(el, '[l10n-title]')).map(el =>
             setAttr(el, 'title', exports.getValue(getAttr(el, 'l10n-title'))));
     };
 })(this.L10n = {}, Dictionaries);

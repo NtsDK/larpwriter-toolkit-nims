@@ -79,7 +79,7 @@ function setClassByCondition(o, c, condition) {
     return o;
 }
 
-const setClassIf = setClassByCondition; 
+const setClassIf = setClassByCondition;
 
 function getEl(id) {
     return document.getElementById(id);
@@ -337,7 +337,7 @@ Utils.addView = function (containers, name, view, opts2) {
     };
 
     button.addEventListener('click', onClickDelegate(view));
-    
+
     // deprecated. Use Utils.setFirstTab instead
     if (opts.mainPage) {
         Utils.setFirstTab(containers, {button, view});

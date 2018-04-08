@@ -145,21 +145,21 @@ if (MODE === 'NIMS_Server') {
                 }));
             });
         });
-        
-        /* assignAdmin is not tested because if I test it will change admin and then I need to reconnect, 
-         restore admin than connect back... So it is too hard for simple smoke test.
-         publishPermissionsUpdate is a function for server side. It is used to notify all current server users about
-         entity management changes.
-         createCharacterByPlayer and getPlayerProfileInfo are for player login so similar problem with open/close 
-         session in assignAdmin case.
-         */
+
+        /* assignAdmin is not tested because if I test it will change admin and then I need to reconnect,
+        restore admin than connect back... So it is too hard for simple smoke test.
+        publishPermissionsUpdate is a function for server side. It is used to notify all current server users about
+        entity management changes.
+        createCharacterByPlayer and getPlayerProfileInfo are for player login so similar problem with open/close
+        session in assignAdmin case.
+        */
         const customIgnore = ['assignAdmin', 'publishPermissionsUpdate', 'createCharacterByPlayer', 'getPlayerProfileInfo'];
-        
+
         it('Core smoke test coverage check', () => {
             const funcArr = R.uniq(R.concat(getChecks.map(R.prop('func')), setChecks.map(R.prop('func'))));
             const serverSpecificFunctions = Constants.serverSpecificFunctions;
             const commonIgnoreList = Constants.commonIgnoreList;
-            
+
             const sum = [funcArr, commonIgnoreList, customIgnore].reduce( (acc, el) => {
                 acc = R.concat(acc, el);
                 return acc;

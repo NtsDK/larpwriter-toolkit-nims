@@ -23,18 +23,18 @@ See the License for the specific language governing permissions and
     const root = '.group-profile-tab ';
     const l10n = L10n.get('groups');
     const settingsPath = 'GroupProfile';
-    
+
     exports.init = () => {
         const createGroupDialog = UI.createModalDialog(root, exports.createGroup(true), {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'groups-enter-group-name', 
+            dialogTitle: 'groups-enter-group-name',
             actionButtonTitle: 'common-create',
         });
         listen(qe(`${root}.create`), 'click', () => createGroupDialog.showDlg());
-        
+
         state.renameGroupDialog = UI.createModalDialog(root, renameGroup, {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'groups-enter-new-group-name', 
+            dialogTitle: 'groups-enter-new-group-name',
             actionButtonTitle: 'common-rename',
         });
 
@@ -46,7 +46,7 @@ See the License for the specific language governing permissions and
             profileSettings.displayName = getL10n(`groups-${profileSettings.name}`);
             addEl(tbody, makeInput(profileSettings));
         });
-        
+
         listen(queryEl(`${root} .entity-filter`), 'input', filterOptions);
 
         exports.content = queryEl(`${root}`);
@@ -55,7 +55,7 @@ See the License for the specific language governing permissions and
     exports.refresh = () => {
         PermissionInformer.getEntityNamesArray('group', false, (err, groupNames) => {
             if (err) { Utils.handleError(err); return; }
-            
+
             addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map( name => {
                 const el = wrapEl('div', qte(`.entity-item-tmpl` ));
                 addEl(qee(el, '.primary-name'), makeText(name.displayName));
@@ -77,7 +77,7 @@ See the License for the specific language governing permissions and
                 }
                 return el;
             }));
-            
+
             showProfileInfoDelegate2(UI.checkAndGetEntitySetting(settingsPath, groupNames))();
         });
     };
@@ -224,17 +224,17 @@ See the License for the specific language governing permissions and
         const settings = DBMS.getSettings();
         settings.GroupProfile.groupName = name;
     }
-    
+
     function filterOptions(event){
         const str = event.target.value.toLowerCase();
-        
+
         const els = queryEls(`${root} [primary-name]`);
         els.forEach(el => {
             let isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
             setClassByCondition(el, 'hidden', !isVisible);
         });
-        
-        if(queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null || 
+
+        if(queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
             queryEl(`${root} [primary-name] .select-button.btn-primary`) === null) {
             const els = queryEls(`${root} [primary-name]`).filter(R.pipe(hasClass(R.__, 'hidden'), R.not));
             selectProfile(els.length > 0 ? getAttr(els[0], 'profile-name') : null);
@@ -242,13 +242,13 @@ See the License for the specific language governing permissions and
 //            queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
         }
     }
-    
+
     exports.createGroup = (updateSettings) => {
         return (dialog) => {
             return () => {
                 const input = qee(dialog, '.entity-input');
                 const name = input.value.trim();
-                
+
                 DBMS.createGroup(name, (err) => {
                     if(err){
                         setError(dialog, err);
@@ -267,13 +267,13 @@ See the License for the specific language governing permissions and
             }
         }
     }
-    
+
     function renameGroup (dialog){
         return () => {
             const toInput = qee(dialog, '.entity-input');
             const fromName = dialog.fromName;
             const toName = toInput.value.trim();
-            
+
             DBMS.renameGroup(fromName, toName, (err) => {
                 if (err) {
                     setError(dialog, err);
@@ -286,11 +286,11 @@ See the License for the specific language governing permissions and
             });
         }
     };
-    
+
     exports.removeGroup = (callback) => {
         return () => {
             const name = callback();
-            
+
             Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
                 DBMS.removeGroup(name, (err) => {
                     if (err) { Utils.handleError(err); return; }

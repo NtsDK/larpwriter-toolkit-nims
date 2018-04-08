@@ -19,10 +19,10 @@ See the License for the specific language governing permissions and
 'use strict';
 
 function RoutingTabTmpl(exports, opts) {
-    
+
     const state = {};
     const tmplRoot = '.tab-routing-tmpl';
-    
+
     exports.init = () => {
         const el = queryEl(tmplRoot).cloneNode(true);
         removeClass(el, 'tab-routing-tmpl');
@@ -36,10 +36,10 @@ function RoutingTabTmpl(exports, opts) {
         const tabs = R.indexBy(R.prop('viewName'), opts.tabs.map(tab => {
             return {
                 viewName: tab.viewName,
-                viewRes: Utils.addView(containers, tab.btnName, window[tab.viewName]) 
+                viewRes: Utils.addView(containers, tab.btnName, window[tab.viewName])
             }
         }));
-        
+
         Utils.setFirstTab(containers, tabs[opts.firstTab].viewRes);
         exports.content = el;
     };
@@ -66,10 +66,10 @@ RoutingTabTmpl(this.Characters = {}, {
         btnName: 'filling-profile',
         viewName: 'CharacterEditor'
     },{
-        btnName: 'changing-profile-structure', 
+        btnName: 'changing-profile-structure',
         viewName: 'CharacterConfigurer'
     },{
-        btnName: 'binding-characters-and-players', 
+        btnName: 'binding-characters-and-players',
         viewName: 'ProfileBinding2'
     }]
 });
@@ -80,10 +80,10 @@ RoutingTabTmpl(this.Players = {}, {
         btnName: 'filling-profile',
         viewName: 'PlayerEditor'
     },{
-        btnName: 'changing-profile-structure', 
+        btnName: 'changing-profile-structure',
         viewName: 'PlayerConfigurer'
     },{
-        btnName: 'binding-characters-and-players', 
+        btnName: 'binding-characters-and-players',
         viewName: 'ProfileBinding2'
     }]
 });
@@ -115,4 +115,3 @@ RoutingTabTmpl(this.AccessManager = {}, {
         viewName: 'PlayerManagement'
     }]
 });
-

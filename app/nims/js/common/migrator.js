@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
         exports.migrate = (data) => {
             if (!data.Version) {
                 data.Settings = {};
-    
+
                 let story, storyCharacters;
                 Object.keys(data.Stories).forEach((storyName) => {
                     story = data.Stories[storyName];
@@ -32,7 +32,7 @@ See the License for the specific language governing permissions and
                         story.characters[character].activity = {};
                     });
                 });
-    
+
                 data.Version = '0.0.4';
             }
             if (data.Version === '0.0.4') { // new versioning rule
@@ -104,7 +104,7 @@ See the License for the specific language governing permissions and
                         data.ManagementInfo.UsersInfo[userName].groups = [];
                     });
                 }
-    
+
                 data.Version = '0.5.0';
             }
             if (data.Version === '0.5.0') {
@@ -186,19 +186,19 @@ See the License for the specific language governing permissions and
                     }
                     return acc;
                 }, {})
-    
+
                 data.Relations = R.values(acc).map(R.merge({
                     origin: '',
                     starterTextReady: false,
                     enderTextReady: false,
                     essence: []
                 }));
-                
+
                 data.Version = '0.6.2';
             }
             console.log('data ' + data);
-    
-    
+
+
             return data;
         };
     };

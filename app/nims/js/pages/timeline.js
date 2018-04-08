@@ -113,8 +113,8 @@ See the License for the specific language governing permissions and
         fillSelector(selector, selectorValues.map(obj => ({
             name: obj.displayName,
             value: obj.value,
-            className: obj.hasEvents ? 
-                    'fa-icon finished transparent-icon select-icon-padding' : 
+            className: obj.hasEvents ?
+                    'fa-icon finished transparent-icon select-icon-padding' :
                     'fa-icon empty icon-padding select-icon-padding'
         })));
         setAttr(selector, 'size', selectorValues.length > 15 ? 15 : selectorValues.length);

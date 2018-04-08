@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
         listen(getEl('drawNetworkButton'), 'click', onDrawNetwork);
         $('#nodeFocusSelector').select2().on('change', onNodeFocus);
         listen(getEl('networkSelector'), 'change', onNetworkSelectorChangeDelegate);
-        
+
         queryEls('#activityBlock button').forEach( listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
         queryEls('#relationsBlock button').forEach( listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
 
@@ -83,31 +83,31 @@ See the License for the specific language governing permissions and
                                         if (err8) { Utils.handleError(err8); return; }
                                         DBMS.getRelations((err9, relations) => { // relations
                                             if (err9) { Utils.handleError(err9); return; }
-                                            
+
                                             state.Stories = stories;
                                             state.Characters = profiles;
                                             state.profileBindings = profileBindings;
                                             state.groupCharacterSets = groupCharacterSets;
                                             state.metaInfo = metaInfo;
                                             state.relations = relations;
-    
+
                                             const checkboxes = profileStructure.filter(element =>
                                                 R.equals(element.type, 'checkbox'));
                                             R.values(profiles).forEach((profile) => {
                                                 checkboxes.map(item => (profile[item.name] =
                                                     constL10n(Constants[profile[item.name]])));
                                             });
-    
+
                                             const colorGroups = profileStructure.filter(element =>
                                                 R.contains(element.type, ['enum', 'checkbox']));
                                             const defaultColorGroup = {
                                                 value: Constants.noGroup,
                                                 name: constL10n(Constants.noGroup)
                                             };
-    
+
                                             const profileLabel = strFormat(getL10n('social-network-profile-group'));
                                             const filterLabel = strFormat(getL10n('social-network-filter-group'));
-    
+
                                             const profileGroups = colorGroups.map(group => group.name).map(name =>
                                                 ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
                                             const filterGroups = R.keys(groupCharacterSets).map(name =>
@@ -116,9 +116,9 @@ See the License for the specific language governing permissions and
                                                 selector,
                                                 [defaultColorGroup].concat(profileGroups).concat(filterGroups)
                                             );
-    
+
                                             initGroupColors(colorGroups);
-    
+
                                             NetworkSubsetsSelector.refresh({
                                                 characterNames,
                                                 storyNames,
@@ -344,7 +344,7 @@ See the License for the specific language governing permissions and
                     hoverWidth: 4
                 })))));
     }
-    
+
     function getRelationEdges() {
         const selectedRelations = queryEls('#relationsBlock button.btn-primary').map(getAttr(R.__, 'data-value'));
         const relations = state.relations;

@@ -24,9 +24,9 @@ See the License for the specific language governing permissions and
 
     let makeNewRow;
     const l10n = L10n.get('briefings');
-    
+
     const findRel = R.curry((fromCharacter, toCharacter, relations) => {
-        const findFunc = R.curry((fromCharacter, toCharacter, rel) => 
+        const findFunc = R.curry((fromCharacter, toCharacter, rel) =>
             rel[fromCharacter] !== undefined && rel[toCharacter] !== undefined);
         return R.find(findFunc(fromCharacter, toCharacter), relations);
     });
@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
         let { characterNamesArray } = data;
 
         characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName), R.prop('value')));
-        
+
         const get2ndCharName = ProjectUtils.get2ndRelChar(characterName)
         const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CommonUtils.charOrdA);
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
@@ -49,9 +49,9 @@ See the License for the specific language governing permissions and
         const qe = qee(relationTmpl);
         const content = qe('.relation-content');
         const getProfileItemSelect = () => qe('.profile-item-select');
-        
+
         makeProfileItemSelector(qe('.profile-item-select'), profileSettings, refreshProfileItem(content, profiles));
-        
+
         const makeRow = makeNewRow(
             profiles, getProfileItemSelect, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
             externalRefresh, characterName
@@ -68,13 +68,13 @@ See the License for the specific language governing permissions and
         fillCharSelector(qe('.unknown-characters-select'), unknownBtn, unknownNoRels, characterName, makeRowCallback);
 
         // filling table
-        const toCharacterFilter = toCharacter => (isAdaptationsMode ? true : 
+        const toCharacterFilter = toCharacter => (isAdaptationsMode ? true :
             !R.isEmpty(findRel(characterName, toCharacter, relationsSummary.relations)[characterName]));
         const findRelTmp = findRel(characterName, R.__, relationsSummary.relations);
         addEls(content, showCharacters.filter(toCharacterFilter).map(toChar => makeRow(toChar, findRelTmp(toChar))));
         return relationTmpl;
     };
-    
+
     function refreshProfileItem(content, profiles){
         return (event) => {
             const dataArr = queryElEls(content, '[toCharacter]');
@@ -96,7 +96,7 @@ See the License for the specific language governing permissions and
             tmpSelect.val(profileSettings[0].name).trigger('change');
         }
     }
-    
+
     makeNewRow = R.curry((
         profiles, getProfileItemSelect, isAdaptationsMode, knownCharacters, profileBindings,
         externalRefresh, fromCharacter, toCharacter, rel
@@ -117,14 +117,14 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-        
+
         const directText = qe('.direct textarea');
         directText.value = rel[fromCharacter];
         setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
         listen(directText, 'change', (event) => {
             DBMS.setCharacterRelationText(fromCharacter, toCharacter, fromCharacter, event.target.value, Utils.processError());
         });
-        
+
         Constants.relationEssences.forEach(name => {
             const btn = qe(`.${name}`);
             $(btn).tooltip({
@@ -144,29 +144,29 @@ See the License for the specific language governing permissions and
                 });
             });
         });
-        
+
         const originText = qe('.origin textarea');
         originText.value = rel.origin;
         setAttr(originText, 'placeholder', l10n('relation-origin'));
         listen(originText, 'change', (event) => {
             DBMS.setOriginRelationText(fromCharacter, toCharacter, event.target.value, Utils.processError());
         });
-        
+
         const reverseText = qe('.reverse textarea');
         reverseText.value = rel[toCharacter];
         setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
         listen(reverseText, 'change', (event) => {
             DBMS.setCharacterRelationText(fromCharacter, toCharacter, toCharacter, event.target.value, Utils.processError());
         });
-        
+
         const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
-        fillFinishedButton(qe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter, 
+        fillFinishedButton(qe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
             toCharacter, fromCharacter, directChecked, directText);
-        
+
         const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
-        fillFinishedButton(qe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter, 
+        fillFinishedButton(qe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
             toCharacter, toCharacter, reverseChecked, reverseText);
-        
+
         if(isAdaptationsMode){
         } else {
             removeClass(qe('.direct'), 'col-xs-3');
@@ -175,10 +175,10 @@ See the License for the specific language governing permissions and
             addClass(qe('.reverse'), 'hidden');
         }
         L10n.localizeStatic(row);
-        
+
         return row;
     });
-    
+
     function fillFinishedButton(button, id, fromCharacter, toCharacter, character, checked, textarea){
         setClassIf(button, 'btn-primary', checked);
         Utils.enableEl(textarea, !checked);

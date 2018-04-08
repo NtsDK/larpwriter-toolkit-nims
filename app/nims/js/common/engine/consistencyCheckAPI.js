@@ -22,10 +22,10 @@ See the License for the specific language governing permissions and
         const CU = CommonUtils;
         const validatorLib = opts.Ajv;
         const schemaBuilder = opts.Schema;
-        
+
         LocalDBMS.prototype.getConsistencyCheckResult = function (callback) {
             let errors = [];
-            
+
             let errors2 = [
                 checkProfileStructureConsistency(this.database, 'character', 'CharacterProfileStructure'),
                 checkProfileStructureConsistency(this.database, 'player', 'PlayerProfileStructure'),
@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
                 errors2.push(checkObjectRightsConsistency(this.database));
                 errors2.push(checkPlayerLoginConsistency(this.database));
             }
-            
+
             errors2.forEach(module => {
                 module.errors = module.errors.map(R.apply(CU.strFormat));
             });
@@ -54,17 +54,17 @@ See the License for the specific language governing permissions and
             const valid = validate(this.database);
             if (!valid) {
                 errors = errors.concat(validate.errors);
-                
+
                 errors2 = R.concat(errors2, schema.required.map( moduleName => {
                     const validate2 = validator.compile(schema.properties[moduleName]);
                     const valid2 = validate2(this.database[moduleName]);
                     return {
-                        module: moduleName, 
+                        module: moduleName,
                         errors: valid2 ? [] : validate2.errors
                     }
                 }));
             }
-            
+
             const details = R.mapObjIndexed(arr =>{
                 return R.flatten(arr.map(R.prop('errors')));
             }, R.groupBy(R.prop('module'), errors2));
@@ -99,10 +99,10 @@ See the License for the specific language governing permissions and
                 });
             });
             return {
-                module: 'ManagementInfo', 
+                module: 'ManagementInfo',
                 errors
-            } 
-            
+            }
+
         }
 
         function checkPlayerLoginConsistency(data) {
@@ -116,9 +116,9 @@ See the License for the specific language governing permissions and
                 errors.push([msg, [difference]]);
             }
             return {
-                module: 'ManagementInfo', 
+                module: 'ManagementInfo',
                 errors
-            } 
+            }
         }
 
         function checkEventsCharactersConsistency(data) {
@@ -135,9 +135,9 @@ See the License for the specific language governing permissions and
                 });
             });
             return {
-                module: 'Stories', 
+                module: 'Stories',
                 errors
-            } 
+            }
         }
 
         function checkBindingsConsistency(data) {
@@ -147,11 +147,11 @@ See the License for the specific language governing permissions and
                 errors.push([msg, [pair[0], JSON.stringify(pair[1])]]);
             });
             return {
-                module: 'ProfileBindings', 
+                module: 'ProfileBindings',
                 errors
-            } 
+            }
         }
-        
+
         function checkRelationsConsistency(data, callback) {
             let errors = [];
             data.Relations.filter(rel => rel[rel.starter] === undefined).forEach( rel => {
@@ -162,7 +162,7 @@ See the License for the specific language governing permissions and
                 const msg = 'Relation inconsistent, ender is not from relation: ender {0}, relation {1}';
                 errors.push([msg, [rel.ender, JSON.stringify(rel)]]);
             });
-            
+
             const keys = data.Relations.map(dbmsUtils._rel2RelKey);
             const groups = R.groupBy(str => str, keys);
             R.values(groups).filter(R.pipe(R.length, R.gt(R.__, 1))).forEach( group => {
@@ -170,9 +170,9 @@ See the License for the specific language governing permissions and
                 errors.push([msg, [group[0]]]);
             });
             return {
-                module: 'Relations', 
+                module: 'Relations',
                 errors
-            } 
+            }
         }
 
         function checkStoryCharactersConsistency(data, callback) {
@@ -194,9 +194,9 @@ See the License for the specific language governing permissions and
                 }
             });
             return {
-                module: 'Stories', 
+                module: 'Stories',
                 errors
-            } 
+            }
         }
 
         const isInconsistent = (charValue, type, profileItemValue) => {
@@ -232,7 +232,7 @@ See the License for the specific language governing permissions and
         function checkProfileValueConsistency(data, profiles, structure, callback) {
             const msg = 'Profile value inconsistency, item type is inconsistent: char {0}, item {1}, value {2}';
             let errors = [];
-            
+
             R.values(data[profiles]).forEach((character) => {
                 data[structure].forEach((profileItem) => {
                     if (isInconsistent(character[profileItem.name], profileItem.type, profileItem.value)) {
@@ -241,9 +241,9 @@ See the License for the specific language governing permissions and
                 });
             });
             return {
-                module: profiles, 
+                module: profiles,
                 errors
-            } 
+            }
         }
 
         function checkProfileConsistency(data, profiles, structure) {
@@ -266,9 +266,9 @@ See the License for the specific language governing permissions and
                 }
             });
             return {
-                module: profiles, 
+                module: profiles,
                 errors
-            } 
+            }
         }
 
         function checkProfileStructureConsistency(data, type, structure) {
@@ -281,9 +281,9 @@ See the License for the specific language governing permissions and
                 errors.push([msg, [type, diff]]);
             }
             return {
-                module: structure, 
+                module: structure,
                 errors
-            } 
+            }
         }
     }
 

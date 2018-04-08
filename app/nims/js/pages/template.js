@@ -19,10 +19,10 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    
+
     const root = '.-tab ';
     const state = {};
-    
+
     exports.init = () => {
         //exports.content = queryEl(root);
     };

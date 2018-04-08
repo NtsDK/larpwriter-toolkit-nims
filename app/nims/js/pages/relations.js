@@ -19,11 +19,11 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    
+
     const root = '.relations-tab ';
     const state = {};
     const settingsPath = 'Relations';
-    
+
     exports.init = () => {
         $(`${root} .character-select`).select2().on('change', buildContent);
         exports.content = queryEl(root);
@@ -32,7 +32,7 @@ See the License for the specific language governing permissions and
     exports.refresh = () => {
         clearEl(queryEl(`${root} .character-select`));
         clearEl(queryEl(`${root} .panel-body`));
-        
+
         DBMS.getProfileStructure('character', (err, characterProfileStructure) => {
             if (err) { Utils.handleError(err); return; }
             state.characterProfileStructure = characterProfileStructure;
@@ -42,12 +42,12 @@ See the License for the specific language governing permissions and
                     const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
                     const data = getSelect2Data(names);
                     // this call trigger buildContent
-                    $(`${root} .character-select`).select2(data).val(characterName).trigger('change'); 
+                    $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
                 }
             });
         });
     };
-    
+
     function buildContent(event) {
         clearEl(queryEl(`${root} .panel-body`));
         const characterName = event.target.value;
@@ -56,15 +56,15 @@ See the License for the specific language governing permissions and
         state.data.characterName = characterName;
         exports.load(state.data, buildContentInner);
     }
-    
+
     function buildContentInner(){
-        const content = RelationsPreview.makeRelationsContent(state.data, true, state.characterProfileStructure, 
+        const content = RelationsPreview.makeRelationsContent(state.data, true, state.characterProfileStructure,
             exports.refresh);
         addEl(queryEl(`${root} .panel-body`), content);
         UI.initTextAreas(`${root} .panel-body textarea`);
         UI.refreshTextAreas(`${root} .panel-body textarea`);
     }
-    
+
     exports.load = (data, callback) => {
         DBMS.getAllProfiles('character', (err, profiles) => {
             if (err) { Utils.handleError(err); return; }

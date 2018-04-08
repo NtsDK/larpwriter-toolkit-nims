@@ -19,9 +19,9 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    
+
     const root = '.character-reports-tmpl';
-    
+
     exports.makeStoryReportRow = (storyInfo) => {
         const act = storyInfo.activity;
         const completness = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
         addEl(qe('.inventory'), makeText(storyInfo.inventory));
         return row;
     }
-    
+
     exports.makeRelationReportRow = R.curry((characterName, rel) => {
         const row = qte(`${root} .relation-report-row-tmpl` );
         const qe = qee(row);
@@ -48,35 +48,35 @@ See the License for the specific language governing permissions and
         const secondCharacter = ProjectUtils.get2ndRelChar(characterName, rel);
         addEl(qe('.character-name'), makeText(secondCharacter));
         const isStarter = rel.starter === characterName;
-        
+
         if(isStarter){
-            setAttr(qe('.direction-starterToEnder'), 'title', 
+            setAttr(qe('.direction-starterToEnder'), 'title',
                 L10n.format('briefings', 'starterToEnder', [characterName, secondCharacter]));
-            setAttr(qe('.direction-enderToStarter'), 'title', 
+            setAttr(qe('.direction-enderToStarter'), 'title',
                 L10n.format('briefings', 'enderToStarter', [secondCharacter, characterName]));
         } else {
-            setAttr(qe('.direction-starterToEnder'), 'title', 
+            setAttr(qe('.direction-starterToEnder'), 'title',
                     L10n.format('briefings', 'starterToEnder', [secondCharacter, characterName]));
-            setAttr(qe('.direction-enderToStarter'), 'title', 
+            setAttr(qe('.direction-enderToStarter'), 'title',
                     L10n.format('briefings', 'enderToStarter', [characterName, secondCharacter]));
         }
-        
-        setClassByCondition(qe('.direction-starterToEnder'), 'active-item-in-report', 
+
+        setClassByCondition(qe('.direction-starterToEnder'), 'active-item-in-report',
             R.contains(isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence));
         setClassByCondition(qe('.direction-allies'), 'active-item-in-report', R.contains('allies', rel.essence));
-        setClassByCondition(qe('.direction-enderToStarter'), 'active-item-in-report', 
+        setClassByCondition(qe('.direction-enderToStarter'), 'active-item-in-report',
             R.contains(!isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence));
-        
+
         const finished = isStarter ? rel.starterTextReady : rel.enderTextReady;
-        
+
         addEl(qe('.completness'), makeText(L10n.get('constant', finished ? 'finished' : 'unfinished')));
         setClassByCondition(qe('.completness'), 'relation-finished', finished);
         setClassByCondition(qe('.completness'), 'relation-unfinished', !finished);
-        
+
         addEl(qe('.origin'), makeText(rel.origin));
         return row;
     });
-    
+
     function makeCompletenessLabel(value, total) {
         return strFormat('{0} ({1}/{2})', [total === 0 ? '-' : `${((value / total) * 100).toFixed(0)}%`, value, total]);
     }

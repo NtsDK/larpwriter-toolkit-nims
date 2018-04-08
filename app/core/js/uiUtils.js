@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
         addEl(qe(root), el);
         return el;
     };
-    
+
     exports.initTabPanel = (tabClazz, containerClazz) => {
         const containers = getEls(containerClazz);
 
@@ -138,7 +138,7 @@ See the License for the specific language governing permissions and
         }
         sel.dispatchEvent(new Event('change'));
     };
-    
+
     exports.initPanelToggler = (el) => {
         const attr = getAttr(el, 'panel-toggler');
         addClass(el, 'expanded');
@@ -150,7 +150,7 @@ See the License for the specific language governing permissions and
     }
 
     exports.initPanelTogglers = (el) => qees(el || document, '[panel-toggler]').forEach(exports.initPanelToggler);
-    
+
     exports.attachPanelToggler = (header, content, callback) => {
         addClass(header, 'expanded');
         listen(header, 'click', (event) => {
@@ -170,7 +170,7 @@ See the License for the specific language governing permissions and
         addClass(el, isExpanded ? 'collapsed' : 'expanded');
         toggleClass(sel, 'hidden');
     };
-    
+
     exports.makeEventTimePicker = (opts) => {
         const input = makeEl('input');
         R.ap([addClass(input)], opts.extraClasses);
@@ -197,12 +197,12 @@ See the License for the specific language governing permissions and
         jQuery(input).datetimepicker(pickerOpts);
         return input;
     };
-    
+
     exports.makeEventTimePicker2 = (input, opts) => {
         input.value = opts.eventTime;
-        
+
         input.eventIndex = opts.index;
-        
+
         const pickerOpts = {
             lang: L10n.getLang(),
             mask: true,
@@ -210,14 +210,14 @@ See the License for the specific language governing permissions and
             endDate: new Date(opts.date),
             onChangeDateTime: opts.onChangeDateTimeCreator(input),
         };
-        
+
         if (opts.eventTime !== '') {
             pickerOpts.value = opts.eventTime;
         } else {
             pickerOpts.value = opts.date;
             addClass(input, 'defaultDate');
         }
-        
+
         jQuery(input).datetimepicker(pickerOpts);
         return input;
     };
@@ -254,15 +254,15 @@ See the License for the specific language governing permissions and
     //
     //      return input;
     //  };
-    
+
     exports.initTextAreas = (sel) => {
         R.ap([exports.attachTextareaResizer], queryEls(sel));
     }
-    
+
     exports.refreshTextAreas = (sel) => {
         R.ap([exports.resizeTextarea], queryEls(sel).map(el => ({ target: el })));
     }
-    
+
     exports.attachTextareaResizer = (input) => {
         listen(input, 'keydown', exports.resizeTextarea);
         listen(input, 'paste', exports.resizeTextarea);
@@ -281,7 +281,7 @@ See the License for the specific language governing permissions and
         that.style.height = '24px';
         that.style.height = `${that.scrollHeight + 12}px`;
     };
-    
+
     exports.populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
         setClassByCondition(input, 'notEditable', !isEditable);
         input.value = event.characters[characterName].time;
@@ -311,12 +311,12 @@ See the License for the specific language governing permissions and
             const dataKey = JSON.parse(event.target.id);
             const value = !hasClass(event.target, 'btn-primary');
             DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, (err) => {
-                if (err) { Utils.handleError(err); return; } 
+                if (err) { Utils.handleError(err); return; }
                 setClassByCondition(event.target, 'btn-primary', value);
                 callback(value);
             });
         };
-    }; 
+    };
 
     exports.makePanelCore = (title, content) => {
         const panel = addClasses(makeEl('div'), ['panel', 'panel-default']);
@@ -364,7 +364,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.makeTableRow = (col1, col2) => addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);
-    
+
     exports.checkAndGetEntitySetting = (settingsPath, names) => {
         if(names.length === 0) throw new Error('names are empty');
         const settings = DBMS.getSettings();
@@ -381,7 +381,7 @@ See the License for the specific language governing permissions and
         }
         return name;
     }
-    
+
     exports.updateEntitySetting = (settingsPath, name) => {
         const settings = DBMS.getSettings();
         settings[settingsPath].name = name;

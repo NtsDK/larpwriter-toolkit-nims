@@ -29,8 +29,8 @@ See the License for the specific language governing permissions and
 // 3. simple and lesser complexity, I choose this way
 
 function ProfileConfigurerTmpl(exports, opts) {
-    
-    const { tabType } = opts; 
+
+    const { tabType } = opts;
 
     const tmplRoot = '.profile-configurer2-tab-tmpl';
     const tabRoot = `.profile-configurer2-tab.${tabType + '-type'} `;
@@ -40,14 +40,14 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     exports.init = () => {
         const el = queryEl(tmplRoot).cloneNode(true);
-        
+
         addClasses(el, ['profile-configurer2-tab', `${tabType + '-type'}`]);
         removeClass(el, 'profile-configurer2-tab-tmpl');
         addEl(queryEl('.tab-container'), el);
-        
+
         const createProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, createProfileItem, {
             bodySelector: 'create-profile-item-body',
-            dialogTitle: 'profiles-create-profile-item', 
+            dialogTitle: 'profiles-create-profile-item',
             actionButtonTitle: 'common-create',
             initBody: (body) => {
                 const sel = clearEl(qee(body, `.create-entity-type-select`));
@@ -56,25 +56,25 @@ function ProfileConfigurerTmpl(exports, opts) {
                 L10n.onL10nChange(fillMainSel);
             }
         });
-        
+
         state.renameProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, renameProfileItem, {
             bodySelector: 'modal-prompt-body',
-            dialogTitle: 'profiles-enter-new-profile-item-name', 
+            dialogTitle: 'profiles-enter-new-profile-item-name',
             actionButtonTitle: 'common-rename',
         });
-        
+
         state.moveProfileItemDialog = UI.createModalDialog(`.profile-configurer2-tab.${tabType + '-type'}`, moveProfileItem, {
             bodySelector: 'move-profile-item-body',
-            dialogTitle: 'profiles-new-profile-item-position', 
+            dialogTitle: 'profiles-new-profile-item-position',
             actionButtonTitle: 'common-move',
         });
-        
+
         setAttr(qee(el, '.panel h3'), 'l10n-id', 'profiles-' + opts.panelName);
         L10n.localizeStatic(el);
-        
+
         setAttr(qee(el,'.panel a') , 'panel-toggler', tabRoot + ".profile-panel");
         UI.initPanelTogglers(el);
-        
+
         listen(qe(`${tabRoot}.create`), 'click', () => createProfileItemDialog.showDlg());
         exports.content = el;
     };
@@ -89,8 +89,8 @@ function ProfileConfigurerTmpl(exports, opts) {
 
             const arr = allProfileSettings.map(R.compose(strFormat(getL10n('common-set-item-before')), R.append(R.__, []), R.prop('name')));
             arr.push(getL10n('common-set-item-as-last'));
-            
-            const positionSelectors = [queryEl(`${tabRoot} .create-entity-position-select`), 
+
+            const positionSelectors = [queryEl(`${tabRoot} .create-entity-position-select`),
                 queryEl(`${tabRoot} .move-entity-position-select`)];
             positionSelectors.map(clearEl).map(fillSelector(R.__, arr2Select(arr))).map(setProp(R.__, 'selectedIndex', allProfileSettings.length));
 
@@ -115,7 +115,7 @@ function ProfileConfigurerTmpl(exports, opts) {
             const name = input.value.trim();
             const itemType = qee(dialog, `.create-entity-type-select`).value.trim();
             const selectedIndex = qee(dialog, `.create-entity-position-select`).selectedIndex;
-            
+
             DBMS.createProfileItem(tabType, name, itemType, selectedIndex, (err) => {
                 if(err){
                     setError(dialog, err);
@@ -127,7 +127,7 @@ function ProfileConfigurerTmpl(exports, opts) {
             });
         };
     }
-    
+
     // eslint-disable-next-line no-var,vars-on-top
     var fillItemTypesSel = sel => fillSelector(sel, constArr2Select(R.keys(Constants.profileFieldTypes)));
     const fillPlayerAccessSel = sel => fillSelector(sel, constArr2Select(Constants.playerAccessTypes));
@@ -180,7 +180,7 @@ function ProfileConfigurerTmpl(exports, opts) {
         addClasses(input, [`profile-configurer-${profileSettings.type}`, 'adminOnly', 'form-control']);
         listen(input, 'change', updateDefaultValue(type));
         addEl(qee(row, '.item-default-value-container'), input);
-        
+
         setClassIf(qee(row, '.print'), 'btn-primary', profileSettings.doExport);
         listen(qee(row, '.print'), 'click', (e) => {
             DBMS.doExportProfileItemChange(type, profileSettings.name, !hasClass(e.target, 'btn-primary'), (err) => {
@@ -188,7 +188,7 @@ function ProfileConfigurerTmpl(exports, opts) {
                 toggleClass(e.target, 'btn-primary');
             });
         });
-        
+
         const playerAccess = qee(row, '.player-access');
         fillPlayerAccessSel(playerAccess);
         playerAccess.value = profileSettings.playerAccess;
@@ -200,18 +200,18 @@ function ProfileConfigurerTmpl(exports, opts) {
         showInRoleGrid.checked = profileSettings.showInRoleGrid;
         showInRoleGrid.info = profileSettings.name;
         listen(showInRoleGrid, 'change', showInRoleGridChange(type));
-        
+
         listen(qee(row, '.move'), 'click', () => {
             state.currentIndex = index;
             state.moveProfileItemDialog.showDlg();
         });
-        
+
         listen(qee(row, '.rename'), 'click', () => {
             qee(state.renameProfileItemDialog, '.entity-input').value = profileSettings.name;
             state.renameProfileItemDialog.fromName = profileSettings.name;
             state.renameProfileItemDialog.showDlg();
         });
-        
+
         listen(qee(row, '.remove'), 'click', () => {
             Utils.confirm(L10n.format('profiles', 'are-you-sure-about-removing-profile-item', [profileSettings.name]), () => {
                 DBMS.removeProfileItem(type, index, profileSettings.name, Utils.processError(exports.refresh));
@@ -281,13 +281,13 @@ function ProfileConfigurerTmpl(exports, opts) {
             DBMS.showInRoleGridProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
         };
     }
-    
+
     function renameProfileItem (dialog) {
         return () => {
             const toInput = qee(dialog, '.entity-input');
             const oldName = dialog.fromName;
             const newName = toInput.value.trim();
-            
+
             DBMS.renameProfileItem(tabType, newName, oldName, (err) => {
                 if (err) {
                     setError(dialog, err);
@@ -299,7 +299,7 @@ function ProfileConfigurerTmpl(exports, opts) {
             });
         }
     };
-    
+
     function moveProfileItem(dialog) {
         return () => {
             const index = state.currentIndex;
@@ -342,11 +342,11 @@ function ProfileConfigurerTmpl(exports, opts) {
 }
 
 ProfileConfigurerTmpl(this.CharacterConfigurer = {}, {
-    tabType: 'character', 
+    tabType: 'character',
     panelName: 'characters-profile-structure',
 });
 
 ProfileConfigurerTmpl(this.PlayerConfigurer = {}, {
-    tabType: 'player', 
+    tabType: 'player',
     panelName: 'players-profile-structure',
 });

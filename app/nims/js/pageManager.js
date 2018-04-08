@@ -108,7 +108,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             });
         }
     };
-    
+
     function consistencyCheckAlert(checkResult){
         if (checkResult.errors.length > 0) {
             Utils.alert(getL10n('overview-consistency-problem-detected'));
@@ -143,17 +143,17 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 let button;
                 stateInit();
-                
+
                 const tabs = {};
                 const firstTab = 'Briefings';
-                
+
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
                         viewName: viewName,
                         viewRes: Utils.addView(containers, btnName, window[viewName], opts)
                     }
                 };
-                
+
                 addView(state.containers, 'overview', 'Overview');
 //                addView(state.containers, 'profiles', 'Profiles');
                 addView(state.containers, 'characters', 'Characters');
@@ -173,12 +173,12 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addView(state.containers, "roleGrid", 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
-                
+
                 if (MODE === 'NIMS_Server') {
                     addView(state.containers, 'admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
                 }
                 addView(state.containers, 'logViewer', 'LogViewer2', { clazz: 'logViewerButton icon-button', tooltip: true });
-                
+
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
                 if (isAdmin) {
@@ -222,7 +222,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                         state.currentView.refresh();
                     });
                 });
-                
+
                 Utils.setFirstTab(state.containers, tabs[firstTab].viewRes);
 
                 state.currentView.refresh();
@@ -247,7 +247,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     function showDbmsConsistencyState() {
         consistencyCheck((checkRes) => TestUtils.showModuleSchema(checkRes));
     }
-        
+
     function checkConsistency() {
         consistencyCheck((checkRes) => TestUtils.showConsistencyCheckAlert(checkRes));
     }

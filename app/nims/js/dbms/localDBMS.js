@@ -99,7 +99,7 @@ function makeLocalDBMS(fullVersion) {
         'logAPI'].map(func);
 
     Logger.attachLogCalls(LocalDBMS, R, false);
-    
+
     const baseAPIList = R.keys(R.mergeAll(R.values(funcList)));
     const loggerAPIList = R.difference(R.keys(R.mergeAll(R.values(Logger.apiInfo))), Logger.offlineIgnoreList);
 
@@ -110,6 +110,6 @@ function makeLocalDBMS(fullVersion) {
         console.error(`In base but not logged: ${R.difference(baseAPIList, loggerAPIList)}`);
         throw new Error('API processors are inconsistent');
     }
-    
+
     return LocalDBMS;
 }

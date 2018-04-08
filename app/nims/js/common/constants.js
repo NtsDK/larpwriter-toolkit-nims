@@ -44,9 +44,9 @@ See the License for the specific language governing permissions and
             value: ''
         }
     };
-    
+
     exports.relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'];
-    
+
     exports.relationEssences = ['starterToEnder', 'allies', 'enderToStarter'];
 
     exports.playerAccessTypes = ['write', 'readonly', 'hidden'];
@@ -104,7 +104,7 @@ See the License for the specific language governing permissions and
         'defensive',
         'passive',
     ];
-    
+
     exports.characterRelationTypes = [
         'allies',
         'directional',
@@ -403,7 +403,7 @@ See the License for the specific language governing permissions and
         defensive: 'green',
         passive: 'grey'
     };
-    
+
     exports.snRelationColors = {
         starterToEnder: 'red',
         enderToStarter: 'red',
@@ -499,14 +499,14 @@ See the License for the specific language governing permissions and
     exports.visLocales.en_EN = exports.visLocales.en;
     exports.visLocales.en_US = exports.visLocales.en;
     exports.visLocales.ru_RU = exports.visLocales.ru;
-    
-    exports.serverSpecificFunctions = [ "getManagementInfo", "assignAdmin", "assignEditor", "removeEditor", 
-        "changeAdaptationRightsMode", 
-        "removeMaster", "removePermission", "assignPermission", "getPlayerLoginsArray", "removePlayerLogin", 
-        "getWelcomeText", "setWelcomeText", "getPlayersOptions", "setPlayerOption", "createMaster", 
-        "changeMasterPassword", "createPlayer", "createPlayerLogin", "changePlayerPassword", 
+
+    exports.serverSpecificFunctions = [ "getManagementInfo", "assignAdmin", "assignEditor", "removeEditor",
+        "changeAdaptationRightsMode",
+        "removeMaster", "removePermission", "assignPermission", "getPlayerLoginsArray", "removePlayerLogin",
+        "getWelcomeText", "setWelcomeText", "getPlayersOptions", "setPlayerOption", "createMaster",
+        "changeMasterPassword", "createPlayer", "createPlayerLogin", "changePlayerPassword",
         "getPlayerProfileInfo", "createCharacterByPlayer", "publishPermissionsUpdate"];
-    
+
     exports.commonIgnoreList = ["getSettings", "_init", "clearSettings", "log"];
 
     exports.httpTimeout = 5000;

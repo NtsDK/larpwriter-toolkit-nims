@@ -233,7 +233,7 @@ See the License for the specific language governing permissions and
             addClass(row, `${event.index}-dependent`);
             row.dependsOnCharacters = R.keys(event.characters);
             addEl(qee(row, '.eventMainPanelRow-left'), exports.makeOriginCard(event, metaInfo, storyName, {
-                
+
                 showTimeInput: true,
                 showTextInput: true,
                 cardTitle: event.name
@@ -253,14 +253,14 @@ See the License for the specific language governing permissions and
             return row;
         }));
     }
-    
+
     exports.makeOriginCard = (event, metaInfo, storyName, opts) => {
         const card = qmte(`${root} .origin-tmpl`);
         addEl(qee(card, '.card-title'), makeText(opts.cardTitle));
         const textInput = qee(card, '.text-input');
         const timeInput = qee(card, '.time-input');
         const lockButton = qee(card, 'button.locked');
-        
+
         if(opts.showTimeInput === true){
             UI.makeEventTimePicker2(timeInput, {
                 eventTime: event.time,
@@ -272,7 +272,7 @@ See the License for the specific language governing permissions and
         } else {
             addClass(timeInput, 'hidden');
         }
-        
+
         if(opts.showTextInput === true){
             textInput.value = event.text;
             textInput.dataKey = JSON.stringify([storyName, event.index]);
@@ -280,7 +280,7 @@ See the License for the specific language governing permissions and
         } else {
             addClass(textInput, 'hidden');
         }
-        
+
         if(opts.showLockButton === true){
             listen(lockButton, 'click', onOriginLockClick(timeInput, textInput));
             Utils.enableEl(timeInput, false);
@@ -289,10 +289,10 @@ See the License for the specific language governing permissions and
         } else {
             addClass(lockButton, 'hidden');
         }
-        
+
         return card;
     }
-    
+
     function onOriginLockClick(timeInput, textInput){
         return (event) => {
             const {target} = event;
@@ -303,24 +303,24 @@ See the License for the specific language governing permissions and
             Utils.enableEl(timeInput, isLocked);
             Utils.enableEl(textInput, isLocked);
         }
-    } 
-    
+    }
+
     exports.makeAdaptationCard = R.curry((isEditable, event, storyName, characterName, opts) => {
         const card = qmte(`${root} .adaptation-tmpl` );
         setAttr(card, 'dependent-on-character', characterName);
-        
+
         addEl(qee(card, '.card-title'), makeText(opts.cardTitle));
         const textInput = qee(card, '.text-input');
         const timeInput = qee(card, '.time-input');
         const finishedButton = qee(card, 'button.finished');
         const id = JSON.stringify([storyName, event.index, characterName]);
-        
+
         if(opts.showTimeInput === true){
             UI.populateAdaptationTimeInput(timeInput, storyName, event, characterName, isEditable);
         } else {
             addClass(timeInput, 'hidden');
         }
-        
+
         if(opts.showTextInput === true){
             setClassByCondition(textInput, 'notEditable', !isEditable);
             textInput.value = event.characters[characterName].text;
@@ -329,7 +329,7 @@ See the License for the specific language governing permissions and
         } else {
             addClass(textInput, 'hidden');
         }
-        
+
         if(opts.showFinishedButton === true){
             const isFinished = event.characters[characterName].ready;
             setClassIf(finishedButton, 'btn-primary', isFinished);
@@ -344,7 +344,7 @@ See the License for the specific language governing permissions and
         } else {
             addClass(lockButton, 'hidden');
         }
-        
+
         return card;
     });
 
@@ -364,7 +364,7 @@ See the License for the specific language governing permissions and
         const text = event.target.value;
         DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'text', text, Utils.processError());
     }
-    
+
     function getIconClass(object) {
         if (object.isEmpty) return 'fa-icon empty select-icon-padding';
         if (object.isFinished) return 'fa-icon finished select-icon-padding';

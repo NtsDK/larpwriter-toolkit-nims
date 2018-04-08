@@ -294,9 +294,9 @@ See the License for the specific language governing permissions and
             });
             return [calcPercent(finishedAdaptations, allAdaptations), finishedAdaptations, allAdaptations];
         }
-        
+
         const rel2bools = R.pipe(R.pick(['starterTextReady', 'enderTextReady']), R.values, R.filter(R.identity));
-            
+
         function _getRelationCompleteness(database) {
             let finishedRelations = 0, allRelations = 0;
             allRelations = database.Relations.length * 2;

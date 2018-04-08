@@ -39,7 +39,7 @@ See the License for the specific language governing permissions and
         listen(getEl('proofreadingModeRadio'), 'change', exports.refresh);
         listen(getEl('hideAllPanelsCheckbox'), 'change', exports.refresh);
         listen(getEl('disableHeadersCheckbox'), 'change', exports.refresh);
-        
+
         getEl('hideAllPanelsCheckbox').checked = true;
 
         exports.content = getEl('briefingPreviewDiv');
@@ -67,7 +67,7 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     function buildContentDelegate(event) {
         buildContent(event.target.value);
     }
@@ -192,7 +192,7 @@ See the License for the specific language governing permissions and
         load: Relations.load,
         make(el, data) {
             const label = `${getL10n('header-relations')} (${data.relationsSummary.relations.length})`;
-            const content = RelationsPreview.makeRelationsContent(data, getFlags().isAdaptationsMode, 
+            const content = RelationsPreview.makeRelationsContent(data, getFlags().isAdaptationsMode,
                     state.characterProfileStructure, exports.refresh);
             addEl(el, makePanel(makeText(label), content, getFlags().hideAllPanels));
         }
@@ -253,7 +253,7 @@ See the License for the specific language governing permissions and
                 addClass(input, 'notEditable');
             }
             listen(input, 'change', updateCharacterInventory);
-            
+
             const row = qmte(`.profile-editor-row-tmpl`);
             addEl(qee(row, '.profile-item-name'), makeText(elem.storyName));
             addEl(qee(row, '.profile-item-input'), input);
@@ -271,7 +271,7 @@ See the License for the specific language governing permissions and
 
             PermissionInformer.areAdaptationsEditable(adaptations, (err2, areAdaptationsEditable) => {
                 if (err2) { Utils.handleError(err2); return; }
-                
+
                 DBMS.getMetaInfo((err3, metaInfo) => {
                     if (err3) { Utils.handleError(err3); return; }
 
@@ -281,15 +281,15 @@ See the License for the specific language governing permissions and
                         showStoryName: true,
                         metaInfo
                     };
-    
+
                     const splitConstant = 5;
-    
+
                     addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
                         const eventContent = addEls(makeEl('div'), subPart.map((event, j) => {
                             opts.index = (i * splitConstant) + 1 + j;
                             return showEvent(event, characterName, opts, flags);
                         }));
-    
+
                         let name;
                         if (flags.disableHeaders) {
                             name = makeText(strFormat(getL10n('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
@@ -331,7 +331,7 @@ See the License for the specific language governing permissions and
                         showStoryName: false,
                         metaInfo
                     };
-    
+
                     addEls(content, eventGroups.map((elem, i) => {
                         const storyContent = addEls(makeEl('div'), elem.events.map((event, j) => {
                             opts.index = j + 1;
@@ -352,12 +352,12 @@ See the License for the specific language governing permissions and
     }
 
     function showEvent(event, characterName, opts, flags) {
-        
+
         const { isAdaptationsMode } = flags;
         const showAll = isAdaptationsMode;
         const showAdaptationText = event.characters[characterName].text !== '';
         const showSubjectiveTime = event.characters[characterName].time !== '';
-        
+
         const eventDiv = qmte(`.adaptation-row-tmpl`);
         const originCard = Adaptations.makeOriginCard(event, opts.metaInfo, event.storyName, {
             cardTitle: flags.disableHeaders ? L10n.format('briefings', 'event-header', [opts.index]) : event.name,
@@ -367,7 +367,7 @@ See the License for the specific language governing permissions and
         });
         addEl(qee(eventDiv, '.eventMainPanelRow-left'), originCard);
         const isEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
-        const adaptationsCard = Adaptations.makeAdaptationCard(isEditable, event, 
+        const adaptationsCard = Adaptations.makeAdaptationCard(isEditable, event,
             event.storyName, characterName, {
                 cardTitle: '',
                 showTimeInput: showAll || showSubjectiveTime,

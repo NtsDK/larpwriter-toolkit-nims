@@ -10,7 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-   limitations under the License. */
+    limitations under the License. */
 
 /*global
  Utils, DBMS
@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
 "use strict";
 
 (function(exports){
-    
+
     var root = '.role-grid-tab ';
     var groupingOrder;
     var profilesData;
@@ -28,24 +28,24 @@ See the License for the specific language governing permissions and
     exports.init = function() {
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = function() {
         DBMS.getRoleGridInfo(function(err, data2){
             if(err) {Utils.handleError(err); return;}
             groupingOrder = [];
             buttons = [];
-            
+
             // hack - dynamically replace checkbox with enum
             const checkboxes = data2.characterProfileStructure.filter(el => el.type === 'checkbox').map(R.prop('name'));
             data2.characterProfileStructure = data2.characterProfileStructure.map(el => {
                 if(el.type === 'checkbox'){
                     return {
-                        doExport: el.doExport, 
-                        name: el.name, 
-                        playerAccess: el.playerAccess, 
-                        showInRoleGrid: el.showInRoleGrid, 
-                        type: 'enum', 
-                        value: [L10n.get('constant','yes'),L10n.get('constant','no')].join(','), 
+                        doExport: el.doExport,
+                        name: el.name,
+                        playerAccess: el.playerAccess,
+                        showInRoleGrid: el.showInRoleGrid,
+                        type: 'enum',
+                        value: [L10n.get('constant','yes'),L10n.get('constant','no')].join(','),
                     }
                 }
                 return el;
@@ -56,11 +56,11 @@ See the License for the specific language governing permissions and
                     el.character[name] = L10n.get('constant',el.character[name] === true ? 'yes' : 'no');
                 });
             });
-            
+
             var sorter = CommonUtils.charOrdAFactory((a) => a.toLowerCase());
             var filter = el => el.type === 'enum';
             var groupingItems = profilesData.characterProfileStructure.filter(filter).map(R.prop('name')).sort(sorter);
-            
+
             addEls(clearEl(queryEl(root + '.button-container')), groupingItems.map((item, i) => {
                 const button = addEl(makeEl('a'), makeText(item));
                 button.item = item;
@@ -82,12 +82,12 @@ See the License for the specific language governing permissions and
                 buttons.push(button);
                 return button;
             }));
-            
+
             drawList();
 //            drawPlainPanelList();
         });
     };
-    
+
     var onDragStart = function(event){
         console.log('onDragStart ' + this.item);
         event.dataTransfer.setData('data', JSON.stringify({ item: this.item, order: getAttr(this, 'order')}));
@@ -104,7 +104,7 @@ See the License for the specific language governing permissions and
         console.log('allowDrop ' + this.item);
         event.preventDefault();
     };
-    
+
     function handleDragEnter(event) {
         addClass(this, 'over');
     }
@@ -112,7 +112,7 @@ See the License for the specific language governing permissions and
     function handleDragLeave(event) {
         removeClass(this, 'over');
     }
-    
+
     var updateButtons = (dragStarter, dragReceiver) => {
         const startOrder = Number(dragStarter.order)-1;
         const receiveOrder = Number(dragReceiver.order)-1;
@@ -124,24 +124,24 @@ See the License for the specific language governing permissions and
         });
         drawList();
     };
-    
+
     var drawList = () => {
         groupingOrder = buttons.filter(hasClass(R.__, 'btn-primary')).map(R.prop('item'));
         drawGroupedList((groupingOrder.length > 0) ? getTreeByUserSelect() : getTreeByAlphabet());
 //        (groupingOrder.length > 0) ? drawGroupedList() : drawPlainPanelList();
     };
-    
+
     var getTreeByAlphabet = () => {
 //        var groups = R.groupBy((profile) => {
 //            return profile.characterName[0];
 //        }, profilesData.profileData);
-//        
+//
 //        var structures = R.toPairs(groups).map(pair => ({
 //            key: pair[0],
 //            lastKeyPart: pair[0],
 //            groups: pair[1]
 //        }));
-//        
+//
 //        structures.sort(CommonUtils.charOrdAFactory(R.prop('key')));
 //        return structures;
         return [{
@@ -150,23 +150,23 @@ See the License for the specific language governing permissions and
             "groups": profilesData.profileData
         }];
     };
-    
+
     var getTreeByUserSelect = () => {
         var groups = R.groupBy((profile) => {
             return groupingOrder.map(name => profile.character[name]).join('/');
         }, profilesData.profileData);
-        
+
         var groupingItemInfo = R.indexBy(R.prop('name'), profilesData.characterProfileStructure.filter(el => R.contains(el.name, groupingOrder)));
-        
+
         return [{
             "key": "Все персонажи",
             "lastKeyPart": "Все персонажи",
             "children": makeGroupTree(groups, groupingItemInfo, 0, [])
         }];
     };
-    
+
 //            var filter = el => el.type === 'enum' || el.type === 'checkbox';
-    
+
     var drawGroupedList = (structures) => {
 //        structures = [{
 //            "key": "Все персонажи",
@@ -174,17 +174,17 @@ See the License for the specific language governing permissions and
 //            "children": structures
 //        }];
 //        console.log(JSON.stringify(structures));
-        
+
         structures.forEach(calcSize);
-        
+
 //        addEl(queryEl(root + '.group-content'), addEls(addClasses(makeEl('ul'), ['remove-ul-dots', 'zero-padding']), makeGroupTree(groups, groupingItemInfo, 0, [])));
         addEl(clearEl(queryEl(root + '.group-content')), addEls(addClasses(makeEl('ul'), ['remove-ul-dots', 'zero-padding']), R.flatten(structures.map(renderGroupStructure))));
     };
-    
+
     var makeHeader = (text, characterNum, playerNum) => {
         const characterBadge = addEl(addClass(makeEl('span'), 'badge'), makeText(characterNum + ' / ' + playerNum));
 //        const playerBadge = addEl(addClass(makeEl('span'), 'badge'), makeText(playerNum));
-        
+
         const h3 = addEls(addClass(makeEl('h3'), 'panel-title'), [makeText(' ' + text + ' '), characterBadge]);
         const a = setAttr(makeEl('a'), 'href', '#/');
         setAttr(a, 'tree-panel-toggler', '');
@@ -193,7 +193,7 @@ See the License for the specific language governing permissions and
 //        var heading = addEl(addClass(makeEl('div'), 'panel-heading'), addEl(addClass(makeEl('h3'), 'panel-title'), makeText(text)));
 //        return addEl(addClasses(makeEl('div'), ['panel', 'panel-default']), heading);
     };
-    
+
     var calcSize = (el) => {
         if(el.children){
             el.children.forEach(calcSize);
@@ -204,7 +204,7 @@ See the License for the specific language governing permissions and
             el.playerNum = el.groups.filter(R.pipe(R.prop('playerName'), R.isNil, R.not)).length;
         }
     }
-    
+
     var renderGroupStructure = (el) => {
 //        return R.flatten(structure.map(el => {
         var domChildren, header;
@@ -227,10 +227,10 @@ See the License for the specific language governing permissions and
 //            domChildren = addEls(container, panelList);
 //            return R.concat([addEl(makeEl('li'), makeHeader(el.key, el.characterNum, el.playerNum))], [domChildren]);
         }
-        
+
 //        }));
     };
-    
+
     var makeGroupTree = (groups, groupingItemInfo, index, key) => {
         var arr = groupingItemInfo[groupingOrder[index]].value.split(',').map(name => {
             var nextKey = R.concat(key, [name]);
@@ -264,21 +264,21 @@ See the License for the specific language governing permissions and
 //            return R.concat([addEl(makeEl('li'), makeHeader(nextKey.join(' / ')))], domChildren);
 //            return {
 //                name: nextKey.join(' / '),
-//                children: 
+//                children:
 //            }
         }).filter(el => el !== null);
         return arr.length === 0 ? null : arr;
 //        if(arr.length === 0){
 //            return null;
 //        } else {
-//            return R.flatten(arr); 
+//            return R.flatten(arr);
 //        }
     };
-    
+
     var drawPlainPanelList = () => {
         addEls(clearEl(queryEl(root + '.group-content')), makePanelList(profilesData.profileData));
     };
-    
+
     var makePanelList = (profileArray) => {
         return profileArray.sort(CommonUtils.charOrdAFactory((a) => a.characterName.toLowerCase())).map(profileData => {
             var tables = [UI.makeProfileTable(profilesData.characterProfileStructure, profileData.character)];
@@ -287,14 +287,14 @@ See the License for the specific language governing permissions and
                 tables.push(UI.makeProfileTable(profilesData.playerProfileStructure, profileData.player));
                 title += '/' + profileData.playerName;
             }
-            
+
             var panelInfo = UI.makePanelCore(makeText(title), addEls(makeEl('div'), tables));
             UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv, (event, togglePanel) => {
                 queryEls(root + '.group-content .expanded[panel-toggler]').filter(el => !el.contains(event.target)).forEach(el => el.click());
                 togglePanel();
             });
             panelInfo.a.click();
-            
+
             return panelInfo.panel;
         });
     };

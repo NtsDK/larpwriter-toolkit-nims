@@ -26,7 +26,7 @@ See the License for the specific language governing permissions and
         listen(queryEl(`${root} .character-filter`), 'input', filterList('.character-list'));
         listen(queryEl(`${root} .player-filter`), 'input', filterList('.player-list'));
         listen(queryEl(`${root} .binding-filter`), 'input', filterList('.binding-list'));
-        
+
         exports.content = queryEl(root);
     };
 
@@ -42,27 +42,27 @@ See the License for the specific language governing permissions and
             });
         });
     };
-    
+
     function rebuildInterface(characterNames, playerNames, profileBindings){
         const bindedCharacterList = R.keys(profileBindings);
         const bindedPlayerList = R.values(profileBindings);
         const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
-        
-        addEls(clearEl(queryEl(`${root} .entity-list.character-list`)), 
+
+        addEls(clearEl(queryEl(`${root} .entity-list.character-list`)),
             characterNames.filter(filter(bindedCharacterList)).map(profile2el('character')));
-        
-        addEls(clearEl(queryEl(`${root} .entity-list.player-list`)), 
+
+        addEls(clearEl(queryEl(`${root} .entity-list.player-list`)),
             playerNames.filter(filter(bindedPlayerList)).map(profile2el('player')));
-                
+
         const bindings = R.toPairs(profileBindings).map(binding => ({
             name: R.join('/', binding),
             value: binding
         }));
         bindings.sort(CommonUtils.charOrdAFactory(R.prop('name')));
-        
+
         addEls(clearEl(queryEl(`${root} .entity-list.binding-list`)), bindings.map(binding2el));
     }
-    
+
     const profile2el = R.curry((type, name) => {
         const el = wrapEl('div', qte(`${root} .profile-item-tmpl` ));
         el.profileName = name.value;
@@ -77,12 +77,12 @@ See the License for the specific language governing permissions and
         listen(el, 'dragleave', handleDragLeave);
         return el;
     })
-    
+
     var onDragStart = function(event){
         console.log('onDragStart ' + this.profileName);
-        event.dataTransfer.setData('data', JSON.stringify({ 
-            name: getAttr(this, 'profile-name'), 
-            type: getAttr(this, 'profile-type'), 
+        event.dataTransfer.setData('data', JSON.stringify({
+            name: getAttr(this, 'profile-name'),
+            type: getAttr(this, 'profile-type'),
         }));
         event.dataTransfer.effectAllowed = 'move';
     };
@@ -96,17 +96,17 @@ See the License for the specific language governing permissions and
         if(thatData.type === getAttr(this, 'profile-type')){
             return;
         }
-        
-        createBinding([thatData, { 
-            name: getAttr(this, 'profile-name'), 
-            type: getAttr(this, 'profile-type'), 
+
+        createBinding([thatData, {
+            name: getAttr(this, 'profile-name'),
+            type: getAttr(this, 'profile-type'),
         }]);
     };
     var allowDrop = function(event){
         console.log('allowDrop ' + this.profileName);
         event.preventDefault();
     };
-    
+
     function handleDragEnter(event) {
         addClass(this, 'over');
     }
@@ -114,7 +114,7 @@ See the License for the specific language governing permissions and
     function handleDragLeave(event) {
         removeClass(this, 'over');
     }
-    
+
     function binding2el(binding){
         const el = wrapEl('div', qte(`${root} .binding-item-tmpl` ));
         addEl(qee(el, '.primary-name'), makeText(binding.name));
@@ -123,10 +123,10 @@ See the License for the specific language governing permissions and
         listen(qee(el, '.unlink'), 'click', () => removeBinding(binding.value));
         return el;
     }
-    
+
     var filterList = (sel) => (event) => {
         const str = event.target.value.toLowerCase();
-        
+
         const els = queryEls(`${root} ${sel} [primary-name]`);
         els.forEach(el => {
             let isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;

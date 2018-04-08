@@ -113,18 +113,18 @@ See the License for the specific language governing permissions and
                 isOwner: userEntities.indexOf(name) !== -1,
                 hasOwner: ownerMap[name] !== '-'
             }));
-            
+
             const name2str = a => a.displayName.toLowerCase();
-            
+
             const entityCmp = CommonUtils.charOrdAFactoryBase('asc', (a,b) => {
                 if (a.isOwner && b.isOwner) return name2str(a) > name2str(b);
                 if (a.isOwner) return false;
                 if (b.isOwner) return true;
-                
+
                 if (a.hasOwner && b.hasOwner) return name2str(a) > name2str(b);
                 if (a.hasOwner) return false;
                 if (b.hasOwner) return true;
-                
+
                 return name2str(a) > name2str(b);
             }, R.identity);
 
