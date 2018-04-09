@@ -23,6 +23,7 @@ See the License for the specific language governing permissions and
     let groupingOrder;
     let profilesData;
     let buttons;
+    const l10n = L10n.get('role-grid');
 
     exports.init = () => {
         exports.content = queryEl(root);
@@ -152,8 +153,8 @@ See the License for the specific language governing permissions and
         //        structures.sort(CommonUtils.charOrdAFactory(R.prop('key')));
         //        return structures;
         [{
-            key: 'Все персонажи',
-            lastKeyPart: 'Все персонажи',
+            key: l10n('all-characters'),
+            lastKeyPart: l10n('all-characters'),
             groups: profilesData.profileData
         }];
 
@@ -164,8 +165,8 @@ See the License for the specific language governing permissions and
         const groupingItemInfo = R.indexBy(R.prop('name'), profilesData.characterProfileStructure.filter(el => R.contains(el.name, groupingOrder)));
 
         return [{
-            key: 'Все персонажи',
-            lastKeyPart: 'Все персонажи',
+            key: l10n('all-characters'),
+            lastKeyPart: l10n('all-characters'),
             children: makeGroupTree(groups, groupingItemInfo, 0, [])
         }];
     };
@@ -175,8 +176,8 @@ See the License for the specific language governing permissions and
     // eslint-disable-next-line no-var,vars-on-top
     var drawGroupedList = (structures) => {
         //        structures = [{
-        //            "key": "Все персонажи",
-        //            "lastKeyPart": "Все персонажи",
+        //            "key": l10n('all-characters'),
+        //            "lastKeyPart": l10n('all-characters'),
         //            "children": structures
         //        }];
         //        console.log(JSON.stringify(structures));
@@ -193,6 +194,7 @@ See the License for the specific language governing permissions and
 
     const makeHeader = (text, characterNum, playerNum) => {
         const characterBadge = addEl(addClass(makeEl('span'), 'badge'), makeText(`${characterNum} / ${playerNum}`));
+        setAttr(characterBadge, 'title', L10n.format('role-grid', 'badge-title', [characterNum, playerNum]));
         //        const playerBadge = addEl(addClass(makeEl('span'), 'badge'), makeText(playerNum));
 
         const h3 = addEls(addClass(makeEl('h3'), 'panel-title'), [makeText(` ${text} `), characterBadge]);

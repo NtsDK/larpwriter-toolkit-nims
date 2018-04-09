@@ -600,6 +600,7 @@ textarea.game-description-area {
 
 .flex-front-element{
   order: -1;
+  margin-bottom: 16px;
 }
 
 .board-popup {

@@ -139,7 +139,7 @@ See the License for the specific language governing permissions and
 
     function rebuildContent() {
         const dataArrays = makePrintData();
-        //        addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
+        addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
         addEls(clearEl(queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
         UI.showSelectedEls('-dependent')({ target: queryEl(`${root}.profile-item-selector`) });
     }

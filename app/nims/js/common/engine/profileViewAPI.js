@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
             };
         };
 
-        LocalDBMS.prototype.getRoleGridInfo = (callback) => {
+        LocalDBMS.prototype.getRoleGridInfo = function (callback){
             const characters = getProfileInfo('character', this.database);
             const players = getProfileInfo('player', this.database);
 
