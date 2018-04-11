@@ -40,6 +40,10 @@ See the License for the specific language governing permissions and
         el.showDlg = () => {
             clearError(el);
             $(el).modal('show');
+            const focusable = qee(body, '.focusable');
+            if(focusable !== null){
+                setTimeout(() => focusable.focus(), 500);
+            }
         };
         el.hideDlg = () => $(el).modal('hide');
         addEl(qe(root), el);
@@ -382,6 +386,9 @@ See the License for the specific language governing permissions and
 
     exports.updateEntitySetting = (settingsPath, name) => {
         const settings = DBMS.getSettings();
+        if(settings[settingsPath] === undefined) {
+            settings[settingsPath] = {};
+        }
         settings[settingsPath].name = name;
     };
 })(this.UI = {});

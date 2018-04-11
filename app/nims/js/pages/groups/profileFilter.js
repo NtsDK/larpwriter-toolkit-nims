@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
     const root = '.profile-filter-tab ';
 
     exports.init = () => {
-        const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false), {
+        const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false, exports.refresh), {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'groups-enter-group-name',
             actionButtonTitle: 'common-create',

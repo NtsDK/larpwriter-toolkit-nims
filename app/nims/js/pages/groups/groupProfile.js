@@ -25,7 +25,7 @@ See the License for the specific language governing permissions and
     const settingsPath = 'GroupProfile';
 
     exports.init = () => {
-        const createGroupDialog = UI.createModalDialog(root, exports.createGroup(true), {
+        const createGroupDialog = UI.createModalDialog(root, exports.createGroup(true, exports.refresh), {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'groups-enter-group-name',
             actionButtonTitle: 'common-create',
@@ -243,7 +243,7 @@ See the License for the specific language governing permissions and
         }
     }
 
-    exports.createGroup = updateSettingsFlag => dialog => () => {
+    exports.createGroup = (updateSettingsFlag, refresh) => dialog => () => {
         const input = qee(dialog, '.entity-input');
         const name = input.value.trim();
 
@@ -258,7 +258,7 @@ See the License for the specific language governing permissions and
                     if (err2) { Utils.handleError(err2); return; }
                     input.value = '';
                     dialog.hideDlg();
-                    exports.refresh();
+                    refresh();
                 });
             }
         });
