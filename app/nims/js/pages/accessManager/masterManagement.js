@@ -328,21 +328,12 @@ See the License for the specific language governing permissions and
             const toInput = qee(dialog, '.entity-input');
             const newPassword = toInput.value;
             const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-//            const toName = toInput.value.trim();
-//
             DBMS.changeMasterPassword(userName, newPassword, (err) => {
                 if (err) {
                     setError(dialog, err);
                 } else {
-//                    updateSettings(toName);
                     dialog.hideDlg();
                     exports.refresh();
-//                    PermissionInformer.refresh((err2) => {
-//                        if (err2) { Utils.handleError(err2); return; }
-//                        toInput.value = '';
-//                        dialog.hideDlg();
-//                        exports.refresh();
-//                    });
                 }
             });
         };

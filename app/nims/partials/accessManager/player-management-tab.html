@@ -1,64 +1,44 @@
 <div class="player-management-tab block">
-  <div style="display: flex;justify-content: space-between;">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <a href="#" panel-toggler=".player-management-tab div.user-management-area">
-          <h3 class="panel-title" l10n-id="admins-user-management"></h3>
-        </a>
-      </div>
-      <div class="panel-body user-management-area">
-        <div class="entity-management">
-          <div>
-            <input class="adminOnly create-user-name-input" l10n-placeholder-id="admins-user-name"></input>
-            <input class="adminOnly create-user-password-input" l10n-placeholder-id="admins-user-password"></input>
-            <button class="adminOnly create-user-button" l10n-id="admins-create-player"></button>
-          </div>
-          <div>
-            <select class="adminOnly create-login-name-select"></select>
-            <input class="adminOnly create-login-password-input" l10n-placeholder-id="admins-user-password"></input>
-            <button class="adminOnly create-login-button" l10n-id="admins-create-login"></button>
-          </div>
-          <div>
-            <select class="adminOnly change-password-user-select"></select> 
-            <input class="adminOnly change-password-password-input" l10n-placeholder-id="admins-new-password"></input>
-            <button class="adminOnly change-password-button" l10n-id="admins-change-password"></button>
-          </div>
-          <div>
-            <select class="adminOnly remove-user-select"></select>
-            <button class="adminOnly remove-user-button" l10n-id="admins-remove-login"></button>
-          </div>
-        </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body first-panel">
+      <div class="flex-root entity-toolbar">
+        <button class="btn btn-default btn-reduced fa-icon create player flex-0-0-auto icon-padding" 
+          l10n-title="admins-create-player"><span l10n-id="admins-player"></span></button>
+        <button class="btn btn-default btn-reduced fa-icon create player-account flex-0-0-auto icon-padding" 
+          l10n-title="admins-create-player-account"><span l10n-id="admins-player-account"></span></button>
+        <select class="adminOnly common-select change-password-user-select"></select> 
+        <button class="btn btn-default btn-reduced fa-icon change-password user flex-0-0-auto"
+          l10n-title="admins-change-player-password"></button>
+        <button class="btn btn-default btn-reduced fa-icon remove user flex-0-0-auto remove-user-button"
+          l10n-title="admins-remove-player-account"></button>
       </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <a href="#" panel-toggler=".player-management-tab div.special-actions-area">
-          <h3 class="panel-title" l10n-id="admins-settings"></h3>
-        </a>
-      </div>
-      <div class="panel-body special-actions-area" style="display: flex;justify-content: space-between;">
-        <div class="entity-management">
-          <div>
-            <input type="checkbox" class="playerOptions hidden" value="allowPlayerCreation" id="allowPlayerCreation"/>
-            <label for="allowPlayerCreation" class="checkbox-label-icon common-checkbox"><span l10n-id="admins-allow-player-creation"></span></label> 
-          </div>
-          <div>
-            <input type="checkbox" class="playerOptions hidden" value="allowCharacterCreation" id="allowCharacterCreation"/>
-            <label for="allowCharacterCreation" class="checkbox-label-icon common-checkbox"><span l10n-id="admins-allow-character-creation"></span></label> 
-          </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="entity-management">
+        <div>
+          <input type="checkbox" class="playerOptions hidden" value="allowPlayerCreation" id="allowPlayerCreation"/>
+          <label for="allowPlayerCreation" class="checkbox-label-icon common-checkbox"><span l10n-id="admins-allow-player-creation"></span></label> 
+        </div>
+        <div>
+          <input type="checkbox" class="playerOptions hidden" value="allowCharacterCreation" id="allowCharacterCreation"/>
+          <label for="allowCharacterCreation" class="checkbox-label-icon common-checkbox"><span l10n-id="admins-allow-character-creation"></span></label> 
         </div>
       </div>
     </div>
   </div>
-  <div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title" l10n-id="admins-welcome-text"></h3>
-      </div>
-      <div class="panel-body">
-        <textarea class="welcome-text-area"></textarea>
-      </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title" l10n-id="admins-welcome-text"></h3>
     </div>
+    <div class="panel-body">
+      <textarea class="welcome-text-area form-control"></textarea>
+    </div>
+  </div>
 <!--     <div class="panel panel-default hidden"> -->
 <!--       <div class="panel-heading"> -->
 <!--         <h3 class="panel-title" l10n-id="admins-auto-export"></h3> -->
@@ -68,5 +48,5 @@
 <!--         </div> -->
 <!--       </div> -->
 <!--     </div> -->
-  </div>
+<!--   </div> -->
 </div>

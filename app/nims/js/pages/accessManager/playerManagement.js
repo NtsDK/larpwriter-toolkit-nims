@@ -24,9 +24,34 @@ See the License for the specific language governing permissions and
     const root = '.player-management-tab ';
 
     exports.init = () => {
-        listen(queryEl(`${root}.create-user-button`), 'click', createUser);
-        listen(queryEl(`${root}.create-login-button`), 'click', createLogin);
-        listen(queryEl(`${root}.change-password-button`), 'click', changePassword);
+        const createUserDialog = UI.createModalDialog(root, createUser, {
+            bodySelector: 'create-master-body',
+            dialogTitle: 'admins-creating-player',
+            actionButtonTitle: 'common-create',
+        });
+        listen(qe(`${root}.create.player`), 'click', () => createUserDialog.showDlg());
+        
+        const createPlayerAccountDialog = UI.createModalDialog(root, createUserAccount, {
+            bodySelector: 'create-player-account-body',
+            dialogTitle: 'admins-creating-player-account',
+            actionButtonTitle: 'common-create',
+        });
+        listen(qe(`${root}.create.player-account`), 'click', () => createPlayerAccountDialog.showDlg());
+        
+        const changePasswordDialog = UI.createModalDialog(root, changePassword, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'admins-enter-new-password',
+            actionButtonTitle: 'common-replace',
+        });
+        listen(qe(`${root}.user.change-password`), 'click', () => {
+            qee(changePasswordDialog, '.entity-input').value = '';
+            changePasswordDialog.showDlg();
+        });
+        
+        
+//        listen(queryEl(`${root}.create-user-button`), 'click', createUser);
+//        listen(queryEl(`${root}.create-login-button`), 'click', createLogin);
+//        listen(queryEl(`${root}.change-password-button`), 'click', changePassword);
         listen(queryEl(`${root}.remove-user-button`), 'click', removeUser);
         listen(queryEl(`${root}.welcome-text-area`), 'change', setWelcomeText);
         queryElEls(queryEl(root), '.playerOptions').map(listen(R.__, 'change', setPlayerOption));
@@ -49,26 +74,59 @@ See the License for the specific language governing permissions and
                         queryEl(`${root}.welcome-text-area`).value = text;
                         const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
                         const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
-                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
-                            .sort(Utils.charOrdAObject).map(remapProps4Select));
-                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
-                            .sort(Utils.charOrdAObject).map(remapProps4Select));
-                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
-                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+                        
+                        const noAccounts = (hasLoginObj.false || []);
+                        noAccounts.sort(Utils.charOrdAObject);
+                        $(clearEl(queryEl(`${root}.create-login-name-select`))).select2(getSelect2Data(noAccounts));
+//                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
+//                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+                        const hasAccounts = (hasLoginObj.true || []);
+                        hasAccounts.sort(Utils.charOrdAObject);
+                        $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
+//                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
+//                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+//                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
+//                            .sort(Utils.charOrdAObject).map(remapProps4Select));
                     });
                 });
             });
         });
     };
 
-    function createUser() {
-        const userNameInput = queryEl(`${root}.create-user-name-input`);
-        const passwordInput = queryEl(`${root}.create-user-password-input`);
-        DBMS.createPlayer(userNameInput.value.trim(), passwordInput.value, Utils.processError(() => {
-            userNameInput.value = '';
-            passwordInput.value = '';
-            exports.refresh();
-        }));
+    function createUser(dialog) {
+        return () => {
+            const userNameInput = qee(dialog,`.create-user-name-input`);
+            const userPasswordInput = qee(dialog,`.create-user-password-input`);
+            DBMS.createPlayer(userNameInput.value.trim(), userPasswordInput.value, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    PermissionInformer.refresh((err2) => {
+                        if (err2) { Utils.handleError(err2); return; }
+                        userNameInput.value = '';
+                        userPasswordInput.value = '';
+                        dialog.hideDlg();
+                        exports.refresh();
+                    });
+                }
+            });
+        };
+    }
+    
+    function createUserAccount(dialog) {
+        return () => {
+            const userNameSelect = qee(dialog,`.create-login-name-select`);
+            const passwordInput = qee(dialog,`.create-login-password-input`);
+            DBMS.createPlayerLogin(userNameSelect.value, passwordInput.value, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    passwordInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        };
     }
 
     function createLogin() {
@@ -80,18 +138,38 @@ See the License for the specific language governing permissions and
         }));
     }
 
-    function changePassword() {
-        const userNameSelect = queryEl(`${root}.change-password-user-select`);
-        const passwordInput = queryEl(`${root}.change-password-password-input`);
-        DBMS.changePlayerPassword(userNameSelect.value, passwordInput.value, Utils.processError(() => {
-            passwordInput.value = '';
-            exports.refresh();
-        }));
+//    function changePassword() {
+//        const userNameSelect = queryEl(`${root}.change-password-user-select`);
+//        const passwordInput = queryEl(`${root}.change-password-password-input`);
+//        DBMS.changePlayerPassword(userNameSelect.value, passwordInput.value, Utils.processError(() => {
+//            passwordInput.value = '';
+//            exports.refresh();
+//        }));
+//    }
+    
+    function changePassword(dialog) {
+        return () => {
+            const toInput = qee(dialog, '.entity-input');
+            const newPassword = toInput.value;
+            const userName = queryEl(`${root}.change-password-user-select`).value.trim();
+            DBMS.changePlayerPassword(userName, newPassword, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        };
     }
 
     function removeUser() {
-        const userNameSelect = queryEl(`${root}.remove-user-select`);
-        DBMS.removePlayerLogin(userNameSelect.value, Utils.processError(exports.refresh));
+        const name = queryEl(`${root}.change-password-user-select`).value.trim();
+        Utils.confirm(strFormat(getL10n('admins-confirm-user-account-remove'), [name]), () => {
+            DBMS.removePlayerLogin(name, Utils.processError(exports.refresh));
+        });
+//        const userNameSelect = queryEl(`${root}.change-password-user-select`);
+//        DBMS.removePlayerLogin(userNameSelect.value, Utils.processError(exports.refresh));
     }
 
     function setWelcomeText(event) {

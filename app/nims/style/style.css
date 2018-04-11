@@ -701,6 +701,7 @@ textarea.game-description-area {
 textarea.welcome-text-area{
   width: 100%;
   height: 160px;
+  resize: vertical;
 }
 /* playerManagement.js **/
 
