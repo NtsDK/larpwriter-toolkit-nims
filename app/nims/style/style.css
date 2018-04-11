@@ -939,6 +939,10 @@ a[tree-panel-toggler] h3{
   margin-right: 16px;
 }
 
+.margin-rl-16 {
+  margin: 0 16px;
+}
+
 .margin-bottom-16 {
   margin-bottom: 16px;
 }

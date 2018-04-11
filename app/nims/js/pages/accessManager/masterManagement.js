@@ -54,6 +54,10 @@ See the License for the specific language governing permissions and
         listen(queryEl(`${root}.assign-admin-button`), 'click', assignNewAdmin);
         listen(queryEl(`${root}.remove-editor-button`), 'click', removeEditor);
         listen(queryEl(`${root}.assign-editor-button`), 'click', assignEditor);
+        
+        state.entities.forEach(type => {
+            listen(queryEl(`${root} .entity-filter.${type}`), 'input', filterList(`.entity-list.${type}`));
+        });
 
         queryElEls(queryEl(root), '.adaptationRights').map(listen(R.__, 'click', changeAdaptationRightsMode));
 
@@ -192,6 +196,7 @@ See the License for the specific language governing permissions and
 
     // eslint-disable-next-line no-var,vars-on-top
     var onDragStart = function(event) {
+        addClass(qee(this, 'button'), 'btn-primary');
         console.log(`onDragStart ${this.profileName}`);
         event.dataTransfer.setData('data', JSON.stringify({
             name: getAttr(this, 'profile-name'),
@@ -217,6 +222,8 @@ See the License for the specific language governing permissions and
         
         if(type1 !== type2){
             const userName = type1 === 'user' ? getAttr(this, 'profile-name') : thatData.name;
+//            const entityBtn =  type1 === 'user' ? 
+            
 //            console.log(user);
             const btns = qes(`${root} .rights-panel button.btn-primary`);
             const selected = btns.map( btn => ({
@@ -401,4 +408,15 @@ See the License for the specific language governing permissions and
     function changeAdaptationRightsMode(event) {
         DBMS.changeAdaptationRightsMode(event.target.value, Utils.processError());
     }
+    
+    // eslint-disable-next-line no-var,vars-on-top
+    var filterList = sel => (event) => {
+        const str = event.target.value.toLowerCase();
+
+        const els = queryEls(`${root} ${sel} [primary-name]`);
+        els.forEach((el) => {
+            const isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
+            setClassByCondition(el, 'hidden', !isVisible);
+        });
+    };
 })(this.MasterManagement = {});
