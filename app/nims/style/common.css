@@ -328,6 +328,11 @@ input[selector-filter]{
   content: "\f0c8";
 }
 
+.common-checkbox:before {
+  font-size: 1.2em;
+  margin-right: 6px;
+}
+
 #eventPresenceTable .vertical-aligned-td,
 #story-characterActivityTable .vertical-aligned-td{
   vertical-align: middle;

@@ -374,30 +374,28 @@ See the License for the specific language governing permissions and
     }
 
     function makeInput(profileItemConfig) {
-        const div = makeEl('div');
-        const span = makeEl('label');
-        const checkbox = makeEl('input');
-        checkbox.type = 'checkbox';
+        const el = qmte(`${root} .filter-item-tmpl`);
+        const checkbox = qee(el, 'input[type="checkbox"]');
+        const id = "filter-item-" + profileItemConfig.displayName;
         checkbox.checked = false;
-        addEl(span, checkbox);
-        addEl(span, makeText(profileItemConfig.displayName));
-        function toggleContent(itemContainer, inputContainer) {
-            return (event) => {
-                setClassByCondition(inputContainer, 'hidden', !event.target.checked);
-                setClassByCondition(itemContainer, 'flex-front-element', event.target.checked);
-                rebuildContent();
-            };
-        }
-
-        addEl(div, span);
-        const inputContainer = makeEl('div');
-        addClass(inputContainer, 'hidden');
-        addEl(div, inputContainer);
-        listen(checkbox, 'click', toggleContent(div, inputContainer));
+        checkbox.id = id;
+        addEl(qee(el, '.filter-item-name'), makeText(profileItemConfig.displayName));
+        setAttr(qee(el, 'label'), 'for', id);
+        
+        const inputContainer = qee(el, '.filter-item-container');
+        listen(checkbox, 'click', toggleContent(el, inputContainer));
         state.checkboxes[profileItemConfig.name] = checkbox;
-
+        
         addEl(inputContainer, makeFilter(profileItemConfig));
-        return div;
+        return el;
+    }
+    
+    function toggleContent(itemContainer, inputContainer) {
+        return (event) => {
+            setClassByCondition(inputContainer, 'hidden', !event.target.checked);
+            setClassByCondition(itemContainer, 'flex-front-element', event.target.checked);
+            rebuildContent();
+        };
     }
 
     function makeFilter(profileItemConfig) {
