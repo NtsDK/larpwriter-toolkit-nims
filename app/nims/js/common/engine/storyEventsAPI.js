@@ -30,16 +30,15 @@ See the License for the specific language governing permissions and
         };
 
         //story events
-        LocalDBMS.prototype.createEvent = function (storyName, eventName, eventText, selectedIndex, callback) {
+        LocalDBMS.prototype.createEvent = function (storyName, eventName, selectedIndex, callback) {
             const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(selectedIndex),
-                PC.isString(eventName), PC.isNotEmptyString(eventName), PC.isString(eventText),
-                PC.isNotEmptyString(eventText)];
+                PC.isString(eventName), PC.isNotEmptyString(eventName)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const story = this.database.Stories[storyName];
                 PC.precondition(PC.isInRange(selectedIndex, 0, story.events.length), callback, () => {
                     const event = {
                         name: eventName,
-                        text: eventText,
+                        text: '',
                         time: '',
                         characters: {}
                     };

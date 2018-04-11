@@ -117,18 +117,15 @@ See the License for the specific language governing permissions and
         return () => {
             const eventNameInput = qee(dialog, '.eventNameInput');
             const eventName = eventNameInput.value.trim();
-            const eventTextInput = qee(dialog, '.eventTextInput');
             const positionSelector = qee(dialog, '.positionSelector');
-            const eventText = eventTextInput.value.trim();
 
             DBMS.createEvent(
-                Stories.getCurrentStoryName(), eventName, eventText, positionSelector.selectedIndex,
+                Stories.getCurrentStoryName(), eventName, positionSelector.selectedIndex,
                 (err) => {
                     if (err) {
                         setError(dialog, err);
                     } else {
                         eventNameInput.value = '';
-                        eventTextInput.value = '';
                         dialog.hideDlg();
                         exports.refresh();
                     }
