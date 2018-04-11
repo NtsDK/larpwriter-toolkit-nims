@@ -1,4 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+/*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,8 +28,25 @@ See the License for the specific language governing permissions and
     let removePermission, assignPermission;
 
     exports.init = () => {
-        listen(queryEl(`${root}.create-user-button`), 'click', createMaster);
-        listen(queryEl(`${root}.change-password-button`), 'click', changeMasterPassword);
+        const createUserDialog = UI.createModalDialog(root, createUser, {
+            bodySelector: 'create-master-body',
+            dialogTitle: 'admins-creating-user',
+            actionButtonTitle: 'common-create',
+        });
+        listen(qe(`${root}.create.user`), 'click', () => createUserDialog.showDlg());
+        
+        const changePasswordDialog = UI.createModalDialog(root, changePassword, {
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'admins-enter-new-password',
+            actionButtonTitle: 'common-replace',
+        });
+        listen(qe(`${root}.user.change-password`), 'click', () => {
+            qee(changePasswordDialog, '.entity-input').value = '';
+            changePasswordDialog.showDlg();
+        });
+        
+//        listen(queryEl(`${root}.create-user-button`), 'click', createMaster);
+//        listen(queryEl(`${root}.change-password-button`), 'click', changeMasterPassword);
         listen(queryEl(`${root}.remove-user-button`), 'click', removeMaster);
 
         listen(queryEl(`${root}.assign-permission-button`), 'click', assignPermission);
@@ -88,20 +105,29 @@ See the License for the specific language governing permissions and
 
         const selectors = [];
         selectors.push(queryEl(`${root}.change-password-user-select`));
-        selectors.push(queryEl(`${root}.user-permission-select`));
-        selectors.push(queryEl(`${root}.assign-editor-select`));
+//        selectors.push(queryEl(`${root}.user-permission-select`));
+//        selectors.push(queryEl(`${root}.assign-editor-select`));
 
+        const data = arr2Select2(userNames)
         selectors.forEach((selector) => {
-            Utils.rebuildSelectorArr(selector, userNames);
+            clearEl(selector);
+            $(selector).select2(data);
+//            Utils.rebuildSelectorArr(selector, userNames);
         });
+        
+        Utils.rebuildSelectorArr(queryEl(`${root}.user-permission-select`), userNames);
 
         const clone = userNames.slice(0);
         clone.splice(userNames.indexOf(managementInfo.admin), 1);
-        let selector = queryEl(`${root}.assign-admin-select`);
-        Utils.rebuildSelectorArr(selector, clone);
+//        let selector = queryEl(`${root}.assign-admin-select`);
+//        Utils.rebuildSelectorArr(selector, clone);
+        
+//        const data = getSelect2Data(allGroupNames);
+//        clearEl(queryEl(`${root}.save-entity-select`));
+//        $(`${root}.save-entity-select`).select2(data);
 
-        selector = queryEl(`${root}.remove-user-select`);
-        Utils.rebuildSelectorArr(selector, clone);
+//        selector = queryEl(`${root}.remove-user-select`);
+//        Utils.rebuildSelectorArr(selector, clone);
 
         state.entities.forEach((entity) => {
             Utils.rebuildSelector(queryEl(`${root}.permission-selector__${entity}`), names[entity]);
@@ -116,7 +142,117 @@ See the License for the specific language governing permissions and
 
         getEl(`adaptationRights${managementInfo.adaptationRights}`).checked = true;
 
+        state.entities.forEach((entity) => {
+//            Utils.rebuildSelector(queryEl(`${root}.permission-selector__${entity}`), names[entity]);
+            addEls(
+                clearEl(queryEl(`${root} .entity-list.${entity}`)),
+                names[entity].map(entity2el(entity))
+            );
+        });
+        
+        addEls(
+            clearEl(queryEl(`${root} .entity-list.users`)),
+            userNames.map(user2el)
+        );
         buildPermissionList(names, usersInfo);
+    }
+    
+    const entity2el = R.curry((type, name) => {
+        const el = wrapEl('div', qte(`.profile-item-tmpl`));
+        el.profileName = name.value;
+        addEl(qee(el, '.primary-name'), makeText(name.displayName));
+        setAttr(el, 'profile-name', name.value);
+        setAttr(el, 'primary-name', name.displayName);
+        setAttr(el, 'button-type', 'entity');
+        setAttr(el, 'profile-type', type);
+        listen(el, 'dragstart', onDragStart);
+        listen(el, 'drop', onDrop);
+        listen(el, 'dragover', allowDrop);
+        listen(el, 'dragenter', handleDragEnter);
+        listen(el, 'dragleave', handleDragLeave);
+        listen(qee(el, 'button'), 'click', e => toggleClass(qee(el, 'button'), 'btn-primary'));
+        return el;
+    });
+    
+    const user2el = R.curry((name) => {
+        const el = wrapEl('div', qte(`.profile-item-tmpl`));
+//        el.profileName = name.value;
+        addEl(qee(el, '.primary-name'), makeText(name));
+        setAttr(el, 'profile-name', name);
+        setAttr(el, 'button-type', 'user');
+//        setAttr(el, 'primary-name', name.displayName);
+//        setAttr(el, 'profile-type', type);
+        listen(el, 'dragstart', onDragStart);
+        listen(el, 'drop', onDrop);
+        listen(el, 'dragover', allowDrop);
+        listen(el, 'dragenter', handleDragEnter);
+        listen(el, 'dragleave', handleDragLeave);
+        return el;
+    });
+
+    // eslint-disable-next-line no-var,vars-on-top
+    var onDragStart = function(event) {
+        console.log(`onDragStart ${this.profileName}`);
+        event.dataTransfer.setData('data', JSON.stringify({
+            name: getAttr(this, 'profile-name'),
+            type: getAttr(this, 'profile-type'),
+            buttonType: getAttr(this, 'button-type'),
+        }));
+        event.dataTransfer.effectAllowed = 'move';
+    };
+
+    // eslint-disable-next-line no-var,vars-on-top
+    var onDrop = function(event) {
+        removeClass(this, 'over');
+        console.log(`onDrop ${this.profileName}${event.dataTransfer.getData('data')}`);
+        if (event.stopPropagation) {
+            event.stopPropagation(); // stops the browser from redirecting.
+        }
+        const thatData = JSON.parse(event.dataTransfer.getData('data'));
+        if (thatData.type === getAttr(this, 'profile-type')) {
+            return;
+        }
+        const type1 = getAttr(this, 'button-type');
+        const type2 = thatData.buttonType;
+        
+        if(type1 !== type2){
+            const userName = type1 === 'user' ? getAttr(this, 'profile-name') : thatData.name;
+//            console.log(user);
+            const btns = qes(`${root} .rights-panel button.btn-primary`);
+            const selected = btns.map( btn => ({
+                type: getAttr(btn.parentNode.parentNode, 'profile-type'),
+                name: getAttr(btn.parentNode.parentNode, 'profile-name'),
+            }));
+            const names = R.mapObjIndexed(arr => arr.map(R.prop('name')), R.groupBy(R.prop('type'), selected));
+            btns.forEach(btn => removeClass(btn, 'btn-primary'))
+            
+            DBMS['assignPermission'](userName, names, Utils.processError(exports.refresh));
+//            DBMS[action](userName, names, Utils.processError(exports.refresh));
+//        };
+//    }
+//
+//    removePermission = permissionAction('removePermission');
+//    assignPermission = permissionAction('assignPermission');
+        }
+
+//        createBinding([thatData, {
+//            name: getAttr(this, 'profile-name'),
+//            type: getAttr(this, 'profile-type'),
+//        }]);
+    };
+
+    // eslint-disable-next-line no-var,vars-on-top
+    var allowDrop = function(event) {
+        console.log(`allowDrop ${this.profileName}`);
+        event.preventDefault();
+    };
+
+    function handleDragEnter(event) {
+        addClass(this, 'over');
+    }
+
+    function handleDragLeave(event) {
+        removeClass(this, 'over');
     }
 
     function buildPermissionList(names, usersInfo) {
@@ -163,14 +299,46 @@ See the License for the specific language governing permissions and
         }, []));
     }
 
-    function createMaster() {
-        const userNameInput = queryEl(`${root}.create-user-name-input`);
-        const userPasswordInput = queryEl(`${root}.create-user-password-input`);
-        DBMS.createMaster(userNameInput.value.trim(), userPasswordInput.value, Utils.processError(() => {
-            userNameInput.value = '';
-            userPasswordInput.value = '';
-            exports.refresh();
-        }));
+    function createUser(dialog) {
+        return () => {
+            const userNameInput = qee(dialog,`.create-user-name-input`);
+            const userPasswordInput = qee(dialog,`.create-user-password-input`);
+            DBMS.createMaster(userNameInput.value.trim(), userPasswordInput.value, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    userNameInput.value = '';
+                    userPasswordInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        };
+    }
+    
+    function changePassword(dialog) {
+        return () => {
+            const toInput = qee(dialog, '.entity-input');
+            const newPassword = toInput.value;
+            const userName = queryEl(`${root}.change-password-user-select`).value.trim();
+//            const toName = toInput.value.trim();
+//
+            DBMS.changeMasterPassword(userName, newPassword, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+//                    updateSettings(toName);
+                    dialog.hideDlg();
+                    exports.refresh();
+//                    PermissionInformer.refresh((err2) => {
+//                        if (err2) { Utils.handleError(err2); return; }
+//                        toInput.value = '';
+//                        dialog.hideDlg();
+//                        exports.refresh();
+//                    });
+                }
+            });
+        };
     }
 
 
@@ -184,7 +352,8 @@ See the License for the specific language governing permissions and
     }
 
     function removeMaster() {
-        const name = queryEl(`${root}.remove-user-select`).value.trim();
+//        const name = queryEl(`${root}.remove-user-select`).value.trim();
+        const name = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]), () => {
             DBMS.removeMaster(name, Utils.processError(exports.refresh));
         });
@@ -215,7 +384,7 @@ See the License for the specific language governing permissions and
     assignPermission = permissionAction('assignPermission');
 
     function assignNewAdmin() {
-        const userName = queryEl(`${root}.assign-admin-select`).value.trim();
+        const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-admin-assigment'), [userName]), () => {
             DBMS.assignAdmin(userName, Utils.processError(exports.refresh));
         });
@@ -224,7 +393,7 @@ See the License for the specific language governing permissions and
         DBMS.removeEditor(Utils.processError(exports.refresh));
     }
     function assignEditor() {
-        const userName = queryEl(`${root}.assign-editor-select`).value.trim();
+        const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-editor-assigment'), [userName]), () => {
             DBMS.assignEditor(userName, Utils.processError(exports.refresh));
         });

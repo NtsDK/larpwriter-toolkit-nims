@@ -1,118 +1,145 @@
 <div class="master-management-tab block">
-  <div style="display: flex;justify-content: space-between;">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <a href="#" panel-toggler=".master-management-tab div.user-management-area">
-          <h3 class="panel-title" l10n-id="admins-user-management"></h3>
-        </a>
-      </div>
-      <div class="panel-body user-management-area">
-        <div class="entity-management">
-          <div>
-            <input class="adminOnly create-user-name-input" l10n-placeholder-id="admins-user-name"></input>
-            <input class="adminOnly create-user-password-input" l10n-placeholder-id="admins-user-password"></input>
-            <button class="adminOnly create-user-button" l10n-id="common-create"></button>
-          </div>
-          <div>
-            <select class="adminOnly change-password-user-select"></select> 
-            <input class="adminOnly change-password-password-input" l10n-placeholder-id="admins-new-password"></input>
-            <button class="adminOnly change-password-button" l10n-id="admins-change-password"></button>
-          </div>
-          <div>
-            <select class="adminOnly remove-user-select"></select>
-            <button class="adminOnly remove-user-button" l10n-id="common-remove"></button>
-          </div>
-        </div>
+  <div class="panel panel-default">
+    <div class="panel-body first-panel">
+      <div class="flex-root entity-toolbar">
+        <button class="btn btn-default btn-reduced fa-icon create user flex-0-0-auto" 
+          l10n-title="admins-create-entity"></button>
+        <select class="common-select change-password-user-select"></select>
+        <button class="btn btn-default btn-reduced fa-icon change-password user flex-0-0-auto"
+          l10n-title="admins-change-password"></button>
+        <button class="btn btn-default btn-reduced fa-icon remove user flex-0-0-auto remove-user-button"
+          l10n-title="admins-remove-entity"></button>
+        <button class="btn btn-default btn-reduced fa-icon assign flex-0-0-auto icon-padding assign-admin-button"
+          l10n-title="admins-assign-admin"><span l10n-id="admins-admin"></span></button>
+        <button class="btn btn-default btn-reduced fa-icon assign flex-0-0-auto icon-padding assign-editor-button"
+          l10n-title="admins-assign-editor"><span l10n-id="admins-editor"></span></button>
       </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <a href="#" panel-toggler=".master-management-tab div.special-actions-area">
-          <h3 class="panel-title" l10n-id="admins-special-actions"></h3>
-        </a>
-      </div>
-      <div class="panel-body special-actions-area" style="display: flex;justify-content: space-between;">
-        <div class="entity-management">
-          <div>
-            <span l10n-id="admins-admin"></span><span class="current-admin-label"></span>
-          </div>
-          <div>
-            <select class="adminOnly assign-admin-select"></select>
-            <button class="adminOnly assign-admin-button" l10n-id="admins-assign-admin"></button>
-          </div>
-          <div>
-            <span l10n-id="admins-editor"></span><span class="current-editor-label"></span>
-            <button class="editorOrAdmin remove-editor-button" l10n-id="admins-remove-editor"></button>
-          </div>
-          <div>
-            <select class="adminOnly assign-editor-select"></select>
-            <button class="adminOnly assign-editor-button" l10n-id="admins-assign-editor"></button>
-          </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body special-actions-area flex-root">
+      <fieldset class="margin-right-16">
+        <legend l10n-id="admins-current-admin"></legend>
+        <div>
+          <label class="current-admin-label"></label>
         </div>
-        <div class="entity-management">
-          <div>
-            <span l10n-id="admins-assign-adaptation-rights"></span>
+      </fieldset>
+      
+      <fieldset class="margin-right-16">
+        <legend l10n-id="admins-current-editor"></legend>
+        <div>
+          <label class="current-editor-label"></label>
+          <button class="editorOrAdmin remove-editor-button fa-icon remove" l10n-title="admins-remove-editor"></button>
+        </div>
+      </fieldset>
+      
+      <fieldset class="margin-right-16">
+        <legend l10n-id="admins-assign-adaptation-rights"></legend>
+        <div>
+          <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory"
+            id="adaptationRightsByStory"
+          >
+          <label for="adaptationRightsByStory" l10n-id="admins-by-stories"></label>
+        </div>
+        <div>
+          <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter"
+            id="adaptationRightsByCharacter"
+          >
+          <label for="adaptationRightsByCharacter" l10n-id="admins-by-characters"></label>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+
+  <div class="panel panel-default rights-panel">
+    <div class="panel-heading">
+      <h3 class="panel-title" l10n-id="admins-editing-rights"></h3>
+    </div>
+    <div class="panel-body ">
+      <div class="container-fluid ">
+        <div class="row ">
+          <div class="col-xs-2 ">
+            <h4 l10n-id="admins-rights"></h4>
+            <div class="permission-table"></div>
           </div>
-          <div>
-            <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByStory"
-              id="adaptationRightsByStory"
-            >
-            <label for="adaptationRightsByStory" l10n-id="admins-by-stories"></label>
+          <div class="col-xs-2 ">
+            <h4 l10n-id="admins-characters"></h4>
+            <input class="form-control entity-filter characters margin-bottom-8" type="search" l10n-placeholder-id="admins-character-search">
+            <div class="entity-list characters">
+            </div>
           </div>
-          <div>
-            <input type="radio" name="adaptationRights" class="adaptationRights adminOnly" value="ByCharacter"
-              id="adaptationRightsByCharacter"
-            >
-            <label for="adaptationRightsByCharacter" l10n-id="admins-by-characters"></label>
+          <div class="col-xs-2 ">
+            <h4 l10n-id="admins-stories"></h4>
+            <input class="form-control entity-filter stories margin-bottom-8" type="search" l10n-placeholder-id="admins-story-search">
+            <div class="entity-list stories">
+            </div>
+          </div>
+          <div class="col-xs-2 ">
+            <h4 l10n-id="admins-groups"></h4>
+            <input class="form-control entity-filter groups margin-bottom-8" type="search" l10n-placeholder-id="admins-group-search">
+            <div class="entity-list groups">
+            </div>
+          </div>
+          <div class="col-xs-2 ">
+            <h4 l10n-id="admins-players"></h4>
+            <input class="form-control entity-filter players margin-bottom-8" type="search" l10n-placeholder-id="admins-player-search">
+            <div class="entity-list players">
+            </div>
+          </div>
+          <div class="col-xs-2 ">
+            <h4 l10n-id="admins-users"></h4>
+            <div class="entity-list users">
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title" l10n-id="admins-editing-rights"></h3>
+  
+  <div class="panel panel-default hidden">
+    <div class="panel-heading">
+      <h3 class="panel-title" l10n-id="admins-editing-rights"></h3>
+    </div>
+    <div class="panel-body " style="display:flex;">
+      <div>
+        <span l10n-id="admins-rights"></span>
+<!--         <div class="permission-table"></div> -->
       </div>
-      <div class="panel-body" style="display:flex;">
-        <div>
-          <span l10n-id="admins-rights"></span>
-          <div class="permission-table"></div>
-        </div>
-        <div>
-          <table>
-            <tr>
-              <th l10n-id="admins-characters"></th>
-              <th l10n-id="admins-stories"></th>
-              <th l10n-id="admins-groups"></th>
-              <th l10n-id="admins-players"></th>
-              <th l10n-id="admins-users"></th>
-            </tr>
-            <tr>
-              <td>
-                <input selector-filter=".master-management-tab .permission-selector__characters">
-                <select size=15 class="permission-selector__characters" multiple></select>
-              </td>
-              <td>
-                <input selector-filter=".master-management-tab .permission-selector__stories">
-                <select size=15 class="permission-selector__stories" multiple></select>
-              </td>
-              <td>
-                <input selector-filter=".master-management-tab .permission-selector__groups">
-                <select size=15 class="permission-selector__groups" multiple></select>
-              </td>
-              <td>
-                <input selector-filter=".master-management-tab .permission-selector__groups">
-                <select size=15 class="permission-selector__players" multiple></select>
-              </td>
-              <td>
-                <select size=10 class="user-permission-select" style="min-width: 96px;"></select>
-              </td>
-            </tr>
-          </table>
-          <button class="assign-permission-button" l10n-id="admins-assign-rights"></button>
-          <button class="adminOnly remove-permission-button" l10n-id="admins-take-away-rights"></button>
-        </div>
+      <div>
+        <table>
+          <tr>
+            <th l10n-id="admins-characters"></th>
+            <th l10n-id="admins-stories"></th>
+            <th l10n-id="admins-groups"></th>
+            <th l10n-id="admins-players"></th>
+            <th l10n-id="admins-users"></th>
+          </tr>
+          <tr>
+            <td>
+              <input selector-filter=".master-management-tab .permission-selector__characters">
+              <select size=15 class="permission-selector__characters" multiple></select>
+            </td>
+            <td>
+              <input selector-filter=".master-management-tab .permission-selector__stories">
+              <select size=15 class="permission-selector__stories" multiple></select>
+            </td>
+            <td>
+              <input selector-filter=".master-management-tab .permission-selector__groups">
+              <select size=15 class="permission-selector__groups" multiple></select>
+            </td>
+            <td>
+              <input selector-filter=".master-management-tab .permission-selector__groups">
+              <select size=15 class="permission-selector__players" multiple></select>
+            </td>
+            <td>
+              <select size=10 class="user-permission-select" style="min-width: 96px;"></select>
+            </td>
+          </tr>
+        </table>
+        <button class="assign-permission-button" l10n-id="admins-assign-rights"></button>
+        <button class="adminOnly remove-permission-button" l10n-id="admins-take-away-rights"></button>
       </div>
     </div>
   </div>

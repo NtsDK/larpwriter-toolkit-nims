@@ -42,6 +42,9 @@ See the License for the specific language governing permissions and
 .rename:before {
   content: "\f044";
 }
+.change-password:before {
+  content: "\f084";
+}
 .replace:before {
   content: "\f362";
 }
@@ -141,6 +144,10 @@ See the License for the specific language governing permissions and
 }
 .filter-to-group:before {
   content: "\f0b0\00a0\f30b\00a0\f0c0";
+}
+
+.assign:before {
+  content: "\f30b";
 }
 
 .download-table:before {

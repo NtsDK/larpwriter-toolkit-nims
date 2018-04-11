@@ -83,7 +83,7 @@ See the License for the specific language governing permissions and
     });
 
     // eslint-disable-next-line no-var,vars-on-top
-    var onDragStart = (event) => {
+    var onDragStart = function(event) {
         console.log(`onDragStart ${this.profileName}`);
         event.dataTransfer.setData('data', JSON.stringify({
             name: getAttr(this, 'profile-name'),
@@ -93,7 +93,7 @@ See the License for the specific language governing permissions and
     };
 
     // eslint-disable-next-line no-var,vars-on-top
-    var onDrop = (event) => {
+    var onDrop = function(event) {
         removeClass(this, 'over');
         console.log(`onDrop ${this.profileName}${event.dataTransfer.getData('data')}`);
         if (event.stopPropagation) {
@@ -111,7 +111,7 @@ See the License for the specific language governing permissions and
     };
 
     // eslint-disable-next-line no-var,vars-on-top
-    var allowDrop = (event) => {
+    var allowDrop = function(event) {
         console.log(`allowDrop ${this.profileName}`);
         event.preventDefault();
     };

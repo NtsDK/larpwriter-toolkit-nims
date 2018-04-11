@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
             createProfile: {},
             renameProfile: {},
             removeProfile: {},
-            updateProfileField: {}
+            updateProfileField: {}  // text
         },
         profileBindingAPI: {
             getProfileBindings: null,
@@ -81,7 +81,7 @@ See the License for the specific language governing permissions and
             renameGroup: {},
             removeGroup: {},
             saveFilterToGroup: {},
-            updateGroupField: {},
+            updateGroupField: {}, // text
             getProfileFilterInfo: null,
             getGroupCharacterSets: null
         },
@@ -106,10 +106,10 @@ See the License for the specific language governing permissions and
             getRelations: null,
             createCharacterRelation: {},
             removeCharacterRelation: {},
-            setCharacterRelationText: {},
+            setCharacterRelationText: {}, // text
             setRelationReadyStatus: {},
             setRelationEssenceStatus: {},
-            setOriginRelationText: {},
+            setOriginRelationText: {}, // text
             getRelationsSummary: null,
         },
         briefingExportAPI: {
@@ -134,7 +134,7 @@ See the License for the specific language governing permissions and
             getStoryNamesArray: null,
             getAllStories: null,
             getMasterStory: null,
-            setMasterStory: {},
+            setMasterStory: {}, // text
             createStory: {},
             renameStory: {},
             removeStory: {}
@@ -146,7 +146,7 @@ See the License for the specific language governing permissions and
             cloneEvent: {},
             mergeEvents: {},
             removeEvent: {},
-            setEventOriginProperty: {}
+            setEventOriginProperty: {} // text
         },
         storyCharactersAPI: {
             getStoryCharacterNamesArray: null,
@@ -154,7 +154,7 @@ See the License for the specific language governing permissions and
             addStoryCharacter: {},
             switchStoryCharacters: {},
             removeStoryCharacter: {},
-            updateCharacterInventory: {},
+            updateCharacterInventory: {}, // text+-
             onChangeCharacterActivity: {},
             addCharacterToEvent: {},
             removeCharacterFromEvent: {}
@@ -170,7 +170,7 @@ See the License for the specific language governing permissions and
         storyAdaptationsAPI: {
             getFilteredStoryNames: null,
             getStory: null,
-            setEventAdaptationProperty: {}
+            setEventAdaptationProperty: {} // text
         },
         accessManagerAPI: {
             getManagementInfo: null,
@@ -190,7 +190,7 @@ See the License for the specific language governing permissions and
             changePlayerPassword: { ignoreParams: true },
             removePlayerLogin: {},
             getWelcomeText: null,
-            setWelcomeText: {},
+            setWelcomeText: {},  // text
             getPlayersOptions: null,
             setPlayerOption: {},
             getPlayerProfileInfo: null,
