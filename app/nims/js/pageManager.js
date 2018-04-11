@@ -65,7 +65,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
         Utils.addView(state.containers, 'about', About);
         //        addEl(state.navigation, makeL10nButton());
-        addEl(state.navigation, makeButton('logoutButton', 'logout', postLogout, btnOpts));
+        addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
         state.currentView.refresh();
     };
 

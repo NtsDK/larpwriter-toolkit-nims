@@ -59,8 +59,11 @@ See the License for the specific language governing permissions and
             const el = clearEl(queryEl(characterProfileDiv));
             if (playersOptions.allowCharacterCreation) {
                 const label = addEl(makeEl('div'), makeText(getL10n('profiles-player-has-no-character-and-can-create-it')));
+                addClass(label, 'margin-bottom-8');
                 const input = setAttr(makeEl('input'), 'placeholder', getL10n('profiles-character-name'));
+                addClass(input, 'form-control margin-bottom-8');
                 const button = addEl(makeEl('button'), makeText(getL10n('common-create')));
+                addClass(button, 'btn btn-default');
                 listen(button, 'click', () => {
                     DBMS.createCharacterByPlayer(input.value.trim(), Utils.processError(exports.refresh));
                 });

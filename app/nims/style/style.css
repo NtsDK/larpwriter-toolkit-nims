@@ -698,7 +698,7 @@ textarea.game-description-area {
 /* register.js **/
 
 /** playerManagement.js */
-.welcome-text-area{
+textarea.welcome-text-area{
   width: 100%;
   height: 160px;
 }
