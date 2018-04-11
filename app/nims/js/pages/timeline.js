@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
+    const root = '.timeline-tab';
 
     exports.init = () => {
         listen(getEl('timelineStorySelector'), 'change', onStorySelectorChangeDelegate);
@@ -27,7 +28,7 @@ See the License for the specific language governing permissions and
         state.TimelineDataset = new vis.DataSet();
         state.TagDataset = new vis.DataSet();
 
-        queryEls('#timelineDiv input[name=timelineFilter]').map(listen(R.__, 'change', refreshTimeline));
+        queryEls(`${root} input[name=timelineFilter]`).map(listen(R.__, 'change', refreshTimeline));
         getEl('timelineFilterByStory').checked = true;
 
         // specify options
@@ -53,7 +54,7 @@ See the License for the specific language governing permissions and
         timeline.setItems(state.TimelineDataset);
         state.timelineComponent = timeline;
 
-        exports.content = getEl('timelineDiv');
+        exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
@@ -137,20 +138,28 @@ See the License for the specific language governing permissions and
 
         state.TagDataset.add(entityNames.map(entityName => R.always({ id: entityName, content: entityName })()));
 
-        function fillTimelines(entityNames2, data) {
-            entityNames2 = R.intersection(entityNames2, R.keys(data));
-            state.TimelineDataset.add(R.flatten(R.toPairs(R.pick(entityNames2, data)).map((pair) => {
-                const entityName = pair[0];
-                return pair[1].map(event => ({
-                    content: prepareLabel(event.name),
-                    start: event.time !== '' ? event.time : state.postDate,
-                    group: entityName
-                }));
-            })));
-        }
-
         const byStory = getEl('timelineFilterByStory').checked;
-        fillTimelines(entityNames, byStory ? state.eventsByStories : state.eventsByCharacters);
+        const data = byStory ? state.eventsByStories : state.eventsByCharacters;
+        entityNames = R.intersection(entityNames, R.keys(data));
+        const usedData = R.pick(entityNames, data);
+        fillTimelines(usedData);
+        const events = R.uniq(R.flatten(R.values(usedData))
+                .map(event => {
+                    event.time = new Date(event.time !== '' ? event.time : state.postDate);
+                    event.characters.sort(CommonUtils.charOrdA);
+                    return event;
+                }));
+        
+        events.sort(CommonUtils.charOrdAFactory(R.prop('time')));
+        
+        addEls(clearEl(queryEl(`${root} .timeline-list`)), events.map(event => {
+            const row = qmte(`${root} .timeline-event-tmpl`);
+            addEl(qee(row, '.time'), makeText(event.time.format('yyyy/mm/dd h:MM')));
+            addEl(qee(row, '.story-name'), makeText(event.storyName));
+            addEl(qee(row, '.event-name'), makeText(event.name));
+            addEl(qee(row, '.characters'), makeText(event.characters.join(', ')));
+            return row;
+        }));
 
         if (entityNames[0]) {
             state.TimelineDataset.add({
@@ -168,5 +177,16 @@ See the License for the specific language governing permissions and
                 editable: false
             });
         }
+    }
+    
+    function fillTimelines(usedData) {
+        state.TimelineDataset.add(R.flatten(R.toPairs(usedData).map((pair) => {
+            const entityName = pair[0];
+            return pair[1].map(event => ({
+                content: prepareLabel(event.name),
+                start: event.time !== '' ? event.time : state.postDate,
+                group: entityName
+            }));
+        })));
     }
 })(this.Timeline = {});
