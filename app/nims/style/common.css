@@ -327,8 +327,14 @@ input[selector-filter]{
   font-weight: 500;
   content: "\f0c8";
 }
+.radio-label-icon:before {
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 500;
+  content: "\f111";
+}
 
-.common-checkbox:before {
+.common-checkbox:before,
+.common-radio:before {
   font-size: 1.2em;
   margin-right: 6px;
 }
@@ -344,6 +350,9 @@ input[type="checkbox"]:checked + .checkbox-label{
 
 input[type="checkbox"]:checked + .checkbox-label-icon:before{
   content: "\f14a";
+}
+input[type="radio"]:checked + .radio-label-icon:before{
+  content: "\f192";
 }
 
 .flexRoot,
