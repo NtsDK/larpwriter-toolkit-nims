@@ -71,13 +71,13 @@ See the License for the specific language governing permissions and
                 if (err2) { Utils.handleError(err2); return; }
                 PermissionInformer.isEditor((err3, isEditor) => {
                     if (err3) { Utils.handleError(err3); return; }
-                    PermissionInformer.getEntityNamesArray('character', !isAdmin, (err4, characterNames) => {
+                    PermissionInformer.getEntityNamesArray('character', false, (err4, characterNames) => {
                         if (err4) { Utils.handleError(err4); return; }
-                        PermissionInformer.getEntityNamesArray('story', !isAdmin, (err5, storyNames) => {
+                        PermissionInformer.getEntityNamesArray('story', false, (err5, storyNames) => {
                             if (err5) { Utils.handleError(err5); return; }
-                            PermissionInformer.getEntityNamesArray('group', !isAdmin, (err6, groupNames) => {
+                            PermissionInformer.getEntityNamesArray('group', false, (err6, groupNames) => {
                                 if (err6) { Utils.handleError(err6); return; }
-                                PermissionInformer.getEntityNamesArray('player', !isAdmin, (err7, playerNames) => {
+                                PermissionInformer.getEntityNamesArray('player', false, (err7, playerNames) => {
                                     if (err7) { Utils.handleError(err7); return; }
                                     const names = {
                                         characters: characterNames,

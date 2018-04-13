@@ -339,6 +339,16 @@ input[selector-filter]{
   margin-right: 6px;
 }
 
+.common-checkbox,
+.common-radio {
+  cursor: pointer;
+}
+
+input[type="checkbox"][disabled="disabled"] + .common-checkbox,
+input[type="radio"][disabled="disabled"] + .common-radio {
+  cursor: not-allowed;
+}
+
 #eventPresenceTable .vertical-aligned-td,
 #story-characterActivityTable .vertical-aligned-td{
   vertical-align: middle;
@@ -346,6 +356,9 @@ input[selector-filter]{
 
 input[type="checkbox"]:checked + .checkbox-label{
   color: #228B22;
+}
+input[type="checkbox"][disabled="disabled"] + .checkbox-label {
+  cursor: not-allowed;
 }
 
 input[type="checkbox"]:checked + .checkbox-label-icon:before{

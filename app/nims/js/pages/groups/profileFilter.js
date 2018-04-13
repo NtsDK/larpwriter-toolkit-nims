@@ -36,6 +36,16 @@ See the License for the specific language governing permissions and
         });
 
         listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls('-dependent'));
+        
+//        Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
+//        listen queryEl(`${root}.save-entity-select`)
+        
+        $(`${root}.save-entity-select`).select2().on('change', (event) => {
+            const group = event.target.value;
+            const userGroups = state.userGroupNames.map(R.prop('value'));
+            const isGroupEditable = R.contains(group, userGroups);
+            Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
+        });
 
         listen(queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
         listen(queryEl(`${root}.save-entity-button`), 'click', saveFilterToGroup);
@@ -54,6 +64,8 @@ See the License for the specific language governing permissions and
     function groupAreaRefresh() {
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError((userGroupNames) => {
             PermissionInformer.getEntityNamesArray('group', false, Utils.processError((allGroupNames) => {
+                state.userGroupNames = userGroupNames;
+                state.allGroupNames = allGroupNames;
                 const data = getSelect2Data(allGroupNames);
                 clearEl(queryEl(`${root}.save-entity-select`));
                 $(`${root}.save-entity-select`).select2(data);

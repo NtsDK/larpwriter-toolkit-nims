@@ -2,16 +2,16 @@
   <div class="panel panel-default">
     <div class="panel-body first-panel">
       <div class="flex-root entity-toolbar">
-        <button class="btn btn-default btn-reduced fa-icon create user flex-0-0-auto" 
+        <button class="btn btn-default btn-reduced fa-icon create user flex-0-0-auto adminOnly" 
           l10n-title="admins-create-entity"></button>
-        <select class="common-select change-password-user-select"></select>
-        <button class="btn btn-default btn-reduced fa-icon change-password user flex-0-0-auto"
+        <select class="common-select change-password-user-select adminOnly"></select>
+        <button class="btn btn-default btn-reduced fa-icon change-password user flex-0-0-auto adminOnly"
           l10n-title="admins-change-master-password"></button>
-        <button class="btn btn-default btn-reduced fa-icon remove user flex-0-0-auto remove-user-button"
+        <button class="btn btn-default btn-reduced fa-icon remove user flex-0-0-auto remove-user-button adminOnly"
           l10n-title="admins-remove-master"></button>
-        <button class="btn btn-default btn-reduced fa-icon assign flex-0-0-auto icon-padding assign-admin-button"
+        <button class="btn btn-default btn-reduced fa-icon assign flex-0-0-auto icon-padding assign-admin-button adminOnly"
           l10n-title="admins-assign-admin"><span l10n-id="admins-admin"></span></button>
-        <button class="btn btn-default btn-reduced fa-icon assign flex-0-0-auto icon-padding assign-editor-button"
+        <button class="btn btn-default btn-reduced fa-icon assign flex-0-0-auto icon-padding assign-editor-button adminOnly"
           l10n-title="admins-assign-editor"><span l10n-id="admins-editor"></span></button>
       </div>
     </div>
@@ -30,7 +30,7 @@
         <legend l10n-id="admins-current-editor"></legend>
         <div>
           <label class="current-editor-label"></label>
-          <button class="editorOrAdmin remove-editor-button fa-icon remove" l10n-title="admins-remove-editor"></button>
+          <button class="btn btn-default editorOrAdmin remove-editor-button fa-icon remove" l10n-title="admins-remove-editor"></button>
         </div>
       </fieldset>
       

@@ -45,24 +45,24 @@ See the License for the specific language governing permissions and
 
                 const selectedStoryName = getSelectedStoryName(storyNames);
 
-                const map = R.indexBy(R.prop('value'), allStoryNames);
-
-                storyNames.forEach((elem) => {
-                    elem.displayName = map[elem.storyName].displayName;
-                    elem.value = map[elem.storyName].value;
+                const filteredArr = R.indexBy(R.prop('storyName'), storyNames);
+                
+                const storyNames2 = allStoryNames.filter(story => R.contains(story.value, R.keys(filteredArr))).map( story => {
+                    const elem = filteredArr[story.value];
+                    elem.displayName = story.displayName;
+                    elem.value = story.value;
+                    return elem;
                 });
 
-                storyNames.sort(Utils.charOrdAObject);
-
                 let option;
-                storyNames.forEach((storyName) => {
+                storyNames2.forEach((storyName) => {
                     option = addEl(makeEl('option'), (makeText(storyName.displayName)));
                     addClass(option, getIconClass(storyName));
                     setProp(option, 'selected', storyName.value === selectedStoryName);
                     setProp(option, 'storyInfo', storyName.value);
                     addEl(selector, option);
                 });
-                setAttr(selector, 'size', Math.min(storyNames.length, 10));
+                setAttr(selector, 'size', Math.min(storyNames2.length, 10));
                 showPersonalStories(selectedStoryName);
             });
         });
@@ -332,6 +332,7 @@ See the License for the specific language governing permissions and
 
         if (opts.showFinishedButton === true) {
             const isFinished = event.characters[characterName].ready;
+            setClassByCondition(finishedButton, 'notEditable', !isEditable);
             setClassIf(finishedButton, 'btn-primary', isFinished);
             finishedButton.id = id;
             const enableInputs = (value) => {

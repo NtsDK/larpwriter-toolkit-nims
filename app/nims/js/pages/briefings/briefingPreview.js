@@ -359,6 +359,8 @@ See the License for the specific language governing permissions and
     function showEvent(event, characterName, opts, flags) {
         const { isAdaptationsMode } = flags;
         const showAll = isAdaptationsMode;
+        const storyName = event.storyName;
+        const isStoryEditable = opts.userStoryNamesMap[storyName] !== undefined;
         const showAdaptationText = event.characters[characterName].text !== '';
         const showSubjectiveTime = event.characters[characterName].time !== '';
 
@@ -369,6 +371,9 @@ See the License for the specific language governing permissions and
             showLockButton: true,
             showTextInput: showAll || !showAdaptationText
         });
+        if(!isStoryEditable){
+            qees(originCard, '.isStoryEditable').forEach(addClass(R.__, 'notEditable'));
+        }
         addEl(qee(eventDiv, '.eventMainPanelRow-left'), originCard);
         const isEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
         const adaptationsCard = Adaptations.makeAdaptationCard(

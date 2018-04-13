@@ -966,3 +966,13 @@ a[tree-panel-toggler] h3{
 .margin-0{
   margin: 0;
 }
+
+
+
+.timeline-list > div {
+  padding: 6px;
+}
+
+.timeline-list > .row:nth-child(odd) {
+  background-color: hsla(0,0%,100%,.8);
+}

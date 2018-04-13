@@ -68,25 +68,29 @@ See the License for the specific language governing permissions and
                     if (err3) { Utils.handleError(err3); return; }
                     DBMS.getPlayersOptions((err4, playersOptions) => {
                         if (err4) { Utils.handleError(err4); return; }
-                        // eslint-disable-next-line prefer-destructuring
-                        R.toPairs(playersOptions).map(pair => (getEl(pair[0]).checked = pair[1]));
-
-                        queryEl(`${root}.welcome-text-area`).value = text;
-                        const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
-                        const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
-                        
-                        const noAccounts = (hasLoginObj.false || []);
-                        noAccounts.sort(Utils.charOrdAObject);
-                        $(clearEl(queryEl(`${root}.create-login-name-select`))).select2(getSelect2Data(noAccounts));
-//                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
+                        PermissionInformer.isAdmin((err5, isAdmin) => {
+                            if (err5) { Utils.handleError(err5); return; }
+                            // eslint-disable-next-line prefer-destructuring
+                            R.toPairs(playersOptions).map(pair => (getEl(pair[0]).checked = pair[1]));
+    
+                            queryEl(`${root}.welcome-text-area`).value = text;
+                            const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
+                            const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
+                            
+                            const noAccounts = (hasLoginObj.false || []);
+                            noAccounts.sort(Utils.charOrdAObject);
+                            $(clearEl(queryEl(`${root}.create-login-name-select`))).select2(getSelect2Data(noAccounts));
+    //                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
+    //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+                            const hasAccounts = (hasLoginObj.true || []);
+                            hasAccounts.sort(Utils.charOrdAObject);
+                            $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
+                            Utils.enable(exports.content, 'adminOnly', isAdmin);
+    //                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
+    //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+    //                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
 //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
-                        const hasAccounts = (hasLoginObj.true || []);
-                        hasAccounts.sort(Utils.charOrdAObject);
-                        $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
-//                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
-//                            .sort(Utils.charOrdAObject).map(remapProps4Select));
-//                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
-//                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+                        });
                     });
                 });
             });
