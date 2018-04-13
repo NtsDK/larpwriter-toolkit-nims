@@ -55,6 +55,15 @@ See the License for the specific language governing permissions and
         listen(queryEl(`${root}.remove-user-button`), 'click', removeUser);
         listen(queryEl(`${root}.welcome-text-area`), 'change', setWelcomeText);
         queryElEls(queryEl(root), '.playerOptions').map(listen(R.__, 'change', setPlayerOption));
+        
+        $(`${root}.change-password-user-select`).select2().on('change', (event) => {
+            const player = event.target.value;
+            const yourPlayers = state.playerNames.filter(R.prop('isOwner')).map(R.prop('value'));
+            const isPlayerEditable = R.contains(player, yourPlayers);
+            Utils.enableEl(qe(`${root}.user.change-password`), isPlayerEditable);
+            Utils.enableEl(qe(`${root}.remove-user-button`), isPlayerEditable);
+        });
+
 
         exports.content = queryEl(root);
     };
@@ -77,13 +86,15 @@ See the License for the specific language governing permissions and
                             const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
                             const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
                             
+                            state.playerNames = playerNames;
+                            
                             const noAccounts = (hasLoginObj.false || []);
                             noAccounts.sort(Utils.charOrdAObject);
                             $(clearEl(queryEl(`${root}.create-login-name-select`))).select2(getSelect2Data(noAccounts));
     //                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
     //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
                             const hasAccounts = (hasLoginObj.true || []);
-                            hasAccounts.sort(Utils.charOrdAObject);
+//                            hasAccounts.sort(Utils.charOrdAObject);
                             $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
                             Utils.enable(exports.content, 'adminOnly', isAdmin);
     //                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])

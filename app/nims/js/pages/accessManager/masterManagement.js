@@ -90,7 +90,7 @@ See the License for the specific language governing permissions and
                                             names[entity] = names[entity].filter(R.prop('isOwner'));
                                         });
                                     }
-                                    rebuildInterface(names, managementInfo);
+                                    rebuildInterface(names, managementInfo, isAdmin);
                                     Utils.enable(exports.content, 'adminOnly', isAdmin);
                                     Utils.enable(exports.content, 'editorOrAdmin', isAdmin || isEditor);
                                 });
@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
         });
     };
 
-    function rebuildInterface(names, managementInfo) {
+    function rebuildInterface(names, managementInfo, isAdmin) {
         const { usersInfo } = managementInfo;
 
         const userNames = Object.keys(usersInfo).sort(CommonUtils.charOrdA);
@@ -150,7 +150,7 @@ See the License for the specific language governing permissions and
 //            Utils.rebuildSelector(queryEl(`${root}.permission-selector__${entity}`), names[entity]);
             addEls(
                 clearEl(queryEl(`${root} .entity-list.${entity}`)),
-                names[entity].map(entity2el(entity))
+                names[entity].map(entity2el(isAdmin, entity))
             );
         });
         
@@ -161,7 +161,7 @@ See the License for the specific language governing permissions and
         buildPermissionList(names, usersInfo);
     }
     
-    const entity2el = R.curry((type, name) => {
+    const entity2el = R.curry((isAdmin, type, name) => {
         const el = wrapEl('div', qte(`.profile-item-tmpl`));
         el.profileName = name.value;
         addEl(qee(el, '.primary-name'), makeText(name.displayName));
@@ -169,12 +169,16 @@ See the License for the specific language governing permissions and
         setAttr(el, 'primary-name', name.displayName);
         setAttr(el, 'button-type', 'entity');
         setAttr(el, 'profile-type', type);
-        listen(el, 'dragstart', onDragStart);
-        listen(el, 'drop', onDrop);
-        listen(el, 'dragover', allowDrop);
-        listen(el, 'dragenter', handleDragEnter);
-        listen(el, 'dragleave', handleDragLeave);
-        listen(qee(el, 'button'), 'click', e => toggleClass(qee(el, 'button'), 'btn-primary'));
+        if(name.isOwner || isAdmin){
+            listen(el, 'dragstart', onDragStart);
+            listen(el, 'drop', onDrop);
+            listen(el, 'dragover', allowDrop);
+            listen(el, 'dragenter', handleDragEnter);
+            listen(el, 'dragleave', handleDragLeave);
+            listen(qee(el, 'button'), 'click', e => toggleClass(qee(el, 'button'), 'btn-primary'));
+        } else {
+            Utils.enableEl(qee(el, 'button'), false);
+        }
         return el;
     });
     
@@ -196,7 +200,9 @@ See the License for the specific language governing permissions and
 
     // eslint-disable-next-line no-var,vars-on-top
     var onDragStart = function(event) {
-        addClass(qee(this, 'button'), 'btn-primary');
+        if(getAttr(this, 'button-type') === 'entity'){
+            addClass(qee(this, 'button'), 'btn-primary');
+        }
         console.log(`onDragStart ${this.profileName}`);
         event.dataTransfer.setData('data', JSON.stringify({
             name: getAttr(this, 'profile-name'),
