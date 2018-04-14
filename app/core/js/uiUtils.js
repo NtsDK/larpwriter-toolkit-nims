@@ -372,7 +372,7 @@ See the License for the specific language governing permissions and
     exports.makeTableRow = (col1, col2) => addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);
 
     exports.checkAndGetEntitySetting = (settingsPath, names) => {
-        if (names.length === 0) throw new Error('names are empty');
+        if (names.length === 0) return null;
         const settings = DBMS.getSettings();
         if (!settings[settingsPath]) {
             settings[settingsPath] = {

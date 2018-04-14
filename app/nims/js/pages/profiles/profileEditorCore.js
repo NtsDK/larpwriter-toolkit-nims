@@ -34,9 +34,16 @@ See the License for the specific language governing permissions and
         innerExports.initProfileStructure = (profileDiv, type, profileStructure, callback) => {
             const container = qte(`${root} .profile-editor-container-tmpl`);
             addEl(clearEl(queryEl(profileDiv)), container);
-
             state[type].inputItems = {};
             state[type].profileStructure = profileStructure;
+
+            if(profileStructure.length === 0){
+                const alert = qmte('.alert-block-tmpl');
+                addEl(alert, makeText(L10n.get('advices', `empty-${type}-profile-structure`)));
+                addEl(queryEl(profileDiv), alert);
+                if (callback) callback();
+                return;
+            }
             try {
                 addEls(qee(queryEl(profileDiv), '.insertion-point'), profileStructure.map(appendInput(type)));
             } catch (err) {
