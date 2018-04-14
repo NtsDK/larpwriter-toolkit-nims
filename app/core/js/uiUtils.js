@@ -76,7 +76,7 @@ See the License for the specific language governing permissions and
             setClassByCondition(buttons[i], 'active', event.target.id === buttons[i].id);
         }
         for (let i = 0; i < containers.length; i++) {
-            setClassByCondition(containers[i], 'hidden', `${event.target.id}Container` !== containers[i].id);
+            hideEl(containers[i], `${event.target.id}Container` !== containers[i].id);
         }
     };
 
@@ -87,7 +87,7 @@ See the License for the specific language governing permissions and
             el = setProps(makeEl('option'), {
                 selected: true,
             });
-            setClassByCondition(el, 'hidden', value.hidden);
+            hideEl(el, value.hidden);
             addEl(selector, addEl(el, makeText(value.name)));
         });
     };
@@ -101,7 +101,7 @@ See the License for the specific language governing permissions and
                 el = setProps(makeEl('option'), {
                     selected: true,
                 });
-                setClassByCondition(el, 'hidden', value.hidden);
+                hideEl(el, value.hidden);
                 counter += (value.hidden ? 0 : 1);
                 return addEl(el, makeText(value.name));
             }));
@@ -116,7 +116,7 @@ See the License for the specific language governing permissions and
         for (i = 0; i < el.options.length; i += 1) {
             els = getEls(i + classKey);
             for (j = 0; j < els.length; j++) {
-                setClassByCondition(els[j], 'hidden', !el.options[i].selected);
+                hideEl(els[j], !el.options[i].selected);
             }
         }
     };
@@ -141,7 +141,7 @@ See the License for the specific language governing permissions and
             if (!isVisible) {
                 opt.selected = false;
             }
-            setClassByCondition(opt, 'hidden', !isVisible);
+            hideEl(opt, !isVisible);
             //                setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
         }
         sel.dispatchEvent(new Event('change'));

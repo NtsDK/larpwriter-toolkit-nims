@@ -70,16 +70,19 @@ const toggleClass = R.curry((o, c) => {
     }
 });
 
-function setClassByCondition(o, c, condition) {
+const setClassByCondition = R.curry((o, c, condition) => {
     if (condition) {
         addClass(o, c);
     } else {
         removeClass(o, c);
     }
     return o;
-}
+});
 
 const setClassIf = setClassByCondition;
+
+const showEl = (el, condition) => setClassByCondition(el, 'hidden', !condition);
+const hideEl = (el, condition) => setClassByCondition(el, 'hidden', condition);
 
 function getEl(id) {
     return document.getElementById(id);

@@ -41,6 +41,10 @@ See the License for the specific language governing permissions and
             if (err) { Utils.handleError(err); return; }
             DBMS.getFilteredStoryNames(getEl('finishedStoryCheckbox').checked, (err2, storyNames) => {
                 if (err2) { Utils.handleError(err2); return; }
+                
+                showEl(qe(`${root} .alert`), storyNames.length === 0);
+                showEl(qe(`${root} .adaptations-content`), storyNames.length !== 0);
+                
                 if (storyNames.length <= 0) { return; }
 
                 const selectedStoryName = getSelectedStoryName(storyNames);
@@ -135,8 +139,8 @@ See the License for the specific language governing permissions and
     function updateFilter(event) {
         updateSettings('selectedFilter', event.target.id);
         const byCharacter = event.target.id === 'adaptationFilterByCharacter';
-        setClassByCondition(getEl('events-characterSelectorDiv'), 'hidden', !byCharacter);
-        setClassByCondition(getEl('events-eventSelectorDiv'), 'hidden', byCharacter);
+        hideEl(getEl('events-characterSelectorDiv'), !byCharacter);
+        hideEl(getEl('events-eventSelectorDiv'), byCharacter);
         if (byCharacter) {
             showPersonalStoriesByCharacters();
         } else {
@@ -151,8 +155,8 @@ See the License for the specific language governing permissions and
 
         const characterNames = nl2array(getEl('events-characterSelector').selectedOptions).map(opt => opt.characterName);
         characterNames.forEach(name => queryElEls(exports.content, `div[dependent-on-character="${name}"]`).map(removeClass(R.__, 'hidden')));
-        eventRows.map(row => setClassByCondition(row, 'hidden', R.intersection(row.dependsOnCharacters, characterNames).length === 0));
-
+        eventRows.map(row => hideEl(row, R.intersection(row.dependsOnCharacters, characterNames).length === 0));
+        
         updateSettings('characterNames', characterNames);
     }
 
@@ -228,7 +232,28 @@ See the License for the specific language governing permissions and
     }
 
     function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
-        addEls(clearEl(getEl('personalStories')), events.map((event) => {
+        const div = clearEl(getEl('personalStories'));
+        if(events.length === 0) {
+            const alert = qmte('.alert-block-tmpl');
+            addEl(alert, makeText(L10n.get('advices', 'no-events-in-story')));
+            addClass(alert, 'margin-bottom-8');
+            addEl(div, alert);
+        }
+        if(characterNames.length === 0) {
+            const alert = qmte('.alert-block-tmpl');
+            addEl(alert, makeText(L10n.get('advices', 'no-characters-in-story')));
+            addClass(alert, 'margin-bottom-8');
+            addEl(div, alert);
+        }
+        const adaptationsNum = R.flatten(events.map(event => R.keys(event.characters))).length;
+        if(adaptationsNum === 0) {
+            const alert = qmte('.alert-block-tmpl');
+            addEl(alert, makeText(L10n.get('advices', 'no-adaptations-in-story')));
+            addClass(alert, 'margin-bottom-8');
+            addEl(div, alert);
+        }
+        
+        addEls(div, events.map((event) => {
             const row = qmte(`${root} .adaptation-row-tmpl`);
             addClass(row, `${event.index}-dependent`);
             row.dependsOnCharacters = R.keys(event.characters);

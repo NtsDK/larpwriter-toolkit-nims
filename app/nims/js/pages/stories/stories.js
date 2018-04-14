@@ -84,22 +84,29 @@ See the License for the specific language governing permissions and
 
         PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
             if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('story', true, (err2, userStoryNames) => {
-                if (err2) { Utils.handleError(err2); return; }
-                if (allStoryNames.length > 0) {
-                    const storyName = getSelectedStoryName(allStoryNames);
-                    const data = getSelect2Data(allStoryNames);
-                    $('#storySelector').select2(data).val(storyName).trigger('change');
+            const data = getSelect2Data(allStoryNames);
+            
+            Utils.enableEl(qe(`${root}.rename.story`), allStoryNames.length > 0);
+            Utils.enableEl(qe(`${root}.remove.story`), allStoryNames.length > 0);
+            Utils.enableEl(qe(`${root}.create.event`), allStoryNames.length > 0);
+            Utils.enableEl(qe(`${root}.add.character`), allStoryNames.length > 0);
+            Utils.enableEl(qe(`${root}#storySelector`), allStoryNames.length > 0);
+            
+            showEl(qe(`${root}.alert`), allStoryNames.length === 0);
+            showEl(qe(`${root}.stories-main-container`), allStoryNames.length !== 0);
+            
+            if (allStoryNames.length > 0) {
+                const storyName = getSelectedStoryName(allStoryNames);
+                $('#storySelector').select2(data).val(storyName).trigger('change');
+                onStorySelectorChange(storyName);
+            } else {
+                $('#storySelector').select2(data);
+                onStorySelectorChange();
+            }
 
-                    onStorySelectorChange(storyName);
-                } else {
-                    onStorySelectorChange();
-                }
-
-                R.values(state.left.views).forEach(view => view.refresh());
-                if (state.left.currentView)state.left.currentView.refresh();
-                if (state.right.currentView)state.right.currentView.refresh();
-            });
+            R.values(state.left.views).forEach(view => view.refresh());
+            if (state.left.currentView)state.left.currentView.refresh();
+            if (state.right.currentView)state.right.currentView.refresh();
         });
     };
 

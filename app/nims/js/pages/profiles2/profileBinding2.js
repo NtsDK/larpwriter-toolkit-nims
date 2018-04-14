@@ -47,6 +47,16 @@ See the License for the specific language governing permissions and
         const bindedCharacterList = R.keys(profileBindings);
         const bindedPlayerList = R.values(profileBindings);
         const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
+        
+        showEl(queryEl(`${root} .alert.no-character`), characterNames.length === 0);
+        Utils.enableEl(queryEl(`${root} .character-filter`), characterNames.length !== 0);
+        showEl(queryEl(`${root} .character-list`), characterNames.length !== 0);
+        
+        showEl(queryEl(`${root} .alert.no-player`), playerNames.length === 0);
+        Utils.enableEl(queryEl(`${root} .player-filter`), playerNames.length !== 0);
+        showEl(queryEl(`${root} .player-list`), playerNames.length !== 0);
+        
+        Utils.enableEl(queryEl(`${root} .binding-filter`), R.keys(profileBindings).length !== 0);
 
         addEls(
             clearEl(queryEl(`${root} .entity-list.character-list`)),
@@ -140,7 +150,7 @@ See the License for the specific language governing permissions and
         const els = queryEls(`${root} ${sel} [primary-name]`);
         els.forEach((el) => {
             const isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
-            setClassByCondition(el, 'hidden', !isVisible);
+            showEl(el, isVisible);
         });
     };
 

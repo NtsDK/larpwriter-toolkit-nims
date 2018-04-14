@@ -349,6 +349,10 @@ input[type="radio"][disabled="disabled"] + .common-radio {
   cursor: not-allowed;
 }
 
+.select2-container--disabled .select2-selection {
+  cursor: not-allowed !important;
+}
+
 #eventPresenceTable .vertical-aligned-td,
 #story-characterActivityTable .vertical-aligned-td{
   vertical-align: middle;

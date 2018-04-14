@@ -55,7 +55,11 @@ See the License for the specific language governing permissions and
     exports.refresh = () => {
         PermissionInformer.getEntityNamesArray('group', false, (err, groupNames) => {
             if (err) { Utils.handleError(err); return; }
-
+            
+            showEl(qe(`${root} .alert`), groupNames.length === 0);
+            showEl(qe(`${root} .col-xs-9`), groupNames.length !== 0);
+            Utils.enableEl(qe(`${root} .entity-filter`), groupNames.length !== 0);
+            
             addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map((name) => {
                 const el = wrapEl('div', qte('.entity-item-tmpl'));
                 addEl(qee(el, '.primary-name'), makeText(name.displayName));
@@ -70,7 +74,7 @@ See the License for the specific language governing permissions and
                         state.renameGroupDialog.fromName = name.value;
                         state.renameGroupDialog.showDlg();
                     });
-                    listen(qee(el, '.remove'), 'click', GroupProfile.removeGroup(() => name.value));
+                    listen(qee(el, '.remove'), 'click', GroupProfile.removeGroup(() => name.value, exports.refresh));
                 } else {
                     setAttr(qee(el, '.rename'), 'disabled', 'disabled');
                     setAttr(qee(el, '.remove'), 'disabled', 'disabled');
@@ -137,11 +141,13 @@ See the License for the specific language governing permissions and
 
     function showProfileInfoDelegate2(name) {
         return () => {
-            UI.updateEntitySetting(settingsPath, name);
             queryEls(`${root} [profile-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
-            const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
-            addClass(el, 'btn-primary');
-            DBMS.getGroup(name, showProfileInfoCallback);
+            if(name !== null){
+                UI.updateEntitySetting(settingsPath, name);
+                const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
+                addClass(el, 'btn-primary');
+                DBMS.getGroup(name, showProfileInfoCallback);
+            }
         };
     }
 
@@ -231,7 +237,7 @@ See the License for the specific language governing permissions and
         const els = queryEls(`${root} [primary-name]`);
         els.forEach((el) => {
             const isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
-            setClassByCondition(el, 'hidden', !isVisible);
+            hideEl(el, !isVisible);
         });
 
         if (queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
@@ -283,7 +289,7 @@ See the License for the specific language governing permissions and
         };
     }
 
-    exports.removeGroup = callback => () => {
+    exports.removeGroup = (callback, refresh) => () => {
         const name = callback();
 
         Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
@@ -291,7 +297,7 @@ See the License for the specific language governing permissions and
                 if (err) { Utils.handleError(err); return; }
                 PermissionInformer.refresh((err2) => {
                     if (err2) { Utils.handleError(err2); return; }
-                    exports.refresh();
+                    refresh();
                 });
             });
         });

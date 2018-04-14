@@ -413,7 +413,7 @@ See the License for the specific language governing permissions and
         const els = queryEls(`${root} ${sel} [primary-name]`);
         els.forEach((el) => {
             const isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
-            setClassByCondition(el, 'hidden', !isVisible);
+            hideEl(el, !isVisible);
         });
     };
 })(this.MasterManagement = {});

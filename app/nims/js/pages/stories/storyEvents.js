@@ -73,6 +73,9 @@ See the License for the specific language governing permissions and
     function rebuildInterface(events, metaInfo) {
         // event part
         const table = clearEl(getEl('eventBlock'));
+        
+        showEl(table, events.length !== 0 );
+        showEl(qe(`${root} .alert`), events.length === 0 );
 
         // refresh position selector
         const addOpt = R.curry((sel, text) => {

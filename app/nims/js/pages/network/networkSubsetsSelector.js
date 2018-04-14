@@ -83,7 +83,7 @@ See the License for the specific language governing permissions and
 
     function onNetworkSubsetsChange(event) {
         const selectedSubset = event.target.value;
-        setClassByCondition(getEl('networkCharacterDiv'), 'hidden', selectedSubset !== Constants.objectSubsets[1]);
-        setClassByCondition(getEl('networkStoryDiv'), 'hidden', selectedSubset !== Constants.objectSubsets[2]);
+        hideEl(getEl('networkCharacterDiv'),  selectedSubset !== Constants.objectSubsets[1]);
+        hideEl(getEl('networkStoryDiv'), selectedSubset !== Constants.objectSubsets[2]);
     }
 })(this.NetworkSubsetsSelector = {});

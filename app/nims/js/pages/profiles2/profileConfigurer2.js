@@ -78,6 +78,7 @@ function ProfileConfigurerTmpl(exports, opts) {
         );
 
         setAttr(qee(el, '.panel h3'), 'l10n-id', `profiles-${opts.panelName}`);
+        setAttr(qee(el, '.alert'), 'l10n-id', `advices-empty-${tabType}-profile-structure`);
         L10n.localizeStatic(el);
 
         setAttr(qee(el, '.panel a'), 'panel-toggler', `${tabRoot}.profile-panel`);
@@ -94,6 +95,9 @@ function ProfileConfigurerTmpl(exports, opts) {
     function refreshPanel(type, root) {
         DBMS.getProfileStructure(type, (err, allProfileSettings) => {
             if (err) { Utils.handleError(err); return; }
+            
+            hideEl(queryEl(`${tabRoot} .alert`), allProfileSettings.length !== 0);
+            hideEl(queryEl(`${tabRoot} table`), allProfileSettings.length === 0);
 
             const arr = allProfileSettings.map(R.compose(strFormat(getL10n('common-set-item-before')), R.append(R.__, []), R.prop('name')));
             arr.push(getL10n('common-set-item-as-last'));

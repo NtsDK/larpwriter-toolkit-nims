@@ -90,6 +90,10 @@ See the License for the specific language governing permissions and
         });
 
         const table = clearEl(queryEl(`${root}.storyCharactersTable`));
+        
+        showEl(qe(`${root} table`), R.keys(localCharacters).length !== 0 );
+        showEl(qe(`${root} .alert`), R.keys(localCharacters).length === 0 );
+        
         removeArray.forEach((removeValue) => {
             addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
         });

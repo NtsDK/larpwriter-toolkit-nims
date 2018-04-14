@@ -62,6 +62,18 @@ FilterConfiguration.prototype.getDataArrays = function (filterModel) {
     return ProjectUtils.getDataArrays(this.info, filterModel);
 };
 
+FilterConfiguration.prototype.haveProfiles = function () {
+    return R.keys(this.info.characters.profiles).length > 0 || R.keys(this.info.players.profiles).length > 0;
+};
+
+FilterConfiguration.prototype.haveProfileStructures = function () {
+    return this.info.characters.profileStructure.length > 0 || this.info.players.profileStructure.length > 0;
+};
+
+FilterConfiguration.prototype.haveData = function () {
+    return this.haveProfiles() && this.haveProfileStructures();
+};
+
 FilterConfiguration.prototype.getProfileIds = function (filterModel) {
     const offset = this.groupedProfileFilterItems[0].profileFilterItems.length;
     return this.getDataArrays(filterModel).map(dataArray => `${dataArray[0].value || ''}/${dataArray[offset].value || ''}`).sort();

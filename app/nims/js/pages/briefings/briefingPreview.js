@@ -57,6 +57,11 @@ See the License for the specific language governing permissions and
                 state.playerProfileStructure = playerProfileStructure;
                 PermissionInformer.getEntityNamesArray('character', false, (err3, names) => {
                     if (err3) { Utils.handleError(err3); return; }
+                    
+                    showEl(qe(`${root} .alert`), names.length === 0);
+                    showEl(qe(`${root} > .panel`), names.length !== 0);
+                    showEl(qe(`${root} #briefingCharacter`), names.length !== 0);
+                    
                     if (names.length > 0) {
                         const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
                         const data = getSelect2Data(names);

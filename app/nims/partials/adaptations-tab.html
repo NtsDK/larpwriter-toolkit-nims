@@ -1,50 +1,54 @@
 <div class="adaptations-tab block">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <input type="checkbox" id="finishedStoryCheckbox" class="hidden"/>
-      <label for="finishedStoryCheckbox" class="checkbox-label-icon common-checkbox"><span l10n-id="adaptations-show-only-unfinished-stories"></span></label>
+  <div class="alert alert-info margin-bottom-8" l10n-id="advices-no-story"></div>
+    
+  <div class="adaptations-content">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <input type="checkbox" id="finishedStoryCheckbox" class="hidden"/>
+        <label for="finishedStoryCheckbox" class="checkbox-label-icon common-checkbox"><span l10n-id="adaptations-show-only-unfinished-stories"></span></label>
+      </div>
     </div>
-  </div>
-  <div class="main-container">
-    <div>
-      <div id="personalStoriesCharacterContainer">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title" l10n-id="adaptations-story"></h3>
-          </div>
-          <div class="panel-body panel-resizable form-group">
-            <input selector-filter="#events-storySelector">
-            <select id="events-storySelector" class="form-control"></select>
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title" l10n-id="adaptations-filter"></h3>
-          </div>
-          <div class="panel-body">
-            
-            <div>
-              <input type="radio" name="adaptationFilter" value="ByCharacter" id="adaptationFilterByCharacter" class="hidden">
-              <label for="adaptationFilterByCharacter" class="radio-label-icon common-radio"><span l10n-id="adaptations-by-characters"></span></label>
+    <div class="main-container">
+      <div>
+        <div id="personalStoriesCharacterContainer">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title" l10n-id="adaptations-story"></h3>
             </div>
-            <div>
-              <input type="radio" name="adaptationFilter" value="ByEvent" id="adaptationFilterByEvent" class="hidden">
-              <label for="adaptationFilterByEvent" class="radio-label-icon common-radio"><span l10n-id="adaptations-by-events"></span></label>
+            <div class="panel-body panel-resizable form-group">
+              <input selector-filter="#events-storySelector">
+              <select id="events-storySelector" class="form-control"></select>
             </div>
-            
-            <div id="events-characterSelectorDiv">
-              <h4 l10n-id="adaptations-characters"></h4>
-              <select id="events-characterSelector" class="form-control" multiple></select>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title" l10n-id="adaptations-filter"></h3>
             </div>
-            <div id="events-eventSelectorDiv" class="hidden">
-              <h4 l10n-id="adaptations-events"></h4>
-              <select id="events-eventSelector" class="form-control" multiple size=15></select>
+            <div class="panel-body">
+              
+              <div>
+                <input type="radio" name="adaptationFilter" value="ByCharacter" id="adaptationFilterByCharacter" class="hidden">
+                <label for="adaptationFilterByCharacter" class="radio-label-icon common-radio"><span l10n-id="adaptations-by-characters"></span></label>
+              </div>
+              <div>
+                <input type="radio" name="adaptationFilter" value="ByEvent" id="adaptationFilterByEvent" class="hidden">
+                <label for="adaptationFilterByEvent" class="radio-label-icon common-radio"><span l10n-id="adaptations-by-events"></span></label>
+              </div>
+              
+              <div id="events-characterSelectorDiv">
+                <h4 l10n-id="adaptations-characters"></h4>
+                <select id="events-characterSelector" class="form-control" multiple></select>
+              </div>
+              <div id="events-eventSelectorDiv" class="hidden">
+                <h4 l10n-id="adaptations-events"></h4>
+                <select id="events-eventSelector" class="form-control" multiple size=15></select>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div id="personalStories" style="flex-grow:1;">
+      <div id="personalStories" style="flex-grow:1;">
+      </div>
     </div>
   </div>
   

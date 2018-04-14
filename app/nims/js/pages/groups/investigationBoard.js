@@ -333,6 +333,6 @@ See the License for the specific language governing permissions and
     }
 
     function showPopup(selector, show) {
-        setClassByCondition(queryEl(root + selector), 'hidden', !show);
+        hideEl(queryEl(root + selector), !show);
     }
 })(this.InvestigationBoard = {});

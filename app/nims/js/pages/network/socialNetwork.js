@@ -238,9 +238,9 @@ See the License for the specific language governing permissions and
     }
 
     function onNetworkSelectorChangeDelegate(event) {
-        setClassByCondition(getEl('activityBlock'), 'hidden', event.target.value !== 'characterActivityInStory');
+        hideEl(getEl('activityBlock'), event.target.value !== 'characterActivityInStory');
         queryEls('#activityBlock button').forEach(el => addClass(el, 'btn-primary'));
-        setClassByCondition(getEl('relationsBlock'), 'hidden', event.target.value !== 'characterRelations');
+        hideEl(getEl('relationsBlock'), event.target.value !== 'characterRelations');
         queryEls('#relationsBlock button').forEach(el => addClass(el, 'btn-primary'));
     }
 

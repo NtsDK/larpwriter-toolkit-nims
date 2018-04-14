@@ -112,13 +112,13 @@ See the License for the specific language governing permissions and
     function onCharacterSelectionChange(event) {
         const exportCharacterRange = event.target.id === 'exportCharacterRange';
         const exportCharacterSet = event.target.id === 'exportCharacterSet';
-        setClassByCondition(getEl('characterRangeSelect'), 'hidden', !exportCharacterRange);
-        setClassByCondition(getEl('characterSetSelect'), 'hidden', !exportCharacterSet);
+        hideEl(getEl('characterRangeSelect'), !exportCharacterRange);
+        hideEl(getEl('characterSetSelect'), !exportCharacterSet);
     }
 
     function onStorySelectionChange(event) {
         const exportStorySet = event.target.id === 'exportStorySet';
-        setClassByCondition(getEl('storySetSelect'), 'hidden', !exportStorySet);
+        hideEl(getEl('storySetSelect'), !exportStorySet);
     }
 
     function getSelectedUsers() {

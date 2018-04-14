@@ -56,7 +56,8 @@ See the License for the specific language governing permissions and
             qee(renameGroupDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value.trim();
             renameGroupDialog.showDlg();
         });
-        listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => queryEl(`${root}.save-entity-select`).value.trim()));
+        listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => 
+            queryEl(`${root}.save-entity-select`).value.trim(), exports.refresh));
 
         exports.content = queryEl(root);
     };
@@ -64,6 +65,13 @@ See the License for the specific language governing permissions and
     function groupAreaRefresh() {
         PermissionInformer.getEntityNamesArray('group', true, Utils.processError((userGroupNames) => {
             PermissionInformer.getEntityNamesArray('group', false, Utils.processError((allGroupNames) => {
+                
+                Utils.enableEl(qe(`${root}.rename.group`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.remove.group`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.show-entity-button`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.save-entity-button`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.save-entity-select`), allGroupNames.length > 0);
+                
                 state.userGroupNames = userGroupNames;
                 state.allGroupNames = allGroupNames;
                 const data = getSelect2Data(allGroupNames);
@@ -88,7 +96,13 @@ See the License for the specific language governing permissions and
             if (err) { Utils.handleError(err); return; }
 
             state.filterConfiguration = filterConfiguration;
-
+            
+            showEl(qe(`${root} .alert.no-characters`), !filterConfiguration.haveProfiles());
+            showEl(qe(`${root} .alert.no-players`), !filterConfiguration.haveProfiles());
+            showEl(qe(`${root} .alert.no-character-profile`), !filterConfiguration.haveProfileStructures());
+            showEl(qe(`${root} .alert.no-player-profile`), !filterConfiguration.haveProfileStructures());
+            showEl(qe(`${root} .profile-filter-container .panel`), filterConfiguration.haveData());
+            
             const groupedProfileFilterItems = filterConfiguration.getGroupedProfileFilterItems();
             addEls(filterSettingsDiv, R.flatten(groupedProfileFilterItems.map(item => R.concat(item.profileFilterItems.map(makeInput), [addClass(makeEl('div'), 'filterSeparator')]))));
 
@@ -404,7 +418,7 @@ See the License for the specific language governing permissions and
     
     function toggleContent(itemContainer, inputContainer) {
         return (event) => {
-            setClassByCondition(inputContainer, 'hidden', !event.target.checked);
+            hideEl(inputContainer, !event.target.checked);
             setClassByCondition(itemContainer, 'flex-front-element', event.target.checked);
             rebuildContent();
         };

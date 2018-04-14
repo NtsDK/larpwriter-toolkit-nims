@@ -57,8 +57,8 @@ function ProfileEditorTmpl(exports, opts) {
             actionButtonTitle: 'common-rename',
         });
 
-        setClassByCondition(qee(el, '.report-by-stories'), 'hidden', firstType === 'player');
-        setClassByCondition(qee(el, '.report-by-relations'), 'hidden', firstType === 'player');
+        hideEl(qee(el, '.report-by-stories'), firstType === 'player');
+        hideEl(qee(el, '.report-by-relations'), firstType === 'player');
         setAttr(qee(el, '.entity-filter'), 'l10n-placeholder-id', `profiles-${opts.filterPlaceholder}`);
         setAttr(qee(el, '.profile-panel h3'), 'l10n-id', `profiles-${opts.panelName}`);
         setAttr(qee(el, '.create'), 'l10n-title', `profiles-${opts.createProfile}`);
@@ -82,6 +82,7 @@ function ProfileEditorTmpl(exports, opts) {
                 DBMS.getProfileBindings((err3, profileBindings) => {
                     if (err3) { Utils.handleError(err3); return; }
                     profileBindings = opts.processBindings(profileBindings);
+                    Utils.enableEl(queryEl(`${root}.entity-filter`), primaryNames.length > 0);
                     rebuildInterface(primaryNames, secondaryNames, profileBindings);
                 });
             });
@@ -127,10 +128,11 @@ function ProfileEditorTmpl(exports, opts) {
     }
 
     function selectProfile(name) {
-        setClassByCondition(queryEl(profilePanel), 'hidden', name === null);
-        setClassByCondition(queryEl(reportByStories), 'hidden', name === null);
-        setClassByCondition(queryEl(reportByRelations), 'hidden', name === null);
-        setClassByCondition(queryEl(alertBlock), 'hidden', name !== null);
+        hideEl(queryEl(profilePanel), name === null);
+        hideEl(queryEl(reportByStories), name === null || firstType === 'player');
+        hideEl(queryEl(reportByRelations), name === null || firstType === 'player');
+        hideEl(queryEl(alertBlock), name !== null);
+        
         if(name === null){
             return;
         }
@@ -154,8 +156,8 @@ function ProfileEditorTmpl(exports, opts) {
                         DBMS.getRelationsSummary(name, (err4, relationsSummary) => {
                             if (err4) { Utils.handleError(err4); return; }
                             
-                            setClassByCondition(queryEl(`${reportByStories} .alert`), 'hidden', characterReport.length !== 0);
-                            setClassByCondition(queryEl(`${reportByStories} table`), 'hidden', characterReport.length === 0);
+                            hideEl(queryEl(`${reportByStories} .alert`), characterReport.length !== 0);
+                            hideEl(queryEl(`${reportByStories} table`), characterReport.length === 0);
                             
                             if(characterReport.length !== 0){
                                 removeClass(queryEl(reportByStoriesDiv), 'hidden');
@@ -165,8 +167,8 @@ function ProfileEditorTmpl(exports, opts) {
                                 );
                             }
                             
-                            setClassByCondition(queryEl(`${reportByRelations} .alert`), 'hidden', relationsSummary.relations.length !== 0);
-                            setClassByCondition(queryEl(`${reportByRelations} table`), 'hidden', relationsSummary.relations.length === 0);
+                            hideEl(queryEl(`${reportByRelations} .alert`), relationsSummary.relations.length !== 0);
+                            hideEl(queryEl(`${reportByRelations} table`), relationsSummary.relations.length === 0);
                             
                             if(relationsSummary.relations.length !== 0){
                                 removeClass(queryEl(reportByRelationsDiv), 'hidden');
@@ -192,7 +194,7 @@ function ProfileEditorTmpl(exports, opts) {
             if (!isVisible && getAttr(el, 'secondary-name') !== null) {
                 isVisible = getAttr(el, 'secondary-name').toLowerCase().search(str) !== -1;
             }
-            setClassByCondition(el, 'hidden', !isVisible);
+            hideEl(el, !isVisible);
         });
 
         if (queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||

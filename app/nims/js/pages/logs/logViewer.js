@@ -58,7 +58,7 @@ See the License for the specific language governing permissions and
         addEl(clearEl(queryEl(`${root}.result-number`)), makeText(L10n.format('log-viewer', 'total', [data.max])));
 
         const container = clearEl(queryEl(`${root}.log-data`));
-        queryEls(`${root}.pagination li`).forEach(li => setClassByCondition(li, 'hidden', li.num > data.logSize - 1));
+        queryEls(`${root}.pagination li`).forEach(li => hideEl(li, li.num > data.logSize - 1));
         R.ap([addEl(container)], R.zip(data.requestedLog, R.append([], R.tail(data.requestedLog))).map(makeRow));
     }
 

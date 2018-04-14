@@ -37,6 +37,10 @@ See the License for the specific language governing permissions and
             state.characterProfileStructure = characterProfileStructure;
             PermissionInformer.getEntityNamesArray('character', false, (err3, names) => {
                 if (err3) { Utils.handleError(err3); return; }
+                
+                showEl(qe(`${root} .alert`), names.length < 2);
+                showEl(qe(`${root} > .panel`), names.length > 1);
+                
                 if (names.length > 0) {
                     const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
                     const data = getSelect2Data(names);

@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
+.alert {
+  margin-bottom: 0;
+}
+
 /** profile configurer */
 
 .profile-configurer-enum, 
@@ -976,3 +980,4 @@ a[tree-panel-toggler] h3{
 .timeline-list > .row:nth-child(odd) {
   background-color: hsla(0,0%,100%,.8);
 }
+

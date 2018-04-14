@@ -21,10 +21,11 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const state = {};
     exports.name = 'EventPresence';
+    const root = '#eventPresenceDiv ';
 
     exports.init = () => {
         listen(getEl('eventPresenceSelector'), 'change', UI.showSelectedEls('-dependent'));
-        exports.content = getEl('eventPresenceDiv');
+        exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
@@ -61,6 +62,11 @@ See the License for the specific language governing permissions and
 
                         clearEl(tableHead);
                         clearEl(table);
+                        
+                        showEl(queryEl(`${root} .alert.no-characters`), characterArray.length === 0);
+                        showEl(queryEl(`${root} .alert.no-events`), events.length === 0);
+                        showEl(queryEl(`${root} .panel-body`), events.length !== 0 && characterArray.length !== 0);
+                        
                         UI.fillShowItemSelector(
                             clearEl(characterSelector),
                             displayArray.map(name => ({ name, hidden: false }))
