@@ -44,9 +44,9 @@
         ]
     },
     "pagesLight" :[
-        "enter.js"   ,
-        "player.js",
-        "register.js"      ,
+        "serverSpecific/enter.js"   ,
+        "serverSpecific/player.js",
+        "serverSpecific/register.js"      ,
         "logs/about.js",
         "profiles/profileEditorCore.js"
     ],

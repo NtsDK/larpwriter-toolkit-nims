@@ -41,6 +41,8 @@ See the License for the specific language governing permissions and
         listen(getEl('disableHeadersCheckbox'), 'change', exports.refresh);
 
         getEl('hideAllPanelsCheckbox').checked = true;
+        
+        initPanelsArr();
 
         exports.content = getEl('briefingPreviewDiv');
     };
@@ -106,117 +108,119 @@ See the License for the specific language governing permissions and
         };
     }
 
-    state.panels = [{
-        name: 'storyRights',
-        load(data, callback) {
-            PermissionInformer.getEntityNamesArray('story', true, (err, userStoryNames) => {
-                if (err) { Utils.handleError(err); return; }
-                data.userStoryNamesMap = R.indexBy(R.prop('value'), userStoryNames);
-                callback();
-            });
-        },
-        make(el, data) {}
-    }, {
-        name: 'characterProfile',
-        load(data, callback) {
-            DBMS.getProfile('character', data.characterName, (err, profile) => {
-                if (err) { Utils.handleError(err); return; }
-                data.profile = profile;
-                callback();
-            });
-        },
-        make(el, data) {
-            const label = strFormat(getL10n('briefings-character-profile'), [data.characterName]);
-            addEl(el, makePanel(
-                makeText(label),
-                UI.makeProfileTable(state.characterProfileStructure, data.profile), getFlags().hideAllPanels
-            ));
-        }
-    }, {
-        name: 'playerProfile',
-        load(data, callback) {
-            DBMS.getProfileBinding('character', data.characterName, (err, binding) => {
-                if (err) { Utils.handleError(err); return; }
-                if (binding[1] === '') {
+    function initPanelsArr(){
+        state.panels = [{
+            name: 'storyRights',
+            load(data, callback) {
+                PermissionInformer.getEntityNamesArray('story', true, (err, userStoryNames) => {
+                    if (err) { Utils.handleError(err); return; }
+                    data.userStoryNamesMap = R.indexBy(R.prop('value'), userStoryNames);
                     callback();
-                } else {
-                    DBMS.getProfile('player', binding[1], (err2, playerProfile) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        data.playerProfile = playerProfile;
-                        // eslint-disable-next-line prefer-destructuring
-                        data.playerName = binding[1];
-                        callback();
-                    });
-                }
-            });
-        },
-        make(el, data) {
-            if (data.playerProfile) {
-                const label = strFormat(getL10n('briefings-player-profile'), [data.playerName]);
+                });
+            },
+            make(el, data) {}
+        }, {
+            name: 'characterProfile',
+            load(data, callback) {
+                DBMS.getProfile('character', data.characterName, (err, profile) => {
+                    if (err) { Utils.handleError(err); return; }
+                    data.profile = profile;
+                    callback();
+                });
+            },
+            make(el, data) {
+                const label = strFormat(getL10n('briefings-character-profile'), [data.characterName]);
                 addEl(el, makePanel(
-                    makeText(label),
-                    UI.makeProfileTable(state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
+                        makeText(label),
+                        UI.makeProfileTable(state.characterProfileStructure, data.profile), getFlags().hideAllPanels
                 ));
             }
-        }
-    }, {
-        name: 'inventory',
-        load(data, callback) {
-            DBMS.getAllInventoryLists(data.characterName, (err, allInventoryLists) => {
-                if (err) { Utils.handleError(err); return; }
-                data.allInventoryLists = allInventoryLists.sort(CommonUtils.charOrdAFactory(R.compose(R.toLower, R.prop('storyName'))));
-                callback();
-            });
-        },
-        make(el, data) {
-            addEl(el, makePanel(
-                makeText(`${getL10n('briefings-inventory')} (${data.allInventoryLists.length})`),
-                makeInventoryContent(
-                    data.allInventoryLists,
-                    data.characterName, data.userStoryNamesMap
-                ), getFlags().hideAllPanels
-            ));
-        }
-    }, {
-        name: 'groups',
-        load(data, callback) {
-            DBMS.getCharacterGroupTexts(data.characterName, (err, groupTexts) => {
-                if (err) { Utils.handleError(err); return; }
-                data.groupTexts = groupTexts;
-                callback();
-            });
-        },
-        make(el, data) {
-            addEl(el, makePanel(
-                makeText(`${getL10n('header-groups')} (${data.groupTexts.length})`),
-                makeGroupContent(data.groupTexts), getFlags().hideAllPanels
-            ));
-        }
-    }, {
-        name: 'relations',
-        load: Relations.load,
-        make(el, data) {
-            const label = `${getL10n('header-relations')} (${data.relationsSummary.relations.length})`;
-            const content = RelationsPreview.makeRelationsContent(
-                data, getFlags().isAdaptationsMode,
-                state.characterProfileStructure, exports.refresh
-            );
-            addEl(el, makePanel(makeText(label), content, getFlags().hideAllPanels));
-        }
-    }, {
-        name: 'stories',
-        load(data, callback) {
-            callback();
-        },
-        make(el, data) {
-            const flags = getFlags();
-            if (flags.isGroupingByStory) {
-                showEventsByStory(el, data.characterName, data.userStoryNamesMap, flags);
-            } else {
-                showEventsByTime(el, data.characterName, data.userStoryNamesMap, flags);
+        }, {
+            name: 'playerProfile',
+            load(data, callback) {
+                DBMS.getProfileBinding('character', data.characterName, (err, binding) => {
+                    if (err) { Utils.handleError(err); return; }
+                    if (binding[1] === '') {
+                        callback();
+                    } else {
+                        DBMS.getProfile('player', binding[1], (err2, playerProfile) => {
+                            if (err2) { Utils.handleError(err2); return; }
+                            data.playerProfile = playerProfile;
+                            // eslint-disable-next-line prefer-destructuring
+                            data.playerName = binding[1];
+                            callback();
+                        });
+                    }
+                });
+            },
+            make(el, data) {
+                if (data.playerProfile) {
+                    const label = strFormat(getL10n('briefings-player-profile'), [data.playerName]);
+                    addEl(el, makePanel(
+                            makeText(label),
+                            UI.makeProfileTable(state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
+                    ));
+                }
             }
-        }
-    }];
+        }, {
+            name: 'inventory',
+            load(data, callback) {
+                DBMS.getAllInventoryLists(data.characterName, (err, allInventoryLists) => {
+                    if (err) { Utils.handleError(err); return; }
+                    data.allInventoryLists = allInventoryLists.sort(CommonUtils.charOrdAFactory(R.compose(R.toLower, R.prop('storyName'))));
+                    callback();
+                });
+            },
+            make(el, data) {
+                addEl(el, makePanel(
+                        makeText(`${getL10n('briefings-inventory')} (${data.allInventoryLists.length})`),
+                        makeInventoryContent(
+                                data.allInventoryLists,
+                                data.characterName, data.userStoryNamesMap
+                        ), getFlags().hideAllPanels
+                ));
+            }
+        }, {
+            name: 'groups',
+            load(data, callback) {
+                DBMS.getCharacterGroupTexts(data.characterName, (err, groupTexts) => {
+                    if (err) { Utils.handleError(err); return; }
+                    data.groupTexts = groupTexts;
+                    callback();
+                });
+            },
+            make(el, data) {
+                addEl(el, makePanel(
+                        makeText(`${getL10n('header-groups')} (${data.groupTexts.length})`),
+                        makeGroupContent(data.groupTexts), getFlags().hideAllPanels
+                ));
+            }
+        }, {
+            name: 'relations',
+            load: Relations.load,
+            make(el, data) {
+                const label = `${getL10n('header-relations')} (${data.relationsSummary.relations.length})`;
+                const content = RelationsPreview.makeRelationsContent(
+                        data, getFlags().isAdaptationsMode,
+                        state.characterProfileStructure, exports.refresh
+                );
+                addEl(el, makePanel(makeText(label), content, getFlags().hideAllPanels));
+            }
+        }, {
+            name: 'stories',
+            load(data, callback) {
+                callback();
+            },
+            make(el, data) {
+                const flags = getFlags();
+                if (flags.isGroupingByStory) {
+                    showEventsByStory(el, data.characterName, data.userStoryNamesMap, flags);
+                } else {
+                    showEventsByTime(el, data.characterName, data.userStoryNamesMap, flags);
+                }
+            }
+        }];
+    }
 
     function onBuildContentFinish() {
         UI.initTextAreas(`${root} #briefingContent textarea`);
