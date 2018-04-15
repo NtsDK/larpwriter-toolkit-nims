@@ -135,7 +135,7 @@ gulp.task('html', function() {
     return gulp.src(htmls, {base : projectBase})
     .pipe(fileInclude({
       prefix: '@@',
-      basepath: './' + projectDir + '/partials/',
+      basepath: './' + projectDir + '/js/pages/',
       context: {
         MODE: isServer ? 'NIMS_Server' : 'Standalone',
         BASE_FILE_NAME: config.get( 'baseFileName' )
@@ -243,7 +243,7 @@ gulp.task('dist', gulp.series('clean',
                 'fontPlains','bsIconsPlains', 'faIconsPlains', 'tests','server')));
 gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
 
-var partials = [projectDir + "/partials/**/*.html"];
+var partials = [projectDir + "/js/pages/**/*.html"];
 
 gulp.task('watch', function() {
     
