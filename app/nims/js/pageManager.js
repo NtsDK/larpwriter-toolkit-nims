@@ -228,6 +228,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 state.currentView.refresh();
                 if (MODE === 'Standalone') {
                     addBeforeUnloadListener();
+//                    localAutoSave();
                 }
                 //                                runTests();
             });
@@ -291,4 +292,25 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             return message;
         };
     }
+    
+//    function localAutoSave() {
+//        if (!window.indexedDB) {
+//            Utils.alert("Ваш браузер не поддерживат стабильную версию IndexedDB. Такие-то функции будут недоступны");
+//            return;
+//        }
+//        
+//        let counter = 0;
+//        setInterval(() => {
+//            console.log(counter + 1);
+//            counter = (counter + 1) % 3;
+//        }, 1000);
+////        LocalBaseAPI.test();
+//        
+////        DBMS.getDatabase((err, database) => {
+////            if (err) { Utils.handleError(err); return; }
+////            
+////            LocalBaseAPI.test();
+////        });
+//    }
+    
 })(this.PageManager = {});
