@@ -65,6 +65,15 @@ See the License for the specific language governing permissions and
                         errors: valid2 ? [] : validate2.errors
                     };
                 }));
+                if (this.database.ManagementInfo) {
+                    const moduleName = 'ManagementInfo';
+                    const validate2 = validator.compile(schema.properties[moduleName]);
+                    const valid2 = validate2(this.database[moduleName]);
+                    errors2.push( {
+                        module: moduleName,
+                        errors: valid2 ? [] : validate2.errors
+                    });
+                }
             }
 
             const details = R.mapObjIndexed(arr => R.flatten(arr.map(R.prop('errors'))), R.groupBy(R.prop('module'), errors2));

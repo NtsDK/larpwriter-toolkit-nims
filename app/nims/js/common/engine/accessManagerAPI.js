@@ -71,10 +71,16 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.removeMaster = function (name, callback) {
+            const chain = [PC.isString(name), 
+                PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)),
+                PC.notEquals(name, this.database.ManagementInfo.admin)];
             PC.precondition(
-                PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), callback,
+                    PC.chainCheck(chain), callback,
                 () => {
                     delete this.database.ManagementInfo.UsersInfo[name];
+                    if(this.database.ManagementInfo.editor === name){
+                        this.database.ManagementInfo.editor = null;
+                    }
                     this.publishPermissionsUpdate();
                     callback();
                 }

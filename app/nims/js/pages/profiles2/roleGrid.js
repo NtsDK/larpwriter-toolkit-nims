@@ -34,6 +34,11 @@ See the License for the specific language governing permissions and
             if (err) { Utils.handleError(err); return; }
             groupingOrder = [];
             buttons = [];
+            
+            showEl(qe(`${root} .alert.no-character-profile`), data2.characterProfileStructure.length === 0);
+            showEl(qe(`${root} .alert.no-characters`), data2.profileData.length === 0);
+            
+            showEl(qe(`${root} > .container-fluid`), data2.profileData.length !== 0 && data2.characterProfileStructure.length !== 0);
 
             // hack - dynamically replace checkbox with enum
             const checkboxes = data2.characterProfileStructure.filter(el => el.type === 'checkbox').map(R.prop('name'));

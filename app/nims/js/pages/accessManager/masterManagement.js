@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
         });
 
         queryElEls(queryEl(root), '.adaptationRights').map(listen(R.__, 'click', changeAdaptationRightsMode));
-
+        
         exports.content = queryEl(root);
     };
 
