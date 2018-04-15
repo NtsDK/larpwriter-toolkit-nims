@@ -401,7 +401,10 @@ Utils.processError = function (callback) {
 Utils.handleErrorMsg = function (err) {
     const checkErrorType = R.curry((err2, name) => err2 instanceof Errors[name] || (err2.name && err2.name === name));
     if (R.keys(Errors).some(checkErrorType(err))) {
-        return strFormat(getL10n(err.messageId), err.parameters);
+        const params = err.parameters.map(val => {
+            return L10n.hasValue(val) ? L10n.getValue(val) : val;
+        });
+        return strFormat(getL10n(err.messageId), params);
     } else if (typeof err === 'object') {
         return err.message;
     }

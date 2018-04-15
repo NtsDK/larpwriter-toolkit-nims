@@ -61,7 +61,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.createProfile = function (type, characterName, callback) {
             PC.precondition(typeCheck(type), callback, () => {
                 const container = R.path(getPath(type), this.database);
-                PC.precondition(PC.createEntityCheck(characterName, R.keys(container)), callback, () => {
+                PC.precondition(PC.createEntityCheck2(characterName, R.keys(container), 'entity-living-name', `entity-of-${type}`), callback, () => {
                     const newCharacter = {
                         name: characterName
                     };

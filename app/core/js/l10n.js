@@ -89,6 +89,11 @@ See the License for the specific language governing permissions and
         if (value === undefined) console.log(`Value is not found: ${name}`);
         return value || `${name}:RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA`;
     };
+    
+    exports.hasValue = (name) => {
+        const value = state.dict[name];
+        return value !== undefined;
+    };
 
     exports.onL10nChange = (delegate) => {
         state.l10nDelegates.push(delegate);

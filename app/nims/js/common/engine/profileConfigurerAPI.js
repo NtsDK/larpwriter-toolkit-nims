@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
                 PC.isNumber(selectedIndex), itemTypeCheck(itemType)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 const container = R.path(getPath(type), this.database);
-                chain = [PC.createEntityCheck(name, container.map(R.prop('name'))), PC.isInRange(selectedIndex, 0, container.length)];
+                chain = [PC.createEntityCheck2(name, container.map(R.prop('name')), 'entity-lifeless-name', 'entity-of-profile-item'), PC.isInRange(selectedIndex, 0, container.length)];
                 PC.precondition(PC.chainCheck(chain), callback, () => {
                     const { value } = Constants.profileFieldTypes[itemType];
                     const profileItem = {

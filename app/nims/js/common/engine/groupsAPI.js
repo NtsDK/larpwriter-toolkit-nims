@@ -76,7 +76,7 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.createGroup = function (groupName, callback) {
-            PC.precondition(PC.createEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
+            PC.precondition(PC.createEntityCheck2(groupName, R.keys(this.database.Groups), 'entity-lifeless-name', 'entity-of-group'), callback, () => {
                 const newGroup = {
                     name: groupName,
                     masterDescription: '',

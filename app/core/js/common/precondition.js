@@ -77,6 +77,9 @@ See the License for the specific language governing permissions and
 
         exports.nameIsNotEmpty = R.curry(el =>
             () => (!R.equals('', el) ? null : ['errors-name-is-empty-string', [el]]));
+        
+        exports.nameIsNotEmpty2 = R.curry((el, nameType, entityTypeKey) =>
+            () => (!R.equals('', el) ? null : ['errors-name-is-empty-string2', [nameType, entityTypeKey]]));
 
         exports.isArray = R.curry(el =>
             () => (R.is(Array, el) ? null : ['errors-argument-is-not-an-array', [el]]));
@@ -109,6 +112,10 @@ See the License for the specific language governing permissions and
 
         exports.createEntityCheck = R.curry((entityName, entityList) =>
             exports.chainCheck([exports.isString(entityName), exports.nameIsNotEmpty(entityName),
+                exports.entityIsNotUsed(entityName, entityList)]));
+        
+        exports.createEntityCheck2 = R.curry((entityName, entityList, nameType, entityTypeKey) =>
+            exports.chainCheck([exports.isString(entityName), exports.nameIsNotEmpty2(entityName, nameType, entityTypeKey),
                 exports.entityIsNotUsed(entityName, entityList)]));
 
         exports.removeEntityCheck = R.curry((entityName, entityList) =>

@@ -48,7 +48,7 @@ See the License for the specific language governing permissions and
 
         // stories
         LocalDBMS.prototype.createStory = function (storyName, callback) {
-            PC.precondition(PC.createEntityCheck(storyName, R.keys(this.database.Stories)), callback, () => {
+            PC.precondition(PC.createEntityCheck2(storyName, R.keys(this.database.Stories), 'entity-lifeless-name', 'entity-of-story'), callback, () => {
                 this.database.Stories[storyName] = {
                     name: storyName,
                     story: '',

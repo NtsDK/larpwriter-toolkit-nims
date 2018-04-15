@@ -569,7 +569,7 @@ const setChecks = {
     },
     {
         func: 'createEvent',
-        args: ['testStory', 'testEventName', 'testEventText', 0],
+        args: ['testStory', 'testEventName', 0],
     },
     {
         func: 'addCharacterToEvent',
@@ -633,7 +633,7 @@ const setChecks = {
     },
     {
         func: 'createEvent',
-        args: ['testStory', 'testEventName', 'testEventText', 0],
+        args: ['testStory', 'testEventName', 0],
     },
     {
         func: 'addStoryCharacter',
@@ -685,11 +685,11 @@ const setChecks = {
     },
     {
         func: 'createEvent',
-        args: ['testStory', 'testEventName', 'testEventText', 0],
+        args: ['testStory', 'testEventName', 0],
     },
     {
         func: 'createEvent',
-        args: ['testStory', 'testEventName2', 'testEventText2', 1],
+        args: ['testStory', 'testEventName2', 1],
     },
     {
         func: 'moveEvent',
