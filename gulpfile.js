@@ -43,6 +43,7 @@ var styles = addPrefix(projectDir + "/style/", config.get('styles:customStyles')
 var libCoreStyles = addPrefix(coreDir + "/libs/", config.get('styles:libCore'));
 
 var libStyles = addPrefix(coreDir + "/libs/", config.get('styles:lib'));
+var pageStyles = [projectDir + "/js/pages/**/*.css"];
 
 var processStyles = function(styles, fileName, taskName, addSourcemaps) {
     return function(done){
@@ -59,11 +60,14 @@ var processStyles = function(styles, fileName, taskName, addSourcemaps) {
     }
 };
 
-gulp.task('styles:nims',    processStyles(styles,       "nims",     'styles:nims',      true));
-gulp.task('styles:libsCore',processStyles(libCoreStyles,"libsCore", 'styles:libsCore',  false));
-gulp.task('styles:libs',    processStyles(libStyles,    "libs",     'styles:libs',      false));
 
-gulp.task('styles', gulp.parallel('styles:libs','styles:nims', 'styles:libsCore'));
+
+gulp.task('styles:nims',        processStyles(styles,       "nims",         'styles:nims',      true));
+gulp.task('styles:libsCore',    processStyles(libCoreStyles,"libsCore",     'styles:libsCore',  false));
+gulp.task('styles:libs',        processStyles(libStyles,    "libs",         'styles:libs',      false));
+gulp.task('styles:pageStyles',  processStyles(pageStyles,   "pageStyles",   'styles:pageStyles',true ));
+
+gulp.task('styles', gulp.parallel('styles:libs','styles:nims', 'styles:libsCore', 'styles:pageStyles'));
 
 // js: libs, resources (l10n, templates), common, scripts (dbms, js root), pages, tests
 
@@ -256,6 +260,7 @@ gulp.task('watch', function() {
     gulp.watch(pagesLight, gulp.series('scripts:pagesLight'));
     gulp.watch(translations, gulp.series('scripts:translations'));
     gulp.watch(styles, gulp.series('styles:nims'));
+    gulp.watch(pageStyles, gulp.series('styles:pageStyles'));
     gulp.watch(htmls, gulp.series('html'));
     gulp.watch(partials, gulp.series('html'));
     gulp.watch(specs, gulp.series('tests'));
