@@ -178,6 +178,9 @@ body {
 .roleGridButton::before{
   content: "\f1ea";
 }
+.gearsButton::before{
+  content: "\f013";
+}
 .refreshButton::before{
   content: "\f2f1";
 }
