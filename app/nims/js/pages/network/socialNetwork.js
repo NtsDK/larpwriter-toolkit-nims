@@ -144,16 +144,16 @@ See the License for the specific language governing permissions and
             if (group.type === 'enum') {
                 state.groupLists[PROFILE_GROUP + group.name] = group.value.split(',').map((subGroupName, i) => {
                     state.groupColors[`${PROFILE_GROUP + group.name}.${subGroupName.trim()}`] =
-                        Constants.colorPalette[i];
+                        Constants.colorPalette[i+2];
                     return `${PROFILE_GROUP + group.name}.${subGroupName.trim()}`;
                 });
             } else if (group.type === 'checkbox') {
                 const trueName = constL10n(Constants.true);
                 const falseName = constL10n(Constants.false);
                 state.groupColors[`${PROFILE_GROUP + group.name}.${trueName}`] =
-                    Constants.colorPalette[group.value ? 0 : 1];
+                    Constants.colorPalette[group.value ? 0+2 : 1+2];
                 state.groupColors[`${PROFILE_GROUP + group.name}.${falseName}`] =
-                    Constants.colorPalette[group.value ? 1 : 0];
+                    Constants.colorPalette[group.value ? 1+2 : 0+2];
                 state.groupLists[PROFILE_GROUP + group.name] =
                     [`${PROFILE_GROUP + group.name}.${trueName}`, `${PROFILE_GROUP + group.name}.${falseName}`];
             } else {

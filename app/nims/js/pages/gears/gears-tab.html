@@ -7,21 +7,37 @@
           <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="">
               <h5 class="panel-title">
-                <a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="true" aria-controls="answerOne">
-                Инструкция
-                </a>
+                <a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="true" aria-controls="answerOne" l10n-id="gears-what-is-gear"></a>
               </h5>
             </div>
             <div id="answerOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="">
               <div class="panel-body">
-                <p>FAQ: Что такое шестерёнка? См. <a href="http://master.larp.ru/theory/gear.php">тут</a>, <a href="http://lib.rpg.ru/index.php/%D0%A8%D0%B5%D1%81%D1%82%D0%B5%D1%80%D0%B5%D0%BD%D0%BA%D0%B0_%D1%80%D0%BE%D0%BB%D0%B5%D0%B9">тут</a>, а ещё лучше <a href="https://www.mirf.ru/boards/karta-syuzheta">тут</a>.</p>
-                <p>Заполните таблицу в эксель как на <a data-toggle="collapse" href="#example-img">картинке</a>.</p>
-<!--                 <img class="collapse" id="example-img" src="excelExample.jpg" style="width: 100%;"> -->
-              
-                <p>Разверните панель <code>Данные</code>.</p>
-                <p>Скопируйте из Excel список узлов вида "название тип заметка".</p>
-                <p>Скопируйте из Excel список связей вида "узел1 действие узел2".</p>
-                <p>Нажмите <code>Нарисовать</code>.</p>
+                <div class="margin-bottom-16">
+                  <a href="http://master.larp.ru/theory/gear.php" l10n-id="gears-link1"></a>
+                </div>
+                <div class="margin-bottom-16">
+                  <a href="http://lib.rpg.ru/index.php/%D0%A8%D0%B5%D1%81%D1%82%D0%B5%D1%80%D0%B5%D0%BD%D0%BA%D0%B0_%D1%80%D0%BE%D0%BB%D0%B5%D0%B9" l10n-id="gears-link2"></a>
+                </div>
+                <div>
+                  <a href="https://www.mirf.ru/boards/karta-syuzheta" l10n-id="gears-link3"></a>
+                </div>
+                <div>
+                  <div l10n-id="gears-search"></div>
+                  <select class="search-node form-control" style=""></select>
+                </div>
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input class="form-check-input show-notes-checkbox" type="checkbox" value="">
+                    <span l10n-id="gears-show-notes"></span>
+                  </label>
+                </div>
+                <button class="clear-button btn btn-primary" l10n-id="gears-clear"></button>
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input class="form-check-input physics-enabled-checkbox" type="checkbox" value="">
+                    <span  l10n-id="gears-physics-enabled"></span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -29,34 +45,22 @@
           <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="">
               <h5 class="panel-title">
-                <a data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo">
-                Данные
+                <a data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo" l10n-id="gears-data">
                 </a>
               </h5>
             </div>
             <div id="answerTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="">
               <div class="panel-body">
                 <div>
-                  <div>Узлы</div>
+                  <div l10n-id="gears-nodes"></div>
                   <textarea class="nodesText form-control" style=""></textarea>
                 </div>
                 <div>
-                  <div>Связи</div>
+                  <div l10n-id="gears-edges"></div>
                   <textarea class="edgesText form-control" style=""></textarea>
                 </div>
-                <div>
-                  <div>Поиск</div>
-                  <select class="search-node form-control" style=""></select>
-                </div>
-                <div class="form-check">
-                  <label class="form-check-label">
-                    <input class="form-check-input show-notes-checkbox" type="checkbox" value="">
-                    Показать заметки
-                  </label>
-                </div>
                 <br>
-                <button class="draw-button btn btn-primary">Нарисовать</button><br>
-                <button class="clear-button btn btn-primary">Очистить</button>
+                <button class="draw-button btn btn-primary" l10n-id="gears-draw"></button><br>
               </div>
             </div>
           </div>
@@ -64,27 +68,21 @@
           <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="">
               <h5 class="panel-title">
-                <a data-toggle="collapse" data-parent="#faq" href="#answerThree" aria-expanded="false" aria-controls="answerThree">
-                Физика
+                <a data-toggle="collapse" data-parent="#faq" href="#answerThree" aria-expanded="false" aria-controls="answerThree" l10n-id="gears-physics">
                 </a>
               </h5>
             </div>
             <div id="answerThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="">
               <div class="panel-body">
-                <div class="form-check">
-                  <label class="form-check-label">
-                    <input class="form-check-input physics-enabled-checkbox" type="checkbox" value="">
-                    Физика включена
-                  </label>
+
+                <div class="form-group">
+                  <button class="physics-settings-button btn btn-primary" l10n-id="gears-physics-editor"></button>
                 </div>
                 <div class="form-group">
-                  <button class="physics-settings-button btn btn-primary">Редактор физики отображения</button>
-                </div>
-                <div class="form-group">
-                  <div>Свои настройки физики (копируются из редактора - нажмите <code>generate option</code>)</div>
+                  <div l10n-id="gears-custom-physics-settings"></div>
                   <textarea class="custom-physics-settings form-control" style=""></textarea>
                 </div>
-                <button class="custom-physics-settings-button btn btn-primary">Применить настройки</button>
+                <button class="custom-physics-settings-button btn btn-primary" l10n-id="gears-apply-custom-settings"></button>
               </div>
             </div>
           </div>
@@ -92,23 +90,22 @@
           <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="">
               <h5 class="panel-title">
-                <a data-toggle="collapse" data-parent="#faq" href="#answerFour" aria-expanded="false" aria-controls="answerFour">
-                Экспорт
+                <a data-toggle="collapse" data-parent="#faq" href="#answerFour" aria-expanded="false" aria-controls="answerFour" l10n-id="gears-export">
                 </a>
               </h5>
             </div>
             <div id="answerFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="">
               <div class="panel-body">
-                <a href="#" class="link get-image-button btn btn-primary" style="" download="cogs.png">Скачать картинку (вызовет перерисовку картинки)</a><br>
+                <a href="#" class="link get-image-button btn btn-primary" style="" download="cogs.png" l10n-id="gears-download-image"></a><br>
                 <div class="form-check">
                   <label class="form-check-label">
                     <input class="form-check-input big-picture-checkbox" type="checkbox" value="">
-                    Режим большого холста (3000px х 3000px)
+                    <span l10n-id="gears-big-picture-mode"></span>
                   </label>
                 </div>
-                <button class="download-button btn btn-primary">Скачать таблицу для Excel (CSV)</button><br>
-                <button class="download-json-button btn btn-primary">Скачать JSON</button><br>
-                <button class="download-graphml-button btn btn-primary">Скачать граф yEd (graphml)</button><br>
+                <button class="download-button btn btn-primary" l10n-id="gears-download-csv"></button><br>
+                <button class="download-json-button btn btn-primary" l10n-id="gears-download-json"></button><br>
+                <button class="download-graphml-button btn btn-primary" l10n-id="gears-download-yed"></button><br>
               </div>
             </div>
           </div>
@@ -118,7 +115,7 @@
   
       <div class="panel panel-default col-xs-9 height-100p">
         <div class="panel-body height-100p">
-          <div id="mynetwork" class=" height-100p">
+          <div class="mynetwork height-100p">
             <div class="vis-network" style="" tabindex="900">
               <canvas style="position: relative; touch-action: none; -moz-user-select: none; width: 100%; height: 100%;" ></canvas>
             </div>
@@ -126,38 +123,5 @@
         </div>
       </div>
     </div>
-  </div>
-  
-  <div id="network-popUp" class="hidable-popup">
-    <span id="operation">node</span> <br>
-    <div class="form-group hidden">
-      <input id="node-id" value="new value" />
-    </div>
-    <div class="form-group">
-      <input id="node-label" placeholder="Подпись" class="form-control"/>
-    </div>
-    <div class="form-group">
-      <input id="node-group" placeholder="Тип (группа)"  class="form-control"/>
-    </div>
-    <div class="form-group">
-      <textarea id="node-notes" placeholder="Заметки"  class="form-control"></textarea>
-    </div>
-    <button id="saveButton" class="btn btn-primary">Сохранить</button>
-    <button id="cancelButton" class="btn btn-primary">Отмена</button>
-  </div>
-
-  <div class="board-add-edge-popup board-popup hidden hidable-popup">
-    <div class="form-group">
-      <input class="add-edge-label-input form-control" placeholder="Подпись">
-    </div>
-    
-    <button class="save-edge-button btn btn-primary" l10n-id="common-ok">Сохранить</button>
-    <button class="cancel-add-edge-button btn btn-primary" l10n-id="common-cancel">Отмена</button>
-  </div>
-  
-  <div id="config" class="hidable-popup hidden">
-    <div id="configInner" >
-    </div>
-    <button class="close-settings-popup-button btn btn-primary" l10n-id="common-ok" style="float: right;">Закрыть</button>
   </div>
 </div>

@@ -12,6 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
 
-body {
-/*   background-color: red; */
+.gears-tab .big-picture {
+  overflow: auto !important;
+}
+
+.gears-tab .big-picture > canvas {
+  width: 3000px !important;
+  height: 3000px !important;
+}
+
+.gears-config-dialog{
+  margin: 30px auto 30px 30px;
 }

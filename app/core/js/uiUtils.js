@@ -44,9 +44,9 @@ See the License for the specific language governing permissions and
             if(focusable !== null){
                 setTimeout(() => focusable.focus(), 500);
             }
-            const onenterable = qee(body, '.onenterable');
-            if(onenterable !== null){
-                listenOnEnter(onenterable, onAction(el));
+            const onenterable = qees(body, '.onenterable');
+            if(onenterable.length !== 0){
+                onenterable.forEach(listenOnEnter(R.__, onAction(el)));
             }
         };
         el.hideDlg = () => $(el).modal('hide');
