@@ -217,6 +217,98 @@ See the License for the specific language governing permissions and
       state.network = new vis.Network(container, data, options);
       state.network.on('selectEdge', showEdgeLabelEditor);
       state.network.on('deselectEdge', hideEdgeLabelEditor);
+      state.network.on('dragEnd', function (params) {
+//          console.log('drag end')
+          console.log(exportNetwork())
+//          importNetwork(exportNetwork())
+      });
+    }
+    
+    function exportNetwork() {
+//        clearOutputArea();
+        const nodePositions = state.network.getPositions();
+        R.keys(nodePositions).map(id => state.nodesDataset.get(id))
+//        var nodes = objectToArray(state.network.getPositions());
+//        nodes.forEach(addConnections);
+//        return nodes;
+        // pretty print node data
+//        var exportValue = JSON.stringify(nodes, undefined, 2);
+//        exportArea.value = exportValue;
+//        resizeExportArea();
+    }
+    
+    function importNetwork(nodes) {
+//        var inputValue = exportArea.value;
+//        var inputData = JSON.parse(inputValue);
+
+        var data = {
+            nodes: getNodeData(nodes),
+            edges: getEdgeData(nodes)
+        }
+        
+        state.network.setData(data);
+
+//        network = new vis.Network(container, data, {});
+//
+//        resizeExportArea();
+    }
+    
+    function getNodeData(data) {
+        var networkNodes = [];
+
+        data.forEach(function(elem, index, array) {
+            networkNodes.push({id: elem.id, label: elem.id, x: elem.x, y: elem.y});
+        });
+
+        return new vis.DataSet(networkNodes);
+    }
+    
+    function getEdgeData(data) {
+        var networkEdges = [];
+
+        data.forEach(function(node) {
+            // add the connection
+            node.connections.forEach(function(connId, cIndex, conns) {
+                networkEdges.push({from: node.id, to: connId});
+                let cNode = getNodeById(data, connId);
+
+                var elementConnections = cNode.connections;
+
+                // remove the connection from the other node to prevent duplicate connections
+                var duplicateIndex = elementConnections.findIndex(function(connection) {
+                  return connection == node.id; // double equals since id can be numeric or string
+                });
+
+
+                if (duplicateIndex != -1) {
+                  elementConnections.splice(duplicateIndex, 1);
+                };
+          });
+        });
+
+        return new vis.DataSet(networkEdges);
+    }
+    
+    function getNodeById(data, id) {
+        for (var n = 0; n < data.length; n++) {
+            if (data[n].id == id) {  // double equals since id can be numeric or string
+              return data[n];
+            }
+        };
+
+        throw 'Can not find id \'' + id + '\' in data';
+    }
+    
+    function addConnections(elem, index) {
+        // need to replace this with a tree of the network, then get child direct children of the element
+        elem.connections = state.network.getConnectedNodes(index);
+    }
+    
+    function objectToArray(obj) {
+        return Object.keys(obj).map(function (key) {
+          obj[key].id = key;
+          return obj[key];
+        });
     }
 
     function showEdgeLabelEditor(params) {
