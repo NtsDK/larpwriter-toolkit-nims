@@ -48,6 +48,12 @@
     </div>
   </template>
   
+  <template class="move-slider-body">
+    <div class="form-group">
+      <select class="form-control move-slider-pos-select"></select> 
+    </div>
+  </template>
+  
   <template class="move-event-body">
     <div class="form-group">
       <select class="isStoryEditable eventPositionSelector movePositionSelector form-control"></select>
@@ -127,6 +133,21 @@
   
   <template class="config-inner-body">
     <div class="configInner" >
+    </div>
+  </template>
+  
+  <template class="create-slider-body">
+    <div class="form-group">
+      <label class="control-label" l10n-id="sliders-slider-name"></label>
+      <input class="slider-name form-control focusable onenterable"/>
+    </div>
+    <div class="form-group">
+      <label class="control-label" l10n-id="sliders-slider-top"></label>
+      <input class="slider-top form-control onenterable"/>
+    </div>
+    <div class="form-group">
+      <label class="control-label" l10n-id="sliders-slider-bottom"></label>
+      <input class="slider-bottom form-control"/>
     </div>
   </template>
   

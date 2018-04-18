@@ -181,6 +181,9 @@ body {
 .gearsButton::before{
   content: "\f013";
 }
+.slidersButton::before{
+  content: "\f1de";
+}
 .refreshButton::before{
   content: "\f2f1";
 }

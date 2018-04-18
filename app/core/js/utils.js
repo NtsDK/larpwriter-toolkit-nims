@@ -204,6 +204,10 @@ function clearEl(el) {
     return el;
 }
 
+function clearEls(els){
+    return els.map(clearEl)
+}
+
 function passEls(src, dst) {
     for (let i = 0; i < src.children.length; i++) {
         addEl(dst, src.children[i]);

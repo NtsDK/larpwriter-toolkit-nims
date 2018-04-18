@@ -27,34 +27,30 @@ See the License for the specific language governing permissions and
     
     exports.init = () => {
         state.addNodeDialog = UI.createModalDialog(root, updateNode, {
-                bodySelector: 'add-or-edit-node-body',
-                dialogTitle: 'gears-add-node',
-                actionButtonTitle: 'common-save',
-                onCancel: onNodeCancel
-            }
-        );
+            bodySelector: 'add-or-edit-node-body',
+            dialogTitle: 'gears-add-node',
+            actionButtonTitle: 'common-save',
+            onCancel: onNodeCancel
+        });
         
         state.editNodeDialog = UI.createModalDialog(root, updateNode, {
-                bodySelector: 'add-or-edit-node-body',
-                dialogTitle: 'gears-edit-node',
-                actionButtonTitle: 'common-save',
-                onCancel: onNodeCancel
-            }
-        );
+            bodySelector: 'add-or-edit-node-body',
+            dialogTitle: 'gears-edit-node',
+            actionButtonTitle: 'common-save',
+            onCancel: onNodeCancel
+        });
         
         state.renameEdgeDialog = UI.createModalDialog(root, renameEdge, {
-                bodySelector: 'modal-prompt-body',
-                dialogTitle: 'gears-rename-edge',
-                actionButtonTitle: 'common-save',
-            }
-        );
+            bodySelector: 'modal-prompt-body',
+            dialogTitle: 'gears-rename-edge',
+            actionButtonTitle: 'common-save',
+        });
         
         const configureNetworkDialog = UI.createModalDialog(root, (dialog) => () => dialog.hideDlg(), {
-                bodySelector: 'config-inner-body',
-                dialogTitle: 'gears-configure-network',
-                actionButtonTitle: 'common-close',
-            }
-        );
+            bodySelector: 'config-inner-body',
+            dialogTitle: 'gears-configure-network',
+            actionButtonTitle: 'common-close',
+        });
         
         addClass(qee(configureNetworkDialog, '.modal-dialog'), 'gears-config-dialog');
         
@@ -88,7 +84,7 @@ See the License for the specific language governing permissions and
                 options = JSON.parse(options);
             }catch(e){
                 console.error(e);
-                alert(l10n('error-on-settings-loading'));
+                Utils.alert(l10n('error-on-settings-loading'));
                 return;
             }
             state.network.setOptions(options);

@@ -145,7 +145,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Gears';
+                const firstTab = 'Sliders';
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
@@ -172,6 +172,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addView(state.containers, 'textSearch', 'TextSearch', { clazz: 'textSearchButton icon-button', tooltip: true });
                 addView(state.containers, 'roleGrid', 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
                 addView(state.containers, 'gears', 'Gears', { clazz: 'gearsButton icon-button', tooltip: true });
+                addView(state.containers, 'sliders', 'Sliders', { clazz: 'slidersButton icon-button', tooltip: true });
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 

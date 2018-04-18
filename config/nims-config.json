@@ -3,11 +3,31 @@
     "translationsPath" : "C:\\workspaces\\smtk-nims-translations\\nims",
     "resources": {
         "enabled" : true,
-        "files": ["templatesArr.js","genericTemplate.js","inventoryTemplate.js","templateByStory.js","templateByTime.js","textTemplate.js"]
+        "files": [
+            "templatesArr.js",
+            "genericTemplate.js",
+            "inventoryTemplate.js",
+            "templateByStory.js",
+            "templateByTime.js",
+            "textTemplate.js"
+        ]
     },
     "styles" : {
-        "customStyles":["common.css", "style.css", "icons.css", "experimental.css"],
-        "libCore": ["bootstrap.min.css", "jquery.datetimepicker.css", "select2.min.css", "vex-theme-default41.css", "vex41.css", "fontawesome-all.min.css"],
+        "customStyles":[
+            "common.css", 
+            "style.css", 
+            "icons.css", 
+            "experimental.css"
+        ],
+        "libCore": [
+            "bootstrap.min.css", 
+            "bootstrap-slider.min.css", 
+            "jquery.datetimepicker.css", 
+            "select2.min.css", 
+            "vex-theme-default41.css", 
+            "vex41.css", 
+            "fontawesome-all.min.css"
+        ],
         "lib" : ["vis.min.css"]
     },
     "scripts" : {
@@ -22,6 +42,7 @@
         "libsCore" : [
             "jquery-3.1.1.min.js",
             "bootstrap.min.js",
+            "bootstrap-slider.min.js",
             "jquery.datetimepicker.js",
             "ramda.min.js",
             "select2.min.js",
