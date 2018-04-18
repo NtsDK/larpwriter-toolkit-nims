@@ -36,6 +36,7 @@ See the License for the specific language governing permissions and
                 state.edgeCallback(edge);
                 state.edgeData = null;
                 state.edgeCallback = null;
+                storeData();
                 dialog.hideDlg();
             }
         }
@@ -56,7 +57,7 @@ See the License for the specific language governing permissions and
                 
                 state.nodeData = null;
                 state.nodeCallback = null;
-                
+                storeData();
                 dialog.hideDlg();
             }
         };
@@ -140,16 +141,24 @@ See the License for the specific language governing permissions and
         
         queryEl(`${root} .physics-enabled-checkbox`).checked = false;
         listen(queryEl(`${root} .physics-enabled-checkbox`), 'change', (event) => {
-            state.network.setOptions({
-                "physics": {
-                    "enabled": event.target.checked,
-                    "minVelocity": 0.75
-                }
-            })
+            DBMS.setGearsPhysicsEnabled(event.target.checked, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                state.network.setOptions({
+                    "physics": {
+                        "enabled": event.target.checked,
+                        "minVelocity": 0.75
+                    }
+                })
+            });
         });
         
         queryEl(`${root} .show-notes-checkbox`).checked = false;
-        listen(queryEl(`${root} .show-notes-checkbox`), 'change', exports.refresh);
+        listen(queryEl(`${root} .show-notes-checkbox`), 'change', (event) => {
+            DBMS.setGearsShowNotesEnabled(event.target.checked, (err) => {
+                if (err) { Utils.handleError(err); return; }
+                exports.refresh();
+            });
+        });
         
         queryEl(`${root} .big-picture-checkbox`).checked = false;
         listen(queryEl(`${root} .big-picture-checkbox`), 'change', (event) => {
@@ -163,12 +172,23 @@ See the License for the specific language governing permissions and
 //        state.edgesDataset.on('*', () => {
 //            updateEdgeTextArea();
 //        });
-        parseData();
+//        parseData();
         exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
-        drawNetwork();
+        DBMS.getAllGearsData((err, data) => {
+            if (err) { Utils.handleError(err); return; }
+            state.nodesDataset.clear();
+            state.nodesDataset.add(data.nodes);
+            state.edgesDataset.clear();
+            state.edgesDataset.add(data.edges);
+            
+            queryEl(`${root} .show-notes-checkbox`).checked = data.settings.showNotes;
+            queryEl(`${root} .physics-enabled-checkbox`).checked = data.settings.physicsEnabled;
+            
+            drawNetwork();
+        });
     };
     
     // create a network
@@ -291,16 +311,15 @@ See the License for the specific language governing permissions and
       state.network = new vis.Network(container, data, options);
       state.network.on('selectEdge', showEdgeLabelEditor);
 //      state.network.on('deselectEdge', hideEdgeLabelEditor);
-      state.network.on('dragEnd', function (params) {
-//          console.log('drag end')
-          console.log(exportNetwork())
-//          importNetwork(exportNetwork())
-      });
-      state.network.on('stabilized', function (params) {
-//          console.log('drag end')
-          console.log(exportNetwork())
-//          importNetwork(exportNetwork())
-      });
+      state.network.on('dragEnd', storeData);
+      state.network.on('stabilized', storeData);
+    }
+    
+    function storeData(){
+        DBMS.setGearsData(exportNetwork(), (err) => {
+            if (err) { Utils.handleError(err); return; }
+        });
+//        console.log(exportNetwork())
     }
     
     function exportNetwork() {
@@ -481,50 +500,50 @@ See the License for the specific language governing permissions and
         return str.split('\n').map(R.splitEvery(20)).map(R.join('\n')).join('\n');
     }
 
-    function parseData(){
-//      nodes = [];
-      let nodes = [];
-      let dictionary = {};
-      const nodesText = document.querySelector('.nodesText').value;
-      nodesText.split('\n').filter(el => el.trim() !== '').forEach((str, index) => {
-        let arr = str.split('\t');
-        dictionary[arr[0].toLowerCase().trim()] = index;
-        const label = makeLabel(arr[0], arr[2]);
-        nodes.push({
-          id: index,
-          label,
-          group: arr[1],
-          notes: arr[2],
-          name: arr[0],
-          shape: 'box'
-        })
-      });
-      
-      state.nodesDataset.clear();
-      state.nodesDataset.add(nodes);
-      
-//      edges = [];
-      let edges = [];
-      const edgesText = document.querySelector('.edgesText').value;
-      edgesText.split('\n').filter(el => el.trim() !== '').forEach((str, index) => {
-        let arr = str.split('\t');
-        
-        let from = arr[0].toLowerCase().trim();
-        let to = arr[2].toLowerCase().trim();
-        if(dictionary[from] !== undefined && dictionary[to] !== undefined){
-          edges.push({
-            from: dictionary[from],
-            to: dictionary[to],
-            label: arr[1],
-            arrows:'to',
-          })
-        }
-        
-      });
-      
-      state.edgesDataset.clear();
-      state.edgesDataset.add(edges);
-    }
+//    function parseData(){
+////      nodes = [];
+//      let nodes = [];
+//      let dictionary = {};
+//      const nodesText = document.querySelector('.nodesText').value;
+//      nodesText.split('\n').filter(el => el.trim() !== '').forEach((str, index) => {
+//        let arr = str.split('\t');
+//        dictionary[arr[0].toLowerCase().trim()] = index;
+//        const label = makeLabel(arr[0], arr[2]);
+//        nodes.push({
+//          id: index,
+//          label,
+//          group: arr[1],
+//          notes: arr[2],
+//          name: arr[0],
+//          shape: 'box'
+//        })
+//      });
+//      
+//      state.nodesDataset.clear();
+//      state.nodesDataset.add(nodes);
+//      
+////      edges = [];
+//      let edges = [];
+//      const edgesText = document.querySelector('.edgesText').value;
+//      edgesText.split('\n').filter(el => el.trim() !== '').forEach((str, index) => {
+//        let arr = str.split('\t');
+//        
+//        let from = arr[0].toLowerCase().trim();
+//        let to = arr[2].toLowerCase().trim();
+//        if(dictionary[from] !== undefined && dictionary[to] !== undefined){
+//          edges.push({
+//            from: dictionary[from],
+//            to: dictionary[to],
+//            label: arr[1],
+//            arrows:'to',
+//          })
+//        }
+//        
+//      });
+//      
+//      state.edgesDataset.clear();
+//      state.edgesDataset.add(edges);
+//    }
 
 
 

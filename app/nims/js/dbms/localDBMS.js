@@ -96,6 +96,7 @@ function makeLocalDBMS(fullVersion) {
         'storyAdaptationsAPI',
         'accessManagerAPI',
         'textSearchAPI',
+        'gearsAPI',
         'logAPI'].map(func);
 
     Logger.attachLogCalls(LocalDBMS, R, false);
