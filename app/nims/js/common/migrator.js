@@ -197,6 +197,23 @@ See the License for the specific language governing permissions and
 
                 data.Version = '0.6.2';
             }
+            if (data.Version === '0.6.2') {
+//                data.CharacterProfileStructure.forEach((item) => {
+//                    item.playerAccess = 'hidden';
+//                });
+//                data.PlayerProfileStructure.forEach((item) => {
+//                    item.playerAccess = 'hidden';
+//                });
+                data.Gears = {
+                    nodes: [],
+                    edges: [],
+                    settings: {
+                        physicsEnabled: false,
+                        showNotes: false,
+                    }
+                }
+                data.Version = '0.7.0';
+            }
             console.log(`data ${data}`);
 
 

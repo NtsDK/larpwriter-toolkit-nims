@@ -312,7 +312,16 @@ See the License for the specific language governing permissions and
         console.log(nodePositions);
         const nodes = state.nodesDataset.get();
         const edges = state.edgesDataset.get();
-        importNetwork(nodes, edges);
+        return {
+            nodes,
+            edges
+        };
+//        importNetwork({
+//            nodes,
+//            edges
+//        });
+        
+        
 //        console.log(state.nodesDataset.get());
 //        console.log(state.edgesDataset.get());
 //        const nodes = objectToArray(state.network.getPositions());
@@ -324,7 +333,8 @@ See the License for the specific language governing permissions and
 //        resizeExportArea();
     }
     
-    function importNetwork(nodes, edges) {
+    function importNetwork(data) {
+        const {nodes, edges} = data;
         state.nodesDataset.clear();
         state.edgesDataset.clear();
         state.nodesDataset.update(nodes);
@@ -519,6 +529,7 @@ See the License for the specific language governing permissions and
 
 
     function getImage(event){
+//      const data = exportNetwork(); 
       const canvas = document.querySelector("canvas");
       
       const context = canvas.getContext("2d");
@@ -532,6 +543,7 @@ See the License for the specific language governing permissions and
       const img    = canvas.toDataURL("image/png");
       const link = document.querySelector(".link");
       event.target.href = img;
+//      importNetwork(data);
       drawNetwork();
     }
 

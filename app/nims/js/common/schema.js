@@ -67,12 +67,13 @@ See the License for the specific language governing permissions and
                 Groups,
                 InvestigationBoard,
                 Settings: {},
+                Gears: {},
                 Relations,
                 ManagementInfo
             };
 
             schema.required = ['Meta', 'CharacterProfileStructure', 'PlayerProfileStructure', 'Version', 'Characters',
-                'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations'];
+                'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations', 'Gears'];
             schema.additionalProperties = false;
 
             schema.moduleList = R.keys(schema.properties);

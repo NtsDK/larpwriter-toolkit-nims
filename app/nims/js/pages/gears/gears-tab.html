@@ -7,10 +7,10 @@
           <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="">
               <h5 class="panel-title">
-                <a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="true" aria-controls="answerOne" l10n-id="gears-what-is-gear"></a>
+                <a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerOne" l10n-id="gears-what-is-gear"></a>
               </h5>
             </div>
-            <div id="answerOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="">
+            <div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="">
               <div class="panel-body">
                 <div class="margin-bottom-16">
                   <a href="http://master.larp.ru/theory/gear.php" l10n-id="gears-link1"></a>
@@ -21,28 +21,41 @@
                 <div>
                   <a href="https://www.mirf.ru/boards/karta-syuzheta" l10n-id="gears-link3"></a>
                 </div>
-                <div>
-                  <div l10n-id="gears-search"></div>
-                  <select class="search-node form-control" style=""></select>
-                </div>
-                <div class="form-check">
-                  <label class="form-check-label">
-                    <input class="form-check-input show-notes-checkbox" type="checkbox" value="">
-                    <span l10n-id="gears-show-notes"></span>
-                  </label>
-                </div>
-                <button class="clear-button btn btn-primary" l10n-id="gears-clear"></button>
-                <div class="form-check">
-                  <label class="form-check-label">
-                    <input class="form-check-input physics-enabled-checkbox" type="checkbox" value="">
-                    <span  l10n-id="gears-physics-enabled"></span>
-                  </label>
-                </div>
               </div>
             </div>
           </div>
           
           <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="">
+              <h5 class="panel-title">
+                <a data-toggle="collapse" data-parent="#faq" href="#answerFive" aria-expanded="true" aria-controls="answerFive" l10n-id="gears-settings">
+                </a>
+              </h5>
+            </div>
+            <div id="answerFive" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="">
+              <div class="panel-body">
+                <div class="margin-bottom-16">
+                  <label l10n-id="gears-search"></label>
+                  <select class="search-node form-control" style=""></select>
+                </div>
+                <div class="form-check margin-bottom-16">
+                  <input id="gears-show-notes-checkbox" class="form-check-input show-notes-checkbox hidden" type="checkbox" value="">
+                  <label class="form-check-label checkbox-label-icon common-checkbox"  for="gears-show-notes-checkbox" >
+                    <span l10n-id="gears-show-notes"></span>
+                  </label>
+                </div>
+                <div class="form-check margin-bottom-16">
+                  <input id="gears-physics-enabled-checkbox" class="form-check-input physics-enabled-checkbox hidden" type="checkbox" value="">
+                  <label for="gears-physics-enabled-checkbox" class="form-check-label checkbox-label-icon common-checkbox">
+                    <span  l10n-id="gears-physics-enabled"></span>
+                  </label>
+                </div>
+                <button class="clear-button btn btn-default fa-icon remove" l10n-title="gears-clear"></button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="panel panel-default hidden">
             <div class="panel-heading" role="tab" id="">
               <h5 class="panel-title">
                 <a data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo" l10n-id="gears-data">
@@ -65,7 +78,7 @@
             </div>
           </div>
           
-          <div class="panel panel-default">
+          <div class="panel panel-default hidden">
             <div class="panel-heading" role="tab" id="">
               <h5 class="panel-title">
                 <a data-toggle="collapse" data-parent="#faq" href="#answerThree" aria-expanded="false" aria-controls="answerThree" l10n-id="gears-physics">
@@ -96,16 +109,16 @@
             </div>
             <div id="answerFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="">
               <div class="panel-body">
-                <a href="#" class="link get-image-button btn btn-primary" style="" download="cogs.png" l10n-id="gears-download-image"></a><br>
-                <div class="form-check">
-                  <label class="form-check-label">
-                    <input class="form-check-input big-picture-checkbox" type="checkbox" value="">
+                <div class="form-check margin-bottom-8">
+                  <input id="gears-big-picture-checkbox" class="form-check-input big-picture-checkbox hidden" type="checkbox" value="">
+                  <label for="gears-big-picture-checkbox" class="form-check-label checkbox-label-icon common-checkbox">
                     <span l10n-id="gears-big-picture-mode"></span>
                   </label>
                 </div>
-                <button class="download-button btn btn-primary" l10n-id="gears-download-csv"></button><br>
-                <button class="download-json-button btn btn-primary" l10n-id="gears-download-json"></button><br>
-                <button class="download-graphml-button btn btn-primary" l10n-id="gears-download-yed"></button><br>
+                <a href="#" class="link get-image-button btn btn-default btn-reduced white-space-normal width-100p margin-bottom-16" style="" download="cogs.png" l10n-id="gears-download-image"></a><br>
+                <button class="download-button btn btn-default btn-reduced white-space-normal width-100p margin-bottom-8" l10n-id="gears-download-csv"></button><br>
+                <button class="download-json-button btn btn-default btn-reduced white-space-normal width-100p margin-bottom-8" l10n-id="gears-download-json"></button><br>
+                <button class="download-graphml-button btn btn-default btn-reduced white-space-normal width-100p margin-bottom-8" l10n-id="gears-download-yed"></button><br>
               </div>
             </div>
           </div>
