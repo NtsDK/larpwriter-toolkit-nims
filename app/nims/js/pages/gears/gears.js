@@ -25,63 +25,24 @@ See the License for the specific language governing permissions and
     state.nodesDataset = new vis.DataSet();
     state.edgesDataset = new vis.DataSet();
     
-    function renameEdge(dialog) {
-        return () => {
-            if(state.edgeData){
-                const toInput = qee(dialog, '.entity-input');
-                const label = toInput.value.trim();
-                const edge = state.edgeData;
-                edge.label = label;
-                toInput.value = '';
-                state.edgeCallback(edge);
-                state.edgeData = null;
-                state.edgeCallback = null;
-                storeData();
-                dialog.hideDlg();
-            }
-        }
-    }
-    function updateNode(dialog) {
-        return () => {
-            if( state.nodeData ){
-                const data = state.nodeData;
-                data.id = qee(dialog, '.node-id').value;
-                data.name = qee(dialog, '.node-name').value;
-                data.group = qee(dialog, '.node-group').value;
-                data.notes = qee(dialog, '.node-notes').value;
-                data.label = makeLabel(data.name, data.notes);
-                data.shape = 'box';
-                
-                state.nodeCallback(data);
-//                state.nodesDataset.update(data);
-                
-                state.nodeData = null;
-                state.nodeCallback = null;
-                storeData();
-                dialog.hideDlg();
-            }
-        };
-    }
-
     exports.init = () => {
-        state.addNodeDialog = UI.createModalDialog(root,
-                updateNode, {
+        state.addNodeDialog = UI.createModalDialog(root, updateNode, {
                 bodySelector: 'add-or-edit-node-body',
                 dialogTitle: 'gears-add-node',
                 actionButtonTitle: 'common-save',
+                onCancel: onNodeCancel
             }
         );
         
-        state.editNodeDialog = UI.createModalDialog(root,
-                updateNode, {
+        state.editNodeDialog = UI.createModalDialog(root, updateNode, {
                 bodySelector: 'add-or-edit-node-body',
                 dialogTitle: 'gears-edit-node',
                 actionButtonTitle: 'common-save',
+                onCancel: onNodeCancel
             }
         );
         
-        state.renameEdgeDialog = UI.createModalDialog(root,
-            renameEdge, {
+        state.renameEdgeDialog = UI.createModalDialog(root, renameEdge, {
                 bodySelector: 'modal-prompt-body',
                 dialogTitle: 'gears-rename-edge',
                 actionButtonTitle: 'common-save',
@@ -99,10 +60,10 @@ See the License for the specific language governing permissions and
         
         queryEl(`${root} .custom-physics-settings`).value = '';
         
-        document.querySelector('.nodesText').value = charExample;
-        setAttr(document.querySelector('.nodesText'),'rows', charExample.split('\n').length);
-        document.querySelector('.edgesText').value = edgesExample;
-        setAttr(document.querySelector('.edgesText'),'rows', edgesExample.split('\n').length);
+//        document.querySelector('.nodesText').value = charExample;
+//        setAttr(document.querySelector('.nodesText'),'rows', charExample.split('\n').length);
+//        document.querySelector('.edgesText').value = edgesExample;
+//        setAttr(document.querySelector('.edgesText'),'rows', edgesExample.split('\n').length);
         
         listen(qe(`${root} .draw-button`), 'click', exports.refresh);
         listen(qe(`${root} .get-image-button`), 'click', getImage);
@@ -111,12 +72,6 @@ See the License for the specific language governing permissions and
         listen(qe(`${root} .download-graphml-button`), 'click', downloadYED);
         listen(qe(`${root} .clear-button`), 'click', clearNetwork);
         
-//        listen(queryEl(`${root} .save-edge-button`), 'click', updateEdge);
-//        listenOnEnter(queryEl(`${root} .add-edge-label-input`), () => queryEl(`${root} .save-edge-button`).click());
-//        listen(queryEl(`${root} .cancel-add-edge-button`), 'click', cancel('.board-add-edge-popup'));
-        
-//        listen(queryEl(`${root} .close-settings-popup-button`), 'click', cancel(`${root} .config`));
-//        listen(queryEl(`${root} .physics-settings-button`), 'click', () => showPopup(`${root} .config`, true));
         listen(queryEl(`${root} .physics-settings-button`), 'click', () => configureNetworkDialog.showDlg());
         
         listen(queryEl(`${root} .search-node`), 'change', onNodeFocus);
@@ -166,26 +121,25 @@ See the License for the specific language governing permissions and
         });
         
         state.nodesDataset.on('*', () => {
-//            updateNodeTextArea();
             fillSearchSelect();
         });
-//        state.edgesDataset.on('*', () => {
-//            updateEdgeTextArea();
-//        });
-//        parseData();
         exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
         DBMS.getAllGearsData((err, data) => {
             if (err) { Utils.handleError(err); return; }
+            queryEl(`${root} .show-notes-checkbox`).checked = data.settings.showNotes;
+            queryEl(`${root} .physics-enabled-checkbox`).checked = data.settings.physicsEnabled;
+            
+            data.nodes.forEach(node => {
+                node.label = makeLabel(node.name, node.notes);
+            });
             state.nodesDataset.clear();
             state.nodesDataset.add(data.nodes);
             state.edgesDataset.clear();
             state.edgesDataset.add(data.edges);
             
-            queryEl(`${root} .show-notes-checkbox`).checked = data.settings.showNotes;
-            queryEl(`${root} .physics-enabled-checkbox`).checked = data.settings.physicsEnabled;
             
             drawNetwork();
         });
@@ -200,13 +154,6 @@ See the License for the specific language governing permissions and
         locales: Constants.visLocales,
         manipulation: {
             addNode: function (data, callback) {
-                
-//                qee(state.renameProfileItemDialog, '.entity-input').value = profileSettings.name;
-//                state.renameProfileItemDialog.fromName = profileSettings.name;
-//                state.renameProfileItemDialog.showDlg();                
-                
-//              state.
-//              // filling in the popup DOM elements
                 data.label = '';
                 data.name = '';
                 
@@ -219,20 +166,8 @@ See the License for the specific language governing permissions and
                 state.nodeCallback = callback;
                 
                 state.addNodeDialog.showDlg();
-//              document.getElementById('node-id').value = data.id;
-//              document.getElementById('node-label').value = data.name;
-//              document.getElementById('node-group').value = "";
-//              document.getElementById('node-notes').value = "";
-//              document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
-              
-//              document.getElementById('cancelButton').onclick = clearPopUp.bind();
-//              document.getElementById('network-popUp').style.display = 'block';
-//              document.getElementById('node-label').focus();
             },
             editNode: function (data, callback) {
-//                data.label = '';
-//                data.name = '';
-                
                 qee(state.editNodeDialog, '.node-id').value = data.id;
                 qee(state.editNodeDialog, '.node-name').value = data.name;
                 qee(state.editNodeDialog, '.node-group').value = data.group;
@@ -244,41 +179,29 @@ See the License for the specific language governing permissions and
                 }.bind(this);
                 
                 state.editNodeDialog.showDlg();
-//              // filling in the popup DOM elements
-//              document.getElementById('node-id').value = data.id;
-//              document.getElementById('node-label').value = data.name;
-//              document.getElementById('node-group').value = data.group;
-//              document.getElementById('node-notes').value = data.notes;
-//              document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
-//              document.getElementById('cancelButton').onclick = cancelEdit.bind(this,callback);
-//              document.getElementById('network-popUp').style.display = 'block';
-//              document.getElementById('node-label').focus();
             },
             addEdge: function (data, callback) {
-              data.arrows ='to';
-              if (data.from == data.to) {
-                const r = confirm(l10n('do-you-want-to-connect-node-to-itself'));
-                if (r == true) {
-                  callback(data);
-                  //updateTextAreas();
+                data.arrows ='to';
+                if (data.from == data.to) {
+                    Utils.confirm(l10n('do-you-want-to-connect-node-to-itself'), () => {
+                        callback(data);
+                    }, () => callback());
                 }
-              }
-              else {
-                callback(data);
-                //updateTextAreas();
-              }
+                else {
+                  callback(data);
+                }
             },
             editEdge:function (data, callback) {
-              callback(data);
-              //updateTextAreas();
+                callback(data);
+                storeData();
             },
             deleteNode:function (data, callback) {
-              callback(data);
-              //updateTextAreas();
+                callback(data);
+                storeData();
             },
             deleteEdge:function (data, callback) {
-              callback(data);
-              //updateTextAreas();
+                callback(data);
+                storeData();
             },
         },
         physics: {
@@ -310,46 +233,29 @@ See the License for the specific language governing permissions and
       };
       state.network = new vis.Network(container, data, options);
       state.network.on('selectEdge', showEdgeLabelEditor);
-//      state.network.on('deselectEdge', hideEdgeLabelEditor);
-      state.network.on('dragEnd', storeData);
-      state.network.on('stabilized', storeData);
+      state.network.on('dragEnd', (params) => storeData());
+      state.network.on('stabilized', (params) => storeData());
     }
     
-    function storeData(){
+    function storeData(callback){
         DBMS.setGearsData(exportNetwork(), (err) => {
             if (err) { Utils.handleError(err); return; }
+            if(callback) callback();
         });
-//        console.log(exportNetwork())
     }
     
     function exportNetwork() {
-//        clearOutputArea();
         state.network.storePositions();
         const nodePositions = state.network.getPositions();
-//        R.keys(nodePositions).map(id => state.nodesDataset.get(id))
         
         console.log(nodePositions);
-        const nodes = state.nodesDataset.get();
+        const nodes = R.clone(state.nodesDataset.get());
         const edges = state.edgesDataset.get();
+        nodes.forEach(node => delete node.color);
         return {
             nodes,
             edges
         };
-//        importNetwork({
-//            nodes,
-//            edges
-//        });
-        
-        
-//        console.log(state.nodesDataset.get());
-//        console.log(state.edgesDataset.get());
-//        const nodes = objectToArray(state.network.getPositions());
-//        nodes.forEach(addConnections);
-//        return nodes;
-        // pretty print node data
-//        const exportValue = JSON.stringify(nodes, undefined, 2);
-//        exportArea.value = exportValue;
-//        resizeExportArea();
     }
     
     function importNetwork(data) {
@@ -358,135 +264,17 @@ See the License for the specific language governing permissions and
         state.edgesDataset.clear();
         state.nodesDataset.update(nodes);
         state.edgesDataset.update(edges);
-//        const inputValue = exportArea.value;
-//        const inputData = JSON.parse(inputValue);
-
-//        const data = {
-//            nodes: getNodeData(nodes),
-//            edges: getEdgeData(nodes)
-//        }
-//        
-//        state.network.setData(data);
-
-//        network = new vis.Network(container, data, {});
-//
-//        resizeExportArea();
     }
-    
-//    function getNodeData(data) {
-//        const networkNodes = [];
-//
-//        data.forEach(function(elem, index, array) {
-//            networkNodes.push({id: elem.id, label: elem.id, x: elem.x, y: elem.y});
-//        });
-//
-//        return new vis.DataSet(networkNodes);
-//    }
-    
-//    function getEdgeData(data) {
-//        const networkEdges = [];
-//
-//        data.forEach(function(node) {
-//            // add the connection
-//            node.connections.forEach(function(connId, cIndex, conns) {
-//                networkEdges.push({from: node.id, to: connId});
-//                let cNode = getNodeById(data, connId);
-//
-//                const elementConnections = cNode.connections;
-//
-//                // remove the connection from the other node to prevent duplicate connections
-//                const duplicateIndex = elementConnections.findIndex(function(connection) {
-//                  return connection == node.id; // double equals since id can be numeric or string
-//                });
-//
-//
-//                if (duplicateIndex != -1) {
-//                  elementConnections.splice(duplicateIndex, 1);
-//                };
-//          });
-//        });
-//
-//        return new vis.DataSet(networkEdges);
-//    }
-    
-//    function getNodeById(data, id) {
-//        for (let n = 0; n < data.length; n++) {
-//            if (data[n].id == id) {  // double equals since id can be numeric or string
-//              return data[n];
-//            }
-//        };
-//
-//        throw 'Can not find id \'' + id + '\' in data';
-//    }
-//    
-//    function addConnections(elem, index) {
-//        // need to replace this with a tree of the network, then get child direct children of the element
-//        elem.connections = state.network.getConnectedNodes(index);
-//    }
-//    
-//    function objectToArray(obj) {
-//        return Object.keys(obj).map(function (key) {
-//          obj[key].id = key;
-//          return obj[key];
-//        });
-//    }
 
     function showEdgeLabelEditor(params) {
         if (params.edges.length !== 0 && params.nodes.length === 0) {
-//            listen(qee(row, '.rename'), 'click', () => {
             const edge = state.edgesDataset.get(params.edges[0]);
             qee(state.renameEdgeDialog, '.entity-input').value = edge.label || '';
-//                state.renameEdgeDialog.fromName = profileSettings.name;
-//            state.renameEdgeDialog.edge = edge;
             state.edgeData = edge;
             state.edgeCallback = (edge) => state.edgesDataset.update(edge);
             state.renameEdgeDialog.showDlg();
-//            });
-            
-//            const edge = state.edgesDataset.get(params.edges[0]);
-//            state.modifyArgs = {
-//                edge,
-//                callback(edge2) {
-//                    if (edge2) {
-//                        state.edgesDataset.update(edge2);
-//                    }
-//                },
-//                editEdge: true
-//            };
-//            queryEl(`${root} .add-edge-label-input`).value = edge.label || '';
-//            showPopup('.board-add-edge-popup', true);
-//            queryEl(`${root} .add-edge-label-input`).focus();
         }
     }
-//    function hideEdgeLabelEditor(params) {
-//        showPopup('.board-add-edge-popup', false);
-//    }
-
-//    function showPopup(selector, show) {
-//        setClassByCondition(queryEl(selector), 'hidden', !show);
-//    }
-
-    function clearPopUp() {
-//      document.getElementById('saveButton').onclick = null;
-//      document.getElementById('cancelButton').onclick = null;
-//      document.getElementById('network-popUp').style.display = 'none';
-    }
-
-    function cancelEdit(callback) {
-      clearPopUp();
-      callback(null);
-    }
-
-//    function saveData(data,callback) {
-//      data.id = document.getElementById('node-id').value;
-//      data.name = document.getElementById('node-label').value;
-//      data.group = document.getElementById('node-group').value;
-//      data.notes = document.getElementById('node-notes').value;
-//      data.label = makeLabel(data.name, data.notes);
-//      data.shape = 'box';
-//      clearPopUp();
-//      callback(data);
-//    }
 
     function makeLabel(name, notes){
       let label = name; 
@@ -500,55 +288,8 @@ See the License for the specific language governing permissions and
         return str.split('\n').map(R.splitEvery(20)).map(R.join('\n')).join('\n');
     }
 
-//    function parseData(){
-////      nodes = [];
-//      let nodes = [];
-//      let dictionary = {};
-//      const nodesText = document.querySelector('.nodesText').value;
-//      nodesText.split('\n').filter(el => el.trim() !== '').forEach((str, index) => {
-//        let arr = str.split('\t');
-//        dictionary[arr[0].toLowerCase().trim()] = index;
-//        const label = makeLabel(arr[0], arr[2]);
-//        nodes.push({
-//          id: index,
-//          label,
-//          group: arr[1],
-//          notes: arr[2],
-//          name: arr[0],
-//          shape: 'box'
-//        })
-//      });
-//      
-//      state.nodesDataset.clear();
-//      state.nodesDataset.add(nodes);
-//      
-////      edges = [];
-//      let edges = [];
-//      const edgesText = document.querySelector('.edgesText').value;
-//      edgesText.split('\n').filter(el => el.trim() !== '').forEach((str, index) => {
-//        let arr = str.split('\t');
-//        
-//        let from = arr[0].toLowerCase().trim();
-//        let to = arr[2].toLowerCase().trim();
-//        if(dictionary[from] !== undefined && dictionary[to] !== undefined){
-//          edges.push({
-//            from: dictionary[from],
-//            to: dictionary[to],
-//            label: arr[1],
-//            arrows:'to',
-//          })
-//        }
-//        
-//      });
-//      
-//      state.edgesDataset.clear();
-//      state.edgesDataset.add(edges);
-//    }
-
-
 
     function getImage(event){
-//      const data = exportNetwork(); 
       const canvas = document.querySelector("canvas");
       
       const context = canvas.getContext("2d");
@@ -562,38 +303,16 @@ See the License for the specific language governing permissions and
       const img    = canvas.toDataURL("image/png");
       const link = document.querySelector(".link");
       event.target.href = img;
-//      importNetwork(data);
       drawNetwork();
     }
 
     function clearNetwork(){
-//        Utils.confirm(getL10n('utils-new-base-warning'), () => {
-//            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), state.callback);
-//        });
-      const r = confirm(l10n('confirm-clearing'));
-      if (r == true) {
-        document.querySelector('.nodesText').value = '';
-        document.querySelector('.edgesText').value = '';
-        exports.refresh();
-      }
+        Utils.confirm(l10n('confirm-clearing'), () => {
+            state.nodesDataset.clear();
+            state.edgesDataset.clear();
+            storeData(exports.refresh);
+        });
     }
-
-//    function updateEdge() {
-//        const input = queryEl(`${root} .add-edge-label-input`);
-//        const label = input.value.trim();
-//        const { edge } = state.modifyArgs;
-//        edge.label = label;
-//        showPopup('.board-add-edge-popup', false);
-//        input.value = '';
-//        state.modifyArgs.callback(edge);
-//    }
-
-//    function cancel(selector) {
-//        return () => {
-//            showPopup(selector, false);
-//            state.modifyArgs.callback();
-//        };
-//    }
 
     function updateNodeTextArea(){
       document.querySelector('.nodesText').value = state.nodesDataset.map((node) => [node.name, node.group, node.notes].join('\t')).join('\n');
@@ -649,7 +368,7 @@ See the License for the specific language governing permissions and
       }).join('\n');
       
       const edges = state.edgesDataset.map(edge => {
-        return CommonUtils.strFormat(Constants.yedEdgeTmpl, [edge.id, edge.label, edge.from, edge.to]);
+        return CommonUtils.strFormat(Constants.yedEdgeTmpl, [edge.id, edge.label || '', edge.from, edge.to]);
       }).join('\n');
       const out = new Blob([CommonUtils.strFormat(Constants.yedGmlBase, [nodes, edges])], {
           type: 'text/xml;charset=utf-8;'
@@ -661,16 +380,49 @@ See the License for the specific language governing permissions and
         state.network.focus(event.target.value, Constants.snFocusOptions);
     }
 
-    var charExample = `Арагорн	персонаж	
-Бильбо	персонаж	Удачливый, старый
-Фродо	персонаж	Юркий, слабый
-кольцо	предмет	
-Назгул	персонаж	бессмертный`;
-
-    var edgesExample = `Фродо	несет	Кольцо
-Бильбо	ждет	Фродо
-Назгул	ищет	Фродо
-Фродо	убегает от	Назгул
-Арагорн	ищет	Назгул`;
-
+    function renameEdge(dialog) {
+        return () => {
+            if(state.edgeData){
+                const toInput = qee(dialog, '.entity-input');
+                const label = toInput.value.trim();
+                const edge = state.edgeData;
+                edge.label = label;
+                toInput.value = '';
+                state.edgeCallback(edge);
+                state.edgeData = null;
+                state.edgeCallback = null;
+                storeData();
+                dialog.hideDlg();
+            }
+        }
+    }
+    
+    function updateNode(dialog) {
+        return () => {
+            if( state.nodeData ){
+                const data = state.nodeData;
+                data.id = qee(dialog, '.node-id').value;
+                data.name = qee(dialog, '.node-name').value;
+                data.group = qee(dialog, '.node-group').value;
+                data.notes = qee(dialog, '.node-notes').value;
+                data.label = makeLabel(data.name, data.notes);
+                data.shape = 'box';
+                
+                state.nodeCallback(data);
+                
+                state.nodeData = null;
+                state.nodeCallback = null;
+                storeData(exports.refresh);
+                dialog.hideDlg();
+            }
+        };
+    }
+    
+    function onNodeCancel() {
+        if( state.nodeData ){
+            state.nodeCallback(null);
+            state.nodeData = null;
+            state.nodeCallback = null;
+        }
+    }
 })(this.Gears = {});

@@ -222,7 +222,7 @@ See the License for the specific language governing permissions and
         },
         gearsAPI: {
             getAllGearsData: null,
-            setGearsData: {},
+            setGearsData: null,
             setGearsPhysicsEnabled: {},
             setGearsShowNotesEnabled: {}
         }

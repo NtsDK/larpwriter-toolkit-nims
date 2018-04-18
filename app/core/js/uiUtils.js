@@ -50,6 +50,14 @@ See the License for the specific language governing permissions and
             }
         };
         el.hideDlg = () => $(el).modal('hide');
+        listen(qee(el, '.on-cancel-button'), 'click', () => {
+            el.hideDlg()
+            if(opts.onCancel) opts.onCancel();
+        });
+        listen(qee(el, '.on-close-button'), 'click', () => {
+            el.hideDlg()
+            if(opts.onCancel) opts.onCancel();
+        });
         addEl(qe(root), el);
         return el;
     };
