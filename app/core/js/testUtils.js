@@ -185,4 +185,45 @@ See the License for the specific language governing permissions and
 
         layouter.start();
     };
+    
+    exports.showDiffExample = () => {
+        addEl(queryEl('body'), queryEl('.show-diff-dialog'));
+        $(queryEl('.show-diff-dialog')).modal('show');
+        
+        DBMS.getLog(0, {
+            action:"setMetaInfo",
+            date:"",
+            params:"",
+            status:"OK",
+            user:""
+        }, (err, data) => {
+            if (err) { Utils.handleError(err); return; }
+            const el = clearEl(queryEl('.show-diff-dialog .container-fluid'));
+            
+            addEls(el, R.aperture(2, data.requestedLog).map(pair => {
+                const row = qmte('.diff-row-tmpl');
+                addEl(qee(row, '.first .user'), makeText(pair[0][1]));
+                addEl(qee(row, '.first .time'), makeText(new Date(pair[0][2]).format('yyyy/mm/dd h:MM')));
+                const firstText = JSON.parse(pair[0][4])[1];
+                addEl(qee(row, '.first .text'), makeText(firstText));
+                
+                addEl(qee(row, '.last .user'), makeText(pair[1][1]));
+                addEl(qee(row, '.last .time'), makeText(new Date(pair[1][2]).format('yyyy/mm/dd h:MM')));
+                const lastText = JSON.parse(pair[1][4])[1];
+                addEl(qee(row, '.last .text'), makeText(lastText));
+                
+                ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
+                ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
+//                const diff = JsDiff.diffWordsWithSpace(firstText, lastText);
+                const diff = JsDiff.diffWordsWithSpace(lastText, firstText);
+                const els = diff.map( part =>
+                    [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => {
+                    return addClasses(addEl(makeEl('span'), makeText(pair[0])), ['log-diff', pair[1]]);
+                });
+                addEls(qee(row, '.diff .text'), els);
+                
+                return row;
+            }));
+        })
+    };
 })(this.TestUtils = {});

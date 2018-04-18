@@ -981,3 +981,7 @@ a[tree-panel-toggler] h3{
   background-color: hsla(0,0%,100%,.8);
 }
 
+
+.show-diff-dialog .container-fluid .row:nth-child(odd) {
+    background-color: #dee2e4;
+}
