@@ -116,7 +116,7 @@ var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
 
 gulp.task('scripts:libsCore',       processScripts(libsCore,    "libsCore",     'scripts:libsCore',     false));
 gulp.task('scripts:libs',           processScripts(libs,        "libs",         'scripts:libs',         false));
-gulp.task('scripts:translations',   processScripts(translations,"translations", 'scripts:translations', false));
+//gulp.task('scripts:translations',   processScripts(translations,"translations", 'scripts:translations', false));
 gulp.task('scripts:resources',      processScripts(resources,   "resources",    'scripts:resources',    false));
 gulp.task('scripts:commonCore',     processScripts(commonCore,  "commonCore",   'scripts:commonCore',   true ));
 gulp.task('scripts:common',         processScripts(common,      "common",       'scripts:common',       true ));
@@ -124,8 +124,10 @@ gulp.task('scripts:scripts',        processScripts(scripts,     "scripts",      
 gulp.task('scripts:pages',          processScripts(pages,       "pages",        'scripts:pages',        true ));
 gulp.task('scripts:pagesLight',     processScripts(pagesLight,  "pagesLight",   'scripts:pagesLight',   true ));
 
-var scriptsArr = ['scripts:libsCore', 'scripts:libs','scripts:translations',
-                  'scripts:commonCore','scripts:common','scripts:scripts','scripts:pages','scripts:pagesLight']
+//var scriptsArr = ['scripts:libsCore', 'scripts:libs','scripts:translations',
+//                  'scripts:commonCore','scripts:common','scripts:scripts','scripts:pages','scripts:pagesLight']
+var scriptsArr = ['scripts:libsCore', 'scripts:libs',
+    'scripts:commonCore','scripts:common','scripts:scripts','scripts:pages','scripts:pagesLight']
 
 if(config.get('resources:enabled')){
     scriptsArr.push('scripts:resources');
@@ -147,6 +149,24 @@ gulp.task('html', function() {
     }))
     .pipe(htmlmin({collapseWhitespace : true}))
     .pipe(gulp.dest('dist'))
+});
+
+var translations2 = [translationsPath + "/l10n2/*.js"];
+var translations2All = [translationsPath + "/l10n2/**/*.js"];
+
+gulp.task('translations2', function() {
+    return gulp.src(translations2, {base : translationsPath})
+    .pipe(fileInclude({
+      prefix: '@@',
+      basepath: translationsPath + "/l10n2",
+//      context: {
+//        MODE: isServer ? 'NIMS_Server' : 'Standalone',
+//        BASE_FILE_NAME: config.get( 'baseFileName' )
+//      }
+    }))
+//    .pipe(htmlmin({collapseWhitespace : true}))
+    .pipe(concat('translations.min.js'))
+    .pipe(gulp.dest('dist/js'))
 });
 
 // plain copy
@@ -244,7 +264,7 @@ gulp.task('zip', function() {
 
 gulp.task('dist', gulp.series('clean', 
         gulp.parallel('styles','assets','scripts','html','corePlains','projectPlains',
-                'fontPlains','bsIconsPlains', 'faIconsPlains', 'tests','server')));
+                'fontPlains','bsIconsPlains', 'faIconsPlains', 'tests','server', 'translations2')));
 gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
 
 var partials = [projectDir + "/js/pages/**/*.html"];
@@ -262,6 +282,7 @@ gulp.task('watch', function() {
     gulp.watch(styles, gulp.series('styles:nims'));
     gulp.watch(pageStyles, gulp.series('styles:pageStyles'));
     gulp.watch(htmls, gulp.series('html'));
+    gulp.watch(translations2All, gulp.series('translations2'));
     gulp.watch(partials, gulp.series('html'));
     gulp.watch(specs, gulp.series('tests'));
     
