@@ -21,6 +21,9 @@ See the License for the specific language governing permissions and
 /* eslint-disable func-names,prefer-rest-params */
 
 const showNotification = true;
+const notificationTimeout = 2000;
+//const notificationTimeout = 10000;
+
 function makeRemoteDBMS(LocalDBMS) {
     const url = '/';
 
@@ -73,15 +76,17 @@ function makeRemoteDBMS(LocalDBMS) {
             removeClass(notificationBox, 'hidden');
             removeClass(notificationBox, 'operationOK');
             removeClass(notificationBox, 'operationFail');
-            addEl(notificationBox, makeText(`${name} ${JSON.stringify(data)}`));
+//            addEl(notificationBox, makeText(`${name} ${JSON.stringify(data)}`));
+            addEl(notificationBox, makeText(L10n.get('constant', 'saving')));
         }
 
         request.done((data2) => {
             if (showNotification) {
                 addClass(notificationBox, 'operationOK');
+                addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-success')));
                 setTimeout(() => {
                     addClass(notificationBox, 'hidden');
-                }, 2000);
+                }, notificationTimeout);
             }
             if (callback) callback();
         });
@@ -89,9 +94,10 @@ function makeRemoteDBMS(LocalDBMS) {
         request.fail((errorInfo, textStatus, errorThrown) => {
             if (showNotification) {
                 addClass(notificationBox, 'operationFail');
+                addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-fail')));
                 setTimeout(() => {
                     addClass(notificationBox, 'hidden');
-                }, 2000);
+                }, notificationTimeout);
             }
             try {
                 callback(JSON.parse(errorInfo.responseText));

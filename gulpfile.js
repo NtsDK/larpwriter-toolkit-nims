@@ -278,7 +278,7 @@ gulp.task('watch', function() {
     gulp.watch(common, gulp.series('server'));
     gulp.watch(pages, gulp.series('scripts:pages'));
     gulp.watch(pagesLight, gulp.series('scripts:pagesLight'));
-    gulp.watch(translations, gulp.series('scripts:translations'));
+//    gulp.watch(translations, gulp.series('scripts:translations'));
     gulp.watch(styles, gulp.series('styles:nims'));
     gulp.watch(pageStyles, gulp.series('styles:pageStyles'));
     gulp.watch(htmls, gulp.series('html'));
