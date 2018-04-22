@@ -73,7 +73,9 @@ See the License for the specific language governing permissions and
     exports.ownedEntityTypes = ['character', 'player', 'story', 'group'];
     exports.ownedEntityTypes2 = ['characters', 'players', 'stories', 'groups'];
 
-    exports.metaInfoList = ['name', 'date', 'preGameDate', 'description'];
+    exports.metaInfoStrings = ['name', 'description'];
+    
+    exports.metaInfoDates = ['date', 'preGameDate'];
 
     exports.profileTypes = ['character', 'player'];
 
@@ -94,7 +96,7 @@ See the License for the specific language governing permissions and
         type: 'text',
     }];
 
-    exports.groupEditableItems = ['masterDescription', 'doExport', 'characterDescription'];
+    exports.groupEditableItems = ['masterDescription', 'characterDescription'];
 
     exports.noGroup = 'noGroup';
 

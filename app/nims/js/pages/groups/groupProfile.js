@@ -128,14 +128,15 @@ See the License for the specific language governing permissions and
             case 'text':
                 // eslint-disable-next-line prefer-destructuring
                 value = event.target.value;
+                DBMS.updateGroupField(groupName, fieldName, value, Utils.processError());
                 break;
             case 'checkbox':
                 value = event.target.checked;
+                DBMS.doExportGroup(groupName, value, Utils.processError());
                 break;
             default:
                 throw new Error(`Unexpected type ${type}`);
             }
-            DBMS.updateGroupField(groupName, fieldName, value, Utils.processError());
         };
     }
 

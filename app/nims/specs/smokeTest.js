@@ -205,6 +205,10 @@ const setChecks = {
         args: ['testGroup2', 'masterDescription', '654654654'],
     },
     {
+        func: 'doExportGroup',
+        args: ['testGroup2', true],
+    },
+    {
         func: 'removeGroup',
         args: ['testGroup2'],
     },

@@ -300,16 +300,16 @@ See the License for the specific language governing permissions and
     }
 
     function updateName(event) {
-        DBMS.setMetaInfo('name', event.target.value, Utils.processError());
+        DBMS.setMetaInfoString('name', event.target.value, Utils.processError());
     }
     function updateTime(dp, input) {
-        DBMS.setMetaInfo('date', input.val(), Utils.processError());
+        DBMS.setMetaInfoDate('date', input.val(), Utils.processError());
     }
     function updatePreGameDate(dp, input) {
-        DBMS.setMetaInfo('preGameDate', input.val(), Utils.processError());
+        DBMS.setMetaInfoDate('preGameDate', input.val(), Utils.processError());
     }
     function updateDescr(event) {
-        DBMS.setMetaInfo('description', event.target.value, Utils.processError());
+        DBMS.setMetaInfoString('description', event.target.value, Utils.processError());
     }
 
     function customTooltips(tooltip) {

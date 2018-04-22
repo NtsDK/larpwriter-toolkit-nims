@@ -29,6 +29,17 @@ See the License for the specific language governing permissions and
         const groupCheck = (groupName, database) => PC.chainCheck([PC.isString(groupName),
             PC.entityExists(groupName, R.keys(database.Groups))]);
 
+//        [
+//            {
+//                name: 'groupName',
+//                check: [{
+//                    type: 'isString'
+//                }, {
+//                    type: 'entityExists',
+//                    arr: (db) => R.keys(db.Groups)
+//                }]
+//            }
+//        ]
         LocalDBMS.prototype.getGroup = function (groupName, callback) {
             PC.precondition(groupCheck(groupName, this.database), callback, () => {
                 callback(null, CU.clone(this.database.Groups[groupName]));
@@ -75,6 +86,19 @@ See the License for the specific language governing permissions and
             });
         };
 
+//  [
+//      {
+//          name: 'groupName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'stringIsNotEmpty'
+//          }, {
+//              type: 'entityIsNotUsed',
+//              arr: (db) => R.keys(db.Groups)
+//          }]
+//      }
+//  ]
         LocalDBMS.prototype.createGroup = function (groupName, callback) {
             PC.precondition(PC.createEntityCheck2(groupName, R.keys(this.database.Groups), 'entity-lifeless-name', 'entity-of-group'), callback, () => {
                 const newGroup = {
@@ -91,6 +115,28 @@ See the License for the specific language governing permissions and
             });
         };
 
+//  [
+//      {
+//          name: 'fromName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'entityExists',
+//              arr: (db) => R.keys(db.Groups)
+//          }]
+//      },
+//      {
+//          name: 'toName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'stringIsNotEmpty'
+//          }, {
+//              type: 'entityIsNotUsed',
+//              arr: (db) => R.keys(db.Groups)
+//          }]
+//      }
+//  ]
         LocalDBMS.prototype.renameGroup = function (fromName, toName, callback) {
             PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), callback, () => {
                 const data = this.database.Groups[fromName];
@@ -101,7 +147,18 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-
+        
+//  [
+//      {
+//          name: 'groupName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'entityExists',
+//              arr: (db) => R.keys(db.Groups)
+//          }]
+//      },
+//  ]
         LocalDBMS.prototype.removeGroup = function (groupName, callback) {
             PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
                 delete this.database.Groups[groupName];
@@ -110,6 +167,17 @@ See the License for the specific language governing permissions and
             });
         };
 
+//  [
+//      {
+//          name: 'groupName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'entityExists',
+//              arr: (db) => R.keys(db.Groups)
+//          }]
+//      },
+//  ]
         LocalDBMS.prototype.saveFilterToGroup = function (groupName, filterModel, callback) {
             PC.precondition(groupCheck(groupName, this.database), callback, () => {
                 const conflictTypes = PU.isFilterModelCompatibleWithProfiles({
@@ -124,14 +192,66 @@ See the License for the specific language governing permissions and
                 if (callback) callback();
             });
         };
-
+        
+//  [
+//      {
+//          name: 'groupName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'entityExists',
+//              arr: (db) => R.keys(db.Groups)
+//          }]
+//      },
+//      {
+//          name: 'fieldName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'elementFromEnum',
+//              arr: Constants.groupEditableItems
+//          }]
+//      },
+//      {
+//          name: 'value',
+//          check: [{
+//              type: 'isString'
+//          }]
+//      },
+//  ]
         LocalDBMS.prototype.updateGroupField = function (groupName, fieldName, value, callback) {
             const chain = PC.chainCheck([groupCheck(groupName, this.database),
                 PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
-                fieldName === 'doExport' ? PC.isBoolean(value) : PC.isString(value)]);
+                PC.isString(value)]);
             PC.precondition(chain, callback, () => {
                 const profileInfo = this.database.Groups[groupName];
                 profileInfo[fieldName] = value;
+                if (callback) callback();
+            });
+        };
+        
+//  [
+//      {
+//          name: 'groupName',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'entityExists',
+//              arr: (db) => R.keys(db.Groups)
+//          }]
+//      },
+//      {
+//          name: 'value',
+//          check: [{
+//              type: 'isBoolean'
+//          }]
+//      },
+//  ]
+        LocalDBMS.prototype.doExportGroup = function (groupName, value, callback) {
+            const chain = PC.chainCheck([groupCheck(groupName, this.database), PC.isBoolean(value)]);
+            PC.precondition(chain, callback, () => {
+                const profileInfo = this.database.Groups[groupName];
+                profileInfo['doExport'] = value;
                 if (callback) callback();
             });
         };

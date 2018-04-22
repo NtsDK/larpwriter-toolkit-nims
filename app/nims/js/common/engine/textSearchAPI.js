@@ -36,6 +36,30 @@ See the License for the specific language governing permissions and
         //            callback('test result');
         //        };
 
+//  [
+//      {
+//          name: 'searchStr',
+//          check: [{
+//              type: 'isString'
+//          }]
+//      },
+//      {
+//          name: 'textTypes',
+//          check: [{
+//              type: 'isArray',
+//              subtype: 'string'
+//          }, {
+//              type: 'elementsFromEnum',
+//              arr: (searchers) => R.keys(searchers)
+//          }]
+//      },
+//      {
+//          name: 'caseSensitive',
+//          check: [{
+//              type: 'isBoolean'
+//          }]
+//      },
+//  ]
         // eslint-disable-next-line func-names
         LocalDBMS.prototype.getTexts = function (searchStr, textTypes, caseSensitive, callback) {
             const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));

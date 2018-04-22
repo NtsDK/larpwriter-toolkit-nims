@@ -33,7 +33,47 @@ See the License for the specific language governing permissions and
         let _getBriefingData, _makeProfileInfo, _makeRelationsInfo, _makeCharInventory,
             _getProfileInfoNotEmpty, _getSimpleProfileInfoObject, _getSplittedProfileInfoObject, _getProfileInfoArray,
             _getStoriesInfo, _getEventsInfo, _getStoryEventsInfo, _makeEventInfo, _splitText;
-
+        
+//  [
+//      {
+//          name: 'selCharacters',
+//          check: [{
+//              type: 'either',
+//              or: [{
+//                  type: 'isNil'
+//              }, [{
+//                      type: 'isArray',
+//                      subType: 'string'
+//                  }, {
+//                      type: 'entitiesExist',
+//                      arr: (db) => R.keys(db.Characters)
+//                  }]
+//              ]
+//          }]
+//      },
+//      {
+//          name: 'selStories',
+//          check: [{
+//              type: 'either',
+//              or: [{
+//                  type: 'isNil'
+//              }, [{
+//                  type: 'isArray',
+//                  subType: 'string'
+//              }, {
+//                  type: 'entitiesExist',
+//                  arr: (db) => R.keys(db.Stories)
+//              }]
+//              ]
+//          }]
+//      },
+//      {
+//          name: 'exportOnlyFinishedStories',
+//          check: 
+//              type: 'isBoolean'
+//          }]
+//      }
+//  ]
         LocalDBMS.prototype.getBriefingData = function (
             selCharacters, selStories, exportOnlyFinishedStories,
             callback

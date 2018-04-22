@@ -50,10 +50,54 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getMetaInfo = function (callback) {
             callback(null, CU.clone(this.database.Meta));
         };
-
+//  [
+//      {
+//          name: 'name',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'elementFromEnum',
+//              arr: Constants.metaInfoStrings
+//          }]
+//      },
+//      {
+//          name: 'value',
+//          check: [{
+//              type: 'isString'
+//          }]
+//      },
+//  ]
         // overview
-        LocalDBMS.prototype.setMetaInfo = function (name, value, callback) {
-            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoList),
+        LocalDBMS.prototype.setMetaInfoString = function (name, value, callback) {
+            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoStrings),
+                PC.isString(value)]);
+            PC.precondition(chain, callback, () => {
+                this.database.Meta[name] = value;
+                if (callback) callback();
+            });
+        };
+        
+//  [
+//      {
+//          name: 'name',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'elementFromEnum',
+//              arr: Constants.metaInfoDates
+//          }]
+//      },
+//      {
+//          name: 'value',
+//          check: [{
+//              type: 'isString'
+//          }, {
+//              type: 'isDate',
+//          }]
+//      },
+//  ]
+        LocalDBMS.prototype.setMetaInfoDate = function (name, value, callback) {
+            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoDates),
                 PC.isString(value)]);
             PC.precondition(chain, callback, () => {
                 this.database.Meta[name] = value;

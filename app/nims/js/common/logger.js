@@ -45,7 +45,8 @@ See the License for the specific language governing permissions and
             getDatabase: { rewrite: true },
             setDatabase: { ignoreParams: true },
             getMetaInfo: null,
-            setMetaInfo: {}
+            setMetaInfoString: {},
+            setMetaInfoDate: {}
         },
         consistencyCheckAPI: {
             getConsistencyCheckResult: null
@@ -82,6 +83,7 @@ See the License for the specific language governing permissions and
             removeGroup: {},
             saveFilterToGroup: {},
             updateGroupField: {}, // text
+            doExportGroup: {},
             getProfileFilterInfo: null,
             getGroupCharacterSets: null
         },
