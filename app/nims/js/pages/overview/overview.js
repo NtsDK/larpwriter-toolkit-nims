@@ -79,8 +79,6 @@ See the License for the specific language governing permissions and
         state.descr = queryEl(`${root}.game-description-area`);
         state.descr.addEventListener('change', updateDescr);
 
-        UI.initTabPanel('overviewInfoButton', 'overviewContainer');
-
         exports.content = queryEl(root);
     };
 
@@ -210,6 +208,7 @@ See the License for the specific language governing permissions and
 
                 function makeContainer(obj) {
                     barDiv = makeEl('div');
+                    addClass(barDiv, 'col-xs-3');
                     addEl(barDiv, addEl(makeEl('h4'), makeText(obj.name)));
                     addEl(barDiv, obj.bar);
                     return barDiv;
