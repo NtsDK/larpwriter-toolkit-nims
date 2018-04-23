@@ -179,13 +179,22 @@ const getChecks = {
         args: ['Арагорн', ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'masterStory', 'eventOrigins',
             'eventAdaptations'], false],
     }],
+    gearsAPI:
+    [{
+        func: 'getAllGearsData',
+        args: [],
+    }],
 };
 
 const setChecks = {
     baseAPI:
     [{
-        func: 'setMetaInfo',
+        func: 'setMetaInfoString',
         args: ['name', '123'],
+    },
+    {
+        func: 'setMetaInfoDate',
+        args: ['preGameDate', "3018/01/14 00:00"],
     }],
     groupsAPI:
     [{
@@ -718,6 +727,19 @@ const setChecks = {
     {
         func: 'removeStory',
         args: ['testStory'],
+    }],
+    gearsAPI:
+    [{
+        func: 'setGearsPhysicsEnabled',
+        args: [true],
+    },
+    {
+        func: 'setGearsShowNotesEnabled',
+        args: [true],
+    },
+    {
+        func: 'setGearsData',
+        args: [{"nodes":[{"id":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","x":85,"y":-20,"label":"123\n\n2","name":"123","group":"1","notes":"2","shape":"box"},{"id":"698903f4-ac21-4fd1-abeb-de688cf8b463","x":-353,"y":-7,"label":"234\n\n345","name":"234","group":"2","notes":"345","shape":"box"}],"edges":[{"from":"698903f4-ac21-4fd1-abeb-de688cf8b463","to":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","arrows":"to","id":"4be956c5-0d6b-4e7e-8be8-9e23dc0fe0fb","label":"2233"}]}],
     }],
 };
 

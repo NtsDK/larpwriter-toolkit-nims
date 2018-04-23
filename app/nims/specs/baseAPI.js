@@ -48,7 +48,7 @@ describe('baseAPI', () => {
 
     //  'name', 'date', 'preGameDate', 'description'
     const setChecks = [{
-        func: 'setMetaInfo',
+        func: 'setMetaInfoString',
         args: ['name', '123'],
         getter: 'getMetaInfo',
         getterArgs: [],
@@ -57,7 +57,7 @@ describe('baseAPI', () => {
             done();
         }
     }, {
-        func: 'setMetaInfo',
+        func: 'setMetaInfoDate',
         args: ['date', '123'],
         getter: 'getMetaInfo',
         getterArgs: [],
@@ -66,7 +66,7 @@ describe('baseAPI', () => {
             done();
         }
     }, {
-        func: 'setMetaInfo',
+        func: 'setMetaInfoDate',
         args: ['preGameDate', '123'],
         getter: 'getMetaInfo',
         getterArgs: [],
@@ -75,7 +75,7 @@ describe('baseAPI', () => {
             done();
         }
     }, {
-        func: 'setMetaInfo',
+        func: 'setMetaInfoString',
         args: ['description', '123'],
         getter: 'getMetaInfo',
         getterArgs: [],
@@ -84,17 +84,17 @@ describe('baseAPI', () => {
             done();
         }
     }, {
-        func: 'setMetaInfo',
+        func: 'setMetaInfoString',
         args: [654, '123'],
         errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [654]
     }, {
-        func: 'setMetaInfo',
+        func: 'setMetaInfoString',
         args: ['65465654', '123'],
         errMessageId: 'errors-unsupported-type-in-list',
         errParameters: ['65465654']
     }, {
-        func: 'setMetaInfo',
+        func: 'setMetaInfoString',
         args: ['description', 123],
         errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [123]

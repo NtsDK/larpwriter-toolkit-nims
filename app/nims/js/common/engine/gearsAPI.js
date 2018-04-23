@@ -41,16 +41,6 @@ See the License for the specific language governing permissions and
             this.database.Gears.settings.showNotes = enabled;
             if (callback) callback();
         };
-//
-//        // overview
-//        LocalDBMS.prototype.setMetaInfo = function (name, value, callback) {
-//            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoList),
-//                PC.isString(value)]);
-//            PC.precondition(chain, callback, () => {
-//                this.database.Meta[name] = value;
-//                if (callback) callback();
-//            });
-//        };
     }
 
     callback2(gearsAPI);

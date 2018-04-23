@@ -1,4 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+/*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -178,6 +178,7 @@ See the License for the specific language governing permissions and
             },
             addEdge: function (data, callback) {
                 data.arrows ='to';
+                data.label ='';
                 if (data.from == data.to) {
                     Utils.confirm(l10n('do-you-want-to-connect-node-to-itself'), () => {
                         callback(data);

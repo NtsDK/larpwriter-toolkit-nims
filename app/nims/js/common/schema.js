@@ -44,6 +44,7 @@ See the License for the specific language governing permissions and
             const Groups = getGroupsSchema(base.CharacterProfileStructure, base.PlayerProfileStructure);
             const InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
             const Relations = getRelationsSchema(base.Characters, schema.definitions);
+            const Gears = getGearsSchema();
             let ManagementInfo = {};
             if (base.ManagementInfo) {
                 ManagementInfo = getManagementInfoSchema(
@@ -67,7 +68,7 @@ See the License for the specific language governing permissions and
                 Groups,
                 InvestigationBoard,
                 Settings: {},
-                Gears: {},
+                Gears,
                 Relations,
                 ManagementInfo
             };
@@ -230,6 +231,88 @@ See the License for the specific language governing permissions and
                     minItems: 5,
                     maxItems: 5
                 }
+            };
+        }
+        
+        function getGearsSchema() {
+            return {
+                type: 'object',
+                properties: {
+                    nodes: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                id: {
+                                    type: 'string'
+                                },
+                                x: {
+                                    type: 'number'
+                                },
+                                y: {
+                                    type: 'number'
+                                },
+                                label: {
+                                    type: 'string'
+                                },
+                                name: {
+                                    type: 'string'
+                                },
+                                group: {
+                                    type: 'string'
+                                },
+                                notes: {
+                                    type: 'string'
+                                },
+                                shape: {
+                                    type: 'string'
+                                },
+                            },
+                            required: ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'],
+                            additionalProperties: false
+                        },
+                    },
+                    edges: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                id: {
+                                    type: 'string'
+                                },
+                                from: {
+                                    type: 'string'
+                                },
+                                to: {
+                                    type: 'string'
+                                },
+                                label: {
+                                    type: 'string'
+                                },
+                                arrows: {
+                                    type: 'string'
+                                }
+                             },
+                            required: ['id', 'from', 'to', 'label', 'arrows'],
+                            additionalProperties: false
+                        },
+                    },
+                    settings: {
+                        type: 'object',
+                        properties: {
+                            physicsEnabled: {
+                                type: 'boolean'
+                            },
+                            showNotes: {
+                                type: 'boolean'
+                            }
+                        },
+                        required: ['physicsEnabled', 'showNotes'],
+                        additionalProperties: false
+                    },
+                },
+                required: ['nodes', 'edges', 'settings'],
+                additionalProperties: false
             };
         }
 
