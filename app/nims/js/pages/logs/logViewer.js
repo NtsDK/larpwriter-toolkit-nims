@@ -73,7 +73,8 @@ See the License for the specific language governing permissions and
         const addText = (text) => {
             addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(text))));
         };
-        addText(`${rowData[0]} ${prevData[0]}`);
+//        addText(`${rowData[0]} ${prevData[0]}`);
+        addText(`${rowData[0]}`);
         addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss'));
         addText(rowData[1]);
         addText(rowData[3]);
