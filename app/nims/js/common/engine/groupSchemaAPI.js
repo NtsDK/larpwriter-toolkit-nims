@@ -53,8 +53,8 @@ See the License for the specific language governing permissions and
                 case 'enum':
                 case 'checkbox':
                     return R.difference(
-                        R.keys(superItem.selectedOptions),
-                        R.keys(subItem.selectedOptions)
+                        R.keys(subItem.selectedOptions),
+                        R.keys(superItem.selectedOptions)
                     ).length === 0;
                 case 'number':
                     if (subItem.condition === 'greater' && superItem.condition === 'lesser') {
@@ -63,42 +63,63 @@ See the License for the specific language governing permissions and
                     if (subItem.condition === 'lesser' && superItem.condition === 'greater') {
                         return false;
                     }
-                    if (subItem.condition === 'equal') {
-                        if (superItem.condition !== 'equal') {
-                            return false;
-                        }
+                    if (subItem.condition === 'lesser' && superItem.condition === 'equal') {
+                        return false;
+                    }
+                    if (subItem.condition === 'greater' && superItem.condition === 'equal') {
+                        return false;
+                    }
+                    if (subItem.condition === 'equal' && superItem.condition === 'greater') {
+                        return subItem.num > superItem.num;
+                    }
+                    if (subItem.condition === 'equal' && superItem.condition === 'lesser') {
+                        return subItem.num < superItem.num;
+                    }
+                    
+                    if (subItem.condition === 'equal' && superItem.condition === 'equal') {
                         return subItem.num === superItem.num;
                     }
-                    if (subItem.condition === 'greater') {
-                        return subItem.num <= superItem.num;
-                    }
-                    if (subItem.condition === 'lesser') {
+                    if (subItem.condition === 'greater' && superItem.condition === 'greater') {
                         return subItem.num >= superItem.num;
+                    }
+                    if (subItem.condition === 'lesser' && superItem.condition === 'lesser') {
+                        return subItem.num <= superItem.num;
                     }
                     break;
                 case 'multiEnum':
+                    // fix rest problems
                     if (subItem.condition === 'every' && superItem.condition === 'some') {
+                        return false;
+                    }
+                    if (subItem.condition === 'every' && superItem.condition === 'equal') {
                         return false;
                     }
                     if (subItem.condition === 'some' && superItem.condition === 'every') {
                         return false;
                     }
-                    if (subItem.condition === 'equal') {
-                        if (superItem.condition !== 'equal') {
-                            return false;
-                        }
+                    if (subItem.condition === 'some' && superItem.condition === 'equal') {
+                        return false;
+                    }
+                    if (subItem.condition === 'equal' && superItem.condition === 'every') {
+                        return false;
+                    }
+                    if (subItem.condition === 'equal' && superItem.condition === 'some') {
+                        return false;
+                    }
+                    
+                    if (subItem.condition === 'every' && superItem.condition === 'every') {
                         return R.difference(
                             R.keys(superItem.selectedOptions),
                             R.keys(subItem.selectedOptions)
                         ).length === 0;
                     }
-                    if (subItem.condition === 'every') {
-                        return R.difference(
+                    if (subItem.condition === 'equal' && superItem.condition === 'equal') {
+                        return R.symmetricDifference(
                             R.keys(superItem.selectedOptions),
                             R.keys(subItem.selectedOptions)
                         ).length === 0;
                     }
-                    if (subItem.condition === 'some') {
+                    if (subItem.condition === 'some' && superItem.condition === 'some') {
                         return R.difference(
                             R.keys(subItem.selectedOptions),
                             R.keys(superItem.selectedOptions)
