@@ -20,11 +20,11 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names,prefer-rest-params */
 
-const showNotification = true;
-const notificationTimeout = 2000;
-//const notificationTimeout = 10000;
 
 function makeRemoteDBMS(LocalDBMS) {
+    const showNotification = true;
+    const notificationTimeout = 2000;
+    //const notificationTimeout = 10000;
     const url = '/';
 
     function RemoteDBMS() {

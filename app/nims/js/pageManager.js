@@ -92,6 +92,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         const LocalDBMS = makeLocalDBMS(true);
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
+            window.DBMS = makeLocalDBMSWrapper(window.DBMS);
             DBMS.setDatabase(BaseExample.data, (err) => {
                 if (err) { Utils.handleError(err); return; }
                 consistencyCheck((checkResult) => {

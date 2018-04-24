@@ -114,3 +114,73 @@ function makeLocalDBMS(fullVersion) {
 
     return LocalDBMS;
 }
+
+
+function makeLocalDBMSWrapper(dbms) {
+    const showNotification = true;
+    const notificationTimeout = 2000;
+    
+    function LocalDBMSWrapper(dbms) {
+        this.dbms = dbms;
+        this.clearSettings();
+    }
+    
+    Object.keys(dbms.__proto__).forEach((name) => {
+        LocalDBMSWrapper.prototype[name] = function () {
+            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is') || R.equals(name, 'log')) {
+                this.dbms[name].apply(this, arguments);
+            } else {
+                const callback = arguments[arguments.length - 1];
+                const arr = [];
+                for (let i = 0; i < arguments.length - 1; i++) {
+                    arr.push(arguments[i]);
+                }
+                
+                let notificationBox;
+                
+                if (showNotification) {
+                    notificationBox = clearEl(getEl('debugNotification'));
+                    removeClass(notificationBox, 'hidden');
+                    removeClass(notificationBox, 'operationOK');
+                    removeClass(notificationBox, 'operationFail');
+                    addEl(notificationBox, makeText(L10n.get('constant', 'saving')));
+                }
+                
+                arr.push(function(err) {
+                    if (showNotification) {
+                        if(err) {
+                            addClass(notificationBox, 'operationFail');
+                            addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-fail')));
+                            setTimeout(() => {
+                                addClass(notificationBox, 'hidden');
+                            }, notificationTimeout);
+                        } else {
+                            addClass(notificationBox, 'operationOK');
+                            addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-success')));
+                            setTimeout(() => {
+                                addClass(notificationBox, 'hidden');
+                            }, notificationTimeout);
+                        }
+                    }
+                    
+                    callback(err);
+                });
+                this.dbms[name].apply(this, arr);
+            }
+        };
+    });
+
+
+    LocalDBMSWrapper.prototype.clearSettings = function () {
+        this.Settings = {
+            BriefingPreview: {},
+            Stories: {},
+            ProfileEditor: {}
+        };
+    };
+
+    LocalDBMSWrapper.prototype.getSettings = function () {
+        return this.Settings;
+    };
+    return new LocalDBMSWrapper(dbms);
+}
