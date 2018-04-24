@@ -169,9 +169,10 @@ See the License for the specific language governing permissions and
                         inputItems[inputName].checked = group[inputName];
                     } else if (inputItems[inputName].type === 'container') {
                         if (inputName === 'filterModel') {
-                            const table = addClass(makeEl('table'), 'table');
-                            const tbody = addEls(makeEl('tbody'), group.filterModel.map(makeFilterItemString(filterConfiguration)));
-                            addEl(clearEl(inputItems[inputName]), addEl(table, tbody));
+                            const table = qmte(`${root} .group-filter-template`);
+                            addEls(qee(table, 'tbody'), group.filterModel.map(makeFilterItemString(filterConfiguration)));
+                            L10n.localizeStatic(table);
+                            addEl(clearEl(inputItems[inputName]), table);
                         } else if (inputName === 'characterList') {
                             const data = filterConfiguration.getProfileIds(group.filterModel);
                             const inputItem = clearEl(inputItems[inputName]);
@@ -198,33 +199,42 @@ See the License for the specific language governing permissions and
     // eslint-disable-next-line no-var,vars-on-top
     var makeFilterItemString = R.curry((filterConfiguration, filterItem) => {
         const displayName = getHeaderDisplayName(filterConfiguration, filterItem.name);
-        let condition, arr;
+        const source = filterConfiguration.getProfileItemSource(filterItem.name);
+        let condition, arr, value;
         switch (filterItem.type) {
         case 'enum':
-            condition = strFormat('{0}', [Object.keys(filterItem.selectedOptions).join(', ')]);
+            condition = getL10n(`groups-one-from`);
+            value = Object.keys(filterItem.selectedOptions).join(', ');
             break;
         case 'checkbox':
             arr = [];
             if (filterItem.selectedOptions.true) { arr.push(getL10n('constant-yes')); }
             if (filterItem.selectedOptions.false) { arr.push(getL10n('constant-no')); }
-            condition = strFormat('{0}', [arr.join(', ')]);
+            condition = getL10n(`groups-one-from`);
+            value = arr.join(', ');
             break;
         case 'number':
-            condition = strFormat('{0} {1}', [getL10n(`constant-${filterItem.condition}`), filterItem.num]);
+            condition = getL10n(`constant-${filterItem.condition}`);
+            value = filterItem.num;
             break;
         case 'multiEnum':
-            condition = strFormat('{0}: {1}', [getL10n(`constant-${filterItem.condition}`), Object.keys(filterItem.selectedOptions).join(', ')]);
+            condition = getL10n(`constant-${filterItem.condition}`);
+            value = Object.keys(filterItem.selectedOptions).join(', ');
             break;
         case 'text':
         case 'string':
-            condition = strFormat(getL10n('groups-text-contains'), [filterItem.regexString]);
+            condition = getL10n('groups-text-contains');
+            value = filterItem.regexString;
             break;
         default:
             throw new Error(`Unexpected type ${filterItem.type}`);
         }
-        const td1 = addEl(makeEl('td'), makeText(displayName));
-        const td2 = addEl(makeEl('td'), makeText(condition));
-        return addEls(makeEl('tr'), [td1, td2]);
+        const row = qmte(`${root} .group-filter-row-template`);
+        addEl(qee(row, '.profile-item'), makeText(displayName));
+        setAttr(qee(row, '.profile-item'), 'title', getL10n(`profile-filter-${source}`) + ', ' + getL10n(`constant-${filterItem.type}`));
+        addEl(qee(row, '.condition'), makeText(condition));
+        addEl(qee(row, '.value'), makeText(value));
+        return row;
     });
 
     function updateSettings(name) {

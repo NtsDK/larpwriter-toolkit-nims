@@ -47,6 +47,17 @@ FilterConfiguration.prototype.getProfileFilterItems = function () {
     return R.flatten(this.groupedProfileFilterItems.map(R.prop('profileFilterItems')));
 };
 
+FilterConfiguration.prototype.getProfileItemSource = function (name) {
+    let source;
+    this.groupedProfileFilterItems.forEach( (el) => {
+        const arr = el.profileFilterItems.map(R.prop('name'));
+        if(R.contains(name, arr)){
+            source = el.name;
+        }
+    });
+    return source;
+};
+
 FilterConfiguration.prototype.getGroupedProfileFilterItems = function () {
     return this.groupedProfileFilterItems;
 };
