@@ -53,11 +53,11 @@ See the License for the specific language governing permissions and
 
         listen(qe(`${root}.create.group`), 'click', () => createGroupDialog.showDlg());
         listen(qe(`${root}.rename.group`), 'click', () => {
-            qee(renameGroupDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value.trim();
+            qee(renameGroupDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value;
             renameGroupDialog.showDlg();
         });
         listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => 
-            queryEl(`${root}.save-entity-select`).value.trim(), exports.refresh));
+            queryEl(`${root}.save-entity-select`).value, exports.refresh));
 
         exports.content = queryEl(root);
     };
@@ -171,7 +171,7 @@ See the License for the specific language governing permissions and
     }
 
     function saveFilterToGroup() {
-        const groupName = queryEl(`${root}.save-entity-select`).value.trim();
+        const groupName = queryEl(`${root}.save-entity-select`).value;
         PermissionInformer.isEntityEditable('group', groupName, (err, isGroupEditable) => {
             if (err) { Utils.handleError(err); return; }
             if (!isGroupEditable) {
@@ -183,7 +183,7 @@ See the License for the specific language governing permissions and
     }
 
     function loadFilterFromGroup() {
-        const groupName = queryEl(`${root}.save-entity-select`).value.trim();
+        const groupName = queryEl(`${root}.save-entity-select`).value;
         DBMS.getGroup(groupName, (err, group) => {
             if (err) { Utils.handleError(err); return; }
             const conflictTypes =
@@ -534,7 +534,7 @@ See the License for the specific language governing permissions and
     function renameGroup(selector) {
         return dialog => () => {
             const toInput = qee(dialog, '.entity-input');
-            const fromName = queryEl(selector).value.trim();
+            const fromName = queryEl(selector).value;
             const toName = toInput.value.trim();
 
             DBMS.renameGroup(fromName, toName, (err) => {

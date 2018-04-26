@@ -94,14 +94,14 @@ See the License for the specific language governing permissions and
     };
 
     // eslint-disable-next-line no-var,vars-on-top
-    var onDragStart = (event) => {
+    var onDragStart = function (event){
         console.log(`onDragStart ${this.item}`);
         event.dataTransfer.setData('data', JSON.stringify({ item: this.item, order: getAttr(this, 'order') }));
         event.dataTransfer.effectAllowed = 'move';
     };
 
     // eslint-disable-next-line no-var,vars-on-top
-    var onDrop = (event) => {
+    var onDrop = function (event) {
         console.log(`onDrop ${this.item}${event.dataTransfer.getData('data')}`);
         if (event.stopPropagation) {
             event.stopPropagation(); // stops the browser from redirecting.
@@ -110,7 +110,7 @@ See the License for the specific language governing permissions and
     };
 
     // eslint-disable-next-line no-var,vars-on-top
-    var allowDrop = (event) => {
+    var allowDrop = function (event) {
         console.log(`allowDrop ${this.item}`);
         event.preventDefault();
     };

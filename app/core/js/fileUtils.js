@@ -20,10 +20,11 @@ See the License for the specific language governing permissions and
     exports.init = (callback) => {
         state.callback = callback;
     };
-
+    
     exports.makeNewBase = () => {
         Utils.confirm(getL10n('utils-new-base-warning'), () => {
             DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), state.callback);
+//            TestUtils.addGroupTestingData();
         });
     };
 

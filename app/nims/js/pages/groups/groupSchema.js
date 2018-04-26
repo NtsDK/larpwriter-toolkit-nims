@@ -29,7 +29,8 @@ See the License for the specific language governing permissions and
     exports.refresh = () => {
         DBMS.getGroupSchemas((err, schemas) => {
 //            redrawSchema(schemas.theory);
-            redrawSchema2(schemas.theory);
+            redrawSchema2(schemas.theory, 'theory');
+            redrawSchema2(schemas.practice, 'practice');
         });
     };
 
@@ -46,9 +47,9 @@ See the License for the specific language governing permissions and
         state.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
     }
     
-    function redrawSchema2(graphData) {
-        clearEl(queryEl(`${rootTab} svg`));
-        const svg = d3.select(`${rootTab} svg`);
+    function redrawSchema2(graphData, className) {
+        clearEl(queryEl(`${rootTab} svg.${className}`));
+        const svg = d3.select(`${rootTab} svg.${className}`);
         const svgGroup = svg.append('g');
         const root = svgGroup.append('g');
 
@@ -78,6 +79,8 @@ See the License for the specific language governing permissions and
         const name2Node = obj => ({
             id: nodeDict[obj.id],
             name: obj.id,
+            title: obj.title,
+            label: obj.label,
             width: nodeWidth,
             height: nodeHeight
         });
@@ -135,17 +138,21 @@ See the License for the specific language governing permissions and
             })
             .attr('width', nodeWidth)
             .attr('height', nodeHeight)
+            .attr('title', 'link')
             .attr('rx', 5)
             .attr('ry', 5)
             .attr('x', 0)
             .attr('y', 0);
+        
+        node.append('title').text(d => d.title)
 
         node.append('text')
             .attr('x', nodeWidth / 2)
             .attr('y', nodeHeight / 2)
             .attr('alignment-baseline', 'middle')
             .attr('text-anchor', 'middle')
-            .text(d => d.name)
+//            .text(d => d.name)
+            .text(d => d.label)
             .attr('font-size', '4px');
 
         // ports

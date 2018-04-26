@@ -91,16 +91,37 @@ See the License for the specific language governing permissions and
                     if (subItem.condition === 'every' && superItem.condition === 'some') {
                         return false;
                     }
-                    if (subItem.condition === 'every' && superItem.condition === 'equal') {
-                        return false;
-                    }
                     if (subItem.condition === 'some' && superItem.condition === 'every') {
                         return false;
                     }
-                    if (subItem.condition === 'some' && superItem.condition === 'equal') {
+                    
+                    if (subItem.condition === 'every' && superItem.condition === 'equal') {
+//                        return R.keys(subItem.selectedOptions).length === 0;
+//                          if(R.keys(subItem.selectedOptions).length === 0){
+//                              return true;
+//                          }
+//                        return R.difference(
+//                            R.keys(subItem.selectedOptions),
+//                            R.keys(superItem.selectedOptions)
+//                        ).length === 0;
                         return false;
                     }
                     if (subItem.condition === 'equal' && superItem.condition === 'every') {
+                        return R.difference(
+                            R.keys(superItem.selectedOptions),
+                            R.keys(subItem.selectedOptions)
+                        ).length === 0;
+//                        if(R.keys(subItem.selectedOptions).length === 0){
+//                            return true;
+//                        }
+//                        return R.difference(
+//                            R.keys(subItem.selectedOptions),
+//                            R.keys(superItem.selectedOptions)
+//                        ).length === 0;
+                        return false;
+                    }
+                    
+                    if (subItem.condition === 'some' && superItem.condition === 'equal') {
                         return false;
                     }
                     if (subItem.condition === 'equal' && superItem.condition === 'some') {
@@ -108,6 +129,12 @@ See the License for the specific language governing permissions and
                     }
                     
                     if (subItem.condition === 'every' && superItem.condition === 'every') {
+                        if(R.keys(superItem.selectedOptions).length === 0){
+                            return false;
+                        }
+                        if(R.keys(subItem.selectedOptions).length === 0){
+                            return true;
+                        }
                         return R.difference(
                             R.keys(superItem.selectedOptions),
                             R.keys(subItem.selectedOptions)

@@ -226,4 +226,93 @@ See the License for the specific language governing permissions and
             }));
         })
     };
+    
+    const getAllSubsets = theArray => theArray.reduce((subsets, value) => 
+        subsets.concat(subsets.map(set => [value,...set])),[[]]);
+    
+    exports.addGroupTestingData = () => {
+        DBMS.createProfileItem('character', 'text', 'text', 0, () => '');
+        DBMS.createProfileItem('character', 'string', 'string', 0, () => '');
+        DBMS.createProfileItem('character', 'checkbox', 'checkbox', 0, () => '');
+        DBMS.createProfileItem('character', 'number', 'number', 0, () => '');
+        DBMS.createProfileItem('character', 'enum', 'enum', 0, () => '');
+        DBMS.createProfileItem('character', 'multiEnum', 'multiEnum', 0, () => '');
+        
+        DBMS.updateDefaultValue("character","enum","1,2,3", () => '');
+        DBMS.updateDefaultValue("character","multiEnum","1,2,3,4", () => '');
+        
+        
+        const makeChar = (name, profileItem, value) => {
+            DBMS.createProfile("character", name, () => '');
+            DBMS.updateProfileField("character", name, profileItem, profileItem, value, () => '');
+        }
+        
+        const makeGroup = (name, profileItem, obj) => {
+            DBMS.createGroup(name, () => '');
+            DBMS.saveFilterToGroup(name, [R.merge(obj, {"type":profileItem,"name":"profile-" + profileItem})], () => '');
+        }
+//        
+//        
+//        const enumValues = [1,2,3];
+//        enumValues.map(value => makeChar('char enum ' + value, 'enum', String(value)));
+//        getAllSubsets(enumValues).map( arr => {
+//            const obj = arr.reduce( (acc, val) => {
+//                acc[String(val)] = true;
+//                return acc;
+//            }, {});
+//            makeGroup('group enum ' + arr.join(','), 'enum', {selectedOptions: obj});
+//        });
+//        
+//        const multiEnumConditions = ['every','equal','some'];
+        // bug in condition combination 
+//        ['every']
+//        ['every','equal']
+//        ['every','some'] ...
+        const multiEnumValues = [1,2,3];
+        const multiEnumValues2 = [1,2,3,4];
+        const multiEnumConditions = ['every','equal'];
+        getAllSubsets(multiEnumValues2).map(value => makeChar('char multiEnum ' + value.join(','), 'multiEnum', String(value.join(','))));
+        multiEnumConditions.map(condition => {
+            getAllSubsets(multiEnumValues).map( arr => {
+                const obj = arr.reduce( (acc, val) => {
+                    acc[String(val)] = true;
+                    return acc;
+                }, {});
+                makeGroup('group multiEnum ' + condition + ' ' + arr.join(','), 'multiEnum', {selectedOptions: obj, condition});
+            });
+        });
+//        
+//        
+//        const numbers = [0,1,2,3,4];
+//        const subNumbers = [1,2,3];
+//        const numberConditions = ['greater','equal','lesser'];
+//        numbers.map(value => makeChar('char number ' + value, 'number', (value)));
+//        numberConditions.map(condition => {
+//            subNumbers.map( num => {
+//                makeGroup('group number ' + condition + ' ' + num, 'number', {num, condition});
+//            });
+//        });
+//        
+//        const checkboxes = [true, false];
+//        checkboxes.map(value => makeChar('char checkbox ' + value, 'checkbox', value));
+//        getAllSubsets(checkboxes).map( arr => {
+//            const obj = arr.reduce( (acc, val) => {
+//                acc[String(val)] = true;
+//                return acc;
+//            }, {});
+//            makeGroup('group checkbox ' + arr.join(','), 'checkbox', {selectedOptions: obj});
+//        });
+//        
+//        const chars = ['a','b','c','d'];
+//        const subChars = ['a','b','c'];
+//        getAllSubsets(chars).map(value => makeChar('char string ' + value.join(''), 'string', String(value.join(''))));
+//        getAllSubsets(chars).map(value => makeChar('char text ' + value.join(''), 'text', String(value.join(''))));
+//        
+//        getAllSubsets(subChars).map( arr => {
+//            makeGroup('group string ' + arr.join(''), 'string', {regexString: arr.join('')});
+//        });
+//        getAllSubsets(subChars).map( arr => {
+//            makeGroup('group text ' + arr.join(''), 'text', {regexString: arr.join('')});
+//        });
+    }
 })(this.TestUtils = {});

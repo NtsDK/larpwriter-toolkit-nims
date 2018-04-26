@@ -128,7 +128,7 @@ function makeLocalDBMSWrapper(dbms) {
     Object.keys(dbms.__proto__).forEach((name) => {
         LocalDBMSWrapper.prototype[name] = function () {
             if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is') || R.equals(name, 'log')) {
-                this.dbms[name].apply(this, arguments);
+                this.dbms[name].apply(this.dbms, arguments);
             } else {
                 const callback = arguments[arguments.length - 1];
                 const arr = [];
@@ -165,7 +165,7 @@ function makeLocalDBMSWrapper(dbms) {
                     
                     callback(err);
                 });
-                this.dbms[name].apply(this, arr);
+                this.dbms[name].apply(this.dbms, arr);
             }
         };
     });
