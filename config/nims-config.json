@@ -73,7 +73,7 @@
     ],
     "serverPages": ["nims.html","index.html","player.html"],
     "standalonePages": ["nims.html"],
-    "baseFileName" : "nims-base",
+    "baseFileName" : "nims",
     "fonts":[],
     "bsIcons": [
         "glyphicons-halflings-regular.eot", 

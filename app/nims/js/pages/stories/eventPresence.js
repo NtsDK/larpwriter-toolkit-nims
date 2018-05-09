@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
     const root = '#eventPresenceDiv ';
 
     exports.init = () => {
-        listen(getEl('eventPresenceSelector'), 'change', UI.showSelectedEls('-dependent'));
+        listen(getEl('eventPresenceSelector'), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
         exports.content = queryEl(root);
     };
 
@@ -84,13 +84,14 @@ See the License for the specific language governing permissions and
     };
 
     function appendTableHeader(table, characterArray) {
-        const tr = makeEl('tr');
-
-        rAddEl(rAddEl(makeText(getL10n('stories-event')), makeEl('th')), tr);
-        characterArray.forEach((characterName, i) => {
-            rAddEl(rAddEl(makeText(characterName), rAddClass(`${i}-dependent`, makeEl('th'))), tr);
+        const eventName = addEl(makeEl('th'), makeText(getL10n('stories-event')));
+        const els = characterArray.map((characterName, i) => {
+            const th = addEl(makeEl('th'), makeText(characterName));
+            addClass(th, `dependent`);
+            setAttr(th, 'dependent-index', i);
+            return th;
         });
-        table.appendChild(tr);
+        addEl(table, addEls(makeEl('tr'), R.concat([eventName], els)));
     }
 
     function appendTableInput(table, event, i, characterArray) {
@@ -99,12 +100,12 @@ See the License for the specific language governing permissions and
         td.appendChild(makeText(event.name));
         tr.appendChild(td);
 
-        characterArray.forEach((character, j) => {
-            td = addClass(makeEl('td'), 'vertical-aligned-td');
-            addClass(td, `${j}-dependent`);
-            const input = makeEl('input');
-            addClass(input, 'isStoryEditable');
-            input.type = 'checkbox';
+        addEls(tr, characterArray.map((character, j) => {
+            const td = qmte(`${root} .event-presence-cell`);
+            addClass(td, `dependent`);
+            setAttr(td, 'dependent-index', j);
+            const input = qee(td, 'input');
+            const label = qee(td, 'label');
             if (event.characters[character]) {
                 input.checked = true;
             }
@@ -113,17 +114,23 @@ See the License for the specific language governing permissions and
             input.characterName = character;
             input.hasText = event.characters[character] !== undefined && event.characters[character].text !== '';
             input.addEventListener('change', onChangeCharacterCheckbox);
-
+            
+            const span = qee(td, 'span');
+            if(event.characters[character] !== undefined){
+                if(event.characters[character].ready){
+                    addClass(span, 'finished');
+                    setAttr(span, 'title', L10n.get('adaptations', 'adaptation-finished'));
+                } else if(input.hasText) {
+                    addClass(span, 'in-progress');
+                    setAttr(span, 'title', L10n.get('adaptations', 'adaptation-in-progress'));
+                }
+            }
+            
             const id = i + character;
             setAttr(input, 'id', id);
-            addClass(input, 'hidden');
-            addEl(td, input);
-            const label = addClass(makeEl('label'), 'checkbox-label checkbox-label-icon');
             setAttr(label, 'for', id);
-            addEl(td, label);
-
-            tr.appendChild(td);
-        });
+            return td;
+        }));
 
         table.appendChild(tr);
     }

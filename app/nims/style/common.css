@@ -333,6 +333,22 @@ input[selector-filter]{
   font-weight: 500;
   content: "\f0c8";
 }
+
+.checkbox-label-icon span:before {
+  font-size: 12px;
+}
+
+.checkbox-label-icon span.in-progress:before {
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 900;
+  content: "\f110";
+}
+.checkbox-label-icon span.finished:before {
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 900;
+  content: "\f11e";
+}
+
 .radio-label-icon:before {
   font-family: Font Awesome\ 5 Free;
   font-weight: 500;

@@ -118,15 +118,45 @@ See the License for the specific language governing permissions and
         setAttr(selector, 'size', counter);
     };
 
-    exports.showSelectedEls = classKey => (event) => {
+//    exports.showSelectedEls = classKey => (event) => {
+//        const t1 = performance.now();
+//        const el = event.target;
+//        let els, i, j;
+//        for (i = 0; i < el.options.length; i += 1) {
+//            els = getEls(classKey + i);
+//            for (j = 0; j < els.length; j++) {
+//                hideEl(els[j], !el.options[i].selected);
+//            }
+//        }
+//        console.log('showSelectedEls time ' + (performance.now() - t1) + ' ms');
+//    };
+//    
+//    exports.showSelectedEls2 = (root, classKey) => (event) => {
+//        const t1 = performance.now();
+//        const el = event.target;
+//        let els, i, j;
+//        for (i = 0; i < el.options.length; i += 1) {
+//            els = queryEls(root + ' .' + classKey + i);
+//            for (j = 0; j < els.length; j++) {
+//                hideEl(els[j], !el.options[i].selected);
+//            }
+//        }
+//        console.log('showSelectedEls2 time ' + (performance.now() - t1) + ' ms');
+//    };
+    
+    exports.showSelectedEls3 = (root, classKey, attr) => (event) => {
+        const t1 = performance.now();
         const el = event.target;
-        let els, i, j;
+        let i, j;
+        const map = {};
         for (i = 0; i < el.options.length; i += 1) {
-            els = getEls(i + classKey);
-            for (j = 0; j < els.length; j++) {
-                hideEl(els[j], !el.options[i].selected);
-            }
+            map[i] = el.options[i].selected;
         }
+        const els = queryEls(root + ' .' + classKey);
+        els.forEach(el2 => {
+            showEl(el2, map[getAttr(el2, attr)]);
+        });
+        console.log('showSelectedEls3 time ' + (performance.now() - t1) + ' ms');
     };
 
     exports.initSelectorFilters = () => {

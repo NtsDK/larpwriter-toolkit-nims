@@ -43,9 +43,6 @@ const addClasses = R.curry((o, c) => {
     return o;
 });
 
-const rAddClass = R.curry((c, o) => addClass(o, c));
-
-
 const hasClass = R.curry((o, c) => {
     const re = new RegExp(`(^|\\s)${c}(\\s|$)`, 'g');
     return (re.test(o.className));
@@ -156,12 +153,6 @@ const makeOpt = function (label) {
     addEl(option, (makeText(label)));
     return option;
 };
-
-const rAddEl = R.curry((child, parent) => {
-    parent.appendChild(child);
-    return parent;
-});
-
 
 const setAttr = R.curry((el, name, value) => {
     el.setAttribute(name, value);

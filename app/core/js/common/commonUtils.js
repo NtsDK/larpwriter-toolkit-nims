@@ -111,6 +111,23 @@ See the License for the specific language governing permissions and
         exports.colorPattern = /^#[0-9A-Fa-f]{6}$/;
 
         exports.isColor = str => exports.colorPattern.test(str);
+        
+        const illegalRe = /[\/\?<>\\:\*\|":]/g;
+        const controlRe = /[\x00-\x1f\x80-\x9f]/g;
+        const reservedRe = /^\.+$/;
+        const windowsReservedRe = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
+        const windowsTrailingRe = /[\. ]+$/;
+
+        exports.sanitizeStr2FileName = (input, replacement) => {
+            replacement = replacement || '';
+            var sanitized = input
+                .replace(illegalRe, replacement)
+                .replace(controlRe, replacement)
+                .replace(reservedRe, replacement)
+                .replace(windowsReservedRe, replacement)
+                .replace(windowsTrailingRe, replacement);
+            return sanitized.substring(0, 255);
+        }
     }
 
     callback(CommonUtils);

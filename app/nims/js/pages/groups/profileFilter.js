@@ -35,7 +35,7 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-rename',
         });
 
-        listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls('-dependent'));
+        listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
         
 //        Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
 //        listen queryEl(`${root}.save-entity-select`)
@@ -167,7 +167,7 @@ See the License for the specific language governing permissions and
         const dataArrays = makePrintData();
         addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
         addEls(clearEl(queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
-        UI.showSelectedEls('-dependent')({ target: queryEl(`${root}.profile-item-selector`) });
+        UI.showSelectedEls3(root, 'dependent', 'dependent-index')({ target: queryEl(`${root}.profile-item-selector`) });
     }
 
     function saveFilterToGroup() {
@@ -362,7 +362,8 @@ See the License for the specific language governing permissions and
                 throw new Error(`Unexpected valueInfo.type: ${valueInfo.type}`);
             }
             const td = addEl(setClassByCondition(makeEl('td'), 'lightGrey', value === undefined), makeText(displayValue));
-            addClasses(td, [`${i}-dependent`, valueInfo.type === 'number' ? 'text-align-right' : 'text-align-left']);
+            addClasses(td, [`dependent-${i}`, 'dependent', valueInfo.type === 'number' ? 'text-align-right' : 'text-align-left']);
+            setAttr(td, 'dependent-index', i);
             return td;
         }));
     }
@@ -371,7 +372,8 @@ See the License for the specific language governing permissions and
         return addEls(makeEl('tr'), profileItemNames.map((elem, i) => {
             const td = addEls(makeEl('th'), [makeText(`${elem.displayName} `)]);
             td.info = elem.name;
-            addClasses(td, [`${i}-dependent`, 'sorting', elem.type === 'number' ? 'text-align-right' : 'text-align-left']);
+            addClasses(td, [`dependent-${i}`, 'dependent', 'sorting', elem.type === 'number' ? 'text-align-right' : 'text-align-left']);
+            setAttr(td, 'dependent-index', i);
             listen(td, 'click', onSortChange);
             return td;
         }));

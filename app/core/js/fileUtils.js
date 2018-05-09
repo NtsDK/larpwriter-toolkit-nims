@@ -52,7 +52,9 @@ See the License for the specific language governing permissions and
     exports.saveFile = () => {
         DBMS.getDatabase((err, database) => {
             if (err) { Utils.handleError(err); return; }
-            exports.json2File(database, `${BASE_FILE_NAME}.json`);
+            const timeStr = new Date(database.Meta.saveTime).format('dd-mmm-yyyy_HH-MM-ss');
+            const fileName = `${BASE_FILE_NAME}_${database.Meta.name}_${timeStr}`;
+            exports.json2File(database, `${CommonUtils.sanitizeStr2FileName(fileName)}.json`);
         });
     };
 
