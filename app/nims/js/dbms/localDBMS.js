@@ -169,6 +169,29 @@ function makeLocalDBMSWrapper(dbms) {
             }
         };
     });
+    
+    Object.keys(dbms.__proto__).forEach((name) => {
+        LocalDBMSWrapper.prototype[name + 'Pm'] = function () {
+            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is') || R.equals(name, 'log')) {
+                const arr = [];
+                for (let i = 0; i < arguments.length; i++) {
+                    arr.push(arguments[i]);
+                }
+                
+                return new Promise(function(resolve, reject) {
+                    arr.push(function(err, value) {
+                        if(err) {reject(err); return;}
+                        resolve(value);
+                    });
+                    this.dbms[name].apply(this.dbms, arr);
+                }.bind(this));
+                
+            } else {
+                // TODO make set promises too
+                return null;
+            }
+        }
+    });
 
 
     LocalDBMSWrapper.prototype.clearSettings = function () {
