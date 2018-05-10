@@ -158,25 +158,42 @@ function ProfileConfigurerTmpl(exports, opts) {
         itemType.oldType = profileSettings.type;
         listen(itemType, 'change', changeProfileItemType(type));
 
-        let input;
+        let input, addDefaultListener = true;
         switch (profileSettings.type) {
         case 'text':
-        case 'enum':
-        case 'multiEnum':
             input = makeEl('textarea');
+            addClass(input, 'hidden');
             input.value = profileSettings.value;
+            break;
+        case 'enum':
+            input = qmte(`${tabRoot} .enum-value-editor-tmpl`);
+            const list = profileSettings.value.split(',');
+            list.sort(CommonUtils.charOrdA);
+            addEl(qee(input, '.text'), makeText(list.join(', ')));
+            addEl(qee(input, '.default-value'), makeText(profileSettings.value.split(',')[0]));
+            L10n.localizeStatic(input);
+            addDefaultListener = false;
+            break;
+        case 'multiEnum':
+//            input = makeEl('textarea');
+            input = makeEl('input');
+            input.value = profileSettings.value;
+            addDefaultListener = false;
             break;
         case 'string':
             input = makeEl('input');
+            addClass(input, 'hidden');
             input.value = profileSettings.value;
             break;
         case 'number':
             input = makeEl('input');
             input.type = 'number';
+            addClass(input, 'hidden');
             input.value = profileSettings.value;
             break;
         case 'checkbox':
             input = makeEl('input');
+            setAttr(input, 'title', l10n('default-value'));
             input.type = 'checkbox';
             input.checked = profileSettings.value;
             break;
@@ -189,8 +206,10 @@ function ProfileConfigurerTmpl(exports, opts) {
             infoType: profileSettings.type,
             oldValue: profileSettings.value
         });
-        addClasses(input, [`profile-configurer-${profileSettings.type}`, 'adminOnly', 'form-control']);
-        listen(input, 'change', updateDefaultValue(type));
+        if(addDefaultListener){
+            addClasses(input, [`profile-configurer-${profileSettings.type}`, 'adminOnly', 'form-control']);
+            listen(input, 'change', updateDefaultValue(type));
+        }
         addEl(qee(row, '.item-default-value-container'), input);
 
         setClassIf(qee(row, '.print'), 'btn-primary', profileSettings.doExport);
@@ -218,7 +237,7 @@ function ProfileConfigurerTmpl(exports, opts) {
             state.moveProfileItemDialog.showDlg();
         });
 
-        listen(qee(row, '.rename'), 'click', () => {
+        listen(qee(row, '.rename-profile-item'), 'click', () => {
             qee(state.renameProfileItemDialog, '.entity-input').value = profileSettings.name;
             state.renameProfileItemDialog.fromName = profileSettings.name;
             state.renameProfileItemDialog.showDlg();
