@@ -127,7 +127,8 @@ See the License for the specific language governing permissions and
             renameProfileItem: {},
             doExportProfileItemChange: {},
             showInRoleGridProfileItemChange: {},
-            updateDefaultValue: {}
+            updateDefaultValue: {},
+            renameEnumValue: {}
         },
         entityAPI: {
             getEntityNamesArray: null

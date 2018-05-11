@@ -390,6 +390,27 @@ See the License for the specific language governing permissions and
         addListener('replaceEnumValue', _replaceEnumValue);
 
         addListener('replaceMultiEnumValue', _replaceEnumValue);
+        
+        function _renameEnumValue(type, profileItemName, fromValue, toValue) {
+            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
+                profileItemName;
+            const that = this;
+            Object.keys(this.database.Groups).forEach((groupName) => {
+                const group = that.database.Groups[groupName];
+                group.filterModel.forEach((filterItem) => {
+                    if (filterItem.name === subFilterName) {
+                        if(filterItem.selectedOptions[fromValue]){
+                            delete filterItem.selectedOptions[fromValue];
+                            filterItem.selectedOptions[toValue] = true;
+                        }
+                    }
+                });
+            });
+        }
+        
+        addListener('renameEnumValue', _renameEnumValue);
+        
+        addListener('renameMultiEnumValue', _renameEnumValue);
     }
 
     callback2(groupsAPI);

@@ -76,6 +76,58 @@ function ProfileConfigurerTmpl(exports, opts) {
                 actionButtonTitle: 'common-move',
             }
         );
+        
+        state.renameEnumItemDialog = UI.createModalDialog(
+            `.profile-configurer2-tab.${`${tabType}-type`}`,
+            renameEnumValue, {
+                bodySelector: 'rename-enum-value-tmpl',
+                dialogTitle: 'profiles-rename-enum-item',
+                actionButtonTitle: 'common-rename',
+                initBody: (body) => {
+                    const renameSelect = clearEl(qee(body, '.renamed-value-select'));
+                    const renameInput = clearEl(qee(body, '.enum-value-name-input'));
+                    listen(renameSelect, 'change', () => {
+                        renameInput.value = renameSelect.value;
+                    });
+                }
+            }
+        );
+        
+        state.enumEditorDialog = UI.createModalDialog(
+            `.profile-configurer2-tab.${`${tabType}-type`}`,
+            updateEnumValues, {
+                bodySelector: 'enum-dialog-editor-tmpl',
+                dialogTitle: 'profiles-enum-editor',
+                actionButtonTitle: 'common-save',
+                initBody: (body) => {
+                    const addedValuesArea = qee(body, '.new-enum-values');
+                    const removedValuesArea = qee(body, '.removed-enum-values');
+                    const inputArea = qee(body, '.enum-value-input');
+                    const defaultValueSelect = qee(body, '.default-value-select');
+                    listen(inputArea, 'input', () => {
+                        const newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
+                        const addedValues = R.sort(CommonUtils.charOrdA, R.difference(newVals, inputArea.srcList));
+                        addEls(clearEl(addedValuesArea), enumList2Els(addedValues));
+                        const removedValues = R.sort(CommonUtils.charOrdA, R.difference(inputArea.srcList, newVals));
+                        addEls(clearEl(removedValuesArea), enumList2Els(removedValues));
+                        
+                        let defaultValue = defaultValueSelect.value;
+                        clearEl(defaultValueSelect);
+                        
+                        if(newVals.length === 0){
+                            return;
+                        }
+                        
+                        if(!R.contains(defaultValue, newVals)){
+                            defaultValue = newVals[0];
+                        }
+                        fillSelector(defaultValueSelect, arr2Select(newVals));
+                        qee(defaultValueSelect, `[value=${defaultValue}]`).selected = true;
+                        
+                    });
+                }
+            }
+        );
 
         setAttr(qee(el, '.panel h3'), 'l10n-id', `profiles-${opts.panelName}`);
         setAttr(qee(el, '.alert'), 'l10n-id', `advices-empty-${tabType}-profile-structure`);
@@ -168,9 +220,42 @@ function ProfileConfigurerTmpl(exports, opts) {
         case 'enum':
             input = qmte(`${tabRoot} .enum-value-editor-tmpl`);
             const list = profileSettings.value.split(',');
+            const defaultValue = list[0];
             list.sort(CommonUtils.charOrdA);
-            addEl(qee(input, '.text'), makeText(list.join(', ')));
-            addEl(qee(input, '.default-value'), makeText(profileSettings.value.split(',')[0]));
+            
+            addEls(qee(input, '.text'), enumList2Els(list, defaultValue));
+            
+            listen(qee(input, '.btn.add'), 'click', () => {
+                addEls(clearEl(qee(state.enumEditorDialog, '.initial-value')), enumList2Els(list, defaultValue));
+                const inputArea = qee(state.enumEditorDialog, '.enum-value-input');
+                inputArea.value = list.join(',');
+                inputArea.srcList = list;
+                inputArea.defaultValue = defaultValue;
+                
+                const defaultValueSelect = clearEl(qee(state.enumEditorDialog, '.default-value-select'));
+                fillSelector(defaultValueSelect, arr2Select(list));
+                qee(defaultValueSelect, `[value=${defaultValue}]`).selected = true;
+                state.enumEditorDialog.itemName = profileSettings.name;
+                state.enumEditorDialog.showDlg();
+            });
+            
+            listen(qee(input, '.btn.rename'), 'click', () => {
+                const renameSelect = clearEl(qee(state.renameEnumItemDialog, '.renamed-value-select'));
+                fillSelector(renameSelect, arr2Select(list));
+                
+                if(list.length > 0){
+                    qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list[0]; 
+                }
+                
+                state.renameEnumItemDialog.itemName = profileSettings.name;
+                state.renameEnumItemDialog.showDlg();
+            });
+            
+            
+            
+//            addEl(qee(input, '.test'), qmte(`${tabRoot} .enum-dialog-editor-tmpl`));
+//            addEl(qee(input, '.text'), makeText(list.join(', ')));
+//            addEl(qee(input, '.default-value'), makeText(profileSettings.value.split(',')[0]));
             L10n.localizeStatic(input);
             addDefaultListener = false;
             break;
@@ -251,6 +336,18 @@ function ProfileConfigurerTmpl(exports, opts) {
 
         return row;
     });
+    
+    function enumList2Els(list, defaultValue){
+        return R.splitEvery(4, list.map(val => {
+            const span = addEl(makeEl('span'), makeText(val));
+            if(defaultValue !== undefined && val === defaultValue){
+                addClass(span, 'bold');
+                setAttr(span, 'title', l10n('default-value'));
+            }
+            addClass(span, 'margin-right-16 enum-item');
+            return span;
+        })).map(arr => addEls(makeEl('div'), arr));
+    }
 
     function updateDefaultValue(type) {
         return (event) => {
@@ -336,6 +433,49 @@ function ProfileConfigurerTmpl(exports, opts) {
             const index = state.currentIndex;
             const newIndex = queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
             DBMS.moveProfileItem(tabType, index, newIndex, (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        };
+    }
+    
+    function updateEnumValues(dialog) {
+        return () => {
+            const name = dialog.itemName;
+            const inputArea = qee(dialog, '.enum-value-input');
+            const defaultValueSelect = qee(dialog, '.default-value-select');
+            
+            if (inputArea.value.trim() === '') {
+                Utils.alert(getL10n('profiles-enum-item-cant-be-empty'));
+                return;
+            }
+            let newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
+            const defaultValue = defaultValueSelect.value;
+            newVals = R.without([defaultValue], newVals);
+            newVals = R.prepend(defaultValue, newVals);
+            
+            DBMS.updateDefaultValue(tabType, name, newVals.join(','), (err) => {
+                if (err) {
+                    setError(dialog, err);
+                } else {
+                    dialog.hideDlg();
+                    exports.refresh();
+                }
+            });
+        };
+    }
+    
+    function renameEnumValue(dialog) {
+        return () => {
+            const name = dialog.itemName;
+            const renameSelect = qee(dialog, '.renamed-value-select');
+            const renameInput = qee(dialog, '.enum-value-name-input');
+            
+            DBMS.renameEnumValue(tabType, name, renameSelect.value.trim(), renameInput.value.trim(), (err) => {
                 if (err) {
                     setError(dialog, err);
                 } else {

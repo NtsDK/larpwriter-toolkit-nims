@@ -216,6 +216,29 @@ See the License for the specific language governing permissions and
                 });
             });
         };
+        
+        LocalDBMS.prototype.renameEnumValue = function (type, profileItemName, fromValue, toValue, callback) {
+            let chain = [typeCheck(type), PC.isString(profileItemName),
+                PC.isString(fromValue), PC.isString(toValue), 
+                PC.isNotEmptyString(fromValue), PC.isNotEmptyString(toValue)];
+            PC.precondition(PC.chainCheck(chain), callback, () => {
+                const container = R.path(getPath(type), this.database);
+                PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), callback, () => {
+                    const info = container.filter(R.compose(R.equals(profileItemName), R.prop('name')))[0];
+                    chain = [PC.elementFromEnum(info.type, ['enum', 'multiEnum'])];
+                    PC.precondition(PC.chainCheck(chain), callback, () => {
+                        const list = info.value.trim() === '' ? [] : info.value.split(',');
+                        chain = [PC.elementFromEnum(fromValue, list), PC.createEntityCheck(toValue, list)];
+                        PC.precondition(PC.chainCheck(chain), callback, () => {
+                            list[R.indexOf(fromValue, list)] = toValue;
+                            info.value = list.join(',');
+                            this.ee.trigger(info.type === 'enum' ? 'renameEnumValue' : 'renameMultiEnumValue', [type, profileItemName, fromValue, toValue]);
+                            callback();
+                        });
+                    });
+                });
+            });
+        }
     }
     callback2(profileConfigurerAPI);
 })(api => (typeof exports === 'undefined' ? (this.profileConfigurerAPI = api) : (module.exports = api)));

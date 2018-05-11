@@ -428,3 +428,11 @@ select[disabled]{
 .sorting {
   cursor: pointer;
 }
+
+.bold {
+  font-weight: bold;
+}
+
+.bold.enum-item {
+  font-size: 115%;
+}
