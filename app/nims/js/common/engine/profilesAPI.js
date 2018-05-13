@@ -225,6 +225,32 @@ See the License for the specific language governing permissions and
         }
 
         addListener('replaceMultiEnumValue', _replaceMultiEnumValue);
+        
+        function _renameEnumValue(type, profileItemName, fromValue, toValue) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
+                const enumValue = profileSet[characterName][profileItemName];
+                if(enumValue === fromValue){
+                    profileSet[characterName][profileItemName] = toValue;
+                }
+            });
+        }
+        addListener('renameEnumValue', _renameEnumValue);
+        
+        function _renameMultiEnumValue(type, profileItemName, fromValue, toValue) {
+            const profileSet = R.path(getPath(type), this.database);
+            Object.keys(profileSet).forEach((characterName) => {
+                let value = profileSet[characterName][profileItemName];
+                if (value !== '') {
+                    const list = value.split(',');
+                    if(R.contains(fromValue, list)){
+                        list[R.indexOf(fromValue, list)] = toValue;
+                        profileSet[characterName][profileItemName] = list.join(',');
+                    }
+                }
+            });
+        }
+        addListener('renameMultiEnumValue', _renameMultiEnumValue);
     }
 
     callback2(profilesAPI);
