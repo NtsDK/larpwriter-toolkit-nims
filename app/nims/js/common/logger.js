@@ -261,7 +261,7 @@ See the License for the specific language governing permissions and
 
                     if (accept) {
                         let userName = 'user';
-                        if (isServer) {
+                        if (isServer && arguments[arguments.length - 1] !== undefined) {
                             userName = arguments[arguments.length - 1].name;
                         }
 
