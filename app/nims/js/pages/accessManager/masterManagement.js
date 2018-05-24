@@ -162,22 +162,23 @@ See the License for the specific language governing permissions and
     }
     
     const entity2el = R.curry((isAdmin, type, name) => {
-        const el = wrapEl('div', qte(`.profile-item-tmpl`));
+        const el = qmte(`.profile-item-tmpl`);
         el.profileName = name.value;
         addEl(qee(el, '.primary-name'), makeText(name.displayName));
-        setAttr(el, 'profile-name', name.value);
-        setAttr(el, 'primary-name', name.displayName);
-        setAttr(el, 'button-type', 'entity');
-        setAttr(el, 'profile-type', type);
+        const btn = qee(el, '[role=button]');
+        setAttr(btn, 'profile-name', name.value);
+        setAttr(btn, 'primary-name', name.displayName);
+        setAttr(btn, 'button-type', 'entity');
+        setAttr(btn, 'profile-type', type);
         if(name.isOwner || isAdmin){
-            listen(el, 'dragstart', onDragStart);
-            listen(el, 'drop', onDrop);
-            listen(el, 'dragover', allowDrop);
-            listen(el, 'dragenter', handleDragEnter);
-            listen(el, 'dragleave', handleDragLeave);
-            listen(qee(el, 'button'), 'click', e => toggleClass(qee(el, 'button'), 'btn-primary'));
+            listen(btn, 'dragstart', onDragStart);
+            listen(btn, 'drop', onDrop);
+            listen(btn, 'dragover', allowDrop);
+            listen(btn, 'dragenter', handleDragEnter);
+            listen(btn, 'dragleave', handleDragLeave);
+            listen(btn, 'click', e => toggleClass(btn, 'btn-primary'));
         } else {
-            Utils.enableEl(qee(el, 'button'), false);
+            Utils.enableEl(btn, false);
         }
         return el;
     });
@@ -201,7 +202,7 @@ See the License for the specific language governing permissions and
     // eslint-disable-next-line no-var,vars-on-top
     var onDragStart = function(event) {
         if(getAttr(this, 'button-type') === 'entity'){
-            addClass(qee(this, 'button'), 'btn-primary');
+            addClass(this, 'btn-primary');
         }
         console.log(`onDragStart ${this.profileName}`);
         event.dataTransfer.setData('data', JSON.stringify({
@@ -231,10 +232,10 @@ See the License for the specific language governing permissions and
 //            const entityBtn =  type1 === 'user' ? 
             
 //            console.log(user);
-            const btns = qes(`${root} .rights-panel button.btn-primary`);
+            const btns = qes(`${root} .rights-panel .btn-primary[role=button]`);
             const selected = btns.map( btn => ({
-                type: getAttr(btn.parentNode.parentNode, 'profile-type'),
-                name: getAttr(btn.parentNode.parentNode, 'profile-name'),
+                type: getAttr(btn, 'profile-type'),
+                name: getAttr(btn, 'profile-name'),
             }));
             const names = R.mapObjIndexed(arr => arr.map(R.prop('name')), R.groupBy(R.prop('type'), selected));
             btns.forEach(btn => removeClass(btn, 'btn-primary'))

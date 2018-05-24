@@ -78,17 +78,18 @@ See the License for the specific language governing permissions and
     }
 
     const profile2el = R.curry((type, name) => {
-        const el = wrapEl('div', qte(`${root} .profile-item-tmpl`));
+        const el = qmte(`${root} .profile-item-tmpl`);
         el.profileName = name.value;
+        const btn = qee(el, '[role=button]');
         addEl(qee(el, '.primary-name'), makeText(name.displayName));
-        setAttr(el, 'profile-name', name.value);
-        setAttr(el, 'primary-name', name.displayName);
-        setAttr(el, 'profile-type', type);
-        listen(el, 'dragstart', onDragStart);
-        listen(el, 'drop', onDrop);
-        listen(el, 'dragover', allowDrop);
-        listen(el, 'dragenter', handleDragEnter);
-        listen(el, 'dragleave', handleDragLeave);
+        setAttr(btn, 'profile-name', name.value);
+        setAttr(btn, 'primary-name', name.displayName);
+        setAttr(btn, 'profile-type', type);
+        listen(btn, 'dragstart', onDragStart);
+        listen(btn, 'drop', onDrop);
+        listen(btn, 'dragover', allowDrop);
+        listen(btn, 'dragenter', handleDragEnter);
+        listen(btn, 'dragleave', handleDragLeave);
         return el;
     });
 
