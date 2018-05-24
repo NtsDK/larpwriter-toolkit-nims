@@ -424,7 +424,21 @@ const setChecks = {
     {
         func: 'removeProfileItem',
         args: ['character', 0, 'testProfileItem2'],
+    },
+    {
+        func: 'createProfileItem',
+        args: ['character', 'testProfileItem', 'enum', 0],
+    },
+    {
+        func: 'renameEnumValue',
+        args: ['character', 'testProfileItem', '_', 'testRename'],
+    },
+    {
+        func: 'removeProfileItem',
+        args: ['character', 0, 'testProfileItem'],
     }],
+    
+    
     profilesAPI:
     [{
         func: 'createProfile',
@@ -820,7 +834,7 @@ describe('Core smoke test coverage check', () => {
         }
         expect(intersection2.length).toBe(0);
 
-        const allFuncs = Object.keys(Object.getPrototypeOf(DBMS));
+        const allFuncs = Object.keys(Object.getPrototypeOf(DBMS)).filter(R.pipe(R.endsWith('Pm'), R.not));
         const sum = [funcArr, serverSpecificFunctions, commonIgnoreList, customIgnore].reduce((acc, el) => {
             acc = R.concat(acc, el);
             return acc;
