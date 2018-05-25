@@ -141,6 +141,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
             PermissionInformer.isAdmin((err2, isAdmin) => {
                 if (err2) { Utils.handleError(err2); return; }
+                
+                $.datetimepicker.setDateFormatter('moment');
 
                 let button;
                 stateInit();

@@ -61,7 +61,8 @@
             "diff.js",
             "klay.js",
             "klayjs.d3.js",
-            "klayjs.bridge.js"
+            "klayjs.bridge.js",
+            "moment.min.js"
         ]
     },
     "pagesLight" :[
