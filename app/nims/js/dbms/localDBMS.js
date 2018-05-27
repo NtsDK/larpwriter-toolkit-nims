@@ -115,11 +115,8 @@ function makeLocalDBMS(fullVersion) {
     return LocalDBMS;
 }
 
-
 function makeLocalDBMSWrapper(dbms) {
-    const showNotification = true;
-    const notificationTimeout = 2000;
-    
+
     function LocalDBMSWrapper(dbms) {
         this.dbms = dbms;
         this.clearSettings();
@@ -136,33 +133,10 @@ function makeLocalDBMSWrapper(dbms) {
                     arr.push(arguments[i]);
                 }
                 
-                let notificationBox;
-                
-                if (showNotification) {
-                    notificationBox = clearEl(getEl('debugNotification'));
-                    removeClass(notificationBox, 'hidden');
-                    removeClass(notificationBox, 'operationOK');
-                    removeClass(notificationBox, 'operationFail');
-                    addEl(notificationBox, makeText(L10n.get('constant', 'saving')));
-                }
+                CallNotificator.onCallStart();
                 
                 arr.push(function(err) {
-                    if (showNotification) {
-                        if(err) {
-                            addClass(notificationBox, 'operationFail');
-                            addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-fail')));
-                            setTimeout(() => {
-                                addClass(notificationBox, 'hidden');
-                            }, notificationTimeout);
-                        } else {
-                            addClass(notificationBox, 'operationOK');
-                            addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-success')));
-                            setTimeout(() => {
-                                addClass(notificationBox, 'hidden');
-                            }, notificationTimeout);
-                        }
-                    }
-                    
+                    CallNotificator.onCallFinished(err);
                     callback(err);
                 });
                 this.dbms[name].apply(this.dbms, arr);
@@ -170,29 +144,7 @@ function makeLocalDBMSWrapper(dbms) {
         };
     });
     
-    Object.keys(dbms.__proto__).forEach((name) => {
-        LocalDBMSWrapper.prototype[name + 'Pm'] = function () {
-            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is') || R.equals(name, 'log')) {
-                const arr = [];
-                for (let i = 0; i < arguments.length; i++) {
-                    arr.push(arguments[i]);
-                }
-                
-                return new Promise(function(resolve, reject) {
-                    arr.push(function(err, value) {
-                        if(err) {reject(err); return;}
-                        resolve(value);
-                    });
-                    this.dbms[name].apply(this.dbms, arr);
-                }.bind(this));
-                
-            } else {
-                // TODO make set promises too
-                return null;
-            }
-        }
-    });
-
+    Promisificator.promisify(dbms, LocalDBMSWrapper);
 
     LocalDBMSWrapper.prototype.clearSettings = function () {
         this.Settings = {

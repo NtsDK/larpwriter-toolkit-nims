@@ -68,37 +68,16 @@ function makeRemoteDBMS(LocalDBMS) {
             data: JSON.stringify(data),
             timeout: Constants.httpTimeout
         });
-
-        let notificationBox;
-
-        if (showNotification) {
-            notificationBox = clearEl(getEl('debugNotification'));
-            removeClass(notificationBox, 'hidden');
-            removeClass(notificationBox, 'operationOK');
-            removeClass(notificationBox, 'operationFail');
-//            addEl(notificationBox, makeText(`${name} ${JSON.stringify(data)}`));
-            addEl(notificationBox, makeText(L10n.get('constant', 'saving')));
-        }
+        
+        CallNotificator.onCallStart();
 
         request.done((data2) => {
-            if (showNotification) {
-                addClass(notificationBox, 'operationOK');
-                addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-success')));
-                setTimeout(() => {
-                    addClass(notificationBox, 'hidden');
-                }, notificationTimeout);
-            }
+            CallNotificator.onCallFinished();
             if (callback) callback();
         });
 
         request.fail((errorInfo, textStatus, errorThrown) => {
-            if (showNotification) {
-                addClass(notificationBox, 'operationFail');
-                addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-fail')));
-                setTimeout(() => {
-                    addClass(notificationBox, 'hidden');
-                }, notificationTimeout);
-            }
+            CallNotificator.onCallFinished(errorInfo);
             try {
                 callback(JSON.parse(errorInfo.responseText));
             } catch (err) {
@@ -124,7 +103,32 @@ function makeRemoteDBMS(LocalDBMS) {
             }
         };
     });
-
+    
+    // promisification
+    Object.keys(LocalDBMS.prototype).forEach((name) => {
+        RemoteDBMS.prototype[name + 'Pm'] = function () {
+            const arr = [];
+            for (let i = 0; i < arguments.length; i++) {
+                arr.push(arguments[i]);
+            }
+            //            if(CommonUtils.startsWith(name, "_")){
+            //                // do nothing for inner functions
+            //            } else
+            return new Promise(function(resolve, reject) {
+                if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
+                    RemoteDBMS._simpleGet(name, arr, function(err, value) {
+                        if(err) {reject(err); return;}
+                        resolve(value);
+                    });
+                } else {
+                    RemoteDBMS._simplePut(name, arr, function(err, value) {
+                        if(err) {reject(err); return;}
+                        resolve();
+                    });
+                }
+            }.bind(this));
+        };
+    });
 
     RemoteDBMS.prototype.clearSettings = function () {
         this.Settings = {

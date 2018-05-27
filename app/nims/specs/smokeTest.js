@@ -758,15 +758,14 @@ const setChecks = {
 };
 
 R.keys(getChecks).forEach((apiName) => {
+    const checks = getChecks[apiName].map((el) => {
+        const args = JSON.stringify(el.args);
+        el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
+        return el;
+    });
+    
     describe(`${apiName} getter tests`, () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-
-        const checks = getChecks[apiName].map((el) => {
-            const args = JSON.stringify(el.args);
-            el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
-            return el;
-        });
-
         checks.forEach((check) => {
             it(check.name, (done) => {
                 DBMS[check.func](...check.args.concat((err) => {
@@ -776,18 +775,33 @@ R.keys(getChecks).forEach((apiName) => {
             });
         });
     });
+    
+    describe(`${apiName} promise getter tests`, () => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        checks.forEach((check) => {
+            it(check.name, (done) => {
+                DBMS[check.func + 'Pm'](...check.args).then((value) => {
+                    expect(value).not.toBeNull();
+                    done();
+                }).catch(function(err){
+                    expect(err).toBeNull();
+                    done();
+                });
+            });
+        });
+    });
 });
 
+
 R.keys(setChecks).forEach((apiName) => {
+    const checks = setChecks[apiName].map((el) => {
+        const args = JSON.stringify(el.args);
+        el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
+        return el;
+    });
+    
     describe(`${apiName} setter tests`, () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-
-        const checks = setChecks[apiName].map((el) => {
-            const args = JSON.stringify(el.args);
-            el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
-            return el;
-        });
-
         checks.forEach((check) => {
             it(check.name, (done) => {
                 DBMS[check.func](...check.args.concat((err) => {
@@ -809,6 +823,41 @@ R.keys(setChecks).forEach((apiName) => {
                     }
                     done();
                 }));
+            });
+        });
+    });
+    
+    describe(`${apiName} promise setter tests`, () => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        checks.forEach((check) => {
+            it(check.name, (done) => {
+                DBMS[check.func + 'Pm'](...check.args).then((value) => {
+                    if (check.gettable === true) {
+                        expect(value).not.toBeNull();
+                    } else {
+                        expect(value).toBeUndefined();
+                    }
+                    done();
+                }).catch((err) => {
+                    if (err) console.error(err);
+                    if (check.gettable === true) {
+                        expect(err).toBeNull();
+                    } else {
+                        expect(err).toBeUndefined();
+                    }
+                    if (check.forInconsistency === true) {
+                        DBMS.getConsistencyCheckResultPm.then(checkResult => {
+                            if (checkResult.errors.length > 0) {
+                                console.error(check.name);
+                                checkResult.errors.forEach(console.error);
+                            }
+                            expect(checkResult.errors.length > 0).toBe(false);
+                        }).catch(err2 => {
+                            expect(err2).toBeNull();
+                        });
+                    }
+                    done();
+                });
             });
         });
     });

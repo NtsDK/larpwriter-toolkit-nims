@@ -163,15 +163,7 @@ See the License for the specific language governing permissions and
             Utils.enable(exports.content, 'adminOnly', isAdmin);
         });
         
-//        Promise.all( [DBMS.getMetaInfoPm(), DBMS.getStatisticsPm()] ).then(updateOverviewTab).catch(Utils.handleError);
-        
-        DBMS.getMetaInfo((err, metaInfo) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getStatistics((err2, statistics) => {
-                if (err2) { Utils.handleError(err2); return; }
-                updateOverviewTab([metaInfo, statistics]);
-            });
-        });
+        Promise.all( [DBMS.getMetaInfoPm(), DBMS.getStatisticsPm()] ).then(updateOverviewTab).catch(Utils.handleError);
     };
 
     function updateOverviewTab(results) {
@@ -309,7 +301,7 @@ See the License for the specific language governing permissions and
     }
 
     function updateName(event) {
-        DBMS.setMetaInfoString('name', event.target.value, Utils.processError());
+        DBMS.setMetaInfoStringPm('name', event.target.value).catch(Utils.handleError);
     }
     function updateTime(dp, input) {
         DBMS.setMetaInfoDate('date', input.val(), Utils.processError());
