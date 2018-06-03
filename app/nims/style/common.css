@@ -16,7 +16,7 @@ body {
   background-color: #ABABAB;
 /*   1. if auto on some pages show scroll when not necessary */
 /*   2. if hidden can't see result of Jasmine tests */
-/*   overflow-y: hidden; */
+  overflow-y: hidden;
 }
 
 .block {

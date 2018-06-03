@@ -42,10 +42,54 @@ See the License for the specific language governing permissions and
 
         getEl('hideAllPanelsCheckbox').checked = true;
         
+        listen(getEl('contentArea'), 'scroll', updateGutterScrollPos);
+        listen(getEl('contentArea'), 'resize', rebuildGutter);
+        
         initPanelsArr();
 
         exports.content = getEl('briefingPreviewDiv');
     };
+    
+    function updateGutterScrollPos (){
+        let doc = getEl('contentArea');
+        let position = qe(`${root} .gutter-scroll-position`);
+        position.style.top = (doc.scrollTop)/doc.scrollHeight*100 + '%';
+        position.style.height = (doc.clientHeight)/doc.scrollHeight*100 + '%';
+    }
+    
+    function rebuildGutter() {
+        let doc = getEl('contentArea');
+        const gutter = clearEl(qe(`${root} .gutter`));
+        const scrollPos = addClass(makeEl('div'), 'gutter-scroll-position');
+        addEl(gutter, scrollPos);
+        updateGutterScrollPos();
+        
+        const btn = makeEl('button');
+        btn.style.top = '0%';
+//        const title = qee(panel, '.panel-title').innerHTML.trim();
+        setAttr(btn, 'title', l10n('to-page-top'));
+        listen(btn, 'click', () => {
+            doc.scrollTop = 0;
+//            panel.scrollIntoView();
+        });
+        addEl(gutter, btn);
+        
+        const panels = qees(doc, '#briefingContent > .panel');
+        addEls(gutter, panels.map(panel => {
+            const btn = makeEl('button');
+            btn.style.top = (panel.offsetTop)/doc.scrollHeight*100 + '%';
+            
+            const panelTitle = qee(panel, '.panel-title');
+            const title = panelTitle.innerText || panelTitle.textContent;
+            setAttr(btn, 'title', title);
+            listen(btn, 'click', () => {
+                doc.scrollTop = panel.offsetTop - 40;
+//                panel.scrollIntoView();
+            });
+            return btn;
+        }));
+        
+    }
 
     exports.refresh = () => {
         clearEl(getEl('briefingCharacter'));
@@ -61,7 +105,7 @@ See the License for the specific language governing permissions and
                     if (err3) { Utils.handleError(err3); return; }
                     
                     showEl(qe(`${root} .alert`), names.length === 0);
-                    showEl(qe(`${root} > .panel`), names.length !== 0);
+                    showEl(qe(`${root} > div > div > .panel`), names.length !== 0);
                     showEl(qe(`${root} #briefingCharacter`), names.length !== 0);
                     
                     if (names.length > 0) {
@@ -94,6 +138,7 @@ See the License for the specific language governing permissions and
                 state.panels.map(R.prop('make')).forEach((make) => {
                     make(content, data);
                 });
+                rebuildGutter();
             }
         }
         buildContentInner();
@@ -131,8 +176,8 @@ See the License for the specific language governing permissions and
             make(el, data) {
                 const label = strFormat(getL10n('briefings-character-profile'), [data.characterName]);
                 addEl(el, makePanel(
-                        makeText(label),
-                        UI.makeProfileTable(state.characterProfileStructure, data.profile), getFlags().hideAllPanels
+                    makeText(label),
+                    UI.makeProfileTable(state.characterProfileStructure, data.profile), getFlags().hideAllPanels
                 ));
             }
         }, {
@@ -157,8 +202,8 @@ See the License for the specific language governing permissions and
                 if (data.playerProfile) {
                     const label = strFormat(getL10n('briefings-player-profile'), [data.playerName]);
                     addEl(el, makePanel(
-                            makeText(label),
-                            UI.makeProfileTable(state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
+                        makeText(label),
+                        UI.makeProfileTable(state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
                     ));
                 }
             }
@@ -233,6 +278,7 @@ See the License for the specific language governing permissions and
         const panelInfo = UI.makePanelCore(title, content);
         UI.attachPanelToggler(panelInfo.a, panelInfo.contentDiv, (event, togglePanel) => {
             togglePanel();
+            rebuildGutter();
             UI.refreshTextAreas(`${root} #briefingContent textarea`);
         });
         if (hideAllPanels) {

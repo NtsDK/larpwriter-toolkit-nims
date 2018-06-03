@@ -15,7 +15,10 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    exports.runTests = () => window.RunTests();
+    exports.runTests = () => {
+        queryEl('body').style.overflow = 'auto';
+        window.RunTests();
+    };
 
     exports.showConsistencyCheckAlert = (checkRes) => {
         if (checkRes === undefined || checkRes.errors.length === 0) {
