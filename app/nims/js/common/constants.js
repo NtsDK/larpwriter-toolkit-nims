@@ -577,6 +577,8 @@ See the License for the specific language governing permissions and
             </y:ArcEdge>
           </data>
         </edge>`;
+    
+    exports.gearsNodeRequiredFields = ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'];
 
     exports.httpTimeout = 5000;
 })(typeof exports === 'undefined' ? this.Constants = {} : exports);

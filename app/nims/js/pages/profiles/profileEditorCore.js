@@ -93,7 +93,8 @@ See the License for the specific language governing permissions and
             case 'enum':
                 input = makeEl('select');
                 addClass(input, 'profileSelectInput');
-                fillSelector(input, profileItemConfig.value.split(',').map(R.compose(R.zipObj(['name']), R.append(R.__, []))));
+                const toNameObj = R.compose(R.zipObj(['name']), R.append(R.__, []));
+                fillSelector(input, R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(',')).map(toNameObj));
                 break;
             case 'number':
                 input = makeEl('input');
@@ -111,7 +112,7 @@ See the License for the specific language governing permissions and
                 [input] = $('<span></span>').append(this.multiEnumSelect);
                 setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
-                sel = this.multiEnumSelect.select2(arr2Select2(profileItemConfig.value.split(',')));
+                sel = this.multiEnumSelect.select2(arr2Select2(R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(','))));
                 sel.on('change', this.updateFieldValue.bind(this));
                 break;
             default:

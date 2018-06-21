@@ -44,11 +44,11 @@ See the License for the specific language governing permissions and
             if(focusable !== null){
                 setTimeout(() => focusable.focus(), 500);
             }
-            const onenterable = qees(body, '.onenterable');
-            if(onenterable.length !== 0){
-                onenterable.forEach(listenOnEnter(R.__, onAction(el)));
-            }
         };
+        const onenterable = qees(body, '.onenterable');
+        if(onenterable.length !== 0){
+            onenterable.forEach(listenOnEnter(R.__, onAction(el)));
+        }
         el.hideDlg = () => $(el).modal('hide');
         listen(qee(el, '.on-cancel-button'), 'click', () => {
             el.hideDlg()
@@ -432,5 +432,25 @@ See the License for the specific language governing permissions and
             settings[settingsPath] = {};
         }
         settings[settingsPath].name = name;
+    };
+    
+    exports.scrollTo = (container, element) => {
+        const domRect = element.getBoundingClientRect();
+        const scrollTop = container.scrollTop;
+        const scrollBottom = container.scrollTop + container.clientHeight;
+        const condition = element.offsetTop < scrollTop || (element.offsetTop + domRect.height) > scrollBottom;
+        
+        if(condition){
+            const from = container.scrollTop;
+            const to = element.offsetTop - container.clientHeight/2 + domRect.height/2;
+            
+            Utils.animate({
+                duration: 500,
+                timing: Timing.makeEaseInOut(Timing.poly(4)),
+                draw: function(progress) {
+                    container.scrollTop = from + (to - from) * progress;
+                }
+            });
+        }
     };
 })(this.UI = {});

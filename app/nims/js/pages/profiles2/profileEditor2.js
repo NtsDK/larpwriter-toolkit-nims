@@ -91,7 +91,7 @@ function ProfileEditorTmpl(exports, opts) {
 
     function rebuildInterface(primaryNames, secondaryNames, profileBindings) {
         const secDict = R.indexBy(R.prop('value'), secondaryNames);
-        addEls(clearEl(queryEl(`${root} .entity-list`)), primaryNames.map((name) => {
+        addEls(clearEl(queryEl(`${root} .entity-list`)), primaryNames.map((name, i, arr) => {
             const el = wrapEl('div', qte(`${root} .entity-item-tmpl`));
             addEl(qee(el, '.primary-name'), makeText(name.displayName));
             setAttr(el, 'primary-name', name.displayName);
@@ -103,17 +103,24 @@ function ProfileEditorTmpl(exports, opts) {
             }
             listen(qee(el, '.select-button'), 'click', () => selectProfile(name.value));
             setAttr(qee(el, '.rename'), 'title', l10n(opts.renameProfile));
-            setAttr(qee(el, '.remove'), 'title', l10n(opts.removeProfile));
+            const removeBtn = qee(el, '.remove');
+            setAttr(removeBtn, 'title', l10n(opts.removeProfile));
+            if(i+1 < arr.length){
+                removeBtn.nextName = arr[i+1].value;
+            }
+            if(i > 0){
+                removeBtn.prevName = arr[i-1].value;
+            }
             if (name.editable) {
                 listen(qee(el, '.rename'), 'click', () => {
                     qee(state.renameCharacterDialog, '.entity-input').value = name.value;
                     state.renameCharacterDialog.fromName = name.value;
                     state.renameCharacterDialog.showDlg();
                 });
-                listen(qee(el, '.remove'), 'click', removeProfile(firstType, name.value));
+                listen(removeBtn, 'click', removeProfile(firstType, name.value, removeBtn));
             } else {
                 setAttr(qee(el, '.rename'), 'disabled', 'disabled');
-                setAttr(qee(el, '.remove'), 'disabled', 'disabled');
+                setAttr(removeBtn, 'disabled', 'disabled');
             }
             return el;
         }));
@@ -141,8 +148,11 @@ function ProfileEditorTmpl(exports, opts) {
         queryEls(`${root} [profile-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
         const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
         addClass(el, 'btn-primary');
-        el.scrollIntoView();
-
+        
+        const parentEl = el.parentElement.parentElement;
+        const entityList = queryEl(`${root} .entity-list`);
+        UI.scrollTo(entityList, parentEl);
+        
         DBMS.getProfile(firstType, name, (err, profile) => {
             if (err) { Utils.handleError(err); return; }
             PermissionInformer.isEntityEditable(firstType, name, (err2, isProfileEditable) => {
@@ -246,13 +256,19 @@ function ProfileEditorTmpl(exports, opts) {
         };
     }
 
-    function removeProfile(type, name) {
+    function removeProfile(type, name, btn) {
         return () => {
             Utils.confirm(strFormat(l10n(opts.removeMsg), [name]), () => {
                 DBMS.removeProfile(type, name, (err) => {
                     if (err) { Utils.handleError(err); return; }
                     PermissionInformer.refresh((err2) => {
                         if (err2) { Utils.handleError(err2); return; }
+                        if(btn.nextName !== undefined){
+                            UI.updateEntitySetting(settingsPath, btn.nextName);
+                        } else if(btn.prevName !== undefined) {
+                            UI.updateEntitySetting(settingsPath, btn.prevName);
+                        }
+                        
                         exports.refresh();
                     });
                 });

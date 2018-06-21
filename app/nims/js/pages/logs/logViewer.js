@@ -68,16 +68,21 @@ See the License for the specific language governing permissions and
     }
 
     function makeRow(rowData) {
-        const tr = makeEl('tr');
         const addText = (text) => {
-            addEl(tr, addEl(makeEl('td'), addEl(makeEl('span'), makeText(text))));
+            return addEl(makeEl('td'), addEl(makeEl('span'), makeText(text)));
         };
-        addText(`${rowData[0]}`);
-        addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss'));
-        addText(rowData[1]);
-        addText(rowData[3]);
-        addText(rowData[4]);
-        addText(rowData[5]);
-        return tr;
+        return addEls(makeEl('tr'), [
+            addText(`${rowData[0]}`),
+            addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss')),
+            addText(rowData[1]),
+            addText(rowData[3]),
+            
+            addEls(makeEl('td'), JSON.parse(rowData[4]).map(item => {
+                return addEl(addClass(makeEl('div'), 'log-param'), makeText(R.is(Object, item) ? JSON.stringify(item) : item));
+            })),
+            addEls(makeEl('td'), JSON.parse(rowData[5]).map(item => {
+                return addEl(addClass(makeEl('div'), 'log-param'), makeText(R.is(Object, item) ? JSON.stringify(item) : item));
+            })),
+        ]);
     }
 })(this.LogViewer = {});

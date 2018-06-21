@@ -122,7 +122,7 @@ function ProfileConfigurerTmpl(exports, opts) {
                             defaultValue = newVals[0];
                         }
                         fillSelector(defaultValueSelect, arr2Select(newVals));
-                        qee(defaultValueSelect, `[value=${defaultValue}]`).selected = true;
+                        qee(defaultValueSelect, `[value="${defaultValue}"]`).selected = true;
                     });
                 }
             }

@@ -60,24 +60,31 @@ See the License for the specific language governing permissions and
             showEl(qe(`${root} .col-xs-9`), groupNames.length !== 0);
             Utils.enableEl(qe(`${root} .entity-filter`), groupNames.length !== 0);
             
-            addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map((name) => {
+            addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map((name, i, arr) => {
                 const el = wrapEl('div', qte('.entity-item-tmpl'));
                 addEl(qee(el, '.primary-name'), makeText(name.displayName));
                 setAttr(el, 'primary-name', name.displayName);
                 setAttr(el, 'profile-name', name.value);
                 listen(qee(el, '.select-button'), 'click', showProfileInfoDelegate2(name.value));
                 setAttr(qee(el, '.rename'), 'title', l10n('rename-entity'));
-                setAttr(qee(el, '.remove'), 'title', l10n('remove-entity'));
+                const removeBtn = qee(el, '.remove');
+                setAttr(removeBtn, 'title', l10n('remove-entity'));
+                if(i+1 < arr.length){
+                    removeBtn.nextName = arr[i+1].value;
+                }
+                if(i > 0){
+                    removeBtn.prevName = arr[i-1].value;
+                }
                 if (name.editable) {
                     listen(qee(el, '.rename'), 'click', () => {
                         qee(state.renameGroupDialog, '.entity-input').value = name.value;
                         state.renameGroupDialog.fromName = name.value;
                         state.renameGroupDialog.showDlg();
                     });
-                    listen(qee(el, '.remove'), 'click', GroupProfile.removeGroup(() => name.value, exports.refresh));
+                    listen(removeBtn, 'click', GroupProfile.removeGroup(() => name.value, exports.refresh, removeBtn));
                 } else {
                     setAttr(qee(el, '.rename'), 'disabled', 'disabled');
-                    setAttr(qee(el, '.remove'), 'disabled', 'disabled');
+                    setAttr(removeBtn, 'disabled', 'disabled');
                 }
                 return el;
             }));
@@ -147,6 +154,11 @@ See the License for the specific language governing permissions and
                 UI.updateEntitySetting(settingsPath, name);
                 const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
                 addClass(el, 'btn-primary');
+                
+                const parentEl = el.parentElement.parentElement;
+                const entityList = queryEl(`${root} .entity-list`);
+                UI.scrollTo(entityList, parentEl);
+                
                 DBMS.getGroup(name, showProfileInfoCallback);
             }
         };
@@ -300,7 +312,7 @@ See the License for the specific language governing permissions and
         };
     }
 
-    exports.removeGroup = (callback, refresh) => () => {
+    exports.removeGroup = (callback, refresh, btn) => () => {
         const name = callback();
 
         Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
@@ -308,6 +320,11 @@ See the License for the specific language governing permissions and
                 if (err) { Utils.handleError(err); return; }
                 PermissionInformer.refresh((err2) => {
                     if (err2) { Utils.handleError(err2); return; }
+                    if(btn.nextName !== undefined){
+                        UI.updateEntitySetting(settingsPath, btn.nextName);
+                    } else if(btn.prevName !== undefined) {
+                        UI.updateEntitySetting(settingsPath, btn.prevName);
+                    }
                     refresh();
                 });
             });

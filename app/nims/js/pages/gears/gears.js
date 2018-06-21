@@ -397,13 +397,16 @@ See the License for the specific language governing permissions and
     function updateNode(dialog) {
         return () => {
             if( state.nodeData ){
-                const data = state.nodeData;
+                let data = state.nodeData;
                 data.id = qee(dialog, '.node-id').value;
                 data.name = qee(dialog, '.node-name').value;
                 data.group = qee(dialog, '.node-group').value;
                 data.notes = qee(dialog, '.node-notes').value;
                 data.label = makeLabel(data.name, data.notes);
                 data.shape = 'box';
+                
+                const extraFields = R.difference(R.keys(data), Constants.gearsNodeRequiredFields);
+                data = R.omit(extraFields, data);
                 
                 state.nodeCallback(data);
                 

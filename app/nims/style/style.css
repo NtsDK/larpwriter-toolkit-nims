@@ -703,16 +703,6 @@ textarea.welcome-text-area{
 }
 /* playerManagement.js **/
 
-/** log-viewer2-tab */
-.log-viewer-tab table td:nth-child(5) span{
-  word-break: break-all;
-  max-height: 160px;
-  overflow: auto;
-  display: inline-block;
-}
-
-/* log-viewer2-tab **/
-
 /* usual panel toggler */ 
 a[panel-toggler].expanded::after{
   content: "\f106";
