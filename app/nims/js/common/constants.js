@@ -580,5 +580,5 @@ See the License for the specific language governing permissions and
     
     exports.gearsNodeRequiredFields = ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'];
 
-    exports.httpTimeout = 5000;
+    exports.httpTimeout = 60000;
 })(typeof exports === 'undefined' ? this.Constants = {} : exports);
