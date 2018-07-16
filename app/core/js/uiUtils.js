@@ -173,7 +173,7 @@ See the License for the specific language governing permissions and
         let val = event.target.value;
         let i, opt;
 //        val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
-        val = val.toLowerCase());
+        val = val.toLowerCase();
         for (i = 0; i < sel.options.length; i += 1) {
             opt = sel.options[i];
 //            const isVisible = opt.innerHTML.toLowerCase().search(val) !== -1;
