@@ -16,7 +16,8 @@ body {
   background-color: #ABABAB;
 /*   1. if auto on some pages show scroll when not necessary */
 /*   2. if hidden can't see result of Jasmine tests */
-  overflow-y: hidden;
+/*   overflow-y: hidden; */
+  overflow-y: auto;
 }
 
 .block {
@@ -57,8 +58,8 @@ body {
 
 #contentArea {
   margin: 36px 0 0;
-  height: calc(100vh - 36px);
-  overflow: auto;
+/*   height: calc(100vh - 36px); */
+/*   overflow: auto; */
 }
 
 .navigation-button {

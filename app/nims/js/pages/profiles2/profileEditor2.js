@@ -200,9 +200,9 @@ function ProfileEditorTmpl(exports, opts) {
 
         const els = queryEls(`${root} [primary-name]`);
         els.forEach((el) => {
-            let isVisible = getAttr(el, 'primary-name').toLowerCase().search(str) !== -1;
+            let isVisible = getAttr(el, 'primary-name').toLowerCase().indexOf(str) !== -1;
             if (!isVisible && getAttr(el, 'secondary-name') !== null) {
-                isVisible = getAttr(el, 'secondary-name').toLowerCase().search(str) !== -1;
+                isVisible = getAttr(el, 'secondary-name').toLowerCase().indexOf(str) !== -1;
             }
             hideEl(el, !isVisible);
         });

@@ -12,44 +12,42 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License. */
    
-#briefingPreviewDiv .gutter {
-  width: 20px;
-  background-color: #ededed;
-  position: fixed;
-/*   block padding */
-  right: 30px;
-  bottom: 8px;
-  top: 84px;
-}
+/* #briefingPreviewDiv .gutter { */
+/*   width: 20px; */
+/*   background-color: #ededed; */
+/*   position: fixed; */
+/*   right: 30px; */
+/*   bottom: 8px; */
+/*   top: 84px; */
+/* } */
 
-#briefingPreviewDiv .gutter button{
-  width: 100%;
-  display: block;
-  height: 12px;
-  margin-top: -6px;
-  position: absolute;
-  padding: 0;
-  top: 50%;
-/*   background: rgb(51, 122, 183); */
-  background: linear-gradient(180deg, 
-        rgba(0,0,0,0) calc(50% - 2px), 
-        rgba(51, 122, 183,1) calc(50%), 
-        rgba(0,0,0,0) calc(50% + 2px)
-    );
-  border: none;
-}
+/* #briefingPreviewDiv .gutter button{ */
+/*   width: 100%; */
+/*   display: block; */
+/*   height: 12px; */
+/*   margin-top: -6px; */
+/*   position: absolute; */
+/*   padding: 0; */
+/*   top: 50%; */
+/*   background: linear-gradient(180deg,  */
+/*         rgba(0,0,0,0) calc(50% - 2px),  */
+/*         rgba(51, 122, 183,1) calc(50%),  */
+/*         rgba(0,0,0,0) calc(50% + 2px) */
+/*     ); */
+/*   border: none; */
+/* } */
 
 #briefingPreviewDiv .data-area {
-  margin-right: 36px;
+/*   margin-right: 36px; */
 }
 
 #contentArea {
-  overflow-y: scroll;
+/*   overflow-y: scroll; */
   overflow-x: auto;
 }
 
-.gutter-scroll-position {
-  position: absolute;
-  width: 100%;
-  border: 2px solid grey;
-}
+/* .gutter-scroll-position { */
+/*   position: absolute; */
+/*   width: 100%; */
+/*   border: 2px solid grey; */
+/* } */
