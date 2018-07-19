@@ -86,6 +86,28 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             state.currentView.refresh();
         });
     };
+    
+//    setDatabase
+    
+    function setDatabase(dialog) {
+        return () => {
+            dialog.hideDlg();
+//            const toInput = qee(dialog, '.entity-input');
+//            const { fromName } = dialog;
+//            const toName = toInput.value.trim();
+//
+//            DBMS.renameGroup(fromName, toName, (err) => {
+//                if (err) {
+//                    setError(dialog, err);
+//                } else {
+//                    UI.updateEntitySetting(settingsPath, toName);
+//                    toInput.value = '';
+//                    dialog.hideDlg();
+//                    exports.refresh();
+//                }
+//            });
+        };
+    }
 
     exports.onMasterPageLoad = () => {
         initPage();
@@ -93,11 +115,24 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
-            DBMS.setDatabase(BaseExample.data, (err) => {
-                if (err) { Utils.handleError(err); return; }
-                consistencyCheck((checkResult) => {
-                    consistencyCheckAlert(checkResult);
-                    onDatabaseLoad();
+            
+//            const dbDialog = queryEl('.set-database-dialog');
+//            addEl(queryEl('body'), dbDialog);
+//            listen(qee(dbDialog, '.on-action-button'), 'click', (event) => {
+//                $(dbDialog).modal('hide');
+//            });
+//            
+//            $(dbDialog).modal({
+//                backdrop: 'static'
+//            });
+            
+            readLocalBases().then((browserBase) => {
+                DBMS.setDatabase(browserBase || BaseExample.data, (err) => {
+                    if (err) { Utils.handleError(err); return; }
+                    consistencyCheck((checkResult) => {
+                        consistencyCheckAlert(checkResult);
+                        onDatabaseLoad();
+                    });
                 });
             });
         } else if (MODE === 'NIMS_Server') {
@@ -234,7 +269,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 state.currentView.refresh();
                 if (MODE === 'Standalone') {
                     addBeforeUnloadListener();
-//                    localAutoSave();
+                    localAutoSave();
                 }
 //                FileUtils.makeNewBase();
 //                state.currentView.refresh();
@@ -290,6 +325,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     function addBeforeUnloadListener() {
         window.onbeforeunload = (evt) => {
+            makeBackup();
             const message = getL10n('utils-close-page-warning');
             if (typeof evt === 'undefined') {
                 evt = window.event;
@@ -301,24 +337,58 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         };
     }
     
-//    function localAutoSave() {
-//        if (!window.indexedDB) {
-//            Utils.alert("Ваш браузер не поддерживат стабильную версию IndexedDB. Такие-то функции будут недоступны");
-//            return;
-//        }
-//        
-//        let counter = 0;
-//        setInterval(() => {
-//            console.log(counter + 1);
-//            counter = (counter + 1) % 3;
-//        }, 1000);
-////        LocalBaseAPI.test();
-//        
-////        DBMS.getDatabase((err, database) => {
-////            if (err) { Utils.handleError(err); return; }
-////            
-////            LocalBaseAPI.test();
-////        });
-//    }
+    function readLocalBases() {
+        if (!window.indexedDB) {
+            Utils.alert(L10n.get('errors', 'indexeddb-is-not-found'));
+            return Promise.resolve(null);
+        }
+        
+        let counter = 0;
+        let counters = [];
+        while(!R.contains(counter, counters)) {
+            counters.push(counter);
+            counter = (counter + 1) % 3;
+        }
+        
+        return Promise.all(counters.map(counter => LocalBaseAPI.get('base' + counter))).then(bases => {
+            bases = bases.filter(base => !R.isNil(base));
+            if(bases.length === 0){
+                return null;
+            }
+            return bases.reduce((base1, base2) => {
+                if(base1 === null){
+                    return base2;
+                }
+                return new Date(base2.obj.Meta.saveTime) > new Date(base1.obj.Meta.saveTime) ? base2 : base1;
+            }, null).obj;
+        });
+    }
+    
+    function localAutoSave() {
+        if (!window.indexedDB) {
+            return;
+        }
+        
+        makeBackup();
+        setInterval(makeBackup, 60000*5); // 5 min
+    }
+    
+    let counter = 0;
+    function makeBackup() {
+        console.log(counter + 1);
+        counter = (counter + 1) % 3;
+        console.log('Starting autosave');
+        
+        DBMS.getDatabase((err, database) => {
+            if (err) { Utils.handleError(err); return; }
+            
+            LocalBaseAPI.put('base' + counter, database).then(() => {
+                console.log('Autosave OK ' + new Date());
+//                LocalBaseAPI.get('base' + counter).then((database) => {
+//                    console.log(database);
+//                }).catch(Utils.handleError);
+            }).catch(Utils.handleError);
+        });
+    }
     
 })(this.PageManager = {});

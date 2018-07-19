@@ -63,21 +63,21 @@ See the License for the specific language governing permissions and
 //    }
     
     exports.test = () => {
-        console.log('2323223');
-        exports.put('base1', {
-            'sd':12,
-        }, logerr2);
-        exports.put('base2', {
-            'ssdsdd':1654654,
-        }, logerr2);
-        exports.get('base1', (err, base) => {
-            if(err) {console.log(err); return;}
-            console.log(base);
-        });
-        exports.get('base3', (err, base) => {
-            if(err) {console.log(err); return;}
-            console.log(base);
-        });
+//        console.log('2323223');
+//        exports.put('base1', {
+//            'sd':12,
+//        }, logerr2);
+//        exports.put('base2', {
+//            'ssdsdd':1654654,
+//        }, logerr2);
+//        exports.get('base1', (err, base) => {
+//            if(err) {console.log(err); return;}
+//            console.log(base);
+//        });
+//        exports.get('base3', (err, base) => {
+//            if(err) {console.log(err); return;}
+//            console.log(base);
+//        });
     };
 
     function logerr(err){
@@ -100,25 +100,29 @@ See the License for the specific language governing permissions and
         }
     }
     
-    exports.get = (id, callback) => {
-        connectDB(function(err, db){
-            if(err) {callback(err); return;}
-            var request = db.transaction([storeName], "readonly").objectStore(storeName).get(id);
-            request.onerror = callback;
-            request.onsuccess = function(){
-                callback(null, request.result ? request.result : null);
-            }
+    exports.get = (id) => {
+        return new Promise(function(resolve, reject) {
+            connectDB(function(err, db){
+                if(err) {reject(err); return;}
+                var request = db.transaction([storeName], "readonly").objectStore(storeName).get(id);
+                request.onerror = reject;
+                request.onsuccess = function(){
+                    resolve(request.result ? request.result : null);
+                }
+            });
         });
     }
     
-    exports.put = (id, obj, callback) => {
-        connectDB(function(err, db){
-            if(err) {callback(err); return;}
-            var request = db.transaction([storeName], "readwrite").objectStore(storeName).put({id, obj});
-            request.onerror = callback;
-            request.onsuccess = function(){
-                callback(null, request.result);
-            }
+    exports.put = (id, obj) => {
+        return new Promise(function(resolve, reject) {
+            connectDB(function(err, db){
+                if(err) {reject(err); return;}
+                var request = db.transaction([storeName], "readwrite").objectStore(storeName).put({id, obj});
+                request.onerror = reject;
+                request.onsuccess = function(){
+                    resolve(request.result);
+                }
+            });
         });
     }
 })(this.LocalBaseAPI = {});
