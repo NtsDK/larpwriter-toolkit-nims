@@ -21,6 +21,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 ((exports) => {
     const state = {};
     state.views = {};
+    
+    const BACKUP_NUMBER = 4;
+    const BACKUP_INTERVAL = 60000*10; // 10 min
 
     const btnOpts = {
         tooltip: true,
@@ -116,18 +119,32 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
             
-//            const dbDialog = queryEl('.set-database-dialog');
-//            addEl(queryEl('body'), dbDialog);
-//            listen(qee(dbDialog, '.on-action-button'), 'click', (event) => {
-//                $(dbDialog).modal('hide');
-//            });
-//            
-//            $(dbDialog).modal({
-//                backdrop: 'static'
-//            });
+            const dbDialog = queryEl('.set-database-dialog');
+            addEl(queryEl('body'), dbDialog);
+            listen(qee(dbDialog, '.on-action-button'), 'click', (event) => {
+                $(dbDialog).modal('hide');
+            });
             
-            readLocalBases().then((browserBase) => {
-                DBMS.setDatabase(browserBase || BaseExample.data, (err) => {
+            
+            readLocalBases().then((browserBases) => {
+                
+                addEls(qee(dbDialog, '.modal-body .backup-bases'), browserBases.map((base,i) => {
+                    const baseSelect = qmte('.backup-base-tmpl');
+                    setAttr(qee(baseSelect, 'input'), 'value', "browserBackup" + i); 
+                    setAttr(qee(baseSelect, 'input'), 'id', "dbSourceBrowserBackup" + i);
+                    setAttr(qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
+                    const date = new Date(base.Meta.saveTime).format('dd mmm yyyy HH:MM:ss');
+                    addEl(qee(baseSelect, '.base-name'), makeText(base.Meta.name + ' (' + date + ')'));
+                    return baseSelect;
+                }));
+                
+                L10n.localizeStatic(dbDialog);
+                
+                $(dbDialog).modal({
+                    backdrop: 'static'
+                });
+                
+                DBMS.setDatabase(browserBases[0] || BaseExample.data, (err) => {
                     if (err) { Utils.handleError(err); return; }
                     consistencyCheck((checkResult) => {
                         consistencyCheckAlert(checkResult);
@@ -347,7 +364,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         let counters = [];
         while(!R.contains(counter, counters)) {
             counters.push(counter);
-            counter = (counter + 1) % 3;
+            counter = (counter + 1) % BACKUP_NUMBER;
         }
         
         return Promise.all(counters.map(counter => LocalBaseAPI.get('base' + counter))).then(bases => {
@@ -355,12 +372,17 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             if(bases.length === 0){
                 return null;
             }
-            return bases.reduce((base1, base2) => {
-                if(base1 === null){
-                    return base2;
-                }
-                return new Date(base2.obj.Meta.saveTime) > new Date(base1.obj.Meta.saveTime) ? base2 : base1;
-            }, null).obj;
+            
+            bases.sort(CommonUtils.charOrdAFactory( base => -new Date(base.obj.Meta.saveTime).getTime()))
+            
+            return bases.map(R.prop('obj'));
+            
+//            return bases.reduce((base1, base2) => {
+//                if(base1 === null){
+//                    return base2;
+//                }
+//                return new Date(base2.obj.Meta.saveTime) > new Date(base1.obj.Meta.saveTime) ? base2 : base1;
+//            }, null).obj;
         });
     }
     
@@ -370,13 +392,13 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         }
         
         makeBackup();
-        setInterval(makeBackup, 60000*5); // 5 min
+        setInterval(makeBackup, BACKUP_INTERVAL); // 5 min
     }
     
     let counter = 0;
     function makeBackup() {
         console.log(counter + 1);
-        counter = (counter + 1) % 3;
+        counter = (counter + 1) % BACKUP_NUMBER;
         console.log('Starting autosave');
         
         DBMS.getDatabase((err, database) => {

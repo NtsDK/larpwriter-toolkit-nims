@@ -22,22 +22,23 @@
     <div class="modal-content">
       <div class="modal-header">
 <!--         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-        <h4 class="modal-title" l10n-id="select-database"></h4>
+        <h4 class="modal-title" l10n-id="dialogs-select-database"></h4>
       </div>
       <div class="modal-body">
-      
+              <div class="backup-bases">
+              </div>
               <div>
                 <input type="radio" name="dbSource" value="demoBase" id="dbSourceDemoBase" class="hidden">
-                <label for="dbSourceDemoBase" class="radio-label-icon common-radio"><span l10n-id="adaptations-by-characters"></span></label>
+                <label for="dbSourceDemoBase" class="radio-label-icon common-radio"><span l10n-id="dialogs-demo-database"></span></label>
               </div>
               <div>
                 <input type="radio" name="dbSource" value="emptyBase" id="dbSourceEmptyBase" class="hidden">
-                <label for="dbSourceEmptyBase" class="radio-label-icon common-radio"><span l10n-id="adaptations-by-events"></span></label>
+                <label for="dbSourceEmptyBase" class="radio-label-icon common-radio"><span l10n-id="dialogs-empty-database"></span></label>
               </div>
-              <div>
-                <input type="radio" name="dbSource" value="browserBackup" id="dbSourceBrowserBackup" class="hidden">
-                <label for="dbSourceBrowserBackup" class="radio-label-icon common-radio"><span l10n-id="adaptations-by-events"></span></label>
-              </div>
+<!--               <div> -->
+<!--                 <input type="radio" name="dbSource" value="browserBackup" id="dbSourceBrowserBackup" class="hidden"> -->
+<!--                 <label for="dbSourceBrowserBackup" class="radio-label-icon common-radio"><span l10n-id="dialogs-browser-database"></span></label> -->
+<!--               </div> -->
 <!--           <div class="image-place flex-0-0-auto"> -->
 <!--               <svg id="svg-canvas" width=960 height=450></svg> -->
 <!--           </div> -->
@@ -48,6 +49,15 @@
     </div>
   </div>
 </div>
+
+<template class="backup-base-tmpl">
+  <div>
+<!--   value="browserBackup" id="dbSourceBrowserBackup" -->
+    <input type="radio" name="dbSource"  class="hidden">
+    <label  class="radio-label-icon common-radio"><span l10n-id="dialogs-browser-database"></span><div class="base-name"></div></label>
+<!--     for="dbSourceBrowserBackup" -->
+  </div>
+</template>
 
 
 <div class="modal fade show-diff-dialog" tabindex="-1" role="dialog">
