@@ -26,13 +26,13 @@
       </div>
       <div class="modal-body">
         <div class="alert alert-info margin-bottom-16" l10n-id2="advices-no-player-profile-items-for-diagram">
-          <p>NIMS automatically stores you game base backup in browser with 10 minutes interval.
-          It stores 4 backups. </p>
-          <p>However browser is unreliable data storage so it is highly
-          recommended to store your game base manually by clicking button <span class="icon-button dataSaveButton"></span> in top right corner 
-          in the end of your work session.
-          This button downloads your game base on your computer.</p> 
-          <p>Next time you can begin your work from the same place by uploading game base file to NIMS.</p>
+          <p l10n-id="dialogs-warn1"> </p>
+          <p> 
+            <span l10n-id="dialogs-warn2"></span>
+            <span class="icon-button dataSaveButton"></span>
+            <span l10n-id="dialogs-warn3"></span> 
+          </p> 
+          <p l10n-id="dialogs-warn4"></p>
         </div>
         <div class="margin-bottom-16 text-align-center">
           <button class="btn btn-primary upload-db" data-original-title="" title="">
@@ -41,7 +41,7 @@
           </button>
         </div>
         <div class="margin-bottom-16 text-align-center">
-          <label>or</label>
+          <label l10n-id="dialogs-or"></label>
         </div>
         <div>
           <div class="backup-bases">
@@ -56,7 +56,7 @@
             <label for="dbSourceEmptyBase" class="radio-label-icon common-radio"><span l10n-id="dialogs-empty-database"></span></label>
           </div>
           <div class="text-align-right">
-            <button type="button" class="btn btn-primary on-action-button" l10n-id2="common-ok">Load</button>
+            <button type="button" class="btn btn-primary on-action-button" l10n-id="common-load"></button>
           </div>
         </div>
       </div>
