@@ -15,15 +15,9 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    const state = {};
-
-    exports.init = (callback) => {
-        state.callback = callback;
-    };
-    
-    exports.makeNewBase = () => {
+    exports.makeNewBase = (callback) => () => {
         Utils.confirm(getL10n('utils-new-base-warning'), () => {
-            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), state.callback);
+            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), callback);
 //            TestUtils.addGroupTestingData();
         });
     };
@@ -32,7 +26,7 @@ See the License for the specific language governing permissions and
         window.open('extras/doc/nims.html');
     };
 
-    exports.readSingleFile = (evt) => {
+    exports.readSingleFile = (callback) => (evt) => {
         // Retrieve the first (and only!) File from the FileList object
         const f = evt.target.files[0];
 
@@ -40,8 +34,12 @@ See the License for the specific language governing permissions and
             const r = new FileReader();
             r.onload = (e) => {
                 const contents = e.target.result;
-                const database = JSON.parse(contents);
-                DBMS.setDatabase(database, state.callback);
+                try {
+                    const database = JSON.parse(contents);
+                    DBMS.setDatabase(database, callback);
+                } catch (err) {
+                    callback(err);
+                }
             };
             r.readAsText(f);
         } else {

@@ -25,37 +25,49 @@
         <h4 class="modal-title" l10n-id="dialogs-select-database"></h4>
       </div>
       <div class="modal-body">
-              <div class="backup-bases">
-              </div>
-              <div>
-                <input type="radio" name="dbSource" value="demoBase" id="dbSourceDemoBase" class="hidden">
-                <label for="dbSourceDemoBase" class="radio-label-icon common-radio"><span l10n-id="dialogs-demo-database"></span></label>
-              </div>
-              <div>
-                <input type="radio" name="dbSource" value="emptyBase" id="dbSourceEmptyBase" class="hidden">
-                <label for="dbSourceEmptyBase" class="radio-label-icon common-radio"><span l10n-id="dialogs-empty-database"></span></label>
-              </div>
-<!--               <div> -->
-<!--                 <input type="radio" name="dbSource" value="browserBackup" id="dbSourceBrowserBackup" class="hidden"> -->
-<!--                 <label for="dbSourceBrowserBackup" class="radio-label-icon common-radio"><span l10n-id="dialogs-browser-database"></span></label> -->
-<!--               </div> -->
-<!--           <div class="image-place flex-0-0-auto"> -->
-<!--               <svg id="svg-canvas" width=960 height=450></svg> -->
-<!--           </div> -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary on-action-button" l10n-id="common-ok"></button>
+        <div class="alert alert-info margin-bottom-16" l10n-id2="advices-no-player-profile-items-for-diagram">
+          <p>NIMS automatically stores you game base backup in browser with 10 minutes interval.
+          It stores 4 backups. </p>
+          <p>However browser is unreliable data storage so it is highly
+          recommended to store your game base manually by clicking button <span class="icon-button dataSaveButton"></span> in top right corner 
+          in the end of your work session.
+          This button downloads your game base on your computer.</p> 
+          <p>Next time you can begin your work from the same place by uploading game base file to NIMS.</p>
+        </div>
+        <div class="margin-bottom-16 text-align-center">
+          <button class="btn btn-primary upload-db" data-original-title="" title="">
+            <span l10n-id="dialogs-upload-database"></span>
+            <input type="file" class="hidden" tabindex="-1">
+          </button>
+        </div>
+        <div class="margin-bottom-16 text-align-center">
+          <label>or</label>
+        </div>
+        <div>
+          <div class="backup-bases">
+          </div>
+          <div class="margin-bottom-16">
+            <input type="radio" name="dbSource" value="demoBase" id="dbSourceDemoBase" class="hidden">
+            <label for="dbSourceDemoBase" class="radio-label-icon common-radio"><span l10n-id="dialogs-demo-database"></span>
+            <span class="demo-base-name"></span></label>
+          </div>
+          <div class="margin-bottom-16">
+            <input type="radio" name="dbSource" value="emptyBase" id="dbSourceEmptyBase" class="hidden">
+            <label for="dbSourceEmptyBase" class="radio-label-icon common-radio"><span l10n-id="dialogs-empty-database"></span></label>
+          </div>
+          <div class="text-align-right">
+            <button type="button" class="btn btn-primary on-action-button" l10n-id2="common-ok">Load</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <template class="backup-base-tmpl">
-  <div>
-<!--   value="browserBackup" id="dbSourceBrowserBackup" -->
+  <div class="margin-bottom-16">
     <input type="radio" name="dbSource"  class="hidden">
-    <label  class="radio-label-icon common-radio"><span l10n-id="dialogs-browser-database"></span><div class="base-name"></div></label>
-<!--     for="dbSourceBrowserBackup" -->
+    <label  class="radio-label-icon common-radio"><span l10n-id="dialogs-browser-database"></span><span class="base-name"></span></label>
   </div>
 </template>
 

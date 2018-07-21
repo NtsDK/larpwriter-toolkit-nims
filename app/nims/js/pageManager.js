@@ -21,6 +21,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 ((exports) => {
     const state = {};
     state.views = {};
+    state.firstBaseLoad = true;
     
     const BACKUP_NUMBER = 4;
     const BACKUP_INTERVAL = 60000*10; // 10 min
@@ -90,68 +91,13 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         });
     };
     
-//    setDatabase
-    
-    function setDatabase(dialog) {
-        return () => {
-            dialog.hideDlg();
-//            const toInput = qee(dialog, '.entity-input');
-//            const { fromName } = dialog;
-//            const toName = toInput.value.trim();
-//
-//            DBMS.renameGroup(fromName, toName, (err) => {
-//                if (err) {
-//                    setError(dialog, err);
-//                } else {
-//                    UI.updateEntitySetting(settingsPath, toName);
-//                    toInput.value = '';
-//                    dialog.hideDlg();
-//                    exports.refresh();
-//                }
-//            });
-        };
-    }
-
     exports.onMasterPageLoad = () => {
         initPage();
         const LocalDBMS = makeLocalDBMS(true);
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
-            
-            const dbDialog = queryEl('.set-database-dialog');
-            addEl(queryEl('body'), dbDialog);
-            listen(qee(dbDialog, '.on-action-button'), 'click', (event) => {
-                $(dbDialog).modal('hide');
-            });
-            
-            
-            readLocalBases().then((browserBases) => {
-                
-                addEls(qee(dbDialog, '.modal-body .backup-bases'), browserBases.map((base,i) => {
-                    const baseSelect = qmte('.backup-base-tmpl');
-                    setAttr(qee(baseSelect, 'input'), 'value', "browserBackup" + i); 
-                    setAttr(qee(baseSelect, 'input'), 'id', "dbSourceBrowserBackup" + i);
-                    setAttr(qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
-                    const date = new Date(base.Meta.saveTime).format('dd mmm yyyy HH:MM:ss');
-                    addEl(qee(baseSelect, '.base-name'), makeText(base.Meta.name + ' (' + date + ')'));
-                    return baseSelect;
-                }));
-                
-                L10n.localizeStatic(dbDialog);
-                
-                $(dbDialog).modal({
-                    backdrop: 'static'
-                });
-                
-                DBMS.setDatabase(browserBases[0] || BaseExample.data, (err) => {
-                    if (err) { Utils.handleError(err); return; }
-                    consistencyCheck((checkResult) => {
-                        consistencyCheckAlert(checkResult);
-                        onDatabaseLoad();
-                    });
-                });
-            });
+            runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
             const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
             window.DBMS = new RemoteDBMS();
@@ -161,6 +107,53 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             });
         }
     };
+    
+    function runBaseSelectDialog() {
+        const dbDialog = queryEl('.set-database-dialog');
+        addEl(queryEl('body'), dbDialog);
+        listen(qee(dbDialog, '.on-action-button'), 'click', (event) => {
+            $(dbDialog).modal('hide');
+        });
+        
+        readLocalBases().then((browserBases) => {
+            addEls(qee(dbDialog, '.modal-body .backup-bases'), browserBases.map((base,i) => {
+                const baseSelect = qmte('.backup-base-tmpl');
+                const input = qee(baseSelect, 'input');
+                setAttr(input, 'value', "browserBackup" + i); 
+                setAttr(input, 'id', "dbSourceBrowserBackup" + i);
+                input.base = base;
+                setAttr(qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
+                const date = new Date(base.Meta.saveTime).format('dd mmm yyyy HH:MM:ss');
+                addEl(qee(baseSelect, '.base-name'), makeText(base.Meta.name + ' (' + date + ')'));
+                return baseSelect;
+            }));
+            
+            qee(dbDialog, 'input[name=dbSource]').checked = true;
+            qee(dbDialog, '#dbSourceDemoBase').base = CommonUtils.clone(BaseExample.data);
+            qee(dbDialog, '#dbSourceEmptyBase').base = CommonUtils.clone(EmptyBase.data);
+            
+            addEl(qee(dbDialog, '.demo-base-name'), makeText(BaseExample.data.Meta.name));
+            
+            const dialogOnBaseLoad = err => {
+                if (err) { Utils.handleError(err); return; }
+                $(dbDialog).modal('hide');
+                onBaseLoaded(err);
+            }
+            
+            initBaseLoadBtn(qee(dbDialog, '.upload-db'), qee(dbDialog, '.upload-db input'), dialogOnBaseLoad);
+            
+            listen(qee(dbDialog, '.on-action-button'), 'click', () => {
+                const base = getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
+                DBMS.setDatabase(base, dialogOnBaseLoad);
+            });
+            
+            L10n.localizeStatic(dbDialog);
+            
+            $(dbDialog).modal({
+                backdrop: 'static'
+            });
+        });
+    }
 
     function consistencyCheckAlert(checkResult) {
         if (checkResult.errors.length > 0) {
@@ -227,7 +220,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addView(state.containers, 'textSearch', 'TextSearch', { clazz: 'textSearchButton icon-button', tooltip: true });
                 addView(state.containers, 'roleGrid', 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
                 addView(state.containers, 'gears', 'Gears', { clazz: 'gearsButton icon-button', tooltip: true });
-//                addView(state.containers, 'sliders', 'Sliders', { clazz: 'slidersButton icon-button', tooltip: true });
+                addView(state.containers, 'sliders', 'Sliders', { clazz: 'slidersButton icon-button', tooltip: true });
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
@@ -240,24 +233,19 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 if (isAdmin) {
                     button = makeButton('dataLoadButton icon-button', 'open-database', null, btnOpts);
-                    button.addEventListener('change', FileUtils.readSingleFile, false);
-
                     const input = makeEl('input');
                     input.type = 'file';
                     addClass(input, 'hidden');
                     setAttr(input, 'tabindex', -1);
                     button.appendChild(input);
-                    button.addEventListener('click', (e) => {
-                        input.value = '';
-                        input.click();
-                        //                    e.preventDefault(); // prevent navigation to "#"
-                    });
+                    
+                    initBaseLoadBtn(button, input, onBaseLoaded);
                     addEl(state.navigation, button);
                 }
 
                 addEl(state.navigation, makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
                 if (MODE === 'Standalone') {
-                    addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', FileUtils.makeNewBase, btnOpts));
+                    addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', FileUtils.makeNewBase(onBaseLoaded), btnOpts));
                 }
                 addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
@@ -273,14 +261,6 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 }
                 addEl(state.navigation, makeButton('refreshButton icon-button', 'refresh', () => state.currentView.refresh(), btnOpts));
 
-                FileUtils.init((err3) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    consistencyCheck((checkResult) => {
-                        consistencyCheckAlert(checkResult);
-                        state.currentView.refresh();
-                    });
-                });
-
                 Utils.setFirstTab(state.containers, tabs[firstTab].viewRes);
 
                 state.currentView.refresh();
@@ -292,6 +272,28 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 //                state.currentView.refresh();
                 //                                runTests();
             });
+        });
+    }
+    
+    function onBaseLoaded(err3) {
+        if (err3) { Utils.handleError(err3); return; }
+        consistencyCheck((checkResult) => {
+            consistencyCheckAlert(checkResult);
+            if(state.firstBaseLoad){
+                onDatabaseLoad();
+                state.firstBaseLoad = false;
+            } else {
+                state.currentView.refresh();
+            }
+        });
+    }
+    
+    function initBaseLoadBtn(button, input, onBaseLoaded) {
+        button.addEventListener('change', FileUtils.readSingleFile(onBaseLoaded), false);
+        button.addEventListener('click', (e) => {
+            input.value = '';
+            input.click();
+            //                    e.preventDefault(); // prevent navigation to "#"
         });
     }
 
@@ -374,15 +376,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }
             
             bases.sort(CommonUtils.charOrdAFactory( base => -new Date(base.obj.Meta.saveTime).getTime()))
-            
             return bases.map(R.prop('obj'));
-            
-//            return bases.reduce((base1, base2) => {
-//                if(base1 === null){
-//                    return base2;
-//                }
-//                return new Date(base2.obj.Meta.saveTime) > new Date(base1.obj.Meta.saveTime) ? base2 : base1;
-//            }, null).obj;
         });
     }
     

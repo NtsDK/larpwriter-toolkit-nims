@@ -87,6 +87,10 @@ See the License for the specific language governing permissions and
     text-align: left;
 }
 
+.text-align-center{
+    text-align: center;
+}
+
 .not-active-item-in-report {
   color: #dddddd;
 }

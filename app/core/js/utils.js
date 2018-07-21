@@ -250,14 +250,8 @@ const arr2Select2 = R.compose(R.assoc('data', R.__, {}), R.map(makeSelect2Opt));
 const arr2Select = R.map(R.compose(R.zipObj(['value', 'name']), R.repeat(R.__, 2)));
 const constArr2Select = R.map(R.compose(R.zipObj(['value', 'name']), name => [name, constL10n(name)]));
 
-const getSelectedRadio = function (query) {
-    const els = document.querySelectorAll(query);
-    for (let i = 0; i < els.length; i++) {
-        if (els[i].checked === true) {
-            return els[i];
-        }
-    }
-    return null;
+const getSelectedRadio = function (el, query) {
+    return queryElEls(el, query).find(R.prop('checked'));
 };
 
 const debugInterceptor = function (callback) {

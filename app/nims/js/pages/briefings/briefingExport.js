@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
 
 ((exports) => {
     const state = {};
+    const root = '.briefing-export-tab ';
 
     state.templates = {};
     state.customDocxTemplate = null;
@@ -55,11 +56,11 @@ See the License for the specific language governing permissions and
         });
 
 
-        let els = queryElEls(document, '#briefingExportDiv input[name=exportCharacterSelection]');
+        let els = queryElEls(document, `${root} input[name=exportCharacterSelection]`);
         els.map(listen(R.__, 'change', onCharacterSelectionChange));
         getEl('exportAllCharacters').checked = true;
 
-        els = queryElEls(document, '#briefingExportDiv input[name=exportStorySelection]');
+        els = queryElEls(document, `${root} input[name=exportStorySelection]`);
         els.map(listen(R.__, 'change', onStorySelectionChange));
         getEl('exportAllStories').checked = true;
 
@@ -86,7 +87,7 @@ See the License for the specific language governing permissions and
         listen(getEl('convertToDocxTemplate'), 'click', convertToDocxTemplate);
         listen(getEl('generateByDocxTemplate'), 'click', generateByDocxTemplate);
 
-        exports.content = getEl('briefingExportDiv');
+        exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
@@ -122,7 +123,7 @@ See the License for the specific language governing permissions and
     }
 
     function getSelectedUsers() {
-        const { id } = getSelectedRadio('#briefingExportDiv input[name=exportCharacterSelection]');
+        const { id } = getSelectedRadio(qe(root), 'input[name=exportCharacterSelection]');
         switch (id) {
         case 'exportAllCharacters':
             return null;
@@ -137,7 +138,7 @@ See the License for the specific language governing permissions and
     }
 
     function getSelectedStories() {
-        const { id } = getSelectedRadio('#briefingExportDiv input[name=exportStorySelection]');
+        const { id } = getSelectedRadio(qe(root), 'input[name=exportStorySelection]');
         switch (id) {
         case 'exportAllStories':
             return null;
