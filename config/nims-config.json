@@ -32,7 +32,6 @@
     },
     "scripts" : {
         "commonList": [
-            "emptyBase.js", 
             "constants.js", 
             "logger.js", 
             "projectUtils.js", 

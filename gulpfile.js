@@ -95,7 +95,8 @@ commonCore.push(langPath + "/defaultLang.js");
 var common = addPrefix(projectDir + "/js/common/", config.get('scripts:commonList'));
 
 common.push(projectDir + "/js/common/engine/*.js");
-common.push(langPath + "/baseExample.js");
+common.push(langPath + "/demoBase.js");
+common.push(langPath + "/emptyBase.js");
 
 var scripts = [projectDir + "/js/dbms/*.js"].concat(coreDir + "/js/*.js").concat(projectDir + "/js/*.js");
 
