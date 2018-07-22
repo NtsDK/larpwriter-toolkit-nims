@@ -135,8 +135,6 @@ See the License for the specific language governing permissions and
             state.nodesDataset.add(data.nodes);
             state.edgesDataset.clear();
             state.edgesDataset.add(data.edges);
-            
-            
             drawNetwork();
         });
     };
@@ -146,7 +144,7 @@ See the License for the specific language governing permissions and
       const container = qe(`${root} .mynetwork`);
       clearEl(queryEl(`${root} .configInner`));
       const options = {
-        locale: 'ru',
+        locale: L10n.getLocale(),
         locales: Constants.visLocales,
         manipulation: {
             addNode: function (data, callback) {

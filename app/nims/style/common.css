@@ -356,6 +356,20 @@ input[selector-filter]{
   content: "\f111";
 }
 
+.fa-free:before {
+  font-family: Font Awesome\ 5 Free;
+}
+
+.fa-bold:before {
+  font-weight: 900;
+}
+.fa-normal:before {
+  font-weight: 500;
+}
+.fa-margin-right:before {
+  margin-right: 4px;
+}
+
 .common-checkbox:before,
 .common-radio:before {
   font-size: 1.2em;

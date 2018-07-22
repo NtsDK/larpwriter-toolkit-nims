@@ -63,6 +63,8 @@ See the License for the specific language governing permissions and
     };
 
     var setHtmlLang = lang => setAttr(document.getElementsByTagName('html')[0], 'lang', lang);
+    
+    exports.getLocale = () => state.lang;
 
     exports.toggleL10n = () => {
         if (state.lang === 'ru') {

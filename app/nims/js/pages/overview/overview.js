@@ -78,8 +78,39 @@ See the License for the specific language governing permissions and
 
         state.descr = queryEl(`${root}.game-description-area`);
         state.descr.addEventListener('change', updateDescr);
+        
+        const gearsContainer = qee(queryEl(root), '#gears');
+        addEl(gearsContainer, qe('.gears-tab'));
+        Gears.init();
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.attributeName === "class") {
+                if(hasClass(gearsContainer, 'active')) {
+                    exports.refresh();
+                }
+            }
+          });
+        });
+        observer.observe(gearsContainer, {
+          attributes: true
+        });
+        
+        const slidersContainer = qee(queryEl(root), '#sliders');
+        addEl(slidersContainer, qe('.sliders-tab'));
+        Sliders.init();
 
         exports.content = queryEl(root);
+    };
+    
+    exports.refresh = () => {
+        Gears.refresh();
+        Sliders.refresh();
+        PermissionInformer.isAdmin((err, isAdmin) => {
+            if (err) { Utils.handleError(err); return; }
+            Utils.enable(exports.content, 'adminOnly', isAdmin);
+        });
+        
+        Promise.all( [DBMS.getMetaInfoPm(), DBMS.getStatisticsPm()] ).then(updateOverviewTab).catch(Utils.handleError);
     };
 
     function makeChart(id, canvas, data) {
@@ -156,15 +187,6 @@ See the License for the specific language governing permissions and
             addEl(place, div);
         });
     }
-
-    exports.refresh = () => {
-        PermissionInformer.isAdmin((err, isAdmin) => {
-            if (err) { Utils.handleError(err); return; }
-            Utils.enable(exports.content, 'adminOnly', isAdmin);
-        });
-        
-        Promise.all( [DBMS.getMetaInfoPm(), DBMS.getStatisticsPm()] ).then(updateOverviewTab).catch(Utils.handleError);
-    };
 
     function updateOverviewTab(results) {
         const [metaInfo, statistics] = results;
