@@ -29,7 +29,7 @@ function FilterConfiguration(info) {
             item.value = '';
         }
         //        item.canHide = item.name !== Constants.CHAR_NAME && item.name !== Constants.PLAYER_NAME;
-        item.canHide = true;
+//        item.canHide = true;
     }
     this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);
     this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
@@ -58,9 +58,23 @@ FilterConfiguration.prototype.getProfileItemSource = function (name) {
     return source;
 };
 
+FilterConfiguration.prototype.getName2SourceMapping = function () {
+    return this.groupedProfileFilterItems.reduce( (acc, group) => {
+        group.profileFilterItems.forEach( item => acc[item.name] = group.name);
+        return acc;
+    }, {});
+};
+
 FilterConfiguration.prototype.getGroupedProfileFilterItems = function () {
     return this.groupedProfileFilterItems;
 };
+
+FilterConfiguration.prototype.getGroupsForSelect = function() {
+    return this.groupedProfileFilterItems.map((group) => ({
+        displayName: getL10n(`profile-filter-${group.name}`),
+        array: group.profileFilterItems
+    }));
+}
 
 FilterConfiguration.prototype.getBaseProfileSettings = function () {
     return {

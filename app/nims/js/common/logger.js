@@ -317,7 +317,7 @@ See the License for the specific language governing permissions and
                         const { length } = arguments;
                         const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
                         const callback = arguments[callbackPos];
-                        console.error(err);
+                        console.error(funcName, err);
                         return callback(err);
                     }
                 };

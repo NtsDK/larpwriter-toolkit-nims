@@ -100,22 +100,27 @@ See the License for the specific language governing permissions and
         });
     };
 
-    exports.fillShowItemSelector2 = (selector, optionGroups) => {
+    exports.fillShowItemSelector2 = (selector, optionGroups, setSize) => {
         let el, groupEl, counter = 0;
         addEls(selector, optionGroups.map((group) => {
             counter++;
-            groupEl = setAttr(makeEl('optgroup'), 'label', group.name);
-            addEls(groupEl, group.array.map((value) => {
+            groupEl = setAttr(makeEl('optgroup'), 'label', group.displayName);
+            addEls(groupEl, group.array.map((option) => {
                 el = setProps(makeEl('option'), {
                     selected: true,
                 });
-                hideEl(el, value.hidden);
-                counter += (value.hidden ? 0 : 1);
-                return addEl(el, makeText(value.name));
+                setAttr(el, 'value', option.name);
+//                el.item = value.item;
+//                hideEl(el, value.hidden);
+//                counter += (value.hidden ? 0 : 1);
+                counter++;
+                return addEl(el, makeText(option.displayName));
             }));
             return groupEl;
         }));
-        setAttr(selector, 'size', counter);
+        if(setSize) {
+            setAttr(selector, 'size', counter);
+        }
     };
 
 //    exports.showSelectedEls = classKey => (event) => {

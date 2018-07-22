@@ -34,8 +34,12 @@ See the License for the specific language governing permissions and
             dialogTitle: 'groups-enter-new-group-name',
             actionButtonTitle: 'common-rename',
         });
+        
+        state.addFilterConditionDialog = new AddFilterConditionDialog(root);
+        listen(qe(`${root}.create.filter-condition`), 'click', onAddFilterCondition);
 
-        listen(queryEl(`${root}.profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
+        listen(queryEl(`${root}#profile-filter-columns .profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
+//        listen(queryEl(`${root}#profile-filter-rows .profile-item-selector`), 'change', onProfileItemSelect);
         
 //        Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
 //        listen queryEl(`${root}.save-entity-select`)
@@ -61,31 +65,13 @@ See the License for the specific language governing permissions and
 
         exports.content = queryEl(root);
     };
-
-    function groupAreaRefresh() {
-        PermissionInformer.getEntityNamesArray('group', true, Utils.processError((userGroupNames) => {
-            PermissionInformer.getEntityNamesArray('group', false, Utils.processError((allGroupNames) => {
-                
-                Utils.enableEl(qe(`${root}.rename.group`), allGroupNames.length > 0);
-                Utils.enableEl(qe(`${root}.remove.group`), allGroupNames.length > 0);
-                Utils.enableEl(qe(`${root}.show-entity-button`), allGroupNames.length > 0);
-                Utils.enableEl(qe(`${root}.save-entity-button`), allGroupNames.length > 0);
-                Utils.enableEl(qe(`${root}.save-entity-select`), allGroupNames.length > 0);
-                
-                state.userGroupNames = userGroupNames;
-                state.allGroupNames = allGroupNames;
-                const data = getSelect2Data(allGroupNames);
-                clearEl(queryEl(`${root}.save-entity-select`));
-                $(`${root}.save-entity-select`).select2(data);
-            }));
-        }));
-    }
-
+    
     exports.refresh = () => {
         state.sortKey = Constants.CHAR_NAME;
         state.sortDir = 'asc';
         state.inputItems = {};
         state.checkboxes = {};
+        state.curFilterModel = [];
 
         const filterSettingsDiv = clearEl(queryEl(`${root}.filter-settings-panel`));
         addEl(filterSettingsDiv, addClass(makeEl('div'), 'separator'));
@@ -107,9 +93,16 @@ See the License for the specific language governing permissions and
             addEls(filterSettingsDiv, R.flatten(groupedProfileFilterItems.map(item => R.concat(item.profileFilterItems.map(makeInput), [addClass(makeEl('div'), 'filterSeparator')]))));
 
             UI.fillShowItemSelector2(
-                clearEl(queryEl(`${root}.profile-item-selector`)),
-                getShowProfileItemNames(filterConfiguration.getGroupedProfileFilterItems())
+                clearEl(queryEl(`${root}#profile-filter-columns .profile-item-selector`)),
+                filterConfiguration.getGroupsForSelect(),
+                true
             );
+            
+//            UI.fillShowItemSelector2(
+//                clearEl(queryEl(`${root}#profile-filter-rows .profile-item-selector`)),
+//                getGroupsForSelect(filterConfiguration.getGroupedProfileFilterItems()),
+//                false
+//            );
 
             addEl(
                 clearEl(queryEl(`${root}.filter-head`)),
@@ -119,18 +112,37 @@ See the License for the specific language governing permissions and
             rebuildContent();
         });
     };
-
-    function getShowProfileItemNames(groups) {
-        return groups.map((group) => {
-            const data = group.profileFilterItems.map(item => ({
-                name: item.displayName,
-                hidden: !item.canHide
+    
+    function onAddFilterCondition() {
+        state.addFilterConditionDialog.showDlg(state.filterConfiguration.getGroupsForSelect(), setFilterModelItem);
+    }
+    
+    function setFilterModelItem (filterModelItem) {
+        const index = R.findIndex(R.propEq('name', filterModelItem.name), state.curFilterModel);
+        if(index === -1){
+            state.curFilterModel.push(filterModelItem);
+        } else {
+            state.curFilterModel[index] = filterModelItem;
+        }
+    }
+    
+    function groupAreaRefresh() {
+        PermissionInformer.getEntityNamesArray('group', true, Utils.processError((userGroupNames) => {
+            PermissionInformer.getEntityNamesArray('group', false, Utils.processError((allGroupNames) => {
+                
+                Utils.enableEl(qe(`${root}.rename.group`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.remove.group`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.show-entity-button`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.save-entity-button`), allGroupNames.length > 0);
+                Utils.enableEl(qe(`${root}.save-entity-select`), allGroupNames.length > 0);
+                
+                state.userGroupNames = userGroupNames;
+                state.allGroupNames = allGroupNames;
+                const data = getSelect2Data(allGroupNames);
+                clearEl(queryEl(`${root}.save-entity-select`));
+                $(`${root}.save-entity-select`).select2(data);
             }));
-            return {
-                name: getL10n(`profile-filter-${group.name}`),
-                array: data
-            };
-        });
+        }));
     }
 
     function getHeaderProfileItemNames(profileSettings) {
@@ -167,7 +179,7 @@ See the License for the specific language governing permissions and
         const dataArrays = makePrintData();
         addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
         addEls(clearEl(queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
-        UI.showSelectedEls3(root, 'dependent', 'dependent-index')({ target: queryEl(`${root}.profile-item-selector`) });
+        UI.showSelectedEls3(root, 'dependent', 'dependent-index')({ target: queryEl(`${root}#profile-filter-columns .profile-item-selector`) });
     }
 
     function saveFilterToGroup() {
@@ -201,7 +213,7 @@ See the License for the specific language governing permissions and
     }
 
     function downloadFilterTable() {
-        const el = queryEl(`${root}.profile-item-selector`);
+        const el = queryEl(`${root}#profile-filter-columns .profile-item-selector`);
         const selected = [];
         for (let i = 0; i < el.options.length; i += 1) {
             selected[i] = el.options[i].selected;

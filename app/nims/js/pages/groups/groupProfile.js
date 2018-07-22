@@ -173,6 +173,10 @@ See the License for the specific language governing permissions and
             PermissionInformer.isEntityEditable('group', name, (err2, isGroupEditable) => {
                 if (err2) { Utils.handleError(err2); return; }
                 updateSettings(name);
+                
+                const name2DisplayName = CommonUtils.arr2map(filterConfiguration.getProfileFilterItems(), 'name');
+                
+                const name2SourceMapping = filterConfiguration.getName2SourceMapping();
 
                 state.name = name;
                 const { inputItems } = state;
@@ -182,7 +186,7 @@ See the License for the specific language governing permissions and
                     } else if (inputItems[inputName].type === 'container') {
                         if (inputName === 'filterModel') {
                             const table = qmte(`${root} .group-filter-template`);
-                            addEls(qee(table, 'tbody'), group.filterModel.map(makeFilterItemString(filterConfiguration)));
+                            addEls(qee(table, 'tbody'), group.filterModel.map(makeFilterItemString(name2DisplayName, name2SourceMapping)));
                             L10n.localizeStatic(table);
                             addEl(clearEl(inputItems[inputName]), table);
                         } else if (inputName === 'characterList') {
@@ -204,14 +208,10 @@ See the License for the specific language governing permissions and
         });
     }
 
-    function getHeaderDisplayName(filterConfiguration, name) {
-        return CommonUtils.arr2map(filterConfiguration.getProfileFilterItems(), 'name')[name].displayName;
-    }
-
     // eslint-disable-next-line no-var,vars-on-top
-    var makeFilterItemString = R.curry((filterConfiguration, filterItem) => {
-        const displayName = getHeaderDisplayName(filterConfiguration, filterItem.name);
-        const source = filterConfiguration.getProfileItemSource(filterItem.name);
+    var makeFilterItemString = R.curry((name2DisplayName, name2SourceMapping, filterItem) => {
+        const displayName = name2DisplayName[filterItem.name].displayName;
+        const source = name2SourceMapping[filterItem.name];
         let condition, arr, value;
         switch (filterItem.type) {
         case 'enum':
@@ -241,9 +241,11 @@ See the License for the specific language governing permissions and
         default:
             throw new Error(`Unexpected type ${filterItem.type}`);
         }
+        const title = getL10n(`profile-filter-${source}`) + ', ' + getL10n(`constant-${filterItem.type}`);
+        
         const row = qmte(`${root} .group-filter-row-template`);
         addEl(qee(row, '.profile-item'), makeText(displayName));
-        setAttr(qee(row, '.profile-item'), 'title', getL10n(`profile-filter-${source}`) + ', ' + getL10n(`constant-${filterItem.type}`));
+        setAttr(qee(row, '.profile-item'), 'title', title);
         addEl(qee(row, '.condition'), makeText(condition));
         addEl(qee(row, '.value'), makeText(value));
         return row;
