@@ -83,16 +83,16 @@ See the License for the specific language governing permissions and
         addEl(gearsContainer, qe('.gears-tab'));
         Gears.init();
         var observer = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
-            if (mutation.attributeName === "class") {
-                if(hasClass(gearsContainer, 'active')) {
-                    exports.refresh();
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === "class") {
+                    if(hasClass(gearsContainer, 'active')) {
+                        Gears.refresh();
+                    }
                 }
-            }
-          });
+            });
         });
         observer.observe(gearsContainer, {
-          attributes: true
+            attributes: true
         });
         
         const slidersContainer = qee(queryEl(root), '#sliders');

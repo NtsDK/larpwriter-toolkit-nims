@@ -30,6 +30,15 @@ See the License for the specific language governing permissions and
                 reject(exports.makeValidationError(err));
             }
         });
+        
+        exports.precondition2 = R.curry((check) => {
+            const err = check();
+            if (err === null) {
+                return Promise.resolve();
+            } else {
+                return Promise.reject(exports.makeValidationError(err));
+            }
+        });
 
         exports.chainCheck = R.curry(arr => () => arr.reduce((err, item) => {
             if (err) return err;

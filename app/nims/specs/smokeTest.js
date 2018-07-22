@@ -184,6 +184,11 @@ const getChecks = {
         func: 'getAllGearsData',
         args: [],
     }],
+    slidersAPI:
+    [{
+        func: 'getSliderData',
+        args: [],
+    }],
 };
 
 const setChecks = {
@@ -754,6 +759,47 @@ const setChecks = {
     {
         func: 'setGearsData',
         args: [{"nodes":[{"id":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","x":85,"y":-20,"label":"123\n\n2","name":"123","group":"1","notes":"2","shape":"box"},{"id":"698903f4-ac21-4fd1-abeb-de688cf8b463","x":-353,"y":-7,"label":"234\n\n345","name":"234","group":"2","notes":"345","shape":"box"}],"edges":[{"from":"698903f4-ac21-4fd1-abeb-de688cf8b463","to":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","arrows":"to","id":"4be956c5-0d6b-4e7e-8be8-9e23dc0fe0fb","label":"2233"}]}],
+    }],
+    slidersAPI:
+    [{
+        func: 'createSlider',
+        args: ['name1', 'top1', 'bottom1'],
+    },
+    {
+        func: 'createSlider',
+        args: ['name1', 'top1', 'bottom1'],
+    },
+    {
+        func: 'updateSliderNaming',
+        args: [2, 'name3', 'top3', 'bottom3'],
+    },
+    {
+        func: 'updateSliderValue',
+        args: [2, 5],
+    },
+    {
+        func: 'updateSliderValue',
+        args: [2, 10],
+    },
+    {
+        func: 'updateSliderValue',
+        args: [2, -10],
+    },
+    {
+        func: 'updateSliderValue',
+        args: [2, 0],
+    },
+    {
+        func: 'moveSlider',
+        args: [2, 3],
+    },
+    {
+        func: 'removeSlider',
+        args: [2],
+    },
+    {
+        func: 'removeSlider',
+        args: [2],
     }],
 };
 

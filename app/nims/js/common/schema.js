@@ -45,6 +45,7 @@ See the License for the specific language governing permissions and
             const InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
             const Relations = getRelationsSchema(base.Characters, schema.definitions);
             const Gears = getGearsSchema();
+            const Sliders = getSlidersSchema();
             let ManagementInfo = {};
             if (base.ManagementInfo) {
                 ManagementInfo = getManagementInfoSchema(
@@ -69,12 +70,13 @@ See the License for the specific language governing permissions and
                 InvestigationBoard,
                 Settings: {},
                 Gears,
+                Sliders,
                 Relations,
                 ManagementInfo
             };
 
             schema.required = ['Meta', 'CharacterProfileStructure', 'PlayerProfileStructure', 'Version', 'Characters',
-                'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations', 'Gears'];
+                'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations', 'Gears', 'Sliders'];
             schema.additionalProperties = false;
 
             schema.moduleList = R.keys(schema.properties);
@@ -230,6 +232,33 @@ See the License for the specific language governing permissions and
                     },
                     minItems: 5,
                     maxItems: 5
+                }
+            };
+        }
+        
+        function getSlidersSchema() {
+            return {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        name: {
+                            type: 'string'
+                        },
+                        top: {
+                            type: 'string'
+                        },
+                        bottom: {
+                            type: 'string'
+                        },
+                        value: {
+                            type: 'integer',
+                            minimum: -10,
+                            maximum: 10,
+                        },
+                    },
+                    required: ['name', 'top', 'bottom', 'value'],
+                    additionalProperties: false
                 }
             };
         }

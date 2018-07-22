@@ -97,6 +97,7 @@ function makeLocalDBMS(fullVersion) {
         'accessManagerAPI',
         'textSearchAPI',
         'gearsAPI',
+        'slidersAPI',
         'logAPI'].map(func);
 
     Logger.attachLogCalls(LocalDBMS, R, false);

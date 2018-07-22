@@ -228,6 +228,14 @@ See the License for the specific language governing permissions and
             setGearsData: null,
             setGearsPhysicsEnabled: {},
             setGearsShowNotesEnabled: {}
+        },
+        slidersAPI: {
+            getSliderData: null,
+            updateSliderNaming: {},
+            updateSliderValue: {},
+            createSlider: {},
+            removeSlider: {},
+            moveSlider: {},
         }
     };
 
