@@ -24,3 +24,7 @@ See the License for the specific language governing permissions and
 .gears-config-dialog{
   margin: 30px auto 30px 30px;
 }
+
+textarea.node-notes {
+  height: 120px;
+}

@@ -272,15 +272,32 @@ See the License for the specific language governing permissions and
     }
 
     function makeLabel(name, notes){
-      let label = name; 
+      let label = prepareStr(name); 
       if(queryEl(`${root} .show-notes-checkbox`).checked){
         label += (notes.trim() !== '' ? ('\n\n' + prepareStr(notes)) : '');
       }
       return label;
     }
 
-    function prepareStr(str) {
-        return str.split('\n').map(R.splitEvery(20)).map(R.join('\n')).join('\n');
+    function prepareStr(text) {
+        const maxStrLength = 30;
+        return text.split('\n').map((str, i, strings) => {
+            let counter = 0;
+            const words = str.split(' ');
+            return words.reduce((acc, word) => {
+                if((counter + word.length + 1) <=  maxStrLength) {
+                    acc += word + ' ';
+                    counter += word.length + 1;
+                } else {
+                    acc += '\n' + word + ' ';
+                    counter = 0;
+                }
+                return acc;
+            }, '');
+        }).join('\n');
+        
+        
+//        return text.split('\n').map(R.splitEvery(30)).map(R.join('-\n')).join('\n');
     }
 
 
@@ -359,7 +376,7 @@ See the License for the specific language governing permissions and
         
       const nodes = state.nodesDataset.map(node => {
         const colors = Constants.colorPalette[groups[node.group]-1].color;
-        return CommonUtils.strFormat(Constants.yedNodeTmpl, [node.id, node.name, colors.background, colors.border]);
+        return CommonUtils.strFormat(Constants.yedNodeTmpl, [node.id, node.label, colors.background, colors.border]);
       }).join('\n');
       
       const edges = state.edgesDataset.map(edge => {
