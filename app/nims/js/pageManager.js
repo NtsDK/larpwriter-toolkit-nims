@@ -97,6 +97,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
+//            DBMS.setDatabase(DemoBase.data, onBaseLoaded);
             runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
             const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
@@ -129,10 +130,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }));
             
             qee(dbDialog, 'input[name=dbSource]').checked = true;
-            qee(dbDialog, '#dbSourceDemoBase').base = CommonUtils.clone(BaseExample.data);
+            qee(dbDialog, '#dbSourceDemoBase').base = CommonUtils.clone(DemoBase.data);
             qee(dbDialog, '#dbSourceEmptyBase').base = CommonUtils.clone(EmptyBase.data);
             
-            addEl(qee(dbDialog, '.demo-base-name'), makeText(BaseExample.data.Meta.name));
+            addEl(qee(dbDialog, '.demo-base-name'), makeText(DemoBase.data.Meta.name));
             
             const dialogOnBaseLoad = err => {
                 if (err) { Utils.handleError(err); return; }
@@ -219,8 +220,6 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addView(state.containers, 'groups', 'GroupProfile', { clazz: 'groupsButton icon-button', tooltip: true });
                 addView(state.containers, 'textSearch', 'TextSearch', { clazz: 'textSearchButton icon-button', tooltip: true });
                 addView(state.containers, 'roleGrid', 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
-                addView(state.containers, 'gears', 'Gears', { clazz: 'gearsButton icon-button', tooltip: true });
-                addView(state.containers, 'sliders', 'Sliders', { clazz: 'slidersButton icon-button', tooltip: true });
 
                 addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
 
