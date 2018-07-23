@@ -174,9 +174,9 @@ See the License for the specific language governing permissions and
                 if (err2) { Utils.handleError(err2); return; }
                 updateSettings(name);
                 
-                const name2DisplayName = CommonUtils.arr2map(filterConfiguration.getProfileFilterItems(), 'name');
+                const name2DisplayName = filterConfiguration.getName2DisplayNameMapping();
                 
-                const name2SourceMapping = filterConfiguration.getName2SourceMapping();
+                const name2Source = filterConfiguration.getName2SourceMapping();
 
                 state.name = name;
                 const { inputItems } = state;
@@ -186,7 +186,8 @@ See the License for the specific language governing permissions and
                     } else if (inputItems[inputName].type === 'container') {
                         if (inputName === 'filterModel') {
                             const table = qmte(`${root} .group-filter-template`);
-                            addEls(qee(table, 'tbody'), group.filterModel.map(makeFilterItemString(name2DisplayName, name2SourceMapping)));
+                            const datas = group.filterModel.map(exports.makeFilterItemString(name2DisplayName, name2Source));
+                            addEls(qee(table, 'tbody'), datas.map(data2row));
                             L10n.localizeStatic(table);
                             addEl(clearEl(inputItems[inputName]), table);
                         } else if (inputName === 'characterList') {
@@ -209,9 +210,9 @@ See the License for the specific language governing permissions and
     }
 
     // eslint-disable-next-line no-var,vars-on-top
-    var makeFilterItemString = R.curry((name2DisplayName, name2SourceMapping, filterItem) => {
-        const displayName = name2DisplayName[filterItem.name].displayName;
-        const source = name2SourceMapping[filterItem.name];
+    exports.makeFilterItemString = R.curry((name2DisplayName, name2Source, filterItem) => {
+        const displayName = name2DisplayName[filterItem.name];
+        const source = name2Source[filterItem.name];
         let condition, arr, value;
         switch (filterItem.type) {
         case 'enum':
@@ -242,14 +243,18 @@ See the License for the specific language governing permissions and
             throw new Error(`Unexpected type ${filterItem.type}`);
         }
         const title = getL10n(`profile-filter-${source}`) + ', ' + getL10n(`constant-${filterItem.type}`);
-        
+        return {displayName, title, condition, value};
+    });
+    
+    function data2row(data){
+        const {displayName, title, condition, value} = data;
         const row = qmte(`${root} .group-filter-row-template`);
         addEl(qee(row, '.profile-item'), makeText(displayName));
         setAttr(qee(row, '.profile-item'), 'title', title);
         addEl(qee(row, '.condition'), makeText(condition));
         addEl(qee(row, '.value'), makeText(value));
         return row;
-    });
+    }
 
     function updateSettings(name) {
         const settings = DBMS.getSettings();

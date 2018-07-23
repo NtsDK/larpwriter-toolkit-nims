@@ -246,7 +246,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 if (MODE === 'Standalone') {
                     addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', FileUtils.makeNewBase(onBaseLoaded), btnOpts));
                 }
-                addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
+//                addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
                 //                addEl(state.navigation, makeL10nButton());
 

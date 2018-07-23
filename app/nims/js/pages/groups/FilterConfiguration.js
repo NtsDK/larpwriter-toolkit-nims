@@ -28,8 +28,6 @@ function FilterConfiguration(info) {
             item.displayName = getL10n(item.displayName);
             item.value = '';
         }
-        //        item.canHide = item.name !== Constants.CHAR_NAME && item.name !== Constants.PLAYER_NAME;
-//        item.canHide = true;
     }
     this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);
     this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
@@ -61,6 +59,13 @@ FilterConfiguration.prototype.getProfileItemSource = function (name) {
 FilterConfiguration.prototype.getName2SourceMapping = function () {
     return this.groupedProfileFilterItems.reduce( (acc, group) => {
         group.profileFilterItems.forEach( item => acc[item.name] = group.name);
+        return acc;
+    }, {});
+};
+
+FilterConfiguration.prototype.getName2DisplayNameMapping = function () {
+    return this.groupedProfileFilterItems.reduce( (acc, group) => {
+        group.profileFilterItems.forEach( item => acc[item.name] = item.displayName);
         return acc;
     }, {});
 };

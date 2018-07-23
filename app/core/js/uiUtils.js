@@ -110,9 +110,6 @@ See the License for the specific language governing permissions and
                     selected: true,
                 });
                 setAttr(el, 'value', option.name);
-//                el.item = value.item;
-//                hideEl(el, value.hidden);
-//                counter += (value.hidden ? 0 : 1);
                 counter++;
                 return addEl(el, makeText(option.displayName));
             }));

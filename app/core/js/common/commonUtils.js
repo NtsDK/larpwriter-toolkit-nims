@@ -62,25 +62,6 @@ See the License for the specific language governing permissions and
 
         exports.clone = R.clone;
 
-        //        exports.clone = (o) => {
-        //            if (!o || typeof o !== 'object') {
-        //                return o;
-        //            }
-        //            const c = typeof o.pop === 'function' ? [] : {};
-        //            let p, v;
-        //            for (p in o) {
-        //                if (o.hasOwnProperty(p)) {
-        //                    v = o[p];
-        //                    if (v && typeof v === 'object') {
-        //                        c[p] = exports.clone(v);
-        //                    } else {
-        //                        c[p] = v;
-        //                    }
-        //                }
-        //            }
-        //            return c;
-        //        };
-
         const pregQuote = (str, delimiter) =>
             // http://kevin.vanzonneveld.net
             // + original by: booeyOH

@@ -35,11 +35,10 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-rename',
         });
         
-        state.addFilterConditionDialog = new AddFilterConditionDialog(root);
-        listen(qe(`${root}.create.filter-condition`), 'click', onAddFilterCondition);
+//        state.addFilterConditionDialog = new AddFilterConditionDialog(root);
+//        listen(qe(`${root}.create.filter-condition`), 'click', onAddFilterCondition);
 
         listen(queryEl(`${root}#profile-filter-columns .profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
-//        listen(queryEl(`${root}#profile-filter-rows .profile-item-selector`), 'change', onProfileItemSelect);
         
 //        Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
 //        listen queryEl(`${root}.save-entity-select`)
@@ -97,12 +96,6 @@ See the License for the specific language governing permissions and
                 filterConfiguration.getGroupsForSelect(),
                 true
             );
-            
-//            UI.fillShowItemSelector2(
-//                clearEl(queryEl(`${root}#profile-filter-rows .profile-item-selector`)),
-//                getGroupsForSelect(filterConfiguration.getGroupedProfileFilterItems()),
-//                false
-//            );
 
             addEl(
                 clearEl(queryEl(`${root}.filter-head`)),
