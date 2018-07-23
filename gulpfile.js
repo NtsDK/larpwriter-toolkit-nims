@@ -238,6 +238,8 @@ gulp.task('server', function(callback) {
         .pipe(gulp.dest('dist'));
         gulp.src(projectDir + '/js/common/**/*.js', {base: projectBase})
         .pipe(gulp.dest('dist'));
+        gulp.src(langPath + "/emptyBase.js", {base: langPath})
+        .pipe(gulp.dest('dist/js/common'));
     }
     callback();
 });
