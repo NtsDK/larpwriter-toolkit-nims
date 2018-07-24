@@ -77,7 +77,7 @@ module.exports = {
         Groups: false,
         ProfileFilter: false,
         PermissionInformer: false,
-        Register: false,
+        SignUp: false,
         Enter: false,
         Player: false,
         Stories: false,

@@ -67,7 +67,7 @@
     "pagesLight" :[
         "serverSpecific/enter.js"   ,
         "serverSpecific/player.js",
-        "serverSpecific/register.js"      ,
+        "serverSpecific/sign-up.js"      ,
         "logs/about.js",
         "profiles/profileEditorCore.js"
     ],

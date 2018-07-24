@@ -689,15 +689,15 @@ textarea.game-description-area {
 }
 /* text-search-tab **/
 
-/** register.js */
-/* .register-form > div > :first-child{ */
+/** sign-up.js */
+/* .sign-up-form > div > :first-child{ */
 /*   width: 120px;; */
 /*   text-align: right; */
 /*   padding: 0 10px 0 0; */
 /*   display: inline-block; */
 /* } */
 
-/* register.js **/
+/* sign-up.js **/
 
 /** playerManagement.js */
 textarea.welcome-text-area{

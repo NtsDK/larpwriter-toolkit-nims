@@ -20,10 +20,10 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    const root = '.register-tab ';
+    const root = '.sign-up-tab ';
 
     exports.init = () => {
-        $(document.forms['register-form']).on('submit', submit);
+        $(document.forms['sign-up-form']).on('submit', submit);
         exports.content = queryEl(root);
     };
 
@@ -37,7 +37,7 @@ See the License for the specific language governing permissions and
         $(':submit', form).button('loading');
 
         const request = $.ajax({
-            url: '/register',
+            url: '/signUp',
             method: 'POST',
             data: form.serialize(),
             complete() {
@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
             },
         });
         request.done((data) => {
-            form.html(getL10n('entrance-register-success')).addClass('alert-success');
+            form.html(getL10n('entrance-sign-up-success')).addClass('alert-success');
         });
 
         request.fail((errorInfo, textStatus, errorThrown) => {
@@ -60,4 +60,4 @@ See the License for the specific language governing permissions and
 
         return false;
     }
-})(this.Register = {});
+})(this.SignUp = {});

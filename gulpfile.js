@@ -152,14 +152,14 @@ gulp.task('html', function() {
     .pipe(gulp.dest('dist'))
 });
 
-var translations2 = [translationsPath + "/l10n2/*.js"];
-var translations2All = [translationsPath + "/l10n2/**/*.js"];
+var translations2 = [translationsPath + "/l10n/*.js"];
+var translations2All = [translationsPath + "/l10n/**/*.js"];
 
 gulp.task('translations2', function() {
     return gulp.src(translations2, {base : translationsPath})
     .pipe(fileInclude({
       prefix: '@@',
-      basepath: translationsPath + "/l10n2",
+      basepath: translationsPath + "/l10n",
 //      context: {
 //        MODE: isServer ? 'NIMS_Server' : 'Standalone',
 //        BASE_FILE_NAME: config.get( 'baseFileName' )

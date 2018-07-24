@@ -25,7 +25,7 @@ See the License for the specific language governing permissions and
         'setPassword',
         'checkPassword',
         'login',
-        'register',
+        'signUp',
         'hasPermission',
         '_getOwnerMap',
         'getPermissionsSummary',
@@ -207,7 +207,7 @@ See the License for the specific language governing permissions and
             setPassword: null,
             checkPassword: null,
             login: null,
-            register: null
+            signUp: null
         },
         accessManagerOverridesAPI: {},
         overridesAPI: {},

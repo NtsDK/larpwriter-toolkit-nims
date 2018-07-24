@@ -7,6 +7,7 @@
     "vtmcl-dev": "./node_modules/.bin/gulp dev --configFile \"config/vtmcl-config.json\"",
     "measurelook-dev": "./node_modules/.bin/gulp dev --configFile \"config/measurelook-config.json\"",
     "nims-dev": "./node_modules/.bin/gulp dev --configFile \"config/nims-config.json\"",
+    "nims-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/nims-config.json\"",
     "vtmcl-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/vtmcl-config.json\"",
     "measurelook-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/measurelook-config.json\"",
     "nims-lint": "eclint fix app\\nims\\js && eclint fix app\\nims\\specs && \"node_modules/.bin/eslint\" app\\nims\\js --fix && \"node_modules/.bin/eslint\" app\\nims\\specs --fix"

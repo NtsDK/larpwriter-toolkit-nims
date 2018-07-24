@@ -83,7 +83,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
             Utils.addView(state.containers, 'enter', Enter, { mainPage: true });
             if (playersOptions.allowPlayerCreation) {
-                Utils.addView(state.containers, 'register', Register);
+                Utils.addView(state.containers, 'sign-up', SignUp);
             }
             Utils.addView(state.containers, 'about', About);
             //            addEl(state.navigation, makeL10nButton());
@@ -117,7 +117,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         });
         
         readLocalBases().then((browserBases) => {
-            addEls(qee(dbDialog, '.modal-body .backup-bases'), browserBases.map((base,i) => {
+            addEls(qee(dbDialog, '.modal-body .backup-bases'), (browserBases || []).map((base,i) => {
                 const baseSelect = qmte('.backup-base-tmpl');
                 const input = qee(baseSelect, 'input');
                 setAttr(input, 'value', "browserBackup" + i); 
@@ -153,7 +153,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             $(dbDialog).modal({
                 backdrop: 'static'
             });
-        });
+        }).catch(err => console.error(err));
     }
 
     function consistencyCheckAlert(checkResult) {
