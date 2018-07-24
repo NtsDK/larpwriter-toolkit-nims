@@ -72,22 +72,22 @@ if (MODE === 'NIMS_Server') {
                 args: ['testPlayer2', '33224455'],
             },
             {
-                func: 'createMaster',
-                args: ['master1', '654654'],
+                func: 'createOrganizer',
+                args: ['Organizer1', '654654'],
             },
             {
-                func: 'changeMasterPassword',
-                args: ['master1', '987987'],
+                func: 'changeOrganizerPassword',
+                args: ['Organizer1', '987987'],
             },
             {
                 func: 'assignPermission',
-                args: ['master1', {
+                args: ['Organizer1', {
                     characters: [], stories: [], groups: [], players: ['testPlayer1']
                 }],
             },
             {
                 func: 'removePermission',
-                args: ['master1', {
+                args: ['Organizer1', {
                     characters: [], stories: [], groups: [], players: ['testPlayer1']
                 }],
             },
@@ -98,8 +98,8 @@ if (MODE === 'NIMS_Server') {
                 }],
             },
             {
-                func: 'removeMaster',
-                args: ['master1'],
+                func: 'removeOrganizer',
+                args: ['Organizer1'],
             },
             {
                 func: 'removePlayerLogin',

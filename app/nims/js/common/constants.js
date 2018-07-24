@@ -504,9 +504,9 @@ See the License for the specific language governing permissions and
 
     exports.serverSpecificFunctions = ['getManagementInfo', 'assignAdmin', 'assignEditor', 'removeEditor',
         'changeAdaptationRightsMode',
-        'removeMaster', 'removePermission', 'assignPermission', 'getPlayerLoginsArray', 'removePlayerLogin',
-        'getWelcomeText', 'setWelcomeText', 'getPlayersOptions', 'setPlayerOption', 'createMaster',
-        'changeMasterPassword', 'createPlayer', 'createPlayerLogin', 'changePlayerPassword',
+        'removeOrganizer', 'removePermission', 'assignPermission', 'getPlayerLoginsArray', 'removePlayerLogin',
+        'getWelcomeText', 'setWelcomeText', 'getPlayersOptions', 'setPlayerOption', 'createOrganizer',
+        'changeOrganizerPassword', 'createPlayer', 'createPlayerLogin', 'changePlayerPassword',
         'getPlayerProfileInfo', 'createCharacterByPlayer', 'publishPermissionsUpdate'];
 
     exports.commonIgnoreList = ['getSettings', '_init', 'clearSettings', 'log'];

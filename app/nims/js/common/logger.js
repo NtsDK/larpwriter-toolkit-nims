@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
     // argument description
     // add function name to log it
     // ignoreParams - make true if you don't need params in log.
-    //     Example - createMaster params include password.
+    //     Example - createOrganizer params include password.
     // filter - add this function to filter out unnecessary calls.
     //     Example - we need all meta info calls except description.
     // rewrite - make true if you don't want to flood log with some repeated call.
@@ -136,8 +136,8 @@ See the License for the specific language governing permissions and
         storyBaseAPI: {
             getStoryNamesArray: null,
             getAllStories: null,
-            getMasterStory: null,
-            setMasterStory: {}, // text
+            getWriterStory: null,
+            setWriterStory: {}, // text
             createStory: {},
             renameStory: {},
             removeStory: {}
@@ -181,9 +181,9 @@ See the License for the specific language governing permissions and
             assignEditor: {},
             removeEditor: {},
             changeAdaptationRightsMode: {},
-            createMaster: { ignoreParams: true },
-            changeMasterPassword: { ignoreParams: true },
-            removeMaster: {},
+            createOrganizer: { ignoreParams: true },
+            changeOrganizerPassword: { ignoreParams: true },
+            removeOrganizer: {},
             removePermission: {},
             assignPermission: {},
             publishPermissionsUpdate: null,

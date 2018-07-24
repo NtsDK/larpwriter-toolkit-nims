@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
 <script src="js/libs.min.js"></script>
 
 </head>
-<body onload="PageManager.onMasterPageLoad()">
+<body onload="PageManager.onOrganizerPageLoad()">
   <script src="js/resources.min.js"></script>
   <script src="js/translations.min.js"></script>
   <script src="js/commonCore.min.js"></script>
@@ -54,7 +54,7 @@ See the License for the specific language governing permissions and
   <div class="hidden tab-container">
     @@include('./tabRouting/tab-routing-tmpl.html')
   
-    @@include('./accessManager/master-management-tab.html')
+    @@include('./accessManager/organizer-management-tab.html')
     @@include('./accessManager/player-management-tab.html')
     
     @@include('./briefings/briefing-export-tab.html')
@@ -85,7 +85,7 @@ See the License for the specific language governing permissions and
     @@include('./profiles2/profile-editor-core-tmpl.html')
     
     @@include('./stories/event-presence-tab.html')
-    @@include('./stories/master-story-tab.html')
+    @@include('./stories/writer-story-tab.html')
     @@include('./stories/stories-tab.html')
     @@include('./stories/story-characters-tab.html')
     @@include('./stories/story-events-tab.html')

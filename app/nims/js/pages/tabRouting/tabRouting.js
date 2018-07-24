@@ -103,10 +103,10 @@ RoutingTabTmpl(this.LogViewer2 = {}, {
 });
 
 RoutingTabTmpl(this.AccessManager = {}, {
-    firstTab: 'MasterManagement',
+    firstTab: 'OrganizerManagement',
     tabs: [{
-        btnName: 'masterManagement',
-        viewName: 'MasterManagement'
+        btnName: 'organizerManagement',
+        viewName: 'OrganizerManagement'
     }, {
         btnName: 'playerManagement',
         viewName: 'PlayerManagement'

@@ -310,14 +310,14 @@ See the License for the specific language governing permissions and
 
         function _countTextCharacters(database) {
             const counts = {
-                masterStories: 0,
+                writerStories: 0,
                 eventOrigins: 0,
                 eventAdaptations: 0,
                 groups: 0,
                 relations: 0,
             };
             R.values(database.Stories).forEach((story) => {
-                counts.masterStories += _noWhiteSpaceLength(story.story);
+                counts.writerStories += _noWhiteSpaceLength(story.story);
                 story.events.forEach((event) => {
                     counts.eventOrigins += _noWhiteSpaceLength(event.text);
                     R.keys(event.characters).forEach((character) => {

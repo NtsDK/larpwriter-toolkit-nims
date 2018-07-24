@@ -32,13 +32,13 @@ See the License for the specific language governing permissions and
         };
 
         //stories
-        LocalDBMS.prototype.getMasterStory = function (storyName, callback) {
+        LocalDBMS.prototype.getWriterStory = function (storyName, callback) {
             PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
                 callback(null, this.database.Stories[storyName].story);
             });
         };
         //stories
-        LocalDBMS.prototype.setMasterStory = function (storyName, value, callback) {
+        LocalDBMS.prototype.setWriterStory = function (storyName, value, callback) {
             const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(value)];
             PC.precondition(PC.chainCheck(chain), callback, () => {
                 this.database.Stories[storyName].story = value;

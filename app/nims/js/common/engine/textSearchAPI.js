@@ -86,7 +86,7 @@ See the License for the specific language governing permissions and
             text
         });
 
-        searchers.masterStory = (textType, test, database) => R.values(database.Stories)
+        searchers.writerStory = (textType, test, database) => R.values(database.Stories)
             .filter(story => test(story.story))
             .map(story => format(story.name, 'text', story.story));
 
@@ -133,7 +133,7 @@ See the License for the specific language governing permissions and
             return R.flatten(R.values(groups).map((group) => {
                 const arr = [];
                 if (test(group.masterDescription)) {
-                    arr.push(format(`${group.name}/master`, 'text', group.masterDescription));
+                    arr.push(format(`${group.name}/writer`, 'text', group.masterDescription));
                 }
                 if (test(group.characterDescription)) {
                     arr.push(format(`${group.name}/character`, 'text', group.characterDescription));

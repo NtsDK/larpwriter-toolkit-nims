@@ -131,7 +131,7 @@ const getChecks = {
         args: [],
     },
     {
-        func: 'getMasterStory',
+        func: 'getWriterStory',
         args: ['Начало пути'],
     }],
     storyCharactersAPI:
@@ -176,7 +176,7 @@ const getChecks = {
     textSearchAPI:
     [{
         func: 'getTexts',
-        args: ['Арагорн', ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'masterStory', 'eventOrigins',
+        args: ['Арагорн', ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'writerStory', 'eventOrigins',
             'eventAdaptations'], false],
     }],
     gearsAPI:
@@ -630,8 +630,8 @@ const setChecks = {
         args: ['testStory', 'testStory2'],
     },
     {
-        func: 'setMasterStory',
-        args: ['testStory2', 'setMasterStory test'],
+        func: 'setWriterStory',
+        args: ['testStory2', 'setWriterStory test'],
     },
     {
         func: 'removeStory',

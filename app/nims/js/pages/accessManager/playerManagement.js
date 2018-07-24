@@ -25,7 +25,7 @@ See the License for the specific language governing permissions and
 
     exports.init = () => {
         const createUserDialog = UI.createModalDialog(root, createUser, {
-            bodySelector: 'create-master-body',
+            bodySelector: 'create-organizer-body',
             dialogTitle: 'admins-creating-player',
             actionButtonTitle: 'common-create',
         });

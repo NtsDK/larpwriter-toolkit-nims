@@ -21,7 +21,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 ((exports) => {
     const state = {};
     state.views = {};
-    state.firstBaseLoad = true;
+    state.firstBaseLoad = MODE === 'Standalone';
     
     const BACKUP_NUMBER = 4;
     const BACKUP_INTERVAL = 60000*10; // 10 min
@@ -91,7 +91,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         });
     };
     
-    exports.onMasterPageLoad = () => {
+    exports.onOrganizerPageLoad = () => {
         initPage();
         const LocalDBMS = makeLocalDBMS(true);
         if (MODE === 'Standalone') {
@@ -250,10 +250,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 //                addEl(state.navigation, makeL10nButton());
 
-//                addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-//                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
 //                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
                 if (MODE === 'NIMS_Server') {
                     addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));

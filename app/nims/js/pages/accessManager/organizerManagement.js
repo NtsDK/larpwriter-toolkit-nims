@@ -23,13 +23,13 @@ See the License for the specific language governing permissions and
 
     state.entities = ['characters', 'stories', 'groups', 'players'];
 
-    const root = '.master-management-tab ';
+    const root = '.organizer-management-tab ';
 
     let removePermission, assignPermission;
 
     exports.init = () => {
         const createUserDialog = UI.createModalDialog(root, createUser, {
-            bodySelector: 'create-master-body',
+            bodySelector: 'create-organizer-body',
             dialogTitle: 'admins-creating-user',
             actionButtonTitle: 'common-create',
         });
@@ -45,9 +45,7 @@ See the License for the specific language governing permissions and
             changePasswordDialog.showDlg();
         });
         
-//        listen(queryEl(`${root}.create-user-button`), 'click', createMaster);
-//        listen(queryEl(`${root}.change-password-button`), 'click', changeMasterPassword);
-        listen(queryEl(`${root}.remove-user-button`), 'click', removeMaster);
+        listen(queryEl(`${root}.remove-user-button`), 'click', removeOrganizer);
 
         listen(queryEl(`${root}.assign-permission-button`), 'click', assignPermission);
         listen(queryEl(`${root}.remove-permission-button`), 'click', removePermission);
@@ -317,7 +315,7 @@ See the License for the specific language governing permissions and
         return () => {
             const userNameInput = qee(dialog,`.create-user-name-input`);
             const userPasswordInput = qee(dialog,`.create-user-password-input`);
-            DBMS.createMaster(userNameInput.value.trim(), userPasswordInput.value, (err) => {
+            DBMS.createOrganizer(userNameInput.value.trim(), userPasswordInput.value, (err) => {
                 if (err) {
                     setError(dialog, err);
                 } else {
@@ -335,7 +333,7 @@ See the License for the specific language governing permissions and
             const toInput = qee(dialog, '.entity-input');
             const newPassword = toInput.value;
             const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-            DBMS.changeMasterPassword(userName, newPassword, (err) => {
+            DBMS.changeOrganizerPassword(userName, newPassword, (err) => {
                 if (err) {
                     setError(dialog, err);
                 } else {
@@ -347,20 +345,20 @@ See the License for the specific language governing permissions and
     }
 
 
-    function changeMasterPassword() {
+    function changeOrganizerPassword() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         const passwordInput = queryEl(`${root}.change-password-password-input`);
-        DBMS.changeMasterPassword(userName, passwordInput.value, Utils.processError(() => {
+        DBMS.changeOrganizerPassword(userName, passwordInput.value, Utils.processError(() => {
             queryEl(`${root}.change-password-password-input`).value = '';
             exports.refresh();
         }));
     }
 
-    function removeMaster() {
+    function removeOrganizer() {
 //        const name = queryEl(`${root}.remove-user-select`).value.trim();
         const name = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]), () => {
-            DBMS.removeMaster(name, Utils.processError(exports.refresh));
+            DBMS.removeOrganizer(name, Utils.processError(exports.refresh));
         });
     }
 
@@ -417,4 +415,4 @@ See the License for the specific language governing permissions and
             hideEl(el, !isVisible);
         });
     };
-})(this.MasterManagement = {});
+})(this.OrganizerManagement = {});

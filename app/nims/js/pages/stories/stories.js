@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
             navigation: queryEl('.stories-navigation-container .left-side'),
             content: queryEl('.stories-content-container .left-side')
         };
-        Utils.addView(containers, 'master-story', MasterStory, { mainPage: true, toggle: true });
+        Utils.addView(containers, 'writer-story', WriterStory, { mainPage: true, toggle: true });
         Utils.addView(containers, 'story-events', StoryEvents, { toggle: true });
         Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
         Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
@@ -51,7 +51,7 @@ See the License for the specific language governing permissions and
             navigation: queryEl('.stories-navigation-container .right-side'),
             content: queryEl('.stories-content-container .right-side')
         };
-        Utils.addView(containers, 'master-story', MasterStory, { toggle: true });
+        Utils.addView(containers, 'writer-story', WriterStory, { toggle: true });
         Utils.addView(containers, 'story-events', StoryEvents, { mainPage: true, toggle: true });
         Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
         Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });

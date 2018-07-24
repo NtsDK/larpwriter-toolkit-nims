@@ -22,16 +22,16 @@ See the License for the specific language governing permissions and
     const state = {};
 
     exports.init = () => {
-        listen(getEl('masterStoryArea'), 'change', updateMasterStory);
-        exports.content = getEl('masterStoryDiv2');
+        listen(getEl('writerStoryArea'), 'change', updateWriterStory);
+        exports.content = getEl('writerStoryDiv2');
     };
 
     exports.refresh = () => {
-        const storyArea = getEl('masterStoryArea');
+        const storyArea = getEl('writerStoryArea');
         const storyName = Stories.getCurrentStoryName();
 
         if (storyName) {
-            DBMS.getMasterStory(storyName, (err, story) => {
+            DBMS.getWriterStory(storyName, (err, story) => {
                 if (err) { Utils.handleError(err); return; }
                 storyArea.value = story;
             });
@@ -40,8 +40,8 @@ See the License for the specific language governing permissions and
         }
     };
 
-    function updateMasterStory() {
-        const storyArea = getEl('masterStoryArea');
-        DBMS.setMasterStory(Stories.getCurrentStoryName(), storyArea.value, Utils.processError());
+    function updateWriterStory() {
+        const storyArea = getEl('writerStoryArea');
+        DBMS.setWriterStory(Stories.getCurrentStoryName(), storyArea.value, Utils.processError());
     }
-})(this.MasterStory = {});
+})(this.WriterStory = {});

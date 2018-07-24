@@ -70,7 +70,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.removeMaster = function (name, callback) {
+        LocalDBMS.prototype.removeOrganizer = function (name, callback) {
             const chain = [PC.isString(name), 
                 PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)),
                 PC.notEquals(name, this.database.ManagementInfo.admin)];
@@ -161,12 +161,12 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.createMaster = function (name, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createMaster']));
+        LocalDBMS.prototype.createOrganizer = function (name, password, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createOrganizer']));
         };
 
-        LocalDBMS.prototype.changeMasterPassword = function (userName, newPassword, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeMasterPassword']));
+        LocalDBMS.prototype.changeOrganizerPassword = function (userName, newPassword, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeOrganizerPassword']));
         };
 
         LocalDBMS.prototype.publishPermissionsUpdate = function (callback) {
