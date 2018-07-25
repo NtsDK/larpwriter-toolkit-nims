@@ -27,8 +27,8 @@ See the License for the specific language governing permissions and
         exports.getSchema = function (base) {
             const schema = {
                 $schema: 'http://json-schema.org/draft-04/schema#',
-                title: 'SMTK NIMS base',
-                description: 'SMTK NIMS base schema.',
+                title: 'Larpwriter Toolkit NIMS base',
+                description: 'Larpwriter Toolkit base schema.',
                 type: 'object',
                 definitions: {}
             };

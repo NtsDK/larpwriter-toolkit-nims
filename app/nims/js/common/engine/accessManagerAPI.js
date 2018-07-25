@@ -162,35 +162,35 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.createOrganizer = function (name, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createOrganizer']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createOrganizer']));
         };
 
         LocalDBMS.prototype.changeOrganizerPassword = function (userName, newPassword, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changeOrganizerPassword']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['changeOrganizerPassword']));
         };
 
         LocalDBMS.prototype.publishPermissionsUpdate = function (callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['publishPermissionsUpdate']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['publishPermissionsUpdate']));
         };
 
         LocalDBMS.prototype.createPlayer = function (userName, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayer']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createPlayer']));
         };
 
         LocalDBMS.prototype.createPlayerLogin = function (userName, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createPlayerLogin']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createPlayerLogin']));
         };
 
         LocalDBMS.prototype.changePlayerPassword = function (userName, password, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['changePlayerPassword']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['changePlayerPassword']));
         };
 
         LocalDBMS.prototype.getPlayerProfileInfo = function (callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['getPlayerProfileInfo']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['getPlayerProfileInfo']));
         };
 
         LocalDBMS.prototype.createCharacterByPlayer = function (characterName, callback) {
-            callback(new Errors.ValidationError('admins-function-must-be-overriden-on-server', ['createCharacterByPlayer']));
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createCharacterByPlayer']));
         };
 
         function _renameProfile(type, fromName, toName) {

@@ -44,8 +44,8 @@ See the License for the specific language governing permissions and
     };
 
     function rebuildInterface(characterNames, playerNames, profileBindings) {
-        const bindedCharacterList = R.keys(profileBindings);
-        const bindedPlayerList = R.values(profileBindings);
+        const bondedCharacterList = R.keys(profileBindings);
+        const bondedPlayerList = R.values(profileBindings);
         const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
         
         showEl(queryEl(`${root} .alert.no-character`), characterNames.length === 0);
@@ -60,12 +60,12 @@ See the License for the specific language governing permissions and
 
         addEls(
             clearEl(queryEl(`${root} .entity-list.character-list`)),
-            characterNames.filter(filter(bindedCharacterList)).map(profile2el('character'))
+            characterNames.filter(filter(bondedCharacterList)).map(profile2el('character'))
         );
 
         addEls(
             clearEl(queryEl(`${root} .entity-list.player-list`)),
-            playerNames.filter(filter(bindedPlayerList)).map(profile2el('player'))
+            playerNames.filter(filter(bondedPlayerList)).map(profile2el('player'))
         );
 
         const bindings = R.toPairs(profileBindings).map(binding => ({

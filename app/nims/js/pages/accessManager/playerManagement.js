@@ -96,7 +96,12 @@ See the License for the specific language governing permissions and
                             const hasAccounts = (hasLoginObj.true || []);
 //                            hasAccounts.sort(Utils.charOrdAObject);
                             $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
+                            
                             Utils.enable(exports.content, 'adminOnly', isAdmin);
+                            
+                            Utils.enableEl(qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
+                            Utils.enableEl(qe(`${root}.user.change-password`), hasAccounts.length > 0);
+                            Utils.enableEl(qe(`${root}.remove-user-button`), hasAccounts.length > 0);
     //                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
     //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
     //                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])

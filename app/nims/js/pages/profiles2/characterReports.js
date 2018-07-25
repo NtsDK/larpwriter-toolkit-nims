@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
 
     exports.makeStoryReportRow = (storyInfo) => {
         const act = storyInfo.activity;
-        const completness = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
+        const completeness = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
         const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
         const row = qte(`${root} .story-report-row-tmpl`);
         const qe = qee(row);
@@ -33,8 +33,8 @@ See the License for the specific language governing permissions and
         setClassByCondition(qe('.activity-follower'), 'active-item-in-report', act.follower);
         setClassByCondition(qe('.activity-defensive'), 'active-item-in-report', act.defensive);
         setClassByCondition(qe('.activity-passive'), 'active-item-in-report', act.passive);
-        addEl(qe('.completness'), makeText(completness));
-        setStyle(qe('.completness'), 'background-color', color);
+        addEl(qe('.completeness'), makeText(completeness));
+        setStyle(qe('.completeness'), 'background-color', color);
         addEl(qe('.meets'), makeText(storyInfo.meets.join(', ')));
         addEl(qe('.inventory'), makeText(storyInfo.inventory));
         return row;
@@ -80,9 +80,9 @@ See the License for the specific language governing permissions and
 
         const finished = isStarter ? rel.starterTextReady : rel.enderTextReady;
 
-        addEl(qe('.completness'), makeText(L10n.get('constant', finished ? 'finished' : 'unfinished')));
-        setClassByCondition(qe('.completness'), 'relation-finished', finished);
-        setClassByCondition(qe('.completness'), 'relation-unfinished', !finished);
+        addEl(qe('.completeness'), makeText(L10n.get('constant', finished ? 'finished' : 'unfinished')));
+        setClassByCondition(qe('.completeness'), 'relation-finished', finished);
+        setClassByCondition(qe('.completeness'), 'relation-unfinished', !finished);
 
         addEl(qe('.origin'), makeText(rel.origin));
         return row;

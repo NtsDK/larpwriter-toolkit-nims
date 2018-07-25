@@ -28,11 +28,11 @@ See the License for the specific language governing permissions and
     let generateSingleDocx, generateSingleTxt, refreshStorySetSelect, refreshCharacterSetSelect;
 
     exports.init = () => {
-        listen(getEl('makeDefaultTextBriefings'), 'click', () => {
-            resolveTextTemplate((textTemplate) => {
-                makeTextBriefings('txt', generateSingleTxt(textTemplate));
-            });
-        });
+//        listen(getEl('makeDefaultTextBriefings'), 'click', () => {
+//            resolveTextTemplate((textTemplate) => {
+//                makeTextBriefings('txt', generateSingleTxt(textTemplate));
+//            });
+//        });
 
         listen(getEl('makeCustomTextBriefings'), 'click', () => {
             makeTextBriefings(getEl('textTypeSelector').value, generateSingleTxt(getEl('templateArea').value));
@@ -236,7 +236,7 @@ See the License for the specific language governing permissions and
     function convertToDocxTemplate() {
         const docxTemplate = makeDocxTemplate('blob');
         Utils.confirm(getL10n('briefings-save-file'), () => {
-            saveAs(docxTemplate, 'template.docx');
+            saveAs(docxTemplate, FileUtils.makeFileName('template', 'docx'));
         });
     }
 
@@ -314,7 +314,7 @@ See the License for the specific language governing permissions and
     function generateBriefings(briefingData, fileType, oneFileDelegate, separateFileDelegate) {
         const toSeparateFiles = getEl('toSeparateFileCheckbox').checked;
 
-        const fileName = 'briefings';
+        const fileName = 'characterSheets';
 
         let out, archive;
         updateStatus(getL10n('briefings-save-preparing'));
@@ -332,12 +332,12 @@ See the License for the specific language governing permissions and
                 updateStatus(getL10n('briefings-archiving'));
                 archive = zip.generate({ type: 'blob' });
                 updateStatus(getL10n('briefings-archive-is-ready'));
-                saveFile('briefings-save-archive', archive, `${fileName}.zip`);
+                saveFile('briefings-save-archive', archive, fileName, 'zip');
             } else {
                 updateStatus(getL10n('briefings-start-saving'));
                 out = oneFileDelegate(briefingData);
                 updateStatus(getL10n('briefings-file-is-ready'));
-                saveFile('briefings-save-file', out, `${fileName}.${fileType}`);
+                saveFile('briefings-save-file', out, fileName, fileType);
             }
         } catch (err) {
             Utils.alert(getL10n('briefings-error-on-generating-briefings'));
@@ -345,9 +345,9 @@ See the License for the specific language governing permissions and
         }
     }
 
-    function saveFile(msgKey, out, fileName) {
+    function saveFile(msgKey, out, fileName, extension) {
         Utils.confirm(getL10n(msgKey), () => {
-            saveAs(out, fileName);
+            saveAs(out, FileUtils.makeFileName(fileName, extension));
         });
     }
 

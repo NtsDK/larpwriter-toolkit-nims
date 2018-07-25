@@ -50,10 +50,15 @@ See the License for the specific language governing permissions and
     exports.saveFile = () => {
         DBMS.getDatabase((err, database) => {
             if (err) { Utils.handleError(err); return; }
-            const timeStr = new Date(database.Meta.saveTime).format('dd-mmm-yyyy_HH-MM-ss');
-            const fileName = `${BASE_FILE_NAME}_${database.Meta.name}_${timeStr}`;
-            exports.json2File(database, `${CommonUtils.sanitizeStr2FileName(fileName)}.json`);
+            exports.json2File(database, exports.makeFileName(`${BASE_FILE_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
         });
+    };
+    
+    exports.makeFileName = (root, extension, date) => {
+        date = date || new Date();
+        const timeStr = date.format('dd-mmm-yyyy_HH-MM-ss');
+        const fileName = `${root}_${timeStr}`;
+        return `${CommonUtils.sanitizeStr2FileName(fileName)}.${extension}`;
     };
 
     exports.json2File = (str, fileName) => {
@@ -84,6 +89,6 @@ See the License for the specific language governing permissions and
         const out = new Blob([csv], {
             type: 'text/csv;charset=utf-8;'
         });
-        saveAs(out, fileName);
+        saveAs(out, exports.makeFileName(fileName, 'csv'));
     };
 })(this.FileUtils = {});

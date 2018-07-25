@@ -35,17 +35,17 @@ See the License for the specific language governing permissions and
                 DBMS.getProfileBindings((err3, profileBindings) => {
                     if (err3) { Utils.handleError(err3); return; }
 
-                    const bindedCharacterList = R.keys(profileBindings);
-                    const bindedPlayerList = R.values(profileBindings);
+                    const bondedCharacterList = R.keys(profileBindings);
+                    const bondedPlayerList = R.values(profileBindings);
                     const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
 
                     fillSelector(
                         clearEl(queryEl(`${root}.character-selector`)),
-                        characterNames.filter(filter(bindedCharacterList)).map(remapProps4Select)
+                        characterNames.filter(filter(bondedCharacterList)).map(remapProps4Select)
                     );
                     fillSelector(
                         clearEl(queryEl(`${root}.player-selector`)),
-                        playerNames.filter(filter(bindedPlayerList)).map(remapProps4Select)
+                        playerNames.filter(filter(bondedPlayerList)).map(remapProps4Select)
                     );
                     const bindings = R.toPairs(profileBindings).map(binding => ({
                         name: R.join('/', binding),

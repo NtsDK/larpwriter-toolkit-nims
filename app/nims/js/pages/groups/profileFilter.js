@@ -215,7 +215,7 @@ See the License for the specific language governing permissions and
         const dataArrays = makePrintData();
         const cleanArrays = dataArrays.map(dataArray => dataArray.filter((item, index) => selected[index]).map(R.prop('value')));
 
-        FileUtils.arr2d2Csv(cleanArrays, 'table.csv');
+        FileUtils.arr2d2Csv(cleanArrays, 'profileFilter');
     }
 
     function applyFilterModel(filterModel) {

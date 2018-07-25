@@ -388,7 +388,7 @@ See the License for the specific language governing permissions and
 
     function assignNewAdmin() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-        Utils.confirm(strFormat(getL10n('admins-confirm-admin-assigment'), [userName]), () => {
+        Utils.confirm(strFormat(getL10n('admins-confirm-admin-assignment'), [userName]), () => {
             DBMS.assignAdmin(userName, Utils.processError(exports.refresh));
         });
     }
@@ -397,7 +397,7 @@ See the License for the specific language governing permissions and
     }
     function assignEditor() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-        Utils.confirm(strFormat(getL10n('admins-confirm-editor-assigment'), [userName]), () => {
+        Utils.confirm(strFormat(getL10n('admins-confirm-editor-assignment'), [userName]), () => {
             DBMS.assignEditor(userName, Utils.processError(exports.refresh));
         });
     }

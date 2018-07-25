@@ -312,6 +312,8 @@ See the License for the specific language governing permissions and
       context.fillStyle = "#ffffff";
       context.fillRect(0,0,w,h);
       
+      setAttr(event.target, 'download', FileUtils.makeFileName('gears','png'));
+      
       const img    = canvas.toDataURL("image/png");
       const link = document.querySelector(".link");
       event.target.href = img;
@@ -346,7 +348,7 @@ See the License for the specific language governing permissions and
         const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label, 
           state.nodesDataset.get(edge.to).name]);
           
-        FileUtils.arr2d2Csv(arr.concat([['']]).concat(arr2), 'cogs.csv');
+        FileUtils.arr2d2Csv(arr.concat([['']]).concat(arr2), 'gears');
     }
 
     function downloadJSON() {
@@ -357,7 +359,7 @@ See the License for the specific language governing permissions and
       const out = new Blob([JSON.stringify({nodes: arr, edges: arr2}, null, '  ')], {
           type: 'application/json;charset=utf-8;'
       });
-      saveAs(out, 'cogs.json');
+      saveAs(out, FileUtils.makeFileName('gears', 'json'));
     }
 
     function downloadYED() {
@@ -385,7 +387,7 @@ See the License for the specific language governing permissions and
       const out = new Blob([CommonUtils.strFormat(Constants.yedGmlBase, [nodes, edges])], {
           type: 'text/xml;charset=utf-8;'
       });
-      saveAs(out, 'cogs.graphml');
+      saveAs(out, FileUtils.makeFileName('gears', 'graphml'));
     }
 
     function onNodeFocus(event) {
