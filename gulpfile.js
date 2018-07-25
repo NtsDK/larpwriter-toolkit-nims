@@ -268,7 +268,8 @@ gulp.task('zip', function() {
 gulp.task('dist', gulp.series('clean', 
         gulp.parallel('styles','assets','scripts','html','corePlains','projectPlains',
                 'fontPlains','bsIconsPlains', 'faIconsPlains', 'tests','server', 'translations2')));
-gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
+//gulp.task('dist:final', gulp.series('dist', 'copyDoc', 'copyTemplates', 'copyPresentation', 'zip'));
+gulp.task('dist:final', gulp.series('dist', 'copyTemplates', 'zip'));
 
 var partials = [projectDir + "/js/pages/**/*.html"];
 
