@@ -1,3 +1,12 @@
+version 0.7.2 (26 Jul 2018)
+
+  Added the mixing desk of LARP and LARP design cards.
+  Refreshed and improved English translation.
+  More usability improvements.
+  Improved design of enum and multi enum profile items.
+  Library updates.
+  Added autosave base in browser.
+
 version 0.7.0 (25 Apr 2018)
 
   Reworked interface and relations.

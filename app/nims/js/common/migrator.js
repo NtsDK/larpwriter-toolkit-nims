@@ -212,8 +212,7 @@ See the License for the specific language governing permissions and
                 data.Sliders = [];
                 data.Version = '0.7.2';
             }
-            console.log(`data ${data}`);
-
+            
             return data;
         };
     }
