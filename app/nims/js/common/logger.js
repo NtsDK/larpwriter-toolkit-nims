@@ -90,19 +90,6 @@ See the License for the specific language governing permissions and
         groupSchemaAPI: {
             getGroupSchemas: null
         },
-        investigationBoardAPI: {
-            getInvestigationBoardData: null,
-            addBoardGroup: {},
-            switchGroups: {},
-            setGroupNotes: {},
-            removeBoardGroup: {},
-            createResource: {},
-            renameResource: {},
-            removeResource: {},
-            addEdge: {},
-            setEdgeLabel: {},
-            removeEdge: {}
-        },
         relationsAPI: {
             getCharacterRelation: null,
             getRelations: null,

@@ -52,11 +52,6 @@ const getChecks = {
         func: 'getGroupSchemas',
         args: [],
     }],
-    investigationBoardAPI:
-    [{
-        func: 'getInvestigationBoardData',
-        args: [],
-    }],
     logAPI:
     [{
         func: 'getLog',
@@ -292,71 +287,6 @@ const setChecks = {
     {
         func: 'removeGroup',
         args: ['testGroup'],
-    }],
-    investigationBoardAPI:
-    [{
-        func: 'createGroup',
-        args: ['testGroup'],
-    },
-    {
-        func: 'createGroup',
-        args: ['testGroup2'],
-    },
-    {
-        func: 'addBoardGroup',
-        args: ['testGroup'],
-    },
-    {
-        func: 'switchGroups',
-        args: ['testGroup', 'testGroup2'],
-    },
-    {
-        func: 'addBoardGroup',
-        args: ['testGroup'],
-    },
-    {
-        func: 'setGroupNotes',
-        args: ['testGroup2', '223322'],
-    },
-    {
-        func: 'createResource',
-        args: ['testResource'],
-    },
-    {
-        func: 'renameResource',
-        args: ['testResource', 'testResource2'],
-    },
-    {
-        func: 'addEdge',
-        args: ['group-testGroup2', 'resource-testResource2'],
-    },
-    {
-        func: 'addEdge',
-        args: ['group-testGroup2', 'group-testGroup'],
-    },
-    {
-        func: 'setEdgeLabel',
-        args: ['group-testGroup2', 'resource-testResource2', '223322'],
-    },
-    {
-        func: 'removeEdge',
-        args: ['group-testGroup2', 'resource-testResource2'],
-    },
-    {
-        func: 'removeResource',
-        args: ['testResource2'],
-    },
-    {
-        func: 'removeBoardGroup',
-        args: ['testGroup2'],
-    },
-    {
-        func: 'removeGroup',
-        args: ['testGroup'],
-    },
-    {
-        func: 'removeGroup',
-        args: ['testGroup2'],
     }],
     profileBindingAPI:
     [{

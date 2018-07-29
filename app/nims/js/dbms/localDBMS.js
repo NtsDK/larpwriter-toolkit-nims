@@ -82,7 +82,6 @@ function makeLocalDBMS(fullVersion) {
 
         'groupsAPI',
         'groupSchemaAPI',
-        'investigationBoardAPI',
         'relationsAPI',
         'briefingExportAPI',
 

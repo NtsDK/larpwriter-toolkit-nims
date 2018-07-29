@@ -354,51 +354,6 @@ See the License for the specific language governing permissions and
         }
     };
 
-    exports.investigationBoardOpts = {
-        edges: {
-            arrows: 'to',
-            width: 0.7,
-            //                width : 0.15,
-            //                color : {
-            //                    inherit : 'from'
-            //                },
-            color: 'black',
-            smooth: {
-                //                    type : 'continuous'
-                type: 'dynamic'
-            },
-            font: { background: '#33cccc', strokeWidth: 0 }
-        },
-        groups: {
-            groups: { color: { background: '#ffcc00', border: '#a78912' }, borderWidth: 1, shape: 'box' },
-            resources: { color: { background: '#99cc00', border: '#839159' }, borderWidth: 1, shape: 'ellipse' }
-            //                 - edge label back
-        },
-        physics: {
-            barnesHut: {
-                gravitationalConstant: -2000,
-                //                        gravitationalConstant : -15000,
-                //                    gravitationalConstant : -30000,
-                //                     gravitationalConstant : -60000,
-                //                        springLength: 20,
-                //                    springConstant: 0.1,
-                avoidOverlap: 0.4,
-                //                    avoidOverlap: 0.6,
-                //                    springLength: 300,
-                springLength: 120,
-                centralGravity: 0.8,
-            },
-            stabilization: {
-                //                        iterations : 2500
-                iterations: 50
-            },
-            timestep: 0.3
-        },
-        //            physics : {
-        //                enabled: false
-        //            }
-    };
-
     exports.snActivityColors = {
         active: 'red',
         follower: 'blue',

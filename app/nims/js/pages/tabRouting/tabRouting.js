@@ -94,9 +94,6 @@ RoutingTabTmpl(this.LogViewer2 = {}, {
         btnName: 'group-schema',
         viewName: 'GroupSchema'
     }, {
-        btnName: 'investigation-board',
-        viewName: 'InvestigationBoard'
-    }, {
         btnName: 'about',
         viewName: 'About'
     }]
