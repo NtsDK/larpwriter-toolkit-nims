@@ -26,7 +26,6 @@ See the License for the specific language governing permissions and
     function Schema(exports, R, CommonUtils, Constants) {
         exports.getSchema = function (base) {
             const schema = {
-                $schema: 'http://json-schema.org/draft-04/schema#',
                 title: 'Larpwriter Toolkit NIMS base',
                 description: 'Larpwriter Toolkit base schema.',
                 type: 'object',
