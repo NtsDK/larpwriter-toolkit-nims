@@ -56,6 +56,8 @@ See the License for the specific language governing permissions and
             if (m === '}}') { return '}'; }
             return vals[n];
         });
+        
+        exports.strFormatInsertsCount = str => (str.match(/\{\{|\}\}|\{(\d+)\}/g) || []).length;
 
         exports.consoleLog = str => console.log(str);
         exports.consoleErr = str => console.error(str);

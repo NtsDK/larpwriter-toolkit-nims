@@ -23,6 +23,8 @@ See the License for the specific language governing permissions and
     state.l10nDelegates = [];
     state.dictionaries = {};
     state.lang = defaultLang;
+    state.foundStatistics = {};
+    state.notFoundStatistics = {};
 
     exports.init = () => {
         if (state.initialized) {
@@ -31,6 +33,10 @@ See the License for the specific language governing permissions and
         //        console.log(navigator.language);
 
         state.dictionaries = R.map(processDictionary, Dictionaries);
+        
+        dictIterator(checkDictionaryCompleteness);
+        dictIterator(checkDictionaryInsertCount);
+        showDuplicates();
 
         //    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
         //    var lang = 'ru';
@@ -46,6 +52,53 @@ See the License for the specific language governing permissions and
         exports.onL10nChange(exports.localizeStatic);
         state.initialized = true;
     };
+    
+    function dictIterator(callback){
+        const dictNames = R.keys(state.dictionaries);
+        if(dictNames.length < 2) {
+            return;
+        }
+        const base = R.head(dictNames);
+        R.tail(dictNames).forEach( dictName => {
+            callback(base, dictName);
+        });
+    }
+    
+    function checkDictionaryCompleteness(base, dictName){
+        const baseToDict = R.difference(R.keys(state.dictionaries[base]), R.keys(state.dictionaries[dictName]));
+        if(baseToDict.length > 0){
+            console.log(`L10N: ${base} to ${dictName} difference is not empty `, baseToDict);
+        } else {
+            console.log(`L10N: ${base} to ${dictName} difference is empty (OK)`);
+        }
+        const dictToBase = R.difference(R.keys(state.dictionaries[dictName]), R.keys(state.dictionaries[base]));
+        if(dictToBase.length > 0){
+            console.log(`L10N: ${dictName} to ${base} difference is not empty `, dictToBase);
+        } else {
+            console.log(`L10N: ${dictName} to ${base} difference is empty (OK)`);
+        }
+    }
+    
+    function checkDictionaryInsertCount(base, dictName){
+        const baseInst = state.dictionaries[base];
+        const dictInst = state.dictionaries[dictName];
+        const intersection = R.intersection(R.keys(baseInst), R.keys(state.dictionaries[dictName]));
+        const notEqual = intersection.filter(key => {
+            return CommonUtils.strFormatInsertsCount(baseInst[key]) !== CommonUtils.strFormatInsertsCount(dictInst[key])
+        });
+        if(notEqual.length > 0) {
+            console.log(`L10N: insert counts for ${dictName} and ${base} are not equal`, notEqual);
+        } else {
+            console.log(`L10N: insert counts for ${dictName} and ${base} are equal (OK)`);
+        }
+    }
+    
+    function showDuplicates(){
+        R.keys(state.dictionaries).forEach(key => {
+            const map = R.filter(arr => arr.length > 1, R.invert(state.dictionaries[key]));
+            console.log(`L10N: Duplicates ${key} `, map);
+        });
+    }
 
     var processDictionary = (dictionary) => {
         const processedDictionary = {};
@@ -74,10 +127,14 @@ See the License for the specific language governing permissions and
             state.dict = state.dictionaries.ru;
             state.lang = 'ru';
         }
+        state.foundStatistics.clear();
+        state.notFoundStatistics.clear();
+        
         setHtmlLang(state.lang);
         state.l10nDelegates.forEach((delegate) => {
             delegate();
         });
+        
     };
 
     exports.getLang = () => state.lang.toLowerCase();
@@ -88,7 +145,12 @@ See the License for the specific language governing permissions and
 
     exports.getValue = (name) => {
         const value = state.dict[name];
-        if (value === undefined) console.log(`Value is not found: ${name}`);
+        if (value === undefined) {
+            console.log(`Value is not found: ${name}`);
+            state.notFoundStatistics[name] = (state.notFoundStatistics[name] || 0) + 1;
+        } else {
+            state.foundStatistics[name] = (state.foundStatistics[name] || 0) + 1;
+        }
         return value || `${name}:RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA`;
     };
     
@@ -110,4 +172,10 @@ See the License for the specific language governing permissions and
         nl2array(qees(el, '[l10n-title]')).map(el2 =>
             setAttr(el2, 'title', exports.getValue(getAttr(el2, 'l10n-title'))));
     };
+    
+    exports.getFoundStatistics = () => R.clone(state.foundStatistics);
+    exports.getNotFoundStatistics = () => R.clone(state.notFoundStatistics);
+    
+    exports.getNotUsedByStatistics = () => R.difference(R.keys(state.dict), R.keys(state.foundStatistics));
+    
 })(this.L10n = {}, Dictionaries);
