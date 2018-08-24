@@ -354,7 +354,8 @@ See the License for the specific language governing permissions and
     function makeArchiveData(briefingData, generateSingleDelegate) {
         const res = {};
         briefingData.briefings.forEach((briefing, i) => {
-            res[briefing.charName] = generateSingleDelegate({
+            const name = briefing.charName + (briefing.playerName ? `_${briefing.playerName}` : '')
+            res[name] = generateSingleDelegate({
                 gameName: briefingData.gameName,
                 briefings: [briefing]
             });

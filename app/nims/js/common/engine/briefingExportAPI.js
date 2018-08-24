@@ -118,6 +118,7 @@ See the License for the specific language governing permissions and
                 const playerName = database.ProfileBindings[charName];
                 if (playerName !== undefined) {
                     dataObject = R.merge(dataObject, _makeProfileInfo(playerName, 'player', database));
+                    dataObject.playerName = playerName;
                 }
 
                 return dataObject;
