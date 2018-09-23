@@ -23,22 +23,34 @@ See the License for the specific language governing permissions and
         } = opts;
 
         LocalDBMS.prototype.getEntityNamesArray = function (type, callback) {
-            const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
-            PC.precondition(chain, callback, () => {
-                switch (type) {
-                case 'character':
-                case 'player':
-                    this.getProfileNamesArray(type, callback);
-                    break;
-                case 'group':
-                    this.getGroupNamesArray(callback);
-                    break;
-                case 'story':
-                    this.getStoryNamesArray(callback);
-                    break;
-                default:
-                    callback(new Errors.InternalError('errors-unexpected-switch-argument', [type]));
+            this.getEntityNamesArrayNew(type).then(res => callback(null, res)).catch(callback);
+        };
+        LocalDBMS.prototype.getEntityNamesArrayNew = function (type) {
+            return new Promise((resolve,reject) => {
+                const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
+                const callback = (err, result) => {
+                    if(err){
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
                 }
+                PC.precondition(chain, reject, () => {
+                    switch (type) {
+                    case 'character':
+                    case 'player':
+                        this.getProfileNamesArray(type, callback);
+                        break;
+                    case 'group':
+                        this.getGroupNamesArray(callback);
+                        break;
+                    case 'story':
+                        this.getStoryNamesArray(callback);
+                        break;
+                    default:
+                        reject(new Errors.InternalError('errors-unexpected-switch-argument', [type]));
+                    }
+                });
             });
         };
     }

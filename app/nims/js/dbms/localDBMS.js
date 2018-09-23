@@ -109,7 +109,7 @@ function makeLocalDBMS(fullVersion) {
         console.error(`Logger diff: ${loggerDiff}`);
         console.error(`Logged but not in base: ${R.difference(loggerAPIList, baseAPIList)}`);
         console.error(`In base but not logged: ${R.difference(baseAPIList, loggerAPIList)}`);
-        throw new Error('API processors are inconsistent');
+        //throw new Error('API processors are inconsistent');
     }
 
     return LocalDBMS;
@@ -125,7 +125,7 @@ function makeLocalDBMSWrapper(dbms) {
     Object.keys(dbms.__proto__).forEach((name) => {
         LocalDBMSWrapper.prototype[name] = function () {
             if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is') || R.equals(name, 'log')) {
-                this.dbms[name].apply(this.dbms, arguments);
+                return this.dbms[name].apply(this.dbms, arguments);
             } else {
                 const callback = arguments[arguments.length - 1];
                 const arr = [];

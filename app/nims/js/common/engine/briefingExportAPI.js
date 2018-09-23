@@ -74,25 +74,44 @@ See the License for the specific language governing permissions and
 //          }]
 //      }
 //  ]
+
+
         LocalDBMS.prototype.getBriefingData = function (
             selCharacters, selStories, exportOnlyFinishedStories,
             callback
         ) {
-            PC.precondition(
-                check(selCharacters, selStories, exportOnlyFinishedStories, this.database), callback,
-                () => {
-                    const that = this;
-                    selCharacters = selCharacters || R.keys(this.database.Characters);
-                    selStories = selStories || R.keys(this.database.Stories);
-                    that.getAllCharacterGroupTexts((err, groupTexts) => {
-                        if (err) { callback(err); return; }
-                        _getBriefingData(
-                            that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories,
-                            callback
-                        );
-                    });
-                }
-            );
+            this.getBriefingDataNew({
+                selCharacters, selStories, exportOnlyFinishedStories
+            }).then(res => callback(null, res)).catch(callback);
+        }
+
+
+        LocalDBMS.prototype.getBriefingDataNew = function (
+            {selCharacters, selStories, exportOnlyFinishedStories}={}
+        ) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(
+                    check(selCharacters, selStories, exportOnlyFinishedStories, this.database), reject,
+                    () => {
+                        const that = this;
+                        selCharacters = selCharacters || R.keys(this.database.Characters);
+                        selStories = selStories || R.keys(this.database.Stories);
+                        that.getAllCharacterGroupTexts((err, groupTexts) => {
+                            if (err) { reject(err); return; }
+                            _getBriefingData(
+                                that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories,
+                                (err, res) => {
+                                    if(err) {
+                                        reject(err)
+                                    } else {
+                                        resolve(res);
+                                    }
+                                }
+                            );
+                        });
+                    }
+                );
+            });
         };
 
         _getBriefingData = (

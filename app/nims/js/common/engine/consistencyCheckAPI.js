@@ -26,63 +26,70 @@ See the License for the specific language governing permissions and
         const schemaBuilder = opts.Schema;
 
         LocalDBMS.prototype.getConsistencyCheckResult = function (callback) {
-            let errors = [];
+            this.getConsistencyCheckResultNew().then(res => callback(null, res)).catch(callback);
+        };
 
-            let errors2 = [
-                checkProfileStructureConsistency(this.database, 'character', 'CharacterProfileStructure'),
-                checkProfileStructureConsistency(this.database, 'player', 'PlayerProfileStructure'),
-                checkProfileConsistency(this.database, 'Characters', 'CharacterProfileStructure'),
-                checkProfileConsistency(this.database, 'Players', 'PlayerProfileStructure'),
-                checkProfileValueConsistency(this.database, 'Characters', 'CharacterProfileStructure'),
-                checkProfileValueConsistency(this.database, 'Players', 'PlayerProfileStructure'),
-                checkStoryCharactersConsistency(this.database),
-                checkEventsCharactersConsistency(this.database),
-                checkBindingsConsistency(this.database),
-                checkRelationsConsistency(this.database)
-            ];
-            if (this.database.ManagementInfo) {
-                errors2.push(checkObjectRightsConsistency(this.database));
-                errors2.push(checkPlayerLoginConsistency(this.database));
-            }
+        LocalDBMS.prototype.getConsistencyCheckResultNew = function () {
+            return new Promise((resolve, reject) => {
 
-            errors2.forEach((module) => {
-                module.errors = module.errors.map(R.apply(CU.strFormat));
-            });
-            errors = errors.concat(R.flatten(errors2.map(R.prop('errors'))));
-
-            const schema = schemaBuilder.getSchema(this.database);
-            const validator = validatorLib({ allErrors: true }); // options can be passed, e.g. {allErrors: true}
-            const validate = validator.compile(schema);
-            const valid = validate(this.database);
-            if (!valid) {
-                errors = errors.concat(validate.errors);
-
-                errors2 = R.concat(errors2, schema.required.map((moduleName) => {
-                    const validate2 = validator.compile(schema.properties[moduleName]);
-                    const valid2 = validate2(this.database[moduleName]);
-                    return {
-                        module: moduleName,
-                        errors: valid2 ? [] : validate2.errors
-                    };
-                }));
+                let errors = [];
+    
+                let errors2 = [
+                    checkProfileStructureConsistency(this.database, 'character', 'CharacterProfileStructure'),
+                    checkProfileStructureConsistency(this.database, 'player', 'PlayerProfileStructure'),
+                    checkProfileConsistency(this.database, 'Characters', 'CharacterProfileStructure'),
+                    checkProfileConsistency(this.database, 'Players', 'PlayerProfileStructure'),
+                    checkProfileValueConsistency(this.database, 'Characters', 'CharacterProfileStructure'),
+                    checkProfileValueConsistency(this.database, 'Players', 'PlayerProfileStructure'),
+                    checkStoryCharactersConsistency(this.database),
+                    checkEventsCharactersConsistency(this.database),
+                    checkBindingsConsistency(this.database),
+                    checkRelationsConsistency(this.database)
+                ];
                 if (this.database.ManagementInfo) {
-                    const moduleName = 'ManagementInfo';
-                    const validate2 = validator.compile(schema.properties[moduleName]);
-                    const valid2 = validate2(this.database[moduleName]);
-                    errors2.push( {
-                        module: moduleName,
-                        errors: valid2 ? [] : validate2.errors
-                    });
+                    errors2.push(checkObjectRightsConsistency(this.database));
+                    errors2.push(checkPlayerLoginConsistency(this.database));
                 }
-            }
-
-            const details = R.mapObjIndexed(arr => R.flatten(arr.map(R.prop('errors'))), R.groupBy(R.prop('module'), errors2));
-
-            callback(null, {
-                errors,
-                details,
-                nodes: R.clone(schema.moduleList),
-                edges: R.clone(schema.moduleDeps),
+    
+                errors2.forEach((module) => {
+                    module.errors = module.errors.map(R.apply(CU.strFormat));
+                });
+                errors = errors.concat(R.flatten(errors2.map(R.prop('errors'))));
+    
+                const schema = schemaBuilder.getSchema(this.database);
+                const validator = validatorLib({ allErrors: true }); // options can be passed, e.g. {allErrors: true}
+                const validate = validator.compile(schema);
+                const valid = validate(this.database);
+                if (!valid) {
+                    errors = errors.concat(validate.errors);
+    
+                    errors2 = R.concat(errors2, schema.required.map((moduleName) => {
+                        const validate2 = validator.compile(schema.properties[moduleName]);
+                        const valid2 = validate2(this.database[moduleName]);
+                        return {
+                            module: moduleName,
+                            errors: valid2 ? [] : validate2.errors
+                        };
+                    }));
+                    if (this.database.ManagementInfo) {
+                        const moduleName = 'ManagementInfo';
+                        const validate2 = validator.compile(schema.properties[moduleName]);
+                        const valid2 = validate2(this.database[moduleName]);
+                        errors2.push( {
+                            module: moduleName,
+                            errors: valid2 ? [] : validate2.errors
+                        });
+                    }
+                }
+    
+                const details = R.mapObjIndexed(arr => R.flatten(arr.map(R.prop('errors'))), R.groupBy(R.prop('module'), errors2));
+    
+                resolve({
+                    errors,
+                    details,
+                    nodes: R.clone(schema.moduleList),
+                    edges: R.clone(schema.moduleDeps),
+                });
             });
         };
 

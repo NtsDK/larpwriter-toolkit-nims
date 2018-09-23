@@ -32,23 +32,28 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getDatabase = function (callback) {
-            this.database.Meta.saveTime = new Date().toString();
-            callback(null, CU.clone(this.database));
+        LocalDBMS.prototype.getDatabase = function () {
+          this.database.Meta.saveTime = new Date().toString();
+          return Promise.resolve(CU.clone(this.database));
         };
 
-        LocalDBMS.prototype.setDatabase = function (database, callback) {
+        LocalDBMS.prototype.setDatabaseNew = function ({database}={}) {
             try {
                 this.database = Migrator.migrate(database);
+                return Promise.resolve();
             } catch (err) {
-                callback(err);
-                return;
+                return Promise.reject(err);
             }
-            if (callback) callback();
+        };
+        LocalDBMS.prototype.setDatabase = function (database, callback) {
+            this.setDatabaseNew({database}).then(res => callback(res)).catch(callback);
         };
 
+        LocalDBMS.prototype.getMetaInfoNew = function () {
+            return Promise.resolve(CU.clone(this.database.Meta));
+        };
         LocalDBMS.prototype.getMetaInfo = function (callback) {
-            callback(null, CU.clone(this.database.Meta));
+            this.getMetaInfoNew().then(res => callback(null, res)).catch(callback);
         };
 //  [
 //      {
@@ -68,13 +73,18 @@ See the License for the specific language governing permissions and
 //      },
 //  ]
         // overview
-        LocalDBMS.prototype.setMetaInfoString = function (name, value, callback) {
-            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoStrings),
-                PC.isString(value)]);
-            PC.precondition(chain, callback, () => {
-                this.database.Meta[name] = value;
-                if (callback) callback();
+        LocalDBMS.prototype.setMetaInfoStringNew = function ({name, value}={}) {
+            return new Promise((resolve, reject) => {
+                const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoStrings),
+                    PC.isString(value)]);
+                PC.precondition(chain, reject, () => {
+                    this.database.Meta[name] = value;
+                    resolve();
+                });
             });
+        };
+        LocalDBMS.prototype.setMetaInfoString = function (name, value, callback) {
+            this.setMetaInfoStringNew({name, value}).then(res => callback(undefined, res)).catch(callback);
         };
         
 //  [
@@ -96,13 +106,18 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
-        LocalDBMS.prototype.setMetaInfoDate = function (name, value, callback) {
-            const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoDates),
-                PC.isString(value)]);
-            PC.precondition(chain, callback, () => {
-                this.database.Meta[name] = value;
-                if (callback) callback();
+        LocalDBMS.prototype.setMetaInfoDateNew = function ({name, value}={}) {
+            return new Promise((resolve, reject) => {
+                const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoDates),
+                    PC.isString(value)]);
+                PC.precondition(chain, reject, () => {
+                    this.database.Meta[name] = value;
+                    resolve();
+                });
             });
+        };
+        LocalDBMS.prototype.setMetaInfoDate = function (name, value, callback) {
+            this.setMetaInfoDateNew({name, value}).then(res => callback(undefined, res)).catch(callback);
         };
     }
 

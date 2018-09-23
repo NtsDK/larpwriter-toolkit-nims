@@ -23,6 +23,7 @@ var isServer = !process.env.MODE || process.env.MODE.trim() == 'server';
 var lang = process.env.LANG ? process.env.LANG.trim() : 'ru';
 
 var translationsPath = config.get('translationsPath');
+var distPath = config.get('distPath');
 var langPath = config.get('translationsPath') + '\\' + lang;
 
 //console.log('=' + process.env.NODE_ENV + '=');
@@ -56,7 +57,7 @@ var processStyles = function(styles, fileName, taskName, addSourcemaps) {
         .pipe(debug({title:'concat'}))
         .pipe(cssnano())
         .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.write()))
-        .pipe(gulp.dest('dist/styles'));
+        .pipe(gulp.dest(distPath + '/styles'));
     }
 };
 
@@ -111,7 +112,7 @@ var processScripts = function(scripts, fileName, taskName, addSourcemaps) {
             .pipe(concat(fileName + '.min.js'))
             .pipe(gulpIf(!isDevelopment, uglify()))
             .pipe(gulpIf(addSourcemaps && isDevelopment, sourcemaps.write()))
-            .pipe(gulp.dest('dist/js'));
+            .pipe(gulp.dest(distPath + '/js'));
     }
 };
 
@@ -149,7 +150,7 @@ gulp.task('html', function() {
       }
     }))
     .pipe(htmlmin({collapseWhitespace : true}))
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest(distPath))
 });
 
 var translations2 = [translationsPath + "/l10n/*.js"];
@@ -167,7 +168,7 @@ gulp.task('translations2', function() {
     }))
 //    .pipe(htmlmin({collapseWhitespace : true}))
     .pipe(concat('translations.min.js'))
-    .pipe(gulp.dest('dist/js'))
+    .pipe(gulp.dest(distPath + '/js'))
 });
 
 // plain copy
@@ -180,7 +181,7 @@ var faIconsPlains = addPrefix(coreDir + "/webfonts/",config.get('faIcons'));
 var copyFiles = (files, base) =>{
     return function(done) {
         if(files.length === 0) return done();
-        return gulp.src(files, {base: base}).pipe(gulp.dest('dist'));
+        return gulp.src(files, {base: base}).pipe(gulp.dest(distPath));
     }
 };
 
@@ -192,14 +193,14 @@ gulp.task('faIconsPlains', copyFiles(faIconsPlains, coreDir));
 
 gulp.task('assets', function() {
     return gulp.src(projectDir + '/images/*', {base: projectBase, since: gulp.lastRun('assets')})
-    .pipe(newer('dist')) // used for single tasks when many files already copied, like first launch
+    .pipe(newer(distPath)) // used for single tasks when many files already copied, like first launch
 //    .pipe(gulpIf(!isDevelopment, imagemin())) // enable on adding new images
     .pipe(debug({title:'assets copy'}))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest(distPath));
 });
 
 gulp.task('clean', function() {
-    return del('dist');
+    return del(distPath);
 });
 
 var tests = addPrefix(coreDir + "/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]);
@@ -213,7 +214,7 @@ gulp.task('tests', function() {
     gulp.src(isDevelopment ? [coreDir + "/tests/jasmine/jasmine.css"] : [coreDir + "/tests/empty.js"], {base: projectBase})
     .pipe(concat('tests.min.css'))
     .pipe(cssnano())
-    .pipe(gulp.dest('dist/tests'));
+    .pipe(gulp.dest(distPath + '/tests'));
     
     gulp.src(specs, {base: projectBase})
     .pipe(gulpIf(false && isDevelopment, sourcemaps.init()))
@@ -221,7 +222,7 @@ gulp.task('tests', function() {
     .pipe(concat('specs.min.js'))
     .pipe(gulpIf(!isDevelopment, uglify()))
     .pipe(gulpIf(false && isDevelopment, sourcemaps.write()))
-    .pipe(gulp.dest('dist/tests'));
+    .pipe(gulp.dest(distPath + '/tests'));
     
     return gulp.src(tests, {base: projectBase})
     .pipe(gulpIf(false && isDevelopment, sourcemaps.init()))
@@ -229,38 +230,38 @@ gulp.task('tests', function() {
     .pipe(concat('tests.min.js'))
     .pipe(gulpIf(!isDevelopment, uglify()))
     .pipe(gulpIf(false && isDevelopment, sourcemaps.write()))
-    .pipe(gulp.dest('dist/tests'));
+    .pipe(gulp.dest(distPath + '/tests'));
 });
 
 gulp.task('server', function(callback) {
     if(isServer){
         gulp.src(coreDir + '/js/common/**/*.js', {base: coreBase})
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest(distPath));
         gulp.src(projectDir + '/js/common/**/*.js', {base: projectBase})
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest(distPath));
         gulp.src(langPath + "/emptyBase.js", {base: langPath})
-        .pipe(gulp.dest('dist/js/common'));
+        .pipe(gulp.dest(distPath + '/js/common'));
     }
     callback();
 });
 
 gulp.task('copyDoc', function() {
     return gulp.src(langPath + '\\doc\\_build\\html' + '/**/*')
-    .pipe(gulp.dest('dist/extras/doc'));
+    .pipe(gulp.dest(distPath + '/extras/doc'));
 });
 
 gulp.task('copyTemplates', function() {
     return gulp.src(langPath + '\\templates' + '/**/*')
-    .pipe(gulp.dest('dist/extras/templates'));
+    .pipe(gulp.dest(distPath + '/extras/templates'));
 });
 
 gulp.task('copyPresentation', function() {
     return gulp.src(langPath + '\\presentation' + '/**/*')
-    .pipe(gulp.dest('dist/extras/presentation'));
+    .pipe(gulp.dest(distPath + '/extras/presentation'));
 });
 
 gulp.task('zip', function() {
-    return gulp.src('dist/**/*')
+    return gulp.src(distPath + '/**/*')
         .pipe(zip((isServer?'server':'stand') + '-' + lang + dateformat(new Date(), '_dd-mmm-yyyy_HH-MM-ss') + '.zip'))
         .pipe(gulp.dest('./'));
 });

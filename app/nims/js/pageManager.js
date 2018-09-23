@@ -97,8 +97,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
-//            DBMS.setDatabase(DemoBase.data, onBaseLoaded);
-            runBaseSelectDialog();
+            DBMS.setDatabase(DemoBase.data, onBaseLoaded);
+            // runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
             const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
             window.DBMS = new RemoteDBMS();
@@ -250,7 +250,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 //                addEl(state.navigation, makeL10nButton());
 
-//                addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+               addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
 //                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
@@ -393,17 +393,15 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         console.log(counter + 1);
         counter = (counter + 1) % BACKUP_NUMBER;
         console.log('Starting autosave');
-        
-        DBMS.getDatabase((err, database) => {
-            if (err) { Utils.handleError(err); return; }
-            
+
+        DBMS.getDatabase().then(database => {
             LocalBaseAPI.put('base' + counter, database).then(() => {
                 console.log('Autosave OK ' + new Date());
-//                LocalBaseAPI.get('base' + counter).then((database) => {
-//                    console.log(database);
-//                }).catch(Utils.handleError);
+    //                LocalBaseAPI.get('base' + counter).then((database) => {
+    //                    console.log(database);
+    //                }).catch(Utils.handleError);
             }).catch(Utils.handleError);
-        });
+        }).catch(Utils.handleError);
     }
     
 })(this.PageManager = {});

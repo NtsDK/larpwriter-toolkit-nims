@@ -5,6 +5,7 @@ const getChecks = {
         args: [],
     }, {
         func: 'getDatabase',
+        promise: true,
         args: [],
     }],
     briefingExportAPI:
@@ -743,29 +744,49 @@ R.keys(getChecks).forEach((apiName) => {
     describe(`${apiName} getter tests`, () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
         checks.forEach((check) => {
-            it(check.name, (done) => {
-                DBMS[check.func](...check.args.concat((err) => {
-                    expect(err).toBeNull();
-                    done();
-                }));
-            });
+            if(!check.promise){
+                it(check.name, (done) => {
+                    DBMS[check.func](...check.args.concat((err) => {
+                        expect(err).toBeNull();
+                        done();
+                    }));
+                });
+            } else {
+                it(check.name, (done) => {
+                    DBMS[check.func](...check.args).then( res => {
+                        // expect(res).toBeNull();
+                        expect(res).not.toBeNull();
+                        done();
+                    }).catch(err => {
+                        expect(err).toBeNull();
+                        done();
+                    });
+                    //done();
+                    
+                    
+                    // .concat((err) => {
+                    //     expect(err).toBeNull();
+                    //     done();
+                    // }));
+                });
+            }
         });
     });
     
-    describe(`${apiName} promise getter tests`, () => {
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-        checks.forEach((check) => {
-            it(check.name, (done) => {
-                DBMS[check.func + 'Pm'](...check.args).then((value) => {
-                    expect(value).not.toBeNull();
-                    done();
-                }).catch(function(err){
-                    expect(err).toBeNull();
-                    done();
-                });
-            });
-        });
-    });
+    // describe(`${apiName} promise getter tests`, () => {
+    //     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    //     checks.forEach((check) => {
+    //         it(check.name, (done) => {
+    //             DBMS[check.func + 'Pm'](...check.args).then((value) => {
+    //                 expect(value).not.toBeNull();
+    //                 done();
+    //             }).catch(function(err){
+    //                 expect(err).toBeNull();
+    //                 done();
+    //             });
+    //         });
+    //     });
+    // });
 });
 
 

@@ -48,10 +48,9 @@ See the License for the specific language governing permissions and
     };
 
     exports.saveFile = () => {
-        DBMS.getDatabase((err, database) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getDatabase().then(database => {
             exports.json2File(database, exports.makeFileName(`${BASE_FILE_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
-        });
+        }).catch(Utils.handleError);
     };
     
     exports.makeFileName = (root, extension, date) => {

@@ -2,14 +2,15 @@ describe('baseAPI', () => {
     let oldBase;
 
     beforeAll((done) => {
-        DBMS.getDatabase((err, data) => {
-            if (err) { throw err; }
+        DBMS.getDatabase().then(data => {
             oldBase = data;
             DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), (err2, data2) => {
                 if (err2) { throw err2; }
                 //                PageManager.refresh();
                 done();
             });
+        }).catch(err => {
+            throw err;
         });
     });
 
@@ -21,13 +22,26 @@ describe('baseAPI', () => {
         });
     });
 
-    const funcs = ['getDatabase', 'getMetaInfo'];
+    const funcs = [ 'getMetaInfo'];
 
     funcs.forEach((func) => {
         it(func, (done) => {
             DBMS[func]((err, data) => {
                 expect(err).toBeNull();
                 expect(data).not.toBeNull();
+                done();
+            });
+        });
+    });
+    const funcs2 = ['getDatabase'];
+
+    funcs2.forEach((func) => {
+        it(func, (done) => {
+            DBMS[func]().then(data => {
+                expect(data).not.toBeNull();
+                done();
+            }).catch(err => {
+                expect(err).toBeNull();
                 done();
             });
         });
