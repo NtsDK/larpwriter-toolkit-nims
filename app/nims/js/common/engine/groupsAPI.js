@@ -22,8 +22,11 @@ See the License for the specific language governing permissions and
             R, Constants, Errors, addListener, CU, PC, PU
         } = opts;
 
+        LocalDBMS.prototype.getGroupNamesArrayNew = function () {
+            return Promise.resolve(Object.keys(this.database.Groups).sort(CU.charOrdA));
+        };
         LocalDBMS.prototype.getGroupNamesArray = function (callback) {
-            callback(null, Object.keys(this.database.Groups).sort(CU.charOrdA));
+            this.getGroupNamesArrayNew().then(res => callback(null, res)).catch(callback);
         };
 
         const groupCheck = (groupName, database) => PC.chainCheck([PC.isString(groupName),
@@ -40,10 +43,15 @@ See the License for the specific language governing permissions and
 //                }]
 //            }
 //        ]
+        LocalDBMS.prototype.getGroupNew = function ({groupName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(groupCheck(groupName, this.database), reject, () => {
+                    resolve(CU.clone(this.database.Groups[groupName]));
+                });
+            })
+        };
         LocalDBMS.prototype.getGroup = function (groupName, callback) {
-            PC.precondition(groupCheck(groupName, this.database), callback, () => {
-                callback(null, CU.clone(this.database.Groups[groupName]));
-            });
+            this.getGroupNew({groupName}).then(res => callback(null, res)).catch(callback);
         };
 
         const _getCharacterGroupTexts = (groups, info, profileId) => {
@@ -58,32 +66,43 @@ See the License for the specific language governing permissions and
         };
 
         // preview
+        LocalDBMS.prototype.getCharacterGroupTextsNew = function ({characterName}={}) {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                this.getProfileBinding('character', characterName, (err, profileId) => {
+                    if (err) { reject(err); return; }
+                    that.getProfileFilterInfo((err2, info) => {
+                        if (err2) { reject(err2); return; }
+                        resolve(_getCharacterGroupTexts(that.database.Groups, info, profileId));
+                    });
+                });
+            });
+        };
         LocalDBMS.prototype.getCharacterGroupTexts = function (characterName, callback) {
-            const that = this;
-            this.getProfileBinding('character', characterName, (err, profileId) => {
-                if (err) { callback(err); return; }
-                that.getProfileFilterInfo((err2, info) => {
-                    if (err2) { callback(err2); return; }
-                    callback(null, _getCharacterGroupTexts(that.database.Groups, info, profileId));
+            this.getCharacterGroupTextsNew({characterName}).then(res => callback(null, res)).catch(callback);
+        };
+
+        // export
+        LocalDBMS.prototype.getAllCharacterGroupTextsNew = function () {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                this.getProfileFilterInfo((err, info) => {
+                    if (err) { reject(err); return; }
+                    that.getProfileBindings((err2, bindings) => {
+                        if (err2) { reject(err2); return; }
+                        const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
+                            const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
+                            result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, profileId);
+                            return result;
+                        }, {});
+                        resolve(texts);
+                    });
                 });
             });
         };
 
-        // export
         LocalDBMS.prototype.getAllCharacterGroupTexts = function (callback) {
-            const that = this;
-            this.getProfileFilterInfo((err, info) => {
-                if (err) { callback(err); return; }
-                that.getProfileBindings((err2, bindings) => {
-                    if (err2) { callback(err2); return; }
-                    const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
-                        const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
-                        result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, profileId);
-                        return result;
-                    }, {});
-                    callback(null, texts);
-                });
-            });
+            this.getAllCharacterGroupTextsNew().then(res => callback(null, res)).catch(callback);
         };
 
 //  [
@@ -99,20 +118,26 @@ See the License for the specific language governing permissions and
 //          }]
 //      }
 //  ]
-        LocalDBMS.prototype.createGroup = function (groupName, callback) {
-            PC.precondition(PC.createEntityCheck2(groupName, R.keys(this.database.Groups), 'entity-lifeless-name', 'entity-of-group'), callback, () => {
-                const newGroup = {
-                    name: groupName,
-                    masterDescription: '',
-                    characterDescription: '',
-                    filterModel: [],
-                    doExport: true
-                };
-
-                this.database.Groups[groupName] = newGroup;
-                this.ee.trigger('createGroup', arguments);
-                if (callback) callback();
+        LocalDBMS.prototype.createGroupNew = function ({groupName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(PC.createEntityCheck2(groupName, R.keys(this.database.Groups), 'entity-lifeless-name', 'entity-of-group'), reject, () => {
+                    const newGroup = {
+                        name: groupName,
+                        masterDescription: '',
+                        characterDescription: '',
+                        filterModel: [],
+                        doExport: true
+                    };
+    
+                    this.database.Groups[groupName] = newGroup;
+                    this.ee.trigger('createGroup', arguments);
+                    resolve();
+                });
             });
+        };
+
+        LocalDBMS.prototype.createGroup = function (groupName, callback) {
+            this.createGroupNew({groupName}).then(res => callback()).catch(callback);
         };
 
 //  [
@@ -137,15 +162,21 @@ See the License for the specific language governing permissions and
 //          }]
 //      }
 //  ]
-        LocalDBMS.prototype.renameGroup = function (fromName, toName, callback) {
-            PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), callback, () => {
-                const data = this.database.Groups[fromName];
-                data.name = toName;
-                this.database.Groups[toName] = data;
-                delete this.database.Groups[fromName];
-                this.ee.trigger('renameGroup', arguments);
-                if (callback) callback();
+        LocalDBMS.prototype.renameGroupNew = function ({fromName, toName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), reject, () => {
+                    const data = this.database.Groups[fromName];
+                    data.name = toName;
+                    this.database.Groups[toName] = data;
+                    delete this.database.Groups[fromName];
+                    this.ee.trigger('renameGroup', arguments);
+                    resolve();
+                });
             });
+        };
+
+        LocalDBMS.prototype.renameGroup = function (fromName, toName, callback) {
+            this.renameGroupNew({fromName, toName}).then(res => callback()).catch(callback);
         };
         
 //  [
@@ -159,12 +190,18 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
-        LocalDBMS.prototype.removeGroup = function (groupName, callback) {
-            PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), callback, () => {
-                delete this.database.Groups[groupName];
-                this.ee.trigger('removeGroup', arguments);
-                if (callback) callback();
+        LocalDBMS.prototype.removeGroupNew = function ({groupName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), reject, () => {
+                    delete this.database.Groups[groupName];
+                    this.ee.trigger('removeGroup', arguments);
+                    resolve();
+                });
             });
+        };
+
+        LocalDBMS.prototype.removeGroup = function (groupName, callback) {
+            this.removeGroupNew({groupName}).then(res => callback()).catch(callback);
         };
 
 //  [
@@ -178,19 +215,25 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
-        LocalDBMS.prototype.saveFilterToGroup = function (groupName, filterModel, callback) {
-            PC.precondition(groupCheck(groupName, this.database), callback, () => {
-                const conflictTypes = PU.isFilterModelCompatibleWithProfiles({
-                    characters: this.database.CharacterProfileStructure,
-                    players: this.database.PlayerProfileStructure
-                }, filterModel);
-                if (conflictTypes.length !== 0) {
-                    callback(new Errors.ValidationError('groups-page-filter-is-incompatible-with-base-profiles', [conflictTypes.join(',')]));
-                    return;
-                }
-                this.database.Groups[groupName].filterModel = filterModel;
-                if (callback) callback();
+        LocalDBMS.prototype.saveFilterToGroupNew = function ({groupName, filterModel}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(groupCheck(groupName, this.database), reject, () => {
+                    const conflictTypes = PU.isFilterModelCompatibleWithProfiles({
+                        characters: this.database.CharacterProfileStructure,
+                        players: this.database.PlayerProfileStructure
+                    }, filterModel);
+                    if (conflictTypes.length !== 0) {
+                        reject(new Errors.ValidationError('groups-page-filter-is-incompatible-with-base-profiles', [conflictTypes.join(',')]));
+                        return;
+                    }
+                    this.database.Groups[groupName].filterModel = filterModel;
+                    resolve();
+                });
             });
+        };
+
+        LocalDBMS.prototype.saveFilterToGroup = function (groupName, filterModel, callback) {
+            this.saveFilterToGroupNew({groupName, filterModel}).then(res => callback()).catch(callback);
         };
         
 //  [
@@ -219,15 +262,21 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
-        LocalDBMS.prototype.updateGroupField = function (groupName, fieldName, value, callback) {
-            const chain = PC.chainCheck([groupCheck(groupName, this.database),
-                PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
-                PC.isString(value)]);
-            PC.precondition(chain, callback, () => {
-                const profileInfo = this.database.Groups[groupName];
-                profileInfo[fieldName] = value;
-                if (callback) callback();
+        LocalDBMS.prototype.updateGroupFieldNew = function ({groupName, fieldName, value}={}) {
+            return new Promise((resolve, reject) => {
+                const chain = PC.chainCheck([groupCheck(groupName, this.database),
+                    PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
+                    PC.isString(value)]);
+                PC.precondition(chain, reject, () => {
+                    const profileInfo = this.database.Groups[groupName];
+                    profileInfo[fieldName] = value;
+                    resolve();
+                });
             });
+        };
+
+        LocalDBMS.prototype.updateGroupField = function (groupName, fieldName, value, callback) {
+            this.updateGroupFieldNew({groupName, fieldName, value}).then(res => callback()).catch(callback);
         };
         
 //  [
@@ -247,13 +296,19 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
-        LocalDBMS.prototype.doExportGroup = function (groupName, value, callback) {
-            const chain = PC.chainCheck([groupCheck(groupName, this.database), PC.isBoolean(value)]);
-            PC.precondition(chain, callback, () => {
-                const profileInfo = this.database.Groups[groupName];
-                profileInfo['doExport'] = value;
-                if (callback) callback();
+        LocalDBMS.prototype.doExportGroupNew = function ({groupName, value}={}) {
+            return new Promise((resolve, reject) => {
+                const chain = PC.chainCheck([groupCheck(groupName, this.database), PC.isBoolean(value)]);
+                PC.precondition(chain, reject, () => {
+                    const profileInfo = this.database.Groups[groupName];
+                    profileInfo['doExport'] = value;
+                    resolve();
+                });
             });
+        };
+
+        LocalDBMS.prototype.doExportGroup = function (groupName, value, callback) {
+            this.doExportGroupNew({groupName, value}).then(res => callback()).catch(callback);
         };
 
         const initProfileInfo = (that, type, ownerMapType, callback) => {
@@ -276,27 +331,37 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getProfileFilterInfo = function (callback) {
-            const that = this;
-            initProfileInfo(that, 'character', 'Characters', (err, charactersInfo) => {
-                if (err) { callback(err); return; }
-                initProfileInfo(that, 'player', 'Players', (err2, playersInfo) => {
-                    if (err2) { callback(err2); return; }
-                    that.getCharactersSummary((err3, charactersSummary) => {
-                        if (err3) { callback(err3); return; }
-                        that.getExtendedProfileBindings((err4, bindingData) => {
-                            if (err4) { callback(err4); return; }
-                            const info = PU.makeGroupedProfileFilterInfo({
-                                characters: charactersInfo,
-                                players: playersInfo,
-                                charactersSummary,
-                                bindingData
+        // const initProfileInfo = (that, type, ownerMapType, callback) => {
+        //     this.initProfileInfoNew({groupName, value}).then(res => callback()).catch(callback);
+        // };
+
+        LocalDBMS.prototype.getProfileFilterInfoNew = function () {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                initProfileInfo(that, 'character', 'Characters', (err, charactersInfo) => {
+                    if (err) { reject(err); return; }
+                    initProfileInfo(that, 'player', 'Players', (err2, playersInfo) => {
+                        if (err2) { reject(err2); return; }
+                        that.getCharactersSummary((err3, charactersSummary) => {
+                            if (err3) { reject(err3); return; }
+                            that.getExtendedProfileBindings((err4, bindingData) => {
+                                if (err4) { reject(err4); return; }
+                                const info = PU.makeGroupedProfileFilterInfo({
+                                    characters: charactersInfo,
+                                    players: playersInfo,
+                                    charactersSummary,
+                                    bindingData
+                                });
+                                resolve(info);
                             });
-                            callback(null, info);
                         });
                     });
                 });
             });
+        };
+
+        LocalDBMS.prototype.getProfileFilterInfo = function (callback) {
+            this.getProfileFilterInfoNew().then(res => callback(null, res)).catch(callback);
         };
 
         const _getGroupCharacterSets = (groups, characterNames, bindings, info) => {
@@ -314,15 +379,21 @@ See the License for the specific language governing permissions and
             return groupCharacterSets;
         };
 
-        LocalDBMS.prototype.getGroupCharacterSets = function (callback) {
-            const that = this;
-            this.getProfileFilterInfo((err, info) => {
-                if (err) { callback(err); return; }
-                callback(null, _getGroupCharacterSets(
-                    that.database.Groups, R.keys(that.database.Characters),
-                    R.clone(that.database.ProfileBindings), info
-                ));
+        LocalDBMS.prototype.getGroupCharacterSetsNew = function () {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                this.getProfileFilterInfo((err, info) => {
+                    if (err) { reject(err); return; }
+                    resolve(_getGroupCharacterSets(
+                        that.database.Groups, R.keys(that.database.Characters),
+                        R.clone(that.database.ProfileBindings), info
+                    ));
+                });
             });
+        };
+
+        LocalDBMS.prototype.getGroupCharacterSets = function (callback) {
+            this.getGroupCharacterSetsNew().then(res => callback(null, res)).catch(callback);
         };
 
         function _removeProfileItem(type, index, profileItemName) {

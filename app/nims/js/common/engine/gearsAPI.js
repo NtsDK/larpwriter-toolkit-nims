@@ -22,24 +22,38 @@ See the License for the specific language governing permissions and
             Migrator, EventEmitter, Constants, CU, PC
         } = opts;
         
+        LocalDBMS.prototype.getAllGearsDataNew = function () {
+            return Promise.resolve(CU.clone(this.database.Gears));
+        };
         LocalDBMS.prototype.getAllGearsData = function (callback) {
-            callback(null, CU.clone(this.database.Gears));
+            this.getAllGearsDataNew().then(res => callback(null, res)).catch(callback);
         };
         
+        LocalDBMS.prototype.setGearsDataNew = function ({data}={}) {
+            return new Promise((resolve, reject) => {
+                this.database.Gears.nodes = data.nodes;
+                this.database.Gears.edges = data.edges;
+                resolve();
+            });
+        };
         LocalDBMS.prototype.setGearsData = function (data, callback) {
-            this.database.Gears.nodes = data.nodes;
-            this.database.Gears.edges = data.edges;
-            if (callback) callback();
+            this.setGearsDataNew({data}).then(res => callback()).catch(callback);
         };
         
-        LocalDBMS.prototype.setGearsPhysicsEnabled = function (enabled, callback) {
+        LocalDBMS.prototype.setGearsPhysicsEnabledNew = function ({enabled}={}) {
             this.database.Gears.settings.physicsEnabled = enabled;
-            if (callback) callback();
+            return Promise.resolve();
+        };
+        LocalDBMS.prototype.setGearsPhysicsEnabled = function (enabled, callback) {
+            this.setGearsPhysicsEnabledNew({enabled}).then(res => callback()).catch(callback);
         };
         
-        LocalDBMS.prototype.setGearsShowNotesEnabled = function (enabled, callback) {
+        LocalDBMS.prototype.setGearsShowNotesEnabledNew = function ({enabled}={}) {
             this.database.Gears.settings.showNotes = enabled;
-            if (callback) callback();
+            return Promise.resolve();
+        };
+        LocalDBMS.prototype.setGearsShowNotesEnabled = function (enabled, callback) {
+            this.setGearsShowNotesEnabledNew({enabled}).then(res => callback()).catch(callback);
         };
     }
 
