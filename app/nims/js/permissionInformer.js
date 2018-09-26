@@ -151,44 +151,64 @@ See the License for the specific language governing permissions and
         };
     } else if (mode === 'Standalone') {
         exports.refresh = (callback) => {
-            callback();
+            exports.refreshNew().then(res => callback(null, res)).catch(callback);
+        };
+        exports.refreshNew = () => {
+            return Promise.resolve();
         };
 
         exports.isAdmin = (callback) => {
-            callback(null, true);
+            exports.isAdminNew().then(res => callback(null, res)).catch(callback);
+        };
+        exports.isAdminNew = () => {
+            return Promise.resolve(true);
         };
 
         exports.isEditor = (callback) => {
-            callback(null, true);
+            exports.isEditorNew().then(res => callback(null, res)).catch(callback);
+        };
+        exports.isEditorNew = () => {
+            return Promise.resolve(true);
         };
 
-        exports.getEntityNamesArray = R.curry((type, editableOnly, callback) => {
-            function processNames(err, names) {
-                if (err) { Utils.handleError(err); return; }
-                const newNames = [];
-                names.forEach((name) => {
-                    newNames.push({
-                        displayName: name,
-                        value: name,
-                        editable: true
+        exports.getEntityNamesArray = (type, editableOnly, callback) => {
+            exports.getEntityNamesArrayNew({type, editableOnly}).then(res => callback(null, res)).catch(callback);
+        }
+        exports.getEntityNamesArrayNew = ({type, editableOnly}={}) => {
+            return new Promise((resolve, reject) => {
+                function processNames(err, names) {
+                    if (err) { Utils.handleError(err); return; }
+                    const newNames = [];
+                    names.forEach((name) => {
+                        newNames.push({
+                            displayName: name,
+                            value: name,
+                            editable: true
+                        });
                     });
-                });
-                callback(null, newNames);
-            }
-            DBMS.getEntityNamesArray(type, processNames);
-        });
+                    resolve(newNames);
+                }
+                DBMS.getEntityNamesArray(type, processNames);
+            });
+        };
 
         exports.isEntityEditable = (type, entityName, callback) => {
-            callback(null, true);
+            exports.isEntityEditableNew().then(res => callback(null, res)).catch(callback);
+        };
+        exports.isEntityEditableNew = () => {
+            return Promise.resolve(true);
         };
 
         exports.areAdaptationsEditable = (adaptations, callback) => {
+            exports.areAdaptationsEditableNew({adaptations}).then(res => callback(null, res)).catch(callback);
+        }
+        exports.areAdaptationsEditableNew = ({adaptations}={}) => {
             const map = {};
             adaptations.forEach((elem) => {
                 map[`${elem.storyName}-${elem.characterName}`] = true;
             });
 
-            callback(null, map);
+            return Promise.resolve(map);
         };
     }
 })(this.PermissionInformer = {}, MODE);
