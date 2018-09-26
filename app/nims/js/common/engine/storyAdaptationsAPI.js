@@ -26,19 +26,24 @@ See the License for the specific language governing permissions and
 
         //events
         LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback) {
-            PC.precondition(PC.isBoolean(showOnlyUnfinishedStories), callback, () => {
-                let storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
-                const that = this;
-                storyArray = storyArray.map(elem => ({
-                    storyName: elem,
-                    isFinished: _isStoryFinished(that.database, elem),
-                    isEmpty: _isStoryEmpty(that.database, elem)
-                }));
-
-                if (showOnlyUnfinishedStories) {
-                    storyArray = storyArray.filter(elem => !elem.isFinished || elem.isEmpty);
-                }
-                callback(null, storyArray);
+            this.getFilteredStoryNamesNew({showOnlyUnfinishedStories}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getFilteredStoryNamesNew = function ({showOnlyUnfinishedStories}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(PC.isBoolean(showOnlyUnfinishedStories), reject, () => {
+                    let storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
+                    const that = this;
+                    storyArray = storyArray.map(elem => ({
+                        storyName: elem,
+                        isFinished: _isStoryFinished(that.database, elem),
+                        isEmpty: _isStoryEmpty(that.database, elem)
+                    }));
+    
+                    if (showOnlyUnfinishedStories) {
+                        storyArray = storyArray.filter(elem => !elem.isFinished || elem.isEmpty);
+                    }
+                    resolve(storyArray);
+                });
             });
         };
 
@@ -54,9 +59,14 @@ See the License for the specific language governing permissions and
 
         //adaptations
         LocalDBMS.prototype.getStory = function (storyName, callback) {
-            const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
-            PC.precondition(PC.chainCheck(chain), callback, () => {
-                callback(null, CU.clone(this.database.Stories[storyName]));
+            this.getStoryNew({storyName}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getStoryNew = function ({storyName}={}) {
+            return new Promise((resolve, reject) => {
+                const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
+                PC.precondition(PC.chainCheck(chain), reject, () => {
+                    resolve(CU.clone(this.database.Stories[storyName]));
+                });
             });
         };
 
@@ -77,18 +87,25 @@ See the License for the specific language governing permissions and
             storyName, eventIndex, characterName, type, value,
             callback
         ) {
-            let chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)),
-                PC.isNumber(eventIndex), PC.isString(type), PC.elementFromEnum(type, Constants.adaptationProperties),
-                PC.isString(characterName)];
-            PC.precondition(PC.chainCheck(chain), callback, () => {
-                const story = this.database.Stories[storyName];
-                chain = [PC.entityExists(characterName, R.keys(story.characters)),
-                    PC.isInRange(eventIndex, 0, story.events.length - 1), getValueCheck(type, value)];
-                PC.precondition(PC.chainCheck(chain), callback, () => {
-                    const event = story.events[eventIndex];
-                    PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), callback, () => {
-                        event.characters[characterName][type] = value;
-                        callback();
+            this.setEventAdaptationPropertyNew({storyName, eventIndex, characterName, type, value}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.setEventAdaptationPropertyNew = function (
+            {storyName, eventIndex, characterName, type, value}={}
+        ) {
+            return new Promise((resolve, reject) => {
+                let chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)),
+                    PC.isNumber(eventIndex), PC.isString(type), PC.elementFromEnum(type, Constants.adaptationProperties),
+                    PC.isString(characterName)];
+                PC.precondition(PC.chainCheck(chain), reject, () => {
+                    const story = this.database.Stories[storyName];
+                    chain = [PC.entityExists(characterName, R.keys(story.characters)),
+                        PC.isInRange(eventIndex, 0, story.events.length - 1), getValueCheck(type, value)];
+                    PC.precondition(PC.chainCheck(chain), reject, () => {
+                        const event = story.events[eventIndex];
+                        PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), reject, () => {
+                            event.characters[characterName][type] = value;
+                            resolve();
+                        });
                     });
                 });
             });

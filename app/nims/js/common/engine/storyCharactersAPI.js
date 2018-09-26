@@ -24,86 +24,116 @@ See the License for the specific language governing permissions and
 
         //event presence
         LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
-            PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
-                const localCharacters = this.database.Stories[storyName].characters;
-                callback(null, Object.keys(localCharacters).sort(CU.charOrdA));
+            this.getStoryCharacterNamesArrayNew({storyName}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getStoryCharacterNamesArrayNew = function ({storyName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
+                    const localCharacters = this.database.Stories[storyName].characters;
+                    resolve(Object.keys(localCharacters).sort(CU.charOrdA));
+                });
             });
         };
 
         //story characters
         LocalDBMS.prototype.getStoryCharacters = function (storyName, callback) {
-            PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), callback, () => {
-                callback(null, CU.clone(this.database.Stories[storyName].characters));
+            this.getStoryCharactersNew({storyName}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getStoryCharactersNew = function ({storyName}={}, callback) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
+                    resolve(CU.clone(this.database.Stories[storyName].characters));
+                });
             });
         };
 
         //story characters
         LocalDBMS.prototype.addStoryCharacter = function (storyName, characterName, callback) {
-            const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
-                PC.entityExistsCheck(characterName, R.keys(this.database.Characters))];
-            PC.precondition(PC.chainCheck(chain), callback, () => {
-                const story = this.database.Stories[storyName];
-                PC.precondition(PC.entityIsNotUsed(characterName, R.keys(story.characters)), callback, () => {
-                    story.characters[characterName] = {
-                        name: characterName,
-                        inventory: '',
-                        activity: {}
-                    };
-
-                    callback();
+            this.addStoryCharacterNew({storyName, characterName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.addStoryCharacterNew = function ({storyName, characterName}={}) {
+            return new Promise((resolve, reject) => {
+                const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
+                    PC.entityExistsCheck(characterName, R.keys(this.database.Characters))];
+                PC.precondition(PC.chainCheck(chain), reject, () => {
+                    const story = this.database.Stories[storyName];
+                    PC.precondition(PC.entityIsNotUsed(characterName, R.keys(story.characters)), reject, () => {
+                        story.characters[characterName] = {
+                            name: characterName,
+                            inventory: '',
+                            activity: {}
+                        };
+    
+                        resolve();
+                    });
                 });
             });
         };
 
         //story characters
         LocalDBMS.prototype.switchStoryCharacters = function (storyName, fromName, toName, callback) {
-            let cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
-            PC.precondition(cond, callback, () => {
-                const story = this.database.Stories[storyName];
-                cond = PC.switchEntityCheck(
-                    fromName, toName, R.keys(this.database.Characters),
-                    R.keys(story.characters)
-                );
-                PC.precondition(cond, callback, () => {
-                    story.characters[toName] = story.characters[fromName];
-                    story.characters[toName].name = toName;
-                    delete story.characters[fromName];
-
-                    story.events.forEach((event) => {
-                        if (event.characters[fromName]) {
-                            event.characters[toName] = event.characters[fromName];
-                            delete event.characters[fromName];
-                        }
+            this.switchStoryCharactersNew({storyName, fromName, toName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.switchStoryCharactersNew = function ({storyName, fromName, toName}={}) {
+            return new Promise((resolve, reject) => {
+                let cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
+                PC.precondition(cond, reject, () => {
+                    const story = this.database.Stories[storyName];
+                    cond = PC.switchEntityCheck(
+                        fromName, toName, R.keys(this.database.Characters),
+                        R.keys(story.characters)
+                    );
+                    PC.precondition(cond, reject, () => {
+                        story.characters[toName] = story.characters[fromName];
+                        story.characters[toName].name = toName;
+                        delete story.characters[fromName];
+    
+                        story.events.forEach((event) => {
+                            if (event.characters[fromName]) {
+                                event.characters[toName] = event.characters[fromName];
+                                delete event.characters[fromName];
+                            }
+                        });
+    
+                        resolve();
                     });
-
-                    callback();
                 });
             });
         };
 
         //story characters
         LocalDBMS.prototype.removeStoryCharacter = function (storyName, characterName, callback) {
-            const cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
-            PC.precondition(cond, callback, () => {
-                const story = this.database.Stories[storyName];
-                PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
-                    delete story.characters[characterName];
-                    story.events.forEach((event) => {
-                        delete event.characters[characterName];
+            this.removeStoryCharacterNew({storyName, characterName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.removeStoryCharacterNew = function ({storyName, characterName}={}) {
+            return new Promise((resolve, reject) => {
+                const cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
+                PC.precondition(cond, reject, () => {
+                    const story = this.database.Stories[storyName];
+                    PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), reject, () => {
+                        delete story.characters[characterName];
+                        story.events.forEach((event) => {
+                            delete event.characters[characterName];
+                        });
+                        resolve();
                     });
-                    callback();
                 });
             });
         };
 
         // story characters
         LocalDBMS.prototype.updateCharacterInventory = function (storyName, characterName, inventory, callback) {
-            const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(inventory)];
-            PC.precondition(PC.chainCheck(chain), callback, () => {
-                const story = this.database.Stories[storyName];
-                PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
-                    story.characters[characterName].inventory = inventory;
-                    callback();
+            this.updateCharacterInventoryNew({storyName, characterName, inventory}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.updateCharacterInventoryNew = function ({storyName, characterName, inventory}={}) {
+            return new Promise((resolve, reject) => {
+                const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(inventory)];
+                PC.precondition(PC.chainCheck(chain), reject, () => {
+                    const story = this.database.Stories[storyName];
+                    PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), reject, () => {
+                        story.characters[characterName].inventory = inventory;
+                        resolve();
+                    });
                 });
             });
         };
@@ -113,37 +143,49 @@ See the License for the specific language governing permissions and
             storyName, characterName, activityType, checked,
             callback
         ) {
-            const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(activityType),
-                PC.elementFromEnum(activityType, Constants.characterActivityTypes), PC.isBoolean(checked)];
-            PC.precondition(PC.chainCheck(chain), callback, () => {
-                const story = this.database.Stories[storyName];
-                PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), callback, () => {
-                    const character = story.characters[characterName];
-                    if (checked) {
-                        character.activity[activityType] = true;
-                    } else {
-                        delete character.activity[activityType];
-                    }
-                    callback();
+            this.onChangeCharacterActivityNew({storyName, characterName, activityType, checked}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.onChangeCharacterActivityNew = function (
+            {storyName, characterName, activityType, checked}={}
+        ) {
+            return new Promise((resolve, reject) => {
+                const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(activityType),
+                    PC.elementFromEnum(activityType, Constants.characterActivityTypes), PC.isBoolean(checked)];
+                PC.precondition(PC.chainCheck(chain), reject, () => {
+                    const story = this.database.Stories[storyName];
+                    PC.precondition(PC.entityExistsCheck(characterName, R.keys(story.characters)), reject, () => {
+                        const character = story.characters[characterName];
+                        if (checked) {
+                            character.activity[activityType] = true;
+                        } else {
+                            delete character.activity[activityType];
+                        }
+                        resolve();
+                    });
                 });
             });
         };
 
         //event presence
         LocalDBMS.prototype.addCharacterToEvent = function (storyName, eventIndex, characterName, callback) {
-            let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
-            PC.precondition(PC.chainCheck(chain), callback, () => {
-                const story = this.database.Stories[storyName];
-                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)),
-                    PC.isInRange(eventIndex, 0, story.events.length - 1)];
-                PC.precondition(PC.chainCheck(chain), callback, () => {
-                    const event = story.events[eventIndex];
-                    PC.precondition(PC.entityIsNotUsed(characterName, R.keys(event.characters)), callback, () => {
-                        event.characters[characterName] = {
-                            text: '',
-                            time: ''
-                        };
-                        callback();
+            this.addCharacterToEventNew({storyName, eventIndex, characterName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.addCharacterToEventNew = function ({storyName, eventIndex, characterName}={}) {
+            return new Promise((resolve, reject) => {
+                let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
+                PC.precondition(PC.chainCheck(chain), reject, () => {
+                    const story = this.database.Stories[storyName];
+                    chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)),
+                        PC.isInRange(eventIndex, 0, story.events.length - 1)];
+                    PC.precondition(PC.chainCheck(chain), reject, () => {
+                        const event = story.events[eventIndex];
+                        PC.precondition(PC.entityIsNotUsed(characterName, R.keys(event.characters)), reject, () => {
+                            event.characters[characterName] = {
+                                text: '',
+                                time: ''
+                            };
+                            resolve();
+                        });
                     });
                 });
             });
@@ -151,16 +193,21 @@ See the License for the specific language governing permissions and
 
         // event presence
         LocalDBMS.prototype.removeCharacterFromEvent = function (storyName, eventIndex, characterName, callback) {
-            let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
-            PC.precondition(PC.chainCheck(chain), callback, () => {
-                const story = this.database.Stories[storyName];
-                chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)),
-                    PC.isInRange(eventIndex, 0, story.events.length - 1)];
-                PC.precondition(PC.chainCheck(chain), callback, () => {
-                    const event = story.events[eventIndex];
-                    PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), callback, () => {
-                        delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
-                        callback();
+            this.removeCharacterFromEventNew({storyName, eventIndex, characterName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.removeCharacterFromEventNew = function ({storyName, eventIndex, characterName}={}) {
+            return new Promise((resolve, reject) => {
+                let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
+                PC.precondition(PC.chainCheck(chain), reject, () => {
+                    const story = this.database.Stories[storyName];
+                    chain = [PC.entityExistsCheck(characterName, R.keys(story.characters)),
+                        PC.isInRange(eventIndex, 0, story.events.length - 1)];
+                    PC.precondition(PC.chainCheck(chain), reject, () => {
+                        const event = story.events[eventIndex];
+                        PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), reject, () => {
+                            delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
+                            resolve();
+                        });
                     });
                 });
             });

@@ -25,87 +25,109 @@ See the License for the specific language governing permissions and
 
         // preview
         LocalDBMS.prototype.getAllInventoryLists = function (characterName, callback) {
-            PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                const array = R.values(this.database.Stories)
-                    .filter(story => story.characters[characterName] !== undefined &&
-                        story.characters[characterName].inventory !== '')
-                    .map(story => ({
-                        storyName: story.name,
-                        inventory: story.characters[characterName].inventory
-                    }));
-                callback(null, array);
+            this.getAllInventoryListsNew({characterName}).then(res => callback(null, res)).catch(callback);
+        }
+
+        LocalDBMS.prototype.getAllInventoryListsNew = function ({characterName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(characterCheck(characterName, this.database), reject, () => {
+                    const array = R.values(this.database.Stories)
+                        .filter(story => story.characters[characterName] !== undefined &&
+                            story.characters[characterName].inventory !== '')
+                        .map(story => ({
+                            storyName: story.name,
+                            inventory: story.characters[characterName].inventory
+                        }));
+                        resolve(null, array);
+                });
             });
         };
 
         // preview
         LocalDBMS.prototype.getCharacterEventGroupsByStory = function (characterName, callback) {
-            PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                const eventGroups = [];
-
-                let events;
-
-                const that = this;
-                Object.keys(this.database.Stories).filter(storyName =>
-                    that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
-                    events = [];
-
-                    const tmpEvents = CU.clone(that.database.Stories[storyName].events);
-                    tmpEvents.map((elem, i) => {
-                        elem.index = i;
-                        elem.storyName = storyName;
-                        elem.isTimeEmpty = elem.time === '';
-                        elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
-                        return elem;
-                    }).filter(event => event.characters[characterName]).forEach((event) => {
-                        events.push(event);
+            this.getCharacterEventGroupsByStoryNew({characterName}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getCharacterEventGroupsByStoryNew = function ({characterName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(characterCheck(characterName, this.database), reject, () => {
+                    const eventGroups = [];
+    
+                    let events;
+    
+                    const that = this;
+                    Object.keys(this.database.Stories).filter(storyName =>
+                        that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
+                        events = [];
+    
+                        const tmpEvents = CU.clone(that.database.Stories[storyName].events);
+                        tmpEvents.map((elem, i) => {
+                            elem.index = i;
+                            elem.storyName = storyName;
+                            elem.isTimeEmpty = elem.time === '';
+                            elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
+                            return elem;
+                        }).filter(event => event.characters[characterName]).forEach((event) => {
+                            events.push(event);
+                        });
+    
+                        eventGroups.push({
+                            storyName,
+                            events
+                        });
                     });
-
-                    eventGroups.push({
-                        storyName,
-                        events
-                    });
+                    eventGroups.sort(CU.charOrdAFactory(R.prop('storyName')));
+                    resolve(null, eventGroups);
                 });
-                eventGroups.sort(CU.charOrdAFactory(R.prop('storyName')));
-                callback(null, eventGroups);
             });
         };
 
         // preview
         LocalDBMS.prototype.getCharacterEventsByTime = function (characterName, callback) {
-            PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                let allEvents = [];
-
-                const that = this;
-                Object.keys(this.database.Stories).filter(storyName =>
-                    that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
-                    const events = CU.clone(that.database.Stories[storyName].events);
-                    allEvents = allEvents.concat(events.map((elem, i) => {
-                        elem.index = i;
-                        elem.storyName = storyName;
-                        elem.isTimeEmpty = elem.time === '';
-                        elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
-                        return elem;
-                    }).filter(event => event.characters[characterName]));
+            this.getCharacterEventsByTimeNew({characterName}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getCharacterEventsByTimeNew = function ({characterName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(characterCheck(characterName, this.database), reject, () => {
+                    let allEvents = [];
+    
+                    const that = this;
+                    Object.keys(this.database.Stories).filter(storyName =>
+                        that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
+                        const events = CU.clone(that.database.Stories[storyName].events);
+                        allEvents = allEvents.concat(events.map((elem, i) => {
+                            elem.index = i;
+                            elem.storyName = storyName;
+                            elem.isTimeEmpty = elem.time === '';
+                            elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
+                            return elem;
+                        }).filter(event => event.characters[characterName]));
+                    });
+    
+                    allEvents.sort(CU.eventsByTime);
+                    resolve(allEvents);
                 });
-
-                allEvents.sort(CU.eventsByTime);
-                callback(null, allEvents);
             });
         };
 
         // timeline
         LocalDBMS.prototype.getEventsTimeInfo = function (callback) {
+            this.getEventsTimeInfoNew().then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getEventsTimeInfoNew = function (callback) {
             const result = R.flatten(R.values(CU.clone(this.database.Stories)).map(story => story.events.map((event, index) => R.merge(R.pick(['name', 'time'], event), {
                 characters: R.keys(event.characters),
                 storyName: story.name,
                 index
             }))));
 
-            callback(null, result);
+            return Promise.resolve(result);
         };
 
         // character filter
         LocalDBMS.prototype.getCharactersSummary = function (callback) {
+            this.getCharactersSummaryNew().then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getCharactersSummaryNew = function () {
             const characters = R.keys(this.database.Characters);
             const charactersInfo = {};
             characters.forEach((character) => {
@@ -144,42 +166,47 @@ See the License for the specific language governing permissions and
                 characterInfo.completeness = Math.round((characterInfo.finishedAdaptations * 100) /
                     (characterInfo.totalAdaptations !== 0 ? characterInfo.totalAdaptations : 1));
             });
-            callback(null, charactersInfo);
+            return Promise.resolve(charactersInfo);
         };
 
         // character profile
         LocalDBMS.prototype.getCharacterReport = function (characterName, callback) {
-            PC.precondition(characterCheck(characterName, this.database), callback, () => {
-                const characterReport = R.values(this.database.Stories)
-                    .filter(story => story.characters[characterName] !== undefined)
-                    .map((story) => {
-                        const charEvents = story.events.filter(event => event.characters[characterName] !== undefined);
-
-                        const finishedAdaptations = charEvents
-                            .filter(event => event.characters[characterName].ready === true).length;
-
-                        let meets = {};
-                        charEvents.forEach((event) => {
-                            const chars = R.keys(event.characters);
-                            meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
+            this.getCharacterReportNew({characterName}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getCharacterReportNew = function ({characterName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(characterCheck(characterName, this.database), reject, () => {
+                    const characterReport = R.values(this.database.Stories)
+                        .filter(story => story.characters[characterName] !== undefined)
+                        .map((story) => {
+                            const charEvents = story.events.filter(event => event.characters[characterName] !== undefined);
+    
+                            const finishedAdaptations = charEvents
+                                .filter(event => event.characters[characterName].ready === true).length;
+    
+                            let meets = {};
+                            charEvents.forEach((event) => {
+                                const chars = R.keys(event.characters);
+                                meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
+                            });
+    
+                            delete meets[characterName];
+                            meets = R.keys(meets).sort(CU.charOrdA);
+    
+    
+                            return {
+                                storyName: story.name,
+                                inventory: story.characters[characterName].inventory,
+                                activity: story.characters[characterName].activity,
+                                meets,
+                                totalAdaptations: charEvents.length,
+                                finishedAdaptations
+                            };
                         });
-
-                        delete meets[characterName];
-                        meets = R.keys(meets).sort(CU.charOrdA);
-
-
-                        return {
-                            storyName: story.name,
-                            inventory: story.characters[characterName].inventory,
-                            activity: story.characters[characterName].activity,
-                            meets,
-                            totalAdaptations: charEvents.length,
-                            finishedAdaptations
-                        };
-                    });
-                characterReport.sort(CU.charOrdAFactory(R.prop('storyName')));
-
-                callback(null, characterReport);
+                    characterReport.sort(CU.charOrdAFactory(R.prop('storyName')));
+    
+                    resolve(null, characterReport);
+                });
             });
         };
     }

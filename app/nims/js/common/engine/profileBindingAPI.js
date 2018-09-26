@@ -27,10 +27,16 @@ See the License for the specific language governing permissions and
         const playerPath = ['Players'];
 
         LocalDBMS.prototype.getProfileBindings = function (callback) {
-            callback(null, CU.clone(R.path(path, this.database)));
+            this.getProfileBindingsNew().then(res => callback(null, res)).catch(callback);
+        };
+        LocalDBMS.prototype.getProfileBindingsNew = function () {
+            return Promise.resolve(CU.clone(R.path(path, this.database)));
         };
 
         LocalDBMS.prototype.getExtendedProfileBindings = function (callback) {
+            this.getExtendedProfileBindingsNew().then(res => callback(null, res)).catch(callback);
+        };
+        LocalDBMS.prototype.getExtendedProfileBindingsNew = function () {
             let characters = R.keys(R.path(charPath, this.database));
             let players = R.keys(R.path(playerPath, this.database));
             const bindings = CU.clone(R.path(path, this.database));
@@ -40,7 +46,7 @@ See the License for the specific language governing permissions and
             const bindingData = R.reduce(R.concat, [], [R.toPairs(bindings),
                 R.zip(characters, R.repeat('', characters.length)),
                 R.zip(R.repeat('', players.length), players)]);
-            callback(null, bindingData);
+            return Promise.resolve(bindingData);
         };
 
         const _getProfileBinding = (type, name, db) => {
@@ -58,35 +64,51 @@ See the License for the specific language governing permissions and
         dbmsUtils._getProfileBinding = _getProfileBinding;
 
         LocalDBMS.prototype.getProfileBinding = function (type, name, callback) {
-            const conditions = [PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes), PC.isString(name),
-                PC.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
-            PC.precondition(PC.chainCheck(conditions), callback, () => {
-                callback(null, _getProfileBinding(type, name, this.database));
+            this.getProfileBindingNew({type, name}).then(res => callback(null, res)).catch(callback);
+        };
+
+        LocalDBMS.prototype.getProfileBindingNew = function ({type, name}={}) {
+            return new Promise((resolve, reject) => {
+                const conditions = [PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes), PC.isString(name),
+                    PC.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
+                PC.precondition(PC.chainCheck(conditions), reject, () => {
+                    resolve(_getProfileBinding(type, name, this.database));
+                });
             });
         };
 
         LocalDBMS.prototype.createBinding = function (characterName, playerName, callback) {
-            const bindings = R.path(path, this.database);
-            const conditions = [PC.isString(characterName),
-                PC.entityExists(characterName, R.keys(this.database.Characters)), PC.isString(playerName),
-                PC.entityExists(playerName, R.keys(this.database.Players)),
-                PC.entityIsNotUsed(characterName, R.keys(bindings)),
-                PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
-            PC.precondition(PC.chainCheck(conditions), callback, () => {
-                bindings[characterName] = playerName;
-                if (callback) callback();
-            });
+            this.createBindingNew({characterName, playerName}).then(res => callback()).catch(callback);
+        };
+        LocalDBMS.prototype.createBindingNew = function ({characterName, playerName}={}) {
+            return new Promise((resolve, reject) => {
+                const bindings = R.path(path, this.database);
+                const conditions = [PC.isString(characterName),
+                    PC.entityExists(characterName, R.keys(this.database.Characters)), PC.isString(playerName),
+                    PC.entityExists(playerName, R.keys(this.database.Players)),
+                    PC.entityIsNotUsed(characterName, R.keys(bindings)),
+                    PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
+                PC.precondition(PC.chainCheck(conditions), reject, () => {
+                    bindings[characterName] = playerName;
+                    resolve();
+                });
+            })
         };
 
         LocalDBMS.prototype.removeBinding = function (characterName, playerName, callback) {
-            const bindingArr = R.toPairs(R.path(path, this.database)).map(pair => `${pair[0]}/${pair[1]}`);
-            const conditions = [PC.isString(characterName),
-                PC.entityExists(characterName, R.keys(this.database.Characters)),
-                PC.isString(playerName), PC.entityExists(playerName, R.keys(this.database.Players)),
-                PC.entityExists(`${characterName}/${playerName}`, bindingArr)];
-            PC.precondition(PC.chainCheck(conditions), callback, () => {
-                delete R.path(path, this.database)[characterName];
-                if (callback) callback();
+            this.removeBindingNew({characterName, playerName}).then(res => callback()).catch(callback);
+        };
+        LocalDBMS.prototype.removeBindingNew = function ({characterName, playerName}={}) {
+            return new Promise((resolve, reject) => {
+                const bindingArr = R.toPairs(R.path(path, this.database)).map(pair => `${pair[0]}/${pair[1]}`);
+                const conditions = [PC.isString(characterName),
+                    PC.entityExists(characterName, R.keys(this.database.Characters)),
+                    PC.isString(playerName), PC.entityExists(playerName, R.keys(this.database.Players)),
+                    PC.entityExists(`${characterName}/${playerName}`, bindingArr)];
+                PC.precondition(PC.chainCheck(conditions), reject, () => {
+                    delete R.path(path, this.database)[characterName];
+                    resolve();
+                });
             });
         };
 

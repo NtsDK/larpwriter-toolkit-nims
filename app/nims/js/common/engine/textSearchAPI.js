@@ -62,21 +62,26 @@ See the License for the specific language governing permissions and
 //  ]
         // eslint-disable-next-line func-names
         LocalDBMS.prototype.getTexts = function (searchStr, textTypes, caseSensitive, callback) {
-            const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
-            const check = PC.chainCheck([PC.isString(searchStr), PC.isArray(textTypes),
-                textTypesPrecondition(textTypes), PC.isBoolean(caseSensitive)]);
-            PC.precondition(check, callback, () => {
-                let test;
-                if (caseSensitive) {
-                    test = text => (text.indexOf(searchStr) !== -1);
-                } else {
-                    searchStr = searchStr.toLowerCase();
-                    test = text => (text.toLowerCase().indexOf(searchStr) !== -1);
-                }
-                callback(null, textTypes.map(textType => ({
-                    textType,
-                    result: searchers[textType](textType, test, this.database)
-                })));
+            this.getTextsNew({searchStr, textTypes, caseSensitive}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getTextsNew = function ({searchStr, textTypes, caseSensitive}={}) {
+            return new Promise((resolve, reject) => {
+                const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
+                const check = PC.chainCheck([PC.isString(searchStr), PC.isArray(textTypes),
+                    textTypesPrecondition(textTypes), PC.isBoolean(caseSensitive)]);
+                PC.precondition(check, reject, () => {
+                    let test;
+                    if (caseSensitive) {
+                        test = text => (text.indexOf(searchStr) !== -1);
+                    } else {
+                        searchStr = searchStr.toLowerCase();
+                        test = text => (text.toLowerCase().indexOf(searchStr) !== -1);
+                    }
+                    resolve(textTypes.map(textType => ({
+                        textType,
+                        result: searchers[textType](textType, test, this.database)
+                    })));
+                });
             });
         };
 

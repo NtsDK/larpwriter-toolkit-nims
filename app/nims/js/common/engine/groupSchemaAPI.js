@@ -256,24 +256,31 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.getGroupSchemas = function (callback) {
-            const that = this;
+            this.getGroupSchemasNew().then(res => callback(null, res)).catch(callback);
+        };
 
-            this.getGroupCharacterSets((err, groupCharacterSets) => {
-                if (err) { callback(err); return; }
-                const schemas = {};
-                const groups = that.database.Groups;
+        LocalDBMS.prototype.getGroupSchemasNew = function () {
+            return new Promise((resolve, reject) => {
 
-                schemas.theory = _makeGroupSchema(
-                    groups, _isGroupsEqualByFilterModel, _isSuperGroupByFilterModel,
-                    groupName => groups[groupName].filterModel, groupCharacterSets
-                );
-
-                schemas.practice = _makeGroupSchema(
-                    groups, _isGroupsEqualByElements, _isSuperGroupByElements,
-                    groupName => groupCharacterSets[groupName], groupCharacterSets
-                );
-
-                callback(null, schemas);
+                const that = this;
+    
+                this.getGroupCharacterSets((err, groupCharacterSets) => {
+                    if (err) { reject(err); return; }
+                    const schemas = {};
+                    const groups = that.database.Groups;
+    
+                    schemas.theory = _makeGroupSchema(
+                        groups, _isGroupsEqualByFilterModel, _isSuperGroupByFilterModel,
+                        groupName => groups[groupName].filterModel, groupCharacterSets
+                    );
+    
+                    schemas.practice = _makeGroupSchema(
+                        groups, _isGroupsEqualByElements, _isSuperGroupByElements,
+                        groupName => groupCharacterSets[groupName], groupCharacterSets
+                    );
+    
+                    resolve(schemas);
+                });
             });
         };
     }

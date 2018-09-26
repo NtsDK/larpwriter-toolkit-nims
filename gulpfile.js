@@ -200,7 +200,7 @@ gulp.task('assets', function() {
 });
 
 gulp.task('clean', function() {
-    return del(distPath);
+    return del(distPath, {force: true});
 });
 
 var tests = addPrefix(coreDir + "/tests/jasmine/",["jasmine.js","jasmine-html.js","boot.js"]);

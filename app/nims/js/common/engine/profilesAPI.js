@@ -36,75 +36,107 @@ See the License for the specific language governing permissions and
         const typeCheck = type => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 
         LocalDBMS.prototype.getProfileNamesArray = function (type, callback) {
-            PC.precondition(typeCheck(type), callback, () => {
-                callback(null, Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
+            this.getProfileNamesArrayNew({type}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getProfileNamesArrayNew = function ({type}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(typeCheck(type), reject, () => {
+                    resolve(Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
+                });
             });
         };
 
         // profile, preview
         LocalDBMS.prototype.getProfile = function (type, name, callback) {
-            PC.precondition(typeCheck(type), callback, () => {
-                const container = R.path(getPath(type), this.database);
-                PC.precondition(PC.entityExistsCheck(name, R.keys(container)), callback, () => {
-                    callback(null, CU.clone(container[name]));
+            this.getProfileNew({type, name}).then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getProfileNew = function ({type, name}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(typeCheck(type), reject, () => {
+                    const container = R.path(getPath(type), this.database);
+                    PC.precondition(PC.entityExistsCheck(name, R.keys(container)), reject, () => {
+                        resolve(CU.clone(container[name]));
+                    });
                 });
             });
         };
         // social network, character filter
         LocalDBMS.prototype.getAllProfiles = function (type, callback) {
-            PC.precondition(typeCheck(type), callback, () => {
-                callback(null, CU.clone(R.path(getPath(type), this.database)));
+            this.getAllProfilesNew({type}).then(res => callback(null, res)).catch(callback);
+        }
+
+        LocalDBMS.prototype.getAllProfilesNew = function ({type}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(typeCheck(type), reject, () => {
+                    resolve(CU.clone(R.path(getPath(type), this.database)));
+                });
             });
         };
 
         // profiles
         LocalDBMS.prototype.createProfile = function (type, characterName, callback) {
-            PC.precondition(typeCheck(type), callback, () => {
-                const container = R.path(getPath(type), this.database);
-                PC.precondition(PC.createEntityCheck2(characterName, R.keys(container), 'entity-living-name', `entity-of-${type}`), callback, () => {
-                    const newCharacter = {
-                        name: characterName
-                    };
-
-                    R.path(getStructurePath(type), this.database).forEach((profileSettings) => {
-                        if (profileSettings.type === 'enum') {
-                            newCharacter[profileSettings.name] = profileSettings.value.split(',')[0];
-                        } else if (profileSettings.type === 'multiEnum') {
-                            newCharacter[profileSettings.name] = '';
-                        } else {
-                            newCharacter[profileSettings.name] = profileSettings.value;
-                        }
+            this.createProfileNew({type, characterName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.createProfileNew = function ({type, characterName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(typeCheck(type), reject, () => {
+                    const container = R.path(getPath(type), this.database);
+                    PC.precondition(PC.createEntityCheck2(characterName, R.keys(container), 'entity-living-name', `entity-of-${type}`), reject, () => {
+                        const newCharacter = {
+                            name: characterName
+                        };
+    
+                        R.path(getStructurePath(type), this.database).forEach((profileSettings) => {
+                            if (profileSettings.type === 'enum') {
+                                newCharacter[profileSettings.name] = profileSettings.value.split(',')[0];
+                            } else if (profileSettings.type === 'multiEnum') {
+                                newCharacter[profileSettings.name] = '';
+                            } else {
+                                newCharacter[profileSettings.name] = profileSettings.value;
+                            }
+                        });
+    
+                        R.path(getPath(type), this.database)[characterName] = newCharacter;
+                        // this.ee.trigger('createProfile', arguments);
+                        this.ee.trigger('createProfile', [type, characterName]);
+                        resolve();
                     });
-
-                    R.path(getPath(type), this.database)[characterName] = newCharacter;
-                    this.ee.trigger('createProfile', arguments);
-                    if (callback) callback();
                 });
             });
         };
         // profiles
         LocalDBMS.prototype.renameProfile = function (type, fromName, toName, callback) {
-            PC.precondition(typeCheck(type), callback, () => {
-                const container = R.path(getPath(type), this.database);
-                PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(container)), callback, () => {
-                    const data = container[fromName];
-                    data.name = toName;
-                    container[toName] = data;
-                    delete container[fromName];
-                    this.ee.trigger('renameProfile', arguments);
-                    if (callback) callback();
+            this.renameProfileNew({type, fromName, toName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.renameProfileNew = function ({type, fromName, toName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(typeCheck(type), reject, () => {
+                    const container = R.path(getPath(type), this.database);
+                    PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(container)), reject, () => {
+                        const data = container[fromName];
+                        data.name = toName;
+                        container[toName] = data;
+                        delete container[fromName];
+                        this.ee.trigger('renameProfile', [type, fromName, toName]);
+                        resolve();
+                    });
                 });
             });
         };
 
         // profiles
         LocalDBMS.prototype.removeProfile = function (type, characterName, callback) {
-            PC.precondition(typeCheck(type), callback, () => {
-                const container = R.path(getPath(type), this.database);
-                PC.precondition(PC.removeEntityCheck(characterName, R.keys(container)), callback, () => {
-                    delete container[characterName];
-                    this.ee.trigger('removeProfile', arguments);
-                    if (callback) callback();
+            this.removeProfileNew({type, characterName}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.removeProfileNew = function ({type, characterName}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(typeCheck(type), reject, () => {
+                    const container = R.path(getPath(type), this.database);
+                    PC.precondition(PC.removeEntityCheck(characterName, R.keys(container)), reject, () => {
+                        delete container[characterName];
+                        this.ee.trigger('removeProfile', [type, characterName]);
+                        resolve();
+                    });
                 });
             });
         };
@@ -130,34 +162,39 @@ See the License for the specific language governing permissions and
 
         // profile editor
         LocalDBMS.prototype.updateProfileField = function (type, characterName, fieldName, itemType, value, callback) {
-            PC.precondition(typeCheck(type), callback, () => {
-                const container = R.path(getPath(type), this.database);
-                const containerStructure = R.path(getStructurePath(type), this.database);
-                const arr = [PC.entityExistsCheck(characterName, R.keys(container)),
-                    PC.entityExistsCheck(
-                        `${fieldName}/${itemType}`,
-                        containerStructure.map(item => `${item.name}/${item.type}`)
-                    ),
-                    PC.getValueCheck(itemType)(value)];
-                PC.precondition(PC.chainCheck(arr), callback, () => {
-                    const itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
-                    PC.precondition(typeSpecificPreconditions(itemType, itemDesc, value), callback, () => {
-                        const profileInfo = container[characterName];
-                        switch (itemType) {
-                        case 'text':
-                        case 'string':
-                        case 'enum':
-                        case 'multiEnum':
-                        case 'checkbox':
-                            profileInfo[fieldName] = value;
-                            break;
-                        case 'number':
-                            profileInfo[fieldName] = Number(value);
-                            break;
-                        default:
-                            callback(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
-                        }
-                        if (callback) callback();
+            this.updateProfileFieldNew({type, characterName, fieldName, itemType, value}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.updateProfileFieldNew = function ({type, characterName, fieldName, itemType, value}={}) {
+            return new Promise((resolve, reject) => {
+                PC.precondition(typeCheck(type), reject, () => {
+                    const container = R.path(getPath(type), this.database);
+                    const containerStructure = R.path(getStructurePath(type), this.database);
+                    const arr = [PC.entityExistsCheck(characterName, R.keys(container)),
+                        PC.entityExistsCheck(
+                            `${fieldName}/${itemType}`,
+                            containerStructure.map(item => `${item.name}/${item.type}`)
+                        ),
+                        PC.getValueCheck(itemType)(value)];
+                    PC.precondition(PC.chainCheck(arr), reject, () => {
+                        const itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
+                        PC.precondition(typeSpecificPreconditions(itemType, itemDesc, value), reject, () => {
+                            const profileInfo = container[characterName];
+                            switch (itemType) {
+                            case 'text':
+                            case 'string':
+                            case 'enum':
+                            case 'multiEnum':
+                            case 'checkbox':
+                                profileInfo[fieldName] = value;
+                                break;
+                            case 'number':
+                                profileInfo[fieldName] = Number(value);
+                                break;
+                            default:
+                                reject(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
+                            }
+                            resolve();
+                        });
                     });
                 });
             });

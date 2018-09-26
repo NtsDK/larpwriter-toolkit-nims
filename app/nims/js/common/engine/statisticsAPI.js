@@ -23,14 +23,19 @@ See the License for the specific language governing permissions and
         let _countCharacterSymbols;
 
         LocalDBMS.prototype.getStatistics = function (callback) {
-            const that = this;
-            this.getAllCharacterGroupTexts((err, groupTexts) => {
-                if (err) { callback(err); return; }
-                _getStatistics(that.database, groupTexts, callback);
+            this.getStatisticsNew().then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getStatisticsNew = function (callback) {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                this.getAllCharacterGroupTexts((err, groupTexts) => {
+                    if (err) { reject(err); return; }
+                    _getStatistics(that.database, groupTexts, resolve);
+                });
             });
         };
 
-        function _getStatistics(database, groupTexts, callback) {
+        function _getStatistics(database, groupTexts, resolve) {
             const statistics = {};
             statistics.storyNumber = Object.keys(database.Stories).length;
             statistics.characterNumber = Object.keys(database.Characters).length;
@@ -72,7 +77,7 @@ See the License for the specific language governing permissions and
 
             statistics.profileCharts = _getProfileChartData(database);
 
-            callback(null, statistics);
+            resolve(statistics);
         }
 
         function _makeNumberStep(array) {

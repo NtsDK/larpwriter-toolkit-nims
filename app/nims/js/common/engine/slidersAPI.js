@@ -23,62 +23,90 @@ See the License for the specific language governing permissions and
         const path = ['Sliders'];
         
         LocalDBMS.prototype.getSliderData = function(callback){
-            callback(null, R.clone(R.path(path, this.database)));
+            this.getSliderDataNew().then(res => callback(null, res)).catch(callback);
+        }
+        LocalDBMS.prototype.getSliderDataNew = function(){
+            return Promise.resolve(R.clone(R.path(path, this.database)));
         }
         
         LocalDBMS.prototype.moveSlider = function(index, pos, callback){
-            const model = R.path(path, this.database);
-            const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
-                PC.isNumber(pos), PC.isInRange(pos, 0, model.length)]);
-            PC.precondition2(chain).then(() => {
-                if(pos > index){
-                    pos--;
-                }
-                var tmp = model[index];
-                model.splice(index, 1);
-                model.splice(pos, 0, tmp);
-                
-                if(callback) callback();
-            }).catch(callback);
+            this.moveSliderNew({index, pos}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.moveSliderNew = function({index, pos}={}){
+            return new Promise((resolve, reject) => {
+                const model = R.path(path, this.database);
+                const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
+                    PC.isNumber(pos), PC.isInRange(pos, 0, model.length)]);
+                PC.precondition2(chain).then(() => {
+                    if(pos > index){
+                        pos--;
+                    }
+                    var tmp = model[index];
+                    model.splice(index, 1);
+                    model.splice(pos, 0, tmp);
+                    
+                    resolve();
+                }).catch(reject);
+            });
         }
         
         LocalDBMS.prototype.createSlider = function(name, top, bottom, callback){
-            const chain = PC.chainCheck([PC.isString(name),PC.isString(top),PC.isString(bottom)]);
-            PC.precondition2(chain).then(() => {
-                R.path(path, this.database).push({ name, top, bottom, value: 0 });
-                callback();
-            }).catch(callback);
+            this.createSliderNew({name, top, bottom}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.createSliderNew = function({name, top, bottom}={}){
+            return new Promise((resolve, reject) => {
+                const chain = PC.chainCheck([PC.isString(name),PC.isString(top),PC.isString(bottom)]);
+                PC.precondition2(chain).then(() => {
+                    R.path(path, this.database).push({ name, top, bottom, value: 0 });
+                    resolve();
+                }).catch(reject);
+            });
         }
         
         LocalDBMS.prototype.updateSliderNaming = function(index, name, top, bottom, callback){
-            const model = R.path(path, this.database);
-            const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
-                PC.isString(name),PC.isString(top),PC.isString(bottom)]);
-            PC.precondition2(chain).then(() => {
-                model[index].name = name;
-                model[index].top = top;
-                model[index].bottom = bottom;
-                callback();
-            }).catch(callback);
+            this.updateSliderNamingNew({index, name, top, bottom}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.updateSliderNamingNew = function({index, name, top, bottom}={}){
+            return new Promise((resolve, reject) => {
+                const model = R.path(path, this.database);
+                const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
+                    PC.isString(name),PC.isString(top),PC.isString(bottom)]);
+                PC.precondition2(chain).then(() => {
+                    model[index].name = name;
+                    model[index].top = top;
+                    model[index].bottom = bottom;
+                    resolve();
+                }).catch(reject);
+            });
         }
         
         LocalDBMS.prototype.updateSliderValue = function(index, value, callback){
-            const model = R.path(path, this.database);
-            const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
-                PC.isNumber(value), PC.isInRange(value, -10, 10)]);
-            PC.precondition2(chain).then(() => {
-                model[index].value = value;
-                callback();
-            }).catch(callback);
+            this.updateSliderValueNew({index, value}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.updateSliderValueNew = function({index, value}={}){
+            return new Promise((resolve, reject) => {
+                const model = R.path(path, this.database);
+                const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
+                    PC.isNumber(value), PC.isInRange(value, -10, 10)]);
+                PC.precondition2(chain).then(() => {
+                    model[index].value = value;
+                    resolve();
+                }).catch(reject);
+            });
         }
         
         LocalDBMS.prototype.removeSlider = function(index, callback){
-            const model = R.path(path, this.database);
-            const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1)]);
-            PC.precondition2(chain).then(() => {
-                CU.removeFromArrayByIndex(model, index);
-                callback();
-            }).catch(callback);
+            this.removeSliderNew({index}).then(res => callback()).catch(callback);
+        }
+        LocalDBMS.prototype.removeSliderNew = function({index}={}){
+            return new Promise((resolve, reject) => {
+                const model = R.path(path, this.database);
+                const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1)]);
+                PC.precondition2(chain).then(() => {
+                    CU.removeFromArrayByIndex(model, index);
+                    resolve();
+                }).catch(reject);
+            });
         }
     }
     callback2(slidersAPI);
