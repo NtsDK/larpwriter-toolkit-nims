@@ -121,25 +121,43 @@ function makeLocalDBMSWrapper(dbms) {
         this.dbms = dbms;
         this.clearSettings();
     }
+
+    const all = [];
     
     Object.keys(dbms.__proto__).forEach((name) => {
         LocalDBMSWrapper.prototype[name] = function () {
+            // const callView = {
+            //     func: name,
+            //     args: arguments[0],
+            // };
+            // all.push(callView);
+            // console.log(JSON.stringify(all));
+
             if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is') || R.equals(name, 'log')) {
                 return this.dbms[name].apply(this.dbms, arguments);
             } else {
                 const callback = arguments[arguments.length - 1];
                 const arr = [];
-                for (let i = 0; i < arguments.length - 1; i++) {
+                for (let i = 0; i < arguments.length; i++) {
                     arr.push(arguments[i]);
                 }
+
                 
-                CallNotificator.onCallStart();
+
+                return this.dbms[name].apply(this.dbms, arr);
+
+                // TODO fix call notificator
+                // for (let i = 0; i < arguments.length - 1; i++) {
+                //     arr.push(arguments[i]);
+                // }
                 
-                arr.push(function(err) {
-                    CallNotificator.onCallFinished(err);
-                    callback(err);
-                });
-                this.dbms[name].apply(this.dbms, arr);
+                // CallNotificator.onCallStart();
+                
+                // arr.push(function(err) {
+                //     CallNotificator.onCallFinished(err);
+                //     callback(err);
+                // });
+                // this.dbms[name].apply(this.dbms, arr);
             }
         };
     });

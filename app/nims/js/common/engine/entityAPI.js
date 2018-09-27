@@ -23,9 +23,9 @@ See the License for the specific language governing permissions and
         } = opts;
 
         LocalDBMS.prototype.getEntityNamesArray = function (type, callback) {
-            this.getEntityNamesArrayNew(type).then(res => callback(null, res)).catch(callback);
+            this.getEntityNamesArrayNew({type}).then(res => callback(null, res)).catch(callback);
         };
-        LocalDBMS.prototype.getEntityNamesArrayNew = function (type) {
+        LocalDBMS.prototype.getEntityNamesArrayNew = function ({type}={}) {
             return new Promise((resolve,reject) => {
                 const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
                 const callback = (err, result) => {

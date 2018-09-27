@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
                             storyName: story.name,
                             inventory: story.characters[characterName].inventory
                         }));
-                        resolve(null, array);
+                        resolve(array);
                 });
             });
         };
@@ -76,7 +76,7 @@ See the License for the specific language governing permissions and
                         });
                     });
                     eventGroups.sort(CU.charOrdAFactory(R.prop('storyName')));
-                    resolve(null, eventGroups);
+                    resolve(eventGroups);
                 });
             });
         };
@@ -205,7 +205,7 @@ See the License for the specific language governing permissions and
                         });
                     characterReport.sort(CU.charOrdAFactory(R.prop('storyName')));
     
-                    resolve(null, characterReport);
+                    resolve(characterReport);
                 });
             });
         };
