@@ -48,7 +48,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        DBMS.getSliderDataPm().then(createSliders).catch(Utils.handleError);
+        DBMS.getSliderDataNew().then(createSliders).catch(Utils.handleError);
     };
     
     function createSliders(model) {
@@ -73,7 +73,7 @@ See the License for the specific language governing permissions and
                 },
             });
             slider.on('change', (event) => {
-                DBMS.updateSliderValuePm(i, event.newValue).catch(Utils.handleError);
+                DBMS.updateSliderValueNew({index: i, value: event.newValue}).catch(Utils.handleError);
             });
             return slider;
         });

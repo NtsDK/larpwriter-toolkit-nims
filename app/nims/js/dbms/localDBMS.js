@@ -162,7 +162,7 @@ function makeLocalDBMSWrapper(dbms) {
         };
     });
     
-    Promisificator.promisify(dbms, LocalDBMSWrapper);
+    // Promisificator.promisify(dbms, LocalDBMSWrapper);
 
     LocalDBMSWrapper.prototype.clearSettings = function () {
         this.Settings = {

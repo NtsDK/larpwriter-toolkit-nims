@@ -1,323 +1,323 @@
 const getChecks = {
     baseAPI:
     [{
-        func: 'getMetaInfo',
-        args: [],
-    }, {
+    //     func: 'getMetaInfo',
+    //     args: [],
+    // }, {
         func: 'getMetaInfoNew',
         args: {},
     }, {
-        func: 'getDatabase',
+        func: 'getDatabaseNew',
         args: {},
     }],
     briefingExportAPI:
     [{
-        func: 'getBriefingData',
-        args: [null, null, false],
-    }, {
+    //     func: 'getBriefingData',
+    //     args: [null, null, false],
+    // }, {
         func: 'getBriefingDataNew',
         args: {selCharacters: null, selStories: null, exportOnlyFinishedStories: false}
     }],
     consistencyCheckAPI:
     [{
-        func: 'getConsistencyCheckResult',
-        args: [],
-    },{
+    //     func: 'getConsistencyCheckResult',
+    //     args: [],
+    // },{
         func: 'getConsistencyCheckResultNew',
         args: {},
     }],
     entityAPI:
     [{
-        func: 'getEntityNamesArray',
-        args: ['character'],
-    },{
+    //     func: 'getEntityNamesArray',
+    //     args: ['character'],
+    // },{
         func: 'getEntityNamesArrayNew',
         args: {type: 'character'},
     }],
     groupsAPI:
     [{
-        func: 'getGroupNamesArray',
-        args: [],
-    },
-    {
+    //     func: 'getGroupNamesArray',
+    //     args: [],
+    // },
+    // {
         func: 'getGroupNamesArrayNew',
         args: {},
     },
-    {
-        func: 'getAllCharacterGroupTexts',
-        args: [],
-    },
+    // {
+    //     func: 'getAllCharacterGroupTexts',
+    //     args: [],
+    // },
     {
         func: 'getAllCharacterGroupTextsNew',
         args: {},
     },
-    {
-        func: 'getProfileFilterInfo',
-        args: [],
-    },
+    // {
+    //     func: 'getProfileFilterInfo',
+    //     args: [],
+    // },
     {
         func: 'getProfileFilterInfoNew',
         args: {},
     },
-    {
-        func: 'getGroupCharacterSets',
-        args: [],
-    },
+    // {
+    //     func: 'getGroupCharacterSets',
+    //     args: [],
+    // },
     {
         func: 'getGroupCharacterSetsNew',
         args: {},
     },
-    {
-        func: 'getGroup',
-        args: ['Эльфы'],
-    },
+    // {
+    //     func: 'getGroup',
+    //     args: ['Эльфы'],
+    // },
     {
         func: 'getGroupNew',
         args: {groupName: 'Эльфы'},
     },
     {
-        func: 'getCharacterGroupTexts',
-        args: ['Арагорн'],
-    },{
+    //     func: 'getCharacterGroupTexts',
+    //     args: ['Арагорн'],
+    // },{
         func: 'getCharacterGroupTextsNew',
         args: {characterName:'Арагорн'},
     }],
     groupSchemaAPI:
     [{
-        func: 'getGroupSchemas',
-        args: [],
-    },{
+    //     func: 'getGroupSchemas',
+    //     args: [],
+    // },{
         func: 'getGroupSchemasNew',
         args: {},
     }],
     logAPI:
     [{
-        func: 'getLog',
-        args: [0, {}],
-    },{
+    //     func: 'getLog',
+    //     args: [0, {}],
+    // },{
         func: 'getLogNew',
         args: {pageNumber:0, filter: {}},
     }],
     profileBindingAPI:
     [{
-        func: 'getProfileBindings',
-        args: [],
-    },
-    {
+    //     func: 'getProfileBindings',
+    //     args: [],
+    // },
+    // {
         func: 'getProfileBindingsNew',
         args: {},
     },
-    {
-        func: 'getExtendedProfileBindings',
-        args: [],
-    },
+    // {
+    //     func: 'getExtendedProfileBindings',
+    //     args: [],
+    // },
     {
         func: 'getExtendedProfileBindingsNew',
         args: {},
     },
     {
-        func: 'getProfileBinding',
-        args: ['character', 'Арагорн'],
-    },{
+    //     func: 'getProfileBinding',
+    //     args: ['character', 'Арагорн'],
+    // },{
         func: 'getProfileBindingNew',
         args: {type:'character', name:'Арагорн'},
     }],
     profileConfigurerAPI:
     [{
-        func: 'getProfileStructure',
-        args: ['character'],
-    },{
+    //     func: 'getProfileStructure',
+    //     args: ['character'],
+    // },{
         func: 'getProfileStructureNew',
         args: {type: 'character'},
     }],
     profilesAPI:
     [{
-        func: 'getProfileNamesArray',
-        args: ['character'],
-    },{
+    //     func: 'getProfileNamesArray',
+    //     args: ['character'],
+    // },{
         func: 'getProfileNamesArrayNew',
         args: {type: 'character'},
     },
-    {
-        func: 'getProfile',
-        args: ['character', 'Арагорн'],
-    },
+    // {
+    //     func: 'getProfile',
+    //     args: ['character', 'Арагорн'],
+    // },
     {
         func: 'getProfileNew',
         args: {type:'character',name: 'Арагорн'},
     },
     {
-        func: 'getAllProfiles',
-        args: ['character'],
-    },{
+    //     func: 'getAllProfiles',
+    //     args: ['character'],
+    // },{
         func: 'getAllProfilesNew',
         args: {type: 'character'},
     }],
     profileViewAPI:
     [{
-        func: 'getRoleGridInfo',
-        args: [],
-    },{
+    //     func: 'getRoleGridInfo',
+    //     args: [],
+    // },{
         func: 'getRoleGridInfoNew',
         args: {},
     }],
     relationsAPI:
     [{
-        func: 'getRelationsSummary',
-        args: ['Арагорн'],
-    },{
+    //     func: 'getRelationsSummary',
+    //     args: ['Арагорн'],
+    // },{
         func: 'getRelationsSummaryNew',
         args: {characterName:'Арагорн'},
     }],
     statisticsAPI:
     [{
-        func: 'getStatistics',
-        args: [],
-    },{
+    //     func: 'getStatistics',
+    //     args: [],
+    // },{
         func: 'getStatisticsNew',
         args: {},
     },
     {
-        func: 'getRelations',
-        args: [],
-    },{
+    //     func: 'getRelations',
+    //     args: [],
+    // },{
         func: 'getRelationsNew',
         args: {},
     }],
     storyAdaptationsAPI:
     [{
-        func: 'getFilteredStoryNames',
-        args: [true],
-    },{
+    //     func: 'getFilteredStoryNames',
+    //     args: [true],
+    // },{
         func: 'getFilteredStoryNamesNew',
         args: {showOnlyUnfinishedStories: true},
     },
-    {
-        func: 'getStory',
-        args: ['Начало пути'],
-    },
+    // {
+    //     func: 'getStory',
+    //     args: ['Начало пути'],
+    // },
     {
         func: 'getStoryNew',
         args: {storyName: 'Начало пути'},
     }],
     storyBaseAPI:
     [{
-        func: 'getStoryNamesArray',
-        args: [],
-    },{
+    //     func: 'getStoryNamesArray',
+    //     args: [],
+    // },{
         func: 'getStoryNamesArrayNew',
         args: {},
     },
-    {
-        func: 'getAllStories',
-        args: [],
-    },
+    // {
+    //     func: 'getAllStories',
+    //     args: [],
+    // },
     {
         func: 'getAllStoriesNew',
         args: {},
     },
-    {
-        func: 'getWriterStory',
-        args: ['Начало пути'],
-    },
+    // {
+    //     func: 'getWriterStory',
+    //     args: ['Начало пути'],
+    // },
     {
         func: 'getWriterStoryNew',
         args: {storyName: 'Начало пути'},
     }],
     storyCharactersAPI:
     [{
-        func: 'getStoryCharacterNamesArray',
-        args: ['Начало пути'],
-    },{
+    //     func: 'getStoryCharacterNamesArray',
+    //     args: ['Начало пути'],
+    // },{
         func: 'getStoryCharacterNamesArrayNew',
         args: {storyName: 'Начало пути'},
     },
-    {
-        func: 'getStoryCharacters',
-        args: ['Начало пути'],
-    },
+    // {
+    //     func: 'getStoryCharacters',
+    //     args: ['Начало пути'],
+    // },
     {
         func: 'getStoryCharactersNew',
         args: {storyName:'Начало пути'},
     }],
     storyEventsAPI:
     [{
-        func: 'getStoryEvents',
-        args: ['Начало пути'],
-    },{
+    //     func: 'getStoryEvents',
+    //     args: ['Начало пути'],
+    // },{
         func: 'getStoryEventsNew',
         args: {storyName: 'Начало пути'},
     }],
     storyViewAPI:
     [{
-        func: 'getAllInventoryLists',
-        args: ['Арагорн'],
-    },{
+    //     func: 'getAllInventoryLists',
+    //     args: ['Арагорн'],
+    // },{
         func: 'getAllInventoryListsNew',
         args: {characterName: 'Арагорн'},
     },
-    {
-        func: 'getCharacterEventGroupsByStory',
-        args: ['Арагорн'],
-    },
+    // {
+    //     func: 'getCharacterEventGroupsByStory',
+    //     args: ['Арагорн'],
+    // },
     {
         func: 'getCharacterEventGroupsByStoryNew',
         args: {characterName: 'Арагорн'},
     },
-    {
-        func: 'getCharacterEventsByTime',
-        args: ['Арагорн'],
-    },
+    // {
+    //     func: 'getCharacterEventsByTime',
+    //     args: ['Арагорн'],
+    // },
     {
         func: 'getCharacterEventsByTimeNew',
         args: {characterName: 'Арагорн'},
     },
-    {
-        func: 'getEventsTimeInfo',
-        args: [],
-    },
+    // {
+    //     func: 'getEventsTimeInfo',
+    //     args: [],
+    // },
     {
         func: 'getEventsTimeInfoNew',
         args: {},
     },
-    {
-        func: 'getCharactersSummary',
-        args: [],
-    },
+    // {
+    //     func: 'getCharactersSummary',
+    //     args: [],
+    // },
     {
         func: 'getCharactersSummaryNew',
         args: {},
     },
     {
-        func: 'getCharacterReport',
-        args: ['Арагорн'],
-    }, {
+    //     func: 'getCharacterReport',
+    //     args: ['Арагорн'],
+    // }, {
         func: 'getCharacterReportNew',
         args: {characterName: 'Арагорн'},
     }],
     textSearchAPI:
     [{
-        func: 'getTexts',
-        args: ['Арагорн', ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'writerStory', 'eventOrigins',
-            'eventAdaptations'], false],
-    },{
+    //     func: 'getTexts',
+    //     args: ['Арагорн', ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'writerStory', 'eventOrigins',
+    //         'eventAdaptations'], false],
+    // },{
         func: 'getTextsNew',
         args: {searchStr: 'Арагорн', textTypes: ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'writerStory', 'eventOrigins',
             'eventAdaptations'], caseSensitive: false},
     }],
     gearsAPI:
     [{
-        func: 'getAllGearsData',
-        args: [],
-    },{
+    //     func: 'getAllGearsData',
+    //     args: [],
+    // },{
         func: 'getAllGearsDataNew',
         args: {},
     }],
     slidersAPI:
     [{
-        func: 'getSliderData',
-        args: [],
-    },{
+    //     func: 'getSliderData',
+    //     args: [],
+    // },{
         func: 'getSliderDataNew',
         args: {},
     }],
@@ -420,51 +420,152 @@ const setChecks = {
             "selectedIndex": 0
         }
     },
+    // {
+    //     func: 'saveFilterToGroup',
+    //     args: ['testGroup', [{ type: 'enum', name: 'profile-testProfileItem', selectedOptions: { _: true } }]],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'saveFilterToGroup',
-        args: ['testGroup', [{ type: 'enum', name: 'profile-testProfileItem', selectedOptions: { _: true } }]],
+        "func": "saveFilterToGroupNew",
+        "args": {
+            "groupName": "testGroup",
+            "filterModel": [
+                {
+                    "type": "enum",
+                    "name": "profile-testProfileItem",
+                    "selectedOptions": {}
+                }
+            ]
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'updateDefaultValue',
+    //     args: ['character', 'testProfileItem', 'test1,test2,test3'],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'updateDefaultValue',
-        args: ['character', 'testProfileItem', 'test1,test2,test3'],
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "value": "test1,test2,test3"
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'renameProfileItem',
+    //     args: ['character', 'testProfileItem2', 'testProfileItem'],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'renameProfileItem',
-        args: ['character', 'testProfileItem2', 'testProfileItem'],
+        "func": "renameProfileItemNew",
+        "args": {
+            "type": "character",
+            "newName": "testProfileItem2",
+            "oldName": "testProfileItem"
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'saveFilterToGroup',
+    //     args: ['testGroup', [{ type: 'enum', name: 'profile-testProfileItem2', selectedOptions: { test1: true } }]],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'saveFilterToGroup',
-        args: ['testGroup', [{ type: 'enum', name: 'profile-testProfileItem2', selectedOptions: { test1: true } }]],
+        "func": "saveFilterToGroupNew",
+        "args": {
+            "groupName": "testGroup",
+            "filterModel": [
+                {
+                    "type": "enum",
+                    "name": "profile-testProfileItem2",
+                    "selectedOptions": {
+                        "test1": true
+                    }
+                }
+            ]
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'changeProfileItemType',
+    //     args: ['character', 'testProfileItem2', 'multiEnum'],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'changeProfileItemType',
-        args: ['character', 'testProfileItem2', 'multiEnum'],
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "newType": "multiEnum"
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'updateDefaultValue',
+    //     args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'updateDefaultValue',
-        args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test1,test2,test3"
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'saveFilterToGroup',
+    //     args: ['testGroup', [{
+    //         type: 'multiEnum', name: 'profile-testProfileItem2', condition: 'every', selectedOptions: { test1: true, test2: true }
+    //     }]],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'saveFilterToGroup',
-        args: ['testGroup', [{
-            type: 'multiEnum', name: 'profile-testProfileItem2', condition: 'every', selectedOptions: { test1: true, test2: true }
-        }]],
+        "func": "saveFilterToGroupNew",
+        "args": {
+            "groupName": "testGroup",
+            "filterModel": [
+                {
+                    "type": "multiEnum",
+                    "name": "profile-testProfileItem2",
+                    "condition": "every",
+                    "selectedOptions": {
+                        "test2": true
+                    }
+                }
+            ]
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'updateDefaultValue',
+    //     args: ['character', 'testProfileItem2', 'test2,test3'],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'updateDefaultValue',
-        args: ['character', 'testProfileItem2', 'test2,test3'],
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test2,test3"
+        },
         forInconsistency: true,
     },
+    // {
+    //     func: 'removeProfileItem',
+    //     args: ['character', 0, 'testProfileItem2'],
+    //     forInconsistency: true,
+    // },
     {
-        func: 'removeProfileItem',
-        args: ['character', 0, 'testProfileItem2'],
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem2"
+        },
         forInconsistency: true,
     },
         //        {
@@ -475,415 +576,1221 @@ const setChecks = {
         //            func: 'updateGroupField',
         //            args: ['testGroup2', 'masterDescription', '654654654'],
         //        },
+    // {
+    //     func: 'removeGroup',
+    //     args: ['testGroup'],
+    // },
     {
-        func: 'removeGroup',
-        args: ['testGroup'],
-    }
+        "func": "removeGroupNew",
+        "args": {
+            "groupName": "testGroup"
+        }
+    },
 
 
     ],
     profileBindingAPI:
-    [{
-        func: 'createProfile',
-        args: ['character', 'testCharacter'],
+    [
+    // {
+    //     func: 'createProfile',
+    //     args: ['character', 'testCharacter'],
+    // },
+    // {
+    //     func: 'createProfile',
+    //     args: ['player', 'testPlayer'],
+    // },
+    // {
+    //     func: 'createBinding',
+    //     args: ['testCharacter', 'testPlayer'],
+    // },
+    // {
+    //     func: 'removeBinding',
+    //     args: ['testCharacter', 'testPlayer'],
+    // },
+    // {
+    //     func: 'createBinding',
+    //     args: ['testCharacter', 'testPlayer'],
+    // },
+    // {
+    //     func: 'renameProfile',
+    //     args: ['character', 'testCharacter', 'testCharacter3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'removeProfile',
+    //     args: ['character', 'testCharacter3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'removeProfile',
+    //     args: ['player', 'testPlayer'],
+    // }
+
+
+
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'createProfile',
-        args: ['player', 'testPlayer'],
+        "func": "createProfileNew",
+        "args": {
+            "type": "player",
+            "characterName": "testPlayer"
+        }
     },
     {
-        func: 'createBinding',
-        args: ['testCharacter', 'testPlayer'],
+        "func": "createBindingNew",
+        "args": {
+            "characterName": "testCharacter",
+            "playerName": "testPlayer"
+        }
     },
     {
-        func: 'removeBinding',
-        args: ['testCharacter', 'testPlayer'],
+        "func": "removeBindingNew",
+        "args": {
+            "characterName": "testCharacter",
+            "playerName": "testPlayer"
+        }
     },
     {
-        func: 'createBinding',
-        args: ['testCharacter', 'testPlayer'],
+        "func": "createBindingNew",
+        "args": {
+            "characterName": "testCharacter",
+            "playerName": "testPlayer"
+        }
     },
     {
-        func: 'renameProfile',
-        args: ['character', 'testCharacter', 'testCharacter3'],
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter",
+            "toName": "testCharacter3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'removeProfile',
-        args: ['character', 'testCharacter3'],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'removeProfile',
-        args: ['player', 'testPlayer'],
-    }],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "player",
+            "characterName": "testPlayer"
+        }
+    },
+
+    ],
     profileConfigurerAPI:
-    [{
-        func: 'createProfileItem',
-        args: ['character', 'testProfileItem', 'text', 0],
+    [
+        
+    // {
+    //     func: 'createProfileItem',
+    //     args: ['character', 'testProfileItem', 'text', 0],
+    // },
+    // {
+    //     func: 'moveProfileItem',
+    //     args: ['character', 0, 1],
+    // },
+    // {
+    //     func: 'changeProfileItemType',
+    //     args: ['character', 'testProfileItem', 'string'],
+    // },
+    // {
+    //     func: 'changeProfileItemPlayerAccess',
+    //     args: ['character', 'testProfileItem', 'readonly'],
+    // },
+    // {
+    //     func: 'renameProfileItem',
+    //     args: ['character', 'testProfileItem2', 'testProfileItem'],
+    // },
+    // {
+    //     func: 'doExportProfileItemChange',
+    //     args: ['character', 'testProfileItem2', false],
+    // },
+    // {
+    //     func: 'showInRoleGridProfileItemChange',
+    //     args: ['character', 'testProfileItem2', false],
+    // },
+    // {
+    //     func: 'updateDefaultValue',
+    //     args: ['character', 'testProfileItem2', '223322'],
+    // },
+    // {
+    //     func: 'removeProfileItem',
+    //     args: ['character', 0, 'testProfileItem2'],
+    // },
+    // {
+    //     func: 'createProfileItem',
+    //     args: ['character', 'testProfileItem', 'enum', 0],
+    // },
+    // {
+    //     func: 'renameEnumValue',
+    //     args: ['character', 'testProfileItem', '_', 'testRename'],
+    // },
+    // {
+    //     func: 'removeProfileItem',
+    //     args: ['character', 0, 'testProfileItem'],
+    // }
+
+    {
+        "func": "createProfileItemNew",
+        "args": {
+            "type": "character",
+            "name": "testProfileItem",
+            "itemType": "text",
+            "selectedIndex": 0
+        }
     },
     {
-        func: 'moveProfileItem',
-        args: ['character', 0, 1],
+        "func": "moveProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "newIndex": 1
+        }
     },
     {
-        func: 'changeProfileItemType',
-        args: ['character', 'testProfileItem', 'string'],
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "newType": "string"
+        }
     },
     {
-        func: 'changeProfileItemPlayerAccess',
-        args: ['character', 'testProfileItem', 'readonly'],
+        "func": "changeProfileItemPlayerAccessNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "playerAccessType": "readonly"
+        }
     },
     {
-        func: 'renameProfileItem',
-        args: ['character', 'testProfileItem2', 'testProfileItem'],
+        "func": "renameProfileItemNew",
+        "args": {
+            "type": "character",
+            "newName": "testProfileItem2",
+            "oldName": "testProfileItem"
+        }
     },
     {
-        func: 'doExportProfileItemChange',
-        args: ['character', 'testProfileItem2', false],
+        "func": "doExportProfileItemChangeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "checked": false
+        }
     },
     {
-        func: 'showInRoleGridProfileItemChange',
-        args: ['character', 'testProfileItem2', false],
+        "func": "showInRoleGridProfileItemChangeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "checked": false
+        }
     },
     {
-        func: 'updateDefaultValue',
-        args: ['character', 'testProfileItem2', '223322'],
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "223322"
+        }
     },
     {
-        func: 'removeProfileItem',
-        args: ['character', 0, 'testProfileItem2'],
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem2"
+        }
     },
     {
-        func: 'createProfileItem',
-        args: ['character', 'testProfileItem', 'enum', 0],
+        "func": "createProfileItemNew",
+        "args": {
+            "type": "character",
+            "name": "testProfileItem",
+            "itemType": "enum",
+            "selectedIndex": 0
+        }
     },
     {
-        func: 'renameEnumValue',
-        args: ['character', 'testProfileItem', '_', 'testRename'],
+        "func": "renameEnumValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "fromValue": "_",
+            "toValue": "testRename"
+        }
     },
     {
-        func: 'removeProfileItem',
-        args: ['character', 0, 'testProfileItem'],
-    }],
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem"
+        }
+    },
+
+    ],
     
     
     profilesAPI:
-    [{
-        func: 'createProfile',
-        args: ['character', 'testCharacter'],
+    [
+        
+        
+    // {
+    //     func: 'createProfile',
+    //     args: ['character', 'testCharacter'],
+    // },
+    // {
+    //     func: 'createProfileItem',
+    //     args: ['character', 'testProfileItem', 'text', 0],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'updateProfileField',
+    //     args: ['character', 'testCharacter', 'testProfileItem', 'text', 'test updateProfileField'],
+    // },
+    // {
+    //     func: 'renameProfileItem',
+    //     args: ['character', 'testProfileItem2', 'testProfileItem'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'changeProfileItemType',
+    //     args: ['character', 'testProfileItem2', 'enum'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'updateDefaultValue',
+    //     args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'changeProfileItemType',
+    //     args: ['character', 'testProfileItem2', 'multiEnum'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'updateDefaultValue',
+    //     args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'updateProfileField',
+    //     args: ['character', 'testCharacter', 'testProfileItem2', 'multiEnum', 'test1'],
+    // },
+    // {
+    //     func: 'updateDefaultValue',
+    //     args: ['character', 'testProfileItem2', 'test2,test3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'removeProfileItem',
+        // args: ['character', 0, 'testProfileItem2'],
+        // forInconsistency: true,
+    // },
+    // {
+    //     func: 'renameProfile',
+    //     args: ['character', 'testCharacter', 'testCharacter2'],
+    // },
+    // {
+    //     func: 'removeProfile',
+    //     args: ['character', 'testCharacter2'],
+    // }
+
+
+
+
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'createProfileItem',
-        args: ['character', 'testProfileItem', 'text', 0],
+        "func": "createProfileItemNew",
+        "args": {
+            "type": "character",
+            "name": "testProfileItem",
+            "itemType": "text",
+            "selectedIndex": 0
+        },
         forInconsistency: true,
     },
     {
-        func: 'updateProfileField',
-        args: ['character', 'testCharacter', 'testProfileItem', 'text', 'test updateProfileField'],
+        "func": "updateProfileFieldNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter",
+            "fieldName": "testProfileItem",
+            "itemType": "text",
+            "value": "test updateProfileField"
+        }
     },
     {
-        func: 'renameProfileItem',
-        args: ['character', 'testProfileItem2', 'testProfileItem'],
+        "func": "renameProfileItemNew",
+        "args": {
+            "type": "character",
+            "newName": "testProfileItem2",
+            "oldName": "testProfileItem"
+        },
         forInconsistency: true,
     },
     {
-        func: 'changeProfileItemType',
-        args: ['character', 'testProfileItem2', 'enum'],
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "newType": "enum"
+        },
         forInconsistency: true,
     },
     {
-        func: 'updateDefaultValue',
-        args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test1,test2,test3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'changeProfileItemType',
-        args: ['character', 'testProfileItem2', 'multiEnum'],
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "newType": "multiEnum"
+        },
         forInconsistency: true,
     },
     {
-        func: 'updateDefaultValue',
-        args: ['character', 'testProfileItem2', 'test1,test2,test3'],
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test1,test2,test3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'updateProfileField',
-        args: ['character', 'testCharacter', 'testProfileItem2', 'multiEnum', 'test1'],
+        "func": "updateProfileFieldNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter",
+            "fieldName": "testProfileItem2",
+            "itemType": "multiEnum",
+            "value": "test1"
+        }
     },
     {
-        func: 'updateDefaultValue',
-        args: ['character', 'testProfileItem2', 'test2,test3'],
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test2,test3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'removeProfileItem',
-        args: ['character', 0, 'testProfileItem2'],
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem2"
+        },
         forInconsistency: true,
     },
     {
-        func: 'renameProfile',
-        args: ['character', 'testCharacter', 'testCharacter2'],
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter",
+            "toName": "testCharacter2"
+        }
     },
     {
-        func: 'removeProfile',
-        args: ['character', 'testCharacter2'],
-    }],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter2"
+        }
+    },
+
+
+    ],
     relationsAPI:
-    [{
-        func: 'createProfile',
-        args: ['character', 'testCharacter'],
+    [
+        
+        
+    // {
+    //     func: 'createProfile',
+    //     args: ['character', 'testCharacter'],
+    // },
+    // {
+    //     func: 'createProfile',
+    //     args: ['character', 'testCharacter2'],
+    // },
+    // {
+    //     func: 'createCharacterRelation',
+    //     args: ['testCharacter', 'testCharacter2'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'getCharacterRelation',
+    //     args: ['testCharacter', 'testCharacter2'],
+    //     gettable: true,
+    // },
+    // {
+    //     func: 'getCharacterRelation',
+    //     args: ['testCharacter2', 'testCharacter'],
+    //     gettable: true,
+    // },
+    // {
+    //     func: 'setCharacterRelationText',
+    //     args: ['testCharacter', 'testCharacter2', 'testCharacter', 'setCharacterRelationText check'],
+    // },
+    // {
+    //     func: 'setCharacterRelationText',
+    //     args: ['testCharacter', 'testCharacter2', 'testCharacter2', 'setCharacterRelationText check 2'],
+    // },
+    // {
+    //     func: 'setRelationReadyStatus',
+    //     args: ['testCharacter', 'testCharacter2', 'testCharacter', true],
+    // },
+    // {
+    //     func: 'setRelationReadyStatus',
+    //     args: ['testCharacter2', 'testCharacter', 'testCharacter2', true],
+    // },
+    // {
+    //     func: 'setRelationEssenceStatus',
+    //     args: ['testCharacter', 'testCharacter2', 'allies', true],
+    // },
+    // {
+    //     func: 'setOriginRelationText',
+    //     args: ['testCharacter', 'testCharacter2', 'setOriginRelationText check'],
+    // },
+    // {
+    //     func: 'setOriginRelationText',
+    //     args: ['testCharacter2', 'testCharacter', 'setOriginRelationText check 2'],
+    // },
+    // {
+    //     func: 'removeCharacterRelation',
+    //     args: ['testCharacter2', 'testCharacter'],
+    // },
+    // {
+    //     func: 'createCharacterRelation',
+    //     args: ['testCharacter', 'testCharacter2'],
+    // },
+    // {
+    //     func: 'renameProfile',
+    //     args: ['character', 'testCharacter', 'testCharacter3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'renameProfile',
+    //     args: ['character', 'testCharacter2', 'testCharacter4'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'removeProfile',
+    //     args: ['character', 'testCharacter3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'removeProfile',
+        // args: ['character', 'testCharacter4'],
+        // forInconsistency: true,
+    // }
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'createProfile',
-        args: ['character', 'testCharacter2'],
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter2"
+        }
     },
     {
-        func: 'createCharacterRelation',
-        args: ['testCharacter', 'testCharacter2'],
+        "func": "createCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2"
+        },
         forInconsistency: true,
     },
     {
-        func: 'getCharacterRelation',
-        args: ['testCharacter', 'testCharacter2'],
-        gettable: true,
+        "func": "getCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2"
+        }
     },
     {
-        func: 'getCharacterRelation',
-        args: ['testCharacter2', 'testCharacter'],
-        gettable: true,
+        "func": "getCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter"
+        }
     },
     {
-        func: 'setCharacterRelationText',
-        args: ['testCharacter', 'testCharacter2', 'testCharacter', 'setCharacterRelationText check'],
+        "func": "setCharacterRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "character": "testCharacter",
+            "text": "setCharacterRelationText check"
+        }
     },
     {
-        func: 'setCharacterRelationText',
-        args: ['testCharacter', 'testCharacter2', 'testCharacter2', 'setCharacterRelationText check 2'],
+        "func": "setCharacterRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "character": "testCharacter2",
+            "text": "setCharacterRelationText check 2"
+        }
     },
     {
-        func: 'setRelationReadyStatus',
-        args: ['testCharacter', 'testCharacter2', 'testCharacter', true],
+        "func": "setRelationReadyStatusNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "character": "testCharacter",
+            "ready": true
+        }
     },
     {
-        func: 'setRelationReadyStatus',
-        args: ['testCharacter2', 'testCharacter', 'testCharacter2', true],
+        "func": "setRelationReadyStatusNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter",
+            "character": "testCharacter2",
+            "ready": true
+        }
     },
     {
-        func: 'setRelationEssenceStatus',
-        args: ['testCharacter', 'testCharacter2', 'allies', true],
+        "func": "setRelationEssenceStatusNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "essence": "allies",
+            "flag": true
+        }
     },
     {
-        func: 'setOriginRelationText',
-        args: ['testCharacter', 'testCharacter2', 'setOriginRelationText check'],
+        "func": "setOriginRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "text": "setOriginRelationText check"
+        }
     },
     {
-        func: 'setOriginRelationText',
-        args: ['testCharacter2', 'testCharacter', 'setOriginRelationText check 2'],
+        "func": "setOriginRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter",
+            "text": "setOriginRelationText check 2"
+        }
     },
     {
-        func: 'removeCharacterRelation',
-        args: ['testCharacter2', 'testCharacter'],
+        "func": "removeCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter"
+        }
     },
     {
-        func: 'createCharacterRelation',
-        args: ['testCharacter', 'testCharacter2'],
+        "func": "createCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2"
+        }
     },
     {
-        func: 'renameProfile',
-        args: ['character', 'testCharacter', 'testCharacter3'],
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter",
+            "toName": "testCharacter3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'renameProfile',
-        args: ['character', 'testCharacter2', 'testCharacter4'],
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter2",
+            "toName": "testCharacter4"
+        },
         forInconsistency: true,
     },
     {
-        func: 'removeProfile',
-        args: ['character', 'testCharacter3'],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'removeProfile',
-        args: ['character', 'testCharacter4'],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter4"
+        },
         forInconsistency: true,
-    }],
+    },
+
+    ],
 
     storyAdaptationsAPI:
-    [{
-        func: 'createStory',
-        args: ['testStory'],
+    [
+        
+    // {
+    //     func: 'createStory',
+    //     args: ['testStory'],
+    // },
+    // {
+    //     func: 'createProfile',
+    //     args: ['character', 'testCharacter'],
+    // },
+    // {
+    //     func: 'addStoryCharacter',
+    //     args: ['testStory', 'testCharacter'],
+    // },
+    // {
+    //     func: 'createEvent',
+    //     args: ['testStory', 'testEventName', 0],
+    // },
+    // {
+    //     func: 'addCharacterToEvent',
+    //     args: ['testStory', 0, 'testCharacter'],
+    // },
+    // {
+    //     func: 'setEventAdaptationProperty',
+    //     args: ['testStory', 0, 'testCharacter', 'text', 'test setEventAdaptationProperty'],
+    // },
+    // {
+    //     func: 'removeProfile',
+    //     args: ['character', 'testCharacter'],
+    // },
+    // {
+    //     func: 'removeStory',
+    //     args: ['testStory'],
+    // }
+
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
     },
     {
-        func: 'createProfile',
-        args: ['character', 'testCharacter'],
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'addStoryCharacter',
-        args: ['testStory', 'testCharacter'],
+        "func": "addStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'createEvent',
-        args: ['testStory', 'testEventName', 0],
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName",
+            "selectedIndex": 0
+        }
     },
     {
-        func: 'addCharacterToEvent',
-        args: ['testStory', 0, 'testCharacter'],
+        "func": "addCharacterToEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'setEventAdaptationProperty',
-        args: ['testStory', 0, 'testCharacter', 'text', 'test setEventAdaptationProperty'],
+        "func": "setEventAdaptationPropertyNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter",
+            "type": "text",
+            "value": "test setEventAdaptationProperty"
+        }
     },
     {
-        func: 'removeProfile',
-        args: ['character', 'testCharacter'],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'removeStory',
-        args: ['testStory'],
-    }],
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+
+    ],
 
     storyBaseAPI:
-    [{
-        func: 'createStory',
-        args: ['testStory'],
+    [
+        
+    // {
+    //     func: 'createStory',
+    //     args: ['testStory'],
+    // },
+    // {
+    //     func: 'renameStory',
+    //     args: ['testStory', 'testStory2'],
+    // },
+    // {
+    //     func: 'setWriterStory',
+    //     args: ['testStory2', 'setWriterStory test'],
+    // },
+    // {
+    //     func: 'removeStory',
+    //     args: ['testStory2'],
+    // }
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
     },
     {
-        func: 'renameStory',
-        args: ['testStory', 'testStory2'],
+        "func": "renameStoryNew",
+        "args": {
+            "fromName": "testStory",
+            "toName": "testStory2"
+        }
     },
     {
-        func: 'setWriterStory',
-        args: ['testStory2', 'setWriterStory test'],
+        "func": "setWriterStoryNew",
+        "args": {
+            "storyName": "testStory2",
+            "value": "setWriterStory test"
+        }
     },
     {
-        func: 'removeStory',
-        args: ['testStory2'],
-    }],
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory2"
+        }
+    },
+
+    ],
 
     storyCharactersAPI:
-    [{
-        func: 'createStory',
-        args: ['testStory'],
+    [
+        
+        
+    // {
+    //     func: 'createStory',
+    //     args: ['testStory'],
+    // },
+    // {
+    //     func: 'createProfile',
+    //     args: ['character', 'testCharacter'],
+    // },
+    // {
+    //     func: 'createProfile',
+    //     args: ['character', 'testCharacter2'],
+    // },
+    // {
+    //     func: 'addStoryCharacter',
+    //     args: ['testStory', 'testCharacter'],
+    // },
+    // {
+    //     func: 'switchStoryCharacters',
+    //     args: ['testStory', 'testCharacter', 'testCharacter2'],
+    // },
+    // {
+    //     func: 'updateCharacterInventory',
+    //     args: ['testStory', 'testCharacter2', 'updateCharacterInventory test'],
+    // },
+    // {
+    //     func: 'createEvent',
+    //     args: ['testStory', 'testEventName', 0],
+    // },
+    // {
+    //     func: 'addStoryCharacter',
+    //     args: ['testStory', 'testCharacter'],
+    // },
+    // {
+    //     func: 'addCharacterToEvent',
+    //     args: ['testStory', 0, 'testCharacter'],
+    // },
+    // {
+    //     func: 'addCharacterToEvent',
+    //     args: ['testStory', 0, 'testCharacter2'],
+    // },
+    // {
+    //     func: 'renameProfile',
+    //     args: ['character', 'testCharacter2', 'testCharacter3'],
+    //     forInconsistency: true,
+    // },
+    // {
+    //     func: 'removeCharacterFromEvent',
+    //     args: ['testStory', 0, 'testCharacter3'],
+    // },
+    // {
+    //     func: 'onChangeCharacterActivity',
+    //     args: ['testStory', 'testCharacter3', 'active', true],
+    // },
+    // {
+    //     func: 'removeStoryCharacter',
+    //     args: ['testStory', 'testCharacter3'],
+    // },
+    // {
+    //     func: 'removeProfile',
+        // args: ['character', 'testCharacter'],
+        // forInconsistency: true,
+    // },
+    // {
+    //     func: 'removeProfile',
+    //     args: ['character', 'testCharacter3'],
+    // },
+    // {
+    //     func: 'removeStory',
+    //     args: ['testStory'],
+    // }
+
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
     },
     {
-        func: 'createProfile',
-        args: ['character', 'testCharacter'],
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'createProfile',
-        args: ['character', 'testCharacter2'],
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter2"
+        }
     },
     {
-        func: 'addStoryCharacter',
-        args: ['testStory', 'testCharacter'],
+        "func": "addStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'switchStoryCharacters',
-        args: ['testStory', 'testCharacter', 'testCharacter2'],
+        "func": "switchStoryCharactersNew",
+        "args": {
+            "storyName": "testStory",
+            "fromName": "testCharacter",
+            "toName": "testCharacter2"
+        }
     },
     {
-        func: 'updateCharacterInventory',
-        args: ['testStory', 'testCharacter2', 'updateCharacterInventory test'],
+        "func": "updateCharacterInventoryNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter2",
+            "inventory": "updateCharacterInventory test"
+        }
     },
     {
-        func: 'createEvent',
-        args: ['testStory', 'testEventName', 0],
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName",
+            "selectedIndex": 0
+        }
     },
     {
-        func: 'addStoryCharacter',
-        args: ['testStory', 'testCharacter'],
+        "func": "addStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'addCharacterToEvent',
-        args: ['testStory', 0, 'testCharacter'],
+        "func": "addCharacterToEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter"
+        }
     },
     {
-        func: 'addCharacterToEvent',
-        args: ['testStory', 0, 'testCharacter2'],
+        "func": "addCharacterToEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter2"
+        }
     },
     {
-        func: 'renameProfile',
-        args: ['character', 'testCharacter2', 'testCharacter3'],
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter2",
+            "toName": "testCharacter3"
+        },
         forInconsistency: true,
     },
     {
-        func: 'removeCharacterFromEvent',
-        args: ['testStory', 0, 'testCharacter3'],
+        "func": "removeCharacterFromEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter3"
+        }
     },
     {
-        func: 'onChangeCharacterActivity',
-        args: ['testStory', 'testCharacter3', 'active', true],
+        "func": "onChangeCharacterActivityNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter3",
+            "activityType": "active",
+            "checked": true
+        }
     },
     {
-        func: 'removeStoryCharacter',
-        args: ['testStory', 'testCharacter3'],
+        "func": "removeStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter3"
+        }
     },
     {
-        func: 'removeProfile',
-        args: ['character', 'testCharacter'],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        },
         forInconsistency: true,
     },
     {
-        func: 'removeProfile',
-        args: ['character', 'testCharacter3'],
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter3"
+        }
     },
     {
-        func: 'removeStory',
-        args: ['testStory'],
-    }],
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+
+
+    ],
 
     storyEventsAPI:
-    [{
-        func: 'createStory',
-        args: ['testStory'],
+    [
+        
+    // {
+    //     func: 'createStory',
+    //     args: ['testStory'],
+    // },
+    // {
+    //     func: 'createEvent',
+    //     args: ['testStory', 'testEventName', 0],
+    // },
+    // {
+    //     func: 'createEvent',
+    //     args: ['testStory', 'testEventName2', 1],
+    // },
+    // {
+    //     func: 'moveEvent',
+    //     args: ['testStory', 0, 2],
+    // },
+    // {
+    //     func: 'cloneEvent',
+    //     args: ['testStory', 0],
+    // },
+    // {
+    //     func: 'mergeEvents',
+    //     args: ['testStory', 0],
+    // },
+    // {
+    //     func: 'removeEvent',
+    //     args: ['testStory', 0],
+    // },
+    // {
+    //     func: 'setEventOriginProperty',
+    //     args: ['testStory', 0, 'name', 'test setEventOriginProperty'],
+    // },
+    // {
+    //     func: 'removeStory',
+    //     args: ['testStory'],
+    // }
+
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
     },
     {
-        func: 'createEvent',
-        args: ['testStory', 'testEventName', 0],
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName",
+            "selectedIndex": 0
+        }
     },
     {
-        func: 'createEvent',
-        args: ['testStory', 'testEventName2', 1],
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName2",
+            "selectedIndex": 1
+        }
     },
     {
-        func: 'moveEvent',
-        args: ['testStory', 0, 2],
+        "func": "moveEventNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0,
+            "newIndex": 2
+        }
     },
     {
-        func: 'cloneEvent',
-        args: ['testStory', 0],
+        "func": "cloneEventNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0
+        }
     },
     {
-        func: 'mergeEvents',
-        args: ['testStory', 0],
+        "func": "mergeEventsNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0
+        }
     },
     {
-        func: 'removeEvent',
-        args: ['testStory', 0],
+        "func": "removeEventNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0
+        }
     },
     {
-        func: 'setEventOriginProperty',
-        args: ['testStory', 0, 'name', 'test setEventOriginProperty'],
+        "func": "setEventOriginPropertyNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0,
+            "property": "name",
+            "value": "test setEventOriginProperty"
+        }
     },
     {
-        func: 'removeStory',
-        args: ['testStory'],
-    }],
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+
+    ],
     gearsAPI:
-    [{
-        func: 'setGearsPhysicsEnabled',
-        args: [true],
+    [
+        
+    // {
+    //     func: 'setGearsPhysicsEnabled',
+    //     args: [true],
+    // },
+    // {
+    //     func: 'setGearsShowNotesEnabled',
+    //     args: [true],
+    // },
+    // {
+    //     func: 'setGearsData',
+    //     args: [{"nodes":[{"id":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","x":85,"y":-20,"label":"123\n\n2","name":"123","group":"1","notes":"2","shape":"box"},{"id":"698903f4-ac21-4fd1-abeb-de688cf8b463","x":-353,"y":-7,"label":"234\n\n345","name":"234","group":"2","notes":"345","shape":"box"}],"edges":[{"from":"698903f4-ac21-4fd1-abeb-de688cf8b463","to":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","arrows":"to","id":"4be956c5-0d6b-4e7e-8be8-9e23dc0fe0fb","label":"2233"}]}],
+    // }
+
+    {
+        "func": "setGearsPhysicsEnabledNew",
+        "args": {
+            "enabled": true
+        }
     },
     {
-        func: 'setGearsShowNotesEnabled',
-        args: [true],
+        "func": "setGearsShowNotesEnabledNew",
+        "args": {
+            "enabled": true
+        }
     },
     {
-        func: 'setGearsData',
-        args: [{"nodes":[{"id":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","x":85,"y":-20,"label":"123\n\n2","name":"123","group":"1","notes":"2","shape":"box"},{"id":"698903f4-ac21-4fd1-abeb-de688cf8b463","x":-353,"y":-7,"label":"234\n\n345","name":"234","group":"2","notes":"345","shape":"box"}],"edges":[{"from":"698903f4-ac21-4fd1-abeb-de688cf8b463","to":"e5c1e43e-79c1-4aef-88b9-61e622e3eb6d","arrows":"to","id":"4be956c5-0d6b-4e7e-8be8-9e23dc0fe0fb","label":"2233"}]}],
-    }],
+        "func": "setGearsDataNew",
+        "args": {
+            "data": {
+                "nodes": [
+                    {
+                        "id": "e5c1e43e-79c1-4aef-88b9-61e622e3eb6d",
+                        "x": 85,
+                        "y": -20,
+                        "label": "123\n\n2",
+                        "name": "123",
+                        "group": "1",
+                        "notes": "2",
+                        "shape": "box"
+                    },
+                    {
+                        "id": "698903f4-ac21-4fd1-abeb-de688cf8b463",
+                        "x": -353,
+                        "y": -7,
+                        "label": "234\n\n345",
+                        "name": "234",
+                        "group": "2",
+                        "notes": "345",
+                        "shape": "box"
+                    }
+                ],
+                "edges": [
+                    {
+                        "from": "698903f4-ac21-4fd1-abeb-de688cf8b463",
+                        "to": "e5c1e43e-79c1-4aef-88b9-61e622e3eb6d",
+                        "arrows": "to",
+                        "id": "4be956c5-0d6b-4e7e-8be8-9e23dc0fe0fb",
+                        "label": "2233"
+                    }
+                ]
+            }
+        }
+    },
+
+
+],
     slidersAPI:
     [
     //     {
@@ -1012,12 +1919,13 @@ R.keys(getChecks).forEach((apiName) => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
         checks.forEach((check) => {
             if(Array.isArray(check.args)){
-                it(check.name, (done) => {
-                    DBMS[check.func](...check.args.concat((err) => {
-                        expect(err).toBeNull();
-                        done();
-                    }));
-                });
+                // console.error('Unfinished check', check);
+                // it(check.name, (done) => {
+                //     DBMS[check.func](...check.args.concat((err) => {
+                //         expect(err).toBeNull();
+                //         done();
+                //     }));
+                // });
             } else {
                 it(check.name, (done) => {
                     DBMS[check.func](check.args).then( res => {
@@ -1069,27 +1977,28 @@ R.keys(setChecks).forEach((apiName) => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
         checks.forEach((check) => {
             if(Array.isArray(check.args)){
-                it(check.name, (done) => {
-                    DBMS[check.func](...check.args.concat((err) => {
-                        if (err) console.error(err);
-                        if (check.gettable === true) {
-                            expect(err).toBeNull();
-                        } else {
-                            expect(err).toBeUndefined();
-                        }
-                        if (check.forInconsistency === true) {
-                            DBMS.getConsistencyCheckResult((err2, checkResult) => {
-                                expect(err2).toBeNull();
-                                if (checkResult.errors.length > 0) {
-                                    console.error(check.name);
-                                    checkResult.errors.forEach(console.error);
-                                }
-                                expect(checkResult.errors.length > 0).toBe(false);
-                            });
-                        }
-                        done();
-                    }));
-                });
+                // console.error('Unfinished check', check);
+                // it(check.name, (done) => {
+                //     DBMS[check.func](...check.args.concat((err) => {
+                //         if (err) console.error(err);
+                //         if (check.gettable === true) {
+                //             expect(err).toBeNull();
+                //         } else {
+                //             expect(err).toBeUndefined();
+                //         }
+                //         if (check.forInconsistency === true) {
+                //             DBMS.getConsistencyCheckResult((err2, checkResult) => {
+                //                 expect(err2).toBeNull();
+                //                 if (checkResult.errors.length > 0) {
+                //                     console.error(check.name);
+                //                     checkResult.errors.forEach(console.error);
+                //                 }
+                //                 expect(checkResult.errors.length > 0).toBe(false);
+                //             });
+                //         }
+                //         done();
+                //     }));
+                // });
             } else {
                 it(check.name, (done) => {
                     DBMS[check.func](check.args).then( res => {
@@ -1184,7 +2093,7 @@ R.keys(setChecks).forEach((apiName) => {
 });
 
 describe('Core smoke test coverage check', () => {
-    const customIgnore = ['setDatabase'];
+    const customIgnore = ['setDatabaseNew'];
 
     it('Core smoke test coverage check', () => {
         const funcArr = R.uniq(R.concat(R.flatten(R.values(getChecks)).map(R.prop('func')), R.flatten(R.values(setChecks)).map(R.prop('func'))));
@@ -1203,7 +2112,8 @@ describe('Core smoke test coverage check', () => {
         }
         expect(intersection2.length).toBe(0);
 
-        const allFuncs = Object.keys(Object.getPrototypeOf(DBMS)).filter(R.pipe(R.endsWith('Pm'), R.not));
+        const allFuncs = Object.keys(Object.getPrototypeOf(DBMS)).filter(R.pipe(R.endsWith('New')));
+        // const allFuncs = Object.keys(Object.getPrototypeOf(DBMS)).filter(R.pipe(R.endsWith('Pm'), R.not));
         const sum = [funcArr, serverSpecificFunctions, commonIgnoreList, customIgnore].reduce((acc, el) => {
             acc = R.concat(acc, el);
             return acc;

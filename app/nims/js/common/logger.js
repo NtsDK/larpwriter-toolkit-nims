@@ -294,11 +294,26 @@ See the License for the specific language governing permissions and
                 };
             });
 
+        const arr = [];
+        let timeout;
+
         Object.keys(LocalDBMS.prototype)
             .forEach((funcName) => {
                 const oldFun = LocalDBMS.prototype[funcName];
                 LocalDBMS.prototype[funcName] = function () {
                     try {
+                        // if(funcName.endsWith('New') && funcName !== 'logNew'){
+                        //     const callView = {
+                        //         func: funcName,
+                        //         args: arguments[0],
+                        //     };
+                        //     arr.push(callView);
+                        //     clearTimeout(timeout);
+                        //     timeout = setTimeout(() => {
+                        //         console.log(JSON.stringify(arr));
+                        //     }, 1000);
+                        // }
+                        // console.log(callView);
                         return oldFun.apply(this, arguments);
                     } catch (err) {
                         const { length } = arguments;

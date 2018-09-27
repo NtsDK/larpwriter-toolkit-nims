@@ -110,7 +110,7 @@ See the License for the specific language governing permissions and
             Utils.enable(exports.content, 'adminOnly', isAdmin);
         });
         
-        Promise.all( [DBMS.getMetaInfoPm(), DBMS.getStatisticsPm()] ).then(updateOverviewTab).catch(Utils.handleError);
+        Promise.all( [DBMS.getMetaInfoNew(), DBMS.getStatisticsNew()] ).then(updateOverviewTab).catch(Utils.handleError);
     };
 
     function makeChart(id, canvas, data) {
@@ -323,7 +323,7 @@ See the License for the specific language governing permissions and
     }
 
     function updateName(event) {
-        DBMS.setMetaInfoStringPm('name', event.target.value).catch(Utils.handleError);
+        DBMS.setMetaInfoStringNew({name: 'name', value: event.target.value}).catch(Utils.handleError);
     }
     function updateTime(dp, input) {
         DBMS.setMetaInfoDate('date', input.val(), Utils.processError());

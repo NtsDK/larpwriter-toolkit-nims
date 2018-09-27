@@ -194,7 +194,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Overview';
+                const firstTab = 'Timeline';
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
@@ -253,7 +253,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-//                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+               addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
 //                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
                 if (MODE === 'NIMS_Server') {
                     addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
@@ -267,6 +267,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     addBeforeUnloadListener();
                     localAutoSave();
                 }
+
+                // setTimeout(TestUtils.runTests, 1000);
+                // setTimeout(TestUtils.clickThroughtHeaders, 1000);
 //                FileUtils.makeNewBase();
 //                state.currentView.refresh();
                 //                                runTests();
@@ -394,7 +397,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         counter = (counter + 1) % BACKUP_NUMBER;
         console.log('Starting autosave');
 
-        DBMS.getDatabase().then(database => {
+        DBMS.getDatabaseNew().then(database => {
             LocalBaseAPI.put('base' + counter, database).then(() => {
                 console.log('Autosave OK ' + new Date());
     //                LocalBaseAPI.get('base' + counter).then((database) => {

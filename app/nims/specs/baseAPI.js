@@ -2,12 +2,12 @@ describe('baseAPI', () => {
     let oldBase;
 
     beforeAll((done) => {
-        DBMS.getDatabase().then(data => {
+        DBMS.getDatabaseNew().then(data => {
             oldBase = data;
-            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), (err2, data2) => {
-                if (err2) { throw err2; }
-                //                PageManager.refresh();
-                done();
+            DBMS.setDatabaseNew({
+                database: CommonUtils.clone(EmptyBase.data)
+            }).then(() => done()).catch( err => {
+                throw err;
             });
         }).catch(err => {
             throw err;
@@ -15,25 +15,14 @@ describe('baseAPI', () => {
     });
 
     afterAll((done) => {
-        DBMS.setDatabase(oldBase, (err, data) => {
-            if (err) { throw err; }
-            //            PageManager.refresh();
-            done();
+        DBMS.setDatabaseNew({
+            database: oldBase
+        }).then(() => done()).catch( err => {
+            throw err;
         });
     });
 
-    const funcs = [ 'getMetaInfo'];
-
-    funcs.forEach((func) => {
-        it(func, (done) => {
-            DBMS[func]((err, data) => {
-                expect(err).toBeNull();
-                expect(data).not.toBeNull();
-                done();
-            });
-        });
-    });
-    const funcs2 = ['getDatabase'];
+    const funcs2 = ['getDatabaseNew'];
 
     funcs2.forEach((func) => {
         it(func, (done) => {
@@ -48,71 +37,92 @@ describe('baseAPI', () => {
     });
 
     it('setDatabase(emptyBase) -> ok', (done) => {
-        DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), (err) => {
+        DBMS.setDatabaseNew({
+            database: CommonUtils.clone(EmptyBase.data)
+        }).then(() => {
+            expect(123).not.toBeNull();
+            done();
+        }).catch( err => {
             expect(err).toBeUndefined();
             done();
+            // throw err;
         });
     });
     it('setDatabase({}) -> err', (done) => {
-        DBMS.setDatabase({}, (err) => {
+        DBMS.setDatabaseNew({
+            database: {}
+        }).then(() => {
+            // expect(123).not.toBeNull();
+            // done();
+        }).catch( err => {
             expect(err).not.toBeNull();
             done();
+            // throw err;
         });
     });
 
     //  'name', 'date', 'preGameDate', 'description'
-    const setChecks = [{
-        func: 'setMetaInfoString',
-        args: ['name', '123'],
-        getter: 'getMetaInfo',
-        getterArgs: [],
+    const setChecks = [
+
+    {
+        func: 'setMetaInfoStringNew',
+        args: {name: 'name', value: '123'},
+        getter: 'getMetaInfoNew',
+        getterArgs: {},
         getterCheck: (data, done) => {
             expect(data.name).toEqual('123');
             done();
         }
-    }, {
-        func: 'setMetaInfoDate',
-        args: ['date', '123'],
-        getter: 'getMetaInfo',
-        getterArgs: [],
-        getterCheck: (data, done) => {
-            expect(data.date).toEqual('123');
-            done();
-        }
-    }, {
-        func: 'setMetaInfoDate',
-        args: ['preGameDate', '123'],
-        getter: 'getMetaInfo',
-        getterArgs: [],
-        getterCheck: (data, done) => {
-            expect(data.preGameDate).toEqual('123');
-            done();
-        }
-    }, {
-        func: 'setMetaInfoString',
-        args: ['description', '123'],
-        getter: 'getMetaInfo',
-        getterArgs: [],
+    },
+    {
+        func: 'setMetaInfoStringNew',
+        args: {name: 'description', value: '123'},
+        getter: 'getMetaInfoNew',
+        getterArgs: {},
         getterCheck: (data, done) => {
             expect(data.description).toEqual('123');
             done();
         }
-    }, {
-        func: 'setMetaInfoString',
-        args: [654, '123'],
+    },
+    {
+        func: 'setMetaInfoDateNew',
+        args: {name: 'date', value: '123'},
+        getter: 'getMetaInfoNew',
+        getterArgs: {},
+        getterCheck: (data, done) => {
+            expect(data.date).toEqual('123');
+            done();
+        }
+    },
+    {
+        func: 'setMetaInfoDateNew',
+        args: {name: 'preGameDate', value: '123'},
+        getter: 'getMetaInfoNew',
+        getterArgs: {},
+        getterCheck: (data, done) => {
+            expect(data.preGameDate).toEqual('123');
+            done();
+        }
+    },
+    {
+        func: 'setMetaInfoStringNew',
+        args: {name: 654, value: '123'},
         errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [654]
-    }, {
-        func: 'setMetaInfoString',
-        args: ['65465654', '123'],
+    },
+     {
+        func: 'setMetaInfoStringNew',
+        args: {name: '65465654', value: '123'},
         errMessageId: 'errors-unsupported-type-in-list',
         errParameters: ['65465654']
-    }, {
-        func: 'setMetaInfoString',
-        args: ['description', 123],
+    },
+     {
+        func: 'setMetaInfoStringNew',
+        args: {name: 'description', value: 123},
         errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [123]
-    }];
+    },
+    ];
 
     const checks = R.groupBy(el => (el.errMessageId !== undefined ? 'errChecks' : 'okChecks'), setChecks);
 
@@ -131,25 +141,23 @@ describe('baseAPI', () => {
 
     checks.okChecks.forEach((check) => {
         it(check.name, (done) => {
-            DBMS[check.func](...check.args.concat((err) => {
-                expect(err).toBeUndefined();
-                DBMS[check.getter](...check.getterArgs.concat((err2, data) => {
-                    expect(err2).toBeNull();
+
+            DBMS[check.func](check.args).then(res=> {
+                DBMS[check.getter](check.getterArgs).then(data => {
                     check.getterCheck(data, done);
-                    //                    done();
-                }));
-            }));
+                });
+            });
         });
     });
 
     checks.errChecks.forEach((check) => {
         it(check.name, (done) => {
-            DBMS[check.func](...check.args.concat((err) => {
+            DBMS[check.func](check.args).catch((err) => {
                 expect(err).not.toBeUndefined();
                 expect(err.messageId).toEqual(check.errMessageId);
                 expect(err.parameters).toEqual(check.errParameters);
                 done();
-            }));
+            });
         });
     });
 });
