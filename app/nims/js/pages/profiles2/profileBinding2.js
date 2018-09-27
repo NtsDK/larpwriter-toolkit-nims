@@ -31,16 +31,14 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        PermissionInformer.getEntityNamesArray('character', false, (err, characterNames) => {
-            if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('player', false, (err2, playerNames) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getProfileBindings((err3, profileBindings) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    rebuildInterface(characterNames, playerNames, profileBindings);
-                });
-            });
-        });
+        Promise.all([
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'player', editableOnly: false}),
+            DBMS.getProfileBindingsNew()
+        ]).then(results => {
+            const [characterNames, playerNames, profileBindings] = results;
+            rebuildInterface(characterNames, playerNames, profileBindings);
+        }).catch(Utils.handleError);
     };
 
     function rebuildInterface(characterNames, playerNames, profileBindings) {

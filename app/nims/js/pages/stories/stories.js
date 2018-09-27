@@ -82,8 +82,7 @@ See the License for the specific language governing permissions and
     exports.refresh = () => {
         const storySelector = clearEl(getEl('storySelector'));
 
-        PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
-            if (err) { Utils.handleError(err); return; }
+        PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}).then( allStoryNames => {
             const data = getSelect2Data(allStoryNames);
             
             Utils.enableEl(qe(`${root}.rename.story`), allStoryNames.length > 0);
@@ -107,7 +106,7 @@ See the License for the specific language governing permissions and
             R.values(state.left.views).forEach(view => view.refresh());
             if (state.left.currentView)state.left.currentView.refresh();
             if (state.right.currentView)state.right.currentView.refresh();
-        });
+        }).catch(Utils.handleError);
     };
 
     function getSelectedStoryName(storyNames) {
@@ -192,12 +191,11 @@ See the License for the specific language governing permissions and
 
         if (storyName) {
             updateSettings(storyName);
-            PermissionInformer.isEntityEditable('story', storyName, (err, isStoryEditable) => {
-                if (err) { Utils.handleError(err); return; }
+            PermissionInformer.isEntityEditableNew({type: 'story', name: storyName}).then( isStoryEditable => {
                 if (state.left.currentView)state.left.currentView.refresh();
                 if (state.right.currentView)state.right.currentView.refresh();
                 Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
-            });
+            }).catch(Utils.handleError);
         } else { // when there are no stories at all
             updateSettings(null);
             if (state.left.currentView)state.left.currentView.refresh();

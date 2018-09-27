@@ -28,10 +28,9 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getStatisticsNew = function (callback) {
             return new Promise((resolve, reject) => {
                 const that = this;
-                this.getAllCharacterGroupTexts((err, groupTexts) => {
-                    if (err) { reject(err); return; }
+                this.getAllCharacterGroupTextsNew().then((groupTexts) => {
                     _getStatistics(that.database, groupTexts, resolve);
-                });
+                }).catch(reject);
             });
         };
 

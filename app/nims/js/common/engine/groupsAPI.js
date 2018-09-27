@@ -86,18 +86,18 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getAllCharacterGroupTextsNew = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
-                this.getProfileFilterInfo((err, info) => {
-                    if (err) { reject(err); return; }
-                    that.getProfileBindings((err2, bindings) => {
-                        if (err2) { reject(err2); return; }
-                        const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
-                            const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
-                            result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, profileId);
-                            return result;
-                        }, {});
-                        resolve(texts);
-                    });
-                });
+                Promise.all([
+                    this.getProfileFilterInfoNew(),
+                    this.getProfileBindingsNew()
+                ]).then(results => {
+                    const [info, bindings] = results;
+                    const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
+                        const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
+                        result[characterName] = _getCharacterGroupTexts(that.database.Groups, info, profileId);
+                        return result;
+                    }, {});
+                    resolve(texts);
+                }).catch(reject);
             });
         };
 
@@ -311,23 +311,25 @@ See the License for the specific language governing permissions and
             this.doExportGroupNew({groupName, value}).then(res => callback()).catch(callback);
         };
 
-        const initProfileInfo = (that, type, ownerMapType, callback) => {
-            that.getAllProfiles(type, (err, profiles) => {
-                if (err) { callback(err); return; }
-                let owners = R.keys(profiles);
-                if (that._getOwnerMap) {
-                    owners = that._getOwnerMap(ownerMapType);
-                } else {
-                    owners = R.zipObj(owners, R.repeat('user', owners.length));
-                }
-                that.getProfileStructure(type, (err2, profileStructure) => {
-                    if (err2) { callback(err2); return; }
-                    callback(null, {
+        const initProfileInfo = (that, type, ownerMapType) => {
+            return new Promise((resolve, reject) => {
+                Promise.all([
+                    that.getAllProfilesNew({type}),
+                    that.getProfileStructureNew({type}),
+                ]).then(results => {
+                    const [profiles, profileStructure] = results;
+                    let owners = R.keys(profiles);
+                    if (that._getOwnerMap) {
+                        owners = that._getOwnerMap(ownerMapType);
+                    } else {
+                        owners = R.zipObj(owners, R.repeat('user', owners.length));
+                    }
+                    resolve({
                         profileStructure,
                         owners,
                         profiles
                     });
-                });
+                }).catch(reject);
             });
         };
 
@@ -338,25 +340,21 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getProfileFilterInfoNew = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
-                initProfileInfo(that, 'character', 'Characters', (err, charactersInfo) => {
-                    if (err) { reject(err); return; }
-                    initProfileInfo(that, 'player', 'Players', (err2, playersInfo) => {
-                        if (err2) { reject(err2); return; }
-                        that.getCharactersSummary((err3, charactersSummary) => {
-                            if (err3) { reject(err3); return; }
-                            that.getExtendedProfileBindings((err4, bindingData) => {
-                                if (err4) { reject(err4); return; }
-                                const info = PU.makeGroupedProfileFilterInfo({
-                                    characters: charactersInfo,
-                                    players: playersInfo,
-                                    charactersSummary,
-                                    bindingData
-                                });
-                                resolve(info);
-                            });
-                        });
+                Promise.all([
+                    initProfileInfo(that, 'character', 'Characters'),
+                    initProfileInfo(that, 'player', 'Players'),
+                    that.getCharactersSummaryNew(),
+                    that.getExtendedProfileBindingsNew(),
+                ]).then(results => {
+                    const [charactersInfo, playersInfo, charactersSummary, bindingData] = results;
+                    const info = PU.makeGroupedProfileFilterInfo({
+                        characters: charactersInfo,
+                        players: playersInfo,
+                        charactersSummary,
+                        bindingData
                     });
-                });
+                    resolve(info);
+                }).catch(reject);
             });
         };
 

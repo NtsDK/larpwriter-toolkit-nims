@@ -53,18 +53,16 @@ See the License for the specific language governing permissions and
 
         if (!Stories.getCurrentStoryName()) { return; }
 
-        PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), (err, isStoryEditable) => {
-            if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('character', false, (err2, allCharacters) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getStoryCharacters(Stories.getCurrentStoryName(), (err3, localCharacters) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    rebuildInterface(allCharacters, localCharacters);
-                    Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
-                    Stories.chainRefresh();
-                });
-            });
-        });
+        Promise.all([
+            PermissionInformer.isEntityEditableNew({type: 'story', name: Stories.getCurrentStoryName()}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
+            DBMS.getStoryCharactersNew({storyName: Stories.getCurrentStoryName()})
+        ]).then(results => {
+            const [isStoryEditable, allCharacters, localCharacters] = results;
+            rebuildInterface(allCharacters, localCharacters);
+            Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            Stories.chainRefresh();
+        }).catch(Utils.handleError);
     };
 
     function rebuildInterface(allCharacters, localCharacters) {

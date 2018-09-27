@@ -31,10 +31,9 @@ See the License for the specific language governing permissions and
         const storyName = Stories.getCurrentStoryName();
 
         if (storyName) {
-            DBMS.getWriterStory(storyName, (err, story) => {
-                if (err) { Utils.handleError(err); return; }
+            DBMS.getWriterStoryNew({storyName}).then(story => {
                 storyArea.value = story;
-            });
+            }).catch(Utils.handleError);
         } else {
             storyArea.value = '';
         }

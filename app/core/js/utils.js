@@ -405,7 +405,10 @@ Utils.handleErrorMsg = function (err) {
     return err;
 };
 
-Utils.handleError = err => Utils.alert(Utils.handleErrorMsg(err));
+Utils.handleError = err => {
+    console.error(err);
+    Utils.alert(Utils.handleErrorMsg(err));
+}
 
 Utils.enableEl = R.curry((el, condition) => {
     const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';

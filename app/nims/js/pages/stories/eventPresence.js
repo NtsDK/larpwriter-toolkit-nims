@@ -40,47 +40,41 @@ See the License for the specific language governing permissions and
             return;
         }
 
-        PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), (err, isStoryEditable) => {
-            if (err) { Utils.handleError(err); return; }
-            PermissionInformer.getEntityNamesArray('character', false, (err2, allCharacters) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getStoryCharacterNamesArray(Stories.getCurrentStoryName(), (err3, characterArray) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    const map = {};
-                    allCharacters.forEach((elem) => {
-                        map[elem.value] = elem;
-                    });
-                    const dataArray = characterArray.map(elem => map[elem]);
-
-                    dataArray.sort(Utils.charOrdAObject);
-
-                    const displayArray = dataArray.map(elem => elem.displayName);
-                    characterArray = dataArray.map(elem => elem.value);
-
-                    DBMS.getStoryEvents(Stories.getCurrentStoryName(), (err4, events) => {
-                        if (err4) { Utils.handleError(err4); return; }
-
-                        clearEl(tableHead);
-                        clearEl(table);
-                        
-                        showEl(queryEl(`${root} .alert.no-characters`), characterArray.length === 0);
-                        showEl(queryEl(`${root} .alert.no-events`), events.length === 0);
-                        showEl(queryEl(`${root} .panel-body`), events.length !== 0 && characterArray.length !== 0);
-                        
-                        UI.fillShowItemSelector(
-                            clearEl(characterSelector),
-                            displayArray.map(name => ({ name, hidden: false }))
-                        );
-
-                        appendTableHeader(tableHead, displayArray);
-                        events.forEach((event, i) => {
-                            appendTableInput(table, event, i, characterArray);
-                            Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
-                        });
-                    });
-                });
+        Promise.all([
+            PermissionInformer.isEntityEditableNew({type: 'story', name: Stories.getCurrentStoryName()}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
+            DBMS.getStoryCharacterNamesArrayNew({storyName: Stories.getCurrentStoryName()}),
+            DBMS.getStoryEventsNew({storyName: Stories.getCurrentStoryName()})
+        ]).then(results => {
+            let [isStoryEditable, allCharacters, characterArray, events] = results;
+            const map = {};
+            allCharacters.forEach((elem) => {
+                map[elem.value] = elem;
             });
-        });
+            const dataArray = characterArray.map(elem => map[elem]);
+    
+            dataArray.sort(Utils.charOrdAObject);
+    
+            const displayArray = dataArray.map(elem => elem.displayName);
+            characterArray = dataArray.map(elem => elem.value);
+            clearEl(tableHead);
+            clearEl(table);
+            
+            showEl(queryEl(`${root} .alert.no-characters`), characterArray.length === 0);
+            showEl(queryEl(`${root} .alert.no-events`), events.length === 0);
+            showEl(queryEl(`${root} .panel-body`), events.length !== 0 && characterArray.length !== 0);
+            
+            UI.fillShowItemSelector(
+                clearEl(characterSelector),
+                displayArray.map(name => ({ name, hidden: false }))
+            );
+    
+            appendTableHeader(tableHead, displayArray);
+            events.forEach((event, i) => {
+                appendTableInput(table, event, i, characterArray);
+                Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            });
+        }).catch(Utils.handleError);
     };
 
     function appendTableHeader(table, characterArray) {

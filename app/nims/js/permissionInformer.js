@@ -195,9 +195,9 @@ See the License for the specific language governing permissions and
         };
 
         exports.isEntityEditable = (type, entityName, callback) => {
-            exports.isEntityEditableNew().then(res => callback(null, res)).catch(callback);
+            exports.isEntityEditableNew({type, entityName}).then(res => callback(null, res)).catch(callback);
         };
-        exports.isEntityEditableNew = () => {
+        exports.isEntityEditableNew = ({type, entityName}={}) => {
             return Promise.resolve(true);
         };
 
@@ -220,7 +220,7 @@ See the License for the specific language governing permissions and
             try {
                 const exclude = ['_init'];
                 if(!funcName.endsWith('New') && !R.contains(funcName, exclude)){
-                    console.error('Old PermInfo call', funcName);
+                    console.error('Old PermInfo call', funcName, arguments);
                     // console.trace('Old API call', funcName);
                 }
                 return oldFun.apply(null, arguments);

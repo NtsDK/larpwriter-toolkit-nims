@@ -105,10 +105,9 @@ See the License for the specific language governing permissions and
     exports.refresh = () => {
         Gears.refresh();
         Sliders.refresh();
-        PermissionInformer.isAdmin((err, isAdmin) => {
-            if (err) { Utils.handleError(err); return; }
+        PermissionInformer.isAdminNew().then( isAdmin => {
             Utils.enable(exports.content, 'adminOnly', isAdmin);
-        });
+        }).catch(Utils.handleError);
         
         Promise.all( [DBMS.getMetaInfoNew(), DBMS.getStatisticsNew()] ).then(updateOverviewTab).catch(Utils.handleError);
     };

@@ -321,7 +321,7 @@ See the License for the specific language governing permissions and
                     try {
                         const exclude = ['_init'];
                         if(!funcName.endsWith('New') && !R.contains(funcName, exclude)){
-                            console.error('Old API call', funcName);
+                            console.error('Old API call', funcName, arguments);
                             // console.trace('Old API call', funcName);
                         }
                         return oldFun.apply(this, arguments);

@@ -165,32 +165,30 @@ function ProfileConfigurerTmpl(exports, opts) {
     };
 
     function refreshPanel(type, root) {
-        DBMS.getProfileStructure(type, (err, allProfileSettings) => {
-            if (err) { Utils.handleError(err); return; }
-            
+        Promise.all([
+            DBMS.getProfileStructureNew({type}),
+            PermissionInformer.isAdminNew()
+        ]).then(results => {
+            const [allProfileSettings, isAdmin] = results;
             hideEl(queryEl(`${tabRoot} .alert`), allProfileSettings.length !== 0);
             hideEl(queryEl(`${tabRoot} table`), allProfileSettings.length === 0);
-
+    
             const arr = allProfileSettings.map(R.compose(strFormat(getL10n('common-set-item-before')), R.append(R.__, []), R.prop('name')));
             arr.push(getL10n('common-set-item-as-last'));
-
+    
             const positionSelectors = [queryEl(`${tabRoot} .create-entity-position-select`),
                 queryEl(`${tabRoot} .move-entity-position-select`)];
             positionSelectors.map(clearEl).map(fillSelector(R.__, arr2Select(arr))).map(setProp(R.__, 'selectedIndex', allProfileSettings.length));
-
+    
             const table = clearEl(queryEl(`${root}.profile-config-container`));
-
+    
             try {
                 addEls(table, allProfileSettings.map(getInput(type)));
             } catch (err1) {
                 Utils.handleError(err1); return;
             }
-
-            PermissionInformer.isAdmin((err2, isAdmin) => {
-                if (err2) { Utils.handleError(err2); return; }
-                Utils.enable(exports.content, 'adminOnly', isAdmin);
-            });
-        });
+            Utils.enable(exports.content, 'adminOnly', isAdmin);
+        }).catch(Utils.handleError);
     }
 
     function createProfileItem(dialog) {

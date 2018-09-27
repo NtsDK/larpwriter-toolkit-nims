@@ -48,18 +48,16 @@ See the License for the specific language governing permissions and
             return;
         }
 
-        PermissionInformer.isEntityEditable('story', Stories.getCurrentStoryName(), (err, isStoryEditable) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getMetaInfo((err2, metaInfo) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getStoryEvents(Stories.getCurrentStoryName(), (err3, events) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    rebuildInterface(events, metaInfo);
-                    Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
-                    Stories.chainRefresh();
-                });
-            });
-        });
+        Promise.all([
+            PermissionInformer.isEntityEditableNew({type: 'story', name: Stories.getCurrentStoryName()}),
+            DBMS.getMetaInfoNew(),
+            DBMS.getStoryEventsNew({storyName: Stories.getCurrentStoryName()})
+        ]).then(results => {
+            const [isStoryEditable, metaInfo, events] = results;
+            rebuildInterface(events, metaInfo);
+            Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            Stories.chainRefresh();
+        }).catch(Utils.handleError);
     };
 
     function clearInterface() {
