@@ -2009,13 +2009,15 @@ R.keys(setChecks).forEach((apiName) => {
                         //     expect(err).toBeUndefined();
                         // }
                         if (check.forInconsistency === true) {
-                            DBMS.getConsistencyCheckResult((err2, checkResult) => {
-                                expect(err2).toBeNull();
+                            DBMS.getConsistencyCheckResultNew().then(checkResult => {
+                                // expect(err2).toBeNull();
                                 if (checkResult.errors.length > 0) {
                                     console.error(check.name);
                                     checkResult.errors.forEach(console.error);
                                 }
                                 expect(checkResult.errors.length > 0).toBe(false);
+                            }).catch(err2 => {
+                                expect(err2).toBeNull();
                             });
                         }
                         if (check.gettable === true) {
@@ -2055,41 +2057,6 @@ R.keys(setChecks).forEach((apiName) => {
             }
         });
     });
-    
-    // describe(`${apiName} promise setter tests`, () => {
-    //     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-    //     checks.forEach((check) => {
-    //         it(check.name, (done) => {
-    //             DBMS[check.func + 'Pm'](...check.args).then((value) => {
-    //                 if (check.gettable === true) {
-    //                     expect(value).not.toBeNull();
-    //                 } else {
-    //                     expect(value).toBeUndefined();
-    //                 }
-    //                 done();
-    //             }).catch((err) => {
-    //                 if (err) console.error(err);
-    //                 if (check.gettable === true) {
-    //                     expect(err).toBeNull();
-    //                 } else {
-    //                     expect(err).toBeUndefined();
-    //                 }
-    //                 if (check.forInconsistency === true) {
-    //                     DBMS.getConsistencyCheckResultPm.then(checkResult => {
-    //                         if (checkResult.errors.length > 0) {
-    //                             console.error(check.name);
-    //                             checkResult.errors.forEach(console.error);
-    //                         }
-    //                         expect(checkResult.errors.length > 0).toBe(false);
-    //                     }).catch(err2 => {
-    //                         expect(err2).toBeNull();
-    //                     });
-    //                 }
-    //                 done();
-    //             });
-    //         });
-    //     });
-    // });
 });
 
 describe('Core smoke test coverage check', () => {

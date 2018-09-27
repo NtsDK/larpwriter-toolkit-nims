@@ -123,8 +123,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        DBMS.getAllGearsData((err, data) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getAllGearsDataNew().then((data) => {
             queryEl(`${root} .show-notes-checkbox`).checked = data.settings.showNotes;
             queryEl(`${root} .physics-enabled-checkbox`).checked = data.settings.physicsEnabled;
             
@@ -136,7 +135,7 @@ See the License for the specific language governing permissions and
             state.edgesDataset.clear();
             state.edgesDataset.add(data.edges);
             drawNetwork();
-        });
+        }).catch(Utils.handleError);
     };
     
     // create a network

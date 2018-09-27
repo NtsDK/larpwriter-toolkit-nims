@@ -28,24 +28,27 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getEntityNamesArrayNew = function ({type}={}) {
             return new Promise((resolve,reject) => {
                 const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
-                const callback = (err, result) => {
-                    if(err){
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                }
+                // const callback = (err, result) => {
+                //     if(err){
+                //         reject(err);
+                //     } else {
+                //         resolve(result);
+                //     }
+                // }
                 PC.precondition(chain, reject, () => {
                     switch (type) {
                     case 'character':
                     case 'player':
-                        this.getProfileNamesArray(type, callback);
+                        // this.getProfileNamesArray(type, callback);
+                        this.getProfileNamesArrayNew({type}).then(resolve).catch(reject);
                         break;
                     case 'group':
-                        this.getGroupNamesArray(callback);
+                        // this.getGroupNamesArray(callback);
+                        this.getGroupNamesArrayNew().then(resolve).catch(reject);
                         break;
                     case 'story':
-                        this.getStoryNamesArray(callback);
+                        // this.getStoryNamesArray(callback);
+                        this.getStoryNamesArrayNew().then(resolve).catch(reject);
                         break;
                     default:
                         reject(new Errors.InternalError('errors-unexpected-switch-argument', [type]));

@@ -97,7 +97,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
-            DBMS.setDatabase(DemoBase.data, onBaseLoaded);
+            DBMS.setDatabaseNew({database: DemoBase.data}).then( res => onBaseLoaded()).catch(onBaseLoaded);
+            // DBMS.setDatabase(DemoBase.data, onBaseLoaded);
             // runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
             const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
@@ -165,11 +166,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function consistencyCheck(callback) {
-        DBMS.getConsistencyCheckResult((err, checkResult) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getConsistencyCheckResultNew().then(checkResult => {
             checkResult.errors.forEach(CommonUtils.consoleErr);
             callback(checkResult);
-        });
+        }).catch(Utils.handleError);
     }
 
     function stateInit() {
@@ -182,19 +182,15 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function onDatabaseLoad() {
-        PermissionInformer.refresh((err) => {
-            if (err) { Utils.handleError(err); return; }
-
-            PermissionInformer.isAdmin((err2, isAdmin) => {
-                if (err2) { Utils.handleError(err2); return; }
-                
+        PermissionInformer.refreshNew().then(() => {
+            PermissionInformer.isAdminNew().then((isAdmin) => {
                 $.datetimepicker.setDateFormatter('moment');
 
                 let button;
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Timeline';
+                const firstTab = 'Overview';
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
@@ -273,8 +269,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 //                FileUtils.makeNewBase();
 //                state.currentView.refresh();
                 //                                runTests();
-            });
-        });
+            }).catch(Utils.handleError);
+        }).catch(Utils.handleError);
     }
     
     function onBaseLoaded(err3) {

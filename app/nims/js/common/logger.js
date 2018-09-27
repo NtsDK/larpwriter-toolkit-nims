@@ -261,10 +261,19 @@ See the License for the specific language governing permissions and
                         }
 
                         const beginTime = new Date().toString();
-                        this.log(
-                            userName, beginTime, funcName, !!filteredApi[funcName].rewrite,
-                            filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify(['begin'])
-                        );
+                        this.logNew({
+                            userName, 
+                            time: beginTime, 
+                            funcName, 
+                            rewrite: !!filteredApi[funcName].rewrite, 
+                            params: filteredApi[funcName].ignoreParams ? [] : arr, 
+                            status: JSON.stringify(['begin'])
+                        });
+                        // this.log(
+                        //     userName, beginTime, funcName, !!filteredApi[funcName].rewrite,
+                        //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify(['begin'])
+                        // );
+
 
                         const callbackOverride = function () {
                             const endTime = new Date().toString();
@@ -280,11 +289,19 @@ See the License for the specific language governing permissions and
                             } else {
                                 text = 'OK';
                             }
-                            this.log(
-                                userName, endTime, funcName, !!filteredApi[funcName].rewrite,
-                                filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify([beginTime,
-                                    text])
-                            );
+                            // this.log(
+                            //     userName, endTime, funcName, !!filteredApi[funcName].rewrite,
+                            //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify([beginTime,
+                            //         text])
+                            // );
+                            this.logNew({
+                                userName, 
+                                time: endTime, 
+                                funcName, 
+                                rewrite: !!filteredApi[funcName].rewrite, 
+                                params: filteredApi[funcName].ignoreParams ? [] : arr, 
+                                status: JSON.stringify([beginTime, text])
+                            });
                             callback(...arguments);
                         }.bind(this);
                         arguments[callbackPos] = callbackOverride;
@@ -302,25 +319,19 @@ See the License for the specific language governing permissions and
                 const oldFun = LocalDBMS.prototype[funcName];
                 LocalDBMS.prototype[funcName] = function () {
                     try {
-                        // if(funcName.endsWith('New') && funcName !== 'logNew'){
-                        //     const callView = {
-                        //         func: funcName,
-                        //         args: arguments[0],
-                        //     };
-                        //     arr.push(callView);
-                        //     clearTimeout(timeout);
-                        //     timeout = setTimeout(() => {
-                        //         console.log(JSON.stringify(arr));
-                        //     }, 1000);
-                        // }
-                        // console.log(callView);
+                        const exclude = ['_init'];
+                        if(!funcName.endsWith('New') && !R.contains(funcName, exclude)){
+                            console.error('Old API call', funcName);
+                            // console.trace('Old API call', funcName);
+                        }
                         return oldFun.apply(this, arguments);
                     } catch (err) {
                         const { length } = arguments;
                         const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
                         const callback = arguments[callbackPos];
                         console.error(funcName, err);
-                        return callback(err);
+                        throw err;
+                        // return callback(err);
                     }
                 };
             });

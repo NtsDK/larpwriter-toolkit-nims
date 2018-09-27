@@ -176,8 +176,11 @@ See the License for the specific language governing permissions and
         }
         exports.getEntityNamesArrayNew = ({type, editableOnly}={}) => {
             return new Promise((resolve, reject) => {
-                function processNames(err, names) {
-                    if (err) { Utils.handleError(err); return; }
+                // function processNames(err, names) {
+                //     if (err) { Utils.handleError(err); return; }
+                // }
+                // DBMS.getEntityNamesArray(type, processNames);
+                DBMS.getEntityNamesArrayNew({type}).then( names => {
                     const newNames = [];
                     names.forEach((name) => {
                         newNames.push({
@@ -187,8 +190,7 @@ See the License for the specific language governing permissions and
                         });
                     });
                     resolve(newNames);
-                }
-                DBMS.getEntityNamesArray(type, processNames);
+                }).catch(Utils.handleError);
             });
         };
 
@@ -211,4 +213,25 @@ See the License for the specific language governing permissions and
             return Promise.resolve(map);
         };
     }
+
+    Object.keys(exports).forEach((funcName) => {
+        const oldFun = exports[funcName];
+        exports[funcName] = function () {
+            try {
+                const exclude = ['_init'];
+                if(!funcName.endsWith('New') && !R.contains(funcName, exclude)){
+                    console.error('Old PermInfo call', funcName);
+                    // console.trace('Old API call', funcName);
+                }
+                return oldFun.apply(null, arguments);
+            } catch (err) {
+                const { length } = arguments;
+                const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
+                const callback = arguments[callbackPos];
+                console.error(funcName, err);
+                return callback(err);
+            }
+
+        };
+    });
 })(this.PermissionInformer = {}, MODE);
