@@ -325,13 +325,13 @@ See the License for the specific language governing permissions and
         DBMS.setMetaInfoStringNew({name: 'name', value: event.target.value}).catch(Utils.handleError);
     }
     function updateTime(dp, input) {
-        DBMS.setMetaInfoDate('date', input.val(), Utils.processError());
+        DBMS.setMetaInfoDateNew({name: 'date', value: input.val()}).catch(Utils.handleError);
     }
     function updatePreGameDate(dp, input) {
-        DBMS.setMetaInfoDate('preGameDate', input.val(), Utils.processError());
+        DBMS.setMetaInfoDateNew({name: 'preGameDate', value: input.val()}).catch(Utils.handleError);
     }
     function updateDescr(event) {
-        DBMS.setMetaInfoString('description', event.target.value, Utils.processError());
+        DBMS.setMetaInfoStringNew({name: 'description', value: event.target.value}).catch(Utils.handleError);
     }
 
     function customTooltips(tooltip) {
@@ -399,5 +399,10 @@ See the License for the specific language governing permissions and
         //        tooltipEl.style.fontSize = tooltip.fontSize;
         //        tooltipEl.style.fontStyle = tooltip._fontStyle;
         tooltipEl.style.padding = `${tooltip.yPadding}px ${tooltip.xPadding}px`;
+    }
+
+    exports.test = () => {
+        getEl('gameNameInput').dispatchEvent(new Event('change'));
+        queryEl(`${root}.game-description-area`).dispatchEvent(new Event('change'));
     }
 })(this.Overview = {});

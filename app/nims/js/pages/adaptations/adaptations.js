@@ -369,20 +369,36 @@ See the License for the specific language governing permissions and
 
     // eslint-disable-next-line no-var,vars-on-top
     var onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
-        DBMS.setEventOriginProperty(storyName, myInput.eventIndex, 'time', input.val(), Utils.processError());
+        DBMS.setEventOriginPropertyNew({
+            storyName, 
+            index: myInput.eventIndex, 
+            property: 'time', 
+            value: input.val()
+        }).catch(Utils.handleError);
         removeClass(myInput, 'defaultDate');
     });
 
     function onChangeOriginText(event) {
         const dataKey = JSON.parse(event.target.dataKey);
         const text = event.target.value;
-        DBMS.setEventOriginProperty(dataKey[0], dataKey[1], 'text', text, Utils.processError());
+        DBMS.setEventOriginPropertyNew({
+            storyName: dataKey[0],
+            index: dataKey[1], 
+            property: 'text', 
+            value: text
+        }).catch(Utils.handleError);
     }
 
     function onChangeAdaptationText(event) {
         const dataKey = JSON.parse(event.target.dataKey);
         const text = event.target.value;
-        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'text', text, Utils.processError());
+        DBMS.setEventAdaptationPropertyNew({
+            storyName: dataKey[0],
+            eventIndex: dataKey[1], 
+            characterName: dataKey[2],
+            type: 'text', 
+            value: text
+        }).catch(Utils.handleError);
     }
 
     function getIconClass(object) {

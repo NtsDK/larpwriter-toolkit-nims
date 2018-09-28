@@ -193,14 +193,16 @@ See the License for the specific language governing permissions and
         addEl(queryEl('body'), queryEl('.show-diff-dialog'));
         $(queryEl('.show-diff-dialog')).modal('show');
         
-        DBMS.getLog(0, {
-            action:"setMetaInfo",
-            date:"",
-            params:"",
-            status:"OK",
-            user:""
-        }, (err, data) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getLogNew({
+            pageNumber: 0, 
+            filter: {
+                action:"setMetaInfo",
+                date:"",
+                params:"",
+                status:"OK",
+                user:""
+            }
+        }).then((data) => {
             const el = clearEl(queryEl('.show-diff-dialog .container-fluid'));
             
             addEls(el, R.aperture(2, data.requestedLog).map(pair => {
@@ -217,7 +219,7 @@ See the License for the specific language governing permissions and
                 
                 ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
                 ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
-//                const diff = JsDiff.diffWordsWithSpace(firstText, lastText);
+    //                const diff = JsDiff.diffWordsWithSpace(firstText, lastText);
                 const diff = JsDiff.diffWordsWithSpace(lastText, firstText);
                 const els = diff.map( part =>
                     [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => {
@@ -227,32 +229,33 @@ See the License for the specific language governing permissions and
                 
                 return row;
             }));
-        })
+        }).catch(Utils.handleError);
+        
     };
     
     const getAllSubsets = theArray => theArray.reduce((subsets, value) => 
         subsets.concat(subsets.map(set => [value,...set])),[[]]);
     
     exports.addGroupTestingData = () => {
-        DBMS.createProfileItem('character', 'text', 'text', 0, () => '');
-        DBMS.createProfileItem('character', 'string', 'string', 0, () => '');
-        DBMS.createProfileItem('character', 'checkbox', 'checkbox', 0, () => '');
-        DBMS.createProfileItem('character', 'number', 'number', 0, () => '');
-        DBMS.createProfileItem('character', 'enum', 'enum', 0, () => '');
-        DBMS.createProfileItem('character', 'multiEnum', 'multiEnum', 0, () => '');
+        DBMS.createProfileItemNew({type: 'character', name: 'text', itemType: 'text', selectedIndex:0});
+        DBMS.createProfileItemNew({type: 'character', name: 'string', itemType: 'string', selectedIndex:0});
+        DBMS.createProfileItemNew({type: 'character', name: 'checkbox', itemType: 'checkbox', selectedIndex:0});
+        DBMS.createProfileItemNew({type: 'character', name: 'number', itemType: 'number', selectedIndex:0});
+        DBMS.createProfileItemNew({type: 'character', name: 'enum', itemType: 'enum', selectedIndex:0});
+        DBMS.createProfileItemNew({type: 'character', name: 'multiEnum', itemType: 'multiEnum', selectedIndex:0});
         
-        DBMS.updateDefaultValue("character","enum","1,2,3", () => '');
-        DBMS.updateDefaultValue("character","multiEnum","1,2,3,4", () => '');
+        DBMS.updateDefaultValueNew({type: "character", profileItemName:"enum", value: "1,2,3"});
+        DBMS.updateDefaultValueNew({type: "character", profileItemName:"multiEnum", value: "1,2,3,4"});
         
         
         const makeChar = (name, profileItem, value) => {
-            DBMS.createProfile("character", name, () => '');
-            DBMS.updateProfileField("character", name, profileItem, profileItem, value, () => '');
+            DBMS.createProfileNew({type: "character", characterName: name});
+            DBMS.updateProfileFieldNew({type: "character", characterName: name, fieldName: profileItem, itemType: profileItem, value});
         }
         
         const makeGroup = (name, profileItem, obj) => {
-            DBMS.createGroup(name, () => '');
-            DBMS.saveFilterToGroup(name, [R.merge(obj, {"type":profileItem,"name":"profile-" + profileItem})], () => '');
+            DBMS.createGroupNew({groupName: name});
+            DBMS.saveFilterToGroupNew({groupName: name, filterModel: [R.merge(obj, {"type":profileItem,"name":"profile-" + profileItem})]});
         }
 //        
 //        
@@ -275,6 +278,7 @@ See the License for the specific language governing permissions and
         const multiEnumValues2 = [1,2,3,4];
         const multiEnumConditions = ['every','equal'];
         getAllSubsets(multiEnumValues2).map(value => makeChar('char multiEnum ' + value.join(','), 'multiEnum', String(value.join(','))));
+
         multiEnumConditions.map(condition => {
             getAllSubsets(multiEnumValues).map( arr => {
                 const obj = arr.reduce( (acc, val) => {

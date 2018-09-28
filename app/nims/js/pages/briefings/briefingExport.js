@@ -208,19 +208,20 @@ See the License for the specific language governing permissions and
     }
 
     function getBriefingData(callback) {
-        DBMS.getBriefingData(getSelectedUsers(), getSelectedStories(), getEl('exportOnlyFinishedStories').checked, (err, briefingData) => {
-            if (err) { Utils.handleError(err); return; }
-            // some postprocessing
-            DBMS.getProfileStructure('character', (err2, characterProfileStructure) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getProfileStructure('player', (err3, playerProfileStructure) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    postprocessCheckboxes(briefingData, characterProfileStructure, 'profileInfo-', 'profileInfoArray');
-                    postprocessCheckboxes(briefingData, playerProfileStructure, 'playerInfo-', 'playerInfoArray');
-                    callback(null, briefingData);
-                });
-            });
-        });
+        Promise.all([
+            DBMS.getBriefingDataNew({
+                selCharacters: getSelectedUsers(), 
+                selStories: getSelectedStories(), 
+                exportOnlyFinishedStories: getEl('exportOnlyFinishedStories').checked
+            }),
+            DBMS.getProfileStructureNew({type: 'character'}),
+            DBMS.getProfileStructureNew({type: 'player'}),
+        ]).then(results => {
+            const [briefingData, characterProfileStructure, playerProfileStructure] = results;
+            postprocessCheckboxes(briefingData, characterProfileStructure, 'profileInfo-', 'profileInfoArray');
+            postprocessCheckboxes(briefingData, playerProfileStructure, 'playerInfo-', 'playerInfoArray');
+            callback(null, briefingData);
+        }).catch(Utils.handleError);
     }
 
     function exportDocxByTemplate(template) {

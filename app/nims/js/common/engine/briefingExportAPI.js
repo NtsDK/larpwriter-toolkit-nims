@@ -96,8 +96,7 @@ See the License for the specific language governing permissions and
                         const that = this;
                         selCharacters = selCharacters || R.keys(this.database.Characters);
                         selStories = selStories || R.keys(this.database.Stories);
-                        that.getAllCharacterGroupTexts((err, groupTexts) => {
-                            if (err) { reject(err); return; }
+                        that.getAllCharacterGroupTextsNew().then((groupTexts) => {
                             _getBriefingData(
                                 that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories,
                                 (err, res) => {
@@ -108,7 +107,7 @@ See the License for the specific language governing permissions and
                                     }
                                 }
                             );
-                        });
+                        }).catch(reject);
                     }
                 );
             });

@@ -15,10 +15,14 @@ See the License for the specific language governing permissions and
 'use strict';
 
 ((exports) => {
-    exports.makeNewBase = (callback) => () => {
-        Utils.confirm(getL10n('utils-new-base-warning'), () => {
-            DBMS.setDatabase(CommonUtils.clone(EmptyBase.data), callback);
-//            TestUtils.addGroupTestingData();
+    exports.makeNewBase = () => {
+        return new Promise((resolve, reject) => {
+            Utils.confirm(getL10n('utils-new-base-warning'), () => {
+                DBMS.setDatabaseNew({database:CommonUtils.clone(EmptyBase.data)}).then(() => {
+                    resolve(true);
+                    // TestUtils.addGroupTestingData();
+                }).catch(reject);
+            }, () => resolve(false));
         });
     };
 
@@ -26,25 +30,28 @@ See the License for the specific language governing permissions and
         window.open('extras/doc/nims.html');
     };
 
-    exports.readSingleFile = (callback) => (evt) => {
-        // Retrieve the first (and only!) File from the FileList object
-        const f = evt.target.files[0];
-
-        if (f) {
-            const r = new FileReader();
-            r.onload = (e) => {
-                const contents = e.target.result;
-                try {
-                    const database = JSON.parse(contents);
-                    DBMS.setDatabase(database, callback);
-                } catch (err) {
-                    callback(err);
-                }
-            };
-            r.readAsText(f);
-        } else {
-            Utils.alert(getL10n('utils-base-file-loading-error'));
-        }
+    exports.readSingleFile = (evt) => {
+        return new Promise((resolve, reject) => {
+            // Retrieve the first (and only!) File from the FileList object
+            const f = evt.target.files[0];
+    
+            if (f) {
+                const r = new FileReader();
+                r.onload = (e) => {
+                    const contents = e.target.result;
+                    try {
+                        const database = JSON.parse(contents);
+                        DBMS.setDatabaseNew({database}).then(resolve, reject);
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                r.readAsText(f);
+            } else {
+                Utils.alert(getL10n('utils-base-file-loading-error'));
+                reject();
+            }
+        });
     };
 
     exports.saveFile = () => {

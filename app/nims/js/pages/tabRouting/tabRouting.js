@@ -44,6 +44,9 @@ function RoutingTabTmpl(exports, opts) {
     exports.refresh = () => {
         state.currentView.refresh();
     };
+    exports.test = () => {
+        state.currentView.test();
+    };
 }
 
 RoutingTabTmpl(this.Briefings = {}, {

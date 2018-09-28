@@ -41,22 +41,22 @@ See the License for the specific language governing permissions and
             clearError(el);
             $(el).modal('show');
             const focusable = qee(body, '.focusable');
-            if(focusable !== null){
+            if (focusable !== null) {
                 setTimeout(() => focusable.focus(), 500);
             }
         };
         const onenterable = qees(body, '.onenterable');
-        if(onenterable.length !== 0){
+        if (onenterable.length !== 0) {
             onenterable.forEach(listenOnEnter(R.__, onAction(el)));
         }
         el.hideDlg = () => $(el).modal('hide');
         listen(qee(el, '.on-cancel-button'), 'click', () => {
             el.hideDlg()
-            if(opts.onCancel) opts.onCancel();
+            if (opts.onCancel) opts.onCancel();
         });
         listen(qee(el, '.on-close-button'), 'click', () => {
             el.hideDlg()
-            if(opts.onCancel) opts.onCancel();
+            if (opts.onCancel) opts.onCancel();
         });
         addEl(qe(root), el);
         return el;
@@ -115,37 +115,37 @@ See the License for the specific language governing permissions and
             }));
             return groupEl;
         }));
-        if(setSize) {
+        if (setSize) {
             setAttr(selector, 'size', counter);
         }
     };
 
-//    exports.showSelectedEls = classKey => (event) => {
-//        const t1 = performance.now();
-//        const el = event.target;
-//        let els, i, j;
-//        for (i = 0; i < el.options.length; i += 1) {
-//            els = getEls(classKey + i);
-//            for (j = 0; j < els.length; j++) {
-//                hideEl(els[j], !el.options[i].selected);
-//            }
-//        }
-//        console.log('showSelectedEls time ' + (performance.now() - t1) + ' ms');
-//    };
-//    
-//    exports.showSelectedEls2 = (root, classKey) => (event) => {
-//        const t1 = performance.now();
-//        const el = event.target;
-//        let els, i, j;
-//        for (i = 0; i < el.options.length; i += 1) {
-//            els = queryEls(root + ' .' + classKey + i);
-//            for (j = 0; j < els.length; j++) {
-//                hideEl(els[j], !el.options[i].selected);
-//            }
-//        }
-//        console.log('showSelectedEls2 time ' + (performance.now() - t1) + ' ms');
-//    };
-    
+    //    exports.showSelectedEls = classKey => (event) => {
+    //        const t1 = performance.now();
+    //        const el = event.target;
+    //        let els, i, j;
+    //        for (i = 0; i < el.options.length; i += 1) {
+    //            els = getEls(classKey + i);
+    //            for (j = 0; j < els.length; j++) {
+    //                hideEl(els[j], !el.options[i].selected);
+    //            }
+    //        }
+    //        console.log('showSelectedEls time ' + (performance.now() - t1) + ' ms');
+    //    };
+    //    
+    //    exports.showSelectedEls2 = (root, classKey) => (event) => {
+    //        const t1 = performance.now();
+    //        const el = event.target;
+    //        let els, i, j;
+    //        for (i = 0; i < el.options.length; i += 1) {
+    //            els = queryEls(root + ' .' + classKey + i);
+    //            for (j = 0; j < els.length; j++) {
+    //                hideEl(els[j], !el.options[i].selected);
+    //            }
+    //        }
+    //        console.log('showSelectedEls2 time ' + (performance.now() - t1) + ' ms');
+    //    };
+
     exports.showSelectedEls3 = (root, classKey, attr) => (event) => {
         const t1 = performance.now();
         const el = event.target;
@@ -174,11 +174,11 @@ See the License for the specific language governing permissions and
     var filterOptions = sel => (event) => {
         let val = event.target.value;
         let i, opt;
-//        val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
+        //        val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
         val = val.toLowerCase();
         for (i = 0; i < sel.options.length; i += 1) {
             opt = sel.options[i];
-//            const isVisible = opt.innerHTML.toLowerCase().search(val) !== -1;
+            //            const isVisible = opt.innerHTML.toLowerCase().search(val) !== -1;
             const isVisible = opt.innerHTML.toLowerCase().indexOf(val) !== -1;
             if (!isVisible) {
                 opt.selected = false;
@@ -343,7 +343,13 @@ See the License for the specific language governing permissions and
     var onChangePersonalTimeDelegate = (event) => {
         const dataKey = JSON.parse(event.target.dataKey);
         const time = event.target.value;
-        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'time', time, Utils.processError());
+        DBMS.setEventAdaptationPropertyNew({
+            storyName: dataKey[0],
+            eventIndex: dataKey[1], 
+            characterName: dataKey[2], 
+            type: 'time', 
+            value: time
+        }).catch(Utils.handleError);
     };
 
     exports.populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
@@ -359,11 +365,17 @@ See the License for the specific language governing permissions and
     exports.onChangeAdaptationReadyStatus2 = callback => (event) => {
         const dataKey = JSON.parse(event.target.id);
         const value = !hasClass(event.target, 'btn-primary');
-        DBMS.setEventAdaptationProperty(dataKey[0], dataKey[1], dataKey[2], 'ready', value, (err) => {
-            if (err) { Utils.handleError(err); return; }
+
+        DBMS.setEventAdaptationPropertyNew({
+            storyName: dataKey[0],
+            eventIndex: dataKey[1], 
+            characterName: dataKey[2], 
+            type: 'ready', 
+            value
+        }).then( () => {
             setClassByCondition(event.target, 'btn-primary', value);
             callback(value);
-        });
+        }).catch(Utils.handleError);
     };
 
     exports.makePanelCore = (title, content) => {
@@ -388,21 +400,21 @@ See the License for the specific language governing permissions and
         let value;
         return addEls(container, profileStructure.filter(element => element.doExport).map((element) => {
             switch (element.type) {
-            case 'text':
-                value = addClass(makeEl('span'), 'briefingTextSpan');
-                addEl(value, makeText(profile[element.name]));
-                break;
-            case 'enum':
-            case 'multiEnum':
-            case 'number':
-            case 'string':
-                value = makeText(profile[element.name]);
-                break;
-            case 'checkbox':
-                value = makeText(constL10n(Constants[profile[element.name]]));
-                break;
-            default:
-                throw new Error(`Unexpected type ${element.type}`);
+                case 'text':
+                    value = addClass(makeEl('span'), 'briefingTextSpan');
+                    addEl(value, makeText(profile[element.name]));
+                    break;
+                case 'enum':
+                case 'multiEnum':
+                case 'number':
+                case 'string':
+                    value = makeText(profile[element.name]);
+                    break;
+                case 'checkbox':
+                    value = makeText(constL10n(Constants[profile[element.name]]));
+                    break;
+                default:
+                    throw new Error(`Unexpected type ${element.type}`);
             }
             const row = qmte('.profile-editor-row-tmpl');
             addEl(qee(row, '.profile-item-name'), makeText(element.name));
@@ -432,26 +444,26 @@ See the License for the specific language governing permissions and
 
     exports.updateEntitySetting = (settingsPath, name) => {
         const settings = DBMS.getSettings();
-        if(settings[settingsPath] === undefined) {
+        if (settings[settingsPath] === undefined) {
             settings[settingsPath] = {};
         }
         settings[settingsPath].name = name;
     };
-    
+
     exports.scrollTo = (container, element) => {
         const domRect = element.getBoundingClientRect();
         const scrollTop = container.scrollTop;
         const scrollBottom = container.scrollTop + container.clientHeight;
         const condition = element.offsetTop < scrollTop || (element.offsetTop + domRect.height) > scrollBottom;
-        
-        if(condition){
+
+        if (condition) {
             const from = container.scrollTop;
-            const to = element.offsetTop - container.clientHeight/2 + domRect.height/2;
-            
+            const to = element.offsetTop - container.clientHeight / 2 + domRect.height / 2;
+
             Utils.animate({
                 duration: 500,
                 timing: Timing.makeEaseInOut(Timing.poly(4)),
-                draw: function(progress) {
+                draw: function (progress) {
                     container.scrollTop = from + (to - from) * progress;
                 }
             });

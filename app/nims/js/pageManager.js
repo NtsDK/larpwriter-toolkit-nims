@@ -97,8 +97,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
-            DBMS.setDatabaseNew({database: DemoBase.data}).then( res => onBaseLoaded()).catch(onBaseLoaded);
-            // DBMS.setDatabase(DemoBase.data, onBaseLoaded);
+            DBMS.setDatabaseNew({database: DemoBase.data}).then( onBaseLoaded, Utils.handleError);
             // runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
             const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
@@ -146,7 +145,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             
             listen(qee(dbDialog, '.on-action-button'), 'click', () => {
                 const base = getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
-                DBMS.setDatabase(base, dialogOnBaseLoad);
+                DBMS.setDatabaseNew({database: base}).then(() => {
+                    dialogOnBaseLoad();
+                }).catch(Utils.handleError);
             });
             
             L10n.localizeStatic(dbDialog);
@@ -190,7 +191,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Overview';
+                const firstTab = 'Briefings';
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
@@ -240,17 +241,30 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 addEl(state.navigation, makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
                 if (MODE === 'Standalone') {
-                    addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', FileUtils.makeNewBase(onBaseLoaded), btnOpts));
+                    addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', () => {
+                        FileUtils.makeNewBase().then((confirmed) => {
+                            if(confirmed){
+                                onBaseLoaded();
+                            }
+                        }).catch(Utils.handleError);
+                    }, btnOpts));
                 }
 //                addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
                 //                addEl(state.navigation, makeL10nButton());
 
-               addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-               addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
-//                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
+                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'testTab', () => {
+                    if(state.currentView.test){
+                        state.currentView.test();
+                    } else {
+                        console.error('This tab has no tests')
+                    }
+                }, btnOpts));
+                // addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
                 if (MODE === 'NIMS_Server') {
                     addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
                 }
@@ -287,7 +301,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
     
     function initBaseLoadBtn(button, input, onBaseLoaded) {
-        button.addEventListener('change', FileUtils.readSingleFile(onBaseLoaded), false);
+        button.addEventListener('change', (evt) => {
+            FileUtils.readSingleFile(evt).then(onBaseLoaded, Utils.handleError);
+        }, false);
         button.addEventListener('click', (e) => {
             input.value = '';
             input.click();

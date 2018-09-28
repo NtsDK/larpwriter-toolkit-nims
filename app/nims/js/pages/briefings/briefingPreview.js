@@ -114,17 +114,6 @@ See the License for the specific language governing permissions and
                 $('#briefingCharacter').select2(data).val(characterName).trigger('change');
             }
         }).catch(Utils.handleError);
-
-        // DBMS.getProfileStructure('character', (err, characterProfileStructure) => {
-        //     if (err) { Utils.handleError(err); return; }
-        //     DBMS.getProfileStructure('player', (err2, playerProfileStructure) => {
-        //         if (err2) { Utils.handleError(err2); return; }
-        //         PermissionInformer.getEntityNamesArray('character', false, (err3, names) => {
-        //             if (err3) { Utils.handleError(err3); return; }
-                    
-        //         });
-        //     });
-        // });
     };
 
     function buildContentDelegate(event) {
@@ -321,46 +310,44 @@ See the License for the specific language governing permissions and
     }
 
     function showEventsByTime(content, characterName, userStoryNamesMap, flags) {
-        DBMS.getCharacterEventsByTime(characterName, (err, allEvents) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getCharacterEventsByTimeNew({characterName}).then((allEvents) => {
+            
             const adaptations = allEvents.map(event => ({
                 characterName,
                 storyName: event.storyName
             }));
 
-            PermissionInformer.areAdaptationsEditable(adaptations, (err2, areAdaptationsEditable) => {
-                if (err2) { Utils.handleError(err2); return; }
-
-                DBMS.getMetaInfo((err3, metaInfo) => {
-                    if (err3) { Utils.handleError(err3); return; }
-
-                    const opts = {
-                        userStoryNamesMap,
-                        areAdaptationsEditable,
-                        showStoryName: true,
-                        metaInfo
-                    };
-
-                    const splitConstant = 5;
-
-                    addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
-                        const eventContent = addEls(makeEl('div'), subPart.map((event, j) => {
-                            opts.index = (i * splitConstant) + 1 + j;
-                            return showEvent(event, characterName, opts, flags);
-                        }));
-
-                        let name;
-                        if (flags.disableHeaders) {
-                            name = makeText(strFormat(getL10n('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
-                        } else {
-                            name = addEls(makeEl('div'), subPart.map(event => getEventHeaderDiv(event, true)));
-                        }
-                        return makePanel(name, eventContent, flags.hideAllPanels);
+            Promise.all([
+                PermissionInformer.areAdaptationsEditableNew({adaptations}),
+                DBMS.getMetaInfoNew()
+            ]).then(results => {
+                const [areAdaptationsEditable, metaInfo] = results;
+                const opts = {
+                    userStoryNamesMap,
+                    areAdaptationsEditable,
+                    showStoryName: true,
+                    metaInfo
+                };
+    
+                const splitConstant = 5;
+    
+                addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
+                    const eventContent = addEls(makeEl('div'), subPart.map((event, j) => {
+                        opts.index = (i * splitConstant) + 1 + j;
+                        return showEvent(event, characterName, opts, flags);
                     }));
-                    onBuildContentFinish();
-                });
-            });
-        });
+    
+                    let name;
+                    if (flags.disableHeaders) {
+                        name = makeText(strFormat(getL10n('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
+                    } else {
+                        name = addEls(makeEl('div'), subPart.map(event => getEventHeaderDiv(event, true)));
+                    }
+                    return makePanel(name, eventContent, flags.hideAllPanels);
+                }));
+                onBuildContentFinish();
+            }).catch(Utils.handleError);
+        }).catch(Utils.handleError);
     }
 
     function getStoryHeader(elem, i, disableHeaders) {
@@ -459,6 +446,6 @@ See the License for the specific language governing permissions and
         const {
             storyName, characterName, value
         } = event.target;
-        DBMS.updateCharacterInventory(storyName, characterName, value, Utils.processError());
+        DBMS.updateCharacterInventoryNew({storyName, characterName, inventory: value}).catch(Utils.handleError);
     }
 })(this.BriefingPreview = {});

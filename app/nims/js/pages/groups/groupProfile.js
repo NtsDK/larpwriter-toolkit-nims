@@ -287,12 +287,11 @@ See the License for the specific language governing permissions and
                 if (updateSettingsFlag) {
                     UI.updateEntitySetting(settingsPath, name);
                 }
-                PermissionInformer.refresh((err2) => {
-                    if (err2) { Utils.handleError(err2); return; }
+                PermissionInformer.refreshNew().then(() => {
                     input.value = '';
                     dialog.hideDlg();
                     refresh();
-                });
+                }).catch(Utils.handleError);
             }
         });
     };
@@ -322,15 +321,14 @@ See the License for the specific language governing permissions and
         Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
             DBMS.removeGroup(name, (err) => {
                 if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err2) => {
-                    if (err2) { Utils.handleError(err2); return; }
+                PermissionInformer.refreshNew().then(() => {
                     if(btn.nextName !== undefined){
                         UI.updateEntitySetting(settingsPath, btn.nextName);
                     } else if(btn.prevName !== undefined) {
                         UI.updateEntitySetting(settingsPath, btn.prevName);
                     }
                     refresh();
-                });
+                }).catch(Utils.handleError);
             });
         });
     };
