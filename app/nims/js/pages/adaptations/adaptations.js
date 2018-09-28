@@ -37,39 +37,38 @@ See the License for the specific language governing permissions and
         clearEl(getEl('events-eventSelector'));
         clearEl(getEl('personalStories'));
 
-        PermissionInformer.getEntityNamesArray('story', false, (err, allStoryNames) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getFilteredStoryNames(getEl('finishedStoryCheckbox').checked, (err2, storyNames) => {
-                if (err2) { Utils.handleError(err2); return; }
-                
-                showEl(qe(`${root} .alert`), storyNames.length === 0);
-                showEl(qe(`${root} .adaptations-content`), storyNames.length !== 0);
-                
-                if (storyNames.length <= 0) { return; }
-
-                const selectedStoryName = getSelectedStoryName(storyNames);
-
-                const filteredArr = R.indexBy(R.prop('storyName'), storyNames);
-                
-                const storyNames2 = allStoryNames.filter(story => R.contains(story.value, R.keys(filteredArr))).map( story => {
-                    const elem = filteredArr[story.value];
-                    elem.displayName = story.displayName;
-                    elem.value = story.value;
-                    return elem;
-                });
-
-                let option;
-                storyNames2.forEach((storyName) => {
-                    option = addEl(makeEl('option'), (makeText(storyName.displayName)));
-                    addClass(option, getIconClass(storyName));
-                    setProp(option, 'selected', storyName.value === selectedStoryName);
-                    setProp(option, 'storyInfo', storyName.value);
-                    addEl(selector, option);
-                });
-                setAttr(selector, 'size', Math.min(storyNames2.length, 10));
-                showPersonalStories(selectedStoryName);
+        Promise.all([
+            PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}),
+            DBMS.getFilteredStoryNamesNew({showOnlyUnfinishedStories: getEl('finishedStoryCheckbox').checked})
+        ]).then(results => {
+            const [allStoryNames, storyNames] = results;
+            showEl(qe(`${root} .alert`), storyNames.length === 0);
+            showEl(qe(`${root} .adaptations-content`), storyNames.length !== 0);
+            
+            if (storyNames.length <= 0) { return; }
+    
+            const selectedStoryName = getSelectedStoryName(storyNames);
+    
+            const filteredArr = R.indexBy(R.prop('storyName'), storyNames);
+            
+            const storyNames2 = allStoryNames.filter(story => R.contains(story.value, R.keys(filteredArr))).map( story => {
+                const elem = filteredArr[story.value];
+                elem.displayName = story.displayName;
+                elem.value = story.value;
+                return elem;
             });
-        });
+    
+            let option;
+            storyNames2.forEach((storyName) => {
+                option = addEl(makeEl('option'), (makeText(storyName.displayName)));
+                addClass(option, getIconClass(storyName));
+                setProp(option, 'selected', storyName.value === selectedStoryName);
+                setProp(option, 'storyInfo', storyName.value);
+                addEl(selector, option);
+            });
+            setAttr(selector, 'size', Math.min(storyNames2.length, 10));
+            showPersonalStories(selectedStoryName);
+        }).catch(Utils.handleError);
     };
 
     function updateAdaptationSelectorDelegate(event) {
@@ -200,35 +199,29 @@ See the License for the specific language governing permissions and
     }
 
     function showPersonalStories(storyName) {
-        DBMS.getMetaInfo((err, metaInfo) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getStory(storyName, (err2, story) => {
-                if (err2) { Utils.handleError(err2); return; }
-                PermissionInformer.isEntityEditable('story', storyName, (err3, isStoryEditable) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    PermissionInformer.getEntityNamesArray('character', false, (err4, allCharacters) => {
-                        if (err4) { Utils.handleError(err4); return; }
-
-                        const characterNames = R.keys(story.characters);
-                        const adaptations = characterNames.map(characterName => ({
-                            characterName,
-                            storyName
-                        }));
-                        PermissionInformer.areAdaptationsEditable(adaptations, (err5, areAdaptationsEditable) => {
-                            if (err5) { Utils.handleError(err5); return; }
-                            story.events.forEach((item, i) => (item.index = i));
-                            buildAdaptationInterface(
-                                storyName, characterNames, story.events, areAdaptationsEditable,
-                                metaInfo
-                            );
-                            updateAdaptationSelector(story, allCharacters);
-                            Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
-                            Utils.enable(exports.content, 'notEditable', false);
-                        });
-                    });
-                });
-            });
-        });
+        Promise.all([
+            DBMS.getMetaInfoNew(),
+            DBMS.getStoryNew({storyName}),
+            PermissionInformer.isEntityEditableNew({type: 'story', name: storyName}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+        ]).then(results => {
+            const [metaInfo, story, isStoryEditable, allCharacters] = results;
+            const characterNames = R.keys(story.characters);
+            const adaptations = characterNames.map(characterName => ({
+                characterName,
+                storyName
+            }));
+            PermissionInformer.areAdaptationsEditableNew({adaptations}).then( areAdaptationsEditable => {
+                story.events.forEach((item, i) => (item.index = i));
+                buildAdaptationInterface(
+                    storyName, characterNames, story.events, areAdaptationsEditable,
+                    metaInfo
+                );
+                updateAdaptationSelector(story, allCharacters);
+                Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
+                Utils.enable(exports.content, 'notEditable', false);
+            }).catch(Utils.handleError);
+        }).catch(Utils.handleError);
     }
 
     function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {

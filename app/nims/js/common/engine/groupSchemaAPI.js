@@ -261,11 +261,8 @@ See the License for the specific language governing permissions and
 
         LocalDBMS.prototype.getGroupSchemasNew = function () {
             return new Promise((resolve, reject) => {
-
                 const that = this;
-    
-                this.getGroupCharacterSets((err, groupCharacterSets) => {
-                    if (err) { reject(err); return; }
+                this.getGroupCharacterSetsNew().then((groupCharacterSets) => {
                     const schemas = {};
                     const groups = that.database.Groups;
     
@@ -280,7 +277,7 @@ See the License for the specific language governing permissions and
                     );
     
                     resolve(schemas);
-                });
+                }).catch(reject);
             });
         };
     }

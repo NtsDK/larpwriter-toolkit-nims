@@ -30,8 +30,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        DBMS.getRoleGridInfo((err, data2) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getRoleGridInfoNew().then((data2) => {
             groupingOrder = [];
             buttons = [];
             
@@ -39,7 +38,7 @@ See the License for the specific language governing permissions and
             showEl(qe(`${root} .alert.no-characters`), data2.profileData.length === 0);
             
             showEl(qe(`${root} > .container-fluid`), data2.profileData.length !== 0 && data2.characterProfileStructure.length !== 0);
-
+    
             // hack - dynamically replace checkbox with enum
             const checkboxes = data2.characterProfileStructure.filter(el => el.type === 'checkbox').map(R.prop('name'));
             data2.characterProfileStructure = data2.characterProfileStructure.map((el) => {
@@ -61,11 +60,11 @@ See the License for the specific language governing permissions and
                     el.character[name] = L10n.get('constant', el.character[name] === true ? 'yes' : 'no');
                 });
             });
-
+    
             const sorter = CommonUtils.charOrdAFactory(a => a.toLowerCase());
             const filter = el => el.type === 'enum';
             const groupingItems = profilesData.characterProfileStructure.filter(filter).map(R.prop('name')).sort(sorter);
-
+    
             addEls(clearEl(queryEl(`${root}.button-container`)), groupingItems.map((item, i) => {
                 const button = addEl(makeEl('a'), makeText(item));
                 button.item = item;
@@ -87,10 +86,10 @@ See the License for the specific language governing permissions and
                 buttons.push(button);
                 return button;
             }));
-
+    
             drawList();
             //            drawPlainPanelList();
-        });
+        }).catch(Utils.handleError);
     };
 
     // eslint-disable-next-line no-var,vars-on-top

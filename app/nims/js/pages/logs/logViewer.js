@@ -53,8 +53,7 @@ See the License for the specific language governing permissions and
         queryEls(`${root}.pagination li a`)[0].click();
     };
 
-    function dataRecieved(err, data) {
-        if (err) { Utils.handleError(err); return; }
+    function dataRecieved(data) {
         addEl(clearEl(queryEl(`${root}.result-number`)), makeText(L10n.format('log-viewer', 'total', [data.max])));
 
         const container = clearEl(queryEl(`${root}.log-data`));
@@ -64,7 +63,7 @@ See the License for the specific language governing permissions and
 
     function getData(event) {
         const filter = R.fromPairs(queryEls(`${root}input[filter]`).map(el => [getAttr(el, 'filter'), el.value]));
-        DBMS.getLog(Number(event.target.value), filter, dataRecieved);
+        DBMS.getLogNew({pageNumber: Number(event.target.value), filter}).then(dataRecieved).catch(Utils.handleError);
     }
 
     function makeRow(rowData) {

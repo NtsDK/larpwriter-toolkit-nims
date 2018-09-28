@@ -100,14 +100,13 @@ See the License for the specific language governing permissions and
     };
 
     function resolveTextTemplate(callback) {
-        DBMS.getProfileStructure('character', (err, profileSettings) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getProfileStructureNew({type:'character'}).then((profileSettings) => {
             const func = R.compose(R.join(''), R.insert(1, R.__, ['{{profileInfo-', '}}\n']), R.prop('name'));
             const filter = R.compose(R.equals(true), R.prop('doExport'));
             const value = profileSettings.filter(filter).map(func).join('');
-
+    
             callback(R.replace(/\{0\}/g, value, TEXT_TEMPLATE));
-        });
+        }).catch(Utils.handleError)
     }
 
     function onCharacterSelectionChange(event) {
@@ -155,8 +154,7 @@ See the License for the specific language governing permissions and
         const num = Number(state.briefingNumberSelector.value);
 
         let chunks;
-        PermissionInformer.getEntityNamesArray('character', false, (err, names) => {
-            if (err) { Utils.handleError(err); return; }
+        PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}).then((names) => {
             if (names.length > 0) {
                 chunks = R.splitEvery(num, names);
                 const data = chunks.map(chunk => ({
@@ -164,22 +162,21 @@ See the License for the specific language governing permissions and
                     text: chunk.length === 1 ? chunk[0].displayName :
                         `${chunk[0].displayName} - ${chunk[chunk.length - 1].displayName}`
                 }));
-
+    
                 $(`#${state.briefingIntervalSelector.id}`).select2({ data });
             }
-        });
+        }).catch(Utils.handleError)
     }
 
 
     function refreshSetSelect(entityType, selectorName) {
         const multiSel = clearEl(state[selectorName]);
-        PermissionInformer.getEntityNamesArray(entityType, false, (err, names) => {
-            if (err) { Utils.handleError(err); return; }
+        PermissionInformer.getEntityNamesArrayNew({type: entityType, editableOnly: false}).then((names) => {
             if (names.length > 0) {
                 fillSelector(multiSel, names.map(remapProps4Select));
                 setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
             }
-        });
+        }).catch(Utils.handleError)
     }
 
     refreshStorySetSelect = () => refreshSetSelect('story', 'storySetSelector');

@@ -53,9 +53,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        PermissionInformer.getEntityNamesArray('group', false, (err, groupNames) => {
-            if (err) { Utils.handleError(err); return; }
-            
+        PermissionInformer.getEntityNamesArrayNew({type: 'group', editableOnly: false}).then((groupNames) => {
             showEl(qe(`${root} .alert`), groupNames.length === 0);
             showEl(qe(`${root} .col-xs-9`), groupNames.length !== 0);
             Utils.enableEl(qe(`${root} .entity-filter`), groupNames.length !== 0);
@@ -88,9 +86,9 @@ See the License for the specific language governing permissions and
                 }
                 return el;
             }));
-
+    
             showProfileInfoDelegate2(UI.checkAndGetEntitySetting(settingsPath, groupNames))();
-        });
+        }).catch(Utils.handleError)
     };
 
     function makeInput(profileItemConfig) {
@@ -159,54 +157,53 @@ See the License for the specific language governing permissions and
                 const entityList = queryEl(`${root} .entity-list`);
                 UI.scrollTo(entityList, parentEl);
                 
-                DBMS.getGroup(name, showProfileInfoCallback);
+                showProfileInfoCallback(name);
             }
         };
     }
-
-    function showProfileInfoCallback(err, group) {
-        if (err) { Utils.handleError(err); return; }
-        const { name } = group;
-        FilterConfiguration.makeFilterConfiguration((err1, filterConfiguration) => {
-            if (err1) { Utils.handleError(err1); return; }
-
-            PermissionInformer.isEntityEditable('group', name, (err2, isGroupEditable) => {
-                if (err2) { Utils.handleError(err2); return; }
-                updateSettings(name);
-                
-                const name2DisplayName = filterConfiguration.getName2DisplayNameMapping();
-                
-                const name2Source = filterConfiguration.getName2SourceMapping();
-
-                state.name = name;
-                const { inputItems } = state;
-                Object.keys(inputItems).forEach((inputName) => {
-                    if (inputItems[inputName].type === 'checkbox') {
-                        inputItems[inputName].checked = group[inputName];
-                    } else if (inputItems[inputName].type === 'container') {
-                        if (inputName === 'filterModel') {
-                            const table = qmte(`${root} .group-filter-template`);
-                            const datas = group.filterModel.map(exports.makeFilterItemString(name2DisplayName, name2Source));
-                            addEls(qee(table, 'tbody'), datas.map(data2row));
-                            L10n.localizeStatic(table);
-                            addEl(clearEl(inputItems[inputName]), table);
-                        } else if (inputName === 'characterList') {
-                            const data = filterConfiguration.getProfileIds(group.filterModel);
-                            const inputItem = clearEl(inputItems[inputName]);
-                            addEls(inputItem, [makeText(data.join(', ')), makeEl('br'), makeText(getL10n('groups-total') + data.length)]);
-                        } else {
-                            throw new Error(`Unexpected container: ${inputName}`);
-                        }
-                    } else if (inputItems[inputName].type === 'textarea') {
-                        inputItems[inputName].value = group[inputName];
+    
+    function showProfileInfoCallback(groupName) {
+        Promise.all([
+            DBMS.getGroupNew({groupName: groupName}),
+            FilterConfiguration.makeFilterConfiguration(),
+            PermissionInformer.isEntityEditableNew({type: 'group', name: groupName})
+        ]).then(results => {
+            const [group, filterConfiguration, isGroupEditable] = results;
+            const { name } = group;
+            updateSettings(name);
+            
+            const name2DisplayName = filterConfiguration.getName2DisplayNameMapping();
+            
+            const name2Source = filterConfiguration.getName2SourceMapping();
+    
+            state.name = name;
+            const { inputItems } = state;
+            Object.keys(inputItems).forEach((inputName) => {
+                if (inputItems[inputName].type === 'checkbox') {
+                    inputItems[inputName].checked = group[inputName];
+                } else if (inputItems[inputName].type === 'container') {
+                    if (inputName === 'filterModel') {
+                        const table = qmte(`${root} .group-filter-template`);
+                        const datas = group.filterModel.map(exports.makeFilterItemString(name2DisplayName, name2Source));
+                        addEls(qee(table, 'tbody'), datas.map(data2row));
+                        L10n.localizeStatic(table);
+                        addEl(clearEl(inputItems[inputName]), table);
+                    } else if (inputName === 'characterList') {
+                        const data = filterConfiguration.getProfileIds(group.filterModel);
+                        const inputItem = clearEl(inputItems[inputName]);
+                        addEls(inputItem, [makeText(data.join(', ')), makeEl('br'), makeText(getL10n('groups-total') + data.length)]);
                     } else {
-                        throw new Error(`Unexpected input type: ${inputItems[inputName].type}`);
+                        throw new Error(`Unexpected container: ${inputName}`);
                     }
-                    inputItems[inputName].oldValue = group[inputName];
-                    Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
-                });
+                } else if (inputItems[inputName].type === 'textarea') {
+                    inputItems[inputName].value = group[inputName];
+                } else {
+                    throw new Error(`Unexpected input type: ${inputItems[inputName].type}`);
+                }
+                inputItems[inputName].oldValue = group[inputName];
+                Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
             });
-        });
+        }).catch(Utils.handleError);
     }
 
     // eslint-disable-next-line no-var,vars-on-top

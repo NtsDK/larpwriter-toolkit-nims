@@ -32,23 +32,23 @@ See the License for the specific language governing permissions and
         clearEl(queryEl(`${root} .character-select`));
         clearEl(queryEl(`${root} .panel-body`));
 
-        DBMS.getProfileStructure('character', (err, characterProfileStructure) => {
-            if (err) { Utils.handleError(err); return; }
+        Promise.all([
+            DBMS.getProfileStructureNew({type: 'character'}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+        ]).then(results => {
+            const [characterProfileStructure, names] = results;
             state.characterProfileStructure = characterProfileStructure;
-            PermissionInformer.getEntityNamesArray('character', false, (err3, names) => {
-                if (err3) { Utils.handleError(err3); return; }
-                
-                showEl(qe(`${root} .alert`), names.length < 2);
-                showEl(qe(`${root} > .panel`), names.length > 1);
-                
-                if (names.length > 0) {
-                    const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
-                    const data = getSelect2Data(names);
-                    // this call trigger buildContent
-                    $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
-                }
-            });
-        });
+            
+            showEl(qe(`${root} .alert`), names.length < 2);
+            showEl(qe(`${root} > .panel`), names.length > 1);
+            
+            if (names.length > 0) {
+                const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
+                const data = getSelect2Data(names);
+                // this call trigger buildContent
+                $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
+            }
+        }).catch(Utils.handleError);
     };
 
     function buildContent(event) {
@@ -71,22 +71,18 @@ See the License for the specific language governing permissions and
     }
 
     exports.load = (data, callback) => {
-        DBMS.getAllProfiles('character', (err, profiles) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getRelationsSummary(data.characterName, (err2, relationsSummary) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getExtendedProfileBindings((err3, profileBindings) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    PermissionInformer.getEntityNamesArray('character', false, (err4, characterNamesArray) => {
-                        if (err4) { Utils.handleError(err4); return; }
-                        data.relationsSummary = relationsSummary;
-                        data.characterNamesArray = characterNamesArray;
-                        data.profiles = profiles;
-                        data.profileBindings = R.fromPairs(profileBindings);
-                        callback();
-                    });
-                });
-            });
-        });
+        Promise.all([
+            DBMS.getAllProfilesNew({type:'character'}),
+            DBMS.getRelationsSummaryNew({characterName: data.characterName}),
+            DBMS.getExtendedProfileBindingsNew(),
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+        ]).then(results => {
+            const [profiles, relationsSummary, profileBindings, characterNamesArray] = results;
+            data.relationsSummary = relationsSummary;
+            data.characterNamesArray = characterNamesArray;
+            data.profiles = profiles;
+            data.profileBindings = R.fromPairs(profileBindings);
+            callback();
+        }).catch(Utils.handleError);
     };
 })(this.Relations = {});

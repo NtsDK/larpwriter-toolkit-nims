@@ -33,11 +33,12 @@ function FilterConfiguration(info) {
     this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
 }
 
-FilterConfiguration.makeFilterConfiguration = function (callback) {
-    DBMS.getProfileFilterInfo((err, info) => {
-        if (err) { Utils.handleError(err); return; }
-        const filterConfiguration = new FilterConfiguration(info);
-        callback(null, filterConfiguration);
+FilterConfiguration.makeFilterConfiguration = function () {
+    return new Promise((resolve, reject) => {
+        DBMS.getProfileFilterInfoNew().then((info) => {
+            const filterConfiguration = new FilterConfiguration(info);
+            resolve(filterConfiguration);
+        }).catch(reject);
     });
 };
 

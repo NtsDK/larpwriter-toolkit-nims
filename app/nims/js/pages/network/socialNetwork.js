@@ -65,75 +65,67 @@ See the License for the specific language governing permissions and
 
         selector = clearEl(getEl('networkNodeGroupSelector'));
 
-        PermissionInformer.getEntityNamesArray('character', false, (err1, characterNames) => { // subset selector
-            if (err1) { Utils.handleError(err1); return; }
-            PermissionInformer.getEntityNamesArray('story', false, (err2, storyNames) => { // subset selector
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getAllProfiles('character', (err3, profiles) => { // node coloring
-                    if (err3) { Utils.handleError(err3); return; }
-                    DBMS.getAllStories((err4, stories) => { // contains most part of SN data
-                        if (err4) { Utils.handleError(err4); return; }
-                        DBMS.getProfileStructure('character', (err5, profileStructure) => { // node coloring
-                            if (err5) { Utils.handleError(err5); return; }
-                            DBMS.getProfileBindings((err6, profileBindings) => { // node coloring
-                                if (err6) { Utils.handleError(err6); return; }
-                                DBMS.getGroupCharacterSets((err7, groupCharacterSets) => { // node coloring
-                                    if (err7) { Utils.handleError(err7); return; }
-                                    DBMS.getMetaInfo((err8, metaInfo) => { // timelined network
-                                        if (err8) { Utils.handleError(err8); return; }
-                                        DBMS.getRelations((err9, relations) => { // relations
-                                            if (err9) { Utils.handleError(err9); return; }
-
-                                            state.Stories = stories;
-                                            state.Characters = profiles;
-                                            state.profileBindings = profileBindings;
-                                            state.groupCharacterSets = groupCharacterSets;
-                                            state.metaInfo = metaInfo;
-                                            state.relations = relations;
-
-                                            const checkboxes = profileStructure.filter(element =>
-                                                R.equals(element.type, 'checkbox'));
-                                            R.values(profiles).forEach((profile) => {
-                                                checkboxes.map(item => (profile[item.name] =
-                                                    constL10n(Constants[profile[item.name]])));
-                                            });
-
-                                            const colorGroups = profileStructure.filter(element =>
-                                                R.contains(element.type, ['enum', 'checkbox']));
-                                            const defaultColorGroup = {
-                                                value: Constants.noGroup,
-                                                name: constL10n(Constants.noGroup)
-                                            };
-
-                                            const profileLabel = strFormat(getL10n('social-network-profile-group'));
-                                            const filterLabel = strFormat(getL10n('social-network-filter-group'));
-
-                                            const profileGroups = colorGroups.map(group => group.name).map(name =>
-                                                ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
-                                            const filterGroups = R.keys(groupCharacterSets).map(name =>
-                                                ({ value: FILTER_GROUP + name, name: filterLabel([name]) }));
-                                            fillSelector(
-                                                selector,
-                                                [defaultColorGroup].concat(profileGroups).concat(filterGroups)
-                                            );
-
-                                            initGroupColors(colorGroups);
-
-                                            NetworkSubsetsSelector.refresh({
-                                                characterNames,
-                                                storyNames,
-                                                Stories: stories
-                                            });
-                                            //                            onDrawNetwork();
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
+        Promise.all([
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}), // subset selector
+            PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}), // subset selector
+            DBMS.getAllProfilesNew({type:'character'}), // node coloring
+            DBMS.getAllStoriesNew(), // contains most part of SN data
+            DBMS.getProfileStructureNew({type:'character'}), // node coloring
+            DBMS.getProfileBindingsNew(), // node coloring
+            DBMS.getGroupCharacterSetsNew(), // node coloring
+            DBMS.getMetaInfoNew(), // timelined network
+            DBMS.getRelationsNew() // relations
+        ]).then(results => {
+            const [characterNames, 
+                storyNames, 
+                profiles, 
+                stories, 
+                profileStructure, 
+                profileBindings, 
+                groupCharacterSets, 
+                metaInfo, 
+                relations] = results;
+            state.Stories = stories;
+            state.Characters = profiles;
+            state.profileBindings = profileBindings;
+            state.groupCharacterSets = groupCharacterSets;
+            state.metaInfo = metaInfo;
+            state.relations = relations;
+    
+            const checkboxes = profileStructure.filter(element =>
+                R.equals(element.type, 'checkbox'));
+            R.values(profiles).forEach((profile) => {
+                checkboxes.map(item => (profile[item.name] =
+                    constL10n(Constants[profile[item.name]])));
             });
-        });
+    
+            const colorGroups = profileStructure.filter(element =>
+                R.contains(element.type, ['enum', 'checkbox']));
+            const defaultColorGroup = {
+                value: Constants.noGroup,
+                name: constL10n(Constants.noGroup)
+            };
+    
+            const profileLabel = strFormat(getL10n('social-network-profile-group'));
+            const filterLabel = strFormat(getL10n('social-network-filter-group'));
+    
+            const profileGroups = colorGroups.map(group => group.name).map(name =>
+                ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
+            const filterGroups = R.keys(groupCharacterSets).map(name =>
+                ({ value: FILTER_GROUP + name, name: filterLabel([name]) }));
+            fillSelector(
+                selector,
+                [defaultColorGroup].concat(profileGroups).concat(filterGroups)
+            );
+    
+            initGroupColors(colorGroups);
+    
+            NetworkSubsetsSelector.refresh({
+                characterNames,
+                storyNames,
+                Stories: stories
+            });
+        }).catch(Utils.handleError);
     };
 
     function initGroupColors(colorGroups) {

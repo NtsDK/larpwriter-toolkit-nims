@@ -95,28 +95,36 @@ See the License for the specific language governing permissions and
         clearEl(getEl('briefingCharacter'));
         clearEl(getEl('briefingContent'));
 
-        DBMS.getProfileStructure('character', (err, characterProfileStructure) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getProfileStructure('player', (err2, playerProfileStructure) => {
-                if (err2) { Utils.handleError(err2); return; }
-                state.characterProfileStructure = characterProfileStructure;
-                state.playerProfileStructure = playerProfileStructure;
-                PermissionInformer.getEntityNamesArray('character', false, (err3, names) => {
-                    if (err3) { Utils.handleError(err3); return; }
+        Promise.all([
+            DBMS.getProfileStructureNew({type: 'character'}),
+            DBMS.getProfileStructureNew({type: 'player'}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+        ]).then(results => {
+            const [characterProfileStructure, playerProfileStructure, names] = results;
+            state.characterProfileStructure = characterProfileStructure;
+            state.playerProfileStructure = playerProfileStructure;
+            showEl(qe(`${root} .alert`), names.length === 0);
+            showEl(qe(`${root} > div > div > .panel`), names.length !== 0);
+            showEl(qe(`${root} #briefingCharacter`), names.length !== 0);
+            
+            if (names.length > 0) {
+                const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
+                const data = getSelect2Data(names);
+                // this call trigger buildContent
+                $('#briefingCharacter').select2(data).val(characterName).trigger('change');
+            }
+        }).catch(Utils.handleError);
+
+        // DBMS.getProfileStructure('character', (err, characterProfileStructure) => {
+        //     if (err) { Utils.handleError(err); return; }
+        //     DBMS.getProfileStructure('player', (err2, playerProfileStructure) => {
+        //         if (err2) { Utils.handleError(err2); return; }
+        //         PermissionInformer.getEntityNamesArray('character', false, (err3, names) => {
+        //             if (err3) { Utils.handleError(err3); return; }
                     
-                    showEl(qe(`${root} .alert`), names.length === 0);
-                    showEl(qe(`${root} > div > div > .panel`), names.length !== 0);
-                    showEl(qe(`${root} #briefingCharacter`), names.length !== 0);
-                    
-                    if (names.length > 0) {
-                        const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
-                        const data = getSelect2Data(names);
-                        // this call trigger buildContent
-                        $('#briefingCharacter').select2(data).val(characterName).trigger('change');
-                    }
-                });
-            });
-        });
+        //         });
+        //     });
+        // });
     };
 
     function buildContentDelegate(event) {
@@ -157,21 +165,19 @@ See the License for the specific language governing permissions and
         state.panels = [{
             name: 'storyRights',
             load(data, callback) {
-                PermissionInformer.getEntityNamesArray('story', true, (err, userStoryNames) => {
-                    if (err) { Utils.handleError(err); return; }
+                PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: true}).then((userStoryNames) => {
                     data.userStoryNamesMap = R.indexBy(R.prop('value'), userStoryNames);
                     callback();
-                });
+                }).catch(Utils.handleError)
             },
             make(el, data) {}
         }, {
             name: 'characterProfile',
             load(data, callback) {
-                DBMS.getProfile('character', data.characterName, (err, profile) => {
-                    if (err) { Utils.handleError(err); return; }
+                DBMS.getProfileNew({type: 'character', name: data.characterName}).then((profile) => {
                     data.profile = profile;
                     callback();
-                });
+                }).catch(Utils.handleError)
             },
             make(el, data) {
                 const label = strFormat(getL10n('briefings-character-profile'), [data.characterName]);
@@ -183,20 +189,18 @@ See the License for the specific language governing permissions and
         }, {
             name: 'playerProfile',
             load(data, callback) {
-                DBMS.getProfileBinding('character', data.characterName, (err, binding) => {
-                    if (err) { Utils.handleError(err); return; }
+                DBMS.getProfileBindingNew({type: 'character', name: data.characterName}).then((binding) => {
                     if (binding[1] === '') {
                         callback();
                     } else {
-                        DBMS.getProfile('player', binding[1], (err2, playerProfile) => {
-                            if (err2) { Utils.handleError(err2); return; }
+                        DBMS.getProfileNew({type: 'player', name: binding[1]}).then((playerProfile) => {
                             data.playerProfile = playerProfile;
                             // eslint-disable-next-line prefer-destructuring
                             data.playerName = binding[1];
                             callback();
-                        });
+                        }).catch(Utils.handleError)
                     }
-                });
+                }).catch(Utils.handleError)
             },
             make(el, data) {
                 if (data.playerProfile) {
@@ -210,11 +214,10 @@ See the License for the specific language governing permissions and
         }, {
             name: 'inventory',
             load(data, callback) {
-                DBMS.getAllInventoryLists(data.characterName, (err, allInventoryLists) => {
-                    if (err) { Utils.handleError(err); return; }
+                DBMS.getAllInventoryListsNew({characterName: data.characterName}).then((allInventoryLists) => {
                     data.allInventoryLists = allInventoryLists.sort(CommonUtils.charOrdAFactory(R.compose(R.toLower, R.prop('storyName'))));
                     callback();
-                });
+                }).catch(Utils.handleError)
             },
             make(el, data) {
                 addEl(el, makePanel(
@@ -228,11 +231,10 @@ See the License for the specific language governing permissions and
         }, {
             name: 'groups',
             load(data, callback) {
-                DBMS.getCharacterGroupTexts(data.characterName, (err, groupTexts) => {
-                    if (err) { Utils.handleError(err); return; }
+                DBMS.getCharacterGroupTextsNew({characterName: data.characterName}).then((groupTexts) => {
                     data.groupTexts = groupTexts;
                     callback();
-                });
+                }).catch(Utils.handleError)
             },
             make(el, data) {
                 addEl(el, makePanel(
@@ -372,37 +374,46 @@ See the License for the specific language governing permissions and
     }
 
     function showEventsByStory(content, characterName, userStoryNamesMap, flags) {
-        DBMS.getCharacterEventGroupsByStory(characterName, (err, eventGroups) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getCharacterEventGroupsByStoryNew({characterName}).then((eventGroups) => {
             const adaptations = eventGroups.map(elem => ({
                 characterName,
                 storyName: elem.storyName
             }));
-            PermissionInformer.areAdaptationsEditable(adaptations, (err2, areAdaptationsEditable) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getMetaInfo((err3, metaInfo) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    const opts = {
-                        userStoryNamesMap,
-                        areAdaptationsEditable,
-                        showStoryName: false,
-                        metaInfo
-                    };
-
-                    addEls(content, eventGroups.map((elem, i) => {
-                        const storyContent = addEls(makeEl('div'), elem.events.map((event, j) => {
-                            opts.index = j + 1;
-                            return showEvent(event, characterName, opts, flags);
-                        }));
-                        return makePanel(
-                            getStoryHeader(elem, i, flags.disableHeaders), storyContent,
-                            flags.hideAllPanels
-                        );
+            Promise.all([
+                PermissionInformer.areAdaptationsEditableNew({adaptations}),
+                DBMS.getMetaInfoNew()
+            ]).then(results => {
+                const [areAdaptationsEditable, metaInfo] = results;
+                const opts = {
+                    userStoryNamesMap,
+                    areAdaptationsEditable,
+                    showStoryName: false,
+                    metaInfo
+                };
+        
+                addEls(content, eventGroups.map((elem, i) => {
+                    const storyContent = addEls(makeEl('div'), elem.events.map((event, j) => {
+                        opts.index = j + 1;
+                        return showEvent(event, characterName, opts, flags);
                     }));
-                    onBuildContentFinish();
-                });
-            });
-        });
+                    return makePanel(
+                        getStoryHeader(elem, i, flags.disableHeaders), storyContent,
+                        flags.hideAllPanels
+                    );
+                }));
+                onBuildContentFinish();
+            }).catch(Utils.handleError);
+        }).catch(Utils.handleError)
+
+        // DBMS.getCharacterEventGroupsByStory(characterName, (err, eventGroups) => {
+        //     if (err) { Utils.handleError(err); return; }
+        //     PermissionInformer.areAdaptationsEditable(adaptations, (err2, areAdaptationsEditable) => {
+        //         if (err2) { Utils.handleError(err2); return; }
+        //         DBMS.getMetaInfo((err3, metaInfo) => {
+        //             if (err3) { Utils.handleError(err3); return; }
+        //         });
+        //     });
+        // });
     }
 
     function getEventHeaderDiv(event, showStoryName) {

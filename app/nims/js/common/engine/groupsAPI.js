@@ -68,14 +68,13 @@ See the License for the specific language governing permissions and
         // preview
         LocalDBMS.prototype.getCharacterGroupTextsNew = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
-                const that = this;
-                this.getProfileBinding('character', characterName, (err, profileId) => {
-                    if (err) { reject(err); return; }
-                    that.getProfileFilterInfo((err2, info) => {
-                        if (err2) { reject(err2); return; }
-                        resolve(_getCharacterGroupTexts(that.database.Groups, info, profileId));
-                    });
-                });
+                Promise.all([
+                    this.getProfileBindingNew({type: 'character', name: characterName}),
+                    this.getProfileFilterInfoNew()
+                ]).then(results => {
+                    const [profileId, info] = results;
+                    resolve(_getCharacterGroupTexts(this.database.Groups, info, profileId));
+                }).catch(reject);
             });
         };
         LocalDBMS.prototype.getCharacterGroupTexts = function (characterName, callback) {
@@ -380,13 +379,12 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getGroupCharacterSetsNew = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
-                this.getProfileFilterInfo((err, info) => {
-                    if (err) { reject(err); return; }
+                this.getProfileFilterInfoNew().then((info) => {
                     resolve(_getGroupCharacterSets(
                         that.database.Groups, R.keys(that.database.Characters),
                         R.clone(that.database.ProfileBindings), info
                     ));
-                });
+                }).catch(reject)
             });
         };
 
