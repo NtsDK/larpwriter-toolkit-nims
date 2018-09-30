@@ -120,18 +120,15 @@ See the License for the specific language governing permissions and
             const eventName = eventNameInput.value.trim();
             const positionSelector = qee(dialog, '.positionSelector');
 
-            DBMS.createEvent(
-                Stories.getCurrentStoryName(), eventName, positionSelector.selectedIndex,
-                (err) => {
-                    if (err) {
-                        setError(dialog, err);
-                    } else {
-                        eventNameInput.value = '';
-                        dialog.hideDlg();
-                        exports.refresh();
-                    }
-                }
-            );
+            DBMS.createEventNew({
+                storyName: Stories.getCurrentStoryName(), 
+                eventName, 
+                selectedIndex: positionSelector.selectedIndex
+            }).then(() => {
+                eventNameInput.value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
@@ -177,22 +174,23 @@ See the License for the specific language governing permissions and
     function moveEvent(dialog) {
         return () => {
             const newIndex = queryEl('.movePositionSelector').selectedIndex;
-
-            Utils.processError(exports.refresh);
-            DBMS.moveEvent(Stories.getCurrentStoryName(), dialog.index, newIndex, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.moveEventNew({
+                storyName: Stories.getCurrentStoryName(), 
+                index: dialog.index, 
+                newIndex
+            }).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
     function cloneEvent(index) {
         return () => {
-            DBMS.cloneEvent(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
+            DBMS.cloneEventNew({
+                storyName: Stories.getCurrentStoryName(), 
+                index
+            }).then(exports.refresh, Utils.handleError);
         };
     }
 
@@ -204,7 +202,10 @@ See the License for the specific language governing permissions and
             }
 
             Utils.confirm(L10n.format('stories', 'confirm-event-merge', [firstName, secondName]), () => {
-                DBMS.mergeEvents(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
+                DBMS.mergeEventsNew({
+                    storyName: Stories.getCurrentStoryName(), 
+                    index
+                }).then(exports.refresh, Utils.handleError);
             });
         };
     }
@@ -212,7 +213,10 @@ See the License for the specific language governing permissions and
     function removeEvent(name, index) {
         return () => {
             Utils.confirm(strFormat(getL10n('stories-remove-event-warning'), [name]), () => {
-                DBMS.removeEvent(Stories.getCurrentStoryName(), index, Utils.processError(exports.refresh));
+                DBMS.removeEventNew({
+                    storyName: Stories.getCurrentStoryName(), 
+                    index
+                }).then(exports.refresh, Utils.handleError);
             });
         };
     }
@@ -226,19 +230,33 @@ See the License for the specific language governing permissions and
 
     function onChangeDateTimeCreator(myInput) {
         return (dp, input) => {
-            DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), myInput.eventIndex, 'time', input.val(), Utils.processError());
-            //            StoryEvents.lastDate = input.val();
+            DBMS.setEventOriginPropertyNew({
+                storyName: Stories.getCurrentStoryName(), 
+                index: myInput.eventIndex, 
+                property: 'time', 
+                value: input.val()
+            }).catch(Utils.handleError);
             removeClass(myInput, 'defaultDate');
         };
     }
 
     function updateEventName(event) {
         const input = event.target;
-        DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, 'name', input.value, Utils.processError(exports.refresh));
+        DBMS.setEventOriginPropertyNew({
+            storyName: Stories.getCurrentStoryName(), 
+            index: input.eventIndex, 
+            property: 'name', 
+            value: input.value
+        }).then(exports.refresh, Utils.handleError);
     }
 
     function updateEventText(event) {
         const input = event.target;
-        DBMS.setEventOriginProperty(Stories.getCurrentStoryName(), input.eventIndex, 'text', input.value, Utils.processError());
+        DBMS.setEventOriginPropertyNew({
+            storyName: Stories.getCurrentStoryName(), 
+            index: input.eventIndex, 
+            property: 'text', 
+            value: input.value
+        }).catch(Utils.handleError);
     }
 })(this.StoryEvents = {});

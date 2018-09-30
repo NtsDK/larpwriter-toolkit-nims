@@ -92,23 +92,20 @@ See the License for the specific language governing permissions and
         
         queryEl(`${root} .physics-enabled-checkbox`).checked = false;
         listen(queryEl(`${root} .physics-enabled-checkbox`), 'change', (event) => {
-            DBMS.setGearsPhysicsEnabled(event.target.checked, (err) => {
-                if (err) { Utils.handleError(err); return; }
+            DBMS.setGearsPhysicsEnabledNew({enabled: event.target.checked}).then(() => {
                 state.network.setOptions({
                     "physics": {
                         "enabled": event.target.checked,
                         "minVelocity": 0.75
                     }
-                })
-            });
+                });
+            }).catch(Utils.handleError);
         });
         
         queryEl(`${root} .show-notes-checkbox`).checked = false;
         listen(queryEl(`${root} .show-notes-checkbox`), 'change', (event) => {
-            DBMS.setGearsShowNotesEnabled(event.target.checked, (err) => {
-                if (err) { Utils.handleError(err); return; }
-                exports.refresh();
-            });
+            DBMS.setGearsShowNotesEnabledNew({enabled: event.target.checked})
+                .then(exports.refresh).catch(Utils.handleError);
         });
         
         queryEl(`${root} .big-picture-checkbox`).checked = false;
@@ -232,10 +229,9 @@ See the License for the specific language governing permissions and
     }
     
     function storeData(callback){
-        DBMS.setGearsData(exportNetwork(), (err) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.setGearsDataNew({data: exportNetwork()}).then(() => {
             if(callback) callback();
-        });
+        }).catch(Utils.handleError);
     }
     
     function exportNetwork() {

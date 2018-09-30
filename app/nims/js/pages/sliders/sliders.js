@@ -99,7 +99,7 @@ See the License for the specific language governing permissions and
         });
         listen(qee(el, 'button.remove'), 'click', () => {
             Utils.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
-                DBMS.removeSlider(i, Utils.processError(exports.refresh));
+                DBMS.removeSliderNew({index:i}).then(exports.refresh, Utils.handleError);
             })
         });
         L10n.localizeStatic(el);
@@ -111,17 +111,13 @@ See the License for the specific language governing permissions and
             const name = qee(dialog, '.slider-name').value.trim();
             const top = qee(dialog, '.slider-top').value.trim();
             const bottom = qee(dialog, '.slider-bottom').value.trim();
-            DBMS.createSlider(name, top, bottom, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    qee(dialog, '.slider-name').value = '';
-                    qee(dialog, '.slider-top').value = '';
-                    qee(dialog, '.slider-bottom').value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.createSliderNew({name, top, bottom}).then(() => {
+                qee(dialog, '.slider-name').value = '';
+                qee(dialog, '.slider-top').value = '';
+                qee(dialog, '.slider-bottom').value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
     
@@ -131,17 +127,18 @@ See the License for the specific language governing permissions and
             const top = qee(dialog, '.slider-top').value.trim();
             const bottom = qee(dialog, '.slider-bottom').value.trim();
             const pos = dialog.pos;
-            DBMS.updateSliderNaming(pos, name, top, bottom, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    qee(dialog, '.slider-name').value = '';
-                    qee(dialog, '.slider-top').value = '';
-                    qee(dialog, '.slider-bottom').value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.updateSliderNamingNew({
+                index: pos, 
+                name, 
+                top, 
+                bottom
+            }).then(() => {
+                qee(dialog, '.slider-name').value = '';
+                qee(dialog, '.slider-top').value = '';
+                qee(dialog, '.slider-bottom').value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         }
     }
     
@@ -150,14 +147,10 @@ See the License for the specific language governing permissions and
             var index = dialog.currentIndex;
             var pos = qee(dialog, '.move-slider-pos-select').selectedIndex;
             
-            DBMS.moveSlider(index, pos, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            })
+            DBMS.moveSliderNew({index, pos}).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         }
     }
 })(this.Sliders = {});

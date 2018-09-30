@@ -29,6 +29,7 @@ See the License for the specific language governing permissions and
             this.getConsistencyCheckResultNew().then(res => callback(null, res)).catch(callback);
         };
 
+        // DBMS.consistency.check()
         LocalDBMS.prototype.getConsistencyCheckResultNew = function () {
             return new Promise((resolve, reject) => {
 

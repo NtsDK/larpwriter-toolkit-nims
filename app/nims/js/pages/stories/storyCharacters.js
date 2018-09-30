@@ -100,38 +100,37 @@ See the License for the specific language governing permissions and
     function addCharacter(dialog) {
         return () => {
             const characterName = queryEl(`${superRoot}.storyCharactersAddSelector`).value.trim();
-            DBMS.addStoryCharacter(Stories.getCurrentStoryName(), characterName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.addStoryCharacterNew({
+                storyName: Stories.getCurrentStoryName(), 
+                characterName
+            }).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
     function switchCharacters(dialog) {
         return () => {
             const toName = queryEl(`${root}.storyCharactersToSelector`).value.trim();
-            DBMS.switchStoryCharacters(Stories.getCurrentStoryName(), dialog.characterName, toName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.switchStoryCharactersNew({
+                storyName: Stories.getCurrentStoryName(), 
+                fromName: dialog.characterName, 
+                toName
+            }).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
     function removeCharacter(characterName) {
         return () => {
             Utils.confirm(strFormat(getL10n('stories-remove-character-from-story-warning'), [characterName]), () => {
-                DBMS.removeStoryCharacter(
-                    Stories.getCurrentStoryName(),
-                    characterName, Utils.processError(exports.refresh)
-                );
+                DBMS.removeStoryCharacterNew({
+                    storyName: Stories.getCurrentStoryName(),
+                    characterName
+                }).then(exports.refresh).catch(Utils.handleError);
             });
         };
     }
@@ -169,16 +168,19 @@ See the License for the specific language governing permissions and
     }
 
     function updateCharacterInventory(event) {
-        DBMS.updateCharacterInventory(
-            Stories.getCurrentStoryName(),
-            event.target.characterName, event.target.value, Utils.processError()
-        );
+        DBMS.updateCharacterInventoryNew({
+            storyName: Stories.getCurrentStoryName(), 
+            characterName: event.target.characterName, 
+            inventory: event.target.value
+        }).catch(Utils.handleError);
     }
 
     function onChangeCharacterActivity(event) {
-        DBMS.onChangeCharacterActivity(
-            Stories.getCurrentStoryName(), event.target.characterName,
-            event.target.activityType, event.target.checked, Utils.processError()
-        );
+        DBMS.onChangeCharacterActivityNew({
+            storyName: Stories.getCurrentStoryName(), 
+            characterName: event.target.characterName, 
+            activityType: event.target.activityType, 
+            checked: event.target.checked
+        }).catch(Utils.handleError);
     }
 })(this.StoryCharacters = {});

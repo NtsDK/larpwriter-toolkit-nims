@@ -176,20 +176,21 @@ See the License for the specific language governing permissions and
 
     function saveFilterToGroup() {
         const groupName = queryEl(`${root}.save-entity-select`).value;
-        PermissionInformer.isEntityEditable('group', groupName, (err, isGroupEditable) => {
-            if (err) { Utils.handleError(err); return; }
+        PermissionInformer.isEntityEditableNew({type: 'group', name: groupName}).then((isGroupEditable) => {
             if (!isGroupEditable) {
                 Utils.alert(strFormat(getL10n('groups-group-editing-forbidden'), [groupName]));
                 return;
             }
-            DBMS.saveFilterToGroup(groupName, makeFilterModel(), Utils.processError());
-        });
+            DBMS.saveFilterToGroupNew({
+                groupName, 
+                filterModel: makeFilterModel()
+            }).catch(Utils.handleError);
+        }).catch(Utils.handleError);
     }
 
     function loadFilterFromGroup() {
         const groupName = queryEl(`${root}.save-entity-select`).value;
-        DBMS.getGroup(groupName, (err, group) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getGroupNew({groupName}).then((group) => {
             const conflictTypes =
                 ProjectUtils.isFilterModelCompatibleWithProfiles(
                     state.filterConfiguration.getBaseProfileSettings(),
@@ -201,7 +202,7 @@ See the License for the specific language governing permissions and
             }
             applyFilterModel(group.filterModel);
             rebuildContent();
-        });
+        }).catch(Utils.handleError);
     }
 
     function downloadFilterTable() {
@@ -543,18 +544,13 @@ See the License for the specific language governing permissions and
             const fromName = queryEl(selector).value;
             const toName = toInput.value.trim();
 
-            DBMS.renameGroup(fromName, toName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        toInput.value = '';
-                        dialog.hideDlg();
-                        exports.refresh();
-                    });
-                }
-            });
+            DBMS.renameGroupNew({fromName, toName}).then(() => {
+                PermissionInformer.refreshNew().then(() => {
+                    toInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }).catch(Utils.handleError);
+            }).catch(err => setError(dialog, err));
         };
     }
 })(this.ProfileFilter = {});

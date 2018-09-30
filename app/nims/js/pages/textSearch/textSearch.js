@@ -35,15 +35,18 @@ See the License for the specific language governing permissions and
             .filter(el => el.checked).map(el => el.value);
         const searchStr = queryEl(`${root}.text-search-input`).value;
         const caseSensitive = getEl('caseSensitiveTextSearch').checked;
-        DBMS.getTexts(searchStr, selectedTextTypes, caseSensitive, (err, texts) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getTextsNew({
+            searchStr, 
+            textTypes: selectedTextTypes, 
+            caseSensitive
+        }).then((texts) => {
             const text2panel = text =>
                 makePanel(
                     makeText(`${getL10n(`text-search-${text.textType}`)} (${text.result.length})`),
                     makePanelContent(text, searchStr, caseSensitive)
                 );
             addEls(clearEl(queryEl(`${root}.result-panel`)), texts.map(text2panel));
-        });
+        }).catch(Utils.handleError);
     }
 
     function makePanelContent(textsInfo, searchStr, caseSensitive) {

@@ -198,15 +198,11 @@ function ProfileConfigurerTmpl(exports, opts) {
             const itemType = qee(dialog, '.create-entity-type-select').value.trim();
             const { selectedIndex } = qee(dialog, '.create-entity-position-select');
 
-            DBMS.createProfileItem(tabType, name, itemType, selectedIndex, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    input.value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.createProfileItemNew({type: tabType, name, itemType, selectedIndex}).then(() => {
+                input.value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
@@ -337,10 +333,13 @@ function ProfileConfigurerTmpl(exports, opts) {
 
         setClassIf(qee(row, '.print'), 'btn-primary', profileSettings.doExport);
         listen(qee(row, '.print'), 'click', (e) => {
-            DBMS.doExportProfileItemChange(type, profileSettings.name, !hasClass(e.target, 'btn-primary'), (err) => {
-                if (err) { Utils.handleError(err); return; }
+            DBMS.doExportProfileItemChangeNew({
+                type, 
+                profileItemName: profileSettings.name, 
+                checked: !hasClass(e.target, 'btn-primary')
+            }).then(() => {
                 toggleClass(e.target, 'btn-primary');
-            });
+            }).catch(Utils.handleError);
         });
 
         const playerAccess = qee(row, '.player-access');
@@ -368,7 +367,11 @@ function ProfileConfigurerTmpl(exports, opts) {
 
         listen(qee(row, '.remove'), 'click', () => {
             Utils.confirm(L10n.format('profiles', 'are-you-sure-about-removing-profile-item', [profileSettings.name]), () => {
-                DBMS.removeProfileItem(type, index, profileSettings.name, Utils.processError(exports.refresh));
+                DBMS.removeProfileItemNew({
+                    type, 
+                    index, 
+                    profileItemName: profileSettings.name
+                }).then(exports.refresh, Utils.handleError);
             });
         });
 
@@ -401,7 +404,11 @@ function ProfileConfigurerTmpl(exports, opts) {
             case 'text':
             case 'string':
             case 'checkbox':
-                DBMS.updateDefaultValue(type, name, value, Utils.processError());
+                DBMS.updateDefaultValueNew({
+                    type, 
+                    profileItemName: name, 
+                    value
+                }).catch(Utils.handleError);
                 break;
             case 'number':
                 if (Number.isNaN(value)) {
@@ -409,7 +416,11 @@ function ProfileConfigurerTmpl(exports, opts) {
                     event.target.value = oldValue;
                     return;
                 }
-                DBMS.updateDefaultValue(type, name, Number(value), Utils.processError());
+                DBMS.updateDefaultValueNew({
+                    type, 
+                    profileItemName: name, 
+                    value: Number(value)
+                }).catch(Utils.handleError);
                 break;
             case 'multiEnum':
             case 'enum':
@@ -425,7 +436,12 @@ function ProfileConfigurerTmpl(exports, opts) {
                     newValue = newOptions.join(',');
                     event.target.value = newValue;
                     event.target.oldValue = newValue;
-                    DBMS.updateDefaultValue(type, name, newValue, Utils.processError());
+                    
+                    DBMS.updateDefaultValueNew({
+                        type, 
+                        profileItemName: name, 
+                        value: newValue
+                    }).catch(Utils.handleError);
                 };
 
                 if (missedValues.length !== 0) {
@@ -444,7 +460,11 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function showInRoleGridChange(type) {
         return (event) => {
-            DBMS.showInRoleGridProfileItemChange(type, event.target.info, event.target.checked, Utils.processError());
+            DBMS.showInRoleGridProfileItemChangeNew({
+                type, 
+                profileItemName: event.target.info, 
+                checked: event.target.checked
+            }).catch(Utils.handleError);
         };
     }
 
@@ -454,15 +474,15 @@ function ProfileConfigurerTmpl(exports, opts) {
             const oldName = dialog.fromName;
             const newName = toInput.value.trim();
 
-            DBMS.renameProfileItem(tabType, newName, oldName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    toInput.value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.renameProfileItemNew({
+                type: tabType, 
+                newName, 
+                oldName
+            }).then(() => {
+                toInput.value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
@@ -470,14 +490,14 @@ function ProfileConfigurerTmpl(exports, opts) {
         return () => {
             const index = state.currentIndex;
             const newIndex = queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
-            DBMS.moveProfileItem(tabType, index, newIndex, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.moveProfileItemNew({
+                type: tabType, 
+                index, 
+                newIndex
+            }).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }, err => setError(dialog, err));
         };
     }
     
@@ -498,14 +518,14 @@ function ProfileConfigurerTmpl(exports, opts) {
                 newVals = R.prepend(defaultValue, newVals);
             }
             
-            DBMS.updateDefaultValue(tabType, name, newVals.join(','), (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.updateDefaultValueNew({
+                type: tabType, 
+                profileItemName: name, 
+                value: newVals.join(',')
+            }).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }, err => setError(dialog, err));
         };
     }
     
@@ -515,14 +535,15 @@ function ProfileConfigurerTmpl(exports, opts) {
             const renameSelect = qee(dialog, '.renamed-value-select');
             const renameInput = qee(dialog, '.enum-value-name-input');
             
-            DBMS.renameEnumValue(tabType, name, renameSelect.value.trim(), renameInput.value.trim(), (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.renameEnumValueNew({
+                type: tabType, 
+                profileItemName: name, 
+                fromValue: renameSelect.value.trim(), 
+                toValue: renameInput.value.trim()
+            }).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }, err => setError(dialog, err));
         };
     }
 
@@ -531,7 +552,11 @@ function ProfileConfigurerTmpl(exports, opts) {
             Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-changing-profile-item-type'), [event.target.info]), () => {
                 const newType = event.target.value;
                 const name = event.target.info;
-                DBMS.changeProfileItemType(type, name, newType, Utils.processError(exports.refresh));
+                DBMS.changeProfileItemTypeNew({
+                    type, 
+                    profileItemName: name, 
+                    newType
+                }).then(exports.refresh, Utils.handleError);
             }, () => {
                 event.target.value = event.target.oldType;
             });
@@ -542,11 +567,13 @@ function ProfileConfigurerTmpl(exports, opts) {
         return (event) => {
             const playerAccessType = event.target.value;
             const name = event.target.info;
-            DBMS.changeProfileItemPlayerAccess(type, name, playerAccessType, (err) => {
-                if (err) {
-                    event.target.value = event.target.oldValue;
-                    Utils.processError()(err);
-                }
+            DBMS.changeProfileItemPlayerAccessNew({
+                type, 
+                profileItemName: name, 
+                playerAccessType
+            }).catch((err) => {
+                event.target.value = event.target.oldValue;
+                Utils.processError()(err);
             });
         };
     }

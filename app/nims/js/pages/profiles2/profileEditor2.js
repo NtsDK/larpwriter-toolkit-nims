@@ -221,19 +221,15 @@ function ProfileEditorTmpl(exports, opts) {
             const input = qee(dialog, '.entity-input');
             const value = input.value.trim();
 
-            DBMS.createProfile(firstType, value, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    UI.updateEntitySetting(settingsPath, value);
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        input.value = '';
-                        dialog.hideDlg();
-                        exports.refresh();
-                    });
-                }
-            });
+            DBMS.createProfileNew({type: firstType, characterName: value}).then(() => {
+                UI.updateEntitySetting(settingsPath, value);
+                PermissionInformer.refreshNew().then(() => {
+                    input.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }).catch(Utils.handleError);
+            }).catch((err) => setError(dialog, err));
+
         };
     }
 
@@ -243,35 +239,32 @@ function ProfileEditorTmpl(exports, opts) {
             const { fromName } = dialog;
             const toName = toInput.value.trim();
 
-            DBMS.renameProfile(firstType, fromName, toName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    UI.updateEntitySetting(settingsPath, toName);
-                    toInput.value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.renameProfileNew({
+                type: firstType, 
+                fromName, 
+                toName
+            }).then(() => {
+                UI.updateEntitySetting(settingsPath, toName);
+                toInput.value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch((err) => setError(dialog, err));
         };
     }
 
     function removeProfile(type, name, btn) {
         return () => {
             Utils.confirm(strFormat(l10n(opts.removeMsg), [name]), () => {
-                DBMS.removeProfile(type, name, (err) => {
-                    if (err) { Utils.handleError(err); return; }
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
+                DBMS.removeProfileNew({type, characterName: name}).then(() => {
+                    PermissionInformer.refreshNew().then(() => {
                         if(btn.nextName !== undefined){
                             UI.updateEntitySetting(settingsPath, btn.nextName);
                         } else if(btn.prevName !== undefined) {
                             UI.updateEntitySetting(settingsPath, btn.prevName);
                         }
-                        
                         exports.refresh();
-                    });
-                });
+                    }).catch(Utils.handleError);
+                }).catch(Utils.handleError);
             });
         };
     }

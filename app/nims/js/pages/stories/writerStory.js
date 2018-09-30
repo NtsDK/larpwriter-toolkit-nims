@@ -41,6 +41,9 @@ See the License for the specific language governing permissions and
 
     function updateWriterStory() {
         const storyArea = getEl('writerStoryArea');
-        DBMS.setWriterStory(Stories.getCurrentStoryName(), storyArea.value, Utils.processError());
+        DBMS.setWriterStoryNew({
+            storyName: Stories.getCurrentStoryName(), 
+            value: storyArea.value
+        }).catch(Utils.handleError);
     }
 })(this.WriterStory = {});

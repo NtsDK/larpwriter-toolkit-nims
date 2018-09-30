@@ -131,24 +131,27 @@ See the License for the specific language governing permissions and
 
     function onChangeCharacterCheckbox(event) {
         if (event.target.checked) {
-            DBMS.addCharacterToEvent(
-                Stories.getCurrentStoryName(),
-                event.target.eventIndex, event.target.characterName, Utils.processError()
-            );
+            DBMS.addCharacterToEventNew({
+                storyName: Stories.getCurrentStoryName(), 
+                eventIndex: event.target.eventIndex, 
+                characterName: event.target.characterName
+            }).catch(Utils.handleError);
         } else if (!event.target.hasText) {
-            DBMS.removeCharacterFromEvent(
-                Stories.getCurrentStoryName(),
-                event.target.eventIndex, event.target.characterName, Utils.processError()
-            );
+            DBMS.removeCharacterFromEventNew({
+                storyName: Stories.getCurrentStoryName(), 
+                eventIndex: event.target.eventIndex, 
+                characterName: event.target.characterName
+            }).catch(Utils.handleError);
         } else {
             Utils.confirm(strFormat(
                 getL10n('stories-remove-character-from-event-warning'),
                 [event.target.characterName, event.target.eventName]
             ), () => {
-                DBMS.removeCharacterFromEvent(
-                    Stories.getCurrentStoryName(),
-                    event.target.eventIndex, event.target.characterName, Utils.processError()
-                );
+                DBMS.removeCharacterFromEventNew({
+                    storyName: Stories.getCurrentStoryName(), 
+                    eventIndex: event.target.eventIndex, 
+                    characterName: event.target.characterName
+                }).catch(Utils.handleError);
             }, () => {
                 event.target.checked = true;
             });

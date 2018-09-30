@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
 //      }
 //  ]
 
-
+        // DBMS.briefings.get()
         LocalDBMS.prototype.getBriefingData = function (
             selCharacters, selStories, exportOnlyFinishedStories,
             callback

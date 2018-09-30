@@ -31,6 +31,7 @@ See the License for the specific language governing permissions and
             ['status', 5],
         ];
 
+        // DBMS.log.push({})
         LocalDBMS.prototype.log = function (userName, time, funcName, rewrite, params, status, callback) {
             this.logNew({userName, time, funcName, rewrite, params, status})
                 .then(res => (callback ? callback() : null)).catch(callback);
@@ -65,6 +66,7 @@ See the License for the specific language governing permissions and
             this.getLogNew({pageNumber, filter}).then(res => callback(null, res)).catch(callback);
         };
 
+        // DBMS.log.get({pageNumber, filter})
         LocalDBMS.prototype.getLogNew = function ({pageNumber, filter}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isNumber(pageNumber), PC.isObject(filter)]);

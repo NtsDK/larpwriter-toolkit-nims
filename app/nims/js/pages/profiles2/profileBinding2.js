@@ -156,10 +156,13 @@ See the License for the specific language governing permissions and
     function createBinding(pair) {
         const characterName = pair[0].type === 'character' ? pair[0].name : pair[1].name;
         const playerName = pair[0].type === 'player' ? pair[0].name : pair[1].name;
-        DBMS.createBinding(characterName, playerName, Utils.processError(exports.refresh));
+        DBMS.createBindingNew({characterName, playerName}).then(exports.refresh, Utils.handleError);
     }
 
     function removeBinding(binding) {
-        DBMS.removeBinding(binding[0], binding[1], Utils.processError(exports.refresh));
+        DBMS.removeBindingNew({
+            characterName: binding[0], 
+            playerName: binding[1]
+        }).then(exports.refresh, Utils.handleError);
     }
 })(this.ProfileBinding2 = {});

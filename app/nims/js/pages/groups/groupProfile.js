@@ -133,11 +133,11 @@ See the License for the specific language governing permissions and
             case 'text':
                 // eslint-disable-next-line prefer-destructuring
                 value = event.target.value;
-                DBMS.updateGroupField(groupName, fieldName, value, Utils.processError());
+                DBMS.updateGroupFieldNew({groupName, fieldName, value}).catch(Utils.handleError);
                 break;
             case 'checkbox':
                 value = event.target.checked;
-                DBMS.doExportGroup(groupName, value, Utils.processError());
+                DBMS.doExportGroupNew({groupName, value}).catch(Utils.handleError);
                 break;
             default:
                 throw new Error(`Unexpected type ${type}`);
@@ -280,20 +280,16 @@ See the License for the specific language governing permissions and
         const input = qee(dialog, '.entity-input');
         const name = input.value.trim();
 
-        DBMS.createGroup(name, (err) => {
-            if (err) {
-                setError(dialog, err);
-            } else {
-                if (updateSettingsFlag) {
-                    UI.updateEntitySetting(settingsPath, name);
-                }
-                PermissionInformer.refreshNew().then(() => {
-                    input.value = '';
-                    dialog.hideDlg();
-                    refresh();
-                }).catch(Utils.handleError);
+        DBMS.createGroupNew({groupName: name}).then(() => {
+            if (updateSettingsFlag) {
+                UI.updateEntitySetting(settingsPath, name);
             }
-        });
+            PermissionInformer.refreshNew().then(() => {
+                input.value = '';
+                dialog.hideDlg();
+                refresh();
+            }).catch(Utils.handleError);
+        }).catch(err => setError(dialog, err));
     };
 
     function renameGroup(dialog) {
@@ -302,16 +298,12 @@ See the License for the specific language governing permissions and
             const { fromName } = dialog;
             const toName = toInput.value.trim();
 
-            DBMS.renameGroup(fromName, toName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    UI.updateEntitySetting(settingsPath, toName);
-                    toInput.value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.renameGroupNew({fromName, toName}).then(() => {
+                UI.updateEntitySetting(settingsPath, toName);
+                toInput.value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
@@ -319,8 +311,7 @@ See the License for the specific language governing permissions and
         const name = callback();
 
         Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
-            DBMS.removeGroup(name, (err) => {
-                if (err) { Utils.handleError(err); return; }
+            DBMS.removeGroupNew({groupName: name}).then(() => {
                 PermissionInformer.refreshNew().then(() => {
                     if(btn.nextName !== undefined){
                         UI.updateEntitySetting(settingsPath, btn.nextName);
@@ -329,7 +320,7 @@ See the License for the specific language governing permissions and
                     }
                     refresh();
                 }).catch(Utils.handleError);
-            });
+            }).catch(Utils.handleError);
         });
     };
 })(this.GroupProfile = {});

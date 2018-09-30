@@ -22,13 +22,14 @@ See the License for the specific language governing permissions and
             Migrator, EventEmitter, Constants, CU, PC
         } = opts;
         
+        // DBMS.gears.get()
         LocalDBMS.prototype.getAllGearsDataNew = function () {
             return Promise.resolve(CU.clone(this.database.Gears));
         };
         LocalDBMS.prototype.getAllGearsData = function (callback) {
             this.getAllGearsDataNew().then(res => callback(null, res)).catch(callback);
         };
-        
+        // DBMS.gears.set()
         LocalDBMS.prototype.setGearsDataNew = function ({data}={}) {
             return new Promise((resolve, reject) => {
                 this.database.Gears.nodes = data.nodes;
@@ -40,6 +41,7 @@ See the License for the specific language governing permissions and
             this.setGearsDataNew({data}).then(res => callback()).catch(callback);
         };
         
+        // DBMS.gears.physics.set({enabled})
         LocalDBMS.prototype.setGearsPhysicsEnabledNew = function ({enabled}={}) {
             this.database.Gears.settings.physicsEnabled = enabled;
             return Promise.resolve();
@@ -48,6 +50,7 @@ See the License for the specific language governing permissions and
             this.setGearsPhysicsEnabledNew({enabled}).then(res => callback()).catch(callback);
         };
         
+        // DBMS.gears.showNotes.set({enabled})
         LocalDBMS.prototype.setGearsShowNotesEnabledNew = function ({enabled}={}) {
             this.database.Gears.settings.showNotes = enabled;
             return Promise.resolve();

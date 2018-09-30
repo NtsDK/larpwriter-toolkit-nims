@@ -32,11 +32,13 @@ See the License for the specific language governing permissions and
             });
         };
 
+        // DBMS.get
         LocalDBMS.prototype.getDatabaseNew = function () {
           this.database.Meta.saveTime = new Date().toString();
           return Promise.resolve(CU.clone(this.database));
         };
 
+        // DBMS.set
         LocalDBMS.prototype.setDatabaseNew = function ({database}={}) {
             try {
                 this.database = Migrator.migrate(database);
@@ -48,7 +50,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.setDatabase = function (database, callback) {
             this.setDatabaseNew({database}).then(res => callback(res)).catch(callback);
         };
-
+        // DBMS.meta.get
         LocalDBMS.prototype.getMetaInfoNew = function () {
             return Promise.resolve(CU.clone(this.database.Meta));
         };
@@ -73,6 +75,7 @@ See the License for the specific language governing permissions and
 //      },
 //  ]
         // overview
+        // DBMS.meta.property.set()
         LocalDBMS.prototype.setMetaInfoStringNew = function ({name, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoStrings),

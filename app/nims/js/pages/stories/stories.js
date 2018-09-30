@@ -129,19 +129,14 @@ See the License for the specific language governing permissions and
             const input = qee(dialog, '.entity-input');
             const storyName = input.value.trim();
 
-            DBMS.createStory(storyName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    updateSettings(storyName);
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        input.value = '';
-                        dialog.hideDlg();
-                        exports.refresh();
-                    });
-                }
-            });
+            DBMS.createStoryNew({storyName}).then(() => {
+                updateSettings(storyName);
+                PermissionInformer.refreshNew().then(() => {
+                    input.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }).catch(Utils.handleError);
+            }).catch(err => setError(dialog, err));
         };
     }
 
@@ -151,19 +146,14 @@ See the License for the specific language governing permissions and
             const fromName = queryEl(`${root}#storySelector`).value.trim();
             const toName = toInput.value.trim();
 
-            DBMS.renameStory(fromName, toName, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    updateSettings(toName);
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        toInput.value = '';
-                        dialog.hideDlg();
-                        exports.refresh();
-                    });
-                }
-            });
+            DBMS.renameStoryNew({fromName, toName}).then(() => {
+                updateSettings(toName);
+                PermissionInformer.refreshNew().then(() => {
+                    toInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }).catch(Utils.handleError);
+            }).catch(err => setError(dialog, err));
         };
     }
 
@@ -171,13 +161,11 @@ See the License for the specific language governing permissions and
         const name = queryEl(`${root}#storySelector`).value.trim();
 
         Utils.confirm(strFormat(getL10n('stories-are-you-sure-about-story-removing'), [name]), () => {
-            DBMS.removeStory(name, (err) => {
-                if (err) { Utils.handleError(err); return; }
-                PermissionInformer.refresh((err2) => {
-                    if (err2) { Utils.handleError(err2); return; }
+            DBMS.removeStoryNew({storyName:name}).then(() => {
+                PermissionInformer.refreshNew().then(() => {
                     exports.refresh();
-                });
-            });
+                }).catch(Utils.handleError);
+            }).catch(Utils.handleError);
         });
     }
 

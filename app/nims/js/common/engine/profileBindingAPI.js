@@ -63,6 +63,7 @@ See the License for the specific language governing permissions and
 
         dbmsUtils._getProfileBinding = _getProfileBinding;
 
+        // DBMS.profileBindings.characters[name].get()
         LocalDBMS.prototype.getProfileBinding = function (type, name, callback) {
             this.getProfileBindingNew({type, name}).then(res => callback(null, res)).catch(callback);
         };

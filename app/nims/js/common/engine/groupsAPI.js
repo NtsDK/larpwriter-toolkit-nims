@@ -25,6 +25,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getGroupNamesArrayNew = function () {
             return Promise.resolve(Object.keys(this.database.Groups).sort(CU.charOrdA));
         };
+        // DBMS.groups.names.get()
         LocalDBMS.prototype.getGroupNamesArray = function (callback) {
             this.getGroupNamesArrayNew().then(res => callback(null, res)).catch(callback);
         };
@@ -43,6 +44,7 @@ See the License for the specific language governing permissions and
 //                }]
 //            }
 //        ]
+        // DBMS.groups[].get()
         LocalDBMS.prototype.getGroupNew = function ({groupName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(groupCheck(groupName, this.database), reject, () => {
@@ -66,6 +68,7 @@ See the License for the specific language governing permissions and
         };
 
         // preview
+        // DBMS.groups.find({characterName}).get({characterText})
         LocalDBMS.prototype.getCharacterGroupTextsNew = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
                 Promise.all([
@@ -82,6 +85,7 @@ See the License for the specific language governing permissions and
         };
 
         // export
+        // DBMS.group.groupBy({characterName}).map({characterText})
         LocalDBMS.prototype.getAllCharacterGroupTextsNew = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
@@ -117,6 +121,7 @@ See the License for the specific language governing permissions and
 //          }]
 //      }
 //  ]
+        // DBMS.groups.create({name})
         LocalDBMS.prototype.createGroupNew = function ({groupName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.createEntityCheck2(groupName, R.keys(this.database.Groups), 'entity-lifeless-name', 'entity-of-group'), reject, () => {
@@ -161,6 +166,7 @@ See the License for the specific language governing permissions and
 //          }]
 //      }
 //  ]
+        // DBMS.groups[name].rename({newName})
         LocalDBMS.prototype.renameGroupNew = function ({fromName, toName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), reject, () => {
@@ -189,6 +195,7 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
+        // DBMS.groups.remove({name})
         LocalDBMS.prototype.removeGroupNew = function ({groupName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), reject, () => {
@@ -214,6 +221,7 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
+        // DBMS.groups[name].filter.set({filter})
         LocalDBMS.prototype.saveFilterToGroupNew = function ({groupName, filterModel}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(groupCheck(groupName, this.database), reject, () => {
@@ -261,6 +269,7 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
+        // DBMS.groups[name][fieldName].set({value})
         LocalDBMS.prototype.updateGroupFieldNew = function ({groupName, fieldName, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([groupCheck(groupName, this.database),
@@ -336,6 +345,7 @@ See the License for the specific language governing permissions and
         //     this.initProfileInfoNew({groupName, value}).then(res => callback()).catch(callback);
         // };
 
+        // DBMS.groups.profileFilterInfo.get()
         LocalDBMS.prototype.getProfileFilterInfoNew = function () {
             return new Promise((resolve, reject) => {
                 const that = this;

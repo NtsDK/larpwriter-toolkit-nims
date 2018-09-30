@@ -111,10 +111,7 @@ See the License for the specific language governing permissions and
         fillProfileItemContent(row, getProfileItemSelect().value, profiles[toCharacter][getProfileItemSelect().value]);
         listen(qe('button.remove'), 'click', (event) => {
             Utils.confirm(strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
-                DBMS.removeCharacterRelation(fromCharacter, toCharacter, (err) => {
-                    if (err) { Utils.handleError(err); return; }
-                    externalRefresh();
-                });
+                DBMS.removeCharacterRelationNew({fromCharacter, toCharacter}).then(externalRefresh).catch(Utils.handleError);
             });
         });
 
@@ -122,10 +119,12 @@ See the License for the specific language governing permissions and
         directText.value = rel[fromCharacter];
         setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
         listen(directText, 'change', (event) => {
-            DBMS.setCharacterRelationText(
-                fromCharacter, toCharacter, fromCharacter, event.target.value,
-                Utils.processError()
-            );
+            DBMS.setCharacterRelationTextNew({
+                fromCharacter, 
+                toCharacter, 
+                character: fromCharacter, 
+                text:event.target.value
+            }).catch(Utils.handleError);
         });
 
         Constants.relationEssences.forEach((name) => {
@@ -141,10 +140,14 @@ See the License for the specific language governing permissions and
             }
             setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
             listen(btn, 'click', (event) => {
-                DBMS.setRelationEssenceStatus(fromCharacter, toCharacter, attrName, !hasClass(event.target, 'btn-primary'), (err) => {
-                    if (err) { Utils.handleError(err); return; }
+                DBMS.setRelationEssenceStatusNew({
+                    fromCharacter, 
+                    toCharacter, 
+                    essence: attrName, 
+                    flag: !hasClass(event.target, 'btn-primary')
+                }).then(() => {
                     toggleClass(event.target, 'btn-primary');
-                });
+                }).catch(Utils.handleError);
             });
         });
 
@@ -152,17 +155,23 @@ See the License for the specific language governing permissions and
         originText.value = rel.origin;
         setAttr(originText, 'placeholder', l10n('relation-origin'));
         listen(originText, 'change', (event) => {
-            DBMS.setOriginRelationText(fromCharacter, toCharacter, event.target.value, Utils.processError());
+            DBMS.setOriginRelationTextNew({
+                fromCharacter, 
+                toCharacter, 
+                text: event.target.value
+            }).catch(Utils.handleError);
         });
 
         const reverseText = qe('.reverse textarea');
         reverseText.value = rel[toCharacter];
         setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
         listen(reverseText, 'change', (event) => {
-            DBMS.setCharacterRelationText(
-                fromCharacter, toCharacter, toCharacter,
-                event.target.value, Utils.processError()
-            );
+            DBMS.setCharacterRelationTextNew({
+                fromCharacter, 
+                toCharacter, 
+                character: toCharacter,
+                text: event.target.value
+            }).catch(Utils.handleError);
         });
 
         const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
@@ -196,7 +205,13 @@ See the License for the specific language governing permissions and
             const newValue = !hasClass(button, 'btn-primary');
             setClassByCondition(button, 'btn-primary', newValue);
             Utils.enableEl(textarea, !newValue);
-            DBMS.setRelationReadyStatus(fromCharacter, toCharacter, character, newValue, Utils.processError());
+
+            DBMS.setRelationReadyStatusNew({
+                fromCharacter, 
+                toCharacter, 
+                character, 
+                ready: newValue
+            }).catch(Utils.handleError);
         });
     }
 
@@ -211,16 +226,14 @@ See the License for the specific language governing permissions and
         select1.select2({ width: 'style' });
         listen(button, 'click', () => {
             const toCharacter = select1[0].value;
-            DBMS.createCharacterRelation(fromCharacter, toCharacter, (err) => {
-                if (err) { Utils.handleError(err); return; }
-                DBMS.getCharacterRelation(fromCharacter, toCharacter, (err2, rel) => {
-                    if (err2) { Utils.handleError(err2); return; }
+            DBMS.createCharacterRelationNew({fromCharacter, toCharacter}).then(() => {
+                DBMS.getCharacterRelationNew({fromCharacter, toCharacter}).then((rel) => {
                     makeRowCallback(select1[0].value, rel);
                     data = data.filter(R.compose(R.not, R.equals(select1[0].value), R.prop('value')));
                     clearEl(select1[0]);
                     select1.select2(getSelect2Data(data));
-                });
-            });
+                }).catch(Utils.handleError);
+            }).catch(Utils.handleError);
         });
     }
 })(this.RelationsPreview = {});
