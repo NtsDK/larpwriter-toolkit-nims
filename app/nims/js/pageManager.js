@@ -22,7 +22,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     const state = {};
     state.views = {};
     state.firstBaseLoad = MODE === 'Standalone';
-    
+
     const BACKUP_NUMBER = 4;
     const BACKUP_INTERVAL = 60000*10; // 10 min
 
@@ -75,11 +75,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     exports.onIndexPageLoad = () => {
         initPage();
-        const RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptions', 'getRoleGridInfo']));
+        const RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptionsNew']));
         window.DBMS = new RemoteDBMS();
         stateInit();
-        DBMS.getPlayersOptions((err, playersOptions) => {
-            if (err) { Utils.handleError(err); return; }
+        DBMS.getPlayersOptionsNew().then((playersOptions) => {
             addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
             Utils.addView(state.containers, 'enter', Enter, { mainPage: true });
             if (playersOptions.allowPlayerCreation) {
@@ -88,9 +87,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             Utils.addView(state.containers, 'about', About);
             //            addEl(state.navigation, makeL10nButton());
             state.currentView.refresh();
-        });
+        }).catch(Utils.handleError);
     };
-    
+
     exports.onOrganizerPageLoad = () => {
         initPage();
         const LocalDBMS = makeLocalDBMS(true);
@@ -108,19 +107,19 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             });
         }
     };
-    
+
     function runBaseSelectDialog() {
         const dbDialog = queryEl('.set-database-dialog');
         addEl(queryEl('body'), dbDialog);
         listen(qee(dbDialog, '.on-action-button'), 'click', (event) => {
             $(dbDialog).modal('hide');
         });
-        
+
         readLocalBases().then((browserBases) => {
             addEls(qee(dbDialog, '.modal-body .backup-bases'), (browserBases || []).map((base,i) => {
                 const baseSelect = qmte('.backup-base-tmpl');
                 const input = qee(baseSelect, 'input');
-                setAttr(input, 'value', "browserBackup" + i); 
+                setAttr(input, 'value', "browserBackup" + i);
                 setAttr(input, 'id', "dbSourceBrowserBackup" + i);
                 input.base = base;
                 setAttr(qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
@@ -128,30 +127,30 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 addEl(qee(baseSelect, '.base-name'), makeText(base.Meta.name + ' (' + date + ')'));
                 return baseSelect;
             }));
-            
+
             qee(dbDialog, 'input[name=dbSource]').checked = true;
             qee(dbDialog, '#dbSourceDemoBase').base = CommonUtils.clone(DemoBase.data);
             qee(dbDialog, '#dbSourceEmptyBase').base = CommonUtils.clone(EmptyBase.data);
-            
+
             addEl(qee(dbDialog, '.demo-base-name'), makeText(DemoBase.data.Meta.name));
-            
+
             const dialogOnBaseLoad = err => {
                 if (err) { Utils.handleError(err); return; }
                 $(dbDialog).modal('hide');
                 onBaseLoaded(err);
             }
-            
+
             initBaseLoadBtn(qee(dbDialog, '.upload-db'), qee(dbDialog, '.upload-db input'), dialogOnBaseLoad);
-            
+
             listen(qee(dbDialog, '.on-action-button'), 'click', () => {
                 const base = getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
                 DBMS.setDatabaseNew({database: base}).then(() => {
                     dialogOnBaseLoad();
                 }).catch(Utils.handleError);
             });
-            
+
             L10n.localizeStatic(dbDialog);
-            
+
             $(dbDialog).modal({
                 backdrop: 'static'
             });
@@ -234,7 +233,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                     addClass(input, 'hidden');
                     setAttr(input, 'tabindex', -1);
                     button.appendChild(input);
-                    
+
                     initBaseLoadBtn(button, input, onBaseLoaded);
                     addEl(state.navigation, button);
                 }
@@ -286,7 +285,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }).catch(Utils.handleError);
         }).catch(Utils.handleError);
     }
-    
+
     function onBaseLoaded(err3) {
         if (err3) { Utils.handleError(err3); return; }
         consistencyCheck((checkResult) => {
@@ -299,7 +298,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }
         });
     }
-    
+
     function initBaseLoadBtn(button, input, onBaseLoaded) {
         button.addEventListener('change', (evt) => {
             FileUtils.readSingleFile(evt).then(onBaseLoaded, Utils.handleError);
@@ -369,40 +368,40 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             return message;
         };
     }
-    
+
     function readLocalBases() {
         if (!window.indexedDB) {
             Utils.alert(L10n.get('errors', 'indexeddb-is-not-found'));
             return Promise.resolve(null);
         }
-        
+
         let counter = 0;
         let counters = [];
         while(!R.contains(counter, counters)) {
             counters.push(counter);
             counter = (counter + 1) % BACKUP_NUMBER;
         }
-        
+
         return Promise.all(counters.map(counter => LocalBaseAPI.get('base' + counter))).then(bases => {
             bases = bases.filter(base => !R.isNil(base));
             if(bases.length === 0){
                 return null;
             }
-            
+
             bases.sort(CommonUtils.charOrdAFactory( base => -new Date(base.obj.Meta.saveTime).getTime()))
             return bases.map(R.prop('obj'));
         });
     }
-    
+
     function localAutoSave() {
         if (!window.indexedDB) {
             return;
         }
-        
+
         makeBackup();
         setInterval(makeBackup, BACKUP_INTERVAL); // 5 min
     }
-    
+
     let counter = 0;
     function makeBackup() {
         console.log(counter + 1);
@@ -418,5 +417,5 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             }).catch(Utils.handleError);
         }).catch(Utils.handleError);
     }
-    
+
 })(this.PageManager = {});

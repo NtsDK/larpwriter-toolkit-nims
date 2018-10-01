@@ -23,6 +23,20 @@ See the License for the specific language governing permissions and
     state.summary = {};
 
     if (mode === 'NIMS_Server' && PERMISSION_INFORMER_ENABLED) {
+
+        exports.refreshNew = () => {
+            return new Promise((resolve, reject) => {
+                exports.refresh( (err) => {
+                    if(err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                })
+            });
+            return Promise.resolve();
+        };
+
         exports.refresh = (callback) => {
             const request = $.ajax({
                 url: '/getPermissionsSummary',
@@ -51,7 +65,6 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-
         exports.subscribe = () => {
             const request = $.ajax({
                 url: '/subscribeOnPermissionsUpdate',
@@ -73,14 +86,24 @@ See the License for the specific language governing permissions and
             });
         };
 
-        exports.refresh();
 
-        exports.isAdmin = (callback) => {
-            callback(null, state.summary.isAdmin);
+        exports.refresh();
+        // exports.refreshNew().then(exports.subscribe, err => setTimeout(exports.subscribe, 500));
+
+        exports.isAdminNew = () => {
+            return Promise.resolve(state.summary.isAdmin);
         };
 
-        exports.isEditor = (callback) => {
-            callback(null, state.summary.isEditor);
+        // exports.isAdmin = (callback) => {
+        //     callback(null, state.summary.isAdmin);
+        // };
+
+        // exports.isEditor = (callback) => {
+        //     callback(null, state.summary.isEditor);
+        // };
+
+        exports.isAdminNew = () => {
+            return Promise.resolve(state.summary.isEditor);
         };
 
         const isObjectEditableSync = (type, name) => {
@@ -93,87 +116,88 @@ See the License for the specific language governing permissions and
             return state.summary.user[type].indexOf(name) !== -1;
         };
 
-        exports.isEntityEditable = (type, entityName, callback) => {
-            callback(null, isObjectEditableSync(type, entityName));
+        // exports.isEntityEditable = (type, entityName, callback) => {
+        //     callback(null, isObjectEditableSync(type, entityName));
+        // };
+
+        exports.isEntityEditableNew = (type, entityName) => {
+            return Promise.resolve(isObjectEditableSync(type, entityName));
+            // callback(null, isObjectEditableSync(type, entityName));
         };
 
-        exports.getEntityNamesArray = R.curry((type, editableOnly, callback) => {
-            const userEntities = state.summary.user[type];
-            const allEntities = state.summary.all[type];
-            const ownerMap = state.summary.ownerMaps[type];
-            const names = allEntities.filter((name) => {
-                if (editableOnly) {
-                    return isObjectEditableSync(type, name);
-                }
-                return true;
-            }).map(name => ({
-                displayName: `${ownerMap[name]}. ${name}`,
-                value: name,
-                editable: isObjectEditableSync(type, name),
-                isOwner: userEntities.indexOf(name) !== -1,
-                hasOwner: ownerMap[name] !== '-'
-            }));
+        exports.getEntityNamesArrayNew = ({type, editableOnly}={}) => {
+            return new Promise((resolve, reject) => {
+                const userEntities = state.summary.user[type];
+                const allEntities = state.summary.all[type];
+                const ownerMap = state.summary.ownerMaps[type];
+                const names = allEntities.filter((name) => {
+                    if (editableOnly) {
+                        return isObjectEditableSync(type, name);
+                    }
+                    return true;
+                }).map(name => ({
+                    displayName: `${ownerMap[name]}. ${name}`,
+                    value: name,
+                    editable: isObjectEditableSync(type, name),
+                    isOwner: userEntities.indexOf(name) !== -1,
+                    hasOwner: ownerMap[name] !== '-'
+                }));
 
-            const name2str = a => a.displayName.toLowerCase();
+                const name2str = a => a.displayName.toLowerCase();
 
-            const entityCmp = CommonUtils.charOrdAFactoryBase('asc', (a, b) => {
-                if (a.isOwner && b.isOwner) return name2str(a) > name2str(b);
-                if (a.isOwner) return false;
-                if (b.isOwner) return true;
+                const entityCmp = CommonUtils.charOrdAFactoryBase('asc', (a, b) => {
+                    if (a.isOwner && b.isOwner) return name2str(a) > name2str(b);
+                    if (a.isOwner) return false;
+                    if (b.isOwner) return true;
 
-                if (a.hasOwner && b.hasOwner) return name2str(a) > name2str(b);
-                if (a.hasOwner) return false;
-                if (b.hasOwner) return true;
+                    if (a.hasOwner && b.hasOwner) return name2str(a) > name2str(b);
+                    if (a.hasOwner) return false;
+                    if (b.hasOwner) return true;
 
-                return name2str(a) > name2str(b);
-            }, R.identity);
+                    return name2str(a) > name2str(b);
+                }, R.identity);
 
-            //            names.sort(Utils.charOrdAObject);
-            names.sort(entityCmp);
+                //            names.sort(Utils.charOrdAObject);
+                names.sort(entityCmp);
 
-            callback(null, names);
-        });
-
-        exports.areAdaptationsEditable = (adaptations, callback) => {
-            const map = {};
-            const { isAdaptationRightsByStory } = state.summary;
-
-            adaptations.forEach((elem) => {
-                const key = `${elem.storyName}-${elem.characterName}`;
-                if (isAdaptationRightsByStory) {
-                    map[key] = isObjectEditableSync('story', elem.storyName);
-                } else {
-                    map[key] = isObjectEditableSync('character', elem.characterName);
-                }
+                resolve(names);
             });
+        };
 
-            callback(null, map);
+        exports.areAdaptationsEditableNew = ({adaptations}={}) => {
+            return new Promise((resolve, reject) => {
+                const map = {};
+                const { isAdaptationRightsByStory } = state.summary;
+
+                adaptations.forEach((elem) => {
+                    const key = `${elem.storyName}-${elem.characterName}`;
+                    if (isAdaptationRightsByStory) {
+                        map[key] = isObjectEditableSync('story', elem.storyName);
+                    } else {
+                        map[key] = isObjectEditableSync('character', elem.characterName);
+                    }
+                });
+
+                resolve(map);
+            });
         };
     } else if (mode === 'Standalone') {
-        exports.refresh = (callback) => {
-            exports.refreshNew().then(res => callback(null, res)).catch(callback);
-        };
         exports.refreshNew = () => {
             return Promise.resolve();
         };
 
-        exports.isAdmin = (callback) => {
-            exports.isAdminNew().then(res => callback(null, res)).catch(callback);
+        exports.refresh = (callback) => {
+            exports.refreshNew().then(res => callback(null, res)).catch(callback);
         };
+
         exports.isAdminNew = () => {
             return Promise.resolve(true);
         };
 
-        exports.isEditor = (callback) => {
-            exports.isEditorNew().then(res => callback(null, res)).catch(callback);
-        };
         exports.isEditorNew = () => {
             return Promise.resolve(true);
         };
 
-        exports.getEntityNamesArray = (type, editableOnly, callback) => {
-            exports.getEntityNamesArrayNew({type, editableOnly}).then(res => callback(null, res)).catch(callback);
-        }
         exports.getEntityNamesArrayNew = ({type, editableOnly}={}) => {
             return new Promise((resolve, reject) => {
                 // function processNames(err, names) {
@@ -194,16 +218,10 @@ See the License for the specific language governing permissions and
             });
         };
 
-        exports.isEntityEditable = (type, entityName, callback) => {
-            exports.isEntityEditableNew({type, entityName}).then(res => callback(null, res)).catch(callback);
-        };
         exports.isEntityEditableNew = ({type, entityName}={}) => {
             return Promise.resolve(true);
         };
 
-        exports.areAdaptationsEditable = (adaptations, callback) => {
-            exports.areAdaptationsEditableNew({adaptations}).then(res => callback(null, res)).catch(callback);
-        }
         exports.areAdaptationsEditableNew = ({adaptations}={}) => {
             const map = {};
             adaptations.forEach((elem) => {
@@ -212,6 +230,23 @@ See the License for the specific language governing permissions and
 
             return Promise.resolve(map);
         };
+    }
+
+
+    exports.isAdmin = (callback) => {
+        exports.isAdminNew().then(res => callback(null, res)).catch(callback);
+    };
+    exports.isEditor = (callback) => {
+        exports.isEditorNew().then(res => callback(null, res)).catch(callback);
+    };
+    exports.getEntityNamesArray = (type, editableOnly, callback) => {
+        exports.getEntityNamesArrayNew({type, editableOnly}).then(res => callback(null, res)).catch(callback);
+    }
+    exports.isEntityEditable = (type, entityName, callback) => {
+        exports.isEntityEditableNew({type, entityName}).then(res => callback(null, res)).catch(callback);
+    };
+    exports.areAdaptationsEditable = (adaptations, callback) => {
+        exports.areAdaptationsEditableNew({adaptations}).then(res => callback(null, res)).catch(callback);
     }
 
     Object.keys(exports).forEach((funcName) => {

@@ -8,7 +8,7 @@
     "measurelook-dev": "./node_modules/.bin/gulp dev --configFile \"config/measurelook-config.json\"",
     "nims-dev": "./node_modules/.bin/gulp dev --configFile \"config/nims-config.json\"",
     "nims-live": "node live.js --configFile \"config/nims-config.json\"",
-    "nims-reload": "cd C:/workspace/nims-dist && reload -b -s nims.html",
+    "nims-reload": "cd ../nims-dist && reload -b -s nims.html",
     "nims-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/nims-config.json\"",
     "vtmcl-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/vtmcl-config.json\"",
     "measurelook-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/measurelook-config.json\"",
@@ -48,7 +48,6 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.11.1",
-    "npm-check-updates": "^2.14.2"
+    "eslint-plugin-react": "^7.11.1"
   }
 }

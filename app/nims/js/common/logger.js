@@ -262,11 +262,11 @@ See the License for the specific language governing permissions and
 
                         const beginTime = new Date().toString();
                         this.logNew({
-                            userName, 
-                            time: beginTime, 
-                            funcName, 
-                            rewrite: !!filteredApi[funcName].rewrite, 
-                            params: filteredApi[funcName].ignoreParams ? [] : arr, 
+                            userName,
+                            time: beginTime,
+                            funcName,
+                            rewrite: !!filteredApi[funcName].rewrite,
+                            params: filteredApi[funcName].ignoreParams ? [] : arr,
                             status: JSON.stringify(['begin'])
                         });
                         // this.log(
@@ -295,11 +295,11 @@ See the License for the specific language governing permissions and
                             //         text])
                             // );
                             this.logNew({
-                                userName, 
-                                time: endTime, 
-                                funcName, 
-                                rewrite: !!filteredApi[funcName].rewrite, 
-                                params: filteredApi[funcName].ignoreParams ? [] : arr, 
+                                userName,
+                                time: endTime,
+                                funcName,
+                                rewrite: !!filteredApi[funcName].rewrite,
+                                params: filteredApi[funcName].ignoreParams ? [] : arr,
                                 status: JSON.stringify([beginTime, text])
                             });
                             callback(...arguments);
@@ -319,7 +319,7 @@ See the License for the specific language governing permissions and
                 const oldFun = LocalDBMS.prototype[funcName];
                 LocalDBMS.prototype[funcName] = function () {
                     try {
-                        const exclude = ['_init'];
+                        const exclude = ['_init', 'subscribeOnPermissionsUpdate', 'getPermissionsSummary'];
                         if(!funcName.endsWith('New') && !R.contains(funcName, exclude)){
                             console.error('Old API call', funcName, arguments);
                             // console.trace('Old API call', funcName);

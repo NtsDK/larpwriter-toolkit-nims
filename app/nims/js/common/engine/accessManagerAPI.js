@@ -71,7 +71,7 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.removeOrganizer = function (name, callback) {
-            const chain = [PC.isString(name), 
+            const chain = [PC.isString(name),
                 PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)),
                 PC.notEquals(name, this.database.ManagementInfo.admin)];
             PC.precondition(
@@ -148,8 +148,12 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getPlayersOptions = function (callback) {
-            callback(null, CU.clone(this.database.ManagementInfo.PlayersOptions));
+        // LocalDBMS.prototype.getPlayersOptions = function (callback) {
+        //     callback(null, CU.clone(this.database.ManagementInfo.PlayersOptions));
+        // };
+        LocalDBMS.prototype.getPlayersOptionsNew = function () {
+            return Promise.resolve(CU.clone(this.database.ManagementInfo.PlayersOptions));
+            // callback(null, CU.clone(this.database.ManagementInfo.PlayersOptions));
         };
 
         LocalDBMS.prototype.setPlayerOption = function (name, value, callback) {

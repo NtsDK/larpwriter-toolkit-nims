@@ -31,82 +31,122 @@ function makeRemoteDBMS(LocalDBMS) {
         this.clearSettings();
     }
 
-    RemoteDBMS._simpleGet = function (name, params, callback) {
-        let paramStr = '';
-        if (params) {
-            paramStr = `?params=${encodeURIComponent(JSON.stringify(params))}`;
-        }
-
-        const request = $.ajax({
-            url: url + name + paramStr,
-            dataType: 'text',
-            method: 'GET',
-            contentType: 'application/json;charset=utf-8',
-            cache: false,
-            timeout: Constants.httpTimeout,
-        });
-
-        request.done((data) => {
-            callback(null, JSON.parse(data));
-        });
-
-        request.fail((errorInfo, textStatus, errorThrown) => {
-            try {
-                callback(JSON.parse(errorInfo.responseText));
-            } catch (err) {
-                callback(errorInfo.responseText || textStatus || 'error');
+    RemoteDBMS._simpleGet = function (name, params) {
+        return new Promise((resolve, reject) => {
+            let paramStr = '';
+            if (params) {
+                paramStr = `?params=${encodeURIComponent(JSON.stringify(params))}`;
             }
+
+            const request = $.ajax({
+                url: url + name + paramStr,
+                dataType: 'text',
+                method: 'GET',
+                contentType: 'application/json;charset=utf-8',
+                cache: false,
+                timeout: Constants.httpTimeout,
+            });
+
+            request.done((data) => {
+                resolve(JSON.parse(data));
+            });
+
+            request.fail((errorInfo, textStatus, errorThrown) => {
+                try {
+                    reject(JSON.parse(errorInfo.responseText));
+                } catch (err) {
+                    reject(errorInfo.responseText || textStatus || 'error');
+                }
+            });
         });
     };
 
-    RemoteDBMS._simplePut = function (name, data, callback) {
-        const request = $.ajax({
-            url: url + name,
-            dataType: 'text',
-            method: 'PUT',
-            contentType: 'application/json;charset=utf-8',
-            data: JSON.stringify(data),
-            timeout: Constants.httpTimeout
-        });
-        
-        CallNotificator.onCallStart();
+    // RemoteDBMS._simpleGet = function (name, params, callback) {
+    //     let paramStr = '';
+    //     if (params) {
+    //         paramStr = `?params=${encodeURIComponent(JSON.stringify(params))}`;
+    //     }
 
-        request.done((data2) => {
-            CallNotificator.onCallFinished();
-            if (callback) callback();
-        });
+    //     const request = $.ajax({
+    //         url: url + name + paramStr,
+    //         dataType: 'text',
+    //         method: 'GET',
+    //         contentType: 'application/json;charset=utf-8',
+    //         cache: false,
+    //         timeout: Constants.httpTimeout,
+    //     });
 
-        request.fail((errorInfo, textStatus, errorThrown) => {
-            CallNotificator.onCallFinished(errorInfo);
-            try {
-                callback(JSON.parse(errorInfo.responseText));
-            } catch (err) {
-                callback(errorInfo.responseText || textStatus || 'error');
-            }
+    //     request.done((data) => {
+    //         callback(null, JSON.parse(data));
+    //     });
+
+    //     request.fail((errorInfo, textStatus, errorThrown) => {
+    //         try {
+    //             callback(JSON.parse(errorInfo.responseText));
+    //         } catch (err) {
+    //             callback(errorInfo.responseText || textStatus || 'error');
+    //         }
+    //     });
+    // };
+
+    RemoteDBMS._simplePut = function (name, data) {
+        return new Promise((resolve, reject) => {
+            const request = $.ajax({
+                url: url + name,
+                dataType: 'text',
+                method: 'PUT',
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify(data),
+                timeout: Constants.httpTimeout
+            });
+
+            CallNotificator.onCallStart();
+
+            request.done((data2) => {
+                CallNotificator.onCallFinished();
+                resolve();
+            });
+
+            request.fail((errorInfo, textStatus, errorThrown) => {
+                CallNotificator.onCallFinished(errorInfo);
+                try {
+                    reject(JSON.parse(errorInfo.responseText));
+                } catch (err) {
+                    reject(errorInfo.responseText || textStatus || 'error');
+                }
+            });
         });
     };
+    // RemoteDBMS._simplePut = function (name, data, callback) {
+    //     const request = $.ajax({
+    //         url: url + name,
+    //         dataType: 'text',
+    //         method: 'PUT',
+    //         contentType: 'application/json;charset=utf-8',
+    //         data: JSON.stringify(data),
+    //         timeout: Constants.httpTimeout
+    //     });
+
+    //     CallNotificator.onCallStart();
+
+    //     request.done((data2) => {
+    //         CallNotificator.onCallFinished();
+    //         if (callback) callback();
+    //     });
+
+    //     request.fail((errorInfo, textStatus, errorThrown) => {
+    //         CallNotificator.onCallFinished(errorInfo);
+    //         try {
+    //             callback(JSON.parse(errorInfo.responseText));
+    //         } catch (err) {
+    //             callback(errorInfo.responseText || textStatus || 'error');
+    //         }
+    //     });
+    // };
 
 
     Object.keys(LocalDBMS.prototype).forEach((name) => {
         RemoteDBMS.prototype[name] = function () {
-            const arr = [];
-            for (let i = 0; i < arguments.length - 1; i++) {
-                arr.push(arguments[i]);
-            }
-            //            if(CommonUtils.startsWith(name, "_")){
-            //                // do nothing for inner functions
-            //            } else
-            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
-                RemoteDBMS._simpleGet(name, arr, arguments[arguments.length - 1]);
-            } else {
-                RemoteDBMS._simplePut(name, arr, arguments[arguments.length - 1]);
-            }
-        };
-    });
-    
-    // promisification
-    Object.keys(LocalDBMS.prototype).forEach((name) => {
-        RemoteDBMS.prototype[name + 'Pm'] = function () {
             const arr = [];
             for (let i = 0; i < arguments.length; i++) {
                 arr.push(arguments[i]);
@@ -114,21 +154,55 @@ function makeRemoteDBMS(LocalDBMS) {
             //            if(CommonUtils.startsWith(name, "_")){
             //                // do nothing for inner functions
             //            } else
-            return new Promise(function(resolve, reject) {
-                if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
-                    RemoteDBMS._simpleGet(name, arr, function(err, value) {
-                        if(err) {reject(err); return;}
-                        resolve(value);
-                    });
-                } else {
-                    RemoteDBMS._simplePut(name, arr, function(err, value) {
-                        if(err) {reject(err); return;}
-                        resolve();
-                    });
-                }
-            }.bind(this));
+            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
+                return RemoteDBMS._simpleGet(name, arr);
+            } else {
+                return RemoteDBMS._simplePut(name, arr);
+            }
         };
     });
+    // Object.keys(LocalDBMS.prototype).forEach((name) => {
+    //     RemoteDBMS.prototype[name] = function () {
+    //         const arr = [];
+    //         for (let i = 0; i < arguments.length - 1; i++) {
+    //             arr.push(arguments[i]);
+    //         }
+    //         //            if(CommonUtils.startsWith(name, "_")){
+    //         //                // do nothing for inner functions
+    //         //            } else
+    //         if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
+    //             RemoteDBMS._simpleGet(name, arr, arguments[arguments.length - 1]);
+    //         } else {
+    //             RemoteDBMS._simplePut(name, arr, arguments[arguments.length - 1]);
+    //         }
+    //     };
+    // });
+
+    // promisification
+    // Object.keys(LocalDBMS.prototype).forEach((name) => {
+    //     RemoteDBMS.prototype[name + 'Pm'] = function () {
+    //         const arr = [];
+    //         for (let i = 0; i < arguments.length; i++) {
+    //             arr.push(arguments[i]);
+    //         }
+    //         //            if(CommonUtils.startsWith(name, "_")){
+    //         //                // do nothing for inner functions
+    //         //            } else
+    //         return new Promise(function(resolve, reject) {
+    //             if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
+    //                 RemoteDBMS._simpleGet(name, arr, function(err, value) {
+    //                     if(err) {reject(err); return;}
+    //                     resolve(value);
+    //                 });
+    //             } else {
+    //                 RemoteDBMS._simplePut(name, arr, function(err, value) {
+    //                     if(err) {reject(err); return;}
+    //                     resolve();
+    //                 });
+    //             }
+    //         }.bind(this));
+    //     };
+    // });
 
     RemoteDBMS.prototype.clearSettings = function () {
         this.Settings = {

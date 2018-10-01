@@ -1,7 +1,7 @@
 {
     "projectName" : "nims",
-    "translationsPath" : "C:\\workspace\\larpwriter-toolkit-nims-translations-master\\nims",
-    "distPath": "C:\\workspace\\nims-dist",
+    "translationsPath" : "I:\\workspaces\\smtk-nims-translations\\nims",
+    "distPath": "I:\\workspaces\\nims-dist",
     "resources": {
         "enabled" : true,
         "files": [
