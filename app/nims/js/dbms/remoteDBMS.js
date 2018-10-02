@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 /* eslint-disable func-names,prefer-rest-params */
 
 
-function makeRemoteDBMS(LocalDBMS) {
+function makeRemoteDBMS() {
     const showNotification = true;
     const notificationTimeout = 2000;
     //const notificationTimeout = 10000;
@@ -145,22 +145,24 @@ function makeRemoteDBMS(LocalDBMS) {
     // };
 
 
-    Object.keys(LocalDBMS.prototype).forEach((name) => {
-        RemoteDBMS.prototype[name] = function () {
-            const arr = [];
-            for (let i = 0; i < arguments.length; i++) {
-                arr.push(arguments[i]);
-            }
-            //            if(CommonUtils.startsWith(name, "_")){
-            //                // do nothing for inner functions
-            //            } else
-            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
-                return RemoteDBMS._simpleGet(name, arr);
-            } else {
-                return RemoteDBMS._simplePut(name, arr);
-            }
-        };
-    });
+    // Object.keys(LocalDBMS.prototype).forEach((name) => {
+    //     RemoteDBMS.prototype[name] = function () {
+    //         const arr = [];
+    //         for (let i = 0; i < arguments.length; i++) {
+    //             arr.push(arguments[i]);
+    //         }
+    //         //            if(CommonUtils.startsWith(name, "_")){
+    //         //                // do nothing for inner functions
+    //         //            } else
+    //         if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
+    //             return RemoteDBMS._simpleGet(name, arr);
+    //         } else {
+    //             return RemoteDBMS._simplePut(name, arr);
+    //         }
+    //     };
+    // });
+
+
     // Object.keys(LocalDBMS.prototype).forEach((name) => {
     //     RemoteDBMS.prototype[name] = function () {
     //         const arr = [];
@@ -215,5 +217,30 @@ function makeRemoteDBMS(LocalDBMS) {
     RemoteDBMS.prototype.getSettings = function () {
         return this.Settings;
     };
-    return RemoteDBMS;
+    // return RemoteDBMS;
+    const dbms = new RemoteDBMS();
+
+    const proxy = new Proxy(dbms, {
+        get(target, prop) {
+            // console.log(`Reading ${prop}`);
+            let func;
+            if (CommonUtils.startsWith(prop, 'get') || CommonUtils.startsWith(prop, 'is')) {
+                func = RemoteDBMS._simpleGet;
+            } else {
+                func = RemoteDBMS._simplePut;
+            }
+            return new Proxy(func, {
+                apply: function(target, thisArg, argumentsList) {
+                    const arr = [];
+                    for (let i = 0; i < argumentsList.length; i++) {
+                        arr.push(argumentsList[i]);
+                    }
+                    // alert(`${argumentsList}`);
+                    return target.apply(thisArg, [prop, arr]);
+                }
+            });
+        },
+      })
+
+    return proxy;
 }

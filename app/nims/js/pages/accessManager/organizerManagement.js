@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-create',
         });
         listen(qe(`${root}.create.user`), 'click', () => createUserDialog.showDlg());
-        
+
         const changePasswordDialog = UI.createModalDialog(root, changePassword, {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'admins-enter-new-password',
@@ -44,7 +44,7 @@ See the License for the specific language governing permissions and
             qee(changePasswordDialog, '.entity-input').value = '';
             changePasswordDialog.showDlg();
         });
-        
+
         listen(queryEl(`${root}.remove-user-button`), 'click', removeOrganizer);
 
         listen(queryEl(`${root}.assign-permission-button`), 'click', assignPermission);
@@ -52,52 +52,42 @@ See the License for the specific language governing permissions and
         listen(queryEl(`${root}.assign-admin-button`), 'click', assignNewAdmin);
         listen(queryEl(`${root}.remove-editor-button`), 'click', removeEditor);
         listen(queryEl(`${root}.assign-editor-button`), 'click', assignEditor);
-        
+
         state.entities.forEach(type => {
             listen(queryEl(`${root} .entity-filter.${type}`), 'input', filterList(`.entity-list.${type}`));
         });
 
         queryElEls(queryEl(root), '.adaptationRights').map(listen(R.__, 'click', changeAdaptationRightsMode));
-        
+
         exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
-        DBMS.getManagementInfo((err, managementInfo) => {
-            if (err) { Utils.handleError(err); return; }
-            PermissionInformer.isAdmin((err2, isAdmin) => {
-                if (err2) { Utils.handleError(err2); return; }
-                PermissionInformer.isEditor((err3, isEditor) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    PermissionInformer.getEntityNamesArray('character', false, (err4, characterNames) => {
-                        if (err4) { Utils.handleError(err4); return; }
-                        PermissionInformer.getEntityNamesArray('story', false, (err5, storyNames) => {
-                            if (err5) { Utils.handleError(err5); return; }
-                            PermissionInformer.getEntityNamesArray('group', false, (err6, groupNames) => {
-                                if (err6) { Utils.handleError(err6); return; }
-                                PermissionInformer.getEntityNamesArray('player', false, (err7, playerNames) => {
-                                    if (err7) { Utils.handleError(err7); return; }
-                                    const names = {
-                                        characters: characterNames,
-                                        groups: groupNames,
-                                        stories: storyNames,
-                                        players: playerNames,
-                                    };
-                                    if (!isAdmin && isEditor) {
-                                        R.keys(names).forEach((entity) => {
-                                            names[entity] = names[entity].filter(R.prop('isOwner'));
-                                        });
-                                    }
-                                    rebuildInterface(names, managementInfo, isAdmin);
-                                    Utils.enable(exports.content, 'adminOnly', isAdmin);
-                                    Utils.enable(exports.content, 'editorOrAdmin', isAdmin || isEditor);
-                                });
-                            });
-                        });
-                    });
+        Promise.all([
+            DBMS.getManagementInfoNew(),
+            PermissionInformer.isAdminNew(),
+            PermissionInformer.isEditorNew(),
+            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'group', editableOnly: false}),
+            PermissionInformer.getEntityNamesArrayNew({type: 'player', editableOnly: false}),
+        ]).then(results => {
+            const [managementInfo, isAdmin, isEditor, characterNames, storyNames, groupNames, playerNames] = results;
+            const names = {
+                characters: characterNames,
+                groups: groupNames,
+                stories: storyNames,
+                players: playerNames,
+            };
+            if (!isAdmin && isEditor) {
+                R.keys(names).forEach((entity) => {
+                    names[entity] = names[entity].filter(R.prop('isOwner'));
                 });
-            });
-        });
+            }
+            rebuildInterface(names, managementInfo, isAdmin);
+            Utils.enable(exports.content, 'adminOnly', isAdmin);
+            Utils.enable(exports.content, 'editorOrAdmin', isAdmin || isEditor);
+        }).catch(Utils.handleError);
     };
 
     function rebuildInterface(names, managementInfo, isAdmin) {
@@ -116,14 +106,14 @@ See the License for the specific language governing permissions and
             $(selector).select2(data);
 //            Utils.rebuildSelectorArr(selector, userNames);
         });
-        
+
         Utils.rebuildSelectorArr(queryEl(`${root}.user-permission-select`), userNames);
 
         const clone = userNames.slice(0);
         clone.splice(userNames.indexOf(managementInfo.admin), 1);
 //        let selector = queryEl(`${root}.assign-admin-select`);
 //        Utils.rebuildSelectorArr(selector, clone);
-        
+
 //        const data = getSelect2Data(allGroupNames);
 //        clearEl(queryEl(`${root}.save-entity-select`));
 //        $(`${root}.save-entity-select`).select2(data);
@@ -151,14 +141,14 @@ See the License for the specific language governing permissions and
                 names[entity].map(entity2el(isAdmin, entity))
             );
         });
-        
+
         addEls(
             clearEl(queryEl(`${root} .entity-list.users`)),
             userNames.map(user2el)
         );
         buildPermissionList(names, usersInfo);
     }
-    
+
     const entity2el = R.curry((isAdmin, type, name) => {
         const el = qmte(`.profile-item-tmpl`);
         el.profileName = name.value;
@@ -180,7 +170,7 @@ See the License for the specific language governing permissions and
         }
         return el;
     });
-    
+
     const user2el = R.curry((name) => {
         const el = wrapEl('div', qte(`.profile-item-tmpl`));
 //        el.profileName = name.value;
@@ -224,11 +214,11 @@ See the License for the specific language governing permissions and
         }
         const type1 = getAttr(this, 'button-type');
         const type2 = thatData.buttonType;
-        
+
         if(type1 !== type2){
             const userName = type1 === 'user' ? getAttr(this, 'profile-name') : thatData.name;
-//            const entityBtn =  type1 === 'user' ? 
-            
+//            const entityBtn =  type1 === 'user' ?
+
 //            console.log(user);
             const btns = qes(`${root} .rights-panel .btn-primary[role=button]`);
             const selected = btns.map( btn => ({
@@ -237,8 +227,8 @@ See the License for the specific language governing permissions and
             }));
             const names = R.mapObjIndexed(arr => arr.map(R.prop('name')), R.groupBy(R.prop('type'), selected));
             btns.forEach(btn => removeClass(btn, 'btn-primary'))
-            
-            DBMS['assignPermission'](userName, names, Utils.processError(exports.refresh));
+
+            DBMS['assignPermissionNew'](userName, names).then(exports.refresh, Utils.handleError);
 //            DBMS[action](userName, names, Utils.processError(exports.refresh));
 //        };
 //    }
@@ -315,50 +305,36 @@ See the License for the specific language governing permissions and
         return () => {
             const userNameInput = qee(dialog,`.create-user-name-input`);
             const userPasswordInput = qee(dialog,`.create-user-password-input`);
-            DBMS.createOrganizer(userNameInput.value.trim(), userPasswordInput.value, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    userNameInput.value = '';
-                    userPasswordInput.value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.createOrganizerNew({
+                name: userNameInput.value.trim(),
+                password: userPasswordInput.value
+            }).then(() => {
+                userNameInput.value = '';
+                userPasswordInput.value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
-    
+
     function changePassword(dialog) {
         return () => {
             const toInput = qee(dialog, '.entity-input');
             const newPassword = toInput.value;
             const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-            DBMS.changeOrganizerPassword(userName, newPassword, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+
+            DBMS.changeOrganizerPasswordNew({userName, newPassword}).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
-    }
-
-
-    function changeOrganizerPassword() {
-        const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-        const passwordInput = queryEl(`${root}.change-password-password-input`);
-        DBMS.changeOrganizerPassword(userName, passwordInput.value, Utils.processError(() => {
-            queryEl(`${root}.change-password-password-input`).value = '';
-            exports.refresh();
-        }));
     }
 
     function removeOrganizer() {
 //        const name = queryEl(`${root}.remove-user-select`).value.trim();
         const name = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]), () => {
-            DBMS.removeOrganizer(name, Utils.processError(exports.refresh));
+            DBMS.removeOrganizerNew({name}).then(exports.refresh, Utils.handleError);
         });
     }
 
@@ -379,32 +355,32 @@ See the License for the specific language governing permissions and
                 names[entity] = getSelectedOptions(`${root}.permission-selector__${entity}`);
             });
 
-            DBMS[action](userName, names, Utils.processError(exports.refresh));
+            DBMS[action]({userName, names}).then(exports.refresh, Utils.handleError);
         };
     }
 
-    removePermission = permissionAction('removePermission');
-    assignPermission = permissionAction('assignPermission');
+    removePermission = permissionAction('removePermissionNew');
+    assignPermission = permissionAction('assignPermissionNew');
 
     function assignNewAdmin() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-admin-assignment'), [userName]), () => {
-            DBMS.assignAdmin(userName, Utils.processError(exports.refresh));
+            DBMS.assignAdminNew({userName}).then(exports.refresh, Utils.handleError);
         });
     }
     function removeEditor() {
-        DBMS.removeEditor(Utils.processError(exports.refresh));
+        DBMS.removeEditorNew().then(exports.refresh, Utils.handleError);
     }
     function assignEditor() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-editor-assignment'), [userName]), () => {
-            DBMS.assignEditor(userName, Utils.processError(exports.refresh));
+            DBMS.assignEditorNew({userName}).then(exports.refresh, Utils.handleError);
         });
     }
     function changeAdaptationRightsMode(event) {
-        DBMS.changeAdaptationRightsMode(event.target.value, Utils.processError());
+        DBMS.changeAdaptationRightsModeNew({mode:event.target.value}).catch(Utils.handleError);
     }
-    
+
     // eslint-disable-next-line no-var,vars-on-top
     var filterList = sel => (event) => {
         const str = event.target.value.toLowerCase();

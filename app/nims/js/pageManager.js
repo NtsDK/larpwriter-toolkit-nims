@@ -45,25 +45,27 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         L10n.onL10nChange(updateDialogs);
     };
 
-    const protoExpander = (arr) => {
-        function protoCarrier() {}
-        arr.forEach(name => (protoCarrier.prototype[name] = (() => 1)));
-        return protoCarrier;
-    };
-    const playerArr = [
-        'getPlayersOptions',
-        'getWelcomeText',
-        'getPlayerProfileInfo',
-        'createCharacterByPlayer',
-        'updateProfileField',
-        'getRoleGridInfo'];
+    // const protoExpander = (arr) => {
+    //     function protoCarrier() {}
+    //     arr.forEach(name => (protoCarrier.prototype[name] = (() => 1)));
+    //     return protoCarrier;
+    // };
+    // const playerArr = [
+    //     'getPlayersOptions',
+    //     'getWelcomeText',
+    //     'getPlayerProfileInfo',
+    //     'createCharacterByPlayer',
+    //     'updateProfileField',
+    //     'getRoleGridInfo'];
 
     exports.refresh = () => state.currentView.refresh();
 
     exports.onPlayerPageLoad = () => {
         initPage();
-        const RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
-        window.DBMS = new RemoteDBMS();
+        // const RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
+        // window.DBMS = new RemoteDBMS();
+        window.DBMS = makeRemoteDBMS();
+
         stateInit();
         Utils.addView(state.containers, 'player', Player, { mainPage: true });
         addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
@@ -75,8 +77,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     exports.onIndexPageLoad = () => {
         initPage();
-        const RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptionsNew']));
-        window.DBMS = new RemoteDBMS();
+        // const RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptionsNew']));
+        // window.DBMS = new RemoteDBMS();
+        window.DBMS = makeRemoteDBMS();
         stateInit();
         DBMS.getPlayersOptionsNew().then((playersOptions) => {
             addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
@@ -99,8 +102,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             DBMS.setDatabaseNew({database: DemoBase.data}).then( onBaseLoaded, Utils.handleError);
             // runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
-            const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
-            window.DBMS = new RemoteDBMS();
+            // const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
+            // window.DBMS = new RemoteDBMS();
+            window.DBMS = makeRemoteDBMS();
             consistencyCheck((checkResult) => {
                 consistencyCheckAlert(checkResult);
                 onDatabaseLoad();
@@ -190,7 +194,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Briefings';
+                const firstTab = 'AccessManager';
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
