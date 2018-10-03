@@ -228,7 +228,7 @@ See the License for the specific language governing permissions and
             const names = R.mapObjIndexed(arr => arr.map(R.prop('name')), R.groupBy(R.prop('type'), selected));
             btns.forEach(btn => removeClass(btn, 'btn-primary'))
 
-            DBMS['assignPermissionNew'](userName, names).then(exports.refresh, Utils.handleError);
+            DBMS['assignPermissionNew']({userName, names}).then(exports.refresh, Utils.handleError);
 //            DBMS[action](userName, names, Utils.processError(exports.refresh));
 //        };
 //    }
@@ -374,7 +374,7 @@ See the License for the specific language governing permissions and
     function assignEditor() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-editor-assignment'), [userName]), () => {
-            DBMS.assignEditorNew({userName}).then(exports.refresh, Utils.handleError);
+            DBMS.assignEditorNew({name: userName}).then(exports.refresh, Utils.handleError);
         });
     }
     function changeAdaptationRightsMode(event) {

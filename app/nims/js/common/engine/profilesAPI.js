@@ -85,7 +85,7 @@ See the License for the specific language governing permissions and
                         const newCharacter = {
                             name: characterName
                         };
-    
+
                         R.path(getStructurePath(type), this.database).forEach((profileSettings) => {
                             if (profileSettings.type === 'enum') {
                                 newCharacter[profileSettings.name] = profileSettings.value.split(',')[0];
@@ -95,10 +95,9 @@ See the License for the specific language governing permissions and
                                 newCharacter[profileSettings.name] = profileSettings.value;
                             }
                         });
-    
+
                         R.path(getPath(type), this.database)[characterName] = newCharacter;
-                        // this.ee.trigger('createProfile', arguments);
-                        this.ee.trigger('createProfile', [type, characterName]);
+                        this.ee.trigger('createProfile', arguments);
                         resolve();
                     });
                 });
@@ -117,7 +116,7 @@ See the License for the specific language governing permissions and
                         data.name = toName;
                         container[toName] = data;
                         delete container[fromName];
-                        this.ee.trigger('renameProfile', [type, fromName, toName]);
+                        this.ee.trigger('renameProfile', arguments);
                         resolve();
                     });
                 });
@@ -134,7 +133,7 @@ See the License for the specific language governing permissions and
                     const container = R.path(getPath(type), this.database);
                     PC.precondition(PC.removeEntityCheck(characterName, R.keys(container)), reject, () => {
                         delete container[characterName];
-                        this.ee.trigger('removeProfile', [type, characterName]);
+                        this.ee.trigger('removeProfile', arguments);
                         resolve();
                     });
                 });
@@ -262,7 +261,7 @@ See the License for the specific language governing permissions and
         }
 
         addListener('replaceMultiEnumValue', _replaceMultiEnumValue);
-        
+
         function _renameEnumValue(type, profileItemName, fromValue, toValue) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
@@ -273,7 +272,7 @@ See the License for the specific language governing permissions and
             });
         }
         addListener('renameEnumValue', _renameEnumValue);
-        
+
         function _renameMultiEnumValue(type, profileItemName, fromValue, toValue) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {

@@ -222,6 +222,10 @@ function makeRemoteDBMS() {
 
     const proxy = new Proxy(dbms, {
         get(target, prop) {
+            if(prop === 'getSettings' || prop === 'clearSettings'){
+                return target[prop];
+            }
+
             // console.log(`Reading ${prop}`);
             let func;
             if (CommonUtils.startsWith(prop, 'get') || CommonUtils.startsWith(prop, 'is')) {

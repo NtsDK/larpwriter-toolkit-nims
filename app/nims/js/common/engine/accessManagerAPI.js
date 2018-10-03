@@ -88,7 +88,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.changeAdaptationRightsMode = function (mode, callback) {
             this.changeAdaptationRightsModeNew({mode}).then(res => callback()).catch(callback);
         }
-        LocalDBMS.prototype.changeAdaptationRightsMode = function ({mode}={}) {
+        LocalDBMS.prototype.changeAdaptationRightsModeNew = function ({mode}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(mode), PC.elementFromEnum(mode, Constants.adaptationRightsModes)];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.removeOrganizer = function (name, callback) {
             this.removeOrganizerNew({name}).then(res => callback()).catch(callback);
         }
-        LocalDBMS.prototype.removeOrganizer = function ({name}={}) {
+        LocalDBMS.prototype.removeOrganizerNew = function ({name}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(name),
                     PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)),
@@ -118,54 +118,6 @@ See the License for the specific language governing permissions and
                         resolve();
                     }
                 );
-            });
-        };
-
-        LocalDBMS.prototype.removePermission = function (userName, names, callback) {
-            this.removePermissionNew({userName, names}).then(res => callback()).catch(callback);
-        }
-
-        LocalDBMS.prototype.removePermissionNew = function ({userName, names}={}) {
-            return new Promise((resolve, reject) => {
-                const { ManagementInfo } = this.database;
-                Object.keys(names).forEach((entity) => {
-                    if (names[entity].length !== 0) {
-                        ManagementInfo.UsersInfo[userName][entity] = ManagementInfo.UsersInfo[userName][entity]
-                            .filter(charName => names[entity].indexOf(charName) === -1);
-                    }
-                });
-                this.publishPermissionsUpdate();
-                resolve();
-            });
-        };
-
-        LocalDBMS.prototype.assignPermission = function (userName, names, callback) {
-            this.assignPermissionNew({userName, names}).then(res => callback()).catch(callback);
-        }
-
-        LocalDBMS.prototype.assignPermission = function ({userName, names}={}) {
-            return new Promise((resolve, reject) => {
-                const { ManagementInfo } = this.database;
-                Object.keys(names).forEach((entity) => {
-                    if (names[entity].length !== 0) {
-                        names[entity].forEach((charName) => {
-                            if (ManagementInfo.UsersInfo[userName][entity].indexOf(charName) === -1) {
-                                ManagementInfo.UsersInfo[userName][entity].push(charName);
-                            }
-                        });
-
-                        Object.keys(ManagementInfo.UsersInfo).forEach((name) => {
-                            if (name === userName) {
-                                return;
-                            }
-
-                            ManagementInfo.UsersInfo[name][entity] = ManagementInfo.UsersInfo[name][entity]
-                                .filter(charName => names[entity].indexOf(charName) === -1);
-                        });
-                    }
-                });
-                this.publishPermissionsUpdate();
-                resolve();
             });
         };
 

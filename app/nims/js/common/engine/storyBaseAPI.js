@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
                         characters: {},
                         events: []
                     };
-                    this.ee.trigger('createStory', [storyName]);
+                    this.ee.trigger('createStory', arguments);
                     resolve();
                 });
             });
@@ -91,7 +91,7 @@ See the License for the specific language governing permissions and
                     data.name = toName;
                     this.database.Stories[toName] = data;
                     delete this.database.Stories[fromName];
-                    this.ee.trigger('renameStory', [fromName, toName]);
+                    this.ee.trigger('renameStory', arguments);
                     resolve();
                 });
             });
@@ -105,7 +105,7 @@ See the License for the specific language governing permissions and
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.removeEntityCheck(storyName, R.keys(this.database.Stories)), reject, () => {
                     delete this.database.Stories[storyName];
-                    this.ee.trigger('removeStory', [storyName]);
+                    this.ee.trigger('removeStory', arguments);
                     resolve();
                 });
             });
