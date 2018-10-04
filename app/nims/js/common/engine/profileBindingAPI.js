@@ -113,7 +113,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameProfile(type, fromName, toName) {
+        function _renameProfile({type, fromName, toName}={}) {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
                 const playerName = bindings[fromName];
@@ -134,15 +134,15 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameProfile);
 
-        function _removeProfile(type, profileName) {
+        function _removeProfile({type, characterName}={}) {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
-                delete bindings[profileName];
+                delete bindings[characterName];
             } else if (type === 'player') {
                 const invertedBindings = R.invertObj(bindings);
-                const characterName = invertedBindings[profileName];
-                if (characterName !== undefined) {
-                    delete bindings[characterName];
+                const characterName2 = invertedBindings[characterName];
+                if (characterName2 !== undefined) {
+                    delete bindings[characterName2];
                 }
             } else {
                 console.log(`binding._removeProfile: Unexpected type ${type}`);

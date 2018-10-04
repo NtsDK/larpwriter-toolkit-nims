@@ -188,7 +188,8 @@ const getChecks = {
 
 const setChecks = {
     baseAPI:
-    [{
+    [
+    {
         func: 'setMetaInfoStringNew',
         args: {name: 'name', value: '123'},
     },
@@ -200,1056 +201,1065 @@ const setChecks = {
     [{
         func: 'createGroupNew',
         args: {groupName: 'testGroup'},
+        forInconsistency: true,
     },
     {
         func: 'renameGroupNew',
         args: {fromName: 'testGroup', toName: 'testGroup2'},
+        forInconsistency: true,
     },
-    // {
-    //     func: 'saveFilterToGroupNew',
-    //     args: {groupName: 'testGroup2', filterModel: []},
-    // },
-    // {
-    //     "func": "updateGroupFieldNew",
-    //     "args": {
-    //         "groupName": "testGroup2",
-    //         "fieldName": "masterDescription",
-    //         "value": "654654654"
-    //     }
-    // },
-    // {
-    //     "func": "doExportGroupNew",
-    //     "args": {
-    //         "groupName": "testGroup2",
-    //         "value": true
-    //     }
-    // },
-    // {
-    //     "func": "removeGroupNew",
-    //     "args": {
-    //         "groupName": "testGroup2"
-    //     }
-    // },
-    // {
-    //     "func": "createGroupNew",
-    //     "args": {
-    //         "groupName": "testGroup"
-    //     }
-    // },
-    // {
-    //     "func": "createProfileItemNew",
-    //     "args": {
-    //         "type": "character",
-    //         "name": "testProfileItem",
-    //         "itemType": "enum",
-    //         "selectedIndex": 0
-    //     }
-    // },
-    // {
-    //     "func": "saveFilterToGroupNew",
-    //     "args": {
-    //         "groupName": "testGroup",
-    //         "filterModel": [
-    //             {
-    //                 "type": "enum",
-    //                 "name": "profile-testProfileItem",
-    //                 "selectedOptions": {}
-    //             }
-    //         ]
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "updateDefaultValueNew",
-    //     "args": {
-    //         "type": "character",
-    //         "profileItemName": "testProfileItem",
-    //         "value": "test1,test2,test3"
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "renameProfileItemNew",
-    //     "args": {
-    //         "type": "character",
-    //         "newName": "testProfileItem2",
-    //         "oldName": "testProfileItem"
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "saveFilterToGroupNew",
-    //     "args": {
-    //         "groupName": "testGroup",
-    //         "filterModel": [
-    //             {
-    //                 "type": "enum",
-    //                 "name": "profile-testProfileItem2",
-    //                 "selectedOptions": {
-    //                     "test1": true
-    //                 }
-    //             }
-    //         ]
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "changeProfileItemTypeNew",
-    //     "args": {
-    //         "type": "character",
-    //         "profileItemName": "testProfileItem2",
-    //         "newType": "multiEnum"
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "updateDefaultValueNew",
-    //     "args": {
-    //         "type": "character",
-    //         "profileItemName": "testProfileItem2",
-    //         "value": "test1,test2,test3"
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "saveFilterToGroupNew",
-    //     "args": {
-    //         "groupName": "testGroup",
-    //         "filterModel": [
-    //             {
-    //                 "type": "multiEnum",
-    //                 "name": "profile-testProfileItem2",
-    //                 "condition": "every",
-    //                 "selectedOptions": {
-    //                     "test2": true
-    //                 }
-    //             }
-    //         ]
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "updateDefaultValueNew",
-    //     "args": {
-    //         "type": "character",
-    //         "profileItemName": "testProfileItem2",
-    //         "value": "test2,test3"
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "removeProfileItemNew",
-    //     "args": {
-    //         "type": "character",
-    //         "index": 0,
-    //         "profileItemName": "testProfileItem2"
-    //     },
-    //     forInconsistency: true,
-    // },
-    // {
-    //     "func": "removeGroupNew",
-    //     "args": {
-    //         "groupName": "testGroup"
-    //     }
-    // },
+    {
+        func: 'saveFilterToGroupNew',
+        args: {groupName: 'testGroup2', filterModel: []},
+    },
+    {
+        "func": "updateGroupFieldNew",
+        "args": {
+            "groupName": "testGroup2",
+            "fieldName": "masterDescription",
+            "value": "654654654"
+        }
+    },
+    {
+        "func": "doExportGroupNew",
+        "args": {
+            "groupName": "testGroup2",
+            "value": true
+        }
+    },
+    {
+        "func": "removeGroupNew",
+        "args": {
+            "groupName": "testGroup2"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "createGroupNew",
+        "args": {
+            "groupName": "testGroup"
+        }
+    },
+    {
+        "func": "createProfileItemNew",
+        "args": {
+            "type": "character",
+            "name": "testProfileItem",
+            "itemType": "enum",
+            "selectedIndex": 0
+        }
+    },
+    {
+        "func": "saveFilterToGroupNew",
+        "args": {
+            "groupName": "testGroup",
+            "filterModel": [
+                {
+                    "type": "enum",
+                    "name": "profile-testProfileItem",
+                    "selectedOptions": {}
+                }
+            ]
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "value": "test1,test2,test3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "renameProfileItemNew",
+        "args": {
+            "type": "character",
+            "newName": "testProfileItem2",
+            "oldName": "testProfileItem"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "saveFilterToGroupNew",
+        "args": {
+            "groupName": "testGroup",
+            "filterModel": [
+                {
+                    "type": "enum",
+                    "name": "profile-testProfileItem2",
+                    "selectedOptions": {
+                        "test1": true
+                    }
+                }
+            ]
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "newType": "multiEnum"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test1,test2,test3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "saveFilterToGroupNew",
+        "args": {
+            "groupName": "testGroup",
+            "filterModel": [
+                {
+                    "type": "multiEnum",
+                    "name": "profile-testProfileItem2",
+                    "condition": "every",
+                    "selectedOptions": {
+                        "test2": true
+                    }
+                }
+            ]
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test2,test3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem2"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeGroupNew",
+        "args": {
+            "groupName": "testGroup"
+        }
+    },
 
 
     ],
-//     profileBindingAPI:
-//     [
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "player",
-//             "characterName": "testPlayer"
-//         }
-//     },
-//     {
-//         "func": "createBindingNew",
-//         "args": {
-//             "characterName": "testCharacter",
-//             "playerName": "testPlayer"
-//         }
-//     },
-//     {
-//         "func": "removeBindingNew",
-//         "args": {
-//             "characterName": "testCharacter",
-//             "playerName": "testPlayer"
-//         }
-//     },
-//     {
-//         "func": "createBindingNew",
-//         "args": {
-//             "characterName": "testCharacter",
-//             "playerName": "testPlayer"
-//         }
-//     },
-//     {
-//         "func": "renameProfileNew",
-//         "args": {
-//             "type": "character",
-//             "fromName": "testCharacter",
-//             "toName": "testCharacter3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "player",
-//             "characterName": "testPlayer"
-//         }
-//     },
+    profileBindingAPI:
+    [
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "player",
+            "characterName": "testPlayer"
+        }
+    },
+    {
+        "func": "createBindingNew",
+        "args": {
+            "characterName": "testCharacter",
+            "playerName": "testPlayer"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeBindingNew",
+        "args": {
+            "characterName": "testCharacter",
+            "playerName": "testPlayer"
+        }
+    },
+    {
+        "func": "createBindingNew",
+        "args": {
+            "characterName": "testCharacter",
+            "playerName": "testPlayer"
+        }
+    },
+    {
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter",
+            "toName": "testCharacter3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "player",
+            "characterName": "testPlayer"
+        }
+    },
 
-//     ],
-//     profileConfigurerAPI:
-//     [
-//     {
-//         "func": "createProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "name": "testProfileItem",
-//             "itemType": "text",
-//             "selectedIndex": 0
-//         }
-//     },
-//     {
-//         "func": "moveProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "index": 0,
-//             "newIndex": 1
-//         }
-//     },
-//     {
-//         "func": "changeProfileItemTypeNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem",
-//             "newType": "string"
-//         }
-//     },
-//     {
-//         "func": "changeProfileItemPlayerAccessNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem",
-//             "playerAccessType": "readonly"
-//         }
-//     },
-//     {
-//         "func": "renameProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "newName": "testProfileItem2",
-//             "oldName": "testProfileItem"
-//         }
-//     },
-//     {
-//         "func": "doExportProfileItemChangeNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "checked": false
-//         }
-//     },
-//     {
-//         "func": "showInRoleGridProfileItemChangeNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "checked": false
-//         }
-//     },
-//     {
-//         "func": "updateDefaultValueNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "value": "223322"
-//         }
-//     },
-//     {
-//         "func": "removeProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "index": 0,
-//             "profileItemName": "testProfileItem2"
-//         }
-//     },
-//     {
-//         "func": "createProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "name": "testProfileItem",
-//             "itemType": "enum",
-//             "selectedIndex": 0
-//         }
-//     },
-//     {
-//         "func": "renameEnumValueNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem",
-//             "fromValue": "_",
-//             "toValue": "testRename"
-//         }
-//     },
-//     {
-//         "func": "removeProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "index": 0,
-//             "profileItemName": "testProfileItem"
-//         }
-//     },
+    ],
+    profileConfigurerAPI:
+    [
+    {
+        "func": "createProfileItemNew",
+        "args": {
+            "type": "character",
+            "name": "testProfileItem",
+            "itemType": "text",
+            "selectedIndex": 0
+        }
+    },
+    {
+        "func": "moveProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "newIndex": 1
+        }
+    },
+    {
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "newType": "string"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "changeProfileItemPlayerAccessNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "playerAccessType": "readonly"
+        }
+    },
+    {
+        "func": "renameProfileItemNew",
+        "args": {
+            "type": "character",
+            "newName": "testProfileItem2",
+            "oldName": "testProfileItem"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "doExportProfileItemChangeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "checked": false
+        }
+    },
+    {
+        "func": "showInRoleGridProfileItemChangeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "checked": false
+        }
+    },
+    {
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "223322"
+        }
+    },
+    {
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem2"
+        }
+    },
+    {
+        "func": "createProfileItemNew",
+        "args": {
+            "type": "character",
+            "name": "testProfileItem",
+            "itemType": "enum",
+            "selectedIndex": 0
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "renameEnumValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem",
+            "fromValue": "_",
+            "toValue": "testRename"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem"
+        }
+    },
 
-//     ],
-
-
-//     profilesAPI:
-//     [
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "createProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "name": "testProfileItem",
-//             "itemType": "text",
-//             "selectedIndex": 0
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "updateProfileFieldNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter",
-//             "fieldName": "testProfileItem",
-//             "itemType": "text",
-//             "value": "test updateProfileField"
-//         }
-//     },
-//     {
-//         "func": "renameProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "newName": "testProfileItem2",
-//             "oldName": "testProfileItem"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "changeProfileItemTypeNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "newType": "enum"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "updateDefaultValueNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "value": "test1,test2,test3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "changeProfileItemTypeNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "newType": "multiEnum"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "updateDefaultValueNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "value": "test1,test2,test3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "updateProfileFieldNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter",
-//             "fieldName": "testProfileItem2",
-//             "itemType": "multiEnum",
-//             "value": "test1"
-//         }
-//     },
-//     {
-//         "func": "updateDefaultValueNew",
-//         "args": {
-//             "type": "character",
-//             "profileItemName": "testProfileItem2",
-//             "value": "test2,test3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "removeProfileItemNew",
-//         "args": {
-//             "type": "character",
-//             "index": 0,
-//             "profileItemName": "testProfileItem2"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "renameProfileNew",
-//         "args": {
-//             "type": "character",
-//             "fromName": "testCharacter",
-//             "toName": "testCharacter2"
-//         }
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter2"
-//         }
-//     },
+    ],
 
 
-//     ],
-//     relationsAPI:
-//     [
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter2"
-//         }
-//     },
-//     {
-//         "func": "createCharacterRelationNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "getCharacterRelationNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2"
-//         }
-//     },
-//     {
-//         "func": "getCharacterRelationNew",
-//         "args": {
-//             "fromCharacter": "testCharacter2",
-//             "toCharacter": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "setCharacterRelationTextNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2",
-//             "character": "testCharacter",
-//             "text": "setCharacterRelationText check"
-//         }
-//     },
-//     {
-//         "func": "setCharacterRelationTextNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2",
-//             "character": "testCharacter2",
-//             "text": "setCharacterRelationText check 2"
-//         }
-//     },
-//     {
-//         "func": "setRelationReadyStatusNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2",
-//             "character": "testCharacter",
-//             "ready": true
-//         }
-//     },
-//     {
-//         "func": "setRelationReadyStatusNew",
-//         "args": {
-//             "fromCharacter": "testCharacter2",
-//             "toCharacter": "testCharacter",
-//             "character": "testCharacter2",
-//             "ready": true
-//         }
-//     },
-//     {
-//         "func": "setRelationEssenceStatusNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2",
-//             "essence": "allies",
-//             "flag": true
-//         }
-//     },
-//     {
-//         "func": "setOriginRelationTextNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2",
-//             "text": "setOriginRelationText check"
-//         }
-//     },
-//     {
-//         "func": "setOriginRelationTextNew",
-//         "args": {
-//             "fromCharacter": "testCharacter2",
-//             "toCharacter": "testCharacter",
-//             "text": "setOriginRelationText check 2"
-//         }
-//     },
-//     {
-//         "func": "removeCharacterRelationNew",
-//         "args": {
-//             "fromCharacter": "testCharacter2",
-//             "toCharacter": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "createCharacterRelationNew",
-//         "args": {
-//             "fromCharacter": "testCharacter",
-//             "toCharacter": "testCharacter2"
-//         }
-//     },
-//     {
-//         "func": "renameProfileNew",
-//         "args": {
-//             "type": "character",
-//             "fromName": "testCharacter",
-//             "toName": "testCharacter3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "renameProfileNew",
-//         "args": {
-//             "type": "character",
-//             "fromName": "testCharacter2",
-//             "toName": "testCharacter4"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter4"
-//         },
-//         forInconsistency: true,
-//     },
-
-//     ],
-
-//     storyAdaptationsAPI:
-//     [
-//     {
-//         "func": "createStoryNew",
-//         "args": {
-//             "storyName": "testStory"
-//         }
-//     },
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "addStoryCharacterNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "createEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventName": "testEventName",
-//             "selectedIndex": 0
-//         }
-//     },
-//     {
-//         "func": "addCharacterToEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventIndex": 0,
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "setEventAdaptationPropertyNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventIndex": 0,
-//             "characterName": "testCharacter",
-//             "type": "text",
-//             "value": "test setEventAdaptationProperty"
-//         }
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "removeStoryNew",
-//         "args": {
-//             "storyName": "testStory"
-//         }
-//     },
-
-//     ],
-
-//     storyBaseAPI:
-//     [
-//     {
-//         "func": "createStoryNew",
-//         "args": {
-//             "storyName": "testStory"
-//         }
-//     },
-//     {
-//         "func": "renameStoryNew",
-//         "args": {
-//             "fromName": "testStory",
-//             "toName": "testStory2"
-//         }
-//     },
-//     {
-//         "func": "setWriterStoryNew",
-//         "args": {
-//             "storyName": "testStory2",
-//             "value": "setWriterStory test"
-//         }
-//     },
-//     {
-//         "func": "removeStoryNew",
-//         "args": {
-//             "storyName": "testStory2"
-//         }
-//     },
-
-//     ],
-
-//     storyCharactersAPI:
-//     [
-//     {
-//         "func": "createStoryNew",
-//         "args": {
-//             "storyName": "testStory"
-//         }
-//     },
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "createProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter2"
-//         }
-//     },
-//     {
-//         "func": "addStoryCharacterNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "switchStoryCharactersNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "fromName": "testCharacter",
-//             "toName": "testCharacter2"
-//         }
-//     },
-//     {
-//         "func": "updateCharacterInventoryNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "characterName": "testCharacter2",
-//             "inventory": "updateCharacterInventory test"
-//         }
-//     },
-//     {
-//         "func": "createEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventName": "testEventName",
-//             "selectedIndex": 0
-//         }
-//     },
-//     {
-//         "func": "addStoryCharacterNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "addCharacterToEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventIndex": 0,
-//             "characterName": "testCharacter"
-//         }
-//     },
-//     {
-//         "func": "addCharacterToEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventIndex": 0,
-//             "characterName": "testCharacter2"
-//         }
-//     },
-//     {
-//         "func": "renameProfileNew",
-//         "args": {
-//             "type": "character",
-//             "fromName": "testCharacter2",
-//             "toName": "testCharacter3"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "removeCharacterFromEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventIndex": 0,
-//             "characterName": "testCharacter3"
-//         }
-//     },
-//     {
-//         "func": "onChangeCharacterActivityNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "characterName": "testCharacter3",
-//             "activityType": "active",
-//             "checked": true
-//         }
-//     },
-//     {
-//         "func": "removeStoryCharacterNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "characterName": "testCharacter3"
-//         }
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter"
-//         },
-//         forInconsistency: true,
-//     },
-//     {
-//         "func": "removeProfileNew",
-//         "args": {
-//             "type": "character",
-//             "characterName": "testCharacter3"
-//         }
-//     },
-//     {
-//         "func": "removeStoryNew",
-//         "args": {
-//             "storyName": "testStory"
-//         }
-//     },
+    profilesAPI:
+    [
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "createProfileItemNew",
+        "args": {
+            "type": "character",
+            "name": "testProfileItem",
+            "itemType": "text",
+            "selectedIndex": 0
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "updateProfileFieldNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter",
+            "fieldName": "testProfileItem",
+            "itemType": "text",
+            "value": "test updateProfileField"
+        }
+    },
+    {
+        "func": "renameProfileItemNew",
+        "args": {
+            "type": "character",
+            "newName": "testProfileItem2",
+            "oldName": "testProfileItem"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "newType": "enum"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test1,test2,test3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "changeProfileItemTypeNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "newType": "multiEnum"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test1,test2,test3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "updateProfileFieldNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter",
+            "fieldName": "testProfileItem2",
+            "itemType": "multiEnum",
+            "value": "test1"
+        }
+    },
+    {
+        "func": "updateDefaultValueNew",
+        "args": {
+            "type": "character",
+            "profileItemName": "testProfileItem2",
+            "value": "test2,test3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileItemNew",
+        "args": {
+            "type": "character",
+            "index": 0,
+            "profileItemName": "testProfileItem2"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter",
+            "toName": "testCharacter2"
+        }
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter2"
+        }
+    },
 
 
-//     ],
+    ],
+    relationsAPI:
+    [
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter2"
+        }
+    },
+    {
+        "func": "createCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "getCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2"
+        }
+    },
+    {
+        "func": "getCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter"
+        }
+    },
+    {
+        "func": "setCharacterRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "character": "testCharacter",
+            "text": "setCharacterRelationText check"
+        }
+    },
+    {
+        "func": "setCharacterRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "character": "testCharacter2",
+            "text": "setCharacterRelationText check 2"
+        }
+    },
+    {
+        "func": "setRelationReadyStatusNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "character": "testCharacter",
+            "ready": true
+        }
+    },
+    {
+        "func": "setRelationReadyStatusNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter",
+            "character": "testCharacter2",
+            "ready": true
+        }
+    },
+    {
+        "func": "setRelationEssenceStatusNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "essence": "allies",
+            "flag": true
+        }
+    },
+    {
+        "func": "setOriginRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2",
+            "text": "setOriginRelationText check"
+        }
+    },
+    {
+        "func": "setOriginRelationTextNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter",
+            "text": "setOriginRelationText check 2"
+        }
+    },
+    {
+        "func": "removeCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter2",
+            "toCharacter": "testCharacter"
+        }
+    },
+    {
+        "func": "createCharacterRelationNew",
+        "args": {
+            "fromCharacter": "testCharacter",
+            "toCharacter": "testCharacter2"
+        }
+    },
+    {
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter",
+            "toName": "testCharacter3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter2",
+            "toName": "testCharacter4"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter4"
+        },
+        forInconsistency: true,
+    },
 
-//     storyEventsAPI:
-//     [
-//     {
-//         "func": "createStoryNew",
-//         "args": {
-//             "storyName": "testStory"
-//         }
-//     },
-//     {
-//         "func": "createEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventName": "testEventName",
-//             "selectedIndex": 0
-//         }
-//     },
-//     {
-//         "func": "createEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "eventName": "testEventName2",
-//             "selectedIndex": 1
-//         }
-//     },
-//     {
-//         "func": "moveEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "index": 0,
-//             "newIndex": 2
-//         }
-//     },
-//     {
-//         "func": "cloneEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "index": 0
-//         }
-//     },
-//     {
-//         "func": "mergeEventsNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "index": 0
-//         }
-//     },
-//     {
-//         "func": "removeEventNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "index": 0
-//         }
-//     },
-//     {
-//         "func": "setEventOriginPropertyNew",
-//         "args": {
-//             "storyName": "testStory",
-//             "index": 0,
-//             "property": "name",
-//             "value": "test setEventOriginProperty"
-//         }
-//     },
-//     {
-//         "func": "removeStoryNew",
-//         "args": {
-//             "storyName": "testStory"
-//         }
-//     },
+    ],
 
-//     ],
-//     gearsAPI:
-//     [
+    storyAdaptationsAPI:
+    [
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "addStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName",
+            "selectedIndex": 0
+        }
+    },
+    {
+        "func": "addCharacterToEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "setEventAdaptationPropertyNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter",
+            "type": "text",
+            "value": "test setEventAdaptationProperty"
+        }
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+
+    ],
+
+    storyBaseAPI:
+    [
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+    {
+        "func": "renameStoryNew",
+        "args": {
+            "fromName": "testStory",
+            "toName": "testStory2"
+        }
+    },
+    {
+        "func": "setWriterStoryNew",
+        "args": {
+            "storyName": "testStory2",
+            "value": "setWriterStory test"
+        }
+    },
+    {
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory2"
+        }
+    },
+
+    ],
+
+    storyCharactersAPI:
+    [
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "createProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter2"
+        }
+    },
+    {
+        "func": "addStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "switchStoryCharactersNew",
+        "args": {
+            "storyName": "testStory",
+            "fromName": "testCharacter",
+            "toName": "testCharacter2"
+        }
+    },
+    {
+        "func": "updateCharacterInventoryNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter2",
+            "inventory": "updateCharacterInventory test"
+        }
+    },
+    {
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName",
+            "selectedIndex": 0
+        }
+    },
+    {
+        "func": "addStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "addCharacterToEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter"
+        }
+    },
+    {
+        "func": "addCharacterToEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter2"
+        }
+    },
+    {
+        "func": "renameProfileNew",
+        "args": {
+            "type": "character",
+            "fromName": "testCharacter2",
+            "toName": "testCharacter3"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeCharacterFromEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventIndex": 0,
+            "characterName": "testCharacter3"
+        }
+    },
+    {
+        "func": "onChangeCharacterActivityNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter3",
+            "activityType": "active",
+            "checked": true
+        }
+    },
+    {
+        "func": "removeStoryCharacterNew",
+        "args": {
+            "storyName": "testStory",
+            "characterName": "testCharacter3"
+        }
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter"
+        },
+        forInconsistency: true,
+    },
+    {
+        "func": "removeProfileNew",
+        "args": {
+            "type": "character",
+            "characterName": "testCharacter3"
+        }
+    },
+    {
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
 
 
-//     {
-//         "func": "setGearsPhysicsEnabledNew",
-//         "args": {
-//             "enabled": true
-//         }
-//     },
-//     {
-//         "func": "setGearsShowNotesEnabledNew",
-//         "args": {
-//             "enabled": true
-//         }
-//     },
-//     {
-//         "func": "setGearsDataNew",
-//         "args": {
-//             "data": {
-//                 "nodes": [
-//                     {
-//                         "id": "e5c1e43e-79c1-4aef-88b9-61e622e3eb6d",
-//                         "x": 85,
-//                         "y": -20,
-//                         "label": "123\n\n2",
-//                         "name": "123",
-//                         "group": "1",
-//                         "notes": "2",
-//                         "shape": "box"
-//                     },
-//                     {
-//                         "id": "698903f4-ac21-4fd1-abeb-de688cf8b463",
-//                         "x": -353,
-//                         "y": -7,
-//                         "label": "234\n\n345",
-//                         "name": "234",
-//                         "group": "2",
-//                         "notes": "345",
-//                         "shape": "box"
-//                     }
-//                 ],
-//                 "edges": [
-//                     {
-//                         "from": "698903f4-ac21-4fd1-abeb-de688cf8b463",
-//                         "to": "e5c1e43e-79c1-4aef-88b9-61e622e3eb6d",
-//                         "arrows": "to",
-//                         "id": "4be956c5-0d6b-4e7e-8be8-9e23dc0fe0fb",
-//                         "label": "2233"
-//                     }
-//                 ]
-//             }
-//         }
-//     },
+    ],
+
+    storyEventsAPI:
+    [
+    {
+        "func": "createStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+    {
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName",
+            "selectedIndex": 0
+        }
+    },
+    {
+        "func": "createEventNew",
+        "args": {
+            "storyName": "testStory",
+            "eventName": "testEventName2",
+            "selectedIndex": 1
+        }
+    },
+    {
+        "func": "moveEventNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0,
+            "newIndex": 2
+        }
+    },
+    {
+        "func": "cloneEventNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0
+        }
+    },
+    {
+        "func": "mergeEventsNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0
+        }
+    },
+    {
+        "func": "removeEventNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0
+        }
+    },
+    {
+        "func": "setEventOriginPropertyNew",
+        "args": {
+            "storyName": "testStory",
+            "index": 0,
+            "property": "name",
+            "value": "test setEventOriginProperty"
+        }
+    },
+    {
+        "func": "removeStoryNew",
+        "args": {
+            "storyName": "testStory"
+        }
+    },
+
+    ],
+    gearsAPI:
+    [
 
 
-// ],
-//     slidersAPI:
-//     [
-//     {
-//         "func": "createSliderNew",
-//         "args": {
-//             "name": "name1",
-//             "top": "top1",
-//             "bottom": "bottom1"
-//         }
-//     },
-//     {
-//         "func": "createSliderNew",
-//         "args": {
-//             "name": "name1",
-//             "top": "top1",
-//             "bottom": "bottom1"
-//         }
-//     },
-//     {
-//         "func": "updateSliderNamingNew",
-//         "args": {
-//             "index": 2,
-//             "name": "name3",
-//             "top": "top3",
-//             "bottom": "bottom3"
-//         }
-//     },
-//     {
-//         "func": "updateSliderValueNew",
-//         "args": {
-//             "index": 2,
-//             "value": 5
-//         }
-//     },
-//     {
-//         "func": "updateSliderValueNew",
-//         "args": {
-//             "index": 2,
-//             "value": 10
-//         }
-//     },
-//     {
-//         "func": "updateSliderValueNew",
-//         "args": {
-//             "index": 2,
-//             "value": -10
-//         }
-//     },
-//     {
-//         "func": "updateSliderValueNew",
-//         "args": {
-//             "index": 2,
-//             "value": 0
-//         }
-//     },
-//     {
-//         "func": "moveSliderNew",
-//         "args": {
-//             "index": 2,
-//             "pos": 3
-//         }
-//     },
-//     {
-//         "func": "removeSliderNew",
-//         "args": {
-//             "index": 2
-//         }
-//     },
-//     {
-//         "func": "removeSliderNew",
-//         "args": {
-//             "index": 2
-//         }
-//     }
-//     ],
+    {
+        "func": "setGearsPhysicsEnabledNew",
+        "args": {
+            "enabled": true
+        }
+    },
+    {
+        "func": "setGearsShowNotesEnabledNew",
+        "args": {
+            "enabled": true
+        }
+    },
+    {
+        "func": "setGearsDataNew",
+        "args": {
+            "data": {
+                "nodes": [
+                    {
+                        "id": "e5c1e43e-79c1-4aef-88b9-61e622e3eb6d",
+                        "x": 85,
+                        "y": -20,
+                        "label": "123\n\n2",
+                        "name": "123",
+                        "group": "1",
+                        "notes": "2",
+                        "shape": "box"
+                    },
+                    {
+                        "id": "698903f4-ac21-4fd1-abeb-de688cf8b463",
+                        "x": -353,
+                        "y": -7,
+                        "label": "234\n\n345",
+                        "name": "234",
+                        "group": "2",
+                        "notes": "345",
+                        "shape": "box"
+                    }
+                ],
+                "edges": [
+                    {
+                        "from": "698903f4-ac21-4fd1-abeb-de688cf8b463",
+                        "to": "e5c1e43e-79c1-4aef-88b9-61e622e3eb6d",
+                        "arrows": "to",
+                        "id": "4be956c5-0d6b-4e7e-8be8-9e23dc0fe0fb",
+                        "label": "2233"
+                    }
+                ]
+            }
+        }
+    },
+
+
+    ],
+    slidersAPI:
+    [
+    {
+        "func": "createSliderNew",
+        "args": {
+            "name": "name1",
+            "top": "top1",
+            "bottom": "bottom1"
+        }
+    },
+    {
+        "func": "createSliderNew",
+        "args": {
+            "name": "name1",
+            "top": "top1",
+            "bottom": "bottom1"
+        }
+    },
+    {
+        "func": "updateSliderNamingNew",
+        "args": {
+            "index": 2,
+            "name": "name3",
+            "top": "top3",
+            "bottom": "bottom3"
+        }
+    },
+    {
+        "func": "updateSliderValueNew",
+        "args": {
+            "index": 2,
+            "value": 5
+        }
+    },
+    {
+        "func": "updateSliderValueNew",
+        "args": {
+            "index": 2,
+            "value": 10
+        }
+    },
+    {
+        "func": "updateSliderValueNew",
+        "args": {
+            "index": 2,
+            "value": -10
+        }
+    },
+    {
+        "func": "updateSliderValueNew",
+        "args": {
+            "index": 2,
+            "value": 0
+        }
+    },
+    {
+        "func": "moveSliderNew",
+        "args": {
+            "index": 2,
+            "pos": 3
+        }
+    },
+    {
+        "func": "removeSliderNew",
+        "args": {
+            "index": 2
+        }
+    },
+    {
+        "func": "removeSliderNew",
+        "args": {
+            "index": 2
+        }
+    }
+    ],
 };
 
-// R.keys(getChecks).forEach((apiName) => {
-//     const checks = getChecks[apiName].map((el) => {
-//         const args = JSON.stringify(el.args);
-//         el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
-//         return el;
-//     });
+R.keys(getChecks).forEach((apiName) => {
+    const checks = getChecks[apiName].map((el) => {
+        const args = JSON.stringify(el.args);
+        el.name = `${el.func}(${args.substring(1, args.length - 1)}) -> ok`;
+        return el;
+    });
 
-//     describe(`${apiName} getter tests`, () => {
-//         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-//         checks.forEach((check) => {
-//             it(check.name, (done) => {
-//                 DBMS[check.func](check.args).then( res => {
-//                     // expect(res).toBeNull();
-//                     expect(res).not.toBeNull();
-//                     done();
-//                 }).catch(err => {
-//                     if (err) console.error(err);
-//                     expect(err).toBeNull();
-//                     done();
-//                 });
-//             });
-//         });
-//     });
-// });
+    describe(`${apiName} getter tests`, () => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        checks.forEach((check) => {
+            it(check.name, (done) => {
+                DBMS[check.func](check.args).then( res => {
+                    // expect(res).toBeNull();
+                    expect(res).not.toBeNull();
+                    done();
+                }).catch(err => {
+                    if (err) console.error(err);
+                    expect(err).toBeNull();
+                    done();
+                });
+            });
+        });
+    });
+});
 
 
 R.keys(setChecks).forEach((apiName) => {
@@ -1270,18 +1280,6 @@ R.keys(setChecks).forEach((apiName) => {
                     // } else {
                     //     expect(err).toBeUndefined();
                     // }
-                    if (check.forInconsistency === true) {
-                        DBMS.getConsistencyCheckResultNew().then(checkResult => {
-                            // expect(err2).toBeNull();
-                            if (checkResult.errors.length > 0) {
-                                console.error(check.name);
-                                checkResult.errors.forEach(console.error);
-                            }
-                            expect(checkResult.errors.length > 0).toBe(false);
-                        }).catch(err2 => {
-                            expect(err2).toBeNull();
-                        });
-                    }
                     if (check.gettable === true) {
                         expect(res).not.toBeNull();
                     } else {
@@ -1289,32 +1287,29 @@ R.keys(setChecks).forEach((apiName) => {
                         // if we are here then function is okay
                         expect({k:2}).not.toBeNull()
                     }
+                    if (check.forInconsistency === true) {
+                    // if (true) {
+                        DBMS.getConsistencyCheckResultNew().then(checkResult => {
+                            // expect(err2).toBeNull();
+                            if (checkResult.errors.length > 0) {
+                                console.error(check.name);
+                                checkResult.errors.forEach(console.error);
+                            }
+                            expect(checkResult.errors.length > 0).toBe(false);
+                            done();
+                        }).catch(err2 => {
+                            expect(err2).toBeNull();
+                            done();
+                        });
+                    } else {
+                        done();
+                    }
                     // expect(res).not.toBeNull();
-                    done();
                 }).catch(err => {
                     if (err) console.error(err);
                     expect(err).toBeNull();
                     done();
                 });
-                // DBMS[check.func](...check.args.concat((err) => {
-                //     if (err) console.error(err);
-                    // if (check.gettable === true) {
-                    //     expect(err).toBeNull();
-                    // } else {
-                    //     expect(err).toBeUndefined();
-                    // }
-                    // if (check.forInconsistency === true) {
-                    //     DBMS.getConsistencyCheckResult((err2, checkResult) => {
-                    //         expect(err2).toBeNull();
-                    //         if (checkResult.errors.length > 0) {
-                    //             console.error(check.name);
-                    //             checkResult.errors.forEach(console.error);
-                    //         }
-                    //         expect(checkResult.errors.length > 0).toBe(false);
-                    //     });
-                    // }
-                //     done();
-                // }));
             });
         });
     });

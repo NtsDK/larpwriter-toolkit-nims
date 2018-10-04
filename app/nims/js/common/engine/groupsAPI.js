@@ -132,7 +132,7 @@ See the License for the specific language governing permissions and
                         filterModel: [],
                         doExport: true
                     };
-    
+
                     this.database.Groups[groupName] = newGroup;
                     this.ee.trigger('createGroup', arguments);
                     resolve();
@@ -183,7 +183,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.renameGroup = function (fromName, toName, callback) {
             this.renameGroupNew({fromName, toName}).then(res => callback()).catch(callback);
         };
-        
+
 //  [
 //      {
 //          name: 'groupName',
@@ -242,7 +242,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.saveFilterToGroup = function (groupName, filterModel, callback) {
             this.saveFilterToGroupNew({groupName, filterModel}).then(res => callback()).catch(callback);
         };
-        
+
 //  [
 //      {
 //          name: 'groupName',
@@ -286,7 +286,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.updateGroupField = function (groupName, fieldName, value, callback) {
             this.updateGroupFieldNew({groupName, fieldName, value}).then(res => callback()).catch(callback);
         };
-        
+
 //  [
 //      {
 //          name: 'groupName',
@@ -402,7 +402,7 @@ See the License for the specific language governing permissions and
             this.getGroupCharacterSetsNew().then(res => callback(null, res)).catch(callback);
         };
 
-        function _removeProfileItem(type, index, profileItemName) {
+        function _removeProfileItem({type, index, profileItemName}={}) {
             const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
             const subFilterName = prefix + profileItemName;
             const that = this;
@@ -414,13 +414,13 @@ See the License for the specific language governing permissions and
 
         addListener('removeProfileItem', _removeProfileItem);
 
-        function _changeProfileItemType(type, profileItemName, newType) {
-            _removeProfileItem.apply(this, [type, -1, profileItemName]);
+        function _changeProfileItemType({type, profileItemName, newType}={}) {
+            _removeProfileItem.apply(this, [{type, index: -1, profileItemName}]);
         }
 
         addListener('changeProfileItemType', _changeProfileItemType);
 
-        function _renameProfileItem(type, newName, oldName) {
+        function _renameProfileItem({type, newName, oldName}={}) {
             const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
             const subFilterName = prefix + oldName;
             const that = this;
@@ -437,7 +437,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfileItem', _renameProfileItem);
 
-        function _replaceEnumValue(type, profileItemName, defaultValue, newOptionsMap) {
+        function _replaceEnumValue({type, profileItemName, defaultValue, newOptionsMap}={}) {
             const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
                 profileItemName;
             const that = this;
@@ -467,8 +467,8 @@ See the License for the specific language governing permissions and
         addListener('replaceEnumValue', _replaceEnumValue);
 
         addListener('replaceMultiEnumValue', _replaceEnumValue);
-        
-        function _renameEnumValue(type, profileItemName, fromValue, toValue) {
+
+        function _renameEnumValue({type, profileItemName, fromValue, toValue}={}) {
             const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
                 profileItemName;
             const that = this;
@@ -484,9 +484,9 @@ See the License for the specific language governing permissions and
                 });
             });
         }
-        
+
         addListener('renameEnumValue', _renameEnumValue);
-        
+
         addListener('renameMultiEnumValue', _renameEnumValue);
     }
 

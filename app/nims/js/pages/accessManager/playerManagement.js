@@ -30,14 +30,14 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-create',
         });
         listen(qe(`${root}.create.player`), 'click', () => createUserDialog.showDlg());
-        
+
         const createPlayerAccountDialog = UI.createModalDialog(root, createUserAccount, {
             bodySelector: 'create-player-account-body',
             dialogTitle: 'admins-creating-player-account',
             actionButtonTitle: 'common-create',
         });
         listen(qe(`${root}.create.player-account`), 'click', () => createPlayerAccountDialog.showDlg());
-        
+
         const changePasswordDialog = UI.createModalDialog(root, changePassword, {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'admins-enter-new-password',
@@ -47,15 +47,15 @@ See the License for the specific language governing permissions and
             qee(changePasswordDialog, '.entity-input').value = '';
             changePasswordDialog.showDlg();
         });
-        
-        
+
+
 //        listen(queryEl(`${root}.create-user-button`), 'click', createUser);
 //        listen(queryEl(`${root}.create-login-button`), 'click', createLogin);
 //        listen(queryEl(`${root}.change-password-button`), 'click', changePassword);
         listen(queryEl(`${root}.remove-user-button`), 'click', removeUser);
         listen(queryEl(`${root}.welcome-text-area`), 'change', setWelcomeText);
         queryElEls(queryEl(root), '.playerOptions').map(listen(R.__, 'change', setPlayerOption));
-        
+
         $(`${root}.change-password-user-select`).select2().on('change', (event) => {
             const player = event.target.value;
             const yourPlayers = state.playerNames.filter(R.prop('isOwner')).map(R.prop('value'));
@@ -69,134 +69,95 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        PermissionInformer.getEntityNamesArray('player', false, (err, playerNames) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getPlayerLoginsArray((err2, playerLogins) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getWelcomeText((err3, text) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    DBMS.getPlayersOptions((err4, playersOptions) => {
-                        if (err4) { Utils.handleError(err4); return; }
-                        PermissionInformer.isAdmin((err5, isAdmin) => {
-                            if (err5) { Utils.handleError(err5); return; }
-                            // eslint-disable-next-line prefer-destructuring
-                            R.toPairs(playersOptions).map(pair => (getEl(pair[0]).checked = pair[1]));
-    
-                            queryEl(`${root}.welcome-text-area`).value = text;
-                            const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
-                            const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
-                            
-                            state.playerNames = playerNames;
-                            
-                            const noAccounts = (hasLoginObj.false || []);
-                            noAccounts.sort(Utils.charOrdAObject);
-                            $(clearEl(queryEl(`${root}.create-login-name-select`))).select2(getSelect2Data(noAccounts));
+        Promise.all([
+            PermissionInformer.getEntityNamesArrayNew({type: 'player', editableOnly: false}),
+            DBMS.getPlayerLoginsArrayNew(),
+            DBMS.getWelcomeTextNew(),
+            DBMS.getPlayersOptionsNew(),
+            PermissionInformer.isAdminNew()
+        ]).then(results => {
+            const [playerNames, playerLogins, text, playersOptions, isAdmin] = results;
+            // eslint-disable-next-line prefer-destructuring
+            R.toPairs(playersOptions).map(pair => (getEl(pair[0]).checked = pair[1]));
+
+            queryEl(`${root}.welcome-text-area`).value = text;
+            const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
+            const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
+
+            state.playerNames = playerNames;
+
+            const noAccounts = (hasLoginObj.false || []);
+            noAccounts.sort(Utils.charOrdAObject);
+            $(clearEl(queryEl(`${root}.create-login-name-select`))).select2(getSelect2Data(noAccounts));
     //                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
     //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
-                            const hasAccounts = (hasLoginObj.true || []);
-//                            hasAccounts.sort(Utils.charOrdAObject);
-                            $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
-                            
-                            Utils.enable(exports.content, 'adminOnly', isAdmin);
-                            
-                            Utils.enableEl(qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
-                            Utils.enableEl(qe(`${root}.user.change-password`), hasAccounts.length > 0);
-                            Utils.enableEl(qe(`${root}.remove-user-button`), hasAccounts.length > 0);
+            const hasAccounts = (hasLoginObj.true || []);
+    //                            hasAccounts.sort(Utils.charOrdAObject);
+            $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
+
+            Utils.enable(exports.content, 'adminOnly', isAdmin);
+
+            Utils.enableEl(qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
+            Utils.enableEl(qe(`${root}.user.change-password`), hasAccounts.length > 0);
+            Utils.enableEl(qe(`${root}.remove-user-button`), hasAccounts.length > 0);
     //                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
     //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
     //                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
-//                            .sort(Utils.charOrdAObject).map(remapProps4Select));
-                        });
-                    });
-                });
-            });
-        });
+    //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+        }).catch(Utils.handleError);
     };
 
     function createUser(dialog) {
         return () => {
             const userNameInput = qee(dialog,`.create-user-name-input`);
             const userPasswordInput = qee(dialog,`.create-user-password-input`);
-            DBMS.createPlayer(userNameInput.value.trim(), userPasswordInput.value, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    PermissionInformer.refresh((err2) => {
-                        if (err2) { Utils.handleError(err2); return; }
-                        userNameInput.value = '';
-                        userPasswordInput.value = '';
-                        dialog.hideDlg();
-                        exports.refresh();
-                    });
-                }
-            });
+            DBMS.createPlayerNew({userName: userNameInput.value.trim(), password: userPasswordInput.value}).then(() => {
+                PermissionInformer.refreshNew().then(() => {
+                    userNameInput.value = '';
+                    userPasswordInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }, Utils.handleError);
+            }).catch(err => setError(dialog, err));
         };
     }
-    
+
     function createUserAccount(dialog) {
         return () => {
             const userNameSelect = qee(dialog,`.create-login-name-select`);
             const passwordInput = qee(dialog,`.create-login-password-input`);
-            DBMS.createPlayerLogin(userNameSelect.value, passwordInput.value, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    passwordInput.value = '';
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.createPlayerLoginNew({userName: userNameSelect.value, password: passwordInput.value}).then(() => {
+                passwordInput.value = '';
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
-    function createLogin() {
-        const userNameSelect = queryEl(`${root}.create-login-name-select`);
-        const passwordInput = queryEl(`${root}.create-login-password-input`);
-        DBMS.createPlayerLogin(userNameSelect.value, passwordInput.value, Utils.processError(() => {
-            passwordInput.value = '';
-            exports.refresh();
-        }));
-    }
-
-//    function changePassword() {
-//        const userNameSelect = queryEl(`${root}.change-password-user-select`);
-//        const passwordInput = queryEl(`${root}.change-password-password-input`);
-//        DBMS.changePlayerPassword(userNameSelect.value, passwordInput.value, Utils.processError(() => {
-//            passwordInput.value = '';
-//            exports.refresh();
-//        }));
-//    }
-    
     function changePassword(dialog) {
         return () => {
             const toInput = qee(dialog, '.entity-input');
             const newPassword = toInput.value;
             const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-            DBMS.changePlayerPassword(userName, newPassword, (err) => {
-                if (err) {
-                    setError(dialog, err);
-                } else {
-                    dialog.hideDlg();
-                    exports.refresh();
-                }
-            });
+            DBMS.changePlayerPasswordNew({userName, newPassword}).then(() => {
+                dialog.hideDlg();
+                exports.refresh();
+            }).catch(err => setError(dialog, err));
         };
     }
 
     function removeUser() {
         const name = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-user-account-remove'), [name]), () => {
-            DBMS.removePlayerLogin(name, Utils.processError(exports.refresh));
+            DBMS.removePlayerLoginNew({userName: name}).then(exports.refresh, Utils.handleError);
         });
-//        const userNameSelect = queryEl(`${root}.change-password-user-select`);
-//        DBMS.removePlayerLogin(userNameSelect.value, Utils.processError(exports.refresh));
     }
 
     function setWelcomeText(event) {
-        DBMS.setWelcomeText(event.target.value, Utils.processError());
+        DBMS.setWelcomeTextNew({text: event.target.value}).catch(Utils.handleError);
     }
 
     function setPlayerOption(event) {
-        DBMS.setPlayerOption(event.target.value, event.target.checked, Utils.processError());
+        DBMS.setPlayerOptionNew({name: event.target.value, value: event.target.checked}).catch(Utils.handleError);
     }
 })(this.PlayerManagement = {});

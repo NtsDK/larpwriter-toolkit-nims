@@ -65,9 +65,9 @@ See the License for the specific language governing permissions and
                             playerAccess: 'hidden',
                             showInRoleGrid: false
                         };
-    
+
                         container.splice(selectedIndex, 0, profileItem);
-                        this.ee.trigger('createProfileItem', [type, name, itemType, value]);
+                        this.ee.trigger('createProfileItem', [{type, name, itemType, value}]);
                         resolve();
                     });
                 });
@@ -108,8 +108,7 @@ See the License for the specific language governing permissions and
                     const els = container.map((item, i) => `${i}/${item.name}`);
                     PC.precondition(PC.entityExists(`${index}/${profileItemName}`, els), reject, () => {
                         CU.removeFromArrayByIndex(container, index);
-                        this.ee.trigger('removeProfileItem', [type, index, profileItemName]);
-                        // this.ee.trigger('removeProfileItem', arguments);
+                        this.ee.trigger('removeProfileItem', arguments);
                         resolve();
                     });
                 });
@@ -128,8 +127,7 @@ See the License for the specific language governing permissions and
                         const profileItem = container.filter(elem => elem.name === profileItemName)[0];
                         profileItem.type = newType;
                         profileItem.value = Constants.profileFieldTypes[newType].value;
-                        this.ee.trigger('changeProfileItemType', [type, profileItemName, newType]);
-                        // this.ee.trigger('changeProfileItemType', arguments);
+                        this.ee.trigger('changeProfileItemType', arguments);
                         resolve();
                     });
                 });
@@ -167,7 +165,7 @@ See the License for the specific language governing permissions and
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
                     PC.precondition(PC.renameEntityCheck(oldName, newName, container.map(R.prop('name'))), reject, () => {
-                        this.ee.trigger('renameProfileItem', [type, newName, oldName]);
+                        this.ee.trigger('renameProfileItem', arguments);
                         container.filter(elem => elem.name === oldName)[0].name = newName;
                         resolve();
                     });
@@ -185,7 +183,7 @@ See the License for the specific language governing permissions and
                     const container = R.path(getPath(type), this.database);
                     PC.precondition(PC.entityExists(profileItemName, container.map(R.prop('name'))), reject, () => {
                         const profileItem = container.filter(elem => elem.name === profileItemName)[0];
-    
+
                         profileItem.doExport = checked;
                         resolve();
                     });
@@ -238,7 +236,7 @@ See the License for the specific language governing permissions and
                         chain = [PC.getValueCheck(info.type)(value), typeSpecificPreconditions(info.type, value)];
                         PC.precondition(PC.chainCheck(chain), reject, () => {
                             let newOptions, newOptionsMap, missedValues;
-    
+
                             switch (info.type) {
                             case 'text':
                             case 'string':
@@ -253,11 +251,11 @@ See the License for the specific language governing permissions and
                                 newOptions = R.uniq(value.split(',').map(R.trim));
                                 missedValues = info.value.trim() === '' ? [] : R.difference(info.value.split(','), newOptions);
                                 newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
-    
+
                                 if (missedValues.length !== 0) {
-                                    this.ee.trigger(info.type === 'enum' ? 'replaceEnumValue' : 'replaceMultiEnumValue', [type, profileItemName, newOptions[0], newOptionsMap]);
+                                    this.ee.trigger(info.type === 'enum' ? 'replaceEnumValue' : 'replaceMultiEnumValue', [{type, profileItemName, defaultValue: newOptions[0], newOptionsMap}]);
                                 }
-    
+
                                 info.value = newOptions.join(',');
                                 break;
                             default:
@@ -269,14 +267,14 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        
+
         LocalDBMS.prototype.renameEnumValue = function (type, profileItemName, fromValue, toValue, callback) {
             this.renameEnumValueNew({type, profileItemName, fromValue, toValue}).then(res => callback()).catch(callback);
         }
         LocalDBMS.prototype.renameEnumValueNew = function ({type, profileItemName, fromValue, toValue}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [typeCheck(type), PC.isString(profileItemName),
-                    PC.isString(fromValue), PC.isString(toValue), 
+                    PC.isString(fromValue), PC.isString(toValue),
                     PC.isNotEmptyString(fromValue), PC.isNotEmptyString(toValue)];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -289,7 +287,7 @@ See the License for the specific language governing permissions and
                             PC.precondition(PC.chainCheck(chain), reject, () => {
                                 list[R.indexOf(fromValue, list)] = toValue;
                                 info.value = list.join(',');
-                                this.ee.trigger(info.type === 'enum' ? 'renameEnumValue' : 'renameMultiEnumValue', [type, profileItemName, fromValue, toValue]);
+                                this.ee.trigger(info.type === 'enum' ? 'renameEnumValue' : 'renameMultiEnumValue', arguments);
                                 resolve();
                             });
                         });

@@ -40,12 +40,15 @@ See the License for the specific language governing permissions and
 
         // DBMS.set
         LocalDBMS.prototype.setDatabaseNew = function ({database}={}) {
-            try {
-                this.database = Migrator.migrate(database);
-                return Promise.resolve();
-            } catch (err) {
-                return Promise.reject(err);
-            }
+            return new Promise((resolve, reject) => {
+                try {
+                    this.database = Migrator.migrate(database);
+                    this.ee.trigger('setDatabase', [{database, reject}]);
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            });
         };
         LocalDBMS.prototype.setDatabase = function (database, callback) {
             this.setDatabaseNew({database}).then(res => callback(res)).catch(callback);
@@ -89,7 +92,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.setMetaInfoString = function (name, value, callback) {
             this.setMetaInfoStringNew({name, value}).then(res => callback(undefined, res)).catch(callback);
         };
-        
+
 //  [
 //      {
 //          name: 'name',

@@ -124,7 +124,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getPlayerLoginsArray = function (callback) {
             this.getPlayerLoginsArrayNew().then(res => callback(null, res)).catch(callback);
         }
-        LocalDBMS.prototype.getPlayerLoginsArray = function () {
+        LocalDBMS.prototype.getPlayerLoginsArrayNew = function () {
             return Promise.resolve(R.keys(this.database.ManagementInfo.PlayersInfo));
         };
 
@@ -132,7 +132,7 @@ See the License for the specific language governing permissions and
             this.removePlayerLoginNew({userName}).then(res => callback()).catch(callback);
         }
 
-        LocalDBMS.prototype.removePlayerLogin = function ({userName}={}) {
+        LocalDBMS.prototype.removePlayerLoginNew = function ({userName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(
                     PC.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), reject,
@@ -155,7 +155,7 @@ See the License for the specific language governing permissions and
             this.setWelcomeTextNew({text}).then(res => callback()).catch(callback);
         }
 
-        LocalDBMS.prototype.setWelcomeText = function ({text}={}) {
+        LocalDBMS.prototype.setWelcomeTextNew = function ({text}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.isString(text), reject, () => {
                     this.database.ManagementInfo.WelcomeText = text;
@@ -174,7 +174,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.setPlayerOption = function (name, value, callback) {
             this.setPlayerOptionNew({name, value}).then(res => callback()).catch(callback);
         }
-        LocalDBMS.prototype.setPlayerOption = function ({name, value}={}) {
+        LocalDBMS.prototype.setPlayerOptionNew = function ({name, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes),
                     PC.isBoolean(value)];
@@ -185,39 +185,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        // LocalDBMS.prototype.createOrganizer = function (name, password, callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createOrganizer']));
-        // };
-
-        // LocalDBMS.prototype.changeOrganizerPassword = function (userName, newPassword, callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['changeOrganizerPassword']));
-        // };
-
-        // LocalDBMS.prototype.publishPermissionsUpdate = function (callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['publishPermissionsUpdate']));
-        // };
-
-        // LocalDBMS.prototype.createPlayer = function (userName, password, callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createPlayer']));
-        // };
-
-        // LocalDBMS.prototype.createPlayerLogin = function (userName, password, callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createPlayerLogin']));
-        // };
-
-        // LocalDBMS.prototype.changePlayerPassword = function (userName, password, callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['changePlayerPassword']));
-        // };
-
-        // LocalDBMS.prototype.getPlayerProfileInfo = function (callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['getPlayerProfileInfo']));
-        // };
-
-        // LocalDBMS.prototype.createCharacterByPlayer = function (characterName, callback) {
-        //     callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createCharacterByPlayer']));
-        // };
-
-        function _renameProfile(type, fromName, toName) {
+        function _renameProfile({type, fromName, toName}={}) {
             if (type === 'character') return;
             if (this.database.ManagementInfo !== undefined) {
                 const playersInfo = this.database.ManagementInfo.PlayersInfo;
@@ -231,7 +199,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameProfile);
 
-        function _removeProfile(type, characterName) {
+        function _removeProfile({type, characterName}={}) {
             if (type === 'character') return;
             if (this.database.ManagementInfo !== undefined) {
                 const playersInfo = this.database.ManagementInfo.PlayersInfo;

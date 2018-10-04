@@ -63,7 +63,7 @@ See the License for the specific language governing permissions and
                             inventory: '',
                             activity: {}
                         };
-    
+
                         resolve();
                     });
                 });
@@ -87,14 +87,14 @@ See the License for the specific language governing permissions and
                         story.characters[toName] = story.characters[fromName];
                         story.characters[toName].name = toName;
                         delete story.characters[fromName];
-    
+
                         story.events.forEach((event) => {
                             if (event.characters[fromName]) {
                                 event.characters[toName] = event.characters[fromName];
                                 delete event.characters[fromName];
                             }
                         });
-    
+
                         resolve();
                     });
                 });
@@ -213,7 +213,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameCharacterInStories(type, fromName, toName) {
+        function _renameCharacterInStories({type, fromName, toName}={}) {
             if (type === 'player') return;
             const renameEventCharacter = (event) => {
                 if (event.characters[fromName]) {
@@ -235,7 +235,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameCharacterInStories);
 
-        function _removeCharacterFromStories(type, characterName) {
+        function _removeCharacterFromStories({type, characterName}={}) {
             if (type === 'player') return;
             const cleanEvent = (event) => {
                 if (event.characters[characterName]) {

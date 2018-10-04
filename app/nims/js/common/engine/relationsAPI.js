@@ -71,7 +71,7 @@ See the License for the specific language governing permissions and
                 PC.precondition(characterCheck(characterName, this.database), reject, () => {
                     const relData = R.clone(R.path(relationsPath, this.database));
                     const relations = charFilter(characterName, relData);
-    
+
                     resolve({
                         relations,
                         knownCharacters: dbmsUtils._getKnownCharacters(this.database, characterName)
@@ -226,7 +226,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameCharacter(type, fromName, toName) {
+        function _renameCharacter({type, fromName, toName}={}) {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             const arrPair = R.partition(R.pipe(R.prop(fromName), R.isNil), relData);
@@ -246,7 +246,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameCharacter);
 
-        function _removeCharacter(type, characterName) {
+        function _removeCharacter({type, characterName}={}) {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             this.database.Relations = R.filter(R.pipe(R.prop(characterName), R.isNil), relData);
