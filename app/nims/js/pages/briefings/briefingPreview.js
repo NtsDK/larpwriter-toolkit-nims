@@ -41,29 +41,29 @@ See the License for the specific language governing permissions and
         listen(getEl('disableHeadersCheckbox'), 'change', exports.refresh);
 
         getEl('hideAllPanelsCheckbox').checked = true;
-        
+
 //        listen(getEl('contentArea'), 'scroll', updateGutterScrollPos);
 //        listen(getEl('contentArea'), 'resize', rebuildGutter);
-        
+
         initPanelsArr();
 
         exports.content = getEl('briefingPreviewDiv');
     };
-    
+
 //    function updateGutterScrollPos (){
 //        let doc = getEl('contentArea');
 //        let position = qe(`${root} .gutter-scroll-position`);
 //        position.style.top = (doc.scrollTop)/doc.scrollHeight*100 + '%';
 //        position.style.height = (doc.clientHeight)/doc.scrollHeight*100 + '%';
 //    }
-//    
+//
 //    function rebuildGutter() {
 //        let doc = getEl('contentArea');
 //        const gutter = clearEl(qe(`${root} .gutter`));
 //        const scrollPos = addClass(makeEl('div'), 'gutter-scroll-position');
 //        addEl(gutter, scrollPos);
 //        updateGutterScrollPos();
-//        
+//
 //        const btn = makeEl('button');
 //        btn.style.top = '0%';
 ////        const title = qee(panel, '.panel-title').innerHTML.trim();
@@ -73,12 +73,12 @@ See the License for the specific language governing permissions and
 ////            panel.scrollIntoView();
 //        });
 //        addEl(gutter, btn);
-//        
+//
 //        const panels = qees(doc, '#briefingContent > .panel');
 //        addEls(gutter, panels.map(panel => {
 //            const btn = makeEl('button');
 //            btn.style.top = (panel.offsetTop)/doc.scrollHeight*100 + '%';
-//            
+//
 //            const panelTitle = qee(panel, '.panel-title');
 //            const title = panelTitle.innerText || panelTitle.textContent;
 //            setAttr(btn, 'title', title);
@@ -88,7 +88,7 @@ See the License for the specific language governing permissions and
 //            });
 //            return btn;
 //        }));
-//        
+//
 //    }
 
     exports.refresh = () => {
@@ -106,7 +106,7 @@ See the License for the specific language governing permissions and
             showEl(qe(`${root} .alert`), names.length === 0);
             showEl(qe(`${root} > div > div > .panel`), names.length !== 0);
             showEl(qe(`${root} #briefingCharacter`), names.length !== 0);
-            
+
             if (names.length > 0) {
                 const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
                 const data = getSelect2Data(names);
@@ -311,7 +311,7 @@ See the License for the specific language governing permissions and
 
     function showEventsByTime(content, characterName, userStoryNamesMap, flags) {
         DBMS.getCharacterEventsByTimeNew({characterName}).then((allEvents) => {
-            
+
             const adaptations = allEvents.map(event => ({
                 characterName,
                 storyName: event.storyName
@@ -328,15 +328,15 @@ See the License for the specific language governing permissions and
                     showStoryName: true,
                     metaInfo
                 };
-    
+
                 const splitConstant = 5;
-    
+
                 addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
                     const eventContent = addEls(makeEl('div'), subPart.map((event, j) => {
                         opts.index = (i * splitConstant) + 1 + j;
                         return showEvent(event, characterName, opts, flags);
                     }));
-    
+
                     let name;
                     if (flags.disableHeaders) {
                         name = makeText(strFormat(getL10n('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
@@ -377,7 +377,7 @@ See the License for the specific language governing permissions and
                     showStoryName: false,
                     metaInfo
                 };
-        
+
                 addEls(content, eventGroups.map((elem, i) => {
                     const storyContent = addEls(makeEl('div'), elem.events.map((event, j) => {
                         opts.index = j + 1;
@@ -391,16 +391,6 @@ See the License for the specific language governing permissions and
                 onBuildContentFinish();
             }).catch(Utils.handleError);
         }).catch(Utils.handleError)
-
-        // DBMS.getCharacterEventGroupsByStory(characterName, (err, eventGroups) => {
-        //     if (err) { Utils.handleError(err); return; }
-        //     PermissionInformer.areAdaptationsEditable(adaptations, (err2, areAdaptationsEditable) => {
-        //         if (err2) { Utils.handleError(err2); return; }
-        //         DBMS.getMetaInfo((err3, metaInfo) => {
-        //             if (err3) { Utils.handleError(err3); return; }
-        //         });
-        //     });
-        // });
     }
 
     function getEventHeaderDiv(event, showStoryName) {

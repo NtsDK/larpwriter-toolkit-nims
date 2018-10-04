@@ -59,7 +59,7 @@ See the License for the specific language governing permissions and
 
     exports.refresh = () => {
         Promise.all([
-            DBMS.getMetaInfoNew(), 
+            DBMS.getMetaInfoNew(),
             DBMS.getEventsTimeInfoNew(),
             PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}),
             PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
@@ -94,48 +94,6 @@ See the License for the specific language governing permissions and
             state.allCharacterNames = allCharacterNames;
             refreshTimeline();
         }).catch(Utils.handleError)
-
-        // DBMS.getMetaInfo((err, metaInfo) => {
-        //     if (err) { Utils.handleError(err); return; }
-
-            // state.postDate = metaInfo.date;
-            // state.preDate = metaInfo.preGameDate;
-
-            // const endDate = new Date(state.postDate);
-            // const startDate = new Date(state.preDate);
-            // endDate.setFullYear(endDate.getFullYear() + 1);
-            // startDate.setFullYear(startDate.getFullYear() - 1);
-
-            // state.timelineComponent.setOptions({
-            //     end: endDate,
-            //     start: startDate,
-            // });
-
-            // // DBMS.getEventsTimeInfo((err1, eventsTimeInfo) => {
-            // //     if (err1) { Utils.handleError(err1); return; }
-            //     state.eventsTimeInfo = eventsTimeInfo;
-            //     state.eventsByStories = R.groupBy(R.prop('storyName'), eventsTimeInfo);
-            //     state.eventsByCharacters = R.uniq(R.flatten(eventsTimeInfo.map(event => event.characters)));
-            //     state.eventsByCharacters = R.zipObj(
-            //         state.eventsByCharacters,
-            //         R.ap([R.clone], R.repeat([], state.eventsByCharacters.length))
-            //     );
-            //     eventsTimeInfo.forEach(event => event.characters.forEach(character =>
-            //         state.eventsByCharacters[character].push(event)));
-
-            //     // PermissionInformer.getEntityNamesArray('story', false, (err2, allStoryNames) => {
-            //     //     if (err2) { Utils.handleError(err2); return; }
-            //     //     PermissionInformer.getEntityNamesArray('character', false, (err3, allCharacterNames) => {
-            //     //         if (err3) { Utils.handleError(err3); return; }
-            //             suffixy(allStoryNames, state.eventsByStories);
-            //             state.allStoryNames = allStoryNames;
-            //             suffixy(allCharacterNames, state.eventsByCharacters);
-            //             state.allCharacterNames = allCharacterNames;
-            //             refreshTimeline();
-        //             });
-        //         });
-        //     });
-        // });
     };
 
     function suffixy(entityNames, data) {
@@ -186,9 +144,9 @@ See the License for the specific language governing permissions and
                     event.characters.sort(CommonUtils.charOrdA);
                     return event;
                 }));
-        
+
         events.sort(CommonUtils.charOrdAFactory(R.prop('time')));
-        
+
         addEls(clearEl(queryEl(`${root} .timeline-list`)), events.map(event => {
             const row = qmte(`${root} .timeline-event-tmpl`);
             addEl(qee(row, '.time'), makeText(event.time.format('yyyy/mm/dd h:MM')));
@@ -215,7 +173,7 @@ See the License for the specific language governing permissions and
             });
         }
     }
-    
+
     function fillTimelines(usedData) {
         state.TimelineDataset.add(R.flatten(R.toPairs(usedData).map((pair) => {
             const entityName = pair[0];
