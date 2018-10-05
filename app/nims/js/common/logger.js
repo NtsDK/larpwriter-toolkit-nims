@@ -29,7 +29,19 @@ See the License for the specific language governing permissions and
         'hasPermission',
         '_getOwnerMap',
         'getPermissionsSummary',
-        'subscribeOnPermissionsUpdate'];
+        'subscribeOnPermissionsUpdate',
+
+        'createOrganizer',
+        'changeOrganizerPassword',
+        'removePermission',
+        'assignPermission',
+        'publishPermissionsUpdate',
+        'createPlayer',
+        'createPlayerLogin',
+        'changePlayerPassword',
+        'getPlayerProfileInfo',
+        'createCharacterByPlayer'
+    ];
 
     // argument description
     // add function name to log it
