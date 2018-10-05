@@ -50,7 +50,7 @@ function RoutingTabTmpl(exports, opts) {
 }
 
 RoutingTabTmpl(this.Briefings = {}, {
-    firstTab: 'BriefingExport',
+    firstTab: 'BriefingPreview',
     tabs: [{
         btnName: 'briefing-preview',
         viewName: 'BriefingPreview'
@@ -89,7 +89,7 @@ RoutingTabTmpl(this.Players = {}, {
 });
 
 RoutingTabTmpl(this.LogViewer2 = {}, {
-    firstTab: 'About',
+    firstTab: 'LogViewer',
     tabs: [{
         btnName: 'logViewer',
         viewName: 'LogViewer'

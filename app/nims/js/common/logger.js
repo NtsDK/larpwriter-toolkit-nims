@@ -231,85 +231,148 @@ See the License for the specific language governing permissions and
     // environment - used to disable this.log function in thin client in server version.
     //      I agree it is strange.
     exports.attachLogCalls = (LocalDBMS, R, isServer) => {
-        // const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
-        // const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
+        const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
+        const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
 
-        // Object.keys(LocalDBMS.prototype)
-        //     .filter(R.prop(R.__, filteredApi))
-        //     .forEach((funcName) => {
-        //         const oldFun = LocalDBMS.prototype[funcName];
-        //         LocalDBMS.prototype[funcName] = function () {
-        //             const arr = [];
-        //             for (let i = 0; i < arguments.length - 1; i++) {
-        //                 arr.push(arguments[i]);
-        //             }
+        Object.keys(LocalDBMS.prototype)
+            .filter(R.prop(R.__, filteredApi))
+            .forEach((funcName) => {
+                const oldFun = LocalDBMS.prototype[funcName];
+                LocalDBMS.prototype[funcName] = function (...arr) {
 
-        //             const { length } = arguments;
-        //             const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
-        //             const callback = arguments[callbackPos];
+                    let accept = true;
+                    if (filteredApi[funcName].filter) {
+                        accept = filteredApi[funcName].filter(arr);
+                    }
+
+                    function getArgs(arr) {
+                        return isServer ? R.init(arr) : arr;
+                    }
+
+                    if (!accept) {
+                        return oldFun.apply(this, arguments);
+                    } else {
+                        let userName = 'user';
+                        if (isServer && arguments[arguments.length - 1] !== undefined) {
+                            userName = arguments[arguments.length - 1].name;
+                        }
+
+                        const beginTime = new Date().toString();
+                        this.log({
+                            userName,
+                            time: beginTime,
+                            funcName,
+                            rewrite: !!filteredApi[funcName].rewrite,
+                            params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
+                            status: JSON.stringify(['begin'])
+                        });
+
+                        return new Promise((resolve, reject) => {
+                            oldFun.apply(this, arguments).then((result) => {
+                                const endTime = new Date().toString();
+                                const text = 'OK';
+                                this.log({
+                                    userName,
+                                    time: endTime,
+                                    funcName,
+                                    rewrite: !!filteredApi[funcName].rewrite,
+                                    params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
+                                    status: JSON.stringify([beginTime, text])
+                                });
+                                resolve(result);
+                            }).catch((err) => {
+                                const endTime = new Date().toString();
+                                let text = 'ERR: ';
+                                if (err.messageId !== undefined) {
+                                    text += `${err.messageId}, ${JSON.stringify(err.parameters)}`;
+                                } else {
+                                    text += err;
+                                }
+                                this.log({
+                                    userName,
+                                    time: endTime,
+                                    funcName,
+                                    rewrite: !!filteredApi[funcName].rewrite,
+                                    params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
+                                    status: JSON.stringify([beginTime, text])
+                                });
+                                reject(err);
+                            });
+                        });
+                    }
 
 
-        //             let accept = true;
-        //             if (filteredApi[funcName].filter) {
-        //                 accept = filteredApi[funcName].filter(arr);
-        //             }
+                    // const arr = [];
+                    // for (let i = 0; i < arguments.length - 1; i++) {
+                    //     arr.push(arguments[i]);
+                    // }
 
-        //             if (accept) {
-        //                 let userName = 'user';
-        //                 if (isServer && arguments[arguments.length - 1] !== undefined) {
-        //                     userName = arguments[arguments.length - 1].name;
-        //                 }
-
-        //                 const beginTime = new Date().toString();
-        //                 this.log({
-        //                     userName,
-        //                     time: beginTime,
-        //                     funcName,
-        //                     rewrite: !!filteredApi[funcName].rewrite,
-        //                     params: filteredApi[funcName].ignoreParams ? [] : arr,
-        //                     status: JSON.stringify(['begin'])
-        //                 });
-        //                 // this.log(
-        //                 //     userName, beginTime, funcName, !!filteredApi[funcName].rewrite,
-        //                 //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify(['begin'])
-        //                 // );
+                    // const { length } = arguments;
+                    // const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
+                    // const callback = arguments[callbackPos];
 
 
-        //                 const callbackOverride = function () {
-        //                     const endTime = new Date().toString();
-        //                     const hasError = (arguments[0] !== null && arguments[0] !== undefined);
-        //                     let text;
-        //                     if (hasError) {
-        //                         text = 'ERR: ';
-        //                         if (arguments[0].messageId !== undefined) {
-        //                             text += `${arguments[0].messageId}, ${JSON.stringify(arguments[0].parameters)}`;
-        //                         } else {
-        //                             text += arguments[0];
-        //                         }
-        //                     } else {
-        //                         text = 'OK';
-        //                     }
-        //                     // this.log(
-        //                     //     userName, endTime, funcName, !!filteredApi[funcName].rewrite,
-        //                     //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify([beginTime,
-        //                     //         text])
-        //                     // );
-        //                     this.log({
-        //                         userName,
-        //                         time: endTime,
-        //                         funcName,
-        //                         rewrite: !!filteredApi[funcName].rewrite,
-        //                         params: filteredApi[funcName].ignoreParams ? [] : arr,
-        //                         status: JSON.stringify([beginTime, text])
-        //                     });
-        //                     callback(...arguments);
-        //                 }.bind(this);
-        //                 arguments[callbackPos] = callbackOverride;
-        //             }
+                    // let accept = true;
+                    // if (filteredApi[funcName].filter) {
+                    //     accept = filteredApi[funcName].filter(arr);
+                    // }
 
-        //             return oldFun.apply(this, arguments);
-        //         };
-            // });
+                    // if (accept) {
+                    //     let userName = 'user';
+                    //     if (isServer && arguments[arguments.length - 1] !== undefined) {
+                    //         userName = arguments[arguments.length - 1].name;
+                    //     }
+
+                    //     const beginTime = new Date().toString();
+                    //     this.log({
+                    //         userName,
+                    //         time: beginTime,
+                    //         funcName,
+                    //         rewrite: !!filteredApi[funcName].rewrite,
+                    //         params: filteredApi[funcName].ignoreParams ? [] : arr,
+                    //         status: JSON.stringify(['begin'])
+                    //     });
+                    //     // this.log(
+                    //     //     userName, beginTime, funcName, !!filteredApi[funcName].rewrite,
+                    //     //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify(['begin'])
+                    //     // );
+
+
+                    //     const callbackOverride = function () {
+                    //         const endTime = new Date().toString();
+                    //         const hasError = (arguments[0] !== null && arguments[0] !== undefined);
+                    //         let text;
+                    //         if (hasError) {
+                    //             text = 'ERR: ';
+                    //             if (arguments[0].messageId !== undefined) {
+                    //                 text += `${arguments[0].messageId}, ${JSON.stringify(arguments[0].parameters)}`;
+                    //             } else {
+                    //                 text += arguments[0];
+                    //             }
+                    //         } else {
+                    //             text = 'OK';
+                    //         }
+                    //         // this.log(
+                    //         //     userName, endTime, funcName, !!filteredApi[funcName].rewrite,
+                    //         //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify([beginTime,
+                    //         //         text])
+                    //         // );
+                    //         this.log({
+                    //             userName,
+                    //             time: endTime,
+                    //             funcName,
+                    //             rewrite: !!filteredApi[funcName].rewrite,
+                    //             params: filteredApi[funcName].ignoreParams ? [] : arr,
+                    //             status: JSON.stringify([beginTime, text])
+                    //         });
+                    //         callback(...arguments);
+                    //     }.bind(this);
+                    //     arguments[callbackPos] = callbackOverride;
+                    // }
+
+                    // return oldFun.apply(this, arguments);
+                };
+            });
 
         const arr = [];
         let timeout;
