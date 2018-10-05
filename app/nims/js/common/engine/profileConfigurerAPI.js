@@ -34,9 +34,6 @@ See the License for the specific language governing permissions and
         const playerAccessCheck = type => PC.chainCheck([PC.isString(type),
             PC.elementFromEnum(type, Constants.playerAccessTypes)]);
 
-        LocalDBMS.prototype.getProfileStructure = function (type, callback) {
-            this.getProfileStructureNew({type}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getProfileStructureNew = function ({type}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -45,9 +42,6 @@ See the License for the specific language governing permissions and
             });
         };
         // profile configurer
-        LocalDBMS.prototype.createProfileItem = function (type, name, itemType, selectedIndex, callback) {
-            this.createProfileItemNew({type, name, itemType, selectedIndex}).then(res => callback()).catch(callback);
-        };
         LocalDBMS.prototype.createProfileItemNew = function ({type, name, itemType, selectedIndex}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [typeCheck(type), PC.isString(name), PC.notEquals(name, 'name'),
@@ -75,9 +69,6 @@ See the License for the specific language governing permissions and
         };
 
         //profile configurer
-        LocalDBMS.prototype.moveProfileItem = function (type, index, newIndex, callback) {
-            this.moveProfileItemNew({type, index, newIndex}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.moveProfileItemNew = function ({type, index, newIndex}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [typeCheck(type), PC.isNumber(index), PC.isNumber(newIndex)];
@@ -97,9 +88,6 @@ See the License for the specific language governing permissions and
             });
         };
         // profile configurer
-        LocalDBMS.prototype.removeProfileItem = function (type, index, profileItemName, callback) {
-            this.removeProfileItemNew({type, index, profileItemName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeProfileItemNew = function ({type, index, profileItemName}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [typeCheck(type), PC.isNumber(index), PC.isString(profileItemName)];
@@ -115,9 +103,6 @@ See the License for the specific language governing permissions and
             });
         };
         // profile configurer
-        LocalDBMS.prototype.changeProfileItemType = function (type, profileItemName, newType, callback) {
-            this.changeProfileItemTypeNew({type, profileItemName, newType}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.changeProfileItemTypeNew = function ({type, profileItemName, newType}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [typeCheck(type), PC.isString(profileItemName), itemTypeCheck(newType)];
@@ -134,11 +119,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.changeProfileItemPlayerAccess = function (
-            type, profileItemName, playerAccessType, callback
-        ) {
-            this.changeProfileItemPlayerAccessNew({type, profileItemName, playerAccessType}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.changeProfileItemPlayerAccessNew = function (
             {type, profileItemName, playerAccessType}={}
         ) {
@@ -157,9 +137,6 @@ See the License for the specific language governing permissions and
         };
 
         // profile configurer
-        LocalDBMS.prototype.renameProfileItem = function (type, newName, oldName, callback) {
-            this.renameProfileItemNew({type, newName, oldName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.renameProfileItemNew = function ({type, newName, oldName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -173,9 +150,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.doExportProfileItemChange = function (type, profileItemName, checked, callback) {
-            this.doExportProfileItemChangeNew({type, profileItemName, checked}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.doExportProfileItemChangeNew = function ({type, profileItemName, checked}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [typeCheck(type), PC.isString(profileItemName), PC.isBoolean(checked)];
@@ -191,9 +165,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.showInRoleGridProfileItemChange = function (type, profileItemName, checked, callback) {
-            this.showInRoleGridProfileItemChangeNew({type, profileItemName, checked}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.showInRoleGridProfileItemChangeNew = function ({type, profileItemName, checked}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [typeCheck(type), PC.isString(profileItemName), PC.isBoolean(checked)];
@@ -223,9 +194,6 @@ See the License for the specific language governing permissions and
         };
 
         // profile configurer
-        LocalDBMS.prototype.updateDefaultValue = function (type, profileItemName, value, callback) {
-            this.updateDefaultValueNew({type, profileItemName, value}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.updateDefaultValueNew = function ({type, profileItemName, value}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [typeCheck(type), PC.isString(profileItemName)];
@@ -268,9 +236,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.renameEnumValue = function (type, profileItemName, fromValue, toValue, callback) {
-            this.renameEnumValueNew({type, profileItemName, fromValue, toValue}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.renameEnumValueNew = function ({type, profileItemName, fromValue, toValue}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [typeCheck(type), PC.isString(profileItemName),

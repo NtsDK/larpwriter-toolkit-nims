@@ -25,16 +25,12 @@ See the License for the specific language governing permissions and
         const validatorLib = opts.Ajv;
         const schemaBuilder = opts.Schema;
 
-        LocalDBMS.prototype.getConsistencyCheckResult = function (callback) {
-            this.getConsistencyCheckResultNew().then(res => callback(null, res)).catch(callback);
-        };
-
         // DBMS.consistency.check()
         LocalDBMS.prototype.getConsistencyCheckResultNew = function () {
             return new Promise((resolve, reject) => {
 
                 let errors = [];
-    
+
                 let errors2 = [
                     checkProfileStructureConsistency(this.database, 'character', 'CharacterProfileStructure'),
                     checkProfileStructureConsistency(this.database, 'player', 'PlayerProfileStructure'),
@@ -51,19 +47,19 @@ See the License for the specific language governing permissions and
                     errors2.push(checkObjectRightsConsistency(this.database));
                     errors2.push(checkPlayerLoginConsistency(this.database));
                 }
-    
+
                 errors2.forEach((module) => {
                     module.errors = module.errors.map(R.apply(CU.strFormat));
                 });
                 errors = errors.concat(R.flatten(errors2.map(R.prop('errors'))));
-    
+
                 const schema = schemaBuilder.getSchema(this.database);
                 const validator = validatorLib({ allErrors: true }); // options can be passed, e.g. {allErrors: true}
                 const validate = validator.compile(schema);
                 const valid = validate(this.database);
                 if (!valid) {
                     errors = errors.concat(validate.errors);
-    
+
                     errors2 = R.concat(errors2, schema.required.map((moduleName) => {
                         const validate2 = validator.compile(schema.properties[moduleName]);
                         const valid2 = validate2(this.database[moduleName]);
@@ -82,9 +78,9 @@ See the License for the specific language governing permissions and
                         });
                     }
                 }
-    
+
                 const details = R.mapObjIndexed(arr => R.flatten(arr.map(R.prop('errors'))), R.groupBy(R.prop('module'), errors2));
-    
+
                 resolve({
                     errors,
                     details,

@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
                     if (subItem.condition === 'equal' && superItem.condition === 'lesser') {
                         return subItem.num < superItem.num;
                     }
-                    
+
                     if (subItem.condition === 'equal' && superItem.condition === 'equal') {
                         return subItem.num === superItem.num;
                     }
@@ -94,7 +94,7 @@ See the License for the specific language governing permissions and
                     if (subItem.condition === 'some' && superItem.condition === 'every') {
                         return false;
                     }
-                    
+
                     if (subItem.condition === 'every' && superItem.condition === 'equal') {
 //                        return R.keys(subItem.selectedOptions).length === 0;
 //                          if(R.keys(subItem.selectedOptions).length === 0){
@@ -120,14 +120,14 @@ See the License for the specific language governing permissions and
 //                        ).length === 0;
                         return false;
                     }
-                    
+
                     if (subItem.condition === 'some' && superItem.condition === 'equal') {
                         return false;
                     }
                     if (subItem.condition === 'equal' && superItem.condition === 'some') {
                         return false;
                     }
-                    
+
                     if (subItem.condition === 'every' && superItem.condition === 'every') {
                         if(R.keys(superItem.selectedOptions).length === 0){
                             return false;
@@ -255,27 +255,23 @@ See the License for the specific language governing permissions and
             return _makeGraph(equalGroups, superGroups, groupCharacterSets);
         };
 
-        LocalDBMS.prototype.getGroupSchemas = function (callback) {
-            this.getGroupSchemasNew().then(res => callback(null, res)).catch(callback);
-        };
-
         LocalDBMS.prototype.getGroupSchemasNew = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
                 this.getGroupCharacterSetsNew().then((groupCharacterSets) => {
                     const schemas = {};
                     const groups = that.database.Groups;
-    
+
                     schemas.theory = _makeGroupSchema(
                         groups, _isGroupsEqualByFilterModel, _isSuperGroupByFilterModel,
                         groupName => groups[groupName].filterModel, groupCharacterSets
                     );
-    
+
                     schemas.practice = _makeGroupSchema(
                         groups, _isGroupsEqualByElements, _isSuperGroupByElements,
                         groupName => groupCharacterSets[groupName], groupCharacterSets
                     );
-    
+
                     resolve(schemas);
                 }).catch(reject);
             });

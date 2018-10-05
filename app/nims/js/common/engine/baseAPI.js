@@ -50,16 +50,10 @@ See the License for the specific language governing permissions and
                 }
             });
         };
-        // LocalDBMS.prototype.setDatabase = function (database, callback) {
-        //     this.setDatabaseNew({database}).then(res => callback(res)).catch(callback);
-        // };
         // DBMS.meta.get
         LocalDBMS.prototype.getMetaInfoNew = function () {
             return Promise.resolve(CU.clone(this.database.Meta));
         };
-        // LocalDBMS.prototype.getMetaInfo = function (callback) {
-        //     this.getMetaInfoNew().then(res => callback(null, res)).catch(callback);
-        // };
 //  [
 //      {
 //          name: 'name',
@@ -89,10 +83,6 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        // LocalDBMS.prototype.setMetaInfoString = function (name, value, callback) {
-        //     this.setMetaInfoStringNew({name, value}).then(res => callback(undefined, res)).catch(callback);
-        // };
-
 //  [
 //      {
 //          name: 'name',
@@ -122,9 +112,6 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-        // LocalDBMS.prototype.setMetaInfoDate = function (name, value, callback) {
-        //     this.setMetaInfoDateNew({name, value}).then(res => callback(undefined, res)).catch(callback);
-        // };
     }
 
     callback2(baseAPI);

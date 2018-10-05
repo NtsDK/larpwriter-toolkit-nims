@@ -22,10 +22,6 @@ See the License for the specific language governing permissions and
             R, Constants, Errors, CU, PC
         } = opts;
 
-        LocalDBMS.prototype.getEntityNamesArray = function (type, callback) {
-            this.getEntityNamesArrayNew({type}).then(res => callback(null, res)).catch(callback);
-        };
-
         // DBMS.groups.names.get()
         LocalDBMS.prototype.getEntityNamesArrayNew = function ({type}={}) {
             return new Promise((resolve,reject) => {

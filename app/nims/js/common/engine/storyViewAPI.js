@@ -24,10 +24,6 @@ See the License for the specific language governing permissions and
             PC.entityExists(characterName, R.keys(database.Characters))]);
 
         // preview
-        LocalDBMS.prototype.getAllInventoryLists = function (characterName, callback) {
-            this.getAllInventoryListsNew({characterName}).then(res => callback(null, res)).catch(callback);
-        }
-
         LocalDBMS.prototype.getAllInventoryListsNew = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(characterCheck(characterName, this.database), reject, () => {
@@ -44,21 +40,18 @@ See the License for the specific language governing permissions and
         };
 
         // preview
-        LocalDBMS.prototype.getCharacterEventGroupsByStory = function (characterName, callback) {
-            this.getCharacterEventGroupsByStoryNew({characterName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getCharacterEventGroupsByStoryNew = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(characterCheck(characterName, this.database), reject, () => {
                     const eventGroups = [];
-    
+
                     let events;
-    
+
                     const that = this;
                     Object.keys(this.database.Stories).filter(storyName =>
                         that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
                         events = [];
-    
+
                         const tmpEvents = CU.clone(that.database.Stories[storyName].events);
                         tmpEvents.map((elem, i) => {
                             elem.index = i;
@@ -69,7 +62,7 @@ See the License for the specific language governing permissions and
                         }).filter(event => event.characters[characterName]).forEach((event) => {
                             events.push(event);
                         });
-    
+
                         eventGroups.push({
                             storyName,
                             events
@@ -82,14 +75,11 @@ See the License for the specific language governing permissions and
         };
 
         // preview
-        LocalDBMS.prototype.getCharacterEventsByTime = function (characterName, callback) {
-            this.getCharacterEventsByTimeNew({characterName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getCharacterEventsByTimeNew = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(characterCheck(characterName, this.database), reject, () => {
                     let allEvents = [];
-    
+
                     const that = this;
                     Object.keys(this.database.Stories).filter(storyName =>
                         that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
@@ -102,7 +92,7 @@ See the License for the specific language governing permissions and
                             return elem;
                         }).filter(event => event.characters[characterName]));
                     });
-    
+
                     allEvents.sort(CU.eventsByTime);
                     resolve(allEvents);
                 });
@@ -110,9 +100,6 @@ See the License for the specific language governing permissions and
         };
 
         // timeline
-        LocalDBMS.prototype.getEventsTimeInfo = function (callback) {
-            this.getEventsTimeInfoNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getEventsTimeInfoNew = function (callback) {
             const result = R.flatten(R.values(CU.clone(this.database.Stories)).map(story => story.events.map((event, index) => R.merge(R.pick(['name', 'time'], event), {
                 characters: R.keys(event.characters),
@@ -124,9 +111,6 @@ See the License for the specific language governing permissions and
         };
 
         // character filter
-        LocalDBMS.prototype.getCharactersSummary = function (callback) {
-            this.getCharactersSummaryNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getCharactersSummaryNew = function () {
             const characters = R.keys(this.database.Characters);
             const charactersInfo = {};
@@ -170,9 +154,6 @@ See the License for the specific language governing permissions and
         };
 
         // character profile
-        LocalDBMS.prototype.getCharacterReport = function (characterName, callback) {
-            this.getCharacterReportNew({characterName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getCharacterReportNew = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(characterCheck(characterName, this.database), reject, () => {
@@ -180,20 +161,20 @@ See the License for the specific language governing permissions and
                         .filter(story => story.characters[characterName] !== undefined)
                         .map((story) => {
                             const charEvents = story.events.filter(event => event.characters[characterName] !== undefined);
-    
+
                             const finishedAdaptations = charEvents
                                 .filter(event => event.characters[characterName].ready === true).length;
-    
+
                             let meets = {};
                             charEvents.forEach((event) => {
                                 const chars = R.keys(event.characters);
                                 meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
                             });
-    
+
                             delete meets[characterName];
                             meets = R.keys(meets).sort(CU.charOrdA);
-    
-    
+
+
                             return {
                                 storyName: story.name,
                                 inventory: story.characters[characterName].inventory,
@@ -204,7 +185,7 @@ See the License for the specific language governing permissions and
                             };
                         });
                     characterReport.sort(CU.charOrdAFactory(R.prop('storyName')));
-    
+
                     resolve(characterReport);
                 });
             });

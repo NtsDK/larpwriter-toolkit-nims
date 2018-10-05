@@ -22,10 +22,6 @@ See the License for the specific language governing permissions and
             R, addListener, Errors, Constants, CU, PC
         } = opts;
 
-        LocalDBMS.prototype.getManagementInfo = function (callback) {
-            this.getManagementInfoNew().then(res => callback(null, res)).catch(callback);
-        }
-
         LocalDBMS.prototype.getManagementInfoNew = function () {
             return new Promise((resolve, reject) => {
                 const { ManagementInfo } = this.database;
@@ -42,10 +38,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.assignAdmin = function (name, callback) {
-            this.assignAdminNew({name}).then(res => callback()).catch(callback);
-        }
-
         LocalDBMS.prototype.assignAdminNew = function ({name}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(
@@ -59,10 +51,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.assignEditor = function (name, callback) {
-            this.assignEditorNew({name}).then(res => callback()).catch(callback);
-        }
-
         LocalDBMS.prototype.assignEditorNew = function ({name}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(
@@ -75,9 +63,6 @@ See the License for the specific language governing permissions and
                 );
             });
         };
-        LocalDBMS.prototype.removeEditor = function (callback) {
-            this.removeEditorNew({}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeEditorNew = function () {
             return new Promise((resolve, reject) => {
                 this.database.ManagementInfo.editor = null;
@@ -85,9 +70,6 @@ See the License for the specific language governing permissions and
                 resolve();
             });
         };
-        LocalDBMS.prototype.changeAdaptationRightsMode = function (mode, callback) {
-            this.changeAdaptationRightsModeNew({mode}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.changeAdaptationRightsModeNew = function ({mode}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(mode), PC.elementFromEnum(mode, Constants.adaptationRightsModes)];
@@ -99,9 +81,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.removeOrganizer = function (name, callback) {
-            this.removeOrganizerNew({name}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeOrganizerNew = function ({name}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(name),
@@ -121,16 +100,9 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getPlayerLoginsArray = function (callback) {
-            this.getPlayerLoginsArrayNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getPlayerLoginsArrayNew = function () {
             return Promise.resolve(R.keys(this.database.ManagementInfo.PlayersInfo));
         };
-
-        LocalDBMS.prototype.removePlayerLogin = function (userName, callback) {
-            this.removePlayerLoginNew({userName}).then(res => callback()).catch(callback);
-        }
 
         LocalDBMS.prototype.removePlayerLoginNew = function ({userName}={}) {
             return new Promise((resolve, reject) => {
@@ -144,16 +116,9 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getWelcomeText = function (callback) {
-            this.getWelcomeTextNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getWelcomeTextNew = function () {
             return Promise.resolve(this.database.ManagementInfo.WelcomeText);
         };
-
-        LocalDBMS.prototype.setWelcomeText = function (text, callback) {
-            this.setWelcomeTextNew({text}).then(res => callback()).catch(callback);
-        }
 
         LocalDBMS.prototype.setWelcomeTextNew = function ({text}={}) {
             return new Promise((resolve, reject) => {
@@ -164,16 +129,10 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getPlayersOptions = function (callback) {
-            this.getPlayersOptionsNew().then(res => callback(null, res)).catch(callback);
-        };
         LocalDBMS.prototype.getPlayersOptionsNew = function () {
             return Promise.resolve(CU.clone(this.database.ManagementInfo.PlayersOptions));
         };
 
-        LocalDBMS.prototype.setPlayerOption = function (name, value, callback) {
-            this.setPlayerOptionNew({name, value}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setPlayerOptionNew = function ({name, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes),

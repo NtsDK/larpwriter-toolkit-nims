@@ -56,16 +56,10 @@ See the License for the specific language governing permissions and
 
         const charFilter = R.curry((char, data) => R.filter(rel => rel[char] !== undefined, data));
 
-        LocalDBMS.prototype.getRelations = function (callback) {
-            this.getRelationsNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getRelationsNew = function (callback) {
             return Promise.resolve(R.clone(R.path(relationsPath, this.database)));
         };
 
-        LocalDBMS.prototype.getRelationsSummary = function (characterName, callback) {
-            this.getRelationsSummaryNew({characterName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getRelationsSummaryNew = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(characterCheck(characterName, this.database), reject, () => {
@@ -80,9 +74,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getCharacterRelation = function (fromCharacter, toCharacter, callback) {
-            this.getCharacterRelationNew({fromCharacter, toCharacter}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getCharacterRelationNew = function ({fromCharacter, toCharacter}={}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
@@ -95,9 +86,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.createCharacterRelation = function (fromCharacter, toCharacter, callback) {
-            this.createCharacterRelationNew({fromCharacter, toCharacter}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.createCharacterRelationNew = function ({fromCharacter, toCharacter}={}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
@@ -120,9 +108,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.removeCharacterRelation = function (fromCharacter, toCharacter, callback) {
-            this.removeCharacterRelationNew({fromCharacter, toCharacter}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeCharacterRelationNew = function ({fromCharacter, toCharacter}={}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
@@ -137,12 +122,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setCharacterRelationText = function (
-            fromCharacter, toCharacter, character, text,
-            callback
-        ) {
-            this.setCharacterRelationTextNew({fromCharacter, toCharacter, character, text}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setCharacterRelationTextNew = function (
             {fromCharacter, toCharacter, character, text}={}
         ) {
@@ -162,9 +141,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setRelationReadyStatus = function (fromCharacter, toCharacter, character, ready, callback) {
-            this.setRelationReadyStatusNew({fromCharacter, toCharacter, character, ready}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setRelationReadyStatusNew = function ({fromCharacter, toCharacter, character, ready}={}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
@@ -185,9 +161,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setRelationEssenceStatus = function (fromCharacter, toCharacter, essence, flag, callback) {
-            this.setRelationEssenceStatusNew({fromCharacter, toCharacter, essence, flag}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setRelationEssenceStatusNew = function ({fromCharacter, toCharacter, essence, flag}={}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
@@ -208,9 +181,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setOriginRelationText = function (fromCharacter, toCharacter, text, callback) {
-            this.setOriginRelationTextNew({fromCharacter, toCharacter, text}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setOriginRelationTextNew = function ({fromCharacter, toCharacter, text}={}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);

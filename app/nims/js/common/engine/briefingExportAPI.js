@@ -33,7 +33,7 @@ See the License for the specific language governing permissions and
         let _getBriefingData, _makeProfileInfo, _makeRelationsInfo, _makeCharInventory,
             _getProfileInfoNotEmpty, _getSimpleProfileInfoObject, _getSplittedProfileInfoObject, _getProfileInfoArray,
             _getStoriesInfo, _getEventsInfo, _getStoryEventsInfo, _makeEventInfo, _splitText;
-        
+
 //  [
 //      {
 //          name: 'selCharacters',
@@ -69,23 +69,13 @@ See the License for the specific language governing permissions and
 //      },
 //      {
 //          name: 'exportOnlyFinishedStories',
-//          check: 
+//          check:
 //              type: 'isBoolean'
 //          }]
 //      }
 //  ]
 
         // DBMS.briefings.get()
-        LocalDBMS.prototype.getBriefingData = function (
-            selCharacters, selStories, exportOnlyFinishedStories,
-            callback
-        ) {
-            this.getBriefingDataNew({
-                selCharacters, selStories, exportOnlyFinishedStories
-            }).then(res => callback(null, res)).catch(callback);
-        }
-
-
         LocalDBMS.prototype.getBriefingDataNew = function (
             {selCharacters, selStories, exportOnlyFinishedStories}={}
         ) {

@@ -33,16 +33,14 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        DBMS.getWelcomeText((err, text) => {
-            if (err) { Utils.handleError(err); return; }
-            DBMS.getPlayerProfileInfo((err2, profileInfo) => {
-                if (err2) { Utils.handleError(err2); return; }
-                DBMS.getPlayersOptions((err3, playersOptions) => {
-                    if (err3) { Utils.handleError(err3); return; }
-                    buildInterface(text, profileInfo, playersOptions);
-                });
-            });
-        });
+        Promise.all([
+            DBMS.getWelcomeTextNew(),
+            DBMS.getPlayerProfileInfoNew(),
+            DBMS.getPlayersOptionsNew(),
+        ]).then(results => {
+            const [text, profileInfo, playersOptions] = results;
+            buildInterface(text, profileInfo, playersOptions);
+        }).catch(Utils.handleError);
     };
 
     function isEditable(profileName, profileStructure) {
@@ -65,7 +63,7 @@ See the License for the specific language governing permissions and
                 const button = addEl(makeEl('button'), makeText(getL10n('common-create')));
                 addClass(button, 'btn btn-default');
                 listen(button, 'click', () => {
-                    DBMS.createCharacterByPlayer(input.value.trim(), Utils.processError(exports.refresh));
+                    DBMS.createCharacterByPlayerNew({characterName: input.value.trim()}).then(exports.refresh, Utils.handleError);
                 });
                 addEls(el, [label, input, button]);
             } else {

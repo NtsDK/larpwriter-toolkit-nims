@@ -26,10 +26,6 @@ See the License for the specific language governing permissions and
             return Promise.resolve(Object.keys(this.database.Groups).sort(CU.charOrdA));
         };
         // DBMS.groups.names.get()
-        LocalDBMS.prototype.getGroupNamesArray = function (callback) {
-            this.getGroupNamesArrayNew().then(res => callback(null, res)).catch(callback);
-        };
-
         const groupCheck = (groupName, database) => PC.chainCheck([PC.isString(groupName),
             PC.entityExists(groupName, R.keys(database.Groups))]);
 
@@ -51,9 +47,6 @@ See the License for the specific language governing permissions and
                     resolve(CU.clone(this.database.Groups[groupName]));
                 });
             })
-        };
-        LocalDBMS.prototype.getGroup = function (groupName, callback) {
-            this.getGroupNew({groupName}).then(res => callback(null, res)).catch(callback);
         };
 
         const _getCharacterGroupTexts = (groups, info, profileId) => {
@@ -80,9 +73,6 @@ See the License for the specific language governing permissions and
                 }).catch(reject);
             });
         };
-        LocalDBMS.prototype.getCharacterGroupTexts = function (characterName, callback) {
-            this.getCharacterGroupTextsNew({characterName}).then(res => callback(null, res)).catch(callback);
-        };
 
         // export
         // DBMS.group.groupBy({characterName}).map({characterText})
@@ -102,10 +92,6 @@ See the License for the specific language governing permissions and
                     resolve(texts);
                 }).catch(reject);
             });
-        };
-
-        LocalDBMS.prototype.getAllCharacterGroupTexts = function (callback) {
-            this.getAllCharacterGroupTextsNew().then(res => callback(null, res)).catch(callback);
         };
 
 //  [
@@ -138,10 +124,6 @@ See the License for the specific language governing permissions and
                     resolve();
                 });
             });
-        };
-
-        LocalDBMS.prototype.createGroup = function (groupName, callback) {
-            this.createGroupNew({groupName}).then(res => callback()).catch(callback);
         };
 
 //  [
@@ -180,10 +162,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.renameGroup = function (fromName, toName, callback) {
-            this.renameGroupNew({fromName, toName}).then(res => callback()).catch(callback);
-        };
-
 //  [
 //      {
 //          name: 'groupName',
@@ -204,10 +182,6 @@ See the License for the specific language governing permissions and
                     resolve();
                 });
             });
-        };
-
-        LocalDBMS.prototype.removeGroup = function (groupName, callback) {
-            this.removeGroupNew({groupName}).then(res => callback()).catch(callback);
         };
 
 //  [
@@ -237,10 +211,6 @@ See the License for the specific language governing permissions and
                     resolve();
                 });
             });
-        };
-
-        LocalDBMS.prototype.saveFilterToGroup = function (groupName, filterModel, callback) {
-            this.saveFilterToGroupNew({groupName, filterModel}).then(res => callback()).catch(callback);
         };
 
 //  [
@@ -283,10 +253,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.updateGroupField = function (groupName, fieldName, value, callback) {
-            this.updateGroupFieldNew({groupName, fieldName, value}).then(res => callback()).catch(callback);
-        };
-
 //  [
 //      {
 //          name: 'groupName',
@@ -315,10 +281,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.doExportGroup = function (groupName, value, callback) {
-            this.doExportGroupNew({groupName, value}).then(res => callback()).catch(callback);
-        };
-
         const initProfileInfo = (that, type, ownerMapType) => {
             return new Promise((resolve, reject) => {
                 Promise.all([
@@ -341,10 +303,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-        // const initProfileInfo = (that, type, ownerMapType, callback) => {
-        //     this.initProfileInfoNew({groupName, value}).then(res => callback()).catch(callback);
-        // };
-
         // DBMS.groups.profileFilterInfo.get()
         LocalDBMS.prototype.getProfileFilterInfoNew = function () {
             return new Promise((resolve, reject) => {
@@ -365,10 +323,6 @@ See the License for the specific language governing permissions and
                     resolve(info);
                 }).catch(reject);
             });
-        };
-
-        LocalDBMS.prototype.getProfileFilterInfo = function (callback) {
-            this.getProfileFilterInfoNew().then(res => callback(null, res)).catch(callback);
         };
 
         const _getGroupCharacterSets = (groups, characterNames, bindings, info) => {
@@ -396,10 +350,6 @@ See the License for the specific language governing permissions and
                     ));
                 }).catch(reject)
             });
-        };
-
-        LocalDBMS.prototype.getGroupCharacterSets = function (callback) {
-            this.getGroupCharacterSetsNew().then(res => callback(null, res)).catch(callback);
         };
 
         function _removeProfileItem({type, index, profileItemName}={}) {

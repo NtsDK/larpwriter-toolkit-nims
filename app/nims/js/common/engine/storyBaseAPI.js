@@ -23,24 +23,15 @@ See the License for the specific language governing permissions and
         } = opts;
 
         // stories, timeline
-        LocalDBMS.prototype.getStoryNamesArray = function (callback) {
-            this.getStoryNamesArrayNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getStoryNamesArrayNew = function () {
             return Promise.resolve(Object.keys(this.database.Stories).sort(CU.charOrdA));
         };
         // social network
-        LocalDBMS.prototype.getAllStories = function (callback) {
-            this.getAllStoriesNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getAllStoriesNew = function () {
             return Promise.resolve(CU.clone(this.database.Stories));
         };
 
         //stories
-        LocalDBMS.prototype.getWriterStory = function (storyName, callback) {
-            this.getWriterStoryNew({storyName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getWriterStoryNew = function ({storyName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
@@ -49,9 +40,6 @@ See the License for the specific language governing permissions and
             });
         };
         //stories
-        LocalDBMS.prototype.setWriterStory = function (storyName, value, callback) {
-            this.setWriterStoryNew({storyName, value}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setWriterStoryNew = function ({storyName, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(value)];
@@ -63,9 +51,6 @@ See the License for the specific language governing permissions and
         };
 
         // stories
-        LocalDBMS.prototype.createStory = function (storyName, callback) {
-            this.createStoryNew({storyName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.createStoryNew = function ({storyName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.createEntityCheck2(storyName, R.keys(this.database.Stories), 'entity-lifeless-name', 'entity-of-story'), reject, () => {
@@ -81,9 +66,6 @@ See the License for the specific language governing permissions and
             });
         };
         // stories
-        LocalDBMS.prototype.renameStory = function (fromName, toName, callback) {
-            this.renameStoryNew({fromName, toName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.renameStoryNew = function ({fromName, toName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Stories)), reject, () => {
@@ -98,9 +80,6 @@ See the License for the specific language governing permissions and
         };
 
         // stories
-        LocalDBMS.prototype.removeStory = function (storyName, callback) {
-            this.removeStoryNew({storyName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeStoryNew = function ({storyName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.removeEntityCheck(storyName, R.keys(this.database.Stories)), reject, () => {

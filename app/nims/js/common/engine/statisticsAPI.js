@@ -22,9 +22,6 @@ See the License for the specific language governing permissions and
 
         let _countCharacterSymbols;
 
-        LocalDBMS.prototype.getStatistics = function (callback) {
-            this.getStatisticsNew().then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getStatisticsNew = function (callback) {
             return new Promise((resolve, reject) => {
                 const that = this;

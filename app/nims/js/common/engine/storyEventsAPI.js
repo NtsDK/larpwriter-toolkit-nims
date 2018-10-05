@@ -23,9 +23,6 @@ See the License for the specific language governing permissions and
         } = opts;
 
         //story events, event presence
-        LocalDBMS.prototype.getStoryEvents = function (storyName, callback) {
-            this.getStoryEventsNew({storyName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getStoryEventsNew = function ({storyName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
@@ -35,9 +32,6 @@ See the License for the specific language governing permissions and
         };
 
         //story events
-        LocalDBMS.prototype.createEvent = function (storyName, eventName, selectedIndex, callback) {
-            this.createEventNew({storyName, eventName, selectedIndex}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.createEventNew = function ({storyName, eventName, selectedIndex}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(selectedIndex),
@@ -59,9 +53,6 @@ See the License for the specific language governing permissions and
         };
 
         //story events
-        LocalDBMS.prototype.moveEvent = function (storyName, index, newIndex, callback) {
-            this.moveEventNew({storyName, index, newIndex}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.moveEventNew = function ({storyName, index, newIndex}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index),
@@ -83,9 +74,6 @@ See the License for the specific language governing permissions and
         };
 
         //story events
-        LocalDBMS.prototype.cloneEvent = function (storyName, index, callback) {
-            this.cloneEventNew({storyName, index}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.cloneEventNew = function ({storyName, index}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
@@ -101,9 +89,6 @@ See the License for the specific language governing permissions and
         };
 
         //story events
-        LocalDBMS.prototype.mergeEvents = function (storyName, index, callback) {
-            this.mergeEventsNew({storyName, index}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.mergeEventsNew = function ({storyName, index}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
@@ -113,7 +98,7 @@ See the License for the specific language governing permissions and
                     PC.precondition(PC.chainCheck(chain), reject, () => {
                         const event1 = events[index];
                         const event2 = events[index + 1];
-    
+
                         event1.name += `/${event2.name}`;
                         event1.text += `\n\n${event2.text}`;
                         R.keys(event2.characters).forEach((characterName) => {
@@ -126,7 +111,7 @@ See the License for the specific language governing permissions and
                             }
                         });
                         CU.removeFromArrayByIndex(events, index + 1);
-    
+
                         resolve();
                     });
                 });
@@ -134,9 +119,6 @@ See the License for the specific language governing permissions and
         };
 
         //story events
-        LocalDBMS.prototype.removeEvent = function (storyName, index, callback) {
-            this.removeEventNew({storyName, index}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeEventNew = function ({storyName, index}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
@@ -152,9 +134,6 @@ See the License for the specific language governing permissions and
         };
 
         // story events, preview, adaptations
-        LocalDBMS.prototype.setEventOriginProperty = function (storyName, index, property, value, callback) {
-            this.setEventOriginPropertyNew({storyName, index, property, value}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setEventOriginPropertyNew = function ({storyName, index, property, value}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index),

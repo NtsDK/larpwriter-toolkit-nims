@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
         const {
             R, CU, PC, Constants
         } = opts;
-        
+
 
         const filterMap = [
             ['user', 1],
@@ -32,10 +32,6 @@ See the License for the specific language governing permissions and
         ];
 
         // DBMS.log.push({})
-        LocalDBMS.prototype.log = function (userName, time, funcName, rewrite, params, status, callback) {
-            this.logNew({userName, time, funcName, rewrite, params, status})
-                .then(res => (callback ? callback() : null)).catch(callback);
-        };
         LocalDBMS.prototype.logNew = function ({userName, time, funcName, rewrite, params, status}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(userName), PC.isString(time), PC.isString(funcName),
@@ -61,11 +57,6 @@ See the License for the specific language governing permissions and
             });
         };
 
-
-        LocalDBMS.prototype.getLog = function (pageNumber, filter, callback) {
-            this.getLogNew({pageNumber, filter}).then(res => callback(null, res)).catch(callback);
-        };
-
         // DBMS.log.get({pageNumber, filter})
         LocalDBMS.prototype.getLogNew = function ({pageNumber, filter}={}) {
             return new Promise((resolve, reject) => {
@@ -81,10 +72,10 @@ See the License for the specific language governing permissions and
                                 if (filter[pair[0]] === undefined) return true;
                                 return arr[pair[1]].toLowerCase().indexOf(filter[pair[0]].toLowerCase()) !== -1;
                             }));
-    
+
                         const max = tmp.length;
                         const requestedLog = R.slice((pageNumber * 100), ((pageNumber + 1) * 100), R.reverse(tmp));
-    
+
                         resolve({
                             requestedLog,
                             pageNumber,

@@ -23,9 +23,6 @@ See the License for the specific language governing permissions and
         } = opts;
 
         //event presence
-        LocalDBMS.prototype.getStoryCharacterNamesArray = function (storyName, callback) {
-            this.getStoryCharacterNamesArrayNew({storyName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getStoryCharacterNamesArrayNew = function ({storyName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
@@ -36,9 +33,6 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.getStoryCharacters = function (storyName, callback) {
-            this.getStoryCharactersNew({storyName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getStoryCharactersNew = function ({storyName}={}, callback) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
@@ -48,9 +42,6 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.addStoryCharacter = function (storyName, characterName, callback) {
-            this.addStoryCharacterNew({storyName, characterName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.addStoryCharacterNew = function ({storyName, characterName}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
@@ -71,9 +62,6 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.switchStoryCharacters = function (storyName, fromName, toName, callback) {
-            this.switchStoryCharactersNew({storyName, fromName, toName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.switchStoryCharactersNew = function ({storyName, fromName, toName}={}) {
             return new Promise((resolve, reject) => {
                 let cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
@@ -102,9 +90,6 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.removeStoryCharacter = function (storyName, characterName, callback) {
-            this.removeStoryCharacterNew({storyName, characterName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeStoryCharacterNew = function ({storyName, characterName}={}) {
             return new Promise((resolve, reject) => {
                 const cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
@@ -122,9 +107,6 @@ See the License for the specific language governing permissions and
         };
 
         // story characters
-        LocalDBMS.prototype.updateCharacterInventory = function (storyName, characterName, inventory, callback) {
-            this.updateCharacterInventoryNew({storyName, characterName, inventory}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.updateCharacterInventoryNew = function ({storyName, characterName, inventory}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(inventory)];
@@ -139,12 +121,6 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.onChangeCharacterActivity = function (
-            storyName, characterName, activityType, checked,
-            callback
-        ) {
-            this.onChangeCharacterActivityNew({storyName, characterName, activityType, checked}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.onChangeCharacterActivityNew = function (
             {storyName, characterName, activityType, checked}={}
         ) {
@@ -167,9 +143,6 @@ See the License for the specific language governing permissions and
         };
 
         //event presence
-        LocalDBMS.prototype.addCharacterToEvent = function (storyName, eventIndex, characterName, callback) {
-            this.addCharacterToEventNew({storyName, eventIndex, characterName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.addCharacterToEventNew = function ({storyName, eventIndex, characterName}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
@@ -192,9 +165,6 @@ See the License for the specific language governing permissions and
         };
 
         // event presence
-        LocalDBMS.prototype.removeCharacterFromEvent = function (storyName, eventIndex, characterName, callback) {
-            this.removeCharacterFromEventNew({storyName, eventIndex, characterName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeCharacterFromEventNew = function ({storyName, eventIndex, characterName}={}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];

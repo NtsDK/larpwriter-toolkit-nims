@@ -25,9 +25,6 @@ See the License for the specific language governing permissions and
         let _isStoryEmpty, _isStoryFinished;
 
         //events
-        LocalDBMS.prototype.getFilteredStoryNames = function (showOnlyUnfinishedStories, callback) {
-            this.getFilteredStoryNamesNew({showOnlyUnfinishedStories}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getFilteredStoryNamesNew = function ({showOnlyUnfinishedStories}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.isBoolean(showOnlyUnfinishedStories), reject, () => {
@@ -38,7 +35,7 @@ See the License for the specific language governing permissions and
                         isFinished: _isStoryFinished(that.database, elem),
                         isEmpty: _isStoryEmpty(that.database, elem)
                     }));
-    
+
                     if (showOnlyUnfinishedStories) {
                         storyArray = storyArray.filter(elem => !elem.isFinished || elem.isEmpty);
                     }
@@ -58,9 +55,6 @@ See the License for the specific language governing permissions and
         dbmsUtils._isStoryFinished = _isStoryFinished;
 
         //adaptations
-        LocalDBMS.prototype.getStory = function (storyName, callback) {
-            this.getStoryNew({storyName}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getStoryNew = function ({storyName}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
@@ -83,12 +77,6 @@ See the License for the specific language governing permissions and
         };
 
         // preview, events
-        LocalDBMS.prototype.setEventAdaptationProperty = function (
-            storyName, eventIndex, characterName, type, value,
-            callback
-        ) {
-            this.setEventAdaptationPropertyNew({storyName, eventIndex, characterName, type, value}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.setEventAdaptationPropertyNew = function (
             {storyName, eventIndex, characterName, type, value}={}
         ) {

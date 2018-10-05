@@ -35,9 +35,6 @@ See the License for the specific language governing permissions and
 
         const typeCheck = type => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 
-        LocalDBMS.prototype.getProfileNamesArray = function (type, callback) {
-            this.getProfileNamesArrayNew({type}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getProfileNamesArrayNew = function ({type}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -47,9 +44,6 @@ See the License for the specific language governing permissions and
         };
 
         // profile, preview
-        LocalDBMS.prototype.getProfile = function (type, name, callback) {
-            this.getProfileNew({type, name}).then(res => callback(null, res)).catch(callback);
-        }
         LocalDBMS.prototype.getProfileNew = function ({type, name}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -61,10 +55,6 @@ See the License for the specific language governing permissions and
             });
         };
         // social network, character filter
-        LocalDBMS.prototype.getAllProfiles = function (type, callback) {
-            this.getAllProfilesNew({type}).then(res => callback(null, res)).catch(callback);
-        }
-
         LocalDBMS.prototype.getAllProfilesNew = function ({type}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -74,9 +64,6 @@ See the License for the specific language governing permissions and
         };
 
         // profiles
-        LocalDBMS.prototype.createProfile = function (type, characterName, callback) {
-            this.createProfileNew({type, characterName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.createProfileNew = function ({type, characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -104,9 +91,6 @@ See the License for the specific language governing permissions and
             });
         };
         // profiles
-        LocalDBMS.prototype.renameProfile = function (type, fromName, toName, callback) {
-            this.renameProfileNew({type, fromName, toName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.renameProfileNew = function ({type, fromName, toName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -124,9 +108,6 @@ See the License for the specific language governing permissions and
         };
 
         // profiles
-        LocalDBMS.prototype.removeProfile = function (type, characterName, callback) {
-            this.removeProfileNew({type, characterName}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.removeProfileNew = function ({type, characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
@@ -160,9 +141,6 @@ See the License for the specific language governing permissions and
         };
 
         // profile editor
-        LocalDBMS.prototype.updateProfileField = function (type, characterName, fieldName, itemType, value, callback) {
-            this.updateProfileFieldNew({type, characterName, fieldName, itemType, value}).then(res => callback()).catch(callback);
-        }
         LocalDBMS.prototype.updateProfileFieldNew = function ({type, characterName, fieldName, itemType, value}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
