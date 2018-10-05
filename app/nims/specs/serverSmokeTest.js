@@ -5,16 +5,16 @@ if (MODE === 'NIMS_Server') {
         let getChecks = [
             // accessManagerAPI
             {
-                func: 'getManagementInfoNew',
+                func: 'getManagementInfo',
                 args: {},
             }, {
-                func: 'getPlayerLoginsArrayNew',
+                func: 'getPlayerLoginsArray',
                 args: {},
             }, {
-                func: 'getWelcomeTextNew',
+                func: 'getWelcomeText',
                 args: {},
             }, {
-                func: 'getPlayersOptionsNew',
+                func: 'getPlayersOptions',
                 args: {},
             },
         ];
@@ -67,85 +67,85 @@ if (MODE === 'NIMS_Server') {
         let setChecks = [
             // accessManagerAPI
             {
-                func: 'assignEditorNew',
+                func: 'assignEditor',
                 args: {name:'admin'},
             },
             {
-                func: 'removeEditorNew',
+                func: 'removeEditor',
                 args: {},
             },
             {
-                func: 'changeAdaptationRightsModeNew',
+                func: 'changeAdaptationRightsMode',
                 args: {mode:'ByCharacter'},
             },
             {
-                func: 'createPlayerNew',
+                func: 'createPlayer',
                 args: {userName: 'testPlayer1', password:'2233'},
             },
             {
-                func: 'createProfileNew',
+                func: 'createProfile',
                 args: {type: 'player', characterName: 'testPlayer2'},
             },
             {
-                func: 'createPlayerLoginNew',
+                func: 'createPlayerLogin',
                 args: {userName: 'testPlayer2', password: '3322'},
             },
             {
-                func: 'changePlayerPasswordNew',
+                func: 'changePlayerPassword',
                 args: {userName: 'testPlayer2', newPassword: '33224455'},
             },
             {
-                func: 'createOrganizerNew',
+                func: 'createOrganizer',
                 args: {name: 'Organizer1', password: '654654'},
             },
             {
-                func: 'changeOrganizerPasswordNew',
+                func: 'changeOrganizerPassword',
                 args: {userName: 'Organizer1', newPassword: '987987'},
             },
             {
-                func: 'assignPermissionNew',
+                func: 'assignPermission',
                 args: {userName: 'Organizer1', names: {
                     characters: [], stories: [], groups: [], players: ['testPlayer1']
                 }},
             },
             {
-                func: 'removePermissionNew',
+                func: 'removePermission',
                 args: {userName: 'Organizer1', names: {
                     characters: [], stories: [], groups: [], players: ['testPlayer1']
                 }},
             },
             {
-                func: 'assignPermissionNew',
+                func: 'assignPermission',
                 args: {userName: 'admin',names: {
                     characters: [], stories: [], groups: [], players: ['testPlayer1']
                 }},
             },
             {
-                func: 'removeOrganizerNew',
+                func: 'removeOrganizer',
                 args: {name: 'Organizer1'},
             },
             {
-                func: 'removePlayerLoginNew',
+                func: 'removePlayerLogin',
                 args: {userName: 'testPlayer2'},
             },
             {
-                func: 'removeProfileNew',
+                func: 'removeProfile',
                 args: {type: 'player', characterName: 'testPlayer2'},
             },
             {
-                func: 'removeProfileNew',
+                func: 'removeProfile',
                 args: {type:'player', characterName: 'testPlayer1'},
             },
             {
-                func: 'setWelcomeTextNew',
+                func: 'setWelcomeText',
                 args: {text: '78787658765'},
             },
             {
-                func: 'setPlayerOptionNew',
+                func: 'setPlayerOption',
                 args: {name: 'allowCharacterCreation', value: true}
             },
             {
-                func: 'setPlayerOptionNew',
+                func: 'setPlayerOption',
                 args: {name: 'allowCharacterCreation', value:  false}
             },
         ];
@@ -195,7 +195,7 @@ if (MODE === 'NIMS_Server') {
                     }
                     // if (check.forInconsistency === true) {
                     if (true) {
-                        DBMS.getConsistencyCheckResultNew().then(checkResult => {
+                        DBMS.getConsistencyCheckResult().then(checkResult => {
                             // expect(err2).toBeNull();
                             if (checkResult.errors.length > 0) {
                                 console.error(check.name);
@@ -227,21 +227,21 @@ if (MODE === 'NIMS_Server') {
         // createCharacterByPlayer and getPlayerProfileInfo are for player login so similar problem with open/close
         // session in assignAdmin case.
         // */
-        // const customIgnore = ['assignAdmin', 'publishPermissionsUpdate', 'createCharacterByPlayer', 'getPlayerProfileInfo'];
+        const customIgnore = ['assignAdmin', 'publishPermissionsUpdate', 'createCharacterByPlayer', 'getPlayerProfileInfo'];
 
-        // it('Core smoke test coverage check', () => {
-        //     const funcArr = R.uniq(R.concat(getChecks.map(R.prop('func')), setChecks.map(R.prop('func'))));
-        //     const { serverSpecificFunctions, commonIgnoreList } = Constants;
+        it('Core smoke test coverage check', () => {
+            const funcArr = R.uniq(R.concat(getChecks.map(R.prop('func')), setChecks.map(R.prop('func'))));
+            const { serverSpecificFunctions, commonIgnoreList } = Constants;
 
-        //     const sum = [funcArr, commonIgnoreList, customIgnore].reduce((acc, el) => {
-        //         acc = R.concat(acc, el);
-        //         return acc;
-        //     }, []);
-        //     const diff = R.difference(serverSpecificFunctions, sum);
-        //     if (diff.length > 0) {
-        //         console.log(diff);
-        //     }
-        //     expect(diff.length).toBe(0);
-        // });
+            const sum = [funcArr, commonIgnoreList, customIgnore].reduce((acc, el) => {
+                acc = R.concat(acc, el);
+                return acc;
+            }, []);
+            const diff = R.difference(serverSpecificFunctions, sum);
+            if (diff.length > 0) {
+                console.log(diff);
+            }
+            expect(diff.length).toBe(0);
+        });
     });
 }

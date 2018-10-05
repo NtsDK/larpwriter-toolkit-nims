@@ -22,7 +22,7 @@ See the License for the specific language governing permissions and
             R, Constants, Errors, addListener, CU, PC, PU
         } = opts;
 
-        LocalDBMS.prototype.getGroupNamesArrayNew = function () {
+        LocalDBMS.prototype.getGroupNamesArray = function () {
             return Promise.resolve(Object.keys(this.database.Groups).sort(CU.charOrdA));
         };
         // DBMS.groups.names.get()
@@ -41,7 +41,7 @@ See the License for the specific language governing permissions and
 //            }
 //        ]
         // DBMS.groups[].get()
-        LocalDBMS.prototype.getGroupNew = function ({groupName}={}) {
+        LocalDBMS.prototype.getGroup = function ({groupName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(groupCheck(groupName, this.database), reject, () => {
                     resolve(CU.clone(this.database.Groups[groupName]));
@@ -62,11 +62,11 @@ See the License for the specific language governing permissions and
 
         // preview
         // DBMS.groups.find({characterName}).get({characterText})
-        LocalDBMS.prototype.getCharacterGroupTextsNew = function ({characterName}={}) {
+        LocalDBMS.prototype.getCharacterGroupTexts = function ({characterName}={}) {
             return new Promise((resolve, reject) => {
                 Promise.all([
-                    this.getProfileBindingNew({type: 'character', name: characterName}),
-                    this.getProfileFilterInfoNew()
+                    this.getProfileBinding({type: 'character', name: characterName}),
+                    this.getProfileFilterInfo()
                 ]).then(results => {
                     const [profileId, info] = results;
                     resolve(_getCharacterGroupTexts(this.database.Groups, info, profileId));
@@ -76,12 +76,12 @@ See the License for the specific language governing permissions and
 
         // export
         // DBMS.group.groupBy({characterName}).map({characterText})
-        LocalDBMS.prototype.getAllCharacterGroupTextsNew = function () {
+        LocalDBMS.prototype.getAllCharacterGroupTexts = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
                 Promise.all([
-                    this.getProfileFilterInfoNew(),
-                    this.getProfileBindingsNew()
+                    this.getProfileFilterInfo(),
+                    this.getProfileBindings()
                 ]).then(results => {
                     const [info, bindings] = results;
                     const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
@@ -108,7 +108,7 @@ See the License for the specific language governing permissions and
 //      }
 //  ]
         // DBMS.groups.create({name})
-        LocalDBMS.prototype.createGroupNew = function ({groupName}={}) {
+        LocalDBMS.prototype.createGroup = function ({groupName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.createEntityCheck2(groupName, R.keys(this.database.Groups), 'entity-lifeless-name', 'entity-of-group'), reject, () => {
                     const newGroup = {
@@ -149,7 +149,7 @@ See the License for the specific language governing permissions and
 //      }
 //  ]
         // DBMS.groups[name].rename({newName})
-        LocalDBMS.prototype.renameGroupNew = function ({fromName, toName}={}) {
+        LocalDBMS.prototype.renameGroup = function ({fromName, toName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), reject, () => {
                     const data = this.database.Groups[fromName];
@@ -174,7 +174,7 @@ See the License for the specific language governing permissions and
 //      },
 //  ]
         // DBMS.groups.remove({name})
-        LocalDBMS.prototype.removeGroupNew = function ({groupName}={}) {
+        LocalDBMS.prototype.removeGroup = function ({groupName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), reject, () => {
                     delete this.database.Groups[groupName];
@@ -196,7 +196,7 @@ See the License for the specific language governing permissions and
 //      },
 //  ]
         // DBMS.groups[name].filter.set({filter})
-        LocalDBMS.prototype.saveFilterToGroupNew = function ({groupName, filterModel}={}) {
+        LocalDBMS.prototype.saveFilterToGroup = function ({groupName, filterModel}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(groupCheck(groupName, this.database), reject, () => {
                     const conflictTypes = PU.isFilterModelCompatibleWithProfiles({
@@ -240,7 +240,7 @@ See the License for the specific language governing permissions and
 //      },
 //  ]
         // DBMS.groups[name][fieldName].set({value})
-        LocalDBMS.prototype.updateGroupFieldNew = function ({groupName, fieldName, value}={}) {
+        LocalDBMS.prototype.updateGroupField = function ({groupName, fieldName, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([groupCheck(groupName, this.database),
                     PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
@@ -270,7 +270,7 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
-        LocalDBMS.prototype.doExportGroupNew = function ({groupName, value}={}) {
+        LocalDBMS.prototype.doExportGroup = function ({groupName, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([groupCheck(groupName, this.database), PC.isBoolean(value)]);
                 PC.precondition(chain, reject, () => {
@@ -284,8 +284,8 @@ See the License for the specific language governing permissions and
         const initProfileInfo = (that, type, ownerMapType) => {
             return new Promise((resolve, reject) => {
                 Promise.all([
-                    that.getAllProfilesNew({type}),
-                    that.getProfileStructureNew({type}),
+                    that.getAllProfiles({type}),
+                    that.getProfileStructure({type}),
                 ]).then(results => {
                     const [profiles, profileStructure] = results;
                     let owners = R.keys(profiles);
@@ -304,14 +304,14 @@ See the License for the specific language governing permissions and
         };
 
         // DBMS.groups.profileFilterInfo.get()
-        LocalDBMS.prototype.getProfileFilterInfoNew = function () {
+        LocalDBMS.prototype.getProfileFilterInfo = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
                 Promise.all([
                     initProfileInfo(that, 'character', 'Characters'),
                     initProfileInfo(that, 'player', 'Players'),
-                    that.getCharactersSummaryNew(),
-                    that.getExtendedProfileBindingsNew(),
+                    that.getCharactersSummary(),
+                    that.getExtendedProfileBindings(),
                 ]).then(results => {
                     const [charactersInfo, playersInfo, charactersSummary, bindingData] = results;
                     const info = PU.makeGroupedProfileFilterInfo({
@@ -340,10 +340,10 @@ See the License for the specific language governing permissions and
             return groupCharacterSets;
         };
 
-        LocalDBMS.prototype.getGroupCharacterSetsNew = function () {
+        LocalDBMS.prototype.getGroupCharacterSets = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
-                this.getProfileFilterInfoNew().then((info) => {
+                this.getProfileFilterInfo().then((info) => {
                     resolve(_getGroupCharacterSets(
                         that.database.Groups, R.keys(that.database.Characters),
                         R.clone(that.database.ProfileBindings), info

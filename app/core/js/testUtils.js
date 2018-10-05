@@ -188,13 +188,13 @@ See the License for the specific language governing permissions and
 
         layouter.start();
     };
-    
+
     exports.showDiffExample = () => {
         addEl(queryEl('body'), queryEl('.show-diff-dialog'));
         $(queryEl('.show-diff-dialog')).modal('show');
-        
-        DBMS.getLogNew({
-            pageNumber: 0, 
+
+        DBMS.getLog({
+            pageNumber: 0,
             filter: {
                 action:"setMetaInfo",
                 date:"",
@@ -204,19 +204,19 @@ See the License for the specific language governing permissions and
             }
         }).then((data) => {
             const el = clearEl(queryEl('.show-diff-dialog .container-fluid'));
-            
+
             addEls(el, R.aperture(2, data.requestedLog).map(pair => {
                 const row = qmte('.diff-row-tmpl');
                 addEl(qee(row, '.first .user'), makeText(pair[0][1]));
                 addEl(qee(row, '.first .time'), makeText(new Date(pair[0][2]).format('yyyy/mm/dd h:MM')));
                 const firstText = JSON.parse(pair[0][4])[1];
                 addEl(qee(row, '.first .text'), makeText(firstText));
-                
+
                 addEl(qee(row, '.last .user'), makeText(pair[1][1]));
                 addEl(qee(row, '.last .time'), makeText(new Date(pair[1][2]).format('yyyy/mm/dd h:MM')));
                 const lastText = JSON.parse(pair[1][4])[1];
                 addEl(qee(row, '.last .text'), makeText(lastText));
-                
+
                 ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
                 ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
     //                const diff = JsDiff.diffWordsWithSpace(firstText, lastText);
@@ -226,39 +226,39 @@ See the License for the specific language governing permissions and
                     return addClasses(addEl(makeEl('span'), makeText(pair[0])), ['log-diff', pair[1]]);
                 });
                 addEls(qee(row, '.diff .text'), els);
-                
+
                 return row;
             }));
         }).catch(Utils.handleError);
-        
+
     };
-    
-    const getAllSubsets = theArray => theArray.reduce((subsets, value) => 
+
+    const getAllSubsets = theArray => theArray.reduce((subsets, value) =>
         subsets.concat(subsets.map(set => [value,...set])),[[]]);
-    
+
     exports.addGroupTestingData = () => {
-        DBMS.createProfileItemNew({type: 'character', name: 'text', itemType: 'text', selectedIndex:0});
-        DBMS.createProfileItemNew({type: 'character', name: 'string', itemType: 'string', selectedIndex:0});
-        DBMS.createProfileItemNew({type: 'character', name: 'checkbox', itemType: 'checkbox', selectedIndex:0});
-        DBMS.createProfileItemNew({type: 'character', name: 'number', itemType: 'number', selectedIndex:0});
-        DBMS.createProfileItemNew({type: 'character', name: 'enum', itemType: 'enum', selectedIndex:0});
-        DBMS.createProfileItemNew({type: 'character', name: 'multiEnum', itemType: 'multiEnum', selectedIndex:0});
-        
-        DBMS.updateDefaultValueNew({type: "character", profileItemName:"enum", value: "1,2,3"});
-        DBMS.updateDefaultValueNew({type: "character", profileItemName:"multiEnum", value: "1,2,3,4"});
-        
-        
+        DBMS.createProfileItem({type: 'character', name: 'text', itemType: 'text', selectedIndex:0});
+        DBMS.createProfileItem({type: 'character', name: 'string', itemType: 'string', selectedIndex:0});
+        DBMS.createProfileItem({type: 'character', name: 'checkbox', itemType: 'checkbox', selectedIndex:0});
+        DBMS.createProfileItem({type: 'character', name: 'number', itemType: 'number', selectedIndex:0});
+        DBMS.createProfileItem({type: 'character', name: 'enum', itemType: 'enum', selectedIndex:0});
+        DBMS.createProfileItem({type: 'character', name: 'multiEnum', itemType: 'multiEnum', selectedIndex:0});
+
+        DBMS.updateDefaultValue({type: "character", profileItemName:"enum", value: "1,2,3"});
+        DBMS.updateDefaultValue({type: "character", profileItemName:"multiEnum", value: "1,2,3,4"});
+
+
         const makeChar = (name, profileItem, value) => {
-            DBMS.createProfileNew({type: "character", characterName: name});
-            DBMS.updateProfileFieldNew({type: "character", characterName: name, fieldName: profileItem, itemType: profileItem, value});
+            DBMS.createProfile({type: "character", characterName: name});
+            DBMS.updateProfileField({type: "character", characterName: name, fieldName: profileItem, itemType: profileItem, value});
         }
-        
+
         const makeGroup = (name, profileItem, obj) => {
-            DBMS.createGroupNew({groupName: name});
-            DBMS.saveFilterToGroupNew({groupName: name, filterModel: [R.merge(obj, {"type":profileItem,"name":"profile-" + profileItem})]});
+            DBMS.createGroup({groupName: name});
+            DBMS.saveFilterToGroup({groupName: name, filterModel: [R.merge(obj, {"type":profileItem,"name":"profile-" + profileItem})]});
         }
-//        
-//        
+//
+//
 //        const enumValues = [1,2,3];
 //        enumValues.map(value => makeChar('char enum ' + value, 'enum', String(value)));
 //        getAllSubsets(enumValues).map( arr => {
@@ -268,9 +268,9 @@ See the License for the specific language governing permissions and
 //            }, {});
 //            makeGroup('group enum ' + arr.join(','), 'enum', {selectedOptions: obj});
 //        });
-//        
+//
 //        const multiEnumConditions = ['every','equal','some'];
-        // bug in condition combination 
+        // bug in condition combination
 //        ['every']
 //        ['every','equal']
 //        ['every','some'] ...
@@ -288,8 +288,8 @@ See the License for the specific language governing permissions and
                 makeGroup('group multiEnum ' + condition + ' ' + arr.join(','), 'multiEnum', {selectedOptions: obj, condition});
             });
         });
-//        
-//        
+//
+//
 //        const numbers = [0,1,2,3,4];
 //        const subNumbers = [1,2,3];
 //        const numberConditions = ['greater','equal','lesser'];
@@ -299,7 +299,7 @@ See the License for the specific language governing permissions and
 //                makeGroup('group number ' + condition + ' ' + num, 'number', {num, condition});
 //            });
 //        });
-//        
+//
 //        const checkboxes = [true, false];
 //        checkboxes.map(value => makeChar('char checkbox ' + value, 'checkbox', value));
 //        getAllSubsets(checkboxes).map( arr => {
@@ -309,12 +309,12 @@ See the License for the specific language governing permissions and
 //            }, {});
 //            makeGroup('group checkbox ' + arr.join(','), 'checkbox', {selectedOptions: obj});
 //        });
-//        
+//
 //        const chars = ['a','b','c','d'];
 //        const subChars = ['a','b','c'];
 //        getAllSubsets(chars).map(value => makeChar('char string ' + value.join(''), 'string', String(value.join(''))));
 //        getAllSubsets(chars).map(value => makeChar('char text ' + value.join(''), 'text', String(value.join(''))));
-//        
+//
 //        getAllSubsets(subChars).map( arr => {
 //            makeGroup('group string ' + arr.join(''), 'string', {regexString: arr.join('')});
 //        });

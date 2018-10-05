@@ -76,7 +76,7 @@ function ProfileConfigurerTmpl(exports, opts) {
                 actionButtonTitle: 'common-move',
             }
         );
-        
+
         state.renameEnumItemDialog = UI.createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             renameEnumValue, {
@@ -92,7 +92,7 @@ function ProfileConfigurerTmpl(exports, opts) {
                 }
             }
         );
-        
+
         state.enumEditorDialog = UI.createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             updateEnumValues, {
@@ -110,14 +110,14 @@ function ProfileConfigurerTmpl(exports, opts) {
                         addEls(clearEl(addedValuesArea), enumList2Els(addedValues));
                         const removedValues = R.sort(CommonUtils.charOrdA, R.difference(inputArea.srcList, newVals));
                         addEls(clearEl(removedValuesArea), enumList2Els(removedValues));
-                        
+
                         let defaultValue = defaultValueSelect.value;
                         clearEl(defaultValueSelect);
-                        
+
                         if(newVals.length === 0){
                             return;
                         }
-                        
+
                         if(!R.contains(defaultValue, newVals)){
                             defaultValue = newVals[0];
                         }
@@ -127,7 +127,7 @@ function ProfileConfigurerTmpl(exports, opts) {
                 }
             }
         );
-        
+
         state.multiEnumEditorDialog = UI.createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             updateEnumValues, {
@@ -166,22 +166,22 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function refreshPanel(type, root) {
         Promise.all([
-            DBMS.getProfileStructureNew({type}),
-            PermissionInformer.isAdminNew()
+            DBMS.getProfileStructure({type}),
+            PermissionInformer.isAdmin()
         ]).then(results => {
             const [allProfileSettings, isAdmin] = results;
             hideEl(queryEl(`${tabRoot} .alert`), allProfileSettings.length !== 0);
             hideEl(queryEl(`${tabRoot} table`), allProfileSettings.length === 0);
-    
+
             const arr = allProfileSettings.map(R.compose(strFormat(getL10n('common-set-item-before')), R.append(R.__, []), R.prop('name')));
             arr.push(getL10n('common-set-item-as-last'));
-    
+
             const positionSelectors = [queryEl(`${tabRoot} .create-entity-position-select`),
                 queryEl(`${tabRoot} .move-entity-position-select`)];
             positionSelectors.map(clearEl).map(fillSelector(R.__, arr2Select(arr))).map(setProp(R.__, 'selectedIndex', allProfileSettings.length));
-    
+
             const table = clearEl(queryEl(`${root}.profile-config-container`));
-    
+
             try {
                 addEls(table, allProfileSettings.map(getInput(type)));
             } catch (err1) {
@@ -198,7 +198,7 @@ function ProfileConfigurerTmpl(exports, opts) {
             const itemType = qee(dialog, '.create-entity-type-select').value.trim();
             const { selectedIndex } = qee(dialog, '.create-entity-position-select');
 
-            DBMS.createProfileItemNew({type: tabType, name, itemType, selectedIndex}).then(() => {
+            DBMS.createProfileItem({type: tabType, name, itemType, selectedIndex}).then(() => {
                 input.value = '';
                 dialog.hideDlg();
                 exports.refresh();
@@ -236,35 +236,35 @@ function ProfileConfigurerTmpl(exports, opts) {
             const list = profileSettings.value.split(',');
             const defaultValue = list[0];
             list.sort(CommonUtils.charOrdA);
-            
+
             addEls(qee(input, '.text'), enumList2Els(list, defaultValue));
-            
+
             listen(qee(input, '.btn.add'), 'click', () => {
                 addEls(clearEl(qee(state.enumEditorDialog, '.initial-value')), enumList2Els(list, defaultValue));
                 const inputArea = qee(state.enumEditorDialog, '.enum-value-input');
                 inputArea.value = list.join(',');
                 inputArea.srcList = list;
                 inputArea.defaultValue = defaultValue;
-                
+
                 const defaultValueSelect = clearEl(qee(state.enumEditorDialog, '.default-value-select'));
                 fillSelector(defaultValueSelect, arr2Select(list));
                 qee(defaultValueSelect, `[value="${defaultValue}"]`).selected = true;
                 state.enumEditorDialog.itemName = profileSettings.name;
                 state.enumEditorDialog.showDlg();
             });
-            
+
             listen(qee(input, '.btn.rename'), 'click', () => {
                 const renameSelect = clearEl(qee(state.renameEnumItemDialog, '.renamed-value-select'));
                 fillSelector(renameSelect, arr2Select(list));
-                
+
                 if(list.length > 0){
-                    qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list[0]; 
+                    qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list[0];
                 }
-                
+
                 state.renameEnumItemDialog.itemName = profileSettings.name;
                 state.renameEnumItemDialog.showDlg();
             });
-            
+
             L10n.localizeStatic(input);
             addDefaultListener = false;
             break;
@@ -272,9 +272,9 @@ function ProfileConfigurerTmpl(exports, opts) {
             input = qmte(`${tabRoot} .enum-value-editor-tmpl`);
             const list2 = profileSettings.value.split(',');
             list2.sort(CommonUtils.charOrdA);
-            
+
             addEls(qee(input, '.text'), enumList2Els(list2));
-            
+
             listen(qee(input, '.btn.add'), 'click', () => {
                 addEls(clearEl(qee(state.multiEnumEditorDialog, '.initial-value')), enumList2Els(list2));
                 const inputArea = qee(state.multiEnumEditorDialog, '.enum-value-input');
@@ -283,19 +283,19 @@ function ProfileConfigurerTmpl(exports, opts) {
                 state.multiEnumEditorDialog.itemName = profileSettings.name;
                 state.multiEnumEditorDialog.showDlg();
             });
-            
+
             listen(qee(input, '.btn.rename'), 'click', () => {
                 const renameSelect = clearEl(qee(state.renameEnumItemDialog, '.renamed-value-select'));
                 fillSelector(renameSelect, arr2Select(list2));
-                
+
                 if(list2.length > 0){
-                    qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list2[0]; 
+                    qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list2[0];
                 }
-                
+
                 state.renameEnumItemDialog.itemName = profileSettings.name;
                 state.renameEnumItemDialog.showDlg();
             });
-            
+
             L10n.localizeStatic(input);
             addDefaultListener = false;
             break;
@@ -333,9 +333,9 @@ function ProfileConfigurerTmpl(exports, opts) {
 
         setClassIf(qee(row, '.print'), 'btn-primary', profileSettings.doExport);
         listen(qee(row, '.print'), 'click', (e) => {
-            DBMS.doExportProfileItemChangeNew({
-                type, 
-                profileItemName: profileSettings.name, 
+            DBMS.doExportProfileItemChange({
+                type,
+                profileItemName: profileSettings.name,
                 checked: !hasClass(e.target, 'btn-primary')
             }).then(() => {
                 toggleClass(e.target, 'btn-primary');
@@ -367,9 +367,9 @@ function ProfileConfigurerTmpl(exports, opts) {
 
         listen(qee(row, '.remove'), 'click', () => {
             Utils.confirm(L10n.format('profiles', 'are-you-sure-about-removing-profile-item', [profileSettings.name]), () => {
-                DBMS.removeProfileItemNew({
-                    type, 
-                    index, 
+                DBMS.removeProfileItem({
+                    type,
+                    index,
                     profileItemName: profileSettings.name
                 }).then(exports.refresh, Utils.handleError);
             });
@@ -377,7 +377,7 @@ function ProfileConfigurerTmpl(exports, opts) {
 
         return row;
     });
-    
+
     function enumList2Els(list, defaultValue){
         return R.splitEvery(4, list.map(val => {
             const span = addEl(makeEl('span'), makeText(val));
@@ -404,9 +404,9 @@ function ProfileConfigurerTmpl(exports, opts) {
             case 'text':
             case 'string':
             case 'checkbox':
-                DBMS.updateDefaultValueNew({
-                    type, 
-                    profileItemName: name, 
+                DBMS.updateDefaultValue({
+                    type,
+                    profileItemName: name,
                     value
                 }).catch(Utils.handleError);
                 break;
@@ -416,9 +416,9 @@ function ProfileConfigurerTmpl(exports, opts) {
                     event.target.value = oldValue;
                     return;
                 }
-                DBMS.updateDefaultValueNew({
-                    type, 
-                    profileItemName: name, 
+                DBMS.updateDefaultValue({
+                    type,
+                    profileItemName: name,
                     value: Number(value)
                 }).catch(Utils.handleError);
                 break;
@@ -436,10 +436,10 @@ function ProfileConfigurerTmpl(exports, opts) {
                     newValue = newOptions.join(',');
                     event.target.value = newValue;
                     event.target.oldValue = newValue;
-                    
-                    DBMS.updateDefaultValueNew({
-                        type, 
-                        profileItemName: name, 
+
+                    DBMS.updateDefaultValue({
+                        type,
+                        profileItemName: name,
                         value: newValue
                     }).catch(Utils.handleError);
                 };
@@ -460,9 +460,9 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function showInRoleGridChange(type) {
         return (event) => {
-            DBMS.showInRoleGridProfileItemChangeNew({
-                type, 
-                profileItemName: event.target.info, 
+            DBMS.showInRoleGridProfileItemChange({
+                type,
+                profileItemName: event.target.info,
                 checked: event.target.checked
             }).catch(Utils.handleError);
         };
@@ -474,9 +474,9 @@ function ProfileConfigurerTmpl(exports, opts) {
             const oldName = dialog.fromName;
             const newName = toInput.value.trim();
 
-            DBMS.renameProfileItemNew({
-                type: tabType, 
-                newName, 
+            DBMS.renameProfileItem({
+                type: tabType,
+                newName,
                 oldName
             }).then(() => {
                 toInput.value = '';
@@ -490,9 +490,9 @@ function ProfileConfigurerTmpl(exports, opts) {
         return () => {
             const index = state.currentIndex;
             const newIndex = queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
-            DBMS.moveProfileItemNew({
-                type: tabType, 
-                index, 
+            DBMS.moveProfileItem({
+                type: tabType,
+                index,
                 newIndex
             }).then(() => {
                 dialog.hideDlg();
@@ -500,13 +500,13 @@ function ProfileConfigurerTmpl(exports, opts) {
             }, err => setError(dialog, err));
         };
     }
-    
+
     function updateEnumValues(dialog) {
         return () => {
             const name = dialog.itemName;
             const inputArea = qee(dialog, '.enum-value-input');
             const defaultValueSelect = qee(dialog, '.default-value-select');
-            
+
             if (inputArea.value.trim() === '') {
                 Utils.alert(getL10n('profiles-enum-item-cant-be-empty'));
                 return;
@@ -517,10 +517,10 @@ function ProfileConfigurerTmpl(exports, opts) {
                 newVals = R.without([defaultValue], newVals);
                 newVals = R.prepend(defaultValue, newVals);
             }
-            
-            DBMS.updateDefaultValueNew({
-                type: tabType, 
-                profileItemName: name, 
+
+            DBMS.updateDefaultValue({
+                type: tabType,
+                profileItemName: name,
                 value: newVals.join(',')
             }).then(() => {
                 dialog.hideDlg();
@@ -528,17 +528,17 @@ function ProfileConfigurerTmpl(exports, opts) {
             }, err => setError(dialog, err));
         };
     }
-    
+
     function renameEnumValue(dialog) {
         return () => {
             const name = dialog.itemName;
             const renameSelect = qee(dialog, '.renamed-value-select');
             const renameInput = qee(dialog, '.enum-value-name-input');
-            
-            DBMS.renameEnumValueNew({
-                type: tabType, 
-                profileItemName: name, 
-                fromValue: renameSelect.value.trim(), 
+
+            DBMS.renameEnumValue({
+                type: tabType,
+                profileItemName: name,
+                fromValue: renameSelect.value.trim(),
                 toValue: renameInput.value.trim()
             }).then(() => {
                 dialog.hideDlg();
@@ -552,9 +552,9 @@ function ProfileConfigurerTmpl(exports, opts) {
             Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-changing-profile-item-type'), [event.target.info]), () => {
                 const newType = event.target.value;
                 const name = event.target.info;
-                DBMS.changeProfileItemTypeNew({
-                    type, 
-                    profileItemName: name, 
+                DBMS.changeProfileItemType({
+                    type,
+                    profileItemName: name,
                     newType
                 }).then(exports.refresh, Utils.handleError);
             }, () => {
@@ -567,9 +567,9 @@ function ProfileConfigurerTmpl(exports, opts) {
         return (event) => {
             const playerAccessType = event.target.value;
             const name = event.target.info;
-            DBMS.changeProfileItemPlayerAccessNew({
-                type, 
-                profileItemName: name, 
+            DBMS.changeProfileItemPlayerAccess({
+                type,
+                profileItemName: name,
                 playerAccessType
             }).catch((err) => {
                 event.target.value = event.target.oldValue;

@@ -175,11 +175,11 @@ See the License for the specific language governing permissions and
                 Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type]));
                 return;
             }
-            DBMS.updateProfileFieldNew({
-                type: this.profileType, 
-                characterName: profileName, 
-                fieldName, 
-                itemType: this.type, 
+            DBMS.updateProfileField({
+                type: this.profileType,
+                characterName: profileName,
+                fieldName,
+                itemType: this.type,
                 value
             }).catch(Utils.processError());
         };

@@ -27,7 +27,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        DBMS.getGroupSchemasNew().then((schemas) => {
+        DBMS.getGroupSchemas().then((schemas) => {
             redrawSchema2(schemas.theory, 'theory');
             redrawSchema2(schemas.practice, 'practice');
         }).catch(Utils.handleError);
@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
 
         state.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
     }
-    
+
     function redrawSchema2(graphData, className) {
         clearEl(queryEl(`${rootTab} svg.${className}`));
         const svg = d3.select(`${rootTab} svg.${className}`);
@@ -66,7 +66,7 @@ See the License for the specific language governing permissions and
             .style('stroke-opacity', 0.6) // arrowhead color
             .append('svg:path')
             .attr('d', 'M0,-5L10,0L0,5');
-        
+
         const nodeDict = graphData.nodes.reduce((dict, node, i) => {
             dict[node.id] = i;
             return dict;
@@ -142,7 +142,7 @@ See the License for the specific language governing permissions and
             .attr('ry', 5)
             .attr('x', 0)
             .attr('y', 0);
-        
+
         node.append('title').text(d => d.title)
 
         node.append('text')

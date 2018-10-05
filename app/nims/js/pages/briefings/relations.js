@@ -33,15 +33,15 @@ See the License for the specific language governing permissions and
         clearEl(queryEl(`${root} .panel-body`));
 
         Promise.all([
-            DBMS.getProfileStructureNew({type: 'character'}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+            DBMS.getProfileStructure({type: 'character'}),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false})
         ]).then(results => {
             const [characterProfileStructure, names] = results;
             state.characterProfileStructure = characterProfileStructure;
-            
+
             showEl(qe(`${root} .alert`), names.length < 2);
             showEl(qe(`${root} > .panel`), names.length > 1);
-            
+
             if (names.length > 0) {
                 const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
                 const data = getSelect2Data(names);
@@ -72,10 +72,10 @@ See the License for the specific language governing permissions and
 
     exports.load = (data, callback) => {
         Promise.all([
-            DBMS.getAllProfilesNew({type:'character'}),
-            DBMS.getRelationsSummaryNew({characterName: data.characterName}),
-            DBMS.getExtendedProfileBindingsNew(),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+            DBMS.getAllProfiles({type:'character'}),
+            DBMS.getRelationsSummary({characterName: data.characterName}),
+            DBMS.getExtendedProfileBindings(),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false})
         ]).then(results => {
             const [profiles, relationsSummary, profileBindings, characterNamesArray] = results;
             data.relationsSummary = relationsSummary;

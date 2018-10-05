@@ -76,7 +76,7 @@ See the License for the specific language governing permissions and
 //  ]
 
         // DBMS.briefings.get()
-        LocalDBMS.prototype.getBriefingDataNew = function (
+        LocalDBMS.prototype.getBriefingData = function (
             {selCharacters, selStories, exportOnlyFinishedStories}={}
         ) {
             return new Promise((resolve, reject) => {
@@ -86,7 +86,7 @@ See the License for the specific language governing permissions and
                         const that = this;
                         selCharacters = selCharacters || R.keys(this.database.Characters);
                         selStories = selStories || R.keys(this.database.Stories);
-                        that.getAllCharacterGroupTextsNew().then((groupTexts) => {
+                        that.getAllCharacterGroupTexts().then((groupTexts) => {
                             _getBriefingData(
                                 that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories,
                                 (err, res) => {

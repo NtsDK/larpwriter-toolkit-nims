@@ -132,7 +132,7 @@ See the License for the specific language governing permissions and
     //        }
     //        console.log('showSelectedEls time ' + (performance.now() - t1) + ' ms');
     //    };
-    //    
+    //
     //    exports.showSelectedEls2 = (root, classKey) => (event) => {
     //        const t1 = performance.now();
     //        const el = event.target;
@@ -343,11 +343,11 @@ See the License for the specific language governing permissions and
     var onChangePersonalTimeDelegate = (event) => {
         const dataKey = JSON.parse(event.target.dataKey);
         const time = event.target.value;
-        DBMS.setEventAdaptationPropertyNew({
+        DBMS.setEventAdaptationProperty({
             storyName: dataKey[0],
-            eventIndex: dataKey[1], 
-            characterName: dataKey[2], 
-            type: 'time', 
+            eventIndex: dataKey[1],
+            characterName: dataKey[2],
+            type: 'time',
             value: time
         }).catch(Utils.handleError);
     };
@@ -366,11 +366,11 @@ See the License for the specific language governing permissions and
         const dataKey = JSON.parse(event.target.id);
         const value = !hasClass(event.target, 'btn-primary');
 
-        DBMS.setEventAdaptationPropertyNew({
+        DBMS.setEventAdaptationProperty({
             storyName: dataKey[0],
-            eventIndex: dataKey[1], 
-            characterName: dataKey[2], 
-            type: 'ready', 
+            eventIndex: dataKey[1],
+            characterName: dataKey[2],
+            type: 'ready',
             value
         }).then( () => {
             setClassByCondition(event.target, 'btn-primary', value);

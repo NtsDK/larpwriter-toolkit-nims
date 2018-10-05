@@ -41,10 +41,10 @@ See the License for the specific language governing permissions and
         }
 
         Promise.all([
-            PermissionInformer.isEntityEditableNew({type: 'story', name: Stories.getCurrentStoryName()}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
-            DBMS.getStoryCharacterNamesArrayNew({storyName: Stories.getCurrentStoryName()}),
-            DBMS.getStoryEventsNew({storyName: Stories.getCurrentStoryName()})
+            PermissionInformer.isEntityEditable({type: 'story', name: Stories.getCurrentStoryName()}),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
+            DBMS.getStoryCharacterNamesArray({storyName: Stories.getCurrentStoryName()}),
+            DBMS.getStoryEvents({storyName: Stories.getCurrentStoryName()})
         ]).then(results => {
             let [isStoryEditable, allCharacters, characterArray, events] = results;
             const map = {};
@@ -52,23 +52,23 @@ See the License for the specific language governing permissions and
                 map[elem.value] = elem;
             });
             const dataArray = characterArray.map(elem => map[elem]);
-    
+
             dataArray.sort(Utils.charOrdAObject);
-    
+
             const displayArray = dataArray.map(elem => elem.displayName);
             characterArray = dataArray.map(elem => elem.value);
             clearEl(tableHead);
             clearEl(table);
-            
+
             showEl(queryEl(`${root} .alert.no-characters`), characterArray.length === 0);
             showEl(queryEl(`${root} .alert.no-events`), events.length === 0);
             showEl(queryEl(`${root} .panel-body`), events.length !== 0 && characterArray.length !== 0);
-            
+
             UI.fillShowItemSelector(
                 clearEl(characterSelector),
                 displayArray.map(name => ({ name, hidden: false }))
             );
-    
+
             appendTableHeader(tableHead, displayArray);
             events.forEach((event, i) => {
                 appendTableInput(table, event, i, characterArray);
@@ -108,7 +108,7 @@ See the License for the specific language governing permissions and
             input.characterName = character;
             input.hasText = event.characters[character] !== undefined && event.characters[character].text !== '';
             input.addEventListener('change', onChangeCharacterCheckbox);
-            
+
             const span = qee(td, 'span');
             if(event.characters[character] !== undefined){
                 if(event.characters[character].ready){
@@ -119,7 +119,7 @@ See the License for the specific language governing permissions and
                     setAttr(span, 'title', L10n.get('adaptations', 'adaptation-in-progress'));
                 }
             }
-            
+
             const id = i + character;
             setAttr(input, 'id', id);
             setAttr(label, 'for', id);
@@ -131,15 +131,15 @@ See the License for the specific language governing permissions and
 
     function onChangeCharacterCheckbox(event) {
         if (event.target.checked) {
-            DBMS.addCharacterToEventNew({
-                storyName: Stories.getCurrentStoryName(), 
-                eventIndex: event.target.eventIndex, 
+            DBMS.addCharacterToEvent({
+                storyName: Stories.getCurrentStoryName(),
+                eventIndex: event.target.eventIndex,
                 characterName: event.target.characterName
             }).catch(Utils.handleError);
         } else if (!event.target.hasText) {
-            DBMS.removeCharacterFromEventNew({
-                storyName: Stories.getCurrentStoryName(), 
-                eventIndex: event.target.eventIndex, 
+            DBMS.removeCharacterFromEvent({
+                storyName: Stories.getCurrentStoryName(),
+                eventIndex: event.target.eventIndex,
                 characterName: event.target.characterName
             }).catch(Utils.handleError);
         } else {
@@ -147,9 +147,9 @@ See the License for the specific language governing permissions and
                 getL10n('stories-remove-character-from-event-warning'),
                 [event.target.characterName, event.target.eventName]
             ), () => {
-                DBMS.removeCharacterFromEventNew({
-                    storyName: Stories.getCurrentStoryName(), 
-                    eventIndex: event.target.eventIndex, 
+                DBMS.removeCharacterFromEvent({
+                    storyName: Stories.getCurrentStoryName(),
+                    eventIndex: event.target.eventIndex,
                     characterName: event.target.characterName
                 }).catch(Utils.handleError);
             }, () => {

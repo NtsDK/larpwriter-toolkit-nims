@@ -49,9 +49,9 @@ See the License for the specific language governing permissions and
         }
 
         Promise.all([
-            PermissionInformer.isEntityEditableNew({type: 'story', name: Stories.getCurrentStoryName()}),
-            DBMS.getMetaInfoNew(),
-            DBMS.getStoryEventsNew({storyName: Stories.getCurrentStoryName()})
+            PermissionInformer.isEntityEditable({type: 'story', name: Stories.getCurrentStoryName()}),
+            DBMS.getMetaInfo(),
+            DBMS.getStoryEvents({storyName: Stories.getCurrentStoryName()})
         ]).then(results => {
             const [isStoryEditable, metaInfo, events] = results;
             rebuildInterface(events, metaInfo);
@@ -71,7 +71,7 @@ See the License for the specific language governing permissions and
     function rebuildInterface(events, metaInfo) {
         // event part
         const table = clearEl(getEl('eventBlock'));
-        
+
         showEl(table, events.length !== 0 );
         showEl(qe(`${root} .alert`), events.length === 0 );
 
@@ -120,9 +120,9 @@ See the License for the specific language governing permissions and
             const eventName = eventNameInput.value.trim();
             const positionSelector = qee(dialog, '.positionSelector');
 
-            DBMS.createEventNew({
-                storyName: Stories.getCurrentStoryName(), 
-                eventName, 
+            DBMS.createEvent({
+                storyName: Stories.getCurrentStoryName(),
+                eventName,
                 selectedIndex: positionSelector.selectedIndex
             }).then(() => {
                 eventNameInput.value = '';
@@ -174,9 +174,9 @@ See the License for the specific language governing permissions and
     function moveEvent(dialog) {
         return () => {
             const newIndex = queryEl('.movePositionSelector').selectedIndex;
-            DBMS.moveEventNew({
-                storyName: Stories.getCurrentStoryName(), 
-                index: dialog.index, 
+            DBMS.moveEvent({
+                storyName: Stories.getCurrentStoryName(),
+                index: dialog.index,
                 newIndex
             }).then(() => {
                 dialog.hideDlg();
@@ -187,8 +187,8 @@ See the License for the specific language governing permissions and
 
     function cloneEvent(index) {
         return () => {
-            DBMS.cloneEventNew({
-                storyName: Stories.getCurrentStoryName(), 
+            DBMS.cloneEvent({
+                storyName: Stories.getCurrentStoryName(),
                 index
             }).then(exports.refresh, Utils.handleError);
         };
@@ -202,8 +202,8 @@ See the License for the specific language governing permissions and
             }
 
             Utils.confirm(L10n.format('stories', 'confirm-event-merge', [firstName, secondName]), () => {
-                DBMS.mergeEventsNew({
-                    storyName: Stories.getCurrentStoryName(), 
+                DBMS.mergeEvents({
+                    storyName: Stories.getCurrentStoryName(),
                     index
                 }).then(exports.refresh, Utils.handleError);
             });
@@ -213,8 +213,8 @@ See the License for the specific language governing permissions and
     function removeEvent(name, index) {
         return () => {
             Utils.confirm(strFormat(getL10n('stories-remove-event-warning'), [name]), () => {
-                DBMS.removeEventNew({
-                    storyName: Stories.getCurrentStoryName(), 
+                DBMS.removeEvent({
+                    storyName: Stories.getCurrentStoryName(),
                     index
                 }).then(exports.refresh, Utils.handleError);
             });
@@ -230,10 +230,10 @@ See the License for the specific language governing permissions and
 
     function onChangeDateTimeCreator(myInput) {
         return (dp, input) => {
-            DBMS.setEventOriginPropertyNew({
-                storyName: Stories.getCurrentStoryName(), 
-                index: myInput.eventIndex, 
-                property: 'time', 
+            DBMS.setEventOriginProperty({
+                storyName: Stories.getCurrentStoryName(),
+                index: myInput.eventIndex,
+                property: 'time',
                 value: input.val()
             }).catch(Utils.handleError);
             removeClass(myInput, 'defaultDate');
@@ -242,20 +242,20 @@ See the License for the specific language governing permissions and
 
     function updateEventName(event) {
         const input = event.target;
-        DBMS.setEventOriginPropertyNew({
-            storyName: Stories.getCurrentStoryName(), 
-            index: input.eventIndex, 
-            property: 'name', 
+        DBMS.setEventOriginProperty({
+            storyName: Stories.getCurrentStoryName(),
+            index: input.eventIndex,
+            property: 'name',
             value: input.value
         }).then(exports.refresh, Utils.handleError);
     }
 
     function updateEventText(event) {
         const input = event.target;
-        DBMS.setEventOriginPropertyNew({
-            storyName: Stories.getCurrentStoryName(), 
-            index: input.eventIndex, 
-            property: 'text', 
+        DBMS.setEventOriginProperty({
+            storyName: Stories.getCurrentStoryName(),
+            index: input.eventIndex,
+            property: 'text',
             value: input.value
         }).catch(Utils.handleError);
     }

@@ -22,11 +22,11 @@ See the License for the specific language governing permissions and
 
         const path = ['Sliders'];
 
-        LocalDBMS.prototype.getSliderDataNew = function(){
+        LocalDBMS.prototype.getSliderData = function(){
             return Promise.resolve(R.clone(R.path(path, this.database)));
         }
 
-        LocalDBMS.prototype.moveSliderNew = function({index, pos}={}){
+        LocalDBMS.prototype.moveSlider = function({index, pos}={}){
             return new Promise((resolve, reject) => {
                 const model = R.path(path, this.database);
                 const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
@@ -44,7 +44,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        LocalDBMS.prototype.createSliderNew = function({name, top, bottom}={}){
+        LocalDBMS.prototype.createSlider = function({name, top, bottom}={}){
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(name),PC.isString(top),PC.isString(bottom)]);
                 PC.precondition2(chain).then(() => {
@@ -54,7 +54,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        LocalDBMS.prototype.updateSliderNamingNew = function({index, name, top, bottom}={}){
+        LocalDBMS.prototype.updateSliderNaming = function({index, name, top, bottom}={}){
             return new Promise((resolve, reject) => {
                 const model = R.path(path, this.database);
                 const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
@@ -68,7 +68,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        LocalDBMS.prototype.updateSliderValueNew = function({index, value}={}){
+        LocalDBMS.prototype.updateSliderValue = function({index, value}={}){
             return new Promise((resolve, reject) => {
                 const model = R.path(path, this.database);
                 const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1),
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
             });
         }
 
-        LocalDBMS.prototype.removeSliderNew = function({index}={}){
+        LocalDBMS.prototype.removeSlider = function({index}={}){
             return new Promise((resolve, reject) => {
                 const model = R.path(path, this.database);
                 const chain = PC.chainCheck([PC.isNumber(index), PC.isInRange(index, 0, model.length-1)]);

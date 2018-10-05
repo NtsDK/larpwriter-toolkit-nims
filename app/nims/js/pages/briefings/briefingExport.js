@@ -100,11 +100,11 @@ See the License for the specific language governing permissions and
     };
 
     function resolveTextTemplate(callback) {
-        DBMS.getProfileStructureNew({type:'character'}).then((profileSettings) => {
+        DBMS.getProfileStructure({type:'character'}).then((profileSettings) => {
             const func = R.compose(R.join(''), R.insert(1, R.__, ['{{profileInfo-', '}}\n']), R.prop('name'));
             const filter = R.compose(R.equals(true), R.prop('doExport'));
             const value = profileSettings.filter(filter).map(func).join('');
-    
+
             callback(R.replace(/\{0\}/g, value, TEXT_TEMPLATE));
         }).catch(Utils.handleError)
     }
@@ -154,7 +154,7 @@ See the License for the specific language governing permissions and
         const num = Number(state.briefingNumberSelector.value);
 
         let chunks;
-        PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}).then((names) => {
+        PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}).then((names) => {
             if (names.length > 0) {
                 chunks = R.splitEvery(num, names);
                 const data = chunks.map(chunk => ({
@@ -162,7 +162,7 @@ See the License for the specific language governing permissions and
                     text: chunk.length === 1 ? chunk[0].displayName :
                         `${chunk[0].displayName} - ${chunk[chunk.length - 1].displayName}`
                 }));
-    
+
                 $(`#${state.briefingIntervalSelector.id}`).select2({ data });
             }
         }).catch(Utils.handleError)
@@ -171,7 +171,7 @@ See the License for the specific language governing permissions and
 
     function refreshSetSelect(entityType, selectorName) {
         const multiSel = clearEl(state[selectorName]);
-        PermissionInformer.getEntityNamesArrayNew({type: entityType, editableOnly: false}).then((names) => {
+        PermissionInformer.getEntityNamesArray({type: entityType, editableOnly: false}).then((names) => {
             if (names.length > 0) {
                 fillSelector(multiSel, names.map(remapProps4Select));
                 setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
@@ -209,13 +209,13 @@ See the License for the specific language governing permissions and
 
     function getBriefingData(callback) {
         Promise.all([
-            DBMS.getBriefingDataNew({
-                selCharacters: getSelectedUsers(), 
-                selStories: getSelectedStories(), 
+            DBMS.getBriefingData({
+                selCharacters: getSelectedUsers(),
+                selStories: getSelectedStories(),
                 exportOnlyFinishedStories: getEl('exportOnlyFinishedStories').checked
             }),
-            DBMS.getProfileStructureNew({type: 'character'}),
-            DBMS.getProfileStructureNew({type: 'player'}),
+            DBMS.getProfileStructure({type: 'character'}),
+            DBMS.getProfileStructure({type: 'player'}),
         ]).then(results => {
             const [briefingData, characterProfileStructure, playerProfileStructure] = results;
             postprocessCheckboxes(briefingData, characterProfileStructure, 'profileInfo-', 'profileInfoArray');

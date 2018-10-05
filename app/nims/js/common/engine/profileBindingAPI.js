@@ -26,11 +26,11 @@ See the License for the specific language governing permissions and
         const charPath = ['Characters'];
         const playerPath = ['Players'];
 
-        LocalDBMS.prototype.getProfileBindingsNew = function () {
+        LocalDBMS.prototype.getProfileBindings = function () {
             return Promise.resolve(CU.clone(R.path(path, this.database)));
         };
 
-        LocalDBMS.prototype.getExtendedProfileBindingsNew = function () {
+        LocalDBMS.prototype.getExtendedProfileBindings = function () {
             let characters = R.keys(R.path(charPath, this.database));
             let players = R.keys(R.path(playerPath, this.database));
             const bindings = CU.clone(R.path(path, this.database));
@@ -58,7 +58,7 @@ See the License for the specific language governing permissions and
         dbmsUtils._getProfileBinding = _getProfileBinding;
 
         // DBMS.profileBindings.characters[name].get()
-        LocalDBMS.prototype.getProfileBindingNew = function ({type, name}={}) {
+        LocalDBMS.prototype.getProfileBinding = function ({type, name}={}) {
             return new Promise((resolve, reject) => {
                 const conditions = [PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes), PC.isString(name),
                     PC.entityExists(name, R.keys(this.database[type === 'character' ? 'Characters' : 'Players']))];
@@ -68,7 +68,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.createBindingNew = function ({characterName, playerName}={}) {
+        LocalDBMS.prototype.createBinding = function ({characterName, playerName}={}) {
             return new Promise((resolve, reject) => {
                 const bindings = R.path(path, this.database);
                 const conditions = [PC.isString(characterName),
@@ -83,7 +83,7 @@ See the License for the specific language governing permissions and
             })
         };
 
-        LocalDBMS.prototype.removeBindingNew = function ({characterName, playerName}={}) {
+        LocalDBMS.prototype.removeBinding = function ({characterName, playerName}={}) {
             return new Promise((resolve, reject) => {
                 const bindingArr = R.toPairs(R.path(path, this.database)).map(pair => `${pair[0]}/${pair[1]}`);
                 const conditions = [PC.isString(characterName),

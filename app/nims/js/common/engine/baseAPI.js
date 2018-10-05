@@ -33,13 +33,13 @@ See the License for the specific language governing permissions and
         };
 
         // DBMS.get
-        LocalDBMS.prototype.getDatabaseNew = function () {
+        LocalDBMS.prototype.getDatabase = function () {
           this.database.Meta.saveTime = new Date().toString();
           return Promise.resolve(CU.clone(this.database));
         };
 
         // DBMS.set
-        LocalDBMS.prototype.setDatabaseNew = function ({database}={}) {
+        LocalDBMS.prototype.setDatabase = function ({database}={}) {
             return new Promise((resolve, reject) => {
                 try {
                     this.database = Migrator.migrate(database);
@@ -51,7 +51,7 @@ See the License for the specific language governing permissions and
             });
         };
         // DBMS.meta.get
-        LocalDBMS.prototype.getMetaInfoNew = function () {
+        LocalDBMS.prototype.getMetaInfo = function () {
             return Promise.resolve(CU.clone(this.database.Meta));
         };
 //  [
@@ -73,7 +73,7 @@ See the License for the specific language governing permissions and
 //  ]
         // overview
         // DBMS.meta.property.set()
-        LocalDBMS.prototype.setMetaInfoStringNew = function ({name, value}={}) {
+        LocalDBMS.prototype.setMetaInfoString = function ({name, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoStrings),
                     PC.isString(value)]);
@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
 //          }]
 //      },
 //  ]
-        LocalDBMS.prototype.setMetaInfoDateNew = function ({name, value}={}) {
+        LocalDBMS.prototype.setMetaInfoDate = function ({name, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoDates),
                     PC.isString(value)]);

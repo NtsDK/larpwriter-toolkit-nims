@@ -2,9 +2,9 @@ describe('baseAPI', () => {
     let oldBase;
 
     beforeAll((done) => {
-        DBMS.getDatabaseNew().then(data => {
+        DBMS.getDatabase().then(data => {
             oldBase = data;
-            DBMS.setDatabaseNew({
+            DBMS.setDatabase({
                 database: CommonUtils.clone(EmptyBase.data)
             }).then(() => done()).catch( err => {
                 throw err;
@@ -15,14 +15,14 @@ describe('baseAPI', () => {
     });
 
     afterAll((done) => {
-        DBMS.setDatabaseNew({
+        DBMS.setDatabase({
             database: oldBase
         }).then(() => done()).catch( err => {
             throw err;
         });
     });
 
-    const funcs2 = ['getDatabaseNew'];
+    const funcs2 = ['getDatabase'];
 
     funcs2.forEach((func) => {
         it(func, (done) => {
@@ -37,7 +37,7 @@ describe('baseAPI', () => {
     });
 
     it('setDatabase(emptyBase) -> ok', (done) => {
-        DBMS.setDatabaseNew({
+        DBMS.setDatabase({
             database: CommonUtils.clone(EmptyBase.data)
         }).then(() => {
             expect(123).not.toBeNull();
@@ -49,7 +49,7 @@ describe('baseAPI', () => {
         });
     });
     it('setDatabase({}) -> err', (done) => {
-        DBMS.setDatabaseNew({
+        DBMS.setDatabase({
             database: {}
         }).then(() => {
             // expect(123).not.toBeNull();
@@ -65,9 +65,9 @@ describe('baseAPI', () => {
     const setChecks = [
 
     {
-        func: 'setMetaInfoStringNew',
+        func: 'setMetaInfoString',
         args: {name: 'name', value: '123'},
-        getter: 'getMetaInfoNew',
+        getter: 'getMetaInfo',
         getterArgs: {},
         getterCheck: (data, done) => {
             expect(data.name).toEqual('123');
@@ -75,9 +75,9 @@ describe('baseAPI', () => {
         }
     },
     {
-        func: 'setMetaInfoStringNew',
+        func: 'setMetaInfoString',
         args: {name: 'description', value: '123'},
-        getter: 'getMetaInfoNew',
+        getter: 'getMetaInfo',
         getterArgs: {},
         getterCheck: (data, done) => {
             expect(data.description).toEqual('123');
@@ -85,9 +85,9 @@ describe('baseAPI', () => {
         }
     },
     {
-        func: 'setMetaInfoDateNew',
+        func: 'setMetaInfoDate',
         args: {name: 'date', value: '123'},
-        getter: 'getMetaInfoNew',
+        getter: 'getMetaInfo',
         getterArgs: {},
         getterCheck: (data, done) => {
             expect(data.date).toEqual('123');
@@ -95,9 +95,9 @@ describe('baseAPI', () => {
         }
     },
     {
-        func: 'setMetaInfoDateNew',
+        func: 'setMetaInfoDate',
         args: {name: 'preGameDate', value: '123'},
-        getter: 'getMetaInfoNew',
+        getter: 'getMetaInfo',
         getterArgs: {},
         getterCheck: (data, done) => {
             expect(data.preGameDate).toEqual('123');
@@ -105,19 +105,19 @@ describe('baseAPI', () => {
         }
     },
     {
-        func: 'setMetaInfoStringNew',
+        func: 'setMetaInfoString',
         args: {name: 654, value: '123'},
         errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [654]
     },
      {
-        func: 'setMetaInfoStringNew',
+        func: 'setMetaInfoString',
         args: {name: '65465654', value: '123'},
         errMessageId: 'errors-unsupported-type-in-list',
         errParameters: ['65465654']
     },
      {
-        func: 'setMetaInfoStringNew',
+        func: 'setMetaInfoString',
         args: {name: 'description', value: 123},
         errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [123]

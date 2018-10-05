@@ -35,7 +35,7 @@ See the License for the specific language governing permissions and
 
         const typeCheck = type => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 
-        LocalDBMS.prototype.getProfileNamesArrayNew = function ({type}={}) {
+        LocalDBMS.prototype.getProfileNamesArray = function ({type}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     resolve(Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
@@ -44,7 +44,7 @@ See the License for the specific language governing permissions and
         };
 
         // profile, preview
-        LocalDBMS.prototype.getProfileNew = function ({type, name}={}) {
+        LocalDBMS.prototype.getProfile = function ({type, name}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -55,7 +55,7 @@ See the License for the specific language governing permissions and
             });
         };
         // social network, character filter
-        LocalDBMS.prototype.getAllProfilesNew = function ({type}={}) {
+        LocalDBMS.prototype.getAllProfiles = function ({type}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     resolve(CU.clone(R.path(getPath(type), this.database)));
@@ -64,7 +64,7 @@ See the License for the specific language governing permissions and
         };
 
         // profiles
-        LocalDBMS.prototype.createProfileNew = function ({type, characterName}={}) {
+        LocalDBMS.prototype.createProfile = function ({type, characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -91,7 +91,7 @@ See the License for the specific language governing permissions and
             });
         };
         // profiles
-        LocalDBMS.prototype.renameProfileNew = function ({type, fromName, toName}={}) {
+        LocalDBMS.prototype.renameProfile = function ({type, fromName, toName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -108,7 +108,7 @@ See the License for the specific language governing permissions and
         };
 
         // profiles
-        LocalDBMS.prototype.removeProfileNew = function ({type, characterName}={}) {
+        LocalDBMS.prototype.removeProfile = function ({type, characterName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -141,7 +141,7 @@ See the License for the specific language governing permissions and
         };
 
         // profile editor
-        LocalDBMS.prototype.updateProfileFieldNew = function ({type, characterName, fieldName, itemType, value}={}) {
+        LocalDBMS.prototype.updateProfileField = function ({type, characterName, fieldName, itemType, value}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);

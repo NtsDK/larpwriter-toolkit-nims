@@ -35,7 +35,7 @@ function FilterConfiguration(info) {
 
 FilterConfiguration.makeFilterConfiguration = function () {
     return new Promise((resolve, reject) => {
-        DBMS.getProfileFilterInfoNew().then((info) => {
+        DBMS.getProfileFilterInfo().then((info) => {
             const filterConfiguration = new FilterConfiguration(info);
             resolve(filterConfiguration);
         }).catch(reject);

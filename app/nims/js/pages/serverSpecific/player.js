@@ -34,9 +34,9 @@ See the License for the specific language governing permissions and
 
     exports.refresh = () => {
         Promise.all([
-            DBMS.getWelcomeTextNew(),
-            DBMS.getPlayerProfileInfoNew(),
-            DBMS.getPlayersOptionsNew(),
+            DBMS.getWelcomeText(),
+            DBMS.getPlayerProfileInfo(),
+            DBMS.getPlayersOptions(),
         ]).then(results => {
             const [text, profileInfo, playersOptions] = results;
             buildInterface(text, profileInfo, playersOptions);
@@ -63,7 +63,7 @@ See the License for the specific language governing permissions and
                 const button = addEl(makeEl('button'), makeText(getL10n('common-create')));
                 addClass(button, 'btn btn-default');
                 listen(button, 'click', () => {
-                    DBMS.createCharacterByPlayerNew({characterName: input.value.trim()}).then(exports.refresh, Utils.handleError);
+                    DBMS.createCharacterByPlayer({characterName: input.value.trim()}).then(exports.refresh, Utils.handleError);
                 });
                 addEls(el, [label, input, button]);
             } else {

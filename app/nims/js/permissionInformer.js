@@ -24,9 +24,9 @@ See the License for the specific language governing permissions and
 
     if (mode === 'NIMS_Server' && PERMISSION_INFORMER_ENABLED) {
 
-        exports.refreshNew = () => {
+        exports.refresh = () => {
             return new Promise((resolve, reject) => {
-                exports.refresh( (err) => {
+                exports.refreshInner( (err) => {
                     if(err) {
                         reject(err);
                     } else {
@@ -34,10 +34,10 @@ See the License for the specific language governing permissions and
                     }
                 })
             });
-            return Promise.resolve();
+            // return Promise.resolve();
         };
 
-        exports.refresh = (callback) => {
+        exports.refreshInner = (callback) => {
             const request = $.ajax({
                 url: '/getPermissionsSummary',
                 dataType: 'text',
@@ -87,10 +87,10 @@ See the License for the specific language governing permissions and
         };
 
 
-        exports.refresh();
-        // exports.refreshNew().then(exports.subscribe, err => setTimeout(exports.subscribe, 500));
+        exports.refreshInner();
+        // exports.refresh().then(exports.subscribe, err => setTimeout(exports.subscribe, 500));
 
-        exports.isAdminNew = () => {
+        exports.isAdmin = () => {
             return Promise.resolve(state.summary.isAdmin);
         };
 
@@ -102,7 +102,7 @@ See the License for the specific language governing permissions and
         //     callback(null, state.summary.isEditor);
         // };
 
-        exports.isEditorNew = () => {
+        exports.isEditor = () => {
             return Promise.resolve(state.summary.isEditor);
         };
 
@@ -120,12 +120,12 @@ See the License for the specific language governing permissions and
         //     callback(null, isObjectEditableSync(type, entityName));
         // };
 
-        exports.isEntityEditableNew = ({type, entityName}={}) => {
+        exports.isEntityEditable = ({type, entityName}={}) => {
             return Promise.resolve(isObjectEditableSync(type, entityName));
             // callback(null, isObjectEditableSync(type, entityName));
         };
 
-        exports.getEntityNamesArrayNew = ({type, editableOnly}={}) => {
+        exports.getEntityNamesArray = ({type, editableOnly}={}) => {
             return new Promise((resolve, reject) => {
                 const userEntities = state.summary.user[type];
                 const allEntities = state.summary.all[type];
@@ -164,7 +164,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        exports.areAdaptationsEditableNew = ({adaptations}={}) => {
+        exports.areAdaptationsEditable = ({adaptations}={}) => {
             return new Promise((resolve, reject) => {
                 const map = {};
                 const { isAdaptationRightsByStory } = state.summary;
@@ -182,29 +182,29 @@ See the License for the specific language governing permissions and
             });
         };
     } else if (mode === 'Standalone') {
-        exports.refreshNew = () => {
+        exports.refresh = () => {
             return Promise.resolve();
         };
 
-        exports.refresh = (callback) => {
-            exports.refreshNew().then(res => callback(null, res)).catch(callback);
-        };
+        // exports.refreshInner = (callback) => {
+        //     exports.refresh().then(res => callback(null, res)).catch(callback);
+        // };
 
-        exports.isAdminNew = () => {
+        exports.isAdmin = () => {
             return Promise.resolve(true);
         };
 
-        exports.isEditorNew = () => {
+        exports.isEditor = () => {
             return Promise.resolve(true);
         };
 
-        exports.getEntityNamesArrayNew = ({type, editableOnly}={}) => {
+        exports.getEntityNamesArray = ({type, editableOnly}={}) => {
             return new Promise((resolve, reject) => {
                 // function processNames(err, names) {
                 //     if (err) { Utils.handleError(err); return; }
                 // }
                 // DBMS.getEntityNamesArray(type, processNames);
-                DBMS.getEntityNamesArrayNew({type}).then( names => {
+                DBMS.getEntityNamesArray({type}).then( names => {
                     const newNames = [];
                     names.forEach((name) => {
                         newNames.push({
@@ -218,11 +218,11 @@ See the License for the specific language governing permissions and
             });
         };
 
-        exports.isEntityEditableNew = ({type, entityName}={}) => {
+        exports.isEntityEditable = ({type, entityName}={}) => {
             return Promise.resolve(true);
         };
 
-        exports.areAdaptationsEditableNew = ({adaptations}={}) => {
+        exports.areAdaptationsEditable = ({adaptations}={}) => {
             const map = {};
             adaptations.forEach((elem) => {
                 map[`${elem.storyName}-${elem.characterName}`] = true;
@@ -233,40 +233,40 @@ See the License for the specific language governing permissions and
     }
 
 
-    exports.isAdmin = (callback) => {
-        exports.isAdminNew().then(res => callback(null, res)).catch(callback);
-    };
-    exports.isEditor = (callback) => {
-        exports.isEditorNew().then(res => callback(null, res)).catch(callback);
-    };
-    exports.getEntityNamesArray = (type, editableOnly, callback) => {
-        exports.getEntityNamesArrayNew({type, editableOnly}).then(res => callback(null, res)).catch(callback);
-    }
-    exports.isEntityEditable = (type, entityName, callback) => {
-        exports.isEntityEditableNew({type, entityName}).then(res => callback(null, res)).catch(callback);
-    };
-    exports.areAdaptationsEditable = (adaptations, callback) => {
-        exports.areAdaptationsEditableNew({adaptations}).then(res => callback(null, res)).catch(callback);
-    }
+    // exports.isAdmin = (callback) => {
+    //     exports.isAdmin().then(res => callback(null, res)).catch(callback);
+    // };
+    // exports.isEditor = (callback) => {
+    //     exports.isEditor().then(res => callback(null, res)).catch(callback);
+    // };
+    // exports.getEntityNamesArray = (type, editableOnly, callback) => {
+    //     exports.getEntityNamesArray({type, editableOnly}).then(res => callback(null, res)).catch(callback);
+    // }
+    // exports.isEntityEditable = (type, entityName, callback) => {
+    //     exports.isEntityEditable({type, entityName}).then(res => callback(null, res)).catch(callback);
+    // };
+    // exports.areAdaptationsEditable = (adaptations, callback) => {
+    //     exports.areAdaptationsEditable({adaptations}).then(res => callback(null, res)).catch(callback);
+    // }
 
-    Object.keys(exports).forEach((funcName) => {
-        const oldFun = exports[funcName];
-        exports[funcName] = function () {
-            try {
-                const exclude = ['_init','refresh', 'subscribe'];
-                if(!funcName.endsWith('New') && !R.contains(funcName, exclude)){
-                    console.error('Old PermInfo call', funcName, arguments);
-                    // console.trace('Old API call', funcName);
-                }
-                return oldFun.apply(null, arguments);
-            } catch (err) {
-                const { length } = arguments;
-                const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
-                const callback = arguments[callbackPos];
-                console.error(funcName, err);
-                return callback(err);
-            }
+    // Object.keys(exports).forEach((funcName) => {
+    //     const oldFun = exports[funcName];
+    //     exports[funcName] = function () {
+    //         try {
+    //             // const exclude = ['_init','refreshInner', 'subscribe'];
+    //             // if(!funcName.endsWith('') && !R.contains(funcName, exclude)){
+    //             //     console.error('Old PermInfo call', funcName, arguments);
+    //             //     // console.trace('Old API call', funcName);
+    //             // }
+    //             return oldFun.apply(null, arguments);
+    //         } catch (err) {
+    //             const { length } = arguments;
+    //             const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
+    //             const callback = arguments[callbackPos];
+    //             console.error(funcName, err);
+    //             return callback(err);
+    //         }
 
-        };
-    });
+    //     };
+    // });
 })(this.PermissionInformer = {}, MODE);

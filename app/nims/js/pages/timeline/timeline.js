@@ -59,10 +59,10 @@ See the License for the specific language governing permissions and
 
     exports.refresh = () => {
         Promise.all([
-            DBMS.getMetaInfoNew(),
-            DBMS.getEventsTimeInfoNew(),
-            PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
+            DBMS.getMetaInfo(),
+            DBMS.getEventsTimeInfo(),
+            PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
         ]).then( results => {
             const [metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames] = results;
 

@@ -38,26 +38,26 @@ See the License for the specific language governing permissions and
         clearEl(getEl('personalStories'));
 
         Promise.all([
-            PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}),
-            DBMS.getFilteredStoryNamesNew({showOnlyUnfinishedStories: getEl('finishedStoryCheckbox').checked})
+            PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}),
+            DBMS.getFilteredStoryNames({showOnlyUnfinishedStories: getEl('finishedStoryCheckbox').checked})
         ]).then(results => {
             const [allStoryNames, storyNames] = results;
             showEl(qe(`${root} .alert`), storyNames.length === 0);
             showEl(qe(`${root} .adaptations-content`), storyNames.length !== 0);
-            
+
             if (storyNames.length <= 0) { return; }
-    
+
             const selectedStoryName = getSelectedStoryName(storyNames);
-    
+
             const filteredArr = R.indexBy(R.prop('storyName'), storyNames);
-            
+
             const storyNames2 = allStoryNames.filter(story => R.contains(story.value, R.keys(filteredArr))).map( story => {
                 const elem = filteredArr[story.value];
                 elem.displayName = story.displayName;
                 elem.value = story.value;
                 return elem;
             });
-    
+
             let option;
             storyNames2.forEach((storyName) => {
                 option = addEl(makeEl('option'), (makeText(storyName.displayName)));
@@ -155,7 +155,7 @@ See the License for the specific language governing permissions and
         const characterNames = nl2array(getEl('events-characterSelector').selectedOptions).map(opt => opt.characterName);
         characterNames.forEach(name => queryElEls(exports.content, `div[dependent-on-character="${name}"]`).map(removeClass(R.__, 'hidden')));
         eventRows.map(row => hideEl(row, R.intersection(row.dependsOnCharacters, characterNames).length === 0));
-        
+
         updateSettings('characterNames', characterNames);
     }
 
@@ -200,10 +200,10 @@ See the License for the specific language governing permissions and
 
     function showPersonalStories(storyName) {
         Promise.all([
-            DBMS.getMetaInfoNew(),
-            DBMS.getStoryNew({storyName}),
-            PermissionInformer.isEntityEditableNew({type: 'story', name: storyName}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+            DBMS.getMetaInfo(),
+            DBMS.getStory({storyName}),
+            PermissionInformer.isEntityEditable({type: 'story', name: storyName}),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false})
         ]).then(results => {
             const [metaInfo, story, isStoryEditable, allCharacters] = results;
             const characterNames = R.keys(story.characters);
@@ -211,7 +211,7 @@ See the License for the specific language governing permissions and
                 characterName,
                 storyName
             }));
-            PermissionInformer.areAdaptationsEditableNew({adaptations}).then( areAdaptationsEditable => {
+            PermissionInformer.areAdaptationsEditable({adaptations}).then( areAdaptationsEditable => {
                 story.events.forEach((item, i) => (item.index = i));
                 buildAdaptationInterface(
                     storyName, characterNames, story.events, areAdaptationsEditable,
@@ -245,7 +245,7 @@ See the License for the specific language governing permissions and
             addClass(alert, 'margin-bottom-8');
             addEl(div, alert);
         }
-        
+
         addEls(div, events.map((event) => {
             const row = qmte(`${root} .adaptation-row-tmpl`);
             addClass(row, `${event.index}-dependent`);
@@ -369,10 +369,10 @@ See the License for the specific language governing permissions and
 
     // eslint-disable-next-line no-var,vars-on-top
     var onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
-        DBMS.setEventOriginPropertyNew({
-            storyName, 
-            index: myInput.eventIndex, 
-            property: 'time', 
+        DBMS.setEventOriginProperty({
+            storyName,
+            index: myInput.eventIndex,
+            property: 'time',
             value: input.val()
         }).catch(Utils.handleError);
         removeClass(myInput, 'defaultDate');
@@ -381,10 +381,10 @@ See the License for the specific language governing permissions and
     function onChangeOriginText(event) {
         const dataKey = JSON.parse(event.target.dataKey);
         const text = event.target.value;
-        DBMS.setEventOriginPropertyNew({
+        DBMS.setEventOriginProperty({
             storyName: dataKey[0],
-            index: dataKey[1], 
-            property: 'text', 
+            index: dataKey[1],
+            property: 'text',
             value: text
         }).catch(Utils.handleError);
     }
@@ -392,11 +392,11 @@ See the License for the specific language governing permissions and
     function onChangeAdaptationText(event) {
         const dataKey = JSON.parse(event.target.dataKey);
         const text = event.target.value;
-        DBMS.setEventAdaptationPropertyNew({
+        DBMS.setEventAdaptationProperty({
             storyName: dataKey[0],
-            eventIndex: dataKey[1], 
+            eventIndex: dataKey[1],
             characterName: dataKey[2],
-            type: 'text', 
+            type: 'text',
             value: text
         }).catch(Utils.handleError);
     }

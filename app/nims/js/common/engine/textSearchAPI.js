@@ -61,7 +61,7 @@ See the License for the specific language governing permissions and
 //      },
 //  ]
         // eslint-disable-next-line func-names
-        LocalDBMS.prototype.getTextsNew = function ({searchStr, textTypes, caseSensitive}={}) {
+        LocalDBMS.prototype.getTexts = function ({searchStr, textTypes, caseSensitive}={}) {
             return new Promise((resolve, reject) => {
                 const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
                 const check = PC.chainCheck([PC.isString(searchStr), PC.isArray(textTypes),

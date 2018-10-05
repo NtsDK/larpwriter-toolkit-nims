@@ -96,9 +96,9 @@ See the License for the specific language governing permissions and
         clearEl(getEl('briefingContent'));
 
         Promise.all([
-            DBMS.getProfileStructureNew({type: 'character'}),
-            DBMS.getProfileStructureNew({type: 'player'}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false})
+            DBMS.getProfileStructure({type: 'character'}),
+            DBMS.getProfileStructure({type: 'player'}),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false})
         ]).then(results => {
             const [characterProfileStructure, playerProfileStructure, names] = results;
             state.characterProfileStructure = characterProfileStructure;
@@ -154,7 +154,7 @@ See the License for the specific language governing permissions and
         state.panels = [{
             name: 'storyRights',
             load(data, callback) {
-                PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: true}).then((userStoryNames) => {
+                PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: true}).then((userStoryNames) => {
                     data.userStoryNamesMap = R.indexBy(R.prop('value'), userStoryNames);
                     callback();
                 }).catch(Utils.handleError)
@@ -163,7 +163,7 @@ See the License for the specific language governing permissions and
         }, {
             name: 'characterProfile',
             load(data, callback) {
-                DBMS.getProfileNew({type: 'character', name: data.characterName}).then((profile) => {
+                DBMS.getProfile({type: 'character', name: data.characterName}).then((profile) => {
                     data.profile = profile;
                     callback();
                 }).catch(Utils.handleError)
@@ -178,11 +178,11 @@ See the License for the specific language governing permissions and
         }, {
             name: 'playerProfile',
             load(data, callback) {
-                DBMS.getProfileBindingNew({type: 'character', name: data.characterName}).then((binding) => {
+                DBMS.getProfileBinding({type: 'character', name: data.characterName}).then((binding) => {
                     if (binding[1] === '') {
                         callback();
                     } else {
-                        DBMS.getProfileNew({type: 'player', name: binding[1]}).then((playerProfile) => {
+                        DBMS.getProfile({type: 'player', name: binding[1]}).then((playerProfile) => {
                             data.playerProfile = playerProfile;
                             // eslint-disable-next-line prefer-destructuring
                             data.playerName = binding[1];
@@ -203,7 +203,7 @@ See the License for the specific language governing permissions and
         }, {
             name: 'inventory',
             load(data, callback) {
-                DBMS.getAllInventoryListsNew({characterName: data.characterName}).then((allInventoryLists) => {
+                DBMS.getAllInventoryLists({characterName: data.characterName}).then((allInventoryLists) => {
                     data.allInventoryLists = allInventoryLists.sort(CommonUtils.charOrdAFactory(R.compose(R.toLower, R.prop('storyName'))));
                     callback();
                 }).catch(Utils.handleError)
@@ -220,7 +220,7 @@ See the License for the specific language governing permissions and
         }, {
             name: 'groups',
             load(data, callback) {
-                DBMS.getCharacterGroupTextsNew({characterName: data.characterName}).then((groupTexts) => {
+                DBMS.getCharacterGroupTexts({characterName: data.characterName}).then((groupTexts) => {
                     data.groupTexts = groupTexts;
                     callback();
                 }).catch(Utils.handleError)
@@ -310,7 +310,7 @@ See the License for the specific language governing permissions and
     }
 
     function showEventsByTime(content, characterName, userStoryNamesMap, flags) {
-        DBMS.getCharacterEventsByTimeNew({characterName}).then((allEvents) => {
+        DBMS.getCharacterEventsByTime({characterName}).then((allEvents) => {
 
             const adaptations = allEvents.map(event => ({
                 characterName,
@@ -318,8 +318,8 @@ See the License for the specific language governing permissions and
             }));
 
             Promise.all([
-                PermissionInformer.areAdaptationsEditableNew({adaptations}),
-                DBMS.getMetaInfoNew()
+                PermissionInformer.areAdaptationsEditable({adaptations}),
+                DBMS.getMetaInfo()
             ]).then(results => {
                 const [areAdaptationsEditable, metaInfo] = results;
                 const opts = {
@@ -361,14 +361,14 @@ See the License for the specific language governing permissions and
     }
 
     function showEventsByStory(content, characterName, userStoryNamesMap, flags) {
-        DBMS.getCharacterEventGroupsByStoryNew({characterName}).then((eventGroups) => {
+        DBMS.getCharacterEventGroupsByStory({characterName}).then((eventGroups) => {
             const adaptations = eventGroups.map(elem => ({
                 characterName,
                 storyName: elem.storyName
             }));
             Promise.all([
-                PermissionInformer.areAdaptationsEditableNew({adaptations}),
-                DBMS.getMetaInfoNew()
+                PermissionInformer.areAdaptationsEditable({adaptations}),
+                DBMS.getMetaInfo()
             ]).then(results => {
                 const [areAdaptationsEditable, metaInfo] = results;
                 const opts = {
@@ -436,6 +436,6 @@ See the License for the specific language governing permissions and
         const {
             storyName, characterName, value
         } = event.target;
-        DBMS.updateCharacterInventoryNew({storyName, characterName, inventory: value}).catch(Utils.handleError);
+        DBMS.updateCharacterInventory({storyName, characterName, inventory: value}).catch(Utils.handleError);
     }
 })(this.BriefingPreview = {});

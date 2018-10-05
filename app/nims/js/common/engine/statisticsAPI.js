@@ -22,10 +22,10 @@ See the License for the specific language governing permissions and
 
         let _countCharacterSymbols;
 
-        LocalDBMS.prototype.getStatisticsNew = function (callback) {
+        LocalDBMS.prototype.getStatistics = function (callback) {
             return new Promise((resolve, reject) => {
                 const that = this;
-                this.getAllCharacterGroupTextsNew().then((groupTexts) => {
+                this.getAllCharacterGroupTexts().then((groupTexts) => {
                     _getStatistics(that.database, groupTexts, resolve);
                 }).catch(reject);
             });

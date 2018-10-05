@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
     exports.makeNewBase = () => {
         return new Promise((resolve, reject) => {
             Utils.confirm(getL10n('utils-new-base-warning'), () => {
-                DBMS.setDatabaseNew({database:CommonUtils.clone(EmptyBase.data)}).then(() => {
+                DBMS.setDatabase({database:CommonUtils.clone(EmptyBase.data)}).then(() => {
                     resolve(true);
                     // TestUtils.addGroupTestingData();
                 }).catch(reject);
@@ -34,14 +34,14 @@ See the License for the specific language governing permissions and
         return new Promise((resolve, reject) => {
             // Retrieve the first (and only!) File from the FileList object
             const f = evt.target.files[0];
-    
+
             if (f) {
                 const r = new FileReader();
                 r.onload = (e) => {
                     const contents = e.target.result;
                     try {
                         const database = JSON.parse(contents);
-                        DBMS.setDatabaseNew({database}).then(resolve, reject);
+                        DBMS.setDatabase({database}).then(resolve, reject);
                     } catch (err) {
                         reject(err);
                     }
@@ -55,11 +55,11 @@ See the License for the specific language governing permissions and
     };
 
     exports.saveFile = () => {
-        DBMS.getDatabaseNew().then(database => {
+        DBMS.getDatabase().then(database => {
             exports.json2File(database, exports.makeFileName(`${BASE_FILE_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
         }).catch(Utils.handleError);
     };
-    
+
     exports.makeFileName = (root, extension, date) => {
         date = date || new Date();
         const timeStr = date.format('dd-mmm-yyyy_HH-MM-ss');

@@ -78,7 +78,7 @@ See the License for the specific language governing permissions and
 
         state.descr = queryEl(`${root}.game-description-area`);
         state.descr.addEventListener('change', updateDescr);
-        
+
         const gearsContainer = qee(queryEl(root), '#gears');
         addEl(gearsContainer, qe('.gears-tab'));
         Gears.init();
@@ -94,22 +94,22 @@ See the License for the specific language governing permissions and
         observer.observe(gearsContainer, {
             attributes: true
         });
-        
+
         const slidersContainer = qee(queryEl(root), '#sliders');
         addEl(slidersContainer, qe('.sliders-tab'));
         Sliders.init();
 
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = () => {
         Gears.refresh();
         Sliders.refresh();
-        PermissionInformer.isAdminNew().then( isAdmin => {
+        PermissionInformer.isAdmin().then( isAdmin => {
             Utils.enable(exports.content, 'adminOnly', isAdmin);
         }).catch(Utils.handleError);
-        
-        Promise.all( [DBMS.getMetaInfoNew(), DBMS.getStatisticsNew()] ).then(updateOverviewTab).catch(Utils.handleError);
+
+        Promise.all( [DBMS.getMetaInfo(), DBMS.getStatistics()] ).then(updateOverviewTab).catch(Utils.handleError);
     };
 
     function makeChart(id, canvas, data) {
@@ -194,40 +194,40 @@ See the License for the specific language governing permissions and
         state.preDate.value = metaInfo.preGameDate;
         state.descr.value = metaInfo.description;
         addEl(clearEl(state.lastSaveTime), makeText(new Date(metaInfo.saveTime).format('yyyy/mm/dd HH:MM:ss')));
-        
+
         statistics.lastEvent = statistics.lastEvent !== '' ? new Date(statistics.lastEvent).format('yyyy/mm/dd h:MM') : '';
         statistics.firstEvent = statistics.firstEvent !== '' ? new Date(statistics.firstEvent).format('yyyy/mm/dd h:MM') : '';
-        
+
         statisticKeys.forEach((key) => {
             updateStatisticValue(statistics, key);
         });
-        
+
         addEl(clearEl(getEl('generalCompleteness')), makeText(strFormat(getL10n('overview-general-completeness-value'), statistics.generalCompleteness)));
         addEl(clearEl(getEl('storyCompleteness')), makeText(strFormat(getL10n('overview-story-completeness-value'), statistics.storyCompleteness)));
         addEl(clearEl(getEl('relationCompleteness')), makeText(strFormat(getL10n('overview-relation-completeness-value'), statistics.relationCompleteness)));
-        
+
         defaultHists.forEach((histName) => {
             makeHistogram(clearEl(queryEl(`${root}.${histName}`)), statistics[histName]);
         });
-        
+
         entityCharts.forEach((entityChart) => {
             makeChart(entityChart, queryEl(`${root}.${entityChart}`), statistics[entityChart]);
         });
-        
+
         const symbolChartData = R.toPairs(localizeConsts(statistics.textCharactersCount)).map(pair => ({
             value: pair[1],
             label: makeChartLabel(statistics.textCharacterNumber, pair[0], pair[1])
         }));
         makeChart('symbolChart', queryEl(`${root}.symbolChart`), symbolChartData);
-        
+
         const bindingChartData = R.toPairs(localizeConsts(statistics.bindingStats)).map(pair => ({
             value: pair[1],
             label: [pair[0], ': ', pair[1]].join('')
         }));
         makeChart('bindingChart', queryEl(`${root}.bindingChart`), bindingChartData);
-        
+
         let barData, barDiv, bar;
-        
+
         function makeContainer(obj) {
             barDiv = makeEl('div');
             addClass(barDiv, 'col-xs-3');
@@ -242,7 +242,7 @@ See the License for the specific language governing permissions and
             makeChart(info.id, bar, info.prepared);
             return container;
         }
-        
+
         function buildHist(info) {
             bar = addClass(makeEl('div'), 'overviewHist');
             const data = R.zipObj(['name', 'bar'], [info.name, bar]);
@@ -250,10 +250,10 @@ See the License for the specific language governing permissions and
             makeHistogram(bar, info.prepared);
             return container;
         }
-        
+
         const innerMakeChart = R.compose(buildChart, prepareChart);
         const innerMakeHist = R.compose(buildHist, prepareHist);
-        
+
         function localizeCheckboxes(info) {
             info.data = R.fromPairs(R.toPairs(info.data).map((val) => {
                 val[0] = constL10n(Constants[val[0]]);
@@ -261,15 +261,15 @@ See the License for the specific language governing permissions and
             }));
             return info;
         }
-        
+
         const makeCheckboxChart = R.compose(innerMakeChart, localizeCheckboxes);
-        
+
         const fn = R.cond([
             [R.compose(R.equals('enum'), R.prop('type')), innerMakeChart],
             [R.compose(R.equals('checkbox'), R.prop('type')), makeCheckboxChart],
             [R.T, innerMakeHist],
             ]);
-        
+
         showEl(qe(`${root} .alert.character`), statistics.profileCharts.characterCharts.length === 0);
         statistics.profileCharts.characterCharts.map(fn)
             .map(addEl(clearEl(queryEl(`${root}.characterProfileDiagrams`))));
@@ -277,7 +277,7 @@ See the License for the specific language governing permissions and
         statistics.profileCharts.playerCharts.map(fn)
             .map(addEl(clearEl(queryEl(`${root}.playerProfileDiagrams`))));
     }
-    
+
     function localizeConsts(info) {
         info = R.fromPairs(R.toPairs(info).map((val) => {
             val[0] = constL10n(val[0]);
@@ -322,16 +322,16 @@ See the License for the specific language governing permissions and
     }
 
     function updateName(event) {
-        DBMS.setMetaInfoStringNew({name: 'name', value: event.target.value}).catch(Utils.handleError);
+        DBMS.setMetaInfoString({name: 'name', value: event.target.value}).catch(Utils.handleError);
     }
     function updateTime(dp, input) {
-        DBMS.setMetaInfoDateNew({name: 'date', value: input.val()}).catch(Utils.handleError);
+        DBMS.setMetaInfoDate({name: 'date', value: input.val()}).catch(Utils.handleError);
     }
     function updatePreGameDate(dp, input) {
-        DBMS.setMetaInfoDateNew({name: 'preGameDate', value: input.val()}).catch(Utils.handleError);
+        DBMS.setMetaInfoDate({name: 'preGameDate', value: input.val()}).catch(Utils.handleError);
     }
     function updateDescr(event) {
-        DBMS.setMetaInfoStringNew({name: 'description', value: event.target.value}).catch(Utils.handleError);
+        DBMS.setMetaInfoString({name: 'description', value: event.target.value}).catch(Utils.handleError);
     }
 
     function customTooltips(tooltip) {

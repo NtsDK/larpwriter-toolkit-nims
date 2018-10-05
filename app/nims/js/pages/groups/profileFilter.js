@@ -34,15 +34,15 @@ See the License for the specific language governing permissions and
             dialogTitle: 'groups-enter-new-group-name',
             actionButtonTitle: 'common-rename',
         });
-        
+
 //        state.addFilterConditionDialog = new AddFilterConditionDialog(root);
 //        listen(qe(`${root}.create.filter-condition`), 'click', onAddFilterCondition);
 
         listen(queryEl(`${root}#profile-filter-columns .profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
-        
+
 //        Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
 //        listen queryEl(`${root}.save-entity-select`)
-        
+
         $(`${root}.save-entity-select`).select2().on('change', (event) => {
             const group = event.target.value;
             const userGroups = state.userGroupNames.map(R.prop('value'));
@@ -59,12 +59,12 @@ See the License for the specific language governing permissions and
             qee(renameGroupDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value;
             renameGroupDialog.showDlg();
         });
-        listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => 
+        listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() =>
             queryEl(`${root}.save-entity-select`).value, exports.refresh));
 
         exports.content = queryEl(root);
     };
-    
+
     exports.refresh = () => {
         state.sortKey = Constants.CHAR_NAME;
         state.sortDir = 'asc';
@@ -79,35 +79,35 @@ See the License for the specific language governing permissions and
 
         FilterConfiguration.makeFilterConfiguration().then((filterConfiguration) => {
             state.filterConfiguration = filterConfiguration;
-            
+
             showEl(qe(`${root} .alert.no-characters`), !filterConfiguration.haveProfiles());
             showEl(qe(`${root} .alert.no-players`), !filterConfiguration.haveProfiles());
             showEl(qe(`${root} .alert.no-character-profile`), !filterConfiguration.haveProfileStructures());
             showEl(qe(`${root} .alert.no-player-profile`), !filterConfiguration.haveProfileStructures());
             showEl(qe(`${root} .profile-filter-container .panel`), filterConfiguration.haveData());
-            
+
             const groupedProfileFilterItems = filterConfiguration.getGroupedProfileFilterItems();
             addEls(filterSettingsDiv, R.flatten(groupedProfileFilterItems.map(item => R.concat(item.profileFilterItems.map(makeInput), [addClass(makeEl('div'), 'filterSeparator')]))));
-    
+
             UI.fillShowItemSelector2(
                 clearEl(queryEl(`${root}#profile-filter-columns .profile-item-selector`)),
                 filterConfiguration.getGroupsForSelect(),
                 true
             );
-    
+
             addEl(
                 clearEl(queryEl(`${root}.filter-head`)),
                 makeContentHeader(getHeaderProfileItemNames(filterConfiguration.getProfileFilterItems()))
             );
-    
+
             rebuildContent();
         }).catch(Utils.handleError);
     };
-    
+
     function onAddFilterCondition() {
         state.addFilterConditionDialog.showDlg(state.filterConfiguration.getGroupsForSelect(), setFilterModelItem);
     }
-    
+
     function setFilterModelItem (filterModelItem) {
         const index = R.findIndex(R.propEq('name', filterModelItem.name), state.curFilterModel);
         if(index === -1){
@@ -116,11 +116,11 @@ See the License for the specific language governing permissions and
             state.curFilterModel[index] = filterModelItem;
         }
     }
-    
+
     function groupAreaRefresh() {
         Promise.all([
-            PermissionInformer.getEntityNamesArrayNew({type: 'group', editableOnly: true}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'group', editableOnly: false})
+            PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: true}),
+            PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false})
         ]).then(results => {
             const [userGroupNames, allGroupNames] = results;
             Utils.enableEl(qe(`${root}.rename.group`), allGroupNames.length > 0);
@@ -128,7 +128,7 @@ See the License for the specific language governing permissions and
             Utils.enableEl(qe(`${root}.show-entity-button`), allGroupNames.length > 0);
             Utils.enableEl(qe(`${root}.save-entity-button`), allGroupNames.length > 0);
             Utils.enableEl(qe(`${root}.save-entity-select`), allGroupNames.length > 0);
-            
+
             state.userGroupNames = userGroupNames;
             state.allGroupNames = allGroupNames;
             const data = getSelect2Data(allGroupNames);
@@ -176,13 +176,13 @@ See the License for the specific language governing permissions and
 
     function saveFilterToGroup() {
         const groupName = queryEl(`${root}.save-entity-select`).value;
-        PermissionInformer.isEntityEditableNew({type: 'group', name: groupName}).then((isGroupEditable) => {
+        PermissionInformer.isEntityEditable({type: 'group', name: groupName}).then((isGroupEditable) => {
             if (!isGroupEditable) {
                 Utils.alert(strFormat(getL10n('groups-group-editing-forbidden'), [groupName]));
                 return;
             }
-            DBMS.saveFilterToGroupNew({
-                groupName, 
+            DBMS.saveFilterToGroup({
+                groupName,
                 filterModel: makeFilterModel()
             }).catch(Utils.handleError);
         }).catch(Utils.handleError);
@@ -190,7 +190,7 @@ See the License for the specific language governing permissions and
 
     function loadFilterFromGroup() {
         const groupName = queryEl(`${root}.save-entity-select`).value;
-        DBMS.getGroupNew({groupName}).then((group) => {
+        DBMS.getGroup({groupName}).then((group) => {
             const conflictTypes =
                 ProjectUtils.isFilterModelCompatibleWithProfiles(
                     state.filterConfiguration.getBaseProfileSettings(),
@@ -414,15 +414,15 @@ See the License for the specific language governing permissions and
         checkbox.id = id;
         addEl(qee(el, '.filter-item-name'), makeText(profileItemConfig.displayName));
         setAttr(qee(el, 'label'), 'for', id);
-        
+
         const inputContainer = qee(el, '.filter-item-container');
         listen(checkbox, 'click', toggleContent(el, inputContainer));
         state.checkboxes[profileItemConfig.name] = checkbox;
-        
+
         addEl(inputContainer, makeFilter(profileItemConfig));
         return el;
     }
-    
+
     function toggleContent(itemContainer, inputContainer) {
         return (event) => {
             hideEl(inputContainer, !event.target.checked);
@@ -544,8 +544,8 @@ See the License for the specific language governing permissions and
             const fromName = queryEl(selector).value;
             const toName = toInput.value.trim();
 
-            DBMS.renameGroupNew({fromName, toName}).then(() => {
-                PermissionInformer.refreshNew().then(() => {
+            DBMS.renameGroup({fromName, toName}).then(() => {
+                PermissionInformer.refresh().then(() => {
                     toInput.value = '';
                     dialog.hideDlg();
                     exports.refresh();

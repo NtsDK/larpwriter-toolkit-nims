@@ -76,9 +76,9 @@ function ProfileEditorTmpl(exports, opts) {
 
     exports.refresh = () => {
         Promise.all([
-            PermissionInformer.getEntityNamesArrayNew({type:firstType, editableOnly: false}),
-            PermissionInformer.getEntityNamesArrayNew({type:secondType, editableOnly: false}),
-            DBMS.getProfileBindingsNew()
+            PermissionInformer.getEntityNamesArray({type:firstType, editableOnly: false}),
+            PermissionInformer.getEntityNamesArray({type:secondType, editableOnly: false}),
+            DBMS.getProfileBindings()
         ]).then(results => {
             let [primaryNames, secondaryNames, profileBindings] = results;
             profileBindings = opts.processBindings(profileBindings);
@@ -126,7 +126,7 @@ function ProfileEditorTmpl(exports, opts) {
         const callback = () => {
             selectProfile(UI.checkAndGetEntitySetting(settingsPath, primaryNames));
         };
-        DBMS.getProfileStructureNew({type: firstType}).then(allProfileSettings => {
+        DBMS.getProfileStructure({type: firstType}).then(allProfileSettings => {
             profileEditorCore.initProfileStructure(profileDiv, firstType, allProfileSettings, callback);
         }).catch(Utils.handleError);
     }
@@ -136,43 +136,43 @@ function ProfileEditorTmpl(exports, opts) {
         hideEl(queryEl(reportByStories), name === null || firstType === 'player');
         hideEl(queryEl(reportByRelations), name === null || firstType === 'player');
         hideEl(queryEl(alertBlock), name !== null);
-        
+
         if(name === null){
             return;
         }
-        
+
         UI.updateEntitySetting(settingsPath, name);
         queryEls(`${root} [profile-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
         const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
         addClass(el, 'btn-primary');
-        
+
         const parentEl = el.parentElement.parentElement;
         const entityList = queryEl(`${root} .entity-list`);
         UI.scrollTo(entityList, parentEl);
-        
+
         Promise.all([
-            DBMS.getProfileNew({type: firstType, name}),
-            PermissionInformer.isEntityEditableNew({type: firstType, name})
+            DBMS.getProfile({type: firstType, name}),
+            PermissionInformer.isEntityEditable({type: firstType, name})
         ]).then(results => {
             const [profile, isProfileEditable] = results;
             removeClass(queryEl(profileDiv), 'hidden');
             profileEditorCore.fillProfileInformation(profileDiv, firstType, profile, () => isProfileEditable);
-    
+
             if (firstType === 'character') {
                 showCharacterReports(name);
             }
         }).catch(Utils.handleError);
     }
-    
+
     function showCharacterReports(name){
         Promise.all([
-            DBMS.getCharacterReportNew({characterName: name}),
-            DBMS.getRelationsSummaryNew({characterName: name}),
+            DBMS.getCharacterReport({characterName: name}),
+            DBMS.getRelationsSummary({characterName: name}),
         ]).then(results => {
             const [characterReport, relationsSummary] = results;
             hideEl(queryEl(`${reportByStories} .alert`), characterReport.length !== 0);
             hideEl(queryEl(`${reportByStories} table`), characterReport.length === 0);
-            
+
             if(characterReport.length !== 0){
                 removeClass(queryEl(reportByStoriesDiv), 'hidden');
                 addEls(
@@ -180,15 +180,15 @@ function ProfileEditorTmpl(exports, opts) {
                         characterReport.map(CharacterReports.makeStoryReportRow)
                 );
             }
-            
+
             hideEl(queryEl(`${reportByRelations} .alert`), relationsSummary.relations.length !== 0);
             hideEl(queryEl(`${reportByRelations} table`), relationsSummary.relations.length === 0);
-            
+
             if(relationsSummary.relations.length !== 0){
                 removeClass(queryEl(reportByRelationsDiv), 'hidden');
                 relationsSummary.relations.sort(CommonUtils.charOrdAFactory(rel =>
                         ProjectUtils.get2ndRelChar(name, rel).toLowerCase()));
-                
+
                 addEls(clearEl(queryEl(reportByRelationsDiv)), relationsSummary.relations
                         .map(CharacterReports.makeRelationReportRow(name)));
             }
@@ -221,9 +221,9 @@ function ProfileEditorTmpl(exports, opts) {
             const input = qee(dialog, '.entity-input');
             const value = input.value.trim();
 
-            DBMS.createProfileNew({type: firstType, characterName: value}).then(() => {
+            DBMS.createProfile({type: firstType, characterName: value}).then(() => {
                 UI.updateEntitySetting(settingsPath, value);
-                PermissionInformer.refreshNew().then(() => {
+                PermissionInformer.refresh().then(() => {
                     input.value = '';
                     dialog.hideDlg();
                     exports.refresh();
@@ -239,9 +239,9 @@ function ProfileEditorTmpl(exports, opts) {
             const { fromName } = dialog;
             const toName = toInput.value.trim();
 
-            DBMS.renameProfileNew({
-                type: firstType, 
-                fromName, 
+            DBMS.renameProfile({
+                type: firstType,
+                fromName,
                 toName
             }).then(() => {
                 UI.updateEntitySetting(settingsPath, toName);
@@ -255,8 +255,8 @@ function ProfileEditorTmpl(exports, opts) {
     function removeProfile(type, name, btn) {
         return () => {
             Utils.confirm(strFormat(l10n(opts.removeMsg), [name]), () => {
-                DBMS.removeProfileNew({type, characterName: name}).then(() => {
-                    PermissionInformer.refreshNew().then(() => {
+                DBMS.removeProfile({type, characterName: name}).then(() => {
+                    PermissionInformer.refresh().then(() => {
                         if(btn.nextName !== undefined){
                             UI.updateEntitySetting(settingsPath, btn.nextName);
                         } else if(btn.prevName !== undefined) {

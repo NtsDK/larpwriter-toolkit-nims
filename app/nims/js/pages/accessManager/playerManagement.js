@@ -70,11 +70,11 @@ See the License for the specific language governing permissions and
 
     exports.refresh = () => {
         Promise.all([
-            PermissionInformer.getEntityNamesArrayNew({type: 'player', editableOnly: false}),
-            DBMS.getPlayerLoginsArrayNew(),
-            DBMS.getWelcomeTextNew(),
-            DBMS.getPlayersOptionsNew(),
-            PermissionInformer.isAdminNew()
+            PermissionInformer.getEntityNamesArray({type: 'player', editableOnly: false}),
+            DBMS.getPlayerLoginsArray(),
+            DBMS.getWelcomeText(),
+            DBMS.getPlayersOptions(),
+            PermissionInformer.isAdmin()
         ]).then(results => {
             const [playerNames, playerLogins, text, playersOptions, isAdmin] = results;
             // eslint-disable-next-line prefer-destructuring
@@ -111,8 +111,8 @@ See the License for the specific language governing permissions and
         return () => {
             const userNameInput = qee(dialog,`.create-user-name-input`);
             const userPasswordInput = qee(dialog,`.create-user-password-input`);
-            DBMS.createPlayerNew({userName: userNameInput.value.trim(), password: userPasswordInput.value}).then(() => {
-                PermissionInformer.refreshNew().then(() => {
+            DBMS.createPlayer({userName: userNameInput.value.trim(), password: userPasswordInput.value}).then(() => {
+                PermissionInformer.refresh().then(() => {
                     userNameInput.value = '';
                     userPasswordInput.value = '';
                     dialog.hideDlg();
@@ -126,7 +126,7 @@ See the License for the specific language governing permissions and
         return () => {
             const userNameSelect = qee(dialog,`.create-login-name-select`);
             const passwordInput = qee(dialog,`.create-login-password-input`);
-            DBMS.createPlayerLoginNew({userName: userNameSelect.value, password: passwordInput.value}).then(() => {
+            DBMS.createPlayerLogin({userName: userNameSelect.value, password: passwordInput.value}).then(() => {
                 passwordInput.value = '';
                 dialog.hideDlg();
                 exports.refresh();
@@ -139,7 +139,7 @@ See the License for the specific language governing permissions and
             const toInput = qee(dialog, '.entity-input');
             const newPassword = toInput.value;
             const userName = queryEl(`${root}.change-password-user-select`).value.trim();
-            DBMS.changePlayerPasswordNew({userName, newPassword}).then(() => {
+            DBMS.changePlayerPassword({userName, newPassword}).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
             }).catch(err => setError(dialog, err));
@@ -149,15 +149,15 @@ See the License for the specific language governing permissions and
     function removeUser() {
         const name = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-user-account-remove'), [name]), () => {
-            DBMS.removePlayerLoginNew({userName: name}).then(exports.refresh, Utils.handleError);
+            DBMS.removePlayerLogin({userName: name}).then(exports.refresh, Utils.handleError);
         });
     }
 
     function setWelcomeText(event) {
-        DBMS.setWelcomeTextNew({text: event.target.value}).catch(Utils.handleError);
+        DBMS.setWelcomeText({text: event.target.value}).catch(Utils.handleError);
     }
 
     function setPlayerOption(event) {
-        DBMS.setPlayerOptionNew({name: event.target.value, value: event.target.checked}).catch(Utils.handleError);
+        DBMS.setPlayerOption({name: event.target.value, value: event.target.checked}).catch(Utils.handleError);
     }
 })(this.PlayerManagement = {});

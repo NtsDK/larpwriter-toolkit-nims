@@ -54,9 +54,9 @@ See the License for the specific language governing permissions and
         if (!Stories.getCurrentStoryName()) { return; }
 
         Promise.all([
-            PermissionInformer.isEntityEditableNew({type: 'story', name: Stories.getCurrentStoryName()}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
-            DBMS.getStoryCharactersNew({storyName: Stories.getCurrentStoryName()})
+            PermissionInformer.isEntityEditable({type: 'story', name: Stories.getCurrentStoryName()}),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
+            DBMS.getStoryCharacters({storyName: Stories.getCurrentStoryName()})
         ]).then(results => {
             const [isStoryEditable, allCharacters, localCharacters] = results;
             rebuildInterface(allCharacters, localCharacters);
@@ -88,10 +88,10 @@ See the License for the specific language governing permissions and
         });
 
         const table = clearEl(queryEl(`${root}.storyCharactersTable`));
-        
+
         showEl(qe(`${root} table`), R.keys(localCharacters).length !== 0 );
         showEl(qe(`${root} .alert`), R.keys(localCharacters).length === 0 );
-        
+
         removeArray.forEach((removeValue) => {
             addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
         });
@@ -100,8 +100,8 @@ See the License for the specific language governing permissions and
     function addCharacter(dialog) {
         return () => {
             const characterName = queryEl(`${superRoot}.storyCharactersAddSelector`).value.trim();
-            DBMS.addStoryCharacterNew({
-                storyName: Stories.getCurrentStoryName(), 
+            DBMS.addStoryCharacter({
+                storyName: Stories.getCurrentStoryName(),
                 characterName
             }).then(() => {
                 dialog.hideDlg();
@@ -113,9 +113,9 @@ See the License for the specific language governing permissions and
     function switchCharacters(dialog) {
         return () => {
             const toName = queryEl(`${root}.storyCharactersToSelector`).value.trim();
-            DBMS.switchStoryCharactersNew({
-                storyName: Stories.getCurrentStoryName(), 
-                fromName: dialog.characterName, 
+            DBMS.switchStoryCharacters({
+                storyName: Stories.getCurrentStoryName(),
+                fromName: dialog.characterName,
                 toName
             }).then(() => {
                 dialog.hideDlg();
@@ -127,7 +127,7 @@ See the License for the specific language governing permissions and
     function removeCharacter(characterName) {
         return () => {
             Utils.confirm(strFormat(getL10n('stories-remove-character-from-story-warning'), [characterName]), () => {
-                DBMS.removeStoryCharacterNew({
+                DBMS.removeStoryCharacter({
                     storyName: Stories.getCurrentStoryName(),
                     characterName
                 }).then(exports.refresh).catch(Utils.handleError);
@@ -168,18 +168,18 @@ See the License for the specific language governing permissions and
     }
 
     function updateCharacterInventory(event) {
-        DBMS.updateCharacterInventoryNew({
-            storyName: Stories.getCurrentStoryName(), 
-            characterName: event.target.characterName, 
+        DBMS.updateCharacterInventory({
+            storyName: Stories.getCurrentStoryName(),
+            characterName: event.target.characterName,
             inventory: event.target.value
         }).catch(Utils.handleError);
     }
 
     function onChangeCharacterActivity(event) {
-        DBMS.onChangeCharacterActivityNew({
-            storyName: Stories.getCurrentStoryName(), 
-            characterName: event.target.characterName, 
-            activityType: event.target.activityType, 
+        DBMS.onChangeCharacterActivity({
+            storyName: Stories.getCurrentStoryName(),
+            characterName: event.target.characterName,
+            activityType: event.target.activityType,
             checked: event.target.checked
         }).catch(Utils.handleError);
     }

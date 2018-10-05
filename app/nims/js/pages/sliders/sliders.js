@@ -22,44 +22,44 @@ See the License for the specific language governing permissions and
     const root = '.sliders-tab ';
     const state = {};
     state.sliders = [];
-    
+
     exports.init = () => {
         const createSliderDialog = UI.createModalDialog(root, createSlider, {
             bodySelector: 'create-slider-body',
             dialogTitle: 'sliders-create-slider',
             actionButtonTitle: 'common-create',
         });
-        
+
         state.editSliderDialog = UI.createModalDialog(root, editSlider, {
             bodySelector: 'create-slider-body',
             dialogTitle: 'sliders-edit-slider',
             actionButtonTitle: 'common-save',
         });
-        
+
         state.moveSliderDialog = UI.createModalDialog(root, moveSlider, {
             bodySelector: 'move-slider-body',
             dialogTitle: 'sliders-move-slider',
             actionButtonTitle: 'common-move',
         });
-        
+
         listen(qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());
-        
+
         exports.content = queryEl(root);
     };
 
     exports.refresh = () => {
-        DBMS.getSliderDataNew().then(createSliders).catch(Utils.handleError);
+        DBMS.getSliderData().then(createSliders).catch(Utils.handleError);
     };
-    
+
     function createSliders(model) {
         const positions = model.map( info => {return {name: strFormat(L10n.get('common', 'set-item-before'), [info.name])}});
         positions.push({name: L10n.get('common', 'set-item-as-last')});
         fillSelector(clearEl(qe(`${root} .move-slider-pos-select`)), positions);
-        
+
         addEls(clearEl(queryEl('.mixer-panel .panel-body')), model.map( makeSliderBackbone )) ;
-        
+
         clearEls(state.sliders);
-        
+
         state.sliders = model.map( (sl, i) => {
             const slider = new Slider('.mixer-panel .panel-body input[pos="' + i + '"]', {
                 max: 10,
@@ -73,19 +73,19 @@ See the License for the specific language governing permissions and
                 },
             });
             slider.on('change', (event) => {
-                DBMS.updateSliderValueNew({index: i, value: event.newValue}).catch(Utils.handleError);
+                DBMS.updateSliderValue({index: i, value: event.newValue}).catch(Utils.handleError);
             });
             return slider;
         });
     }
-    
+
     var makeSliderBackbone = (sl, i) => {
         const el = qmte(`${root} .slider-container-tmpl`);
         setAttr(qee(el, 'input'), 'pos', i);
         addEl(qee(el, '.slider-name'), makeText(sl.name));
         addEl(qee(el, '.slider-top'), makeText(sl.top));
         addEl(qee(el, '.slider-bottom'), makeText(sl.bottom));
-        
+
         listen(qee(el, 'button.move'), 'click', () => {
             state.moveSliderDialog.currentIndex = i;
             state.moveSliderDialog.showDlg();
@@ -99,19 +99,19 @@ See the License for the specific language governing permissions and
         });
         listen(qee(el, 'button.remove'), 'click', () => {
             Utils.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
-                DBMS.removeSliderNew({index:i}).then(exports.refresh, Utils.handleError);
+                DBMS.removeSlider({index:i}).then(exports.refresh, Utils.handleError);
             })
         });
         L10n.localizeStatic(el);
         return el;
     };
-    
+
     function createSlider(dialog) {
         return () => {
             const name = qee(dialog, '.slider-name').value.trim();
             const top = qee(dialog, '.slider-top').value.trim();
             const bottom = qee(dialog, '.slider-bottom').value.trim();
-            DBMS.createSliderNew({name, top, bottom}).then(() => {
+            DBMS.createSlider({name, top, bottom}).then(() => {
                 qee(dialog, '.slider-name').value = '';
                 qee(dialog, '.slider-top').value = '';
                 qee(dialog, '.slider-bottom').value = '';
@@ -120,17 +120,17 @@ See the License for the specific language governing permissions and
             }).catch(err => setError(dialog, err));
         };
     }
-    
+
     function editSlider(dialog) {
         return () => {
             const name = qee(dialog, '.slider-name').value.trim();
             const top = qee(dialog, '.slider-top').value.trim();
             const bottom = qee(dialog, '.slider-bottom').value.trim();
             const pos = dialog.pos;
-            DBMS.updateSliderNamingNew({
-                index: pos, 
-                name, 
-                top, 
+            DBMS.updateSliderNaming({
+                index: pos,
+                name,
+                top,
                 bottom
             }).then(() => {
                 qee(dialog, '.slider-name').value = '';
@@ -141,13 +141,13 @@ See the License for the specific language governing permissions and
             }).catch(err => setError(dialog, err));
         }
     }
-    
+
     function moveSlider(dialog) {
         return () => {
             var index = dialog.currentIndex;
             var pos = qee(dialog, '.move-slider-pos-select').selectedIndex;
-            
-            DBMS.moveSliderNew({index, pos}).then(() => {
+
+            DBMS.moveSlider({index, pos}).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
             }).catch(err => setError(dialog, err));

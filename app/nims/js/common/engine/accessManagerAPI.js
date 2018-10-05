@@ -22,7 +22,7 @@ See the License for the specific language governing permissions and
             R, addListener, Errors, Constants, CU, PC
         } = opts;
 
-        LocalDBMS.prototype.getManagementInfoNew = function () {
+        LocalDBMS.prototype.getManagementInfo = function () {
             return new Promise((resolve, reject) => {
                 const { ManagementInfo } = this.database;
                 const usersInfo = CU.clone(R.keys(ManagementInfo.UsersInfo).reduce((result, user) => {
@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.assignAdminNew = function ({name}={}) {
+        LocalDBMS.prototype.assignAdmin = function ({name}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(
                     PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), reject,
@@ -51,7 +51,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.assignEditorNew = function ({name}={}) {
+        LocalDBMS.prototype.assignEditor = function ({name}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(
                     PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)), reject,
@@ -63,14 +63,14 @@ See the License for the specific language governing permissions and
                 );
             });
         };
-        LocalDBMS.prototype.removeEditorNew = function () {
+        LocalDBMS.prototype.removeEditor = function () {
             return new Promise((resolve, reject) => {
                 this.database.ManagementInfo.editor = null;
                 this.publishPermissionsUpdate();
                 resolve();
             });
         };
-        LocalDBMS.prototype.changeAdaptationRightsModeNew = function ({mode}={}) {
+        LocalDBMS.prototype.changeAdaptationRightsMode = function ({mode}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(mode), PC.elementFromEnum(mode, Constants.adaptationRightsModes)];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -81,7 +81,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.removeOrganizerNew = function ({name}={}) {
+        LocalDBMS.prototype.removeOrganizer = function ({name}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(name),
                     PC.entityExistsCheck(name, R.keys(this.database.ManagementInfo.UsersInfo)),
@@ -100,11 +100,11 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getPlayerLoginsArrayNew = function () {
+        LocalDBMS.prototype.getPlayerLoginsArray = function () {
             return Promise.resolve(R.keys(this.database.ManagementInfo.PlayersInfo));
         };
 
-        LocalDBMS.prototype.removePlayerLoginNew = function ({userName}={}) {
+        LocalDBMS.prototype.removePlayerLogin = function ({userName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(
                     PC.entityExistsCheck(userName, R.keys(this.database.ManagementInfo.PlayersInfo)), reject,
@@ -116,11 +116,11 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getWelcomeTextNew = function () {
+        LocalDBMS.prototype.getWelcomeText = function () {
             return Promise.resolve(this.database.ManagementInfo.WelcomeText);
         };
 
-        LocalDBMS.prototype.setWelcomeTextNew = function ({text}={}) {
+        LocalDBMS.prototype.setWelcomeText = function ({text}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.isString(text), reject, () => {
                     this.database.ManagementInfo.WelcomeText = text;
@@ -129,11 +129,11 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getPlayersOptionsNew = function () {
+        LocalDBMS.prototype.getPlayersOptions = function () {
             return Promise.resolve(CU.clone(this.database.ManagementInfo.PlayersOptions));
         };
 
-        LocalDBMS.prototype.setPlayerOptionNew = function ({name, value}={}) {
+        LocalDBMS.prototype.setPlayerOption = function ({name, value}={}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(name), PC.elementFromEnum(name, Constants.playersOptionTypes),
                     PC.isBoolean(value)];

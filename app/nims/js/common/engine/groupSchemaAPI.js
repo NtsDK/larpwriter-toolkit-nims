@@ -255,10 +255,10 @@ See the License for the specific language governing permissions and
             return _makeGraph(equalGroups, superGroups, groupCharacterSets);
         };
 
-        LocalDBMS.prototype.getGroupSchemasNew = function () {
+        LocalDBMS.prototype.getGroupSchemas = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
-                this.getGroupCharacterSetsNew().then((groupCharacterSets) => {
+                this.getGroupCharacterSets().then((groupCharacterSets) => {
                     const schemas = {};
                     const groups = that.database.Groups;
 

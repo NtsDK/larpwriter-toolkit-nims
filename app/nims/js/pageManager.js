@@ -45,25 +45,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         L10n.onL10nChange(updateDialogs);
     };
 
-    // const protoExpander = (arr) => {
-    //     function protoCarrier() {}
-    //     arr.forEach(name => (protoCarrier.prototype[name] = (() => 1)));
-    //     return protoCarrier;
-    // };
-    // const playerArr = [
-    //     'getPlayersOptions',
-    //     'getWelcomeText',
-    //     'getPlayerProfileInfo',
-    //     'createCharacterByPlayer',
-    //     'updateProfileField',
-    //     'getRoleGridInfo'];
-
     exports.refresh = () => state.currentView.refresh();
 
     exports.onPlayerPageLoad = () => {
         initPage();
-        // const RemoteDBMS = makeRemoteDBMS(protoExpander(playerArr));
-        // window.DBMS = new RemoteDBMS();
         window.DBMS = makeRemoteDBMS();
 
         stateInit();
@@ -77,11 +62,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     exports.onIndexPageLoad = () => {
         initPage();
-        // const RemoteDBMS = makeRemoteDBMS(protoExpander(['getPlayersOptionsNew']));
-        // window.DBMS = new RemoteDBMS();
         window.DBMS = makeRemoteDBMS();
         stateInit();
-        DBMS.getPlayersOptionsNew().then((playersOptions) => {
+        DBMS.getPlayersOptions().then((playersOptions) => {
             addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
             Utils.addView(state.containers, 'enter', Enter, { mainPage: true });
             if (playersOptions.allowPlayerCreation) {
@@ -99,11 +82,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         if (MODE === 'Standalone') {
             window.DBMS = new LocalDBMS();
             window.DBMS = makeLocalDBMSWrapper(window.DBMS);
-            DBMS.setDatabaseNew({database: DemoBase.data}).then( onBaseLoaded, Utils.handleError);
+            DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, Utils.handleError);
             // runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
-            // const RemoteDBMS = makeRemoteDBMS(LocalDBMS);
-            // window.DBMS = new RemoteDBMS();
             window.DBMS = makeRemoteDBMS();
             consistencyCheck((checkResult) => {
                 consistencyCheckAlert(checkResult);
@@ -148,7 +129,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
             listen(qee(dbDialog, '.on-action-button'), 'click', () => {
                 const base = getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
-                DBMS.setDatabaseNew({database: base}).then(() => {
+                DBMS.setDatabase({database: base}).then(() => {
                     dialogOnBaseLoad();
                 }).catch(Utils.handleError);
             });
@@ -170,7 +151,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function consistencyCheck(callback) {
-        DBMS.getConsistencyCheckResultNew().then(checkResult => {
+        DBMS.getConsistencyCheckResult().then(checkResult => {
             checkResult.errors.forEach(CommonUtils.consoleErr);
             callback(checkResult);
         }).catch(Utils.handleError);
@@ -186,8 +167,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function onDatabaseLoad() {
-        PermissionInformer.refreshNew().then(() => {
-            PermissionInformer.isAdminNew().then((isAdmin) => {
+        PermissionInformer.refresh().then(() => {
+            PermissionInformer.isAdmin().then((isAdmin) => {
                 $.datetimepicker.setDateFormatter('moment');
 
                 let button;
@@ -257,7 +238,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 //                addEl(state.navigation, makeL10nButton());
 
                 addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
-//                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+               addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
 //                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
                 addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
                 addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'testTab', () => {
@@ -412,7 +393,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         counter = (counter + 1) % BACKUP_NUMBER;
         console.log('Starting autosave');
 
-        DBMS.getDatabaseNew().then(database => {
+        DBMS.getDatabase().then(database => {
             LocalBaseAPI.put('base' + counter, database).then(() => {
                 console.log('Autosave OK ' + new Date());
     //                LocalBaseAPI.get('base' + counter).then((database) => {

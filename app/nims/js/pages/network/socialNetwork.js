@@ -66,24 +66,24 @@ See the License for the specific language governing permissions and
         selector = clearEl(getEl('networkNodeGroupSelector'));
 
         Promise.all([
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}), // subset selector
-            PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}), // subset selector
-            DBMS.getAllProfilesNew({type:'character'}), // node coloring
-            DBMS.getAllStoriesNew(), // contains most part of SN data
-            DBMS.getProfileStructureNew({type:'character'}), // node coloring
-            DBMS.getProfileBindingsNew(), // node coloring
-            DBMS.getGroupCharacterSetsNew(), // node coloring
-            DBMS.getMetaInfoNew(), // timelined network
-            DBMS.getRelationsNew() // relations
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}), // subset selector
+            PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}), // subset selector
+            DBMS.getAllProfiles({type:'character'}), // node coloring
+            DBMS.getAllStories(), // contains most part of SN data
+            DBMS.getProfileStructure({type:'character'}), // node coloring
+            DBMS.getProfileBindings(), // node coloring
+            DBMS.getGroupCharacterSets(), // node coloring
+            DBMS.getMetaInfo(), // timelined network
+            DBMS.getRelations() // relations
         ]).then(results => {
-            const [characterNames, 
-                storyNames, 
-                profiles, 
-                stories, 
-                profileStructure, 
-                profileBindings, 
-                groupCharacterSets, 
-                metaInfo, 
+            const [characterNames,
+                storyNames,
+                profiles,
+                stories,
+                profileStructure,
+                profileBindings,
+                groupCharacterSets,
+                metaInfo,
                 relations] = results;
             state.Stories = stories;
             state.Characters = profiles;
@@ -91,24 +91,24 @@ See the License for the specific language governing permissions and
             state.groupCharacterSets = groupCharacterSets;
             state.metaInfo = metaInfo;
             state.relations = relations;
-    
+
             const checkboxes = profileStructure.filter(element =>
                 R.equals(element.type, 'checkbox'));
             R.values(profiles).forEach((profile) => {
                 checkboxes.map(item => (profile[item.name] =
                     constL10n(Constants[profile[item.name]])));
             });
-    
+
             const colorGroups = profileStructure.filter(element =>
                 R.contains(element.type, ['enum', 'checkbox']));
             const defaultColorGroup = {
                 value: Constants.noGroup,
                 name: constL10n(Constants.noGroup)
             };
-    
+
             const profileLabel = strFormat(getL10n('social-network-profile-group'));
             const filterLabel = strFormat(getL10n('social-network-filter-group'));
-    
+
             const profileGroups = colorGroups.map(group => group.name).map(name =>
                 ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
             const filterGroups = R.keys(groupCharacterSets).map(name =>
@@ -117,9 +117,9 @@ See the License for the specific language governing permissions and
                 selector,
                 [defaultColorGroup].concat(profileGroups).concat(filterGroups)
             );
-    
+
             initGroupColors(colorGroups);
-    
+
             NetworkSubsetsSelector.refresh({
                 characterNames,
                 storyNames,

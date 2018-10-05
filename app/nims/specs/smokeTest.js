@@ -1,187 +1,187 @@
 const getChecks = {
     baseAPI:
     [{
-        func: 'getMetaInfoNew',
+        func: 'getMetaInfo',
         args: {},
     }, {
-        func: 'getDatabaseNew',
+        func: 'getDatabase',
         args: {},
     }],
     briefingExportAPI:
     [{
-        func: 'getBriefingDataNew',
+        func: 'getBriefingData',
         args: {selCharacters: null, selStories: null, exportOnlyFinishedStories: false}
     }],
     consistencyCheckAPI:
     [{
-        func: 'getConsistencyCheckResultNew',
+        func: 'getConsistencyCheckResult',
         args: {},
     }],
     entityAPI:
     [{
-        func: 'getEntityNamesArrayNew',
+        func: 'getEntityNamesArray',
         args: {type: 'character'},
     }],
     groupsAPI:
     [{
-        func: 'getGroupNamesArrayNew',
+        func: 'getGroupNamesArray',
         args: {},
     },
     {
-        func: 'getAllCharacterGroupTextsNew',
+        func: 'getAllCharacterGroupTexts',
         args: {},
     },
     {
-        func: 'getProfileFilterInfoNew',
+        func: 'getProfileFilterInfo',
         args: {},
     },
     {
-        func: 'getGroupCharacterSetsNew',
+        func: 'getGroupCharacterSets',
         args: {},
     },
     {
-        func: 'getGroupNew',
+        func: 'getGroup',
         args: {groupName: 'Эльфы'},
     },
     {
-        func: 'getCharacterGroupTextsNew',
+        func: 'getCharacterGroupTexts',
         args: {characterName:'Арагорн'},
     }],
     groupSchemaAPI:
     [{
-        func: 'getGroupSchemasNew',
+        func: 'getGroupSchemas',
         args: {},
     }],
     logAPI:
     [{
-        func: 'getLogNew',
+        func: 'getLog',
         args: {pageNumber:0, filter: {}},
     }],
     profileBindingAPI:
     [{
-        func: 'getProfileBindingsNew',
+        func: 'getProfileBindings',
         args: {},
     },
     {
-        func: 'getExtendedProfileBindingsNew',
+        func: 'getExtendedProfileBindings',
         args: {},
     },
     {
-        func: 'getProfileBindingNew',
+        func: 'getProfileBinding',
         args: {type:'character', name:'Арагорн'},
     }],
     profileConfigurerAPI:
     [{
-        func: 'getProfileStructureNew',
+        func: 'getProfileStructure',
         args: {type: 'character'},
     }],
     profilesAPI:
     [{
-        func: 'getProfileNamesArrayNew',
+        func: 'getProfileNamesArray',
         args: {type: 'character'},
     },
     {
-        func: 'getProfileNew',
+        func: 'getProfile',
         args: {type:'character',name: 'Арагорн'},
     },
     {
-        func: 'getAllProfilesNew',
+        func: 'getAllProfiles',
         args: {type: 'character'},
     }],
     profileViewAPI:
     [{
-        func: 'getRoleGridInfoNew',
+        func: 'getRoleGridInfo',
         args: {},
     }],
     relationsAPI:
     [{
-        func: 'getRelationsSummaryNew',
+        func: 'getRelationsSummary',
         args: {characterName:'Арагорн'},
     }],
     statisticsAPI:
     [{
-        func: 'getStatisticsNew',
+        func: 'getStatistics',
         args: {},
     },
     {
-        func: 'getRelationsNew',
+        func: 'getRelations',
         args: {},
     }],
     storyAdaptationsAPI:
     [{
-        func: 'getFilteredStoryNamesNew',
+        func: 'getFilteredStoryNames',
         args: {showOnlyUnfinishedStories: true},
     },
     {
-        func: 'getStoryNew',
+        func: 'getStory',
         args: {storyName: 'Начало пути'},
     }],
     storyBaseAPI:
     [{
-        func: 'getStoryNamesArrayNew',
+        func: 'getStoryNamesArray',
         args: {},
     },
     {
-        func: 'getAllStoriesNew',
+        func: 'getAllStories',
         args: {},
     },
     {
-        func: 'getWriterStoryNew',
+        func: 'getWriterStory',
         args: {storyName: 'Начало пути'},
     }],
     storyCharactersAPI:
     [{
-        func: 'getStoryCharacterNamesArrayNew',
+        func: 'getStoryCharacterNamesArray',
         args: {storyName: 'Начало пути'},
     },
     {
-        func: 'getStoryCharactersNew',
+        func: 'getStoryCharacters',
         args: {storyName:'Начало пути'},
     }],
     storyEventsAPI:
     [{
-        func: 'getStoryEventsNew',
+        func: 'getStoryEvents',
         args: {storyName: 'Начало пути'},
     }],
     storyViewAPI:
     [{
-        func: 'getAllInventoryListsNew',
+        func: 'getAllInventoryLists',
         args: {characterName: 'Арагорн'},
     },
     {
-        func: 'getCharacterEventGroupsByStoryNew',
+        func: 'getCharacterEventGroupsByStory',
         args: {characterName: 'Арагорн'},
     },
     {
-        func: 'getCharacterEventsByTimeNew',
+        func: 'getCharacterEventsByTime',
         args: {characterName: 'Арагорн'},
     },
     {
-        func: 'getEventsTimeInfoNew',
+        func: 'getEventsTimeInfo',
         args: {},
     },
     {
-        func: 'getCharactersSummaryNew',
+        func: 'getCharactersSummary',
         args: {},
     },
     {
-        func: 'getCharacterReportNew',
+        func: 'getCharacterReport',
         args: {characterName: 'Арагорн'},
     }],
     textSearchAPI:
     [{
-        func: 'getTextsNew',
+        func: 'getTexts',
         args: {searchStr: 'Арагорн', textTypes: ['characterProfiles', 'playerProfiles', 'groups', 'relations', 'writerStory', 'eventOrigins',
             'eventAdaptations'], caseSensitive: false},
     }],
     gearsAPI:
     [{
-        func: 'getAllGearsDataNew',
+        func: 'getAllGearsData',
         args: {},
     }],
     slidersAPI:
     [{
-        func: 'getSliderDataNew',
+        func: 'getSliderData',
         args: {},
     }],
 };
@@ -190,30 +190,30 @@ const setChecks = {
     baseAPI:
     [
     {
-        func: 'setMetaInfoStringNew',
+        func: 'setMetaInfoString',
         args: {name: 'name', value: '123'},
     },
     {
-        func: 'setMetaInfoDateNew',
+        func: 'setMetaInfoDate',
         args: {name: 'preGameDate', value: "3018/01/14 00:00"},
     }],
     groupsAPI:
     [{
-        func: 'createGroupNew',
+        func: 'createGroup',
         args: {groupName: 'testGroup'},
         forInconsistency: true,
     },
     {
-        func: 'renameGroupNew',
+        func: 'renameGroup',
         args: {fromName: 'testGroup', toName: 'testGroup2'},
         forInconsistency: true,
     },
     {
-        func: 'saveFilterToGroupNew',
+        func: 'saveFilterToGroup',
         args: {groupName: 'testGroup2', filterModel: []},
     },
     {
-        "func": "updateGroupFieldNew",
+        "func": "updateGroupField",
         "args": {
             "groupName": "testGroup2",
             "fieldName": "masterDescription",
@@ -221,27 +221,27 @@ const setChecks = {
         }
     },
     {
-        "func": "doExportGroupNew",
+        "func": "doExportGroup",
         "args": {
             "groupName": "testGroup2",
             "value": true
         }
     },
     {
-        "func": "removeGroupNew",
+        "func": "removeGroup",
         "args": {
             "groupName": "testGroup2"
         },
         forInconsistency: true,
     },
     {
-        "func": "createGroupNew",
+        "func": "createGroup",
         "args": {
             "groupName": "testGroup"
         }
     },
     {
-        "func": "createProfileItemNew",
+        "func": "createProfileItem",
         "args": {
             "type": "character",
             "name": "testProfileItem",
@@ -250,7 +250,7 @@ const setChecks = {
         }
     },
     {
-        "func": "saveFilterToGroupNew",
+        "func": "saveFilterToGroup",
         "args": {
             "groupName": "testGroup",
             "filterModel": [
@@ -264,7 +264,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "updateDefaultValueNew",
+        "func": "updateDefaultValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem",
@@ -273,7 +273,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "renameProfileItemNew",
+        "func": "renameProfileItem",
         "args": {
             "type": "character",
             "newName": "testProfileItem2",
@@ -282,7 +282,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "saveFilterToGroupNew",
+        "func": "saveFilterToGroup",
         "args": {
             "groupName": "testGroup",
             "filterModel": [
@@ -298,7 +298,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "changeProfileItemTypeNew",
+        "func": "changeProfileItemType",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -307,7 +307,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "updateDefaultValueNew",
+        "func": "updateDefaultValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -316,7 +316,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "saveFilterToGroupNew",
+        "func": "saveFilterToGroup",
         "args": {
             "groupName": "testGroup",
             "filterModel": [
@@ -333,7 +333,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "updateDefaultValueNew",
+        "func": "updateDefaultValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -342,7 +342,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileItemNew",
+        "func": "removeProfileItem",
         "args": {
             "type": "character",
             "index": 0,
@@ -351,7 +351,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeGroupNew",
+        "func": "removeGroup",
         "args": {
             "groupName": "testGroup"
         }
@@ -362,7 +362,7 @@ const setChecks = {
     profileBindingAPI:
     [
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter"
@@ -370,14 +370,14 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "player",
             "characterName": "testPlayer"
         }
     },
     {
-        "func": "createBindingNew",
+        "func": "createBinding",
         "args": {
             "characterName": "testCharacter",
             "playerName": "testPlayer"
@@ -385,21 +385,21 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeBindingNew",
+        "func": "removeBinding",
         "args": {
             "characterName": "testCharacter",
             "playerName": "testPlayer"
         }
     },
     {
-        "func": "createBindingNew",
+        "func": "createBinding",
         "args": {
             "characterName": "testCharacter",
             "playerName": "testPlayer"
         }
     },
     {
-        "func": "renameProfileNew",
+        "func": "renameProfile",
         "args": {
             "type": "character",
             "fromName": "testCharacter",
@@ -408,7 +408,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter3"
@@ -416,7 +416,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "player",
             "characterName": "testPlayer"
@@ -427,7 +427,7 @@ const setChecks = {
     profileConfigurerAPI:
     [
     {
-        "func": "createProfileItemNew",
+        "func": "createProfileItem",
         "args": {
             "type": "character",
             "name": "testProfileItem",
@@ -436,7 +436,7 @@ const setChecks = {
         }
     },
     {
-        "func": "moveProfileItemNew",
+        "func": "moveProfileItem",
         "args": {
             "type": "character",
             "index": 0,
@@ -444,7 +444,7 @@ const setChecks = {
         }
     },
     {
-        "func": "changeProfileItemTypeNew",
+        "func": "changeProfileItemType",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem",
@@ -453,7 +453,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "changeProfileItemPlayerAccessNew",
+        "func": "changeProfileItemPlayerAccess",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem",
@@ -461,7 +461,7 @@ const setChecks = {
         }
     },
     {
-        "func": "renameProfileItemNew",
+        "func": "renameProfileItem",
         "args": {
             "type": "character",
             "newName": "testProfileItem2",
@@ -470,7 +470,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "doExportProfileItemChangeNew",
+        "func": "doExportProfileItemChange",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -478,7 +478,7 @@ const setChecks = {
         }
     },
     {
-        "func": "showInRoleGridProfileItemChangeNew",
+        "func": "showInRoleGridProfileItemChange",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -486,7 +486,7 @@ const setChecks = {
         }
     },
     {
-        "func": "updateDefaultValueNew",
+        "func": "updateDefaultValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -494,7 +494,7 @@ const setChecks = {
         }
     },
     {
-        "func": "removeProfileItemNew",
+        "func": "removeProfileItem",
         "args": {
             "type": "character",
             "index": 0,
@@ -502,7 +502,7 @@ const setChecks = {
         }
     },
     {
-        "func": "createProfileItemNew",
+        "func": "createProfileItem",
         "args": {
             "type": "character",
             "name": "testProfileItem",
@@ -512,7 +512,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "renameEnumValueNew",
+        "func": "renameEnumValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem",
@@ -522,7 +522,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileItemNew",
+        "func": "removeProfileItem",
         "args": {
             "type": "character",
             "index": 0,
@@ -536,14 +536,14 @@ const setChecks = {
     profilesAPI:
     [
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "createProfileItemNew",
+        "func": "createProfileItem",
         "args": {
             "type": "character",
             "name": "testProfileItem",
@@ -553,7 +553,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "updateProfileFieldNew",
+        "func": "updateProfileField",
         "args": {
             "type": "character",
             "characterName": "testCharacter",
@@ -563,7 +563,7 @@ const setChecks = {
         }
     },
     {
-        "func": "renameProfileItemNew",
+        "func": "renameProfileItem",
         "args": {
             "type": "character",
             "newName": "testProfileItem2",
@@ -572,7 +572,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "changeProfileItemTypeNew",
+        "func": "changeProfileItemType",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -581,7 +581,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "updateDefaultValueNew",
+        "func": "updateDefaultValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -590,7 +590,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "changeProfileItemTypeNew",
+        "func": "changeProfileItemType",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -599,7 +599,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "updateDefaultValueNew",
+        "func": "updateDefaultValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -608,7 +608,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "updateProfileFieldNew",
+        "func": "updateProfileField",
         "args": {
             "type": "character",
             "characterName": "testCharacter",
@@ -618,7 +618,7 @@ const setChecks = {
         }
     },
     {
-        "func": "updateDefaultValueNew",
+        "func": "updateDefaultValue",
         "args": {
             "type": "character",
             "profileItemName": "testProfileItem2",
@@ -627,7 +627,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileItemNew",
+        "func": "removeProfileItem",
         "args": {
             "type": "character",
             "index": 0,
@@ -636,7 +636,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "renameProfileNew",
+        "func": "renameProfile",
         "args": {
             "type": "character",
             "fromName": "testCharacter",
@@ -644,7 +644,7 @@ const setChecks = {
         }
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter2"
@@ -656,21 +656,21 @@ const setChecks = {
     relationsAPI:
     [
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter2"
         }
     },
     {
-        "func": "createCharacterRelationNew",
+        "func": "createCharacterRelation",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2"
@@ -678,21 +678,21 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "getCharacterRelationNew",
+        "func": "getCharacterRelation",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2"
         }
     },
     {
-        "func": "getCharacterRelationNew",
+        "func": "getCharacterRelation",
         "args": {
             "fromCharacter": "testCharacter2",
             "toCharacter": "testCharacter"
         }
     },
     {
-        "func": "setCharacterRelationTextNew",
+        "func": "setCharacterRelationText",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2",
@@ -701,7 +701,7 @@ const setChecks = {
         }
     },
     {
-        "func": "setCharacterRelationTextNew",
+        "func": "setCharacterRelationText",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2",
@@ -710,7 +710,7 @@ const setChecks = {
         }
     },
     {
-        "func": "setRelationReadyStatusNew",
+        "func": "setRelationReadyStatus",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2",
@@ -719,7 +719,7 @@ const setChecks = {
         }
     },
     {
-        "func": "setRelationReadyStatusNew",
+        "func": "setRelationReadyStatus",
         "args": {
             "fromCharacter": "testCharacter2",
             "toCharacter": "testCharacter",
@@ -728,7 +728,7 @@ const setChecks = {
         }
     },
     {
-        "func": "setRelationEssenceStatusNew",
+        "func": "setRelationEssenceStatus",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2",
@@ -737,7 +737,7 @@ const setChecks = {
         }
     },
     {
-        "func": "setOriginRelationTextNew",
+        "func": "setOriginRelationText",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2",
@@ -745,7 +745,7 @@ const setChecks = {
         }
     },
     {
-        "func": "setOriginRelationTextNew",
+        "func": "setOriginRelationText",
         "args": {
             "fromCharacter": "testCharacter2",
             "toCharacter": "testCharacter",
@@ -753,21 +753,21 @@ const setChecks = {
         }
     },
     {
-        "func": "removeCharacterRelationNew",
+        "func": "removeCharacterRelation",
         "args": {
             "fromCharacter": "testCharacter2",
             "toCharacter": "testCharacter"
         }
     },
     {
-        "func": "createCharacterRelationNew",
+        "func": "createCharacterRelation",
         "args": {
             "fromCharacter": "testCharacter",
             "toCharacter": "testCharacter2"
         }
     },
     {
-        "func": "renameProfileNew",
+        "func": "renameProfile",
         "args": {
             "type": "character",
             "fromName": "testCharacter",
@@ -776,7 +776,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "renameProfileNew",
+        "func": "renameProfile",
         "args": {
             "type": "character",
             "fromName": "testCharacter2",
@@ -785,7 +785,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter3"
@@ -793,7 +793,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter4"
@@ -806,27 +806,27 @@ const setChecks = {
     storyAdaptationsAPI:
     [
     {
-        "func": "createStoryNew",
+        "func": "createStory",
         "args": {
             "storyName": "testStory"
         }
     },
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "addStoryCharacterNew",
+        "func": "addStoryCharacter",
         "args": {
             "storyName": "testStory",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "createEventNew",
+        "func": "createEvent",
         "args": {
             "storyName": "testStory",
             "eventName": "testEventName",
@@ -834,7 +834,7 @@ const setChecks = {
         }
     },
     {
-        "func": "addCharacterToEventNew",
+        "func": "addCharacterToEvent",
         "args": {
             "storyName": "testStory",
             "eventIndex": 0,
@@ -842,7 +842,7 @@ const setChecks = {
         }
     },
     {
-        "func": "setEventAdaptationPropertyNew",
+        "func": "setEventAdaptationProperty",
         "args": {
             "storyName": "testStory",
             "eventIndex": 0,
@@ -852,14 +852,14 @@ const setChecks = {
         }
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "removeStoryNew",
+        "func": "removeStory",
         "args": {
             "storyName": "testStory"
         }
@@ -870,27 +870,27 @@ const setChecks = {
     storyBaseAPI:
     [
     {
-        "func": "createStoryNew",
+        "func": "createStory",
         "args": {
             "storyName": "testStory"
         }
     },
     {
-        "func": "renameStoryNew",
+        "func": "renameStory",
         "args": {
             "fromName": "testStory",
             "toName": "testStory2"
         }
     },
     {
-        "func": "setWriterStoryNew",
+        "func": "setWriterStory",
         "args": {
             "storyName": "testStory2",
             "value": "setWriterStory test"
         }
     },
     {
-        "func": "removeStoryNew",
+        "func": "removeStory",
         "args": {
             "storyName": "testStory2"
         }
@@ -901,34 +901,34 @@ const setChecks = {
     storyCharactersAPI:
     [
     {
-        "func": "createStoryNew",
+        "func": "createStory",
         "args": {
             "storyName": "testStory"
         }
     },
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "createProfileNew",
+        "func": "createProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter2"
         }
     },
     {
-        "func": "addStoryCharacterNew",
+        "func": "addStoryCharacter",
         "args": {
             "storyName": "testStory",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "switchStoryCharactersNew",
+        "func": "switchStoryCharacters",
         "args": {
             "storyName": "testStory",
             "fromName": "testCharacter",
@@ -936,7 +936,7 @@ const setChecks = {
         }
     },
     {
-        "func": "updateCharacterInventoryNew",
+        "func": "updateCharacterInventory",
         "args": {
             "storyName": "testStory",
             "characterName": "testCharacter2",
@@ -944,7 +944,7 @@ const setChecks = {
         }
     },
     {
-        "func": "createEventNew",
+        "func": "createEvent",
         "args": {
             "storyName": "testStory",
             "eventName": "testEventName",
@@ -952,14 +952,14 @@ const setChecks = {
         }
     },
     {
-        "func": "addStoryCharacterNew",
+        "func": "addStoryCharacter",
         "args": {
             "storyName": "testStory",
             "characterName": "testCharacter"
         }
     },
     {
-        "func": "addCharacterToEventNew",
+        "func": "addCharacterToEvent",
         "args": {
             "storyName": "testStory",
             "eventIndex": 0,
@@ -967,7 +967,7 @@ const setChecks = {
         }
     },
     {
-        "func": "addCharacterToEventNew",
+        "func": "addCharacterToEvent",
         "args": {
             "storyName": "testStory",
             "eventIndex": 0,
@@ -975,7 +975,7 @@ const setChecks = {
         }
     },
     {
-        "func": "renameProfileNew",
+        "func": "renameProfile",
         "args": {
             "type": "character",
             "fromName": "testCharacter2",
@@ -984,7 +984,7 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeCharacterFromEventNew",
+        "func": "removeCharacterFromEvent",
         "args": {
             "storyName": "testStory",
             "eventIndex": 0,
@@ -992,7 +992,7 @@ const setChecks = {
         }
     },
     {
-        "func": "onChangeCharacterActivityNew",
+        "func": "onChangeCharacterActivity",
         "args": {
             "storyName": "testStory",
             "characterName": "testCharacter3",
@@ -1001,14 +1001,14 @@ const setChecks = {
         }
     },
     {
-        "func": "removeStoryCharacterNew",
+        "func": "removeStoryCharacter",
         "args": {
             "storyName": "testStory",
             "characterName": "testCharacter3"
         }
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter"
@@ -1016,14 +1016,14 @@ const setChecks = {
         forInconsistency: true,
     },
     {
-        "func": "removeProfileNew",
+        "func": "removeProfile",
         "args": {
             "type": "character",
             "characterName": "testCharacter3"
         }
     },
     {
-        "func": "removeStoryNew",
+        "func": "removeStory",
         "args": {
             "storyName": "testStory"
         }
@@ -1035,13 +1035,13 @@ const setChecks = {
     storyEventsAPI:
     [
     {
-        "func": "createStoryNew",
+        "func": "createStory",
         "args": {
             "storyName": "testStory"
         }
     },
     {
-        "func": "createEventNew",
+        "func": "createEvent",
         "args": {
             "storyName": "testStory",
             "eventName": "testEventName",
@@ -1049,7 +1049,7 @@ const setChecks = {
         }
     },
     {
-        "func": "createEventNew",
+        "func": "createEvent",
         "args": {
             "storyName": "testStory",
             "eventName": "testEventName2",
@@ -1057,7 +1057,7 @@ const setChecks = {
         }
     },
     {
-        "func": "moveEventNew",
+        "func": "moveEvent",
         "args": {
             "storyName": "testStory",
             "index": 0,
@@ -1065,28 +1065,28 @@ const setChecks = {
         }
     },
     {
-        "func": "cloneEventNew",
+        "func": "cloneEvent",
         "args": {
             "storyName": "testStory",
             "index": 0
         }
     },
     {
-        "func": "mergeEventsNew",
+        "func": "mergeEvents",
         "args": {
             "storyName": "testStory",
             "index": 0
         }
     },
     {
-        "func": "removeEventNew",
+        "func": "removeEvent",
         "args": {
             "storyName": "testStory",
             "index": 0
         }
     },
     {
-        "func": "setEventOriginPropertyNew",
+        "func": "setEventOriginProperty",
         "args": {
             "storyName": "testStory",
             "index": 0,
@@ -1095,7 +1095,7 @@ const setChecks = {
         }
     },
     {
-        "func": "removeStoryNew",
+        "func": "removeStory",
         "args": {
             "storyName": "testStory"
         }
@@ -1107,19 +1107,19 @@ const setChecks = {
 
 
     {
-        "func": "setGearsPhysicsEnabledNew",
+        "func": "setGearsPhysicsEnabled",
         "args": {
             "enabled": true
         }
     },
     {
-        "func": "setGearsShowNotesEnabledNew",
+        "func": "setGearsShowNotesEnabled",
         "args": {
             "enabled": true
         }
     },
     {
-        "func": "setGearsDataNew",
+        "func": "setGearsData",
         "args": {
             "data": {
                 "nodes": [
@@ -1162,7 +1162,7 @@ const setChecks = {
     slidersAPI:
     [
     {
-        "func": "createSliderNew",
+        "func": "createSlider",
         "args": {
             "name": "name1",
             "top": "top1",
@@ -1170,7 +1170,7 @@ const setChecks = {
         }
     },
     {
-        "func": "createSliderNew",
+        "func": "createSlider",
         "args": {
             "name": "name1",
             "top": "top1",
@@ -1178,7 +1178,7 @@ const setChecks = {
         }
     },
     {
-        "func": "updateSliderNamingNew",
+        "func": "updateSliderNaming",
         "args": {
             "index": 2,
             "name": "name3",
@@ -1187,48 +1187,48 @@ const setChecks = {
         }
     },
     {
-        "func": "updateSliderValueNew",
+        "func": "updateSliderValue",
         "args": {
             "index": 2,
             "value": 5
         }
     },
     {
-        "func": "updateSliderValueNew",
+        "func": "updateSliderValue",
         "args": {
             "index": 2,
             "value": 10
         }
     },
     {
-        "func": "updateSliderValueNew",
+        "func": "updateSliderValue",
         "args": {
             "index": 2,
             "value": -10
         }
     },
     {
-        "func": "updateSliderValueNew",
+        "func": "updateSliderValue",
         "args": {
             "index": 2,
             "value": 0
         }
     },
     {
-        "func": "moveSliderNew",
+        "func": "moveSlider",
         "args": {
             "index": 2,
             "pos": 3
         }
     },
     {
-        "func": "removeSliderNew",
+        "func": "removeSlider",
         "args": {
             "index": 2
         }
     },
     {
-        "func": "removeSliderNew",
+        "func": "removeSlider",
         "args": {
             "index": 2
         }
@@ -1289,7 +1289,7 @@ R.keys(setChecks).forEach((apiName) => {
                     }
                     if (check.forInconsistency === true) {
                     // if (true) {
-                        DBMS.getConsistencyCheckResultNew().then(checkResult => {
+                        DBMS.getConsistencyCheckResult().then(checkResult => {
                             // expect(err2).toBeNull();
                             if (checkResult.errors.length > 0) {
                                 console.error(check.name);
@@ -1316,7 +1316,7 @@ R.keys(setChecks).forEach((apiName) => {
 });
 
 describe('Core smoke test coverage check', () => {
-    const customIgnore = ['setDatabaseNew'];
+    const customIgnore = ['setDatabase'];
 
     it('Core smoke test coverage check', () => {
         const funcArr = R.uniq(R.concat(R.flatten(R.values(getChecks)).map(R.prop('func')), R.flatten(R.values(setChecks)).map(R.prop('func'))));
@@ -1335,7 +1335,8 @@ describe('Core smoke test coverage check', () => {
         }
         expect(intersection2.length).toBe(0);
 
-        const allFuncs = Object.keys(Object.getPrototypeOf(DBMS)).filter(R.pipe(R.endsWith('New')));
+        // const allFuncs = Object.keys(Object.getPrototypeOf(DBMS)).filter(R.pipe(R.endsWith('New')));
+        const allFuncs = Object.keys(Object.getPrototypeOf(DBMS));
         // const allFuncs = Object.keys(Object.getPrototypeOf(DBMS)).filter(R.pipe(R.endsWith('Pm'), R.not));
         const sum = [funcArr, serverSpecificFunctions, commonIgnoreList, customIgnore].reduce((acc, el) => {
             acc = R.concat(acc, el);

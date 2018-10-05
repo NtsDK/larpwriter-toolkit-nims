@@ -31,7 +31,7 @@ See the License for the specific language governing permissions and
         const storyName = Stories.getCurrentStoryName();
 
         if (storyName) {
-            DBMS.getWriterStoryNew({storyName}).then(story => {
+            DBMS.getWriterStory({storyName}).then(story => {
                 storyArea.value = story;
             }).catch(Utils.handleError);
         } else {
@@ -41,8 +41,8 @@ See the License for the specific language governing permissions and
 
     function updateWriterStory() {
         const storyArea = getEl('writerStoryArea');
-        DBMS.setWriterStoryNew({
-            storyName: Stories.getCurrentStoryName(), 
+        DBMS.setWriterStory({
+            storyName: Stories.getCurrentStoryName(),
             value: storyArea.value
         }).catch(Utils.handleError);
     }

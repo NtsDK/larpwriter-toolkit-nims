@@ -63,7 +63,7 @@ See the License for the specific language governing permissions and
 
     function getData(event) {
         const filter = R.fromPairs(queryEls(`${root}input[filter]`).map(el => [getAttr(el, 'filter'), el.value]));
-        DBMS.getLogNew({pageNumber: Number(event.target.value), filter}).then(dataRecieved).catch(Utils.handleError);
+        DBMS.getLog({pageNumber: Number(event.target.value), filter}).then(dataRecieved).catch(Utils.handleError);
     }
 
     function makeRow(rowData) {
@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
             addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss')),
             addText(rowData[1]),
             addText(rowData[3]),
-            
+
             addEls(makeEl('td'), JSON.parse(rowData[4]).map(item => {
                 return addEl(addClass(makeEl('div'), 'log-param'), makeText(R.is(Object, item) ? JSON.stringify(item) : item));
             })),

@@ -32,9 +32,9 @@ See the License for the specific language governing permissions and
 
     exports.refresh = () => {
         Promise.all([
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'player', editableOnly: false}),
-            DBMS.getProfileBindingsNew()
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
+            PermissionInformer.getEntityNamesArray({type: 'player', editableOnly: false}),
+            DBMS.getProfileBindings()
         ]).then(results => {
             const [characterNames, playerNames, profileBindings] = results;
             rebuildInterface(characterNames, playerNames, profileBindings);
@@ -45,15 +45,15 @@ See the License for the specific language governing permissions and
         const bondedCharacterList = R.keys(profileBindings);
         const bondedPlayerList = R.values(profileBindings);
         const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
-        
+
         showEl(queryEl(`${root} .alert.no-character`), characterNames.length === 0);
         Utils.enableEl(queryEl(`${root} .character-filter`), characterNames.length !== 0);
         showEl(queryEl(`${root} .character-list`), characterNames.length !== 0);
-        
+
         showEl(queryEl(`${root} .alert.no-player`), playerNames.length === 0);
         Utils.enableEl(queryEl(`${root} .player-filter`), playerNames.length !== 0);
         showEl(queryEl(`${root} .player-list`), playerNames.length !== 0);
-        
+
         Utils.enableEl(queryEl(`${root} .binding-filter`), R.keys(profileBindings).length !== 0);
 
         addEls(
@@ -156,12 +156,12 @@ See the License for the specific language governing permissions and
     function createBinding(pair) {
         const characterName = pair[0].type === 'character' ? pair[0].name : pair[1].name;
         const playerName = pair[0].type === 'player' ? pair[0].name : pair[1].name;
-        DBMS.createBindingNew({characterName, playerName}).then(exports.refresh, Utils.handleError);
+        DBMS.createBinding({characterName, playerName}).then(exports.refresh, Utils.handleError);
     }
 
     function removeBinding(binding) {
-        DBMS.removeBindingNew({
-            characterName: binding[0], 
+        DBMS.removeBinding({
+            characterName: binding[0],
             playerName: binding[1]
         }).then(exports.refresh, Utils.handleError);
     }

@@ -32,7 +32,7 @@ See the License for the specific language governing permissions and
         ];
 
         // DBMS.log.push({})
-        LocalDBMS.prototype.logNew = function ({userName, time, funcName, rewrite, params, status}={}) {
+        LocalDBMS.prototype.log = function ({userName, time, funcName, rewrite, params, status}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(userName), PC.isString(time), PC.isString(funcName),
                     PC.isBoolean(rewrite), PC.isArray(params), PC.isString(status)]);
@@ -58,7 +58,7 @@ See the License for the specific language governing permissions and
         };
 
         // DBMS.log.get({pageNumber, filter})
-        LocalDBMS.prototype.getLogNew = function ({pageNumber, filter}={}) {
+        LocalDBMS.prototype.getLog = function ({pageNumber, filter}={}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isNumber(pageNumber), PC.isObject(filter)]);
                 PC.precondition(chain, reject, () => {

@@ -35,9 +35,9 @@ See the License for the specific language governing permissions and
             .filter(el => el.checked).map(el => el.value);
         const searchStr = queryEl(`${root}.text-search-input`).value;
         const caseSensitive = getEl('caseSensitiveTextSearch').checked;
-        DBMS.getTextsNew({
-            searchStr, 
-            textTypes: selectedTextTypes, 
+        DBMS.getTexts({
+            searchStr,
+            textTypes: selectedTextTypes,
             caseSensitive
         }).then((texts) => {
             const text2panel = text =>

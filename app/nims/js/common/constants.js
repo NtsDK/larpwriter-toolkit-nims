@@ -74,7 +74,7 @@ See the License for the specific language governing permissions and
     exports.ownedEntityTypes2 = ['characters', 'players', 'stories', 'groups'];
 
     exports.metaInfoStrings = ['name', 'description'];
-    
+
     exports.metaInfoDates = ['date', 'preGameDate'];
 
     exports.profileTypes = ['character', 'player'];
@@ -464,10 +464,10 @@ See the License for the specific language governing permissions and
         'changeOrganizerPassword', 'createPlayer', 'createPlayerLogin', 'changePlayerPassword',
         'getPlayerProfileInfo', 'createCharacterByPlayer', 'publishPermissionsUpdate'];
 
-    exports.commonIgnoreList = ['getSettings', '_init', 'clearSettings', 'logNew'];
-    
-    
-    
+    exports.commonIgnoreList = ['getSettings', '_init', 'clearSettings', 'log'];
+
+
+
     exports.yedGmlBase = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:java="http://www.yworks.com/xml/yfiles-common/1.0/java" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
           <!--Created by yEd 3.15.0.2-->
@@ -510,7 +510,7 @@ See the License for the specific language governing permissions and
             </y:ShapeNode>
           </data>
         </node>`;
-            
+
     exports.yedEdgeTmpl = `<edge id="{0}" source="{2}" target="{3}">
           <data key="d9"/>
           <data key="d10">
@@ -532,7 +532,7 @@ See the License for the specific language governing permissions and
             </y:ArcEdge>
           </data>
         </edge>`;
-    
+
     exports.gearsNodeRequiredFields = ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'];
 
     exports.httpTimeout = 60000;

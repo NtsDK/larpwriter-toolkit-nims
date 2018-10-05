@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
         } = opts;
 
         // DBMS.groups.names.get()
-        LocalDBMS.prototype.getEntityNamesArrayNew = function ({type}={}) {
+        LocalDBMS.prototype.getEntityNamesArray = function ({type}={}) {
             return new Promise((resolve,reject) => {
                 const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
                 // const callback = (err, result) => {
@@ -38,15 +38,15 @@ See the License for the specific language governing permissions and
                     case 'character':
                     case 'player':
                         // this.getProfileNamesArray(type, callback);
-                        this.getProfileNamesArrayNew({type}).then(resolve).catch(reject);
+                        this.getProfileNamesArray({type}).then(resolve).catch(reject);
                         break;
                     case 'group':
                         // this.getGroupNamesArray(callback);
-                        this.getGroupNamesArrayNew().then(resolve).catch(reject);
+                        this.getGroupNamesArray().then(resolve).catch(reject);
                         break;
                     case 'story':
                         // this.getStoryNamesArray(callback);
-                        this.getStoryNamesArrayNew().then(resolve).catch(reject);
+                        this.getStoryNamesArray().then(resolve).catch(reject);
                         break;
                     default:
                         reject(new Errors.InternalError('errors-unexpected-switch-argument', [type]));

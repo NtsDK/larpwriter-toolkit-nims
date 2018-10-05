@@ -26,7 +26,7 @@ See the License for the specific language governing permissions and
         const schemaBuilder = opts.Schema;
 
         // DBMS.consistency.check()
-        LocalDBMS.prototype.getConsistencyCheckResultNew = function () {
+        LocalDBMS.prototype.getConsistencyCheckResult = function () {
             return new Promise((resolve, reject) => {
 
                 let errors = [];

@@ -64,13 +64,13 @@ See the License for the specific language governing permissions and
 
     exports.refresh = () => {
         Promise.all([
-            DBMS.getManagementInfoNew(),
-            PermissionInformer.isAdminNew(),
-            PermissionInformer.isEditorNew(),
-            PermissionInformer.getEntityNamesArrayNew({type: 'character', editableOnly: false}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'group', editableOnly: false}),
-            PermissionInformer.getEntityNamesArrayNew({type: 'player', editableOnly: false}),
+            DBMS.getManagementInfo(),
+            PermissionInformer.isAdmin(),
+            PermissionInformer.isEditor(),
+            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
+            PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}),
+            PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false}),
+            PermissionInformer.getEntityNamesArray({type: 'player', editableOnly: false}),
         ]).then(results => {
             const [managementInfo, isAdmin, isEditor, characterNames, storyNames, groupNames, playerNames] = results;
             const names = {
@@ -228,7 +228,7 @@ See the License for the specific language governing permissions and
             const names = R.mapObjIndexed(arr => arr.map(R.prop('name')), R.groupBy(R.prop('type'), selected));
             btns.forEach(btn => removeClass(btn, 'btn-primary'))
 
-            DBMS['assignPermissionNew']({userName, names}).then(exports.refresh, Utils.handleError);
+            DBMS['assignPermission']({userName, names}).then(exports.refresh, Utils.handleError);
 //            DBMS[action](userName, names, Utils.processError(exports.refresh));
 //        };
 //    }
@@ -305,7 +305,7 @@ See the License for the specific language governing permissions and
         return () => {
             const userNameInput = qee(dialog,`.create-user-name-input`);
             const userPasswordInput = qee(dialog,`.create-user-password-input`);
-            DBMS.createOrganizerNew({
+            DBMS.createOrganizer({
                 name: userNameInput.value.trim(),
                 password: userPasswordInput.value
             }).then(() => {
@@ -323,7 +323,7 @@ See the License for the specific language governing permissions and
             const newPassword = toInput.value;
             const userName = queryEl(`${root}.change-password-user-select`).value.trim();
 
-            DBMS.changeOrganizerPasswordNew({userName, newPassword}).then(() => {
+            DBMS.changeOrganizerPassword({userName, newPassword}).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
             }).catch(err => setError(dialog, err));
@@ -334,7 +334,7 @@ See the License for the specific language governing permissions and
 //        const name = queryEl(`${root}.remove-user-select`).value.trim();
         const name = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-user-remove'), [name]), () => {
-            DBMS.removeOrganizerNew({name}).then(exports.refresh, Utils.handleError);
+            DBMS.removeOrganizer({name}).then(exports.refresh, Utils.handleError);
         });
     }
 
@@ -359,26 +359,26 @@ See the License for the specific language governing permissions and
         };
     }
 
-    removePermission = permissionAction('removePermissionNew');
-    assignPermission = permissionAction('assignPermissionNew');
+    removePermission = permissionAction('removePermission');
+    assignPermission = permissionAction('assignPermission');
 
     function assignNewAdmin() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-admin-assignment'), [userName]), () => {
-            DBMS.assignAdminNew({userName}).then(exports.refresh, Utils.handleError);
+            DBMS.assignAdmin({userName}).then(exports.refresh, Utils.handleError);
         });
     }
     function removeEditor() {
-        DBMS.removeEditorNew().then(exports.refresh, Utils.handleError);
+        DBMS.removeEditor().then(exports.refresh, Utils.handleError);
     }
     function assignEditor() {
         const userName = queryEl(`${root}.change-password-user-select`).value.trim();
         Utils.confirm(strFormat(getL10n('admins-confirm-editor-assignment'), [userName]), () => {
-            DBMS.assignEditorNew({name: userName}).then(exports.refresh, Utils.handleError);
+            DBMS.assignEditor({name: userName}).then(exports.refresh, Utils.handleError);
         });
     }
     function changeAdaptationRightsMode(event) {
-        DBMS.changeAdaptationRightsModeNew({mode:event.target.value}).catch(Utils.handleError);
+        DBMS.changeAdaptationRightsMode({mode:event.target.value}).catch(Utils.handleError);
     }
 
     // eslint-disable-next-line no-var,vars-on-top

@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
     const l10n = L10n.get('gears');
     state.nodesDataset = new vis.DataSet();
     state.edgesDataset = new vis.DataSet();
-    
+
     exports.init = () => {
         state.addNodeDialog = UI.createModalDialog(root, updateNode, {
             bodySelector: 'add-or-edit-node-body',
@@ -32,46 +32,46 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-save',
             onCancel: onNodeCancel
         });
-        
+
         state.editNodeDialog = UI.createModalDialog(root, updateNode, {
             bodySelector: 'add-or-edit-node-body',
             dialogTitle: 'gears-edit-node',
             actionButtonTitle: 'common-save',
             onCancel: onNodeCancel
         });
-        
+
         state.renameEdgeDialog = UI.createModalDialog(root, renameEdge, {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'gears-rename-edge',
             actionButtonTitle: 'common-save',
         });
-        
+
         const configureNetworkDialog = UI.createModalDialog(root, (dialog) => () => dialog.hideDlg(), {
             bodySelector: 'config-inner-body',
             dialogTitle: 'gears-configure-network',
             actionButtonTitle: 'common-close',
         });
-        
+
         addClass(qee(configureNetworkDialog, '.modal-dialog'), 'gears-config-dialog');
-        
+
         queryEl(`${root} .custom-physics-settings`).value = '';
-        
+
 //        document.querySelector('.nodesText').value = charExample;
 //        setAttr(document.querySelector('.nodesText'),'rows', charExample.split('\n').length);
 //        document.querySelector('.edgesText').value = edgesExample;
 //        setAttr(document.querySelector('.edgesText'),'rows', edgesExample.split('\n').length);
-        
+
         listen(qe(`${root} .draw-button`), 'click', exports.refresh);
         listen(qe(`${root} .get-image-button`), 'click', getImage);
         listen(qe(`${root} .download-button`), 'click', downloadCsv);
         listen(qe(`${root} .download-json-button`), 'click', downloadJSON);
         listen(qe(`${root} .download-graphml-button`), 'click', downloadYED);
         listen(qe(`${root} .clear-button`), 'click', clearNetwork);
-        
+
         listen(queryEl(`${root} .physics-settings-button`), 'click', () => configureNetworkDialog.showDlg());
-        
+
         listen(queryEl(`${root} .search-node`), 'change', onNodeFocus);
-        
+
         listen(queryEl(`${root} .custom-physics-settings-button`), 'click', () => {
             const options = queryEl(`${root} .custom-physics-settings`).value;
             if(options.trim() === ''){
@@ -89,10 +89,10 @@ See the License for the specific language governing permissions and
             }
             state.network.setOptions(options);
         });
-        
+
         queryEl(`${root} .physics-enabled-checkbox`).checked = false;
         listen(queryEl(`${root} .physics-enabled-checkbox`), 'change', (event) => {
-            DBMS.setGearsPhysicsEnabledNew({enabled: event.target.checked}).then(() => {
+            DBMS.setGearsPhysicsEnabled({enabled: event.target.checked}).then(() => {
                 state.network.setOptions({
                     "physics": {
                         "enabled": event.target.checked,
@@ -101,18 +101,18 @@ See the License for the specific language governing permissions and
                 });
             }).catch(Utils.handleError);
         });
-        
+
         queryEl(`${root} .show-notes-checkbox`).checked = false;
         listen(queryEl(`${root} .show-notes-checkbox`), 'change', (event) => {
-            DBMS.setGearsShowNotesEnabledNew({enabled: event.target.checked})
+            DBMS.setGearsShowNotesEnabled({enabled: event.target.checked})
                 .then(exports.refresh).catch(Utils.handleError);
         });
-        
+
         queryEl(`${root} .big-picture-checkbox`).checked = false;
         listen(queryEl(`${root} .big-picture-checkbox`), 'change', (event) => {
             setClassByCondition(queryEl(`${root} .mynetwork > div`),'big-picture',event.target.checked);
         });
-        
+
         state.nodesDataset.on('*', () => {
             fillSearchSelect();
         });
@@ -120,10 +120,10 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        DBMS.getAllGearsDataNew().then((data) => {
+        DBMS.getAllGearsData().then((data) => {
             queryEl(`${root} .show-notes-checkbox`).checked = data.settings.showNotes;
             queryEl(`${root} .physics-enabled-checkbox`).checked = data.settings.physicsEnabled;
-            
+
             data.nodes.forEach(node => {
                 node.label = makeLabel(node.name, node.notes);
             });
@@ -134,7 +134,7 @@ See the License for the specific language governing permissions and
             drawNetwork();
         }).catch(Utils.handleError);
     };
-    
+
     // create a network
     function drawNetwork() {
       const container = qe(`${root} .mynetwork`);
@@ -146,15 +146,15 @@ See the License for the specific language governing permissions and
             addNode: function (data, callback) {
                 data.label = '';
                 data.name = '';
-                
+
                 qee(state.addNodeDialog, '.node-id').value = data.id;
                 qee(state.addNodeDialog, '.node-name').value = data.name;
                 qee(state.addNodeDialog, '.node-group').value = '';
                 qee(state.addNodeDialog, '.node-notes').value = '';
-                
+
                 state.nodeData = data;
                 state.nodeCallback = callback;
-                
+
                 state.addNodeDialog.showDlg();
             },
             editNode: function (data, callback) {
@@ -162,12 +162,12 @@ See the License for the specific language governing permissions and
                 qee(state.editNodeDialog, '.node-name').value = data.name;
                 qee(state.editNodeDialog, '.node-group').value = data.group;
                 qee(state.editNodeDialog, '.node-notes').value = data.notes;
-                
+
                 state.nodeData = data;
                 state.nodeCallback = function(data) {
                     callback(data);
                 }.bind(this);
-                
+
                 state.editNodeDialog.showDlg();
             },
             addEdge: function (data, callback) {
@@ -227,17 +227,17 @@ See the License for the specific language governing permissions and
       state.network.on('dragEnd', (params) => storeData());
       state.network.on('stabilized', (params) => storeData());
     }
-    
+
     function storeData(callback){
-        DBMS.setGearsDataNew({data: exportNetwork()}).then(() => {
+        DBMS.setGearsData({data: exportNetwork()}).then(() => {
             if(callback) callback();
         }).catch(Utils.handleError);
     }
-    
+
     function exportNetwork() {
         state.network.storePositions();
         const nodePositions = state.network.getPositions();
-        
+
         console.log(nodePositions);
         const nodes = R.clone(state.nodesDataset.get());
         const edges = state.edgesDataset.get();
@@ -247,7 +247,7 @@ See the License for the specific language governing permissions and
             edges
         };
     }
-    
+
     function importNetwork(data) {
         const {nodes, edges} = data;
         state.nodesDataset.clear();
@@ -267,7 +267,7 @@ See the License for the specific language governing permissions and
     }
 
     function makeLabel(name, notes){
-      let label = prepareStr(name); 
+      let label = prepareStr(name);
       if(queryEl(`${root} .show-notes-checkbox`).checked){
         label += (notes.trim() !== '' ? ('\n\n' + prepareStr(notes)) : '');
       }
@@ -290,25 +290,25 @@ See the License for the specific language governing permissions and
                 return acc;
             }, '');
         }).join('\n');
-        
-        
+
+
 //        return text.split('\n').map(R.splitEvery(30)).map(R.join('-\n')).join('\n');
     }
 
 
     function getImage(event){
       const canvas = document.querySelector("canvas");
-      
+
       const context = canvas.getContext("2d");
       const w = canvas.width;
       const h = canvas.height;
-      
+
       context.globalCompositeOperation = "destination-over";
       context.fillStyle = "#ffffff";
       context.fillRect(0,0,w,h);
-      
+
       setAttr(event.target, 'download', FileUtils.makeFileName('gears','png'));
-      
+
       const img    = canvas.toDataURL("image/png");
       const link = document.querySelector(".link");
       event.target.href = img;
@@ -328,7 +328,7 @@ See the License for the specific language governing permissions and
     }
 
     function updateEdgeTextArea(){
-      document.querySelector('.edgesText').value = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label, 
+      document.querySelector('.edgesText').value = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
           state.nodesDataset.get(edge.to).name].join('\t')).join('\n');
     }
 
@@ -340,17 +340,17 @@ See the License for the specific language governing permissions and
 
     function downloadCsv() {
         const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
-        const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label, 
+        const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
           state.nodesDataset.get(edge.to).name]);
-          
+
         FileUtils.arr2d2Csv(arr.concat([['']]).concat(arr2), 'gears');
     }
 
     function downloadJSON() {
       const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
-      const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label, 
+      const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
         state.nodesDataset.get(edge.to).name]);
-        
+
       const out = new Blob([JSON.stringify({nodes: arr, edges: arr2}, null, '  ')], {
           type: 'application/json;charset=utf-8;'
       });
@@ -359,9 +359,9 @@ See the License for the specific language governing permissions and
 
     function downloadYED() {
       const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
-      const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label, 
+      const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
         state.nodesDataset.get(edge.to).name]);
-      
+
       const groups = {};
       let index = 1;
       state.nodesDataset.map(node => {
@@ -370,12 +370,12 @@ See the License for the specific language governing permissions and
           index++;
         }
       });
-        
+
       const nodes = state.nodesDataset.map(node => {
         const colors = Constants.colorPalette[groups[node.group]-1].color;
         return CommonUtils.strFormat(Constants.yedNodeTmpl, [node.id, node.label, colors.background, colors.border]);
       }).join('\n');
-      
+
       const edges = state.edgesDataset.map(edge => {
         return CommonUtils.strFormat(Constants.yedEdgeTmpl, [edge.id, edge.label || '', edge.from, edge.to]);
       }).join('\n');
@@ -405,7 +405,7 @@ See the License for the specific language governing permissions and
             }
         }
     }
-    
+
     function updateNode(dialog) {
         return () => {
             if( state.nodeData ){
@@ -416,12 +416,12 @@ See the License for the specific language governing permissions and
                 data.notes = qee(dialog, '.node-notes').value;
                 data.label = makeLabel(data.name, data.notes);
                 data.shape = 'box';
-                
+
                 const extraFields = R.difference(R.keys(data), Constants.gearsNodeRequiredFields);
                 data = R.omit(extraFields, data);
-                
+
                 state.nodeCallback(data);
-                
+
                 state.nodeData = null;
                 state.nodeCallback = null;
                 storeData(exports.refresh);
@@ -429,7 +429,7 @@ See the License for the specific language governing permissions and
             }
         };
     }
-    
+
     function onNodeCancel() {
         if( state.nodeData ){
             state.nodeCallback(null);

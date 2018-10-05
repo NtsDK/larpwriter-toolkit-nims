@@ -53,11 +53,11 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        PermissionInformer.getEntityNamesArrayNew({type: 'group', editableOnly: false}).then((groupNames) => {
+        PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false}).then((groupNames) => {
             showEl(qe(`${root} .alert`), groupNames.length === 0);
             showEl(qe(`${root} .col-xs-9`), groupNames.length !== 0);
             Utils.enableEl(qe(`${root} .entity-filter`), groupNames.length !== 0);
-            
+
             addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map((name, i, arr) => {
                 const el = wrapEl('div', qte('.entity-item-tmpl'));
                 addEl(qee(el, '.primary-name'), makeText(name.displayName));
@@ -86,7 +86,7 @@ See the License for the specific language governing permissions and
                 }
                 return el;
             }));
-    
+
             showProfileInfoDelegate2(UI.checkAndGetEntitySetting(settingsPath, groupNames))();
         }).catch(Utils.handleError)
     };
@@ -133,11 +133,11 @@ See the License for the specific language governing permissions and
             case 'text':
                 // eslint-disable-next-line prefer-destructuring
                 value = event.target.value;
-                DBMS.updateGroupFieldNew({groupName, fieldName, value}).catch(Utils.handleError);
+                DBMS.updateGroupField({groupName, fieldName, value}).catch(Utils.handleError);
                 break;
             case 'checkbox':
                 value = event.target.checked;
-                DBMS.doExportGroupNew({groupName, value}).catch(Utils.handleError);
+                DBMS.doExportGroup({groupName, value}).catch(Utils.handleError);
                 break;
             default:
                 throw new Error(`Unexpected type ${type}`);
@@ -152,30 +152,30 @@ See the License for the specific language governing permissions and
                 UI.updateEntitySetting(settingsPath, name);
                 const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
                 addClass(el, 'btn-primary');
-                
+
                 const parentEl = el.parentElement.parentElement;
                 const entityList = queryEl(`${root} .entity-list`);
                 UI.scrollTo(entityList, parentEl);
-                
+
                 showProfileInfoCallback(name);
             }
         };
     }
-    
+
     function showProfileInfoCallback(groupName) {
         Promise.all([
-            DBMS.getGroupNew({groupName: groupName}),
+            DBMS.getGroup({groupName: groupName}),
             FilterConfiguration.makeFilterConfiguration(),
-            PermissionInformer.isEntityEditableNew({type: 'group', name: groupName})
+            PermissionInformer.isEntityEditable({type: 'group', name: groupName})
         ]).then(results => {
             const [group, filterConfiguration, isGroupEditable] = results;
             const { name } = group;
             updateSettings(name);
-            
+
             const name2DisplayName = filterConfiguration.getName2DisplayNameMapping();
-            
+
             const name2Source = filterConfiguration.getName2SourceMapping();
-    
+
             state.name = name;
             const { inputItems } = state;
             Object.keys(inputItems).forEach((inputName) => {
@@ -242,7 +242,7 @@ See the License for the specific language governing permissions and
         const title = getL10n(`profile-filter-${source}`) + ', ' + getL10n(`constant-${filterItem.type}`);
         return {displayName, title, condition, value};
     });
-    
+
     function data2row(data){
         const {displayName, title, condition, value} = data;
         const row = qmte(`${root} .group-filter-row-template`);
@@ -280,11 +280,11 @@ See the License for the specific language governing permissions and
         const input = qee(dialog, '.entity-input');
         const name = input.value.trim();
 
-        DBMS.createGroupNew({groupName: name}).then(() => {
+        DBMS.createGroup({groupName: name}).then(() => {
             if (updateSettingsFlag) {
                 UI.updateEntitySetting(settingsPath, name);
             }
-            PermissionInformer.refreshNew().then(() => {
+            PermissionInformer.refresh().then(() => {
                 input.value = '';
                 dialog.hideDlg();
                 refresh();
@@ -298,7 +298,7 @@ See the License for the specific language governing permissions and
             const { fromName } = dialog;
             const toName = toInput.value.trim();
 
-            DBMS.renameGroupNew({fromName, toName}).then(() => {
+            DBMS.renameGroup({fromName, toName}).then(() => {
                 UI.updateEntitySetting(settingsPath, toName);
                 toInput.value = '';
                 dialog.hideDlg();
@@ -311,8 +311,8 @@ See the License for the specific language governing permissions and
         const name = callback();
 
         Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
-            DBMS.removeGroupNew({groupName: name}).then(() => {
-                PermissionInformer.refreshNew().then(() => {
+            DBMS.removeGroup({groupName: name}).then(() => {
+                PermissionInformer.refresh().then(() => {
                     if(btn.nextName !== undefined){
                         UI.updateEntitySetting(settingsPath, btn.nextName);
                     } else if(btn.prevName !== undefined) {

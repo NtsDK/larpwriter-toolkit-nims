@@ -82,18 +82,18 @@ See the License for the specific language governing permissions and
     exports.refresh = () => {
         const storySelector = clearEl(getEl('storySelector'));
 
-        PermissionInformer.getEntityNamesArrayNew({type: 'story', editableOnly: false}).then( allStoryNames => {
+        PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}).then( allStoryNames => {
             const data = getSelect2Data(allStoryNames);
-            
+
             Utils.enableEl(qe(`${root}.rename.story`), allStoryNames.length > 0);
             Utils.enableEl(qe(`${root}.remove.story`), allStoryNames.length > 0);
             Utils.enableEl(qe(`${root}.create.event`), allStoryNames.length > 0);
             Utils.enableEl(qe(`${root}.add.character`), allStoryNames.length > 0);
             Utils.enableEl(qe(`${root}#storySelector`), allStoryNames.length > 0);
-            
+
             showEl(qe(`${root}.alert`), allStoryNames.length === 0);
             showEl(qe(`${root}.stories-main-container`), allStoryNames.length !== 0);
-            
+
             if (allStoryNames.length > 0) {
                 const storyName = getSelectedStoryName(allStoryNames);
                 $('#storySelector').select2(data).val(storyName).trigger('change');
@@ -129,9 +129,9 @@ See the License for the specific language governing permissions and
             const input = qee(dialog, '.entity-input');
             const storyName = input.value.trim();
 
-            DBMS.createStoryNew({storyName}).then(() => {
+            DBMS.createStory({storyName}).then(() => {
                 updateSettings(storyName);
-                PermissionInformer.refreshNew().then(() => {
+                PermissionInformer.refresh().then(() => {
                     input.value = '';
                     dialog.hideDlg();
                     exports.refresh();
@@ -146,9 +146,9 @@ See the License for the specific language governing permissions and
             const fromName = queryEl(`${root}#storySelector`).value.trim();
             const toName = toInput.value.trim();
 
-            DBMS.renameStoryNew({fromName, toName}).then(() => {
+            DBMS.renameStory({fromName, toName}).then(() => {
                 updateSettings(toName);
-                PermissionInformer.refreshNew().then(() => {
+                PermissionInformer.refresh().then(() => {
                     toInput.value = '';
                     dialog.hideDlg();
                     exports.refresh();
@@ -161,8 +161,8 @@ See the License for the specific language governing permissions and
         const name = queryEl(`${root}#storySelector`).value.trim();
 
         Utils.confirm(strFormat(getL10n('stories-are-you-sure-about-story-removing'), [name]), () => {
-            DBMS.removeStoryNew({storyName:name}).then(() => {
-                PermissionInformer.refreshNew().then(() => {
+            DBMS.removeStory({storyName:name}).then(() => {
+                PermissionInformer.refresh().then(() => {
                     exports.refresh();
                 }).catch(Utils.handleError);
             }).catch(Utils.handleError);
@@ -179,7 +179,7 @@ See the License for the specific language governing permissions and
 
         if (storyName) {
             updateSettings(storyName);
-            PermissionInformer.isEntityEditableNew({type: 'story', name: storyName}).then( isStoryEditable => {
+            PermissionInformer.isEntityEditable({type: 'story', name: storyName}).then( isStoryEditable => {
                 if (state.left.currentView)state.left.currentView.refresh();
                 if (state.right.currentView)state.right.currentView.refresh();
                 Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);

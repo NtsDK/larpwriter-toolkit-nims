@@ -23,11 +23,11 @@ See the License for the specific language governing permissions and
         } = opts;
 
         // DBMS.gears.get()
-        LocalDBMS.prototype.getAllGearsDataNew = function () {
+        LocalDBMS.prototype.getAllGearsData = function () {
             return Promise.resolve(CU.clone(this.database.Gears));
         };
         // DBMS.gears.set()
-        LocalDBMS.prototype.setGearsDataNew = function ({data}={}) {
+        LocalDBMS.prototype.setGearsData = function ({data}={}) {
             return new Promise((resolve, reject) => {
                 this.database.Gears.nodes = data.nodes;
                 this.database.Gears.edges = data.edges;
@@ -36,13 +36,13 @@ See the License for the specific language governing permissions and
         };
 
         // DBMS.gears.physics.set({enabled})
-        LocalDBMS.prototype.setGearsPhysicsEnabledNew = function ({enabled}={}) {
+        LocalDBMS.prototype.setGearsPhysicsEnabled = function ({enabled}={}) {
             this.database.Gears.settings.physicsEnabled = enabled;
             return Promise.resolve();
         };
 
         // DBMS.gears.showNotes.set({enabled})
-        LocalDBMS.prototype.setGearsShowNotesEnabledNew = function ({enabled}={}) {
+        LocalDBMS.prototype.setGearsShowNotesEnabled = function ({enabled}={}) {
             this.database.Gears.settings.showNotes = enabled;
             return Promise.resolve();
         };
