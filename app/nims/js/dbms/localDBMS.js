@@ -87,7 +87,7 @@ function makeLocalDBMS() {
         'slidersAPI',
         'logAPI'].map(func);
 
-    Logger.attachLogCalls(LocalDBMS, R, false);
+    // Logger.attachLogCalls(LocalDBMS, R, false);
 
     const baseAPIList = R.keys(R.mergeAll(R.values(funcList)));
     const loggerAPIList = R.difference(R.keys(R.mergeAll(R.values(Logger.apiInfo))), Logger.offlineIgnoreList);
@@ -101,6 +101,8 @@ function makeLocalDBMS() {
     }
 
     const dbms = new LocalDBMS();
+    const proxy1 = CallNotificator.applyCallNotificatorProxy(dbms);
+    const proxy2 = Logger.applyLoggerProxy(proxy1, R, false);
 
-    return CallNotificator.applyCallNotificatorProxy(dbms);
+    return proxy2;
 }

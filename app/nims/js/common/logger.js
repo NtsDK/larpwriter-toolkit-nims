@@ -196,8 +196,6 @@ See the License for the specific language governing permissions and
             createOrganizer: { ignoreParams: true },
             changeOrganizerPassword: { ignoreParams: true },
             removeOrganizer: {},
-            removePermission: {},
-            assignPermission: {},
         },
         playerManagementAPI: {
             getPlayerLoginsArray: null,
@@ -212,7 +210,10 @@ See the License for the specific language governing permissions and
             getPlayerProfileInfo: null,
             createCharacterByPlayer: {}
         },
-
+        entityManagementAPI: {
+            removePermission: {},
+            assignPermission: {},
+        },
         textSearchAPI: {
             getTexts: null
         },
@@ -252,177 +253,86 @@ See the License for the specific language governing permissions and
         }
     };
 
-
     // isServer - used in server mode. If false then user in logs will be named "user".
-    // environment - used to disable this.log function in thin client in server version.
-    //      I agree it is strange.
-    exports.attachLogCalls = (LocalDBMS, R, isServer) => {
+    exports.applyLoggerProxy = function(dbms, R, isServer) {
         const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
         const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
 
-        Object.keys(LocalDBMS.prototype)
-            .filter(R.prop(R.__, filteredApi))
-            .forEach((funcName) => {
-                const oldFun = LocalDBMS.prototype[funcName];
-                LocalDBMS.prototype[funcName] = function (...arr) {
+        return new Proxy(dbms, {
+            get(target, prop) {
+                function isFunction(obj) {
+                    return typeof obj === 'function';
+                }
 
-                    let accept = true;
-                    if (filteredApi[funcName].filter) {
-                        accept = filteredApi[funcName].filter(arr);
-                    }
+                if(target[prop] === undefined || !isFunction(target[prop])) {
+                    return target[prop];
+                }
 
-                    function getArgs(arr) {
-                        return isServer ? R.init(arr) : arr;
-                    }
-
-                    if (!accept) {
-                        return oldFun.apply(this, arguments);
-                    } else {
-                        let userName = 'user';
-                        if (isServer && arguments[arguments.length - 1] !== undefined) {
-                            userName = arguments[arguments.length - 1].name;
+                const funcName = prop;
+                return new Proxy(target[funcName], {
+                    apply: function(func, thisArg, arr) {
+                        if (filteredApi[funcName] === undefined) {
+                            return func.apply(thisArg, arr);
                         }
 
-                        const beginTime = new Date().toString();
-                        this.log({
-                            userName,
-                            time: beginTime,
-                            funcName,
-                            rewrite: !!filteredApi[funcName].rewrite,
-                            params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
-                            status: JSON.stringify(['begin'])
-                        });
+                        let accept = true;
+                        if (filteredApi[funcName].filter) {
+                            accept = filteredApi[funcName].filter(arr);
+                        }
 
-                        return new Promise((resolve, reject) => {
-                            oldFun.apply(this, arguments).then((result) => {
-                                const endTime = new Date().toString();
-                                const text = 'OK';
-                                this.log({
-                                    userName,
-                                    time: endTime,
-                                    funcName,
-                                    rewrite: !!filteredApi[funcName].rewrite,
-                                    params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
-                                    status: JSON.stringify([beginTime, text])
+                        function getArgs(arr) {
+                            return isServer ? R.init(arr) : arr;
+                        }
+
+                        if (!accept) {
+                            // return oldFun.apply(this, arguments);
+                            return func.apply(thisArg, arr);
+                        } else {
+                            let userName = 'user';
+                            if (isServer && arr[arr.length - 1] !== undefined) {
+                                userName = arr[arr.length - 1].name;
+                            }
+
+                            const beginTime = new Date().toString();
+                            const logInfo = {
+                                userName,
+                                time: beginTime,
+                                funcName,
+                                rewrite: !!filteredApi[funcName].rewrite,
+                                params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
+                                status: JSON.stringify(['begin'])
+                            };
+
+                            thisArg.log(logInfo);
+
+                            return new Promise((resolve, reject) => {
+                                func.apply(thisArg, arr).then((result) => {
+                                    const endTime = new Date().toString();
+                                    const text = 'OK';
+                                    logInfo.time = endTime;
+                                    logInfo.status = JSON.stringify([beginTime, text]);
+                                    thisArg.log(logInfo);
+
+                                    resolve(result);
+                                }).catch((err) => {
+                                    const endTime = new Date().toString();
+                                    let text = 'ERR: ';
+                                    if (err.messageId !== undefined) {
+                                        text += `${err.messageId}, ${JSON.stringify(err.parameters)}`;
+                                    } else {
+                                        text += err;
+                                    }
+                                    logInfo.time = endTime;
+                                    logInfo.status = JSON.stringify([beginTime, text]);
+                                    thisArg.log(logInfo);
+
+                                    reject(err);
                                 });
-                                resolve(result);
-                            }).catch((err) => {
-                                const endTime = new Date().toString();
-                                let text = 'ERR: ';
-                                if (err.messageId !== undefined) {
-                                    text += `${err.messageId}, ${JSON.stringify(err.parameters)}`;
-                                } else {
-                                    text += err;
-                                }
-                                this.log({
-                                    userName,
-                                    time: endTime,
-                                    funcName,
-                                    rewrite: !!filteredApi[funcName].rewrite,
-                                    params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
-                                    status: JSON.stringify([beginTime, text])
-                                });
-                                reject(err);
                             });
-                        });
+                        }
                     }
-
-
-                    // const arr = [];
-                    // for (let i = 0; i < arguments.length - 1; i++) {
-                    //     arr.push(arguments[i]);
-                    // }
-
-                    // const { length } = arguments;
-                    // const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
-                    // const callback = arguments[callbackPos];
-
-
-                    // let accept = true;
-                    // if (filteredApi[funcName].filter) {
-                    //     accept = filteredApi[funcName].filter(arr);
-                    // }
-
-                    // if (accept) {
-                    //     let userName = 'user';
-                    //     if (isServer && arguments[arguments.length - 1] !== undefined) {
-                    //         userName = arguments[arguments.length - 1].name;
-                    //     }
-
-                    //     const beginTime = new Date().toString();
-                    //     this.log({
-                    //         userName,
-                    //         time: beginTime,
-                    //         funcName,
-                    //         rewrite: !!filteredApi[funcName].rewrite,
-                    //         params: filteredApi[funcName].ignoreParams ? [] : arr,
-                    //         status: JSON.stringify(['begin'])
-                    //     });
-                    //     // this.log(
-                    //     //     userName, beginTime, funcName, !!filteredApi[funcName].rewrite,
-                    //     //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify(['begin'])
-                    //     // );
-
-
-                    //     const callbackOverride = function () {
-                    //         const endTime = new Date().toString();
-                    //         const hasError = (arguments[0] !== null && arguments[0] !== undefined);
-                    //         let text;
-                    //         if (hasError) {
-                    //             text = 'ERR: ';
-                    //             if (arguments[0].messageId !== undefined) {
-                    //                 text += `${arguments[0].messageId}, ${JSON.stringify(arguments[0].parameters)}`;
-                    //             } else {
-                    //                 text += arguments[0];
-                    //             }
-                    //         } else {
-                    //             text = 'OK';
-                    //         }
-                    //         // this.log(
-                    //         //     userName, endTime, funcName, !!filteredApi[funcName].rewrite,
-                    //         //     filteredApi[funcName].ignoreParams ? [] : arr, JSON.stringify([beginTime,
-                    //         //         text])
-                    //         // );
-                    //         this.log({
-                    //             userName,
-                    //             time: endTime,
-                    //             funcName,
-                    //             rewrite: !!filteredApi[funcName].rewrite,
-                    //             params: filteredApi[funcName].ignoreParams ? [] : arr,
-                    //             status: JSON.stringify([beginTime, text])
-                    //         });
-                    //         callback(...arguments);
-                    //     }.bind(this);
-                    //     arguments[callbackPos] = callbackOverride;
-                    // }
-
-                    // return oldFun.apply(this, arguments);
-                };
-            });
-
-        const arr = [];
-        let timeout;
-
-        // Object.keys(LocalDBMS.prototype)
-        //     .forEach((funcName) => {
-        //         const oldFun = LocalDBMS.prototype[funcName];
-        //         LocalDBMS.prototype[funcName] = function () {
-        //             try {
-        //                 // const exclude = ['_init', 'subscribeOnPermissionsUpdate', 'getPermissionsSummary'];
-        //                 // if(!funcName.endsWith('New') && !R.contains(funcName, exclude)){
-        //                 //     console.error('Old API call', funcName, arguments);
-        //                 //     // console.trace('Old API call', funcName);
-        //                 // }
-        //                 return oldFun.apply(this, arguments);
-        //             } catch (err) {
-        //                 const { length } = arguments;
-        //                 const callbackPos = length + (typeof arguments[length - 1] === 'function' ? -1 : -2);
-        //                 const callback = arguments[callbackPos];
-        //                 console.error(funcName, err);
-        //                 throw err;
-        //                 // return callback(err);
-        //             }
-        //         };
-        //     });
-    };
+                });
+            },
+        });
+    }
 })(typeof exports === 'undefined' ? this.Logger = {} : exports);

@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
     const showNotification = true;
     const notificationTimeout = 2000;
 
-    exports.onCallStart = () => {
+    function onCallStart(){
         if (!showNotification) return;
         const notificationBox = clearEl(getEl('debugNotification'));
         removeClass(notificationBox, 'hidden');
@@ -27,7 +27,7 @@ See the License for the specific language governing permissions and
         addEl(notificationBox, makeText(L10n.get('constant', 'saving')));
     };
 
-    exports.onCallFinished = (err) => {
+    function onCallFinished(err){
         if (!showNotification) return;
         if(err) {
             onCallFail();
@@ -70,11 +70,11 @@ See the License for the specific language governing permissions and
                 } else {
                     return new Proxy(target[prop], {
                         apply: function(target, thisArg, argumentsList) {
-                            CallNotificator.onCallStart();
+                            onCallStart();
                             const promise = target.apply(thisArg, argumentsList);
                             promise.then( () => {
-                                CallNotificator.onCallFinished()
-                            }, err => CallNotificator.onCallFinished(err));
+                                onCallFinished()
+                            }, err => onCallFinished(err));
                             return promise;
                         }
                     });

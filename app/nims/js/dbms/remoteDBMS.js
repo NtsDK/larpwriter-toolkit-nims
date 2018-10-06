@@ -60,34 +60,6 @@ function makeRemoteDBMS() {
         });
     };
 
-    // RemoteDBMS._simpleGet = function (name, params, callback) {
-    //     let paramStr = '';
-    //     if (params) {
-    //         paramStr = `?params=${encodeURIComponent(JSON.stringify(params))}`;
-    //     }
-
-    //     const request = $.ajax({
-    //         url: url + name + paramStr,
-    //         dataType: 'text',
-    //         method: 'GET',
-    //         contentType: 'application/json;charset=utf-8',
-    //         cache: false,
-    //         timeout: Constants.httpTimeout,
-    //     });
-
-    //     request.done((data) => {
-    //         callback(null, JSON.parse(data));
-    //     });
-
-    //     request.fail((errorInfo, textStatus, errorThrown) => {
-    //         try {
-    //             callback(JSON.parse(errorInfo.responseText));
-    //         } catch (err) {
-    //             callback(errorInfo.responseText || textStatus || 'error');
-    //         }
-    //     });
-    // };
-
     RemoteDBMS._simplePut = function (name, data) {
         return new Promise((resolve, reject) => {
             const request = $.ajax({
@@ -112,32 +84,6 @@ function makeRemoteDBMS() {
             });
         });
     };
-    // RemoteDBMS._simplePut = function (name, data, callback) {
-    //     const request = $.ajax({
-    //         url: url + name,
-    //         dataType: 'text',
-    //         method: 'PUT',
-    //         contentType: 'application/json;charset=utf-8',
-    //         data: JSON.stringify(data),
-    //         timeout: Constants.httpTimeout
-    //     });
-
-    //     CallNotificator.onCallStart();
-
-    //     request.done((data2) => {
-    //         CallNotificator.onCallFinished();
-    //         if (callback) callback();
-    //     });
-
-    //     request.fail((errorInfo, textStatus, errorThrown) => {
-    //         CallNotificator.onCallFinished(errorInfo);
-    //         try {
-    //             callback(JSON.parse(errorInfo.responseText));
-    //         } catch (err) {
-    //             callback(errorInfo.responseText || textStatus || 'error');
-    //         }
-    //     });
-    // };
 
     const dbms = new RemoteDBMS();
 
