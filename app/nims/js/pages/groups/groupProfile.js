@@ -254,7 +254,7 @@ See the License for the specific language governing permissions and
     }
 
     function updateSettings(name) {
-        const settings = DBMS.getSettings();
+        const settings = SM.getSettings();
         settings.GroupProfile.groupName = name;
     }
 

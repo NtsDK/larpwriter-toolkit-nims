@@ -464,7 +464,7 @@ See the License for the specific language governing permissions and
         'changeOrganizerPassword', 'createPlayer', 'createPlayerLogin', 'changePlayerPassword',
         'getPlayerProfileInfo', 'createCharacterByPlayer', 'publishPermissionsUpdate'];
 
-    exports.commonIgnoreList = ['getSettings', '_init', 'clearSettings', 'log'];
+    exports.commonIgnoreList = ['_init', 'log'];
 
 
 

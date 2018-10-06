@@ -20,12 +20,7 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names */
 
-function makeLocalDBMS(fullVersion) {
-//    if(!fullVersion){
-//        function LocalDBMS(){
-//        };
-//        return LocalDBMS;
-//    }
+function makeLocalDBMS() {
     const listeners = {};
 
     function addListener(eventName, callback) {
@@ -55,12 +50,6 @@ function makeLocalDBMS(fullVersion) {
     function LocalDBMS() {
         this._init(listeners);
     }
-
-    LocalDBMS.prototype.getSettings = function () {
-        'use strict';
-
-        return this.database.Settings;
-    };
 
     const funcList = {};
     const func = R.curry((name) => {
@@ -93,7 +82,6 @@ function makeLocalDBMS(fullVersion) {
 
         'storyViewAPI',
         'storyAdaptationsAPI',
-        'accessManagerAPI',
         'textSearchAPI',
         'gearsAPI',
         'slidersAPI',
@@ -109,71 +97,10 @@ function makeLocalDBMS(fullVersion) {
         console.error(`Logger diff: ${loggerDiff}`);
         console.error(`Logged but not in base: ${R.difference(loggerAPIList, baseAPIList)}`);
         console.error(`In base but not logged: ${R.difference(baseAPIList, loggerAPIList)}`);
-        //throw new Error('API processors are inconsistent');
+        throw new Error('API processors are inconsistent');
     }
 
-    return LocalDBMS;
-}
+    const dbms = new LocalDBMS();
 
-function makeLocalDBMSWrapper(dbms) {
-
-    function LocalDBMSWrapper(dbms) {
-        this.dbms = dbms;
-        this.clearSettings();
-    }
-
-    const all = [];
-    
-    Object.keys(dbms.__proto__).forEach((name) => {
-        LocalDBMSWrapper.prototype[name] = function () {
-            // const callView = {
-            //     func: name,
-            //     args: arguments[0],
-            // };
-            // all.push(callView);
-            // console.log(JSON.stringify(all));
-
-            if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is') || R.equals(name, 'log')) {
-                return this.dbms[name].apply(this.dbms, arguments);
-            } else {
-                const callback = arguments[arguments.length - 1];
-                const arr = [];
-                for (let i = 0; i < arguments.length; i++) {
-                    arr.push(arguments[i]);
-                }
-
-                
-
-                return this.dbms[name].apply(this.dbms, arr);
-
-                // TODO fix call notificator
-                // for (let i = 0; i < arguments.length - 1; i++) {
-                //     arr.push(arguments[i]);
-                // }
-                
-                // CallNotificator.onCallStart();
-                
-                // arr.push(function(err) {
-                //     CallNotificator.onCallFinished(err);
-                //     callback(err);
-                // });
-                // this.dbms[name].apply(this.dbms, arr);
-            }
-        };
-    });
-    
-    // Promisificator.promisify(dbms, LocalDBMSWrapper);
-
-    LocalDBMSWrapper.prototype.clearSettings = function () {
-        this.Settings = {
-            BriefingPreview: {},
-            Stories: {},
-            ProfileEditor: {}
-        };
-    };
-
-    LocalDBMSWrapper.prototype.getSettings = function () {
-        return this.Settings;
-    };
-    return new LocalDBMSWrapper(dbms);
+    return CallNotificator.applyCallNotificatorProxy(dbms);
 }

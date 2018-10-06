@@ -28,7 +28,6 @@ function makeRemoteDBMS() {
     const url = '/api';
 
     function RemoteDBMS() {
-        this.clearSettings();
     }
 
     RemoteDBMS._simpleGet = function (name, params) {
@@ -100,15 +99,11 @@ function makeRemoteDBMS() {
                 timeout: Constants.httpTimeout
             });
 
-            CallNotificator.onCallStart();
-
             request.done((data2) => {
-                CallNotificator.onCallFinished();
                 resolve();
             });
 
             request.fail((errorInfo, textStatus, errorThrown) => {
-                CallNotificator.onCallFinished(errorInfo);
                 try {
                     reject(JSON.parse(errorInfo.responseText));
                 } catch (err) {
@@ -144,89 +139,11 @@ function makeRemoteDBMS() {
     //     });
     // };
 
-
-    // Object.keys(LocalDBMS.prototype).forEach((name) => {
-    //     RemoteDBMS.prototype[name] = function () {
-    //         const arr = [];
-    //         for (let i = 0; i < arguments.length; i++) {
-    //             arr.push(arguments[i]);
-    //         }
-    //         //            if(CommonUtils.startsWith(name, "_")){
-    //         //                // do nothing for inner functions
-    //         //            } else
-    //         if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
-    //             return RemoteDBMS._simpleGet(name, arr);
-    //         } else {
-    //             return RemoteDBMS._simplePut(name, arr);
-    //         }
-    //     };
-    // });
-
-
-    // Object.keys(LocalDBMS.prototype).forEach((name) => {
-    //     RemoteDBMS.prototype[name] = function () {
-    //         const arr = [];
-    //         for (let i = 0; i < arguments.length - 1; i++) {
-    //             arr.push(arguments[i]);
-    //         }
-    //         //            if(CommonUtils.startsWith(name, "_")){
-    //         //                // do nothing for inner functions
-    //         //            } else
-    //         if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
-    //             RemoteDBMS._simpleGet(name, arr, arguments[arguments.length - 1]);
-    //         } else {
-    //             RemoteDBMS._simplePut(name, arr, arguments[arguments.length - 1]);
-    //         }
-    //     };
-    // });
-
-    // promisification
-    // Object.keys(LocalDBMS.prototype).forEach((name) => {
-    //     RemoteDBMS.prototype[name + 'Pm'] = function () {
-    //         const arr = [];
-    //         for (let i = 0; i < arguments.length; i++) {
-    //             arr.push(arguments[i]);
-    //         }
-    //         //            if(CommonUtils.startsWith(name, "_")){
-    //         //                // do nothing for inner functions
-    //         //            } else
-    //         return new Promise(function(resolve, reject) {
-    //             if (CommonUtils.startsWith(name, 'get') || CommonUtils.startsWith(name, 'is')) {
-    //                 RemoteDBMS._simpleGet(name, arr, function(err, value) {
-    //                     if(err) {reject(err); return;}
-    //                     resolve(value);
-    //                 });
-    //             } else {
-    //                 RemoteDBMS._simplePut(name, arr, function(err, value) {
-    //                     if(err) {reject(err); return;}
-    //                     resolve();
-    //                 });
-    //             }
-    //         }.bind(this));
-    //     };
-    // });
-
-    RemoteDBMS.prototype.clearSettings = function () {
-        this.Settings = {
-            BriefingPreview: {},
-            Stories: {},
-            ProfileEditor: {}
-        };
-    };
-
-    RemoteDBMS.prototype.getSettings = function () {
-        return this.Settings;
-    };
-    // return RemoteDBMS;
     const dbms = new RemoteDBMS();
 
     const proxy = new Proxy(dbms, {
         get(target, prop) {
-            if(prop === 'getSettings' || prop === 'clearSettings'){
-                return target[prop];
-            }
 
-            // console.log(`Reading ${prop}`);
             let func;
             if (CommonUtils.startsWith(prop, 'get') || CommonUtils.startsWith(prop, 'is')) {
                 func = RemoteDBMS._simpleGet;
@@ -239,12 +156,12 @@ function makeRemoteDBMS() {
                     for (let i = 0; i < argumentsList.length; i++) {
                         arr.push(argumentsList[i]);
                     }
-                    // alert(`${argumentsList}`);
                     return target.apply(thisArg, [prop, arr]);
                 }
             });
         },
-      })
+    });
 
-    return proxy;
+    // return proxy;
+    return CallNotificator.applyCallNotificatorProxy(proxy);
 }

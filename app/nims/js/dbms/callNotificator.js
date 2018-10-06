@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
 ((exports) => {
     const showNotification = true;
     const notificationTimeout = 2000;
-    
+
     exports.onCallStart = () => {
         if (!showNotification) return;
         const notificationBox = clearEl(getEl('debugNotification'));
@@ -26,7 +26,7 @@ See the License for the specific language governing permissions and
         removeClass(notificationBox, 'operationFail');
         addEl(notificationBox, makeText(L10n.get('constant', 'saving')));
     };
-    
+
     exports.onCallFinished = (err) => {
         if (!showNotification) return;
         if(err) {
@@ -53,6 +53,36 @@ See the License for the specific language governing permissions and
             addClass(notificationBox, 'hidden');
         }, notificationTimeout);
     }
-    
-    
+
+    exports.applyCallNotificatorProxy = function(dbms) {
+        return new Proxy(dbms, {
+            get(target, prop) {
+                function isFunction(obj) {
+                    return typeof obj === 'function';
+                }
+
+                if(target[prop] === undefined || !isFunction(target[prop])) {
+                    return target[prop];
+                }
+
+                if (CommonUtils.startsWith(prop, 'get') || CommonUtils.startsWith(prop, 'is')) {
+                    return target[prop];
+                } else {
+                    return new Proxy(target[prop], {
+                        apply: function(target, thisArg, argumentsList) {
+                            CallNotificator.onCallStart();
+                            const promise = target.apply(thisArg, argumentsList);
+                            promise.then( () => {
+                                CallNotificator.onCallFinished()
+                            }, err => CallNotificator.onCallFinished(err));
+                            return promise;
+                        }
+                    });
+                }
+            },
+        });
+    }
+
+
+
 })(this.CallNotificator = {});

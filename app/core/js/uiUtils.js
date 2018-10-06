@@ -427,7 +427,7 @@ See the License for the specific language governing permissions and
 
     exports.checkAndGetEntitySetting = (settingsPath, names) => {
         if (names.length === 0) return null;
-        const settings = DBMS.getSettings();
+        const settings = SM.getSettings();
         if (!settings[settingsPath]) {
             settings[settingsPath] = {
                 name: names[0].value
@@ -443,7 +443,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.updateEntitySetting = (settingsPath, name) => {
-        const settings = DBMS.getSettings();
+        const settings = SM.getSettings();
         if (settings[settingsPath] === undefined) {
             settings[settingsPath] = {};
         }

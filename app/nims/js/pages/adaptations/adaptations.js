@@ -126,7 +126,7 @@ See the License for the specific language governing permissions and
         });
         setAttr(eventSelector, 'size', eventArray.length);
 
-        const { selectedFilter } = DBMS.getSettings().Adaptations;
+        const { selectedFilter } = SM.getSettings().Adaptations;
         getEl(selectedFilter).checked = true;
         updateFilter({
             target: {
@@ -408,14 +408,14 @@ See the License for the specific language governing permissions and
     }
 
     function updateSettings(name, value) {
-        const settings = DBMS.getSettings();
+        const settings = SM.getSettings();
         settings.Adaptations[name] = value;
     }
 
     function getSelectedStoryName(storyNames) {
         const storyNamesOnly = storyNames.map(R.prop('storyName'));
 
-        const settings = DBMS.getSettings();
+        const settings = SM.getSettings();
         if (!settings.Adaptations) {
             settings.Adaptations = {
                 storyName: storyNamesOnly[0],
@@ -436,7 +436,7 @@ See the License for the specific language governing permissions and
 
     function getNames(nameObjectArray, nameObjectProperty, settingsProperty) {
         const namesOnly = nameObjectArray.map(R.prop(nameObjectProperty));
-        const names = DBMS.getSettings().Adaptations[settingsProperty];
+        const names = SM.getSettings().Adaptations[settingsProperty];
         let existingNames;
         if (names === null) {
             existingNames = namesOnly;

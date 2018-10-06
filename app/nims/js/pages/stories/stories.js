@@ -110,7 +110,7 @@ See the License for the specific language governing permissions and
     };
 
     function getSelectedStoryName(storyNames) {
-        const settings = DBMS.getSettings();
+        const settings = SM.getSettings();
         if (!settings.Stories) {
             settings.Stories = {
                 storyName: storyNames[0].value
@@ -194,7 +194,7 @@ See the License for the specific language governing permissions and
     exports.getCurrentStoryName = () => state.CurrentStoryName;
 
     function updateSettings(storyName) {
-        const settings = DBMS.getSettings();
+        const settings = SM.getSettings();
         settings.Stories.storyName = storyName;
     }
 })(this.Stories = {});

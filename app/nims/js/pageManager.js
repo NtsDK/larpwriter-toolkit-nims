@@ -31,6 +31,22 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         className: 'mainNavButton'
     };
 
+    function SettingsManager() {
+        this.clearSettings();
+    }
+
+    SettingsManager.prototype.getSettings = function () {
+        return this.Settings;
+    };
+
+    SettingsManager.prototype.clearSettings = function () {
+        this.Settings = {
+            BriefingPreview: {},
+            Stories: {},
+            ProfileEditor: {}
+        };
+    };
+
     const initPage = () => {
         L10n.init();
         L10n.onL10nChange(() => state.currentView.refresh());
@@ -43,6 +59,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         }
         updateDialogs();
         L10n.onL10nChange(updateDialogs);
+        window.SM = new SettingsManager();
     };
 
     exports.refresh = () => state.currentView.refresh();
@@ -78,10 +95,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     exports.onOrganizerPageLoad = () => {
         initPage();
-        const LocalDBMS = makeLocalDBMS(true);
+        // const LocalDBMS = makeLocalDBMS(true);
         if (MODE === 'Standalone') {
-            window.DBMS = new LocalDBMS();
-            window.DBMS = makeLocalDBMSWrapper(window.DBMS);
+            window.DBMS = makeLocalDBMS();
             DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, Utils.handleError);
             // runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
@@ -175,7 +191,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'AccessManager';
+                const firstTab = 'Overview';
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {
