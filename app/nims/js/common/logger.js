@@ -40,7 +40,20 @@ See the License for the specific language governing permissions and
         'createPlayerLogin',
         'changePlayerPassword',
         'getPlayerProfileInfo',
-        'createCharacterByPlayer'
+        'createCharacterByPlayer',
+
+        'getManagementInfo',
+        'assignAdmin',
+        'assignEditor',
+        'removeEditor',
+        'changeAdaptationRightsMode',
+        'removeOrganizer',
+        'getPlayerLoginsArray',
+        'removePlayerLogin',
+        'getWelcomeText',
+        'setWelcomeText',
+        'getPlayersOptions',
+        'setPlayerOption'
     ];
 
     // argument description
@@ -174,7 +187,7 @@ See the License for the specific language governing permissions and
             getStory: null,
             setEventAdaptationProperty: {} // text
         },
-        accessManagerAPI: {
+        organizerManagementAPI: {
             getManagementInfo: null,
             assignAdmin: {},
             assignEditor: {},
@@ -185,7 +198,8 @@ See the License for the specific language governing permissions and
             removeOrganizer: {},
             removePermission: {},
             assignPermission: {},
-            publishPermissionsUpdate: null,
+        },
+        playerManagementAPI: {
             getPlayerLoginsArray: null,
             createPlayer: { ignoreParams: true },
             createPlayerLogin: { ignoreParams: true },
@@ -198,6 +212,7 @@ See the License for the specific language governing permissions and
             getPlayerProfileInfo: null,
             createCharacterByPlayer: {}
         },
+
         textSearchAPI: {
             getTexts: null
         },
@@ -208,13 +223,12 @@ See the License for the specific language governing permissions and
             login: null,
             signUp: null
         },
-        accessManagerOverridesAPI: {},
-        overridesAPI: {},
         permissionAPI: {
             hasPermission: null
         },
         permissionSummaryAPI: {
             _getOwnerMap: null,
+            publishPermissionsUpdate: null,
             getPermissionsSummary: null, // special case
             subscribeOnPermissionsUpdate: null // special case
         },

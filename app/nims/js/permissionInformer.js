@@ -34,12 +34,11 @@ See the License for the specific language governing permissions and
                     }
                 })
             });
-            // return Promise.resolve();
         };
 
         exports.refreshInner = (callback) => {
             const request = $.ajax({
-                url: '/getPermissionsSummary',
+                url: '/api/getPermissionsSummary',
                 dataType: 'text',
                 method: 'GET',
                 contentType: 'application/json;charset=utf-8',
@@ -67,7 +66,7 @@ See the License for the specific language governing permissions and
         };
         exports.subscribe = () => {
             const request = $.ajax({
-                url: '/subscribeOnPermissionsUpdate',
+                url: '/api/subscribeOnPermissionsUpdate',
                 dataType: 'text',
                 method: 'GET',
                 contentType: 'application/json;charset=utf-8',
@@ -88,19 +87,10 @@ See the License for the specific language governing permissions and
 
 
         exports.refreshInner();
-        // exports.refresh().then(exports.subscribe, err => setTimeout(exports.subscribe, 500));
 
         exports.isAdmin = () => {
             return Promise.resolve(state.summary.isAdmin);
         };
-
-        // exports.isAdmin = (callback) => {
-        //     callback(null, state.summary.isAdmin);
-        // };
-
-        // exports.isEditor = (callback) => {
-        //     callback(null, state.summary.isEditor);
-        // };
 
         exports.isEditor = () => {
             return Promise.resolve(state.summary.isEditor);
@@ -116,13 +106,8 @@ See the License for the specific language governing permissions and
             return state.summary.user[type].indexOf(name) !== -1;
         };
 
-        // exports.isEntityEditable = (type, entityName, callback) => {
-        //     callback(null, isObjectEditableSync(type, entityName));
-        // };
-
         exports.isEntityEditable = ({type, entityName}={}) => {
             return Promise.resolve(isObjectEditableSync(type, entityName));
-            // callback(null, isObjectEditableSync(type, entityName));
         };
 
         exports.getEntityNamesArray = ({type, editableOnly}={}) => {
@@ -186,10 +171,6 @@ See the License for the specific language governing permissions and
             return Promise.resolve();
         };
 
-        // exports.refreshInner = (callback) => {
-        //     exports.refresh().then(res => callback(null, res)).catch(callback);
-        // };
-
         exports.isAdmin = () => {
             return Promise.resolve(true);
         };
@@ -231,23 +212,6 @@ See the License for the specific language governing permissions and
             return Promise.resolve(map);
         };
     }
-
-
-    // exports.isAdmin = (callback) => {
-    //     exports.isAdmin().then(res => callback(null, res)).catch(callback);
-    // };
-    // exports.isEditor = (callback) => {
-    //     exports.isEditor().then(res => callback(null, res)).catch(callback);
-    // };
-    // exports.getEntityNamesArray = (type, editableOnly, callback) => {
-    //     exports.getEntityNamesArray({type, editableOnly}).then(res => callback(null, res)).catch(callback);
-    // }
-    // exports.isEntityEditable = (type, entityName, callback) => {
-    //     exports.isEntityEditable({type, entityName}).then(res => callback(null, res)).catch(callback);
-    // };
-    // exports.areAdaptationsEditable = (adaptations, callback) => {
-    //     exports.areAdaptationsEditable({adaptations}).then(res => callback(null, res)).catch(callback);
-    // }
 
     // Object.keys(exports).forEach((funcName) => {
     //     const oldFun = exports[funcName];

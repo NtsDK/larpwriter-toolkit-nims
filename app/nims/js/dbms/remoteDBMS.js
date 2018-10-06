@@ -25,7 +25,7 @@ function makeRemoteDBMS() {
     const showNotification = true;
     const notificationTimeout = 2000;
     //const notificationTimeout = 10000;
-    const url = '/';
+    const url = '/api';
 
     function RemoteDBMS() {
         this.clearSettings();
@@ -35,11 +35,11 @@ function makeRemoteDBMS() {
         return new Promise((resolve, reject) => {
             let paramStr = '';
             if (params) {
-                paramStr = `?params=${encodeURIComponent(JSON.stringify(params))}`;
+                paramStr = `params=${encodeURIComponent(JSON.stringify(params))}`;
             }
 
             const request = $.ajax({
-                url: url + name + paramStr,
+                url: `${url}/${name}?${paramStr}`,
                 dataType: 'text',
                 method: 'GET',
                 contentType: 'application/json;charset=utf-8',
@@ -92,7 +92,7 @@ function makeRemoteDBMS() {
     RemoteDBMS._simplePut = function (name, data) {
         return new Promise((resolve, reject) => {
             const request = $.ajax({
-                url: url + name,
+                url: `${url}/${name}`,
                 dataType: 'text',
                 method: 'PUT',
                 contentType: 'application/json;charset=utf-8',
