@@ -22,7 +22,7 @@ See the License for the specific language governing permissions and
         this.name = 'ValidationError';
 
         this.messageId = messageId;
-        this.parameters = parameters;
+        this.parameters = parameters || [];
 
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, ValidationError);

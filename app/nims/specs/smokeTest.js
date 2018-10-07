@@ -97,14 +97,14 @@ const getChecks = {
     [{
         func: 'getRelationsSummary',
         args: {characterName:'Арагорн'},
+    },
+    {
+        func: 'getRelations',
+        args: {},
     }],
     statisticsAPI:
     [{
         func: 'getStatistics',
-        args: {},
-    },
-    {
-        func: 'getRelations',
         args: {},
     }],
     storyAdaptationsAPI:
