@@ -106,8 +106,8 @@ See the License for the specific language governing permissions and
             return state.summary.user[type].indexOf(name) !== -1;
         };
 
-        exports.isEntityEditable = ({type, entityName}={}) => {
-            return Promise.resolve(isObjectEditableSync(type, entityName));
+        exports.isEntityEditable = ({type, name}={}) => {
+            return Promise.resolve(isObjectEditableSync(type, name));
         };
 
         exports.getEntityNamesArray = ({type, editableOnly}={}) => {
@@ -199,7 +199,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        exports.isEntityEditable = ({type, entityName}={}) => {
+        exports.isEntityEditable = ({type, name}={}) => {
             return Promise.resolve(true);
         };
 

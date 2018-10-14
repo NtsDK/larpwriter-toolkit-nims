@@ -41,7 +41,9 @@ See the License for the specific language governing permissions and
                     const contents = e.target.result;
                     try {
                         const database = JSON.parse(contents);
-                        DBMS.setDatabase({database}).then(resolve, reject);
+                        DBMS.setDatabase({database}).then(() => {
+                            PermissionInformer.refresh().then(resolve, reject);
+                        }, reject);
                     } catch (err) {
                         reject(err);
                     }

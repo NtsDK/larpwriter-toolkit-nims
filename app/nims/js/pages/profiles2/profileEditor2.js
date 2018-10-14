@@ -244,10 +244,12 @@ function ProfileEditorTmpl(exports, opts) {
                 fromName,
                 toName
             }).then(() => {
-                UI.updateEntitySetting(settingsPath, toName);
-                toInput.value = '';
-                dialog.hideDlg();
-                exports.refresh();
+                PermissionInformer.refresh().then(() => {
+                    UI.updateEntitySetting(settingsPath, toName);
+                    toInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }).catch(Utils.handleError);
             }).catch((err) => setError(dialog, err));
         };
     }

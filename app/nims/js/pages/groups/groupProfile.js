@@ -299,10 +299,12 @@ See the License for the specific language governing permissions and
             const toName = toInput.value.trim();
 
             DBMS.renameGroup({fromName, toName}).then(() => {
-                UI.updateEntitySetting(settingsPath, toName);
-                toInput.value = '';
-                dialog.hideDlg();
-                exports.refresh();
+                PermissionInformer.refresh().then(() => {
+                    UI.updateEntitySetting(settingsPath, toName);
+                    toInput.value = '';
+                    dialog.hideDlg();
+                    exports.refresh();
+                }).catch(Utils.handleError);
             }).catch(err => setError(dialog, err));
         };
     }
