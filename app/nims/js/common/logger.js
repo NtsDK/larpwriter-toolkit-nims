@@ -26,7 +26,7 @@ See the License for the specific language governing permissions and
         'checkPassword',
         'login',
         'signUp',
-        'hasPermission',
+        // 'hasPermission',
         '_getOwnerMap',
         'getPermissionsSummary',
         'subscribeOnPermissionsUpdate',
@@ -224,9 +224,9 @@ See the License for the specific language governing permissions and
             login: null,
             signUp: null
         },
-        permissionAPI: {
-            hasPermission: null
-        },
+        // permissionAPI: {
+        //     hasPermission: null
+        // },
         permissionSummaryAPI: {
             _getOwnerMap: null,
             publishPermissionsUpdate: null,
