@@ -164,18 +164,21 @@ See the License for the specific language governing permissions and
         };
 
         _makeRelationsInfo = (knownCharacters, database, charName) => {
-            const relations = database.Relations[charName];
-            const profiles = database.Characters;
-            return R.keys(relations).map((toCharacter) => {
+            const relations = database.Relations.filter(R.has(charName));
+            const exportInfo = relations.map( relation => {
+                const charIsStarter = relation.starter === charName;
+                const toCharacter = charIsStarter ? relation.ender: relation.starter;
                 let obj = {
                     toCharacter,
-                    text: relations[toCharacter],
-                    splittedText: _splitText(relations[toCharacter]),
-                    stories: R.keys(knownCharacters[toCharacter] || {}).join(', ')
+                    text: relation[charName],
+                    splittedText: _splitText(relation[charName]),
+                    stories: R.keys(knownCharacters[charName] || {}).join(', ')
                 };
                 obj = R.merge(obj, _makeProfileInfo(toCharacter, 'character', database));
                 return obj;
-            }).sort(CU.charOrdAFactory(R.prop('toCharacter')));
+            });
+            exportInfo.sort(CU.charOrdAFactory(R.prop('toCharacter')));
+            return exportInfo;
         };
 
         _makeCharInventory = (database, charName) => R.values(database.Stories)
