@@ -32,22 +32,19 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-add',
         });
 
-        //        listen(qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
-
         state.switchCharacterDialog = UI.createModalDialog(root, switchCharacters, {
             bodySelector: 'modal-switch-event-body',
             dialogTitle: 'stories-switch-character-title',
             actionButtonTitle: 'common-replace',
         });
-        state.ExternalCharacterSelectors = [queryEl(`${superRoot}.storyCharactersAddSelector`),
-            queryEl(`${root}.storyCharactersToSelector`)];
 
         exports.content = queryEl(root);
         initialized = true;
     };
 
     exports.refresh = () => {
-        state.ExternalCharacterSelectors.forEach(clearEl);
+        clearEl(queryEl(`${superRoot}.storyCharactersAddSelector`));
+        clearEl(queryEl(`${root}.storyCharactersToSelector`));
 
         clearEl(queryEl(`${root}.storyCharactersTable`));
 
@@ -85,8 +82,13 @@ See the License for the specific language governing permissions and
         const addData = getSelect2Data(addArray);
         const removeData = getSelect2Data(removeArray);
 
-        state.ExternalCharacterSelectors.forEach((selector) => {
-            $(selector).select2(addData);
+        $(queryEl(`${superRoot}.storyCharactersAddSelector`)).select2({
+            data: addData.data,
+            dropdownParent: $(exports.addCharacterDialog)
+        });
+        $(queryEl(`${root}.storyCharactersToSelector`)).select2({
+            data: addData.data,
+            dropdownParent: $(state.switchCharacterDialog)
         });
 
         const table = clearEl(queryEl(`${root}.storyCharactersTable`));
