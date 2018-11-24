@@ -94,3 +94,8 @@ g > text {
   fill: none;
   stroke-width: 2px;
 }
+
+body {
+  color: green;
+  
+}
