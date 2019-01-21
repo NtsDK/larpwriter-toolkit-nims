@@ -16,20 +16,23 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const vis = require('vis');
+require('vis/dist/vis.min.css');
+
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '.timeline-tab';
 
     exports.init = () => {
-        listen(getEl('timelineStorySelector'), 'change', onStorySelectorChangeDelegate);
+        U.listen(U.queryEl('#timelineStorySelector'), 'change', onStorySelectorChangeDelegate);
 
         state.TimelineDataset = new vis.DataSet();
         state.TagDataset = new vis.DataSet();
 
-        queryEls(`${root} input[name=timelineFilter]`).map(listen(R.__, 'change', refreshTimeline));
-        getEl('timelineFilterByStory').checked = true;
+        U.queryEls(`${root} input[name=timelineFilter]`).map(U.listen(R.__, 'change', refreshTimeline));
+        U.queryEl('#timelineFilterByStory').checked = true;
 
         // specify options
         const options = {
@@ -49,12 +52,12 @@ See the License for the specific language governing permissions and
             //        multiselect : true
         };
 
-        const timeline = new vis.Timeline(getEl('timelineContainer'), null, options);
+        const timeline = new vis.Timeline(U.queryEl('#timelineContainer'), null, options);
         timeline.setGroups(state.TagDataset);
         timeline.setItems(state.TimelineDataset);
         state.timelineComponent = timeline;
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -103,17 +106,17 @@ See the License for the specific language governing permissions and
     }
 
     function refreshTimeline() {
-        const selectorValues = getEl('timelineFilterByStory').checked ? state.allStoryNames : state.allCharacterNames;
+        const selectorValues = U.queryEl('#timelineFilterByStory').checked ? state.allStoryNames : state.allCharacterNames;
 
-        const selector = clearEl(getEl('timelineStorySelector'));
-        fillSelector(selector, selectorValues.map(obj => ({
+        const selector = U.clearEl(U.queryEl('#timelineStorySelector'));
+        U.fillSelector(selector, selectorValues.map(obj => ({
             name: obj.displayName,
             value: obj.value,
             className: obj.hasEvents ?
                 'fa-icon finished transparent-icon select-icon-padding' :
                 'fa-icon empty icon-padding select-icon-padding'
         })));
-        setAttr(selector, 'size', selectorValues.length > 15 ? 15 : selectorValues.length);
+        U.setAttr(selector, 'size', selectorValues.length > 15 ? 15 : selectorValues.length);
 
         if (selectorValues.length !== 0) {
             selector.options[0].selected = true;
@@ -122,7 +125,7 @@ See the License for the specific language governing permissions and
     }
 
     function onStorySelectorChangeDelegate(event) {
-        onStorySelectorChange(nl2array(event.target.selectedOptions).map(opt => opt.value));
+        onStorySelectorChange(U.nl2array(event.target.selectedOptions).map(opt => opt.value));
     }
 
     const prepareLabel = label => `<span class="timeline-label">${label}</span>`;
@@ -133,7 +136,7 @@ See the License for the specific language governing permissions and
 
         state.TagDataset.add(entityNames.map(entityName => R.always({ id: entityName, content: entityName })()));
 
-        const byStory = getEl('timelineFilterByStory').checked;
+        const byStory = U.queryEl('#timelineFilterByStory').checked;
         const data = byStory ? state.eventsByStories : state.eventsByCharacters;
         entityNames = R.intersection(entityNames, R.keys(data));
         const usedData = R.pick(entityNames, data);
@@ -147,12 +150,12 @@ See the License for the specific language governing permissions and
 
         events.sort(CommonUtils.charOrdAFactory(R.prop('time')));
 
-        addEls(clearEl(queryEl(`${root} .timeline-list`)), events.map(event => {
-            const row = qmte(`${root} .timeline-event-tmpl`);
-            addEl(qee(row, '.time'), makeText(event.time.format('yyyy/mm/dd h:MM')));
-            addEl(qee(row, '.story-name'), makeText(event.storyName));
-            addEl(qee(row, '.event-name'), makeText(event.name));
-            addEl(qee(row, '.characters'), makeText(event.characters.join(', ')));
+        U.addEls(U.clearEl(U.queryEl(`${root} .timeline-list`)), events.map(event => {
+            const row = U.qmte(`${root} .timeline-event-tmpl`);
+            U.addEl(U.qee(row, '.time'), U.makeText(event.time.format('yyyy/mm/dd h:MM')));
+            U.addEl(U.qee(row, '.story-name'), U.makeText(event.storyName));
+            U.addEl(U.qee(row, '.event-name'), U.makeText(event.name));
+            U.addEl(U.qee(row, '.characters'), U.makeText(event.characters.join(', ')));
             return row;
         }));
 
@@ -184,4 +187,4 @@ See the License for the specific language governing permissions and
             }));
         })));
     }
-})(this.Timeline = {});
+// })(window.Timeline = {});

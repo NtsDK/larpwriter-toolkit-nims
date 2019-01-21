@@ -20,7 +20,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     exports.makeProfileEditorCore = () => {
         const innerExports = {};
 
@@ -32,20 +32,20 @@ See the License for the specific language governing permissions and
         };
 
         innerExports.initProfileStructure = (profileDiv, type, profileStructure, callback) => {
-            const container = qte(`${root} .profile-editor-container-tmpl`);
-            addEl(clearEl(queryEl(profileDiv)), container);
+            const container = U.qte(`${root} .profile-editor-container-tmpl`);
+            U.addEl(U.clearEl(U.queryEl(profileDiv)), container);
             state[type].inputItems = {};
             state[type].profileStructure = profileStructure;
 
             if(profileStructure.length === 0){
-                const alert = qmte('.alert-block-tmpl');
-                addEl(alert, makeText(L10n.get('advices', `empty-${type}-profile-structure`)));
-                addEl(queryEl(profileDiv), alert);
+                const alert = U.qmte('.alert-block-tmpl');
+                U.addEl(alert, U.makeText(L10n.get('advices', `empty-${type}-profile-structure`)));
+                U.addEl(U.queryEl(profileDiv), alert);
                 if (callback) callback();
                 return;
             }
             try {
-                addEls(qee(queryEl(profileDiv), '.insertion-point'), profileStructure.map(appendInput(type)));
+                U.addEls(U.qee(U.queryEl(profileDiv), '.insertion-point'), profileStructure.map(appendInput(type)));
             } catch (err) {
                 Utils.handleError(err); return;
             }
@@ -57,14 +57,14 @@ See the License for the specific language governing permissions and
         var appendInput = R.curry((type, profileItemConfig) => {
             const itemInput = new ProfileItemInput(type, profileItemConfig);
             state[type].inputItems[profileItemConfig.name] = itemInput;
-            const row = qte(`${root} .profile-editor-row-tmpl`);
-            addEl(qee(row, '.profile-item-name'), makeText(profileItemConfig.name));
-            addEl(qee(row, '.profile-item-input'), itemInput.dom);
+            const row = U.qte(`${root} .profile-editor-row-tmpl`);
+            U.addEl(U.qee(row, '.profile-item-name'), U.makeText(profileItemConfig.name));
+            U.addEl(U.qee(row, '.profile-item-input'), itemInput.dom);
             return row;
         });
 
         innerExports.fillProfileInformation = (profileDiv, type, profile, isEditable) => {
-            removeClass(queryEl(profileDiv), 'hidden');
+            U.removeClass(U.queryEl(profileDiv), 'hidden');
             R.values(state[type].inputItems).forEach((itemInput) => {
                 if (itemInput.type === 'multiEnum') {
                     itemInput.multiEnumSelect.prop('disabled', !isEditable(itemInput.name, state[type].profileStructure));
@@ -83,36 +83,36 @@ See the License for the specific language governing permissions and
             let input, sel;
             switch (profileItemConfig.type) {
             case 'text':
-                input = makeEl('textarea');
-                addClass(input, 'profileTextInput');
+                input = U.makeEl('textarea');
+                U.addClass(input, 'profileTextInput');
                 break;
             case 'string':
-                input = makeEl('input');
-                addClass(input, 'profileStringInput');
+                input = U.makeEl('input');
+                U.addClass(input, 'profileStringInput');
                 break;
             case 'enum':
-                input = makeEl('select');
-                addClass(input, 'profileSelectInput');
+                input = U.makeEl('select');
+                U.addClass(input, 'profileSelectInput');
                 const toNameObj = R.compose(R.zipObj(['name']), R.append(R.__, []));
-                fillSelector(input, R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(',')).map(toNameObj));
+                U.fillSelector(input, R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(',')).map(toNameObj));
                 break;
             case 'number':
-                input = makeEl('input');
+                input = U.makeEl('input');
                 input.type = 'number';
                 break;
             case 'checkbox':
-                input = makeEl('input');
+                input = U.makeEl('input');
                 input.type = 'checkbox';
                 break;
             case 'multiEnum':
                 this.multiEnumSelect = $('<select></select>');
-                setAttr(this.multiEnumSelect[0], 'style', 'width: 100%;');
-                addClass(this.multiEnumSelect[0], 'common-select');
-                addClass(this.multiEnumSelect[0], 'profileStringInput');
+                U.setAttr(this.multiEnumSelect[0], 'style', 'width: 100%;');
+                U.addClass(this.multiEnumSelect[0], 'common-select');
+                U.addClass(this.multiEnumSelect[0], 'profileStringInput');
                 [input] = $('<span></span>').append(this.multiEnumSelect);
-                setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
+                U.setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
-                sel = this.multiEnumSelect.select2(arr2Select2(R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(','))));
+                sel = this.multiEnumSelect.select2(U.arr2Select2(R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(','))));
                 sel.on('change', this.updateFieldValue.bind(this));
                 break;
             default:
@@ -120,8 +120,8 @@ See the License for the specific language governing permissions and
             }
 
             if (profileItemConfig.type !== 'multiEnum') {
-                listen(input, 'change', this.updateFieldValue.bind(this));
-                addClass(input, 'form-control');
+                U.listen(input, 'change', this.updateFieldValue.bind(this));
+                U.addClass(input, 'form-control');
             }
 
             this.dom = input;
@@ -159,7 +159,7 @@ See the License for the specific language governing permissions and
                 break;
             case 'number':
                 if (Number.isNaN(this.dom.value)) {
-                    Utils.alert(getL10n('profiles-not-a-number'));
+                    Utils.alert(L10n.getValue('profiles-not-a-number'));
                     this.dom.value = this.oldValue;
                     return;
                 }
@@ -186,4 +186,4 @@ See the License for the specific language governing permissions and
 
         return innerExports;
     };
-})(this.ProfileEditorCore = {});
+// })(window.ProfileEditorCore = {});

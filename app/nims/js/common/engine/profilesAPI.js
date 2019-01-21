@@ -84,7 +84,7 @@ See the License for the specific language governing permissions and
                         });
 
                         R.path(getPath(type), this.database)[characterName] = newCharacter;
-                        this.ee.trigger('createProfile', arguments);
+                        this.ee.emit('createProfile', arguments);
                         resolve();
                     });
                 });
@@ -100,7 +100,7 @@ See the License for the specific language governing permissions and
                         data.name = toName;
                         container[toName] = data;
                         delete container[fromName];
-                        this.ee.trigger('renameProfile', arguments);
+                        this.ee.emit('renameProfile', arguments);
                         resolve();
                     });
                 });
@@ -114,7 +114,7 @@ See the License for the specific language governing permissions and
                     const container = R.path(getPath(type), this.database);
                     PC.precondition(PC.removeEntityCheck(characterName, R.keys(container)), reject, () => {
                         delete container[characterName];
-                        this.ee.trigger('removeProfile', arguments);
+                        this.ee.emit('removeProfile', arguments);
                         resolve();
                     });
                 });

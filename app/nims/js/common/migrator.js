@@ -18,8 +18,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((callback) => {
-    function Migrator(exports, R) {
+// ((callback) => {
+    // exportsfunction (exports, R) {
         exports.migrate = (data) => {
             if (!data.Version) {
                 data.Settings = {};
@@ -215,6 +215,6 @@ See the License for the specific language governing permissions and
             
             return data;
         };
-    }
-    callback(Migrator);
-})(api => ((typeof exports === 'undefined') ? api((this.Migrator = {}), R) : (module.exports = api)));
+    // }
+    // callback(Migrator);
+// })(api => ((typeof exports === 'undefined') ? api((this.Migrator = {}), R) : (module.exports = api)));

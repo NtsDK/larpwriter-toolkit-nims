@@ -1,3 +1,19 @@
+// const {U}  = require('../../../../core/js/utils.js');
+// const { U, L10n, Utils }  = require('../../../../core');
+// const jQuery = require("jquery");
+require("chart.js");
+// const $ = jQuery;
+const dateFormat = require("dateFormat");
+const PermissionInformer = require("permissionInformer");
+
+const Constants = require('common/constants.js');
+
+// const {Gears, Sliders} = require('../index')
+require('./overview.css');
+
+const Gears = require('../gears/gears.js');
+const Sliders = require('../sliders/sliders.js');
+// require("moment");
 /*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +32,12 @@ See the License for the specific language governing permissions and
  jQuery, DBMS
  */
 
+// const R = require("ramda");
+
 'use strict';
 
 
-((exports) => {
+// ((exports) => {
     const defaultHists = ['storyEventsHist', 'storyCharactersHist', 'eventCompletenessHist',
         'characterSymbolsHist', 'characterStoriesHist'];
     const entityCharts = ['characterChart', 'playerChart', 'storyChart', 'groupChart'];
@@ -42,12 +60,12 @@ See the License for the specific language governing permissions and
     state.Charts = {};
 
     exports.init = () => {
-        state.name = getEl('gameNameInput');
+        state.name = U.queryEl('#gameNameInput');
         state.name.addEventListener('change', updateName);
 
-        state.lastSaveTime = getEl('lastSaveTime');
+        state.lastSaveTime = U.queryEl('#lastSaveTime');
 
-        state.date = getEl('gameDatePicker');
+        state.date = U.queryEl('#gameDatePicker');
 
         let opts = {
             lang: L10n.getLang(),
@@ -57,7 +75,7 @@ See the License for the specific language governing permissions and
 
         jQuery(state.date).datetimepicker(opts);
 
-        state.preDate = getEl('preGameDatePicker');
+        state.preDate = U.queryEl('#preGameDatePicker');
 
         opts = {
             lang: L10n.getLang(),
@@ -76,16 +94,16 @@ See the License for the specific language governing permissions and
             });
         });
 
-        state.descr = queryEl(`${root}.game-description-area`);
+        state.descr = U.queryEl(`${root}.game-description-area`);
         state.descr.addEventListener('change', updateDescr);
 
-        const gearsContainer = qee(queryEl(root), '#gears');
-        addEl(gearsContainer, qe('.gears-tab'));
+        const gearsContainer = U.qee(U.queryEl(root), '#gears');
+        U.addEl(gearsContainer, U.qe('.gears-tab'));
         Gears.init();
         var observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.attributeName === "class") {
-                    if(hasClass(gearsContainer, 'active')) {
+                    if(U.hasClass(gearsContainer, 'active')) {
                         Gears.refresh();
                     }
                 }
@@ -95,11 +113,11 @@ See the License for the specific language governing permissions and
             attributes: true
         });
 
-        const slidersContainer = qee(queryEl(root), '#sliders');
-        addEl(slidersContainer, qe('.sliders-tab'));
+        const slidersContainer = U.qee(U.queryEl(root), '#sliders');
+        U.addEl(slidersContainer, U.qe('.sliders-tab'));
         Sliders.init();
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -174,16 +192,16 @@ See the License for the specific language governing permissions and
 
         let div;
         data.forEach((barData) => {
-            div = barData === null ? makeEl('div') : addEl(makeEl('div'), makeText(barData.value));
-            addClass(div, 'bar');
+            div = barData === null ? U.makeEl('div') : U.addEl(U.makeEl('div'), U.makeText(barData.value));
+            U.addClass(div, 'bar');
             if (barData) {
                 div.style.height = `${barData.normValue * 100}%`;
-                $(div).tooltip({
-                    title: barData.tip,
-                });
+                // $(div).tooltip({
+                //     title: barData.tip,
+                // });
             }
 
-            addEl(place, div);
+            U.addEl(place, div);
         });
     }
 
@@ -193,50 +211,50 @@ See the License for the specific language governing permissions and
         state.date.value = metaInfo.date;
         state.preDate.value = metaInfo.preGameDate;
         state.descr.value = metaInfo.description;
-        addEl(clearEl(state.lastSaveTime), makeText(new Date(metaInfo.saveTime).format('yyyy/mm/dd HH:MM:ss')));
+        U.addEl(U.clearEl(state.lastSaveTime), U.makeText(dateFormat(new Date(metaInfo.saveTime), 'yyyy/mm/dd HH:MM:ss')));
 
-        statistics.lastEvent = statistics.lastEvent !== '' ? new Date(statistics.lastEvent).format('yyyy/mm/dd h:MM') : '';
-        statistics.firstEvent = statistics.firstEvent !== '' ? new Date(statistics.firstEvent).format('yyyy/mm/dd h:MM') : '';
+        statistics.lastEvent = statistics.lastEvent !== '' ? dateFormat(new Date(statistics.lastEvent), 'yyyy/mm/dd h:MM') : '';
+        statistics.firstEvent = statistics.firstEvent !== '' ? dateFormat(new Date(statistics.firstEvent), 'yyyy/mm/dd h:MM') : '';
 
         statisticKeys.forEach((key) => {
             updateStatisticValue(statistics, key);
         });
 
-        addEl(clearEl(getEl('generalCompleteness')), makeText(strFormat(getL10n('overview-general-completeness-value'), statistics.generalCompleteness)));
-        addEl(clearEl(getEl('storyCompleteness')), makeText(strFormat(getL10n('overview-story-completeness-value'), statistics.storyCompleteness)));
-        addEl(clearEl(getEl('relationCompleteness')), makeText(strFormat(getL10n('overview-relation-completeness-value'), statistics.relationCompleteness)));
+        U.addEl(U.clearEl(U.queryEl('#generalCompleteness')), U.makeText(U.strFormat(L10n.getValue('overview-general-completeness-value'), statistics.generalCompleteness)));
+        U.addEl(U.clearEl(U.queryEl('#storyCompleteness')), U.makeText(U.strFormat(L10n.getValue('overview-story-completeness-value'), statistics.storyCompleteness)));
+        U.addEl(U.clearEl(U.queryEl('#relationCompleteness')), U.makeText(U.strFormat(L10n.getValue('overview-relation-completeness-value'), statistics.relationCompleteness)));
 
         defaultHists.forEach((histName) => {
-            makeHistogram(clearEl(queryEl(`${root}.${histName}`)), statistics[histName]);
+            makeHistogram(U.clearEl(U.queryEl(`${root}.${histName}`)), statistics[histName]);
         });
 
         entityCharts.forEach((entityChart) => {
-            makeChart(entityChart, queryEl(`${root}.${entityChart}`), statistics[entityChart]);
+            makeChart(entityChart, U.queryEl(`${root}.${entityChart}`), statistics[entityChart]);
         });
 
         const symbolChartData = R.toPairs(localizeConsts(statistics.textCharactersCount)).map(pair => ({
             value: pair[1],
             label: makeChartLabel(statistics.textCharacterNumber, pair[0], pair[1])
         }));
-        makeChart('symbolChart', queryEl(`${root}.symbolChart`), symbolChartData);
+        makeChart('symbolChart', U.queryEl(`${root}.symbolChart`), symbolChartData);
 
         const bindingChartData = R.toPairs(localizeConsts(statistics.bindingStats)).map(pair => ({
             value: pair[1],
             label: [pair[0], ': ', pair[1]].join('')
         }));
-        makeChart('bindingChart', queryEl(`${root}.bindingChart`), bindingChartData);
+        makeChart('bindingChart', U.queryEl(`${root}.bindingChart`), bindingChartData);
 
         let barData, barDiv, bar;
 
         function makeContainer(obj) {
-            barDiv = makeEl('div');
-            addClass(barDiv, 'col-xs-3');
-            addEl(barDiv, addEl(makeEl('h4'), makeText(obj.name)));
-            addEl(barDiv, obj.bar);
+            barDiv = U.makeEl('div');
+            U.addClass(barDiv, 'col-xs-3');
+            U.addEl(barDiv, U.addEl(U.makeEl('h4'), U.makeText(obj.name)));
+            U.addEl(barDiv, obj.bar);
             return barDiv;
         }
         function buildChart(info) {
-            bar = setAttr(setAttr(makeEl('canvas'), 'width', '300'), 'height', '100');
+            bar = U.setAttr(U.setAttr(U.makeEl('canvas'), 'width', '300'), 'height', '100');
             const data = R.zipObj(['name', 'bar'], [info.name, bar]);
             const container = makeContainer(data);
             makeChart(info.id, bar, info.prepared);
@@ -244,7 +262,7 @@ See the License for the specific language governing permissions and
         }
 
         function buildHist(info) {
-            bar = addClass(makeEl('div'), 'overviewHist');
+            bar = U.addClass(U.makeEl('div'), 'overviewHist');
             const data = R.zipObj(['name', 'bar'], [info.name, bar]);
             const container = makeContainer(data);
             makeHistogram(bar, info.prepared);
@@ -256,7 +274,7 @@ See the License for the specific language governing permissions and
 
         function localizeCheckboxes(info) {
             info.data = R.fromPairs(R.toPairs(info.data).map((val) => {
-                val[0] = constL10n(Constants[val[0]]);
+                val[0] = L10n.const(Constants[val[0]]);
                 return val;
             }));
             return info;
@@ -270,17 +288,17 @@ See the License for the specific language governing permissions and
             [R.T, innerMakeHist],
             ]);
 
-        showEl(qe(`${root} .alert.character`), statistics.profileCharts.characterCharts.length === 0);
+        U.showEl(U.qe(`${root} .alert.character`), statistics.profileCharts.characterCharts.length === 0);
         statistics.profileCharts.characterCharts.map(fn)
-            .map(addEl(clearEl(queryEl(`${root}.characterProfileDiagrams`))));
-        showEl(qe(`${root} .alert.player`), statistics.profileCharts.playerCharts.length === 0);
+            .map(U.addEl(U.clearEl(U.queryEl(`${root}.characterProfileDiagrams`))));
+        U.showEl(U.qe(`${root} .alert.player`), statistics.profileCharts.playerCharts.length === 0);
         statistics.profileCharts.playerCharts.map(fn)
-            .map(addEl(clearEl(queryEl(`${root}.playerProfileDiagrams`))));
+            .map(U.addEl(U.clearEl(U.queryEl(`${root}.playerProfileDiagrams`))));
     }
 
     function localizeConsts(info) {
         info = R.fromPairs(R.toPairs(info).map((val) => {
-            val[0] = constL10n(val[0]);
+            val[0] = L10n.const(val[0]);
             return val;
         }));
         return info;
@@ -318,7 +336,7 @@ See the License for the specific language governing permissions and
         [key, ': ', ((value / total) * 100).toFixed(0), '% (', value, '/', total, ')'].join(''));
 
     function updateStatisticValue(statistics, key) {
-        addEl(clearEl(getEl(key)), makeText(statistics[key]));
+        U.addEl(U.clearEl(U.queryEl('#'+key)), U.makeText(statistics[key]));
     }
 
     function updateName(event) {
@@ -402,7 +420,7 @@ See the License for the specific language governing permissions and
     }
 
     exports.test = () => {
-        getEl('gameNameInput').dispatchEvent(new Event('change'));
-        queryEl(`${root}.game-description-area`).dispatchEvent(new Event('change'));
+        U.queryEl('#gameNameInput').dispatchEvent(new Event('change'));
+        U.queryEl(`${root}.game-description-area`).dispatchEvent(new Event('change'));
     }
-})(this.Overview = {});
+// })(window.Overview = {});

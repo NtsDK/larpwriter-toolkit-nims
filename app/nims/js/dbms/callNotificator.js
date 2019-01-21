@@ -1,3 +1,6 @@
+const CommonUtils = require('../../../core/js/common/commonUtils.js');
+const {U} = require('../../../core/js/utils.js');
+const L10n = require('../../../core/js/l10n.js');
 /*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +17,17 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const showNotification = true;
     const notificationTimeout = 2000;
 
     function onCallStart(){
         if (!showNotification) return;
-        const notificationBox = clearEl(getEl('debugNotification'));
-        removeClass(notificationBox, 'hidden');
-        removeClass(notificationBox, 'operationOK');
-        removeClass(notificationBox, 'operationFail');
-        addEl(notificationBox, makeText(L10n.get('constant', 'saving')));
+        const notificationBox = U.clearEl(U.queryEl('#debugNotification'));
+        U.removeClass(notificationBox, 'hidden');
+        U.removeClass(notificationBox, 'operationOK');
+        U.removeClass(notificationBox, 'operationFail');
+        U.addEl(notificationBox, U.makeText(L10n.get('constant', 'saving')));
     };
 
     function onCallFinished(err){
@@ -37,20 +40,20 @@ See the License for the specific language governing permissions and
     };
 
     function onCallSuccess(){
-        const notificationBox = getEl('debugNotification');
-        addClass(notificationBox, 'operationOK');
-        addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-success')));
+        const notificationBox = U.queryEl('#debugNotification');
+        U.addClass(notificationBox, 'operationOK');
+        U.addEl(U.clearEl(notificationBox), U.makeText(L10n.get('constant', 'saving-success')));
         setTimeout(() => {
-            addClass(notificationBox, 'hidden');
+            U.addClass(notificationBox, 'hidden');
         }, notificationTimeout);
     }
 
     function onCallFail(){
-        const notificationBox = getEl('debugNotification');
-        addClass(notificationBox, 'operationFail');
-        addEl(clearEl(notificationBox), makeText(L10n.get('constant', 'saving-fail')));
+        const notificationBox = U.queryEl('#debugNotification');
+        U.addClass(notificationBox, 'operationFail');
+        U.addEl(U.clearEl(notificationBox), U.makeText(L10n.get('constant', 'saving-fail')));
         setTimeout(() => {
-            addClass(notificationBox, 'hidden');
+            U.addClass(notificationBox, 'hidden');
         }, notificationTimeout);
     }
 
@@ -85,4 +88,4 @@ See the License for the specific language governing permissions and
 
 
 
-})(this.CallNotificator = {});
+// })(window.CallNotificator = {});

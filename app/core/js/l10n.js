@@ -1,3 +1,8 @@
+const {Dictionaries, defaultLang } = require('./translations.js');
+const CommonUtils = require("./common/commonUtils.js");
+const U  = require('./utils.js').U;
+// import { setAttr } from "./utils.js";
+// const R = require("ramda");
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +21,7 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable no-var,vars-on-top */
 
-((exports, Dictionaries) => {
+// ((exports, Dictionaries) => {
     const state = {};
 
     state.initialized = false;
@@ -115,7 +120,7 @@ See the License for the specific language governing permissions and
         return processedDictionary;
     };
 
-    var setHtmlLang = lang => setAttr(document.getElementsByTagName('html')[0], 'lang', lang);
+    var setHtmlLang = lang => U.setAttr(document.getElementsByTagName('html')[0], 'lang', lang);
     
     exports.getLocale = () => state.lang;
 
@@ -139,9 +144,15 @@ See the License for the specific language governing permissions and
 
     exports.getLang = () => state.lang.toLowerCase();
 
-    exports.format = R.curry((namespace, name, args) => strFormat(exports.get(namespace, name), args));
+    exports.format = R.curry((namespace, name, args) => U.strFormat(exports.get(namespace, name), args));
 
-    exports.get = R.curry((namespace, name) => L10n.getValue(`${namespace}-${name}`));
+    // function getL10n(key) {
+    //     return L10n.getValue(key);
+    // }
+    
+    // function constL10n(key) {
+    //     return L10n.getValue(`constant-${key}`);
+    // }
 
     exports.getValue = (name) => {
         const value = state.dict[name];
@@ -153,6 +164,10 @@ See the License for the specific language governing permissions and
         }
         return value || `${name}:RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA`;
     };
+
+    exports.get = R.curry((namespace, name) => exports.getValue(`${namespace}-${name}`));
+
+    exports.const = key => exports.getValue(`constant-${key}`);
     
     exports.hasValue = (name) => {
         const value = state.dict[name];
@@ -165,12 +180,12 @@ See the License for the specific language governing permissions and
 
     exports.localizeStatic = (el) => {
         el = el || document;
-        nl2array(qees(el, '[l10n-id]')).map(el2 =>
-            addEl(clearEl(el2), makeText(exports.getValue(getAttr(el2, 'l10n-id')))));
-        nl2array(qees(el, '[l10n-placeholder-id]')).map(el2 =>
-            setAttr(el2, 'placeholder', exports.getValue(getAttr(el2, 'l10n-placeholder-id'))));
-        nl2array(qees(el, '[l10n-title]')).map(el2 =>
-            setAttr(el2, 'title', exports.getValue(getAttr(el2, 'l10n-title'))));
+        U.nl2array(U.qees(el, '[l10n-id]')).map(el2 =>
+            U.addEl(U.clearEl(el2), U.makeText(exports.getValue(U.getAttr(el2, 'l10n-id')))));
+        U.nl2array(U.qees(el, '[l10n-placeholder-id]')).map(el2 =>
+            U.setAttr(el2, 'placeholder', exports.getValue(U.getAttr(el2, 'l10n-placeholder-id'))));
+        U.nl2array(U.qees(el, '[l10n-title]')).map(el2 =>
+            U.setAttr(el2, 'title', exports.getValue(U.getAttr(el2, 'l10n-title'))));
     };
     
     exports.getFoundStatistics = () => R.clone(state.foundStatistics);
@@ -178,4 +193,4 @@ See the License for the specific language governing permissions and
     
     exports.getNotUsedByStatistics = () => R.difference(R.keys(state.dict), R.keys(state.foundStatistics));
     
-})(this.L10n = {}, Dictionaries);
+// })(window.L10n = {}, Dictionaries);

@@ -23,18 +23,18 @@ function RoutingTabTmpl(exports, opts) {
     const tmplRoot = '.tab-routing-tmpl';
 
     exports.init = () => {
-        const el = queryEl(tmplRoot).cloneNode(true);
-        removeClass(el, 'tab-routing-tmpl');
-        addEl(queryEl('.tab-container'), el);
+        const el = U.queryEl(tmplRoot).cloneNode(true);
+        U.removeClass(el, 'tab-routing-tmpl');
+        U.addEl(U.queryEl('.tab-container'), el);
         state.views = {};
         const containers = {
             root: state,
-            navigation: qee(el, '.sub-tab-navigation'),
-            content: qee(el, '.sub-tab-content')
+            navigation: U.qee(el, '.sub-tab-navigation'),
+            content: U.qee(el, '.sub-tab-content')
         };
         const tabs = R.indexBy(R.prop('viewName'), opts.tabs.map(tab => ({
             viewName: tab.viewName,
-            viewRes: Utils.addView(containers, tab.btnName, window[tab.viewName])
+            viewRes: UI.addView(containers, tab.btnName, window[tab.viewName])
         })));
 
         Utils.setFirstTab(containers, tabs[opts.firstTab].viewRes);

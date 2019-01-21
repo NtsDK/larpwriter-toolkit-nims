@@ -1,3 +1,46 @@
+
+
+require('bootstrap-sass');
+require('bootstrap-sass/assets/stylesheets/_bootstrap.scss');
+
+require('@fortawesome/fontawesome-free/css/all.css');
+
+require("jquery-datetimepicker");
+require("jquery-datetimepicker/build/jquery.datetimepicker.min.css");
+window.moment = require("moment");
+
+require('select2');
+require('select2/dist/css/select2.min.css');
+
+require("../index.html");
+require("../style/common.css");
+require("../style/icons.css");
+require("../style/style.css");
+const {makeLocalDBMS} = require('./dbms/localDBMS.js');
+
+
+
+var MODE = "Standalone";
+
+// const { U, L10n, Utils, UI, CommonUtils, DemoBase, FileUtils, TestUtils, LocalBaseAPI }  = require('../../core');
+
+// const CommonUtils = require('../../core/js/common/commonUtils.js');
+
+// const DemoBase = require('../../core/js/demoBase.js');
+const PermissionInformer = require('permissionInformer');
+// const PermissionInformer = require('./permissionInformer.js');
+
+var vex = require('vex-js');
+vex.registerPlugin(require('vex-dialog'));
+vex.defaultOptions.className = 'vex-theme-os';
+
+// const Overview = require('./pages/overview/overview.js')
+const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
+    Briefings } = require('./pages');
+
+// require("../../core/js/common/commonUtils.js");
+//const R = require("ramda");
+
 /*Copyright 2015, 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +61,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
 'use strict';
 
-((exports) => {
+
+
+
+
+// ((exports) => {
     const state = {};
     state.views = {};
     state.firstBaseLoad = MODE === 'Standalone';
@@ -54,8 +101,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         UI.initPanelTogglers();
         L10n.localizeStatic();
         function updateDialogs() {
-            vex.dialog.buttons.YES.text = getL10n('common-ok');
-            vex.dialog.buttons.NO.text = getL10n('common-cancel');
+            vex.dialog.buttons.YES.text = L10n.getValue('common-ok');
+            vex.dialog.buttons.NO.text = L10n.getValue('common-cancel');
         }
         updateDialogs();
         L10n.onL10nChange(updateDialogs);
@@ -69,11 +116,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         window.DBMS = makeRemoteDBMS();
 
         stateInit();
-        Utils.addView(state.containers, 'player', Player, { mainPage: true });
-        addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
-        Utils.addView(state.containers, 'about', About);
-        //        addEl(state.navigation, makeL10nButton());
-        addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+        UI.addView(state.containers, 'player', Player, { mainPage: true });
+        U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
+        UI.addView(state.containers, 'about', About);
+        //        U.addEl(state.navigation, makeL10nButton());
+        U.addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
         state.currentView.refresh();
     };
 
@@ -82,13 +129,13 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         window.DBMS = makeRemoteDBMS();
         stateInit();
         DBMS.getPlayersOptions().then((playersOptions) => {
-            addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
-            Utils.addView(state.containers, 'enter', Enter, { mainPage: true });
+            U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
+            UI.addView(state.containers, 'enter', Enter, { mainPage: true });
             if (playersOptions.allowPlayerCreation) {
-                Utils.addView(state.containers, 'sign-up', SignUp);
+                UI.addView(state.containers, 'sign-up', SignUp);
             }
-            Utils.addView(state.containers, 'about', About);
-            //            addEl(state.navigation, makeL10nButton());
+            UI.addView(state.containers, 'about', About);
+            //            U.addEl(state.navigation, makeL10nButton());
             state.currentView.refresh();
         }).catch(Utils.handleError);
     };
@@ -110,30 +157,30 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     };
 
     function runBaseSelectDialog() {
-        const dbDialog = queryEl('.set-database-dialog');
-        addEl(queryEl('body'), dbDialog);
-        listen(qee(dbDialog, '.on-action-button'), 'click', (event) => {
+        const dbDialog = U.queryEl('.set-database-dialog');
+        U.addEl(U.queryEl('body'), dbDialog);
+        U.listen(U.qee(dbDialog, '.on-action-button'), 'click', (event) => {
             $(dbDialog).modal('hide');
         });
 
         readLocalBases().then((browserBases) => {
-            addEls(qee(dbDialog, '.modal-body .backup-bases'), (browserBases || []).map((base,i) => {
-                const baseSelect = qmte('.backup-base-tmpl');
-                const input = qee(baseSelect, 'input');
-                setAttr(input, 'value', "browserBackup" + i);
-                setAttr(input, 'id', "dbSourceBrowserBackup" + i);
+            U.addEls(U.qee(dbDialog, '.modal-body .backup-bases'), (browserBases || []).map((base,i) => {
+                const baseSelect = U.qmte('.backup-base-tmpl');
+                const input = U.qee(baseSelect, 'input');
+                U.setAttr(input, 'value', "browserBackup" + i);
+                U.setAttr(input, 'id', "dbSourceBrowserBackup" + i);
                 input.base = base;
-                setAttr(qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
+                U.setAttr(U.qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
                 const date = new Date(base.Meta.saveTime).format('dd mmm yyyy HH:MM:ss');
-                addEl(qee(baseSelect, '.base-name'), makeText(base.Meta.name + ' (' + date + ')'));
+                U.addEl(U.qee(baseSelect, '.base-name'), U.makeText(base.Meta.name + ' (' + date + ')'));
                 return baseSelect;
             }));
 
-            qee(dbDialog, 'input[name=dbSource]').checked = true;
-            qee(dbDialog, '#dbSourceDemoBase').base = CommonUtils.clone(DemoBase.data);
-            qee(dbDialog, '#dbSourceEmptyBase').base = CommonUtils.clone(EmptyBase.data);
+            U.qee(dbDialog, 'input[name=dbSource]').checked = true;
+            U.qee(dbDialog, '#dbSourceDemoBase').base = CommonUtils.clone(DemoBase.data);
+            U.qee(dbDialog, '#dbSourceEmptyBase').base = CommonUtils.clone(EmptyBase.data);
 
-            addEl(qee(dbDialog, '.demo-base-name'), makeText(DemoBase.data.Meta.name));
+            U.addEl(U.qee(dbDialog, '.demo-base-name'), U.makeText(DemoBase.data.Meta.name));
 
             const dialogOnBaseLoad = err => {
                 if (err) { Utils.handleError(err); return; }
@@ -141,10 +188,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 onBaseLoaded(err);
             }
 
-            initBaseLoadBtn(qee(dbDialog, '.upload-db'), qee(dbDialog, '.upload-db input'), dialogOnBaseLoad);
+            initBaseLoadBtn(U.qee(dbDialog, '.upload-db'), U.qee(dbDialog, '.upload-db input'), dialogOnBaseLoad);
 
-            listen(qee(dbDialog, '.on-action-button'), 'click', () => {
-                const base = getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
+            U.listen(U.qee(dbDialog, '.on-action-button'), 'click', () => {
+                const base = U.getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
                 DBMS.setDatabase({database: base}).then(() => {
                     dialogOnBaseLoad();
                 }).catch(Utils.handleError);
@@ -160,7 +207,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     function consistencyCheckAlert(checkResult) {
         if (checkResult.errors.length > 0) {
-            Utils.alert(getL10n('overview-consistency-problem-detected'));
+            Utils.alert(L10n.getValue('overview-consistency-problem-detected'));
         } else {
             console.log('Consistency check didn\'t find errors');
         }
@@ -174,11 +221,11 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function stateInit() {
-        state.navigation = getEl('navigation');
+        state.navigation = U.queryEl('#navigation');
         state.containers = {
             root: state,
             navigation: state.navigation,
-            content: getEl('contentArea')
+            content: U.queryEl('#contentArea')
         };
     }
 
@@ -191,57 +238,58 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Overview';
+                const firstTab = 'Briefings';
 
-                const addView = (containers, btnName, viewName, opts) => {
+                const addView = (containers, btnName, viewName, view, opts) => {
                     tabs[viewName] = {
                         viewName,
-                        viewRes: Utils.addView(containers, btnName, window[viewName], opts)
+                        viewRes: UI.addView(containers, btnName, view, opts)
+                        // viewRes: UI.addView(containers, btnName, window[viewName], opts)
                     };
                 };
 
-                addView(state.containers, 'overview', 'Overview');
-                //                addView(state.containers, 'profiles', 'Profiles');
-                addView(state.containers, 'characters', 'Characters');
-                addView(state.containers, 'players', 'Players');
-                addView(state.containers, 'stories', 'Stories');
-                addView(state.containers, 'adaptations', 'Adaptations');
-                addView(state.containers, 'briefings', 'Briefings');
-                addView(state.containers, 'relations', 'Relations');
+                addView(state.containers, 'overview', 'Overview', Overview);
+                // //                addView(state.containers, 'profiles', 'Profiles');
+                // addView(state.containers, 'characters', 'Characters');
+                // addView(state.containers, 'players', 'Players');
+                // addView(state.containers, 'stories', 'Stories');
+                addView(state.containers, 'adaptations', 'Adaptations', Adaptations);
+                addView(state.containers, 'briefings', 'Briefings', Briefings);
+                addView(state.containers, 'relations', 'Relations', Relations);
 
-                addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
+                U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 
-                addView(state.containers, 'timeline', 'Timeline', { clazz: 'timelineButton icon-button', tooltip: true });
-                addView(state.containers, 'social-network', 'SocialNetwork', { clazz: 'socialNetworkButton icon-button', tooltip: true });
-                addView(state.containers, 'profile-filter', 'ProfileFilter', { clazz: 'filterButton icon-button', tooltip: true });
-                addView(state.containers, 'groups', 'GroupProfile', { clazz: 'groupsButton icon-button', tooltip: true });
-                addView(state.containers, 'textSearch', 'TextSearch', { clazz: 'textSearchButton icon-button', tooltip: true });
-                addView(state.containers, 'roleGrid', 'RoleGrid', { clazz: 'roleGridButton icon-button', tooltip: true });
+                addView(state.containers, 'timeline', 'Timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
+                addView(state.containers, 'social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
+                // addView(state.containers, 'profile-filter', 'ProfileFilter', { clazz: 'filterButton icon-button', tooltip: true });
+                // addView(state.containers, 'groups', 'GroupProfile', { clazz: 'groupsButton icon-button', tooltip: true });
+                addView(state.containers, 'textSearch', 'TextSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
+                addView(state.containers, 'roleGrid', 'RoleGrid', RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
 
-                addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
+                U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 
-                if (MODE === 'NIMS_Server') {
-                    addView(state.containers, 'admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
-                }
-                addView(state.containers, 'logViewer', 'LogViewer2', { clazz: 'logViewerButton icon-button', tooltip: true });
+                // if (MODE === 'NIMS_Server') {
+                //     addView(state.containers, 'admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
+                // }
+                // addView(state.containers, 'logViewer', 'LogViewer2', { clazz: 'logViewerButton icon-button', tooltip: true });
 
-                addEl(state.navigation, addClass(makeEl('div'), 'nav-separator'));
+                U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 
                 if (isAdmin) {
                     button = makeButton('dataLoadButton icon-button', 'open-database', null, btnOpts);
-                    const input = makeEl('input');
+                    const input = U.makeEl('input');
                     input.type = 'file';
-                    addClass(input, 'hidden');
-                    setAttr(input, 'tabindex', -1);
+                    U.addClass(input, 'hidden');
+                    U.setAttr(input, 'tabindex', -1);
                     button.appendChild(input);
 
                     initBaseLoadBtn(button, input, onBaseLoaded);
-                    addEl(state.navigation, button);
+                    U.addEl(state.navigation, button);
                 }
 
-                addEl(state.navigation, makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
+                U.addEl(state.navigation, makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
                 if (MODE === 'Standalone') {
-                    addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', () => {
+                    U.addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', () => {
                         FileUtils.makeNewBase().then((confirmed) => {
                             if(confirmed){
                                 onBaseLoaded();
@@ -249,26 +297,26 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                         }).catch(Utils.handleError);
                     }, btnOpts));
                 }
-//                addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
+//                U.addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
-                //                addEl(state.navigation, makeL10nButton());
+                //                U.addEl(state.navigation, makeL10nButton());
 
-                addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
-                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-//                addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
-                addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'testTab', () => {
+                U.addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                U.addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+//                U.addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+                U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'testTab', () => {
                     if(state.currentView.test){
                         state.currentView.test();
                     } else {
                         console.error('This tab has no tests')
                     }
                 }, btnOpts));
-                // addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
+                // U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
                 if (MODE === 'NIMS_Server') {
-                    addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                    U.addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
                 }
-                addEl(state.navigation, makeButton('refreshButton icon-button', 'refresh', () => state.currentView.refresh(), btnOpts));
+                U.addEl(state.navigation, makeButton('refreshButton icon-button', 'refresh', () => state.currentView.refresh(), btnOpts));
 
                 Utils.setFirstTab(state.containers, tabs[firstTab].viewRes);
 
@@ -314,7 +362,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     function makeL10nButton() {
         const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
         const setIcon = () => {
-            l10nBtn.style.backgroundImage = strFormat('url("./images/{0}.svg")', [getL10n('header-dictionary-icon')]);
+            l10nBtn.style.backgroundImage = U.strFormat('url("./images/{0}.svg")', [L10n.getValue('header-dictionary-icon')]);
         };
         L10n.onL10nChange(setIcon);
         setIcon();
@@ -334,39 +382,40 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     }
 
     function makeButton(clazz, name, callback, opts) {
-        const button = makeEl('button');
-        addClass(button, clazz);
-        if (opts.tooltip) {
-            const delegate = () => {
-                $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
-            };
-            L10n.onL10nChange(delegate);
-            $(button).tooltip({
-                title: L10n.getValue(`header-${name}`),
-                placement: 'bottom'
-            });
-        }
-        addClass(button, 'action-button');
+        const button = U.makeEl('button');
+        U.addClass(button, clazz);
+        // if (opts.tooltip) {
+        //     const delegate = () => {
+        //         $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
+        //     };
+        //     L10n.onL10nChange(delegate);
+        //     $(button).tooltip({
+        //         title: L10n.getValue(`header-${name}`),
+        //         placement: 'bottom'
+        //     });
+        // }
+        U.addClass(button, 'action-button');
         if (opts.className) {
-            addClass(button, opts.className);
+            U.addClass(button, opts.className);
         }
         if (callback) {
-            listen(button, 'click', callback);
+            U.listen(button, 'click', callback);
         }
         return button;
     }
 
     function addBeforeUnloadListener() {
         window.onbeforeunload = (evt) => {
-            makeBackup();
-            const message = getL10n('utils-close-page-warning');
-            if (typeof evt === 'undefined') {
-                evt = window.event;
-            }
-            if (evt) {
-                evt.returnValue = message;
-            }
-            return message;
+            console.error('Dont forget to enable on unload listener');
+            // makeBackup();
+            // const message = L10n.getValue('utils-close-page-warning');
+            // if (typeof evt === 'undefined') {
+            //     evt = window.event;
+            // }
+            // if (evt) {
+            //     evt.returnValue = message;
+            // }
+            // return message;
         };
     }
 
@@ -419,4 +468,6 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         }).catch(Utils.handleError);
     }
 
-})(this.PageManager = {});
+// })(window.PageManager = {});
+window.PageManager = {}
+PageManager.onOrganizerPageLoad = exports.onOrganizerPageLoad;

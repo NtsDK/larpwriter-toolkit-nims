@@ -16,9 +16,12 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+ const Constants = require('common/constants');
+//  
+
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '.briefing-export-tab ';
 
@@ -28,71 +31,71 @@ See the License for the specific language governing permissions and
     let generateSingleDocx, generateSingleTxt, refreshStorySetSelect, refreshCharacterSetSelect;
 
     exports.init = () => {
-//        listen(getEl('makeDefaultTextBriefings'), 'click', () => {
+//        U.listen(U.queryEl('#makeDefaultTextBriefings'), 'click', () => {
 //            resolveTextTemplate((textTemplate) => {
 //                makeTextBriefings('txt', generateSingleTxt(textTemplate));
 //            });
 //        });
 
-        listen(getEl('makeCustomTextBriefings'), 'click', () => {
-            makeTextBriefings(getEl('textTypeSelector').value, generateSingleTxt(getEl('templateArea').value));
+        U.listen(U.queryEl('#makeCustomTextBriefings'), 'click', () => {
+            makeTextBriefings(U.queryEl('#textTypeSelector').value, generateSingleTxt(U.queryEl('#templateArea').value));
         });
-        listen(getEl('makeMarkdownBriefings'), 'click', () => {
-            makeTextBriefings('html', R.compose(data => markdownit('commonmark').render(data), generateSingleTxt(getEl('templateArea').value)));
+        U.listen(U.queryEl('#makeMarkdownBriefings'), 'click', () => {
+            makeTextBriefings('html', R.compose(data => markdownit('commonmark').render(data), generateSingleTxt(U.queryEl('#templateArea').value)));
         });
 
-        listen(getEl('docxBriefings'), 'change', readTemplateFile);
-        listen(getEl('docxBriefings'), 'focus', (e) => {
+        U.listen(U.queryEl('#docxBriefings'), 'change', readTemplateFile);
+        U.listen(U.queryEl('#docxBriefings'), 'focus', (e) => {
             e.target.value = '';
             state.customDocxTemplate = null;
         });
 
-        listen(getEl('makeDocxBriefings'), 'click', () => {
+        U.listen(U.queryEl('#makeDocxBriefings'), 'click', () => {
             if (state.customDocxTemplate === null) {
-                Utils.alert(getL10n('briefings-custom-docx-template-is-missing'));
+                Utils.alert(L10n.getValue('briefings-custom-docx-template-is-missing'));
             } else {
                 exportDocxByTemplate(state.customDocxTemplate);
             }
         });
 
 
-        let els = queryElEls(document, `${root} input[name=exportCharacterSelection]`);
-        els.map(listen(R.__, 'change', onCharacterSelectionChange));
-        getEl('exportAllCharacters').checked = true;
+        let els = U.queryElEls(document, `${root} input[name=exportCharacterSelection]`);
+        els.map(U.listen(R.__, 'change', onCharacterSelectionChange));
+        U.queryEl('#exportAllCharacters').checked = true;
 
-        els = queryElEls(document, `${root} input[name=exportStorySelection]`);
-        els.map(listen(R.__, 'change', onStorySelectionChange));
-        getEl('exportAllStories').checked = true;
+        els = U.queryElEls(document, `${root} input[name=exportStorySelection]`);
+        els.map(U.listen(R.__, 'change', onStorySelectionChange));
+        U.queryEl('#exportAllStories').checked = true;
 
-        const el = getEl('briefingNumberSelector');
-        Constants.briefingNumber.forEach(R.compose(addEl(el), makeOpt));
-        listen(el, 'change', refreshCharacterRangeSelect);
+        const el = U.queryEl('#briefingNumberSelector');
+        Constants.briefingNumber.forEach(R.compose(U.addEl(el), U.makeOpt));
+        U.listen(el, 'change', refreshCharacterRangeSelect);
 
         state.briefingNumberSelector = el;
-        state.briefingIntervalSelector = getEl('briefingIntervalSelector');
-        state.characterSetSelector = getEl('characterSetSelector');
-        state.storySetSelector = getEl('storySetSelector');
+        state.briefingIntervalSelector = U.queryEl('#briefingIntervalSelector');
+        state.characterSetSelector = U.queryEl('#characterSetSelector');
+        state.storySetSelector = U.queryEl('#storySetSelector');
 
-        getEl('makeBriefingsByTime '.trim()).addEventListener('click', makeExport('templateByTime'));
-        getEl('makeBriefingsByStory'.trim()).addEventListener('click', makeExport('templateByStory'));
-        getEl('makeInventoryList   '.trim()).addEventListener('click', makeExport('inventoryTemplate'));
+        U.queryEl('#makeBriefingsByTime '.trim()).addEventListener('click', makeExport('templateByTime'));
+        U.queryEl('#makeBriefingsByStory'.trim()).addEventListener('click', makeExport('templateByStory'));
+        U.queryEl('#makeInventoryList   '.trim()).addEventListener('click', makeExport('inventoryTemplate'));
 
         UI.initTabPanel('exportModeButton', 'exportContainer');
 
-        listen(getEl('previewTextOutput'), 'click', previewTextOutput);
-        getEl('textBriefingPreviewArea').value = '';
+        U.listen(U.queryEl('#previewTextOutput'), 'click', previewTextOutput);
+        U.queryEl('#textBriefingPreviewArea').value = '';
 
-        listen(getEl('showRawData'), 'click', previewTextDataAsIs);
+        U.listen(U.queryEl('#showRawData'), 'click', previewTextDataAsIs);
 
-        listen(getEl('convertToDocxTemplate'), 'click', convertToDocxTemplate);
-        listen(getEl('generateByDocxTemplate'), 'click', generateByDocxTemplate);
+        U.listen(U.queryEl('#convertToDocxTemplate'), 'click', convertToDocxTemplate);
+        U.listen(U.queryEl('#generateByDocxTemplate'), 'click', generateByDocxTemplate);
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
         resolveTextTemplate((textTemplate) => {
-            getEl('templateArea').value = textTemplate;
+            U.queryEl('#templateArea').value = textTemplate;
             refreshCharacterRangeSelect();
             refreshCharacterSetSelect();
             refreshStorySetSelect();
@@ -112,24 +115,24 @@ See the License for the specific language governing permissions and
     function onCharacterSelectionChange(event) {
         const exportCharacterRange = event.target.id === 'exportCharacterRange';
         const exportCharacterSet = event.target.id === 'exportCharacterSet';
-        hideEl(getEl('characterRangeSelect'), !exportCharacterRange);
-        hideEl(getEl('characterSetSelect'), !exportCharacterSet);
+        U.hideEl(U.queryEl('#characterRangeSelect'), !exportCharacterRange);
+        U.hideEl(U.queryEl('#characterSetSelect'), !exportCharacterSet);
     }
 
     function onStorySelectionChange(event) {
         const exportStorySet = event.target.id === 'exportStorySet';
-        hideEl(getEl('storySetSelect'), !exportStorySet);
+        U.hideEl(U.queryEl('#storySetSelect'), !exportStorySet);
     }
 
     function getSelectedUsers() {
-        const { id } = getSelectedRadio(qe(root), 'input[name=exportCharacterSelection]');
+        const { id } = U.getSelectedRadio(U.qe(root), 'input[name=exportCharacterSelection]');
         switch (id) {
         case 'exportAllCharacters':
             return null;
         case 'exportCharacterRange':
             return JSON.parse(state.briefingIntervalSelector.selectedOptions[0].value);
         case 'exportCharacterSet':
-            return nl2array(state.characterSetSelector.selectedOptions).map(opt => opt.value);
+            return U.nl2array(state.characterSetSelector.selectedOptions).map(opt => opt.value);
         default:
             Utils.alert(`unexpected id: ${id}`);
         }
@@ -137,12 +140,12 @@ See the License for the specific language governing permissions and
     }
 
     function getSelectedStories() {
-        const { id } = getSelectedRadio(qe(root), 'input[name=exportStorySelection]');
+        const { id } = U.getSelectedRadio(U.qe(root), 'input[name=exportStorySelection]');
         switch (id) {
         case 'exportAllStories':
             return null;
         case 'exportStorySet':
-            return nl2array(state.storySetSelector.selectedOptions).map(opt => opt.value);
+            return U.nl2array(state.storySetSelector.selectedOptions).map(opt => opt.value);
         default:
             Utils.alert(`unexpected id: ${id}`);
         }
@@ -150,7 +153,7 @@ See the License for the specific language governing permissions and
     }
 
     function refreshCharacterRangeSelect() {
-        const selector = clearEl(state.briefingIntervalSelector);
+        const selector = U.clearEl(state.briefingIntervalSelector);
         const num = Number(state.briefingNumberSelector.value);
 
         let chunks;
@@ -170,11 +173,11 @@ See the License for the specific language governing permissions and
 
 
     function refreshSetSelect(entityType, selectorName) {
-        const multiSel = clearEl(state[selectorName]);
+        const multiSel = U.clearEl(state[selectorName]);
         PermissionInformer.getEntityNamesArray({type: entityType, editableOnly: false}).then((names) => {
             if (names.length > 0) {
-                fillSelector(multiSel, names.map(remapProps4Select));
-                setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
+                U.fillSelector(multiSel, names.map(UI.remapProps4Select));
+                U.setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
             }
         }).catch(Utils.handleError)
     }
@@ -197,12 +200,12 @@ See the License for the specific language governing permissions and
             if (charData[arrName] === undefined) return;
             charData[arrName].forEach((element) => {
                 if (checkboxNames.indexOf(element.itemName) !== -1) {
-                    element.value = constL10n(Constants[element.value]);
+                    element.value = L10n.const(Constants[element.value]);
                     element.splittedText = [{ string: element.value }];
                 }
             });
             checkboxNames.forEach((name) => {
-                charData[prefix + name] = constL10n(Constants[charData[prefix + name]]);
+                charData[prefix + name] = L10n.const(Constants[charData[prefix + name]]);
             });
         });
     }
@@ -212,7 +215,7 @@ See the License for the specific language governing permissions and
             DBMS.getBriefingData({
                 selCharacters: getSelectedUsers(),
                 selStories: getSelectedStories(),
-                exportOnlyFinishedStories: getEl('exportOnlyFinishedStories').checked
+                exportOnlyFinishedStories: U.queryEl('#exportOnlyFinishedStories').checked
             }),
             DBMS.getProfileStructure({type: 'character'}),
             DBMS.getProfileStructure({type: 'player'}),
@@ -233,7 +236,7 @@ See the License for the specific language governing permissions and
 
     function convertToDocxTemplate() {
         const docxTemplate = makeDocxTemplate('blob');
-        Utils.confirm(getL10n('briefings-save-file'), () => {
+        Utils.confirm(L10n.getValue('briefings-save-file'), () => {
             saveAs(docxTemplate, FileUtils.makeFileName('template', 'docx'));
         });
     }
@@ -243,7 +246,7 @@ See the License for the specific language governing permissions and
     }
 
     function makeDocxTemplate(type) {
-        let template = getEl('templateArea').value;
+        let template = U.queryEl('#templateArea').value;
 
         const replaceBrackets = R.pipe(R.replace(/{{{/g, '{'), R.replace(/}}}/g, '}'), R.replace(/{{/g, '{'), R.replace(/}}/g, '}'));
         template = replaceBrackets(template).split('\n').map(string => ({ string }));
@@ -264,14 +267,14 @@ See the License for the specific language governing permissions and
     function previewTextDataAsIs() {
         getBriefingData((err, briefingData) => {
             if (err) { Utils.handleError(err); return; }
-            getEl('textBriefingPreviewArea').value = JSON.stringify(briefingData, null, '  ');
+            U.queryEl('#textBriefingPreviewArea').value = JSON.stringify(briefingData, null, '  ');
         });
     }
 
     function previewTextOutput() {
         getBriefingData((err, data) => {
             if (err) { Utils.handleError(err); return; }
-            getEl('textBriefingPreviewArea').value = generateSingleTxt(getEl('templateArea').value, data);
+            U.queryEl('#textBriefingPreviewArea').value = generateSingleTxt(U.queryEl('#templateArea').value, data);
         });
     }
 
@@ -295,56 +298,56 @@ See the License for the specific language governing permissions and
             const r = new FileReader();
             r.onload = (e) => {
                 state.customDocxTemplate = e.target.result;
-                Utils.alert(getL10n('briefings-template-is-loaded'));
+                Utils.alert(L10n.getValue('briefings-template-is-loaded'));
             };
             r.readAsBinaryString(f);
         } else {
-            Utils.alert(getL10n('briefings-error-on-template-uploading'));
+            Utils.alert(L10n.getValue('briefings-error-on-template-uploading'));
         }
     }
 
     function updateStatus(text) {
-        const exportStatus = getEl('exportStatus');
-        clearEl(exportStatus);
-        exportStatus.appendChild(makeText(text));
+        const exportStatus = U.queryEl('#exportStatus');
+        U.clearEl(exportStatus);
+        exportStatus.appendChild(U.makeText(text));
     }
 
     function generateBriefings(briefingData, fileType, oneFileDelegate, separateFileDelegate) {
-        const toSeparateFiles = getEl('toSeparateFileCheckbox').checked;
+        const toSeparateFiles = U.queryEl('#toSeparateFileCheckbox').checked;
 
         const fileName = 'characterSheets';
 
         let out, archive;
-        updateStatus(getL10n('briefings-save-preparing'));
+        updateStatus(L10n.getValue('briefings-save-preparing'));
         try {
             if (toSeparateFiles) {
                 const zip = new JSZip();
                 const content = zip.generate();
-                updateStatus(getL10n('briefings-start-saving'));
+                updateStatus(L10n.getValue('briefings-start-saving'));
 
                 const res = makeArchiveData(briefingData, separateFileDelegate);
                 R.keys(res).forEach((key) => {
                     zip.file(`${key}.${fileType}`, res[key]);
                 });
 
-                updateStatus(getL10n('briefings-archiving'));
+                updateStatus(L10n.getValue('briefings-archiving'));
                 archive = zip.generate({ type: 'blob' });
-                updateStatus(getL10n('briefings-archive-is-ready'));
+                updateStatus(L10n.getValue('briefings-archive-is-ready'));
                 saveFile('briefings-save-archive', archive, fileName, 'zip');
             } else {
-                updateStatus(getL10n('briefings-start-saving'));
+                updateStatus(L10n.getValue('briefings-start-saving'));
                 out = oneFileDelegate(briefingData);
-                updateStatus(getL10n('briefings-file-is-ready'));
+                updateStatus(L10n.getValue('briefings-file-is-ready'));
                 saveFile('briefings-save-file', out, fileName, fileType);
             }
         } catch (err) {
-            Utils.alert(getL10n('briefings-error-on-generating-briefings'));
+            Utils.alert(L10n.getValue('briefings-error-on-generating-briefings'));
             console.log(err);
         }
     }
 
     function saveFile(msgKey, out, fileName, extension) {
-        Utils.confirm(getL10n(msgKey), () => {
+        Utils.confirm(L10n.getValue(msgKey), () => {
             saveAs(out, FileUtils.makeFileName(fileName, extension));
         });
     }
@@ -357,7 +360,7 @@ See the License for the specific language governing permissions and
                 gameName: briefingData.gameName,
                 briefings: [briefing]
             });
-            updateStatus(strFormat(getL10n('briefings-save-status'), [i + 1, briefingData.briefings.length]));
+            updateStatus(U.strFormat(L10n.getValue('briefings-save-status'), [i + 1, briefingData.briefings.length]));
         });
         return res;
     }
@@ -377,8 +380,8 @@ See the License for the specific language governing permissions and
         try {
             return Mustache.render(template, data);
         } catch (err) {
-            Utils.alert(strFormat(getL10n('briefings-template-error'), [err.message]));
+            Utils.alert(U.strFormat(L10n.getValue('briefings-template-error'), [err.message]));
             throw err;
         }
     });
-})(this.BriefingExport = {});
+// })(window.BriefingExport = {});

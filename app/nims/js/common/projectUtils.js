@@ -1,3 +1,6 @@
+// const R = require('ramda');
+const Constants = require('./constants');
+const {CU} = require('../../../core');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +17,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((callback) => {
-    function ProjectUtils(exports, R, Constants, Errors, CU) {
+// ((callback) => {
+    // function ProjectUtils(exports, R, Constants, Errors, CU) {
         exports.acceptDataRow = R.curry((model, dataString) => {
             const dataMap = CU.arr2map(dataString, 'itemName');
             return model.every((filterItem) => {
@@ -234,7 +237,7 @@ See the License for the specific language governing permissions and
 
         exports.rel2charArr = R.props(['starter', 'ender']);
         exports.get2ndRelChar = R.curry((char1, rel) => (rel.starter === char1 ? rel.ender : rel.starter));
-    }
+    // }
 
-    callback(ProjectUtils);
-})(api => ((typeof exports === 'undefined') ? api((this.ProjectUtils = {}), R, Constants, Errors, CommonUtils) : (module.exports = api)));
+//     callback(ProjectUtils);
+// })(api => ((typeof exports === 'undefined') ? api((this.ProjectUtils = {}), R, Constants, Errors, CommonUtils) : (module.exports = api)));

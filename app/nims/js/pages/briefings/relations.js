@@ -16,21 +16,26 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const PermissionInformer = require('permissionInformer');
+const RelationsPreview = require('./relationsPreview');
+
+
+ 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.relations-tab ';
     const state = {};
     const settingsPath = 'Relations';
 
     exports.init = () => {
         $(`${root} .character-select`).select2().on('change', buildContent);
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
-        clearEl(queryEl(`${root} .character-select`));
-        clearEl(queryEl(`${root} .panel-body`));
+        U.clearEl(U.queryEl(`${root} .character-select`));
+        U.clearEl(U.queryEl(`${root} .panel-body`));
 
         Promise.all([
             DBMS.getProfileStructure({type: 'character'}),
@@ -39,12 +44,12 @@ See the License for the specific language governing permissions and
             const [characterProfileStructure, names] = results;
             state.characterProfileStructure = characterProfileStructure;
 
-            showEl(qe(`${root} .alert`), names.length < 2);
-            showEl(qe(`${root} > .panel`), names.length > 1);
+            U.showEl(U.qe(`${root} .alert`), names.length < 2);
+            U.showEl(U.qe(`${root} > .panel`), names.length > 1);
 
             if (names.length > 0) {
                 const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
-                const data = getSelect2Data(names);
+                const data = UI.getSelect2Data(names);
                 // this call trigger buildContent
                 $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
             }
@@ -52,7 +57,7 @@ See the License for the specific language governing permissions and
     };
 
     function buildContent(event) {
-        clearEl(queryEl(`${root} .panel-body`));
+        U.clearEl(U.queryEl(`${root} .panel-body`));
         const characterName = event.target.value;
         UI.updateEntitySetting(settingsPath, characterName);
         state.data = {};
@@ -65,7 +70,7 @@ See the License for the specific language governing permissions and
             state.data, true, state.characterProfileStructure,
             exports.refresh
         );
-        addEl(queryEl(`${root} .panel-body`), content);
+        U.addEl(U.queryEl(`${root} .panel-body`), content);
         UI.initTextAreas(`${root} .panel-body textarea`);
         UI.refreshTextAreas(`${root} .panel-body textarea`);
     }
@@ -85,4 +90,4 @@ See the License for the specific language governing permissions and
             callback();
         }).catch(Utils.handleError);
     };
-})(this.Relations = {});
+// })(window.Relations = {});

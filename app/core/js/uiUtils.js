@@ -1,3 +1,6 @@
+const {U, Utils} = require('./utils.js');
+const L10n = require('./l10n.js');
+// const R = require('ramda');
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,107 +19,187 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable no-var,vars-on-top */
 
-((exports) => {
+/** opts
+    tooltip - add tooltip to button, used for iconic buttons
+    id - set button id
+    mainPage - enable view as first page - deprecated. Use Utils.setFirstTab instead
+    toggle - toggle content, associated with button
+*/
+exports.addView = function (containers, name, view, opts2) {
+    const opts = opts2 || {};
+    view.init();
+    const buttonClass = 'navigation-button';
+    containers.root.views[name] = view;
+    const button = U.makeEl('button');
+    function delegate() {
+        $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
+    }
+    if (opts.tooltip) {
+        L10n.onL10nChange(delegate);
+        $(button).tooltip({
+            title: L10n.getValue(`header-${name}`),
+            placement: 'bottom'
+        });
+    } else {
+        U.addEl(button, U.makeText(L10n.getValue(`header-${name}`)));
+        U.setAttr(button, 'l10n-id', `header-${name}`);
+    }
+    U.addClass(button, buttonClass);
+    U.addClass(button, `-test-${name}`);
+    U.addClass(button, `-toggle-class-${name}`);
+    if (opts.clazz) {
+        U.addClass(button, opts.clazz);
+    }
+    containers.navigation.appendChild(button);
+
+    const onClickDelegate = function (view2) {
+        return function (evt) {
+            //Tests.run();
+            const elems = containers.navigation.getElementsByClassName(buttonClass);
+            if (opts.toggle) {
+                const els = U.queryEls(`.-toggle-class-${name}`);
+                for (let i = 0; i < els.length; i++) {
+                    if (evt.target.isEqualNode(els[i])) {
+                        continue;
+                    }
+                    if (U.hasClass(els[i], 'active')) {
+                        els[i].click();
+                    }
+                }
+            }
+
+            const isActive = U.hasClass(evt.target, 'active');
+            for (let i = 0; i < elems.length; i++) {
+                U.removeClass(elems[i], 'active');
+            }
+            if (!opts.toggle || (opts.toggle && !isActive)) {
+                U.addClass(evt.target, 'active');
+
+                U.passEls(containers.content, U.queryEl('#warehouse'));
+                containers.content.appendChild(view2.content);
+                U.removeClass(containers.content, 'hidden');
+                containers.root.currentView = view2;
+                view2.refresh();
+            } else {
+                U.removeClass(evt.target, 'active');
+                U.passEls(containers.content, U.queryEl('#warehouse'));
+                containers.root.currentView = null;
+                U.addClass(containers.content, 'hidden');
+            }
+        };
+    };
+
+    button.addEventListener('click', onClickDelegate(view));
+
+    // deprecated. Use Utils.setFirstTab instead
+    if (opts.mainPage) {
+        Utils.setFirstTab(containers, {button, view});
+    }
+    return {button, view};
+};
+
+
+// ((exports) => {
     exports.createModalDialog = (root, onAction, opts) => {
         const commons = '.dialog-commons ';
-        const el2 = wrapEl('div', qte(`${commons} .request-data-dialog-tmpl`));
-        const el = qee(el2, '.modal');
+        const el2 = U.wrapEl('div', U.qte(`${commons} .request-data-dialog-tmpl`));
+        const el = U.qee(el2, '.modal');
         if (opts.dialogClass !== undefined) {
-            addClass(el, opts.dialogClass);
+            U.addClass(el, opts.dialogClass);
         }
-        const body = qee(el, '.modal-body');
-        addEl(body, qte(`${commons} .${opts.bodySelector}`));
+        const body = U.qee(el, '.modal-body');
+        U.addEl(body, U.qte(`${commons} .${opts.bodySelector}`));
         if (opts.body !== undefined) {
-            R.toPairs(opts.body).map(pair => setAttr(qee(body, pair[0]), 'l10n-id', pair[1]));
+            R.toPairs(opts.body).map(pair => U.setAttr(U.qee(body, pair[0]), 'l10n-id', pair[1]));
         }
         if (opts.initBody !== undefined) {
             opts.initBody(body);
         }
-        addEl(body, qte(`${commons} .modal-error-block`));
-        setAttr(qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
-        setAttr(qee(el, '.on-action-button'), 'l10n-id', opts.actionButtonTitle);
+        U.addEl(body, U.qte(`${commons} .modal-error-block`));
+        U.setAttr(U.qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
+        U.setAttr(U.qee(el, '.on-action-button'), 'l10n-id', opts.actionButtonTitle);
         L10n.localizeStatic(el);
-        listen(qee(el, '.on-action-button'), 'click', onAction(el));
+        U.listen(U.qee(el, '.on-action-button'), 'click', onAction(el));
         el.showDlg = () => {
-            clearError(el);
+            Utils.clearError(el);
             $(el).modal('show');
-            const focusable = qee(body, '.focusable');
+            const focusable = U.qee(body, '.focusable');
             if (focusable !== null) {
                 setTimeout(() => focusable.focus(), 500);
             }
         };
-        const onenterable = qees(body, '.onenterable');
+        const onenterable = U.qees(body, '.onenterable');
         if (onenterable.length !== 0) {
-            onenterable.forEach(listenOnEnter(R.__, onAction(el)));
+            onenterable.forEach(U.listenOnEnter(R.__, onAction(el)));
         }
         el.hideDlg = () => $(el).modal('hide');
-        listen(qee(el, '.on-cancel-button'), 'click', () => {
+        U.listen(U.qee(el, '.on-cancel-button'), 'click', () => {
             el.hideDlg()
             if (opts.onCancel) opts.onCancel();
         });
-        listen(qee(el, '.on-close-button'), 'click', () => {
+        U.listen(U.qee(el, '.on-close-button'), 'click', () => {
             el.hideDlg()
             if (opts.onCancel) opts.onCancel();
         });
-        addEl(qe(root), el);
+        U.addEl(U.qe(root), el);
         return el;
     };
 
     exports.initTabPanel = (tabClazz, containerClazz) => {
-        const containers = getEls(containerClazz);
+        const containers = U.queryEls('.'+containerClazz);
 
         let i;
         for (i = 1; i < containers.length; i++) { // don't hide 1st element
-            addClass(containers[i], 'hidden');
+            U.addClass(containers[i], 'hidden');
         }
 
-        const tabButtons = getEls(tabClazz);
+        const tabButtons = U.queryEls('.'+tabClazz);
 
-        addClass(tabButtons[0], 'active');
+        U.addClass(tabButtons[0], 'active');
 
         for (i = 0; i < tabButtons.length; i++) {
-            listen(tabButtons[i], 'click', tabButtonClick(tabButtons, containers));
+            U.listen(tabButtons[i], 'click', tabButtonClick(tabButtons, containers));
         }
     };
 
     var tabButtonClick = (buttons, containers) => (event) => {
         for (let i = 0; i < buttons.length; i++) {
-            setClassByCondition(buttons[i], 'active', event.target.id === buttons[i].id);
+            U.setClassByCondition(buttons[i], 'active', event.target.id === buttons[i].id);
         }
         for (let i = 0; i < containers.length; i++) {
-            hideEl(containers[i], `${event.target.id}Container` !== containers[i].id);
+            U.hideEl(containers[i], `${event.target.id}Container` !== containers[i].id);
         }
     };
 
     exports.fillShowItemSelector = (selector, displayArray) => {
         let el;
-        setAttr(selector, 'size', displayArray.length);
+        U.setAttr(selector, 'size', displayArray.length);
         displayArray.forEach((value) => {
-            el = setProps(makeEl('option'), {
+            el = U.setProps(U.makeEl('option'), {
                 selected: true,
             });
-            hideEl(el, value.hidden);
-            addEl(selector, addEl(el, makeText(value.name)));
+            U.hideEl(el, value.hidden);
+            U.addEl(selector, U.addEl(el, U.makeText(value.name)));
         });
     };
 
     exports.fillShowItemSelector2 = (selector, optionGroups, setSize) => {
         let el, groupEl, counter = 0;
-        addEls(selector, optionGroups.map((group) => {
+        U.addEls(selector, optionGroups.map((group) => {
             counter++;
-            groupEl = setAttr(makeEl('optgroup'), 'label', group.displayName);
-            addEls(groupEl, group.array.map((option) => {
-                el = setProps(makeEl('option'), {
+            groupEl = U.setAttr(U.makeEl('optgroup'), 'label', group.displayName);
+            U.addEls(groupEl, group.array.map((option) => {
+                el = U.setProps(U.makeEl('option'), {
                     selected: true,
                 });
-                setAttr(el, 'value', option.name);
+                U.setAttr(el, 'value', option.name);
                 counter++;
-                return addEl(el, makeText(option.displayName));
+                return U.addEl(el, U.makeText(option.displayName));
             }));
             return groupEl;
         }));
         if (setSize) {
-            setAttr(selector, 'size', counter);
+            U.setAttr(selector, 'size', counter);
         }
     };
 
@@ -127,7 +210,7 @@ See the License for the specific language governing permissions and
     //        for (i = 0; i < el.options.length; i += 1) {
     //            els = getEls(classKey + i);
     //            for (j = 0; j < els.length; j++) {
-    //                hideEl(els[j], !el.options[i].selected);
+    //                U.hideEl(els[j], !el.options[i].selected);
     //            }
     //        }
     //        console.log('showSelectedEls time ' + (performance.now() - t1) + ' ms');
@@ -138,9 +221,9 @@ See the License for the specific language governing permissions and
     //        const el = event.target;
     //        let els, i, j;
     //        for (i = 0; i < el.options.length; i += 1) {
-    //            els = queryEls(root + ' .' + classKey + i);
+    //            els = U.queryEls(root + ' .' + classKey + i);
     //            for (j = 0; j < els.length; j++) {
-    //                hideEl(els[j], !el.options[i].selected);
+    //                U.hideEl(els[j], !el.options[i].selected);
     //            }
     //        }
     //        console.log('showSelectedEls2 time ' + (performance.now() - t1) + ' ms');
@@ -154,20 +237,20 @@ See the License for the specific language governing permissions and
         for (i = 0; i < el.options.length; i += 1) {
             map[i] = el.options[i].selected;
         }
-        const els = queryEls(root + ' .' + classKey);
+        const els = U.queryEls(root + ' .' + classKey);
         els.forEach(el2 => {
-            showEl(el2, map[getAttr(el2, attr)]);
+            U.showEl(el2, map[U.getAttr(el2, attr)]);
         });
         console.log('showSelectedEls3 time ' + (performance.now() - t1) + ' ms');
     };
 
     exports.initSelectorFilters = () => {
-        queryEls('[selector-filter]').forEach((el) => {
-            const sel = queryEl(getAttr(el, 'selector-filter'));
+        U.queryEls('[selector-filter]').forEach((el) => {
+            const sel = U.queryEl(U.getAttr(el, 'selector-filter'));
             el.value = '';
-            setAttr(el, 'l10n-placeholder-id', 'constant-filter');
-            addClass(el, 'form-control margin-bottom-8');
-            listen(el, 'input', filterOptions(sel));
+            U.setAttr(el, 'l10n-placeholder-id', 'constant-filter');
+            U.addClass(el, 'form-control margin-bottom-8');
+            U.listen(el, 'input', filterOptions(sel));
         });
     };
 
@@ -183,27 +266,27 @@ See the License for the specific language governing permissions and
             if (!isVisible) {
                 opt.selected = false;
             }
-            hideEl(opt, !isVisible);
-            //                setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
+            U.hideEl(opt, !isVisible);
+            //                U.setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
         }
         sel.dispatchEvent(new Event('change'));
     };
 
     exports.initPanelToggler = (el) => {
-        const attr = getAttr(el, 'panel-toggler');
-        addClass(el, 'expanded');
+        const attr = U.getAttr(el, 'panel-toggler');
+        U.addClass(el, 'expanded');
         const sel = document.querySelector(attr);
         if (sel == null) {
             Utils.alert(`Panel toggler is broken: ${attr}`);
         }
-        listen(el, 'click', togglePanel(el, sel));
+        U.listen(el, 'click', togglePanel(el, sel));
     };
 
-    exports.initPanelTogglers = el => qees(el || document, '[panel-toggler]').forEach(exports.initPanelToggler);
+    exports.initPanelTogglers = el => U.qees(el || document, '[panel-toggler]').forEach(exports.initPanelToggler);
 
     exports.attachPanelToggler = (header, content, callback) => {
-        addClass(header, 'expanded');
-        listen(header, 'click', (event) => {
+        U.addClass(header, 'expanded');
+        U.listen(header, 'click', (event) => {
             if (callback) {
                 callback(event, () => {
                     togglePanel(header, content)(event);
@@ -215,16 +298,16 @@ See the License for the specific language governing permissions and
     };
 
     var togglePanel = (el, sel) => (event) => {
-        const isExpanded = hasClass(el, 'expanded');
-        removeClasses(el, ['expanded', 'collapsed']);
-        addClass(el, isExpanded ? 'collapsed' : 'expanded');
-        toggleClass(sel, 'hidden');
+        const isExpanded = U.hasClass(el, 'expanded');
+        U.removeClasses(el, ['expanded', 'collapsed']);
+        U.addClass(el, isExpanded ? 'collapsed' : 'expanded');
+        U.toggleClass(sel, 'hidden');
     };
 
     exports.makeEventTimePicker = (opts) => {
-        const input = makeEl('input');
-        R.ap([addClass(input)], opts.extraClasses);
-        addClass(input, 'eventTime');
+        const input = U.makeEl('input');
+        R.ap([U.addClass(input)], opts.extraClasses);
+        U.addClass(input, 'eventTime');
         input.value = opts.eventTime;
 
         input.eventIndex = opts.index;
@@ -241,7 +324,7 @@ See the License for the specific language governing permissions and
             pickerOpts.value = opts.eventTime;
         } else {
             pickerOpts.value = opts.date;
-            addClass(input, 'defaultDate');
+            U.addClass(input, 'defaultDate');
         }
 
         jQuery(input).datetimepicker(pickerOpts);
@@ -265,7 +348,7 @@ See the License for the specific language governing permissions and
             pickerOpts.value = opts.eventTime;
         } else {
             pickerOpts.value = opts.date;
-            addClass(input, 'defaultDate');
+            U.addClass(input, 'defaultDate');
         }
 
         jQuery(input).datetimepicker(pickerOpts);
@@ -274,9 +357,9 @@ See the License for the specific language governing permissions and
 
     // bug about setting 0900 years in Braavos game is event date. Fixed in production.
     //  exports.makeEventTimePicker = function (opts) {
-    //      var input = makeEl("input");
-    //      R.ap([addClass(input)], opts.extraClasses);
-    //      addClass(input, "eventTime");
+    //      var input = U.makeEl("input");
+    //      R.ap([U.addClass(input)], opts.extraClasses);
+    //      U.addClass(input, "eventTime");
     //      input.value = opts.eventTime;
     //
     //      input.eventIndex = opts.index;
@@ -296,7 +379,7 @@ See the License for the specific language governing permissions and
     //          value = new Date(opts.eventTime);
     //      } else {
     //          value = opts.date;
-    //          addClass(input, "defaultDate");
+    //          U.addClass(input, "defaultDate");
     //      }
     //
     //      picker.value = value;
@@ -306,19 +389,19 @@ See the License for the specific language governing permissions and
     //  };
 
     exports.initTextAreas = (sel) => {
-        R.ap([exports.attachTextareaResizer], queryEls(sel));
+        R.ap([exports.attachTextareaResizer], U.queryEls(sel));
     };
 
     exports.refreshTextAreas = (sel) => {
-        R.ap([exports.resizeTextarea], queryEls(sel).map(el => ({ target: el })));
+        R.ap([exports.resizeTextarea], U.queryEls(sel).map(el => ({ target: el })));
     };
 
     exports.attachTextareaResizer = (input) => {
-        listen(input, 'keydown', exports.resizeTextarea);
-        listen(input, 'paste', exports.resizeTextarea);
-        listen(input, 'cut', exports.resizeTextarea);
-        listen(input, 'change', exports.resizeTextarea);
-        listen(input, 'drop', exports.resizeTextarea);
+        U.listen(input, 'keydown', exports.resizeTextarea);
+        U.listen(input, 'paste', exports.resizeTextarea);
+        U.listen(input, 'cut', exports.resizeTextarea);
+        U.listen(input, 'change', exports.resizeTextarea);
+        U.listen(input, 'drop', exports.resizeTextarea);
     };
 
     exports.resizeTextarea = (ev) => {
@@ -333,10 +416,10 @@ See the License for the specific language governing permissions and
     };
 
     exports.populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
-        setClassByCondition(input, 'notEditable', !isEditable);
+        U.setClassByCondition(input, 'notEditable', !isEditable);
         input.value = event.characters[characterName].time;
         input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-        listen(input, 'change', onChangePersonalTimeDelegate);
+        U.listen(input, 'change', onChangePersonalTimeDelegate);
         return input;
     };
 
@@ -353,18 +436,18 @@ See the License for the specific language governing permissions and
     };
 
     exports.populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
-        const input = qee(div, 'input');
-        setClassByCondition(input, 'notEditable', !isEditable);
+        const input = U.qee(div, 'input');
+        U.setClassByCondition(input, 'notEditable', !isEditable);
         input.checked = checked;
         input.id = id;
-        listen(input, 'change', callback);
-        setAttr(qee(div, 'label'), 'for', input.id);
+        U.listen(input, 'change', callback);
+        U.setAttr(U.qee(div, 'label'), 'for', input.id);
         return div;
     };
 
     exports.onChangeAdaptationReadyStatus2 = callback => (event) => {
         const dataKey = JSON.parse(event.target.id);
-        const value = !hasClass(event.target, 'btn-primary');
+        const value = !U.hasClass(event.target, 'btn-primary');
 
         DBMS.setEventAdaptationProperty({
             storyName: dataKey[0],
@@ -373,20 +456,20 @@ See the License for the specific language governing permissions and
             type: 'ready',
             value
         }).then( () => {
-            setClassByCondition(event.target, 'btn-primary', value);
+            U.setClassByCondition(event.target, 'btn-primary', value);
             callback(value);
         }).catch(Utils.handleError);
     };
 
     exports.makePanelCore = (title, content) => {
-        const panel = addClasses(makeEl('div'), ['panel', 'panel-default']);
-        const h3 = addClass(addEl(makeEl('h3'), title), 'panel-title');
-        const a = setAttr(makeEl('a'), 'href', '#/');
-        setAttr(a, 'panel-toggler', '');
-        const headDiv = addClass(makeEl('div'), 'panel-heading');
-        addEl(panel, addEl(headDiv, addEl(a, h3)));
-        const contentDiv = addClass(makeEl('div'), 'panel-body');
-        addEl(panel, addEl(contentDiv, content));
+        const panel = U.addClasses(U.makeEl('div'), ['panel', 'panel-default']);
+        const h3 = U.addClass(U.addEl(U.makeEl('h3'), title), 'panel-title');
+        const a = U.setAttr(U.makeEl('a'), 'href', '#/');
+        U.setAttr(a, 'panel-toggler', '');
+        const headDiv = U.addClass(U.makeEl('div'), 'panel-heading');
+        U.addEl(panel, U.addEl(headDiv, U.addEl(a, h3)));
+        const contentDiv = U.addClass(U.makeEl('div'), 'panel-body');
+        U.addEl(panel, U.addEl(contentDiv, content));
         return {
             panel,
             contentDiv,
@@ -394,36 +477,36 @@ See the License for the specific language governing permissions and
         };
     };
 
-    exports.makeProfileTable = (profileStructure, profile) => {
-        const container = qmte('.profile-editor-container-tmpl');
-        addClass(container, 'profile-table');
+    exports.makeProfileTable = (Constants, profileStructure, profile) => {
+        const container = U.qmte('.profile-editor-container-tmpl');
+        U.addClass(container, 'profile-table');
         let value;
-        return addEls(container, profileStructure.filter(element => element.doExport).map((element) => {
+        return U.addEls(container, profileStructure.filter(element => element.doExport).map((element) => {
             switch (element.type) {
                 case 'text':
-                    value = addClass(makeEl('span'), 'briefingTextSpan');
-                    addEl(value, makeText(profile[element.name]));
+                    value = U.addClass(U.makeEl('span'), 'briefingTextSpan');
+                    U.addEl(value, U.makeText(profile[element.name]));
                     break;
                 case 'enum':
                 case 'multiEnum':
                 case 'number':
                 case 'string':
-                    value = makeText(profile[element.name]);
+                    value = U.makeText(profile[element.name]);
                     break;
                 case 'checkbox':
-                    value = makeText(constL10n(Constants[profile[element.name]]));
+                    value = U.makeText(L10n.const(Constants[profile[element.name]]));
                     break;
                 default:
                     throw new Error(`Unexpected type ${element.type}`);
             }
-            const row = qmte('.profile-editor-row-tmpl');
-            addEl(qee(row, '.profile-item-name'), makeText(element.name));
-            addEl(qee(row, '.profile-item-input'), value);
+            const row = U.qmte('.profile-editor-row-tmpl');
+            U.addEl(U.qee(row, '.profile-item-name'), U.makeText(element.name));
+            U.addEl(U.qee(row, '.profile-item-input'), value);
             return row;
         }));
     };
 
-    exports.makeTableRow = (col1, col2) => addEls(makeEl('tr'), [addEl(makeEl('td'), col1), addEl(makeEl('td'), col2)]);
+    exports.makeTableRow = (col1, col2) => U.addEls(U.makeEl('tr'), [U.addEl(U.makeEl('td'), col1), U.addEl(U.makeEl('td'), col2)]);
 
     exports.checkAndGetEntitySetting = (settingsPath, names) => {
         if (names.length === 0) return null;
@@ -469,4 +552,14 @@ See the License for the specific language governing permissions and
             });
         }
     };
-})(this.UI = {});
+
+    exports.constArr2Select = R.map(R.compose(R.zipObj(['value', 'name']), name => [name, L10n.const(name)]));
+
+    exports.remapProps = R.curry((outKeys, pickKeys, obj) => R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj));
+
+    exports.remapProps4Select2 = exports.remapProps(['id', 'text'], ['value', 'displayName']);
+    exports.remapProps4Select = exports.remapProps(['value', 'name'], ['value', 'displayName']);
+
+    exports.getSelect2DataCommon = R.curry((preparator, obj) => R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj));
+    exports.getSelect2Data = exports.getSelect2DataCommon(exports.remapProps4Select2);
+// })(window.UI = {});

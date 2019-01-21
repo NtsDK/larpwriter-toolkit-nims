@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '.story-characters-tab ';
     const superRoot = '.stories-tab ';
@@ -32,24 +32,24 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-add',
         });
 
-        //        listen(qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
+        //        U.listen(U.qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
 
         state.switchCharacterDialog = UI.createModalDialog(root, switchCharacters, {
             bodySelector: 'modal-switch-event-body',
             dialogTitle: 'stories-switch-character-title',
             actionButtonTitle: 'common-replace',
         });
-        state.ExternalCharacterSelectors = [queryEl(`${superRoot}.storyCharactersAddSelector`),
-            queryEl(`${root}.storyCharactersToSelector`)];
+        state.ExternalCharacterSelectors = [U.queryEl(`${superRoot}.storyCharactersAddSelector`),
+            U.queryEl(`${root}.storyCharactersToSelector`)];
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
         initialized = true;
     };
 
     exports.refresh = () => {
         state.ExternalCharacterSelectors.forEach(clearEl);
 
-        clearEl(queryEl(`${root}.storyCharactersTable`));
+        U.clearEl(U.queryEl(`${root}.storyCharactersTable`));
 
         if (!Stories.getCurrentStoryName()) { return; }
 
@@ -80,26 +80,26 @@ See the License for the specific language governing permissions and
         addArray.sort(Utils.charOrdAObject);
         removeArray.sort(Utils.charOrdAObject);
 
-        const addData = getSelect2Data(addArray);
-        const removeData = getSelect2Data(removeArray);
+        const addData = UI.getSelect2Data(addArray);
+        const removeData = UI.getSelect2Data(removeArray);
 
         state.ExternalCharacterSelectors.forEach((selector) => {
             $(selector).select2(addData);
         });
 
-        const table = clearEl(queryEl(`${root}.storyCharactersTable`));
+        const table = U.clearEl(U.queryEl(`${root}.storyCharactersTable`));
 
-        showEl(qe(`${root} table`), R.keys(localCharacters).length !== 0 );
-        showEl(qe(`${root} .alert`), R.keys(localCharacters).length === 0 );
+        U.showEl(U.qe(`${root} table`), R.keys(localCharacters).length !== 0 );
+        U.showEl(U.qe(`${root} .alert`), R.keys(localCharacters).length === 0 );
 
         removeArray.forEach((removeValue) => {
-            addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
+            U.addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
         });
     }
 
     function addCharacter(dialog) {
         return () => {
-            const characterName = queryEl(`${superRoot}.storyCharactersAddSelector`).value.trim();
+            const characterName = U.queryEl(`${superRoot}.storyCharactersAddSelector`).value.trim();
             DBMS.addStoryCharacter({
                 storyName: Stories.getCurrentStoryName(),
                 characterName
@@ -112,7 +112,7 @@ See the License for the specific language governing permissions and
 
     function switchCharacters(dialog) {
         return () => {
-            const toName = queryEl(`${root}.storyCharactersToSelector`).value.trim();
+            const toName = U.queryEl(`${root}.storyCharactersToSelector`).value.trim();
             DBMS.switchStoryCharacters({
                 storyName: Stories.getCurrentStoryName(),
                 fromName: dialog.characterName,
@@ -126,7 +126,7 @@ See the License for the specific language governing permissions and
 
     function removeCharacter(characterName) {
         return () => {
-            Utils.confirm(strFormat(getL10n('stories-remove-character-from-story-warning'), [characterName]), () => {
+            Utils.confirm(U.strFormat(L10n.getValue('stories-remove-character-from-story-warning'), [characterName]), () => {
                 DBMS.removeStoryCharacter({
                     storyName: Stories.getCurrentStoryName(),
                     characterName
@@ -136,34 +136,34 @@ See the License for the specific language governing permissions and
     }
 
     function getCharacterInput(characterMeta, character) {
-        const el = wrapEl('tr', qte(`${root} .story-character-row-tmpl`));
+        const el = U.wrapEl('tr', U.qte(`${root} .story-character-row-tmpl`));
         L10n.localizeStatic(el);
-        const qe = qee(el);
+        const qe = U.qee(el);
 
-        addEl(qe('.character-name'), makeText(characterMeta.displayName));
+        U.addEl(U.qe('.character-name'), U.makeText(characterMeta.displayName));
 
-        let input = qe('.inventoryInput');
+        let input = U.qe('.inventoryInput');
         input.value = character.inventory;
         input.characterName = character.name;
-        listen(input, 'change', updateCharacterInventory);
+        U.listen(input, 'change', updateCharacterInventory);
 
         Constants.characterActivityTypes.forEach((activityType) => {
-            input = qe(`.${activityType} input`);
+            input = U.qe(`.${activityType} input`);
             if (character.activity[activityType]) {
                 input.checked = true;
             }
             input.characterName = character.name;
             input.activityType = activityType;
-            listen(input, 'change', onChangeCharacterActivity);
-            setAttr(input, 'id', character.name + activityType);
-            setAttr(qe(`.${activityType} label`), 'for', character.name + activityType);
+            U.listen(input, 'change', onChangeCharacterActivity);
+            U.setAttr(input, 'id', character.name + activityType);
+            U.setAttr(U.qe(`.${activityType} label`), 'for', character.name + activityType);
         });
 
-        listen(qe('.replace.character'), 'click', () => {
+        U.listen(U.qe('.replace.character'), 'click', () => {
             state.switchCharacterDialog.characterName = character.name;
             state.switchCharacterDialog.showDlg();
         });
-        listen(qe('.remove.character'), 'click', removeCharacter(character.name));
+        U.listen(U.qe('.remove.character'), 'click', removeCharacter(character.name));
         return el;
     }
 
@@ -183,4 +183,4 @@ See the License for the specific language governing permissions and
             checked: event.target.checked
         }).catch(Utils.handleError);
     }
-})(this.StoryCharacters = {});
+// })(window.StoryCharacters = {});

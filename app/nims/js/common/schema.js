@@ -1,3 +1,6 @@
+// const R = require("ramda");
+const CommonUtils = require('../../../core/js/common/commonUtils.js');
+const Constants = require('../common/constants.js');
 /*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,10 +23,10 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names */
 
-((callback) => {
+// ((callback) => {
     let makeProfileStructureItemSchema;
 
-    function Schema(exports, R, CommonUtils, Constants) {
+    // function Schema(exports, R, CommonUtils, Constants) {
         exports.getSchema = function (base) {
             const schema = {
                 title: 'Larpwriter Toolkit NIMS base',
@@ -977,7 +980,7 @@ See the License for the specific language governing permissions and
             };
             return schema;
         }
-    }
+//     }
 
-    callback(Schema);
-})(api => ((typeof exports === 'undefined') ? api((this.Schema = {}), R, CommonUtils, Constants) : (module.exports = api)));
+//     callback(Schema);
+// })(api => ((typeof exports === 'undefined') ? api((this.Schema = {}), R, CommonUtils, Constants) : (module.exports = api)));

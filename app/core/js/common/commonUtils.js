@@ -1,3 +1,4 @@
+// const R = require("ramda");
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +15,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((callback) => {
-    function CommonUtils(exports, R) {
+// ((callback) => {
+//     function CommonUtils(exports, R) {
         exports.startsWith = (str1, str2) => str1.substring(0, str2.length) === str2;
 
         exports.removeFromArrayByIndex = (array, from, to) => {
@@ -111,7 +112,8 @@ See the License for the specific language governing permissions and
                 .replace(windowsTrailingRe, replacement);
             return sanitized.substring(0, 255);
         }
-    }
+    // }
 
-    callback(CommonUtils);
-})(api => ((typeof exports === 'undefined') ? api((this.CommonUtils = {}), R) : (module.exports = api)));
+//     callback(CommonUtils);
+// // })(api => ((typeof exports === 'undefined') ? api((window.CommonUtils = {}), R) : (module.exports = api)));
+// })(api => window.CommonUtils = api);

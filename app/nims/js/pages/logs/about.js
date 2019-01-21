@@ -18,11 +18,11 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     exports.init = () => {
-        exports.content = getEl('aboutDiv');
+        exports.content = U.queryEl('#aboutDiv');
     };
 
     exports.refresh = () => {
     };
-})(this.About = {});
+// })(window.About = {});

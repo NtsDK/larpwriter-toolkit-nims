@@ -97,5 +97,6 @@ g > text {
 
 body {
   color: green;
+  border: 3px solid red;
   
 }

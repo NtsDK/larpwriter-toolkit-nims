@@ -18,23 +18,23 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.text-search-tab ';
 
     exports.init = () => {
-        listen(queryEl(`${root}.text-search-button`), 'click', findTexts);
-        listenOnEnter(queryEl(`${root}.text-search-input`), findTexts);
-        exports.content = queryEl(root);
+        U.listen(U.queryEl(`${root}.text-search-button`), 'click', findTexts);
+        U.listenOnEnter(U.queryEl(`${root}.text-search-input`), findTexts);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
     };
 
     function findTexts() {
-        const selectedTextTypes = queryElEls(queryEl(root), `${root}.textSearchTypeRadio`)
+        const selectedTextTypes = U.queryElEls(U.queryEl(root), `${root}.textSearchTypeRadio`)
             .filter(el => el.checked).map(el => el.value);
-        const searchStr = queryEl(`${root}.text-search-input`).value;
-        const caseSensitive = getEl('caseSensitiveTextSearch').checked;
+        const searchStr = U.queryEl(`${root}.text-search-input`).value;
+        const caseSensitive = U.queryEl('#caseSensitiveTextSearch').checked;
         DBMS.getTexts({
             searchStr,
             textTypes: selectedTextTypes,
@@ -42,21 +42,21 @@ See the License for the specific language governing permissions and
         }).then((texts) => {
             const text2panel = text =>
                 makePanel(
-                    makeText(`${getL10n(`text-search-${text.textType}`)} (${text.result.length})`),
+                    U.makeText(`${L10n.getValue(`text-search-${text.textType}`)} (${text.result.length})`),
                     makePanelContent(text, searchStr, caseSensitive)
                 );
-            addEls(clearEl(queryEl(`${root}.result-panel`)), texts.map(text2panel));
+            U.addEls(U.clearEl(U.queryEl(`${root}.result-panel`)), texts.map(text2panel));
         }).catch(Utils.handleError);
     }
 
     function makePanelContent(textsInfo, searchStr, caseSensitive) {
         textsInfo.result.sort(CommonUtils.charOrdAFactory(R.prop('name')));
-        return addEls(makeEl('div'), textsInfo.result.map((textInfo) => {
-            const head = addEl(makeEl('div'), makeText(textInfo.name));
-            const body = addClass(makeEl('div'), textInfo.type === 'text' ? 'text-body' : 'string-body');
+        return U.addEls(U.makeEl('div'), textsInfo.result.map((textInfo) => {
+            const head = U.addEl(U.makeEl('div'), U.makeText(textInfo.name));
+            const body = U.addClass(U.makeEl('div'), textInfo.type === 'text' ? 'text-body' : 'string-body');
             const regex = new RegExp(CommonUtils.escapeRegExp(searchStr), caseSensitive ? 'g' : 'gi');
             body.innerHTML = textInfo.text.replace(regex, '<span>$&</span>');
-            return addEls(addClass(makeEl('div'), 'text-card'), [head, body]);
+            return U.addEls(U.addClass(U.makeEl('div'), 'text-card'), [head, body]);
         }));
     }
 
@@ -66,4 +66,4 @@ See the License for the specific language governing permissions and
         panelInfo.a.click();
         return panelInfo.panel;
     }
-})(this.TextSearch = {});
+// })(window.TextSearch = {});

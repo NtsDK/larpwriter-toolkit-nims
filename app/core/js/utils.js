@@ -1,3 +1,10 @@
+// const R = require("ramda");
+const CommonUtils = require("./common/commonUtils.js");
+const Errors = require("./common/errors.js");
+
+var vex = require('vex-js');
+// vex.registerPlugin(require('vex-dialog'));
+// vex.defaultOptions.className = 'vex-theme-os';
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,14 +26,6 @@ See the License for the specific language governing permissions and
 
 const strFormat = R.curry(CommonUtils.strFormat);
 
-function getL10n(key) {
-    return L10n.getValue(key);
-}
-
-function constL10n(key) {
-    return L10n.getValue(`constant-${key}`);
-}
-
 function isEmpty(obj) {
     return (Object.getOwnPropertyNames(obj).length === 0);
 }
@@ -39,7 +38,7 @@ const addClass = R.curry((o, c) => {
 });
 
 const addClasses = R.curry((o, c) => {
-    R.ap([addClass(o)], c);
+    R.ap([U.addClass(o)], c);
     return o;
 });
 
@@ -60,18 +59,18 @@ const removeClasses = R.curry((o, c) => {
 });
 
 const toggleClass = R.curry((o, c) => {
-    if (hasClass(o, c)) {
-        removeClass(o, c);
+    if (U.hasClass(o, c)) {
+        U.removeClass(o, c);
     } else {
-        addClass(o, c);
+        U.addClass(o, c);
     }
 });
 
 const setClassByCondition = R.curry((o, c, condition) => {
     if (condition) {
-        addClass(o, c);
+        U.addClass(o, c);
     } else {
-        removeClass(o, c);
+        U.removeClass(o, c);
     }
     return o;
 });
@@ -80,10 +79,6 @@ const setClassIf = setClassByCondition;
 
 const showEl = (el, condition) => setClassByCondition(el, 'hidden', !condition);
 const hideEl = (el, condition) => setClassByCondition(el, 'hidden', condition);
-
-function getEl(id) {
-    return document.getElementById(id);
-}
 
 function queryEl(sel) {
     return document.querySelector(sel);
@@ -98,11 +93,12 @@ function qte(sel){
 
 // query materialize template element
 function qmte(sel){
-    return addEl(makeEl('div'), qte(sel)).firstChild;
+    return U.addEl(U.makeEl('div'), U.qte(sel)).children[0];
+    // return U.addEl(U.makeEl('div'), U.qte(sel)).firstChild;
 }
 
 function queryEls(sel) {
-    return nl2array(document.querySelectorAll(sel));
+    return U.nl2array(document.querySelectorAll(sel));
 }
 
 const qes = queryEls;
@@ -119,38 +115,40 @@ function queryElEls(el, sel) {
 
 const qees = R.curry(queryElEls);
 
-function getEls(clazz) {
-    return document.getElementsByClassName(clazz);
-}
+// function getEls(clazz) {
+//     return document.getElementsByClassName(clazz);
+// }
 
 function makeEl(elTag) {
     return document.createElement(elTag);
 }
 
 const wrapEl = R.curry((elTag, el) => {
-    return addEl(makeEl(elTag), el);
+    return U.addEl(U.makeEl(elTag), el);
 })
 
-const wrapEls = R.curry((elTag, els) => {
-    return addEls(makeEl(elTag), els);
-})
+// const wrapEls = R.curry((elTag, els) => {
+//     return U.addEls(U.makeEl(elTag), els);
+// })
 
 function makeText(text) {
     return document.createTextNode(text);
 }
+
+// exports.makeText = makeText;
 
 const addEl = R.curry((parent, child) => {
     parent.appendChild(child);
     return parent;
 });
 const addEls = R.curry((parent, children) => {
-    R.ap([addEl(parent)], children);
+    R.ap([U.addEl(parent)], children);
     return parent;
 });
 
 const makeOpt = function (label) {
-    const option = makeEl('option');
-    addEl(option, (makeText(label)));
+    const option = U.makeEl('option');
+    U.addEl(option, (U.makeText(label)));
     return option;
 };
 
@@ -164,15 +162,15 @@ const setStyle = R.curry((el, name, value) => {
     return el;
 });
 
-const setImportantStyle = R.curry((el, name, value) => {
-    el.style.setProperty(name, value, 'important');
-    return el;
-});
+// const setImportantStyle = R.curry((el, name, value) => {
+//     el.style.setProperty(name, value, 'important');
+//     return el;
+// });
 
-function delAttr(el, name) {
-    el.removeAttribute(name);
-    return el;
-}
+// function delAttr(el, name) {
+//     el.removeAttribute(name);
+//     return el;
+// }
 
 const getAttr = R.curry((el, name) => {
     return el.getAttribute(name);
@@ -201,7 +199,7 @@ function clearEls(els){
 
 function passEls(src, dst) {
     for (let i = 0; i < src.children.length; i++) {
-        addEl(dst, src.children[i]);
+        U.addEl(dst, src.children[i]);
     }
 }
 
@@ -211,7 +209,7 @@ const listen = R.curry((el, event, listener) => {
 });
 
 const listenOnEnter = R.curry((el, callback) => {
-    listen(el, 'keydown', (e) => {
+    U.listen(el, 'keydown', (e) => {
         if (e.keyCode === 13) {
             if(e.iAmNotAlone) {
                 throw new Error('Oh dear!');
@@ -223,12 +221,12 @@ const listenOnEnter = R.curry((el, callback) => {
     });
 });
 
-const fillSelector = R.curry((sel, data) => addEls(sel, data.map((item) => {
-    const opt = makeEl('option');
-    addEl(opt, makeText(item.name));
+const fillSelector = R.curry((sel, data) => U.addEls(sel, data.map((item) => {
+    const opt = U.makeEl('option');
+    U.addEl(opt, U.makeText(item.name));
     if (item.value !== undefined) { opt.value = item.value; }
     if (item.selected !== undefined) { opt.selected = true; }
-    if (item.className !== undefined) { addClass(opt, item.className); }
+    if (item.className !== undefined) { U.addClass(opt, item.className); }
     return opt;
 })));
 
@@ -236,114 +234,61 @@ function nl2array(nodeList) {
     return Array.prototype.slice.call(nodeList);
 }
 
-const remapProps = R.curry((outKeys, pickKeys, obj) => R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj));
-
-const remapProps4Select2 = remapProps(['id', 'text'], ['value', 'displayName']);
-const remapProps4Select = remapProps(['value', 'name'], ['value', 'displayName']);
-
-const getSelect2DataCommon = R.curry((preparator, obj) => R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj));
-
-const getSelect2Data = getSelect2DataCommon(remapProps4Select2);
+// exports.nl2array = nl2array;
 
 const makeSelect2Opt = R.compose(R.zipObj(['id', 'text']), R.repeat(R.__, 2));
 const arr2Select2 = R.compose(R.assoc('data', R.__, {}), R.map(makeSelect2Opt));
 const arr2Select = R.map(R.compose(R.zipObj(['value', 'name']), R.repeat(R.__, 2)));
-const constArr2Select = R.map(R.compose(R.zipObj(['value', 'name']), name => [name, constL10n(name)]));
+
 
 const getSelectedRadio = function (el, query) {
     return queryElEls(el, query).find(R.prop('checked'));
 };
 
-const debugInterceptor = function (callback) {
-    return function () {
-        console.log(JSON.stringify(arguments[0]));
-        callback(...arguments);
-    };
+// const debugInterceptor = function (callback) {
+//     return function () {
+//         console.log(JSON.stringify(arguments[0]));
+//         callback(...arguments);
+//     };
+// };
+
+
+
+
+
+
+
+const U = {
+    setAttr, nl2array, qees, addEl, clearEl, makeText, getAttr,
+    queryEls, queryEl, addClass, listen,
+
+    qe,qee, wrapEl, qte,listenOnEnter, makeEl, fillSelector, 
+    addEls, clearEls, qmte, showEl, passEls, setProp, qes,queryElEl,
+
+    setClassByCondition,setClassIf,hideEl,
+    queryElEls, arr2Select2, makeOpt,setStyle,setProps,
+
+    arr2Select,getSelectedRadio,removeClasses,
+
+    // getL10n, 
+    // constL10n, 
+    
+    strFormat, isEmpty, addClasses, hasClass, removeClass, toggleClass
 };
+
+exports.U = U;
+
+
+
+
+
+
 
 const Utils = {};
-
-/** opts
-    tooltip - add tooltip to button, used for iconic buttons
-    id - set button id
-    mainPage - enable view as first page - deprecated. Use Utils.setFirstTab instead
-    toggle - toggle content, associated with button
-*/
-Utils.addView = function (containers, name, view, opts2) {
-    const opts = opts2 || {};
-    view.init();
-    const buttonClass = 'navigation-button';
-    containers.root.views[name] = view;
-    const button = makeEl('button');
-    function delegate() {
-        $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
-    }
-    if (opts.tooltip) {
-        L10n.onL10nChange(delegate);
-        $(button).tooltip({
-            title: L10n.getValue(`header-${name}`),
-            placement: 'bottom'
-        });
-    } else {
-        addEl(button, makeText(L10n.getValue(`header-${name}`)));
-        setAttr(button, 'l10n-id', `header-${name}`);
-    }
-    addClass(button, buttonClass);
-    addClass(button, `-test-${name}`);
-    addClass(button, `-toggle-class-${name}`);
-    if (opts.clazz) {
-        addClass(button, opts.clazz);
-    }
-    containers.navigation.appendChild(button);
-
-    const onClickDelegate = function (view2) {
-        return function (evt) {
-            //Tests.run();
-            const elems = containers.navigation.getElementsByClassName(buttonClass);
-            if (opts.toggle) {
-                const els = getEls(`-toggle-class-${name}`);
-                for (let i = 0; i < els.length; i++) {
-                    if (evt.target.isEqualNode(els[i])) {
-                        continue;
-                    }
-                    if (hasClass(els[i], 'active')) {
-                        els[i].click();
-                    }
-                }
-            }
-
-            const isActive = hasClass(evt.target, 'active');
-            for (let i = 0; i < elems.length; i++) {
-                removeClass(elems[i], 'active');
-            }
-            if (!opts.toggle || (opts.toggle && !isActive)) {
-                addClass(evt.target, 'active');
-
-                passEls(containers.content, getEl('warehouse'));
-                containers.content.appendChild(view2.content);
-                removeClass(containers.content, 'hidden');
-                containers.root.currentView = view2;
-                view2.refresh();
-            } else {
-                removeClass(evt.target, 'active');
-                passEls(containers.content, getEl('warehouse'));
-                containers.root.currentView = null;
-                addClass(containers.content, 'hidden');
-            }
-        };
-    };
-
-    button.addEventListener('click', onClickDelegate(view));
-
-    // deprecated. Use Utils.setFirstTab instead
-    if (opts.mainPage) {
-        Utils.setFirstTab(containers, {button, view});
-    }
-    return {button, view};
-};
+exports.Utils = Utils;
 
 Utils.setFirstTab = function(containers, opts){
-    addClass(opts.button, 'active');
+    U.addClass(opts.button, 'active');
     containers.content.appendChild(opts.view.content);
     containers.root.currentView = opts.view;
 }
@@ -352,8 +297,11 @@ Utils.alert = function (message) {
     vex.dialog.alert(message);
 };
 
-const setError = (el, err) => addEl(clearEl(qee(el, '.error-msg')), makeText(Utils.handleErrorMsg(err)));
-const clearError = (el) => clearEl(qee(el, '.error-msg'));
+const setError = (el, err) => U.addEl(U.clearEl(U.qee(el, '.error-msg')), U.makeText(Utils.handleErrorMsg(err)));
+const clearError = (el) => U.clearEl(U.qee(el, '.error-msg'));
+
+Utils.setError = setError;
+Utils.clearError = clearError;
 
 Utils.confirm = function (message, onOk, onCancel) {
     vex.dialog.confirm({
@@ -398,7 +346,7 @@ Utils.handleErrorMsg = function (err) {
         const params = err.parameters.map(val => {
             return L10n.hasValue(val) ? L10n.getValue(val) : val;
         });
-        return strFormat(getL10n(err.messageId), params);
+        return U.strFormat(L10n.getValue(err.messageId), params);
     } else if (typeof err === 'object') {
         return err.message;
     }
@@ -420,26 +368,26 @@ Utils.enableEl = R.curry((el, condition) => {
 });
 
 Utils.enable = function (root, className, condition) {
-    nl2array(root.getElementsByClassName(className)).map(Utils.enableEl(R.__, condition));
+    U.nl2array(root.getElementsByClassName(className)).map(Utils.enableEl(R.__, condition));
 };
 
 Utils.charOrdAObject = CommonUtils.charOrdAFactory(a => a.displayName.toLowerCase());
 
 Utils.rebuildSelector = function (selector, names) {
-    clearEl(selector);
+    U.clearEl(selector);
     names.forEach((nameInfo) => {
-        const option = makeEl('option');
-        option.appendChild(makeText(nameInfo.displayName));
+        const option = U.makeEl('option');
+        option.appendChild(U.makeText(nameInfo.displayName));
         option.value = nameInfo.value;
         selector.appendChild(option);
     });
 };
 
 Utils.rebuildSelectorArr = function (selector, names) {
-    clearEl(selector);
+    U.clearEl(selector);
     names.forEach((name) => {
-        const option = makeEl('option');
-        option.appendChild(makeText(name));
+        const option = U.makeEl('option');
+        option.appendChild(U.makeText(name));
         selector.appendChild(option);
     });
 };
@@ -465,6 +413,7 @@ Utils.animate = (options) => {
 }
 
 const Timing = {};
+exports.Timing = Timing;
 
 // call examples
 //timing: Timing.linear,
@@ -529,8 +478,8 @@ String.prototype.endsWith = function (suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
-// from date format utils
-//For convenience...
-Date.prototype.format = function (mask, utc) {
-    return dateFormat(this, mask, utc);
-};
+// // from date format utils
+// //For convenience...
+// Date.prototype.format = function (mask, utc) {
+//     return dateFormat(this, mask, utc);
+// };

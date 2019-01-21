@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '.group-profile-tab ';
     const l10n = L10n.get('groups');
@@ -30,7 +30,7 @@ See the License for the specific language governing permissions and
             dialogTitle: 'groups-enter-group-name',
             actionButtonTitle: 'common-create',
         });
-        listen(qe(`${root}.create`), 'click', () => createGroupDialog.showDlg());
+        U.listen(U.qe(`${root}.create`), 'click', () => createGroupDialog.showDlg());
 
         state.renameGroupDialog = UI.createModalDialog(root, renameGroup, {
             bodySelector: 'modal-prompt-body',
@@ -38,35 +38,35 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-rename',
         });
 
-        const tbody = clearEl(queryEl(`${root} .entity-profile`));
+        const tbody = U.clearEl(U.queryEl(`${root} .entity-profile`));
 
         state.inputItems = {};
 
         Constants.groupProfileStructure.forEach((profileSettings) => {
-            profileSettings.displayName = getL10n(`groups-${profileSettings.name}`);
-            addEl(tbody, makeInput(profileSettings));
+            profileSettings.displayName = L10n.getValue(`groups-${profileSettings.name}`);
+            U.addEl(tbody, makeInput(profileSettings));
         });
 
-        listen(queryEl(`${root} .entity-filter`), 'input', filterOptions);
+        U.listen(U.queryEl(`${root} .entity-filter`), 'input', filterOptions);
 
-        exports.content = queryEl(`${root}`);
+        exports.content = U.queryEl(`${root}`);
     };
 
     exports.refresh = () => {
         PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false}).then((groupNames) => {
-            showEl(qe(`${root} .alert`), groupNames.length === 0);
-            showEl(qe(`${root} .col-xs-9`), groupNames.length !== 0);
-            Utils.enableEl(qe(`${root} .entity-filter`), groupNames.length !== 0);
+            U.showEl(U.qe(`${root} .alert`), groupNames.length === 0);
+            U.showEl(U.qe(`${root} .col-xs-9`), groupNames.length !== 0);
+            Utils.enableEl(U.qe(`${root} .entity-filter`), groupNames.length !== 0);
 
-            addEls(clearEl(queryEl(`${root} .entity-list`)), groupNames.map((name, i, arr) => {
-                const el = wrapEl('div', qte('.entity-item-tmpl'));
-                addEl(qee(el, '.primary-name'), makeText(name.displayName));
-                setAttr(el, 'primary-name', name.displayName);
-                setAttr(el, 'profile-name', name.value);
-                listen(qee(el, '.select-button'), 'click', showProfileInfoDelegate2(name.value));
-                setAttr(qee(el, '.rename'), 'title', l10n('rename-entity'));
-                const removeBtn = qee(el, '.remove');
-                setAttr(removeBtn, 'title', l10n('remove-entity'));
+            U.addEls(U.clearEl(U.queryEl(`${root} .entity-list`)), groupNames.map((name, i, arr) => {
+                const el = U.wrapEl('div', U.qte('.entity-item-tmpl'));
+                U.addEl(U.qee(el, '.primary-name'), U.makeText(name.displayName));
+                U.setAttr(el, 'primary-name', name.displayName);
+                U.setAttr(el, 'profile-name', name.value);
+                U.listen(U.qee(el, '.select-button'), 'click', showProfileInfoDelegate2(name.value));
+                U.setAttr(U.qee(el, '.rename'), 'title', l10n('rename-entity'));
+                const removeBtn = U.qee(el, '.remove');
+                U.setAttr(removeBtn, 'title', l10n('remove-entity'));
                 if(i+1 < arr.length){
                     removeBtn.nextName = arr[i+1].value;
                 }
@@ -74,15 +74,15 @@ See the License for the specific language governing permissions and
                     removeBtn.prevName = arr[i-1].value;
                 }
                 if (name.editable) {
-                    listen(qee(el, '.rename'), 'click', () => {
-                        qee(state.renameGroupDialog, '.entity-input').value = name.value;
+                    U.listen(U.qee(el, '.rename'), 'click', () => {
+                        U.qee(state.renameGroupDialog, '.entity-input').value = name.value;
                         state.renameGroupDialog.fromName = name.value;
                         state.renameGroupDialog.showDlg();
                     });
-                    listen(removeBtn, 'click', GroupProfile.removeGroup(() => name.value, exports.refresh, removeBtn));
+                    U.listen(removeBtn, 'click', GroupProfile.removeGroup(() => name.value, exports.refresh, removeBtn));
                 } else {
-                    setAttr(qee(el, '.rename'), 'disabled', 'disabled');
-                    setAttr(removeBtn, 'disabled', 'disabled');
+                    U.setAttr(U.qee(el, '.rename'), 'disabled', 'disabled');
+                    U.setAttr(removeBtn, 'disabled', 'disabled');
                 }
                 return el;
             }));
@@ -95,31 +95,31 @@ See the License for the specific language governing permissions and
         let input;
         switch (profileItemConfig.type) {
         case 'text':
-            input = makeEl('textarea');
-            addClass(input, 'profileTextInput form-control');
+            input = U.makeEl('textarea');
+            U.addClass(input, 'profileTextInput form-control');
             input.addEventListener('change', updateFieldValue(profileItemConfig.type));
             break;
         case 'checkbox':
-            input = makeEl('input');
+            input = U.makeEl('input');
             input.type = 'checkbox';
-            addClass(input, 'form-control');
+            U.addClass(input, 'form-control');
             input.addEventListener('change', updateFieldValue(profileItemConfig.type));
             break;
         case 'container':
-            input = makeEl('div');
+            input = U.makeEl('div');
             input.type = 'container';
             break;
         default:
             throw new Error(`Unexpected type ${profileItemConfig.type}`);
         }
         input.selfName = profileItemConfig.name;
-        addClass(input, 'isGroupEditable');
+        U.addClass(input, 'isGroupEditable');
         state.inputItems[profileItemConfig.name] = input;
 
-        const row = qmte('.profile-editor-row-tmpl');
-        addEl(qee(row, '.profile-item-name'), makeText(profileItemConfig.displayName));
-        setAttr(qee(row, '.profile-item-name'), 'l10n-id', `groups-${profileItemConfig.name}`);
-        addEl(qee(row, '.profile-item-input'), input);
+        const row = U.qmte('.profile-editor-row-tmpl');
+        U.addEl(U.qee(row, '.profile-item-name'), U.makeText(profileItemConfig.displayName));
+        U.setAttr(U.qee(row, '.profile-item-name'), 'l10n-id', `groups-${profileItemConfig.name}`);
+        U.addEl(U.qee(row, '.profile-item-input'), input);
         return row;
     }
 
@@ -147,14 +147,14 @@ See the License for the specific language governing permissions and
 
     function showProfileInfoDelegate2(name) {
         return () => {
-            queryEls(`${root} [profile-name] .select-button`).map(removeClass(R.__, 'btn-primary'));
+            U.queryEls(`${root} [profile-name] .select-button`).map(U.removeClass(R.__, 'btn-primary'));
             if(name !== null){
                 UI.updateEntitySetting(settingsPath, name);
-                const el = queryEl(`${root} [profile-name="${name}"] .select-button`);
-                addClass(el, 'btn-primary');
+                const el = U.queryEl(`${root} [profile-name="${name}"] .select-button`);
+                U.addClass(el, 'btn-primary');
 
                 const parentEl = el.parentElement.parentElement;
-                const entityList = queryEl(`${root} .entity-list`);
+                const entityList = U.queryEl(`${root} .entity-list`);
                 UI.scrollTo(entityList, parentEl);
 
                 showProfileInfoCallback(name);
@@ -183,15 +183,15 @@ See the License for the specific language governing permissions and
                     inputItems[inputName].checked = group[inputName];
                 } else if (inputItems[inputName].type === 'container') {
                     if (inputName === 'filterModel') {
-                        const table = qmte(`${root} .group-filter-template`);
+                        const table = U.qmte(`${root} .group-filter-template`);
                         const datas = group.filterModel.map(exports.makeFilterItemString(name2DisplayName, name2Source));
-                        addEls(qee(table, 'tbody'), datas.map(data2row));
+                        U.addEls(U.qee(table, 'tbody'), datas.map(data2row));
                         L10n.localizeStatic(table);
-                        addEl(clearEl(inputItems[inputName]), table);
+                        U.addEl(U.clearEl(inputItems[inputName]), table);
                     } else if (inputName === 'characterList') {
                         const data = filterConfiguration.getProfileIds(group.filterModel);
-                        const inputItem = clearEl(inputItems[inputName]);
-                        addEls(inputItem, [makeText(data.join(', ')), makeEl('br'), makeText(getL10n('groups-total') + data.length)]);
+                        const inputItem = U.clearEl(inputItems[inputName]);
+                        U.addEls(inputItem, [U.makeText(data.join(', ')), U.makeEl('br'), U.makeText(L10n.getValue('groups-total') + data.length)]);
                     } else {
                         throw new Error(`Unexpected container: ${inputName}`);
                     }
@@ -213,43 +213,43 @@ See the License for the specific language governing permissions and
         let condition, arr, value;
         switch (filterItem.type) {
         case 'enum':
-            condition = getL10n(`groups-one-from`);
+            condition = L10n.getValue(`groups-one-from`);
             value = Object.keys(filterItem.selectedOptions).join(', ');
             break;
         case 'checkbox':
             arr = [];
-            if (filterItem.selectedOptions.true) { arr.push(getL10n('constant-yes')); }
-            if (filterItem.selectedOptions.false) { arr.push(getL10n('constant-no')); }
-            condition = getL10n(`groups-one-from`);
+            if (filterItem.selectedOptions.true) { arr.push(L10n.getValue('constant-yes')); }
+            if (filterItem.selectedOptions.false) { arr.push(L10n.getValue('constant-no')); }
+            condition = L10n.getValue(`groups-one-from`);
             value = arr.join(', ');
             break;
         case 'number':
-            condition = getL10n(`constant-${filterItem.condition}`);
+            condition = L10n.getValue(`constant-${filterItem.condition}`);
             value = filterItem.num;
             break;
         case 'multiEnum':
-            condition = getL10n(`constant-${filterItem.condition}`);
+            condition = L10n.getValue(`constant-${filterItem.condition}`);
             value = Object.keys(filterItem.selectedOptions).join(', ');
             break;
         case 'text':
         case 'string':
-            condition = getL10n('groups-text-contains');
+            condition = L10n.getValue('groups-text-contains');
             value = filterItem.regexString;
             break;
         default:
             throw new Error(`Unexpected type ${filterItem.type}`);
         }
-        const title = getL10n(`profile-filter-${source}`) + ', ' + getL10n(`constant-${filterItem.type}`);
+        const title = L10n.getValue(`profile-filter-${source}`) + ', ' + L10n.getValue(`constant-${filterItem.type}`);
         return {displayName, title, condition, value};
     });
 
     function data2row(data){
         const {displayName, title, condition, value} = data;
-        const row = qmte(`${root} .group-filter-row-template`);
-        addEl(qee(row, '.profile-item'), makeText(displayName));
-        setAttr(qee(row, '.profile-item'), 'title', title);
-        addEl(qee(row, '.condition'), makeText(condition));
-        addEl(qee(row, '.value'), makeText(value));
+        const row = U.qmte(`${root} .group-filter-row-template`);
+        U.addEl(U.qee(row, '.profile-item'), U.makeText(displayName));
+        U.setAttr(U.qee(row, '.profile-item'), 'title', title);
+        U.addEl(U.qee(row, '.condition'), U.makeText(condition));
+        U.addEl(U.qee(row, '.value'), U.makeText(value));
         return row;
     }
 
@@ -261,23 +261,23 @@ See the License for the specific language governing permissions and
     function filterOptions(event) {
         const str = event.target.value.toLowerCase();
 
-        const els = queryEls(`${root} [primary-name]`);
+        const els = U.queryEls(`${root} [primary-name]`);
         els.forEach((el) => {
-            const isVisible = getAttr(el, 'primary-name').toLowerCase().indexOf(str) !== -1;
-            hideEl(el, !isVisible);
+            const isVisible = U.getAttr(el, 'primary-name').toLowerCase().indexOf(str) !== -1;
+            U.hideEl(el, !isVisible);
         });
 
-        if (queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
-            queryEl(`${root} [primary-name] .select-button.btn-primary`) === null) {
-            const els2 = queryEls(`${root} [primary-name]`).filter(R.pipe(hasClass(R.__, 'hidden'), R.not));
-            showProfileInfoDelegate2(els2.length > 0 ? getAttr(els2[0], 'profile-name') : null)();
+        if (U.queryEl(`${root} .hidden[primary-name] .select-button.btn-primary`) !== null ||
+            U.queryEl(`${root} [primary-name] .select-button.btn-primary`) === null) {
+            const els2 = U.queryEls(`${root} [primary-name]`).filter(R.pipe(U.hasClass(R.__, 'hidden'), R.not));
+            showProfileInfoDelegate2(els2.length > 0 ? U.getAttr(els2[0], 'profile-name') : null)();
         } else {
-            //            queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
+            //            U.queryEl(`${root} [primary-name] .select-button.btn-primary`).scrollIntoView();
         }
     }
 
     exports.createGroup = (updateSettingsFlag, refresh) => dialog => () => {
-        const input = qee(dialog, '.entity-input');
+        const input = U.qee(dialog, '.entity-input');
         const name = input.value.trim();
 
         DBMS.createGroup({groupName: name}).then(() => {
@@ -294,7 +294,7 @@ See the License for the specific language governing permissions and
 
     function renameGroup(dialog) {
         return () => {
-            const toInput = qee(dialog, '.entity-input');
+            const toInput = U.qee(dialog, '.entity-input');
             const { fromName } = dialog;
             const toName = toInput.value.trim();
 
@@ -312,7 +312,7 @@ See the License for the specific language governing permissions and
     exports.removeGroup = (callback, refresh, btn) => () => {
         const name = callback();
 
-        Utils.confirm(strFormat(getL10n('groups-are-you-sure-about-group-removing'), [name]), () => {
+        Utils.confirm(U.strFormat(L10n.getValue('groups-are-you-sure-about-group-removing'), [name]), () => {
             DBMS.removeGroup({groupName: name}).then(() => {
                 PermissionInformer.refresh().then(() => {
                     if(btn.nextName !== undefined){
@@ -325,4 +325,4 @@ See the License for the specific language governing permissions and
             }).catch(Utils.handleError);
         });
     };
-})(this.GroupProfile = {});
+// })(window.GroupProfile = {});

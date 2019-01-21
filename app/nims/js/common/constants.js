@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     exports.profileFieldTypes = {
         text: {
             name: 'text',
@@ -536,4 +536,4 @@ See the License for the specific language governing permissions and
     exports.gearsNodeRequiredFields = ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'];
 
     exports.httpTimeout = 60000;
-})(typeof exports === 'undefined' ? this.Constants = {} : exports);
+// })(typeof exports === 'undefined' ? this.Constants = {} : exports);

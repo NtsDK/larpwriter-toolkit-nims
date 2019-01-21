@@ -120,7 +120,7 @@ See the License for the specific language governing permissions and
                     };
 
                     this.database.Groups[groupName] = newGroup;
-                    this.ee.trigger('createGroup', arguments);
+                    this.ee.emit('createGroup', arguments);
                     resolve();
                 });
             });
@@ -156,7 +156,7 @@ See the License for the specific language governing permissions and
                     data.name = toName;
                     this.database.Groups[toName] = data;
                     delete this.database.Groups[fromName];
-                    this.ee.trigger('renameGroup', arguments);
+                    this.ee.emit('renameGroup', arguments);
                     resolve();
                 });
             });
@@ -178,7 +178,7 @@ See the License for the specific language governing permissions and
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), reject, () => {
                     delete this.database.Groups[groupName];
-                    this.ee.trigger('removeGroup', arguments);
+                    this.ee.emit('removeGroup', arguments);
                     resolve();
                 });
             });

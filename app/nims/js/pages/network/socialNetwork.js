@@ -16,9 +16,18 @@ See the License for the specific language governing permissions and
  Utils, DBMS, StoryCharacters
  */
 
+const vis = require('vis');
+require('vis/dist/vis.min.css');
+
+const Constants = require('common/constants.js');
+
+const NetworkSubsetsSelector = require('./networkSubsetsSelector');
+
+const PermissionInformer = require("permissionInformer");
+
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
 
     const STORY_PREFIX = 'St:';
@@ -29,14 +38,14 @@ See the License for the specific language governing permissions and
     exports.init = () => {
         NetworkSubsetsSelector.init();
 
-        listen(getEl('networkNodeGroupSelector'), 'change', colorNodes);
-        listen(getEl('showPlayerNamesCheckbox'), 'change', updateNodeLabels);
-        listen(getEl('drawNetworkButton'), 'click', onDrawNetwork);
+        U.listen(U.queryEl('#networkNodeGroupSelector'), 'change', colorNodes);
+        U.listen(U.queryEl('#showPlayerNamesCheckbox'), 'change', updateNodeLabels);
+        U.listen(U.queryEl('#drawNetworkButton'), 'click', onDrawNetwork);
         $('#nodeFocusSelector').select2().on('change', onNodeFocus);
-        listen(getEl('networkSelector'), 'change', onNetworkSelectorChangeDelegate);
+        U.listen(U.queryEl('#networkSelector'), 'change', onNetworkSelectorChangeDelegate);
 
-        queryEls('#activityBlock button').forEach(listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
-        queryEls('#relationsBlock button').forEach(listen(R.__, 'click', event => toggleClass(event.target, 'btn-primary')));
+        U.queryEls('#activityBlock button').forEach(U.listen(R.__, 'click', event => U.toggleClass(event.target, 'btn-primary')));
+        U.queryEls('#relationsBlock button').forEach(U.listen(R.__, 'click', event => U.toggleClass(event.target, 'btn-primary')));
 
         //        state.network;
         state.highlightActive = false;
@@ -46,24 +55,24 @@ See the License for the specific language governing permissions and
 
         //    TimelinedNetwork.init();
 
-        exports.content = getEl('socialNetworkDiv');
+        exports.content = U.queryEl('#socialNetworkDiv');
     };
 
     function initWarning() {
-        const warning = clearEl(getEl('socialNetworkWarning'));
-        const button = addEl(makeEl('button'), makeText(getL10n('social-network-remove-resources-warning')));
-        addEls(warning, [makeText(getL10n('social-network-require-resources-warning')), button]);
-        listen(button, 'click', () => addClass(warning, 'hidden'));
+        const warning = U.clearEl(U.queryEl('#socialNetworkWarning'));
+        const button = U.addEl(U.makeEl('button'), U.makeText(L10n.getValue('social-network-remove-resources-warning')));
+        U.addEls(warning, [U.makeText(L10n.getValue('social-network-require-resources-warning')), button]);
+        U.listen(button, 'click', () => U.addClass(warning, 'hidden'));
     }
 
     const nodeSort = CommonUtils.charOrdAFactory(a => a.label.toLowerCase());
 
     exports.refresh = () => {
-        let selector = fillSelector(clearEl(getEl('networkSelector')), constArr2Select(Constants.networks));
+        let selector = U.fillSelector(U.clearEl(U.queryEl('#networkSelector')), UI.constArr2Select(Constants.networks));
         [selector.value] = Constants.networks;
         onNetworkSelectorChangeDelegate({ target: selector });
 
-        selector = clearEl(getEl('networkNodeGroupSelector'));
+        selector = U.clearEl(U.queryEl('#networkNodeGroupSelector'));
 
         Promise.all([
             PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}), // subset selector
@@ -96,24 +105,24 @@ See the License for the specific language governing permissions and
                 R.equals(element.type, 'checkbox'));
             R.values(profiles).forEach((profile) => {
                 checkboxes.map(item => (profile[item.name] =
-                    constL10n(Constants[profile[item.name]])));
+                    L10n.const(Constants[profile[item.name]])));
             });
 
             const colorGroups = profileStructure.filter(element =>
                 R.contains(element.type, ['enum', 'checkbox']));
             const defaultColorGroup = {
                 value: Constants.noGroup,
-                name: constL10n(Constants.noGroup)
+                name: L10n.const(Constants.noGroup)
             };
 
-            const profileLabel = strFormat(getL10n('social-network-profile-group'));
-            const filterLabel = strFormat(getL10n('social-network-filter-group'));
+            const profileLabel = U.strFormat(L10n.getValue('social-network-profile-group'));
+            const filterLabel = U.strFormat(L10n.getValue('social-network-filter-group'));
 
             const profileGroups = colorGroups.map(group => group.name).map(name =>
                 ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
             const filterGroups = R.keys(groupCharacterSets).map(name =>
                 ({ value: FILTER_GROUP + name, name: filterLabel([name]) }));
-            fillSelector(
+            U.fillSelector(
                 selector,
                 [defaultColorGroup].concat(profileGroups).concat(filterGroups)
             );
@@ -140,8 +149,8 @@ See the License for the specific language governing permissions and
                     return `${PROFILE_GROUP + group.name}.${subGroupName.trim()}`;
                 });
             } else if (group.type === 'checkbox') {
-                const trueName = constL10n(Constants.true);
-                const falseName = constL10n(Constants.false);
+                const trueName = L10n.const(Constants.true);
+                const falseName = L10n.const(Constants.false);
                 state.groupColors[`${PROFILE_GROUP + group.name}.${trueName}`] =
                     Constants.colorPalette[group.value ? 0+2 : 1+2];
                 state.groupColors[`${PROFILE_GROUP + group.name}.${falseName}`] =
@@ -155,32 +164,32 @@ See the License for the specific language governing permissions and
     }
 
     function makeLegendItem(label, color) {
-        const colorDiv = addEl(makeEl('div'), makeText(label));
+        const colorDiv = U.addEl(U.makeEl('div'), U.makeText(label));
         colorDiv.style.backgroundColor = color.background;
         colorDiv.style.border = `solid 2px ${color.border}`;
         return colorDiv;
     }
 
     function refreshLegend(groupName) {
-        const colorLegend = clearEl(getEl('colorLegend'));
+        const colorLegend = U.clearEl(U.queryEl('#colorLegend'));
         let els = [];
 
         if (groupName === 'noGroup') {
-            els.push(makeLegendItem(constL10n('noGroup'), Constants.snFixedColors.noGroup.color));
+            els.push(makeLegendItem(L10n.const('noGroup'), Constants.snFixedColors.noGroup.color));
         } else if (CommonUtils.startsWith(groupName, PROFILE_GROUP)) {
             els = els.concat(state.groupLists[groupName].map(value =>
                 makeLegendItem(value.substring(PROFILE_GROUP.length), state.groupColors[value].color)));
         } else if (CommonUtils.startsWith(groupName, FILTER_GROUP)) {
-            els.push(makeLegendItem(constL10n('noGroup'), Constants.snFixedColors.noGroup.color));
-            els.push(makeLegendItem(constL10n('fromGroup'), Constants.snFixedColors.fromGroup.color));
+            els.push(makeLegendItem(L10n.const('noGroup'), Constants.snFixedColors.noGroup.color));
+            els.push(makeLegendItem(L10n.const('fromGroup'), Constants.snFixedColors.fromGroup.color));
         } else {
             throw new Error(`Unexpected group name/type: ${groupName}`);
         }
 
         if (['characterPresenceInStory', 'characterActivityInStory'].indexOf(state.selectedNetwork) !== -1) {
-            els.push(makeLegendItem(getL10n('social-network-story'), Constants.snFixedColors.storyColor.color));
+            els.push(makeLegendItem(L10n.getValue('social-network-story'), Constants.snFixedColors.storyColor.color));
         }
-        addEls(colorLegend, els);
+        U.addEls(colorLegend, els);
     }
 
     function colorNodes(event) {
@@ -210,7 +219,7 @@ See the License for the specific language governing permissions and
 
     function updateNodeLabels() {
         if (state.nodesDataset === undefined) return;
-        const showPlayer = getEl('showPlayerNamesCheckbox').checked;
+        const showPlayer = U.queryEl('#showPlayerNamesCheckbox').checked;
         const allNodes = state.nodesDataset.get({
             returnType: 'Object'
         });
@@ -230,10 +239,10 @@ See the License for the specific language governing permissions and
     }
 
     function onNetworkSelectorChangeDelegate(event) {
-        hideEl(getEl('activityBlock'), event.target.value !== 'characterActivityInStory');
-        queryEls('#activityBlock button').forEach(el => addClass(el, 'btn-primary'));
-        hideEl(getEl('relationsBlock'), event.target.value !== 'characterRelations');
-        queryEls('#relationsBlock button').forEach(el => addClass(el, 'btn-primary'));
+        U.hideEl(U.queryEl('#activityBlock'), event.target.value !== 'characterActivityInStory');
+        U.queryEls('#activityBlock button').forEach(el => U.addClass(el, 'btn-primary'));
+        U.hideEl(U.queryEl('#relationsBlock'), event.target.value !== 'characterRelations');
+        U.queryEls('#relationsBlock button').forEach(el => U.addClass(el, 'btn-primary'));
     }
 
     function onNodeFocus(event) {
@@ -241,7 +250,7 @@ See the License for the specific language governing permissions and
     }
 
     function onDrawNetwork() {
-        onNetworkSelectorChange(getEl('networkSelector').value);
+        onNetworkSelectorChange(U.queryEl('#networkSelector').value);
     //    TimelinedNetwork.refresh(state.network, state.nodesDataset,
     //            state.edgesDataset, getEventDetails(), state.metaInfo);
     }
@@ -272,12 +281,12 @@ See the License for the specific language governing permissions and
             throw new Error(`Unexpected network type: ${selectedNetwork}`);
         }
 
-        refreshLegend(getEl('networkNodeGroupSelector').value);
+        refreshLegend(U.queryEl('#networkNodeGroupSelector').value);
 
-        clearEl(getEl('nodeFocusSelector'));
+        U.clearEl(U.queryEl('#nodeFocusSelector'));
         nodes.sort(nodeSort);
 
-        const data = getSelect2DataCommon(remapProps(['id', 'text'], ['id', 'originName']), nodes);
+        const data = UI.getSelect2DataCommon(UI.remapProps(['id', 'text'], ['id', 'originName']), nodes);
         $('#nodeFocusSelector').select2(data);
 
         state.nodesDataset = new vis.DataSet(nodes);
@@ -296,8 +305,8 @@ See the License for the specific language governing permissions and
     }
 
     function getCharacterNodes() {
-        const groupName = getEl('networkNodeGroupSelector').value;
-        const showPlayer = getEl('showPlayerNamesCheckbox').checked;
+        const groupName = U.queryEl('#networkNodeGroupSelector').value;
+        const showPlayer = U.queryEl('#showPlayerNamesCheckbox').checked;
         return NetworkSubsetsSelector.getCharacterNames().map((characterName) => {
             const profile = state.Characters[characterName];
             return {
@@ -305,7 +314,7 @@ See the License for the specific language governing permissions and
                 label: makeCharacterNodeLabel(showPlayer, characterName),
                 type: 'character',
                 originName: characterName,
-                group: groupName === 'noGroup' ? constL10n('noGroup') : `${groupName}.${profile[groupName]}`
+                group: groupName === 'noGroup' ? L10n.const('noGroup') : `${groupName}.${profile[groupName]}`
             };
         });
     }
@@ -324,7 +333,7 @@ See the License for the specific language governing permissions and
     }
 
     function getActivityEdges() {
-        const selectedActivities = queryEls('#activityBlock button.btn-primary').map(getAttr(R.__, 'data-value'));
+        const selectedActivities = U.queryEls('#activityBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
         const stories = state.Stories;
         return R.flatten(R.keys(stories).map(name => R.keys(stories[name].characters)
             .map(char1 => R.keys(stories[name].characters[char1].activity).filter(R.contains(R.__, selectedActivities))
@@ -338,7 +347,7 @@ See the License for the specific language governing permissions and
     }
 
     function getRelationEdges() {
-        const selectedRelations = queryEls('#relationsBlock button.btn-primary').map(getAttr(R.__, 'data-value'));
+        const selectedRelations = U.queryEls('#relationsBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
         const { relations } = state;
         const checked = R.contains(R.__, selectedRelations);
         return R.flatten(relations.map((rel) => {
@@ -436,7 +445,7 @@ See the License for the specific language governing permissions and
     }
 
     function redrawAll() {
-        const container = getEl('socialNetworkContainer');
+        const container = U.queryEl('#socialNetworkContainer');
 
         const data = {
             nodes: state.nodesDataset,
@@ -523,4 +532,4 @@ See the License for the specific language governing permissions and
         // transform the object into an array
         state.nodesDataset.update(R.values(allNodes));
     }
-})(this.SocialNetwork = {});
+// })(window.SocialNetwork = {});

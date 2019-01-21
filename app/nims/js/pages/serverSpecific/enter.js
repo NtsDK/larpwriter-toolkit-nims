@@ -19,12 +19,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.enter-tab ';
 
     exports.init = () => {
         $(document.forms['login-form']).on('submit', submit);
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -74,4 +74,4 @@ See the License for the specific language governing permissions and
 
         return false;
     }
-})(this.Enter = {});
+// })(window.Enter = {});

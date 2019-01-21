@@ -19,7 +19,7 @@
 //    function initStats() {
 //        var stats = new Stats();
 //        stats.setMode(0); // 0: fps, 1: ms
-//        addEl(clearEl(getEl("Stats-output")), stats.domElement);
+//        U.addEl(U.clearEl(U.queryEl("#Stats-output")), stats.domElement);
 //        return stats;
 //    };
 //
@@ -27,7 +27,7 @@
 //        // create a render and set the size
 //        renderer = new THREE.WebGLRenderer();
 //        renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
-//        addEl(clearEl(getEl("WebGL-output")), renderer.domElement);
+//        U.addEl(U.clearEl(U.queryEl("#WebGL-output")), renderer.domElement);
 //
 //        stats = initStats();
 //
@@ -59,7 +59,7 @@
 //
 //        gui.add(controls, 'outputObjects');
 //
-//        addEl(getEl('gui-settings-output'), gui.domElement);
+//        U.addEl(U.queryEl('#gui-settings-output'), gui.domElement);
 //    //    renderer.shadowMapEnabled = true;
 //    };
 //
@@ -254,7 +254,7 @@
 //    }
 //
 //    function updateRendererSize(){
-//        var styles = getComputedStyle(getEl('socialNetworkContainer'));
+//        var styles = getComputedStyle(U.queryEl('#socialNetworkContainer'));
 //        var width = styles.width.split('px').join('') * 0.75;
 //        var height = styles.height.split('px').join('') * 0.75;
 //        renderer.setSize(width, height);

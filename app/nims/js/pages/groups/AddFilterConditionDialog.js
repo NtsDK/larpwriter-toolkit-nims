@@ -26,16 +26,16 @@ function AddFilterConditionDialog(root) {
         dialogTitle: 'groups-add-filter-condition',
         actionButtonTitle: 'common-ok',
     });
-    listen(qee(this.dialog, `.profile-item-selector`), 'change', this.onProfileItemSelect.bind(this));
+    U.listen(U.qee(this.dialog, `.profile-item-selector`), 'change', this.onProfileItemSelect.bind(this));
 }
 
 AddFilterConditionDialog.prototype.showDlg = function(groups, callback){
     this.callback = callback;
     this.items = R.indexBy(R.prop('name'), R.unnest(groups.map(R.prop('array'))));
     
-    const selector = qee(this.dialog, `.profile-item-selector`);
+    const selector = U.qee(this.dialog, `.profile-item-selector`);
     UI.fillShowItemSelector2(
-        clearEl(selector),
+        U.clearEl(selector),
         groups,
         false
     );
@@ -45,7 +45,7 @@ AddFilterConditionDialog.prototype.showDlg = function(groups, callback){
     
     this.dialog.showDlg();
     // to set dialog title
-//    setAttr(qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
+//    U.setAttr(U.qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
     
 }
 
@@ -58,7 +58,7 @@ AddFilterConditionDialog.prototype.onAction = function (dialog){
 } 
 
 AddFilterConditionDialog.prototype.getFilterModelItem = function () {
-    const opt = qee(this.dialog, `.profile-item-selector`).selectedOptions[0];
+    const opt = U.qee(this.dialog, `.profile-item-selector`).selectedOptions[0];
     const item = this.items[opt.value];
     
     const filterItem = {
@@ -66,19 +66,19 @@ AddFilterConditionDialog.prototype.getFilterModelItem = function () {
         name: item.name
     };
     
-    const conditionContainer = (qee(this.dialog, '.condition'));
-    const valueContainer = (qee(this.dialog, '.value'));
+    const conditionContainer = (U.qee(this.dialog, '.condition'));
+    const valueContainer = (U.qee(this.dialog, '.value'));
     
     let arr;
     switch (item.type) {
     case 'enum':
     case 'checkbox':
-        arr = nl2array(qee(valueContainer, 'select').selectedOptions).map(R.prop('value'));
+        arr = U.nl2array(U.qee(valueContainer, 'select').selectedOptions).map(R.prop('value'));
         filterItem.selectedOptions = R.zipObj(arr, R.repeat(true, arr.length));
         break;
     case 'number':
-        filterItem.condition = qee(conditionContainer, 'select').value;
-        filterItem.num = Number(qee(valueContainer, 'input').value);
+        filterItem.condition = U.qee(conditionContainer, 'select').value;
+        filterItem.num = Number(U.qee(valueContainer, 'input').value);
         
 //        if (inputItem.value === 'ignore') { return; }
 //        num = Number(state.inputItems[`${inputItem.selfInfo.name}:numberInput`].value);
@@ -87,13 +87,13 @@ AddFilterConditionDialog.prototype.getFilterModelItem = function () {
 //        });
         break;
     case 'multiEnum':
-        filterItem.condition = qee(conditionContainer, 'select').value;
-        arr = nl2array(qee(valueContainer, 'select').selectedOptions).map(R.prop('value'));
+        filterItem.condition = U.qee(conditionContainer, 'select').value;
+        arr = U.nl2array(U.qee(valueContainer, 'select').selectedOptions).map(R.prop('value'));
         filterItem.selectedOptions = R.zipObj(arr, R.repeat(true, arr.length));
 //        if (inputItem.value === 'ignore') { return; }
 //        selectedOptions = {};
 //        select2 = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
-//        arr = nl2array(select2.selectedOptions).map(R.prop('value'));
+//        arr = U.nl2array(select2.selectedOptions).map(R.prop('value'));
 //        model.push({
 //            type,
 //            name: inputItemName,
@@ -103,7 +103,7 @@ AddFilterConditionDialog.prototype.getFilterModelItem = function () {
         break;
     case 'text':
     case 'string':
-        filterItem.regexString = qee(valueContainer, 'input').value.toLowerCase();
+        filterItem.regexString = U.qee(valueContainer, 'input').value.toLowerCase();
 //        model.push({ type, name: inputItemName, regexString: inputItem.value.toLowerCase() });
         break;
     default:
@@ -117,52 +117,52 @@ AddFilterConditionDialog.prototype.onProfileItemSelect = function (event) {
     const item = this.items[opt.value];
     console.log(item);
     
-    const conditionContainer = clearEl(qee(this.dialog, '.condition'));
+    const conditionContainer = U.clearEl(U.qee(this.dialog, '.condition'));
     switch (item.type) {
     case 'text':
     case 'string':
-        addEl(conditionContainer, qmte('.text-condition-tmpl'));
+        U.addEl(conditionContainer, U.qmte('.text-condition-tmpl'));
         break;
     case 'enum':
     case 'checkbox':
-        addEl(conditionContainer, qmte('.enum-condition-tmpl'));
+        U.addEl(conditionContainer, U.qmte('.enum-condition-tmpl'));
         break;
     case 'multiEnum':
-        addEl(conditionContainer, qmte('.multienum-condition-tmpl'));
+        U.addEl(conditionContainer, U.qmte('.multienum-condition-tmpl'));
         break;
     case 'number':
-        addEl(conditionContainer, qmte('.number-condition-tmpl'));
+        U.addEl(conditionContainer, U.qmte('.number-condition-tmpl'));
         break;
     default:
         throw new Error(`Unexpected type ${item.type}`);
     }
     
-    const valueContainer = clearEl(qee(this.dialog, '.value'));
+    const valueContainer = U.clearEl(U.qee(this.dialog, '.value'));
     let valueInput, values;
     switch (item.type) {
     case 'text':
     case 'string':
-        addEl(valueContainer, qmte('.text-value-tmpl'));
+        U.addEl(valueContainer, U.qmte('.text-value-tmpl'));
         break;
     case 'checkbox':
-        addEl(valueContainer, qmte('.checkbox-value-tmpl'));
+        U.addEl(valueContainer, U.qmte('.checkbox-value-tmpl'));
         break;
     case 'enum':
     case 'multiEnum':
-        valueInput = qmte('.enum-value-tmpl');
+        valueInput = U.qmte('.enum-value-tmpl');
         values = item.value.split(',');
         values.sort(CommonUtils.charOrdA);
-        values = arr2Select(values);
+        values = U.arr2Select(values);
         valueInput.size = values.length;
 
-        fillSelector(valueInput, values.map((value) => {
+        U.fillSelector(valueInput, values.map((value) => {
             value.selected = true;
             return value;
         }));
-        addEl(valueContainer, valueInput);
+        U.addEl(valueContainer, valueInput);
         break;
     case 'number':
-        addEl(valueContainer, qmte('.number-value-tmpl'));
+        U.addEl(valueContainer, U.qmte('.number-value-tmpl'));
         break;
     default:
         throw new Error(`Unexpected type ${item.type}`);

@@ -16,9 +16,18 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+require('./briefing-preview.css');
+
+const Relations = require('./relations');
+const RelationsPreview = require('./relationsPreview');
+const Adaptations = require('../adaptations/adaptations');
+const PermissionInformer = require('permissionInformer');
+
+const Constants = require('common/constants');
+
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '#briefingPreviewDiv ';
     const settingsPath = 'BriefingPreview';
@@ -27,62 +36,62 @@ See the License for the specific language governing permissions and
     exports.init = () => {
         $('#briefingCharacter').select2().on('change', buildContentDelegate);
 
-        let button = getEl('eventGroupingByStoryRadio');
-        listen(button, 'change', exports.refresh);
+        let button = U.queryEl('#eventGroupingByStoryRadio');
+        U.listen(button, 'change', exports.refresh);
         button.checked = true;
 
-        button = getEl('adaptationsModeRadio');
-        listen(button, 'change', exports.refresh);
+        button = U.queryEl('#adaptationsModeRadio');
+        U.listen(button, 'change', exports.refresh);
         button.checked = true;
 
-        listen(getEl('eventGroupingByTimeRadio'), 'change', exports.refresh);
-        listen(getEl('proofreadingModeRadio'), 'change', exports.refresh);
-        listen(getEl('hideAllPanelsCheckbox'), 'change', exports.refresh);
-        listen(getEl('disableHeadersCheckbox'), 'change', exports.refresh);
+        U.listen(U.queryEl('#eventGroupingByTimeRadio'), 'change', exports.refresh);
+        U.listen(U.queryEl('#proofreadingModeRadio'), 'change', exports.refresh);
+        U.listen(U.queryEl('#hideAllPanelsCheckbox'), 'change', exports.refresh);
+        U.listen(U.queryEl('#disableHeadersCheckbox'), 'change', exports.refresh);
 
-        getEl('hideAllPanelsCheckbox').checked = true;
+        U.queryEl('#hideAllPanelsCheckbox').checked = true;
 
-//        listen(getEl('contentArea'), 'scroll', updateGutterScrollPos);
-//        listen(getEl('contentArea'), 'resize', rebuildGutter);
+//        U.listen(U.queryEl('#contentArea'), 'scroll', updateGutterScrollPos);
+//        U.listen(U.queryEl('#contentArea'), 'resize', rebuildGutter);
 
         initPanelsArr();
 
-        exports.content = getEl('briefingPreviewDiv');
+        exports.content = U.queryEl('#briefingPreviewDiv');
     };
 
 //    function updateGutterScrollPos (){
-//        let doc = getEl('contentArea');
-//        let position = qe(`${root} .gutter-scroll-position`);
+//        let doc = U.queryEl('#contentArea');
+//        let position = U.qe(`${root} .gutter-scroll-position`);
 //        position.style.top = (doc.scrollTop)/doc.scrollHeight*100 + '%';
 //        position.style.height = (doc.clientHeight)/doc.scrollHeight*100 + '%';
 //    }
 //
 //    function rebuildGutter() {
-//        let doc = getEl('contentArea');
-//        const gutter = clearEl(qe(`${root} .gutter`));
-//        const scrollPos = addClass(makeEl('div'), 'gutter-scroll-position');
-//        addEl(gutter, scrollPos);
+//        let doc = U.queryEl('#contentArea');
+//        const gutter = U.clearEl(U.qe(`${root} .gutter`));
+//        const scrollPos = U.addClass(U.makeEl('div'), 'gutter-scroll-position');
+//        U.addEl(gutter, scrollPos);
 //        updateGutterScrollPos();
 //
-//        const btn = makeEl('button');
+//        const btn = U.makeEl('button');
 //        btn.style.top = '0%';
-////        const title = qee(panel, '.panel-title').innerHTML.trim();
-//        setAttr(btn, 'title', l10n('to-page-top'));
-//        listen(btn, 'click', () => {
+////        const title = U.qee(panel, '.panel-title').innerHTML.trim();
+//        U.setAttr(btn, 'title', l10n('to-page-top'));
+//        U.listen(btn, 'click', () => {
 //            doc.scrollTop = 0;
 ////            panel.scrollIntoView();
 //        });
-//        addEl(gutter, btn);
+//        U.addEl(gutter, btn);
 //
-//        const panels = qees(doc, '#briefingContent > .panel');
-//        addEls(gutter, panels.map(panel => {
-//            const btn = makeEl('button');
+//        const panels = U.qees(doc, '#briefingContent > .panel');
+//        U.addEls(gutter, panels.map(panel => {
+//            const btn = U.makeEl('button');
 //            btn.style.top = (panel.offsetTop)/doc.scrollHeight*100 + '%';
 //
-//            const panelTitle = qee(panel, '.panel-title');
+//            const panelTitle = U.qee(panel, '.panel-title');
 //            const title = panelTitle.innerText || panelTitle.textContent;
-//            setAttr(btn, 'title', title);
-//            listen(btn, 'click', () => {
+//            U.setAttr(btn, 'title', title);
+//            U.listen(btn, 'click', () => {
 //                doc.scrollTop = panel.offsetTop - 40;
 ////                panel.scrollIntoView();
 //            });
@@ -92,8 +101,8 @@ See the License for the specific language governing permissions and
 //    }
 
     exports.refresh = () => {
-        clearEl(getEl('briefingCharacter'));
-        clearEl(getEl('briefingContent'));
+        U.clearEl(U.queryEl('#briefingCharacter'));
+        U.clearEl(U.queryEl('#briefingContent'));
 
         Promise.all([
             DBMS.getProfileStructure({type: 'character'}),
@@ -103,13 +112,13 @@ See the License for the specific language governing permissions and
             const [characterProfileStructure, playerProfileStructure, names] = results;
             state.characterProfileStructure = characterProfileStructure;
             state.playerProfileStructure = playerProfileStructure;
-            showEl(qe(`${root} .alert`), names.length === 0);
-            showEl(qe(`${root} > div > div > .panel`), names.length !== 0);
-            showEl(qe(`${root} #briefingCharacter`), names.length !== 0);
+            U.showEl(U.qe(`${root} .alert`), names.length === 0);
+            U.showEl(U.qe(`${root} > div > div > .panel`), names.length !== 0);
+            U.showEl(U.qe(`${root} #briefingCharacter`), names.length !== 0);
 
             if (names.length > 0) {
                 const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
-                const data = getSelect2Data(names);
+                const data = UI.getSelect2Data(names);
                 // this call trigger buildContent
                 $('#briefingCharacter').select2(data).val(characterName).trigger('change');
             }
@@ -122,7 +131,7 @@ See the License for the specific language governing permissions and
 
     function buildContent(characterName) {
         UI.updateEntitySetting(settingsPath, characterName);
-        const content = clearEl(getEl('briefingContent'));
+        const content = U.clearEl(U.queryEl('#briefingContent'));
         let index = 0;
         const data = {
             characterName
@@ -143,10 +152,10 @@ See the License for the specific language governing permissions and
 
     function getFlags() {
         return {
-            isAdaptationsMode: getEl('adaptationsModeRadio').checked,
-            isGroupingByStory: getEl('eventGroupingByStoryRadio').checked,
-            disableHeaders: getEl('disableHeadersCheckbox').checked,
-            hideAllPanels: getEl('hideAllPanelsCheckbox').checked
+            isAdaptationsMode: U.queryEl('#adaptationsModeRadio').checked,
+            isGroupingByStory: U.queryEl('#eventGroupingByStoryRadio').checked,
+            disableHeaders: U.queryEl('#disableHeadersCheckbox').checked,
+            hideAllPanels: U.queryEl('#hideAllPanelsCheckbox').checked
         };
     }
 
@@ -169,10 +178,10 @@ See the License for the specific language governing permissions and
                 }).catch(Utils.handleError)
             },
             make(el, data) {
-                const label = strFormat(getL10n('briefings-character-profile'), [data.characterName]);
-                addEl(el, makePanel(
-                    makeText(label),
-                    UI.makeProfileTable(state.characterProfileStructure, data.profile), getFlags().hideAllPanels
+                const label = U.strFormat(L10n.getValue('briefings-character-profile'), [data.characterName]);
+                U.addEl(el, makePanel(
+                    U.makeText(label),
+                    UI.makeProfileTable(Constants, state.characterProfileStructure, data.profile), getFlags().hideAllPanels
                 ));
             }
         }, {
@@ -193,10 +202,10 @@ See the License for the specific language governing permissions and
             },
             make(el, data) {
                 if (data.playerProfile) {
-                    const label = strFormat(getL10n('briefings-player-profile'), [data.playerName]);
-                    addEl(el, makePanel(
-                        makeText(label),
-                        UI.makeProfileTable(state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
+                    const label = U.strFormat(L10n.getValue('briefings-player-profile'), [data.playerName]);
+                    U.addEl(el, makePanel(
+                        U.makeText(label),
+                        UI.makeProfileTable(Constants, state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
                     ));
                 }
             }
@@ -209,8 +218,8 @@ See the License for the specific language governing permissions and
                 }).catch(Utils.handleError)
             },
             make(el, data) {
-                addEl(el, makePanel(
-                        makeText(`${getL10n('briefings-inventory')} (${data.allInventoryLists.length})`),
+                U.addEl(el, makePanel(
+                        U.makeText(`${L10n.getValue('briefings-inventory')} (${data.allInventoryLists.length})`),
                         makeInventoryContent(
                                 data.allInventoryLists,
                                 data.characterName, data.userStoryNamesMap
@@ -226,8 +235,8 @@ See the License for the specific language governing permissions and
                 }).catch(Utils.handleError)
             },
             make(el, data) {
-                addEl(el, makePanel(
-                        makeText(`${getL10n('header-groups')} (${data.groupTexts.length})`),
+                U.addEl(el, makePanel(
+                        U.makeText(`${L10n.getValue('header-groups')} (${data.groupTexts.length})`),
                         makeGroupContent(data.groupTexts), getFlags().hideAllPanels
                 ));
             }
@@ -235,12 +244,12 @@ See the License for the specific language governing permissions and
             name: 'relations',
             load: Relations.load,
             make(el, data) {
-                const label = `${getL10n('header-relations')} (${data.relationsSummary.relations.length})`;
+                const label = `${L10n.getValue('header-relations')} (${data.relationsSummary.relations.length})`;
                 const content = RelationsPreview.makeRelationsContent(
                         data, getFlags().isAdaptationsMode,
                         state.characterProfileStructure, exports.refresh
                 );
-                addEl(el, makePanel(makeText(label), content, getFlags().hideAllPanels));
+                U.addEl(el, makePanel(U.makeText(label), content, getFlags().hideAllPanels));
             }
         }, {
             name: 'stories',
@@ -279,32 +288,32 @@ See the License for the specific language governing permissions and
     }
 
     function makeGroupContent(groupTexts) {
-        return addEls(makeEl('div'), groupTexts.map((groupText) => {
-            const div = makeEl('div');
-            addEl(div, addEl(makeEl('h4'), makeText(groupText.groupName)));
-            const span = addEl(makeEl('textarea'), makeText(groupText.text));
-            setAttr(span, 'disabled', 'disabled');
-            addClasses(span, ['briefingTextSpan', 'form-control']);
-            return addEl(div, span);
+        return U.addEls(U.makeEl('div'), groupTexts.map((groupText) => {
+            const div = U.makeEl('div');
+            U.addEl(div, U.addEl(U.makeEl('h4'), U.makeText(groupText.groupName)));
+            const span = U.addEl(U.makeEl('textarea'), U.makeText(groupText.text));
+            U.setAttr(span, 'disabled', 'disabled');
+            U.addClasses(span, ['briefingTextSpan', 'form-control']);
+            return U.addEl(div, span);
         }));
     }
 
     function makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap) {
-        const container = qmte('.profile-editor-container-tmpl');
-        return addEls(container, allInventoryLists.map((elem) => {
-            const input = makeEl('input');
+        const container = U.qmte('.profile-editor-container-tmpl');
+        return U.addEls(container, allInventoryLists.map((elem) => {
+            const input = U.makeEl('input');
             input.value = elem.inventory;
             input.storyName = elem.storyName;
             input.characterName = characterName;
-            addClasses(input, ['inventoryInput', 'form-control']);
+            U.addClasses(input, ['inventoryInput', 'form-control']);
             if (!userStoryNamesMap[elem.storyName]) {
-                addClass(input, 'notEditable');
+                U.addClass(input, 'notEditable');
             }
-            listen(input, 'change', updateCharacterInventory);
+            U.listen(input, 'change', updateCharacterInventory);
 
-            const row = qmte('.profile-editor-row-tmpl');
-            addEl(qee(row, '.profile-item-name'), makeText(elem.storyName));
-            addEl(qee(row, '.profile-item-input'), input);
+            const row = U.qmte('.profile-editor-row-tmpl');
+            U.addEl(U.qee(row, '.profile-item-name'), U.makeText(elem.storyName));
+            U.addEl(U.qee(row, '.profile-item-input'), input);
             return row;
         }));
     }
@@ -331,17 +340,17 @@ See the License for the specific language governing permissions and
 
                 const splitConstant = 5;
 
-                addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
-                    const eventContent = addEls(makeEl('div'), subPart.map((event, j) => {
+                U.addEls(content, R.splitEvery(splitConstant, allEvents).map((subPart, i) => {
+                    const eventContent = U.addEls(U.makeEl('div'), subPart.map((event, j) => {
                         opts.index = (i * splitConstant) + 1 + j;
                         return showEvent(event, characterName, opts, flags);
                     }));
 
                     let name;
                     if (flags.disableHeaders) {
-                        name = makeText(strFormat(getL10n('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
+                        name = U.makeText(U.strFormat(L10n.getValue('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
                     } else {
-                        name = addEls(makeEl('div'), subPart.map(event => getEventHeaderDiv(event, true)));
+                        name = U.addEls(U.makeEl('div'), subPart.map(event => getEventHeaderDiv(event, true)));
                     }
                     return makePanel(name, eventContent, flags.hideAllPanels);
                 }));
@@ -353,11 +362,11 @@ See the License for the specific language governing permissions and
     function getStoryHeader(elem, i, disableHeaders) {
         let name;
         if (disableHeaders) {
-            name = strFormat(getL10n('briefings-story-header'), [i + 1]);
+            name = U.strFormat(L10n.getValue('briefings-story-header'), [i + 1]);
         } else {
             name = elem.storyName;
         }
-        return makeText(`${name} (${elem.events.length})`);
+        return U.makeText(`${name} (${elem.events.length})`);
     }
 
     function showEventsByStory(content, characterName, userStoryNamesMap, flags) {
@@ -378,8 +387,8 @@ See the License for the specific language governing permissions and
                     metaInfo
                 };
 
-                addEls(content, eventGroups.map((elem, i) => {
-                    const storyContent = addEls(makeEl('div'), elem.events.map((event, j) => {
+                U.addEls(content, eventGroups.map((elem, i) => {
+                    const storyContent = U.addEls(U.makeEl('div'), elem.events.map((event, j) => {
                         opts.index = j + 1;
                         return showEvent(event, characterName, opts, flags);
                     }));
@@ -394,9 +403,9 @@ See the License for the specific language governing permissions and
     }
 
     function getEventHeaderDiv(event, showStoryName) {
-        const eventName = addEl(makeEl('span'), makeText(strFormat('{0} {1}', [showStoryName ? `${event.storyName}:` : '', event.name])));
-        const eventTime = addClass(addEl(makeEl('span'), makeText(event.time)), 'previewEventTime');
-        return addEls(makeEl('div'), [eventTime, eventName]);
+        const eventName = U.addEl(U.makeEl('span'), U.makeText(U.strFormat('{0} {1}', [showStoryName ? `${event.storyName}:` : '', event.name])));
+        const eventTime = U.addClass(U.addEl(U.makeEl('span'), U.makeText(event.time)), 'previewEventTime');
+        return U.addEls(U.makeEl('div'), [eventTime, eventName]);
     }
 
     function showEvent(event, characterName, opts, flags) {
@@ -407,7 +416,7 @@ See the License for the specific language governing permissions and
         const showAdaptationText = event.characters[characterName].text !== '';
         const showSubjectiveTime = event.characters[characterName].time !== '';
 
-        const eventDiv = qmte('.adaptation-row-tmpl');
+        const eventDiv = U.qmte('.adaptation-row-tmpl');
         const originCard = Adaptations.makeOriginCard(event, opts.metaInfo, event.storyName, {
             cardTitle: flags.disableHeaders ? L10n.format('briefings', 'event-header', [opts.index]) : event.name,
             showTimeInput: showAll || !showSubjectiveTime,
@@ -415,9 +424,9 @@ See the License for the specific language governing permissions and
             showTextInput: showAll || !showAdaptationText
         });
         if(!isStoryEditable){
-            qees(originCard, '.isStoryEditable').forEach(addClass(R.__, 'notEditable'));
+            U.qees(originCard, '.isStoryEditable').forEach(U.addClass(R.__, 'notEditable'));
         }
-        addEl(qee(eventDiv, '.eventMainPanelRow-left'), originCard);
+        U.addEl(U.qee(eventDiv, '.eventMainPanelRow-left'), originCard);
         const isEditable = opts.areAdaptationsEditable[`${event.storyName}-${characterName}`];
         const adaptationsCard = Adaptations.makeAdaptationCard(
             isEditable, event,
@@ -428,7 +437,7 @@ See the License for the specific language governing permissions and
                 showTextInput: showAll || showAdaptationText
             }
         );
-        addEl(qee(eventDiv, '.eventMainPanelRow-left'), adaptationsCard);
+        U.addEl(U.qee(eventDiv, '.eventMainPanelRow-left'), adaptationsCard);
         return eventDiv;
     }
 
@@ -438,4 +447,4 @@ See the License for the specific language governing permissions and
         } = event.target;
         DBMS.updateCharacterInventory({storyName, characterName, inventory: value}).catch(Utils.handleError);
     }
-})(this.BriefingPreview = {});
+// })(window.BriefingPreview = {});

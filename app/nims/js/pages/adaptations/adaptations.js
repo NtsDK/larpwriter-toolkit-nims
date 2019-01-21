@@ -15,35 +15,37 @@ See the License for the specific language governing permissions and
 /*global
  Utils, DBMS
  */
+// const U = core.U;
 
+const PermissionInformer = require('permissionInformer');
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.adaptations-tab ';
 
     exports.init = () => {
-        listen(getEl('events-storySelector'), 'change', updateAdaptationSelectorDelegate);
-        listen(getEl('events-characterSelector'), 'change', showPersonalStoriesByCharacters);
-        listen(getEl('events-eventSelector'), 'change', showPersonalStoriesByEvents);
-        listen(getEl('finishedStoryCheckbox'), 'change', exports.refresh);
-        queryEls('.adaptations-tab input[name=adaptationFilter]').map(listen(R.__, 'change', updateFilter));
-        exports.content = queryEl(root);
+        U.listen(U.queryEl('#events-storySelector'), 'change', updateAdaptationSelectorDelegate);
+        U.listen(U.queryEl('#events-characterSelector'), 'change', showPersonalStoriesByCharacters);
+        U.listen(U.queryEl('#events-eventSelector'), 'change', showPersonalStoriesByEvents);
+        U.listen(U.queryEl('#finishedStoryCheckbox'), 'change', exports.refresh);
+        U.queryEls('.adaptations-tab input[name=adaptationFilter]').map(U.listen(R.__, 'change', updateFilter));
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
-        const selector = clearEl(getEl('events-storySelector'));
-        clearEl(getEl('events-characterSelector'));
-        clearEl(getEl('events-eventSelector'));
-        clearEl(getEl('personalStories'));
+        const selector = U.clearEl(U.queryEl('#events-storySelector'));
+        U.clearEl(U.queryEl('#events-characterSelector'));
+        U.clearEl(U.queryEl('#events-eventSelector'));
+        U.clearEl(U.queryEl('#personalStories'));
 
         Promise.all([
             PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}),
-            DBMS.getFilteredStoryNames({showOnlyUnfinishedStories: getEl('finishedStoryCheckbox').checked})
+            DBMS.getFilteredStoryNames({showOnlyUnfinishedStories: U.queryEl('#finishedStoryCheckbox').checked})
         ]).then(results => {
             const [allStoryNames, storyNames] = results;
-            showEl(qe(`${root} .alert`), storyNames.length === 0);
-            showEl(qe(`${root} .adaptations-content`), storyNames.length !== 0);
+            U.showEl(U.qe(`${root} .alert`), storyNames.length === 0);
+            U.showEl(U.qe(`${root} .adaptations-content`), storyNames.length !== 0);
 
             if (storyNames.length <= 0) { return; }
 
@@ -60,19 +62,19 @@ See the License for the specific language governing permissions and
 
             let option;
             storyNames2.forEach((storyName) => {
-                option = addEl(makeEl('option'), (makeText(storyName.displayName)));
-                addClass(option, getIconClass(storyName));
-                setProp(option, 'selected', storyName.value === selectedStoryName);
-                setProp(option, 'storyInfo', storyName.value);
-                addEl(selector, option);
+                option = U.addEl(U.makeEl('option'), (U.makeText(storyName.displayName)));
+                U.addClass(option, getIconClass(storyName));
+                U.setProp(option, 'selected', storyName.value === selectedStoryName);
+                U.setProp(option, 'storyInfo', storyName.value);
+                U.addEl(selector, option);
             });
-            setAttr(selector, 'size', Math.min(storyNames2.length, 10));
+            U.setAttr(selector, 'size', Math.min(storyNames2.length, 10));
             showPersonalStories(selectedStoryName);
         }).catch(Utils.handleError);
     };
 
     function updateAdaptationSelectorDelegate(event) {
-        clearEl(getEl('personalStories'));
+        U.clearEl(U.queryEl('#personalStories'));
         const storyName = event.target.selectedOptions[0].storyInfo;
         updateSettings('storyName', storyName);
         updateSettings('characterNames', null);
@@ -81,13 +83,13 @@ See the License for the specific language governing permissions and
     }
 
     function updateAdaptationSelector(story, allCharacters) {
-        const characterSelector = clearEl(getEl('events-characterSelector'));
-        const eventSelector = clearEl(getEl('events-eventSelector'));
+        const characterSelector = U.clearEl(U.queryEl('#events-characterSelector'));
+        const eventSelector = U.clearEl(U.queryEl('#events-eventSelector'));
 
         let characterArray = getStoryCharacterCompleteness(story);
         let eventArray = getStoryEventCompleteness(story);
 
-        const showOnlyUnfinishedStories = getEl('finishedStoryCheckbox').checked;
+        const showOnlyUnfinishedStories = U.queryEl('#finishedStoryCheckbox').checked;
         if (showOnlyUnfinishedStories) {
             characterArray = characterArray.filter(elem => !elem.isFinished || elem.isEmpty);
             eventArray = eventArray.filter(elem => !elem.isFinished || elem.isEmpty);
@@ -107,27 +109,27 @@ See the License for the specific language governing permissions and
 
         let option;
         characterArray.forEach((elem) => {
-            option = addEl(makeEl('option'), (makeText(elem.displayName)));
-            addClass(option, getIconClass(elem));
-            setProp(option, 'selected', characterNames.indexOf(elem.value) !== -1);
-            setProp(option, 'storyInfo', story.name);
-            setProp(option, 'characterName', elem.value);
-            addEl(characterSelector, option);
+            option = U.addEl(U.makeEl('option'), (U.makeText(elem.displayName)));
+            U.addClass(option, getIconClass(elem));
+            U.setProp(option, 'selected', characterNames.indexOf(elem.value) !== -1);
+            U.setProp(option, 'storyInfo', story.name);
+            U.setProp(option, 'characterName', elem.value);
+            U.addEl(characterSelector, option);
         });
-        setAttr(characterSelector, 'size', characterArray.length);
+        U.setAttr(characterSelector, 'size', characterArray.length);
 
         eventArray.forEach((elem) => {
-            option = addEl(makeEl('option'), (makeText(elem.name)));
-            addClass(option, getIconClass(elem));
-            setProp(option, 'selected', eventIndexes.indexOf(elem.index) !== -1);
-            setProp(option, 'storyInfo', story.name);
-            setProp(option, 'eventIndex222', elem.index);
-            addEl(eventSelector, option);
+            option = U.addEl(U.makeEl('option'), (U.makeText(elem.name)));
+            U.addClass(option, getIconClass(elem));
+            U.setProp(option, 'selected', eventIndexes.indexOf(elem.index) !== -1);
+            U.setProp(option, 'storyInfo', story.name);
+            U.setProp(option, 'eventIndex222', elem.index);
+            U.addEl(eventSelector, option);
         });
-        setAttr(eventSelector, 'size', eventArray.length);
+        U.setAttr(eventSelector, 'size', eventArray.length);
 
         const { selectedFilter } = SM.getSettings().Adaptations;
-        getEl(selectedFilter).checked = true;
+        U.queryEl('#'+selectedFilter).checked = true;
         updateFilter({
             target: {
                 id: selectedFilter
@@ -138,8 +140,8 @@ See the License for the specific language governing permissions and
     function updateFilter(event) {
         updateSettings('selectedFilter', event.target.id);
         const byCharacter = event.target.id === 'adaptationFilterByCharacter';
-        hideEl(getEl('events-characterSelectorDiv'), !byCharacter);
-        hideEl(getEl('events-eventSelectorDiv'), byCharacter);
+        U.hideEl(U.queryEl('#events-characterSelectorDiv'), !byCharacter);
+        U.hideEl(U.queryEl('#events-eventSelectorDiv'), byCharacter);
         if (byCharacter) {
             showPersonalStoriesByCharacters();
         } else {
@@ -148,23 +150,23 @@ See the License for the specific language governing permissions and
     }
 
     function showPersonalStoriesByCharacters() {
-        const eventRows = queryElEls(exports.content, '.eventRow-dependent');
-        eventRows.map(removeClass(R.__, 'hidden'));
-        nl2array(queryElEls(exports.content, 'div[dependent-on-character]')).map(addClass(R.__, 'hidden'));
+        const eventRows = U.queryElEls(exports.content, '.eventRow-dependent');
+        eventRows.map(U.removeClass(R.__, 'hidden'));
+        U.nl2array(U.queryElEls(exports.content, 'div[dependent-on-character]')).map(U.addClass(R.__, 'hidden'));
 
-        const characterNames = nl2array(getEl('events-characterSelector').selectedOptions).map(opt => opt.characterName);
-        characterNames.forEach(name => queryElEls(exports.content, `div[dependent-on-character="${name}"]`).map(removeClass(R.__, 'hidden')));
-        eventRows.map(row => hideEl(row, R.intersection(row.dependsOnCharacters, characterNames).length === 0));
+        const characterNames = U.nl2array(U.queryEl('#events-characterSelector').selectedOptions).map(opt => opt.characterName);
+        characterNames.forEach(name => U.queryElEls(exports.content, `div[dependent-on-character="${name}"]`).map(U.removeClass(R.__, 'hidden')));
+        eventRows.map(row => U.hideEl(row, R.intersection(row.dependsOnCharacters, characterNames).length === 0));
 
         updateSettings('characterNames', characterNames);
     }
 
     function showPersonalStoriesByEvents() {
-        queryElEls(exports.content, 'div[dependent-on-character]').map(removeClass(R.__, 'hidden'));
-        queryElEls(exports.content, '.eventRow-dependent').map(addClass(R.__, 'hidden'));
+        U.queryElEls(exports.content, 'div[dependent-on-character]').map(U.removeClass(R.__, 'hidden'));
+        U.queryElEls(exports.content, '.eventRow-dependent').map(U.addClass(R.__, 'hidden'));
 
-        const eventIndexes = nl2array(getEl('events-eventSelector').selectedOptions).map(opt => opt.eventIndex222);
-        eventIndexes.forEach(index => removeClass(getEls(`${index}-dependent`)[0], 'hidden'));
+        const eventIndexes = U.nl2array(U.queryEl('#events-eventSelector').selectedOptions).map(opt => opt.eventIndex222);
+        eventIndexes.forEach(index => U.removeClass(U.queryEls(`.${index}-dependent`)[0], 'hidden'));
         updateSettings('eventIndexes', eventIndexes);
     }
 
@@ -225,38 +227,38 @@ See the License for the specific language governing permissions and
     }
 
     function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
-        const div = clearEl(getEl('personalStories'));
+        const div = U.clearEl(U.queryEl('#personalStories'));
         if(events.length === 0) {
-            const alert = qmte('.alert-block-tmpl');
-            addEl(alert, makeText(L10n.get('advices', 'no-events-in-story')));
-            addClass(alert, 'margin-bottom-8');
-            addEl(div, alert);
+            const alert = U.qmte('.alert-block-tmpl');
+            U.addEl(alert, U.makeText(L10n.get('advices', 'no-events-in-story')));
+            U.addClass(alert, 'margin-bottom-8');
+            U.addEl(div, alert);
         }
         if(characterNames.length === 0) {
-            const alert = qmte('.alert-block-tmpl');
-            addEl(alert, makeText(L10n.get('advices', 'no-characters-in-story')));
-            addClass(alert, 'margin-bottom-8');
-            addEl(div, alert);
+            const alert = U.qmte('.alert-block-tmpl');
+            U.addEl(alert, U.makeText(L10n.get('advices', 'no-characters-in-story')));
+            U.addClass(alert, 'margin-bottom-8');
+            U.addEl(div, alert);
         }
         const adaptationsNum = R.flatten(events.map(event => R.keys(event.characters))).length;
         if(adaptationsNum === 0) {
-            const alert = qmte('.alert-block-tmpl');
-            addEl(alert, makeText(L10n.get('advices', 'no-adaptations-in-story')));
-            addClass(alert, 'margin-bottom-8');
-            addEl(div, alert);
+            const alert = U.qmte('.alert-block-tmpl');
+            U.addEl(alert, U.makeText(L10n.get('advices', 'no-adaptations-in-story')));
+            U.addClass(alert, 'margin-bottom-8');
+            U.addEl(div, alert);
         }
 
-        addEls(div, events.map((event) => {
-            const row = qmte(`${root} .adaptation-row-tmpl`);
-            addClass(row, `${event.index}-dependent`);
+        U.addEls(div, events.map((event) => {
+            const row = U.qmte(`${root} .adaptation-row-tmpl`);
+            U.addClass(row, `${event.index}-dependent`);
             row.dependsOnCharacters = R.keys(event.characters);
-            addEl(qee(row, '.eventMainPanelRow-left'), exports.makeOriginCard(event, metaInfo, storyName, {
+            U.addEl(U.qee(row, '.eventMainPanelRow-left'), exports.makeOriginCard(event, metaInfo, storyName, {
 
                 showTimeInput: true,
                 showTextInput: true,
                 cardTitle: event.name
             }));
-            addEls(qee(row, '.events-eventsContainer'), characterNames
+            U.addEls(U.qee(row, '.events-eventsContainer'), characterNames
                 .filter(characterName => event.characters[characterName])
                 .map((characterName) => {
                     const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
@@ -273,11 +275,11 @@ See the License for the specific language governing permissions and
     }
 
     exports.makeOriginCard = (event, metaInfo, storyName, opts) => {
-        const card = qmte(`${root} .origin-tmpl`);
-        addEl(qee(card, '.card-title'), makeText(opts.cardTitle));
-        const textInput = qee(card, '.text-input');
-        const timeInput = qee(card, '.time-input');
-        const lockButton = qee(card, 'button.locked');
+        const card = U.qmte(`${root} .origin-tmpl`);
+        U.addEl(U.qee(card, '.card-title'), U.makeText(opts.cardTitle));
+        const textInput = U.qee(card, '.text-input');
+        const timeInput = U.qee(card, '.time-input');
+        const lockButton = U.qee(card, 'button.locked');
 
         if (opts.showTimeInput === true) {
             UI.makeEventTimePicker2(timeInput, {
@@ -288,24 +290,24 @@ See the License for the specific language governing permissions and
                 onChangeDateTimeCreator: onChangeDateTimeCreator(storyName)
             });
         } else {
-            addClass(timeInput, 'hidden');
+            U.addClass(timeInput, 'hidden');
         }
 
         if (opts.showTextInput === true) {
             textInput.value = event.text;
             textInput.dataKey = JSON.stringify([storyName, event.index]);
-            listen(textInput, 'change', onChangeOriginText);
+            U.listen(textInput, 'change', onChangeOriginText);
         } else {
-            addClass(textInput, 'hidden');
+            U.addClass(textInput, 'hidden');
         }
 
         if (opts.showLockButton === true) {
-            listen(lockButton, 'click', onOriginLockClick(timeInput, textInput));
+            U.listen(lockButton, 'click', onOriginLockClick(timeInput, textInput));
             Utils.enableEl(timeInput, false);
             Utils.enableEl(textInput, false);
             L10n.localizeStatic(card);
         } else {
-            addClass(lockButton, 'hidden');
+            U.addClass(lockButton, 'hidden');
         }
 
         return card;
@@ -314,54 +316,54 @@ See the License for the specific language governing permissions and
     function onOriginLockClick(timeInput, textInput) {
         return (event) => {
             const { target } = event;
-            const isLocked = hasClass(target, 'btn-primary');
-            setClassByCondition(target, 'btn-primary', !isLocked);
-            setClassByCondition(target, 'locked', !isLocked);
-            setClassByCondition(target, 'unlocked', isLocked);
+            const isLocked = U.hasClass(target, 'btn-primary');
+            U.setClassByCondition(target, 'btn-primary', !isLocked);
+            U.setClassByCondition(target, 'locked', !isLocked);
+            U.setClassByCondition(target, 'unlocked', isLocked);
             Utils.enableEl(timeInput, isLocked);
             Utils.enableEl(textInput, isLocked);
         };
     }
 
     exports.makeAdaptationCard = R.curry((isEditable, event, storyName, characterName, opts) => {
-        const card = qmte(`${root} .adaptation-tmpl`);
-        setAttr(card, 'dependent-on-character', characterName);
+        const card = U.qmte(`${root} .adaptation-tmpl`);
+        U.setAttr(card, 'dependent-on-character', characterName);
 
-        addEl(qee(card, '.card-title'), makeText(opts.cardTitle));
-        const textInput = qee(card, '.text-input');
-        const timeInput = qee(card, '.time-input');
-        const finishedButton = qee(card, 'button.finished');
+        U.addEl(U.qee(card, '.card-title'), U.makeText(opts.cardTitle));
+        const textInput = U.qee(card, '.text-input');
+        const timeInput = U.qee(card, '.time-input');
+        const finishedButton = U.qee(card, 'button.finished');
         const id = JSON.stringify([storyName, event.index, characterName]);
 
         if (opts.showTimeInput === true) {
             UI.populateAdaptationTimeInput(timeInput, storyName, event, characterName, isEditable);
         } else {
-            addClass(timeInput, 'hidden');
+            U.addClass(timeInput, 'hidden');
         }
 
         if (opts.showTextInput === true) {
-            setClassByCondition(textInput, 'notEditable', !isEditable);
+            U.setClassByCondition(textInput, 'notEditable', !isEditable);
             textInput.value = event.characters[characterName].text;
             textInput.dataKey = JSON.stringify([storyName, event.index, characterName]);
-            listen(textInput, 'change', onChangeAdaptationText);
+            U.listen(textInput, 'change', onChangeAdaptationText);
         } else {
-            addClass(textInput, 'hidden');
+            U.addClass(textInput, 'hidden');
         }
 
         if (opts.showFinishedButton === true) {
             const isFinished = event.characters[characterName].ready;
-            setClassByCondition(finishedButton, 'notEditable', !isEditable);
-            setClassIf(finishedButton, 'btn-primary', isFinished);
+            U.setClassByCondition(finishedButton, 'notEditable', !isEditable);
+            U.setClassIf(finishedButton, 'btn-primary', isFinished);
             finishedButton.id = id;
             const enableInputs = (value) => {
                 Utils.enableEl(textInput, !value);
                 Utils.enableEl(timeInput, !value);
             };
             enableInputs(isFinished);
-            listen(finishedButton, 'click', UI.onChangeAdaptationReadyStatus2(enableInputs));
+            U.listen(finishedButton, 'click', UI.onChangeAdaptationReadyStatus2(enableInputs));
             L10n.localizeStatic(card);
         } else {
-            addClass(finishedButton, 'hidden');
+            U.addClass(finishedButton, 'hidden');
         }
 
         return card;
@@ -375,7 +377,7 @@ See the License for the specific language governing permissions and
             property: 'time',
             value: input.val()
         }).catch(Utils.handleError);
-        removeClass(myInput, 'defaultDate');
+        U.removeClass(myInput, 'defaultDate');
     });
 
     function onChangeOriginText(event) {
@@ -455,4 +457,4 @@ See the License for the specific language governing permissions and
     function getEventIndexes(eventArray) {
         return getNames(eventArray, 'index', 'eventIndexes');
     }
-})(this.Adaptations = {});
+// })(window.Adaptations = {});

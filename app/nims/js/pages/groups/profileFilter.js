@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '.profile-filter-tab ';
 
@@ -36,12 +36,12 @@ See the License for the specific language governing permissions and
         });
 
 //        state.addFilterConditionDialog = new AddFilterConditionDialog(root);
-//        listen(qe(`${root}.create.filter-condition`), 'click', onAddFilterCondition);
+//        U.listen(U.qe(`${root}.create.filter-condition`), 'click', onAddFilterCondition);
 
-        listen(queryEl(`${root}#profile-filter-columns .profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
+        U.listen(U.queryEl(`${root}#profile-filter-columns .profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
 
 //        Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
-//        listen queryEl(`${root}.save-entity-select`)
+//        listen U.queryEl(`${root}.save-entity-select`)
 
         $(`${root}.save-entity-select`).select2().on('change', (event) => {
             const group = event.target.value;
@@ -50,19 +50,19 @@ See the License for the specific language governing permissions and
             Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
         });
 
-        listen(queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
-        listen(queryEl(`${root}.save-entity-button`), 'click', saveFilterToGroup);
-        listen(queryEl(`${root}.download-filter-table`), 'click', downloadFilterTable);
+        U.listen(U.queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
+        U.listen(U.queryEl(`${root}.save-entity-button`), 'click', saveFilterToGroup);
+        U.listen(U.queryEl(`${root}.download-filter-table`), 'click', downloadFilterTable);
 
-        listen(qe(`${root}.create.group`), 'click', () => createGroupDialog.showDlg());
-        listen(qe(`${root}.rename.group`), 'click', () => {
-            qee(renameGroupDialog, '.entity-input').value = queryEl(`${root}.save-entity-select`).value;
+        U.listen(U.qe(`${root}.create.group`), 'click', () => createGroupDialog.showDlg());
+        U.listen(U.qe(`${root}.rename.group`), 'click', () => {
+            U.qee(renameGroupDialog, '.entity-input').value = U.queryEl(`${root}.save-entity-select`).value;
             renameGroupDialog.showDlg();
         });
-        listen(queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() =>
-            queryEl(`${root}.save-entity-select`).value, exports.refresh));
+        U.listen(U.queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() =>
+            U.queryEl(`${root}.save-entity-select`).value, exports.refresh));
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -72,31 +72,31 @@ See the License for the specific language governing permissions and
         state.checkboxes = {};
         state.curFilterModel = [];
 
-        const filterSettingsDiv = clearEl(queryEl(`${root}.filter-settings-panel`));
-        addEl(filterSettingsDiv, addClass(makeEl('div'), 'separator'));
+        const filterSettingsDiv = U.clearEl(U.queryEl(`${root}.filter-settings-panel`));
+        U.addEl(filterSettingsDiv, U.addClass(U.makeEl('div'), 'separator'));
 
         groupAreaRefresh();
 
         FilterConfiguration.makeFilterConfiguration().then((filterConfiguration) => {
             state.filterConfiguration = filterConfiguration;
 
-            showEl(qe(`${root} .alert.no-characters`), !filterConfiguration.haveProfiles());
-            showEl(qe(`${root} .alert.no-players`), !filterConfiguration.haveProfiles());
-            showEl(qe(`${root} .alert.no-character-profile`), !filterConfiguration.haveProfileStructures());
-            showEl(qe(`${root} .alert.no-player-profile`), !filterConfiguration.haveProfileStructures());
-            showEl(qe(`${root} .profile-filter-container .panel`), filterConfiguration.haveData());
+            U.showEl(U.qe(`${root} .alert.no-characters`), !filterConfiguration.haveProfiles());
+            U.showEl(U.qe(`${root} .alert.no-players`), !filterConfiguration.haveProfiles());
+            U.showEl(U.qe(`${root} .alert.no-character-profile`), !filterConfiguration.haveProfileStructures());
+            U.showEl(U.qe(`${root} .alert.no-player-profile`), !filterConfiguration.haveProfileStructures());
+            U.showEl(U.qe(`${root} .profile-filter-container .panel`), filterConfiguration.haveData());
 
             const groupedProfileFilterItems = filterConfiguration.getGroupedProfileFilterItems();
-            addEls(filterSettingsDiv, R.flatten(groupedProfileFilterItems.map(item => R.concat(item.profileFilterItems.map(makeInput), [addClass(makeEl('div'), 'filterSeparator')]))));
+            U.addEls(filterSettingsDiv, R.flatten(groupedProfileFilterItems.map(item => R.concat(item.profileFilterItems.map(makeInput), [U.addClass(U.makeEl('div'), 'filterSeparator')]))));
 
             UI.fillShowItemSelector2(
-                clearEl(queryEl(`${root}#profile-filter-columns .profile-item-selector`)),
+                U.clearEl(U.queryEl(`${root}#profile-filter-columns .profile-item-selector`)),
                 filterConfiguration.getGroupsForSelect(),
                 true
             );
 
-            addEl(
-                clearEl(queryEl(`${root}.filter-head`)),
+            U.addEl(
+                U.clearEl(U.queryEl(`${root}.filter-head`)),
                 makeContentHeader(getHeaderProfileItemNames(filterConfiguration.getProfileFilterItems()))
             );
 
@@ -123,16 +123,16 @@ See the License for the specific language governing permissions and
             PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false})
         ]).then(results => {
             const [userGroupNames, allGroupNames] = results;
-            Utils.enableEl(qe(`${root}.rename.group`), allGroupNames.length > 0);
-            Utils.enableEl(qe(`${root}.remove.group`), allGroupNames.length > 0);
-            Utils.enableEl(qe(`${root}.show-entity-button`), allGroupNames.length > 0);
-            Utils.enableEl(qe(`${root}.save-entity-button`), allGroupNames.length > 0);
-            Utils.enableEl(qe(`${root}.save-entity-select`), allGroupNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.rename.group`), allGroupNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.remove.group`), allGroupNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.show-entity-button`), allGroupNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.save-entity-button`), allGroupNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.save-entity-select`), allGroupNames.length > 0);
 
             state.userGroupNames = userGroupNames;
             state.allGroupNames = allGroupNames;
-            const data = getSelect2Data(allGroupNames);
-            clearEl(queryEl(`${root}.save-entity-select`));
+            const data = UI.getSelect2Data(allGroupNames);
+            U.clearEl(U.queryEl(`${root}.save-entity-select`));
             $(`${root}.save-entity-select`).select2(data);
         }).catch(Utils.handleError);
     }
@@ -169,16 +169,16 @@ See the License for the specific language governing permissions and
 
     function rebuildContent() {
         const dataArrays = makePrintData();
-        addEl(clearEl(queryEl(`${root}.filter-result-size`)), makeText(dataArrays.length));
-        addEls(clearEl(queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
-        UI.showSelectedEls3(root, 'dependent', 'dependent-index')({ target: queryEl(`${root}#profile-filter-columns .profile-item-selector`) });
+        U.addEl(U.clearEl(U.queryEl(`${root}.filter-result-size`)), U.makeText(dataArrays.length));
+        U.addEls(U.clearEl(U.queryEl(`${root}.filter-content`)), dataArrays.map(makeDataString));
+        UI.showSelectedEls3(root, 'dependent', 'dependent-index')({ target: U.queryEl(`${root}#profile-filter-columns .profile-item-selector`) });
     }
 
     function saveFilterToGroup() {
-        const groupName = queryEl(`${root}.save-entity-select`).value;
+        const groupName = U.queryEl(`${root}.save-entity-select`).value;
         PermissionInformer.isEntityEditable({type: 'group', name: groupName}).then((isGroupEditable) => {
             if (!isGroupEditable) {
-                Utils.alert(strFormat(getL10n('groups-group-editing-forbidden'), [groupName]));
+                Utils.alert(U.strFormat(L10n.getValue('groups-group-editing-forbidden'), [groupName]));
                 return;
             }
             DBMS.saveFilterToGroup({
@@ -189,7 +189,7 @@ See the License for the specific language governing permissions and
     }
 
     function loadFilterFromGroup() {
-        const groupName = queryEl(`${root}.save-entity-select`).value;
+        const groupName = U.queryEl(`${root}.save-entity-select`).value;
         DBMS.getGroup({groupName}).then((group) => {
             const conflictTypes =
                 ProjectUtils.isFilterModelCompatibleWithProfiles(
@@ -197,7 +197,7 @@ See the License for the specific language governing permissions and
                     group.filterModel
                 );
             if (conflictTypes.length !== 0) {
-                Utils.alert(strFormat(getL10n('groups-base-filter-is-incompatible-with-page-profiles'), [conflictTypes.join(',')]));
+                Utils.alert(U.strFormat(L10n.getValue('groups-base-filter-is-incompatible-with-page-profiles'), [conflictTypes.join(',')]));
                 return;
             }
             applyFilterModel(group.filterModel);
@@ -206,7 +206,7 @@ See the License for the specific language governing permissions and
     }
 
     function downloadFilterTable() {
-        const el = queryEl(`${root}#profile-filter-columns .profile-item-selector`);
+        const el = U.queryEl(`${root}#profile-filter-columns .profile-item-selector`);
         const selected = [];
         for (let i = 0; i < el.options.length; i += 1) {
             selected[i] = el.options[i].selected;
@@ -310,7 +310,7 @@ See the License for the specific language governing permissions and
             let select2;
             switch (type) {
             case 'enum':
-                arr = nl2array(inputItem.selectedOptions).map(R.prop('value'));
+                arr = U.nl2array(inputItem.selectedOptions).map(R.prop('value'));
                 model.push({ type, name: inputItemName, selectedOptions: R.zipObj(arr, R.repeat(true, arr.length)) });
                 break;
             case 'checkbox':
@@ -330,7 +330,7 @@ See the License for the specific language governing permissions and
                 if (inputItem.value === 'ignore') { return; }
                 selectedOptions = {};
                 select2 = state.inputItems[`${inputItem.selfInfo.name}:multiEnumInput`];
-                arr = nl2array(select2.selectedOptions).map(R.prop('value'));
+                arr = U.nl2array(select2.selectedOptions).map(R.prop('value'));
                 model.push({
                     type,
                     name: inputItemName,
@@ -351,13 +351,13 @@ See the License for the specific language governing permissions and
 
     function makeDataString(dataArray) {
         const { inputItems } = state;
-        return addEls(makeEl('tr'), dataArray.map((valueInfo, i) => {
+        return U.addEls(U.makeEl('tr'), dataArray.map((valueInfo, i) => {
             let regex, pos, displayValue;
             const { value } = valueInfo;
             if (value === undefined) {
-                displayValue = constL10n('notAvailable');
+                displayValue = L10n.const('notAvailable');
             } else if (valueInfo.type === 'checkbox') {
-                displayValue = constL10n(Constants[value]);
+                displayValue = L10n.const(Constants[value]);
             } else if (valueInfo.type === 'text') {
                 pos = value.toLowerCase().indexOf(inputItems[valueInfo.itemName].value.toLowerCase());
                 displayValue = value.substring(pos - 5, pos + 15);
@@ -366,20 +366,20 @@ See the License for the specific language governing permissions and
             } else {
                 throw new Error(`Unexpected valueInfo.type: ${valueInfo.type}`);
             }
-            const td = addEl(setClassByCondition(makeEl('td'), 'lightGrey', value === undefined), makeText(displayValue));
-            addClasses(td, [`dependent-${i}`, 'dependent', valueInfo.type === 'number' ? 'text-align-right' : 'text-align-left']);
-            setAttr(td, 'dependent-index', i);
+            const td = U.addEl(U.setClassByCondition(U.makeEl('td'), 'lightGrey', value === undefined), U.makeText(displayValue));
+            U.addClasses(td, [`dependent-${i}`, 'dependent', valueInfo.type === 'number' ? 'text-align-right' : 'text-align-left']);
+            U.setAttr(td, 'dependent-index', i);
             return td;
         }));
     }
 
     function makeContentHeader(profileItemNames) {
-        return addEls(makeEl('tr'), profileItemNames.map((elem, i) => {
-            const td = addEls(makeEl('th'), [makeText(`${elem.displayName} `)]);
+        return U.addEls(U.makeEl('tr'), profileItemNames.map((elem, i) => {
+            const td = U.addEls(U.makeEl('th'), [U.makeText(`${elem.displayName} `)]);
             td.info = elem.name;
-            addClasses(td, [`dependent-${i}`, 'dependent', 'sorting', elem.type === 'number' ? 'text-align-right' : 'text-align-left']);
-            setAttr(td, 'dependent-index', i);
-            listen(td, 'click', onSortChange);
+            U.addClasses(td, [`dependent-${i}`, 'dependent', 'sorting', elem.type === 'number' ? 'text-align-right' : 'text-align-left']);
+            U.setAttr(td, 'dependent-index', i);
+            U.listen(td, 'click', onSortChange);
             return td;
         }));
     }
@@ -392,41 +392,41 @@ See the License for the specific language governing permissions and
 
         if (state.sortKey === target.info) {
             state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
-            setClassByCondition(target, 'sortDesc', state.sortDir === 'desc');
-            setClassByCondition(target, 'sortAsc', state.sortDir === 'asc');
+            U.setClassByCondition(target, 'sortDesc', state.sortDir === 'desc');
+            U.setClassByCondition(target, 'sortAsc', state.sortDir === 'asc');
         } else {
-            const filterHead = queryEl(`${root}.filter-head`);
-            nl2array(filterHead.getElementsByClassName('sortAsc')).forEach(removeClass(R.__, 'sortAsc'));
-            nl2array(filterHead.getElementsByClassName('sortDesc')).forEach(removeClass(R.__, 'sortDesc'));
+            const filterHead = U.queryEl(`${root}.filter-head`);
+            U.nl2array(filterHead.getElementsByClassName('sortAsc')).forEach(U.removeClass(R.__, 'sortAsc'));
+            U.nl2array(filterHead.getElementsByClassName('sortDesc')).forEach(U.removeClass(R.__, 'sortDesc'));
 
             state.sortKey = target.info;
             state.sortDir = 'asc';
-            addClass(target, 'sortAsc');
+            U.addClass(target, 'sortAsc');
         }
         rebuildContent();
     }
 
     function makeInput(profileItemConfig) {
-        const el = qmte(`${root} .filter-item-tmpl`);
-        const checkbox = qee(el, 'input[type="checkbox"]');
+        const el = U.qmte(`${root} .filter-item-tmpl`);
+        const checkbox = U.qee(el, 'input[type="checkbox"]');
         const id = "filter-item-" + profileItemConfig.displayName;
         checkbox.checked = false;
         checkbox.id = id;
-        addEl(qee(el, '.filter-item-name'), makeText(profileItemConfig.displayName));
-        setAttr(qee(el, 'label'), 'for', id);
+        U.addEl(U.qee(el, '.filter-item-name'), U.makeText(profileItemConfig.displayName));
+        U.setAttr(U.qee(el, 'label'), 'for', id);
 
-        const inputContainer = qee(el, '.filter-item-container');
-        listen(checkbox, 'click', toggleContent(el, inputContainer));
+        const inputContainer = U.qee(el, '.filter-item-container');
+        U.listen(checkbox, 'click', toggleContent(el, inputContainer));
         state.checkboxes[profileItemConfig.name] = checkbox;
 
-        addEl(inputContainer, makeFilter(profileItemConfig));
+        U.addEl(inputContainer, makeFilter(profileItemConfig));
         return el;
     }
 
     function toggleContent(itemContainer, inputContainer) {
         return (event) => {
-            hideEl(inputContainer, !event.target.checked);
-            setClassByCondition(itemContainer, 'flex-front-element', event.target.checked);
+            U.hideEl(inputContainer, !event.target.checked);
+            U.setClassByCondition(itemContainer, 'flex-front-element', event.target.checked);
             rebuildContent();
         };
     }
@@ -450,7 +450,7 @@ See the License for the specific language governing permissions and
     }
 
     function makeTextFilter(profileItemConfig) {
-        const input = qmte(`${root} .text-filter-tmpl`);
+        const input = U.qmte(`${root} .text-filter-tmpl`);
         input.selfInfo = profileItemConfig;
         input.value = '';
         input.addEventListener('input', rebuildContent);
@@ -459,11 +459,11 @@ See the License for the specific language governing permissions and
     }
 
     function makeCommonEnumFilter(profileItemConfig, values) {
-        const selector = qmte(`${root} .common-enum-filter-tmpl`);
+        const selector = U.qmte(`${root} .common-enum-filter-tmpl`);
         selector.selfInfo = profileItemConfig;
         selector.size = values.length;
 
-        fillSelector(selector, values.map((value) => {
+        U.fillSelector(selector, values.map((value) => {
             value.selected = true;
             return value;
         }));
@@ -473,29 +473,29 @@ See the License for the specific language governing permissions and
     }
 
     function makeEnumFilter(profileItemConfig) {
-        const values = arr2Select(profileItemConfig.value.split(','));
+        const values = U.arr2Select(profileItemConfig.value.split(','));
         return makeCommonEnumFilter(profileItemConfig, values);
     }
 
     function makeCheckboxFilter(profileItemConfig) {
         const values = [{
             value: Constants.true,
-            name: constL10n(Constants.true)
+            name: L10n.const(Constants.true)
         }, {
             value: Constants.false,
-            name: constL10n(Constants.false)
+            name: L10n.const(Constants.false)
         }];
         return makeCommonEnumFilter(profileItemConfig, values);
     }
 
     function makeMultiEnumFilter(profileItemConfig) {
-        const filter = qmte(`${root} .multi-enum-filter-tmpl`);
-        const selector = qee(filter, '.multi-enum-filter-type');
+        const filter = U.qmte(`${root} .multi-enum-filter-tmpl`);
+        const selector = U.qee(filter, '.multi-enum-filter-type');
         selector.selfInfo = profileItemConfig;
 
         Constants.multiEnumFilter.forEach((value) => {
-            const option = makeEl('option');
-            option.appendChild(makeText(constL10n(value)));
+            const option = U.makeEl('option');
+            option.appendChild(U.makeText(L10n.const(value)));
             option.value = value;
             selector.appendChild(option);
         });
@@ -503,9 +503,9 @@ See the License for the specific language governing permissions and
         state.inputItems[profileItemConfig.name] = selector;
         selector.addEventListener('change', rebuildContent);
 
-        const selector2 = qee(filter, '.multi-enum-filter-content');
-        const values = arr2Select(profileItemConfig.value.split(','));
-        fillSelector(selector2, values.map((value) => {
+        const selector2 = U.qee(filter, '.multi-enum-filter-content');
+        const values = U.arr2Select(profileItemConfig.value.split(','));
+        U.fillSelector(selector2, values.map((value) => {
             value.selected = true;
             return value;
         }));
@@ -517,13 +517,13 @@ See the License for the specific language governing permissions and
     }
 
     function makeNumberFilter(profileItemConfig) {
-        const filter = qmte(`${root} .number-filter-tmpl`);
-        const selector = qee(filter, 'select');
+        const filter = U.qmte(`${root} .number-filter-tmpl`);
+        const selector = U.qee(filter, 'select');
         selector.selfInfo = profileItemConfig;
 
         Constants.numberFilter.forEach((value) => {
-            const option = makeEl('option');
-            option.appendChild(makeText(constL10n(value)));
+            const option = U.makeEl('option');
+            option.appendChild(U.makeText(L10n.const(value)));
             option.value = value;
             selector.appendChild(option);
         });
@@ -531,7 +531,7 @@ See the License for the specific language governing permissions and
         state.inputItems[profileItemConfig.name] = selector;
         selector.addEventListener('change', rebuildContent);
 
-        const input = qee(filter, 'input');
+        const input = U.qee(filter, 'input');
         input.value = 0;
         state.inputItems[`${profileItemConfig.name}:numberInput`] = input;
         input.addEventListener('input', rebuildContent);
@@ -540,8 +540,8 @@ See the License for the specific language governing permissions and
 
     function renameGroup(selector) {
         return dialog => () => {
-            const toInput = qee(dialog, '.entity-input');
-            const fromName = queryEl(selector).value;
+            const toInput = U.qee(dialog, '.entity-input');
+            const fromName = U.queryEl(selector).value;
             const toName = toInput.value.trim();
 
             DBMS.renameGroup({fromName, toName}).then(() => {
@@ -553,4 +553,4 @@ See the License for the specific language governing permissions and
             }).catch(err => setError(dialog, err));
         };
     }
-})(this.ProfileFilter = {});
+// })(window.ProfileFilter = {});

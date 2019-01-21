@@ -14,22 +14,22 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     exports.runTests = () => {
-        queryEl('body').style.overflow = 'auto';
+        U.queryEl('body').style.overflow = 'auto';
         window.RunTests();
     };
 
     exports.showConsistencyCheckAlert = (checkRes) => {
         if (checkRes === undefined || checkRes.errors.length === 0) {
-            Utils.alert(getL10n('overview-consistency-is-ok'));
+            Utils.alert(L10n.getValue('overview-consistency-is-ok'));
         } else {
-            Utils.alert(getL10n('overview-consistency-problem-detected'));
+            Utils.alert(L10n.getValue('overview-consistency-problem-detected'));
         }
     };
 
     exports.clickThroughtHeaders = () => {
-        let tabs = queryEls('#navigation .navigation-button');
+        let tabs = U.queryEls('#navigation .navigation-button');
 
         let index = 0;
         let subTabsNum = 0;
@@ -37,7 +37,7 @@ See the License for the specific language governing permissions and
             if (index <= tabs.length - 1) {
                 tabs[index].click();
                 if (subTabsNum === 0) {
-                    const subTabs = queryEls('#contentArea .navigation-button');
+                    const subTabs = U.queryEls('#contentArea .navigation-button');
                     tabs = R.insertAll(index + 1, subTabs, tabs);
                     subTabsNum = subTabs.length;
                 } else {
@@ -51,8 +51,8 @@ See the License for the specific language governing permissions and
     };
 
     exports.showModuleSchema = (checkRes) => {
-        addEl(queryEl('body'), queryEl('.consistency-check-result-dialog'));
-        $(queryEl('.consistency-check-result-dialog')).modal('show');
+        U.addEl(U.queryEl('body'), U.queryEl('.consistency-check-result-dialog'));
+        $(U.queryEl('.consistency-check-result-dialog')).modal('show');
 
         const svg = d3.select('.image-place svg');
         const svgGroup = svg.append('g');
@@ -190,8 +190,8 @@ See the License for the specific language governing permissions and
     };
 
     exports.showDiffExample = () => {
-        addEl(queryEl('body'), queryEl('.show-diff-dialog'));
-        $(queryEl('.show-diff-dialog')).modal('show');
+        U.addEl(U.queryEl('body'), U.queryEl('.show-diff-dialog'));
+        $(U.queryEl('.show-diff-dialog')).modal('show');
 
         DBMS.getLog({
             pageNumber: 0,
@@ -203,19 +203,19 @@ See the License for the specific language governing permissions and
                 user:""
             }
         }).then((data) => {
-            const el = clearEl(queryEl('.show-diff-dialog .container-fluid'));
+            const el = U.clearEl(U.queryEl('.show-diff-dialog .container-fluid'));
 
-            addEls(el, R.aperture(2, data.requestedLog).map(pair => {
-                const row = qmte('.diff-row-tmpl');
-                addEl(qee(row, '.first .user'), makeText(pair[0][1]));
-                addEl(qee(row, '.first .time'), makeText(new Date(pair[0][2]).format('yyyy/mm/dd h:MM')));
+            U.addEls(el, R.aperture(2, data.requestedLog).map(pair => {
+                const row = U.qmte('.diff-row-tmpl');
+                U.addEl(U.qee(row, '.first .user'), U.makeText(pair[0][1]));
+                U.addEl(U.qee(row, '.first .time'), U.makeText(new Date(pair[0][2]).format('yyyy/mm/dd h:MM')));
                 const firstText = JSON.parse(pair[0][4])[1];
-                addEl(qee(row, '.first .text'), makeText(firstText));
+                U.addEl(U.qee(row, '.first .text'), U.makeText(firstText));
 
-                addEl(qee(row, '.last .user'), makeText(pair[1][1]));
-                addEl(qee(row, '.last .time'), makeText(new Date(pair[1][2]).format('yyyy/mm/dd h:MM')));
+                U.addEl(U.qee(row, '.last .user'), U.makeText(pair[1][1]));
+                U.addEl(U.qee(row, '.last .time'), U.makeText(new Date(pair[1][2]).format('yyyy/mm/dd h:MM')));
                 const lastText = JSON.parse(pair[1][4])[1];
-                addEl(qee(row, '.last .text'), makeText(lastText));
+                U.addEl(U.qee(row, '.last .text'), U.makeText(lastText));
 
                 ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
                 ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
@@ -223,9 +223,9 @@ See the License for the specific language governing permissions and
                 const diff = JsDiff.diffWordsWithSpace(lastText, firstText);
                 const els = diff.map( part =>
                     [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => {
-                    return addClasses(addEl(makeEl('span'), makeText(pair[0])), ['log-diff', pair[1]]);
+                    return U.addClasses(U.addEl(U.makeEl('span'), U.makeText(pair[0])), ['log-diff', pair[1]]);
                 });
-                addEls(qee(row, '.diff .text'), els);
+                U.addEls(U.qee(row, '.diff .text'), els);
 
                 return row;
             }));
@@ -322,4 +322,4 @@ See the License for the specific language governing permissions and
 //            makeGroup('group text ' + arr.join(''), 'text', {regexString: arr.join('')});
 //        });
     }
-})(this.TestUtils = {});
+// })(window.TestUtils = {});

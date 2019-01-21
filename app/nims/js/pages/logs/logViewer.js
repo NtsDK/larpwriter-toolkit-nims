@@ -16,72 +16,74 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+ require('./logViewer.css');
+
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.log-viewer-tab ';
 
     exports.init = () => {
-        const pagination = clearEl(queryEl(`${root}.pagination`));
-        addEls(pagination, R.range(0, 20).map((num) => {
-            const a = setAttr(makeEl('a'), 'href', '#');
-            const li = addEl(makeEl('li'), a);
+        const pagination = U.clearEl(U.queryEl(`${root}.pagination`));
+        U.addEls(pagination, R.range(0, 20).map((num) => {
+            const a = U.setAttr(U.makeEl('a'), 'href', '#');
+            const li = U.addEl(U.makeEl('li'), a);
             li.num = num;
-            addEl(a, makeText(num + 1));
-            listen(a, 'click', () => {
+            U.addEl(a, U.makeText(num + 1));
+            U.listen(a, 'click', () => {
                 getData({ target: { value: num } });
-                const prevActive = queryEl(`${root}.pagination li.active`);
+                const prevActive = U.queryEl(`${root}.pagination li.active`);
                 if (prevActive !== null) {
-                    removeClass(prevActive, 'active');
+                    U.removeClass(prevActive, 'active');
                 }
-                addClass(li, 'active');
+                U.addClass(li, 'active');
             });
             return li;
         }));
 
-        listen(queryEl(`${root}button.clear-filter`), 'click', () => {
-            queryEls(`${root}input[filter]`).forEach(el => (el.value = ''));
+        U.listen(U.queryEl(`${root}button.clear-filter`), 'click', () => {
+            U.queryEls(`${root}input[filter]`).forEach(el => (el.value = ''));
             exports.refresh();
         });
 
-        queryEls(`${root}input[filter]`).forEach(listen(R.__, 'input', exports.refresh));
+        U.queryEls(`${root}input[filter]`).forEach(U.listen(R.__, 'input', exports.refresh));
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
-        queryEls(`${root}.pagination li a`)[0].click();
+        U.queryEls(`${root}.pagination li a`)[0].click();
     };
 
     function dataRecieved(data) {
-        addEl(clearEl(queryEl(`${root}.result-number`)), makeText(L10n.format('log-viewer', 'total', [data.max])));
+        U.addEl(U.clearEl(U.queryEl(`${root}.result-number`)), U.makeText(L10n.format('log-viewer', 'total', [data.max])));
 
-        const container = clearEl(queryEl(`${root}.log-data`));
-        queryEls(`${root}.pagination li`).forEach(li => hideEl(li, li.num > data.logSize - 1));
-        R.ap([addEl(container)], data.requestedLog.map(makeRow));
+        const container = U.clearEl(U.queryEl(`${root}.log-data`));
+        U.queryEls(`${root}.pagination li`).forEach(li => U.hideEl(li, li.num > data.logSize - 1));
+        R.ap([U.addEl(container)], data.requestedLog.map(makeRow));
     }
 
     function getData(event) {
-        const filter = R.fromPairs(queryEls(`${root}input[filter]`).map(el => [getAttr(el, 'filter'), el.value]));
+        const filter = R.fromPairs(U.queryEls(`${root}input[filter]`).map(el => [U.getAttr(el, 'filter'), el.value]));
         DBMS.getLog({pageNumber: Number(event.target.value), filter}).then(dataRecieved).catch(Utils.handleError);
     }
 
     function makeRow(rowData) {
         const addText = (text) => {
-            return addEl(makeEl('td'), addEl(makeEl('span'), makeText(text)));
+            return U.addEl(U.makeEl('td'), U.addEl(U.makeEl('span'), U.makeText(text)));
         };
-        return addEls(makeEl('tr'), [
+        return U.addEls(U.makeEl('tr'), [
             addText(`${rowData[0]}`),
             addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss')),
             addText(rowData[1]),
             addText(rowData[3]),
 
-            addEls(makeEl('td'), JSON.parse(rowData[4]).map(item => {
-                return addEl(addClass(makeEl('div'), 'log-param'), makeText(R.is(Object, item) ? JSON.stringify(item) : item));
+            U.addEls(U.makeEl('td'), JSON.parse(rowData[4]).map(item => {
+                return U.addEl(U.addClass(U.makeEl('div'), 'log-param'), U.makeText(R.is(Object, item) ? JSON.stringify(item) : item));
             })),
-            addEls(makeEl('td'), JSON.parse(rowData[5]).map(item => {
-                return addEl(addClass(makeEl('div'), 'log-param'), makeText(R.is(Object, item) ? JSON.stringify(item) : item));
+            U.addEls(U.makeEl('td'), JSON.parse(rowData[5]).map(item => {
+                return U.addEl(U.addClass(U.makeEl('div'), 'log-param'), U.makeText(R.is(Object, item) ? JSON.stringify(item) : item));
             })),
         ]);
     }
-})(this.LogViewer = {});
+// })(window.LogViewer = {});

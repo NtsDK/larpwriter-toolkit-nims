@@ -18,25 +18,25 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     exports.name = 'EventPresence';
     const root = '#eventPresenceDiv ';
 
     exports.init = () => {
-        listen(getEl('eventPresenceSelector'), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
-        exports.content = queryEl(root);
+        U.listen(U.queryEl('#eventPresenceSelector'), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
-        const tableHead = getEl('eventPresenceTableHead');
-        const table = getEl('eventPresenceTable');
-        const characterSelector = getEl('eventPresenceSelector');
+        const tableHead = U.queryEl('#eventPresenceTableHead');
+        const table = U.queryEl('#eventPresenceTable');
+        const characterSelector = U.queryEl('#eventPresenceSelector');
 
         if (Stories.getCurrentStoryName() === undefined) {
-            clearEl(tableHead);
-            clearEl(table);
-            clearEl(characterSelector);
+            U.clearEl(tableHead);
+            U.clearEl(table);
+            U.clearEl(characterSelector);
             return;
         }
 
@@ -57,15 +57,15 @@ See the License for the specific language governing permissions and
 
             const displayArray = dataArray.map(elem => elem.displayName);
             characterArray = dataArray.map(elem => elem.value);
-            clearEl(tableHead);
-            clearEl(table);
+            U.clearEl(tableHead);
+            U.clearEl(table);
 
-            showEl(queryEl(`${root} .alert.no-characters`), characterArray.length === 0);
-            showEl(queryEl(`${root} .alert.no-events`), events.length === 0);
-            showEl(queryEl(`${root} .panel-body`), events.length !== 0 && characterArray.length !== 0);
+            U.showEl(U.queryEl(`${root} .alert.no-characters`), characterArray.length === 0);
+            U.showEl(U.queryEl(`${root} .alert.no-events`), events.length === 0);
+            U.showEl(U.queryEl(`${root} .panel-body`), events.length !== 0 && characterArray.length !== 0);
 
             UI.fillShowItemSelector(
-                clearEl(characterSelector),
+                U.clearEl(characterSelector),
                 displayArray.map(name => ({ name, hidden: false }))
             );
 
@@ -78,28 +78,28 @@ See the License for the specific language governing permissions and
     };
 
     function appendTableHeader(table, characterArray) {
-        const eventName = addEl(makeEl('th'), makeText(getL10n('stories-event')));
+        const eventName = U.addEl(U.makeEl('th'), U.makeText(L10n.getValue('stories-event')));
         const els = characterArray.map((characterName, i) => {
-            const th = addEl(makeEl('th'), makeText(characterName));
-            addClass(th, `dependent`);
-            setAttr(th, 'dependent-index', i);
+            const th = U.addEl(U.makeEl('th'), U.makeText(characterName));
+            U.addClass(th, `dependent`);
+            U.setAttr(th, 'dependent-index', i);
             return th;
         });
-        addEl(table, addEls(makeEl('tr'), R.concat([eventName], els)));
+        U.addEl(table, U.addEls(U.makeEl('tr'), R.concat([eventName], els)));
     }
 
     function appendTableInput(table, event, i, characterArray) {
-        const tr = makeEl('tr');
-        let td = makeEl('td');
-        td.appendChild(makeText(event.name));
+        const tr = U.makeEl('tr');
+        let td = U.makeEl('td');
+        td.appendChild(U.makeText(event.name));
         tr.appendChild(td);
 
-        addEls(tr, characterArray.map((character, j) => {
-            const td = qmte(`${root} .event-presence-cell`);
-            addClass(td, `dependent`);
-            setAttr(td, 'dependent-index', j);
-            const input = qee(td, 'input');
-            const label = qee(td, 'label');
+        U.addEls(tr, characterArray.map((character, j) => {
+            const td = U.qmte(`${root} .event-presence-cell`);
+            U.addClass(td, `dependent`);
+            U.setAttr(td, 'dependent-index', j);
+            const input = U.qee(td, 'input');
+            const label = U.qee(td, 'label');
             if (event.characters[character]) {
                 input.checked = true;
             }
@@ -109,20 +109,20 @@ See the License for the specific language governing permissions and
             input.hasText = event.characters[character] !== undefined && event.characters[character].text !== '';
             input.addEventListener('change', onChangeCharacterCheckbox);
 
-            const span = qee(td, 'span');
+            const span = U.qee(td, 'span');
             if(event.characters[character] !== undefined){
                 if(event.characters[character].ready){
-                    addClass(span, 'finished');
-                    setAttr(span, 'title', L10n.get('adaptations', 'adaptation-finished'));
+                    U.addClass(span, 'finished');
+                    U.setAttr(span, 'title', L10n.get('adaptations', 'adaptation-finished'));
                 } else if(input.hasText) {
-                    addClass(span, 'in-progress');
-                    setAttr(span, 'title', L10n.get('adaptations', 'adaptation-in-progress'));
+                    U.addClass(span, 'in-progress');
+                    U.setAttr(span, 'title', L10n.get('adaptations', 'adaptation-in-progress'));
                 }
             }
 
             const id = i + character;
-            setAttr(input, 'id', id);
-            setAttr(label, 'for', id);
+            U.setAttr(input, 'id', id);
+            U.setAttr(label, 'for', id);
             return td;
         }));
 
@@ -143,8 +143,8 @@ See the License for the specific language governing permissions and
                 characterName: event.target.characterName
             }).catch(Utils.handleError);
         } else {
-            Utils.confirm(strFormat(
-                getL10n('stories-remove-character-from-event-warning'),
+            Utils.confirm(U.strFormat(
+                L10n.getValue('stories-remove-character-from-event-warning'),
                 [event.target.characterName, event.target.eventName]
             ), () => {
                 DBMS.removeCharacterFromEvent({
@@ -157,4 +157,4 @@ See the License for the specific language governing permissions and
             });
         }
     }
-})(this.EventPresence = {});
+// })(window.EventPresence = {});

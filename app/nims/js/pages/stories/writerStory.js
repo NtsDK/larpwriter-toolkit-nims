@@ -18,16 +18,16 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
 
     exports.init = () => {
-        listen(getEl('writerStoryArea'), 'change', updateWriterStory);
-        exports.content = getEl('writerStoryDiv2');
+        U.listen(U.queryEl('#writerStoryArea'), 'change', updateWriterStory);
+        exports.content = U.queryEl('#writerStoryDiv2');
     };
 
     exports.refresh = () => {
-        const storyArea = getEl('writerStoryArea');
+        const storyArea = U.queryEl('#writerStoryArea');
         const storyName = Stories.getCurrentStoryName();
 
         if (storyName) {
@@ -40,10 +40,10 @@ See the License for the specific language governing permissions and
     };
 
     function updateWriterStory() {
-        const storyArea = getEl('writerStoryArea');
+        const storyArea = U.queryEl('#writerStoryArea');
         DBMS.setWriterStory({
             storyName: Stories.getCurrentStoryName(),
             value: storyArea.value
         }).catch(Utils.handleError);
     }
-})(this.WriterStory = {});
+// })(window.WriterStory = {});

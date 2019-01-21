@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
 
     const root = '.player-management-tab ';
@@ -29,43 +29,43 @@ See the License for the specific language governing permissions and
             dialogTitle: 'admins-creating-player',
             actionButtonTitle: 'common-create',
         });
-        listen(qe(`${root}.create.player`), 'click', () => createUserDialog.showDlg());
+        U.listen(U.qe(`${root}.create.player`), 'click', () => createUserDialog.showDlg());
 
         const createPlayerAccountDialog = UI.createModalDialog(root, createUserAccount, {
             bodySelector: 'create-player-account-body',
             dialogTitle: 'admins-creating-player-account',
             actionButtonTitle: 'common-create',
         });
-        listen(qe(`${root}.create.player-account`), 'click', () => createPlayerAccountDialog.showDlg());
+        U.listen(U.qe(`${root}.create.player-account`), 'click', () => createPlayerAccountDialog.showDlg());
 
         const changePasswordDialog = UI.createModalDialog(root, changePassword, {
             bodySelector: 'modal-prompt-body',
             dialogTitle: 'admins-enter-new-password',
             actionButtonTitle: 'common-replace',
         });
-        listen(qe(`${root}.user.change-password`), 'click', () => {
-            qee(changePasswordDialog, '.entity-input').value = '';
+        U.listen(U.qe(`${root}.user.change-password`), 'click', () => {
+            U.qee(changePasswordDialog, '.entity-input').value = '';
             changePasswordDialog.showDlg();
         });
 
 
-//        listen(queryEl(`${root}.create-user-button`), 'click', createUser);
-//        listen(queryEl(`${root}.create-login-button`), 'click', createLogin);
-//        listen(queryEl(`${root}.change-password-button`), 'click', changePassword);
-        listen(queryEl(`${root}.remove-user-button`), 'click', removeUser);
-        listen(queryEl(`${root}.welcome-text-area`), 'change', setWelcomeText);
-        queryElEls(queryEl(root), '.playerOptions').map(listen(R.__, 'change', setPlayerOption));
+//        U.listen(U.queryEl(`${root}.create-user-button`), 'click', createUser);
+//        U.listen(U.queryEl(`${root}.create-login-button`), 'click', createLogin);
+//        U.listen(U.queryEl(`${root}.change-password-button`), 'click', changePassword);
+        U.listen(U.queryEl(`${root}.remove-user-button`), 'click', removeUser);
+        U.listen(U.queryEl(`${root}.welcome-text-area`), 'change', setWelcomeText);
+        U.queryElEls(U.queryEl(root), '.playerOptions').map(U.listen(R.__, 'change', setPlayerOption));
 
         $(`${root}.change-password-user-select`).select2().on('change', (event) => {
             const player = event.target.value;
             const yourPlayers = state.playerNames.filter(R.prop('isOwner')).map(R.prop('value'));
             const isPlayerEditable = R.contains(player, yourPlayers);
-            Utils.enableEl(qe(`${root}.user.change-password`), isPlayerEditable);
-            Utils.enableEl(qe(`${root}.remove-user-button`), isPlayerEditable);
+            Utils.enableEl(U.qe(`${root}.user.change-password`), isPlayerEditable);
+            Utils.enableEl(U.qe(`${root}.remove-user-button`), isPlayerEditable);
         });
 
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -78,9 +78,9 @@ See the License for the specific language governing permissions and
         ]).then(results => {
             const [playerNames, playerLogins, text, playersOptions, isAdmin] = results;
             // eslint-disable-next-line prefer-destructuring
-            R.toPairs(playersOptions).map(pair => (getEl(pair[0]).checked = pair[1]));
+            R.toPairs(playersOptions).map(pair => (U.queryEl('#'+pair[0]).checked = pair[1]));
 
-            queryEl(`${root}.welcome-text-area`).value = text;
+            U.queryEl(`${root}.welcome-text-area`).value = text;
             const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop('value'));
             const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
 
@@ -88,29 +88,29 @@ See the License for the specific language governing permissions and
 
             const noAccounts = (hasLoginObj.false || []);
             noAccounts.sort(Utils.charOrdAObject);
-            $(clearEl(queryEl(`${root}.create-login-name-select`))).select2(getSelect2Data(noAccounts));
-    //                        fillSelector(clearEl(queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
-    //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+            $(U.clearEl(U.queryEl(`${root}.create-login-name-select`))).select2(UI.getSelect2Data(noAccounts));
+    //                        U.fillSelector(U.clearEl(U.queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
+    //                            .sort(Utils.charOrdAObject).map(UI.remapProps4Select));
             const hasAccounts = (hasLoginObj.true || []);
     //                            hasAccounts.sort(Utils.charOrdAObject);
-            $(clearEl(queryEl(`${root}.change-password-user-select`))).select2(getSelect2Data(hasAccounts));
+            $(U.clearEl(U.queryEl(`${root}.change-password-user-select`))).select2(UI.getSelect2Data(hasAccounts));
 
             Utils.enable(exports.content, 'adminOnly', isAdmin);
 
-            Utils.enableEl(qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
-            Utils.enableEl(qe(`${root}.user.change-password`), hasAccounts.length > 0);
-            Utils.enableEl(qe(`${root}.remove-user-button`), hasAccounts.length > 0);
-    //                        fillSelector(clearEl(queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
-    //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
-    //                        fillSelector(clearEl(queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
-    //                            .sort(Utils.charOrdAObject).map(remapProps4Select));
+            Utils.enableEl(U.qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
+            Utils.enableEl(U.qe(`${root}.user.change-password`), hasAccounts.length > 0);
+            Utils.enableEl(U.qe(`${root}.remove-user-button`), hasAccounts.length > 0);
+    //                        U.fillSelector(U.clearEl(U.queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
+    //                            .sort(Utils.charOrdAObject).map(UI.remapProps4Select);
+    //                        U.fillSelector(U.clearEl(U.queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
+    //                            .sort(Utils.charOrdAObject).map(UI.remapProps4Select));
         }).catch(Utils.handleError);
     };
 
     function createUser(dialog) {
         return () => {
-            const userNameInput = qee(dialog,`.create-user-name-input`);
-            const userPasswordInput = qee(dialog,`.create-user-password-input`);
+            const userNameInput = U.qee(dialog,`.create-user-name-input`);
+            const userPasswordInput = U.qee(dialog,`.create-user-password-input`);
             DBMS.createPlayer({userName: userNameInput.value.trim(), password: userPasswordInput.value}).then(() => {
                 PermissionInformer.refresh().then(() => {
                     userNameInput.value = '';
@@ -124,8 +124,8 @@ See the License for the specific language governing permissions and
 
     function createUserAccount(dialog) {
         return () => {
-            const userNameSelect = qee(dialog,`.create-login-name-select`);
-            const passwordInput = qee(dialog,`.create-login-password-input`);
+            const userNameSelect = U.qee(dialog,`.create-login-name-select`);
+            const passwordInput = U.qee(dialog,`.create-login-password-input`);
             DBMS.createPlayerLogin({userName: userNameSelect.value, password: passwordInput.value}).then(() => {
                 passwordInput.value = '';
                 dialog.hideDlg();
@@ -136,9 +136,9 @@ See the License for the specific language governing permissions and
 
     function changePassword(dialog) {
         return () => {
-            const toInput = qee(dialog, '.entity-input');
+            const toInput = U.qee(dialog, '.entity-input');
             const newPassword = toInput.value;
-            const userName = queryEl(`${root}.change-password-user-select`).value.trim();
+            const userName = U.queryEl(`${root}.change-password-user-select`).value.trim();
             DBMS.changePlayerPassword({userName, newPassword}).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
@@ -147,8 +147,8 @@ See the License for the specific language governing permissions and
     }
 
     function removeUser() {
-        const name = queryEl(`${root}.change-password-user-select`).value.trim();
-        Utils.confirm(strFormat(getL10n('admins-confirm-user-account-remove'), [name]), () => {
+        const name = U.queryEl(`${root}.change-password-user-select`).value.trim();
+        Utils.confirm(U.strFormat(L10n.getValue('admins-confirm-user-account-remove'), [name]), () => {
             DBMS.removePlayerLogin({userName: name}).then(exports.refresh, Utils.handleError);
         });
     }
@@ -160,4 +160,4 @@ See the License for the specific language governing permissions and
     function setPlayerOption(event) {
         DBMS.setPlayerOption({name: event.target.value, value: event.target.checked}).catch(Utils.handleError);
     }
-})(this.PlayerManagement = {});
+// })(window.PlayerManagement = {});

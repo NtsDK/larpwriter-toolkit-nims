@@ -25,7 +25,7 @@ function FilterConfiguration(info) {
     function populateProfileItems(item) {
         if (!CommonUtils.startsWith(item.name, Constants.CHAR_PREFIX) &&
             !CommonUtils.startsWith(item.name, Constants.PLAYER_PREFIX)) {
-            item.displayName = getL10n(item.displayName);
+            item.displayName = L10n.getValue(item.displayName);
             item.value = '';
         }
     }
@@ -77,7 +77,7 @@ FilterConfiguration.prototype.getGroupedProfileFilterItems = function () {
 
 FilterConfiguration.prototype.getGroupsForSelect = function() {
     return this.groupedProfileFilterItems.map((group) => ({
-        displayName: getL10n(`profile-filter-${group.name}`),
+        displayName: L10n.getValue(`profile-filter-${group.name}`),
         array: group.profileFilterItems
     }));
 }

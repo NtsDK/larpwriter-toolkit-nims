@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable prefer-rest-params */
 
-((exports) => {
+// ((exports) => {
     function ValidationError(messageId, parameters) {
         Error.call(this, arguments);
         this.name = 'ValidationError';
@@ -52,4 +52,4 @@ See the License for the specific language governing permissions and
     InternalError.prototype = Object.create(Error.prototype);
 
     exports.InternalError = InternalError;
-})(typeof exports === 'undefined' ? this.Errors = {} : exports);
+// })(typeof exports === 'undefined' ? this.Errors = {} : exports);

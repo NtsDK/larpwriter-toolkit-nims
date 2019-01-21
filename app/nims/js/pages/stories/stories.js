@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '.stories-tab ';
 
@@ -39,37 +39,37 @@ See the License for the specific language governing permissions and
         state.right = { views: {} };
         let containers = {
             root: state.left,
-            navigation: queryEl('.stories-navigation-container .left-side'),
-            content: queryEl('.stories-content-container .left-side')
+            navigation: U.queryEl('.stories-navigation-container .left-side'),
+            content: U.queryEl('.stories-content-container .left-side')
         };
-        Utils.addView(containers, 'writer-story', WriterStory, { mainPage: true, toggle: true });
-        Utils.addView(containers, 'story-events', StoryEvents, { toggle: true });
-        Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
-        Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
+        UI.addView(containers, 'writer-story', WriterStory, { mainPage: true, toggle: true });
+        UI.addView(containers, 'story-events', StoryEvents, { toggle: true });
+        UI.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
+        UI.addView(containers, 'event-presence', EventPresence, { toggle: true });
         containers = {
             root: state.right,
-            navigation: queryEl('.stories-navigation-container .right-side'),
-            content: queryEl('.stories-content-container .right-side')
+            navigation: U.queryEl('.stories-navigation-container .right-side'),
+            content: U.queryEl('.stories-content-container .right-side')
         };
-        Utils.addView(containers, 'writer-story', WriterStory, { toggle: true });
-        Utils.addView(containers, 'story-events', StoryEvents, { mainPage: true, toggle: true });
-        Utils.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
-        Utils.addView(containers, 'event-presence', EventPresence, { toggle: true });
+        UI.addView(containers, 'writer-story', WriterStory, { toggle: true });
+        UI.addView(containers, 'story-events', StoryEvents, { mainPage: true, toggle: true });
+        UI.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
+        UI.addView(containers, 'event-presence', EventPresence, { toggle: true });
 
-        listen(queryEl(`${root}.remove.story`), 'click', removeStory);
+        U.listen(U.queryEl(`${root}.remove.story`), 'click', removeStory);
 
-        listen(qe(`${root}.create.story`), 'click', () => createStoryDialog.showDlg());
-        listen(qe(`${root}.rename.story`), 'click', () => {
-            qee(renameStoryDialog, '.entity-input').value = queryEl(`${root}#storySelector`).value.trim();
+        U.listen(U.qe(`${root}.create.story`), 'click', () => createStoryDialog.showDlg());
+        U.listen(U.qe(`${root}.rename.story`), 'click', () => {
+            U.qee(renameStoryDialog, '.entity-input').value = U.queryEl(`${root}#storySelector`).value.trim();
             renameStoryDialog.showDlg();
         });
 
-        listen(qe(`${root}.create.event`), 'click', () => StoryEvents.createEventDialog.showDlg());
-        listen(qe(`${root}.add.character`), 'click', () => StoryCharacters.addCharacterDialog.showDlg());
+        U.listen(U.qe(`${root}.create.event`), 'click', () => StoryEvents.createEventDialog.showDlg());
+        U.listen(U.qe(`${root}.add.character`), 'click', () => StoryCharacters.addCharacterDialog.showDlg());
 
         $('#storySelector').select2().on('change', onStorySelectorChangeDelegate);
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.chainRefresh = () => {
@@ -80,19 +80,19 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        const storySelector = clearEl(getEl('storySelector'));
+        const storySelector = U.clearEl(U.queryEl('#storySelector'));
 
         PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}).then( allStoryNames => {
-            const data = getSelect2Data(allStoryNames);
+            const data = UI.getSelect2Data(allStoryNames);
 
-            Utils.enableEl(qe(`${root}.rename.story`), allStoryNames.length > 0);
-            Utils.enableEl(qe(`${root}.remove.story`), allStoryNames.length > 0);
-            Utils.enableEl(qe(`${root}.create.event`), allStoryNames.length > 0);
-            Utils.enableEl(qe(`${root}.add.character`), allStoryNames.length > 0);
-            Utils.enableEl(qe(`${root}#storySelector`), allStoryNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.rename.story`), allStoryNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.remove.story`), allStoryNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.create.event`), allStoryNames.length > 0);
+            Utils.enableEl(U.qe(`${root}.add.character`), allStoryNames.length > 0);
+            Utils.enableEl(U.qe(`${root}#storySelector`), allStoryNames.length > 0);
 
-            showEl(qe(`${root}.alert`), allStoryNames.length === 0);
-            showEl(qe(`${root}.stories-main-container`), allStoryNames.length !== 0);
+            U.showEl(U.qe(`${root}.alert`), allStoryNames.length === 0);
+            U.showEl(U.qe(`${root}.stories-main-container`), allStoryNames.length !== 0);
 
             if (allStoryNames.length > 0) {
                 const storyName = getSelectedStoryName(allStoryNames);
@@ -126,7 +126,7 @@ See the License for the specific language governing permissions and
 
     function createStory(dialog) {
         return () => {
-            const input = qee(dialog, '.entity-input');
+            const input = U.qee(dialog, '.entity-input');
             const storyName = input.value.trim();
 
             DBMS.createStory({storyName}).then(() => {
@@ -142,8 +142,8 @@ See the License for the specific language governing permissions and
 
     function renameStory(dialog) {
         return () => {
-            const toInput = qee(dialog, '.entity-input');
-            const fromName = queryEl(`${root}#storySelector`).value.trim();
+            const toInput = U.qee(dialog, '.entity-input');
+            const fromName = U.queryEl(`${root}#storySelector`).value.trim();
             const toName = toInput.value.trim();
 
             DBMS.renameStory({fromName, toName}).then(() => {
@@ -158,9 +158,9 @@ See the License for the specific language governing permissions and
     }
 
     function removeStory() {
-        const name = queryEl(`${root}#storySelector`).value.trim();
+        const name = U.queryEl(`${root}#storySelector`).value.trim();
 
-        Utils.confirm(strFormat(getL10n('stories-are-you-sure-about-story-removing'), [name]), () => {
+        Utils.confirm(U.strFormat(L10n.getValue('stories-are-you-sure-about-story-removing'), [name]), () => {
             DBMS.removeStory({storyName:name}).then(() => {
                 PermissionInformer.refresh().then(() => {
                     exports.refresh();
@@ -197,4 +197,4 @@ See the License for the specific language governing permissions and
         const settings = SM.getSettings();
         settings.Stories.storyName = storyName;
     }
-})(this.Stories = {});
+// })(window.Stories = {});

@@ -16,9 +16,12 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const ProjectUtils = require('common/ProjectUtils');
+const Constants = require('common/constants');
+
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const relationTableHeader = ['character-name', 'direct-relation', 'relation-origin', 'reverse-relation'];
     const partialTableHeader = ['character-name', 'direct-relation'];
 
@@ -45,12 +48,12 @@ See the License for the specific language governing permissions and
         const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value'));
         const [knownNoRels, unknownNoRels] = R.partition(predicate, noRelsList);
 
-        const relationTmpl = wrapEl('div', qte('.relation-tmpl'));
-        const qe = qee(relationTmpl);
-        const content = qe('.relation-content');
-        const getProfileItemSelect = () => qe('.profile-item-select');
+        const relationTmpl = U.wrapEl('div', U.qte('.relation-tmpl'));
+        const tmplQe = U.qee(relationTmpl);
+        const content = tmplQe('.relation-content');
+        const getProfileItemSelect = () => tmplQe('.profile-item-select');
 
-        makeProfileItemSelector(qe('.profile-item-select'), profileSettings, refreshProfileItem(content, profiles));
+        makeProfileItemSelector(tmplQe('.profile-item-select'), profileSettings, refreshProfileItem(content, profiles));
 
         const makeRow = makeNewRow(
             profiles, getProfileItemSelect, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
@@ -58,28 +61,28 @@ See the License for the specific language governing permissions and
         );
 
         // filling header - need table body for callbacks
-        const makeRowCallback = R.compose(addEl(content), makeRow);
-        addEl(qe('.known-characters-label'), makeText(l10n('known-characters')));
-        const knownBtn = addEl(qe('.add-known-character-relation'), makeText(getL10n('common-add')));
-        addEl(qe('.unknown-characters-label'), makeText(l10n('unknown-characters')));
-        const unknownBtn = addEl(qe('.add-unknown-character-relation'), makeText(getL10n('common-add')));
-        addEl(qe('.profile-item-label'), makeText(l10n('profile-item')));
-        fillCharSelector(qe('.known-characters-select'), knownBtn, knownNoRels, characterName, makeRowCallback);
-        fillCharSelector(qe('.unknown-characters-select'), unknownBtn, unknownNoRels, characterName, makeRowCallback);
+        const makeRowCallback = R.compose(U.addEl(content), makeRow);
+        U.addEl(tmplQe('.known-characters-label'), U.makeText(l10n('known-characters')));
+        const knownBtn = U.addEl(tmplQe('.add-known-character-relation'), U.makeText(L10n.getValue('common-add')));
+        U.addEl(tmplQe('.unknown-characters-label'), U.makeText(l10n('unknown-characters')));
+        const unknownBtn = U.addEl(tmplQe('.add-unknown-character-relation'), U.makeText(L10n.getValue('common-add')));
+        U.addEl(tmplQe('.profile-item-label'), U.makeText(l10n('profile-item')));
+        fillCharSelector(tmplQe('.known-characters-select'), knownBtn, knownNoRels, characterName, makeRowCallback);
+        fillCharSelector(tmplQe('.unknown-characters-select'), unknownBtn, unknownNoRels, characterName, makeRowCallback);
 
         // filling table
         const toCharacterFilter = toCharacter => (isAdaptationsMode ? true :
             !R.isEmpty(findRel(characterName, toCharacter, relationsSummary.relations)[characterName]));
         const findRelTmp = findRel(characterName, R.__, relationsSummary.relations);
-        addEls(content, showCharacters.filter(toCharacterFilter).map(toChar => makeRow(toChar, findRelTmp(toChar))));
+        U.addEls(content, showCharacters.filter(toCharacterFilter).map(toChar => makeRow(toChar, findRelTmp(toChar))));
         return relationTmpl;
     };
 
     function refreshProfileItem(content, profiles) {
         return (event) => {
-            const dataArr = queryElEls(content, '[toCharacter]');
+            const dataArr = U.queryElEls(content, '[toCharacter]');
             dataArr.forEach((el) => {
-                const char = getAttr(el, 'toCharacter');
+                const char = U.getAttr(el, 'toCharacter');
                 const selectedName = event.target.value;
                 fillProfileItemContent(el, selectedName, profiles[char][selectedName]);
             });
@@ -88,7 +91,7 @@ See the License for the specific language governing permissions and
 
     function makeProfileItemSelector(select1, profileSettings, refresh) {
         select1 = $(select1);
-        const tmpSelect = select1.select2(arr2Select2(profileSettings.map(R.prop('name')).sort()));
+        const tmpSelect = select1.select2(U.arr2Select2(profileSettings.map(R.prop('name')).sort()));
 
         select1.select2({ width: 'style' });
         tmpSelect.on('change', refresh);
@@ -102,23 +105,23 @@ See the License for the specific language governing permissions and
         externalRefresh, fromCharacter, toCharacter, rel
     ) => {
         const stories = knownCharacters[toCharacter];
-        const row = qmte('.relation-row-tmpl');
-        const qe = qee(row);
-        addEl(qe('.to-character-name'), makeText(`${toCharacter}/${profileBindings[toCharacter]}`));
-        addEl(qe('.where-meets-label'), makeText(l10n('where-meets')));
-        addEl(qe('.where-meets-content'), makeText(stories === undefined ? '' : R.keys(stories).join(', ')));
-        setAttr(qe('[toCharacter]'), 'toCharacter', toCharacter);
+        const row = U.qmte('.relation-row-tmpl');
+        const tmplQe = U.qee(row);
+        U.addEl(tmplQe('.to-character-name'), U.makeText(`${toCharacter}/${profileBindings[toCharacter]}`));
+        U.addEl(tmplQe('.where-meets-label'), U.makeText(l10n('where-meets')));
+        U.addEl(tmplQe('.where-meets-content'), U.makeText(stories === undefined ? '' : R.keys(stories).join(', ')));
+        U.setAttr(tmplQe('[toCharacter]'), 'toCharacter', toCharacter);
         fillProfileItemContent(row, getProfileItemSelect().value, profiles[toCharacter][getProfileItemSelect().value]);
-        listen(qe('button.remove'), 'click', (event) => {
-            Utils.confirm(strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
+        U.listen(tmplQe('button.remove'), 'click', (event) => {
+            Utils.confirm(U.strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
                 DBMS.removeCharacterRelation({fromCharacter, toCharacter}).then(externalRefresh).catch(Utils.handleError);
             });
         });
 
-        const directText = qe('.direct textarea');
+        const directText = tmplQe('.direct textarea');
         directText.value = rel[fromCharacter];
-        setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
-        listen(directText, 'change', (event) => {
+        U.setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
+        U.listen(directText, 'change', (event) => {
             DBMS.setCharacterRelationText({
                 fromCharacter,
                 toCharacter,
@@ -128,7 +131,7 @@ See the License for the specific language governing permissions and
         });
 
         Constants.relationEssences.forEach((name) => {
-            const btn = qe(`.${name}`);
+            const btn = tmplQe(`.${name}`);
             $(btn).tooltip({
                 title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
                 placement: 'top'
@@ -138,23 +141,23 @@ See the License for the specific language governing permissions and
                 if (name === 'starterToEnder') attrName = 'enderToStarter';
                 if (name === 'enderToStarter') attrName = 'starterToEnder';
             }
-            setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
-            listen(btn, 'click', (event) => {
+            U.setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
+            U.listen(btn, 'click', (event) => {
                 DBMS.setRelationEssenceStatus({
                     fromCharacter,
                     toCharacter,
                     essence: attrName,
-                    flag: !hasClass(event.target, 'btn-primary')
+                    flag: !U.hasClass(event.target, 'btn-primary')
                 }).then(() => {
-                    toggleClass(event.target, 'btn-primary');
+                    U.toggleClass(event.target, 'btn-primary');
                 }).catch(Utils.handleError);
             });
         });
 
-        const originText = qe('.origin textarea');
+        const originText = tmplQe('.origin textarea');
         originText.value = rel.origin;
-        setAttr(originText, 'placeholder', l10n('relation-origin'));
-        listen(originText, 'change', (event) => {
+        U.setAttr(originText, 'placeholder', l10n('relation-origin'));
+        U.listen(originText, 'change', (event) => {
             DBMS.setOriginRelationText({
                 fromCharacter,
                 toCharacter,
@@ -162,10 +165,10 @@ See the License for the specific language governing permissions and
             }).catch(Utils.handleError);
         });
 
-        const reverseText = qe('.reverse textarea');
+        const reverseText = tmplQe('.reverse textarea');
         reverseText.value = rel[toCharacter];
-        setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
-        listen(reverseText, 'change', (event) => {
+        U.setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
+        U.listen(reverseText, 'change', (event) => {
             DBMS.setCharacterRelationText({
                 fromCharacter,
                 toCharacter,
@@ -176,21 +179,21 @@ See the License for the specific language governing permissions and
 
         const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
         fillFinishedButton(
-            qe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
+            tmplQe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
             toCharacter, fromCharacter, directChecked, directText
         );
 
         const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
         fillFinishedButton(
-            qe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
+            tmplQe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
             toCharacter, toCharacter, reverseChecked, reverseText
         );
 
         if (!isAdaptationsMode) {
-            removeClass(qe('.direct'), 'col-xs-3');
-            addClass(qe('.direct'), 'col-xs-9');
-            addClass(qe('.origin'), 'hidden');
-            addClass(qe('.reverse'), 'hidden');
+            U.removeClass(tmplQe('.direct'), 'col-xs-3');
+            U.addClass(tmplQe('.direct'), 'col-xs-9');
+            U.addClass(tmplQe('.origin'), 'hidden');
+            U.addClass(tmplQe('.reverse'), 'hidden');
         }
         L10n.localizeStatic(row);
 
@@ -198,12 +201,12 @@ See the License for the specific language governing permissions and
     });
 
     function fillFinishedButton(button, id, fromCharacter, toCharacter, character, checked, textarea) {
-        setClassIf(button, 'btn-primary', checked);
+        U.setClassIf(button, 'btn-primary', checked);
         Utils.enableEl(textarea, !checked);
         button.id = id;
-        listen(button, 'click', (event) => {
-            const newValue = !hasClass(button, 'btn-primary');
-            setClassByCondition(button, 'btn-primary', newValue);
+        U.listen(button, 'click', (event) => {
+            const newValue = !U.hasClass(button, 'btn-primary');
+            U.setClassByCondition(button, 'btn-primary', newValue);
             Utils.enableEl(textarea, !newValue);
 
             DBMS.setRelationReadyStatus({
@@ -216,24 +219,24 @@ See the License for the specific language governing permissions and
     }
 
     function fillProfileItemContent(el, profileItemName, profileItemValue) {
-        addEl(clearEl(qee(el, '.profile-item-name')), makeText(profileItemName));
-        addEl(clearEl(qee(el, '.profile-item-value')), makeText(profileItemValue));
+        U.addEl(U.clearEl(U.qee(el, '.profile-item-name')), U.makeText(profileItemName));
+        U.addEl(U.clearEl(U.qee(el, '.profile-item-value')), U.makeText(profileItemValue));
     }
 
     function fillCharSelector(select1, button, data, fromCharacter, makeRowCallback) {
         select1 = $(select1);
-        const tmpSelect = select1.select2(getSelect2Data(data));
+        const tmpSelect = select1.select2(UI.getSelect2Data(data));
         select1.select2({ width: 'style' });
-        listen(button, 'click', () => {
+        U.listen(button, 'click', () => {
             const toCharacter = select1[0].value;
             DBMS.createCharacterRelation({fromCharacter, toCharacter}).then(() => {
                 DBMS.getCharacterRelation({fromCharacter, toCharacter}).then((rel) => {
                     makeRowCallback(select1[0].value, rel);
                     data = data.filter(R.compose(R.not, R.equals(select1[0].value), R.prop('value')));
-                    clearEl(select1[0]);
-                    select1.select2(getSelect2Data(data));
+                    U.clearEl(select1[0]);
+                    select1.select2(UI.getSelect2Data(data));
                 }).catch(Utils.handleError);
             }).catch(Utils.handleError);
         });
     }
-})(this.RelationsPreview = {});
+// })(window.RelationsPreview = {});

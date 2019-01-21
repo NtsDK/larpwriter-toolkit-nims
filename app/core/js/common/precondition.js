@@ -1,3 +1,5 @@
+// const R = require("ramda");
+const Errors = require('./errors.js');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +16,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((callback2) => {
-    function Precondition(exports, R, Errors) {
+// ((callback2) => {
+//     function Precondition(exports, R, Errors) {
         exports.makeValidationError = (err) => {
             err.splice(0, 0, null);
             return new (Function.prototype.bind.apply(Errors.ValidationError, err))();
@@ -157,7 +159,7 @@ See the License for the specific language governing permissions and
                 return exports.isString;
             }
         };
-    }
+//     }
 
-    callback2(Precondition);
-})(api => ((typeof exports === 'undefined') ? api((this.Precondition = {}), R, Errors) : (module.exports = api)));
+//     callback2(Precondition);
+// })(api => ((typeof exports === 'undefined') ? api((this.Precondition = {}), R, Errors) : (module.exports = api)));

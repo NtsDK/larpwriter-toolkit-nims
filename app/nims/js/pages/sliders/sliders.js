@@ -1,3 +1,8 @@
+// const { U, L10n, UI, Utils }  = require('../../../../core');
+
+const Slider = require('bootstrap-slider');
+require('bootstrap-slider/dist/css/bootstrap-slider.min.css');
+require('./sliders.css');
 /*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +23,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.sliders-tab ';
     const state = {};
     state.sliders = [];
@@ -42,9 +47,9 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-move',
         });
 
-        listen(qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());
+        U.listen(U.qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());
 
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -52,13 +57,13 @@ See the License for the specific language governing permissions and
     };
 
     function createSliders(model) {
-        const positions = model.map( info => {return {name: strFormat(L10n.get('common', 'set-item-before'), [info.name])}});
+        const positions = model.map( info => {return {name: U.strFormat(L10n.get('common', 'set-item-before'), [info.name])}});
         positions.push({name: L10n.get('common', 'set-item-as-last')});
-        fillSelector(clearEl(qe(`${root} .move-slider-pos-select`)), positions);
+        U.fillSelector(U.clearEl(U.qe(`${root} .move-slider-pos-select`)), positions);
 
-        addEls(clearEl(queryEl('.mixer-panel .panel-body')), model.map( makeSliderBackbone )) ;
+        U.addEls(U.clearEl(U.queryEl('.mixer-panel .panel-body')), model.map( makeSliderBackbone )) ;
 
-        clearEls(state.sliders);
+        U.clearEls(state.sliders);
 
         state.sliders = model.map( (sl, i) => {
             const slider = new Slider('.mixer-panel .panel-body input[pos="' + i + '"]', {
@@ -80,24 +85,24 @@ See the License for the specific language governing permissions and
     }
 
     var makeSliderBackbone = (sl, i) => {
-        const el = qmte(`${root} .slider-container-tmpl`);
-        setAttr(qee(el, 'input'), 'pos', i);
-        addEl(qee(el, '.slider-name'), makeText(sl.name));
-        addEl(qee(el, '.slider-top'), makeText(sl.top));
-        addEl(qee(el, '.slider-bottom'), makeText(sl.bottom));
+        const el = U.qmte(`${root} .slider-container-tmpl`);
+        U.setAttr(U.qee(el, 'input'), 'pos', i);
+        U.addEl(U.qee(el, '.slider-name'), U.makeText(sl.name));
+        U.addEl(U.qee(el, '.slider-top'), U.makeText(sl.top));
+        U.addEl(U.qee(el, '.slider-bottom'), U.makeText(sl.bottom));
 
-        listen(qee(el, 'button.move'), 'click', () => {
+        U.listen(U.qee(el, 'button.move'), 'click', () => {
             state.moveSliderDialog.currentIndex = i;
             state.moveSliderDialog.showDlg();
         });
-        listen(qee(el, 'button.rename'), 'click', () => {
-            qee(state.editSliderDialog, '.slider-name').value = sl.name;
-            qee(state.editSliderDialog, '.slider-top').value = sl.top;
-            qee(state.editSliderDialog, '.slider-bottom').value = sl.bottom;
+        U.listen(U.qee(el, 'button.rename'), 'click', () => {
+            U.qee(state.editSliderDialog, '.slider-name').value = sl.name;
+            U.qee(state.editSliderDialog, '.slider-top').value = sl.top;
+            U.qee(state.editSliderDialog, '.slider-bottom').value = sl.bottom;
             state.editSliderDialog.pos = i;
             state.editSliderDialog.showDlg();
         });
-        listen(qee(el, 'button.remove'), 'click', () => {
+        U.listen(U.qee(el, 'button.remove'), 'click', () => {
             Utils.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
                 DBMS.removeSlider({index:i}).then(exports.refresh, Utils.handleError);
             })
@@ -108,13 +113,13 @@ See the License for the specific language governing permissions and
 
     function createSlider(dialog) {
         return () => {
-            const name = qee(dialog, '.slider-name').value.trim();
-            const top = qee(dialog, '.slider-top').value.trim();
-            const bottom = qee(dialog, '.slider-bottom').value.trim();
+            const name = U.qee(dialog, '.slider-name').value.trim();
+            const top = U.qee(dialog, '.slider-top').value.trim();
+            const bottom = U.qee(dialog, '.slider-bottom').value.trim();
             DBMS.createSlider({name, top, bottom}).then(() => {
-                qee(dialog, '.slider-name').value = '';
-                qee(dialog, '.slider-top').value = '';
-                qee(dialog, '.slider-bottom').value = '';
+                U.qee(dialog, '.slider-name').value = '';
+                U.qee(dialog, '.slider-top').value = '';
+                U.qee(dialog, '.slider-bottom').value = '';
                 dialog.hideDlg();
                 exports.refresh();
             }).catch(err => setError(dialog, err));
@@ -123,9 +128,9 @@ See the License for the specific language governing permissions and
 
     function editSlider(dialog) {
         return () => {
-            const name = qee(dialog, '.slider-name').value.trim();
-            const top = qee(dialog, '.slider-top').value.trim();
-            const bottom = qee(dialog, '.slider-bottom').value.trim();
+            const name = U.qee(dialog, '.slider-name').value.trim();
+            const top = U.qee(dialog, '.slider-top').value.trim();
+            const bottom = U.qee(dialog, '.slider-bottom').value.trim();
             const pos = dialog.pos;
             DBMS.updateSliderNaming({
                 index: pos,
@@ -133,9 +138,9 @@ See the License for the specific language governing permissions and
                 top,
                 bottom
             }).then(() => {
-                qee(dialog, '.slider-name').value = '';
-                qee(dialog, '.slider-top').value = '';
-                qee(dialog, '.slider-bottom').value = '';
+                U.qee(dialog, '.slider-name').value = '';
+                U.qee(dialog, '.slider-top').value = '';
+                U.qee(dialog, '.slider-bottom').value = '';
                 dialog.hideDlg();
                 exports.refresh();
             }).catch(err => setError(dialog, err));
@@ -145,7 +150,7 @@ See the License for the specific language governing permissions and
     function moveSlider(dialog) {
         return () => {
             var index = dialog.currentIndex;
-            var pos = qee(dialog, '.move-slider-pos-select').selectedIndex;
+            var pos = U.qee(dialog, '.move-slider-pos-select').selectedIndex;
 
             DBMS.moveSlider({index, pos}).then(() => {
                 dialog.hideDlg();
@@ -153,4 +158,4 @@ See the License for the specific language governing permissions and
             }).catch(err => setError(dialog, err));
         }
     }
-})(this.Sliders = {});
+// })(window.Sliders = {});

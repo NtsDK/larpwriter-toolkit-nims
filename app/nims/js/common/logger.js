@@ -20,7 +20,7 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names,prefer-rest-params */
 
-((exports) => {
+// ((exports) => {
     exports.offlineIgnoreList = ['getUser',
         'setPassword',
         'checkPassword',
@@ -335,4 +335,4 @@ See the License for the specific language governing permissions and
             },
         });
     }
-})(typeof exports === 'undefined' ? this.Logger = {} : exports);
+// })(typeof exports === 'undefined' ? this.Logger = {} : exports);

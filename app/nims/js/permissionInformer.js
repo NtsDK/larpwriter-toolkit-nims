@@ -17,7 +17,13 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports, mode) => {
+var mode = "Standalone";
+var PERMISSION_INFORMER_ENABLED = false;
+
+// (
+// module.exports = (mode, PERMISSION_INFORMER_ENABLED) => {
+    // const exports = {};
+
     const state = {};
 
     state.summary = {};
@@ -185,6 +191,7 @@ See the License for the specific language governing permissions and
                 //     if (err) { Utils.handleError(err); return; }
                 // }
                 // DBMS.getEntityNamesArray(type, processNames);
+                const Utils2 = Utils;
                 DBMS.getEntityNamesArray({type}).then( names => {
                     const newNames = [];
                     names.forEach((name) => {
@@ -195,7 +202,7 @@ See the License for the specific language governing permissions and
                         });
                     });
                     resolve(newNames);
-                }).catch(Utils.handleError);
+                }).catch(Utils2.handleError);
             });
         };
 
@@ -233,4 +240,7 @@ See the License for the specific language governing permissions and
 
     //     };
     // });
-})(this.PermissionInformer = {}, MODE);
+//     return exports;
+// }
+
+// )(window.PermissionInformer = {}, MODE);

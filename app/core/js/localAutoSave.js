@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const indexedDB     = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     const IDBTransaction  = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
     const baseName      = "filesBase";
@@ -83,4 +83,4 @@ See the License for the specific language governing permissions and
             });
         });
     }
-})(this.LocalBaseAPI = {});
+// })(window.LocalBaseAPI = {});

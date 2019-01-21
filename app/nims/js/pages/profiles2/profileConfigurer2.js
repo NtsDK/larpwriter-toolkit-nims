@@ -38,11 +38,11 @@ function ProfileConfigurerTmpl(exports, opts) {
     const state = {};
 
     exports.init = () => {
-        const el = queryEl(tmplRoot).cloneNode(true);
+        const el = U.queryEl(tmplRoot).cloneNode(true);
 
-        addClasses(el, ['profile-configurer2-tab', `${`${tabType}-type`}`]);
-        removeClass(el, 'profile-configurer2-tab-tmpl');
-        addEl(queryEl('.tab-container'), el);
+        U.addClasses(el, ['profile-configurer2-tab', `${`${tabType}-type`}`]);
+        U.removeClass(el, 'profile-configurer2-tab-tmpl');
+        U.addEl(U.queryEl('.tab-container'), el);
 
         const createProfileItemDialog = UI.createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
@@ -51,8 +51,8 @@ function ProfileConfigurerTmpl(exports, opts) {
                 dialogTitle: 'profiles-create-profile-item',
                 actionButtonTitle: 'common-create',
                 initBody: (body) => {
-                    const sel = clearEl(qee(body, '.create-entity-type-select'));
-                    const fillMainSel = () => { fillItemTypesSel(clearEl(sel)); };
+                    const sel = U.clearEl(U.qee(body, '.create-entity-type-select'));
+                    const fillMainSel = () => { fillItemTypesSel(U.clearEl(sel)); };
                     fillMainSel();
                     L10n.onL10nChange(fillMainSel);
                 }
@@ -84,9 +84,9 @@ function ProfileConfigurerTmpl(exports, opts) {
                 dialogTitle: 'profiles-rename-enum-item',
                 actionButtonTitle: 'common-rename',
                 initBody: (body) => {
-                    const renameSelect = clearEl(qee(body, '.renamed-value-select'));
-                    const renameInput = clearEl(qee(body, '.enum-value-name-input'));
-                    listen(renameSelect, 'change', () => {
+                    const renameSelect = U.clearEl(U.qee(body, '.renamed-value-select'));
+                    const renameInput = U.clearEl(U.qee(body, '.enum-value-name-input'));
+                    U.listen(renameSelect, 'change', () => {
                         renameInput.value = renameSelect.value;
                     });
                 }
@@ -100,19 +100,19 @@ function ProfileConfigurerTmpl(exports, opts) {
                 dialogTitle: 'profiles-enum-editor',
                 actionButtonTitle: 'common-save',
                 initBody: (body) => {
-                    const addedValuesArea = qee(body, '.new-enum-values');
-                    const removedValuesArea = qee(body, '.removed-enum-values');
-                    const inputArea = qee(body, '.enum-value-input');
-                    const defaultValueSelect = qee(body, '.default-value-select');
-                    listen(inputArea, 'input', () => {
+                    const addedValuesArea = U.qee(body, '.new-enum-values');
+                    const removedValuesArea = U.qee(body, '.removed-enum-values');
+                    const inputArea = U.qee(body, '.enum-value-input');
+                    const defaultValueSelect = U.qee(body, '.default-value-select');
+                    U.listen(inputArea, 'input', () => {
                         const newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
                         const addedValues = R.sort(CommonUtils.charOrdA, R.difference(newVals, inputArea.srcList));
-                        addEls(clearEl(addedValuesArea), enumList2Els(addedValues));
+                        U.addEls(U.clearEl(addedValuesArea), enumList2Els(addedValues));
                         const removedValues = R.sort(CommonUtils.charOrdA, R.difference(inputArea.srcList, newVals));
-                        addEls(clearEl(removedValuesArea), enumList2Els(removedValues));
+                        U.addEls(U.clearEl(removedValuesArea), enumList2Els(removedValues));
 
                         let defaultValue = defaultValueSelect.value;
-                        clearEl(defaultValueSelect);
+                        U.clearEl(defaultValueSelect);
 
                         if(newVals.length === 0){
                             return;
@@ -121,8 +121,8 @@ function ProfileConfigurerTmpl(exports, opts) {
                         if(!R.contains(defaultValue, newVals)){
                             defaultValue = newVals[0];
                         }
-                        fillSelector(defaultValueSelect, arr2Select(newVals));
-                        qee(defaultValueSelect, `[value="${defaultValue}"]`).selected = true;
+                        U.fillSelector(defaultValueSelect, U.arr2Select(newVals));
+                        U.qee(defaultValueSelect, `[value="${defaultValue}"]`).selected = true;
                     });
                 }
             }
@@ -135,28 +135,28 @@ function ProfileConfigurerTmpl(exports, opts) {
                 dialogTitle: 'profiles-multi-enum-editor',
                 actionButtonTitle: 'common-save',
                 initBody: (body) => {
-                    const addedValuesArea = qee(body, '.new-enum-values');
-                    const removedValuesArea = qee(body, '.removed-enum-values');
-                    const inputArea = qee(body, '.enum-value-input');
-                    listen(inputArea, 'input', () => {
+                    const addedValuesArea = U.qee(body, '.new-enum-values');
+                    const removedValuesArea = U.qee(body, '.removed-enum-values');
+                    const inputArea = U.qee(body, '.enum-value-input');
+                    U.listen(inputArea, 'input', () => {
                         const newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
                         const addedValues = R.sort(CommonUtils.charOrdA, R.difference(newVals, inputArea.srcList));
-                        addEls(clearEl(addedValuesArea), enumList2Els(addedValues));
+                        U.addEls(U.clearEl(addedValuesArea), enumList2Els(addedValues));
                         const removedValues = R.sort(CommonUtils.charOrdA, R.difference(inputArea.srcList, newVals));
-                        addEls(clearEl(removedValuesArea), enumList2Els(removedValues));
+                        U.addEls(U.clearEl(removedValuesArea), enumList2Els(removedValues));
                     });
                 }
             }
         );
 
-        setAttr(qee(el, '.panel h3'), 'l10n-id', `profiles-${opts.panelName}`);
-        setAttr(qee(el, '.alert'), 'l10n-id', `advices-empty-${tabType}-profile-structure`);
+        U.setAttr(U.qee(el, '.panel h3'), 'l10n-id', `profiles-${opts.panelName}`);
+        U.setAttr(U.qee(el, '.alert'), 'l10n-id', `advices-empty-${tabType}-profile-structure`);
         L10n.localizeStatic(el);
 
-        setAttr(qee(el, '.panel a'), 'panel-toggler', `${tabRoot}.profile-panel`);
+        U.setAttr(U.qee(el, '.panel a'), 'panel-toggler', `${tabRoot}.profile-panel`);
         UI.initPanelTogglers(el);
 
-        listen(qe(`${tabRoot}.create`), 'click', () => createProfileItemDialog.showDlg());
+        U.listen(U.qe(`${tabRoot}.create`), 'click', () => createProfileItemDialog.showDlg());
         exports.content = el;
     };
 
@@ -170,20 +170,20 @@ function ProfileConfigurerTmpl(exports, opts) {
             PermissionInformer.isAdmin()
         ]).then(results => {
             const [allProfileSettings, isAdmin] = results;
-            hideEl(queryEl(`${tabRoot} .alert`), allProfileSettings.length !== 0);
-            hideEl(queryEl(`${tabRoot} table`), allProfileSettings.length === 0);
+            U.hideEl(U.queryEl(`${tabRoot} .alert`), allProfileSettings.length !== 0);
+            U.hideEl(U.queryEl(`${tabRoot} table`), allProfileSettings.length === 0);
 
-            const arr = allProfileSettings.map(R.compose(strFormat(getL10n('common-set-item-before')), R.append(R.__, []), R.prop('name')));
-            arr.push(getL10n('common-set-item-as-last'));
+            const arr = allProfileSettings.map(R.compose(U.strFormat(L10n.getValue('common-set-item-before')), R.append(R.__, []), R.prop('name')));
+            arr.push(L10n.getValue('common-set-item-as-last'));
 
-            const positionSelectors = [queryEl(`${tabRoot} .create-entity-position-select`),
-                queryEl(`${tabRoot} .move-entity-position-select`)];
-            positionSelectors.map(clearEl).map(fillSelector(R.__, arr2Select(arr))).map(setProp(R.__, 'selectedIndex', allProfileSettings.length));
+            const positionSelectors = [U.queryEl(`${tabRoot} .create-entity-position-select`),
+                U.queryEl(`${tabRoot} .move-entity-position-select`)];
+            positionSelectors.map(clearEl).map(U.fillSelector(R.__, U.arr2Select(arr))).map(U.setProp(R.__, 'selectedIndex', allProfileSettings.length));
 
-            const table = clearEl(queryEl(`${root}.profile-config-container`));
+            const table = U.clearEl(U.queryEl(`${root}.profile-config-container`));
 
             try {
-                addEls(table, allProfileSettings.map(getInput(type)));
+                U.addEls(table, allProfileSettings.map(getInput(type)));
             } catch (err1) {
                 Utils.handleError(err1); return;
             }
@@ -193,10 +193,10 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function createProfileItem(dialog) {
         return () => {
-            const input = qee(dialog, '.create-entity-name-input');
+            const input = U.qee(dialog, '.create-entity-name-input');
             const name = input.value.trim();
-            const itemType = qee(dialog, '.create-entity-type-select').value.trim();
-            const { selectedIndex } = qee(dialog, '.create-entity-position-select');
+            const itemType = U.qee(dialog, '.create-entity-type-select').value.trim();
+            const { selectedIndex } = U.qee(dialog, '.create-entity-position-select');
 
             DBMS.createProfileItem({type: tabType, name, itemType, selectedIndex}).then(() => {
                 input.value = '';
@@ -207,58 +207,58 @@ function ProfileConfigurerTmpl(exports, opts) {
     }
 
     // eslint-disable-next-line no-var,vars-on-top
-    var fillItemTypesSel = sel => fillSelector(sel, constArr2Select(R.keys(Constants.profileFieldTypes)));
-    const fillPlayerAccessSel = sel => fillSelector(sel, constArr2Select(Constants.playerAccessTypes));
+    var fillItemTypesSel = sel => U.fillSelector(sel, UI.constArr2Select(R.keys(Constants.profileFieldTypes)));
+    const fillPlayerAccessSel = sel => U.fillSelector(sel, UI.constArr2Select(Constants.playerAccessTypes));
 
     // eslint-disable-next-line no-var,vars-on-top
     var getInput = R.curry((type, profileSettings, index) => { // throws InternalError
-        const row = qte(`${tabRoot} .profile-configurer-row-tmpl`);
+        const row = U.qte(`${tabRoot} .profile-configurer-row-tmpl`);
         L10n.localizeStatic(row);
-        addEl(qee(row, '.item-position'), makeText(index + 1));
-        addEl(qee(row, '.item-name'), makeText(profileSettings.name));
+        U.addEl(U.qee(row, '.item-position'), U.makeText(index + 1));
+        U.addEl(U.qee(row, '.item-name'), U.makeText(profileSettings.name));
 
-        const itemType = qee(row, '.item-type');
+        const itemType = U.qee(row, '.item-type');
         fillItemTypesSel(itemType);
         itemType.value = profileSettings.type;
         itemType.info = profileSettings.name;
         itemType.oldType = profileSettings.type;
-        listen(itemType, 'change', changeProfileItemType(type));
+        U.listen(itemType, 'change', changeProfileItemType(type));
 
         let input, addDefaultListener = true;
         switch (profileSettings.type) {
         case 'text':
-            input = makeEl('textarea');
-            addClass(input, 'hidden');
+            input = U.makeEl('textarea');
+            U.addClass(input, 'hidden');
             input.value = profileSettings.value;
             break;
         case 'enum':
-            input = qmte(`${tabRoot} .enum-value-editor-tmpl`);
+            input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
             const list = profileSettings.value.split(',');
             const defaultValue = list[0];
             list.sort(CommonUtils.charOrdA);
 
-            addEls(qee(input, '.text'), enumList2Els(list, defaultValue));
+            U.addEls(U.qee(input, '.text'), enumList2Els(list, defaultValue));
 
-            listen(qee(input, '.btn.add'), 'click', () => {
-                addEls(clearEl(qee(state.enumEditorDialog, '.initial-value')), enumList2Els(list, defaultValue));
-                const inputArea = qee(state.enumEditorDialog, '.enum-value-input');
+            U.listen(U.qee(input, '.btn.add'), 'click', () => {
+                U.addEls(U.clearEl(U.qee(state.enumEditorDialog, '.initial-value')), enumList2Els(list, defaultValue));
+                const inputArea = U.qee(state.enumEditorDialog, '.enum-value-input');
                 inputArea.value = list.join(',');
                 inputArea.srcList = list;
                 inputArea.defaultValue = defaultValue;
 
-                const defaultValueSelect = clearEl(qee(state.enumEditorDialog, '.default-value-select'));
-                fillSelector(defaultValueSelect, arr2Select(list));
-                qee(defaultValueSelect, `[value="${defaultValue}"]`).selected = true;
+                const defaultValueSelect = U.clearEl(U.qee(state.enumEditorDialog, '.default-value-select'));
+                U.fillSelector(defaultValueSelect, U.arr2Select(list));
+                U.qee(defaultValueSelect, `[value="${defaultValue}"]`).selected = true;
                 state.enumEditorDialog.itemName = profileSettings.name;
                 state.enumEditorDialog.showDlg();
             });
 
-            listen(qee(input, '.btn.rename'), 'click', () => {
-                const renameSelect = clearEl(qee(state.renameEnumItemDialog, '.renamed-value-select'));
-                fillSelector(renameSelect, arr2Select(list));
+            U.listen(U.qee(input, '.btn.rename'), 'click', () => {
+                const renameSelect = U.clearEl(U.qee(state.renameEnumItemDialog, '.renamed-value-select'));
+                U.fillSelector(renameSelect, U.arr2Select(list));
 
                 if(list.length > 0){
-                    qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list[0];
+                    U.qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list[0];
                 }
 
                 state.renameEnumItemDialog.itemName = profileSettings.name;
@@ -269,27 +269,27 @@ function ProfileConfigurerTmpl(exports, opts) {
             addDefaultListener = false;
             break;
         case 'multiEnum':
-            input = qmte(`${tabRoot} .enum-value-editor-tmpl`);
+            input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
             const list2 = profileSettings.value.split(',');
             list2.sort(CommonUtils.charOrdA);
 
-            addEls(qee(input, '.text'), enumList2Els(list2));
+            U.addEls(U.qee(input, '.text'), enumList2Els(list2));
 
-            listen(qee(input, '.btn.add'), 'click', () => {
-                addEls(clearEl(qee(state.multiEnumEditorDialog, '.initial-value')), enumList2Els(list2));
-                const inputArea = qee(state.multiEnumEditorDialog, '.enum-value-input');
+            U.listen(U.qee(input, '.btn.add'), 'click', () => {
+                U.addEls(U.clearEl(U.qee(state.multiEnumEditorDialog, '.initial-value')), enumList2Els(list2));
+                const inputArea = U.qee(state.multiEnumEditorDialog, '.enum-value-input');
                 inputArea.value = list2.join(',');
                 inputArea.srcList = list2;
                 state.multiEnumEditorDialog.itemName = profileSettings.name;
                 state.multiEnumEditorDialog.showDlg();
             });
 
-            listen(qee(input, '.btn.rename'), 'click', () => {
-                const renameSelect = clearEl(qee(state.renameEnumItemDialog, '.renamed-value-select'));
-                fillSelector(renameSelect, arr2Select(list2));
+            U.listen(U.qee(input, '.btn.rename'), 'click', () => {
+                const renameSelect = U.clearEl(U.qee(state.renameEnumItemDialog, '.renamed-value-select'));
+                U.fillSelector(renameSelect, U.arr2Select(list2));
 
                 if(list2.length > 0){
-                    qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list2[0];
+                    U.qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list2[0];
                 }
 
                 state.renameEnumItemDialog.itemName = profileSettings.name;
@@ -300,19 +300,19 @@ function ProfileConfigurerTmpl(exports, opts) {
             addDefaultListener = false;
             break;
         case 'string':
-            input = makeEl('input');
-            addClass(input, 'hidden');
+            input = U.makeEl('input');
+            U.addClass(input, 'hidden');
             input.value = profileSettings.value;
             break;
         case 'number':
-            input = makeEl('input');
+            input = U.makeEl('input');
             input.type = 'number';
-            addClass(input, 'hidden');
+            U.addClass(input, 'hidden');
             input.value = profileSettings.value;
             break;
         case 'checkbox':
-            input = makeEl('input');
-            setAttr(input, 'title', l10n('default-value'));
+            input = U.makeEl('input');
+            U.setAttr(input, 'title', l10n('default-value'));
             input.type = 'checkbox';
             input.checked = profileSettings.value;
             break;
@@ -320,52 +320,52 @@ function ProfileConfigurerTmpl(exports, opts) {
             throw new Errors.InternalError('errors-unexpected-switch-argument', [profileSettings.type]);
         }
 
-        setProps(input, {
+        U.setProps(input, {
             info: profileSettings.name,
             infoType: profileSettings.type,
             oldValue: profileSettings.value
         });
         if(addDefaultListener){
-            addClasses(input, [`profile-configurer-${profileSettings.type}`, 'adminOnly', 'form-control']);
-            listen(input, 'change', updateDefaultValue(type));
+            U.addClasses(input, [`profile-configurer-${profileSettings.type}`, 'adminOnly', 'form-control']);
+            U.listen(input, 'change', updateDefaultValue(type));
         }
-        addEl(qee(row, '.item-default-value-container'), input);
+        U.addEl(U.qee(row, '.item-default-value-container'), input);
 
-        setClassIf(qee(row, '.print'), 'btn-primary', profileSettings.doExport);
-        listen(qee(row, '.print'), 'click', (e) => {
+        U.setClassIf(U.qee(row, '.print'), 'btn-primary', profileSettings.doExport);
+        U.listen(U.qee(row, '.print'), 'click', (e) => {
             DBMS.doExportProfileItemChange({
                 type,
                 profileItemName: profileSettings.name,
-                checked: !hasClass(e.target, 'btn-primary')
+                checked: !U.hasClass(e.target, 'btn-primary')
             }).then(() => {
-                toggleClass(e.target, 'btn-primary');
+                U.toggleClass(e.target, 'btn-primary');
             }).catch(Utils.handleError);
         });
 
-        const playerAccess = qee(row, '.player-access');
+        const playerAccess = U.qee(row, '.player-access');
         fillPlayerAccessSel(playerAccess);
         playerAccess.value = profileSettings.playerAccess;
         playerAccess.info = profileSettings.name;
         playerAccess.oldValue = profileSettings.playerAccess;
-        listen(playerAccess, 'change', changeProfileItemPlayerAccess(type));
+        U.listen(playerAccess, 'change', changeProfileItemPlayerAccess(type));
 
-        const showInRoleGrid = qee(row, '.show-in-role-grid');
+        const showInRoleGrid = U.qee(row, '.show-in-role-grid');
         showInRoleGrid.checked = profileSettings.showInRoleGrid;
         showInRoleGrid.info = profileSettings.name;
-        listen(showInRoleGrid, 'change', showInRoleGridChange(type));
+        U.listen(showInRoleGrid, 'change', showInRoleGridChange(type));
 
-        listen(qee(row, '.move'), 'click', () => {
+        U.listen(U.qee(row, '.move'), 'click', () => {
             state.currentIndex = index;
             state.moveProfileItemDialog.showDlg();
         });
 
-        listen(qee(row, '.rename-profile-item'), 'click', () => {
-            qee(state.renameProfileItemDialog, '.entity-input').value = profileSettings.name;
+        U.listen(U.qee(row, '.rename-profile-item'), 'click', () => {
+            U.qee(state.renameProfileItemDialog, '.entity-input').value = profileSettings.name;
             state.renameProfileItemDialog.fromName = profileSettings.name;
             state.renameProfileItemDialog.showDlg();
         });
 
-        listen(qee(row, '.remove'), 'click', () => {
+        U.listen(U.qee(row, '.remove'), 'click', () => {
             Utils.confirm(L10n.format('profiles', 'are-you-sure-about-removing-profile-item', [profileSettings.name]), () => {
                 DBMS.removeProfileItem({
                     type,
@@ -380,14 +380,14 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function enumList2Els(list, defaultValue){
         return R.splitEvery(4, list.map(val => {
-            const span = addEl(makeEl('span'), makeText(val));
+            const span = U.addEl(U.makeEl('span'), U.makeText(val));
             if(defaultValue !== undefined && val === defaultValue){
-                addClass(span, 'bold');
-                setAttr(span, 'title', l10n('default-value'));
+                U.addClass(span, 'bold');
+                U.setAttr(span, 'title', l10n('default-value'));
             }
-            addClass(span, 'margin-right-16 enum-item');
+            U.addClass(span, 'margin-right-16 enum-item');
             return span;
-        })).map(arr => addEls(makeEl('div'), arr));
+        })).map(arr => U.addEls(U.makeEl('div'), arr));
     }
 
     function updateDefaultValue(type) {
@@ -412,7 +412,7 @@ function ProfileConfigurerTmpl(exports, opts) {
                 break;
             case 'number':
                 if (Number.isNaN(value)) {
-                    Utils.alert(getL10n('profiles-not-a-number'));
+                    Utils.alert(L10n.getValue('profiles-not-a-number'));
                     event.target.value = oldValue;
                     return;
                 }
@@ -425,7 +425,7 @@ function ProfileConfigurerTmpl(exports, opts) {
             case 'multiEnum':
             case 'enum':
                 if (value === '' && itemType === 'enum') {
-                    Utils.alert(getL10n('profiles-enum-item-cant-be-empty'));
+                    Utils.alert(L10n.getValue('profiles-enum-item-cant-be-empty'));
                     event.target.value = oldValue;
                     return;
                 }
@@ -445,7 +445,7 @@ function ProfileConfigurerTmpl(exports, opts) {
                 };
 
                 if (missedValues.length !== 0) {
-                    Utils.confirm(strFormat(getL10n('profiles-new-enum-values-remove-some-old-values'), [missedValues.join(',')]), updateEnum, () => {
+                    Utils.confirm(U.strFormat(L10n.getValue('profiles-new-enum-values-remove-some-old-values'), [missedValues.join(',')]), updateEnum, () => {
                         event.target.value = oldValue;
                     });
                 } else {
@@ -470,7 +470,7 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function renameProfileItem(dialog) {
         return () => {
-            const toInput = qee(dialog, '.entity-input');
+            const toInput = U.qee(dialog, '.entity-input');
             const oldName = dialog.fromName;
             const newName = toInput.value.trim();
 
@@ -489,7 +489,7 @@ function ProfileConfigurerTmpl(exports, opts) {
     function moveProfileItem(dialog) {
         return () => {
             const index = state.currentIndex;
-            const newIndex = queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
+            const newIndex = U.queryEl(`${tabRoot}.move-entity-position-select`).selectedIndex;
             DBMS.moveProfileItem({
                 type: tabType,
                 index,
@@ -504,11 +504,11 @@ function ProfileConfigurerTmpl(exports, opts) {
     function updateEnumValues(dialog) {
         return () => {
             const name = dialog.itemName;
-            const inputArea = qee(dialog, '.enum-value-input');
-            const defaultValueSelect = qee(dialog, '.default-value-select');
+            const inputArea = U.qee(dialog, '.enum-value-input');
+            const defaultValueSelect = U.qee(dialog, '.default-value-select');
 
             if (inputArea.value.trim() === '') {
-                Utils.alert(getL10n('profiles-enum-item-cant-be-empty'));
+                Utils.alert(L10n.getValue('profiles-enum-item-cant-be-empty'));
                 return;
             }
             let newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
@@ -532,8 +532,8 @@ function ProfileConfigurerTmpl(exports, opts) {
     function renameEnumValue(dialog) {
         return () => {
             const name = dialog.itemName;
-            const renameSelect = qee(dialog, '.renamed-value-select');
-            const renameInput = qee(dialog, '.enum-value-name-input');
+            const renameSelect = U.qee(dialog, '.renamed-value-select');
+            const renameInput = U.qee(dialog, '.enum-value-name-input');
 
             DBMS.renameEnumValue({
                 type: tabType,
@@ -549,7 +549,7 @@ function ProfileConfigurerTmpl(exports, opts) {
 
     function changeProfileItemType(type) {
         return (event) => {
-            Utils.confirm(strFormat(getL10n('profiles-are-you-sure-about-changing-profile-item-type'), [event.target.info]), () => {
+            Utils.confirm(U.strFormat(L10n.getValue('profiles-are-you-sure-about-changing-profile-item-type'), [event.target.info]), () => {
                 const newType = event.target.value;
                 const name = event.target.info;
                 DBMS.changeProfileItemType({

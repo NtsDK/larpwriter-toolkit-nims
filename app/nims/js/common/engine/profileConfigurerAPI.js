@@ -61,7 +61,7 @@ See the License for the specific language governing permissions and
                         };
 
                         container.splice(selectedIndex, 0, profileItem);
-                        this.ee.trigger('createProfileItem', [{type, name, itemType, value}]);
+                        this.ee.emit('createProfileItem', [{type, name, itemType, value}]);
                         resolve();
                     });
                 });
@@ -96,7 +96,7 @@ See the License for the specific language governing permissions and
                     const els = container.map((item, i) => `${i}/${item.name}`);
                     PC.precondition(PC.entityExists(`${index}/${profileItemName}`, els), reject, () => {
                         CU.removeFromArrayByIndex(container, index);
-                        this.ee.trigger('removeProfileItem', arguments);
+                        this.ee.emit('removeProfileItem', arguments);
                         resolve();
                     });
                 });
@@ -112,7 +112,7 @@ See the License for the specific language governing permissions and
                         const profileItem = container.filter(elem => elem.name === profileItemName)[0];
                         profileItem.type = newType;
                         profileItem.value = Constants.profileFieldTypes[newType].value;
-                        this.ee.trigger('changeProfileItemType', arguments);
+                        this.ee.emit('changeProfileItemType', arguments);
                         resolve();
                     });
                 });
@@ -142,7 +142,7 @@ See the License for the specific language governing permissions and
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
                     PC.precondition(PC.renameEntityCheck(oldName, newName, container.map(R.prop('name'))), reject, () => {
-                        this.ee.trigger('renameProfileItem', arguments);
+                        this.ee.emit('renameProfileItem', arguments);
                         container.filter(elem => elem.name === oldName)[0].name = newName;
                         resolve();
                     });
@@ -221,7 +221,7 @@ See the License for the specific language governing permissions and
                                 newOptionsMap = R.zipObj(newOptions, R.repeat(true, newOptions.length));
 
                                 if (missedValues.length !== 0) {
-                                    this.ee.trigger(info.type === 'enum' ? 'replaceEnumValue' : 'replaceMultiEnumValue', [{type, profileItemName, defaultValue: newOptions[0], newOptionsMap}]);
+                                    this.ee.emit(info.type === 'enum' ? 'replaceEnumValue' : 'replaceMultiEnumValue', [{type, profileItemName, defaultValue: newOptions[0], newOptionsMap}]);
                                 }
 
                                 info.value = newOptions.join(',');
@@ -252,7 +252,7 @@ See the License for the specific language governing permissions and
                             PC.precondition(PC.chainCheck(chain), reject, () => {
                                 list[R.indexOf(fromValue, list)] = toValue;
                                 info.value = list.join(',');
-                                this.ee.trigger(info.type === 'enum' ? 'renameEnumValue' : 'renameMultiEnumValue', arguments);
+                                this.ee.emit(info.type === 'enum' ? 'renameEnumValue' : 'renameMultiEnumValue', arguments);
                                 resolve();
                             });
                         });

@@ -18,12 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const rootTab = '.group-schema-tab';
 
     exports.init = () => {
-        exports.content = queryEl(rootTab);
+        exports.content = U.queryEl(rootTab);
     };
 
     exports.refresh = () => {
@@ -34,7 +34,7 @@ See the License for the specific language governing permissions and
     };
 
     function redrawSchema(graph) {
-        const container = queryEl(`${rootTab} .schema-container`);
+        const container = U.queryEl(`${rootTab} .schema-container`);
 
         if (state.network) {
             state.network.destroy();
@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
     }
 
     function redrawSchema2(graphData, className) {
-        clearEl(queryEl(`${rootTab} svg.${className}`));
+        U.clearEl(U.queryEl(`${rootTab} svg.${className}`));
         const svg = d3.select(`${rootTab} svg.${className}`);
         const svgGroup = svg.append('g');
         const root = svgGroup.append('g');
@@ -190,4 +190,4 @@ See the License for the specific language governing permissions and
 
         layouter.start();
     };
-})(this.GroupSchema = {});
+// })(window.GroupSchema = {});

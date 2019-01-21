@@ -43,7 +43,7 @@ See the License for the specific language governing permissions and
             return new Promise((resolve, reject) => {
                 try {
                     this.database = Migrator.migrate(database);
-                    this.ee.trigger('setDatabase', [{database, reject}]);
+                    this.ee.emit('setDatabase', [{database, reject}]);
                     resolve();
                 } catch (err) {
                     reject(err);

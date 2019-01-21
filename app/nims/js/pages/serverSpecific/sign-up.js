@@ -19,12 +19,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.sign-up-tab ';
 
     exports.init = () => {
         $(document.forms['sign-up-form']).on('submit', submit);
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
             },
         });
         request.done((data) => {
-            form.html(getL10n('entrance-sign-up-success')).addClass('alert-success');
+            form.html(L10n.getValue('entrance-sign-up-success')).U.addClass('alert-success');
         });
 
         request.fail((errorInfo, textStatus, errorThrown) => {
@@ -60,4 +60,4 @@ See the License for the specific language governing permissions and
 
         return false;
     }
-})(this.SignUp = {});
+// })(window.SignUp = {});

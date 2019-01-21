@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     exports.makeNewBase = () => {
         return new Promise((resolve, reject) => {
-            Utils.confirm(getL10n('utils-new-base-warning'), () => {
+            Utils.confirm(L10n.getValue('utils-new-base-warning'), () => {
                 DBMS.setDatabase({database:CommonUtils.clone(EmptyBase.data)}).then(() => {
                     resolve(true);
                     // TestUtils.addGroupTestingData();
@@ -50,7 +50,7 @@ See the License for the specific language governing permissions and
                 };
                 r.readAsText(f);
             } else {
-                Utils.alert(getL10n('utils-base-file-loading-error'));
+                Utils.alert(L10n.getValue('utils-base-file-loading-error'));
                 reject();
             }
         });
@@ -99,4 +99,4 @@ See the License for the specific language governing permissions and
         });
         saveAs(out, exports.makeFileName(fileName, 'csv'));
     };
-})(this.FileUtils = {});
+// })(window.FileUtils = {});

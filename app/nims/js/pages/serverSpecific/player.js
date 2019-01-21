@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const root = '.player-tab ';
     const characterProfileDiv = `${root}.character-profile-div`;
     const playerProfileDiv = `${root}.player-profile-div`;
@@ -29,7 +29,7 @@ See the License for the specific language governing permissions and
 
     exports.init = () => {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
-        exports.content = queryEl(root);
+        exports.content = U.queryEl(root);
     };
 
     exports.refresh = () => {
@@ -50,31 +50,31 @@ See the License for the specific language governing permissions and
     function buildInterface(text, profileInfo, playersOptions) {
         profileEditorCore.initProfileStructure(playerProfileDiv, 'player', profileInfo.player.profileStructure);
         profileEditorCore.fillProfileInformation(playerProfileDiv, 'player', profileInfo.player.profile, isEditable);
-        addEl(clearEl(queryEl(playerHeader)), makeText(strFormat(getL10n('briefings-player-profile'), [profileInfo.player.profile.name])));
+        U.addEl(U.clearEl(U.queryEl(playerHeader)), U.makeText(U.strFormat(L10n.getValue('briefings-player-profile'), [profileInfo.player.profile.name])));
 
         if (profileInfo.character === undefined) {
-            addEl(clearEl(queryEl(characterHeader)), makeText(strFormat(getL10n('briefings-character-profile'), [''])));
-            const el = clearEl(queryEl(characterProfileDiv));
+            U.addEl(U.clearEl(U.queryEl(characterHeader)), U.makeText(U.strFormat(L10n.getValue('briefings-character-profile'), [''])));
+            const el = U.clearEl(U.queryEl(characterProfileDiv));
             if (playersOptions.allowCharacterCreation) {
-                const label = addEl(makeEl('div'), makeText(getL10n('profiles-player-has-no-character-and-can-create-it')));
-                addClass(label, 'margin-bottom-8');
-                const input = setAttr(makeEl('input'), 'placeholder', getL10n('profiles-character-name'));
-                addClass(input, 'form-control margin-bottom-8');
-                const button = addEl(makeEl('button'), makeText(getL10n('common-create')));
-                addClass(button, 'btn btn-default');
-                listen(button, 'click', () => {
+                const label = U.addEl(U.makeEl('div'), U.makeText(L10n.getValue('profiles-player-has-no-character-and-can-create-it')));
+                U.addClass(label, 'margin-bottom-8');
+                const input = U.setAttr(U.makeEl('input'), 'placeholder', L10n.getValue('profiles-character-name'));
+                U.addClass(input, 'form-control margin-bottom-8');
+                const button = U.addEl(U.makeEl('button'), U.makeText(L10n.getValue('common-create')));
+                U.addClass(button, 'btn btn-default');
+                U.listen(button, 'click', () => {
                     DBMS.createCharacterByPlayer({characterName: input.value.trim()}).then(exports.refresh, Utils.handleError);
                 });
-                addEls(el, [label, input, button]);
+                U.addEls(el, [label, input, button]);
             } else {
-                addEl(el, addEl(makeEl('span'), makeText(getL10n('profiles-player-has-no-character-and-cant-create-it'))));
+                U.addEl(el, U.addEl(U.makeEl('span'), U.makeText(L10n.getValue('profiles-player-has-no-character-and-cant-create-it'))));
             }
         } else {
             profileEditorCore.initProfileStructure(characterProfileDiv, 'character', profileInfo.character.profileStructure);
             profileEditorCore.fillProfileInformation(characterProfileDiv, 'character', profileInfo.character.profile, isEditable);
-            addEl(clearEl(queryEl(characterHeader)), makeText(strFormat(getL10n('briefings-character-profile'), [profileInfo.character.profile.name])));
+            U.addEl(U.clearEl(U.queryEl(characterHeader)), U.makeText(U.strFormat(L10n.getValue('briefings-character-profile'), [profileInfo.character.profile.name])));
         }
 
-        queryEl(`${root}.welcome-text-area`).value = text;
+        U.queryEl(`${root}.welcome-text-area`).value = text;
     }
-})(this.Player = {});
+// })(window.Player = {});

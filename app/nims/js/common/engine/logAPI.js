@@ -51,7 +51,7 @@ See the License for the specific language governing permissions and
                         }
                         //                console.log(this.database.Log.length);
                     }
-    //                console.log(CU.strFormat('{0},{1},{2},{3},{4}', info));
+    //                console.log(CU.U.strFormat('{0},{1},{2},{3},{4}', info));
                     resolve();
                 });
             });

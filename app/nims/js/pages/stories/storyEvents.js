@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-((exports) => {
+// ((exports) => {
     const state = {};
     const root = '.story-events-tab ';
     let initialized = false;
@@ -31,14 +31,14 @@ See the License for the specific language governing permissions and
             actionButtonTitle: 'common-create',
         });
 
-        //        listen(qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
+        //        U.listen(U.qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
 
         state.moveEventDialog = UI.createModalDialog(root, moveEvent, {
             bodySelector: 'move-event-body',
             dialogTitle: 'stories-move-event',
             actionButtonTitle: 'common-move',
         });
-        exports.content = qe(root);
+        exports.content = U.qe(root);
         initialized = true;
     };
 
@@ -61,53 +61,53 @@ See the License for the specific language governing permissions and
     };
 
     function clearInterface() {
-        clearEl(getEl('eventBlock'));
-        const positionSelectors = nl2array(document.querySelectorAll('.eventPositionSelector'));
+        U.clearEl(U.queryEl('#eventBlock'));
+        const positionSelectors = U.nl2array(document.querySelectorAll('.eventPositionSelector'));
         R.ap([clearEl], positionSelectors);
-        const selectorArr = nl2array(document.querySelectorAll('.eventEditSelector'));
+        const selectorArr = U.nl2array(document.querySelectorAll('.eventEditSelector'));
         R.ap([clearEl], selectorArr);
     }
 
     function rebuildInterface(events, metaInfo) {
         // event part
-        const table = clearEl(getEl('eventBlock'));
+        const table = U.clearEl(U.queryEl('#eventBlock'));
 
-        showEl(table, events.length !== 0 );
-        showEl(qe(`${root} .alert`), events.length === 0 );
+        U.showEl(table, events.length !== 0 );
+        U.showEl(U.qe(`${root} .alert`), events.length === 0 );
 
         // refresh position selector
         const addOpt = R.curry((sel, text) => {
-            addEl(sel, addEl(makeEl('option'), makeText(text)));
+            U.addEl(sel, U.addEl(U.makeEl('option'), U.makeText(text)));
         });
 
         let option, addOptLoc;
-        const positionSelectors = nl2array(document.querySelectorAll('.eventPositionSelector'));
+        const positionSelectors = U.nl2array(document.querySelectorAll('.eventPositionSelector'));
         R.ap([clearEl], positionSelectors);
         positionSelectors.forEach((positionSelector) => {
             addOptLoc = addOpt(positionSelector);
 
             events.forEach((event) => {
-                addOptLoc(strFormat(getL10n('common-set-item-before'), [event.name]));
+                addOptLoc(U.strFormat(L10n.getValue('common-set-item-before'), [event.name]));
             });
 
-            addOptLoc(getL10n('common-set-item-as-last'));
+            addOptLoc(L10n.getValue('common-set-item-as-last'));
 
             positionSelector.selectedIndex = events.length;
         });
 
         state.eventsLength = events.length;
 
-        R.ap([addEl(table)], events.map((event, i, events2) =>
+        R.ap([U.addEl(table)], events.map((event, i, events2) =>
             appendEventInput(event, i, events2, metaInfo.date, metaInfo.preGameDate)));
 
         // refresh swap selector
-        const selectorArr = nl2array(document.querySelectorAll('.eventEditSelector'));
+        const selectorArr = U.nl2array(document.querySelectorAll('.eventEditSelector'));
         R.ap([clearEl], selectorArr);
 
         events.forEach((event, i) => {
             selectorArr.forEach((selector) => {
-                option = makeEl('option');
-                option.appendChild(makeText(event.name));
+                option = U.makeEl('option');
+                option.appendChild(U.makeText(event.name));
                 option.eventIndex = i;
                 selector.appendChild(option);
             });
@@ -116,9 +116,9 @@ See the License for the specific language governing permissions and
 
     function createEvent(dialog) {
         return () => {
-            const eventNameInput = qee(dialog, '.eventNameInput');
+            const eventNameInput = U.qee(dialog, '.eventNameInput');
             const eventName = eventNameInput.value.trim();
-            const positionSelector = qee(dialog, '.positionSelector');
+            const positionSelector = U.qee(dialog, '.positionSelector');
 
             DBMS.createEvent({
                 storyName: Stories.getCurrentStoryName(),
@@ -133,21 +133,21 @@ See the License for the specific language governing permissions and
     }
 
     function appendEventInput(event, index, events, date, preGameDate) {
-        const el = wrapEl('tr', qte(`${root} .event-tmpl`));
+        const el = U.wrapEl('tr', U.qte(`${root} .event-tmpl`));
         L10n.localizeStatic(el);
-        const qe = qee(el);
-        addEl(qe('.event-number'), makeText(index + 1));
-        const nameInput = qe('.event-name-input');
+        const qe = U.qee(el);
+        U.addEl(U.qe('.event-number'), U.makeText(index + 1));
+        const nameInput = U.qe('.event-name-input');
         nameInput.value = event.name;
         nameInput.eventIndex = index;
-        listen(nameInput, 'change', updateEventName);
+        U.listen(nameInput, 'change', updateEventName);
 
-        const textInput = qe('.event-text');
+        const textInput = U.qe('.event-text');
         textInput.value = event.text;
         textInput.eventIndex = index;
-        listen(textInput, 'change', updateEventText);
+        U.listen(textInput, 'change', updateEventText);
 
-        UI.makeEventTimePicker2(qe('.event-time'), {
+        UI.makeEventTimePicker2(U.qe('.event-time'), {
             eventTime: event.time,
             index,
             preGameDate,
@@ -155,25 +155,25 @@ See the License for the specific language governing permissions and
             onChangeDateTimeCreator
         });
 
-        listen(qee(el, '.move'), 'click', () => {
+        U.listen(U.qee(el, '.move'), 'click', () => {
             state.moveEventDialog.index = index;
             state.moveEventDialog.showDlg();
         });
 
-        listen(qee(el, '.clone'), 'click', cloneEvent(index));
+        U.listen(U.qee(el, '.clone'), 'click', cloneEvent(index));
         if (state.eventsLength === index + 1) {
-            setAttr(qee(el, '.merge'), 'disabled', 'disabled');
+            U.setAttr(U.qee(el, '.merge'), 'disabled', 'disabled');
         } else {
-            listen(qee(el, '.merge'), 'click', mergeEvents(index, event.name, events[index + 1].name));
+            U.listen(U.qee(el, '.merge'), 'click', mergeEvents(index, event.name, events[index + 1].name));
         }
-        listen(qee(el, '.remove'), 'click', removeEvent(event.name, index));
+        U.listen(U.qee(el, '.remove'), 'click', removeEvent(event.name, index));
 
         return el;
     }
 
     function moveEvent(dialog) {
         return () => {
-            const newIndex = queryEl('.movePositionSelector').selectedIndex;
+            const newIndex = U.queryEl('.movePositionSelector').selectedIndex;
             DBMS.moveEvent({
                 storyName: Stories.getCurrentStoryName(),
                 index: dialog.index,
@@ -197,7 +197,7 @@ See the License for the specific language governing permissions and
     function mergeEvents(index, firstName, secondName) {
         return () => {
             if (state.eventsLength === index + 1) {
-                Utils.alert(getL10n('stories-cant-merge-last-event'));
+                Utils.alert(L10n.getValue('stories-cant-merge-last-event'));
                 return;
             }
 
@@ -212,7 +212,7 @@ See the License for the specific language governing permissions and
 
     function removeEvent(name, index) {
         return () => {
-            Utils.confirm(strFormat(getL10n('stories-remove-event-warning'), [name]), () => {
+            Utils.confirm(U.strFormat(L10n.getValue('stories-remove-event-warning'), [name]), () => {
                 DBMS.removeEvent({
                     storyName: Stories.getCurrentStoryName(),
                     index
@@ -222,9 +222,9 @@ See the License for the specific language governing permissions and
     }
 
     function getEventHeader() {
-        const tr = makeEl('tr');
-        addEl(tr, addEl(makeEl('th'), makeText('№')));
-        addEl(tr, addEl(makeEl('th'), makeText(getL10n('stories-event'))));
+        const tr = U.makeEl('tr');
+        U.addEl(tr, U.addEl(U.makeEl('th'), U.makeText('№')));
+        U.addEl(tr, U.addEl(U.makeEl('th'), U.makeText(L10n.getValue('stories-event'))));
         return tr;
     }
 
@@ -236,7 +236,7 @@ See the License for the specific language governing permissions and
                 property: 'time',
                 value: input.val()
             }).catch(Utils.handleError);
-            removeClass(myInput, 'defaultDate');
+            U.removeClass(myInput, 'defaultDate');
         };
     }
 
@@ -259,4 +259,4 @@ See the License for the specific language governing permissions and
             value: input.value
         }).catch(Utils.handleError);
     }
-})(this.StoryEvents = {});
+// })(window.StoryEvents = {});
