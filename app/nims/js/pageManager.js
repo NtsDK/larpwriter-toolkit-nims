@@ -36,7 +36,7 @@ vex.defaultOptions.className = 'vex-theme-os';
 
 // const Overview = require('./pages/overview/overview.js')
 const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
-    Briefings } = require('./pages');
+    Briefings, LogViewer2 } = require('./pages');
 
 // require("../../core/js/common/commonUtils.js");
 //const R = require("ramda");
@@ -238,7 +238,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Briefings';
+                const firstTab = 'LogViewer2';
 
                 const addView = (containers, btnName, viewName, view, opts) => {
                     tabs[viewName] = {
@@ -271,7 +271,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 // if (MODE === 'NIMS_Server') {
                 //     addView(state.containers, 'admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
                 // }
-                // addView(state.containers, 'logViewer', 'LogViewer2', { clazz: 'logViewerButton icon-button', tooltip: true });
+                addView(state.containers, 'logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
 
                 U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 

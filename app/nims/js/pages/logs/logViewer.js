@@ -17,6 +17,7 @@ See the License for the specific language governing permissions and
  */
 
  require('./logViewer.css');
+ const dateFormat = require('dateFormat');
 
 'use strict';
 
@@ -74,7 +75,7 @@ See the License for the specific language governing permissions and
         };
         return U.addEls(U.makeEl('tr'), [
             addText(`${rowData[0]}`),
-            addText(new Date(rowData[2]).format('yyyy/mm/dd HH:MM:ss')),
+            addText(dateFormat(new Date(rowData[2]), 'yyyy/mm/dd HH:MM:ss')),
             addText(rowData[1]),
             addText(rowData[3]),
 

@@ -18,6 +18,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
+// const d3 = require('d3');
+
 // ((exports) => {
     const state = {};
     const rootTab = '.group-schema-tab';

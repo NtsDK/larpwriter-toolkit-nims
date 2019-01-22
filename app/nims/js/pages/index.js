@@ -19,13 +19,73 @@ exports.Briefings = require('./tabRouting/routingTab')({
     }]
 });
 
-// RoutingTabTmpl(this.Briefings = {}, {
-//     firstTab: 'BriefingPreview',
+exports.LogViewer2 = require('./tabRouting/routingTab')({
+    firstTab: 'GroupSchema',
+    tabs: [{
+        btnName: 'logViewer',
+        viewName: 'LogViewer',
+        viewBody: require('./logs/logViewer')
+    }, {
+        btnName: 'group-schema',
+        viewName: 'GroupSchema',
+        viewBody: require('./groups/groupSchema')
+    }, {
+        btnName: 'about',
+        viewName: 'About',
+        viewBody: require('./logs/about')
+    }]
+});
+
+// exports.Characters = require('./tabRouting/routingTab')({
+//     firstTab: 'CharacterEditor',
 //     tabs: [{
-//         btnName: 'briefing-preview',
-//         viewName: 'BriefingPreview'
+//         btnName: 'filling-profile',
+//         viewName: 'CharacterEditor',
+//         viewBody: require('./profiles2/briefingPreview')
 //     }, {
 //         btnName: 'briefing-export',
-//         viewName: 'BriefingExport'
+//         viewName: 'BriefingExport',
+//         viewBody: require('./briefings/briefingExport')
+//     }]
+// });
+
+// RoutingTabTmpl(this.Characters = {}, {
+//     firstTab: 'CharacterEditor',
+//     tabs: [{
+//         btnName: 'filling-profile',
+//         viewName: 'CharacterEditor'
+//     }, {
+//         btnName: 'changing-profile-structure',
+//         viewName: 'CharacterConfigurer'
+//     }, {
+//         btnName: 'binding-characters-and-players',
+//         viewName: 'ProfileBinding2'
+//     }]
+// });
+
+// RoutingTabTmpl(this.Players = {}, {
+//     firstTab: 'PlayerEditor',
+//     tabs: [{
+//         btnName: 'filling-profile',
+//         viewName: 'PlayerEditor'
+//     }, {
+//         btnName: 'changing-profile-structure',
+//         viewName: 'PlayerConfigurer'
+//     }, {
+//         btnName: 'binding-characters-and-players',
+//         viewName: 'ProfileBinding2'
+//     }]
+// });
+
+
+
+// RoutingTabTmpl(this.AccessManager = {}, {
+//     firstTab: 'OrganizerManagement',
+//     tabs: [{
+//         btnName: 'organizerManagement',
+//         viewName: 'OrganizerManagement'
+//     }, {
+//         btnName: 'playerManagement',
+//         viewName: 'PlayerManagement'
 //     }]
 // });
