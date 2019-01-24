@@ -223,6 +223,12 @@ See the License for the specific language governing permissions and
             createSlider: {},
             removeSlider: {},
             moveSlider: {},
+        },
+        joinRpgAPI : {
+            setJoinRpgSettings: {},
+            isJoinRpgCredentialsValid: null,
+            getJoinRpgSettings: null,
+            getJoinRpgData: null
         }
     };
 

@@ -43,7 +43,7 @@ See the License for the specific language governing permissions and
 
 #contentArea {
 /*   overflow-y: scroll; */
-  overflow-x: auto;
+  /* overflow-x: auto; */
 }
 
 /* .gutter-scroll-position { */

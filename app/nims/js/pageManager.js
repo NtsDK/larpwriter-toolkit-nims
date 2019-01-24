@@ -194,7 +194,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Overview';
+                const firstTab = 'AccessManager';
 
                 const addView = (containers, btnName, viewName, opts) => {
                     tabs[viewName] = {

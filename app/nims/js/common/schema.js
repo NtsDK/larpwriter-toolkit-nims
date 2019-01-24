@@ -45,6 +45,7 @@ See the License for the specific language governing permissions and
             const Relations = getRelationsSchema(base.Characters, schema.definitions);
             const Gears = getGearsSchema();
             const Sliders = getSlidersSchema();
+            const JoinRpg = {};
             let ManagementInfo = {};
             if (base.ManagementInfo) {
                 ManagementInfo = getManagementInfoSchema(
@@ -71,11 +72,13 @@ See the License for the specific language governing permissions and
                 Gears,
                 Sliders,
                 Relations,
-                ManagementInfo
+                ManagementInfo,
+                JoinRpg
             };
 
             schema.required = ['Meta', 'CharacterProfileStructure', 'PlayerProfileStructure', 'Version', 'Characters',
-                'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations', 'Gears', 'Sliders'];
+                'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations', 'Gears', 'Sliders',
+            'JoinRpg'];
             schema.additionalProperties = false;
 
             schema.moduleList = R.keys(schema.properties);

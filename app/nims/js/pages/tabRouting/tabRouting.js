@@ -100,12 +100,16 @@ RoutingTabTmpl(this.LogViewer2 = {}, {
 });
 
 RoutingTabTmpl(this.AccessManager = {}, {
-    firstTab: 'OrganizerManagement',
+    firstTab: 'JoinRpg',
     tabs: [{
         btnName: 'organizerManagement',
         viewName: 'OrganizerManagement'
     }, {
         btnName: 'playerManagement',
         viewName: 'PlayerManagement'
+    }, {
+        btnName: 'playerManagement',
+        // btnName: 'joinRpg',
+        viewName: 'JoinRpg'
     }]
 });

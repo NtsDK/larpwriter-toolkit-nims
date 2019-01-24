@@ -212,6 +212,16 @@ See the License for the specific language governing permissions and
                 data.Sliders = [];
                 data.Version = '0.7.2';
             }
+            if (data.Version === '0.7.2') {
+                data.JoinRpg = {
+                    Settings: {
+                        username: '',
+                        password: '',
+                        gameId: ''
+                    }
+                };
+                data.Version = '0.7.3';
+            }
             
             return data;
         };

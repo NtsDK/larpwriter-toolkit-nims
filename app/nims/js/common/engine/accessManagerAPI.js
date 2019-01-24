@@ -192,6 +192,18 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.createCharacterByPlayer = function (characterName, callback) {
             callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createCharacterByPlayer']));
         };
+        LocalDBMS.prototype.getJoinRpgSettings = function (characterName, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createCharacterByPlayer']));
+        };
+        LocalDBMS.prototype.setJoinRpgSettings = function (characterName, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createCharacterByPlayer']));
+        };
+        LocalDBMS.prototype.getJoinRpgData = function (characterName, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createCharacterByPlayer']));
+        };
+        LocalDBMS.prototype.isJoinRpgCredentialsValid = function (characterName, callback) {
+            callback(new Errors.ValidationError('admins-function-must-be-overridden-on-server', ['createCharacterByPlayer']));
+        };
 
         function _renameProfile(type, fromName, toName) {
             if (type === 'character') return;
