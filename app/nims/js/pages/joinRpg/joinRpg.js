@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
             DBMS.isJoinRpgCredentialsValid( (err, isValid) => {
                 if (err) { Utils.handleError(err); return; }
                 addEl(clearEl(state.isValidSpan), makeText(isValid));
-                console.log('isValid' + isValid);
+                // console.log('isValid' + isValid);
             });
         });
     };
@@ -168,7 +168,10 @@ See the License for the specific language governing permissions and
                 R.keys(joinMeta).forEach(joinFieldName => {
                     const joinField = joinMeta[joinFieldName];
                     if(nimsMeta[joinFieldName] === undefined) {
-                        diff.push(`Поля "${joinFieldName}" нет в досье персонажа НИМС.`);
+                        diff.push({
+                            item: joinFieldName,
+                            problem: 'Отсутствует в досье персонажа НИМС'
+                        });
                         state.profileMetaFixes.push({
                             func: 'createProfileItem',
                             args: ['character', joinFieldName, joinField.type, itemCounter]
@@ -180,14 +183,16 @@ See the License for the specific language governing permissions and
                             });
                         }
                         itemCounter++;
-                        // createProfileItem = function (type, name, itemType, selectedIndex, callback)
                     } else if(joinField.type === 'enum') {
                         // TODO enum process
                         const joinEnumValues = joinField.value.split(',').map(R.trim);
                         const nimsEnumValues = nimsMeta[joinFieldName].value.split(',').map(R.trim);
                         const enumDiff = R.difference(joinEnumValues, nimsEnumValues);
                         if(enumDiff.length > 0) {
-                            diff.push(`Поле "${joinFieldName}" не содержит следующих элементов "${enumDiff.join(',')}".`);
+                            diff.push({
+                                item: joinFieldName,
+                                problem: `Выбор не содержит следующих элементов "${enumDiff.join(',')}".`
+                            });
                             state.profileMetaFixes.push({
                                 func: 'updateDefaultValue',
                                 args: ['character', joinFieldName, nimsEnumValues.concat(enumDiff).join(',')]
@@ -195,26 +200,39 @@ See the License for the specific language governing permissions and
                         }
                     }
                 });
-                const errorsDiv = clearEl(qe(`${root} .profile-structure-panel .errors`));
+
+                const notesDiv = clearEl(qe(`${root} .profile-structure-panel .notes`));
+
+                const delta = R.difference(R.keys(nimsMeta), R.keys(joinMeta));
+                if(delta.length > 0) {
+                    const text = 'Следующие поля есть в НИМСе, но нет в JoinRpg: ' + delta.join(', ');
+                    addEl(notesDiv, addEl(makeEl('div'), makeText(text)));
+                }
+
                 showEl(state.fixProfileStructureBtn, diff.length > 0);
+                showEl(qe(`${root} .profile-structure-panel table`), diff.length > 0);
+                const errorsBody = clearEl(qe(`${root} .profile-structure-panel tbody`));
                 if(diff.length > 0){
-                    addEls(errorsDiv, diff.map(error => {
-                        return addEl(makeEl('div'), makeText(error));
+                    addEls(errorsBody, diff.map(error => {
+                        const row = qmte(`${root} .profile-structure-row-tmpl`);
+                        addEl(qee(row, '.item-name'), makeText(error.item));
+                        addEl(qee(row, '.problem-description'), makeText(error.problem));
+                        return row;
                     }));
                     reject();
                 } else {
-                    addEl(errorsDiv, makeText('Структура досье совместима.'));
+                    addEl(notesDiv, addEl(makeEl('div'), makeText('Структура досье совместима.')));
                     resolve();
                 }
             })
         });
     }
 
-    function fixCharacterList() {
+    var applyFixes = R.curry(function (fixesList) {
         let index = 0;
         function applyFix() {
-            if(index < state.characterListFixes.length) {
-                const fix = state.characterListFixes[index];
+            if(index < state[fixesList].length) {
+                const fix = state[fixesList][index];
                 const args = fix.args.concat(function(err){
                     if (err) { Utils.handleError(err); return; }
                     index++;
@@ -226,64 +244,11 @@ See the License for the specific language governing permissions and
             }
         }
         applyFix();
-    }
-    
-    function fixCharacterProfiles() {
-        let index = 0;
-        function applyFix() {
-            if(index < state.characterProfilesFixes.length) {
-                const fix = state.characterProfilesFixes[index];
-                const args = fix.args.concat(function(err){
-                    if (err) { Utils.handleError(err); return; }
-                    index++;
-                    applyFix();
-                })
-                DBMS[fix.func].apply(null, args);
-            } else {
-                onGetData();
-            }
-        }
-        applyFix();
-    }
+    });
 
-    function fixProfileStructure() {
-        let index = 0;
-        function applyFix() {
-            if(index < state.profileMetaFixes.length) {
-                const fix = state.profileMetaFixes[index];
-                const args = fix.args.concat(function(err){
-                    if (err) { Utils.handleError(err); return; }
-                    index++;
-                    applyFix();
-                })
-                DBMS[fix.func].apply(null, args);
-            } else {
-                onGetData();
-            }
-        }
-        applyFix();
-    }
-
-//     function buildContent(characterName) {
-//         UI.updateEntitySetting(settingsPath, characterName);
-//         const content = clearEl(getEl('briefingContent'));
-//         let index = 0;
-//         const data = {
-//             characterName
-//         };
-//         function buildContentInner() {
-//             if (index < state.panels.length) {
-//                 index++;
-//                 state.panels[index - 1].load(data, buildContentInner);
-//             } else {
-//                 state.panels.map(R.prop('make')).forEach((make) => {
-//                     make(content, data);
-//                 });
-// //                rebuildGutter();
-//             }
-//         }
-//         buildContentInner();
-//     }
+    var fixCharacterList = () => applyFixes('characterListFixes');
+    var fixCharacterProfiles = () => applyFixes('characterProfilesFixes');
+    var fixProfileStructure = () => applyFixes('profileMetaFixes');
 
     function extractProfileMeta(data) {
         return data.profileMeta.Fields.map( item => {
@@ -301,7 +266,8 @@ See the License for the specific language governing permissions and
                     localItem.type = 'string';
                     break;
                 case 'Dropdown':
-                    localItem.value = item.ValueList.map(R.prop('Label')).map(R.trim).join(',');
+                    localItem.value = R.concat(['ничего не выбрано'], item.ValueList.map(R.prop('Label'))
+                        .map(R.trim).map(R.replace(/,/, ''))).join(',');
                     localItem.type = 'enum';
                     break;
                 default:
@@ -352,11 +318,11 @@ See the License for the specific language governing permissions and
                 if (err) { Utils.handleError(err); return; }
                 DBMS.isJoinRpgCredentialsValid( (err, isValid) => {
                     if (err) { Utils.handleError(err); return; }
-                    console.log('isValid' + isValid);
+                    // console.log('isValid' + isValid);
                     addEl(clearEl(state.isValidSpan), makeText(isValid));
                 });
             });
-            console.log('sdfsfd')
+            // console.log('sdfsfd')
         }, 200);
     }
 })(this.JoinRpg = {});

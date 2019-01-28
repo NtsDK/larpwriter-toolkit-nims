@@ -23,12 +23,31 @@
       <!-- </a> -->
     </div>
     <div class="panel-body profile-structure-panel">
-      <div class="errors">
+      <div class="notes">
       </div>
+      <table class="table table-bordered table-striped">
+      
+        <thead>
+          <tr>
+            <th>Поле</th>
+            <th>Проблема</th>
+          </tr>
+        </thead>
+      
+        <tbody>
+        </tbody>
+      </table>
       <button class="btn btn-default btn-reduced fix-profile-structure flex-0-0-auto adminOnly hidden" 
         >Исправить</button>
     </div>
   </div>
+
+  <template class="profile-structure-row-tmpl">
+    <tr>
+      <td><span class="item-name"></span></td>
+      <td><span class="problem-description"></span></td>
+    </tr>
+  </template>
 
   <div class="panel panel-default">
     <div class="panel-heading">
