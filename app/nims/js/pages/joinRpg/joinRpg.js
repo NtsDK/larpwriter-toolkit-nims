@@ -86,16 +86,18 @@ See the License for the specific language governing permissions and
         state.characterProfilesFixes = [];
         DBMS.getAllProfiles('character', (err, nimsProfiles) => {
             if (err) { Utils.handleError(err); return; }
+            const charId2NameMap = data.waData.charId2NameMap;
+            const id2Charname = id => charId2NameMap[String(id)] + '-' + String(id);
             const joinId2ItemName = data.profileMeta.Fields.reduce( (acc, item) => {
-                acc[item.ProjectFieldId] = item.FieldName;
+                acc[(item.ProjectFieldId)] = item.FieldName;
                 return acc;
             }, {});
             const joinMetaIndex = R.indexBy(R.prop('ProjectFieldId'), data.profileMeta.Fields);
             console.log(joinId2ItemName);
             const errors = [];
-            const errorsDiv = clearEl(qe(`${root} .character-profiles-panel .errors`));
+            const errorsDiv = clearEl(qe(`${root} .character-profiles-panel .notes`));
             data.characterData.forEach( joinCharacter => {
-                const characterName = String(joinCharacter.CharacterId);
+                const characterName = id2Charname(joinCharacter.CharacterId);
                 const nimsCharacter = nimsProfiles[characterName];
                 joinCharacter.Fields.forEach(field => {
                     // dont process dropdown-enums this moment
@@ -106,7 +108,13 @@ See the License for the specific language governing permissions and
 
                     const joinItemName = joinId2ItemName[field.ProjectFieldId];
                     if(nimsCharacter[joinItemName] !== field.DisplayString) {
-                        errors.push(`Персонаж ${characterName}, поле ${joinItemName}, в НИМСе "${nimsCharacter[joinItemName].substring(0,20)}", в JoinRpg "${field.DisplayString.substring(0,20)}"`);
+                        // errors.push(`Персонаж ${characterName}, поле ${joinItemName}, в НИМСе "${nimsCharacter[joinItemName].substring(0,20)}", в JoinRpg "${field.DisplayString.substring(0,20)}"`);
+                        errors.push({
+                            characterName,
+                            joinItemName,
+                            nimsContent: nimsCharacter[joinItemName].substring(0,40),
+                            joinContent: field.DisplayString.substring(0,40)
+                        });
                         state.characterProfilesFixes.push({
                             func: 'updateProfileField',
                             args: ['character', characterName, joinItemName, joinItemType.toLowerCase(), field.DisplayString]
@@ -117,9 +125,15 @@ See the License for the specific language governing permissions and
             });
 
             showEl(state.fixCharacterProfilesBtn, errors.length > 0);
+            const errorsBody = clearEl(qe(`${root} .character-profiles-panel tbody`));
             if(errors.length > 0) {
-                addEls(errorsDiv, errors.map(error => {
-                    return addEl(makeEl('div'), makeText(error));
+                addEls(errorsBody, errors.map(error => {
+                    const row = qmte(`${root} .character-profiles-row-tmpl`);
+                    addEl(qee(row, '.character-name'), makeText(error.characterName));
+                    addEl(qee(row, '.join-item-name'), makeText(error.joinItemName));
+                    addEl(qee(row, '.nims-content'), makeText(error.nimsContent));
+                    addEl(qee(row, '.join-content'), makeText(error.joinContent));
+                    return row;
                 }));
             } else {
                 addEl(errorsDiv, makeText('Данные персонажей актуальны.'));
@@ -133,7 +147,8 @@ See the License for the specific language governing permissions and
             PermissionInformer.getEntityNamesArray('character', false, (err, nimsCharacterNames) => {
                 if (err) { Utils.handleError(err); return; }
                 nimsCharacterNames = nimsCharacterNames.map(R.prop('value'));
-                const joinCharacterNames = data.characterList.map(R.prop('CharacterId')).map(id => String(id));
+                const charId2NameMap = data.waData.charId2NameMap;
+                const joinCharacterNames = data.characterList.map(R.prop('CharacterId')).map(id => charId2NameMap[String(id)] + '-' + String(id));
                 const characterDiff = R.difference(joinCharacterNames, nimsCharacterNames);
                 const errorsDiv = clearEl(qe(`${root} .character-list-panel .errors`));
                 showEl(state.fixCharacterListBtn, characterDiff.length > 0);
