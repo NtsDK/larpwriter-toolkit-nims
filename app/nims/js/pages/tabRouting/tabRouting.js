@@ -108,8 +108,7 @@ RoutingTabTmpl(this.AccessManager = {}, {
         btnName: 'playerManagement',
         viewName: 'PlayerManagement'
     }, {
-        btnName: 'playerManagement',
-        // btnName: 'joinRpg',
+        btnName: 'joinRpg',
         viewName: 'JoinRpg'
     }]
 });

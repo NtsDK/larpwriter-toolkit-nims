@@ -56,12 +56,33 @@
       <!-- </a> -->
     </div>
     <div class="panel-body character-list-panel">
-        <div class="errors">
-        </div>
+        <div class="notes">
+          </div>
+          <table class="table table-bordered table-striped">
+          
+            <thead>
+              <tr>
+                <th>Персонаж</th>
+                <th>Проблема</th>
+                <th>Персонаж в НИМС</th>
+              </tr>
+            </thead>
+          
+            <tbody>
+            </tbody>
+          </table>
         <button class="btn btn-default btn-reduced fix-character-list flex-0-0-auto adminOnly hidden" 
           >Исправить</button>
     </div>
   </div>
+
+  <template class="character-list-row-tmpl">
+    <tr>
+      <td><span class="character-name"></span></td>
+      <td><span class="problem-description"></span></td>
+      <td><span class="nims-character-name"></span></td>
+    </tr>
+  </template>
 
   <div class="panel panel-default">
     <div class="panel-heading">

@@ -75,7 +75,7 @@ See the License for the specific language governing permissions and
             processCharacterProfiles(data);
         }).catch(err =>{
             hideEl(state.fixCharacterProfilesBtn, true);
-            addEl(clearEl(qe(`${root} .character-profiles-panel .errors`)), 
+            addEl(clearEl(qe(`${root} .character-profiles-panel .notes`)), 
                 makeText('Невозможно выполнить операцию до устранения ошибок в досье и списке персонажей.'));
             console.log(err);
         });
@@ -97,30 +97,55 @@ See the License for the specific language governing permissions and
             const errors = [];
             const errorsDiv = clearEl(qe(`${root} .character-profiles-panel .notes`));
             data.characterData.forEach( joinCharacter => {
+                let isFirstProblemRow = true;
                 const characterName = id2Charname(joinCharacter.CharacterId);
                 const nimsCharacter = nimsProfiles[characterName];
                 joinCharacter.Fields.forEach(field => {
-                    // dont process dropdown-enums this moment
                     const joinItemType = joinMetaIndex[field.ProjectFieldId].FieldType;
-                    if(joinItemType === 'Dropdown'){
+                    if(!R.contains(joinItemType,['String', 'Text', 'Dropdown'])){
+                        console.log(joinItemType, ' not processed', characterName, field.ProjectFieldId);
                         return;
                     }
-
                     const joinItemName = joinId2ItemName[field.ProjectFieldId];
-                    if(nimsCharacter[joinItemName] !== field.DisplayString) {
-                        // errors.push(`Персонаж ${characterName}, поле ${joinItemName}, в НИМСе "${nimsCharacter[joinItemName].substring(0,20)}", в JoinRpg "${field.DisplayString.substring(0,20)}"`);
-                        errors.push({
-                            characterName,
-                            joinItemName,
-                            nimsContent: nimsCharacter[joinItemName].substring(0,40),
-                            joinContent: field.DisplayString.substring(0,40)
-                        });
-                        state.characterProfilesFixes.push({
-                            func: 'updateProfileField',
-                            args: ['character', characterName, joinItemName, joinItemType.toLowerCase(), field.DisplayString]
-                        });
-                        // updateProfileField = function (type, characterName, fieldName, itemType, value
+                    switch(joinItemType) {
+                    case 'String':
+                    case 'Text':
+                        if(nimsCharacter[joinItemName] !== field.DisplayString) {
+                            errors.push({
+                                characterName: isFirstProblemRow ? characterName : '',
+                                joinItemName,
+                                nimsContent: nimsCharacter[joinItemName].substring(0,40),
+                                joinContent: field.DisplayString.substring(0,40)
+                            });
+                            isFirstProblemRow = false;
+                            state.characterProfilesFixes.push({
+                                func: 'updateProfileField',
+                                args: ['character', characterName, joinItemName, joinItemType.toLowerCase(), field.DisplayString]
+                            });
+                            // updateProfileField = function (type, characterName, fieldName, itemType, value
+                        }
+                        break;
+                    case 'Dropdown':
+                        const tranformedValue = joinDropdownLabel2Nims(field.DisplayString);
+                        if(nimsCharacter[joinItemName] !== tranformedValue) {
+                            errors.push({
+                                characterName: isFirstProblemRow ? characterName : '',
+                                joinItemName,
+                                nimsContent: nimsCharacter[joinItemName],
+                                joinContent: tranformedValue
+                            });
+                            isFirstProblemRow = false;
+                            state.characterProfilesFixes.push({
+                                func: 'updateProfileField',
+                                args: ['character', characterName, joinItemName,'enum', tranformedValue]
+                            });
+                            // updateProfileField = function (type, characterName, fieldName, itemType, value
+                        }
+                        break;
+                    default:
+                        console.log('Unexpected item ', joinItemType, characterName, field.ProjectFieldId);
                     }
+
                 })
             });
 
@@ -141,28 +166,87 @@ See the License for the specific language governing permissions and
         });
     }
 
+    function isNumeric(num){
+        return !isNaN(num)
+    }
+
+    function isJoinCharacter(name) {
+        const index = name.lastIndexOf("-");
+        if(index === -1) {
+            return false;
+        }
+        return isNumeric(name.substring(index+1));
+    }
+
+    function getJoinCharacterId(name) {
+        const index = name.lastIndexOf("-");
+        return name.substring(index+1);
+    }
+
+    function msgWithList(msg, list){
+        const elList = addEls(makeEl('ul'), list.map(name => addEl(makeEl('li'), makeText(name))));
+        return addEls(makeEl('div'), [makeText(msg), elList]);
+    }
+
     function processCharacterList(data) {
         return new Promise((resolve, reject) => {
             state.characterListFixes = [];
             PermissionInformer.getEntityNamesArray('character', false, (err, nimsCharacterNames) => {
                 if (err) { Utils.handleError(err); return; }
                 nimsCharacterNames = nimsCharacterNames.map(R.prop('value'));
+                const joinId2NimsChar = R.fromPairs(nimsCharacterNames.filter(isJoinCharacter).map(name => [getJoinCharacterId(name), name]));
+
                 const charId2NameMap = data.waData.charId2NameMap;
                 const joinCharacterNames = data.characterList.map(R.prop('CharacterId')).map(id => charId2NameMap[String(id)] + '-' + String(id));
                 const characterDiff = R.difference(joinCharacterNames, nimsCharacterNames);
-                const errorsDiv = clearEl(qe(`${root} .character-list-panel .errors`));
+                characterDiff.sort(CommonUtils.charOrdA);
+
+                const notesDiv = clearEl(qe(`${root} .character-list-panel .notes`));
+                const characterDiff2 = R.difference(nimsCharacterNames, joinCharacterNames);
+                characterDiff2.sort(CommonUtils.charOrdA);
+                if(characterDiff2.length > 0) {
+                    addEl(notesDiv, msgWithList('Следующие персонажи есть в НИМСе, но нет в JoinRpg:', characterDiff2));
+                }
+
+                
                 showEl(state.fixCharacterListBtn, characterDiff.length > 0);
+                const errorsBody = clearEl(qe(`${root} .character-list-panel tbody`));
                 if(characterDiff.length > 0){
-                    addEls(errorsDiv, characterDiff.map(char => {
-                        state.characterListFixes.push({
-                            func: 'createProfile',
-                            args: ['character', String(char)]
-                        });
-                        return addEl(makeEl('div'), makeText(`Персонажа ${char} не существует.`));
+                    const errors = [];
+                    characterDiff.map(char => {
+                        const joinCharacterId = getJoinCharacterId(char);
+                        if(joinId2NimsChar[joinCharacterId] === undefined) {
+                            state.characterListFixes.push({
+                                func: 'createProfile',
+                                args: ['character', (char)]
+                            });
+                            errors.push({
+                                char,
+                                problem: 'Не существует',
+                            });
+                        } else {
+                            state.characterListFixes.push({
+                                func: 'renameProfile',
+                                args: ['character', joinId2NimsChar[joinCharacterId], (char)]
+                            });
+                            errors.push({
+                                char,
+                                problem: 'Переименован',
+                                nimsCharacterName: joinId2NimsChar[joinCharacterId]
+                            });
+                        }
+                    });
+                    addEls(errorsBody, errors.map(error => {
+                        const row = qmte(`${root} .character-list-row-tmpl`);
+                        addEl(qee(row, '.character-name'), makeText(error.char));
+                        addEl(qee(row, '.problem-description'), makeText(error.problem));
+                        addEl(qee(row, '.nims-character-name'), makeText(error.nimsCharacterName || ''));
+                        return row;
                     }));
                     reject();
                 } else {
-                    addEl(errorsDiv, makeText('Список персонажей совместим.'));
+                    const text = 'Список персонажей совместим.';
+                    addEl(notesDiv, addEl(makeEl('div'), makeText(text)));
                     resolve();
                 }
                 
@@ -220,8 +304,10 @@ See the License for the specific language governing permissions and
 
                 const delta = R.difference(R.keys(nimsMeta), R.keys(joinMeta));
                 if(delta.length > 0) {
-                    const text = 'Следующие поля есть в НИМСе, но нет в JoinRpg: ' + delta.join(', ');
-                    addEl(notesDiv, addEl(makeEl('div'), makeText(text)));
+                    // const text = 'Следующие поля есть в НИМСе, но нет в JoinRpg: ' + delta.join(', ');
+                    // addEl(notesDiv, addEl(makeEl('div'), makeText(text)));
+
+                    addEl(notesDiv, msgWithList('Следующие поля есть в НИМСе, но нет в JoinRpg: ', delta));
                 }
 
                 showEl(state.fixProfileStructureBtn, diff.length > 0);
@@ -282,7 +368,7 @@ See the License for the specific language governing permissions and
                     break;
                 case 'Dropdown':
                     localItem.value = R.concat(['ничего не выбрано'], item.ValueList.map(R.prop('Label'))
-                        .map(R.trim).map(R.replace(/,/, ''))).join(',');
+                        .map(joinDropdownLabel2Nims)).join(',');
                     localItem.type = 'enum';
                     break;
                 default:
@@ -290,6 +376,12 @@ See the License for the specific language governing permissions and
             }
             return localItem;
         });
+    }
+
+    function joinDropdownLabel2Nims(label) {
+        label = label.trim();
+        label = R.replace(/,/, '', label);
+        return label === '' ? 'ничего не выбрано' : label;
     }
 
     function onGetData () {
@@ -312,7 +404,6 @@ See the License for the specific language governing permissions and
     }
 
     function startTimer() {
-        // clearEl(state.spendTimeSpan);
         addEl(clearEl(state.spendTimeSpan), makeText('0 сек.'));
         let counter = 0;
         state.dataLoadTimer = setInterval(function(){
