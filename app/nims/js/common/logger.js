@@ -225,7 +225,7 @@ See the License for the specific language governing permissions and
             moveSlider: {},
         },
         joinRpgAPI : {
-            setJoinRpgSettings: {},
+            setJoinRpgSettings: null,
             isJoinRpgCredentialsValid: null,
             getJoinRpgSettings: null,
             getJoinRpgData: null
