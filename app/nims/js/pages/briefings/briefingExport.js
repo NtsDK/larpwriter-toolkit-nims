@@ -16,7 +16,12 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
- const Constants = require('common/constants');
+const Constants = require('common/constants');
+const {Export} = require('core');
+const PermissionInformer = require('permissionInformer');
+
+const Mustache = require('mustache');
+const Docxtemplater = require('docxtemplater');
 //  
 
 'use strict';
@@ -108,7 +113,7 @@ See the License for the specific language governing permissions and
             const filter = R.compose(R.equals(true), R.prop('doExport'));
             const value = profileSettings.filter(filter).map(func).join('');
 
-            callback(R.replace(/\{0\}/g, value, TEXT_TEMPLATE));
+            callback(R.replace(/\{0\}/g, value, Export.getTemplate(L10n.getLang(), 'textTemplate')));
         }).catch(Utils.handleError)
     }
 
@@ -187,9 +192,9 @@ See the License for the specific language governing permissions and
 
     function makeExport(type) {
         return () => {
-            if (!state.templates[type]) {
-                state.templates[type] = atob(templatesArr[type]);
-            }
+            // if (!state.templates[type]) {
+                state.templates[type] = atob(Export.getTemplate(L10n.getLang(), type)); 
+            // }
             exportDocxByTemplate(state.templates[type]);
         };
     }
@@ -251,11 +256,12 @@ See the License for the specific language governing permissions and
         const replaceBrackets = R.pipe(R.replace(/{{{/g, '{'), R.replace(/}}}/g, '}'), R.replace(/{{/g, '{'), R.replace(/}}/g, '}'));
         template = replaceBrackets(template).split('\n').map(string => ({ string }));
 
-        if (!state.templates.genericTemplate) {
-            state.templates.genericTemplate = atob(templatesArr.genericTemplate);
-        }
+        // if (!state.templates.genericTemplate) {
+            state.templates.genericTemplate = atob(Export.getTemplate(L10n.getLang(), 'genericTemplate'));
+        // }
 
-        const doc = new window.Docxgen(state.templates.genericTemplate);
+        const doc = new Docxtemplater(state.templates.genericTemplate);
+        // const doc = new window.Docxgen(state.templates.genericTemplate);
         doc.setData({
             splittedText: template
         });
@@ -366,7 +372,9 @@ See the License for the specific language governing permissions and
     }
 
     generateSingleDocx = R.curry((type, template, data) => {
-        const doc = new window.Docxgen(template);
+        // const doc = new window.Docxgen(template);
+        const doc = new Docxtemplater();
+        doc.loadZip(template);
         doc.setData(data);
         doc.render(); // apply them (replace all occurences of {first_name} by
         // Hipp, ...)

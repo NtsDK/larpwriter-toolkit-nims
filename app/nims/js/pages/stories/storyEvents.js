@@ -16,9 +16,12 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const PermissionInformer = require("permissionInformer");
+
 'use strict';
 
-// ((exports) => {
+module.exports = (Stories) => {
+    const exports = {};
     const state = {};
     const root = '.story-events-tab ';
     let initialized = false;
@@ -63,9 +66,9 @@ See the License for the specific language governing permissions and
     function clearInterface() {
         U.clearEl(U.queryEl('#eventBlock'));
         const positionSelectors = U.nl2array(document.querySelectorAll('.eventPositionSelector'));
-        R.ap([clearEl], positionSelectors);
+        R.ap([U.clearEl], positionSelectors);
         const selectorArr = U.nl2array(document.querySelectorAll('.eventEditSelector'));
-        R.ap([clearEl], selectorArr);
+        R.ap([U.clearEl], selectorArr);
     }
 
     function rebuildInterface(events, metaInfo) {
@@ -82,7 +85,7 @@ See the License for the specific language governing permissions and
 
         let option, addOptLoc;
         const positionSelectors = U.nl2array(document.querySelectorAll('.eventPositionSelector'));
-        R.ap([clearEl], positionSelectors);
+        R.ap([U.clearEl], positionSelectors);
         positionSelectors.forEach((positionSelector) => {
             addOptLoc = addOpt(positionSelector);
 
@@ -102,7 +105,7 @@ See the License for the specific language governing permissions and
 
         // refresh swap selector
         const selectorArr = U.nl2array(document.querySelectorAll('.eventEditSelector'));
-        R.ap([clearEl], selectorArr);
+        R.ap([U.clearEl], selectorArr);
 
         events.forEach((event, i) => {
             selectorArr.forEach((selector) => {
@@ -136,18 +139,18 @@ See the License for the specific language governing permissions and
         const el = U.wrapEl('tr', U.qte(`${root} .event-tmpl`));
         L10n.localizeStatic(el);
         const qe = U.qee(el);
-        U.addEl(U.qe('.event-number'), U.makeText(index + 1));
-        const nameInput = U.qe('.event-name-input');
+        U.addEl(qe('.event-number'), U.makeText(index + 1));
+        const nameInput = qe('.event-name-input');
         nameInput.value = event.name;
         nameInput.eventIndex = index;
         U.listen(nameInput, 'change', updateEventName);
 
-        const textInput = U.qe('.event-text');
+        const textInput = qe('.event-text');
         textInput.value = event.text;
         textInput.eventIndex = index;
         U.listen(textInput, 'change', updateEventText);
 
-        UI.makeEventTimePicker2(U.qe('.event-time'), {
+        UI.makeEventTimePicker2(qe('.event-time'), {
             eventTime: event.time,
             index,
             preGameDate,
@@ -259,4 +262,6 @@ See the License for the specific language governing permissions and
             value: input.value
         }).catch(Utils.handleError);
     }
-// })(window.StoryEvents = {});
+    return exports;
+}
+// )(window.StoryEvents = {});

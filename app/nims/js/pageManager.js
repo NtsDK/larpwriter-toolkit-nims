@@ -34,9 +34,11 @@ var vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
 vex.defaultOptions.className = 'vex-theme-os';
 
+require('vex-js/dist/css/vex-theme-os.css');
+
 // const Overview = require('./pages/overview/overview.js')
 const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
-    Briefings, LogViewer2 } = require('./pages');
+    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile } = require('./pages');
 
 // require("../../core/js/common/commonUtils.js");
 //const R = require("ramda");
@@ -238,21 +240,19 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'LogViewer2';
+                const firstTab = 'Briefings';
 
                 const addView = (containers, btnName, viewName, view, opts) => {
                     tabs[viewName] = {
                         viewName,
                         viewRes: UI.addView(containers, btnName, view, opts)
-                        // viewRes: UI.addView(containers, btnName, window[viewName], opts)
                     };
                 };
 
                 addView(state.containers, 'overview', 'Overview', Overview);
-                // //                addView(state.containers, 'profiles', 'Profiles');
-                // addView(state.containers, 'characters', 'Characters');
-                // addView(state.containers, 'players', 'Players');
-                // addView(state.containers, 'stories', 'Stories');
+                addView(state.containers, 'characters', 'Characters', Characters);
+                addView(state.containers, 'players', 'Players', Players);
+                addView(state.containers, 'stories', 'Stories', Stories);
                 addView(state.containers, 'adaptations', 'Adaptations', Adaptations);
                 addView(state.containers, 'briefings', 'Briefings', Briefings);
                 addView(state.containers, 'relations', 'Relations', Relations);
@@ -261,8 +261,8 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 addView(state.containers, 'timeline', 'Timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
                 addView(state.containers, 'social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
-                // addView(state.containers, 'profile-filter', 'ProfileFilter', { clazz: 'filterButton icon-button', tooltip: true });
-                // addView(state.containers, 'groups', 'GroupProfile', { clazz: 'groupsButton icon-button', tooltip: true });
+                addView(state.containers, 'profile-filter', 'ProfileFilter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
+                addView(state.containers, 'groups', 'GroupProfile', GroupProfile, { clazz: 'groupsButton icon-button', tooltip: true });
                 addView(state.containers, 'textSearch', 'TextSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
                 addView(state.containers, 'roleGrid', 'RoleGrid', RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
 
@@ -303,7 +303,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
                 U.addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
                 U.addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-//                U.addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+                U.addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
                 U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
                 U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'testTab', () => {
                     if(state.currentView.test){
@@ -384,16 +384,16 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     function makeButton(clazz, name, callback, opts) {
         const button = U.makeEl('button');
         U.addClass(button, clazz);
-        // if (opts.tooltip) {
-        //     const delegate = () => {
-        //         $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
-        //     };
-        //     L10n.onL10nChange(delegate);
-        //     $(button).tooltip({
-        //         title: L10n.getValue(`header-${name}`),
-        //         placement: 'bottom'
-        //     });
-        // }
+        if (opts.tooltip) {
+            const delegate = () => {
+                $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
+            };
+            L10n.onL10nChange(delegate);
+            $(button).tooltip({
+                title: L10n.getValue(`header-${name}`),
+                placement: 'bottom'
+            });
+        }
         U.addClass(button, 'action-button');
         if (opts.className) {
             U.addClass(button, opts.className);

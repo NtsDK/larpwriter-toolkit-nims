@@ -1,10 +1,11 @@
-exports.L10n = require('./js/l10n.js');
-exports.UI = require('./js/uiUtils.js');
-exports.FileUtils = require('./js/fileUtils.js');
-exports.DemoBase = require('./js/demoBase.js');
-exports.TestUtils = require('./js/testUtils.js');
-exports.LocalBaseAPI = require('./js/localAutoSave.js');
-exports.CommonUtils = require('./js/common/commonUtils.js');
+exports.L10n = require('./js/l10n');
+exports.UI = require('./js/uiUtils');
+exports.FileUtils = require('./js/fileUtils');
+exports.DemoBase = require('./js/demoBase');
+exports.TestUtils = require('./js/testUtils');
+exports.Export = require('./js/export');
+exports.LocalBaseAPI = require('./js/localAutoSave');
+exports.CommonUtils = require('./js/common/commonUtils');
 exports.CU = exports.CommonUtils;
 
 const {U, Utils} = require('./js/utils');

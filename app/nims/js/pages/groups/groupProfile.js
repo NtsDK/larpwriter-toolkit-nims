@@ -16,6 +16,10 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+ const Constants = require('common/constants');
+ const PermissionInformer = require("permissionInformer");
+ const FilterConfiguration = require('./FilterConfiguration');
+
 'use strict';
 
 // ((exports) => {
@@ -79,7 +83,7 @@ See the License for the specific language governing permissions and
                         state.renameGroupDialog.fromName = name.value;
                         state.renameGroupDialog.showDlg();
                     });
-                    U.listen(removeBtn, 'click', GroupProfile.removeGroup(() => name.value, exports.refresh, removeBtn));
+                    U.listen(removeBtn, 'click', exports.removeGroup(() => name.value, exports.refresh, removeBtn));
                 } else {
                     U.setAttr(U.qee(el, '.rename'), 'disabled', 'disabled');
                     U.setAttr(removeBtn, 'disabled', 'disabled');

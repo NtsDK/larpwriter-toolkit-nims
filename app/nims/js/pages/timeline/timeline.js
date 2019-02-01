@@ -19,6 +19,10 @@ See the License for the specific language governing permissions and
 const vis = require('vis');
 require('vis/dist/vis.min.css');
 
+const PermissionInformer = require('permissionInformer');
+
+const dateFormat = require("dateFormat");
+
 'use strict';
 
 // ((exports) => {
@@ -152,7 +156,7 @@ require('vis/dist/vis.min.css');
 
         U.addEls(U.clearEl(U.queryEl(`${root} .timeline-list`)), events.map(event => {
             const row = U.qmte(`${root} .timeline-event-tmpl`);
-            U.addEl(U.qee(row, '.time'), U.makeText(event.time.format('yyyy/mm/dd h:MM')));
+            U.addEl(U.qee(row, '.time'), U.makeText(dateFormat(event.time, 'yyyy/mm/dd h:MM')));
             U.addEl(U.qee(row, '.story-name'), U.makeText(event.storyName));
             U.addEl(U.qee(row, '.event-name'), U.makeText(event.name));
             U.addEl(U.qee(row, '.characters'), U.makeText(event.characters.join(', ')));

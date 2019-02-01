@@ -18,7 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-// ((exports) => {
+const PermissionInformer = require("permissionInformer");
+const WriterStory = require('./writerStory')(module.exports);
+const StoryEvents = require('./storyEvents')(module.exports);
+const StoryCharacters = require('./storyCharacters')(module.exports);
+const EventPresence = require('./eventPresence')(module.exports);
+
     const state = {};
     const root = '.stories-tab ';
 
@@ -197,4 +202,3 @@ See the License for the specific language governing permissions and
         const settings = SM.getSettings();
         settings.Stories.storyName = storyName;
     }
-// })(window.Stories = {});

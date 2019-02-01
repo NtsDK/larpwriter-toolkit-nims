@@ -196,9 +196,9 @@ See the License for the specific language governing permissions and
             U.addClass(div, 'bar');
             if (barData) {
                 div.style.height = `${barData.normValue * 100}%`;
-                // $(div).tooltip({
-                //     title: barData.tip,
-                // });
+                $(div).tooltip({
+                    title: barData.tip,
+                });
             }
 
             U.addEl(place, div);

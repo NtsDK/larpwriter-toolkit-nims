@@ -16,9 +16,13 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const PermissionInformer = require("permissionInformer");
+const Constants = require('common/constants');
+
 'use strict';
 
-// ((exports) => {
+module.exports = (Stories) => {
+    const exports = {};
     const state = {};
     const root = '.story-characters-tab ';
     const superRoot = '.stories-tab ';
@@ -47,7 +51,7 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        state.ExternalCharacterSelectors.forEach(clearEl);
+        state.ExternalCharacterSelectors.forEach(U.clearEl);
 
         U.clearEl(U.queryEl(`${root}.storyCharactersTable`));
 
@@ -140,15 +144,15 @@ See the License for the specific language governing permissions and
         L10n.localizeStatic(el);
         const qe = U.qee(el);
 
-        U.addEl(U.qe('.character-name'), U.makeText(characterMeta.displayName));
+        U.addEl(qe('.character-name'), U.makeText(characterMeta.displayName));
 
-        let input = U.qe('.inventoryInput');
+        let input = qe('.inventoryInput');
         input.value = character.inventory;
         input.characterName = character.name;
         U.listen(input, 'change', updateCharacterInventory);
 
         Constants.characterActivityTypes.forEach((activityType) => {
-            input = U.qe(`.${activityType} input`);
+            input = qe(`.${activityType} input`);
             if (character.activity[activityType]) {
                 input.checked = true;
             }
@@ -156,14 +160,14 @@ See the License for the specific language governing permissions and
             input.activityType = activityType;
             U.listen(input, 'change', onChangeCharacterActivity);
             U.setAttr(input, 'id', character.name + activityType);
-            U.setAttr(U.qe(`.${activityType} label`), 'for', character.name + activityType);
+            U.setAttr(qe(`.${activityType} label`), 'for', character.name + activityType);
         });
 
-        U.listen(U.qe('.replace.character'), 'click', () => {
+        U.listen(qe('.replace.character'), 'click', () => {
             state.switchCharacterDialog.characterName = character.name;
             state.switchCharacterDialog.showDlg();
         });
-        U.listen(U.qe('.remove.character'), 'click', removeCharacter(character.name));
+        U.listen(qe('.remove.character'), 'click', removeCharacter(character.name));
         return el;
     }
 
@@ -183,4 +187,5 @@ See the License for the specific language governing permissions and
             checked: event.target.checked
         }).catch(Utils.handleError);
     }
-// })(window.StoryCharacters = {});
+    return exports;
+}

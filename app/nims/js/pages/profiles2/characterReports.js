@@ -16,6 +16,8 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const ProjectUtils = require('common/ProjectUtils.js');
+
 'use strict';
 
 // ((exports) => {
@@ -28,15 +30,15 @@ See the License for the specific language governing permissions and
         const row = U.qte(`${root} .story-report-row-tmpl`);
         const qe = U.qee(row);
         L10n.localizeStatic(row);
-        U.addEl(U.qe('.story-name'), U.makeText(storyInfo.storyName));
-        U.setClassByCondition(U.qe('.activity-active'), 'active-item-in-report', act.active);
-        U.setClassByCondition(U.qe('.activity-follower'), 'active-item-in-report', act.follower);
-        U.setClassByCondition(U.qe('.activity-defensive'), 'active-item-in-report', act.defensive);
-        U.setClassByCondition(U.qe('.activity-passive'), 'active-item-in-report', act.passive);
-        U.addEl(U.qe('.completeness'), U.makeText(completeness));
-        U.setStyle(U.qe('.completeness'), 'background-color', color);
-        U.addEl(U.qe('.meets'), U.makeText(storyInfo.meets.join(', ')));
-        U.addEl(U.qe('.inventory'), U.makeText(storyInfo.inventory));
+        U.addEl(qe('.story-name'), U.makeText(storyInfo.storyName));
+        U.setClassByCondition(qe('.activity-active'), 'active-item-in-report', act.active);
+        U.setClassByCondition(qe('.activity-follower'), 'active-item-in-report', act.follower);
+        U.setClassByCondition(qe('.activity-defensive'), 'active-item-in-report', act.defensive);
+        U.setClassByCondition(qe('.activity-passive'), 'active-item-in-report', act.passive);
+        U.addEl(qe('.completeness'), U.makeText(completeness));
+        U.setStyle(qe('.completeness'), 'background-color', color);
+        U.addEl(qe('.meets'), U.makeText(storyInfo.meets.join(', ')));
+        U.addEl(qe('.inventory'), U.makeText(storyInfo.inventory));
         return row;
     };
 
@@ -45,46 +47,46 @@ See the License for the specific language governing permissions and
         const qe = U.qee(row);
         L10n.localizeStatic(row);
         const secondCharacter = ProjectUtils.get2ndRelChar(characterName, rel);
-        U.addEl(U.qe('.character-name'), U.makeText(secondCharacter));
+        U.addEl(qe('.character-name'), U.makeText(secondCharacter));
         const isStarter = rel.starter === characterName;
 
         if (isStarter) {
             U.setAttr(
-                U.qe('.direction-starterToEnder'), 'title',
+                qe('.direction-starterToEnder'), 'title',
                 L10n.format('briefings', 'starterToEnder', [characterName, secondCharacter])
             );
             U.setAttr(
-                U.qe('.direction-enderToStarter'), 'title',
+                qe('.direction-enderToStarter'), 'title',
                 L10n.format('briefings', 'enderToStarter', [secondCharacter, characterName])
             );
         } else {
             U.setAttr(
-                U.qe('.direction-starterToEnder'), 'title',
+                qe('.direction-starterToEnder'), 'title',
                 L10n.format('briefings', 'starterToEnder', [secondCharacter, characterName])
             );
             U.setAttr(
-                U.qe('.direction-enderToStarter'), 'title',
+                qe('.direction-enderToStarter'), 'title',
                 L10n.format('briefings', 'enderToStarter', [characterName, secondCharacter])
             );
         }
 
         U.setClassByCondition(
-            U.qe('.direction-starterToEnder'), 'active-item-in-report',
+            qe('.direction-starterToEnder'), 'active-item-in-report',
             R.contains(isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence)
         );
-        U.setClassByCondition(U.qe('.direction-allies'), 'active-item-in-report', R.contains('allies', rel.essence));
+        U.setClassByCondition(qe('.direction-allies'), 'active-item-in-report', R.contains('allies', rel.essence));
         U.setClassByCondition(
-            U.qe('.direction-enderToStarter'), 'active-item-in-report',
+            qe('.direction-enderToStarter'), 'active-item-in-report',
             R.contains(!isStarter ? 'starterToEnder' : 'enderToStarter', rel.essence)
         );
 
         const finished = isStarter ? rel.starterTextReady : rel.enderTextReady;
 
-        U.addEl(U.qe('.completeness'), U.makeText(L10n.get('constant', finished ? 'finished' : 'unfinished')));
-        U.setClassByCondition(U.qe('.completeness'), 'relation-finished', finished);
-        U.setClassByCondition(U.qe('.completeness'), 'relation-unfinished', !finished);
+        U.addEl(qe('.completeness'), U.makeText(L10n.get('constant', finished ? 'finished' : 'unfinished')));
+        U.setClassByCondition(qe('.completeness'), 'relation-finished', finished);
+        U.setClassByCondition(qe('.completeness'), 'relation-unfinished', !finished);
 
-        U.addEl(U.qe('.origin'), U.makeText(rel.origin));
+        U.addEl(qe('.origin'), U.makeText(rel.origin));
         return row;
     });
 

@@ -18,6 +18,12 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
+const GroupProfile = require('./groupProfile');
+const FilterConfiguration = require('./FilterConfiguration');
+const Constants = require('common/constants');
+
+const PermissionInformer = require('permissionInformer');
+
 // ((exports) => {
     const state = {};
     const root = '.profile-filter-tab ';

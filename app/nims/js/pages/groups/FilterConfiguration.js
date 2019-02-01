@@ -18,6 +18,9 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names */
 
+const Constants = require('common/constants');
+const ProjectUtils = require('common/ProjectUtils');
+
 'use strict';
 
 function FilterConfiguration(info) {
@@ -109,3 +112,5 @@ FilterConfiguration.prototype.getProfileIds = function (filterModel) {
     const offset = this.groupedProfileFilterItems[0].profileFilterItems.length;
     return this.getDataArrays(filterModel).map(dataArray => `${dataArray[0].value || ''}/${dataArray[offset].value || ''}`).sort();
 };
+
+module.exports = FilterConfiguration;

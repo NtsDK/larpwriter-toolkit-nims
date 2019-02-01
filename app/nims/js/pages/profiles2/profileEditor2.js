@@ -16,9 +16,15 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const PermissionInformer = require("permissionInformer");
+const ProfileEditorCore = require('./profileEditorCore');
+const CharacterReports = require('./characterReports');
+const ProjectUtils = require('common/ProjectUtils');
+
 'use strict';
 
-function ProfileEditorTmpl(exports, opts) {
+function ProfileEditorTmpl(opts) {
+    const exports = {};
     const { firstType, secondType, settingsPath } = opts;
 
     const tmplRoot = '.profile-editor2-tab-tmpl';
@@ -270,9 +276,10 @@ function ProfileEditorTmpl(exports, opts) {
             });
         };
     }
+    return exports;
 }
 
-ProfileEditorTmpl(this.CharacterEditor = {}, {
+exports.CharacterEditor = ProfileEditorTmpl({
     firstType: 'character',
     secondType: 'player',
     settingsPath: 'Characters',
@@ -287,7 +294,7 @@ ProfileEditorTmpl(this.CharacterEditor = {}, {
     removeProfile: 'remove-character',
 });
 
-ProfileEditorTmpl(this.PlayerEditor = {}, {
+exports.PlayerEditor = ProfileEditorTmpl({
     firstType: 'player',
     secondType: 'character',
     settingsPath: 'Players',
@@ -301,3 +308,7 @@ ProfileEditorTmpl(this.PlayerEditor = {}, {
     renameProfile: 'rename-player',
     removeProfile: 'remove-player',
 });
+
+// ProfileEditorTmpl(this.CharacterEditor = {}, );
+
+// ProfileEditorTmpl(this.PlayerEditor = {}, );

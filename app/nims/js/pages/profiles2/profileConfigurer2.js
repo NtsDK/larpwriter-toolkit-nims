@@ -16,6 +16,9 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const Constants = require('common/constants.js');
+const PermissionInformer = require("permissionInformer");
+
 'use strict';
 
 
@@ -28,7 +31,8 @@ See the License for the specific language governing permissions and
 // 2. - too complex way
 // 3. simple and lesser complexity, I choose this way
 
-function ProfileConfigurerTmpl(exports, opts) {
+function ProfileConfigurerTmpl(opts) {
+    const exports = {};
     const { tabType } = opts;
 
     const tmplRoot = '.profile-configurer2-tab-tmpl';
@@ -178,7 +182,7 @@ function ProfileConfigurerTmpl(exports, opts) {
 
             const positionSelectors = [U.queryEl(`${tabRoot} .create-entity-position-select`),
                 U.queryEl(`${tabRoot} .move-entity-position-select`)];
-            positionSelectors.map(clearEl).map(U.fillSelector(R.__, U.arr2Select(arr))).map(U.setProp(R.__, 'selectedIndex', allProfileSettings.length));
+            positionSelectors.map(U.clearEl).map(U.fillSelector(R.__, U.arr2Select(arr))).map(U.setProp(R.__, 'selectedIndex', allProfileSettings.length));
 
             const table = U.clearEl(U.queryEl(`${root}.profile-config-container`));
 
@@ -577,14 +581,25 @@ function ProfileConfigurerTmpl(exports, opts) {
             });
         };
     }
+    return exports;
 }
 
-ProfileConfigurerTmpl(this.CharacterConfigurer = {}, {
+exports.CharacterConfigurer = ProfileConfigurerTmpl({
     tabType: 'character',
     panelName: 'characters-profile-structure',
 });
 
-ProfileConfigurerTmpl(this.PlayerConfigurer = {}, {
+exports.PlayerConfigurer = ProfileConfigurerTmpl({
     tabType: 'player',
     panelName: 'players-profile-structure',
 });
+
+// ProfileConfigurerTmpl(this.CharacterConfigurer = {}, {
+//     tabType: 'character',
+//     panelName: 'characters-profile-structure',
+// });
+
+// ProfileConfigurerTmpl(this.PlayerConfigurer = {}, {
+//     tabType: 'player',
+//     panelName: 'players-profile-structure',
+// });

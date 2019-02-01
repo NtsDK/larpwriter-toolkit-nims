@@ -16,9 +16,12 @@ See the License for the specific language governing permissions and
  Utils, DBMS, Stories
  */
 
+const PermissionInformer = require("permissionInformer");
+
 'use strict';
 
-// ((exports) => {
+module.exports = (Stories) => {
+    const exports = {};
     const state = {};
     exports.name = 'EventPresence';
     const root = '#eventPresenceDiv ';
@@ -157,4 +160,5 @@ See the License for the specific language governing permissions and
             });
         }
     }
-// })(window.EventPresence = {});
+    return exports;
+}

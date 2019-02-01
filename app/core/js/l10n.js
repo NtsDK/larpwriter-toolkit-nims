@@ -1,4 +1,4 @@
-const {Dictionaries, defaultLang } = require('./translations.js');
+const {Dictionaries, defaultLang } = require('./translations');
 const CommonUtils = require("./common/commonUtils.js");
 const U  = require('./utils.js').U;
 // import { setAttr } from "./utils.js";

@@ -18,7 +18,8 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-// ((exports) => {
+module.exports = (Stories) => {
+    const exports = {};
     const state = {};
 
     exports.init = () => {
@@ -46,4 +47,7 @@ See the License for the specific language governing permissions and
             value: storyArea.value
         }).catch(Utils.handleError);
     }
-// })(window.WriterStory = {});
+    return exports;
+}
+
+//(window.WriterStory = {});
