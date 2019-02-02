@@ -59,7 +59,7 @@ See the License for the specific language governing permissions and
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
-                    resolve(CU.clone(this.database.Stories[storyName]));
+                    resolve(R.clone(this.database.Stories[storyName]));
                 });
             });
         };

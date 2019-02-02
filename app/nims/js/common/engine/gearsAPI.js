@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
 
         // DBMS.gears.get()
         LocalDBMS.prototype.getAllGearsData = function () {
-            return Promise.resolve(CU.clone(this.database.Gears));
+            return Promise.resolve(R.clone(this.database.Gears));
         };
         // DBMS.gears.set()
         LocalDBMS.prototype.setGearsData = function ({data}={}) {

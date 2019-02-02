@@ -62,9 +62,9 @@ See the License for the specific language governing permissions and
         request.fail((errorInfo, textStatus, errorThrown) => {
             let msg;
             try {
-                msg = Utils.handleErrorMsg(JSON.parse(errorInfo.responseText));
+                msg = UI.handleErrorMsg(JSON.parse(errorInfo.responseText));
             } catch (err) {
-                msg = Utils.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
+                msg = UI.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
             }
             //             var error = JSON.parse(jqXHR.responseText);
             //             $('.error', form).html(error.message);

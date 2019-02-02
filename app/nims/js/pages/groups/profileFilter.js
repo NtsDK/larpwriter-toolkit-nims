@@ -21,6 +21,7 @@ See the License for the specific language governing permissions and
 const GroupProfile = require('./groupProfile');
 const FilterConfiguration = require('./FilterConfiguration');
 const Constants = require('common/constants');
+const ProjectUtils = require('common/ProjectUtils');
 
 const PermissionInformer = require('permissionInformer');
 
@@ -46,14 +47,14 @@ const PermissionInformer = require('permissionInformer');
 
         U.listen(U.queryEl(`${root}#profile-filter-columns .profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
 
-//        Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
+//        UI.enable(exports.content, 'isGroupEditable', isGroupEditable);
 //        listen U.queryEl(`${root}.save-entity-select`)
 
         $(`${root}.save-entity-select`).select2().on('change', (event) => {
             const group = event.target.value;
             const userGroups = state.userGroupNames.map(R.prop('value'));
             const isGroupEditable = R.contains(group, userGroups);
-            Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
+            UI.enable(exports.content, 'isGroupEditable', isGroupEditable);
         });
 
         U.listen(U.queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
@@ -107,7 +108,7 @@ const PermissionInformer = require('permissionInformer');
             );
 
             rebuildContent();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function onAddFilterCondition() {
@@ -129,18 +130,18 @@ const PermissionInformer = require('permissionInformer');
             PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false})
         ]).then(results => {
             const [userGroupNames, allGroupNames] = results;
-            Utils.enableEl(U.qe(`${root}.rename.group`), allGroupNames.length > 0);
-            Utils.enableEl(U.qe(`${root}.remove.group`), allGroupNames.length > 0);
-            Utils.enableEl(U.qe(`${root}.show-entity-button`), allGroupNames.length > 0);
-            Utils.enableEl(U.qe(`${root}.save-entity-button`), allGroupNames.length > 0);
-            Utils.enableEl(U.qe(`${root}.save-entity-select`), allGroupNames.length > 0);
+            UI.enableEl(U.qe(`${root}.rename.group`), allGroupNames.length > 0);
+            UI.enableEl(U.qe(`${root}.remove.group`), allGroupNames.length > 0);
+            UI.enableEl(U.qe(`${root}.show-entity-button`), allGroupNames.length > 0);
+            UI.enableEl(U.qe(`${root}.save-entity-button`), allGroupNames.length > 0);
+            UI.enableEl(U.qe(`${root}.save-entity-select`), allGroupNames.length > 0);
 
             state.userGroupNames = userGroupNames;
             state.allGroupNames = allGroupNames;
             const data = UI.getSelect2Data(allGroupNames);
             U.clearEl(U.queryEl(`${root}.save-entity-select`));
             $(`${root}.save-entity-select`).select2(data);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function getHeaderProfileItemNames(profileSettings) {
@@ -150,8 +151,8 @@ const PermissionInformer = require('permissionInformer');
     function makePrintData() {
         const dataArrays = state.filterConfiguration.getDataArrays(makeFilterModel());
 
-        const sortFunc = CommonUtils.charOrdAFactoryBase(state.sortDir, (a, b) => a > b, (a) => {
-            const map = CommonUtils.arr2map(a, 'itemName');
+        const sortFunc = CU.charOrdAFactoryBase(state.sortDir, (a, b) => a > b, (a) => {
+            const map = R.indexBy(R.prop('itemName'), a);
             const item = map[state.sortKey];
             let { value } = item;
             if (value === undefined) return value;
@@ -184,14 +185,14 @@ const PermissionInformer = require('permissionInformer');
         const groupName = U.queryEl(`${root}.save-entity-select`).value;
         PermissionInformer.isEntityEditable({type: 'group', name: groupName}).then((isGroupEditable) => {
             if (!isGroupEditable) {
-                Utils.alert(U.strFormat(L10n.getValue('groups-group-editing-forbidden'), [groupName]));
+                UI.alert(CU.strFormat(L10n.getValue('groups-group-editing-forbidden'), [groupName]));
                 return;
             }
             DBMS.saveFilterToGroup({
                 groupName,
                 filterModel: makeFilterModel()
-            }).catch(Utils.handleError);
-        }).catch(Utils.handleError);
+            }).catch(UI.handleError);
+        }).catch(UI.handleError);
     }
 
     function loadFilterFromGroup() {
@@ -203,12 +204,12 @@ const PermissionInformer = require('permissionInformer');
                     group.filterModel
                 );
             if (conflictTypes.length !== 0) {
-                Utils.alert(U.strFormat(L10n.getValue('groups-base-filter-is-incompatible-with-page-profiles'), [conflictTypes.join(',')]));
+                UI.alert(CU.strFormat(L10n.getValue('groups-base-filter-is-incompatible-with-page-profiles'), [conflictTypes.join(',')]));
                 return;
             }
             applyFilterModel(group.filterModel);
             rebuildContent();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function downloadFilterTable() {
@@ -225,10 +226,10 @@ const PermissionInformer = require('permissionInformer');
     }
 
     function applyFilterModel(filterModel) {
-        filterModel = CommonUtils.arr2map(filterModel, 'name');
+        filterModel = R.indexBy(R.prop('name'), filterModel);
 
         Object.keys(state.inputItems).forEach((inputItemName) => {
-            if (inputItemName.endsWith(':numberInput') || inputItemName.endsWith(':multiEnumInput')) {
+            if (R.endsWith(':numberInput', inputItemName) || R.endsWith(':multiEnumInput', inputItemName)) {
                 return;
             }
 
@@ -303,7 +304,7 @@ const PermissionInformer = require('permissionInformer');
     function makeFilterModel() {
         const model = [];
         Object.keys(state.inputItems).forEach((inputItemName) => {
-            if (inputItemName.endsWith(':numberInput') || inputItemName.endsWith(':multiEnumInput')) {
+            if (R.endsWith(':numberInput', inputItemName) || R.endsWith(':multiEnumInput', inputItemName)) {
                 return;
             }
             if (state.checkboxes[inputItemName].checked === false) {
@@ -555,8 +556,8 @@ const PermissionInformer = require('permissionInformer');
                     toInput.value = '';
                     dialog.hideDlg();
                     exports.refresh();
-                }).catch(Utils.handleError);
-            }).catch(err => setError(dialog, err));
+                }).catch(UI.handleError);
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 // })(window.ProfileFilter = {});

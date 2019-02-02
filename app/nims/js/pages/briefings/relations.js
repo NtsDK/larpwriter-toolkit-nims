@@ -53,7 +53,7 @@ const RelationsPreview = require('./relationsPreview');
                 // this call trigger buildContent
                 $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
             }
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function buildContent(event) {
@@ -88,6 +88,6 @@ const RelationsPreview = require('./relationsPreview');
             data.profiles = profiles;
             data.profileBindings = R.fromPairs(profileBindings);
             callback();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 // })(window.Relations = {});

@@ -58,9 +58,9 @@ module.exports = (Stories) => {
         ]).then(results => {
             const [isStoryEditable, metaInfo, events] = results;
             rebuildInterface(events, metaInfo);
-            Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
             Stories.chainRefresh();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function clearInterface() {
@@ -90,7 +90,7 @@ module.exports = (Stories) => {
             addOptLoc = addOpt(positionSelector);
 
             events.forEach((event) => {
-                addOptLoc(U.strFormat(L10n.getValue('common-set-item-before'), [event.name]));
+                addOptLoc(CU.strFormat(L10n.getValue('common-set-item-before'), [event.name]));
             });
 
             addOptLoc(L10n.getValue('common-set-item-as-last'));
@@ -131,7 +131,7 @@ module.exports = (Stories) => {
                 eventNameInput.value = '';
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -184,7 +184,7 @@ module.exports = (Stories) => {
             }).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -193,33 +193,33 @@ module.exports = (Stories) => {
             DBMS.cloneEvent({
                 storyName: Stories.getCurrentStoryName(),
                 index
-            }).then(exports.refresh, Utils.handleError);
+            }).then(exports.refresh, UI.handleError);
         };
     }
 
     function mergeEvents(index, firstName, secondName) {
         return () => {
             if (state.eventsLength === index + 1) {
-                Utils.alert(L10n.getValue('stories-cant-merge-last-event'));
+                UI.alert(L10n.getValue('stories-cant-merge-last-event'));
                 return;
             }
 
-            Utils.confirm(L10n.format('stories', 'confirm-event-merge', [firstName, secondName]), () => {
+            UI.confirm(L10n.format('stories', 'confirm-event-merge', [firstName, secondName]), () => {
                 DBMS.mergeEvents({
                     storyName: Stories.getCurrentStoryName(),
                     index
-                }).then(exports.refresh, Utils.handleError);
+                }).then(exports.refresh, UI.handleError);
             });
         };
     }
 
     function removeEvent(name, index) {
         return () => {
-            Utils.confirm(U.strFormat(L10n.getValue('stories-remove-event-warning'), [name]), () => {
+            UI.confirm(CU.strFormat(L10n.getValue('stories-remove-event-warning'), [name]), () => {
                 DBMS.removeEvent({
                     storyName: Stories.getCurrentStoryName(),
                     index
-                }).then(exports.refresh, Utils.handleError);
+                }).then(exports.refresh, UI.handleError);
             });
         };
     }
@@ -238,7 +238,7 @@ module.exports = (Stories) => {
                 index: myInput.eventIndex,
                 property: 'time',
                 value: input.val()
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
             U.removeClass(myInput, 'defaultDate');
         };
     }
@@ -250,7 +250,7 @@ module.exports = (Stories) => {
             index: input.eventIndex,
             property: 'name',
             value: input.value
-        }).then(exports.refresh, Utils.handleError);
+        }).then(exports.refresh, UI.handleError);
     }
 
     function updateEventText(event) {
@@ -260,7 +260,7 @@ module.exports = (Stories) => {
             index: input.eventIndex,
             property: 'text',
             value: input.value
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
     return exports;
 }

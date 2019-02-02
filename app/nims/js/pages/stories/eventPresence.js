@@ -56,7 +56,7 @@ module.exports = (Stories) => {
             });
             const dataArray = characterArray.map(elem => map[elem]);
 
-            dataArray.sort(Utils.charOrdAObject);
+            dataArray.sort(CU.charOrdAObject);
 
             const displayArray = dataArray.map(elem => elem.displayName);
             characterArray = dataArray.map(elem => elem.value);
@@ -75,9 +75,9 @@ module.exports = (Stories) => {
             appendTableHeader(tableHead, displayArray);
             events.forEach((event, i) => {
                 appendTableInput(table, event, i, characterArray);
-                Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
+                UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
             });
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function appendTableHeader(table, characterArray) {
@@ -138,15 +138,15 @@ module.exports = (Stories) => {
                 storyName: Stories.getCurrentStoryName(),
                 eventIndex: event.target.eventIndex,
                 characterName: event.target.characterName
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         } else if (!event.target.hasText) {
             DBMS.removeCharacterFromEvent({
                 storyName: Stories.getCurrentStoryName(),
                 eventIndex: event.target.eventIndex,
                 characterName: event.target.characterName
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         } else {
-            Utils.confirm(U.strFormat(
+            UI.confirm(CU.strFormat(
                 L10n.getValue('stories-remove-character-from-event-warning'),
                 [event.target.characterName, event.target.eventName]
             ), () => {
@@ -154,7 +154,7 @@ module.exports = (Stories) => {
                     storyName: Stories.getCurrentStoryName(),
                     eventIndex: event.target.eventIndex,
                     characterName: event.target.characterName
-                }).catch(Utils.handleError);
+                }).catch(UI.handleError);
             }, () => {
                 event.target.checked = true;
             });

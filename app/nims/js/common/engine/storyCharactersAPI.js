@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getStoryCharacters = function ({storyName}={}, callback) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
-                    resolve(CU.clone(this.database.Stories[storyName].characters));
+                    resolve(R.clone(this.database.Stories[storyName].characters));
                 });
             });
         };

@@ -65,7 +65,7 @@ const PermissionInformer = require("permissionInformer");
         U.listen(button, 'click', () => U.addClass(warning, 'hidden'));
     }
 
-    const nodeSort = CommonUtils.charOrdAFactory(a => a.label.toLowerCase());
+    
 
     exports.refresh = () => {
         let selector = U.fillSelector(U.clearEl(U.queryEl('#networkSelector')), UI.constArr2Select(Constants.networks));
@@ -115,8 +115,8 @@ const PermissionInformer = require("permissionInformer");
                 name: L10n.const(Constants.noGroup)
             };
 
-            const profileLabel = U.strFormat(L10n.getValue('social-network-profile-group'));
-            const filterLabel = U.strFormat(L10n.getValue('social-network-filter-group'));
+            const profileLabel = CU.strFormat(L10n.getValue('social-network-profile-group'));
+            const filterLabel = CU.strFormat(L10n.getValue('social-network-filter-group'));
 
             const profileGroups = colorGroups.map(group => group.name).map(name =>
                 ({ value: PROFILE_GROUP + name, name: profileLabel([name]) }));
@@ -134,7 +134,7 @@ const PermissionInformer = require("permissionInformer");
                 storyNames,
                 Stories: stories
             });
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function initGroupColors(colorGroups) {
@@ -176,10 +176,10 @@ const PermissionInformer = require("permissionInformer");
 
         if (groupName === 'noGroup') {
             els.push(makeLegendItem(L10n.const('noGroup'), Constants.snFixedColors.noGroup.color));
-        } else if (CommonUtils.startsWith(groupName, PROFILE_GROUP)) {
+        } else if (R.startsWith(PROFILE_GROUP, groupName)) {
             els = els.concat(state.groupLists[groupName].map(value =>
                 makeLegendItem(value.substring(PROFILE_GROUP.length), state.groupColors[value].color)));
-        } else if (CommonUtils.startsWith(groupName, FILTER_GROUP)) {
+        } else if (R.startsWith(FILTER_GROUP, groupName)) {
             els.push(makeLegendItem(L10n.const('noGroup'), Constants.snFixedColors.noGroup.color));
             els.push(makeLegendItem(L10n.const('fromGroup'), Constants.snFixedColors.fromGroup.color));
         } else {
@@ -208,10 +208,10 @@ const PermissionInformer = require("permissionInformer");
     function getNodeGroup(characterName, groupName) {
         if (groupName === 'noGroup') {
             return groupName;
-        } else if (CommonUtils.startsWith(groupName, PROFILE_GROUP)) {
+        } else if (R.startsWith(PROFILE_GROUP, groupName)) {
             const character = state.Characters[characterName];
             return `${groupName}.${character[groupName.substring(PROFILE_GROUP.length)]}`;
-        } else if (CommonUtils.startsWith(groupName, FILTER_GROUP)) {
+        } else if (R.startsWith(FILTER_GROUP, groupName)) {
             return state.groupCharacterSets[groupName.substring(FILTER_GROUP.length)][characterName] ? 'fromGroup' : 'noGroup';
         }
         throw new Error(`Unexpected group name: ${groupName}`);
@@ -284,6 +284,7 @@ const PermissionInformer = require("permissionInformer");
         refreshLegend(U.queryEl('#networkNodeGroupSelector').value);
 
         U.clearEl(U.queryEl('#nodeFocusSelector'));
+        const nodeSort = CU.charOrdAFactory(a => a.label.toLowerCase());
         nodes.sort(nodeSort);
 
         const data = UI.getSelect2DataCommon(UI.remapProps(['id', 'text'], ['id', 'originName']), nodes);
@@ -456,7 +457,7 @@ const PermissionInformer = require("permissionInformer");
             state.network.destroy();
         }
 
-        const opts = CommonUtils.clone(Constants.socialNetworkOpts);
+        const opts = R.clone(Constants.socialNetworkOpts);
         opts.groups = state.groupColors;
 
         state.network = new vis.Network(container, data, opts);

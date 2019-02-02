@@ -44,7 +44,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getGroup = function ({groupName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(groupCheck(groupName, this.database), reject, () => {
-                    resolve(CU.clone(this.database.Groups[groupName]));
+                    resolve(R.clone(this.database.Groups[groupName]));
                 });
             })
         };

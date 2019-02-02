@@ -18,7 +18,7 @@ module.exports = function RoutingTabTmpl(opts) {
             viewRes: UI.addView(containers, tab.btnName, tab.viewBody)
         })));
 
-        Utils.setFirstTab(containers, tabs[opts.firstTab].viewRes);
+        UI.setFirstTab(containers, tabs[opts.firstTab].viewRes);
         exports.content = el;
     };
 

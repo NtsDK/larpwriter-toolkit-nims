@@ -110,9 +110,9 @@ function ProfileConfigurerTmpl(opts) {
                     const defaultValueSelect = U.qee(body, '.default-value-select');
                     U.listen(inputArea, 'input', () => {
                         const newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
-                        const addedValues = R.sort(CommonUtils.charOrdA, R.difference(newVals, inputArea.srcList));
+                        const addedValues = R.sort(CU.charOrdA, R.difference(newVals, inputArea.srcList));
                         U.addEls(U.clearEl(addedValuesArea), enumList2Els(addedValues));
-                        const removedValues = R.sort(CommonUtils.charOrdA, R.difference(inputArea.srcList, newVals));
+                        const removedValues = R.sort(CU.charOrdA, R.difference(inputArea.srcList, newVals));
                         U.addEls(U.clearEl(removedValuesArea), enumList2Els(removedValues));
 
                         let defaultValue = defaultValueSelect.value;
@@ -144,9 +144,9 @@ function ProfileConfigurerTmpl(opts) {
                     const inputArea = U.qee(body, '.enum-value-input');
                     U.listen(inputArea, 'input', () => {
                         const newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
-                        const addedValues = R.sort(CommonUtils.charOrdA, R.difference(newVals, inputArea.srcList));
+                        const addedValues = R.sort(CU.charOrdA, R.difference(newVals, inputArea.srcList));
                         U.addEls(U.clearEl(addedValuesArea), enumList2Els(addedValues));
-                        const removedValues = R.sort(CommonUtils.charOrdA, R.difference(inputArea.srcList, newVals));
+                        const removedValues = R.sort(CU.charOrdA, R.difference(inputArea.srcList, newVals));
                         U.addEls(U.clearEl(removedValuesArea), enumList2Els(removedValues));
                     });
                 }
@@ -177,7 +177,7 @@ function ProfileConfigurerTmpl(opts) {
             U.hideEl(U.queryEl(`${tabRoot} .alert`), allProfileSettings.length !== 0);
             U.hideEl(U.queryEl(`${tabRoot} table`), allProfileSettings.length === 0);
 
-            const arr = allProfileSettings.map(R.compose(U.strFormat(L10n.getValue('common-set-item-before')), R.append(R.__, []), R.prop('name')));
+            const arr = allProfileSettings.map(R.compose(CU.strFormat(L10n.getValue('common-set-item-before')), R.append(R.__, []), R.prop('name')));
             arr.push(L10n.getValue('common-set-item-as-last'));
 
             const positionSelectors = [U.queryEl(`${tabRoot} .create-entity-position-select`),
@@ -189,10 +189,10 @@ function ProfileConfigurerTmpl(opts) {
             try {
                 U.addEls(table, allProfileSettings.map(getInput(type)));
             } catch (err1) {
-                Utils.handleError(err1); return;
+                UI.handleError(err1); return;
             }
-            Utils.enable(exports.content, 'adminOnly', isAdmin);
-        }).catch(Utils.handleError);
+            UI.enable(exports.content, 'adminOnly', isAdmin);
+        }).catch(UI.handleError);
     }
 
     function createProfileItem(dialog) {
@@ -206,7 +206,7 @@ function ProfileConfigurerTmpl(opts) {
                 input.value = '';
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -239,7 +239,7 @@ function ProfileConfigurerTmpl(opts) {
             input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
             const list = profileSettings.value.split(',');
             const defaultValue = list[0];
-            list.sort(CommonUtils.charOrdA);
+            list.sort(CU.charOrdA);
 
             U.addEls(U.qee(input, '.text'), enumList2Els(list, defaultValue));
 
@@ -275,7 +275,7 @@ function ProfileConfigurerTmpl(opts) {
         case 'multiEnum':
             input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
             const list2 = profileSettings.value.split(',');
-            list2.sort(CommonUtils.charOrdA);
+            list2.sort(CU.charOrdA);
 
             U.addEls(U.qee(input, '.text'), enumList2Els(list2));
 
@@ -343,7 +343,7 @@ function ProfileConfigurerTmpl(opts) {
                 checked: !U.hasClass(e.target, 'btn-primary')
             }).then(() => {
                 U.toggleClass(e.target, 'btn-primary');
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         });
 
         const playerAccess = U.qee(row, '.player-access');
@@ -370,12 +370,12 @@ function ProfileConfigurerTmpl(opts) {
         });
 
         U.listen(U.qee(row, '.remove'), 'click', () => {
-            Utils.confirm(L10n.format('profiles', 'are-you-sure-about-removing-profile-item', [profileSettings.name]), () => {
+            UI.confirm(L10n.format('profiles', 'are-you-sure-about-removing-profile-item', [profileSettings.name]), () => {
                 DBMS.removeProfileItem({
                     type,
                     index,
                     profileItemName: profileSettings.name
-                }).then(exports.refresh, Utils.handleError);
+                }).then(exports.refresh, UI.handleError);
             });
         });
 
@@ -412,11 +412,11 @@ function ProfileConfigurerTmpl(opts) {
                     type,
                     profileItemName: name,
                     value
-                }).catch(Utils.handleError);
+                }).catch(UI.handleError);
                 break;
             case 'number':
                 if (Number.isNaN(value)) {
-                    Utils.alert(L10n.getValue('profiles-not-a-number'));
+                    UI.alert(L10n.getValue('profiles-not-a-number'));
                     event.target.value = oldValue;
                     return;
                 }
@@ -424,12 +424,12 @@ function ProfileConfigurerTmpl(opts) {
                     type,
                     profileItemName: name,
                     value: Number(value)
-                }).catch(Utils.handleError);
+                }).catch(UI.handleError);
                 break;
             case 'multiEnum':
             case 'enum':
                 if (value === '' && itemType === 'enum') {
-                    Utils.alert(L10n.getValue('profiles-enum-item-cant-be-empty'));
+                    UI.alert(L10n.getValue('profiles-enum-item-cant-be-empty'));
                     event.target.value = oldValue;
                     return;
                 }
@@ -445,11 +445,11 @@ function ProfileConfigurerTmpl(opts) {
                         type,
                         profileItemName: name,
                         value: newValue
-                    }).catch(Utils.handleError);
+                    }).catch(UI.handleError);
                 };
 
                 if (missedValues.length !== 0) {
-                    Utils.confirm(U.strFormat(L10n.getValue('profiles-new-enum-values-remove-some-old-values'), [missedValues.join(',')]), updateEnum, () => {
+                    UI.confirm(CU.strFormat(L10n.getValue('profiles-new-enum-values-remove-some-old-values'), [missedValues.join(',')]), updateEnum, () => {
                         event.target.value = oldValue;
                     });
                 } else {
@@ -457,7 +457,7 @@ function ProfileConfigurerTmpl(opts) {
                 }
                 break;
             default:
-                Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
+                UI.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [itemType]));
             }
         };
     }
@@ -468,7 +468,7 @@ function ProfileConfigurerTmpl(opts) {
                 type,
                 profileItemName: event.target.info,
                 checked: event.target.checked
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         };
     }
 
@@ -486,7 +486,7 @@ function ProfileConfigurerTmpl(opts) {
                 toInput.value = '';
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -501,7 +501,7 @@ function ProfileConfigurerTmpl(opts) {
             }).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }, err => setError(dialog, err));
+            }, err => UI.setError(dialog, err));
         };
     }
 
@@ -512,7 +512,7 @@ function ProfileConfigurerTmpl(opts) {
             const defaultValueSelect = U.qee(dialog, '.default-value-select');
 
             if (inputArea.value.trim() === '') {
-                Utils.alert(L10n.getValue('profiles-enum-item-cant-be-empty'));
+                UI.alert(L10n.getValue('profiles-enum-item-cant-be-empty'));
                 return;
             }
             let newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
@@ -529,7 +529,7 @@ function ProfileConfigurerTmpl(opts) {
             }).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }, err => setError(dialog, err));
+            }, err => UI.setError(dialog, err));
         };
     }
 
@@ -547,20 +547,20 @@ function ProfileConfigurerTmpl(opts) {
             }).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }, err => setError(dialog, err));
+            }, err => UI.setError(dialog, err));
         };
     }
 
     function changeProfileItemType(type) {
         return (event) => {
-            Utils.confirm(U.strFormat(L10n.getValue('profiles-are-you-sure-about-changing-profile-item-type'), [event.target.info]), () => {
+            UI.confirm(CU.strFormat(L10n.getValue('profiles-are-you-sure-about-changing-profile-item-type'), [event.target.info]), () => {
                 const newType = event.target.value;
                 const name = event.target.info;
                 DBMS.changeProfileItemType({
                     type,
                     profileItemName: name,
                     newType
-                }).then(exports.refresh, Utils.handleError);
+                }).then(exports.refresh, UI.handleError);
             }, () => {
                 event.target.value = event.target.oldType;
             });
@@ -577,7 +577,7 @@ function ProfileConfigurerTmpl(opts) {
                 playerAccessType
             }).catch((err) => {
                 event.target.value = event.target.oldValue;
-                Utils.processError()(err);
+                UI.processError()(err);
             });
         };
     }

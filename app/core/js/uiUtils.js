@@ -1,6 +1,10 @@
-const {U, Utils} = require('./utils.js');
-const L10n = require('./l10n.js');
+const U = require('./utils');
+const L10n = require('./l10n');
+const Errors = require('./common/errors');
+var vex = require('vex-js');
+const Timing = require('./Timing');
 // const R = require('ramda');
+
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -93,7 +97,7 @@ exports.addView = function (containers, name, view, opts2) {
 
     // deprecated. Use Utils.setFirstTab instead
     if (opts.mainPage) {
-        Utils.setFirstTab(containers, {button, view});
+        exports.setFirstTab(containers, {button, view});
     }
     return {button, view};
 };
@@ -121,7 +125,7 @@ exports.addView = function (containers, name, view, opts2) {
         L10n.localizeStatic(el);
         U.listen(U.qee(el, '.on-action-button'), 'click', onAction(el));
         el.showDlg = () => {
-            Utils.clearError(el);
+            exports.clearError(el);
             $(el).modal('show');
             const focusable = U.qee(body, '.focusable');
             if (focusable !== null) {
@@ -257,7 +261,6 @@ exports.addView = function (containers, name, view, opts2) {
     var filterOptions = sel => (event) => {
         let val = event.target.value;
         let i, opt;
-        //        val = CommonUtils.globStringToRegex(val.trim().toLowerCase());
         val = val.toLowerCase();
         for (i = 0; i < sel.options.length; i += 1) {
             opt = sel.options[i];
@@ -277,7 +280,7 @@ exports.addView = function (containers, name, view, opts2) {
         U.addClass(el, 'expanded');
         const sel = document.querySelector(attr);
         if (sel == null) {
-            Utils.alert(`Panel toggler is broken: ${attr}`);
+            UI.alert(`Panel toggler is broken: ${attr}`);
         }
         U.listen(el, 'click', togglePanel(el, sel));
     };
@@ -432,7 +435,7 @@ exports.addView = function (containers, name, view, opts2) {
             characterName: dataKey[2],
             type: 'time',
             value: time
-        }).catch(Utils.handleError);
+        }).catch(exports.handleError);
     };
 
     exports.populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
@@ -458,7 +461,7 @@ exports.addView = function (containers, name, view, opts2) {
         }).then( () => {
             U.setClassByCondition(event.target, 'btn-primary', value);
             callback(value);
-        }).catch(Utils.handleError);
+        }).catch(exports.handleError);
     };
 
     exports.makePanelCore = (title, content) => {
@@ -543,7 +546,7 @@ exports.addView = function (containers, name, view, opts2) {
             const from = container.scrollTop;
             const to = element.offsetTop - container.clientHeight / 2 + domRect.height / 2;
 
-            Utils.animate({
+            exports.animate({
                 duration: 500,
                 timing: Timing.makeEaseInOut(Timing.poly(4)),
                 draw: function (progress) {
@@ -563,3 +566,120 @@ exports.addView = function (containers, name, view, opts2) {
     exports.getSelect2DataCommon = R.curry((preparator, obj) => R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj));
     exports.getSelect2Data = exports.getSelect2DataCommon(exports.remapProps4Select2);
 // })(window.UI = {});
+
+
+exports.setFirstTab = function(containers, opts){
+    U.addClass(opts.button, 'active');
+    containers.content.appendChild(opts.view.content);
+    containers.root.currentView = opts.view;
+}
+
+exports.alert = function (message) {
+    vex.dialog.alert(message);
+};
+
+const setError = (el, err) => U.addEl(U.clearEl(U.qee(el, '.error-msg')), U.makeText(exports.handleErrorMsg(err)));
+const clearError = (el) => U.clearEl(U.qee(el, '.error-msg'));
+
+exports.setError = setError;
+exports.clearError = clearError;
+
+exports.confirm = function (message, onOk, onCancel) {
+    vex.dialog.confirm({
+        message,
+        callback: (val) => {
+            if (val) {
+                if (onOk) onOk();
+            } else if (onCancel) onCancel();
+        }
+    });
+};
+
+exports.processError = function (callback) {
+    return function (err) {
+        if (err) {
+            exports.handleError(err);
+            return;
+        }
+
+        if (callback) {
+            const arr = [];
+            for (let i = 1; i < arguments.length; i++) {
+                arr.push(arguments[i]);
+            }
+            callback(...arr);
+        }
+    };
+};
+
+exports.handleErrorMsg = function (err) {
+    const checkErrorType = R.curry((err2, name) => err2 instanceof Errors[name] || (err2.name && err2.name === name));
+    if (R.keys(Errors).some(checkErrorType(err))) {
+        const params = err.parameters.map(val => {
+            return L10n.hasValue(val) ? L10n.getValue(val) : val;
+        });
+        return CU.strFormat(L10n.getValue(err.messageId), params);
+    } else if (typeof err === 'object') {
+        return err.message;
+    }
+    return err;
+};
+
+exports.handleError = err => {
+    console.error(err);
+    exports.alert(exports.handleErrorMsg(err));
+}
+
+exports.enableEl = R.curry((el, condition) => {
+    const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';
+    if (condition) {
+        el.removeAttribute(key);
+    } else {
+        el.setAttribute(key, key);
+    }
+});
+
+exports.enable = function (root, className, condition) {
+    U.nl2array(root.getElementsByClassName(className)).map(exports.enableEl(R.__, condition));
+};
+
+
+
+exports.rebuildSelector = function (selector, names) {
+    U.clearEl(selector);
+    names.forEach((nameInfo) => {
+        const option = U.makeEl('option');
+        option.appendChild(U.makeText(nameInfo.displayName));
+        option.value = nameInfo.value;
+        selector.appendChild(option);
+    });
+};
+
+exports.rebuildSelectorArr = function (selector, names) {
+    U.clearEl(selector);
+    names.forEach((name) => {
+        const option = U.makeEl('option');
+        option.appendChild(U.makeText(name));
+        selector.appendChild(option);
+    });
+};
+
+// from https://learn.javascript.ru/js-animation
+exports.animate = (options) => {
+    const start = performance.now();
+
+    requestAnimationFrame(function animate(time) {
+        // timeFraction from 0 to 1
+        let timeFraction = (time - start) / options.duration;
+        if (timeFraction > 1) timeFraction = 1;
+        
+        // current animation state
+        const progress = options.timing(timeFraction)
+        
+        options.draw(progress);
+        
+        if (timeFraction < 1) {
+            requestAnimationFrame(animate);
+        }
+    });
+}

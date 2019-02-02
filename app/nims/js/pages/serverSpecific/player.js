@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
         ]).then(results => {
             const [text, profileInfo, playersOptions] = results;
             buildInterface(text, profileInfo, playersOptions);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function isEditable(profileName, profileStructure) {
@@ -50,10 +50,10 @@ See the License for the specific language governing permissions and
     function buildInterface(text, profileInfo, playersOptions) {
         profileEditorCore.initProfileStructure(playerProfileDiv, 'player', profileInfo.player.profileStructure);
         profileEditorCore.fillProfileInformation(playerProfileDiv, 'player', profileInfo.player.profile, isEditable);
-        U.addEl(U.clearEl(U.queryEl(playerHeader)), U.makeText(U.strFormat(L10n.getValue('briefings-player-profile'), [profileInfo.player.profile.name])));
+        U.addEl(U.clearEl(U.queryEl(playerHeader)), U.makeText(CU.strFormat(L10n.getValue('briefings-player-profile'), [profileInfo.player.profile.name])));
 
         if (profileInfo.character === undefined) {
-            U.addEl(U.clearEl(U.queryEl(characterHeader)), U.makeText(U.strFormat(L10n.getValue('briefings-character-profile'), [''])));
+            U.addEl(U.clearEl(U.queryEl(characterHeader)), U.makeText(CU.strFormat(L10n.getValue('briefings-character-profile'), [''])));
             const el = U.clearEl(U.queryEl(characterProfileDiv));
             if (playersOptions.allowCharacterCreation) {
                 const label = U.addEl(U.makeEl('div'), U.makeText(L10n.getValue('profiles-player-has-no-character-and-can-create-it')));
@@ -63,7 +63,7 @@ See the License for the specific language governing permissions and
                 const button = U.addEl(U.makeEl('button'), U.makeText(L10n.getValue('common-create')));
                 U.addClass(button, 'btn btn-default');
                 U.listen(button, 'click', () => {
-                    DBMS.createCharacterByPlayer({characterName: input.value.trim()}).then(exports.refresh, Utils.handleError);
+                    DBMS.createCharacterByPlayer({characterName: input.value.trim()}).then(exports.refresh, UI.handleError);
                 });
                 U.addEls(el, [label, input, button]);
             } else {
@@ -72,7 +72,7 @@ See the License for the specific language governing permissions and
         } else {
             profileEditorCore.initProfileStructure(characterProfileDiv, 'character', profileInfo.character.profileStructure);
             profileEditorCore.fillProfileInformation(characterProfileDiv, 'character', profileInfo.character.profile, isEditable);
-            U.addEl(U.clearEl(U.queryEl(characterHeader)), U.makeText(U.strFormat(L10n.getValue('briefings-character-profile'), [profileInfo.character.profile.name])));
+            U.addEl(U.clearEl(U.queryEl(characterHeader)), U.makeText(CU.strFormat(L10n.getValue('briefings-character-profile'), [profileInfo.character.profile.name])));
         }
 
         U.queryEl(`${root}.welcome-text-area`).value = text;

@@ -22,13 +22,7 @@ const {makeLocalDBMS} = require('./dbms/localDBMS.js');
 
 var MODE = "Standalone";
 
-// const { U, L10n, Utils, UI, CommonUtils, DemoBase, FileUtils, TestUtils, LocalBaseAPI }  = require('../../core');
-
-// const CommonUtils = require('../../core/js/common/commonUtils.js');
-
-// const DemoBase = require('../../core/js/demoBase.js');
 const PermissionInformer = require('permissionInformer');
-// const PermissionInformer = require('./permissionInformer.js');
 
 var vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
@@ -36,12 +30,12 @@ vex.defaultOptions.className = 'vex-theme-os';
 
 require('vex-js/dist/css/vex-theme-os.css');
 
-// const Overview = require('./pages/overview/overview.js')
+const dateFormat = require('dateFormat');
+
+const {EmptyBase} = require('core');
+
 const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
     Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile } = require('./pages');
-
-// require("../../core/js/common/commonUtils.js");
-//const R = require("ramda");
 
 /*Copyright 2015, 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
@@ -139,7 +133,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
             UI.addView(state.containers, 'about', About);
             //            U.addEl(state.navigation, makeL10nButton());
             state.currentView.refresh();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     exports.onOrganizerPageLoad = () => {
@@ -147,7 +141,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
         // const LocalDBMS = makeLocalDBMS(true);
         if (MODE === 'Standalone') {
             window.DBMS = makeLocalDBMS();
-            DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, Utils.handleError);
+            DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
             // runBaseSelectDialog();
         } else if (MODE === 'NIMS_Server') {
             window.DBMS = makeRemoteDBMS();
@@ -173,19 +167,19 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 U.setAttr(input, 'id', "dbSourceBrowserBackup" + i);
                 input.base = base;
                 U.setAttr(U.qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
-                const date = new Date(base.Meta.saveTime).format('dd mmm yyyy HH:MM:ss');
+                const date = dateFormat(new Date(base.Meta.saveTime), 'dd mmm yyyy HH:MM:ss');
                 U.addEl(U.qee(baseSelect, '.base-name'), U.makeText(base.Meta.name + ' (' + date + ')'));
                 return baseSelect;
             }));
 
             U.qee(dbDialog, 'input[name=dbSource]').checked = true;
-            U.qee(dbDialog, '#dbSourceDemoBase').base = CommonUtils.clone(DemoBase.data);
-            U.qee(dbDialog, '#dbSourceEmptyBase').base = CommonUtils.clone(EmptyBase.data);
+            U.qee(dbDialog, '#dbSourceDemoBase').base = R.clone(DemoBase.data);
+            U.qee(dbDialog, '#dbSourceEmptyBase').base = R.clone(EmptyBase.data);
 
             U.addEl(U.qee(dbDialog, '.demo-base-name'), U.makeText(DemoBase.data.Meta.name));
 
             const dialogOnBaseLoad = err => {
-                if (err) { Utils.handleError(err); return; }
+                if (err) { UI.handleError(err); return; }
                 $(dbDialog).modal('hide');
                 onBaseLoaded(err);
             }
@@ -196,7 +190,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 const base = U.getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
                 DBMS.setDatabase({database: base}).then(() => {
                     dialogOnBaseLoad();
-                }).catch(Utils.handleError);
+                }).catch(UI.handleError);
             });
 
             L10n.localizeStatic(dbDialog);
@@ -209,7 +203,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     function consistencyCheckAlert(checkResult) {
         if (checkResult.errors.length > 0) {
-            Utils.alert(L10n.getValue('overview-consistency-problem-detected'));
+            UI.alert(L10n.getValue('overview-consistency-problem-detected'));
         } else {
             console.log('Consistency check didn\'t find errors');
         }
@@ -217,9 +211,9 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     function consistencyCheck(callback) {
         DBMS.getConsistencyCheckResult().then(checkResult => {
-            checkResult.errors.forEach(CommonUtils.consoleErr);
+            checkResult.errors.forEach(console.error);
             callback(checkResult);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function stateInit() {
@@ -240,7 +234,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'Briefings';
+                const firstTab = 'ProfileFilter';
 
                 const addView = (containers, btnName, viewName, view, opts) => {
                     tabs[viewName] = {
@@ -294,7 +288,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                             if(confirmed){
                                 onBaseLoaded();
                             }
-                        }).catch(Utils.handleError);
+                        }).catch(UI.handleError);
                     }, btnOpts));
                 }
 //                U.addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
@@ -318,7 +312,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 }
                 U.addEl(state.navigation, makeButton('refreshButton icon-button', 'refresh', () => state.currentView.refresh(), btnOpts));
 
-                Utils.setFirstTab(state.containers, tabs[firstTab].viewRes);
+                UI.setFirstTab(state.containers, tabs[firstTab].viewRes);
 
                 state.currentView.refresh();
                 if (MODE === 'Standalone') {
@@ -331,12 +325,12 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 //                FileUtils.makeNewBase();
 //                state.currentView.refresh();
                 //                                runTests();
-            }).catch(Utils.handleError);
-        }).catch(Utils.handleError);
+            }).catch(UI.handleError);
+        }).catch(UI.handleError);
     }
 
     function onBaseLoaded(err3) {
-        if (err3) { Utils.handleError(err3); return; }
+        if (err3) { UI.handleError(err3); return; }
         consistencyCheck((checkResult) => {
             consistencyCheckAlert(checkResult);
             if(state.firstBaseLoad){
@@ -350,7 +344,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     function initBaseLoadBtn(button, input, onBaseLoaded) {
         button.addEventListener('change', (evt) => {
-            FileUtils.readSingleFile(evt).then(onBaseLoaded, Utils.handleError);
+            FileUtils.readSingleFile(evt).then(onBaseLoaded, UI.handleError);
         }, false);
         button.addEventListener('click', (e) => {
             input.value = '';
@@ -362,7 +356,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
     function makeL10nButton() {
         const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
         const setIcon = () => {
-            l10nBtn.style.backgroundImage = U.strFormat('url("./images/{0}.svg")', [L10n.getValue('header-dictionary-icon')]);
+            l10nBtn.style.backgroundImage = CU.strFormat('url("./images/{0}.svg")', [L10n.getValue('header-dictionary-icon')]);
         };
         L10n.onL10nChange(setIcon);
         setIcon();
@@ -421,7 +415,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
 
     function readLocalBases() {
         if (!window.indexedDB) {
-            Utils.alert(L10n.get('errors', 'indexeddb-is-not-found'));
+            UI.alert(L10n.get('errors', 'indexeddb-is-not-found'));
             return Promise.resolve(null);
         }
 
@@ -438,7 +432,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 return null;
             }
 
-            bases.sort(CommonUtils.charOrdAFactory( base => -new Date(base.obj.Meta.saveTime).getTime()))
+            bases.sort(CU.charOrdAFactory( base => -new Date(base.obj.Meta.saveTime).getTime()))
             return bases.map(R.prop('obj'));
         });
     }
@@ -463,11 +457,10 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 console.log('Autosave OK ' + new Date());
     //                LocalBaseAPI.get('base' + counter).then((database) => {
     //                    console.log(database);
-    //                }).catch(Utils.handleError);
-            }).catch(Utils.handleError);
-        }).catch(Utils.handleError);
+    //                }).catch(UI.handleError);
+            }).catch(UI.handleError);
+        }).catch(UI.handleError);
     }
 
-// })(window.PageManager = {});
 window.PageManager = {}
 PageManager.onOrganizerPageLoad = exports.onOrganizerPageLoad;

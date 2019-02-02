@@ -43,7 +43,7 @@ const Constants = require('common/constants');
         characterNamesArray = characterNamesArray.filter(R.compose(R.not, R.equals(characterName), R.prop('value')));
 
         const get2ndCharName = ProjectUtils.get2ndRelChar(characterName);
-        const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CommonUtils.charOrdA);
+        const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CU.charOrdA);
         const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop('value')));
         const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value'));
         const [knownNoRels, unknownNoRels] = R.partition(predicate, noRelsList);
@@ -113,8 +113,8 @@ const Constants = require('common/constants');
         U.setAttr(tmplQe('[toCharacter]'), 'toCharacter', toCharacter);
         fillProfileItemContent(row, getProfileItemSelect().value, profiles[toCharacter][getProfileItemSelect().value]);
         U.listen(tmplQe('button.remove'), 'click', (event) => {
-            Utils.confirm(U.strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
-                DBMS.removeCharacterRelation({fromCharacter, toCharacter}).then(externalRefresh).catch(Utils.handleError);
+            UI.confirm(CU.strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
+                DBMS.removeCharacterRelation({fromCharacter, toCharacter}).then(externalRefresh).catch(UI.handleError);
             });
         });
 
@@ -127,7 +127,7 @@ const Constants = require('common/constants');
                 toCharacter,
                 character: fromCharacter,
                 text:event.target.value
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         });
 
         Constants.relationEssences.forEach((name) => {
@@ -150,7 +150,7 @@ const Constants = require('common/constants');
                     flag: !U.hasClass(event.target, 'btn-primary')
                 }).then(() => {
                     U.toggleClass(event.target, 'btn-primary');
-                }).catch(Utils.handleError);
+                }).catch(UI.handleError);
             });
         });
 
@@ -162,7 +162,7 @@ const Constants = require('common/constants');
                 fromCharacter,
                 toCharacter,
                 text: event.target.value
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         });
 
         const reverseText = tmplQe('.reverse textarea');
@@ -174,7 +174,7 @@ const Constants = require('common/constants');
                 toCharacter,
                 character: toCharacter,
                 text: event.target.value
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         });
 
         const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
@@ -202,19 +202,19 @@ const Constants = require('common/constants');
 
     function fillFinishedButton(button, id, fromCharacter, toCharacter, character, checked, textarea) {
         U.setClassIf(button, 'btn-primary', checked);
-        Utils.enableEl(textarea, !checked);
+        UI.enableEl(textarea, !checked);
         button.id = id;
         U.listen(button, 'click', (event) => {
             const newValue = !U.hasClass(button, 'btn-primary');
             U.setClassByCondition(button, 'btn-primary', newValue);
-            Utils.enableEl(textarea, !newValue);
+            UI.enableEl(textarea, !newValue);
 
             DBMS.setRelationReadyStatus({
                 fromCharacter,
                 toCharacter,
                 character,
                 ready: newValue
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         });
     }
 
@@ -235,8 +235,8 @@ const Constants = require('common/constants');
                     data = data.filter(R.compose(R.not, R.equals(select1[0].value), R.prop('value')));
                     U.clearEl(select1[0]);
                     select1.select2(UI.getSelect2Data(data));
-                }).catch(Utils.handleError);
-            }).catch(Utils.handleError);
+                }).catch(UI.handleError);
+            }).catch(UI.handleError);
         });
     }
 // })(window.RelationsPreview = {});

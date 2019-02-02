@@ -49,7 +49,7 @@ See the License for the specific language governing permissions and
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
                     PC.precondition(PC.entityExistsCheck(name, R.keys(container)), reject, () => {
-                        resolve(CU.clone(container[name]));
+                        resolve(R.clone(container[name]));
                     });
                 });
             });
@@ -58,7 +58,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getAllProfiles = function ({type}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
-                    resolve(CU.clone(R.path(getPath(type), this.database)));
+                    resolve(R.clone(R.path(getPath(type), this.database)));
                 });
             });
         };

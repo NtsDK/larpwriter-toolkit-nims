@@ -151,7 +151,7 @@ AddFilterConditionDialog.prototype.onProfileItemSelect = function (event) {
     case 'multiEnum':
         valueInput = U.qmte('.enum-value-tmpl');
         values = item.value.split(',');
-        values.sort(CommonUtils.charOrdA);
+        values.sort(CU.charOrdA);
         values = U.arr2Select(values);
         valueInput.size = values.length;
 

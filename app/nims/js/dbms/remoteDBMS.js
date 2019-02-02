@@ -91,7 +91,7 @@ function makeRemoteDBMS() {
         get(target, prop) {
 
             let func;
-            if (CommonUtils.startsWith(prop, 'get') || CommonUtils.startsWith(prop, 'is')) {
+            if (R.startsWith('get', prop) || R.startsWith('is', prop)) {
                 func = RemoteDBMS._simpleGet;
             } else {
                 func = RemoteDBMS._simplePut;

@@ -35,7 +35,7 @@ See the License for the specific language governing permissions and
         // DBMS.get
         LocalDBMS.prototype.getDatabase = function () {
           this.database.Meta.saveTime = new Date().toString();
-          return Promise.resolve(CU.clone(this.database));
+          return Promise.resolve(R.clone(this.database));
         };
 
         // DBMS.set
@@ -52,7 +52,7 @@ See the License for the specific language governing permissions and
         };
         // DBMS.meta.get
         LocalDBMS.prototype.getMetaInfo = function () {
-            return Promise.resolve(CU.clone(this.database.Meta));
+            return Promise.resolve(R.clone(this.database.Meta));
         };
 //  [
 //      {

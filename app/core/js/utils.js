@@ -1,8 +1,4 @@
 // const R = require("ramda");
-const CommonUtils = require("./common/commonUtils.js");
-const Errors = require("./common/errors.js");
-
-var vex = require('vex-js');
 // vex.registerPlugin(require('vex-dialog'));
 // vex.defaultOptions.className = 'vex-theme-os';
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
@@ -23,8 +19,6 @@ See the License for the specific language governing permissions and
 
 // TODO need to lint utils with NIMS fixes
 /* eslint-disable */
-
-const strFormat = R.curry(CommonUtils.strFormat);
 
 function isEmpty(obj) {
     return (Object.getOwnPropertyNames(obj).length === 0);
@@ -189,7 +183,12 @@ const setProps = R.curry((el, map) => {
 });
 
 function clearEl(el) {
-    Utils.removeChildren(el);
+    if (!el) {
+        return;
+    }
+    while (el.firstChild) {
+        el.removeChild(el.firstChild);
+    }
     return el;
 }
 
@@ -252,12 +251,6 @@ const getSelectedRadio = function (el, query) {
 //     };
 // };
 
-
-
-
-
-
-
 const U = {
     setAttr, nl2array, qees, addEl, clearEl, makeText, getAttr,
     queryEls, queryEl, addClass, listen,
@@ -270,216 +263,13 @@ const U = {
 
     arr2Select,getSelectedRadio,removeClasses,
 
+    // charOrdAObject,
+
     // getL10n, 
     // constL10n, 
     
-    strFormat, isEmpty, addClasses, hasClass, removeClass, toggleClass
+    // strFormat, 
+    isEmpty, addClasses, hasClass, removeClass, toggleClass
 };
 
-exports.U = U;
-
-
-
-
-
-
-
-const Utils = {};
-exports.Utils = Utils;
-
-Utils.setFirstTab = function(containers, opts){
-    U.addClass(opts.button, 'active');
-    containers.content.appendChild(opts.view.content);
-    containers.root.currentView = opts.view;
-}
-
-Utils.alert = function (message) {
-    vex.dialog.alert(message);
-};
-
-const setError = (el, err) => U.addEl(U.clearEl(U.qee(el, '.error-msg')), U.makeText(Utils.handleErrorMsg(err)));
-const clearError = (el) => U.clearEl(U.qee(el, '.error-msg'));
-
-Utils.setError = setError;
-Utils.clearError = clearError;
-
-Utils.confirm = function (message, onOk, onCancel) {
-    vex.dialog.confirm({
-        message,
-        callback: (val) => {
-            if (val) {
-                if (onOk) onOk();
-            } else if (onCancel) onCancel();
-        }
-    });
-};
-
-Utils.removeChildren = function (myNode) {
-    if (!myNode) {
-        return;
-    }
-    while (myNode.firstChild) {
-        myNode.removeChild(myNode.firstChild);
-    }
-};
-
-Utils.processError = function (callback) {
-    return function (err) {
-        if (err) {
-            Utils.handleError(err);
-            return;
-        }
-
-        if (callback) {
-            const arr = [];
-            for (let i = 1; i < arguments.length; i++) {
-                arr.push(arguments[i]);
-            }
-            callback(...arr);
-        }
-    };
-};
-
-Utils.handleErrorMsg = function (err) {
-    const checkErrorType = R.curry((err2, name) => err2 instanceof Errors[name] || (err2.name && err2.name === name));
-    if (R.keys(Errors).some(checkErrorType(err))) {
-        const params = err.parameters.map(val => {
-            return L10n.hasValue(val) ? L10n.getValue(val) : val;
-        });
-        return U.strFormat(L10n.getValue(err.messageId), params);
-    } else if (typeof err === 'object') {
-        return err.message;
-    }
-    return err;
-};
-
-Utils.handleError = err => {
-    console.error(err);
-    Utils.alert(Utils.handleErrorMsg(err));
-}
-
-Utils.enableEl = R.curry((el, condition) => {
-    const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';
-    if (condition) {
-        el.removeAttribute(key);
-    } else {
-        el.setAttribute(key, key);
-    }
-});
-
-Utils.enable = function (root, className, condition) {
-    U.nl2array(root.getElementsByClassName(className)).map(Utils.enableEl(R.__, condition));
-};
-
-Utils.charOrdAObject = CommonUtils.charOrdAFactory(a => a.displayName.toLowerCase());
-
-Utils.rebuildSelector = function (selector, names) {
-    U.clearEl(selector);
-    names.forEach((nameInfo) => {
-        const option = U.makeEl('option');
-        option.appendChild(U.makeText(nameInfo.displayName));
-        option.value = nameInfo.value;
-        selector.appendChild(option);
-    });
-};
-
-Utils.rebuildSelectorArr = function (selector, names) {
-    U.clearEl(selector);
-    names.forEach((name) => {
-        const option = U.makeEl('option');
-        option.appendChild(U.makeText(name));
-        selector.appendChild(option);
-    });
-};
-
-// from https://learn.javascript.ru/js-animation
-Utils.animate = (options) => {
-    const start = performance.now();
-
-    requestAnimationFrame(function animate(time) {
-        // timeFraction from 0 to 1
-        let timeFraction = (time - start) / options.duration;
-        if (timeFraction > 1) timeFraction = 1;
-        
-        // current animation state
-        const progress = options.timing(timeFraction)
-        
-        options.draw(progress);
-        
-        if (timeFraction < 1) {
-            requestAnimationFrame(animate);
-        }
-    });
-}
-
-const Timing = {};
-exports.Timing = Timing;
-
-// call examples
-//timing: Timing.linear,
-//timing: Timing.quad,
-//timing: Timing.circ,
-//timing: Timing.bounce,
-//timing: Timing.makeEaseOut(Timing.bounce),
-//timing: Timing.makeEaseInOut(Timing.bounce),
-//timing: Timing.back(3.5),
-//timing: Timing.elastic(1.5),
-//timing: Timing.makeEaseInOut(Timing.poly(4)),
-
-Timing.linear = (timeFraction) => {
-    return timeFraction;
-}
-
-Timing.quad = ( progress) => {
-    return Math.pow(progress, 2)
-}
-
-Timing.poly = R.curry((x, progress) => {
-    return Math.pow(progress, x)
-})
-
-Timing.circ = (timeFraction) => {
-    return 1 - Math.sin(Math.acos(timeFraction))
-}
-
-Timing.back = R.curry((x, timeFraction) => {
-    return Math.pow(timeFraction, 2) * ((x + 1) * timeFraction - x)
-})
-
-Timing.bounce = (timeFraction) => {
-    for (var a = 0, b = 1, result; 1; a += b, b /= 2) {
-        if (timeFraction >= (7 - 4 * a) / 11) {
-            return -Math.pow((11 - 6 * a - 11 * timeFraction) / 4, 2) + Math.pow(b, 2)
-        }
-    }
-}
-
-Timing.elastic = (x, timeFraction) => {
-    return Math.pow(2, 10 * (timeFraction - 1)) * Math.cos(20 * Math.PI * x / 3 * timeFraction)
-}
-
-Timing.makeEaseOut = (timing) => {
-    return function(timeFraction) {
-        return 1 - timing(1 - timeFraction);
-    }
-}
-
-Timing.makeEaseInOut = (timing) => {
-    return function(timeFraction) {
-        if (timeFraction < .5) {
-            return timing(2 * timeFraction) / 2;
-        } else {
-            return (2 - timing(2 * (1 - timeFraction))) / 2;
-        }
-    }
-}
-
-String.prototype.endsWith = function (suffix) {
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-
-// // from date format utils
-// //For convenience...
-// Date.prototype.format = function (mask, utc) {
-//     return dateFormat(this, mask, utc);
-// };
+module.exports = U;

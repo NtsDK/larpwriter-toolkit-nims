@@ -32,7 +32,7 @@ See the License for the specific language governing permissions and
         DBMS.getGroupSchemas().then((schemas) => {
             redrawSchema2(schemas.theory, 'theory');
             redrawSchema2(schemas.practice, 'practice');
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function redrawSchema(graph) {

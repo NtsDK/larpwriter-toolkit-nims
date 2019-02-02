@@ -48,7 +48,7 @@ const dateFormat = require("dateFormat");
             //        onMove : function (item, callback) {
             //            if (item.storyName) {
             //                DBMS.setEventTime(item.storyName, item.eventIndex, item.start, function(err){
-            //                    if(err) {Utils.handleError(err); return;}
+            //                    if(err) {UI.handleError(err); return;}
             //                    callback(item);
             //                });
             //            }
@@ -100,7 +100,7 @@ const dateFormat = require("dateFormat");
             suffixy(allCharacterNames, state.eventsByCharacters);
             state.allCharacterNames = allCharacterNames;
             refreshTimeline();
-        }).catch(Utils.handleError)
+        }).catch(UI.handleError)
     };
 
     function suffixy(entityNames, data) {
@@ -148,11 +148,11 @@ const dateFormat = require("dateFormat");
         const events = R.uniq(R.flatten(R.values(usedData))
                 .map(event => {
                     event.time = new Date(event.time !== '' ? event.time : state.postDate);
-                    event.characters.sort(CommonUtils.charOrdA);
+                    event.characters.sort(CU.charOrdA);
                     return event;
                 }));
 
-        events.sort(CommonUtils.charOrdAFactory(R.prop('time')));
+        events.sort(CU.charOrdAFactory(R.prop('time')));
 
         U.addEls(U.clearEl(U.queryEl(`${root} .timeline-list`)), events.map(event => {
             const row = U.qmte(`${root} .timeline-event-tmpl`);

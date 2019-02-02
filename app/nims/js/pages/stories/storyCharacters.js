@@ -64,9 +64,9 @@ module.exports = (Stories) => {
         ]).then(results => {
             const [isStoryEditable, allCharacters, localCharacters] = results;
             rebuildInterface(allCharacters, localCharacters);
-            Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
             Stories.chainRefresh();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function rebuildInterface(allCharacters, localCharacters) {
@@ -81,8 +81,8 @@ module.exports = (Stories) => {
             removeArray.push(nameInfo);
         });
 
-        addArray.sort(Utils.charOrdAObject);
-        removeArray.sort(Utils.charOrdAObject);
+        addArray.sort(CU.charOrdAObject);
+        removeArray.sort(CU.charOrdAObject);
 
         const addData = UI.getSelect2Data(addArray);
         const removeData = UI.getSelect2Data(removeArray);
@@ -110,7 +110,7 @@ module.exports = (Stories) => {
             }).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -124,17 +124,17 @@ module.exports = (Stories) => {
             }).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
     function removeCharacter(characterName) {
         return () => {
-            Utils.confirm(U.strFormat(L10n.getValue('stories-remove-character-from-story-warning'), [characterName]), () => {
+            UI.confirm(CU.strFormat(L10n.getValue('stories-remove-character-from-story-warning'), [characterName]), () => {
                 DBMS.removeStoryCharacter({
                     storyName: Stories.getCurrentStoryName(),
                     characterName
-                }).then(exports.refresh).catch(Utils.handleError);
+                }).then(exports.refresh).catch(UI.handleError);
             });
         };
     }
@@ -176,7 +176,7 @@ module.exports = (Stories) => {
             storyName: Stories.getCurrentStoryName(),
             characterName: event.target.characterName,
             inventory: event.target.value
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function onChangeCharacterActivity(event) {
@@ -185,7 +185,7 @@ module.exports = (Stories) => {
             characterName: event.target.characterName,
             activityType: event.target.activityType,
             checked: event.target.checked
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
     return exports;
 }

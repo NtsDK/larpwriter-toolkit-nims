@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-const {U, Utils} = require('./utils.js');
+const U = require('./utils.js');
 const d3 = require('d3');
 
 'use strict';
@@ -25,9 +25,9 @@ const d3 = require('d3');
 
     exports.showConsistencyCheckAlert = (checkRes) => {
         if (checkRes === undefined || checkRes.errors.length === 0) {
-            Utils.alert(L10n.getValue('overview-consistency-is-ok'));
+            UI.alert(L10n.getValue('overview-consistency-is-ok'));
         } else {
-            Utils.alert(L10n.getValue('overview-consistency-problem-detected'));
+            UI.alert(L10n.getValue('overview-consistency-problem-detected'));
         }
     };
 
@@ -232,7 +232,7 @@ const d3 = require('d3');
 
                 return row;
             }));
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
 
     };
 

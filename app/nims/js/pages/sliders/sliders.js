@@ -1,5 +1,3 @@
-// const { U, L10n, UI, Utils }  = require('../../../../core');
-
 const Slider = require('bootstrap-slider');
 require('bootstrap-slider/dist/css/bootstrap-slider.min.css');
 require('./sliders.css');
@@ -53,11 +51,11 @@ See the License for the specific language governing permissions and
     };
 
     exports.refresh = () => {
-        DBMS.getSliderData().then(createSliders).catch(Utils.handleError);
+        DBMS.getSliderData().then(createSliders).catch(UI.handleError);
     };
 
     function createSliders(model) {
-        const positions = model.map( info => {return {name: U.strFormat(L10n.get('common', 'set-item-before'), [info.name])}});
+        const positions = model.map( info => {return {name: CU.strFormat(L10n.get('common', 'set-item-before'), [info.name])}});
         positions.push({name: L10n.get('common', 'set-item-as-last')});
         U.fillSelector(U.clearEl(U.qe(`${root} .move-slider-pos-select`)), positions);
 
@@ -78,7 +76,7 @@ See the License for the specific language governing permissions and
                 },
             });
             slider.on('change', (event) => {
-                DBMS.updateSliderValue({index: i, value: event.newValue}).catch(Utils.handleError);
+                DBMS.updateSliderValue({index: i, value: event.newValue}).catch(UI.handleError);
             });
             return slider;
         });
@@ -103,8 +101,8 @@ See the License for the specific language governing permissions and
             state.editSliderDialog.showDlg();
         });
         U.listen(U.qee(el, 'button.remove'), 'click', () => {
-            Utils.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
-                DBMS.removeSlider({index:i}).then(exports.refresh, Utils.handleError);
+            UI.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
+                DBMS.removeSlider({index:i}).then(exports.refresh, UI.handleError);
             })
         });
         L10n.localizeStatic(el);
@@ -122,7 +120,7 @@ See the License for the specific language governing permissions and
                 U.qee(dialog, '.slider-bottom').value = '';
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -143,7 +141,7 @@ See the License for the specific language governing permissions and
                 U.qee(dialog, '.slider-bottom').value = '';
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         }
     }
 
@@ -155,7 +153,7 @@ See the License for the specific language governing permissions and
             DBMS.moveSlider({index, pos}).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         }
     }
 // })(window.Sliders = {});

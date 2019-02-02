@@ -22,6 +22,11 @@ const PermissionInformer = require('permissionInformer');
 
 const Mustache = require('mustache');
 const Docxtemplater = require('docxtemplater');
+var JSZip = require('jszip');
+var { saveAs } = require('file-saver');
+
+var markdownit = require('markdown-it');
+
 //  
 
 'use strict';
@@ -57,7 +62,7 @@ const Docxtemplater = require('docxtemplater');
 
         U.listen(U.queryEl('#makeDocxBriefings'), 'click', () => {
             if (state.customDocxTemplate === null) {
-                Utils.alert(L10n.getValue('briefings-custom-docx-template-is-missing'));
+                UI.alert(L10n.getValue('briefings-custom-docx-template-is-missing'));
             } else {
                 exportDocxByTemplate(state.customDocxTemplate);
             }
@@ -114,7 +119,7 @@ const Docxtemplater = require('docxtemplater');
             const value = profileSettings.filter(filter).map(func).join('');
 
             callback(R.replace(/\{0\}/g, value, Export.getTemplate(L10n.getLang(), 'textTemplate')));
-        }).catch(Utils.handleError)
+        }).catch(UI.handleError)
     }
 
     function onCharacterSelectionChange(event) {
@@ -139,7 +144,7 @@ const Docxtemplater = require('docxtemplater');
         case 'exportCharacterSet':
             return U.nl2array(state.characterSetSelector.selectedOptions).map(opt => opt.value);
         default:
-            Utils.alert(`unexpected id: ${id}`);
+            UI.alert(`unexpected id: ${id}`);
         }
         return null;
     }
@@ -152,7 +157,7 @@ const Docxtemplater = require('docxtemplater');
         case 'exportStorySet':
             return U.nl2array(state.storySetSelector.selectedOptions).map(opt => opt.value);
         default:
-            Utils.alert(`unexpected id: ${id}`);
+            UI.alert(`unexpected id: ${id}`);
         }
         return null;
     }
@@ -173,7 +178,7 @@ const Docxtemplater = require('docxtemplater');
 
                 $(`#${state.briefingIntervalSelector.id}`).select2({ data });
             }
-        }).catch(Utils.handleError)
+        }).catch(UI.handleError)
     }
 
 
@@ -184,7 +189,7 @@ const Docxtemplater = require('docxtemplater');
                 U.fillSelector(multiSel, names.map(UI.remapProps4Select));
                 U.setAttr(multiSel, 'size', names.length > 15 ? 15 : names.length);
             }
-        }).catch(Utils.handleError)
+        }).catch(UI.handleError)
     }
 
     refreshStorySetSelect = () => refreshSetSelect('story', 'storySetSelector');
@@ -229,19 +234,19 @@ const Docxtemplater = require('docxtemplater');
             postprocessCheckboxes(briefingData, characterProfileStructure, 'profileInfo-', 'profileInfoArray');
             postprocessCheckboxes(briefingData, playerProfileStructure, 'playerInfo-', 'playerInfoArray');
             callback(null, briefingData);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function exportDocxByTemplate(template) {
         getBriefingData((err, briefingData) => {
-            if (err) { Utils.handleError(err); return; }
+            if (err) { UI.handleError(err); return; }
             generateBriefings(briefingData, 'docx', generateSingleDocx('blob', template), generateSingleDocx('Uint8Array', template));
         });
     }
 
     function convertToDocxTemplate() {
         const docxTemplate = makeDocxTemplate('blob');
-        Utils.confirm(L10n.getValue('briefings-save-file'), () => {
+        UI.confirm(L10n.getValue('briefings-save-file'), () => {
             saveAs(docxTemplate, FileUtils.makeFileName('template', 'docx'));
         });
     }
@@ -260,7 +265,10 @@ const Docxtemplater = require('docxtemplater');
             state.templates.genericTemplate = atob(Export.getTemplate(L10n.getLang(), 'genericTemplate'));
         // }
 
-        const doc = new Docxtemplater(state.templates.genericTemplate);
+        const doc = new Docxtemplater();
+        const zip = new JSZip(state.templates.genericTemplate);
+        doc.loadZip(zip);
+
         // const doc = new window.Docxgen(state.templates.genericTemplate);
         doc.setData({
             splittedText: template
@@ -272,21 +280,21 @@ const Docxtemplater = require('docxtemplater');
     }
     function previewTextDataAsIs() {
         getBriefingData((err, briefingData) => {
-            if (err) { Utils.handleError(err); return; }
+            if (err) { UI.handleError(err); return; }
             U.queryEl('#textBriefingPreviewArea').value = JSON.stringify(briefingData, null, '  ');
         });
     }
 
     function previewTextOutput() {
         getBriefingData((err, data) => {
-            if (err) { Utils.handleError(err); return; }
+            if (err) { UI.handleError(err); return; }
             U.queryEl('#textBriefingPreviewArea').value = generateSingleTxt(U.queryEl('#templateArea').value, data);
         });
     }
 
     function makeTextBriefings(fileType, delegate) {
         getBriefingData((err, briefingData) => {
-            if (err) { Utils.handleError(err); return; }
+            if (err) { UI.handleError(err); return; }
             generateBriefings(briefingData, fileType, (data) => {
                 const result = delegate(data);
                 return new Blob([result], {
@@ -304,11 +312,11 @@ const Docxtemplater = require('docxtemplater');
             const r = new FileReader();
             r.onload = (e) => {
                 state.customDocxTemplate = e.target.result;
-                Utils.alert(L10n.getValue('briefings-template-is-loaded'));
+                UI.alert(L10n.getValue('briefings-template-is-loaded'));
             };
             r.readAsBinaryString(f);
         } else {
-            Utils.alert(L10n.getValue('briefings-error-on-template-uploading'));
+            UI.alert(L10n.getValue('briefings-error-on-template-uploading'));
         }
     }
 
@@ -347,13 +355,13 @@ const Docxtemplater = require('docxtemplater');
                 saveFile('briefings-save-file', out, fileName, fileType);
             }
         } catch (err) {
-            Utils.alert(L10n.getValue('briefings-error-on-generating-briefings'));
+            UI.alert(L10n.getValue('briefings-error-on-generating-briefings'));
             console.log(err);
         }
     }
 
     function saveFile(msgKey, out, fileName, extension) {
-        Utils.confirm(L10n.getValue(msgKey), () => {
+        UI.confirm(L10n.getValue(msgKey), () => {
             saveAs(out, FileUtils.makeFileName(fileName, extension));
         });
     }
@@ -366,7 +374,7 @@ const Docxtemplater = require('docxtemplater');
                 gameName: briefingData.gameName,
                 briefings: [briefing]
             });
-            updateStatus(U.strFormat(L10n.getValue('briefings-save-status'), [i + 1, briefingData.briefings.length]));
+            updateStatus(CU.strFormat(L10n.getValue('briefings-save-status'), [i + 1, briefingData.briefings.length]));
         });
         return res;
     }
@@ -374,7 +382,8 @@ const Docxtemplater = require('docxtemplater');
     generateSingleDocx = R.curry((type, template, data) => {
         // const doc = new window.Docxgen(template);
         const doc = new Docxtemplater();
-        doc.loadZip(template);
+        var zip = new JSZip(template);
+        doc.loadZip(zip);
         doc.setData(data);
         doc.render(); // apply them (replace all occurences of {first_name} by
         // Hipp, ...)
@@ -388,7 +397,7 @@ const Docxtemplater = require('docxtemplater');
         try {
             return Mustache.render(template, data);
         } catch (err) {
-            Utils.alert(U.strFormat(L10n.getValue('briefings-template-error'), [err.message]));
+            UI.alert(CU.strFormat(L10n.getValue('briefings-template-error'), [err.message]));
             throw err;
         }
     });

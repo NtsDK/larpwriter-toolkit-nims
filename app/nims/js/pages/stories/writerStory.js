@@ -34,7 +34,7 @@ module.exports = (Stories) => {
         if (storyName) {
             DBMS.getWriterStory({storyName}).then(story => {
                 storyArea.value = story;
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         } else {
             storyArea.value = '';
         }
@@ -45,7 +45,7 @@ module.exports = (Stories) => {
         DBMS.setWriterStory({
             storyName: Stories.getCurrentStoryName(),
             value: storyArea.value
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
     return exports;
 }

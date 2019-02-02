@@ -91,7 +91,7 @@ const ProjectUtils = require('common/ProjectUtils.js');
     });
 
     function makeCompletenessLabel(value, total) {
-        return U.strFormat('{0} ({1}/{2})', [total === 0 ? '-' : `${((value / total) * 100).toFixed(0)}%`, value, total]);
+        return CU.strFormat('{0} ({1}/{2})', [total === 0 ? '-' : `${((value / total) * 100).toFixed(0)}%`, value, total]);
     }
 
     function getCompletenessColor(value, total) {
@@ -103,9 +103,9 @@ const ProjectUtils = require('common/ProjectUtils.js');
         let p = value / total;
         if (p < 0.5) {
             p *= 2;
-            return U.strFormat('rgba({0},{1},{2}, 1)', [calc(251, 255, p), calc(126, 255, p), calc(129, 0, p)]); // red to yellow mapping
+            return CU.strFormat('rgba({0},{1},{2}, 1)', [calc(251, 255, p), calc(126, 255, p), calc(129, 0, p)]); // red to yellow mapping
         }
         p = (p - 0.5) * 2;
-        return U.strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
+        return CU.strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
     }
 // })(window.CharacterReports = {});

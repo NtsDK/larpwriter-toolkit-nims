@@ -52,7 +52,7 @@ See the License for the specific language governing permissions and
                         that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
                         events = [];
 
-                        const tmpEvents = CU.clone(that.database.Stories[storyName].events);
+                        const tmpEvents = R.clone(that.database.Stories[storyName].events);
                         tmpEvents.map((elem, i) => {
                             elem.index = i;
                             elem.storyName = storyName;
@@ -83,7 +83,7 @@ See the License for the specific language governing permissions and
                     const that = this;
                     Object.keys(this.database.Stories).filter(storyName =>
                         that.database.Stories[storyName].characters[characterName]).forEach((storyName) => {
-                        const events = CU.clone(that.database.Stories[storyName].events);
+                        const events = R.clone(that.database.Stories[storyName].events);
                         allEvents = allEvents.concat(events.map((elem, i) => {
                             elem.index = i;
                             elem.storyName = storyName;
@@ -101,7 +101,7 @@ See the License for the specific language governing permissions and
 
         // timeline
         LocalDBMS.prototype.getEventsTimeInfo = function (callback) {
-            const result = R.flatten(R.values(CU.clone(this.database.Stories)).map(story => story.events.map((event, index) => R.merge(R.pick(['name', 'time'], event), {
+            const result = R.flatten(R.values(R.clone(this.database.Stories)).map(story => story.events.map((event, index) => R.merge(R.pick(['name', 'time'], event), {
                 characters: R.keys(event.characters),
                 storyName: story.name,
                 index

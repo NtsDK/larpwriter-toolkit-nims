@@ -90,11 +90,11 @@ const EventPresence = require('./eventPresence')(module.exports);
         PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}).then( allStoryNames => {
             const data = UI.getSelect2Data(allStoryNames);
 
-            Utils.enableEl(U.qe(`${root}.rename.story`), allStoryNames.length > 0);
-            Utils.enableEl(U.qe(`${root}.remove.story`), allStoryNames.length > 0);
-            Utils.enableEl(U.qe(`${root}.create.event`), allStoryNames.length > 0);
-            Utils.enableEl(U.qe(`${root}.add.character`), allStoryNames.length > 0);
-            Utils.enableEl(U.qe(`${root}#storySelector`), allStoryNames.length > 0);
+            UI.enableEl(U.qe(`${root}.rename.story`), allStoryNames.length > 0);
+            UI.enableEl(U.qe(`${root}.remove.story`), allStoryNames.length > 0);
+            UI.enableEl(U.qe(`${root}.create.event`), allStoryNames.length > 0);
+            UI.enableEl(U.qe(`${root}.add.character`), allStoryNames.length > 0);
+            UI.enableEl(U.qe(`${root}#storySelector`), allStoryNames.length > 0);
 
             U.showEl(U.qe(`${root}.alert`), allStoryNames.length === 0);
             U.showEl(U.qe(`${root}.stories-main-container`), allStoryNames.length !== 0);
@@ -111,7 +111,7 @@ const EventPresence = require('./eventPresence')(module.exports);
             R.values(state.left.views).forEach(view => view.refresh());
             if (state.left.currentView)state.left.currentView.refresh();
             if (state.right.currentView)state.right.currentView.refresh();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function getSelectedStoryName(storyNames) {
@@ -140,8 +140,8 @@ const EventPresence = require('./eventPresence')(module.exports);
                     input.value = '';
                     dialog.hideDlg();
                     exports.refresh();
-                }).catch(Utils.handleError);
-            }).catch(err => setError(dialog, err));
+                }).catch(UI.handleError);
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -157,20 +157,20 @@ const EventPresence = require('./eventPresence')(module.exports);
                     toInput.value = '';
                     dialog.hideDlg();
                     exports.refresh();
-                }).catch(Utils.handleError);
-            }).catch(err => setError(dialog, err));
+                }).catch(UI.handleError);
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
     function removeStory() {
         const name = U.queryEl(`${root}#storySelector`).value.trim();
 
-        Utils.confirm(U.strFormat(L10n.getValue('stories-are-you-sure-about-story-removing'), [name]), () => {
+        UI.confirm(CU.strFormat(L10n.getValue('stories-are-you-sure-about-story-removing'), [name]), () => {
             DBMS.removeStory({storyName:name}).then(() => {
                 PermissionInformer.refresh().then(() => {
                     exports.refresh();
-                }).catch(Utils.handleError);
-            }).catch(Utils.handleError);
+                }).catch(UI.handleError);
+            }).catch(UI.handleError);
         });
     }
 
@@ -187,8 +187,8 @@ const EventPresence = require('./eventPresence')(module.exports);
             PermissionInformer.isEntityEditable({type: 'story', name: storyName}).then( isStoryEditable => {
                 if (state.left.currentView)state.left.currentView.refresh();
                 if (state.right.currentView)state.right.currentView.refresh();
-                Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
-            }).catch(Utils.handleError);
+                UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            }).catch(UI.handleError);
         } else { // when there are no stories at all
             updateSettings(null);
             if (state.left.currentView)state.left.currentView.refresh();

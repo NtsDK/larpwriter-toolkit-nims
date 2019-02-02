@@ -1,20 +1,15 @@
 const {EventEmitter} = require('events');
-// const R = require("ramda");
 const Ajv = require("ajv");
 const dateFormat = require("dateFormat");
 
-const CommonUtils = require('../../../core/js/common/commonUtils.js');
-const Errors = require('../../../core/js/common/errors.js');
-const Precondition = require('../../../core/js/common/precondition.js');
+const Migrator = require('../common/migrator');
+const Logger = require('../common/logger');
+const Constants = require('../common/constants');
+const Schema = require('../common/schema');
+const ProjectUtils = require('common/ProjectUtils');
+const { Precondition, Errors } = require('core');
 
-const Migrator = require('../common/migrator.js');
-const Logger = require('../common/logger.js');
-const Constants = require('../common/constants.js');
-const Schema = require('../common/schema.js');
-const ProjectUtils = require('common/ProjectUtils.js');
-// const ProjectUtils = require('../common/ProjectUtils.js');
-
-const CallNotificator = require('./callNotificator.js');
+const CallNotificator = require('./callNotificator');
 
 /*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
@@ -48,8 +43,7 @@ exports.makeLocalDBMS = function () {
 
     const opts = {
         Migrator,
-        CommonUtils,
-        CU: CommonUtils,
+        CU,
         ProjectUtils,
         PU: ProjectUtils,
         Precondition,

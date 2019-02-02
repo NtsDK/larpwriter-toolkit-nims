@@ -1,18 +1,14 @@
-// const {U}  = require('../../../../core/js/utils.js');
-// const { U, L10n, Utils }  = require('../../../../core');
-// const jQuery = require("jquery");
 require("chart.js");
-// const $ = jQuery;
 const dateFormat = require("dateFormat");
 const PermissionInformer = require("permissionInformer");
 
-const Constants = require('common/constants.js');
+const Constants = require('common/constants');
 
 // const {Gears, Sliders} = require('../index')
 require('./overview.css');
 
-const Gears = require('../gears/gears.js');
-const Sliders = require('../sliders/sliders.js');
+const Gears = require('../gears/gears');
+const Sliders = require('../sliders/sliders');
 // require("moment");
 /*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
@@ -124,10 +120,10 @@ See the License for the specific language governing permissions and
         Gears.refresh();
         Sliders.refresh();
         PermissionInformer.isAdmin().then( isAdmin => {
-            Utils.enable(exports.content, 'adminOnly', isAdmin);
-        }).catch(Utils.handleError);
+            UI.enable(exports.content, 'adminOnly', isAdmin);
+        }).catch(UI.handleError);
 
-        Promise.all( [DBMS.getMetaInfo(), DBMS.getStatistics()] ).then(updateOverviewTab).catch(Utils.handleError);
+        Promise.all( [DBMS.getMetaInfo(), DBMS.getStatistics()] ).then(updateOverviewTab).catch(UI.handleError);
     };
 
     function makeChart(id, canvas, data) {
@@ -220,9 +216,9 @@ See the License for the specific language governing permissions and
             updateStatisticValue(statistics, key);
         });
 
-        U.addEl(U.clearEl(U.queryEl('#generalCompleteness')), U.makeText(U.strFormat(L10n.getValue('overview-general-completeness-value'), statistics.generalCompleteness)));
-        U.addEl(U.clearEl(U.queryEl('#storyCompleteness')), U.makeText(U.strFormat(L10n.getValue('overview-story-completeness-value'), statistics.storyCompleteness)));
-        U.addEl(U.clearEl(U.queryEl('#relationCompleteness')), U.makeText(U.strFormat(L10n.getValue('overview-relation-completeness-value'), statistics.relationCompleteness)));
+        U.addEl(U.clearEl(U.queryEl('#generalCompleteness')), U.makeText(CU.strFormat(L10n.getValue('overview-general-completeness-value'), statistics.generalCompleteness)));
+        U.addEl(U.clearEl(U.queryEl('#storyCompleteness')), U.makeText(CU.strFormat(L10n.getValue('overview-story-completeness-value'), statistics.storyCompleteness)));
+        U.addEl(U.clearEl(U.queryEl('#relationCompleteness')), U.makeText(CU.strFormat(L10n.getValue('overview-relation-completeness-value'), statistics.relationCompleteness)));
 
         defaultHists.forEach((histName) => {
             makeHistogram(U.clearEl(U.queryEl(`${root}.${histName}`)), statistics[histName]);
@@ -340,16 +336,16 @@ See the License for the specific language governing permissions and
     }
 
     function updateName(event) {
-        DBMS.setMetaInfoString({name: 'name', value: event.target.value}).catch(Utils.handleError);
+        DBMS.setMetaInfoString({name: 'name', value: event.target.value}).catch(UI.handleError);
     }
     function updateTime(dp, input) {
-        DBMS.setMetaInfoDate({name: 'date', value: input.val()}).catch(Utils.handleError);
+        DBMS.setMetaInfoDate({name: 'date', value: input.val()}).catch(UI.handleError);
     }
     function updatePreGameDate(dp, input) {
-        DBMS.setMetaInfoDate({name: 'preGameDate', value: input.val()}).catch(Utils.handleError);
+        DBMS.setMetaInfoDate({name: 'preGameDate', value: input.val()}).catch(UI.handleError);
     }
     function updateDescr(event) {
-        DBMS.setMetaInfoString({name: 'description', value: event.target.value}).catch(Utils.handleError);
+        DBMS.setMetaInfoString({name: 'description', value: event.target.value}).catch(UI.handleError);
     }
 
     function customTooltips(tooltip) {

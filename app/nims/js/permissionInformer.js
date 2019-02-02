@@ -136,7 +136,7 @@ var PERMISSION_INFORMER_ENABLED = false;
 
                 const name2str = a => a.displayName.toLowerCase();
 
-                const entityCmp = CommonUtils.charOrdAFactoryBase('asc', (a, b) => {
+                const entityCmp = CU.charOrdAFactoryBase('asc', (a, b) => {
                     if (a.isOwner && b.isOwner) return name2str(a) > name2str(b);
                     if (a.isOwner) return false;
                     if (b.isOwner) return true;
@@ -148,7 +148,7 @@ var PERMISSION_INFORMER_ENABLED = false;
                     return name2str(a) > name2str(b);
                 }, R.identity);
 
-                //            names.sort(Utils.charOrdAObject);
+                //            names.sort(CU.charOrdAObject);
                 names.sort(entityCmp);
 
                 resolve(names);
@@ -188,10 +188,10 @@ var PERMISSION_INFORMER_ENABLED = false;
         exports.getEntityNamesArray = ({type, editableOnly}={}) => {
             return new Promise((resolve, reject) => {
                 // function processNames(err, names) {
-                //     if (err) { Utils.handleError(err); return; }
+                //     if (err) { UI.handleError(err); return; }
                 // }
                 // DBMS.getEntityNamesArray(type, processNames);
-                const Utils2 = Utils;
+                const Utils2 = UI;
                 DBMS.getEntityNamesArray({type}).then( names => {
                     const newNames = [];
                     names.forEach((name) => {

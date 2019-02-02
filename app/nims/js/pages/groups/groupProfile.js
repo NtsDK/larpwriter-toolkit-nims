@@ -60,7 +60,7 @@ See the License for the specific language governing permissions and
         PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false}).then((groupNames) => {
             U.showEl(U.qe(`${root} .alert`), groupNames.length === 0);
             U.showEl(U.qe(`${root} .col-xs-9`), groupNames.length !== 0);
-            Utils.enableEl(U.qe(`${root} .entity-filter`), groupNames.length !== 0);
+            UI.enableEl(U.qe(`${root} .entity-filter`), groupNames.length !== 0);
 
             U.addEls(U.clearEl(U.queryEl(`${root} .entity-list`)), groupNames.map((name, i, arr) => {
                 const el = U.wrapEl('div', U.qte('.entity-item-tmpl'));
@@ -92,7 +92,7 @@ See the License for the specific language governing permissions and
             }));
 
             showProfileInfoDelegate2(UI.checkAndGetEntitySetting(settingsPath, groupNames))();
-        }).catch(Utils.handleError)
+        }).catch(UI.handleError)
     };
 
     function makeInput(profileItemConfig) {
@@ -137,11 +137,11 @@ See the License for the specific language governing permissions and
             case 'text':
                 // eslint-disable-next-line prefer-destructuring
                 value = event.target.value;
-                DBMS.updateGroupField({groupName, fieldName, value}).catch(Utils.handleError);
+                DBMS.updateGroupField({groupName, fieldName, value}).catch(UI.handleError);
                 break;
             case 'checkbox':
                 value = event.target.checked;
-                DBMS.doExportGroup({groupName, value}).catch(Utils.handleError);
+                DBMS.doExportGroup({groupName, value}).catch(UI.handleError);
                 break;
             default:
                 throw new Error(`Unexpected type ${type}`);
@@ -205,9 +205,9 @@ See the License for the specific language governing permissions and
                     throw new Error(`Unexpected input type: ${inputItems[inputName].type}`);
                 }
                 inputItems[inputName].oldValue = group[inputName];
-                Utils.enable(exports.content, 'isGroupEditable', isGroupEditable);
+                UI.enable(exports.content, 'isGroupEditable', isGroupEditable);
             });
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     // eslint-disable-next-line no-var,vars-on-top
@@ -292,8 +292,8 @@ See the License for the specific language governing permissions and
                 input.value = '';
                 dialog.hideDlg();
                 refresh();
-            }).catch(Utils.handleError);
-        }).catch(err => setError(dialog, err));
+            }).catch(UI.handleError);
+        }).catch(err => UI.setError(dialog, err));
     };
 
     function renameGroup(dialog) {
@@ -308,15 +308,15 @@ See the License for the specific language governing permissions and
                     toInput.value = '';
                     dialog.hideDlg();
                     exports.refresh();
-                }).catch(Utils.handleError);
-            }).catch(err => setError(dialog, err));
+                }).catch(UI.handleError);
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
     exports.removeGroup = (callback, refresh, btn) => () => {
         const name = callback();
 
-        Utils.confirm(U.strFormat(L10n.getValue('groups-are-you-sure-about-group-removing'), [name]), () => {
+        UI.confirm(CU.strFormat(L10n.getValue('groups-are-you-sure-about-group-removing'), [name]), () => {
             DBMS.removeGroup({groupName: name}).then(() => {
                 PermissionInformer.refresh().then(() => {
                     if(btn.nextName !== undefined){
@@ -325,8 +325,8 @@ See the License for the specific language governing permissions and
                         UI.updateEntitySetting(settingsPath, btn.prevName);
                     }
                     refresh();
-                }).catch(Utils.handleError);
-            }).catch(Utils.handleError);
+                }).catch(UI.handleError);
+            }).catch(UI.handleError);
         });
     };
 // })(window.GroupProfile = {});

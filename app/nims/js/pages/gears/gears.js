@@ -1,4 +1,3 @@
-// const { U, L10n, UI, Utils, CommonUtils }  = require('../../../../core');
 const vis = require('vis');
 require('vis/dist/vis.min.css');
 require('./gears.css');
@@ -83,14 +82,14 @@ See the License for the specific language governing permissions and
             if(options.trim() === ''){
                 return;
             }
-            if(CommonUtils.startsWith(options, 'var options = ')){
+            if(R.startsWith('var options = ', options)){
                 options = options.substring('var options = '.length);
             }
             try{
                 options = JSON.parse(options);
             }catch(e){
                 console.error(e);
-                Utils.alert(l10n('error-on-settings-loading'));
+                UI.alert(l10n('error-on-settings-loading'));
                 return;
             }
             state.network.setOptions(options);
@@ -105,13 +104,13 @@ See the License for the specific language governing permissions and
                         "minVelocity": 0.75
                     }
                 });
-            }).catch(Utils.handleError);
+            }).catch(UI.handleError);
         });
 
         U.queryEl(`${root} .show-notes-checkbox`).checked = false;
         U.listen(U.queryEl(`${root} .show-notes-checkbox`), 'change', (event) => {
             DBMS.setGearsShowNotesEnabled({enabled: event.target.checked})
-                .then(exports.refresh).catch(Utils.handleError);
+                .then(exports.refresh).catch(UI.handleError);
         });
 
         U.queryEl(`${root} .big-picture-checkbox`).checked = false;
@@ -138,7 +137,7 @@ See the License for the specific language governing permissions and
             state.edgesDataset.clear();
             state.edgesDataset.add(data.edges);
             drawNetwork();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     // create a network
@@ -180,7 +179,7 @@ See the License for the specific language governing permissions and
                 data.arrows ='to';
                 data.label ='';
                 if (data.from == data.to) {
-                    Utils.confirm(l10n('do-you-want-to-connect-node-to-itself'), () => {
+                    UI.confirm(l10n('do-you-want-to-connect-node-to-itself'), () => {
                         callback(data);
                     }, () => callback());
                 }
@@ -237,7 +236,7 @@ See the License for the specific language governing permissions and
     function storeData(callback){
         DBMS.setGearsData({data: exportNetwork()}).then(() => {
             if(callback) callback();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function exportNetwork() {
@@ -322,7 +321,7 @@ See the License for the specific language governing permissions and
     }
 
     function clearNetwork(){
-        Utils.confirm(l10n('confirm-clearing'), () => {
+        UI.confirm(l10n('confirm-clearing'), () => {
             state.nodesDataset.clear();
             state.edgesDataset.clear();
             storeData(exports.refresh);
@@ -340,7 +339,7 @@ See the License for the specific language governing permissions and
 
     function fillSearchSelect(){
       const arr = state.nodesDataset.map((node) => ({name: node.name, value: node.id}));
-      arr.sort(CommonUtils.charOrdAFactory(a => a.name.toLowerCase()));
+      arr.sort(CU.charOrdAFactory(a => a.name.toLowerCase()));
       U.fillSelector(U.clearEl(U.queryEl('.search-node')), arr);
     }
 
@@ -379,13 +378,13 @@ See the License for the specific language governing permissions and
 
       const nodes = state.nodesDataset.map(node => {
         const colors = Constants.colorPalette[groups[node.group]-1].color;
-        return CommonUtils.U.strFormat(Constants.yedNodeTmpl, [node.id, node.label, colors.background, colors.border]);
+        return CU.strFormat(Constants.yedNodeTmpl, [node.id, node.label, colors.background, colors.border]);
       }).join('\n');
 
       const edges = state.edgesDataset.map(edge => {
-        return CommonUtils.U.strFormat(Constants.yedEdgeTmpl, [edge.id, edge.label || '', edge.from, edge.to]);
+        return CU.strFormat(Constants.yedEdgeTmpl, [edge.id, edge.label || '', edge.from, edge.to]);
       }).join('\n');
-      const out = new Blob([CommonUtils.U.strFormat(Constants.yedGmlBase, [nodes, edges])], {
+      const out = new Blob([CU.strFormat(Constants.yedGmlBase, [nodes, edges])], {
           type: 'text/xml;charset=utf-8;'
       });
       saveAs(out, FileUtils.makeFileName('gears', 'graphml'));

@@ -60,8 +60,8 @@ See the License for the specific language governing permissions and
             const player = event.target.value;
             const yourPlayers = state.playerNames.filter(R.prop('isOwner')).map(R.prop('value'));
             const isPlayerEditable = R.contains(player, yourPlayers);
-            Utils.enableEl(U.qe(`${root}.user.change-password`), isPlayerEditable);
-            Utils.enableEl(U.qe(`${root}.remove-user-button`), isPlayerEditable);
+            UI.enableEl(U.qe(`${root}.user.change-password`), isPlayerEditable);
+            UI.enableEl(U.qe(`${root}.remove-user-button`), isPlayerEditable);
         });
 
 
@@ -87,24 +87,24 @@ See the License for the specific language governing permissions and
             state.playerNames = playerNames;
 
             const noAccounts = (hasLoginObj.false || []);
-            noAccounts.sort(Utils.charOrdAObject);
+            noAccounts.sort(CU.charOrdAObject);
             $(U.clearEl(U.queryEl(`${root}.create-login-name-select`))).select2(UI.getSelect2Data(noAccounts));
     //                        U.fillSelector(U.clearEl(U.queryEl(`${root}.create-login-name-select`)), (hasLoginObj.false || [])
-    //                            .sort(Utils.charOrdAObject).map(UI.remapProps4Select));
+    //                            .sort(CU.charOrdAObject).map(UI.remapProps4Select));
             const hasAccounts = (hasLoginObj.true || []);
-    //                            hasAccounts.sort(Utils.charOrdAObject);
+    //                            hasAccounts.sort(CU.charOrdAObject);
             $(U.clearEl(U.queryEl(`${root}.change-password-user-select`))).select2(UI.getSelect2Data(hasAccounts));
 
-            Utils.enable(exports.content, 'adminOnly', isAdmin);
+            UI.enable(exports.content, 'adminOnly', isAdmin);
 
-            Utils.enableEl(U.qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
-            Utils.enableEl(U.qe(`${root}.user.change-password`), hasAccounts.length > 0);
-            Utils.enableEl(U.qe(`${root}.remove-user-button`), hasAccounts.length > 0);
+            UI.enableEl(U.qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
+            UI.enableEl(U.qe(`${root}.user.change-password`), hasAccounts.length > 0);
+            UI.enableEl(U.qe(`${root}.remove-user-button`), hasAccounts.length > 0);
     //                        U.fillSelector(U.clearEl(U.queryEl(`${root}.change-password-user-select`)), (hasLoginObj.true || [])
-    //                            .sort(Utils.charOrdAObject).map(UI.remapProps4Select);
+    //                            .sort(CU.charOrdAObject).map(UI.remapProps4Select);
     //                        U.fillSelector(U.clearEl(U.queryEl(`${root}.remove-user-select`)), (hasLoginObj.true || [])
-    //                            .sort(Utils.charOrdAObject).map(UI.remapProps4Select));
-        }).catch(Utils.handleError);
+    //                            .sort(CU.charOrdAObject).map(UI.remapProps4Select));
+        }).catch(UI.handleError);
     };
 
     function createUser(dialog) {
@@ -117,8 +117,8 @@ See the License for the specific language governing permissions and
                     userPasswordInput.value = '';
                     dialog.hideDlg();
                     exports.refresh();
-                }, Utils.handleError);
-            }).catch(err => setError(dialog, err));
+                }, UI.handleError);
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -130,7 +130,7 @@ See the License for the specific language governing permissions and
                 passwordInput.value = '';
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
@@ -142,22 +142,22 @@ See the License for the specific language governing permissions and
             DBMS.changePlayerPassword({userName, newPassword}).then(() => {
                 dialog.hideDlg();
                 exports.refresh();
-            }).catch(err => setError(dialog, err));
+            }).catch(err => UI.setError(dialog, err));
         };
     }
 
     function removeUser() {
         const name = U.queryEl(`${root}.change-password-user-select`).value.trim();
-        Utils.confirm(U.strFormat(L10n.getValue('admins-confirm-user-account-remove'), [name]), () => {
-            DBMS.removePlayerLogin({userName: name}).then(exports.refresh, Utils.handleError);
+        UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-user-account-remove'), [name]), () => {
+            DBMS.removePlayerLogin({userName: name}).then(exports.refresh, UI.handleError);
         });
     }
 
     function setWelcomeText(event) {
-        DBMS.setWelcomeText({text: event.target.value}).catch(Utils.handleError);
+        DBMS.setWelcomeText({text: event.target.value}).catch(UI.handleError);
     }
 
     function setPlayerOption(event) {
-        DBMS.setPlayerOption({name: event.target.value, value: event.target.checked}).catch(Utils.handleError);
+        DBMS.setPlayerOption({name: event.target.value, value: event.target.checked}).catch(UI.handleError);
     }
 // })(window.PlayerManagement = {});

@@ -5,7 +5,7 @@ describe('baseAPI', () => {
         DBMS.getDatabase().then(data => {
             oldBase = data;
             DBMS.setDatabase({
-                database: CommonUtils.clone(EmptyBase.data)
+                database: R.clone(EmptyBase.data)
             }).then(() => done()).catch( err => {
                 throw err;
             });
@@ -38,7 +38,7 @@ describe('baseAPI', () => {
 
     it('setDatabase(emptyBase) -> ok', (done) => {
         DBMS.setDatabase({
-            database: CommonUtils.clone(EmptyBase.data)
+            database: R.clone(EmptyBase.data)
         }).then(() => {
             expect(123).not.toBeNull();
             done();

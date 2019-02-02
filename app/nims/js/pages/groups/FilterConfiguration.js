@@ -26,13 +26,13 @@ const ProjectUtils = require('common/ProjectUtils');
 function FilterConfiguration(info) {
     this.info = info;
     function populateProfileItems(item) {
-        if (!CommonUtils.startsWith(item.name, Constants.CHAR_PREFIX) &&
-            !CommonUtils.startsWith(item.name, Constants.PLAYER_PREFIX)) {
+        if (!R.startsWith(Constants.CHAR_PREFIX, item.name) &&
+            !R.startsWith(Constants.PLAYER_PREFIX, item.name)) {
             item.displayName = L10n.getValue(item.displayName);
             item.value = '';
         }
     }
-    this.groupedProfileFilterItems = CommonUtils.clone(info.groupedProfileFilterItems);
+    this.groupedProfileFilterItems = R.clone(info.groupedProfileFilterItems);
     this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
 }
 

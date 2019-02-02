@@ -28,7 +28,7 @@ See the License for the specific language governing permissions and
         };
         // social network
         LocalDBMS.prototype.getAllStories = function () {
-            return Promise.resolve(CU.clone(this.database.Stories));
+            return Promise.resolve(R.clone(this.database.Stories));
         };
 
         //stories

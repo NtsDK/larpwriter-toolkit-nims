@@ -66,7 +66,7 @@ See the License for the specific language governing permissions and
 
     function getData(event) {
         const filter = R.fromPairs(U.queryEls(`${root}input[filter]`).map(el => [U.getAttr(el, 'filter'), el.value]));
-        DBMS.getLog({pageNumber: Number(event.target.value), filter}).then(dataRecieved).catch(Utils.handleError);
+        DBMS.getLog({pageNumber: Number(event.target.value), filter}).then(dataRecieved).catch(UI.handleError);
     }
 
     function makeRow(rowData) {

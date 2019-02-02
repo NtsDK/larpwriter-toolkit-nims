@@ -1,5 +1,4 @@
 // const R = require("ramda");
-const CommonUtils = require('../../../core/js/common/commonUtils.js');
 const Constants = require('../common/constants.js');
 /*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
@@ -26,7 +25,6 @@ See the License for the specific language governing permissions and
 // ((callback) => {
     let makeProfileStructureItemSchema;
 
-    // function Schema(exports, R, CommonUtils, Constants) {
         exports.getSchema = function (base) {
             const schema = {
                 title: 'Larpwriter Toolkit NIMS base',
@@ -669,7 +667,7 @@ See the License for the specific language governing permissions and
                 playerNames = ['123'];
             }
 
-            const names = `^(${R.keys(characters).map(CommonUtils.escapeRegExp).join('|')})$`;
+            const names = `^(${R.keys(characters).map(CU.escapeRegExp).join('|')})$`;
             const schema = {
                 type: 'object',
                 additionalProperties: false,
@@ -932,7 +930,7 @@ See the License for the specific language governing permissions and
 
         function getRelationsSchema(Characters, definitions) {
             let chars = R.keys(Characters);
-            const names = `^(${R.keys(Characters).map(CommonUtils.escapeRegExp).join('|')})$`;
+            const names = `^(${R.keys(Characters).map(CU.escapeRegExp).join('|')})$`;
             if (chars.length === 0) {
                 chars = ['123'];
             }
@@ -980,7 +978,3 @@ See the License for the specific language governing permissions and
             };
             return schema;
         }
-//     }
-
-//     callback(Schema);
-// })(api => ((typeof exports === 'undefined') ? api((this.Schema = {}), R, CommonUtils, Constants) : (module.exports = api)));

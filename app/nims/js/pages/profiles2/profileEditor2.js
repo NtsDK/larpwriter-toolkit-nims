@@ -88,9 +88,9 @@ function ProfileEditorTmpl(opts) {
         ]).then(results => {
             let [primaryNames, secondaryNames, profileBindings] = results;
             profileBindings = opts.processBindings(profileBindings);
-            Utils.enableEl(U.queryEl(`${root}.entity-filter`), primaryNames.length > 0);
+            UI.enableEl(U.queryEl(`${root}.entity-filter`), primaryNames.length > 0);
             rebuildInterface(primaryNames, secondaryNames, profileBindings);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function rebuildInterface(primaryNames, secondaryNames, profileBindings) {
@@ -134,7 +134,7 @@ function ProfileEditorTmpl(opts) {
         };
         DBMS.getProfileStructure({type: firstType}).then(allProfileSettings => {
             profileEditorCore.initProfileStructure(profileDiv, firstType, allProfileSettings, callback);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function selectProfile(name) {
@@ -167,7 +167,7 @@ function ProfileEditorTmpl(opts) {
             if (firstType === 'character') {
                 showCharacterReports(name);
             }
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function showCharacterReports(name){
@@ -192,13 +192,13 @@ function ProfileEditorTmpl(opts) {
 
             if(relationsSummary.relations.length !== 0){
                 U.removeClass(U.queryEl(reportByRelationsDiv), 'hidden');
-                relationsSummary.relations.sort(CommonUtils.charOrdAFactory(rel =>
+                relationsSummary.relations.sort(CU.charOrdAFactory(rel =>
                         ProjectUtils.get2ndRelChar(name, rel).toLowerCase()));
 
                 U.addEls(U.clearEl(U.queryEl(reportByRelationsDiv)), relationsSummary.relations
                         .map(CharacterReports.makeRelationReportRow(name)));
             }
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function filterOptions(event) {
@@ -233,8 +233,8 @@ function ProfileEditorTmpl(opts) {
                     input.value = '';
                     dialog.hideDlg();
                     exports.refresh();
-                }).catch(Utils.handleError);
-            }).catch((err) => setError(dialog, err));
+                }).catch(UI.handleError);
+            }).catch((err) => UI.setError(dialog, err));
 
         };
     }
@@ -255,14 +255,14 @@ function ProfileEditorTmpl(opts) {
                     toInput.value = '';
                     dialog.hideDlg();
                     exports.refresh();
-                }).catch(Utils.handleError);
-            }).catch((err) => setError(dialog, err));
+                }).catch(UI.handleError);
+            }).catch((err) => UI.setError(dialog, err));
         };
     }
 
     function removeProfile(type, name, btn) {
         return () => {
-            Utils.confirm(U.strFormat(l10n(opts.removeMsg), [name]), () => {
+            UI.confirm(CU.strFormat(l10n(opts.removeMsg), [name]), () => {
                 DBMS.removeProfile({type, characterName: name}).then(() => {
                     PermissionInformer.refresh().then(() => {
                         if(btn.nextName !== undefined){
@@ -271,8 +271,8 @@ function ProfileEditorTmpl(opts) {
                             UI.updateEntitySetting(settingsPath, btn.prevName);
                         }
                         exports.refresh();
-                    }).catch(Utils.handleError);
-                }).catch(Utils.handleError);
+                    }).catch(UI.handleError);
+                }).catch(UI.handleError);
             });
         };
     }

@@ -12,13 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
+const dateFormat = require('dateFormat');
+const CU = require('./common/commonUtils');
+
 'use strict';
 
 // ((exports) => {
     exports.makeNewBase = () => {
         return new Promise((resolve, reject) => {
-            Utils.confirm(L10n.getValue('utils-new-base-warning'), () => {
-                DBMS.setDatabase({database:CommonUtils.clone(EmptyBase.data)}).then(() => {
+            UI.confirm(L10n.getValue('utils-new-base-warning'), () => {
+                DBMS.setDatabase({database:R.clone(EmptyBase.data)}).then(() => {
                     resolve(true);
                     // TestUtils.addGroupTestingData();
                 }).catch(reject);
@@ -50,7 +53,7 @@ See the License for the specific language governing permissions and
                 };
                 r.readAsText(f);
             } else {
-                Utils.alert(L10n.getValue('utils-base-file-loading-error'));
+                UI.alert(L10n.getValue('utils-base-file-loading-error'));
                 reject();
             }
         });
@@ -59,14 +62,14 @@ See the License for the specific language governing permissions and
     exports.saveFile = () => {
         DBMS.getDatabase().then(database => {
             exports.json2File(database, exports.makeFileName(`${BASE_FILE_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     exports.makeFileName = (root, extension, date) => {
         date = date || new Date();
-        const timeStr = date.format('dd-mmm-yyyy_HH-MM-ss');
+        const timeStr = dateFormat(date, 'dd-mmm-yyyy_HH-MM-ss');
         const fileName = `${root}_${timeStr}`;
-        return `${CommonUtils.sanitizeStr2FileName(fileName)}.${extension}`;
+        return `${CU.sanitizeStr2FileName(fileName)}.${extension}`;
     };
 
     exports.json2File = (str, fileName) => {

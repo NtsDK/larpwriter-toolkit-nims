@@ -1,6 +1,5 @@
 // const R = require('ramda');
 const Constants = require('./constants');
-const {CU} = require('../../../core');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +19,7 @@ See the License for the specific language governing permissions and
 // ((callback) => {
     // function ProjectUtils(exports, R, Constants, Errors, CU) {
         exports.acceptDataRow = R.curry((model, dataString) => {
-            const dataMap = CU.arr2map(dataString, 'itemName');
+            const dataMap = R.indexBy(R.prop('itemName'), dataString);
             return model.every((filterItem) => {
                 let regex, result, values;
                 result = true;
@@ -146,10 +145,10 @@ See the License for the specific language governing permissions and
                 return characterName;
             } else if (profileItemName === Constants.CHAR_OWNER) {
                 return info.characters.owners[characterName];
-            } else if (CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX)) {
+            } else if (R.startsWith(Constants.SUMMARY_PREFIX, profileItemName)) {
                 return info.charactersSummary[characterName][profileItemName.substring(Constants
                     .SUMMARY_PREFIX.length)];
-            } else if (CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
+            } else if (R.startsWith(Constants.CHAR_PREFIX, profileItemName)) {
                 return info.characters.profiles[characterName][profileItemName.substring(Constants
                     .CHAR_PREFIX.length)];
             }
@@ -158,31 +157,31 @@ See the License for the specific language governing permissions and
         const getCharacterInfoValue2 = (info, profileId, profileItemName) => {
             if (profileItemName === Constants.CHAR_NAME ||
                     profileItemName === Constants.CHAR_OWNER ||
-                    CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX) ||
-                    CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
+                    R.startsWith(Constants.SUMMARY_PREFIX, profileItemName, ) ||
+                    R.startsWith(Constants.CHAR_PREFIX, profileItemName)) {
                 if (profileId[0] === '') return undefined;
                 const characterName = profileId[0];
                 if (profileItemName === Constants.CHAR_NAME) {
                     return characterName;
                 } else if (profileItemName === Constants.CHAR_OWNER) {
                     return info.characters.owners[characterName];
-                } else if (CU.startsWith(profileItemName, Constants.SUMMARY_PREFIX)) {
+                } else if (R.startsWith(Constants.SUMMARY_PREFIX, profileItemName)) {
                     return info.charactersSummary[characterName][profileItemName.substring(Constants
                         .SUMMARY_PREFIX.length)];
-                } else if (CU.startsWith(profileItemName, Constants.CHAR_PREFIX)) {
+                } else if (R.startsWith(Constants.CHAR_PREFIX, profileItemName)) {
                     return info.characters.profiles[characterName][profileItemName.substring(Constants
                         .CHAR_PREFIX.length)];
                 }
             } else if (profileItemName === Constants.PLAYER_NAME ||
                     profileItemName === Constants.PLAYER_OWNER ||
-                    CU.startsWith(profileItemName, Constants.PLAYER_PREFIX)) {
+                    R.startsWith(Constants.PLAYER_PREFIX, profileItemName)) {
                 if (profileId[1] === '') return undefined;
                 const playerName = profileId[1];
                 if (profileItemName === Constants.PLAYER_NAME) {
                     return playerName;
                 } else if (profileItemName === Constants.PLAYER_OWNER) {
                     return info.players.owners[playerName];
-                } else if (CU.startsWith(profileItemName, Constants.PLAYER_PREFIX)) {
+                } else if (R.startsWith(Constants.PLAYER_PREFIX, profileItemName)) {
                     return info.players.profiles[playerName][profileItemName.substring(Constants.PLAYER_PREFIX.length)];
                 }
             }
@@ -237,7 +236,3 @@ See the License for the specific language governing permissions and
 
         exports.rel2charArr = R.props(['starter', 'ender']);
         exports.get2ndRelChar = R.curry((char1, rel) => (rel.starter === char1 ? rel.ender : rel.starter));
-    // }
-
-//     callback(ProjectUtils);
-// })(api => ((typeof exports === 'undefined') ? api((this.ProjectUtils = {}), R, Constants, Errors, CommonUtils) : (module.exports = api)));

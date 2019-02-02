@@ -70,7 +70,7 @@ const PermissionInformer = require('permissionInformer');
             });
             U.setAttr(selector, 'size', Math.min(storyNames2.length, 10));
             showPersonalStories(selectedStoryName);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function updateAdaptationSelectorDelegate(event) {
@@ -97,15 +97,15 @@ const PermissionInformer = require('permissionInformer');
 
         const characterNames = getCharacterNames(characterArray);
         const eventIndexes = getEventIndexes(eventArray);
-
-        const map = CommonUtils.arr2map(allCharacters, 'value');
+        
+        const map = R.indexBy(R.prop('value'), allCharacters);
 
         characterArray.forEach((elem) => {
             elem.displayName = map[elem.characterName].displayName;
             elem.value = map[elem.characterName].value;
         });
 
-        characterArray.sort(Utils.charOrdAObject);
+        characterArray.sort(CU.charOrdAObject);
 
         let option;
         characterArray.forEach((elem) => {
@@ -220,10 +220,10 @@ const PermissionInformer = require('permissionInformer');
                     metaInfo
                 );
                 updateAdaptationSelector(story, allCharacters);
-                Utils.enable(exports.content, 'isStoryEditable', isStoryEditable);
-                Utils.enable(exports.content, 'notEditable', false);
-            }).catch(Utils.handleError);
-        }).catch(Utils.handleError);
+                UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
+                UI.enable(exports.content, 'notEditable', false);
+            }).catch(UI.handleError);
+        }).catch(UI.handleError);
     }
 
     function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
@@ -303,8 +303,8 @@ const PermissionInformer = require('permissionInformer');
 
         if (opts.showLockButton === true) {
             U.listen(lockButton, 'click', onOriginLockClick(timeInput, textInput));
-            Utils.enableEl(timeInput, false);
-            Utils.enableEl(textInput, false);
+            UI.enableEl(timeInput, false);
+            UI.enableEl(textInput, false);
             L10n.localizeStatic(card);
         } else {
             U.addClass(lockButton, 'hidden');
@@ -320,8 +320,8 @@ const PermissionInformer = require('permissionInformer');
             U.setClassByCondition(target, 'btn-primary', !isLocked);
             U.setClassByCondition(target, 'locked', !isLocked);
             U.setClassByCondition(target, 'unlocked', isLocked);
-            Utils.enableEl(timeInput, isLocked);
-            Utils.enableEl(textInput, isLocked);
+            UI.enableEl(timeInput, isLocked);
+            UI.enableEl(textInput, isLocked);
         };
     }
 
@@ -356,8 +356,8 @@ const PermissionInformer = require('permissionInformer');
             U.setClassIf(finishedButton, 'btn-primary', isFinished);
             finishedButton.id = id;
             const enableInputs = (value) => {
-                Utils.enableEl(textInput, !value);
-                Utils.enableEl(timeInput, !value);
+                UI.enableEl(textInput, !value);
+                UI.enableEl(timeInput, !value);
             };
             enableInputs(isFinished);
             U.listen(finishedButton, 'click', UI.onChangeAdaptationReadyStatus2(enableInputs));
@@ -376,7 +376,7 @@ const PermissionInformer = require('permissionInformer');
             index: myInput.eventIndex,
             property: 'time',
             value: input.val()
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
         U.removeClass(myInput, 'defaultDate');
     });
 
@@ -388,7 +388,7 @@ const PermissionInformer = require('permissionInformer');
             index: dataKey[1],
             property: 'text',
             value: text
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function onChangeAdaptationText(event) {
@@ -400,7 +400,7 @@ const PermissionInformer = require('permissionInformer');
             characterName: dataKey[2],
             type: 'text',
             value: text
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function getIconClass(object) {

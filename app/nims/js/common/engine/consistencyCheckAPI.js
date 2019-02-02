@@ -19,9 +19,8 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function consistencyCheckAPI(LocalDBMS, opts) {
         const {
-            R, CommonUtils, Constants, dbmsUtils
+            R, CU, Constants, dbmsUtils
         } = opts;
-        const CU = CommonUtils;
         const validatorLib = opts.Ajv;
         const schemaBuilder = opts.Schema;
 
@@ -90,7 +89,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        const getErrorProcessor = callback => R.curry(R.compose(callback, CommonUtils.strFormat));
+        const getErrorProcessor = callback => R.curry(R.compose(callback, CU.strFormat));
 
         function checkObjectRightsConsistency(data) {
             const errors = [];

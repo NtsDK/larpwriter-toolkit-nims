@@ -1,6 +1,6 @@
 const {Dictionaries, defaultLang } = require('./translations');
-const CommonUtils = require("./common/commonUtils.js");
-const U  = require('./utils.js').U;
+const CU = require("./common/commonUtils.js");
+const U  = require('./utils.js');
 // import { setAttr } from "./utils.js";
 // const R = require("ramda");
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
@@ -89,7 +89,7 @@ See the License for the specific language governing permissions and
         const dictInst = state.dictionaries[dictName];
         const intersection = R.intersection(R.keys(baseInst), R.keys(state.dictionaries[dictName]));
         const notEqual = intersection.filter(key => {
-            return CommonUtils.strFormatInsertsCount(baseInst[key]) !== CommonUtils.strFormatInsertsCount(dictInst[key])
+            return CU.strFormatInsertsCount(baseInst[key]) !== CU.strFormatInsertsCount(dictInst[key])
         });
         if(notEqual.length > 0) {
             console.log(`L10N: insert counts for ${dictName} and ${base} are not equal`, notEqual);
@@ -144,7 +144,7 @@ See the License for the specific language governing permissions and
 
     exports.getLang = () => state.lang.toLowerCase();
 
-    exports.format = R.curry((namespace, name, args) => U.strFormat(exports.get(namespace, name), args));
+    exports.format = R.curry((namespace, name, args) => CU.strFormat(exports.get(namespace, name), args));
 
     // function getL10n(key) {
     //     return L10n.getValue(key);

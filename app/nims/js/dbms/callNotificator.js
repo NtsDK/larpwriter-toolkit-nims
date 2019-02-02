@@ -1,6 +1,3 @@
-const CommonUtils = require('../../../core/js/common/commonUtils.js');
-const {U} = require('../../../core/js/utils.js');
-const L10n = require('../../../core/js/l10n.js');
 /*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,7 +65,7 @@ See the License for the specific language governing permissions and
                     return target[prop];
                 }
 
-                if (CommonUtils.startsWith(prop, 'get') || CommonUtils.startsWith(prop, 'is')) {
+                if (R.startsWith('get', prop) || R.startsWith('is', prop)) {
                     return target[prop];
                 } else {
                     return new Proxy(target[prop], {

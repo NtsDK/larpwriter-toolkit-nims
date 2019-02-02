@@ -40,7 +40,7 @@ const PermissionInformer = require("permissionInformer");
         ]).then(results => {
             const [characterNames, playerNames, profileBindings] = results;
             rebuildInterface(characterNames, playerNames, profileBindings);
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function rebuildInterface(characterNames, playerNames, profileBindings) {
@@ -49,14 +49,14 @@ const PermissionInformer = require("permissionInformer");
         const filter = list => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
 
         U.showEl(U.queryEl(`${root} .alert.no-character`), characterNames.length === 0);
-        Utils.enableEl(U.queryEl(`${root} .character-filter`), characterNames.length !== 0);
+        UI.enableEl(U.queryEl(`${root} .character-filter`), characterNames.length !== 0);
         U.showEl(U.queryEl(`${root} .character-list`), characterNames.length !== 0);
 
         U.showEl(U.queryEl(`${root} .alert.no-player`), playerNames.length === 0);
-        Utils.enableEl(U.queryEl(`${root} .player-filter`), playerNames.length !== 0);
+        UI.enableEl(U.queryEl(`${root} .player-filter`), playerNames.length !== 0);
         U.showEl(U.queryEl(`${root} .player-list`), playerNames.length !== 0);
 
-        Utils.enableEl(U.queryEl(`${root} .binding-filter`), R.keys(profileBindings).length !== 0);
+        UI.enableEl(U.queryEl(`${root} .binding-filter`), R.keys(profileBindings).length !== 0);
 
         U.addEls(
             U.clearEl(U.queryEl(`${root} .entity-list.character-list`)),
@@ -72,7 +72,7 @@ const PermissionInformer = require("permissionInformer");
             name: R.join('/', binding),
             value: binding
         }));
-        bindings.sort(CommonUtils.charOrdAFactory(R.prop('name')));
+        bindings.sort(CU.charOrdAFactory(R.prop('name')));
 
         U.addEls(U.clearEl(U.queryEl(`${root} .entity-list.binding-list`)), bindings.map(binding2el));
     }
@@ -158,13 +158,13 @@ const PermissionInformer = require("permissionInformer");
     function createBinding(pair) {
         const characterName = pair[0].type === 'character' ? pair[0].name : pair[1].name;
         const playerName = pair[0].type === 'player' ? pair[0].name : pair[1].name;
-        DBMS.createBinding({characterName, playerName}).then(exports.refresh, Utils.handleError);
+        DBMS.createBinding({characterName, playerName}).then(exports.refresh, UI.handleError);
     }
 
     function removeBinding(binding) {
         DBMS.removeBinding({
             characterName: binding[0],
             playerName: binding[1]
-        }).then(exports.refresh, Utils.handleError);
+        }).then(exports.refresh, UI.handleError);
     }
 // })(window.ProfileBinding2 = {});

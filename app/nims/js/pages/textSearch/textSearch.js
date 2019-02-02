@@ -46,15 +46,15 @@ See the License for the specific language governing permissions and
                     makePanelContent(text, searchStr, caseSensitive)
                 );
             U.addEls(U.clearEl(U.queryEl(`${root}.result-panel`)), texts.map(text2panel));
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     }
 
     function makePanelContent(textsInfo, searchStr, caseSensitive) {
-        textsInfo.result.sort(CommonUtils.charOrdAFactory(R.prop('name')));
+        textsInfo.result.sort(CU.charOrdAFactory(R.prop('name')));
         return U.addEls(U.makeEl('div'), textsInfo.result.map((textInfo) => {
             const head = U.addEl(U.makeEl('div'), U.makeText(textInfo.name));
             const body = U.addClass(U.makeEl('div'), textInfo.type === 'text' ? 'text-body' : 'string-body');
-            const regex = new RegExp(CommonUtils.escapeRegExp(searchStr), caseSensitive ? 'g' : 'gi');
+            const regex = new RegExp(CU.escapeRegExp(searchStr), caseSensitive ? 'g' : 'gi');
             body.innerHTML = textInfo.text.replace(regex, '<span>$&</span>');
             return U.addEls(U.addClass(U.makeEl('div'), 'text-card'), [head, body]);
         }));

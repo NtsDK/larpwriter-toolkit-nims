@@ -47,7 +47,7 @@ See the License for the specific language governing permissions and
             try {
                 U.addEls(U.qee(U.queryEl(profileDiv), '.insertion-point'), profileStructure.map(appendInput(type)));
             } catch (err) {
-                Utils.handleError(err); return;
+                UI.handleError(err); return;
             }
 
             if (callback) callback();
@@ -69,7 +69,7 @@ See the License for the specific language governing permissions and
                 if (itemInput.type === 'multiEnum') {
                     itemInput.multiEnumSelect.prop('disabled', !isEditable(itemInput.name, state[type].profileStructure));
                 } else {
-                    Utils.enableEl(itemInput.dom, isEditable(itemInput.name, state[type].profileStructure));
+                    UI.enableEl(itemInput.dom, isEditable(itemInput.name, state[type].profileStructure));
                 }
             });
 
@@ -94,7 +94,7 @@ See the License for the specific language governing permissions and
                 input = U.makeEl('select');
                 U.addClass(input, 'profileSelectInput');
                 const toNameObj = R.compose(R.zipObj(['name']), R.append(R.__, []));
-                U.fillSelector(input, R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(',')).map(toNameObj));
+                U.fillSelector(input, R.sort(CU.charOrdA, profileItemConfig.value.split(',')).map(toNameObj));
                 break;
             case 'number':
                 input = U.makeEl('input');
@@ -112,7 +112,7 @@ See the License for the specific language governing permissions and
                 [input] = $('<span></span>').append(this.multiEnumSelect);
                 U.setAttr(this.multiEnumSelect[0], 'multiple', 'multiple');
 
-                sel = this.multiEnumSelect.select2(U.arr2Select2(R.sort(CommonUtils.charOrdA, profileItemConfig.value.split(','))));
+                sel = this.multiEnumSelect.select2(U.arr2Select2(R.sort(CU.charOrdA, profileItemConfig.value.split(','))));
                 sel.on('change', this.updateFieldValue.bind(this));
                 break;
             default:
@@ -159,7 +159,7 @@ See the License for the specific language governing permissions and
                 break;
             case 'number':
                 if (Number.isNaN(this.dom.value)) {
-                    Utils.alert(L10n.getValue('profiles-not-a-number'));
+                    UI.alert(L10n.getValue('profiles-not-a-number'));
                     this.dom.value = this.oldValue;
                     return;
                 }
@@ -172,7 +172,7 @@ See the License for the specific language governing permissions and
                 value = this.multiEnumSelect.val().join(',');
                 break;
             default:
-                Utils.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type]));
+                UI.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type]));
                 return;
             }
             DBMS.updateProfileField({
@@ -181,7 +181,7 @@ See the License for the specific language governing permissions and
                 fieldName,
                 itemType: this.type,
                 value
-            }).catch(Utils.processError());
+            }).catch(UI.processError());
         };
 
         return innerExports;

@@ -27,13 +27,13 @@ See the License for the specific language governing permissions and
         const playerPath = ['Players'];
 
         LocalDBMS.prototype.getProfileBindings = function () {
-            return Promise.resolve(CU.clone(R.path(path, this.database)));
+            return Promise.resolve(R.clone(R.path(path, this.database)));
         };
 
         LocalDBMS.prototype.getExtendedProfileBindings = function () {
             let characters = R.keys(R.path(charPath, this.database));
             let players = R.keys(R.path(playerPath, this.database));
-            const bindings = CU.clone(R.path(path, this.database));
+            const bindings = R.clone(R.path(path, this.database));
             characters = R.difference(characters, R.keys(bindings));
             players = R.difference(players, R.values(bindings));
 

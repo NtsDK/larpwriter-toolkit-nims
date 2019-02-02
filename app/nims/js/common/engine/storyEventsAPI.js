@@ -26,7 +26,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getStoryEvents = function ({storyName}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
-                    resolve(CU.clone(this.database.Stories[storyName].events));
+                    resolve(R.clone(this.database.Stories[storyName].events));
                 });
             });
         };
@@ -81,7 +81,7 @@ See the License for the specific language governing permissions and
                     const { events } = this.database.Stories[storyName];
                     chain = [PC.isInRange(index, 0, events.length - 1)];
                     PC.precondition(PC.chainCheck(chain), reject, () => {
-                        events.splice(index, 0, CU.clone(events[index]));
+                        events.splice(index, 0, R.clone(events[index]));
                         resolve();
                     });
                 });

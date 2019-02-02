@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 ((callback2) => {
     function statisticsAPI(LocalDBMS, opts) {
-        const { R, CommonUtils, Constants } = opts;
+        const { R, Constants } = opts;
 
         let _countCharacterSymbols;
 

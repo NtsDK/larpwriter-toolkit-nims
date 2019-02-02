@@ -36,12 +36,12 @@ const Constants = require('common/constants.js');
 
         selector = U.fillSelector(
             U.clearEl(U.queryEl('#networkCharacterSelector')),
-            state.parent.characterNames.sort(Utils.charOrdAObject).map(UI.remapProps4Select)
+            state.parent.characterNames.sort(CU.charOrdAObject).map(UI.remapProps4Select)
         );
         U.setAttr(selector, 'size', selector.options.length > 15 ? 15 : selector.options.length);
         selector = U.fillSelector(
             U.clearEl(U.queryEl('#networkStorySelector')),
-            state.parent.storyNames.sort(Utils.charOrdAObject).map(UI.remapProps4Select)
+            state.parent.storyNames.sort(CU.charOrdAObject).map(UI.remapProps4Select)
         );
         U.setAttr(selector, 'size', selector.options.length > 15 ? 15 : selector.options.length);
     };

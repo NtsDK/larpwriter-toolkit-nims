@@ -122,7 +122,7 @@ const Constants = require('common/constants');
                 // this call trigger buildContent
                 $('#briefingCharacter').select2(data).val(characterName).trigger('change');
             }
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     function buildContentDelegate(event) {
@@ -166,7 +166,7 @@ const Constants = require('common/constants');
                 PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: true}).then((userStoryNames) => {
                     data.userStoryNamesMap = R.indexBy(R.prop('value'), userStoryNames);
                     callback();
-                }).catch(Utils.handleError)
+                }).catch(UI.handleError)
             },
             make(el, data) {}
         }, {
@@ -175,10 +175,10 @@ const Constants = require('common/constants');
                 DBMS.getProfile({type: 'character', name: data.characterName}).then((profile) => {
                     data.profile = profile;
                     callback();
-                }).catch(Utils.handleError)
+                }).catch(UI.handleError)
             },
             make(el, data) {
-                const label = U.strFormat(L10n.getValue('briefings-character-profile'), [data.characterName]);
+                const label = CU.strFormat(L10n.getValue('briefings-character-profile'), [data.characterName]);
                 U.addEl(el, makePanel(
                     U.makeText(label),
                     UI.makeProfileTable(Constants, state.characterProfileStructure, data.profile), getFlags().hideAllPanels
@@ -196,13 +196,13 @@ const Constants = require('common/constants');
                             // eslint-disable-next-line prefer-destructuring
                             data.playerName = binding[1];
                             callback();
-                        }).catch(Utils.handleError)
+                        }).catch(UI.handleError)
                     }
-                }).catch(Utils.handleError)
+                }).catch(UI.handleError)
             },
             make(el, data) {
                 if (data.playerProfile) {
-                    const label = U.strFormat(L10n.getValue('briefings-player-profile'), [data.playerName]);
+                    const label = CU.strFormat(L10n.getValue('briefings-player-profile'), [data.playerName]);
                     U.addEl(el, makePanel(
                         U.makeText(label),
                         UI.makeProfileTable(Constants, state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
@@ -213,9 +213,9 @@ const Constants = require('common/constants');
             name: 'inventory',
             load(data, callback) {
                 DBMS.getAllInventoryLists({characterName: data.characterName}).then((allInventoryLists) => {
-                    data.allInventoryLists = allInventoryLists.sort(CommonUtils.charOrdAFactory(R.compose(R.toLower, R.prop('storyName'))));
+                    data.allInventoryLists = allInventoryLists.sort(CU.charOrdAFactory(R.compose(R.toLower, R.prop('storyName'))));
                     callback();
-                }).catch(Utils.handleError)
+                }).catch(UI.handleError)
             },
             make(el, data) {
                 U.addEl(el, makePanel(
@@ -232,7 +232,7 @@ const Constants = require('common/constants');
                 DBMS.getCharacterGroupTexts({characterName: data.characterName}).then((groupTexts) => {
                     data.groupTexts = groupTexts;
                     callback();
-                }).catch(Utils.handleError)
+                }).catch(UI.handleError)
             },
             make(el, data) {
                 U.addEl(el, makePanel(
@@ -270,7 +270,7 @@ const Constants = require('common/constants');
     function onBuildContentFinish() {
         UI.initTextAreas(`${root} #briefingContent textarea`);
         UI.refreshTextAreas(`${root} #briefingContent textarea`);
-        Utils.enable(exports.content, 'notEditable', false);
+        UI.enable(exports.content, 'notEditable', false);
     }
 
 
@@ -348,21 +348,21 @@ const Constants = require('common/constants');
 
                     let name;
                     if (flags.disableHeaders) {
-                        name = U.makeText(U.strFormat(L10n.getValue('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
+                        name = U.makeText(CU.strFormat(L10n.getValue('briefings-events-header'), [(i * splitConstant) + 1, (i * splitConstant) + subPart.length]));
                     } else {
                         name = U.addEls(U.makeEl('div'), subPart.map(event => getEventHeaderDiv(event, true)));
                     }
                     return makePanel(name, eventContent, flags.hideAllPanels);
                 }));
                 onBuildContentFinish();
-            }).catch(Utils.handleError);
-        }).catch(Utils.handleError);
+            }).catch(UI.handleError);
+        }).catch(UI.handleError);
     }
 
     function getStoryHeader(elem, i, disableHeaders) {
         let name;
         if (disableHeaders) {
-            name = U.strFormat(L10n.getValue('briefings-story-header'), [i + 1]);
+            name = CU.strFormat(L10n.getValue('briefings-story-header'), [i + 1]);
         } else {
             name = elem.storyName;
         }
@@ -398,12 +398,12 @@ const Constants = require('common/constants');
                     );
                 }));
                 onBuildContentFinish();
-            }).catch(Utils.handleError);
-        }).catch(Utils.handleError)
+            }).catch(UI.handleError);
+        }).catch(UI.handleError)
     }
 
     function getEventHeaderDiv(event, showStoryName) {
-        const eventName = U.addEl(U.makeEl('span'), U.makeText(U.strFormat('{0} {1}', [showStoryName ? `${event.storyName}:` : '', event.name])));
+        const eventName = U.addEl(U.makeEl('span'), U.makeText(CU.strFormat('{0} {1}', [showStoryName ? `${event.storyName}:` : '', event.name])));
         const eventTime = U.addClass(U.addEl(U.makeEl('span'), U.makeText(event.time)), 'previewEventTime');
         return U.addEls(U.makeEl('div'), [eventTime, eventName]);
     }
@@ -445,6 +445,6 @@ const Constants = require('common/constants');
         const {
             storyName, characterName, value
         } = event.target;
-        DBMS.updateCharacterInventory({storyName, characterName, inventory: value}).catch(Utils.handleError);
+        DBMS.updateCharacterInventory({storyName, characterName, inventory: value}).catch(UI.handleError);
     }
 // })(window.BriefingPreview = {});

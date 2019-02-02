@@ -37,7 +37,7 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getProfileStructure = function ({type}={}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
-                    resolve(CU.clone(R.path(getPath(type), this.database)));
+                    resolve(R.clone(R.path(getPath(type), this.database)));
                 });
             });
         };

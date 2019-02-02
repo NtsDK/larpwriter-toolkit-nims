@@ -63,7 +63,7 @@ See the License for the specific language governing permissions and
                 });
             });
 
-            const sorter = CommonUtils.charOrdAFactory(a => a.toLowerCase());
+            const sorter = CU.charOrdAFactory(a => a.toLowerCase());
             const filter = el => el.type === 'enum';
             const groupingItems = profilesData.characterProfileStructure.filter(filter).map(R.prop('name')).sort(sorter);
 
@@ -91,7 +91,7 @@ See the License for the specific language governing permissions and
 
             drawList();
             //            drawPlainPanelList();
-        }).catch(Utils.handleError);
+        }).catch(UI.handleError);
     };
 
     // eslint-disable-next-line no-var,vars-on-top
@@ -156,7 +156,7 @@ See the License for the specific language governing permissions and
         //            groups: pair[1]
         //        }));
         //
-        //        structures.sort(CommonUtils.charOrdAFactory(R.prop('key')));
+        //        structures.sort(CU.charOrdAFactory(R.prop('key')));
         //        return structures;
         [{
             key: l10n('all-characters'),
@@ -303,7 +303,7 @@ See the License for the specific language governing permissions and
 
     // eslint-disable-next-line no-var,vars-on-top
     var makePanelList = profileArray =>
-        profileArray.sort(CommonUtils.charOrdAFactory(a => a.characterName.toLowerCase())).map((profileData) => {
+        profileArray.sort(CU.charOrdAFactory(a => a.characterName.toLowerCase())).map((profileData) => {
             const tables = [UI.makeProfileTable(Constants, profilesData.characterProfileStructure, profileData.character)];
             let title = profileData.characterName;
             if (profileData.playerName !== undefined) {
