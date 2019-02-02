@@ -1,5 +1,5 @@
 require("chart.js");
-const dateFormat = require("dateFormat");
+const dateFormat = require("dateformat");
 const PermissionInformer = require("permissionInformer");
 
 const Constants = require('common/constants');

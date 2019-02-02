@@ -16,6 +16,8 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
+const {d3, klay} = require('core/libs/klay-adapter');
+
 'use strict';
 
 // const d3 = require('d3');

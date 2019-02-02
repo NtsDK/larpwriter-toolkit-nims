@@ -21,7 +21,7 @@ require('vis/dist/vis.min.css');
 
 const PermissionInformer = require('permissionInformer');
 
-const dateFormat = require("dateFormat");
+const dateFormat = require("dateformat");
 
 'use strict';
 

@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
  */
 
  require('./logViewer.css');
- const dateFormat = require('dateFormat');
+ const dateFormat = require('dateformat');
 
 'use strict';
 

@@ -1,6 +1,6 @@
 /*! klayjs-d3 version 0.3.5 build 201604271204*/
-var klay;
-(function (klay) {
+// var klay;
+module.exports = (function (klay, d3) {
   klay.d3adapter = function() {
     return init("adapter");
   };
@@ -70,7 +70,9 @@ var klay;
     // either we don't want a worker or the worker is not available
     if (!layouter) {
       if (typeof module === "object" && module.exports) {
-        layouter = require("klayjs");
+        // layouter = require("klayjs");
+        // layouter = require("./klay");
+        layouter = klay;
       } else {
         // try to get from global scope, e.g. loaded by bower
         if (typeof $klay !== "undefined") {
@@ -375,4 +377,5 @@ var klay;
     module.exports = klay;
   }
   return klay;
-})(klay || (klay = {}));
+});
+//(klay || (klay = {}));

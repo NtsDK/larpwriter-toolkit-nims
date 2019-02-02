@@ -13,7 +13,11 @@ See the License for the specific language governing permissions and
     limitations under the License. */
 
 const U = require('./utils.js');
-const d3 = require('d3');
+
+const {d3, klay} = require('core/libs/klay-adapter');
+const dateFormat = require('dateformat');
+
+var JsDiff = require('diff');
 
 'use strict';
 
@@ -211,13 +215,13 @@ const d3 = require('d3');
             U.addEls(el, R.aperture(2, data.requestedLog).map(pair => {
                 const row = U.qmte('.diff-row-tmpl');
                 U.addEl(U.qee(row, '.first .user'), U.makeText(pair[0][1]));
-                U.addEl(U.qee(row, '.first .time'), U.makeText(new Date(pair[0][2]).format('yyyy/mm/dd h:MM')));
-                const firstText = JSON.parse(pair[0][4])[1];
+                U.addEl(U.qee(row, '.first .time'), U.makeText(dateFormat(new Date(pair[0][2]), 'yyyy/mm/dd h:MM')));
+                const firstText = JSON.parse(pair[0][4])[0].value;
                 U.addEl(U.qee(row, '.first .text'), U.makeText(firstText));
 
                 U.addEl(U.qee(row, '.last .user'), U.makeText(pair[1][1]));
-                U.addEl(U.qee(row, '.last .time'), U.makeText(new Date(pair[1][2]).format('yyyy/mm/dd h:MM')));
-                const lastText = JSON.parse(pair[1][4])[1];
+                U.addEl(U.qee(row, '.last .time'), U.makeText(dateFormat(new Date(pair[1][2]), 'yyyy/mm/dd h:MM')));
+                const lastText = JSON.parse(pair[1][4])[0].value;
                 U.addEl(U.qee(row, '.last .text'), U.makeText(lastText));
 
                 ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);

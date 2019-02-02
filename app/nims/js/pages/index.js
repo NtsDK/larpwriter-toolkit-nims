@@ -23,16 +23,15 @@ exports.Briefings = require('./tabRouting/routingTab')({
 });
 
 exports.LogViewer2 = require('./tabRouting/routingTab')({
-    firstTab: 'LogViewer',
+    firstTab: 'GroupSchema',
     tabs: [{
         btnName: 'logViewer',
         viewName: 'LogViewer',
         viewBody: require('./logs/logViewer')
-    // TODO
-    // }, {
-    //     btnName: 'group-schema',
-    //     viewName: 'GroupSchema',
-    //     viewBody: require('./groups/groupSchema')
+    }, {
+        btnName: 'group-schema',
+        viewName: 'GroupSchema',
+        viewBody: require('./groups/groupSchema')
     }, {
         btnName: 'about',
         viewName: 'About',

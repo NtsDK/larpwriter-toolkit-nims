@@ -45,6 +45,7 @@
     "chart.js": "^2.7.3",
     "cross-env": "^5.2.0",
     "css-loader": "^2.0.1",
+    "diff": "^4.0.1",
     "docxtemplater": "^3.9.7",
     "editorconfig": "^0.15.0",
     "eslint": "^5.10.0",

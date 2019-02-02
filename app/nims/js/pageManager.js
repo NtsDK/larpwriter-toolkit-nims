@@ -16,9 +16,11 @@ require("../index.html");
 require("../style/common.css");
 require("../style/icons.css");
 require("../style/style.css");
+require("../style/experimental.css");
 const {makeLocalDBMS} = require('./dbms/localDBMS.js');
 
-
+// require('jasmine-core');
+// require('core/tests/jasmine');
 
 var MODE = "Standalone";
 
@@ -30,7 +32,7 @@ vex.defaultOptions.className = 'vex-theme-os';
 
 require('vex-js/dist/css/vex-theme-os.css');
 
-const dateFormat = require('dateFormat');
+const dateFormat = require('dateformat');
 
 const {EmptyBase} = require('core');
 
@@ -234,7 +236,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                 stateInit();
 
                 const tabs = {};
-                const firstTab = 'ProfileFilter';
+                const firstTab = 'LogViewer2';
 
                 const addView = (containers, btnName, viewName, view, opts) => {
                     tabs[viewName] = {
@@ -306,7 +308,7 @@ Utils, Overview, Profiles, Stories, Adaptations, Briefings, Timeline, SocialNetw
                         console.error('This tab has no tests')
                     }
                 }, btnOpts));
-                // U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
+                U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
                 if (MODE === 'NIMS_Server') {
                     U.addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
                 }
