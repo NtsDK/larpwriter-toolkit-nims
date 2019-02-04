@@ -27,6 +27,16 @@ exports.state = state;
 // local
 // state.firstBaseLoad = MODE === 'Standalone';
 
+const tabs = {};
+
+exports.addView = (btnName, viewName, view, opts) => {
+    tabs[viewName] = {
+        viewName,
+        viewRes: UI.addView(state.containers, btnName, view, opts)
+    };
+};
+
+exports.setFirstTab = firstTab => UI.setFirstTab(state.containers, tabs[firstTab].viewRes);
 
 const btnOpts = {
     tooltip: true,
@@ -64,15 +74,24 @@ exports.initPage = () => {
     updateDialogs();
     L10n.onL10nChange(updateDialogs);
     window.SM = new SettingsManager();
+    stateInit();
 };
 
-exports.refresh = () => state.currentView.refresh();
+exports.refreshView = () => state.currentView.refresh();
+
+exports.testView = () => () => {
+    if(state.currentView.test){
+        state.currentView.test();
+    } else {
+        console.error('This tab has no tests')
+    }
+};
 
 exports.onPlayerPageLoad = () => {
     exports.initPage();
     window.DBMS = makeRemoteDBMS();
 
-    exports.stateInit();
+    // exports.stateInit();
     UI.addView(state.containers, 'player', Player, { mainPage: true });
     U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
     UI.addView(state.containers, 'about', About);
@@ -84,7 +103,7 @@ exports.onPlayerPageLoad = () => {
 exports.onIndexPageLoad = () => {
     exports.initPage();
     window.DBMS = makeRemoteDBMS();
-    exports.stateInit();
+    // exports.stateInit();
     DBMS.getPlayersOptions().then((playersOptions) => {
         U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
         UI.addView(state.containers, 'enter', Enter, { mainPage: true });
@@ -97,7 +116,7 @@ exports.onIndexPageLoad = () => {
     }).catch(UI.handleError);
 };
 
-exports.stateInit = function() {
+function stateInit() {
     state.navigation = U.queryEl('#navigation');
     state.containers = {
         root: state,
@@ -149,3 +168,5 @@ exports.makeButton = makeButton;
 exports.addNavSeparator = () => 
     U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 
+exports.addNavEl = (el) => 
+    U.addEl(state.navigation, el);

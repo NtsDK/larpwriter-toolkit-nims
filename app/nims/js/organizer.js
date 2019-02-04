@@ -1,5 +1,5 @@
-const { initPage, stateInit, state, makeButton, btnOpts, postLogout, refresh,
-    addNavSeparator } = require('./pageCore');
+const { initPage, makeButton, btnOpts, postLogout, refreshView,
+    addNavSeparator, addNavEl, testView, addView, setFirstTab } = require('./pageCore');
 const { EmptyBase, DemoBase, TestUtils, LocalBackupCore } = require('core');
 
 const { localAutoSave, runBaseSelectDialog, makeBackup } = require('./localBaseBackup')({
@@ -19,8 +19,6 @@ require('../specs/baseAPI');
 require('../specs/smokeTest');
 
 const PermissionInformer = require('permissionInformer');
-
-
 
 const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
     Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile } = require('./pages');
@@ -62,95 +60,60 @@ function onDatabaseLoad() {
         PermissionInformer.isAdmin().then((isAdmin) => {
             $.datetimepicker.setDateFormatter('moment');
 
-            let button;
-            stateInit();
-
-            const tabs = {};
             const firstTab = 'LogViewer2';
 
-            const addView = (containers, btnName, viewName, view, opts) => {
-                tabs[viewName] = {
-                    viewName,
-                    viewRes: UI.addView(containers, btnName, view, opts)
-                };
-            };
+            addView('overview', 'Overview', Overview);
+            addView('characters', 'Characters', Characters);
+            addView('players', 'Players', Players);
+            addView('stories', 'Stories', Stories);
+            addView('adaptations', 'Adaptations', Adaptations);
+            addView('briefings', 'Briefings', Briefings);
+            addView('relations', 'Relations', Relations);
 
-            addView(state.containers, 'overview', 'Overview', Overview);
-            addView(state.containers, 'characters', 'Characters', Characters);
-            addView(state.containers, 'players', 'Players', Players);
-            addView(state.containers, 'stories', 'Stories', Stories);
-            addView(state.containers, 'adaptations', 'Adaptations', Adaptations);
-            addView(state.containers, 'briefings', 'Briefings', Briefings);
-            addView(state.containers, 'relations', 'Relations', Relations);
-
-            // U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
             addNavSeparator();
 
-            addView(state.containers, 'timeline', 'Timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
-            addView(state.containers, 'social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
-            addView(state.containers, 'profile-filter', 'ProfileFilter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
-            addView(state.containers, 'groups', 'GroupProfile', GroupProfile, { clazz: 'groupsButton icon-button', tooltip: true });
-            addView(state.containers, 'textSearch', 'TextSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
-            addView(state.containers, 'roleGrid', 'RoleGrid', RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
+            addView('timeline', 'Timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
+            addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
+            addView('profile-filter', 'ProfileFilter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
+            addView('groups', 'GroupProfile', GroupProfile, { clazz: 'groupsButton icon-button', tooltip: true });
+            addView('textSearch', 'TextSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
+            addView('roleGrid', 'RoleGrid', RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
 
-            // U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
             addNavSeparator();
 
             // if (MODE === 'NIMS_Server') {
-            //     addView(state.containers, 'admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
+            //     addView('admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
             // }
-            addView(state.containers, 'logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
+            addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
 
-            // U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
             addNavSeparator();
 
             if (isAdmin) {
-                button = makeButton('dataLoadButton icon-button', 'open-database', null, btnOpts);
-                const input = U.makeEl('input');
-                input.type = 'file';
-                U.addClass(input, 'hidden');
-                U.setAttr(input, 'tabindex', -1);
-                button.appendChild(input);
-
-                initBaseLoadBtn(button, input, onBaseLoaded);
-                U.addEl(state.navigation, button);
+                addNavEl(makeLoadBaseButton());
             }
 
-            U.addEl(state.navigation, makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
+            addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
             if (MODE === 'Standalone') {
-                U.addEl(state.navigation, makeButton('newBaseButton icon-button', 'create-database', () => {
-                    FileUtils.makeNewBase(EmptyBase).then((confirmed) => {
-                        if(confirmed){
-                            onBaseLoaded();
-                        }
-                    }).catch(UI.handleError);
-                }, btnOpts));
+                addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
             }
-//                U.addEl(state.navigation, makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
+//                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
-            //                U.addEl(state.navigation, makeL10nButton());
+            //               addNavEl(makeL10nButton());
 
-            U.addEl(state.navigation, makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
-            U.addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-            U.addEl(state.navigation, makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-            U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
-            U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'testTab', () => {
-                if(state.currentView.test){
-                    state.currentView.test();
-                } else {
-                    console.error('This tab has no tests')
-                }
-            }, btnOpts));
-            U.addEl(state.navigation, makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
+            addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+            addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+            addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+            addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+            addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', testView, btnOpts));
+            addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
             if (MODE === 'NIMS_Server') {
-                U.addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
             }
-            U.addEl(state.navigation, makeButton('refreshButton icon-button', 'refresh', () => refresh(), btnOpts));
+            addNavEl(makeButton('refreshButton icon-button', 'refresh', () => refreshView(), btnOpts));
 
-            UI.setFirstTab(state.containers, tabs[firstTab].viewRes);
+            setFirstTab(firstTab);
 
-            refresh();
-            // state.currentView.refresh();
+            refreshView();
             if (MODE === 'Standalone') {
                 addBeforeUnloadListener();
                 localAutoSave();
@@ -159,10 +122,29 @@ function onDatabaseLoad() {
             // setTimeout(TestUtils.runTests, 1000);
             // setTimeout(TestUtils.clickThroughtHeaders, 1000);
 //                FileUtils.makeNewBase();
-//                state.currentView.refresh();
             //                                runTests();
         }).catch(UI.handleError);
     }).catch(UI.handleError);
+}
+
+function loadEmptyBase () {
+    FileUtils.makeNewBase(EmptyBase).then((confirmed) => {
+        if(confirmed){
+            onBaseLoaded();
+        }
+    }).catch(UI.handleError);
+}
+
+function makeLoadBaseButton () {
+    const button = makeButton('dataLoadButton icon-button', 'open-database', null, btnOpts);
+    const input = U.makeEl('input');
+    input.type = 'file';
+    U.addClass(input, 'hidden');
+    U.setAttr(input, 'tabindex', -1);
+    button.appendChild(input);
+
+    initBaseLoadBtn(button, input, onBaseLoaded);
+    return button;
 }
 
 
@@ -174,8 +156,7 @@ function onBaseLoaded(err3) {
             onDatabaseLoad();
             firstBaseLoad = false;
         } else {
-            refresh();
-            // state.currentView.refresh();
+            refreshView();
         }
     });
 }
@@ -231,8 +212,4 @@ function addBeforeUnloadListener() {
     };
 }
 
-
-
-
-window.PageManager = {}
-PageManager.onStandalonePageLoad = exports.onStandalonePageLoad;
+window.onStandalonePageLoad = exports.onStandalonePageLoad;
