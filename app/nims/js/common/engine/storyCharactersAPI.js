@@ -183,7 +183,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameCharacterInStories({type, fromName, toName}={}) {
+        function _renameCharacterInStories([{type, fromName, toName}]=[]) {
             if (type === 'player') return;
             const renameEventCharacter = (event) => {
                 if (event.characters[fromName]) {
@@ -205,7 +205,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameCharacterInStories);
 
-        function _removeCharacterFromStories({type, characterName}={}) {
+        function _removeCharacterFromStories([{type, characterName}]=[]) {
             if (type === 'player') return;
             const cleanEvent = (event) => {
                 if (event.characters[characterName]) {

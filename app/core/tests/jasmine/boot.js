@@ -8,7 +8,7 @@
  [jasmine-gem]: http://github.com/pivotal/jasmine-gem
  */
 
-(function() {
+module.exports = function(jasmineRequire) {
 
   /**
    * ## Require &amp; Instantiate
@@ -138,4 +138,4 @@
     return destination;
   }
 
-}());
+};

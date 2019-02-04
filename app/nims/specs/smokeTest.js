@@ -1,3 +1,5 @@
+const Constants = require('common/constants');
+
 const getChecks = {
     baseAPI:
     [{

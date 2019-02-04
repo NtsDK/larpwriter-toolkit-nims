@@ -1,3 +1,5 @@
+const { EmptyBase } = require('core');
+
 describe('baseAPI', () => {
     let oldBase;
 

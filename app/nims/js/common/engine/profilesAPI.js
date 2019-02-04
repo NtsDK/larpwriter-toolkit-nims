@@ -177,7 +177,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _createProfileItem({type, name, itemType, value}={}) {
+        function _createProfileItem([{type, name, itemType, value}]=[]) {
             // throw new Error(arguments);
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
@@ -187,7 +187,7 @@ See the License for the specific language governing permissions and
 
         addListener('createProfileItem', _createProfileItem);
 
-        function _removeProfileItem({type, index, profileItemName}={}) {
+        function _removeProfileItem([{type, index, profileItemName}]=[]) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 delete profileSet[characterName][profileItemName];
@@ -196,7 +196,7 @@ See the License for the specific language governing permissions and
 
         addListener('removeProfileItem', _removeProfileItem);
 
-        function _changeProfileItemType({type, profileItemName, newType}={}) {
+        function _changeProfileItemType([{type, profileItemName, newType}]=[]) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 profileSet[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
@@ -205,7 +205,7 @@ See the License for the specific language governing permissions and
 
         addListener('changeProfileItemType', _changeProfileItemType);
 
-        function _renameProfileItem({type, newName, oldName}={}) {
+        function _renameProfileItem([{type, newName, oldName}]=[]) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 const tmp = profileSet[characterName][oldName];
@@ -216,7 +216,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfileItem', _renameProfileItem);
 
-        function _replaceEnumValue({type, profileItemName, defaultValue, newOptionsMap}={}) {
+        function _replaceEnumValue([{type, profileItemName, defaultValue, newOptionsMap}]=[]) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 const enumValue = profileSet[characterName][profileItemName];
@@ -228,7 +228,7 @@ See the License for the specific language governing permissions and
 
         addListener('replaceEnumValue', _replaceEnumValue);
 
-        function _replaceMultiEnumValue({type, profileItemName, defaultValue, newOptionsMap}={}) {
+        function _replaceMultiEnumValue([{type, profileItemName, defaultValue, newOptionsMap}]=[]) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 let value = profileSet[characterName][profileItemName];
@@ -241,7 +241,7 @@ See the License for the specific language governing permissions and
 
         addListener('replaceMultiEnumValue', _replaceMultiEnumValue);
 
-        function _renameEnumValue({type, profileItemName, fromValue, toValue}={}) {
+        function _renameEnumValue([{type, profileItemName, fromValue, toValue}]=[]) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 const enumValue = profileSet[characterName][profileItemName];
@@ -252,7 +252,7 @@ See the License for the specific language governing permissions and
         }
         addListener('renameEnumValue', _renameEnumValue);
 
-        function _renameMultiEnumValue({type, profileItemName, fromValue, toValue}={}) {
+        function _renameMultiEnumValue([{type, profileItemName, fromValue, toValue}]=[]) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 let value = profileSet[characterName][profileItemName];

@@ -20,7 +20,10 @@ require("../style/experimental.css");
 const {makeLocalDBMS} = require('./dbms/localDBMS.js');
 
 // require('jasmine-core');
-// require('core/tests/jasmine');
+require('core/tests/jasmine');
+
+require('../specs/baseAPI');
+require('../specs/smokeTest');
 
 var MODE = "Standalone";
 

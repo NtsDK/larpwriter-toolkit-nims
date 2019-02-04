@@ -352,7 +352,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _removeProfileItem({type, index, profileItemName}={}) {
+        function _removeProfileItem([{type, index, profileItemName}]=[]) {
             const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
             const subFilterName = prefix + profileItemName;
             const that = this;
@@ -364,13 +364,14 @@ See the License for the specific language governing permissions and
 
         addListener('removeProfileItem', _removeProfileItem);
 
-        function _changeProfileItemType({type, profileItemName, newType}={}) {
-            _removeProfileItem.apply(this, [{type, index: -1, profileItemName}]);
+        function _changeProfileItemType([{type, profileItemName, newType}]=[]) {
+            _removeProfileItem.call(this, [{type, index: -1, profileItemName}]);
+            // _removeProfileItem.apply(this, [{type, index: -1, profileItemName}]);
         }
 
         addListener('changeProfileItemType', _changeProfileItemType);
 
-        function _renameProfileItem({type, newName, oldName}={}) {
+        function _renameProfileItem([{type, newName, oldName}]=[]) {
             const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
             const subFilterName = prefix + oldName;
             const that = this;
@@ -387,7 +388,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfileItem', _renameProfileItem);
 
-        function _replaceEnumValue({type, profileItemName, defaultValue, newOptionsMap}={}) {
+        function _replaceEnumValue([{type, profileItemName, defaultValue, newOptionsMap}]=[]) {
             const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
                 profileItemName;
             const that = this;
@@ -418,7 +419,7 @@ See the License for the specific language governing permissions and
 
         addListener('replaceMultiEnumValue', _replaceEnumValue);
 
-        function _renameEnumValue({type, profileItemName, fromValue, toValue}={}) {
+        function _renameEnumValue([{type, profileItemName, fromValue, toValue}]=[]) {
             const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
                 profileItemName;
             const that = this;

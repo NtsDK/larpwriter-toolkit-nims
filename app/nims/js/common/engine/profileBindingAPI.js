@@ -97,7 +97,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameProfile({type, fromName, toName}={}) {
+        function _renameProfile([{type, fromName, toName}]=[]) {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
                 const playerName = bindings[fromName];
@@ -118,7 +118,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameProfile);
 
-        function _removeProfile({type, characterName}={}) {
+        function _removeProfile([{type, characterName}]=[]) {
             const bindings = R.path(path, this.database);
             if (type === 'character') {
                 delete bindings[characterName];
