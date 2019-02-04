@@ -6,7 +6,8 @@ const { localAutoSave, runBaseSelectDialog, makeBackup } = require('./localBaseB
     initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
 });
 
-require("../index.html");
+require("../nims.html");
+
 require("../style/common.css");
 require("../style/icons.css");
 require("../style/style.css");
@@ -25,11 +26,6 @@ const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, Tex
 
 var MODE = "Standalone";
 
-// common
-// const state = {};
-// state.views = {};
-
-// local
 let firstBaseLoad = MODE === 'Standalone';
 
 exports.onStandalonePageLoad = () => {

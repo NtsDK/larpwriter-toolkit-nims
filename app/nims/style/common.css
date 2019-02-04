@@ -33,7 +33,6 @@ body {
   display: none;
 }
 
-
 #navigation {
   display: flex;
   flex-wrap: wrap;
@@ -189,14 +188,6 @@ body {
   content: "\f2f1";
 }
 
-/* .accessManagerButton,  */
-/* .chatButton,  */
-/* .timelineButton,  */
-/* .socialNetworkButton,  */
-/* .filterButton,  */
-/* .logViewerButton,  */
-/* .groupsButton, */
-/* .textSearchButton */
 .icon-button
 {
   background-color:  rgb(221, 221, 221);
@@ -207,27 +198,11 @@ body {
   font-size: 23px;
 }
 
-/* .accessManagerButton:hover,  */
-/* .chatButton:hover, */
-/* .timelineButton:hover,  */
-/* .socialNetworkButton:hover,  */
-/* .filterButton:hover,  */
-/* .logViewerButton:hover, */
-/* .groupsButton:hover, */
-/* .textSearchButton:hover */
 .icon-button:hover
 {
   background-color:  #ccc;
 }
 
-/* .accessManagerButton.active,  */
-/* .chatButton.active,  */
-/* .timelineButton.active,  */
-/* .socialNetworkButton.active,  */
-/* .filterButton.active,  */
-/* .logViewerButton.active, */
-/* .groupsButton.active, */
-/* .textSearchButton.active */
 .icon-button.active
 {
   color: #FFF;
@@ -244,8 +219,6 @@ body {
   width: 50px;
 }
 
-#storiesNavigationLeft, 
-#storiesNavigationRight,
 .sub-tab-navigation
 {
   display: flex;
@@ -264,11 +237,11 @@ body {
 /*   box-shadow: 2px 4px 4px rgba(0,0,0,0.3); */
 }
 
-.common-info-div span{
+/* .common-info-div span{
   width: 100%;
   display: inline-block;
   text-align: right;
-}
+} */
 
 .panel-heading {
   padding: 8px 12px;
@@ -297,21 +270,21 @@ label{
   padding: 6px;
 }
 
-.common-info-div table{
+/* .common-info-div table{
   margin: 0;
-}
+} */
 
-.diagram-container{
+/* .diagram-container{
   display: flex; 
   flex-direction: column;
-}
+} */
 
-.diagram-subcontainer{
+/* .diagram-subcontainer{
   display: flex;
   width: 100%;
   justify-content: space-around;
   text-align: center;
-}
+} */
 
 /* :focus { */
 /*   outline: 3px solid red; */
@@ -390,8 +363,9 @@ input[type="radio"][disabled="disabled"] + .common-radio {
   cursor: not-allowed !important;
 }
 
-#eventPresenceTable .vertical-aligned-td,
-#story-characterActivityTable .vertical-aligned-td{
+/* #story-characterActivityTable .vertical-aligned-td */
+#eventPresenceTable .vertical-aligned-td
+{
   vertical-align: middle;
 }
 
@@ -409,10 +383,9 @@ input[type="radio"]:checked + .radio-label-icon:before{
   content: "\f192";
 }
 
-.flexRoot,
-.flex-root, 
 .flex-row {
   display: flex;
+  flex-direction: row;
 }
 
 .flex-column {

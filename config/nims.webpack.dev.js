@@ -39,7 +39,7 @@ module.exports = {
             },
             { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' },
             {
-                test: /index.html$/,
+                test: /nims.html$/,
                 //include: path.join(__dirname, 'src/views'),
                 use: [
                     { loader: "file-loader", options: { name: "[name].html" } },

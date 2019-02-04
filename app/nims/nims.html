@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<!-- Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+<!-- Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,85 +21,71 @@ See the License for the specific language governing permissions and
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title l10n-id="header-page-title"></title>
 
-<link rel="stylesheet" type="text/css" href="styles/libsCore.min.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="styles/libs.min.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="styles/nims.min.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="styles/pageStyles.min.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="tests/tests.min.css" media="screen" />
-
-<script>
+<!-- <script>
     var MODE = "@@MODE";
-    var BASE_FILE_NAME = "@@BASE_FILE_NAME";
-    var PERMISSION_INFORMER_ENABLED = true;
-</script>
-<script src="js/libsCore.min.js"></script>
-<script src="js/libs.min.js"></script>
+    var PERMISSION_INFORMER_ENABLED = false;
+</script> -->
+<!-- <script src="js/libsCore.min.js"></script> -->
 
 </head>
-<body onload="PageManager.onOrganizerPageLoad()">
-  <script src="js/resources.min.js"></script>
-  <script src="js/translations.min.js"></script>
-  <script src="js/commonCore.min.js"></script>
-  <script src="js/common.min.js"></script>
-  <script src="js/scripts.min.js"></script>
-  <script src="js/pages.min.js"></script>
 
-  <script src="tests/tests.min.js"></script>
-  <script src="tests/specs.min.js"></script>
+<body onload="onStandalonePageLoad()">
 
   <nav id="navigation"></nav>
 
-  <div id="contentArea"></div>
+  <div class="" id="contentArea"></div>
 
   <div class="hidden tab-container">
-    @@include('./tabRouting/tab-routing-tmpl.html')
+      ${require('./js/pages/tabRouting/tab-routing-tmpl.html')}
+
+      ${require('./js/pages/accessManager/organizer-management-tab.html')}
+      ${require('./js/pages/accessManager/player-management-tab.html')}
+      
+      ${require('./js/pages/briefings/briefing-export-tab.html')}
+      ${require('./js/pages/briefings/briefing-preview-tab.html')}
+      ${require('./js/pages/briefings/relation-template.html')}
+      ${require('./js/pages/briefings/relations-tab.html')}
+      
+      ${require('./js/pages/groups/group-profile-tab.html')}
+      ${require('./js/pages/groups/group-schema-tab.html')}
+      ${require('./js/pages/groups/profile-filter-tab.html')}
+      
+      ${require('./js/pages/logs/about-tab.html')}
+      ${require('./js/pages/logs/log-viewer-tab.html')}
   
-    @@include('./accessManager/organizer-management-tab.html')
-    @@include('./accessManager/player-management-tab.html')
-    
-    @@include('./briefings/briefing-export-tab.html')
-    @@include('./briefings/briefing-preview-tab.html')
-    @@include('./briefings/relation-template.html')
-    @@include('./briefings/relations-tab.html')
-    
-    @@include('./groups/group-profile-tab.html')
-    @@include('./groups/group-schema-tab.html')
-    @@include('./groups/profile-filter-tab.html')
-    
-    @@include('./logs/about-tab.html')
-    @@include('./logs/log-viewer-tab.html')
+      ${require('./js/pages/network/social-network-tab.html')}
+  
+      ${require('./js/pages/profiles2/role-grid-tab.html')}
+      ${require('./js/pages/profiles2/profile-editor2-tab.html')}
+      ${require('./js/pages/profiles2/profile-configurer2-tab.html')}
+      ${require('./js/pages/profiles2/profile-binding2-tab.html')}
+      ${require('./js/pages/profiles2/character-reports-tmpl.html')}
+      ${require('./js/pages/profiles2/profile-editor-core-tmpl.html')}
+      
+      ${require('./js/pages/stories/event-presence-tab.html')}
+      ${require('./js/pages/stories/writer-story-tab.html')}
+      ${require('./js/pages/stories/stories-tab.html')}
+      ${require('./js/pages/stories/story-characters-tab.html')}
+      ${require('./js/pages/stories/story-events-tab.html')}
+      
+      ${require('./js/pages/adaptations/adaptations-tab.html')}
+      ${require('./js/pages/serverSpecific/logout-form.html')}
+      ${require('./js/pages/overview/overview-tab.html')}
+      ${require('./js/pages/textSearch/text-search-tab.html')}
+      ${require('./js/pages/timeline/timeline-tab.html')}
+      
+      ${require('./js/pages/commons/module-schema-dialog.html')}
+      ${require('./js/pages/commons/dialog-commons.html')}
+      
+      ${require('./js/pages/gears/gears-tab.html')}
+      ${require('./js/pages/sliders/sliders-tab.html')}
 
-    @@include('./network/social-network-tab.html')
-
-    @@include('./profiles2/role-grid-tab.html')
-    @@include('./profiles2/profile-editor2-tab.html')
-    @@include('./profiles2/profile-configurer2-tab.html')
-    @@include('./profiles2/profile-binding2-tab.html')
-    @@include('./profiles2/character-reports-tmpl.html')
-    @@include('./profiles2/profile-editor-core-tmpl.html')
-    
-    @@include('./stories/event-presence-tab.html')
-    @@include('./stories/writer-story-tab.html')
-    @@include('./stories/stories-tab.html')
-    @@include('./stories/story-characters-tab.html')
-    @@include('./stories/story-events-tab.html')
-    
-    @@include('./adaptations/adaptations-tab.html')
-    @@include('./serverSpecific/logout-form.html')
-    @@include('./overview/overview-tab.html')
-    @@include('./textSearch/text-search-tab.html')
-    @@include('./timeline/timeline-tab.html')
-    
-    @@include('./commons/module-schema-dialog.html')
-    @@include('./commons/dialog-commons.html')
-    
-    @@include('./gears/gears-tab.html')
-    @@include('./sliders/sliders-tab.html')
-    
     <div id="warehouse"></div>
   </div>
 
   <div id="debugNotification" class="hidden"></div>
+
+  <script src="organizer-bundle.js"></script>
 
 </body>
 </html>
