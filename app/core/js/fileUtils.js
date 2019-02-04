@@ -18,10 +18,10 @@ const CU = require('./common/commonUtils');
 'use strict';
 
 // ((exports) => {
-    exports.makeNewBase = () => {
+    exports.makeNewBase = (base) => {
         return new Promise((resolve, reject) => {
             UI.confirm(L10n.getValue('utils-new-base-warning'), () => {
-                DBMS.setDatabase({database:R.clone(EmptyBase.data)}).then(() => {
+                DBMS.setDatabase({database:R.clone(base.data)}).then(() => {
                     resolve(true);
                     // TestUtils.addGroupTestingData();
                 }).catch(reject);
@@ -44,9 +44,7 @@ const CU = require('./common/commonUtils');
                     const contents = e.target.result;
                     try {
                         const database = JSON.parse(contents);
-                        DBMS.setDatabase({database}).then(() => {
-                            PermissionInformer.refresh().then(resolve, reject);
-                        }, reject);
+                        resolve(database);
                     } catch (err) {
                         reject(err);
                     }

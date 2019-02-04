@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: {
-        organizer: "./app/nims/js/PageManager.js"
+        organizer: "./app/nims/js/organizer.js"
         // organizer: ["ramda", "./app/nims/js/PageManager.js"]
         // organizer: ["babel-polyfill", "./app/nims/js/test.js"]
         // organizer: ["./app/nims/js/test.js"]
@@ -70,11 +70,11 @@ module.exports = {
             UI: ['core', 'UI'],
             // CommonUtils: ['core', 'CommonUtils'],
             CU: ['core', 'CU'],
-            DemoBase: ['core', 'DemoBase'],
+            // DemoBase: ['core', 'DemoBase'],
             FileUtils: ['core', 'FileUtils'],
-            TestUtils: ['core', 'TestUtils'],
+            // TestUtils: ['core', 'TestUtils'],
             // Export: ['core', 'export'],
-            LocalBaseAPI: ['core', 'LocalBaseAPI'],
+            // LocalBaseAPI: ['core', 'LocalBaseAPI'],
         })
     ],
     resolve: {
