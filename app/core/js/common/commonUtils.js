@@ -1,4 +1,3 @@
-// const R = require("ramda");
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");

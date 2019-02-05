@@ -9,6 +9,10 @@ exports.TextSearch = require('./textSearch/textSearch');
 exports.ProfileFilter = require('./groups/profileFilter');
 exports.GroupProfile = require('./groups/groupProfile');
 
+exports.Enter = require('./serverSpecific/enter');
+exports.SignUp = require('./serverSpecific/sign-up');
+exports.About = require('./logs/about');
+
 exports.Briefings = require('./tabRouting/routingTab')({
     firstTab: 'BriefingExport',
     tabs: [{
@@ -35,7 +39,7 @@ exports.LogViewer2 = require('./tabRouting/routingTab')({
     }, {
         btnName: 'about',
         viewName: 'About',
-        viewBody: require('./logs/about')
+        viewBody: exports.About
     }]
 });
 

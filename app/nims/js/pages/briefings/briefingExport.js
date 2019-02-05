@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
  */
 
 const Constants = require('common/constants');
-const {Export} = require('core');
+const Export = require('resources/export');
 const PermissionInformer = require('permissionInformer');
 
 const Mustache = require('mustache');

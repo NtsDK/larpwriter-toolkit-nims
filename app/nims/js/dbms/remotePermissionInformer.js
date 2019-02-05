@@ -17,18 +17,16 @@ See the License for the specific language governing permissions and
 
 'use strict';
 
-var mode = "Standalone";
-var PERMISSION_INFORMER_ENABLED = false;
+// var mode = "Standalone";
+// var PERMISSION_INFORMER_ENABLED = false;
 
-// (
-// module.exports = (mode, PERMISSION_INFORMER_ENABLED) => {
     // const exports = {};
 
     const state = {};
 
     state.summary = {};
 
-    if (mode === 'NIMS_Server' && PERMISSION_INFORMER_ENABLED) {
+    // if (mode === 'NIMS_Server' && PERMISSION_INFORMER_ENABLED) {
 
         exports.refresh = () => {
             return new Promise((resolve, reject) => {
@@ -172,53 +170,53 @@ var PERMISSION_INFORMER_ENABLED = false;
                 resolve(map);
             });
         };
-    } else if (mode === 'Standalone') {
-        exports.refresh = () => {
-            return Promise.resolve();
-        };
+    // } else if (mode === 'Standalone') {
+    //     exports.refresh = () => {
+    //         return Promise.resolve();
+    //     };
 
-        exports.isAdmin = () => {
-            return Promise.resolve(true);
-        };
+    //     exports.isAdmin = () => {
+    //         return Promise.resolve(true);
+    //     };
 
-        exports.isEditor = () => {
-            return Promise.resolve(true);
-        };
+    //     exports.isEditor = () => {
+    //         return Promise.resolve(true);
+    //     };
 
-        exports.getEntityNamesArray = ({type, editableOnly}={}) => {
-            return new Promise((resolve, reject) => {
-                // function processNames(err, names) {
-                //     if (err) { UI.handleError(err); return; }
-                // }
-                // DBMS.getEntityNamesArray(type, processNames);
-                const Utils2 = UI;
-                DBMS.getEntityNamesArray({type}).then( names => {
-                    const newNames = [];
-                    names.forEach((name) => {
-                        newNames.push({
-                            displayName: name,
-                            value: name,
-                            editable: true
-                        });
-                    });
-                    resolve(newNames);
-                }).catch(Utils2.handleError);
-            });
-        };
+    //     exports.getEntityNamesArray = ({type, editableOnly}={}) => {
+    //         return new Promise((resolve, reject) => {
+    //             // function processNames(err, names) {
+    //             //     if (err) { UI.handleError(err); return; }
+    //             // }
+    //             // DBMS.getEntityNamesArray(type, processNames);
+    //             const Utils2 = UI;
+    //             DBMS.getEntityNamesArray({type}).then( names => {
+    //                 const newNames = [];
+    //                 names.forEach((name) => {
+    //                     newNames.push({
+    //                         displayName: name,
+    //                         value: name,
+    //                         editable: true
+    //                     });
+    //                 });
+    //                 resolve(newNames);
+    //             }).catch(Utils2.handleError);
+    //         });
+    //     };
 
-        exports.isEntityEditable = ({type, name}={}) => {
-            return Promise.resolve(true);
-        };
+    //     exports.isEntityEditable = ({type, name}={}) => {
+    //         return Promise.resolve(true);
+    //     };
 
-        exports.areAdaptationsEditable = ({adaptations}={}) => {
-            const map = {};
-            adaptations.forEach((elem) => {
-                map[`${elem.storyName}-${elem.characterName}`] = true;
-            });
+    //     exports.areAdaptationsEditable = ({adaptations}={}) => {
+    //         const map = {};
+    //         adaptations.forEach((elem) => {
+    //             map[`${elem.storyName}-${elem.characterName}`] = true;
+    //         });
 
-            return Promise.resolve(map);
-        };
-    }
+    //         return Promise.resolve(map);
+    //     };
+    // }
 
     // Object.keys(exports).forEach((funcName) => {
     //     const oldFun = exports[funcName];
@@ -243,4 +241,3 @@ var PERMISSION_INFORMER_ENABLED = false;
 //     return exports;
 // }
 
-// )(window.PermissionInformer = {}, MODE);

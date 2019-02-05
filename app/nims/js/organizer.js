@@ -1,8 +1,11 @@
 const { initPage, makeButton, btnOpts, postLogout, refreshView,
     addNavSeparator, addNavEl, testView, addView, setFirstTab } = require('./pageCore');
-const { EmptyBase, DemoBase, TestUtils, LocalBackupCore } = require('core');
+const { TestUtils, LocalBackupCore } = require('core');
+const DemoBase = require('resources/demoBase');
+const EmptyBase = require('resources/emptyBase');
 
-const { localAutoSave, runBaseSelectDialog, makeBackup } = require('./localBaseBackup')({
+
+const { localAutoSave, runBaseSelectDialog, makeBackup } = require('./dbms/localBaseBackup')({
     initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
 });
 
@@ -12,7 +15,7 @@ require("../style/common.css");
 require("../style/icons.css");
 require("../style/style.css");
 require("../style/experimental.css");
-const {makeLocalDBMS} = require('./dbms/localDBMS.js');
+const {makeDBMS} = require('DBMSFactory');
 
 require('core/tests/jasmine');
 
@@ -28,12 +31,14 @@ var MODE = "Standalone";
 
 let firstBaseLoad = MODE === 'Standalone';
 
-exports.onStandalonePageLoad = () => {
+exports.onPageLoad = () => {
     initPage();
-    window.DBMS = makeLocalDBMS();
+    window.DBMS = makeDBMS();
     DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
     // runBaseSelectDialog();
 };
+
+window.onPageLoad = exports.onPageLoad;
 
 // exports.onServerOrgPageLoad = () => {
 //     initPage();
@@ -207,5 +212,3 @@ function addBeforeUnloadListener() {
         // return message;
     };
 }
-
-window.onStandalonePageLoad = exports.onStandalonePageLoad;

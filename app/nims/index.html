@@ -21,36 +21,25 @@ See the License for the specific language governing permissions and
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title l10n-id="header-page-title"></title>
 
-<link rel="stylesheet" type="text/css" href="styles/libsCore.min.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="styles/nims.min.css" media="screen" />
-
-<script>
-    var MODE = "@@MODE";
-    var PERMISSION_INFORMER_ENABLED = false;
-</script>
-<script src="js/libsCore.min.js"></script>
-
 </head>
-<body onload="PageManager.onIndexPageLoad()">
-  <script src="js/translations.min.js"></script>
-  <script src="js/commonCore.min.js"></script>
-  <script src="js/common.min.js"></script>
-  <script src="js/scripts.min.js"></script>
-  <script src="js/pagesLight.min.js"></script>
+<body onload="onPageLoad()">
 
   <nav id="navigation"></nav>
 
   <div class="" id="contentArea"></div>
 
-  <div class="hidden">
-    @@include('./logs/about-tab.html')
-    @@include('./serverSpecific/enter-tab.html')
-    @@include('./serverSpecific/sign-up-tab.html')
+  <div class="hidden tab-container">
+
+    ${require('./js/pages/logs/about-tab.html')}
+    ${require('./js/pages/serverSpecific/enter-tab.html')}
+    ${require('./js/pages/serverSpecific/sign-up-tab.html')}
 
     <div id="warehouse"></div>
   </div>
 
   <div id="debugNotification" class="hidden"></div>
+
+  <script src="index-bundle.js"></script>
 
 </body>
 </html>

@@ -16,16 +16,10 @@ vex.defaultOptions.className = 'vex-theme-os';
 
 require('vex-js/dist/css/vex-theme-os.css');
 
-// var MODE = "Standalone";
-
-// common
 const state = {};
 state.views = {};
 
-exports.state = state;
-
-// local
-// state.firstBaseLoad = MODE === 'Standalone';
+// exports.state = state;
 
 const tabs = {};
 
@@ -98,22 +92,6 @@ exports.onPlayerPageLoad = () => {
     //        U.addEl(state.navigation, makeL10nButton());
     U.addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
     state.currentView.refresh();
-};
-
-exports.onIndexPageLoad = () => {
-    exports.initPage();
-    window.DBMS = makeRemoteDBMS();
-    // exports.stateInit();
-    DBMS.getPlayersOptions().then((playersOptions) => {
-        U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
-        UI.addView(state.containers, 'enter', Enter, { mainPage: true });
-        if (playersOptions.allowPlayerCreation) {
-            UI.addView(state.containers, 'sign-up', SignUp);
-        }
-        UI.addView(state.containers, 'about', About);
-        //            U.addEl(state.navigation, makeL10nButton());
-        state.currentView.refresh();
-    }).catch(UI.handleError);
 };
 
 function stateInit() {

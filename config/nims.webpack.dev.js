@@ -1,14 +1,22 @@
 ﻿const path = require("path");
 const webpack = require('webpack');
 
-module.exports = {
-    entry: {
-        organizer: "./app/nims/js/organizer.js"
-        // organizer: ["ramda", "./app/nims/js/PageManager.js"]
-        // organizer: ["babel-polyfill", "./app/nims/js/test.js"]
-        // organizer: ["./app/nims/js/test.js"]
-    },
-    mode: "development",
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+const serverEntry = {
+    organizer: "./app/nims/js/organizer.js",
+    index: "./app/nims/js/index.js",
+}
+const standaloneEntry = {
+    organizer: "./app/nims/js/organizer.js",
+}
+
+const config = {
+    // entry: {
+    //     organizer: "./app/nims/js/organizer.js",
+    //     index: "./app/nims/js/index.js",
+    // },
+    // mode: "development",
     output: {
         filename: "[name]-bundle.js",
         path: path.resolve(__dirname, "../dist"),
@@ -39,7 +47,7 @@ module.exports = {
             },
             { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' },
             {
-                test: /nims.html$/,
+                test: /(nims|index).html$/,
                 //include: path.join(__dirname, 'src/views'),
                 use: [
                     { loader: "file-loader", options: { name: "[name].html" } },
@@ -63,25 +71,61 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery',
             R: 'ramda',
+
             core: 'core',
             U: ['core', 'U'],
             L10n: ['core', 'L10n'],
-            Utils: ['core', 'Utils'],
             UI: ['core', 'UI'],
-            // CommonUtils: ['core', 'CommonUtils'],
             CU: ['core', 'CU'],
-            // DemoBase: ['core', 'DemoBase'],
             FileUtils: ['core', 'FileUtils'],
-            // TestUtils: ['core', 'TestUtils'],
-            // Export: ['core', 'export'],
-            // LocalBaseAPI: ['core', 'LocalBaseAPI'],
-        })
+        }),
+        // new BundleAnalyzerPlugin({
+        //     analyzerMode: 'static'
+        // })
     ],
     resolve: {
         modules: [
             'node_modules', 
             path.resolve(__dirname, '../app'), 
+            path.resolve(__dirname, '../app/nims'), 
             path.resolve(__dirname, '../app/nims/js'), 
-        ]
+        ],
+        alias: []
     }
+}
+
+module.exports = module.exports = (env, argv) => {
+    switch(env.mode) {
+    case 'production':
+        config.mode = 'production';
+        break;
+    default:
+        console.error('Unknown mode "' + argv.mode + '" switch to default: development');
+    case 'development':
+        config.devtool = 'source-map';
+        config.mode = 'development';
+        break;
+    }
+
+    switch(env.product) {
+    case 'server':
+        config.entry = serverEntry;
+        break;
+    default:
+        console.error('Unknown product "' + argv.mode + '" switch to default: standalone');
+    case 'standalone':
+        config.entry = standaloneEntry;
+        config.resolve.alias.push({
+            alias: "nims/js/dbms/localPermissionInformer",
+            name: "permissionInformer",
+            onlyModule: true
+        });
+        config.resolve.alias.push({
+            alias: "nims/js/dbms/localDBMS",
+            name: "DBMSFactory",
+            onlyModule: true
+        });
+        break;
+    }
+    return config;
 };

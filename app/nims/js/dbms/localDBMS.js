@@ -33,7 +33,7 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names */
 
-exports.makeLocalDBMS = function () {
+exports.makeDBMS = function () {
     const listeners = {};
 
     function addListener(eventName, callback) {

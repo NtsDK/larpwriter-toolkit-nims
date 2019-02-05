@@ -1,6 +1,3 @@
-// const R = require("ramda");
-// vex.registerPlugin(require('vex-dialog'));
-// vex.defaultOptions.className = 'vex-theme-os';
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
