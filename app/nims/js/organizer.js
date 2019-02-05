@@ -17,25 +17,30 @@ require("../style/style.css");
 require("../style/experimental.css");
 const {makeDBMS} = require('DBMSFactory');
 
-require('core/tests/jasmine');
-
-require('../specs/baseAPI');
-require('../specs/smokeTest');
+if( MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS ) {
+    require('core/tests/jasmine');
+    require('../specs/baseAPI');
+    require('../specs/smokeTest');
+    if ( PRODUCT === 'SERVER') {
+        require('../specs/serverSmokeTest');
+    }
+}
 
 const PermissionInformer = require('permissionInformer');
 
 const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
     Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile } = require('./pages');
 
-var MODE = "Standalone";
-
-let firstBaseLoad = MODE === 'Standalone';
+let firstBaseLoad = PRODUCT === 'STANDALONE';
 
 exports.onPageLoad = () => {
     initPage();
     window.DBMS = makeDBMS();
-    DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
-    // runBaseSelectDialog();
+    if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
+        DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
+    } else {
+        runBaseSelectDialog();
+    }
 };
 
 window.onPageLoad = exports.onPageLoad;
@@ -43,11 +48,11 @@ window.onPageLoad = exports.onPageLoad;
 // exports.onServerOrgPageLoad = () => {
 //     initPage();
 //     // const LocalDBMS = makeLocalDBMS(true);
-//     // if (MODE === 'Standalone') {
+//     // if (PRODUCT === 'STANDALONE') {
 //     //     window.DBMS = makeLocalDBMS();
 //     //     DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
 //     //     // runBaseSelectDialog();
-//     // } else if (MODE === 'NIMS_Server') {
+//     // } else if (PRODUCT === 'SERVER') {
 //         window.DBMS = makeRemoteDBMS();
 //         consistencyCheck((checkResult) => {
 //             consistencyCheckAlert(checkResult);
@@ -82,7 +87,7 @@ function onDatabaseLoad() {
 
             addNavSeparator();
 
-            // if (MODE === 'NIMS_Server') {
+            // if (PRODUCT === 'SERVER') {
             //     addView('admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
             // }
             addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
@@ -94,20 +99,29 @@ function onDatabaseLoad() {
             }
 
             addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
-            if (MODE === 'Standalone') {
+            if (PRODUCT === 'STANDALONE') {
                 addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
             }
 //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
             //               addNavEl(makeL10nButton());
 
-            addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
-            addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-            addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-            addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
-            addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', testView, btnOpts));
-            addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
-            if (MODE === 'NIMS_Server') {
+            if(MODE === 'DEV'){
+                if ( DEV_OPTS.ENABLE_TESTS ) {
+                    addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                }
+                if ( DEV_OPTS.ENABLE_BASICS ) {
+                    addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+                    addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                }
+                if ( DEV_OPTS.ENABLE_EXTRAS ) {
+                    addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+                    addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', testView, btnOpts));
+                    addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
+                }
+            }
+
+            if (PRODUCT === 'SERVER') {
                 addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
             }
             addNavEl(makeButton('refreshButton icon-button', 'refresh', () => refreshView(), btnOpts));
@@ -115,8 +129,10 @@ function onDatabaseLoad() {
             setFirstTab(firstTab);
 
             refreshView();
-            if (MODE === 'Standalone') {
-                addBeforeUnloadListener();
+            if (PRODUCT === 'STANDALONE') {
+                if(MODE === 'PROD') {
+                    addBeforeUnloadListener();
+                }
                 localAutoSave();
             }
 
@@ -200,15 +216,15 @@ function checkConsistency() {
 
 function addBeforeUnloadListener() {
     window.onbeforeunload = (evt) => {
-        console.error('Dont forget to enable on unload listener');
-        // makeBackup();
-        // const message = L10n.getValue('utils-close-page-warning');
-        // if (typeof evt === 'undefined') {
-        //     evt = window.event;
-        // }
-        // if (evt) {
-        //     evt.returnValue = message;
-        // }
-        // return message;
+        // console.error('Dont forget to enable on unload listener');
+        makeBackup();
+        const message = L10n.getValue('utils-close-page-warning');
+        if (typeof evt === 'undefined') {
+            evt = window.event;
+        }
+        if (evt) {
+            evt.returnValue = message;
+        }
+        return message;
     };
 }

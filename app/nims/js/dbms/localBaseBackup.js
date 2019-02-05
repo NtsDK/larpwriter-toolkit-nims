@@ -69,7 +69,7 @@ module.exports = function (imports) {
             counter = (counter + 1) % BACKUP_NUMBER;
         }
     
-        return Promise.all(counters.map(counter => LocalBackupCore.get('base' + counter))).then(bases => {
+        return Promise.all(counters.map(counter => imports.LocalBackupCore.get('base' + counter))).then(bases => {
             bases = bases.filter(base => !R.isNil(base));
             if(bases.length === 0){
                 return null;

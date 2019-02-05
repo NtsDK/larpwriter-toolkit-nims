@@ -7,6 +7,7 @@
     "vtmcl-dev": "./node_modules/.bin/gulp dev --configFile \"config/vtmcl-config.json\"",
     "measurelook-dev": "./node_modules/.bin/gulp dev --configFile \"config/measurelook-config.json\"",
     "nims-wp-start": "./node_modules/.bin/webpack-dev-server --config config\\nims.webpack.dev.js --env.mode=development",
+    "nims-wp-start-prod": "./node_modules/.bin/webpack-dev-server --config config\\nims.webpack.dev.js --env.mode=production",
     "nims-wp-build-server": "webpack --config=config\\nims.webpack.dev.js --env.product=server",
     "nims-wp-build-stand": "webpack --config=config\\nims.webpack.dev.js --env.product=standalone",
     "nims-dev": "./node_modules/.bin/gulp dev --configFile \"config/nims-config.json\"",

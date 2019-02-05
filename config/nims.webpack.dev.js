@@ -112,7 +112,7 @@ module.exports = module.exports = (env, argv) => {
         config.entry = serverEntry;
         break;
     default:
-        console.error('Unknown product "' + argv.mode + '" switch to default: standalone');
+        console.error('Unknown product "' + argv.product + '" switch to default: standalone');
     case 'standalone':
         config.entry = standaloneEntry;
         config.resolve.alias.push({
@@ -127,5 +127,18 @@ module.exports = module.exports = (env, argv) => {
         });
         break;
     }
+
+    const DEV_OPTS = {
+        ENABLE_TESTS: true,
+        ENABLE_BASE_SELECT_DLG: false,
+        ENABLE_BASICS: true,
+        ENABLE_EXTRAS: false
+    }
+
+    config.plugins.push(new webpack.DefinePlugin({ 
+        PRODUCT: JSON.stringify(env.product === 'server' ? 'SERVER' : 'STANDALONE'),
+        MODE: JSON.stringify(env.mode === 'production' ? 'PROD' : 'DEV'),
+        DEV_OPTS
+    }));
     return config;
 };
