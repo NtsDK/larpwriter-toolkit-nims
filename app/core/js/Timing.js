@@ -1,3 +1,4 @@
+const R = require('ramda');
 const Timing = {};
 exports.Timing = Timing;
 

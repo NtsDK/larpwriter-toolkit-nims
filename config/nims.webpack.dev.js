@@ -2,6 +2,7 @@
 const webpack = require('webpack');
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const serverEntry = {
     organizer: "./app/nims/js/organizer.js",
@@ -11,6 +12,8 @@ const standaloneEntry = {
     organizer: "./app/nims/js/organizer.js",
 }
 
+const distPath = path.resolve(__dirname, "../dist");
+
 const config = {
     // entry: {
     //     organizer: "./app/nims/js/organizer.js",
@@ -19,7 +22,7 @@ const config = {
     // mode: "development",
     output: {
         filename: "[name]-bundle.js",
-        path: path.resolve(__dirname, "../dist"),
+        path: distPath,
         publicPath: "/"
     },
     devServer: {
@@ -70,7 +73,7 @@ const config = {
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
-            R: 'ramda',
+            // R: 'ramda',
 
             core: 'core',
             U: ['core', 'U'],
@@ -79,6 +82,10 @@ const config = {
             CU: ['core', 'CU'],
             FileUtils: ['core', 'FileUtils'],
         }),
+        new CleanWebpackPlugin([distPath], {
+            root: process.cwd(),
+        }),
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /(ru|en)/)
         // new BundleAnalyzerPlugin({
         //     analyzerMode: 'static'
         // })
@@ -94,7 +101,7 @@ const config = {
     }
 }
 
-module.exports = module.exports = (env, argv) => {
+module.exports = (env, argv) => {
     switch(env.mode) {
     case 'production':
         config.mode = 'production';
@@ -102,7 +109,14 @@ module.exports = module.exports = (env, argv) => {
     default:
         console.error('Unknown mode "' + argv.mode + '" switch to default: development');
     case 'development':
-        config.devtool = 'source-map';
+        config.devtool = 'cheap-eval-source-map';
+        // config.optimization = {
+        //     // usedExports:true,
+        //     // splitChunks: {
+        //     //     chunks: 'all'
+        //     // }
+        // };
+        // config.devtool = 'source-map';
         config.mode = 'development';
         break;
     }

@@ -22,6 +22,7 @@ const GroupProfile = require('./groupProfile');
 const FilterConfiguration = require('./FilterConfiguration');
 const Constants = require('common/constants');
 const ProjectUtils = require('common/ProjectUtils');
+const R = require('ramda');
 
 const PermissionInformer = require('permissionInformer');
 

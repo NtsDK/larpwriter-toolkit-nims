@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  // Utils
  */
 
-'use strict';
+const R = require('ramda');
 
 // ((callback) => {
     // exportsfunction (exports, R) {

@@ -6,6 +6,7 @@ const Constants = require('common/constants');
 
 // const {Gears, Sliders} = require('../index')
 require('./overview.css');
+const R = require('ramda');
 
 const Gears = require('../gears/gears');
 const Sliders = require('../sliders/sliders');

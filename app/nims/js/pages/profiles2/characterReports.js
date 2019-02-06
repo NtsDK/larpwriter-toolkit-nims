@@ -17,6 +17,7 @@ See the License for the specific language governing permissions and
  */
 
 const ProjectUtils = require('common/ProjectUtils.js');
+const R = require('ramda');
 
 'use strict';
 

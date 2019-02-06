@@ -2,6 +2,7 @@ const vis = require('vis');
 require('vis/dist/vis.min.css');
 require('./gears.css');
 const Constants = require('common/constants.js');
+const R = require('ramda');
 
 /*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 

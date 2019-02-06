@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names */
 
-'use strict';
+const R = require('ramda');
 
 function AddFilterConditionDialog(root) {
     this.dialog = UI.createModalDialog(root, this.onAction.bind(this), {

@@ -1,3 +1,4 @@
+const R = require('ramda');
 if (PRODUCT === 'SERVER') {
     describe('serverSmokeTest', () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;

@@ -1,3 +1,4 @@
+const R = require('ramda');
 module.exports = function (imports) {
     const exports = {}
     const BACKUP_NUMBER = 4;

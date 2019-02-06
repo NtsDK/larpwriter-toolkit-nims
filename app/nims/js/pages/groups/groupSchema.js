@@ -17,6 +17,7 @@ See the License for the specific language governing permissions and
  */
 
 const {d3, klay} = require('core/libs/klay-adapter');
+const R = require('ramda');
 
 'use strict';
 

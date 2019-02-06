@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  Utils, Database
  */
 
-'use strict';
+const R = require('ramda');
 
 /* eslint-disable func-names,prefer-rest-params */
 

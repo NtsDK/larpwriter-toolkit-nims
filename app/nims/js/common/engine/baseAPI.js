@@ -12,14 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-'use strict';
-
 /* eslint-disable func-names */
 
 ((callback2) => {
     function baseAPI(LocalDBMS, opts) {
         const {
-            Migrator, EventEmitter, Constants, CU, PC
+            Migrator, EventEmitter, Constants, CU, PC, R
         } = opts;
 
         LocalDBMS.prototype._init = function (listeners) {

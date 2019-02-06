@@ -20,6 +20,7 @@ const PermissionInformer = require("permissionInformer");
 const ProfileEditorCore = require('./profileEditorCore');
 const CharacterReports = require('./characterReports');
 const ProjectUtils = require('common/ProjectUtils');
+const R = require('ramda');
 
 'use strict';
 

@@ -18,6 +18,7 @@ See the License for the specific language governing permissions and
 // const U = core.U;
 
 const PermissionInformer = require('permissionInformer');
+const R = require('ramda');
 
 'use strict';
 

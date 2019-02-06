@@ -20,6 +20,7 @@ See the License for the specific language governing permissions and
 
 const Constants = require('common/constants');
 const ProjectUtils = require('common/ProjectUtils');
+const R = require('ramda');
 
 'use strict';
 

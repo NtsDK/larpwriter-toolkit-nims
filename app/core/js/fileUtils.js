@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 
 const dateFormat = require('dateformat');
 const CU = require('./common/commonUtils');
+const R = require('ramda');
 
 'use strict';
 

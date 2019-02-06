@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
     limitations under the License. */
 
 const U = require('./utils.js');
+const R = require('ramda');
 
 const {d3, klay} = require('core/libs/klay-adapter');
 const dateFormat = require('dateformat');

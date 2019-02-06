@@ -18,6 +18,7 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable func-names */
 
+const R = require('ramda');
 'use strict';
 
 // ((exports) => {

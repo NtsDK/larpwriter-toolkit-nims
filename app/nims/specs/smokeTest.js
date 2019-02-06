@@ -1,4 +1,5 @@
 const Constants = require('common/constants');
+const R = require('ramda');
 
 const getChecks = {
     baseAPI:

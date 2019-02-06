@@ -19,6 +19,7 @@ See the License for the specific language governing permissions and
  const Constants = require('common/constants');
  const PermissionInformer = require("permissionInformer");
  const FilterConfiguration = require('./FilterConfiguration');
+ const R = require('ramda');
 
 'use strict';
 

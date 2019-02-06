@@ -1,6 +1,7 @@
 const {EventEmitter} = require('events');
 const Ajv = require("ajv");
 const dateFormat = require("dateformat");
+const R = require('ramda');
 
 const Migrator = require('../common/migrator');
 const Logger = require('../common/logger');

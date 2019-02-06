@@ -1,4 +1,4 @@
-// const R = require("ramda");
+const R = require("ramda");
 const Constants = require('../common/constants.js');
 /*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 

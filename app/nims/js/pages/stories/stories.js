@@ -23,6 +23,7 @@ const WriterStory = require('./writerStory')(module.exports);
 const StoryEvents = require('./storyEvents')(module.exports);
 const StoryCharacters = require('./storyCharacters')(module.exports);
 const EventPresence = require('./eventPresence')(module.exports);
+const R = require('ramda');
 
     const state = {};
     const root = '.stories-tab ';
