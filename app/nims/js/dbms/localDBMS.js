@@ -3,10 +3,10 @@ const Ajv = require("ajv");
 const dateFormat = require("dateformat");
 const R = require('ramda');
 
-const Migrator = require('../common/migrator');
-const Logger = require('../common/logger');
-const Constants = require('../common/constants');
-const Schema = require('../common/schema');
+const Migrator = require('common/migrator');
+const Logger = require('common/logger');
+const Constants = require('common/constants');
+const Schema = require('common/schema');
 const ProjectUtils = require('common/ProjectUtils');
 const { Precondition, Errors } = require('core');
 

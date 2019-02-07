@@ -1,4 +1,5 @@
-const { EmptyBase } = require('core');
+const R = require('ramda');
+const EmptyBase = require('resources/emptyBase');
 
 describe('baseAPI', () => {
     let oldBase;

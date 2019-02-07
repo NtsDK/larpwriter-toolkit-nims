@@ -124,6 +124,16 @@ module.exports = (env, argv) => {
     switch(env.product) {
     case 'server':
         config.entry = serverEntry;
+        config.resolve.alias.push({
+            alias: "nims/js/dbms/remotePermissionInformer",
+            name: "permissionInformer",
+            onlyModule: true
+        });
+        config.resolve.alias.push({
+            alias: "nims/js/dbms/remoteDBMS",
+            name: "DBMSFactory",
+            onlyModule: true
+        });
         break;
     default:
         console.error('Unknown product "' + argv.product + '" switch to default: standalone');

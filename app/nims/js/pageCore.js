@@ -12,9 +12,11 @@ require('select2/dist/css/select2.min.css');
 
 var vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
-vex.defaultOptions.className = 'vex-theme-os';
+// vex.defaultOptions.className = 'vex-theme-os';
+vex.defaultOptions.className = 'vex-theme-default';
 
-require('vex-js/dist/css/vex-theme-os.css');
+require('vex-js/dist/css/vex.css');
+require('vex-js/dist/css/vex-theme-default.css');
 
 const state = {};
 state.views = {};

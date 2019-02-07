@@ -29,19 +29,30 @@ if( MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS ) {
 const PermissionInformer = require('permissionInformer');
 
 const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
-    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile } = require('./pages');
+    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager } = require('./pages');
 
 let firstBaseLoad = PRODUCT === 'STANDALONE';
 
-exports.onPageLoad = () => {
-    initPage();
-    window.DBMS = makeDBMS();
-    if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
-        DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
-    } else {
-        runBaseSelectDialog();
-    }
-};
+if(PRODUCT === 'STANDALONE') {
+    exports.onPageLoad = () => {
+        initPage();
+        window.DBMS = makeDBMS();
+        if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
+            DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
+        } else {
+            runBaseSelectDialog();
+        }
+    };
+} else {
+    exports.onPageLoad = () => {
+        initPage();
+        window.DBMS = makeDBMS();
+        consistencyCheck((checkResult) => {
+            consistencyCheckAlert(checkResult);
+            onDatabaseLoad();
+        });
+    };
+}
 
 window.onPageLoad = exports.onPageLoad;
 
@@ -66,7 +77,7 @@ function onDatabaseLoad() {
         PermissionInformer.isAdmin().then((isAdmin) => {
             $.datetimepicker.setDateFormatter('moment');
 
-            const firstTab = 'LogViewer2';
+            const firstTab = 'AccessManager';
 
             addView('overview', 'Overview', Overview);
             addView('characters', 'Characters', Characters);
@@ -87,9 +98,9 @@ function onDatabaseLoad() {
 
             addNavSeparator();
 
-            // if (PRODUCT === 'SERVER') {
-            //     addView('admins', 'AccessManager', { clazz: 'accessManagerButton icon-button', tooltip: true });
-            // }
+            if (PRODUCT === 'SERVER') {
+                addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
+            }
             addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
 
             addNavSeparator();

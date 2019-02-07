@@ -17,11 +17,13 @@ See the License for the specific language governing permissions and
  */
 
 const R = require('ramda');
+const CallNotificator = require('./callNotificator');
+const Constants = require('common/constants');
 
 /* eslint-disable func-names,prefer-rest-params */
 
 
-function makeRemoteDBMS() {
+exports.makeDBMS = function () {
     const showNotification = true;
     const notificationTimeout = 2000;
     //const notificationTimeout = 10000;

@@ -77,13 +77,16 @@ exports.Players = require('./tabRouting/routingTab')({
     }]
 });
 
-// RoutingTabTmpl(this.AccessManager = {}, {
-//     firstTab: 'OrganizerManagement',
-//     tabs: [{
-//         btnName: 'organizerManagement',
-//         viewName: 'OrganizerManagement'
-//     }, {
-//         btnName: 'playerManagement',
-//         viewName: 'PlayerManagement'
-//     }]
-// });
+exports.AccessManager = require('./tabRouting/routingTab')({
+    firstTab: 'OrganizerManagement',
+    tabs: [{
+        btnName: 'organizerManagement',
+        viewName: 'OrganizerManagement',
+        viewBody: require('./accessManager/organizerManagement')
+    }, {
+        btnName: 'playerManagement',
+        viewName: 'PlayerManagement',
+        viewBody: require('./accessManager/playerManagement')
+    }]
+});
+
