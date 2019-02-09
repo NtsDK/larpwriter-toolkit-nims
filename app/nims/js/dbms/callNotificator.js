@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-'use strict';
 
 const R = require('ramda');
 
@@ -71,9 +70,9 @@ exports.applyCallNotificatorProxy = function (dbms) {
                 return target[prop];
             }
             return new Proxy(target[prop], {
-                apply(target, thisArg, argumentsList) {
+                apply(target2, thisArg, argumentsList) {
                     onCallStart();
-                    const promise = target.apply(thisArg, argumentsList);
+                    const promise = target2.apply(thisArg, argumentsList);
                     promise.then(() => {
                         onCallFinished();
                     }, err => onCallFinished(err));

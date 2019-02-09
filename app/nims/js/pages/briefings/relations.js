@@ -12,18 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-/*global
- Utils, DBMS
- */
-
 const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
 const RelationsPreview = require('./relationsPreview');
 
-
-'use strict';
-
-// ((exports) => {
 const root = '.relations-tab ';
 const state = {};
 const settingsPath = 'Relations';

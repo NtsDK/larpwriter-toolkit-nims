@@ -19,7 +19,6 @@ See the License for the specific language governing permissions and
 const Constants = require('common/constants.js');
 const R = require('ramda');
 
-'use strict';
 
 // ((exports) => {
 const state = {};

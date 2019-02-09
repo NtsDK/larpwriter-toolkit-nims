@@ -54,10 +54,13 @@ exports.escapeRegExp = string => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
 
 // exports.isColor = str => exports.colorPattern.test(str);
 
+// eslint-disable-next-line no-useless-escape
 const illegalRe = /[\/\?<>\\:\*\|":]/g;
+// eslint-disable-next-line no-control-regex
 const controlRe = /[\x00-\x1f\x80-\x9f]/g;
 const reservedRe = /^\.+$/;
 const windowsReservedRe = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
+// eslint-disable-next-line no-useless-escape
 const windowsTrailingRe = /[\. ]+$/;
 
 exports.sanitizeStr2FileName = (input, replacement) => {

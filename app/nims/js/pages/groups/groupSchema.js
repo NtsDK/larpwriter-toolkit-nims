@@ -12,18 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-/*global
- Utils, DBMS
- */
-
 const { d3, klay } = require('core/libs/klay-adapter');
 const R = require('ramda');
 
-'use strict';
-
-// const d3 = require('d3');
-
-// ((exports) => {
 const state = {};
 const rootTab = '.group-schema-tab';
 
@@ -37,19 +28,6 @@ exports.refresh = () => {
         redrawSchema2(schemas.practice, 'practice');
     }).catch(UI.handleError);
 };
-
-function redrawSchema(graph) {
-    const container = U.queryEl(`${rootTab} .schema-container`);
-
-    if (state.network) {
-        state.network.destroy();
-    }
-    graph.edges = graph.edges.map(edge => R.merge(edge, {
-        physics: false,
-    }));
-
-    state.network = new vis.Network(container, graph, Constants.groupSchemaOpts);
-}
 
 function redrawSchema2(graphData, className) {
     U.clearEl(U.queryEl(`${rootTab} svg.${className}`));
@@ -131,14 +109,13 @@ function redrawSchema2(graphData, className) {
         .enter()
         .append('g');
 
+    //                const details = checkRes.details[d.name];
+    //                if (details === undefined || details.length === 0) {
+    //                    return 'node valid';
+    //                }
+    //                return 'node invalid';
     node.append('rect')
-        .attr('class', d => 'node valid'
-            //                const details = checkRes.details[d.name];
-            //                if (details === undefined || details.length === 0) {
-            //                    return 'node valid';
-            //                }
-            //                return 'node invalid';
-        )
+        .attr('class', d => 'node valid')
         .attr('width', nodeWidth)
         .attr('height', nodeHeight)
         .attr('title', 'link')

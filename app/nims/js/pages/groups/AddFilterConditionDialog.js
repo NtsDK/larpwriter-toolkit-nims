@@ -106,7 +106,7 @@ AddFilterConditionDialog.prototype.getFilterModelItem = function () {
         //        model.push({ type, name: inputItemName, regexString: inputItem.value.toLowerCase() });
         break;
     default:
-        throw new Error(`Unexpected type ${type}`);
+        throw new Error(`Unexpected type ${item.type}`);
     }
     return filterItem;
 };

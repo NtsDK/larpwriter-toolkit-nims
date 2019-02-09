@@ -19,7 +19,6 @@ See the License for the specific language governing permissions and
 const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
 
-'use strict';
 
 module.exports = (Stories) => {
     const exports = {};
@@ -50,7 +49,8 @@ module.exports = (Stories) => {
             DBMS.getStoryCharacterNamesArray({ storyName: Stories.getCurrentStoryName() }),
             DBMS.getStoryEvents({ storyName: Stories.getCurrentStoryName() })
         ]).then((results) => {
-            let [isStoryEditable, allCharacters, characterArray, events] = results;
+            const [isStoryEditable, allCharacters, events] = results;
+            let [characterArray] = results;
             const map = {};
             allCharacters.forEach((elem) => {
                 map[elem.value] = elem;
@@ -94,9 +94,9 @@ module.exports = (Stories) => {
 
     function appendTableInput(table, event, i, characterArray) {
         const tr = U.makeEl('tr');
-        const td = U.makeEl('td');
-        td.appendChild(U.makeText(event.name));
-        tr.appendChild(td);
+        const td1 = U.makeEl('td');
+        td1.appendChild(U.makeText(event.name));
+        tr.appendChild(td1);
 
         U.addEls(tr, characterArray.map((character, j) => {
             const td = U.qmte(`${root} .event-presence-cell`);

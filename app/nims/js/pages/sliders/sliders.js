@@ -19,7 +19,6 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-'use strict';
 
 // ((exports) => {
 const root = '.sliders-tab ';
@@ -82,7 +81,7 @@ function createSliders(model) {
     });
 }
 
-var makeSliderBackbone = (sl, i) => {
+function makeSliderBackbone(sl, i) {
     const el = U.qmte(`${root} .slider-container-tmpl`);
     U.setAttr(U.qee(el, 'input'), 'pos', i);
     U.addEl(U.qee(el, '.slider-name'), U.makeText(sl.name));
@@ -107,7 +106,7 @@ var makeSliderBackbone = (sl, i) => {
     });
     L10n.localizeStatic(el);
     return el;
-};
+}
 
 function createSlider(dialog) {
     return () => {
@@ -129,7 +128,7 @@ function editSlider(dialog) {
         const name = U.qee(dialog, '.slider-name').value.trim();
         const top = U.qee(dialog, '.slider-top').value.trim();
         const bottom = U.qee(dialog, '.slider-bottom').value.trim();
-        const pos = dialog.pos;
+        const { pos } = dialog;
         DBMS.updateSliderNaming({
             index: pos,
             name,

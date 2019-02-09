@@ -1,11 +1,10 @@
 const R = require('ramda');
+const dateFormat = require('dateformat');
 
 module.exports = function (imports) {
     const exports = {};
     const BACKUP_NUMBER = 4;
     const BACKUP_INTERVAL = 60000 * 10; // 10 min
-
-    const dateFormat = require('dateformat');
 
     exports.runBaseSelectDialog = function () {
         const dbDialog = U.queryEl('.set-database-dialog');
@@ -42,7 +41,7 @@ module.exports = function (imports) {
             imports.initBaseLoadBtn(U.qee(dbDialog, '.upload-db'), U.qee(dbDialog, '.upload-db input'), dialogOnBaseLoad);
 
             U.listen(U.qee(dbDialog, '.on-action-button'), 'click', () => {
-                const base = U.getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
+                const { base } = U.getSelectedRadio(dbDialog, 'input[name=dbSource]');
                 DBMS.setDatabase({ database: base }).then(() => {
                     dialogOnBaseLoad();
                 }).catch(UI.handleError);
@@ -70,7 +69,7 @@ module.exports = function (imports) {
             counter = (counter + 1) % BACKUP_NUMBER;
         }
 
-        return Promise.all(counters.map(counter => imports.LocalBackupCore.get(`base${counter}`))).then((bases) => {
+        return Promise.all(counters.map(counter2 => imports.LocalBackupCore.get(`base${counter2}`))).then((bases) => {
             bases = bases.filter(base => !R.isNil(base));
             if (bases.length === 0) {
                 return null;

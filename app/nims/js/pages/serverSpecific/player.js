@@ -16,9 +16,9 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-'use strict';
 
 const R = require('ramda');
+const ProfileEditorCore = require('../profiles2/profileEditorCore');
 
 // ((exports) => {
 const root = '.player-tab ';

@@ -13,29 +13,41 @@ exports.Enter = require('./serverSpecific/enter');
 exports.SignUp = require('./serverSpecific/sign-up');
 exports.About = require('./logs/about');
 
+const BriefingPreview = require('./briefings/briefingPreview');
+const BriefingExport = require('./briefings/briefingExport');
+const LogViewer = require('./logs/logViewer');
+const GroupSchema = require('./groups/groupSchema');
+const { ChracterEditor, PlayerEditor } = require('./profiles2/profileEditor2');
+const { CharacterConfigurer, PlayerConfigurer } = require('./profiles2/profileConfigurer2');
+const ProfileBinding2 = require('./profiles2/profileBinding2');
+const OrganizerManagement = require('./accessManager/organizerManagement');
+const PlayerManagement = require('./accessManager/playerManagement');
+
+
 exports.Briefings = require('./tabRouting/routingTab')({
     firstTab: 'BriefingExport',
     tabs: [{
         btnName: 'briefing-preview',
         viewName: 'BriefingPreview',
-        viewBody: require('./briefings/briefingPreview')
+        viewBody: BriefingPreview
     }, {
         btnName: 'briefing-export',
         viewName: 'BriefingExport',
-        viewBody: require('./briefings/briefingExport')
+        viewBody: BriefingExport
     }]
 });
+
 
 exports.LogViewer2 = require('./tabRouting/routingTab')({
     firstTab: 'GroupSchema',
     tabs: [{
         btnName: 'logViewer',
         viewName: 'LogViewer',
-        viewBody: require('./logs/logViewer')
+        viewBody: LogViewer
     }, {
         btnName: 'group-schema',
         viewName: 'GroupSchema',
-        viewBody: require('./groups/groupSchema')
+        viewBody: GroupSchema
     }, {
         btnName: 'about',
         viewName: 'About',
@@ -48,15 +60,15 @@ exports.Characters = require('./tabRouting/routingTab')({
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'CharacterEditor',
-        viewBody: require('./profiles2/profileEditor2').CharacterEditor
+        viewBody: ChracterEditor
     }, {
         btnName: 'changing-profile-structure',
         viewName: 'CharacterConfigurer',
-        viewBody: require('./profiles2/profileConfigurer2').CharacterConfigurer
+        viewBody: CharacterConfigurer
     }, {
         btnName: 'binding-characters-and-players',
         viewName: 'ProfileBinding2',
-        viewBody: require('./profiles2/profileBinding2')
+        viewBody: ProfileBinding2
     }]
 });
 
@@ -65,27 +77,28 @@ exports.Players = require('./tabRouting/routingTab')({
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'PlayerEditor',
-        viewBody: require('./profiles2/profileEditor2').PlayerEditor
+        viewBody: PlayerEditor
     }, {
         btnName: 'changing-profile-structure',
         viewName: 'PlayerConfigurer',
-        viewBody: require('./profiles2/profileConfigurer2').PlayerConfigurer
+        viewBody: PlayerConfigurer
     }, {
         btnName: 'binding-characters-and-players',
         viewName: 'ProfileBinding2',
-        viewBody: require('./profiles2/profileBinding2')
+        viewBody: ProfileBinding2
     }]
 });
+
 
 exports.AccessManager = require('./tabRouting/routingTab')({
     firstTab: 'OrganizerManagement',
     tabs: [{
         btnName: 'organizerManagement',
         viewName: 'OrganizerManagement',
-        viewBody: require('./accessManager/organizerManagement')
+        viewBody: OrganizerManagement
     }, {
         btnName: 'playerManagement',
         viewName: 'PlayerManagement',
-        viewBody: require('./accessManager/playerManagement')
+        viewBody: PlayerManagement
     }]
 });

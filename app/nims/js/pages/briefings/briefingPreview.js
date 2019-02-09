@@ -26,9 +26,6 @@ const RelationsPreview = require('./relationsPreview');
 const Adaptations = require('../adaptations/adaptations');
 
 
-'use strict';
-
-// ((exports) => {
 const state = {};
 const root = '#briefingPreviewDiv ';
 const settingsPath = 'BriefingPreview';
@@ -411,7 +408,7 @@ function getEventHeaderDiv(event, showStoryName) {
 function showEvent(event, characterName, opts, flags) {
     const { isAdaptationsMode } = flags;
     const showAll = isAdaptationsMode;
-    const storyName = event.storyName;
+    const { storyName } = event;
     const isStoryEditable = opts.userStoryNamesMap[storyName] !== undefined;
     const showAdaptationText = event.characters[characterName].text !== '';
     const showSubjectiveTime = event.characters[characterName].time !== '';

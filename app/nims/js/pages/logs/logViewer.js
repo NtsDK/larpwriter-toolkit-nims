@@ -20,7 +20,6 @@ require('./logViewer.css');
 const dateFormat = require('dateformat');
 const R = require('ramda');
 
-'use strict';
 
 // ((exports) => {
 const root = '.log-viewer-tab ';

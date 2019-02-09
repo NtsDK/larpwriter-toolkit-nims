@@ -1,4 +1,3 @@
-// const R = require('ramda');
 const R = require('ramda');
 const Constants = require('./constants');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
@@ -157,7 +156,7 @@ const getCharacterInfoValue = (info, characterName, profileItemName) => {
 const getCharacterInfoValue2 = (info, profileId, profileItemName) => {
     if (profileItemName === Constants.CHAR_NAME
                     || profileItemName === Constants.CHAR_OWNER
-                    || R.startsWith(Constants.SUMMARY_PREFIX, profileItemName,)
+                    || R.startsWith(Constants.SUMMARY_PREFIX, profileItemName)
                     || R.startsWith(Constants.CHAR_PREFIX, profileItemName)) {
         if (profileId[0] === '') return undefined;
         const characterName = profileId[0];

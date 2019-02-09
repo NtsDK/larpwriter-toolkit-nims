@@ -22,8 +22,6 @@ const Constants = require('common/constants');
 const ProjectUtils = require('common/ProjectUtils');
 const R = require('ramda');
 
-'use strict';
-
 function FilterConfiguration(info) {
     this.info = info;
     function populateProfileItems(item) {
@@ -63,14 +61,14 @@ FilterConfiguration.prototype.getProfileItemSource = function (name) {
 
 FilterConfiguration.prototype.getName2SourceMapping = function () {
     return this.groupedProfileFilterItems.reduce((acc, group) => {
-        group.profileFilterItems.forEach(item => acc[item.name] = group.name);
+        group.profileFilterItems.forEach(item => (acc[item.name] = group.name));
         return acc;
     }, {});
 };
 
 FilterConfiguration.prototype.getName2DisplayNameMapping = function () {
     return this.groupedProfileFilterItems.reduce((acc, group) => {
-        group.profileFilterItems.forEach(item => acc[item.name] = item.displayName);
+        group.profileFilterItems.forEach(item => (acc[item.name] = item.displayName));
         return acc;
     }, {});
 };

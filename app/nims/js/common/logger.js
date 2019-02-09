@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
  // Utils
  */
 
-'use strict';
 
 const R = require('ramda');
 
@@ -256,7 +255,7 @@ exports.apiInfo = {
 };
 
 // isServer - used in server mode. If false then user in logs will be named "user".
-exports.applyLoggerProxy = function (dbms, R, isServer) {
+exports.applyLoggerProxy = function (dbms, isServer) {
     const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
     const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
 
@@ -282,8 +281,8 @@ exports.applyLoggerProxy = function (dbms, R, isServer) {
                         accept = filteredApi[funcName].filter(arr);
                     }
 
-                    function getArgs(arr) {
-                        return isServer ? R.init(arr) : arr;
+                    function getArgs(arr2) {
+                        return isServer ? R.init(arr2) : arr2;
                     }
 
                     if (!accept) {

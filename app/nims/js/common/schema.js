@@ -19,8 +19,6 @@ See the License for the specific language governing permissions and
  // Utils
  */
 
-'use strict';
-
 /* eslint-disable func-names */
 
 // ((callback) => {

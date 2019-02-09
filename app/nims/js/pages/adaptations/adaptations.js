@@ -20,9 +20,6 @@ See the License for the specific language governing permissions and
 const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
 
-'use strict';
-
-// ((exports) => {
 const root = '.adaptations-tab ';
 
 exports.init = () => {

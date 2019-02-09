@@ -28,11 +28,6 @@ const { saveAs } = require('file-saver');
 
 const markdownit = require('markdown-it');
 
-//
-
-'use strict';
-
-// ((exports) => {
 const state = {};
 const root = '.briefing-export-tab ';
 

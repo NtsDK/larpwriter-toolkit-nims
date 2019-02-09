@@ -12,10 +12,14 @@ require('../style/experimental.css');
 const { makeDBMS } = require('DBMSFactory');
 
 if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
+    // eslint-disable-next-line global-require
     require('core/tests/jasmine');
+    // eslint-disable-next-line global-require
     require('../specs/baseAPI');
+    // eslint-disable-next-line global-require
     require('../specs/smokeTest');
     if (PRODUCT === 'SERVER') {
+        // eslint-disable-next-line global-require
         require('../specs/serverSmokeTest');
     }
 }
@@ -207,9 +211,9 @@ function consistencyCheckAlert(checkResult) {
     }
 }
 
-function initBaseLoadBtn(button, input, onBaseLoaded) {
+function initBaseLoadBtn(button, input, onBaseLoaded2) {
     button.addEventListener('change', (evt) => {
-        FileUtils.readSingleFile(evt).then(database => DBMS.setDatabase({ database })).then(() => PermissionInformer.refresh()).then(onBaseLoaded, UI.handleError);
+        FileUtils.readSingleFile(evt).then(database => DBMS.setDatabase({ database })).then(() => PermissionInformer.refresh()).then(onBaseLoaded2, UI.handleError);
     }, false);
     button.addEventListener('click', (e) => {
         input.value = '';

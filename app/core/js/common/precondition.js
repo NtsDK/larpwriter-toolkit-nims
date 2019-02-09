@@ -14,10 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-'use strict';
-
-// ((callback2) => {
-//     function Precondition(exports, R, Errors) {
 exports.makeValidationError = (err) => {
     err.splice(0, 0, null);
     return new (Function.prototype.bind.apply(Errors.ValidationError, err))();
@@ -107,7 +103,8 @@ exports.isNonNegative = R.curry(el => () => (el >= 0 ? null : ['errors-argument-
 exports.createEntityCheck = R.curry((entityName, entityList) => exports.chainCheck([exports.isString(entityName), exports.nameIsNotEmpty(entityName),
     exports.entityIsNotUsed(entityName, entityList)]));
 
-exports.createEntityCheck2 = R.curry((entityName, entityList, nameType, entityTypeKey) => exports.chainCheck([exports.isString(entityName), exports.nameIsNotEmpty2(entityName, nameType, entityTypeKey),
+exports.createEntityCheck2 = R.curry((entityName, entityList, nameType, entityTypeKey) => exports.chainCheck([exports.isString(entityName),
+    exports.nameIsNotEmpty2(entityName, nameType, entityTypeKey),
     exports.entityIsNotUsed(entityName, entityList)]));
 
 exports.removeEntityCheck = R.curry((entityName, entityList) => exports.chainCheck([exports.isString(entityName), exports.entityExists(entityName, entityList)]));

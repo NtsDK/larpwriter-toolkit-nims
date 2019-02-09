@@ -20,11 +20,10 @@ const vis = require('vis');
 require('vis/dist/vis.min.css');
 const R = require('ramda');
 
+/* eslint-disable-next-line import/no-unresolved */
 const PermissionInformer = require('permissionInformer');
 
 const dateFormat = require('dateformat');
-
-'use strict';
 
 // ((exports) => {
 const state = {};

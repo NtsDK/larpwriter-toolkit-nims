@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 /*
  */
 
-'use strict';
 
 // ((exports) => {
 exports.profileFieldTypes = {
@@ -480,7 +479,15 @@ exports.commonIgnoreList = ['_init', 'log'];
 
 
 exports.yedGmlBase = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:java="http://www.yworks.com/xml/yfiles-common/1.0/java" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+        <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+        xmlns:java="http://www.yworks.com/xml/yfiles-common/1.0/java"
+        xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0"
+        xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/2.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:y="http://www.yworks.com/xml/graphml"
+        xmlns:yed="http://www.yworks.com/xml/yed/3"
+        xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+        http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
         <!--Created by yEd 3.15.0.2-->
         <key attr.name="Description" attr.type="string" for="graph" id="d0"/>
         <key for="port" id="d1" yfiles.type="portgraphics"/>
@@ -510,7 +517,10 @@ exports.yedNodeTmpl = `<node id="{0}">
             <y:Geometry height="45.0" width="151.0" x="94.0" y="152.75"/>
             <y:Fill color="{2}" transparent="false"/>
             <y:BorderStyle color="{3}" type="line" width="1.0"/>
-            <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="35.8515625" x="57.57421875" y="13.1494140625">{1}<y:LabelModel>
+            <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog"
+            fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false"
+            height="18.701171875" modelName="custom" textColor="#000000" visible="true"
+            width="35.8515625" x="57.57421875" y="13.1494140625">{1}<y:LabelModel>
                 <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -531,13 +541,19 @@ exports.yedEdgeTmpl = `<edge id="{0}" source="{2}" target="{3}">
             </y:Path>
             <y:LineStyle color="#000000" type="line" width="1.0"/>
             <y:Arrows source="none" target="standard"/>
-            <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="41.30078125" x="-234.82116743359467" y="-7.955110597360772">{1}<y:LabelModel>
+            <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0"
+            fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false"
+            hasLineColor="false" height="18.701171875" modelName="custom"
+            preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"
+            width="41.30078125" x="-234.82116743359467" y="-7.955110597360772">{1}<y:LabelModel>
                 <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
                 <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="center" ratio="0.189477660359121" segment="-1"/>
                 </y:ModelParameter>
-                <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+                <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0"
+                angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0"
+                frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
             </y:EdgeLabel>
             <y:Arc height="106.20632934570312" ratio="1.0" type="fixedRatio"/>
             </y:ArcEdge>

@@ -1,8 +1,9 @@
 const vis = require('vis');
 require('vis/dist/vis.min.css');
 require('./gears.css');
-const Constants = require('common/constants.js');
+const Constants = require('common/constants');
 const R = require('ramda');
+const { saveAs } = require('file-saver');
 
 /*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
@@ -22,9 +23,6 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-'use strict';
-
-// ((exports) => {
 const root = '.gears-tab';
 const state = {};
 const l10n = L10n.get('gears');
@@ -79,7 +77,7 @@ exports.init = () => {
     U.listen(U.queryEl(`${root} .search-node`), 'change', onNodeFocus);
 
     U.listen(U.queryEl(`${root} .custom-physics-settings-button`), 'click', () => {
-        const options = U.queryEl(`${root} .custom-physics-settings`).value;
+        let options = U.queryEl(`${root} .custom-physics-settings`).value;
         if (options.trim() === '') {
             return;
         }
@@ -170,8 +168,8 @@ function drawNetwork() {
                 U.qee(state.editNodeDialog, '.node-notes').value = data.notes;
 
                 state.nodeData = data;
-                state.nodeCallback = function (data) {
-                    callback(data);
+                state.nodeCallback = function (data2) {
+                    callback(data2);
                 };
 
                 state.editNodeDialog.showDlg();
@@ -179,7 +177,7 @@ function drawNetwork() {
             addEdge(data, callback) {
                 data.arrows = 'to';
                 data.label = '';
-                if (data.from == data.to) {
+                if (data.from === data.to) {
                     UI.confirm(l10n('do-you-want-to-connect-node-to-itself'), () => {
                         callback(data);
                     }, () => callback());
@@ -266,7 +264,7 @@ function showEdgeLabelEditor(params) {
         const edge = state.edgesDataset.get(params.edges[0]);
         U.qee(state.renameEdgeDialog, '.entity-input').value = edge.label || '';
         state.edgeData = edge;
-        state.edgeCallback = edge => state.edgesDataset.update(edge);
+        state.edgeCallback = state.edgesDataset.update;
         state.renameEdgeDialog.showDlg();
     }
 }
@@ -369,7 +367,7 @@ function downloadYED() {
 
     const groups = {};
     let index = 1;
-    state.nodesDataset.map((node) => {
+    state.nodesDataset.forEach((node) => {
         if (groups[node.group] === undefined) {
             groups[node.group] = index;
             index++;

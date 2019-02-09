@@ -1,18 +1,18 @@
-﻿const path = require("path");
+const path = require('path');
 const webpack = require('webpack');
 
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const serverEntry = {
-    organizer: "./app/nims/js/organizer.js",
-    index: "./app/nims/js/index.js",
-}
+    organizer: './app/nims/js/organizer.js',
+    index: './app/nims/js/index.js',
+};
 const standaloneEntry = {
-    organizer: "./app/nims/js/organizer.js",
-}
+    organizer: './app/nims/js/organizer.js',
+};
 
-const distPath = path.resolve(__dirname, "../dist");
+const distPath = path.resolve(__dirname, '../dist');
 
 const config = {
     // entry: {
@@ -21,31 +21,31 @@ const config = {
     // },
     // mode: "development",
     output: {
-        filename: "[name]-bundle.js",
+        filename: '[name]-bundle.js',
         path: distPath,
-        publicPath: "/"
+        publicPath: '/'
     },
     devServer: {
-        contentBase: "dist",
+        contentBase: 'dist',
         overlay: true
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
-                use: [{ loader: "babel-loader" }],
+                use: [{ loader: 'babel-loader' }],
                 exclude: /node_modules/
             },
             {
                 test: /\.css$/,
-                use: [{ loader: "style-loader" }, { loader: "css-loader" }]
+                use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
             },
             {
                 test: /\.scss$/,
                 use: [
-                    "style-loader", // creates style nodes from JS strings
-                    "css-loader", // translates CSS into CommonJS
-                    "sass-loader" // compiles Sass to CSS, using Node Sass by default
+                    'style-loader', // creates style nodes from JS strings
+                    'css-loader', // translates CSS into CommonJS
+                    'sass-loader' // compiles Sass to CSS, using Node Sass by default
                 ]
             },
             { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' },
@@ -53,9 +53,9 @@ const config = {
                 test: /(nims|index).html$/,
                 //include: path.join(__dirname, 'src/views'),
                 use: [
-                    { loader: "file-loader", options: { name: "[name].html" } },
-                    { loader: "extract-loader" },
-                    { loader: "html-loader", options: {interpolate: true} },
+                    { loader: 'file-loader', options: { name: '[name].html' } },
+                    { loader: 'extract-loader' },
+                    { loader: 'html-loader', options: { interpolate: true } },
                 ]
             },
             {
@@ -64,12 +64,12 @@ const config = {
                 use: [
                     // { loader: "file-loader", options: { name: "[name].html" } },
                     // { loader: "extract-loader" },
-                    { loader: "html-loader" },
+                    { loader: 'html-loader' },
                 ]
             },
         ]
     },
-    plugins:[
+    plugins: [
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
@@ -80,11 +80,13 @@ const config = {
             L10n: ['core', 'L10n'],
             UI: ['core', 'UI'],
             CU: ['core', 'CU'],
+            Errors: ['core', 'Errors'],
             FileUtils: ['core', 'FileUtils'],
         }),
         new CleanWebpackPlugin([distPath], {
             root: process.cwd(),
         }),
+        // eslint-disable-next-line no-useless-escape
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /(ru|en)/)
         // new BundleAnalyzerPlugin({
         //     analyzerMode: 'static'
@@ -92,22 +94,23 @@ const config = {
     ],
     resolve: {
         modules: [
-            'node_modules', 
-            path.resolve(__dirname, '../app'), 
-            path.resolve(__dirname, '../app/nims'), 
-            path.resolve(__dirname, '../app/nims/js'), 
+            'node_modules',
+            path.resolve(__dirname, '../app'),
+            path.resolve(__dirname, '../app/nims'),
+            path.resolve(__dirname, '../app/nims/js'),
         ],
         alias: []
     }
-}
+};
 
 module.exports = (env, argv) => {
-    switch(env.mode) {
+    switch (env.mode) {
     case 'production':
         config.mode = 'production';
         break;
     default:
-        console.error('Unknown mode "' + argv.mode + '" switch to default: development');
+        console.error(`Unknown mode "${argv.mode}" switch to default: development`);
+    // eslint-disable-next-line no-fallthrough
     case 'development':
         config.devtool = 'cheap-eval-source-map';
         // config.optimization = {
@@ -121,49 +124,51 @@ module.exports = (env, argv) => {
         break;
     }
 
-    switch(env.product) {
+    switch (env.product) {
     case 'server':
         config.entry = serverEntry;
         config.resolve.alias.push({
-            alias: "nims/js/dbms/remotePermissionInformer",
-            name: "permissionInformer",
+            alias: 'nims/js/dbms/remotePermissionInformer',
+            name: 'permissionInformer',
             onlyModule: true
         });
         config.resolve.alias.push({
-            alias: "nims/js/dbms/remoteDBMS",
-            name: "DBMSFactory",
+            alias: 'nims/js/dbms/remoteDBMS',
+            name: 'DBMSFactory',
             onlyModule: true
         });
         break;
     default:
-        console.error('Unknown product "' + argv.product + '" switch to default: standalone');
+        console.error(`Unknown product "${argv.product}" switch to default: standalone`);
+    // eslint-disable-next-line no-fallthrough
     case 'standalone':
         config.entry = standaloneEntry;
         config.resolve.alias.push({
-            alias: "nims/js/dbms/localPermissionInformer",
-            name: "permissionInformer",
+            alias: 'nims/js/dbms/localPermissionInformer',
+            name: 'permissionInformer',
             onlyModule: true
         });
         config.resolve.alias.push({
-            alias: "nims/js/dbms/localDBMS",
-            name: "DBMSFactory",
+            alias: 'nims/js/dbms/localDBMS',
+            name: 'DBMSFactory',
             onlyModule: true
         });
         break;
     }
 
-    const valOrDefault = (val, defaultVal) => val !== undefined ? Boolean(val) : defaultVal;
+    const valOrDefault = (val, defaultVal) => (val !== undefined ? Boolean(val) : defaultVal);
 
     const DEV_OPTS = {
         ENABLE_TESTS: valOrDefault(env.ENABLE_TESTS, true),
         ENABLE_BASE_SELECT_DLG: valOrDefault(env.ENABLE_BASE_SELECT_DLG, false),
         ENABLE_BASICS: valOrDefault(env.ENABLE_BASICS, true),
         ENABLE_EXTRAS: valOrDefault(env.ENABLE_EXTRAS, false)
-    }
+    };
 
-    config.plugins.push(new webpack.DefinePlugin({ 
+    config.plugins.push(new webpack.DefinePlugin({
         PRODUCT: JSON.stringify(env.product === 'server' ? 'SERVER' : 'STANDALONE'),
         MODE: JSON.stringify(env.mode === 'production' ? 'PROD' : 'DEV'),
+        BASE_FILE_NAME: 'nims',
         DEV_OPTS
     }));
     return config;

@@ -19,7 +19,6 @@ See the License for the specific language governing permissions and
 const Constants = require('common/constants');
 const R = require('ramda');
 
-'use strict';
 
 // ((exports) => {
 const root = '.role-grid-tab ';
@@ -158,6 +157,7 @@ var drawList = () => {
 //
 //        structures.sort(CU.charOrdAFactory(R.prop('key')));
 //        return structures;
+// eslint-disable-next-line no-var,vars-on-top
 var getTreeByAlphabet = () => [{
     key: l10n('all-characters'),
     lastKeyPart: l10n('all-characters'),

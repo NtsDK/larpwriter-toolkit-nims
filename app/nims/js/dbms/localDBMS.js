@@ -30,10 +30,6 @@ See the License for the specific language governing permissions and
  Utils, Database, Migrator
  */
 
-'use strict';
-
-/* eslint-disable func-names */
-
 exports.makeDBMS = function () {
     const listeners = {};
 
@@ -67,6 +63,7 @@ exports.makeDBMS = function () {
     const funcList = {};
     const func = R.curry((name) => {
         const before = R.keys(LocalDBMS.prototype);
+        // eslint-disable-next-line global-require,import/no-dynamic-require
         require(`../common/engine/${name}`)(LocalDBMS, opts);
         // window[name](LocalDBMS, opts);
         const after = R.keys(LocalDBMS.prototype);
@@ -118,7 +115,7 @@ exports.makeDBMS = function () {
 
     const dbms = new LocalDBMS();
     const proxy1 = CallNotificator.applyCallNotificatorProxy(dbms);
-    const proxy2 = Logger.applyLoggerProxy(proxy1, R, false);
+    const proxy2 = Logger.applyLoggerProxy(proxy1, false);
 
     return proxy2;
 };

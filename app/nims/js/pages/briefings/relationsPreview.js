@@ -20,9 +20,6 @@ const ProjectUtils = require('common/ProjectUtils');
 const Constants = require('common/constants');
 const R = require('ramda');
 
-'use strict';
-
-// ((exports) => {
 const relationTableHeader = ['character-name', 'direct-relation', 'relation-origin', 'reverse-relation'];
 const partialTableHeader = ['character-name', 'direct-relation'];
 

@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-'use strict';
 
 /* eslint-disable func-names,no-continue */
 
@@ -116,7 +115,7 @@ See the License for the specific language governing permissions and
                         //                            R.keys(subItem.selectedOptions),
                         //                            R.keys(superItem.selectedOptions)
                         //                        ).length === 0;
-                        return false;
+                        // return false;
                     }
 
                     if (subItem.condition === 'some' && superItem.condition === 'equal') {

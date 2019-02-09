@@ -16,11 +16,9 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const Constants = require('common/constants.js');
+const Constants = require('common/constants');
 const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
-
-'use strict';
 
 
 // Character/Player profiles already have field 'name'
@@ -231,7 +229,7 @@ function ProfileConfigurerTmpl(opts) {
         itemType.oldType = profileSettings.type;
         U.listen(itemType, 'change', changeProfileItemType(type));
 
-        let input, addDefaultListener = true;
+        let input, addDefaultListener = true, list, defaultValue, list2;
         switch (profileSettings.type) {
         case 'text':
             input = U.makeEl('textarea');
@@ -240,8 +238,8 @@ function ProfileConfigurerTmpl(opts) {
             break;
         case 'enum':
             input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
-            const list = profileSettings.value.split(',');
-            const defaultValue = list[0];
+            list = profileSettings.value.split(',');
+            defaultValue = list[0];
             list.sort(CU.charOrdA);
 
             U.addEls(U.qee(input, '.text'), enumList2Els(list, defaultValue));
@@ -277,7 +275,7 @@ function ProfileConfigurerTmpl(opts) {
             break;
         case 'multiEnum':
             input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
-            const list2 = profileSettings.value.split(',');
+            list2 = profileSettings.value.split(',');
             list2.sort(CU.charOrdA);
 
             U.addEls(U.qee(input, '.text'), enumList2Els(list2));

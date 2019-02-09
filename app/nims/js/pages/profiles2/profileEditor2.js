@@ -22,7 +22,6 @@ const R = require('ramda');
 const ProfileEditorCore = require('./profileEditorCore');
 const CharacterReports = require('./characterReports');
 
-'use strict';
 
 function ProfileEditorTmpl(opts) {
     const exports = {};
@@ -87,7 +86,8 @@ function ProfileEditorTmpl(opts) {
             PermissionInformer.getEntityNamesArray({ type: secondType, editableOnly: false }),
             DBMS.getProfileBindings()
         ]).then((results) => {
-            let [primaryNames, secondaryNames, profileBindings] = results;
+            let [profileBindings] = results;
+            const [primaryNames, secondaryNames] = results;
             profileBindings = opts.processBindings(profileBindings);
             UI.enableEl(U.queryEl(`${root}.entity-filter`), primaryNames.length > 0);
             rebuildInterface(primaryNames, secondaryNames, profileBindings);

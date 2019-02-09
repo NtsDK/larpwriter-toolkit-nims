@@ -20,7 +20,6 @@ const PermissionInformer = require('permissionInformer');
 const Constants = require('common/constants');
 const R = require('ramda');
 
-'use strict';
 
 module.exports = (Stories) => {
     const exports = {};

@@ -26,8 +26,6 @@ const PermissionInformer = require('permissionInformer');
 const NetworkSubsetsSelector = require('./networkSubsetsSelector');
 
 
-'use strict';
-
 // ((exports) => {
 const state = {};
 

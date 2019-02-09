@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-'use strict';
 
 module.exports = (Stories) => {
     const exports = {};

@@ -20,7 +20,6 @@ See the License for the specific language governing permissions and
 
 const R = require('ramda');
 
-'use strict';
 
 // ((exports) => {
 exports.makeProfileEditorCore = () => {
@@ -82,7 +81,7 @@ exports.makeProfileEditorCore = () => {
     };
 
     function ProfileItemInput(profileType, profileItemConfig) {
-        let input, sel;
+        let input, sel, toNameObj;
         switch (profileItemConfig.type) {
         case 'text':
             input = U.makeEl('textarea');
@@ -95,7 +94,7 @@ exports.makeProfileEditorCore = () => {
         case 'enum':
             input = U.makeEl('select');
             U.addClass(input, 'profileSelectInput');
-            const toNameObj = R.compose(R.zipObj(['name']), R.append(R.__, []));
+            toNameObj = R.compose(R.zipObj(['name']), R.append(R.__, []));
             U.fillSelector(input, R.sort(CU.charOrdA, profileItemConfig.value.split(',')).map(toNameObj));
             break;
         case 'number':

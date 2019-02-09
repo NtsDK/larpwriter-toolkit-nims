@@ -20,7 +20,6 @@ const dateFormat = require('dateformat');
 const JsDiff = require('diff');
 const U = require('./utils.js');
 
-'use strict';
 
 // ((exports) => {
 exports.runTests = () => {
@@ -229,7 +228,10 @@ exports.showDiffExample = () => {
             ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
             //                const diff = JsDiff.diffWordsWithSpace(firstText, lastText);
             const diff = JsDiff.diffWordsWithSpace(lastText, firstText);
-            const els = diff.map(part => [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => U.addClasses(U.addEl(U.makeEl('span'), U.makeText(pair[0])), ['log-diff', pair[1]]));
+
+            // eslint-disable-next-line no-nested-ternary
+            const part2status = part => (part.added ? 'added' : (part.removed ? 'removed' : 'same'));
+            const els = diff.map(part => [part.value, part]).map(pair2 => U.addClasses(U.addEl(U.makeEl('span'), U.makeText(pair2[0])), ['log-diff', pair2[1]]));
             U.addEls(U.qee(row, '.diff .text'), els);
 
             return row;
@@ -296,8 +298,8 @@ exports.addGroupTestingData = () => {
     const multiEnumConditions = ['every', 'equal'];
     getAllSubsets(multiEnumValues2).map(value => makeChar(`char multiEnum ${value.join(',')}`, 'multiEnum', String(value.join(','))));
 
-    multiEnumConditions.map((condition) => {
-        getAllSubsets(multiEnumValues).map((arr) => {
+    multiEnumConditions.forEach((condition) => {
+        getAllSubsets(multiEnumValues).forEach((arr) => {
             const obj = arr.reduce((acc, val) => {
                 acc[String(val)] = true;
                 return acc;

@@ -20,8 +20,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-'use strict';
-
 /* eslint-disable no-var,vars-on-top */
 
 /** opts
@@ -64,10 +62,7 @@ exports.addView = function (containers, name, view, opts2) {
             if (opts.toggle) {
                 const els = U.queryEls(`.-toggle-class-${name}`);
                 for (let i = 0; i < els.length; i++) {
-                    if (evt.target.isEqualNode(els[i])) {
-                        continue;
-                    }
-                    if (U.hasClass(els[i], 'active')) {
+                    if (!evt.target.isEqualNode(els[i]) && U.hasClass(els[i], 'active')) {
                         els[i].click();
                     }
                 }
@@ -539,9 +534,9 @@ exports.updateEntitySetting = (settingsPath, name) => {
 
 exports.scrollTo = (container, element) => {
     const domRect = element.getBoundingClientRect();
-    const scrollTop = container.scrollTop;
+    const { scrollTop } = container;
     const scrollBottom = container.scrollTop + container.clientHeight;
-    const condition = element.offsetTop < scrollTop || (element.offsetTop + domRect.height) > scrollBottom;
+    const condition = (element.offsetTop < scrollTop) || (element.offsetTop + domRect.height) > scrollBottom;
 
     if (condition) {
         const from = container.scrollTop;
@@ -606,6 +601,7 @@ exports.processError = function (callback) {
         if (callback) {
             const arr = [];
             for (let i = 1; i < arguments.length; i++) {
+                // eslint-disable-next-line prefer-rest-params
                 arr.push(arguments[i]);
             }
             callback(...arr);

@@ -98,12 +98,12 @@ exports.makeDBMS = function () {
                 func = RemoteDBMS._simplePut;
             }
             return new Proxy(func, {
-                apply(target, thisArg, argumentsList) {
+                apply(target2, thisArg, argumentsList) {
                     const arr = [];
                     for (let i = 0; i < argumentsList.length; i++) {
                         arr.push(argumentsList[i]);
                     }
-                    return target.apply(thisArg, [prop, arr]);
+                    return target2.apply(thisArg, [prop, arr]);
                 }
             });
         },

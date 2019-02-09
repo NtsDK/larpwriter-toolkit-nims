@@ -21,9 +21,6 @@ const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
 const FilterConfiguration = require('./FilterConfiguration');
 
-'use strict';
-
-// ((exports) => {
 const state = {};
 const root = '.group-profile-tab ';
 const l10n = L10n.get('groups');

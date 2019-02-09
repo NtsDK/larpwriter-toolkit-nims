@@ -1,4 +1,4 @@
-require('chart.js');
+const Chart = require('chart.js');
 const dateFormat = require('dateformat');
 const PermissionInformer = require('permissionInformer');
 
@@ -30,8 +30,6 @@ See the License for the specific language governing permissions and
  */
 
 // const R = require("ramda");
-
-'use strict';
 
 
 // ((exports) => {
