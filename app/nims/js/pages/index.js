@@ -10,6 +10,7 @@ exports.ProfileFilter = require('./groups/profileFilter');
 exports.GroupProfile = require('./groups/groupProfile');
 
 exports.Enter = require('./serverSpecific/enter');
+exports.Player = require('./serverSpecific/player');
 exports.SignUp = require('./serverSpecific/sign-up');
 exports.About = require('./logs/about');
 

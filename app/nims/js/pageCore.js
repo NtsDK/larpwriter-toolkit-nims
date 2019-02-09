@@ -81,19 +81,6 @@ exports.testView = () => () => {
     }
 };
 
-exports.onPlayerPageLoad = () => {
-    exports.initPage();
-    window.DBMS = makeRemoteDBMS();
-
-    // exports.stateInit();
-    UI.addView(state.containers, 'player', Player, { mainPage: true });
-    U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
-    UI.addView(state.containers, 'about', About);
-    //        U.addEl(state.navigation, makeL10nButton());
-    U.addEl(state.navigation, makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
-    state.currentView.refresh();
-};
-
 function stateInit() {
     state.navigation = U.queryEl('#navigation');
     state.containers = {

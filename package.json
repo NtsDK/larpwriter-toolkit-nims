@@ -19,6 +19,8 @@
     "nims-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/nims-config.json\"",
     "vtmcl-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/vtmcl-config.json\"",
     "measurelook-dist": "./node_modules/.bin/gulp dist:final --configFile \"config/measurelook-config.json\"",
+    
+    "pppprenims-wp-watch-server": "npm run nims-lint",
     "nims-lint": "npm run core-eclint && npm run nims-eclint && npm run core-eslint && npm run nims-eslint",
     "core-eclint": "eclint fix app\\core\\js && eclint fix config",
     "nims-eclint": "eclint fix app\\nims\\js && eclint fix app\\nims\\specs && eclint fix app\\nims\\resources",

@@ -7,6 +7,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const serverEntry = {
     organizer: './app/nims/js/organizer.js',
     index: './app/nims/js/index.js',
+    player: './app/nims/js/player.js',
 };
 const standaloneEntry = {
     organizer: './app/nims/js/organizer.js',
@@ -50,7 +51,7 @@ const config = {
             },
             { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' },
             {
-                test: /(nims|index).html$/,
+                test: /(nims|index|player).html$/,
                 //include: path.join(__dirname, 'src/views'),
                 use: [
                     { loader: 'file-loader', options: { name: '[name].html' } },

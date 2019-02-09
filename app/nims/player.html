@@ -21,29 +21,27 @@ See the License for the specific language governing permissions and
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title l10n-id="header-page-title"></title>
 
-<link rel="stylesheet" type="text/css" href="styles/libsCore.min.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="styles/nims.min.css" media="screen" />
-
 </head>
-<body onload="PageManager.onPlayerPageLoad()">
+<body onload="onPageLoad()">
 
   <nav id="navigation"></nav>
 
   <div class="" id="contentArea"></div>
 
-  <div class="hidden">
-    @@include('./logs/about-tab.html')
-    @@include('./serverSpecific/logout-form.html')
-    @@include('./serverSpecific/player-tab.html')
-    
-    @@include('./commons/dialog-commons.html')
-    
-    @@include('./profiles2/profile-editor-core-tmpl.html')
+  <div class="hidden tab-container">
+
+    ${require('./js/pages/logs/about-tab.html')}
+    ${require('./js/pages/serverSpecific/player-tab.html')}
+    ${require('./js/pages/profiles2/profile-editor-core-tmpl.html')}
+    ${require('./js/pages/serverSpecific/logout-form.html')}
+    ${require('./js/pages/commons/dialog-commons.html')}
 
     <div id="warehouse"></div>
   </div>
 
   <div id="debugNotification" class="hidden"></div>
+
+  <script src="player-bundle.js"></script>
 
 </body>
 </html>
