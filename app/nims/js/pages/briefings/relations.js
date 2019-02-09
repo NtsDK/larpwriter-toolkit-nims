@@ -20,7 +20,7 @@ const PermissionInformer = require('permissionInformer');
 const RelationsPreview = require('./relationsPreview');
 const R = require('ramda');
 
- 
+
 'use strict';
 
 // ((exports) => {

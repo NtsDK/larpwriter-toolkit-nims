@@ -211,7 +211,7 @@ const listenOnEnter = R.curry((el, callback) => {
                 throw new Error('Oh dear!');
             }
             e.iAmNotAlone = true;
-            
+
             callback();
         }
     });
@@ -252,7 +252,7 @@ const U = {
     setAttr, nl2array, qees, addEl, clearEl, makeText, getAttr,
     queryEls, queryEl, addClass, listen,
 
-    qe,qee, wrapEl, qte,listenOnEnter, makeEl, fillSelector, 
+    qe,qee, wrapEl, qte,listenOnEnter, makeEl, fillSelector,
     addEls, clearEls, qmte, showEl, passEls, setProp, qes,queryElEl,
 
     setClassByCondition,setClassIf,hideEl,
@@ -262,10 +262,10 @@ const U = {
 
     // charOrdAObject,
 
-    // getL10n, 
-    // constL10n, 
-    
-    // strFormat, 
+    // getL10n,
+    // constL10n,
+
+    // strFormat,
     isEmpty, addClasses, hasClass, removeClass, toggleClass
 };
 

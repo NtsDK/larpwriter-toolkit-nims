@@ -236,7 +236,7 @@ See the License for the specific language governing permissions and
                 }
             };
         }
-        
+
         function getSlidersSchema() {
             return {
                 type: 'array',
@@ -263,7 +263,7 @@ See the License for the specific language governing permissions and
                 }
             };
         }
-        
+
         function getGearsSchema() {
             return {
                 type: 'object',
@@ -322,7 +322,7 @@ See the License for the specific language governing permissions and
                                 arrows: {
                                     type: 'string'
                                 }
-                             },
+                            },
                             required: ['id', 'from', 'to', 'label', 'arrows'],
                             additionalProperties: false
                         },

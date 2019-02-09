@@ -113,13 +113,13 @@ describe('baseAPI', () => {
         errMessageId: 'errors-argument-is-not-a-string',
         errParameters: [654]
     },
-     {
+    {
         func: 'setMetaInfoString',
         args: {name: '65465654', value: '123'},
         errMessageId: 'errors-unsupported-type-in-list',
         errParameters: ['65465654']
     },
-     {
+    {
         func: 'setMetaInfoString',
         args: {name: 'description', value: 123},
         errMessageId: 'errors-argument-is-not-a-string',

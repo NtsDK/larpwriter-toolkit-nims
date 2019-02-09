@@ -89,4 +89,3 @@ exports.AccessManager = require('./tabRouting/routingTab')({
         viewBody: require('./accessManager/playerManagement')
     }]
 });
-

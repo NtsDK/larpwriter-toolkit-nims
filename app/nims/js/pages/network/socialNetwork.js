@@ -66,7 +66,7 @@ const PermissionInformer = require("permissionInformer");
         U.listen(button, 'click', () => U.addClass(warning, 'hidden'));
     }
 
-    
+
 
     exports.refresh = () => {
         let selector = U.fillSelector(U.clearEl(U.queryEl('#networkSelector')), UI.constArr2Select(Constants.networks));

@@ -143,9 +143,9 @@ See the License for the specific language governing permissions and
 
     // create a network
     function drawNetwork() {
-      const container = U.qe(`${root} .mynetwork`);
-      U.clearEl(U.queryEl(`${root} .configInner`));
-      const options = {
+        const container = U.qe(`${root} .mynetwork`);
+        U.clearEl(U.queryEl(`${root} .configInner`));
+        const options = {
         locale: L10n.getLocale(),
         locales: Constants.visLocales,
         manipulation: {
@@ -185,7 +185,7 @@ See the License for the specific language governing permissions and
                     }, () => callback());
                 }
                 else {
-                  callback(data);
+                callback(data);
                 }
             },
             editEdge:function (data, callback) {
@@ -202,36 +202,36 @@ See the License for the specific language governing permissions and
             },
         },
         physics: {
-          enabled: U.queryEl(`${root} .physics-enabled-checkbox`).checked,
-          stabilization: false
+        enabled: U.queryEl(`${root} .physics-enabled-checkbox`).checked,
+        stabilization: false
         },
         "edges": {
-          "smooth": {
+        "smooth": {
             "type": "discrete",
             "forceDirection": "none"
-          }
+        }
         },
         configure: {
-          filter:function (option, path) {
+        filter:function (option, path) {
             if (path.indexOf('physics') !== -1) {
-              return true;
+            return true;
             }
             if (path.indexOf('smooth') !== -1 || option === 'smooth') {
-              return true;
+            return true;
             }
             return false;
-          },
-          container: U.qe(`${root} .configInner`)
+        },
+        container: U.qe(`${root} .configInner`)
         }
-      };
-      const data = {
+    };
+    const data = {
         nodes: state.nodesDataset,
         edges: state.edgesDataset
-      };
-      state.network = new vis.Network(container, data, options);
-      state.network.on('selectEdge', showEdgeLabelEditor);
-      state.network.on('dragEnd', (params) => storeData());
-      state.network.on('stabilized', (params) => storeData());
+    };
+    state.network = new vis.Network(container, data, options);
+    state.network.on('selectEdge', showEdgeLabelEditor);
+    state.network.on('dragEnd', (params) => storeData());
+    state.network.on('stabilized', (params) => storeData());
     }
 
     function storeData(callback){
@@ -273,11 +273,11 @@ See the License for the specific language governing permissions and
     }
 
     function makeLabel(name, notes){
-      let label = prepareStr(name);
-      if(U.queryEl(`${root} .show-notes-checkbox`).checked){
+    let label = prepareStr(name);
+    if(U.queryEl(`${root} .show-notes-checkbox`).checked){
         label += (notes.trim() !== '' ? ('\n\n' + prepareStr(notes)) : '');
-      }
-      return label;
+    }
+    return label;
     }
 
     function prepareStr(text) {
@@ -303,22 +303,22 @@ See the License for the specific language governing permissions and
 
 
     function getImage(event){
-      const canvas = document.querySelector("canvas");
+    const canvas = document.querySelector("canvas");
 
-      const context = canvas.getContext("2d");
-      const w = canvas.width;
-      const h = canvas.height;
+    const context = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
 
-      context.globalCompositeOperation = "destination-over";
-      context.fillStyle = "#ffffff";
-      context.fillRect(0,0,w,h);
+    context.globalCompositeOperation = "destination-over";
+    context.fillStyle = "#ffffff";
+    context.fillRect(0,0,w,h);
 
-      U.setAttr(event.target, 'download', FileUtils.makeFileName('gears','png'));
+    U.setAttr(event.target, 'download', FileUtils.makeFileName('gears','png'));
 
-      const img    = canvas.toDataURL("image/png");
-      const link = document.querySelector(".link");
-      event.target.href = img;
-      drawNetwork();
+    const img    = canvas.toDataURL("image/png");
+    const link = document.querySelector(".link");
+    event.target.href = img;
+    drawNetwork();
     }
 
     function clearNetwork(){
@@ -330,65 +330,65 @@ See the License for the specific language governing permissions and
     }
 
     function updateNodeTextArea(){
-      document.querySelector('.nodesText').value = state.nodesDataset.map((node) => [node.name, node.group, node.notes].join('\t')).join('\n');
+    document.querySelector('.nodesText').value = state.nodesDataset.map((node) => [node.name, node.group, node.notes].join('\t')).join('\n');
     }
 
     function updateEdgeTextArea(){
-      document.querySelector('.edgesText').value = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
-          state.nodesDataset.get(edge.to).name].join('\t')).join('\n');
+    document.querySelector('.edgesText').value = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
+        state.nodesDataset.get(edge.to).name].join('\t')).join('\n');
     }
 
     function fillSearchSelect(){
-      const arr = state.nodesDataset.map((node) => ({name: node.name, value: node.id}));
-      arr.sort(CU.charOrdAFactory(a => a.name.toLowerCase()));
-      U.fillSelector(U.clearEl(U.queryEl('.search-node')), arr);
+    const arr = state.nodesDataset.map((node) => ({name: node.name, value: node.id}));
+    arr.sort(CU.charOrdAFactory(a => a.name.toLowerCase()));
+    U.fillSelector(U.clearEl(U.queryEl('.search-node')), arr);
     }
 
     function downloadCsv() {
         const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
         const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
-          state.nodesDataset.get(edge.to).name]);
+        state.nodesDataset.get(edge.to).name]);
 
         FileUtils.arr2d2Csv(arr.concat([['']]).concat(arr2), 'gears');
     }
 
     function downloadJSON() {
-      const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
-      const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
+    const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
+    const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
         state.nodesDataset.get(edge.to).name]);
 
-      const out = new Blob([JSON.stringify({nodes: arr, edges: arr2}, null, '  ')], {
-          type: 'application/json;charset=utf-8;'
-      });
-      saveAs(out, FileUtils.makeFileName('gears', 'json'));
+    const out = new Blob([JSON.stringify({nodes: arr, edges: arr2}, null, '  ')], {
+        type: 'application/json;charset=utf-8;'
+    });
+    saveAs(out, FileUtils.makeFileName('gears', 'json'));
     }
 
     function downloadYED() {
-      const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
-      const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
+    const arr = state.nodesDataset.map((node) => [node.name, node.group, node.notes]);
+    const arr2 = state.edgesDataset.map((edge) => [state.nodesDataset.get(edge.from).name, edge.label,
         state.nodesDataset.get(edge.to).name]);
 
-      const groups = {};
-      let index = 1;
-      state.nodesDataset.map(node => {
+    const groups = {};
+    let index = 1;
+    state.nodesDataset.map(node => {
         if(groups[node.group] === undefined){
-          groups[node.group] = index;
-          index++;
+        groups[node.group] = index;
+        index++;
         }
-      });
+    });
 
-      const nodes = state.nodesDataset.map(node => {
+    const nodes = state.nodesDataset.map(node => {
         const colors = Constants.colorPalette[groups[node.group]-1].color;
         return CU.strFormat(Constants.yedNodeTmpl, [node.id, node.label, colors.background, colors.border]);
-      }).join('\n');
+    }).join('\n');
 
-      const edges = state.edgesDataset.map(edge => {
+    const edges = state.edgesDataset.map(edge => {
         return CU.strFormat(Constants.yedEdgeTmpl, [edge.id, edge.label || '', edge.from, edge.to]);
-      }).join('\n');
-      const out = new Blob([CU.strFormat(Constants.yedGmlBase, [nodes, edges])], {
-          type: 'text/xml;charset=utf-8;'
-      });
-      saveAs(out, FileUtils.makeFileName('gears', 'graphml'));
+    }).join('\n');
+    const out = new Blob([CU.strFormat(Constants.yedGmlBase, [nodes, edges])], {
+        type: 'text/xml;charset=utf-8;'
+    });
+    saveAs(out, FileUtils.makeFileName('gears', 'graphml'));
     }
 
     function onNodeFocus(event) {

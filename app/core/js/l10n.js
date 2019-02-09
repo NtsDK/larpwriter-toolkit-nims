@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
         //        console.log(navigator.language);
 
         state.dictionaries = R.map(processDictionary, Dictionaries);
-        
+
         dictIterator(checkDictionaryCompleteness);
         dictIterator(checkDictionaryInsertCount);
         showDuplicates();
@@ -57,7 +57,7 @@ See the License for the specific language governing permissions and
         exports.onL10nChange(exports.localizeStatic);
         state.initialized = true;
     };
-    
+
     function dictIterator(callback){
         const dictNames = R.keys(state.dictionaries);
         if(dictNames.length < 2) {
@@ -68,7 +68,7 @@ See the License for the specific language governing permissions and
             callback(base, dictName);
         });
     }
-    
+
     function checkDictionaryCompleteness(base, dictName){
         const baseToDict = R.difference(R.keys(state.dictionaries[base]), R.keys(state.dictionaries[dictName]));
         if(baseToDict.length > 0){
@@ -83,7 +83,7 @@ See the License for the specific language governing permissions and
             console.log(`L10N: ${dictName} to ${base} difference is empty (OK)`);
         }
     }
-    
+
     function checkDictionaryInsertCount(base, dictName){
         const baseInst = state.dictionaries[base];
         const dictInst = state.dictionaries[dictName];
@@ -97,7 +97,7 @@ See the License for the specific language governing permissions and
             console.log(`L10N: insert counts for ${dictName} and ${base} are equal (OK)`);
         }
     }
-    
+
     function showDuplicates(){
         R.keys(state.dictionaries).forEach(key => {
             const map = R.filter(arr => arr.length > 1, R.invert(state.dictionaries[key]));
@@ -121,7 +121,7 @@ See the License for the specific language governing permissions and
     };
 
     var setHtmlLang = lang => U.setAttr(document.getElementsByTagName('html')[0], 'lang', lang);
-    
+
     exports.getLocale = () => state.lang;
 
     exports.toggleL10n = () => {
@@ -134,12 +134,12 @@ See the License for the specific language governing permissions and
         }
         state.foundStatistics.clear();
         state.notFoundStatistics.clear();
-        
+
         setHtmlLang(state.lang);
         state.l10nDelegates.forEach((delegate) => {
             delegate();
         });
-        
+
     };
 
     exports.getLang = () => state.lang.toLowerCase();
@@ -149,7 +149,7 @@ See the License for the specific language governing permissions and
     // function getL10n(key) {
     //     return L10n.getValue(key);
     // }
-    
+
     // function constL10n(key) {
     //     return L10n.getValue(`constant-${key}`);
     // }
@@ -168,7 +168,7 @@ See the License for the specific language governing permissions and
     exports.get = R.curry((namespace, name) => exports.getValue(`${namespace}-${name}`));
 
     exports.const = key => exports.getValue(`constant-${key}`);
-    
+
     exports.hasValue = (name) => {
         const value = state.dict[name];
         return value !== undefined;
@@ -187,10 +187,10 @@ See the License for the specific language governing permissions and
         U.nl2array(U.qees(el, '[l10n-title]')).map(el2 =>
             U.setAttr(el2, 'title', exports.getValue(U.getAttr(el2, 'l10n-title'))));
     };
-    
+
     exports.getFoundStatistics = () => R.clone(state.foundStatistics);
     exports.getNotFoundStatistics = () => R.clone(state.notFoundStatistics);
-    
+
     exports.getNotUsedByStatistics = () => R.difference(R.keys(state.dict), R.keys(state.foundStatistics));
-    
+
 // })(window.L10n = {}, Dictionaries);

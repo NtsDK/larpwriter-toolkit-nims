@@ -212,7 +212,7 @@ const R = require('ramda');
                 data.Sliders = [];
                 data.Version = '0.7.2';
             }
-            
+
             return data;
         };
     // }

@@ -145,8 +145,8 @@ function makeButton(clazz, name, callback, opts) {
 }
 exports.makeButton = makeButton;
 
-exports.addNavSeparator = () => 
+exports.addNavSeparator = () =>
     U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 
-exports.addNavEl = (el) => 
+exports.addNavEl = (el) =>
     U.addEl(state.navigation, el);

@@ -1,6 +1,6 @@
-module.exports = "{{gameName}}\n" +  
-  "{{#briefings}}\n" + 
-  "{{gameName}}\n" +  
+module.exports = "{{gameName}}\n" +
+  "{{#briefings}}\n" +
+  "{{gameName}}\n" +
   "{{charName}}\n" +
   "\n" +
   "Инвентарь: {{inventory}}\n" +

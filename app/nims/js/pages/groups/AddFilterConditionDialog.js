@@ -32,7 +32,7 @@ function AddFilterConditionDialog(root) {
 AddFilterConditionDialog.prototype.showDlg = function(groups, callback){
     this.callback = callback;
     this.items = R.indexBy(R.prop('name'), R.unnest(groups.map(R.prop('array'))));
-    
+
     const selector = U.qee(this.dialog, `.profile-item-selector`);
     UI.fillShowItemSelector2(
         U.clearEl(selector),
@@ -40,13 +40,13 @@ AddFilterConditionDialog.prototype.showDlg = function(groups, callback){
         false
     );
     selector.options[0].selected = true;
-    
+
     this.onProfileItemSelect({target: selector});
-    
+
     this.dialog.showDlg();
     // to set dialog title
 //    U.setAttr(U.qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
-    
+
 }
 
 AddFilterConditionDialog.prototype.onAction = function (dialog){
@@ -55,20 +55,20 @@ AddFilterConditionDialog.prototype.onAction = function (dialog){
         this.callback(this.getFilterModelItem());
         dialog.hideDlg();
     }.bind(this);
-} 
+}
 
 AddFilterConditionDialog.prototype.getFilterModelItem = function () {
     const opt = U.qee(this.dialog, `.profile-item-selector`).selectedOptions[0];
     const item = this.items[opt.value];
-    
+
     const filterItem = {
         type: item.type,
         name: item.name
     };
-    
+
     const conditionContainer = (U.qee(this.dialog, '.condition'));
     const valueContainer = (U.qee(this.dialog, '.value'));
-    
+
     let arr;
     switch (item.type) {
     case 'enum':
@@ -79,7 +79,7 @@ AddFilterConditionDialog.prototype.getFilterModelItem = function () {
     case 'number':
         filterItem.condition = U.qee(conditionContainer, 'select').value;
         filterItem.num = Number(U.qee(valueContainer, 'input').value);
-        
+
 //        if (inputItem.value === 'ignore') { return; }
 //        num = Number(state.inputItems[`${inputItem.selfInfo.name}:numberInput`].value);
 //        model.push({
@@ -116,7 +116,7 @@ AddFilterConditionDialog.prototype.onProfileItemSelect = function (event) {
     const opt = event.target.selectedOptions[0];
     const item = this.items[opt.value];
     console.log(item);
-    
+
     const conditionContainer = U.clearEl(U.qee(this.dialog, '.condition'));
     switch (item.type) {
     case 'text':
@@ -136,7 +136,7 @@ AddFilterConditionDialog.prototype.onProfileItemSelect = function (event) {
     default:
         throw new Error(`Unexpected type ${item.type}`);
     }
-    
+
     const valueContainer = U.clearEl(U.qee(this.dialog, '.value'));
     let valueInput, values;
     switch (item.type) {

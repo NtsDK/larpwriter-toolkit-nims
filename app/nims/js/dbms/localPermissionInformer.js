@@ -57,5 +57,3 @@ exports.areAdaptationsEditable = ({adaptations}={}) => {
 
     return Promise.resolve(map);
 };
-
-

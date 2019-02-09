@@ -100,7 +100,7 @@ exports.makeDBMS = function () {
         'gearsAPI',
         'slidersAPI',
         'logAPI'
-    
+
     ].map(func);
 
     // Logger.attachLogCalls(LocalDBMS, R, false);

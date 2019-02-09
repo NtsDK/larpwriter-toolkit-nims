@@ -28,7 +28,7 @@ var { saveAs } = require('file-saver');
 
 var markdownit = require('markdown-it');
 
-//  
+//
 
 'use strict';
 
@@ -199,7 +199,7 @@ var markdownit = require('markdown-it');
     function makeExport(type) {
         return () => {
             // if (!state.templates[type]) {
-                state.templates[type] = atob(Export.getTemplate(L10n.getLang(), type)); 
+                state.templates[type] = atob(Export.getTemplate(L10n.getLang(), type));
             // }
             exportDocxByTemplate(state.templates[type]);
         };

@@ -98,7 +98,7 @@ const R = require('ramda');
 
         const characterNames = getCharacterNames(characterArray);
         const eventIndexes = getEventIndexes(eventArray);
-        
+
         const map = R.indexBy(R.prop('value'), allCharacters);
 
         characterArray.forEach((elem) => {

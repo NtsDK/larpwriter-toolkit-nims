@@ -32,8 +32,8 @@ See the License for the specific language governing permissions and
 
         // DBMS.get
         LocalDBMS.prototype.getDatabase = function () {
-          this.database.Meta.saveTime = new Date().toString();
-          return Promise.resolve(R.clone(this.database));
+            this.database.Meta.saveTime = new Date().toString();
+            return Promise.resolve(R.clone(this.database));
         };
 
         // DBMS.set
