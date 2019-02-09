@@ -152,11 +152,13 @@ module.exports = (env, argv) => {
         break;
     }
 
+    const valOrDefault = (val, defaultVal) => val !== undefined ? Boolean(val) : defaultVal;
+
     const DEV_OPTS = {
-        ENABLE_TESTS: true,
-        ENABLE_BASE_SELECT_DLG: false,
-        ENABLE_BASICS: true,
-        ENABLE_EXTRAS: false
+        ENABLE_TESTS: valOrDefault(env.ENABLE_TESTS, true),
+        ENABLE_BASE_SELECT_DLG: valOrDefault(env.ENABLE_BASE_SELECT_DLG, false),
+        ENABLE_BASICS: valOrDefault(env.ENABLE_BASICS, true),
+        ENABLE_EXTRAS: valOrDefault(env.ENABLE_EXTRAS, false)
     }
 
     config.plugins.push(new webpack.DefinePlugin({ 

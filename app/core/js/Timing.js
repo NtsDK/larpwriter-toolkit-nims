@@ -1,6 +1,6 @@
 const R = require('ramda');
 const Timing = {};
-exports.Timing = Timing;
+module.exports = Timing;
 
 // call examples
 //timing: Timing.linear,

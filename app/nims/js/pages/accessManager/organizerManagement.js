@@ -64,30 +64,32 @@ const PermissionInformer = require('permissionInformer');
     };
 
     exports.refresh = () => {
-        Promise.all([
-            DBMS.getManagementInfo(),
-            PermissionInformer.isAdmin(),
-            PermissionInformer.isEditor(),
-            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
-            PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}),
-            PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false}),
-            PermissionInformer.getEntityNamesArray({type: 'player', editableOnly: false}),
-        ]).then(results => {
-            const [managementInfo, isAdmin, isEditor, characterNames, storyNames, groupNames, playerNames] = results;
-            const names = {
-                characters: characterNames,
-                groups: groupNames,
-                stories: storyNames,
-                players: playerNames,
-            };
-            if (!isAdmin && isEditor) {
-                R.keys(names).forEach((entity) => {
-                    names[entity] = names[entity].filter(R.prop('isOwner'));
-                });
-            }
-            rebuildInterface(names, managementInfo, isAdmin);
-            UI.enable(exports.content, 'adminOnly', isAdmin);
-            UI.enable(exports.content, 'editorOrAdmin', isAdmin || isEditor);
+        PermissionInformer.refresh().then(() =>{
+            Promise.all([
+                DBMS.getManagementInfo(),
+                PermissionInformer.isAdmin(),
+                PermissionInformer.isEditor(),
+                PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
+                PermissionInformer.getEntityNamesArray({type: 'story', editableOnly: false}),
+                PermissionInformer.getEntityNamesArray({type: 'group', editableOnly: false}),
+                PermissionInformer.getEntityNamesArray({type: 'player', editableOnly: false}),
+            ]).then(results => {
+                const [managementInfo, isAdmin, isEditor, characterNames, storyNames, groupNames, playerNames] = results;
+                const names = {
+                    characters: characterNames,
+                    groups: groupNames,
+                    stories: storyNames,
+                    players: playerNames,
+                };
+                if (!isAdmin && isEditor) {
+                    R.keys(names).forEach((entity) => {
+                        names[entity] = names[entity].filter(R.prop('isOwner'));
+                    });
+                }
+                rebuildInterface(names, managementInfo, isAdmin);
+                UI.enable(exports.content, 'adminOnly', isAdmin);
+                UI.enable(exports.content, 'editorOrAdmin', isAdmin || isEditor);
+            }).catch(UI.handleError);
         }).catch(UI.handleError);
     };
 
