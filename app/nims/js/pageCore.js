@@ -3,14 +3,14 @@ require('bootstrap-sass/assets/stylesheets/_bootstrap.scss');
 
 require('@fortawesome/fontawesome-free/css/all.css');
 
-require("jquery-datetimepicker");
-require("jquery-datetimepicker/build/jquery.datetimepicker.min.css");
-window.moment = require("moment");
+require('jquery-datetimepicker');
+require('jquery-datetimepicker/build/jquery.datetimepicker.min.css');
+window.moment = require('moment');
 
 require('select2');
 require('select2/dist/css/select2.min.css');
 
-var vex = require('vex-js');
+const vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
 // vex.defaultOptions.className = 'vex-theme-os';
 vex.defaultOptions.className = 'vex-theme-default';
@@ -76,10 +76,10 @@ exports.initPage = () => {
 exports.refreshView = () => state.currentView.refresh();
 
 exports.testView = () => () => {
-    if(state.currentView.test){
+    if (state.currentView.test) {
         state.currentView.test();
     } else {
-        console.error('This tab has no tests')
+        console.error('This tab has no tests');
     }
 };
 
@@ -145,8 +145,6 @@ function makeButton(clazz, name, callback, opts) {
 }
 exports.makeButton = makeButton;
 
-exports.addNavSeparator = () =>
-    U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
+exports.addNavSeparator = () => U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 
-exports.addNavEl = (el) =>
-    U.addEl(state.navigation, el);
+exports.addNavEl = el => U.addEl(state.navigation, el);

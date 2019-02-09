@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  Utils, DBMS, Stories
  */
 
-const PermissionInformer = require("permissionInformer");
+const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
 
 'use strict';
@@ -45,11 +45,11 @@ module.exports = (Stories) => {
         }
 
         Promise.all([
-            PermissionInformer.isEntityEditable({type: 'story', name: Stories.getCurrentStoryName()}),
-            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
-            DBMS.getStoryCharacterNamesArray({storyName: Stories.getCurrentStoryName()}),
-            DBMS.getStoryEvents({storyName: Stories.getCurrentStoryName()})
-        ]).then(results => {
+            PermissionInformer.isEntityEditable({ type: 'story', name: Stories.getCurrentStoryName() }),
+            PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
+            DBMS.getStoryCharacterNamesArray({ storyName: Stories.getCurrentStoryName() }),
+            DBMS.getStoryEvents({ storyName: Stories.getCurrentStoryName() })
+        ]).then((results) => {
             let [isStoryEditable, allCharacters, characterArray, events] = results;
             const map = {};
             allCharacters.forEach((elem) => {
@@ -85,7 +85,7 @@ module.exports = (Stories) => {
         const eventName = U.addEl(U.makeEl('th'), U.makeText(L10n.getValue('stories-event')));
         const els = characterArray.map((characterName, i) => {
             const th = U.addEl(U.makeEl('th'), U.makeText(characterName));
-            U.addClass(th, `dependent`);
+            U.addClass(th, 'dependent');
             U.setAttr(th, 'dependent-index', i);
             return th;
         });
@@ -94,13 +94,13 @@ module.exports = (Stories) => {
 
     function appendTableInput(table, event, i, characterArray) {
         const tr = U.makeEl('tr');
-        let td = U.makeEl('td');
+        const td = U.makeEl('td');
         td.appendChild(U.makeText(event.name));
         tr.appendChild(td);
 
         U.addEls(tr, characterArray.map((character, j) => {
             const td = U.qmte(`${root} .event-presence-cell`);
-            U.addClass(td, `dependent`);
+            U.addClass(td, 'dependent');
             U.setAttr(td, 'dependent-index', j);
             const input = U.qee(td, 'input');
             const label = U.qee(td, 'label');
@@ -114,11 +114,11 @@ module.exports = (Stories) => {
             input.addEventListener('change', onChangeCharacterCheckbox);
 
             const span = U.qee(td, 'span');
-            if(event.characters[character] !== undefined){
-                if(event.characters[character].ready){
+            if (event.characters[character] !== undefined) {
+                if (event.characters[character].ready) {
                     U.addClass(span, 'finished');
                     U.setAttr(span, 'title', L10n.get('adaptations', 'adaptation-finished'));
-                } else if(input.hasText) {
+                } else if (input.hasText) {
                     U.addClass(span, 'in-progress');
                     U.setAttr(span, 'title', L10n.get('adaptations', 'adaptation-in-progress'));
                 }
@@ -162,4 +162,4 @@ module.exports = (Stories) => {
         }
     }
     return exports;
-}
+};

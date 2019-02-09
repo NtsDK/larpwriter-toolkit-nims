@@ -22,138 +22,138 @@ See the License for the specific language governing permissions and
 'use strict';
 
 // ((exports) => {
-    const root = '.sliders-tab ';
-    const state = {};
-    state.sliders = [];
+const root = '.sliders-tab ';
+const state = {};
+state.sliders = [];
 
-    exports.init = () => {
-        const createSliderDialog = UI.createModalDialog(root, createSlider, {
-            bodySelector: 'create-slider-body',
-            dialogTitle: 'sliders-create-slider',
-            actionButtonTitle: 'common-create',
+exports.init = () => {
+    const createSliderDialog = UI.createModalDialog(root, createSlider, {
+        bodySelector: 'create-slider-body',
+        dialogTitle: 'sliders-create-slider',
+        actionButtonTitle: 'common-create',
+    });
+
+    state.editSliderDialog = UI.createModalDialog(root, editSlider, {
+        bodySelector: 'create-slider-body',
+        dialogTitle: 'sliders-edit-slider',
+        actionButtonTitle: 'common-save',
+    });
+
+    state.moveSliderDialog = UI.createModalDialog(root, moveSlider, {
+        bodySelector: 'move-slider-body',
+        dialogTitle: 'sliders-move-slider',
+        actionButtonTitle: 'common-move',
+    });
+
+    U.listen(U.qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());
+
+    exports.content = U.queryEl(root);
+};
+
+exports.refresh = () => {
+    DBMS.getSliderData().then(createSliders).catch(UI.handleError);
+};
+
+function createSliders(model) {
+    const positions = model.map(info => ({ name: CU.strFormat(L10n.get('common', 'set-item-before'), [info.name]) }));
+    positions.push({ name: L10n.get('common', 'set-item-as-last') });
+    U.fillSelector(U.clearEl(U.qe(`${root} .move-slider-pos-select`)), positions);
+
+    U.addEls(U.clearEl(U.queryEl('.mixer-panel .panel-body')), model.map(makeSliderBackbone));
+
+    U.clearEls(state.sliders);
+
+    state.sliders = model.map((sl, i) => {
+        const slider = new Slider(`.mixer-panel .panel-body input[pos="${i}"]`, {
+            max: 10,
+            min: -10,
+            orientation: 'vertical',
+            reversed: true,
+            tooltip: 'always',
+            value: sl.value,
+            formatter(value) {
+                return Math.abs(value);
+            },
         });
-
-        state.editSliderDialog = UI.createModalDialog(root, editSlider, {
-            bodySelector: 'create-slider-body',
-            dialogTitle: 'sliders-edit-slider',
-            actionButtonTitle: 'common-save',
+        slider.on('change', (event) => {
+            DBMS.updateSliderValue({ index: i, value: event.newValue }).catch(UI.handleError);
         });
+        return slider;
+    });
+}
 
-        state.moveSliderDialog = UI.createModalDialog(root, moveSlider, {
-            bodySelector: 'move-slider-body',
-            dialogTitle: 'sliders-move-slider',
-            actionButtonTitle: 'common-move',
+var makeSliderBackbone = (sl, i) => {
+    const el = U.qmte(`${root} .slider-container-tmpl`);
+    U.setAttr(U.qee(el, 'input'), 'pos', i);
+    U.addEl(U.qee(el, '.slider-name'), U.makeText(sl.name));
+    U.addEl(U.qee(el, '.slider-top'), U.makeText(sl.top));
+    U.addEl(U.qee(el, '.slider-bottom'), U.makeText(sl.bottom));
+
+    U.listen(U.qee(el, 'button.move'), 'click', () => {
+        state.moveSliderDialog.currentIndex = i;
+        state.moveSliderDialog.showDlg();
+    });
+    U.listen(U.qee(el, 'button.rename'), 'click', () => {
+        U.qee(state.editSliderDialog, '.slider-name').value = sl.name;
+        U.qee(state.editSliderDialog, '.slider-top').value = sl.top;
+        U.qee(state.editSliderDialog, '.slider-bottom').value = sl.bottom;
+        state.editSliderDialog.pos = i;
+        state.editSliderDialog.showDlg();
+    });
+    U.listen(U.qee(el, 'button.remove'), 'click', () => {
+        UI.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
+            DBMS.removeSlider({ index: i }).then(exports.refresh, UI.handleError);
         });
+    });
+    L10n.localizeStatic(el);
+    return el;
+};
 
-        U.listen(U.qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());
-
-        exports.content = U.queryEl(root);
+function createSlider(dialog) {
+    return () => {
+        const name = U.qee(dialog, '.slider-name').value.trim();
+        const top = U.qee(dialog, '.slider-top').value.trim();
+        const bottom = U.qee(dialog, '.slider-bottom').value.trim();
+        DBMS.createSlider({ name, top, bottom }).then(() => {
+            U.qee(dialog, '.slider-name').value = '';
+            U.qee(dialog, '.slider-top').value = '';
+            U.qee(dialog, '.slider-bottom').value = '';
+            dialog.hideDlg();
+            exports.refresh();
+        }).catch(err => UI.setError(dialog, err));
     };
+}
 
-    exports.refresh = () => {
-        DBMS.getSliderData().then(createSliders).catch(UI.handleError);
+function editSlider(dialog) {
+    return () => {
+        const name = U.qee(dialog, '.slider-name').value.trim();
+        const top = U.qee(dialog, '.slider-top').value.trim();
+        const bottom = U.qee(dialog, '.slider-bottom').value.trim();
+        const pos = dialog.pos;
+        DBMS.updateSliderNaming({
+            index: pos,
+            name,
+            top,
+            bottom
+        }).then(() => {
+            U.qee(dialog, '.slider-name').value = '';
+            U.qee(dialog, '.slider-top').value = '';
+            U.qee(dialog, '.slider-bottom').value = '';
+            dialog.hideDlg();
+            exports.refresh();
+        }).catch(err => UI.setError(dialog, err));
     };
+}
 
-    function createSliders(model) {
-        const positions = model.map( info => {return {name: CU.strFormat(L10n.get('common', 'set-item-before'), [info.name])}});
-        positions.push({name: L10n.get('common', 'set-item-as-last')});
-        U.fillSelector(U.clearEl(U.qe(`${root} .move-slider-pos-select`)), positions);
+function moveSlider(dialog) {
+    return () => {
+        const index = dialog.currentIndex;
+        const pos = U.qee(dialog, '.move-slider-pos-select').selectedIndex;
 
-        U.addEls(U.clearEl(U.queryEl('.mixer-panel .panel-body')), model.map( makeSliderBackbone )) ;
-
-        U.clearEls(state.sliders);
-
-        state.sliders = model.map( (sl, i) => {
-            const slider = new Slider('.mixer-panel .panel-body input[pos="' + i + '"]', {
-                max: 10,
-                min: -10,
-                orientation: 'vertical',
-                reversed: true,
-                tooltip: 'always',
-                value: sl.value,
-                formatter: function(value) {
-                    return Math.abs(value);
-                },
-            });
-            slider.on('change', (event) => {
-                DBMS.updateSliderValue({index: i, value: event.newValue}).catch(UI.handleError);
-            });
-            return slider;
-        });
-    }
-
-    var makeSliderBackbone = (sl, i) => {
-        const el = U.qmte(`${root} .slider-container-tmpl`);
-        U.setAttr(U.qee(el, 'input'), 'pos', i);
-        U.addEl(U.qee(el, '.slider-name'), U.makeText(sl.name));
-        U.addEl(U.qee(el, '.slider-top'), U.makeText(sl.top));
-        U.addEl(U.qee(el, '.slider-bottom'), U.makeText(sl.bottom));
-
-        U.listen(U.qee(el, 'button.move'), 'click', () => {
-            state.moveSliderDialog.currentIndex = i;
-            state.moveSliderDialog.showDlg();
-        });
-        U.listen(U.qee(el, 'button.rename'), 'click', () => {
-            U.qee(state.editSliderDialog, '.slider-name').value = sl.name;
-            U.qee(state.editSliderDialog, '.slider-top').value = sl.top;
-            U.qee(state.editSliderDialog, '.slider-bottom').value = sl.bottom;
-            state.editSliderDialog.pos = i;
-            state.editSliderDialog.showDlg();
-        });
-        U.listen(U.qee(el, 'button.remove'), 'click', () => {
-            UI.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
-                DBMS.removeSlider({index:i}).then(exports.refresh, UI.handleError);
-            })
-        });
-        L10n.localizeStatic(el);
-        return el;
+        DBMS.moveSlider({ index, pos }).then(() => {
+            dialog.hideDlg();
+            exports.refresh();
+        }).catch(err => UI.setError(dialog, err));
     };
-
-    function createSlider(dialog) {
-        return () => {
-            const name = U.qee(dialog, '.slider-name').value.trim();
-            const top = U.qee(dialog, '.slider-top').value.trim();
-            const bottom = U.qee(dialog, '.slider-bottom').value.trim();
-            DBMS.createSlider({name, top, bottom}).then(() => {
-                U.qee(dialog, '.slider-name').value = '';
-                U.qee(dialog, '.slider-top').value = '';
-                U.qee(dialog, '.slider-bottom').value = '';
-                dialog.hideDlg();
-                exports.refresh();
-            }).catch(err => UI.setError(dialog, err));
-        };
-    }
-
-    function editSlider(dialog) {
-        return () => {
-            const name = U.qee(dialog, '.slider-name').value.trim();
-            const top = U.qee(dialog, '.slider-top').value.trim();
-            const bottom = U.qee(dialog, '.slider-bottom').value.trim();
-            const pos = dialog.pos;
-            DBMS.updateSliderNaming({
-                index: pos,
-                name,
-                top,
-                bottom
-            }).then(() => {
-                U.qee(dialog, '.slider-name').value = '';
-                U.qee(dialog, '.slider-top').value = '';
-                U.qee(dialog, '.slider-bottom').value = '';
-                dialog.hideDlg();
-                exports.refresh();
-            }).catch(err => UI.setError(dialog, err));
-        }
-    }
-
-    function moveSlider(dialog) {
-        return () => {
-            var index = dialog.currentIndex;
-            var pos = U.qee(dialog, '.move-slider-pos-select').selectedIndex;
-
-            DBMS.moveSlider({index, pos}).then(() => {
-                dialog.hideDlg();
-                exports.refresh();
-            }).catch(err => UI.setError(dialog, err));
-        }
-    }
+}
 // })(window.Sliders = {});

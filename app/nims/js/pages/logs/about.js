@@ -19,10 +19,10 @@ See the License for the specific language governing permissions and
 'use strict';
 
 // ((exports) => {
-    exports.init = () => {
-        exports.content = U.queryEl('#aboutDiv');
-    };
+exports.init = () => {
+    exports.content = U.queryEl('#aboutDiv');
+};
 
-    exports.refresh = () => {
-    };
+exports.refresh = () => {
+};
 // })(window.About = {});

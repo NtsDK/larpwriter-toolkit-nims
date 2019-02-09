@@ -27,7 +27,6 @@ See the License for the specific language governing permissions and
         // DBMS.consistency.check()
         LocalDBMS.prototype.getConsistencyCheckResult = function () {
             return new Promise((resolve, reject) => {
-
                 let errors = [];
 
                 let errors2 = [
@@ -71,7 +70,7 @@ See the License for the specific language governing permissions and
                         const moduleName = 'ManagementInfo';
                         const validate2 = validator.compile(schema.properties[moduleName]);
                         const valid2 = validate2(this.database[moduleName]);
-                        errors2.push( {
+                        errors2.push({
                             module: moduleName,
                             errors: valid2 ? [] : validate2.errors
                         });

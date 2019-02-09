@@ -34,50 +34,50 @@ See the License for the specific language governing permissions and
             _getProfileInfoNotEmpty, _getSimpleProfileInfoObject, _getSplittedProfileInfoObject, _getProfileInfoArray,
             _getStoriesInfo, _getEventsInfo, _getStoryEventsInfo, _makeEventInfo, _splitText;
 
-//  [
-//      {
-//          name: 'selCharacters',
-//          check: [{
-//              type: 'either',
-//              or: [{
-//                  type: 'isNil'
-//              }, [{
-//                      type: 'isArray',
-//                      subType: 'string'
-//                  }, {
-//                      type: 'entitiesExist',
-//                      arr: (db) => R.keys(db.Characters)
-//                  }]
-//              ]
-//          }]
-//      },
-//      {
-//          name: 'selStories',
-//          check: [{
-//              type: 'either',
-//              or: [{
-//                  type: 'isNil'
-//              }, [{
-//                  type: 'isArray',
-//                  subType: 'string'
-//              }, {
-//                  type: 'entitiesExist',
-//                  arr: (db) => R.keys(db.Stories)
-//              }]
-//              ]
-//          }]
-//      },
-//      {
-//          name: 'exportOnlyFinishedStories',
-//          check:
-//              type: 'isBoolean'
-//          }]
-//      }
-//  ]
+        //  [
+        //      {
+        //          name: 'selCharacters',
+        //          check: [{
+        //              type: 'either',
+        //              or: [{
+        //                  type: 'isNil'
+        //              }, [{
+        //                      type: 'isArray',
+        //                      subType: 'string'
+        //                  }, {
+        //                      type: 'entitiesExist',
+        //                      arr: (db) => R.keys(db.Characters)
+        //                  }]
+        //              ]
+        //          }]
+        //      },
+        //      {
+        //          name: 'selStories',
+        //          check: [{
+        //              type: 'either',
+        //              or: [{
+        //                  type: 'isNil'
+        //              }, [{
+        //                  type: 'isArray',
+        //                  subType: 'string'
+        //              }, {
+        //                  type: 'entitiesExist',
+        //                  arr: (db) => R.keys(db.Stories)
+        //              }]
+        //              ]
+        //          }]
+        //      },
+        //      {
+        //          name: 'exportOnlyFinishedStories',
+        //          check:
+        //              type: 'isBoolean'
+        //          }]
+        //      }
+        //  ]
 
         // DBMS.briefings.get()
         LocalDBMS.prototype.getBriefingData = function (
-            {selCharacters, selStories, exportOnlyFinishedStories}={}
+            { selCharacters, selStories, exportOnlyFinishedStories } = {}
         ) {
             return new Promise((resolve, reject) => {
                 PC.precondition(
@@ -90,8 +90,8 @@ See the License for the specific language governing permissions and
                             _getBriefingData(
                                 that.database, selCharacters, selStories, groupTexts, exportOnlyFinishedStories,
                                 (err, res) => {
-                                    if(err) {
-                                        reject(err)
+                                    if (err) {
+                                        reject(err);
                                     } else {
                                         resolve(res);
                                     }
@@ -182,8 +182,7 @@ See the License for the specific language governing permissions and
             .filter(story => !R.isNil(story.characters[charName]) && !R.isEmpty(story.characters[charName].inventory))
             .map(story => story.characters[charName].inventory).join(', ');
 
-        const _processProfileInfo = R.curry((processor, prefix, profile, profileStructure) =>
-            R.fromPairs(profileStructure.map(element => [prefix + element.name, processor(profile[element.name])])));
+        const _processProfileInfo = R.curry((processor, prefix, profile, profileStructure) => R.fromPairs(profileStructure.map(element => [prefix + element.name, processor(profile[element.name])])));
 
         _getProfileInfoNotEmpty = _processProfileInfo(el => String(el).length !== 0);
         _getSimpleProfileInfoObject = _processProfileInfo(el => (el));
@@ -203,27 +202,26 @@ See the License for the specific language governing permissions and
             });
         };
 
-        _getStoriesInfo = (database, charName, selectedStories, exportOnlyFinishedStories) =>
-            R.values(database.Stories).filter((story) => {
-                if (!R.contains(story.name, selectedStories)) return false;
-                if (exportOnlyFinishedStories) {
-                    if (!dbmsUtils._isStoryFinished(database, story.name) ||
-                        dbmsUtils._isStoryEmpty(database, story.name)) {
-                        return false;
-                    }
+        _getStoriesInfo = (database, charName, selectedStories, exportOnlyFinishedStories) => R.values(database.Stories).filter((story) => {
+            if (!R.contains(story.name, selectedStories)) return false;
+            if (exportOnlyFinishedStories) {
+                if (!dbmsUtils._isStoryFinished(database, story.name)
+                        || dbmsUtils._isStoryEmpty(database, story.name)) {
+                    return false;
                 }
-                return story.characters[charName];
-            }).map(story => ({
-                storyName: story.name,
-                eventsInfo: _getStoryEventsInfo(story, charName, database.Meta.date)
-            })).sort(CU.charOrdAFactory(a => a.storyName.toLowerCase()));
+            }
+            return story.characters[charName];
+        }).map(story => ({
+            storyName: story.name,
+            eventsInfo: _getStoryEventsInfo(story, charName, database.Meta.date)
+        })).sort(CU.charOrdAFactory(a => a.storyName.toLowerCase()));
 
         _getEventsInfo = (database, charName, selectedStories, exportOnlyFinishedStories) => {
             let eventsInfo = R.values(database.Stories).filter((story) => {
                 if (!R.contains(story.name, selectedStories)) return false;
                 if (exportOnlyFinishedStories) {
-                    if (!dbmsUtils._isStoryFinished(database, story.name) ||
-                            dbmsUtils._isStoryEmpty(database, story.name)) {
+                    if (!dbmsUtils._isStoryFinished(database, story.name)
+                            || dbmsUtils._isStoryEmpty(database, story.name)) {
                         return false;
                     }
                 }
@@ -237,9 +235,8 @@ See the License for the specific language governing permissions and
             return eventsInfo;
         };
 
-        _getStoryEventsInfo = (story, charName, defaultTime) =>
-            story.events.filter(event => event.characters[charName])
-                .map(_makeEventInfo(charName, story.name, defaultTime));
+        _getStoryEventsInfo = (story, charName, defaultTime) => story.events.filter(event => event.characters[charName])
+            .map(_makeEventInfo(charName, story.name, defaultTime));
 
         _makeEventInfo = R.curry((charName, storyName, defaultTime, event) => {
             const eventInfo = {};

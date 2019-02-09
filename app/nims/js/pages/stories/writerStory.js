@@ -32,7 +32,7 @@ module.exports = (Stories) => {
         const storyName = Stories.getCurrentStoryName();
 
         if (storyName) {
-            DBMS.getWriterStory({storyName}).then(story => {
+            DBMS.getWriterStory({ storyName }).then((story) => {
                 storyArea.value = story;
             }).catch(UI.handleError);
         } else {
@@ -48,6 +48,6 @@ module.exports = (Stories) => {
         }).catch(UI.handleError);
     }
     return exports;
-}
+};
 
 //(window.WriterStory = {});

@@ -20,58 +20,58 @@ See the License for the specific language governing permissions and
 'use strict';
 
 // ((exports) => {
-    const root = '.enter-tab ';
+const root = '.enter-tab ';
 
-    exports.init = () => {
-        $(document.forms['login-form']).on('submit', submit);
-        exports.content = U.queryEl(root);
-    };
+exports.init = () => {
+    $(document.forms['login-form']).on('submit', submit);
+    exports.content = U.queryEl(root);
+};
 
-    exports.refresh = () => {
+exports.refresh = () => {
 
-    };
+};
 
-    function submit() {
-        const form = $(this);
+function submit() {
+    const form = $(this);
 
-        $('.error', form).html('');
-        //        $(":submit", form).button("loading");
+    $('.error', form).html('');
+    //        $(":submit", form).button("loading");
 
-        const request = $.ajax({
-            url: '/login',
-            method: 'POST',
-            data: form.serialize(),
-            complete() {
-                $(':submit', form).button('reset');
-            },
-            //             statusCode : {
-            //                 200 : function() {
-            //                 },
-            //                 403 : function(jqXHR) {
-            //                     var error = JSON.parse(jqXHR.responseText);
-            //                     $('.error', form).html(error.message);
-            //                 }
-            //             }
-        });
-        request.done((data) => {
-            //             //window.location.href = "/chat";
-            //             window.location.href = "/nims.html";
-            window.location.href = '/page.html';
-        });
+    const request = $.ajax({
+        url: '/login',
+        method: 'POST',
+        data: form.serialize(),
+        complete() {
+            $(':submit', form).button('reset');
+        },
+        //             statusCode : {
+        //                 200 : function() {
+        //                 },
+        //                 403 : function(jqXHR) {
+        //                     var error = JSON.parse(jqXHR.responseText);
+        //                     $('.error', form).html(error.message);
+        //                 }
+        //             }
+    });
+    request.done((data) => {
+        //             //window.location.href = "/chat";
+        //             window.location.href = "/nims.html";
+        window.location.href = '/page.html';
+    });
 
-        request.fail((errorInfo, textStatus, errorThrown) => {
-            let msg;
-            try {
-                msg = UI.handleErrorMsg(JSON.parse(errorInfo.responseText));
-            } catch (err) {
-                msg = UI.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
-            }
-            //             var error = JSON.parse(jqXHR.responseText);
-            //             $('.error', form).html(error.message);
-            //            $('.error', form).html(textStatus);
-            $('.error', form).html(msg);
-        });
+    request.fail((errorInfo, textStatus, errorThrown) => {
+        let msg;
+        try {
+            msg = UI.handleErrorMsg(JSON.parse(errorInfo.responseText));
+        } catch (err) {
+            msg = UI.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
+        }
+        //             var error = JSON.parse(jqXHR.responseText);
+        //             $('.error', form).html(error.message);
+        //            $('.error', form).html(textStatus);
+        $('.error', form).html(msg);
+    });
 
-        return false;
-    }
+    return false;
+}
 // })(window.Enter = {});

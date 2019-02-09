@@ -32,7 +32,7 @@ See the License for the specific language governing permissions and
         };
 
         //stories
-        LocalDBMS.prototype.getWriterStory = function ({storyName}={}) {
+        LocalDBMS.prototype.getWriterStory = function ({ storyName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
                     resolve(this.database.Stories[storyName].story);
@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
             });
         };
         //stories
-        LocalDBMS.prototype.setWriterStory = function ({storyName, value}={}) {
+        LocalDBMS.prototype.setWriterStory = function ({ storyName, value } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(value)];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -51,7 +51,7 @@ See the License for the specific language governing permissions and
         };
 
         // stories
-        LocalDBMS.prototype.createStory = function ({storyName}={}) {
+        LocalDBMS.prototype.createStory = function ({ storyName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.createEntityCheck2(storyName, R.keys(this.database.Stories), 'entity-lifeless-name', 'entity-of-story'), reject, () => {
                     this.database.Stories[storyName] = {
@@ -66,7 +66,7 @@ See the License for the specific language governing permissions and
             });
         };
         // stories
-        LocalDBMS.prototype.renameStory = function ({fromName, toName}={}) {
+        LocalDBMS.prototype.renameStory = function ({ fromName, toName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Stories)), reject, () => {
                     const data = this.database.Stories[fromName];
@@ -80,7 +80,7 @@ See the License for the specific language governing permissions and
         };
 
         // stories
-        LocalDBMS.prototype.removeStory = function ({storyName}={}) {
+        LocalDBMS.prototype.removeStory = function ({ storyName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.removeEntityCheck(storyName, R.keys(this.database.Stories)), reject, () => {
                     delete this.database.Stories[storyName];

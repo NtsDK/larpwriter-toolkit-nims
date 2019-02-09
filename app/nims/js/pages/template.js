@@ -19,14 +19,14 @@ See the License for the specific language governing permissions and
 'use strict';
 
 // ((exports) => {
-    const root = '.-tab ';
-    const state = {};
+const root = '.-tab ';
+const state = {};
 
-    exports.init = () => {
-        //exports.content = U.queryEl(root);
-    };
+exports.init = () => {
+    //exports.content = U.queryEl(root);
+};
 
-    exports.refresh = () => {
+exports.refresh = () => {
 
-    };
+};
 // })(window.Template = {});

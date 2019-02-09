@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const PermissionInformer = require("permissionInformer");
+const PermissionInformer = require('permissionInformer');
 const Constants = require('common/constants');
 const R = require('ramda');
 
@@ -59,10 +59,10 @@ module.exports = (Stories) => {
         if (!Stories.getCurrentStoryName()) { return; }
 
         Promise.all([
-            PermissionInformer.isEntityEditable({type: 'story', name: Stories.getCurrentStoryName()}),
-            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false}),
-            DBMS.getStoryCharacters({storyName: Stories.getCurrentStoryName()})
-        ]).then(results => {
+            PermissionInformer.isEntityEditable({ type: 'story', name: Stories.getCurrentStoryName() }),
+            PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
+            DBMS.getStoryCharacters({ storyName: Stories.getCurrentStoryName() })
+        ]).then((results) => {
             const [isStoryEditable, allCharacters, localCharacters] = results;
             rebuildInterface(allCharacters, localCharacters);
             UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
@@ -94,8 +94,8 @@ module.exports = (Stories) => {
 
         const table = U.clearEl(U.queryEl(`${root}.storyCharactersTable`));
 
-        U.showEl(U.qe(`${root} table`), R.keys(localCharacters).length !== 0 );
-        U.showEl(U.qe(`${root} .alert`), R.keys(localCharacters).length === 0 );
+        U.showEl(U.qe(`${root} table`), R.keys(localCharacters).length !== 0);
+        U.showEl(U.qe(`${root} .alert`), R.keys(localCharacters).length === 0);
 
         removeArray.forEach((removeValue) => {
             U.addEl(table, getCharacterInput(removeValue, localCharacters[removeValue.value]));
@@ -189,4 +189,4 @@ module.exports = (Stories) => {
         }).catch(UI.handleError);
     }
     return exports;
-}
+};

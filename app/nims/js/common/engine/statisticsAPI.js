@@ -121,7 +121,7 @@ See the License for the specific language governing permissions and
             const groupedValues = profileItems.map((profileItem) => {
                 if (profileItem.type === 'enum' || profileItem.type === 'checkbox') {
                     return groupReduce(groupProfiles(R.prop(profileItem.name)));
-                } else if (profileItem.type === 'number') {
+                } if (profileItem.type === 'number') {
                     const array = R.ap([R.prop(profileItem.name)], R.values(database[profileType]));
                     const step = _makeNumberStep(array);
                     return {

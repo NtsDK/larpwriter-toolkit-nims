@@ -20,44 +20,44 @@ See the License for the specific language governing permissions and
 'use strict';
 
 // ((exports) => {
-    const root = '.sign-up-tab ';
+const root = '.sign-up-tab ';
 
-    exports.init = () => {
-        $(document.forms['sign-up-form']).on('submit', submit);
-        exports.content = U.queryEl(root);
-    };
+exports.init = () => {
+    $(document.forms['sign-up-form']).on('submit', submit);
+    exports.content = U.queryEl(root);
+};
 
-    exports.refresh = () => {
-    };
+exports.refresh = () => {
+};
 
-    function submit() {
-        const form = $(this);
+function submit() {
+    const form = $(this);
 
-        $('.error', form).html('');
-        $(':submit', form).button('loading');
+    $('.error', form).html('');
+    $(':submit', form).button('loading');
 
-        const request = $.ajax({
-            url: '/signUp',
-            method: 'POST',
-            data: form.serialize(),
-            complete() {
-                $(':submit', form).button('reset');
-            },
-        });
-        request.done((data) => {
-            form.html(L10n.getValue('entrance-sign-up-success')).U.addClass('alert-success');
-        });
+    const request = $.ajax({
+        url: '/signUp',
+        method: 'POST',
+        data: form.serialize(),
+        complete() {
+            $(':submit', form).button('reset');
+        },
+    });
+    request.done((data) => {
+        form.html(L10n.getValue('entrance-sign-up-success')).U.addClass('alert-success');
+    });
 
-        request.fail((errorInfo, textStatus, errorThrown) => {
-            let msg;
-            try {
-                msg = UI.handleErrorMsg(JSON.parse(errorInfo.responseText));
-            } catch (err) {
-                msg = UI.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
-            }
-            $('.error', form).html(msg);
-        });
+    request.fail((errorInfo, textStatus, errorThrown) => {
+        let msg;
+        try {
+            msg = UI.handleErrorMsg(JSON.parse(errorInfo.responseText));
+        } catch (err) {
+            msg = UI.handleErrorMsg(errorInfo.responseText || textStatus || 'error');
+        }
+        $('.error', form).html(msg);
+    });
 
-        return false;
-    }
+    return false;
+}
 // })(window.SignUp = {});

@@ -29,24 +29,24 @@ See the License for the specific language governing permissions and
         const groupCheck = (groupName, database) => PC.chainCheck([PC.isString(groupName),
             PC.entityExists(groupName, R.keys(database.Groups))]);
 
-//        [
-//            {
-//                name: 'groupName',
-//                check: [{
-//                    type: 'isString'
-//                }, {
-//                    type: 'entityExists',
-//                    arr: (db) => R.keys(db.Groups)
-//                }]
-//            }
-//        ]
+        //        [
+        //            {
+        //                name: 'groupName',
+        //                check: [{
+        //                    type: 'isString'
+        //                }, {
+        //                    type: 'entityExists',
+        //                    arr: (db) => R.keys(db.Groups)
+        //                }]
+        //            }
+        //        ]
         // DBMS.groups[].get()
-        LocalDBMS.prototype.getGroup = function ({groupName}={}) {
+        LocalDBMS.prototype.getGroup = function ({ groupName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(groupCheck(groupName, this.database), reject, () => {
                     resolve(R.clone(this.database.Groups[groupName]));
                 });
-            })
+            });
         };
 
         const _getCharacterGroupTexts = (groups, info, profileId) => {
@@ -62,12 +62,12 @@ See the License for the specific language governing permissions and
 
         // preview
         // DBMS.groups.find({characterName}).get({characterText})
-        LocalDBMS.prototype.getCharacterGroupTexts = function ({characterName}={}) {
+        LocalDBMS.prototype.getCharacterGroupTexts = function ({ characterName } = {}) {
             return new Promise((resolve, reject) => {
                 Promise.all([
-                    this.getProfileBinding({type: 'character', name: characterName}),
+                    this.getProfileBinding({ type: 'character', name: characterName }),
                     this.getProfileFilterInfo()
-                ]).then(results => {
+                ]).then((results) => {
                     const [profileId, info] = results;
                     resolve(_getCharacterGroupTexts(this.database.Groups, info, profileId));
                 }).catch(reject);
@@ -82,7 +82,7 @@ See the License for the specific language governing permissions and
                 Promise.all([
                     this.getProfileFilterInfo(),
                     this.getProfileBindings()
-                ]).then(results => {
+                ]).then((results) => {
                     const [info, bindings] = results;
                     const texts = Object.keys(that.database.Characters).reduce((result, characterName) => {
                         const profileId = bindings[characterName] === undefined ? [characterName, ''] : [characterName, bindings[characterName]];
@@ -94,21 +94,21 @@ See the License for the specific language governing permissions and
             });
         };
 
-//  [
-//      {
-//          name: 'groupName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'stringIsNotEmpty'
-//          }, {
-//              type: 'entityIsNotUsed',
-//              arr: (db) => R.keys(db.Groups)
-//          }]
-//      }
-//  ]
+        //  [
+        //      {
+        //          name: 'groupName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'stringIsNotEmpty'
+        //          }, {
+        //              type: 'entityIsNotUsed',
+        //              arr: (db) => R.keys(db.Groups)
+        //          }]
+        //      }
+        //  ]
         // DBMS.groups.create({name})
-        LocalDBMS.prototype.createGroup = function ({groupName}={}) {
+        LocalDBMS.prototype.createGroup = function ({ groupName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.createEntityCheck2(groupName, R.keys(this.database.Groups), 'entity-lifeless-name', 'entity-of-group'), reject, () => {
                     const newGroup = {
@@ -126,30 +126,30 @@ See the License for the specific language governing permissions and
             });
         };
 
-//  [
-//      {
-//          name: 'fromName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'entityExists',
-//              arr: (db) => R.keys(db.Groups)
-//          }]
-//      },
-//      {
-//          name: 'toName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'stringIsNotEmpty'
-//          }, {
-//              type: 'entityIsNotUsed',
-//              arr: (db) => R.keys(db.Groups)
-//          }]
-//      }
-//  ]
+        //  [
+        //      {
+        //          name: 'fromName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'entityExists',
+        //              arr: (db) => R.keys(db.Groups)
+        //          }]
+        //      },
+        //      {
+        //          name: 'toName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'stringIsNotEmpty'
+        //          }, {
+        //              type: 'entityIsNotUsed',
+        //              arr: (db) => R.keys(db.Groups)
+        //          }]
+        //      }
+        //  ]
         // DBMS.groups[name].rename({newName})
-        LocalDBMS.prototype.renameGroup = function ({fromName, toName}={}) {
+        LocalDBMS.prototype.renameGroup = function ({ fromName, toName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Groups)), reject, () => {
                     const data = this.database.Groups[fromName];
@@ -162,19 +162,19 @@ See the License for the specific language governing permissions and
             });
         };
 
-//  [
-//      {
-//          name: 'groupName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'entityExists',
-//              arr: (db) => R.keys(db.Groups)
-//          }]
-//      },
-//  ]
+        //  [
+        //      {
+        //          name: 'groupName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'entityExists',
+        //              arr: (db) => R.keys(db.Groups)
+        //          }]
+        //      },
+        //  ]
         // DBMS.groups.remove({name})
-        LocalDBMS.prototype.removeGroup = function ({groupName}={}) {
+        LocalDBMS.prototype.removeGroup = function ({ groupName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.removeEntityCheck(groupName, R.keys(this.database.Groups)), reject, () => {
                     delete this.database.Groups[groupName];
@@ -184,19 +184,19 @@ See the License for the specific language governing permissions and
             });
         };
 
-//  [
-//      {
-//          name: 'groupName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'entityExists',
-//              arr: (db) => R.keys(db.Groups)
-//          }]
-//      },
-//  ]
+        //  [
+        //      {
+        //          name: 'groupName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'entityExists',
+        //              arr: (db) => R.keys(db.Groups)
+        //          }]
+        //      },
+        //  ]
         // DBMS.groups[name].filter.set({filter})
-        LocalDBMS.prototype.saveFilterToGroup = function ({groupName, filterModel}={}) {
+        LocalDBMS.prototype.saveFilterToGroup = function ({ groupName, filterModel } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(groupCheck(groupName, this.database), reject, () => {
                     const conflictTypes = PU.isFilterModelCompatibleWithProfiles({
@@ -213,34 +213,34 @@ See the License for the specific language governing permissions and
             });
         };
 
-//  [
-//      {
-//          name: 'groupName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'entityExists',
-//              arr: (db) => R.keys(db.Groups)
-//          }]
-//      },
-//      {
-//          name: 'fieldName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'elementFromEnum',
-//              arr: Constants.groupEditableItems
-//          }]
-//      },
-//      {
-//          name: 'value',
-//          check: [{
-//              type: 'isString'
-//          }]
-//      },
-//  ]
+        //  [
+        //      {
+        //          name: 'groupName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'entityExists',
+        //              arr: (db) => R.keys(db.Groups)
+        //          }]
+        //      },
+        //      {
+        //          name: 'fieldName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'elementFromEnum',
+        //              arr: Constants.groupEditableItems
+        //          }]
+        //      },
+        //      {
+        //          name: 'value',
+        //          check: [{
+        //              type: 'isString'
+        //          }]
+        //      },
+        //  ]
         // DBMS.groups[name][fieldName].set({value})
-        LocalDBMS.prototype.updateGroupField = function ({groupName, fieldName, value}={}) {
+        LocalDBMS.prototype.updateGroupField = function ({ groupName, fieldName, value } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([groupCheck(groupName, this.database),
                     PC.isString(fieldName), PC.elementFromEnum(fieldName, Constants.groupEditableItems),
@@ -253,55 +253,53 @@ See the License for the specific language governing permissions and
             });
         };
 
-//  [
-//      {
-//          name: 'groupName',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'entityExists',
-//              arr: (db) => R.keys(db.Groups)
-//          }]
-//      },
-//      {
-//          name: 'value',
-//          check: [{
-//              type: 'isBoolean'
-//          }]
-//      },
-//  ]
-        LocalDBMS.prototype.doExportGroup = function ({groupName, value}={}) {
+        //  [
+        //      {
+        //          name: 'groupName',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'entityExists',
+        //              arr: (db) => R.keys(db.Groups)
+        //          }]
+        //      },
+        //      {
+        //          name: 'value',
+        //          check: [{
+        //              type: 'isBoolean'
+        //          }]
+        //      },
+        //  ]
+        LocalDBMS.prototype.doExportGroup = function ({ groupName, value } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([groupCheck(groupName, this.database), PC.isBoolean(value)]);
                 PC.precondition(chain, reject, () => {
                     const profileInfo = this.database.Groups[groupName];
-                    profileInfo['doExport'] = value;
+                    profileInfo.doExport = value;
                     resolve();
                 });
             });
         };
 
-        const initProfileInfo = (that, type, ownerMapType) => {
-            return new Promise((resolve, reject) => {
-                Promise.all([
-                    that.getAllProfiles({type}),
-                    that.getProfileStructure({type}),
-                ]).then(results => {
-                    const [profiles, profileStructure] = results;
-                    let owners = R.keys(profiles);
-                    if (that._getOwnerMap) {
-                        owners = that._getOwnerMap(ownerMapType);
-                    } else {
-                        owners = R.zipObj(owners, R.repeat('user', owners.length));
-                    }
-                    resolve({
-                        profileStructure,
-                        owners,
-                        profiles
-                    });
-                }).catch(reject);
-            });
-        };
+        const initProfileInfo = (that, type, ownerMapType) => new Promise((resolve, reject) => {
+            Promise.all([
+                that.getAllProfiles({ type }),
+                that.getProfileStructure({ type }),
+            ]).then((results) => {
+                const [profiles, profileStructure] = results;
+                let owners = R.keys(profiles);
+                if (that._getOwnerMap) {
+                    owners = that._getOwnerMap(ownerMapType);
+                } else {
+                    owners = R.zipObj(owners, R.repeat('user', owners.length));
+                }
+                resolve({
+                    profileStructure,
+                    owners,
+                    profiles
+                });
+            }).catch(reject);
+        });
 
         // DBMS.groups.profileFilterInfo.get()
         LocalDBMS.prototype.getProfileFilterInfo = function () {
@@ -312,7 +310,7 @@ See the License for the specific language governing permissions and
                     initProfileInfo(that, 'player', 'Players'),
                     that.getCharactersSummary(),
                     that.getExtendedProfileBindings(),
-                ]).then(results => {
+                ]).then((results) => {
                     const [charactersInfo, playersInfo, charactersSummary, bindingData] = results;
                     const info = PU.makeGroupedProfileFilterInfo({
                         characters: charactersInfo,
@@ -348,11 +346,11 @@ See the License for the specific language governing permissions and
                         that.database.Groups, R.keys(that.database.Characters),
                         R.clone(that.database.ProfileBindings), info
                     ));
-                }).catch(reject)
+                }).catch(reject);
             });
         };
 
-        function _removeProfileItem([{type, index, profileItemName}]=[]) {
+        function _removeProfileItem([{ type, index, profileItemName }] = []) {
             const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
             const subFilterName = prefix + profileItemName;
             const that = this;
@@ -364,14 +362,14 @@ See the License for the specific language governing permissions and
 
         addListener('removeProfileItem', _removeProfileItem);
 
-        function _changeProfileItemType([{type, profileItemName, newType}]=[]) {
-            _removeProfileItem.call(this, [{type, index: -1, profileItemName}]);
+        function _changeProfileItemType([{ type, profileItemName, newType }] = []) {
+            _removeProfileItem.call(this, [{ type, index: -1, profileItemName }]);
             // _removeProfileItem.apply(this, [{type, index: -1, profileItemName}]);
         }
 
         addListener('changeProfileItemType', _changeProfileItemType);
 
-        function _renameProfileItem([{type, newName, oldName}]=[]) {
+        function _renameProfileItem([{ type, newName, oldName }] = []) {
             const prefix = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX);
             const subFilterName = prefix + oldName;
             const that = this;
@@ -388,9 +386,11 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfileItem', _renameProfileItem);
 
-        function _replaceEnumValue([{type, profileItemName, defaultValue, newOptionsMap}]=[]) {
-            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
-                profileItemName;
+        function _replaceEnumValue([{
+            type, profileItemName, defaultValue, newOptionsMap
+        }] = []) {
+            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX)
+                + profileItemName;
             const that = this;
             Object.keys(this.database.Groups).forEach((groupName) => {
                 const group = that.database.Groups[groupName];
@@ -419,15 +419,17 @@ See the License for the specific language governing permissions and
 
         addListener('replaceMultiEnumValue', _replaceEnumValue);
 
-        function _renameEnumValue([{type, profileItemName, fromValue, toValue}]=[]) {
-            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX) +
-                profileItemName;
+        function _renameEnumValue([{
+            type, profileItemName, fromValue, toValue
+        }] = []) {
+            const subFilterName = (type === 'character' ? Constants.CHAR_PREFIX : Constants.PLAYER_PREFIX)
+                + profileItemName;
             const that = this;
             Object.keys(this.database.Groups).forEach((groupName) => {
                 const group = that.database.Groups[groupName];
                 group.filterModel.forEach((filterItem) => {
                     if (filterItem.name === subFilterName) {
-                        if(filterItem.selectedOptions[fromValue]){
+                        if (filterItem.selectedOptions[fromValue]) {
                             delete filterItem.selectedOptions[fromValue];
                             filterItem.selectedOptions[toValue] = true;
                         }

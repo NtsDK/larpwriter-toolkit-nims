@@ -25,7 +25,7 @@ See the License for the specific language governing permissions and
         let _isStoryEmpty, _isStoryFinished;
 
         //events
-        LocalDBMS.prototype.getFilteredStoryNames = function ({showOnlyUnfinishedStories}={}) {
+        LocalDBMS.prototype.getFilteredStoryNames = function ({ showOnlyUnfinishedStories } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.isBoolean(showOnlyUnfinishedStories), reject, () => {
                     let storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
@@ -48,14 +48,12 @@ See the License for the specific language governing permissions and
 
         dbmsUtils._isStoryEmpty = _isStoryEmpty;
 
-        _isStoryFinished = (database, storyName) =>
-            database.Stories[storyName].events.every(event =>
-                !R.isEmpty(event.characters) && R.values(event.characters).every(adaptation => adaptation.ready));
+        _isStoryFinished = (database, storyName) => database.Stories[storyName].events.every(event => !R.isEmpty(event.characters) && R.values(event.characters).every(adaptation => adaptation.ready));
 
         dbmsUtils._isStoryFinished = _isStoryFinished;
 
         //adaptations
-        LocalDBMS.prototype.getStory = function ({storyName}={}) {
+        LocalDBMS.prototype.getStory = function ({ storyName } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -78,7 +76,9 @@ See the License for the specific language governing permissions and
 
         // preview, events
         LocalDBMS.prototype.setEventAdaptationProperty = function (
-            {storyName, eventIndex, characterName, type, value}={}
+            {
+                storyName, eventIndex, characterName, type, value
+            } = {}
         ) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories)),

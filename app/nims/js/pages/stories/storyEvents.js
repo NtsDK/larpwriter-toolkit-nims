@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const PermissionInformer = require("permissionInformer");
+const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
 
 'use strict';
@@ -53,10 +53,10 @@ module.exports = (Stories) => {
         }
 
         Promise.all([
-            PermissionInformer.isEntityEditable({type: 'story', name: Stories.getCurrentStoryName()}),
+            PermissionInformer.isEntityEditable({ type: 'story', name: Stories.getCurrentStoryName() }),
             DBMS.getMetaInfo(),
-            DBMS.getStoryEvents({storyName: Stories.getCurrentStoryName()})
-        ]).then(results => {
+            DBMS.getStoryEvents({ storyName: Stories.getCurrentStoryName() })
+        ]).then((results) => {
             const [isStoryEditable, metaInfo, events] = results;
             rebuildInterface(events, metaInfo);
             UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
@@ -76,8 +76,8 @@ module.exports = (Stories) => {
         // event part
         const table = U.clearEl(U.queryEl('#eventBlock'));
 
-        U.showEl(table, events.length !== 0 );
-        U.showEl(U.qe(`${root} .alert`), events.length === 0 );
+        U.showEl(table, events.length !== 0);
+        U.showEl(U.qe(`${root} .alert`), events.length === 0);
 
         // refresh position selector
         const addOpt = R.curry((sel, text) => {
@@ -101,8 +101,7 @@ module.exports = (Stories) => {
 
         state.eventsLength = events.length;
 
-        R.ap([U.addEl(table)], events.map((event, i, events2) =>
-            appendEventInput(event, i, events2, metaInfo.date, metaInfo.preGameDate)));
+        R.ap([U.addEl(table)], events.map((event, i, events2) => appendEventInput(event, i, events2, metaInfo.date, metaInfo.preGameDate)));
 
         // refresh swap selector
         const selectorArr = U.nl2array(document.querySelectorAll('.eventEditSelector'));
@@ -264,5 +263,5 @@ module.exports = (Stories) => {
         }).catch(UI.handleError);
     }
     return exports;
-}
+};
 // )(window.StoryEvents = {});

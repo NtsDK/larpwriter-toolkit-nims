@@ -1,44 +1,47 @@
-const { initPage, makeButton, btnOpts, postLogout, refreshView,
-    addNavSeparator, addNavEl, testView, addView, setFirstTab } = require('./pageCore');
 const { TestUtils, LocalBackupCore } = require('core');
 const DemoBase = require('resources/demoBase');
 const EmptyBase = require('resources/emptyBase');
 
 
-const { localAutoSave, runBaseSelectDialog, makeBackup } = require('./dbms/localBaseBackup')({
-    initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
-});
+require('../nims.html');
 
-require("../nims.html");
+require('../style/common.css');
+require('../style/icons.css');
+require('../style/style.css');
+require('../style/experimental.css');
+const { makeDBMS } = require('DBMSFactory');
 
-require("../style/common.css");
-require("../style/icons.css");
-require("../style/style.css");
-require("../style/experimental.css");
-const {makeDBMS} = require('DBMSFactory');
-
-if( MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS ) {
+if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
     require('core/tests/jasmine');
     require('../specs/baseAPI');
     require('../specs/smokeTest');
-    if ( PRODUCT === 'SERVER') {
+    if (PRODUCT === 'SERVER') {
         require('../specs/serverSmokeTest');
     }
 }
 
 const PermissionInformer = require('permissionInformer');
+const { localAutoSave, runBaseSelectDialog, makeBackup } = require('./dbms/localBaseBackup')({
+    initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
+});
+const {
+    initPage, makeButton, btnOpts, postLogout, refreshView,
+    addNavSeparator, addNavEl, testView, addView, setFirstTab
+} = require('./pageCore');
 
-const { Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
-    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager } = require('./pages');
+const {
+    Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
+    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager
+} = require('./pages');
 
 let firstBaseLoad = PRODUCT === 'STANDALONE';
 
-if(PRODUCT === 'STANDALONE') {
+if (PRODUCT === 'STANDALONE') {
     exports.onPageLoad = () => {
         initPage();
         window.DBMS = makeDBMS();
         if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
-            DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
+            DBMS.setDatabase({ database: DemoBase.data }).then(onBaseLoaded, UI.handleError);
         } else {
             runBaseSelectDialog();
         }
@@ -113,19 +116,19 @@ function onDatabaseLoad() {
             if (PRODUCT === 'STANDALONE') {
                 addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
             }
-//                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
+            //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
             //               addNavEl(makeL10nButton());
 
-            if(MODE === 'DEV'){
-                if ( DEV_OPTS.ENABLE_TESTS ) {
+            if (MODE === 'DEV') {
+                if (DEV_OPTS.ENABLE_TESTS) {
                     addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
                 }
-                if ( DEV_OPTS.ENABLE_BASICS ) {
+                if (DEV_OPTS.ENABLE_BASICS) {
                     addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
                     addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
                 }
-                if ( DEV_OPTS.ENABLE_EXTRAS ) {
+                if (DEV_OPTS.ENABLE_EXTRAS) {
                     addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
                     addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', testView, btnOpts));
                     addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
@@ -141,7 +144,7 @@ function onDatabaseLoad() {
 
             refreshView();
             if (PRODUCT === 'STANDALONE') {
-                if(MODE === 'PROD') {
+                if (MODE === 'PROD') {
                     addBeforeUnloadListener();
                 }
                 localAutoSave();
@@ -149,21 +152,21 @@ function onDatabaseLoad() {
 
             // setTimeout(TestUtils.runTests, 1000);
             // setTimeout(TestUtils.clickThroughtHeaders, 1000);
-//                FileUtils.makeNewBase();
+            //                FileUtils.makeNewBase();
             //                                runTests();
         }).catch(UI.handleError);
     }).catch(UI.handleError);
 }
 
-function loadEmptyBase () {
+function loadEmptyBase() {
     FileUtils.makeNewBase(EmptyBase).then((confirmed) => {
-        if(confirmed){
+        if (confirmed) {
             onBaseLoaded();
         }
     }).catch(UI.handleError);
 }
 
-function makeLoadBaseButton () {
+function makeLoadBaseButton() {
     const button = makeButton('dataLoadButton icon-button', 'open-database', null, btnOpts);
     const input = U.makeEl('input');
     input.type = 'file';
@@ -180,7 +183,7 @@ function onBaseLoaded(err3) {
     if (err3) { UI.handleError(err3); return; }
     consistencyCheck((checkResult) => {
         consistencyCheckAlert(checkResult);
-        if(firstBaseLoad){
+        if (firstBaseLoad) {
             onDatabaseLoad();
             firstBaseLoad = false;
         } else {
@@ -190,7 +193,7 @@ function onBaseLoaded(err3) {
 }
 
 function consistencyCheck(callback) {
-    DBMS.getConsistencyCheckResult().then(checkResult => {
+    DBMS.getConsistencyCheckResult().then((checkResult) => {
         checkResult.errors.forEach(console.error);
         callback(checkResult);
     }).catch(UI.handleError);
@@ -206,9 +209,7 @@ function consistencyCheckAlert(checkResult) {
 
 function initBaseLoadBtn(button, input, onBaseLoaded) {
     button.addEventListener('change', (evt) => {
-        FileUtils.readSingleFile(evt).then( database => {
-            return DBMS.setDatabase({database});
-        }).then(() => PermissionInformer.refresh()).then(onBaseLoaded, UI.handleError);
+        FileUtils.readSingleFile(evt).then(database => DBMS.setDatabase({ database })).then(() => PermissionInformer.refresh()).then(onBaseLoaded, UI.handleError);
     }, false);
     button.addEventListener('click', (e) => {
         input.value = '';

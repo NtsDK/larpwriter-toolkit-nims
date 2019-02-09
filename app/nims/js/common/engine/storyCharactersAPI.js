@@ -23,7 +23,7 @@ See the License for the specific language governing permissions and
         } = opts;
 
         //event presence
-        LocalDBMS.prototype.getStoryCharacterNamesArray = function ({storyName}={}) {
+        LocalDBMS.prototype.getStoryCharacterNamesArray = function ({ storyName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
                     const localCharacters = this.database.Stories[storyName].characters;
@@ -33,7 +33,7 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.getStoryCharacters = function ({storyName}={}, callback) {
+        LocalDBMS.prototype.getStoryCharacters = function ({ storyName } = {}, callback) {
             return new Promise((resolve, reject) => {
                 PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
                     resolve(R.clone(this.database.Stories[storyName].characters));
@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.addStoryCharacter = function ({storyName, characterName}={}) {
+        LocalDBMS.prototype.addStoryCharacter = function ({ storyName, characterName } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
                     PC.entityExistsCheck(characterName, R.keys(this.database.Characters))];
@@ -62,7 +62,7 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.switchStoryCharacters = function ({storyName, fromName, toName}={}) {
+        LocalDBMS.prototype.switchStoryCharacters = function ({ storyName, fromName, toName } = {}) {
             return new Promise((resolve, reject) => {
                 let cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
                 PC.precondition(cond, reject, () => {
@@ -90,7 +90,7 @@ See the License for the specific language governing permissions and
         };
 
         //story characters
-        LocalDBMS.prototype.removeStoryCharacter = function ({storyName, characterName}={}) {
+        LocalDBMS.prototype.removeStoryCharacter = function ({ storyName, characterName } = {}) {
             return new Promise((resolve, reject) => {
                 const cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
                 PC.precondition(cond, reject, () => {
@@ -107,7 +107,7 @@ See the License for the specific language governing permissions and
         };
 
         // story characters
-        LocalDBMS.prototype.updateCharacterInventory = function ({storyName, characterName, inventory}={}) {
+        LocalDBMS.prototype.updateCharacterInventory = function ({ storyName, characterName, inventory } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(inventory)];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -122,7 +122,9 @@ See the License for the specific language governing permissions and
 
         //story characters
         LocalDBMS.prototype.onChangeCharacterActivity = function (
-            {storyName, characterName, activityType, checked}={}
+            {
+                storyName, characterName, activityType, checked
+            } = {}
         ) {
             return new Promise((resolve, reject) => {
                 const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(activityType),
@@ -143,7 +145,7 @@ See the License for the specific language governing permissions and
         };
 
         //event presence
-        LocalDBMS.prototype.addCharacterToEvent = function ({storyName, eventIndex, characterName}={}) {
+        LocalDBMS.prototype.addCharacterToEvent = function ({ storyName, eventIndex, characterName } = {}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -165,7 +167,7 @@ See the License for the specific language governing permissions and
         };
 
         // event presence
-        LocalDBMS.prototype.removeCharacterFromEvent = function ({storyName, eventIndex, characterName}={}) {
+        LocalDBMS.prototype.removeCharacterFromEvent = function ({ storyName, eventIndex, characterName } = {}) {
             return new Promise((resolve, reject) => {
                 let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
                 PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -183,7 +185,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameCharacterInStories([{type, fromName, toName}]=[]) {
+        function _renameCharacterInStories([{ type, fromName, toName }] = []) {
             if (type === 'player') return;
             const renameEventCharacter = (event) => {
                 if (event.characters[fromName]) {
@@ -205,7 +207,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameCharacterInStories);
 
-        function _removeCharacterFromStories([{type, characterName}]=[]) {
+        function _removeCharacterFromStories([{ type, characterName }] = []) {
             if (type === 'player') return;
             const cleanEvent = (event) => {
                 if (event.characters[characterName]) {

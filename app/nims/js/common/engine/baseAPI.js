@@ -37,11 +37,11 @@ See the License for the specific language governing permissions and
         };
 
         // DBMS.set
-        LocalDBMS.prototype.setDatabase = function ({database}={}) {
+        LocalDBMS.prototype.setDatabase = function ({ database } = {}) {
             return new Promise((resolve, reject) => {
                 try {
                     this.database = Migrator.migrate(database);
-                    this.ee.emit('setDatabase', [{database, reject}]);
+                    this.ee.emit('setDatabase', [{ database, reject }]);
                     resolve();
                 } catch (err) {
                     reject(err);
@@ -52,26 +52,26 @@ See the License for the specific language governing permissions and
         LocalDBMS.prototype.getMetaInfo = function () {
             return Promise.resolve(R.clone(this.database.Meta));
         };
-//  [
-//      {
-//          name: 'name',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'elementFromEnum',
-//              arr: Constants.metaInfoStrings
-//          }]
-//      },
-//      {
-//          name: 'value',
-//          check: [{
-//              type: 'isString'
-//          }]
-//      },
-//  ]
+        //  [
+        //      {
+        //          name: 'name',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'elementFromEnum',
+        //              arr: Constants.metaInfoStrings
+        //          }]
+        //      },
+        //      {
+        //          name: 'value',
+        //          check: [{
+        //              type: 'isString'
+        //          }]
+        //      },
+        //  ]
         // overview
         // DBMS.meta.property.set()
-        LocalDBMS.prototype.setMetaInfoString = function ({name, value}={}) {
+        LocalDBMS.prototype.setMetaInfoString = function ({ name, value } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoStrings),
                     PC.isString(value)]);
@@ -81,26 +81,26 @@ See the License for the specific language governing permissions and
                 });
             });
         };
-//  [
-//      {
-//          name: 'name',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'elementFromEnum',
-//              arr: Constants.metaInfoDates
-//          }]
-//      },
-//      {
-//          name: 'value',
-//          check: [{
-//              type: 'isString'
-//          }, {
-//              type: 'isDate',
-//          }]
-//      },
-//  ]
-        LocalDBMS.prototype.setMetaInfoDate = function ({name, value}={}) {
+        //  [
+        //      {
+        //          name: 'name',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'elementFromEnum',
+        //              arr: Constants.metaInfoDates
+        //          }]
+        //      },
+        //      {
+        //          name: 'value',
+        //          check: [{
+        //              type: 'isString'
+        //          }, {
+        //              type: 'isDate',
+        //          }]
+        //      },
+        //  ]
+        LocalDBMS.prototype.setMetaInfoDate = function ({ name, value } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(name), PC.elementFromEnum(name, Constants.metaInfoDates),
                     PC.isString(value)]);

@@ -17,8 +17,8 @@ See the License for the specific language governing permissions and
  */
 
 const R = require('ramda');
-const CallNotificator = require('./callNotificator');
 const Constants = require('common/constants');
+const CallNotificator = require('./callNotificator');
 
 /* eslint-disable func-names,prefer-rest-params */
 
@@ -91,7 +91,6 @@ exports.makeDBMS = function () {
 
     const proxy = new Proxy(dbms, {
         get(target, prop) {
-
             let func;
             if (R.startsWith('get', prop) || R.startsWith('is', prop)) {
                 func = RemoteDBMS._simpleGet;
@@ -99,7 +98,7 @@ exports.makeDBMS = function () {
                 func = RemoteDBMS._simplePut;
             }
             return new Proxy(func, {
-                apply: function(target, thisArg, argumentsList) {
+                apply(target, thisArg, argumentsList) {
                     const arr = [];
                     for (let i = 0; i < argumentsList.length; i++) {
                         arr.push(argumentsList[i]);
@@ -112,4 +111,4 @@ exports.makeDBMS = function () {
 
     // return proxy;
     return CallNotificator.applyCallNotificatorProxy(proxy);
-}
+};

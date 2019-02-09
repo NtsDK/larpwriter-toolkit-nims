@@ -27,10 +27,8 @@ See the License for the specific language governing permissions and
             const fmMap2 = R.indexBy(R.prop('name'), fm2);
             return R.equals(fmMap1, fmMap2);
         };
-        const _isGroupsEqualByElements = (els1, els2) =>
-            R.symmetricDifference(R.keys(els1), R.keys(els2)).length === 0;
-        const _isSuperGroupByElements = (subGroupEls, superGroupEls) =>
-            R.difference(R.keys(subGroupEls), R.keys(superGroupEls)).length === 0;
+        const _isGroupsEqualByElements = (els1, els2) => R.symmetricDifference(R.keys(els1), R.keys(els2)).length === 0;
+        const _isSuperGroupByElements = (subGroupEls, superGroupEls) => R.difference(R.keys(subGroupEls), R.keys(superGroupEls)).length === 0;
         const _isSuperGroupByFilterModel = (subGroupFm, superGroupFm) => {
             const subMap = R.indexBy(R.prop('name'), subGroupFm);
             const superMap = R.indexBy(R.prop('name'), superGroupFm);
@@ -96,14 +94,14 @@ See the License for the specific language governing permissions and
                     }
 
                     if (subItem.condition === 'every' && superItem.condition === 'equal') {
-//                        return R.keys(subItem.selectedOptions).length === 0;
-//                          if(R.keys(subItem.selectedOptions).length === 0){
-//                              return true;
-//                          }
-//                        return R.difference(
-//                            R.keys(subItem.selectedOptions),
-//                            R.keys(superItem.selectedOptions)
-//                        ).length === 0;
+                        //                        return R.keys(subItem.selectedOptions).length === 0;
+                        //                          if(R.keys(subItem.selectedOptions).length === 0){
+                        //                              return true;
+                        //                          }
+                        //                        return R.difference(
+                        //                            R.keys(subItem.selectedOptions),
+                        //                            R.keys(superItem.selectedOptions)
+                        //                        ).length === 0;
                         return false;
                     }
                     if (subItem.condition === 'equal' && superItem.condition === 'every') {
@@ -111,13 +109,13 @@ See the License for the specific language governing permissions and
                             R.keys(superItem.selectedOptions),
                             R.keys(subItem.selectedOptions)
                         ).length === 0;
-//                        if(R.keys(subItem.selectedOptions).length === 0){
-//                            return true;
-//                        }
-//                        return R.difference(
-//                            R.keys(subItem.selectedOptions),
-//                            R.keys(superItem.selectedOptions)
-//                        ).length === 0;
+                        //                        if(R.keys(subItem.selectedOptions).length === 0){
+                        //                            return true;
+                        //                        }
+                        //                        return R.difference(
+                        //                            R.keys(subItem.selectedOptions),
+                        //                            R.keys(superItem.selectedOptions)
+                        //                        ).length === 0;
                         return false;
                     }
 
@@ -129,10 +127,10 @@ See the License for the specific language governing permissions and
                     }
 
                     if (subItem.condition === 'every' && superItem.condition === 'every') {
-                        if(R.keys(superItem.selectedOptions).length === 0){
+                        if (R.keys(superItem.selectedOptions).length === 0) {
                             return false;
                         }
-                        if(R.keys(subItem.selectedOptions).length === 0){
+                        if (R.keys(subItem.selectedOptions).length === 0) {
                             return true;
                         }
                         return R.difference(
@@ -202,12 +200,11 @@ See the License for the specific language governing permissions and
                 level: levels[subGroup],
                 title: R.keys(groupCharacterSets[subGroup]).join(', ')
             }));
-            const edges = R.keys(superGroups).reduce((result, subGroup) =>
-                result.concat(R.keys(superGroups[subGroup]).map(superGroup => ({
-                    from: subGroup,
-                    to: superGroup,
-                    arrow: 'to'
-                }))), []);
+            const edges = R.keys(superGroups).reduce((result, subGroup) => result.concat(R.keys(superGroups[subGroup]).map(superGroup => ({
+                from: subGroup,
+                to: superGroup,
+                arrow: 'to'
+            }))), []);
             return {
                 nodes,
                 edges

@@ -30,8 +30,7 @@ See the License for the specific language governing permissions and
         dbmsUtils._arr2RelKey = arr2RelKey;
 
         const findRel = R.curry((fromCharacter, toCharacter, relations) => {
-            const findFunc = R.curry((fromCharacter2, toCharacter2, rel) =>
-                rel[fromCharacter2] !== undefined && rel[toCharacter2] !== undefined);
+            const findFunc = R.curry((fromCharacter2, toCharacter2, rel) => rel[fromCharacter2] !== undefined && rel[toCharacter2] !== undefined);
             return R.find(findFunc(fromCharacter, toCharacter), relations);
         });
 
@@ -60,7 +59,7 @@ See the License for the specific language governing permissions and
             return Promise.resolve(R.clone(R.path(relationsPath, this.database)));
         };
 
-        LocalDBMS.prototype.getRelationsSummary = function ({characterName}={}) {
+        LocalDBMS.prototype.getRelationsSummary = function ({ characterName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(characterCheck(characterName, this.database), reject, () => {
                     const relData = R.clone(R.path(relationsPath, this.database));
@@ -74,7 +73,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getCharacterRelation = function ({fromCharacter, toCharacter}={}) {
+        LocalDBMS.prototype.getCharacterRelation = function ({ fromCharacter, toCharacter } = {}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
                 const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
@@ -86,7 +85,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.createCharacterRelation = function ({fromCharacter, toCharacter}={}) {
+        LocalDBMS.prototype.createCharacterRelation = function ({ fromCharacter, toCharacter } = {}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
                 const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
@@ -108,7 +107,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.removeCharacterRelation = function ({fromCharacter, toCharacter}={}) {
+        LocalDBMS.prototype.removeCharacterRelation = function ({ fromCharacter, toCharacter } = {}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
                 const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
@@ -123,7 +122,9 @@ See the License for the specific language governing permissions and
         };
 
         LocalDBMS.prototype.setCharacterRelationText = function (
-            {fromCharacter, toCharacter, character, text}={}
+            {
+                fromCharacter, toCharacter, character, text
+            } = {}
         ) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
@@ -141,7 +142,9 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setRelationReadyStatus = function ({fromCharacter, toCharacter, character, ready}={}) {
+        LocalDBMS.prototype.setRelationReadyStatus = function ({
+            fromCharacter, toCharacter, character, ready
+        } = {}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
                 const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
@@ -161,7 +164,9 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setRelationEssenceStatus = function ({fromCharacter, toCharacter, essence, flag}={}) {
+        LocalDBMS.prototype.setRelationEssenceStatus = function ({
+            fromCharacter, toCharacter, essence, flag
+        } = {}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
                 const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
@@ -181,7 +186,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.setOriginRelationText = function ({fromCharacter, toCharacter, text}={}) {
+        LocalDBMS.prototype.setOriginRelationText = function ({ fromCharacter, toCharacter, text } = {}) {
             return new Promise((resolve, reject) => {
                 const relData = R.path(relationsPath, this.database);
                 const chain = PC.chainCheck([characterCheck(fromCharacter, this.database),
@@ -196,7 +201,7 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _renameCharacter([{type, fromName, toName}]=[]) {
+        function _renameCharacter([{ type, fromName, toName }] = []) {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             const arrPair = R.partition(R.pipe(R.prop(fromName), R.isNil), relData);
@@ -216,7 +221,7 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfile', _renameCharacter);
 
-        function _removeCharacter([{type, characterName}]=[]) {
+        function _removeCharacter([{ type, characterName }] = []) {
             if (type === 'player') return;
             const relData = R.path(relationsPath, this.database);
             this.database.Relations = R.filter(R.pipe(R.prop(characterName), R.isNil), relData);

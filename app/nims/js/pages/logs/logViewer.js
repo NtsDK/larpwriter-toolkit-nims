@@ -16,76 +16,70 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
- require('./logViewer.css');
- const dateFormat = require('dateformat');
- const R = require('ramda');
+require('./logViewer.css');
+const dateFormat = require('dateformat');
+const R = require('ramda');
 
 'use strict';
 
 // ((exports) => {
-    const root = '.log-viewer-tab ';
+const root = '.log-viewer-tab ';
 
-    exports.init = () => {
-        const pagination = U.clearEl(U.queryEl(`${root}.pagination`));
-        U.addEls(pagination, R.range(0, 20).map((num) => {
-            const a = U.setAttr(U.makeEl('a'), 'href', '#');
-            const li = U.addEl(U.makeEl('li'), a);
-            li.num = num;
-            U.addEl(a, U.makeText(num + 1));
-            U.listen(a, 'click', () => {
-                getData({ target: { value: num } });
-                const prevActive = U.queryEl(`${root}.pagination li.active`);
-                if (prevActive !== null) {
-                    U.removeClass(prevActive, 'active');
-                }
-                U.addClass(li, 'active');
-            });
-            return li;
-        }));
-
-        U.listen(U.queryEl(`${root}button.clear-filter`), 'click', () => {
-            U.queryEls(`${root}input[filter]`).forEach(el => (el.value = ''));
-            exports.refresh();
+exports.init = () => {
+    const pagination = U.clearEl(U.queryEl(`${root}.pagination`));
+    U.addEls(pagination, R.range(0, 20).map((num) => {
+        const a = U.setAttr(U.makeEl('a'), 'href', '#');
+        const li = U.addEl(U.makeEl('li'), a);
+        li.num = num;
+        U.addEl(a, U.makeText(num + 1));
+        U.listen(a, 'click', () => {
+            getData({ target: { value: num } });
+            const prevActive = U.queryEl(`${root}.pagination li.active`);
+            if (prevActive !== null) {
+                U.removeClass(prevActive, 'active');
+            }
+            U.addClass(li, 'active');
         });
+        return li;
+    }));
 
-        U.queryEls(`${root}input[filter]`).forEach(U.listen(R.__, 'input', exports.refresh));
+    U.listen(U.queryEl(`${root}button.clear-filter`), 'click', () => {
+        U.queryEls(`${root}input[filter]`).forEach(el => (el.value = ''));
+        exports.refresh();
+    });
 
-        exports.content = U.queryEl(root);
-    };
+    U.queryEls(`${root}input[filter]`).forEach(U.listen(R.__, 'input', exports.refresh));
 
-    exports.refresh = () => {
-        U.queryEls(`${root}.pagination li a`)[0].click();
-    };
+    exports.content = U.queryEl(root);
+};
 
-    function dataRecieved(data) {
-        U.addEl(U.clearEl(U.queryEl(`${root}.result-number`)), U.makeText(L10n.format('log-viewer', 'total', [data.max])));
+exports.refresh = () => {
+    U.queryEls(`${root}.pagination li a`)[0].click();
+};
 
-        const container = U.clearEl(U.queryEl(`${root}.log-data`));
-        U.queryEls(`${root}.pagination li`).forEach(li => U.hideEl(li, li.num > data.logSize - 1));
-        R.ap([U.addEl(container)], data.requestedLog.map(makeRow));
-    }
+function dataRecieved(data) {
+    U.addEl(U.clearEl(U.queryEl(`${root}.result-number`)), U.makeText(L10n.format('log-viewer', 'total', [data.max])));
 
-    function getData(event) {
-        const filter = R.fromPairs(U.queryEls(`${root}input[filter]`).map(el => [U.getAttr(el, 'filter'), el.value]));
-        DBMS.getLog({pageNumber: Number(event.target.value), filter}).then(dataRecieved).catch(UI.handleError);
-    }
+    const container = U.clearEl(U.queryEl(`${root}.log-data`));
+    U.queryEls(`${root}.pagination li`).forEach(li => U.hideEl(li, li.num > data.logSize - 1));
+    R.ap([U.addEl(container)], data.requestedLog.map(makeRow));
+}
 
-    function makeRow(rowData) {
-        const addText = (text) => {
-            return U.addEl(U.makeEl('td'), U.addEl(U.makeEl('span'), U.makeText(text)));
-        };
-        return U.addEls(U.makeEl('tr'), [
-            addText(`${rowData[0]}`),
-            addText(dateFormat(new Date(rowData[2]), 'yyyy/mm/dd HH:MM:ss')),
-            addText(rowData[1]),
-            addText(rowData[3]),
+function getData(event) {
+    const filter = R.fromPairs(U.queryEls(`${root}input[filter]`).map(el => [U.getAttr(el, 'filter'), el.value]));
+    DBMS.getLog({ pageNumber: Number(event.target.value), filter }).then(dataRecieved).catch(UI.handleError);
+}
 
-            U.addEls(U.makeEl('td'), JSON.parse(rowData[4]).map(item => {
-                return U.addEl(U.addClass(U.makeEl('div'), 'log-param'), U.makeText(R.is(Object, item) ? JSON.stringify(item) : item));
-            })),
-            U.addEls(U.makeEl('td'), JSON.parse(rowData[5]).map(item => {
-                return U.addEl(U.addClass(U.makeEl('div'), 'log-param'), U.makeText(R.is(Object, item) ? JSON.stringify(item) : item));
-            })),
-        ]);
-    }
+function makeRow(rowData) {
+    const addText = text => U.addEl(U.makeEl('td'), U.addEl(U.makeEl('span'), U.makeText(text)));
+    return U.addEls(U.makeEl('tr'), [
+        addText(`${rowData[0]}`),
+        addText(dateFormat(new Date(rowData[2]), 'yyyy/mm/dd HH:MM:ss')),
+        addText(rowData[1]),
+        addText(rowData[3]),
+
+        U.addEls(U.makeEl('td'), JSON.parse(rowData[4]).map(item => U.addEl(U.addClass(U.makeEl('div'), 'log-param'), U.makeText(R.is(Object, item) ? JSON.stringify(item) : item)))),
+        U.addEls(U.makeEl('td'), JSON.parse(rowData[5]).map(item => U.addEl(U.addClass(U.makeEl('div'), 'log-param'), U.makeText(R.is(Object, item) ? JSON.stringify(item) : item)))),
+    ]);
+}
 // })(window.LogViewer = {});

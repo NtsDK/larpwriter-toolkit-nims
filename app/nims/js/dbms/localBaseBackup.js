@@ -1,8 +1,9 @@
 const R = require('ramda');
+
 module.exports = function (imports) {
-    const exports = {}
+    const exports = {};
     const BACKUP_NUMBER = 4;
-    const BACKUP_INTERVAL = 60000*10; // 10 min
+    const BACKUP_INTERVAL = 60000 * 10; // 10 min
 
     const dateFormat = require('dateformat');
 
@@ -14,15 +15,15 @@ module.exports = function (imports) {
         });
 
         readLocalBases().then((browserBases) => {
-            U.addEls(U.qee(dbDialog, '.modal-body .backup-bases'), (browserBases || []).map((base,i) => {
+            U.addEls(U.qee(dbDialog, '.modal-body .backup-bases'), (browserBases || []).map((base, i) => {
                 const baseSelect = U.qmte('.backup-base-tmpl');
                 const input = U.qee(baseSelect, 'input');
-                U.setAttr(input, 'value', "browserBackup" + i);
-                U.setAttr(input, 'id', "dbSourceBrowserBackup" + i);
+                U.setAttr(input, 'value', `browserBackup${i}`);
+                U.setAttr(input, 'id', `dbSourceBrowserBackup${i}`);
                 input.base = base;
-                U.setAttr(U.qee(baseSelect, 'label'), 'for', "dbSourceBrowserBackup" + i);
+                U.setAttr(U.qee(baseSelect, 'label'), 'for', `dbSourceBrowserBackup${i}`);
                 const date = dateFormat(new Date(base.Meta.saveTime), 'dd mmm yyyy HH:MM:ss');
-                U.addEl(U.qee(baseSelect, '.base-name'), U.makeText(base.Meta.name + ' (' + date + ')'));
+                U.addEl(U.qee(baseSelect, '.base-name'), U.makeText(`${base.Meta.name} (${date})`));
                 return baseSelect;
             }));
 
@@ -32,17 +33,17 @@ module.exports = function (imports) {
 
             U.addEl(U.qee(dbDialog, '.demo-base-name'), U.makeText(imports.DemoBase.data.Meta.name));
 
-            const dialogOnBaseLoad = err => {
+            const dialogOnBaseLoad = (err) => {
                 if (err) { UI.handleError(err); return; }
                 $(dbDialog).modal('hide');
                 imports.onBaseLoaded(err);
-            }
+            };
 
             imports.initBaseLoadBtn(U.qee(dbDialog, '.upload-db'), U.qee(dbDialog, '.upload-db input'), dialogOnBaseLoad);
 
             U.listen(U.qee(dbDialog, '.on-action-button'), 'click', () => {
                 const base = U.getSelectedRadio(dbDialog, 'input[name=dbSource]').base;
-                DBMS.setDatabase({database: base}).then(() => {
+                DBMS.setDatabase({ database: base }).then(() => {
                     dialogOnBaseLoad();
                 }).catch(UI.handleError);
             });
@@ -53,8 +54,7 @@ module.exports = function (imports) {
                 backdrop: 'static'
             });
         }).catch(err => console.error(err));
-    }
-
+    };
 
 
     function readLocalBases() {
@@ -64,19 +64,19 @@ module.exports = function (imports) {
         }
 
         let counter = 0;
-        let counters = [];
-        while(!R.contains(counter, counters)) {
+        const counters = [];
+        while (!R.contains(counter, counters)) {
             counters.push(counter);
             counter = (counter + 1) % BACKUP_NUMBER;
         }
 
-        return Promise.all(counters.map(counter => imports.LocalBackupCore.get('base' + counter))).then(bases => {
+        return Promise.all(counters.map(counter => imports.LocalBackupCore.get(`base${counter}`))).then((bases) => {
             bases = bases.filter(base => !R.isNil(base));
-            if(bases.length === 0){
+            if (bases.length === 0) {
                 return null;
             }
 
-            bases.sort(CU.charOrdAFactory( base => -new Date(base.obj.Meta.saveTime).getTime()))
+            bases.sort(CU.charOrdAFactory(base => -new Date(base.obj.Meta.saveTime).getTime()));
             return bases.map(R.prop('obj'));
         });
     }
@@ -97,15 +97,15 @@ module.exports = function (imports) {
         counter = (counter + 1) % BACKUP_NUMBER;
         console.log('Starting autosave');
 
-        DBMS.getDatabase().then(database => {
-            imports.LocalBackupCore.put('base' + counter, database).then(() => {
-                console.log('Autosave OK ' + new Date());
-    //                LocalBackupCore.get('base' + counter).then((database) => {
-    //                    console.log(database);
-    //                }).catch(UI.handleError);
+        DBMS.getDatabase().then((database) => {
+            imports.LocalBackupCore.put(`base${counter}`, database).then(() => {
+                console.log(`Autosave OK ${new Date()}`);
+                //                LocalBackupCore.get('base' + counter).then((database) => {
+                //                    console.log(database);
+                //                }).catch(UI.handleError);
             }).catch(UI.handleError);
         }).catch(UI.handleError);
     }
     exports.makeBackup = makeBackup;
     return exports;
-}
+};

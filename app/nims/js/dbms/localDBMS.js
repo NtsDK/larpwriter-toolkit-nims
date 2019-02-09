@@ -1,6 +1,6 @@
-const {EventEmitter} = require('events');
-const Ajv = require("ajv");
-const dateFormat = require("dateformat");
+const { EventEmitter } = require('events');
+const Ajv = require('ajv');
+const dateFormat = require('dateformat');
 const R = require('ramda');
 
 const Migrator = require('common/migrator');
@@ -67,7 +67,7 @@ exports.makeDBMS = function () {
     const funcList = {};
     const func = R.curry((name) => {
         const before = R.keys(LocalDBMS.prototype);
-        require('../common/engine/' + name)(LocalDBMS, opts);
+        require(`../common/engine/${name}`)(LocalDBMS, opts);
         // window[name](LocalDBMS, opts);
         const after = R.keys(LocalDBMS.prototype);
         const diff = R.difference(after, before);
@@ -121,4 +121,4 @@ exports.makeDBMS = function () {
     const proxy2 = Logger.applyLoggerProxy(proxy1, R, false);
 
     return proxy2;
-}
+};

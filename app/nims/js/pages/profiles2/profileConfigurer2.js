@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
  */
 
 const Constants = require('common/constants.js');
-const PermissionInformer = require("permissionInformer");
+const PermissionInformer = require('permissionInformer');
 const R = require('ramda');
 
 'use strict';
@@ -119,11 +119,11 @@ function ProfileConfigurerTmpl(opts) {
                         let defaultValue = defaultValueSelect.value;
                         U.clearEl(defaultValueSelect);
 
-                        if(newVals.length === 0){
+                        if (newVals.length === 0) {
                             return;
                         }
 
-                        if(!R.contains(defaultValue, newVals)){
+                        if (!R.contains(defaultValue, newVals)) {
                             defaultValue = newVals[0];
                         }
                         U.fillSelector(defaultValueSelect, U.arr2Select(newVals));
@@ -171,9 +171,9 @@ function ProfileConfigurerTmpl(opts) {
 
     function refreshPanel(type, root) {
         Promise.all([
-            DBMS.getProfileStructure({type}),
+            DBMS.getProfileStructure({ type }),
             PermissionInformer.isAdmin()
-        ]).then(results => {
+        ]).then((results) => {
             const [allProfileSettings, isAdmin] = results;
             U.hideEl(U.queryEl(`${tabRoot} .alert`), allProfileSettings.length !== 0);
             U.hideEl(U.queryEl(`${tabRoot} table`), allProfileSettings.length === 0);
@@ -203,7 +203,9 @@ function ProfileConfigurerTmpl(opts) {
             const itemType = U.qee(dialog, '.create-entity-type-select').value.trim();
             const { selectedIndex } = U.qee(dialog, '.create-entity-position-select');
 
-            DBMS.createProfileItem({type: tabType, name, itemType, selectedIndex}).then(() => {
+            DBMS.createProfileItem({
+                type: tabType, name, itemType, selectedIndex
+            }).then(() => {
                 input.value = '';
                 dialog.hideDlg();
                 exports.refresh();
@@ -262,7 +264,7 @@ function ProfileConfigurerTmpl(opts) {
                 const renameSelect = U.clearEl(U.qee(state.renameEnumItemDialog, '.renamed-value-select'));
                 U.fillSelector(renameSelect, U.arr2Select(list));
 
-                if(list.length > 0){
+                if (list.length > 0) {
                     U.qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list[0];
                 }
 
@@ -293,7 +295,7 @@ function ProfileConfigurerTmpl(opts) {
                 const renameSelect = U.clearEl(U.qee(state.renameEnumItemDialog, '.renamed-value-select'));
                 U.fillSelector(renameSelect, U.arr2Select(list2));
 
-                if(list2.length > 0){
+                if (list2.length > 0) {
                     U.qee(state.renameEnumItemDialog, '.enum-value-name-input').value = list2[0];
                 }
 
@@ -330,7 +332,7 @@ function ProfileConfigurerTmpl(opts) {
             infoType: profileSettings.type,
             oldValue: profileSettings.value
         });
-        if(addDefaultListener){
+        if (addDefaultListener) {
             U.addClasses(input, [`profile-configurer-${profileSettings.type}`, 'adminOnly', 'form-control']);
             U.listen(input, 'change', updateDefaultValue(type));
         }
@@ -383,10 +385,10 @@ function ProfileConfigurerTmpl(opts) {
         return row;
     });
 
-    function enumList2Els(list, defaultValue){
-        return R.splitEvery(4, list.map(val => {
+    function enumList2Els(list, defaultValue) {
+        return R.splitEvery(4, list.map((val) => {
             const span = U.addEl(U.makeEl('span'), U.makeText(val));
-            if(defaultValue !== undefined && val === defaultValue){
+            if (defaultValue !== undefined && val === defaultValue) {
                 U.addClass(span, 'bold');
                 U.setAttr(span, 'title', l10n('default-value'));
             }
@@ -517,7 +519,7 @@ function ProfileConfigurerTmpl(opts) {
                 return;
             }
             let newVals = inputArea.value.split(',').map(R.trim).filter(R.pipe(R.equals(''), R.not));
-            if(defaultValueSelect){
+            if (defaultValueSelect) {
                 const defaultValue = defaultValueSelect.value;
                 newVals = R.without([defaultValue], newVals);
                 newVals = R.prepend(defaultValue, newVals);

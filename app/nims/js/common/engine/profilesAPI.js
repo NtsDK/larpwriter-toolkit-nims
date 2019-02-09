@@ -35,7 +35,7 @@ See the License for the specific language governing permissions and
 
         const typeCheck = type => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 
-        LocalDBMS.prototype.getProfileNamesArray = function ({type}={}) {
+        LocalDBMS.prototype.getProfileNamesArray = function ({ type } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     resolve(Object.keys(R.path(getPath(type), this.database)).sort(CU.charOrdA));
@@ -44,7 +44,7 @@ See the License for the specific language governing permissions and
         };
 
         // profile, preview
-        LocalDBMS.prototype.getProfile = function ({type, name}={}) {
+        LocalDBMS.prototype.getProfile = function ({ type, name } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -55,7 +55,7 @@ See the License for the specific language governing permissions and
             });
         };
         // social network, character filter
-        LocalDBMS.prototype.getAllProfiles = function ({type}={}) {
+        LocalDBMS.prototype.getAllProfiles = function ({ type } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     resolve(R.clone(R.path(getPath(type), this.database)));
@@ -64,7 +64,7 @@ See the License for the specific language governing permissions and
         };
 
         // profiles
-        LocalDBMS.prototype.createProfile = function ({type, characterName}={}) {
+        LocalDBMS.prototype.createProfile = function ({ type, characterName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -91,7 +91,7 @@ See the License for the specific language governing permissions and
             });
         };
         // profiles
-        LocalDBMS.prototype.renameProfile = function ({type, fromName, toName}={}) {
+        LocalDBMS.prototype.renameProfile = function ({ type, fromName, toName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -108,7 +108,7 @@ See the License for the specific language governing permissions and
         };
 
         // profiles
-        LocalDBMS.prototype.removeProfile = function ({type, characterName}={}) {
+        LocalDBMS.prototype.removeProfile = function ({ type, characterName } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -141,7 +141,9 @@ See the License for the specific language governing permissions and
         };
 
         // profile editor
-        LocalDBMS.prototype.updateProfileField = function ({type, characterName, fieldName, itemType, value}={}) {
+        LocalDBMS.prototype.updateProfileField = function ({
+            type, characterName, fieldName, itemType, value
+        } = {}) {
             return new Promise((resolve, reject) => {
                 PC.precondition(typeCheck(type), reject, () => {
                     const container = R.path(getPath(type), this.database);
@@ -177,7 +179,9 @@ See the License for the specific language governing permissions and
             });
         };
 
-        function _createProfileItem([{type, name, itemType, value}]=[]) {
+        function _createProfileItem([{
+            type, name, itemType, value
+        }] = []) {
             // throw new Error(arguments);
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
@@ -187,7 +191,7 @@ See the License for the specific language governing permissions and
 
         addListener('createProfileItem', _createProfileItem);
 
-        function _removeProfileItem([{type, index, profileItemName}]=[]) {
+        function _removeProfileItem([{ type, index, profileItemName }] = []) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 delete profileSet[characterName][profileItemName];
@@ -196,7 +200,7 @@ See the License for the specific language governing permissions and
 
         addListener('removeProfileItem', _removeProfileItem);
 
-        function _changeProfileItemType([{type, profileItemName, newType}]=[]) {
+        function _changeProfileItemType([{ type, profileItemName, newType }] = []) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 profileSet[characterName][profileItemName] = Constants.profileFieldTypes[newType].value;
@@ -205,7 +209,7 @@ See the License for the specific language governing permissions and
 
         addListener('changeProfileItemType', _changeProfileItemType);
 
-        function _renameProfileItem([{type, newName, oldName}]=[]) {
+        function _renameProfileItem([{ type, newName, oldName }] = []) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 const tmp = profileSet[characterName][oldName];
@@ -216,7 +220,9 @@ See the License for the specific language governing permissions and
 
         addListener('renameProfileItem', _renameProfileItem);
 
-        function _replaceEnumValue([{type, profileItemName, defaultValue, newOptionsMap}]=[]) {
+        function _replaceEnumValue([{
+            type, profileItemName, defaultValue, newOptionsMap
+        }] = []) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 const enumValue = profileSet[characterName][profileItemName];
@@ -228,7 +234,9 @@ See the License for the specific language governing permissions and
 
         addListener('replaceEnumValue', _replaceEnumValue);
 
-        function _replaceMultiEnumValue([{type, profileItemName, defaultValue, newOptionsMap}]=[]) {
+        function _replaceMultiEnumValue([{
+            type, profileItemName, defaultValue, newOptionsMap
+        }] = []) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 let value = profileSet[characterName][profileItemName];
@@ -241,24 +249,28 @@ See the License for the specific language governing permissions and
 
         addListener('replaceMultiEnumValue', _replaceMultiEnumValue);
 
-        function _renameEnumValue([{type, profileItemName, fromValue, toValue}]=[]) {
+        function _renameEnumValue([{
+            type, profileItemName, fromValue, toValue
+        }] = []) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
                 const enumValue = profileSet[characterName][profileItemName];
-                if(enumValue === fromValue){
+                if (enumValue === fromValue) {
                     profileSet[characterName][profileItemName] = toValue;
                 }
             });
         }
         addListener('renameEnumValue', _renameEnumValue);
 
-        function _renameMultiEnumValue([{type, profileItemName, fromValue, toValue}]=[]) {
+        function _renameMultiEnumValue([{
+            type, profileItemName, fromValue, toValue
+        }] = []) {
             const profileSet = R.path(getPath(type), this.database);
             Object.keys(profileSet).forEach((characterName) => {
-                let value = profileSet[characterName][profileItemName];
+                const value = profileSet[characterName][profileItemName];
                 if (value !== '') {
                     const list = value.split(',');
-                    if(R.contains(fromValue, list)){
+                    if (R.contains(fromValue, list)) {
                         list[R.indexOf(fromValue, list)] = toValue;
                         profileSet[characterName][profileItemName] = list.join(',');
                     }

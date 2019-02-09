@@ -1,4 +1,5 @@
 const R = require('ramda');
+
 module.exports = function RoutingTabTmpl(opts) {
     const exports = {};
     const state = {};
@@ -30,4 +31,4 @@ module.exports = function RoutingTabTmpl(opts) {
         state.currentView.test();
     };
     return exports;
-}
+};

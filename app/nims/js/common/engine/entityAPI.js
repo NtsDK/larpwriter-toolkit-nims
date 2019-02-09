@@ -23,8 +23,8 @@ See the License for the specific language governing permissions and
         } = opts;
 
         // DBMS.groups.names.get()
-        LocalDBMS.prototype.getEntityNamesArray = function ({type}={}) {
-            return new Promise((resolve,reject) => {
+        LocalDBMS.prototype.getEntityNamesArray = function ({ type } = {}) {
+            return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
                 // const callback = (err, result) => {
                 //     if(err){
@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
                     case 'character':
                     case 'player':
                         // this.getProfileNamesArray(type, callback);
-                        this.getProfileNamesArray({type}).then(resolve).catch(reject);
+                        this.getProfileNamesArray({ type }).then(resolve).catch(reject);
                         break;
                     case 'group':
                         // this.getGroupNamesArray(callback);

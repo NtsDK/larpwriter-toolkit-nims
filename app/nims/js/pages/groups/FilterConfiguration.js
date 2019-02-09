@@ -27,8 +27,8 @@ const R = require('ramda');
 function FilterConfiguration(info) {
     this.info = info;
     function populateProfileItems(item) {
-        if (!R.startsWith(Constants.CHAR_PREFIX, item.name) &&
-            !R.startsWith(Constants.PLAYER_PREFIX, item.name)) {
+        if (!R.startsWith(Constants.CHAR_PREFIX, item.name)
+            && !R.startsWith(Constants.PLAYER_PREFIX, item.name)) {
             item.displayName = L10n.getValue(item.displayName);
             item.value = '';
         }
@@ -52,9 +52,9 @@ FilterConfiguration.prototype.getProfileFilterItems = function () {
 
 FilterConfiguration.prototype.getProfileItemSource = function (name) {
     let source;
-    this.groupedProfileFilterItems.forEach( (el) => {
+    this.groupedProfileFilterItems.forEach((el) => {
         const arr = el.profileFilterItems.map(R.prop('name'));
-        if(R.contains(name, arr)){
+        if (R.contains(name, arr)) {
             source = el.name;
         }
     });
@@ -62,15 +62,15 @@ FilterConfiguration.prototype.getProfileItemSource = function (name) {
 };
 
 FilterConfiguration.prototype.getName2SourceMapping = function () {
-    return this.groupedProfileFilterItems.reduce( (acc, group) => {
-        group.profileFilterItems.forEach( item => acc[item.name] = group.name);
+    return this.groupedProfileFilterItems.reduce((acc, group) => {
+        group.profileFilterItems.forEach(item => acc[item.name] = group.name);
         return acc;
     }, {});
 };
 
 FilterConfiguration.prototype.getName2DisplayNameMapping = function () {
-    return this.groupedProfileFilterItems.reduce( (acc, group) => {
-        group.profileFilterItems.forEach( item => acc[item.name] = item.displayName);
+    return this.groupedProfileFilterItems.reduce((acc, group) => {
+        group.profileFilterItems.forEach(item => acc[item.name] = item.displayName);
         return acc;
     }, {});
 };
@@ -79,12 +79,12 @@ FilterConfiguration.prototype.getGroupedProfileFilterItems = function () {
     return this.groupedProfileFilterItems;
 };
 
-FilterConfiguration.prototype.getGroupsForSelect = function() {
-    return this.groupedProfileFilterItems.map((group) => ({
+FilterConfiguration.prototype.getGroupsForSelect = function () {
+    return this.groupedProfileFilterItems.map(group => ({
         displayName: L10n.getValue(`profile-filter-${group.name}`),
         array: group.profileFilterItems
     }));
-}
+};
 
 FilterConfiguration.prototype.getBaseProfileSettings = function () {
     return {

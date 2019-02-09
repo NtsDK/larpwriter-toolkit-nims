@@ -32,7 +32,9 @@ See the License for the specific language governing permissions and
         ];
 
         // DBMS.log.push({})
-        LocalDBMS.prototype.log = function ({userName, time, funcName, rewrite, params, status}={}) {
+        LocalDBMS.prototype.log = function ({
+            userName, time, funcName, rewrite, params, status
+        } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isString(userName), PC.isString(time), PC.isString(funcName),
                     PC.isBoolean(rewrite), PC.isArray(params), PC.isString(status)]);
@@ -51,14 +53,14 @@ See the License for the specific language governing permissions and
                         }
                         //                console.log(this.database.Log.length);
                     }
-    //                console.log(CU.CU.strFormat('{0},{1},{2},{3},{4}', info));
+                    //                console.log(CU.CU.strFormat('{0},{1},{2},{3},{4}', info));
                     resolve();
                 });
             });
         };
 
         // DBMS.log.get({pageNumber, filter})
-        LocalDBMS.prototype.getLog = function ({pageNumber, filter}={}) {
+        LocalDBMS.prototype.getLog = function ({ pageNumber, filter } = {}) {
             return new Promise((resolve, reject) => {
                 const chain = PC.chainCheck([PC.isNumber(pageNumber), PC.isObject(filter)]);
                 PC.precondition(chain, reject, () => {

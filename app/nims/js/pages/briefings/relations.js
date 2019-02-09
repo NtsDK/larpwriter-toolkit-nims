@@ -17,77 +17,77 @@ See the License for the specific language governing permissions and
  */
 
 const PermissionInformer = require('permissionInformer');
-const RelationsPreview = require('./relationsPreview');
 const R = require('ramda');
+const RelationsPreview = require('./relationsPreview');
 
 
 'use strict';
 
 // ((exports) => {
-    const root = '.relations-tab ';
-    const state = {};
-    const settingsPath = 'Relations';
+const root = '.relations-tab ';
+const state = {};
+const settingsPath = 'Relations';
 
-    exports.init = () => {
-        $(`${root} .character-select`).select2().on('change', buildContent);
-        exports.content = U.queryEl(root);
-    };
+exports.init = () => {
+    $(`${root} .character-select`).select2().on('change', buildContent);
+    exports.content = U.queryEl(root);
+};
 
-    exports.refresh = () => {
-        U.clearEl(U.queryEl(`${root} .character-select`));
-        U.clearEl(U.queryEl(`${root} .panel-body`));
+exports.refresh = () => {
+    U.clearEl(U.queryEl(`${root} .character-select`));
+    U.clearEl(U.queryEl(`${root} .panel-body`));
 
-        Promise.all([
-            DBMS.getProfileStructure({type: 'character'}),
-            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false})
-        ]).then(results => {
-            const [characterProfileStructure, names] = results;
-            state.characterProfileStructure = characterProfileStructure;
+    Promise.all([
+        DBMS.getProfileStructure({ type: 'character' }),
+        PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
+    ]).then((results) => {
+        const [characterProfileStructure, names] = results;
+        state.characterProfileStructure = characterProfileStructure;
 
-            U.showEl(U.qe(`${root} .alert`), names.length < 2);
-            U.showEl(U.qe(`${root} > .panel`), names.length > 1);
+        U.showEl(U.qe(`${root} .alert`), names.length < 2);
+        U.showEl(U.qe(`${root} > .panel`), names.length > 1);
 
-            if (names.length > 0) {
-                const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
-                const data = UI.getSelect2Data(names);
-                // this call trigger buildContent
-                $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
-            }
-        }).catch(UI.handleError);
-    };
+        if (names.length > 0) {
+            const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
+            const data = UI.getSelect2Data(names);
+            // this call trigger buildContent
+            $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
+        }
+    }).catch(UI.handleError);
+};
 
-    function buildContent(event) {
-        U.clearEl(U.queryEl(`${root} .panel-body`));
-        const characterName = event.target.value;
-        UI.updateEntitySetting(settingsPath, characterName);
-        state.data = {};
-        state.data.characterName = characterName;
-        exports.load(state.data, buildContentInner);
-    }
+function buildContent(event) {
+    U.clearEl(U.queryEl(`${root} .panel-body`));
+    const characterName = event.target.value;
+    UI.updateEntitySetting(settingsPath, characterName);
+    state.data = {};
+    state.data.characterName = characterName;
+    exports.load(state.data, buildContentInner);
+}
 
-    function buildContentInner() {
-        const content = RelationsPreview.makeRelationsContent(
-            state.data, true, state.characterProfileStructure,
-            exports.refresh
-        );
-        U.addEl(U.queryEl(`${root} .panel-body`), content);
-        UI.initTextAreas(`${root} .panel-body textarea`);
-        UI.refreshTextAreas(`${root} .panel-body textarea`);
-    }
+function buildContentInner() {
+    const content = RelationsPreview.makeRelationsContent(
+        state.data, true, state.characterProfileStructure,
+        exports.refresh
+    );
+    U.addEl(U.queryEl(`${root} .panel-body`), content);
+    UI.initTextAreas(`${root} .panel-body textarea`);
+    UI.refreshTextAreas(`${root} .panel-body textarea`);
+}
 
-    exports.load = (data, callback) => {
-        Promise.all([
-            DBMS.getAllProfiles({type:'character'}),
-            DBMS.getRelationsSummary({characterName: data.characterName}),
-            DBMS.getExtendedProfileBindings(),
-            PermissionInformer.getEntityNamesArray({type: 'character', editableOnly: false})
-        ]).then(results => {
-            const [profiles, relationsSummary, profileBindings, characterNamesArray] = results;
-            data.relationsSummary = relationsSummary;
-            data.characterNamesArray = characterNamesArray;
-            data.profiles = profiles;
-            data.profileBindings = R.fromPairs(profileBindings);
-            callback();
-        }).catch(UI.handleError);
-    };
+exports.load = (data, callback) => {
+    Promise.all([
+        DBMS.getAllProfiles({ type: 'character' }),
+        DBMS.getRelationsSummary({ characterName: data.characterName }),
+        DBMS.getExtendedProfileBindings(),
+        PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
+    ]).then((results) => {
+        const [profiles, relationsSummary, profileBindings, characterNamesArray] = results;
+        data.relationsSummary = relationsSummary;
+        data.characterNamesArray = characterNamesArray;
+        data.profiles = profiles;
+        data.profileBindings = R.fromPairs(profileBindings);
+        callback();
+    }).catch(UI.handleError);
+};
 // })(window.Relations = {});
