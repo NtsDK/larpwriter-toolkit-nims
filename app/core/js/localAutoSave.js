@@ -15,12 +15,12 @@ See the License for the specific language governing permissions and
 'use strict';
 
 // ((exports) => {
-    const indexedDB     = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-    const IDBTransaction  = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-    const baseName      = "filesBase";
-    const storeName     = "filesStore";
+const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+const IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+const baseName = 'filesBase';
+const storeName = 'filesStore';
 
-    exports.test = () => {
+exports.test = () => {
 //        console.log('2323223');
 //        exports.put('base1', {
 //            'sd':12,
@@ -36,51 +36,47 @@ See the License for the specific language governing permissions and
 //            if(err) {console.log(err); return;}
 //            console.log(base);
 //        });
+};
+
+function logerr(err) {
+    console.log(err);
+}
+
+const logerr2 = (err) => {
+    if (err) { console.log(err); }
+};
+
+function connectDB(callback) {
+    const request = indexedDB.open(baseName, 1);
+    request.onerror = callback;
+    request.onsuccess = function () {
+        callback(null, request.result);
     };
-
-    function logerr(err){
-        console.log(err);
-    }
-
-    var logerr2 = (err) => {
-        if(err) {console.log(err); return;}
+    request.onupgradeneeded = function (e) {
+        e.currentTarget.result.createObjectStore(storeName, { keyPath: 'id' });
+        connectDB(callback);
     };
+}
 
-    function connectDB(callback){
-        var request = indexedDB.open(baseName, 1);
-        request.onerror = callback;
-        request.onsuccess = function(){
-            callback(null, request.result);
-        }
-        request.onupgradeneeded = function(e){
-            e.currentTarget.result.createObjectStore(storeName, { keyPath: "id" });
-            connectDB(callback);
-        }
-    }
+exports.get = id => new Promise(((resolve, reject) => {
+    connectDB((err, db) => {
+        if (err) { reject(err); return; }
+        const request = db.transaction([storeName], 'readonly').objectStore(storeName).get(id);
+        request.onerror = reject;
+        request.onsuccess = function () {
+            resolve(request.result ? request.result : null);
+        };
+    });
+}));
 
-    exports.get = (id) => {
-        return new Promise(function(resolve, reject) {
-            connectDB(function(err, db){
-                if(err) {reject(err); return;}
-                var request = db.transaction([storeName], "readonly").objectStore(storeName).get(id);
-                request.onerror = reject;
-                request.onsuccess = function(){
-                    resolve(request.result ? request.result : null);
-                }
-            });
-        });
-    }
-
-    exports.put = (id, obj) => {
-        return new Promise(function(resolve, reject) {
-            connectDB(function(err, db){
-                if(err) {reject(err); return;}
-                var request = db.transaction([storeName], "readwrite").objectStore(storeName).put({id, obj});
-                request.onerror = reject;
-                request.onsuccess = function(){
-                    resolve(request.result);
-                }
-            });
-        });
-    }
+exports.put = (id, obj) => new Promise(((resolve, reject) => {
+    connectDB((err, db) => {
+        if (err) { reject(err); return; }
+        const request = db.transaction([storeName], 'readwrite').objectStore(storeName).put({ id, obj });
+        request.onerror = reject;
+        request.onsuccess = function () {
+            resolve(request.result);
+        };
+    });
+}));
 // })(window.LocalBaseAPI = {});

@@ -17,39 +17,39 @@ See the License for the specific language governing permissions and
 /* eslint-disable prefer-rest-params */
 
 // ((exports) => {
-    function ValidationError(messageId, parameters) {
-        Error.call(this, arguments);
-        this.name = 'ValidationError';
+function ValidationError(messageId, parameters) {
+    Error.call(this, arguments);
+    this.name = 'ValidationError';
 
-        this.messageId = messageId;
-        this.parameters = parameters || [];
+    this.messageId = messageId;
+    this.parameters = parameters || [];
 
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, ValidationError);
-        } else {
-            this.stack = (new Error()).stack;
-        }
+    if (Error.captureStackTrace) {
+        Error.captureStackTrace(this, ValidationError);
+    } else {
+        this.stack = (new Error()).stack;
     }
+}
 
-    ValidationError.prototype = Object.create(Error.prototype);
+ValidationError.prototype = Object.create(Error.prototype);
 
-    exports.ValidationError = ValidationError;
+exports.ValidationError = ValidationError;
 
-    function InternalError(messageId, parameters) {
-        Error.call(this, arguments);
-        this.name = 'InternalError';
+function InternalError(messageId, parameters) {
+    Error.call(this, arguments);
+    this.name = 'InternalError';
 
-        this.messageId = messageId;
-        this.parameters = parameters;
+    this.messageId = messageId;
+    this.parameters = parameters;
 
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, InternalError);
-        } else {
-            this.stack = (new Error()).stack;
-        }
+    if (Error.captureStackTrace) {
+        Error.captureStackTrace(this, InternalError);
+    } else {
+        this.stack = (new Error()).stack;
     }
+}
 
-    InternalError.prototype = Object.create(Error.prototype);
+InternalError.prototype = Object.create(Error.prototype);
 
-    exports.InternalError = InternalError;
+exports.InternalError = InternalError;
 // })(typeof exports === 'undefined' ? this.Errors = {} : exports);

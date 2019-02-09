@@ -12,290 +12,299 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-const U = require('./utils.js');
 const R = require('ramda');
 
-const {d3, klay} = require('core/libs/klay-adapter');
+const { d3, klay } = require('core/libs/klay-adapter');
 const dateFormat = require('dateformat');
 
-var JsDiff = require('diff');
+const JsDiff = require('diff');
+const U = require('./utils.js');
 
 'use strict';
 
 // ((exports) => {
-    exports.runTests = () => {
-        U.queryEl('body').style.overflow = 'auto';
-        window.RunTests();
-    };
+exports.runTests = () => {
+    U.queryEl('body').style.overflow = 'auto';
+    window.RunTests();
+};
 
-    exports.showConsistencyCheckAlert = (checkRes) => {
-        if (checkRes === undefined || checkRes.errors.length === 0) {
-            UI.alert(L10n.getValue('overview-consistency-is-ok'));
-        } else {
-            UI.alert(L10n.getValue('overview-consistency-problem-detected'));
-        }
-    };
+exports.showConsistencyCheckAlert = (checkRes) => {
+    if (checkRes === undefined || checkRes.errors.length === 0) {
+        UI.alert(L10n.getValue('overview-consistency-is-ok'));
+    } else {
+        UI.alert(L10n.getValue('overview-consistency-problem-detected'));
+    }
+};
 
-    exports.clickThroughtHeaders = () => {
-        let tabs = U.queryEls('#navigation .navigation-button');
+exports.clickThroughtHeaders = () => {
+    let tabs = U.queryEls('#navigation .navigation-button');
 
-        let index = 0;
-        let subTabsNum = 0;
-        function runClicker() {
-            if (index <= tabs.length - 1) {
-                tabs[index].click();
-                if (subTabsNum === 0) {
-                    const subTabs = U.queryEls('#contentArea .navigation-button');
-                    tabs = R.insertAll(index + 1, subTabs, tabs);
-                    subTabsNum = subTabs.length;
-                } else {
-                    subTabsNum--;
-                }
-                index++;
-                setTimeout(runClicker, 500);
+    let index = 0;
+    let subTabsNum = 0;
+    function runClicker() {
+        if (index <= tabs.length - 1) {
+            tabs[index].click();
+            if (subTabsNum === 0) {
+                const subTabs = U.queryEls('#contentArea .navigation-button');
+                tabs = R.insertAll(index + 1, subTabs, tabs);
+                subTabsNum = subTabs.length;
+            } else {
+                subTabsNum--;
             }
+            index++;
+            setTimeout(runClicker, 500);
         }
-        runClicker();
+    }
+    runClicker();
+};
+
+exports.showModuleSchema = (checkRes) => {
+    U.addEl(U.queryEl('body'), U.queryEl('.consistency-check-result-dialog'));
+    $(U.queryEl('.consistency-check-result-dialog')).modal('show');
+
+    const svg = d3.select('.image-place svg');
+    const svgGroup = svg.append('g');
+    const root = svgGroup.append('g');
+
+    // define an arrow head
+    svg.append('svg:defs')
+        .append('svg:marker')
+        .attr('id', 'end')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 10)
+        .attr('refY', 0)
+        .attr('markerWidth', 3) // marker settings
+        .attr('markerHeight', 5)
+        .attr('orient', 'auto')
+        .style('fill', '#999')
+        .style('stroke-opacity', 0.6) // arrowhead color
+        .append('svg:path')
+        .attr('d', 'M0,-5L10,0L0,5');
+
+    const nodeDict = checkRes.nodes.reduce((dict, name, i) => {
+        dict[name] = i;
+        return dict;
+    }, {});
+
+    const nodeWidth = 170;
+    const nodeHeight = 30;
+
+    const name2Node = name => ({
+        id: nodeDict[name],
+        name,
+        width: nodeWidth,
+        height: nodeHeight
+    });
+
+    const pair2Edge = (pair, i) => ({
+        id: i + checkRes.nodes.length,
+        source: nodeDict[pair[0]],
+        target: nodeDict[pair[1]]
+    });
+
+    const graph = {
+        nodes: checkRes.nodes.map(name2Node),
+        links: checkRes.edges.map(pair2Edge)
     };
 
-    exports.showModuleSchema = (checkRes) => {
-        U.addEl(U.queryEl('body'), U.queryEl('.consistency-check-result-dialog'));
-        $(U.queryEl('.consistency-check-result-dialog')).modal('show');
+    const layouter = klay.d3adapter();
+    const width = 960;
+    const height = 600;
 
-        const svg = d3.select('.image-place svg');
-        const svgGroup = svg.append('g');
-        const root = svgGroup.append('g');
+    layouter
+        .nodes(graph.nodes)
+        .links(graph.links)
+        .size([width, height])
+        .transformGroup(root)
+        .options({
+            edgeRouting: 'ORTHOGONAL',
+            intCoordinates: false
+        })
+        .defaultPortSize([2, 2])
+        .start();
 
-        // define an arrow head
-        svg.append('svg:defs')
-            .append('svg:marker')
-            .attr('id', 'end')
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 10)
-            .attr('refY', 0)
-            .attr('markerWidth', 3) // marker settings
-            .attr('markerHeight', 5)
-            .attr('orient', 'auto')
-            .style('fill', '#999')
-            .style('stroke-opacity', 0.6) // arrowhead color
-            .append('svg:path')
-            .attr('d', 'M0,-5L10,0L0,5');
+    const link = root.selectAll('.link')
+        .data(graph.links)
+        .enter()
+        .append('path')
+        .attr('class', 'link')
+        .attr('d', 'M0 0')
+        .attr('marker-end', 'url(#end)');
 
-        const nodeDict = checkRes.nodes.reduce((dict, name, i) => {
-            dict[name] = i;
-            return dict;
-        }, {});
+    // we group nodes along with their ports
+    const node = root.selectAll('.node')
+        .data(graph.nodes)
+        .enter()
+        .append('g');
 
-        const nodeWidth = 170;
-        const nodeHeight = 30;
+    node.append('rect')
+        .attr('class', (d) => {
+            const details = checkRes.details[d.name];
+            if (details === undefined || details.length === 0) {
+                return 'node valid';
+            }
+            return 'node invalid';
+        })
+        .attr('width', nodeWidth)
+        .attr('height', nodeHeight)
+        .attr('rx', 5)
+        .attr('ry', 5)
+        .attr('x', 0)
+        .attr('y', 0);
 
-        const name2Node = name => ({
-            id: nodeDict[name],
-            name,
-            width: nodeWidth,
-            height: nodeHeight
-        });
+    node.append('text')
+        .attr('x', nodeWidth / 2)
+        .attr('y', nodeHeight / 2)
+        .attr('alignment-baseline', 'middle')
+        .attr('text-anchor', 'middle')
+        .text(d => d.name)
+        .attr('font-size', '4px');
 
-        const pair2Edge = (pair, i) => ({
-            id: i + checkRes.nodes.length,
-            source: nodeDict[pair[0]],
-            target: nodeDict[pair[1]]
-        });
+    // ports
+    const port = node.selectAll('.port')
+        .data(d => d.ports)
+        .enter()
+        .append('rect')
+        .attr('class', 'port')
+        .attr('width', 2)
+        .attr('height', 2)
+        .attr('x', 0)
+        .attr('y', 0);
 
-        const graph = {
-            nodes: checkRes.nodes.map(name2Node),
-            links: checkRes.edges.map(pair2Edge)
-        };
-
-        const layouter = klay.d3adapter();
-        const width = 960;
-        const height = 600;
-
-        layouter
-            .nodes(graph.nodes)
-            .links(graph.links)
-            .size([width, height])
-            .transformGroup(root)
-            .options({
-                edgeRouting: 'ORTHOGONAL',
-                intCoordinates: false
-            })
-            .defaultPortSize([2, 2])
-            .start();
-
-        const link = root.selectAll('.link')
-            .data(graph.links)
-            .enter()
-            .append('path')
-            .attr('class', 'link')
-            .attr('d', 'M0 0')
-            .attr('marker-end', 'url(#end)');
-
-        // we group nodes along with their ports
-        const node = root.selectAll('.node')
-            .data(graph.nodes)
-            .enter()
-            .append('g');
-
-        node.append('rect')
-            .attr('class', (d) => {
-                const details = checkRes.details[d.name];
-                if (details === undefined || details.length === 0) {
-                    return 'node valid';
-                }
-                return 'node invalid';
-            })
-            .attr('width', nodeWidth)
-            .attr('height', nodeHeight)
-            .attr('rx', 5)
-            .attr('ry', 5)
-            .attr('x', 0)
-            .attr('y', 0);
-
-        node.append('text')
-            .attr('x', nodeWidth / 2)
-            .attr('y', nodeHeight / 2)
-            .attr('alignment-baseline', 'middle')
-            .attr('text-anchor', 'middle')
-            .text(d => d.name)
-            .attr('font-size', '4px');
-
-        // ports
-        const port = node.selectAll('.port')
-            .data(d => d.ports)
-            .enter()
-            .append('rect')
-            .attr('class', 'port')
-            .attr('width', 2)
-            .attr('height', 2)
-            .attr('x', 0)
-            .attr('y', 0);
-
-        // apply layout
-        layouter.on('finish', (d2) => {
+    // apply layout
+    layouter.on('finish', (d2) => {
         // apply edge routes
-            link.transition().attr('d', (d) => {
-                let path = '';
-                path += `M${d.sourcePoint.x} ${d.sourcePoint.y} `;
-                d.bendPoints.forEach((bp, i) => {
-                    path += `L${bp.x} ${bp.y} `;
-                });
-                path += `L${d.targetPoint.x} ${d.targetPoint.y} `;
-                return path;
+        link.transition().attr('d', (d) => {
+            let path = '';
+            path += `M${d.sourcePoint.x} ${d.sourcePoint.y} `;
+            d.bendPoints.forEach((bp, i) => {
+                path += `L${bp.x} ${bp.y} `;
             });
-
-            // apply node positions
-            node.transition()
-                .attr('transform', d => `translate(${d.x} ${d.y})`);
-
-            // apply port positions
-            port.transition()
-                .attr('x', d => d.x)
-                .attr('y', d => d.y);
+            path += `L${d.targetPoint.x} ${d.targetPoint.y} `;
+            return path;
         });
 
-        layouter.start();
-    };
+        // apply node positions
+        node.transition()
+            .attr('transform', d => `translate(${d.x} ${d.y})`);
 
-    exports.showDiffExample = () => {
-        U.addEl(U.queryEl('body'), U.queryEl('.show-diff-dialog'));
-        $(U.queryEl('.show-diff-dialog')).modal('show');
+        // apply port positions
+        port.transition()
+            .attr('x', d => d.x)
+            .attr('y', d => d.y);
+    });
 
-        DBMS.getLog({
-            pageNumber: 0,
-            filter: {
-                action:"setMetaInfo",
-                date:"",
-                params:"",
-                status:"OK",
-                user:""
-            }
-        }).then((data) => {
-            const el = U.clearEl(U.queryEl('.show-diff-dialog .container-fluid'));
+    layouter.start();
+};
 
-            U.addEls(el, R.aperture(2, data.requestedLog).map(pair => {
-                const row = U.qmte('.diff-row-tmpl');
-                U.addEl(U.qee(row, '.first .user'), U.makeText(pair[0][1]));
-                U.addEl(U.qee(row, '.first .time'), U.makeText(dateFormat(new Date(pair[0][2]), 'yyyy/mm/dd h:MM')));
-                const firstText = JSON.parse(pair[0][4])[0].value;
-                U.addEl(U.qee(row, '.first .text'), U.makeText(firstText));
+exports.showDiffExample = () => {
+    U.addEl(U.queryEl('body'), U.queryEl('.show-diff-dialog'));
+    $(U.queryEl('.show-diff-dialog')).modal('show');
 
-                U.addEl(U.qee(row, '.last .user'), U.makeText(pair[1][1]));
-                U.addEl(U.qee(row, '.last .time'), U.makeText(dateFormat(new Date(pair[1][2]), 'yyyy/mm/dd h:MM')));
-                const lastText = JSON.parse(pair[1][4])[0].value;
-                U.addEl(U.qee(row, '.last .text'), U.makeText(lastText));
-
-                ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
-                ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
-    //                const diff = JsDiff.diffWordsWithSpace(firstText, lastText);
-                const diff = JsDiff.diffWordsWithSpace(lastText, firstText);
-                const els = diff.map( part =>
-                    [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => {
-                    return U.addClasses(U.addEl(U.makeEl('span'), U.makeText(pair[0])), ['log-diff', pair[1]]);
-                });
-                U.addEls(U.qee(row, '.diff .text'), els);
-
-                return row;
-            }));
-        }).catch(UI.handleError);
-
-    };
-
-    const getAllSubsets = theArray => theArray.reduce((subsets, value) =>
-        subsets.concat(subsets.map(set => [value,...set])),[[]]);
-
-    exports.addGroupTestingData = () => {
-        DBMS.createProfileItem({type: 'character', name: 'text', itemType: 'text', selectedIndex:0});
-        DBMS.createProfileItem({type: 'character', name: 'string', itemType: 'string', selectedIndex:0});
-        DBMS.createProfileItem({type: 'character', name: 'checkbox', itemType: 'checkbox', selectedIndex:0});
-        DBMS.createProfileItem({type: 'character', name: 'number', itemType: 'number', selectedIndex:0});
-        DBMS.createProfileItem({type: 'character', name: 'enum', itemType: 'enum', selectedIndex:0});
-        DBMS.createProfileItem({type: 'character', name: 'multiEnum', itemType: 'multiEnum', selectedIndex:0});
-
-        DBMS.updateDefaultValue({type: "character", profileItemName:"enum", value: "1,2,3"});
-        DBMS.updateDefaultValue({type: "character", profileItemName:"multiEnum", value: "1,2,3,4"});
-
-
-        const makeChar = (name, profileItem, value) => {
-            DBMS.createProfile({type: "character", characterName: name});
-            DBMS.updateProfileField({type: "character", characterName: name, fieldName: profileItem, itemType: profileItem, value});
+    DBMS.getLog({
+        pageNumber: 0,
+        filter: {
+            action: 'setMetaInfo',
+            date: '',
+            params: '',
+            status: 'OK',
+            user: ''
         }
+    }).then((data) => {
+        const el = U.clearEl(U.queryEl('.show-diff-dialog .container-fluid'));
 
-        const makeGroup = (name, profileItem, obj) => {
-            DBMS.createGroup({groupName: name});
-            DBMS.saveFilterToGroup({groupName: name, filterModel: [R.merge(obj, {"type":profileItem,"name":"profile-" + profileItem})]});
-        }
-//
-//
-//        const enumValues = [1,2,3];
-//        enumValues.map(value => makeChar('char enum ' + value, 'enum', String(value)));
-//        getAllSubsets(enumValues).map( arr => {
-//            const obj = arr.reduce( (acc, val) => {
-//                acc[String(val)] = true;
-//                return acc;
-//            }, {});
-//            makeGroup('group enum ' + arr.join(','), 'enum', {selectedOptions: obj});
-//        });
-//
-//        const multiEnumConditions = ['every','equal','some'];
-        // bug in condition combination
-//        ['every']
-//        ['every','equal']
-//        ['every','some'] ...
-        const multiEnumValues = [1,2,3];
-        const multiEnumValues2 = [1,2,3,4];
-        const multiEnumConditions = ['every','equal'];
-        getAllSubsets(multiEnumValues2).map(value => makeChar('char multiEnum ' + value.join(','), 'multiEnum', String(value.join(','))));
+        U.addEls(el, R.aperture(2, data.requestedLog).map((pair) => {
+            const row = U.qmte('.diff-row-tmpl');
+            U.addEl(U.qee(row, '.first .user'), U.makeText(pair[0][1]));
+            U.addEl(U.qee(row, '.first .time'), U.makeText(dateFormat(new Date(pair[0][2]), 'yyyy/mm/dd h:MM')));
+            const firstText = JSON.parse(pair[0][4])[0].value;
+            U.addEl(U.qee(row, '.first .text'), U.makeText(firstText));
 
-        multiEnumConditions.map(condition => {
-            getAllSubsets(multiEnumValues).map( arr => {
-                const obj = arr.reduce( (acc, val) => {
-                    acc[String(val)] = true;
-                    return acc;
-                }, {});
-                makeGroup('group multiEnum ' + condition + ' ' + arr.join(','), 'multiEnum', {selectedOptions: obj, condition});
-            });
+            U.addEl(U.qee(row, '.last .user'), U.makeText(pair[1][1]));
+            U.addEl(U.qee(row, '.last .time'), U.makeText(dateFormat(new Date(pair[1][2]), 'yyyy/mm/dd h:MM')));
+            const lastText = JSON.parse(pair[1][4])[0].value;
+            U.addEl(U.qee(row, '.last .text'), U.makeText(lastText));
+
+            ////        const diff = JsDiff.diffChars(prevData[4] || '', rowData[4]);
+            ////        const diff = JsDiff.diffWords(prevData[4] || '', rowData[4]);
+            //                const diff = JsDiff.diffWordsWithSpace(firstText, lastText);
+            const diff = JsDiff.diffWordsWithSpace(lastText, firstText);
+            const els = diff.map(part => [part.value, (part.added ? 'added' : (part.removed ? 'removed' : 'same'))]).map(pair => U.addClasses(U.addEl(U.makeEl('span'), U.makeText(pair[0])), ['log-diff', pair[1]]));
+            U.addEls(U.qee(row, '.diff .text'), els);
+
+            return row;
+        }));
+    }).catch(UI.handleError);
+};
+
+const getAllSubsets = theArray => theArray.reduce((subsets, value) => subsets.concat(subsets.map(set => [value, ...set])), [[]]);
+
+exports.addGroupTestingData = () => {
+    DBMS.createProfileItem({
+        type: 'character', name: 'text', itemType: 'text', selectedIndex: 0
+    });
+    DBMS.createProfileItem({
+        type: 'character', name: 'string', itemType: 'string', selectedIndex: 0
+    });
+    DBMS.createProfileItem({
+        type: 'character', name: 'checkbox', itemType: 'checkbox', selectedIndex: 0
+    });
+    DBMS.createProfileItem({
+        type: 'character', name: 'number', itemType: 'number', selectedIndex: 0
+    });
+    DBMS.createProfileItem({
+        type: 'character', name: 'enum', itemType: 'enum', selectedIndex: 0
+    });
+    DBMS.createProfileItem({
+        type: 'character', name: 'multiEnum', itemType: 'multiEnum', selectedIndex: 0
+    });
+
+    DBMS.updateDefaultValue({ type: 'character', profileItemName: 'enum', value: '1,2,3' });
+    DBMS.updateDefaultValue({ type: 'character', profileItemName: 'multiEnum', value: '1,2,3,4' });
+
+
+    const makeChar = (name, profileItem, value) => {
+        DBMS.createProfile({ type: 'character', characterName: name });
+        DBMS.updateProfileField({
+            type: 'character', characterName: name, fieldName: profileItem, itemType: profileItem, value
         });
+    };
+
+    const makeGroup = (name, profileItem, obj) => {
+        DBMS.createGroup({ groupName: name });
+        DBMS.saveFilterToGroup({ groupName: name, filterModel: [R.merge(obj, { type: profileItem, name: `profile-${profileItem}` })] });
+    };
+    //
+    //
+    //        const enumValues = [1,2,3];
+    //        enumValues.map(value => makeChar('char enum ' + value, 'enum', String(value)));
+    //        getAllSubsets(enumValues).map( arr => {
+    //            const obj = arr.reduce( (acc, val) => {
+    //                acc[String(val)] = true;
+    //                return acc;
+    //            }, {});
+    //            makeGroup('group enum ' + arr.join(','), 'enum', {selectedOptions: obj});
+    //        });
+    //
+    //        const multiEnumConditions = ['every','equal','some'];
+    // bug in condition combination
+    //        ['every']
+    //        ['every','equal']
+    //        ['every','some'] ...
+    const multiEnumValues = [1, 2, 3];
+    const multiEnumValues2 = [1, 2, 3, 4];
+    const multiEnumConditions = ['every', 'equal'];
+    getAllSubsets(multiEnumValues2).map(value => makeChar(`char multiEnum ${value.join(',')}`, 'multiEnum', String(value.join(','))));
+
+    multiEnumConditions.map((condition) => {
+        getAllSubsets(multiEnumValues).map((arr) => {
+            const obj = arr.reduce((acc, val) => {
+                acc[String(val)] = true;
+                return acc;
+            }, {});
+            makeGroup(`group multiEnum ${condition} ${arr.join(',')}`, 'multiEnum', { selectedOptions: obj, condition });
+        });
+    });
 //
 //
 //        const numbers = [0,1,2,3,4];
@@ -329,5 +338,5 @@ var JsDiff = require('diff');
 //        getAllSubsets(subChars).map( arr => {
 //            makeGroup('group text ' + arr.join(''), 'text', {regexString: arr.join('')});
 //        });
-    }
+};
 // })(window.TestUtils = {});

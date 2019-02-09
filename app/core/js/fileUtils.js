@@ -13,92 +13,88 @@ See the License for the specific language governing permissions and
     limitations under the License. */
 
 const dateFormat = require('dateformat');
-const CU = require('./common/commonUtils');
 const R = require('ramda');
+const CU = require('./common/commonUtils');
 
 'use strict';
 
 // ((exports) => {
-    exports.makeNewBase = (base) => {
-        return new Promise((resolve, reject) => {
-            UI.confirm(L10n.getValue('utils-new-base-warning'), () => {
-                DBMS.setDatabase({database:R.clone(base.data)}).then(() => {
-                    resolve(true);
-                    // TestUtils.addGroupTestingData();
-                }).catch(reject);
-            }, () => resolve(false));
-        });
-    };
+exports.makeNewBase = base => new Promise((resolve, reject) => {
+    UI.confirm(L10n.getValue('utils-new-base-warning'), () => {
+        DBMS.setDatabase({ database: R.clone(base.data) }).then(() => {
+            resolve(true);
+            // TestUtils.addGroupTestingData();
+        }).catch(reject);
+    }, () => resolve(false));
+});
 
-    exports.openHelp = () => {
-        window.open('extras/doc/nims.html');
-    };
+exports.openHelp = () => {
+    window.open('extras/doc/nims.html');
+};
 
-    exports.readSingleFile = (evt) => {
-        return new Promise((resolve, reject) => {
-            // Retrieve the first (and only!) File from the FileList object
-            const f = evt.target.files[0];
+exports.readSingleFile = evt => new Promise((resolve, reject) => {
+    // Retrieve the first (and only!) File from the FileList object
+    const f = evt.target.files[0];
 
-            if (f) {
-                const r = new FileReader();
-                r.onload = (e) => {
-                    const contents = e.target.result;
-                    try {
-                        const database = JSON.parse(contents);
-                        resolve(database);
-                    } catch (err) {
-                        reject(err);
-                    }
-                };
-                r.readAsText(f);
-            } else {
-                UI.alert(L10n.getValue('utils-base-file-loading-error'));
-                reject();
+    if (f) {
+        const r = new FileReader();
+        r.onload = (e) => {
+            const contents = e.target.result;
+            try {
+                const database = JSON.parse(contents);
+                resolve(database);
+            } catch (err) {
+                reject(err);
             }
-        });
-    };
-
-    exports.saveFile = () => {
-        DBMS.getDatabase().then(database => {
-            exports.json2File(database, exports.makeFileName(`${BASE_FILE_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
-        }).catch(UI.handleError);
-    };
-
-    exports.makeFileName = (root, extension, date) => {
-        date = date || new Date();
-        const timeStr = dateFormat(date, 'dd-mmm-yyyy_HH-MM-ss');
-        const fileName = `${root}_${timeStr}`;
-        return `${CU.sanitizeStr2FileName(fileName)}.${extension}`;
-    };
-
-    exports.json2File = (str, fileName) => {
-        exports.str2File(JSON.stringify(str, null, '  '), fileName);
-    };
-
-    exports.str2File = (str, fileName) => {
-        const blob = new Blob([str], {
-            type: 'text/plain;charset=utf-8'
-        });
-        saveAs(blob, fileName);
-    };
-
-    function preprocessCsvStr(str) {
-        if (!(typeof str === 'string' || str instanceof String)) {
-            return str;
-        }
-        let result = str.replace(/"/g, '""');
-        if (result.search(/("|,|\n)/g) >= 0) {
-            result = `"${result}"`;
-        }
-        return result;
+        };
+        r.readAsText(f);
+    } else {
+        UI.alert(L10n.getValue('utils-base-file-loading-error'));
+        reject();
     }
+});
 
-    exports.arr2d2Csv = (arr, fileName) => {
-        const csv = `\ufeff${arr.map(dataArray => dataArray.map(preprocessCsvStr).join(';')).join('\n')}`;
+exports.saveFile = () => {
+    DBMS.getDatabase().then((database) => {
+        exports.json2File(database, exports.makeFileName(`${BASE_FILE_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
+    }).catch(UI.handleError);
+};
 
-        const out = new Blob([csv], {
-            type: 'text/csv;charset=utf-8;'
-        });
-        saveAs(out, exports.makeFileName(fileName, 'csv'));
-    };
+exports.makeFileName = (root, extension, date) => {
+    date = date || new Date();
+    const timeStr = dateFormat(date, 'dd-mmm-yyyy_HH-MM-ss');
+    const fileName = `${root}_${timeStr}`;
+    return `${CU.sanitizeStr2FileName(fileName)}.${extension}`;
+};
+
+exports.json2File = (str, fileName) => {
+    exports.str2File(JSON.stringify(str, null, '  '), fileName);
+};
+
+exports.str2File = (str, fileName) => {
+    const blob = new Blob([str], {
+        type: 'text/plain;charset=utf-8'
+    });
+    saveAs(blob, fileName);
+};
+
+function preprocessCsvStr(str) {
+    if (!(typeof str === 'string' || str instanceof String)) {
+        return str;
+    }
+    let result = str.replace(/"/g, '""');
+    if (result.search(/("|,|\n)/g) >= 0) {
+        result = `"${result}"`;
+    }
+    return result;
+}
+
+exports.arr2d2Csv = (arr, fileName) => {
+    const csv = `\ufeff${arr.map(dataArray => dataArray.map(preprocessCsvStr).join(';')).join('\n')}`;
+
+    const out = new Blob([csv], {
+        type: 'text/csv;charset=utf-8;'
+    });
+    saveAs(out, exports.makeFileName(fileName, 'csv'));
+};
 // })(window.FileUtils = {});

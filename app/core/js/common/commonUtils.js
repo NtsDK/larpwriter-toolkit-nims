@@ -48,8 +48,7 @@ exports.strFormat = R.curry((str, vals) => str.replace(/\{\{|\}\}|\{(\d+)\}/g, (
 exports.strFormatInsertsCount = str => (str.match(/\{\{|\}\}|\{(\d+)\}/g) || []).length;
 
 // taken from MDN https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-exports.escapeRegExp = string =>
-    string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+exports.escapeRegExp = string => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 
 // exports.colorPattern = /^#[0-9A-Fa-f]{6}$/;
 
@@ -63,11 +62,11 @@ const windowsTrailingRe = /[\. ]+$/;
 
 exports.sanitizeStr2FileName = (input, replacement) => {
     replacement = replacement || '';
-    var sanitized = input
+    const sanitized = input
         .replace(illegalRe, replacement)
         .replace(controlRe, replacement)
         .replace(reservedRe, replacement)
         .replace(windowsReservedRe, replacement)
         .replace(windowsTrailingRe, replacement);
     return sanitized.substring(0, 255);
-}
+};
