@@ -168,7 +168,7 @@ module.exports = (env, argv) => {
     config.plugins.push(new webpack.DefinePlugin({
         PRODUCT: JSON.stringify(env.product === 'server' ? 'SERVER' : 'STANDALONE'),
         MODE: JSON.stringify(env.mode === 'production' ? 'PROD' : 'DEV'),
-        BASE_FILE_NAME: 'nims',
+        BASE_FILE_NAME: JSON.stringify('nims'),
         DEV_OPTS
     }));
     return config;

@@ -17,7 +17,7 @@ const BriefingPreview = require('./briefings/briefingPreview');
 const BriefingExport = require('./briefings/briefingExport');
 const LogViewer = require('./logs/logViewer');
 const GroupSchema = require('./groups/groupSchema');
-const { ChracterEditor, PlayerEditor } = require('./profiles2/profileEditor2');
+const { CharacterEditor, PlayerEditor } = require('./profiles2/profileEditor2');
 const { CharacterConfigurer, PlayerConfigurer } = require('./profiles2/profileConfigurer2');
 const ProfileBinding2 = require('./profiles2/profileBinding2');
 const OrganizerManagement = require('./accessManager/organizerManagement');
@@ -60,7 +60,7 @@ exports.Characters = require('./tabRouting/routingTab')({
     tabs: [{
         btnName: 'filling-profile',
         viewName: 'CharacterEditor',
-        viewBody: ChracterEditor
+        viewBody: CharacterEditor
     }, {
         btnName: 'changing-profile-structure',
         viewName: 'CharacterConfigurer',

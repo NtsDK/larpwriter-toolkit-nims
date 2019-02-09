@@ -86,11 +86,10 @@ function ProfileEditorTmpl(opts) {
             PermissionInformer.getEntityNamesArray({ type: secondType, editableOnly: false }),
             DBMS.getProfileBindings()
         ]).then((results) => {
-            let [profileBindings] = results;
-            const [primaryNames, secondaryNames] = results;
-            profileBindings = opts.processBindings(profileBindings);
+            const [primaryNames, secondaryNames, profileBindings] = results;
+            const profileBindings2 = opts.processBindings(profileBindings);
             UI.enableEl(U.queryEl(`${root}.entity-filter`), primaryNames.length > 0);
-            rebuildInterface(primaryNames, secondaryNames, profileBindings);
+            rebuildInterface(primaryNames, secondaryNames, profileBindings2);
         }).catch(UI.handleError);
     };
 

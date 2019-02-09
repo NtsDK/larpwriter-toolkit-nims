@@ -49,8 +49,7 @@ module.exports = (Stories) => {
             DBMS.getStoryCharacterNamesArray({ storyName: Stories.getCurrentStoryName() }),
             DBMS.getStoryEvents({ storyName: Stories.getCurrentStoryName() })
         ]).then((results) => {
-            const [isStoryEditable, allCharacters, events] = results;
-            let [characterArray] = results;
+            const [isStoryEditable, allCharacters, characterArray, events] = results;
             const map = {};
             allCharacters.forEach((elem) => {
                 map[elem.value] = elem;
@@ -60,13 +59,13 @@ module.exports = (Stories) => {
             dataArray.sort(CU.charOrdAObject);
 
             const displayArray = dataArray.map(elem => elem.displayName);
-            characterArray = dataArray.map(elem => elem.value);
+            const characterArray2 = dataArray.map(elem => elem.value);
             U.clearEl(tableHead);
             U.clearEl(table);
 
-            U.showEl(U.queryEl(`${root} .alert.no-characters`), characterArray.length === 0);
+            U.showEl(U.queryEl(`${root} .alert.no-characters`), characterArray2.length === 0);
             U.showEl(U.queryEl(`${root} .alert.no-events`), events.length === 0);
-            U.showEl(U.queryEl(`${root} .panel-body`), events.length !== 0 && characterArray.length !== 0);
+            U.showEl(U.queryEl(`${root} .panel-body`), events.length !== 0 && characterArray2.length !== 0);
 
             UI.fillShowItemSelector(
                 U.clearEl(characterSelector),
@@ -75,7 +74,7 @@ module.exports = (Stories) => {
 
             appendTableHeader(tableHead, displayArray);
             events.forEach((event, i) => {
-                appendTableInput(table, event, i, characterArray);
+                appendTableInput(table, event, i, characterArray2);
                 UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
             });
         }).catch(UI.handleError);

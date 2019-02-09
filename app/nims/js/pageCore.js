@@ -21,8 +21,6 @@ require('vex-js/dist/css/vex-theme-default.css');
 const state = {};
 state.views = {};
 
-// exports.state = state;
-
 const tabs = {};
 
 exports.addView = (btnName, viewName, view, opts) => {
