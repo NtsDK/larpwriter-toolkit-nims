@@ -18,9 +18,9 @@ See the License for the specific language governing permissions and
 
 const vis = require('vis');
 require('vis/dist/vis.min.css');
-const R = require('ramda');
+//const R = require('ramda');
 
-const Constants = require('common/constants.js');
+//const Constants = require('dbms/constants');
 
 const PermissionInformer = require('permissionInformer');
 const NetworkSubsetsSelector = require('./networkSubsetsSelector');

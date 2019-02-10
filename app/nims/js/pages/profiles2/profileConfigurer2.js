@@ -16,9 +16,9 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const Constants = require('common/constants');
+//const Constants = require('dbms/constants');
 const PermissionInformer = require('permissionInformer');
-const R = require('ramda');
+//const R = require('ramda');
 
 
 // Character/Player profiles already have field 'name'

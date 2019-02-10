@@ -8,7 +8,7 @@ textTemplate`.split('\n');
 
 const templates = {};
 
-langs.forEach( lang => {
+langs.forEach((lang) => {
     templates[lang] = templateNames.reduce((acc, templateName) => {
         acc[templateName] = require(`./${lang}/${templateName}`);
         return acc;

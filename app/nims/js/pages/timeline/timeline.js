@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 const vis = require('vis');
 require('vis/dist/vis.min.css');
-const R = require('ramda');
+//const R = require('ramda');
 
 /* eslint-disable-next-line import/no-unresolved */
 const PermissionInformer = require('permissionInformer');

@@ -1,8 +1,8 @@
 const vis = require('vis');
 require('vis/dist/vis.min.css');
 require('./gears.css');
-const Constants = require('common/constants');
-const R = require('ramda');
+//const Constants = require('dbms/constants');
+//const R = require('ramda');
 const { saveAs } = require('file-saver');
 
 /*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>

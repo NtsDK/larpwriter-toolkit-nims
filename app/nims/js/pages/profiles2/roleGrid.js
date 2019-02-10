@@ -16,8 +16,8 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const Constants = require('common/constants');
-const R = require('ramda');
+//const Constants = require('dbms/constants');
+//const R = require('ramda');
 
 
 // ((exports) => {

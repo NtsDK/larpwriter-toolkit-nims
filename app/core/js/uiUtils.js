@@ -1,5 +1,5 @@
 const vex = require('vex-js');
-const R = require('ramda');
+//const R = require('ramda');
 const U = require('./utils');
 const L10n = require('./l10n');
 const Errors = require('./common/errors');

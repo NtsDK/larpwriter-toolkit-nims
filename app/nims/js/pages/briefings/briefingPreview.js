@@ -19,8 +19,8 @@ See the License for the specific language governing permissions and
 require('./briefing-preview.css');
 
 const PermissionInformer = require('permissionInformer');
-const Constants = require('common/constants');
-const R = require('ramda');
+//const Constants = require('dbms/constants');
+//const R = require('ramda');
 const Relations = require('./relations');
 const RelationsPreview = require('./relationsPreview');
 const Adaptations = require('../adaptations/adaptations');

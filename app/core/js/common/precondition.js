@@ -1,4 +1,4 @@
-const R = require('ramda');
+//const R = require('ramda');
 const Errors = require('./errors.js');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 

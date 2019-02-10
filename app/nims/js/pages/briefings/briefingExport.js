@@ -16,10 +16,10 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const Constants = require('common/constants');
+//const Constants = require('dbms/constants');
 const Export = require('resources/export');
 const PermissionInformer = require('permissionInformer');
-const R = require('ramda');
+//const R = require('ramda');
 
 const Mustache = require('mustache');
 const Docxtemplater = require('docxtemplater');

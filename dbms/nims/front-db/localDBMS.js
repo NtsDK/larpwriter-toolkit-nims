@@ -1,13 +1,13 @@
 const { EventEmitter } = require('events');
 const Ajv = require('ajv');
 const dateFormat = require('dateformat');
-const R = require('ramda');
+//const R = require('ramda');
 
-const Migrator = require('common/migrator');
-const Logger = require('common/logger');
-const Constants = require('common/constants');
-const Schema = require('common/schema');
-const ProjectUtils = require('common/ProjectUtils');
+//const Constants = require('dbms/constants');
+const Migrator = require('db-utils/migrator');
+const Logger = require('db-utils/logger');
+const Schema = require('db-utils/schema');
+const ProjectUtils = require('db-utils/ProjectUtils');
 const { Precondition, Errors } = require('core');
 
 const CallNotificator = require('./callNotificator');
@@ -64,7 +64,7 @@ exports.makeDBMS = function () {
     const func = R.curry((name) => {
         const before = R.keys(LocalDBMS.prototype);
         // eslint-disable-next-line global-require,import/no-dynamic-require
-        require(`../common/engine/${name}`)(LocalDBMS, opts);
+        require(`core-apis/${name}`)(LocalDBMS, opts);
         // window[name](LocalDBMS, opts);
         const after = R.keys(LocalDBMS.prototype);
         const diff = R.difference(after, before);

@@ -12,9 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-const Constants = require('common/constants');
-const ProjectUtils = require('common/ProjectUtils');
-const R = require('ramda');
+//const Constants = require('dbms/constants');
+const ProjectUtils = require('db-utils/ProjectUtils');
+//const R = require('ramda');
 
 const PermissionInformer = require('permissionInformer');
 const FilterConfiguration = require('./FilterConfiguration');

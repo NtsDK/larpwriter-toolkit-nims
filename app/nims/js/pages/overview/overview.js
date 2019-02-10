@@ -2,11 +2,11 @@ const Chart = require('chart.js');
 const dateFormat = require('dateformat');
 const PermissionInformer = require('permissionInformer');
 
-const Constants = require('common/constants');
+//const Constants = require('dbms/constants');
 
 // const {Gears, Sliders} = require('../index')
 require('./overview.css');
-const R = require('ramda');
+//const R = require('ramda');
 
 const Gears = require('../gears/gears');
 const Sliders = require('../sliders/sliders');
@@ -29,7 +29,7 @@ See the License for the specific language governing permissions and
  jQuery, DBMS
  */
 
-// const R = require("ramda");
+// //const R = require("ramda");
 
 
 // ((exports) => {

@@ -74,9 +74,10 @@ const config = {
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
-            // R: 'ramda',
+            R: 'ramda',
 
             core: 'core',
+            Constants: 'nims/constants',
             U: ['core', 'U'],
             L10n: ['core', 'L10n'],
             UI: ['core', 'UI'],
@@ -99,6 +100,8 @@ const config = {
             path.resolve(__dirname, '../app'),
             path.resolve(__dirname, '../app/nims'),
             path.resolve(__dirname, '../app/nims/js'),
+            path.resolve(__dirname, '../dbms'),
+            path.resolve(__dirname, '../dbms/nims'),
         ],
         alias: []
     }
@@ -145,12 +148,12 @@ module.exports = (env, argv) => {
     case 'standalone':
         config.entry = standaloneEntry;
         config.resolve.alias.push({
-            alias: 'nims/js/dbms/localPermissionInformer',
+            alias: 'front-db/localPermissionInformer',
             name: 'permissionInformer',
             onlyModule: true
         });
         config.resolve.alias.push({
-            alias: 'nims/js/dbms/localDBMS',
+            alias: 'front-db/localDBMS',
             name: 'DBMSFactory',
             onlyModule: true
         });

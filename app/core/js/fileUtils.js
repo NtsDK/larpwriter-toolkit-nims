@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
     limitations under the License. */
 
 const dateFormat = require('dateformat');
-const R = require('ramda');
+//const R = require('ramda');
 const { saveAs } = require('file-saver');
 const CU = require('./common/commonUtils');
 

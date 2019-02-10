@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
  */
 
 
-const R = require('ramda');
+//const R = require('ramda');
 const ProfileEditorCore = require('../profiles2/profileEditorCore');
 
 // ((exports) => {

@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const R = require('ramda');
+//const R = require('ramda');
 
 // ((exports) => {
 const root = '.text-search-tab ';

@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  Utils, Database
  */
 
-const R = require('ramda');
+//const R = require('ramda');
 const Constants = require('common/constants');
 const CallNotificator = require('./callNotificator');
 

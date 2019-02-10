@@ -32,7 +32,8 @@ if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
 }
 
 
-const { localAutoSave, runBaseSelectDialog, makeBackup } = require('./dbms/localBaseBackup')({
+// eslint-disable-next-line import/order
+const { localAutoSave, runBaseSelectDialog, makeBackup } = require('front-db/localBaseBackup')({
     initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
 });
 
@@ -87,7 +88,7 @@ function onDatabaseLoad() {
         PermissionInformer.isAdmin().then((isAdmin) => {
             $.datetimepicker.setDateFormatter('moment');
 
-            const firstTab = 'AccessManager';
+            const firstTab = 'Overview';
 
             addView('overview', 'Overview', Overview);
             addView('characters', 'Characters', Characters);

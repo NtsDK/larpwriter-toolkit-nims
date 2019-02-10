@@ -8,6 +8,8 @@ module.exports = {
         // webpack preload dependencies
         $: false,
         jQuery: false,
+        R: false,
+        Constants: false,
         core: false,
         U: false,
         L10n: false,

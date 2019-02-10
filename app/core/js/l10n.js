@@ -1,5 +1,5 @@
 const { Dictionaries, defaultLang } = require('resources/translations');
-const R = require('ramda');
+//const R = require('ramda');
 const CU = require('./common/commonUtils.js');
 const U = require('./utils.js');
 // import { setAttr } from "./utils.js";

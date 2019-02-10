@@ -1,4 +1,4 @@
-const R = require('ramda');
+//const R = require('ramda');
 
 const Timing = {};
 module.exports = Timing;

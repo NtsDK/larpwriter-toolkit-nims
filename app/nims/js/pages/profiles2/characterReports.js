@@ -16,8 +16,8 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const ProjectUtils = require('common/ProjectUtils.js');
-const R = require('ramda');
+const ProjectUtils = require('db-utils/ProjectUtils');
+//const R = require('ramda');
 
 
 // ((exports) => {

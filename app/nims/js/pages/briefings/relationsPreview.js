@@ -16,9 +16,9 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const ProjectUtils = require('common/ProjectUtils');
-const Constants = require('common/constants');
-const R = require('ramda');
+const ProjectUtils = require('db-utils/ProjectUtils');
+//const Constants = require('dbms/constants');
+//const R = require('ramda');
 
 const relationTableHeader = ['character-name', 'direct-relation', 'relation-origin', 'reverse-relation'];
 const partialTableHeader = ['character-name', 'direct-relation'];

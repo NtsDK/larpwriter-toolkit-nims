@@ -1,5 +1,5 @@
-const R = require('ramda');
-const Constants = require('./constants');
+//const R = require('ramda');
+const Constants = require('nims/constants');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");

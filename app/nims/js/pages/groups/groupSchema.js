@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
     limitations under the License. */
 
 const { d3, klay } = require('core/libs/klay-adapter');
-const R = require('ramda');
+//const R = require('ramda');
 
 const state = {};
 const rootTab = '.group-schema-tab';

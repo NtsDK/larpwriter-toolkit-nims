@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
     limitations under the License. */
 
 const PermissionInformer = require('permissionInformer');
-const R = require('ramda');
+//const R = require('ramda');
 const RelationsPreview = require('./relationsPreview');
 
 const root = '.relations-tab ';

@@ -1,11 +1,12 @@
-const R = require('ramda');
+/* eslint-disable no-undef */
+//const R = require('ramda');
 const Constants = require('common/constants');
 
 if (PRODUCT === 'SERVER') {
     describe('serverSmokeTest', () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
-        let getChecks = [
+        const getChecks = [
             // accessManagerAPI
             {
                 func: 'getManagementInfo',
@@ -47,11 +48,11 @@ if (PRODUCT === 'SERVER') {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
         checks.forEach((check) => {
             it(check.name, (done) => {
-                DBMS[check.func](check.args).then( res => {
+                DBMS[check.func](check.args).then((res) => {
                     // expect(res).toBeNull();
                     expect(res).not.toBeNull();
                     done();
-                }).catch(err => {
+                }).catch((err) => {
                     if (err) console.error(err);
                     expect(err).toBeNull();
                     done();
@@ -67,11 +68,11 @@ if (PRODUCT === 'SERVER') {
         //      39: LocalDBMS.prototype.assignAdmin = function (name, callback) {
         //      166: LocalDBMS.prototype.publishPermissionsUpdate = function (callback) {
 
-        let setChecks = [
+        const setChecks = [
             // accessManagerAPI
             {
                 func: 'assignEditor',
-                args: {name:'admin'},
+                args: { name: 'admin' },
             },
             {
                 func: 'removeEditor',
@@ -79,77 +80,86 @@ if (PRODUCT === 'SERVER') {
             },
             {
                 func: 'changeAdaptationRightsMode',
-                args: {mode:'ByCharacter'},
+                args: { mode: 'ByCharacter' },
             },
             {
                 func: 'createPlayer',
-                args: {userName: 'testPlayer1', password:'2233'},
+                args: { userName: 'testPlayer1', password: '2233' },
             },
             {
                 func: 'createProfile',
-                args: {type: 'player', characterName: 'testPlayer2'},
+                args: { type: 'player', characterName: 'testPlayer2' },
             },
             {
                 func: 'createPlayerLogin',
-                args: {userName: 'testPlayer2', password: '3322'},
+                args: { userName: 'testPlayer2', password: '3322' },
             },
             {
                 func: 'changePlayerPassword',
-                args: {userName: 'testPlayer2', newPassword: '33224455'},
+                args: { userName: 'testPlayer2', newPassword: '33224455' },
             },
             {
                 func: 'createOrganizer',
-                args: {name: 'Organizer1', password: '654654'},
+                args: { name: 'Organizer1', password: '654654' },
             },
             {
                 func: 'changeOrganizerPassword',
-                args: {userName: 'Organizer1', newPassword: '987987'},
+                args: { userName: 'Organizer1', newPassword: '987987' },
             },
             {
                 func: 'assignPermission',
-                args: {userName: 'Organizer1', names: {
-                    characters: [], stories: [], groups: [], players: ['testPlayer1']
-                }},
+                args: {
+                    userName: 'Organizer1',
+                    names: {
+                        characters: [], stories: [], groups: [], players: ['testPlayer1']
+                    }
+                },
             },
             {
                 func: 'removePermission',
-                args: {userName: 'Organizer1', names: {
-                    characters: [], stories: [], groups: [], players: ['testPlayer1']
-                }},
+                args: {
+                    userName: 'Organizer1',
+                    names: {
+                        characters: [], stories: [], groups: [], players: ['testPlayer1']
+                    }
+                },
             },
             {
                 func: 'assignPermission',
-                args: {userName: 'admin',names: {
-                    characters: [], stories: [], groups: [], players: ['testPlayer1']
-                }},
+                args: {
+                    userName: 'admin',
+                    names: {
+                        characters: [], stories: [], groups: [], players: ['testPlayer1']
+                    }
+                },
             },
             {
                 func: 'removeOrganizer',
-                args: {name: 'Organizer1'},
+                args: { name: 'Organizer1' },
             },
             {
                 func: 'removePlayerLogin',
-                args: {userName: 'testPlayer2'},
+                args: { userName: 'testPlayer2' },
             },
             {
                 func: 'removeProfile',
-                args: {type: 'player', characterName: 'testPlayer2'},
+                args: { type: 'player', characterName: 'testPlayer2' },
             },
             {
                 func: 'removeProfile',
-                args: {type:'player', characterName: 'testPlayer1'},
+                args: { type: 'player', characterName: 'testPlayer1' },
             },
             {
                 func: 'setWelcomeText',
-                args: {text: '78787658765'},
+                args: { text: '78787658765' },
             },
             {
                 func: 'setPlayerOption',
-                args: {name: 'allowCharacterCreation', value: true}
+                args: { name: 'allowCharacterCreation', value: true }
             },
             {
                 func: 'setPlayerOption',
-                args: {name: 'allowCharacterCreation', value:  false}
+                args: { name: 'allowCharacterCreation', value: false }
             },
         ];
 
@@ -182,7 +192,7 @@ if (PRODUCT === 'SERVER') {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
         checks2.forEach((check) => {
             it(check.name, (done) => {
-                DBMS[check.func](check.args).then( res => {
+                DBMS[check.func](check.args).then((res) => {
                     // expect(res).toBeNull();
                     // if (check.gettable === true) {
                     //     expect(err).toBeNull();
@@ -194,11 +204,12 @@ if (PRODUCT === 'SERVER') {
                     } else {
                         // expect(err).toBeUndefined();
                         // if we are here then function is okay
-                        expect({k:2}).not.toBeNull()
+                        expect({ k: 2 }).not.toBeNull();
                     }
                     // if (check.forInconsistency === true) {
+                    // eslint-disable-next-line no-constant-condition
                     if (true) {
-                        DBMS.getConsistencyCheckResult().then(checkResult => {
+                        DBMS.getConsistencyCheckResult().then((checkResult) => {
                             // expect(err2).toBeNull();
                             if (checkResult.errors.length > 0) {
                                 console.error(check.name);
@@ -206,7 +217,7 @@ if (PRODUCT === 'SERVER') {
                             }
                             expect(checkResult.errors.length > 0).toBe(false);
                             done();
-                        }).catch(err2 => {
+                        }).catch((err2) => {
                             expect(err2).toBeNull();
                             done();
                         });
@@ -214,7 +225,7 @@ if (PRODUCT === 'SERVER') {
                         done();
                     }
                     // expect(res).not.toBeNull();
-                }).catch(err => {
+                }).catch((err) => {
                     if (err) console.error(err);
                     expect(err).toBeNull();
                     done();

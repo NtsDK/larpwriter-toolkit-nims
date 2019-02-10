@@ -1,18 +1,19 @@
-const R = require('ramda');
+/* eslint-disable no-undef */
+//const R = require('ramda');
 const EmptyBase = require('resources/emptyBase');
 
 describe('baseAPI', () => {
     let oldBase;
 
     beforeAll((done) => {
-        DBMS.getDatabase().then(data => {
+        DBMS.getDatabase().then((data) => {
             oldBase = data;
             DBMS.setDatabase({
                 database: R.clone(EmptyBase.data)
-            }).then(() => done()).catch( err => {
+            }).then(() => done()).catch((err) => {
                 throw err;
             });
-        }).catch(err => {
+        }).catch((err) => {
             throw err;
         });
     });
@@ -20,7 +21,7 @@ describe('baseAPI', () => {
     afterAll((done) => {
         DBMS.setDatabase({
             database: oldBase
-        }).then(() => done()).catch( err => {
+        }).then(() => done()).catch((err) => {
             throw err;
         });
     });
@@ -29,10 +30,10 @@ describe('baseAPI', () => {
 
     funcs2.forEach((func) => {
         it(func, (done) => {
-            DBMS[func]().then(data => {
+            DBMS[func]().then((data) => {
                 expect(data).not.toBeNull();
                 done();
-            }).catch(err => {
+            }).catch((err) => {
                 expect(err).toBeNull();
                 done();
             });
@@ -45,7 +46,7 @@ describe('baseAPI', () => {
         }).then(() => {
             expect(123).not.toBeNull();
             done();
-        }).catch( err => {
+        }).catch((err) => {
             expect(err).toBeUndefined();
             done();
             // throw err;
@@ -57,7 +58,7 @@ describe('baseAPI', () => {
         }).then(() => {
             // expect(123).not.toBeNull();
             // done();
-        }).catch( err => {
+        }).catch((err) => {
             expect(err).not.toBeNull();
             done();
             // throw err;
@@ -67,64 +68,64 @@ describe('baseAPI', () => {
     //  'name', 'date', 'preGameDate', 'description'
     const setChecks = [
 
-    {
-        func: 'setMetaInfoString',
-        args: {name: 'name', value: '123'},
-        getter: 'getMetaInfo',
-        getterArgs: {},
-        getterCheck: (data, done) => {
-            expect(data.name).toEqual('123');
-            done();
-        }
-    },
-    {
-        func: 'setMetaInfoString',
-        args: {name: 'description', value: '123'},
-        getter: 'getMetaInfo',
-        getterArgs: {},
-        getterCheck: (data, done) => {
-            expect(data.description).toEqual('123');
-            done();
-        }
-    },
-    {
-        func: 'setMetaInfoDate',
-        args: {name: 'date', value: '123'},
-        getter: 'getMetaInfo',
-        getterArgs: {},
-        getterCheck: (data, done) => {
-            expect(data.date).toEqual('123');
-            done();
-        }
-    },
-    {
-        func: 'setMetaInfoDate',
-        args: {name: 'preGameDate', value: '123'},
-        getter: 'getMetaInfo',
-        getterArgs: {},
-        getterCheck: (data, done) => {
-            expect(data.preGameDate).toEqual('123');
-            done();
-        }
-    },
-    {
-        func: 'setMetaInfoString',
-        args: {name: 654, value: '123'},
-        errMessageId: 'errors-argument-is-not-a-string',
-        errParameters: [654]
-    },
-    {
-        func: 'setMetaInfoString',
-        args: {name: '65465654', value: '123'},
-        errMessageId: 'errors-unsupported-type-in-list',
-        errParameters: ['65465654']
-    },
-    {
-        func: 'setMetaInfoString',
-        args: {name: 'description', value: 123},
-        errMessageId: 'errors-argument-is-not-a-string',
-        errParameters: [123]
-    },
+        {
+            func: 'setMetaInfoString',
+            args: { name: 'name', value: '123' },
+            getter: 'getMetaInfo',
+            getterArgs: {},
+            getterCheck: (data, done) => {
+                expect(data.name).toEqual('123');
+                done();
+            }
+        },
+        {
+            func: 'setMetaInfoString',
+            args: { name: 'description', value: '123' },
+            getter: 'getMetaInfo',
+            getterArgs: {},
+            getterCheck: (data, done) => {
+                expect(data.description).toEqual('123');
+                done();
+            }
+        },
+        {
+            func: 'setMetaInfoDate',
+            args: { name: 'date', value: '123' },
+            getter: 'getMetaInfo',
+            getterArgs: {},
+            getterCheck: (data, done) => {
+                expect(data.date).toEqual('123');
+                done();
+            }
+        },
+        {
+            func: 'setMetaInfoDate',
+            args: { name: 'preGameDate', value: '123' },
+            getter: 'getMetaInfo',
+            getterArgs: {},
+            getterCheck: (data, done) => {
+                expect(data.preGameDate).toEqual('123');
+                done();
+            }
+        },
+        {
+            func: 'setMetaInfoString',
+            args: { name: 654, value: '123' },
+            errMessageId: 'errors-argument-is-not-a-string',
+            errParameters: [654]
+        },
+        {
+            func: 'setMetaInfoString',
+            args: { name: '65465654', value: '123' },
+            errMessageId: 'errors-unsupported-type-in-list',
+            errParameters: ['65465654']
+        },
+        {
+            func: 'setMetaInfoString',
+            args: { name: 'description', value: 123 },
+            errMessageId: 'errors-argument-is-not-a-string',
+            errParameters: [123]
+        },
     ];
 
     const checks = R.groupBy(el => (el.errMessageId !== undefined ? 'errChecks' : 'okChecks'), setChecks);
@@ -144,9 +145,8 @@ describe('baseAPI', () => {
 
     checks.okChecks.forEach((check) => {
         it(check.name, (done) => {
-
-            DBMS[check.func](check.args).then(res=> {
-                DBMS[check.getter](check.getterArgs).then(data => {
+            DBMS[check.func](check.args).then((res) => {
+                DBMS[check.getter](check.getterArgs).then((data) => {
                     check.getterCheck(data, done);
                 });
             });
