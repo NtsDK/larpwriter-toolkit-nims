@@ -76,14 +76,19 @@ const config = {
             jQuery: 'jquery',
             R: 'ramda',
 
+            // app
             core: 'core',
-            Constants: 'nims/constants',
             U: ['core', 'U'],
             L10n: ['core', 'L10n'],
             UI: ['core', 'UI'],
-            CU: ['core', 'CU'],
-            Errors: ['core', 'Errors'],
             FileUtils: ['core', 'FileUtils'],
+
+            // dbms
+            Constants: 'nims/constants',
+            CU: 'core/commonUtils',
+            Errors: 'core/errors',
+            // CU: ['core', 'CU'],
+            // Errors: ['core', 'Errors'],
         }),
         new CleanWebpackPlugin([distPath], {
             root: process.cwd(),

@@ -3,7 +3,4 @@ exports.UI = require('./js/uiUtils');
 exports.FileUtils = require('./js/fileUtils');
 exports.TestUtils = require('./js/testUtils');
 exports.LocalBackupCore = require('./js/localAutoSave');
-exports.CU = require('./js/common/commonUtils');
-exports.Errors = require('./js/common/errors');
-exports.Precondition = require('./js/common/precondition');
 exports.U = require('./js/utils');

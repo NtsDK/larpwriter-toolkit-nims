@@ -22,9 +22,9 @@
     
     "pppprenims-wp-watch-server": "npm run nims-lint",
     "nims-lint": "npm run core-eclint && npm run nims-eclint && npm run core-eslint && npm run nims-eslint",
-    "core-eclint": "eclint fix app\\core\\js && eclint fix config",
+    "core-eclint": "eclint fix app\\core\\js && eclint fix dbms\\core && eclint fix config",
     "nims-eclint": "eclint fix app\\nims && eclint fix dbms\\nims",
-    "core-eslint": "eslint app\\core\\js --fix && eslint config --fix",
+    "core-eslint": "eslint app\\core\\js --fix && eslint dbms\\core --fix && eslint config --fix",
     "nims-eslint": "eslint app\\nims --fix && eslint dbms\\nims --fix",
     "nims-lint2": "\"node_modules/.bin/eslint\" app\\nims\\js --fix && \"node_modules/.bin/eslint\" app\\nims\\specs --fix"
   },

@@ -2,9 +2,9 @@ const vex = require('vex-js');
 //const R = require('ramda');
 const U = require('./utils');
 const L10n = require('./l10n');
-const Errors = require('./common/errors');
+// const Errors = require('./common/errors');
 const Timing = require('./Timing');
-const CU = require('./common/commonUtils');
+// const CU = require('./common/commonUtils');
 
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 

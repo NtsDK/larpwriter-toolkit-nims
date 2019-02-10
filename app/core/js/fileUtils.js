@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 const dateFormat = require('dateformat');
 //const R = require('ramda');
 const { saveAs } = require('file-saver');
-const CU = require('./common/commonUtils');
+// const CU = require('./common/commonUtils');
 
 exports.makeNewBase = base => new Promise((resolve, reject) => {
     UI.confirm(L10n.getValue('utils-new-base-warning'), () => {

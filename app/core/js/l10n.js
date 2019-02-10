@@ -1,7 +1,7 @@
 const { Dictionaries, defaultLang } = require('resources/translations');
 //const R = require('ramda');
-const CU = require('./common/commonUtils.js');
-const U = require('./utils.js');
+// const CU = require('./common/commonUtils.js');
+const U = require('./utils');
 // import { setAttr } from "./utils.js";
 /*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
