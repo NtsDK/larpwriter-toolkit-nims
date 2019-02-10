@@ -157,8 +157,8 @@ module.exports = (env, argv) => {
             onlyModule: true
         });
         config.resolve.alias.push({
-            alias: 'front-db/localDBMS',
-            name: 'DBMSFactory',
+            alias: 'front-db/DbmsFactory',
+            name: 'DbmsFactory',
             onlyModule: true
         });
         break;

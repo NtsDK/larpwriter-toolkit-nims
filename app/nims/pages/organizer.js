@@ -1,5 +1,5 @@
 const PermissionInformer = require('permissionInformer');
-const { makeDBMS } = require('DBMSFactory');
+const { makeDBMS } = require('DbmsFactory');
 
 const { TestUtils, LocalBackupCore } = require('core');
 const DemoBase = require('resources/demoBase');
