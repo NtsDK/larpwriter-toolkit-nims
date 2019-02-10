@@ -5,12 +5,12 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const serverEntry = {
-    organizer: './app/nims/js/organizer.js',
-    index: './app/nims/js/index.js',
-    player: './app/nims/js/player.js',
+    organizer: './app/nims/pages/organizer.js',
+    index: './app/nims/pages/index.js',
+    player: './app/nims/pages/player.js',
 };
 const standaloneEntry = {
-    organizer: './app/nims/js/organizer.js',
+    organizer: './app/nims/pages/organizer.js',
 };
 
 const distPath = path.resolve(__dirname, '../dist');
@@ -99,7 +99,6 @@ const config = {
             'node_modules',
             path.resolve(__dirname, '../app'),
             path.resolve(__dirname, '../app/nims'),
-            path.resolve(__dirname, '../app/nims/js'),
             path.resolve(__dirname, '../dbms'),
             path.resolve(__dirname, '../dbms/nims'),
         ],

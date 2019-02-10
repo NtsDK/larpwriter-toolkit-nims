@@ -3,9 +3,9 @@ const { makeDBMS } = require('DBMSFactory');
 const {
     initPage, makeButton, btnOpts, postLogout, refreshView,
     addNavSeparator, addNavEl, testView, addView, setFirstTab
-} = require('./pageCore');
+} = require('pages/pageCore');
 
-require('../player.html');
+require('./player.html');
 
 require('../style/common.css');
 require('../style/icons.css');

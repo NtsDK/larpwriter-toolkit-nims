@@ -8,9 +8,9 @@ const EmptyBase = require('resources/emptyBase');
 const {
     initPage, makeButton, btnOpts, postLogout, refreshView,
     addNavSeparator, addNavEl, testView, addView, setFirstTab
-} = require('./pageCore');
+} = require('pages/pageCore');
 
-require('../nims.html');
+require('./nims.html');
 
 require('../style/common.css');
 require('../style/icons.css');
@@ -40,7 +40,7 @@ const { localAutoSave, runBaseSelectDialog, makeBackup } = require('front-db/loc
 const {
     Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
     Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager
-} = require('./pages');
+} = require('views');
 
 let firstBaseLoad = PRODUCT === 'STANDALONE';
 
