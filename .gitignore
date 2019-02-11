@@ -4,3 +4,4 @@ node_modules/
 dist/
 .settings/
 .project
+*-nims-base*.json
