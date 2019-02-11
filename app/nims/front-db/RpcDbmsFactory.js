@@ -17,7 +17,7 @@ See the License for the specific language governing permissions and
  */
 
 //const R = require('ramda');
-const Constants = require('common/constants');
+// const Constants = require('common/constants');
 const CallNotificator = require('./callNotificator');
 
 /* eslint-disable func-names,prefer-rest-params */

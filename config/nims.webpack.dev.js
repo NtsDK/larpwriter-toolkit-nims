@@ -136,13 +136,13 @@ module.exports = (env, argv) => {
     case 'server':
         config.entry = serverEntry;
         config.resolve.alias.push({
-            alias: 'nims/js/dbms/remotePermissionInformer',
+            alias: 'front-db/remotePermissionInformer',
             name: 'permissionInformer',
             onlyModule: true
         });
         config.resolve.alias.push({
-            alias: 'nims/js/dbms/remoteDBMS',
-            name: 'DBMSFactory',
+            alias: 'front-db/RpcDbmsFactory',
+            name: 'DbmsFactory',
             onlyModule: true
         });
         break;

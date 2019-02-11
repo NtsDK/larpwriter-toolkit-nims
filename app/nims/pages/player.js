@@ -1,4 +1,4 @@
-const { makeDBMS } = require('DBMSFactory');
+const { makeDBMS } = require('DbmsFactory');
 
 const {
     initPage, makeButton, btnOpts, postLogout, refreshView,
@@ -12,7 +12,7 @@ require('../style/icons.css');
 require('../style/style.css');
 require('../style/experimental.css');
 
-const { Player, About } = require('./pages');
+const { Player, About } = require('views');
 
 exports.onPageLoad = () => {
     initPage();

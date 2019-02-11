@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 //const R = require('ramda');
-const Constants = require('common/constants');
+// const Constants = require('common/constants');
 
 if (PRODUCT === 'SERVER') {
     describe('serverSmokeTest', () => {
