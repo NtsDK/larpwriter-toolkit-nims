@@ -1,5 +1,5 @@
 const PermissionInformer = require('permissionInformer');
-const { makeDBMS } = require('DbmsFactory');
+const DbmsFactory = require('DbmsFactory');
 
 const { TestUtils, LocalBackupCore } = require('core');
 const DemoBase = require('resources/demoBase');
@@ -42,12 +42,19 @@ const {
     Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager
 } = require('views');
 
+const logModule = require('front-db/consoleLogModule');
+const CallNotificator = require('front-db/callNotificator');
+
 let firstBaseLoad = PRODUCT === 'STANDALONE';
 
 if (PRODUCT === 'STANDALONE') {
     exports.onPageLoad = () => {
         initPage();
-        window.DBMS = makeDBMS();
+        window.DBMS = DbmsFactory({
+            logModule,
+            projectName: PROJECT_NAME,
+            proxies: [CallNotificator]
+        }).preparedDb;
         if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
             DBMS.setDatabase({ database: DemoBase.data }).then(onBaseLoaded, UI.handleError);
         } else {

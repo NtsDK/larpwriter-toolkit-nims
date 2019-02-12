@@ -373,7 +373,7 @@ const apiInfoObj = R.mergeAll(R.values(apiInfo));
 
 exports.permissionAPIList = R.keys(apiInfoObj);
 
-exports.applyPermissionProxy = function (dbms, PC, Errors) {
+exports.applyPermissionProxy = R.curry(function (makeValidationError, dbms) {
     return new Proxy(dbms, {
         get(target, prop) {
             function isFunction(obj) {
@@ -384,7 +384,7 @@ exports.applyPermissionProxy = function (dbms, PC, Errors) {
             //     return target[prop];
             // }
             if (target[prop] === undefined) {
-                return () => Promise.reject(PC.makeValidationError(unknownCommand));
+                return () => Promise.reject(makeValidationError(unknownCommand));
             }
 
 
@@ -397,7 +397,7 @@ exports.applyPermissionProxy = function (dbms, PC, Errors) {
                     return new Promise((resolve, reject) => {
                         // apiInfoObj[prop].apply(thisArg, argumentsList);
                         if (apiInfoObj[prop] === undefined) {
-                            reject(PC.makeValidationError(unknownCommand));
+                            reject(makeValidationError(unknownCommand));
                         }
 
                         const arr = argumentsList.length === 1 ? [{}, argumentsList[0]] : R.clone(argumentsList);
@@ -409,7 +409,7 @@ exports.applyPermissionProxy = function (dbms, PC, Errors) {
                             // target.apply(thisArg, argumentsList).then(resolve, reject);
                             target2.apply(dbms, argumentsList).then(resolve, reject);
                             // target.apply(dbms, argumentsList).then(resolve, reject);
-                        }, err => reject(err instanceof Error ? err : PC.makeValidationError(err)));
+                        }, err => reject(err instanceof Error ? err : makeValidationError(err)));
                     });
                     // apiInfoObj[prop].apply(thisArg, argumentsList).then(() => {
                     //     return target.apply(thisArg, argumentsList);
@@ -425,4 +425,4 @@ exports.applyPermissionProxy = function (dbms, PC, Errors) {
             // }
         },
     });
-};
+});

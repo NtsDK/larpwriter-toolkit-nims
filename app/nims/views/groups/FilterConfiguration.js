@@ -19,7 +19,7 @@ See the License for the specific language governing permissions and
 /* eslint-disable func-names */
 
 //const Constants = require('dbms/constants');
-const ProjectUtils = require('db-utils/ProjectUtils');
+const ProjectUtils = require('db-utils/projectUtils');
 //const R = require('ramda');
 
 function FilterConfiguration(info) {

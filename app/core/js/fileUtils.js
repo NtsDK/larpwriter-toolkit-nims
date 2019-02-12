@@ -54,7 +54,7 @@ exports.readSingleFile = evt => new Promise((resolve, reject) => {
 
 exports.saveFile = () => {
     DBMS.getDatabase().then((database) => {
-        exports.json2File(database, exports.makeFileName(`${BASE_FILE_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
+        exports.json2File(database, exports.makeFileName(`${PROJECT_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
     }).catch(UI.handleError);
 };
 

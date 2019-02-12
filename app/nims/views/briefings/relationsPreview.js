@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
  Utils, DBMS
  */
 
-const ProjectUtils = require('db-utils/ProjectUtils');
+const ProjectUtils = require('db-utils/projectUtils');
 //const Constants = require('dbms/constants');
 //const R = require('ramda');
 

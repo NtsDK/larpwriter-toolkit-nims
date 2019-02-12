@@ -2,41 +2,41 @@
 const permissionProxy = require('./permissionProxy');
 const permissionProxySpec = require('./permissionProxy.spec');
 
-exports.initAPIs = function (commonFunc, serverFunc) {
-    ['baseAPI',
-        'consistencyCheckAPI',
-        'statisticsAPI',
-        'profilesAPI',
-        'profileBindingAPI',
+// exports.initAPIs = function (commonFunc, serverFunc) {
+//     ['baseAPI',
+//         'consistencyCheckAPI',
+//         'statisticsAPI',
+//         'profilesAPI',
+//         'profileBindingAPI',
 
-        'profileViewAPI',
+//         'profileViewAPI',
 
-        'groupsAPI',
-        'groupSchemaAPI',
-        'relationsAPI',
-        'briefingExportAPI',
+//         'groupsAPI',
+//         'groupSchemaAPI',
+//         'relationsAPI',
+//         'briefingExportAPI',
 
-        'profileConfigurerAPI',
-        'entityAPI',
-        'storyBaseAPI',
-        'storyEventsAPI',
-        'storyCharactersAPI',
+//         'profileConfigurerAPI',
+//         'entityAPI',
+//         'storyBaseAPI',
+//         'storyEventsAPI',
+//         'storyCharactersAPI',
 
-        'storyViewAPI',
-        'storyAdaptationsAPI',
-        'gearsAPI',
-        'slidersAPI',
-        'textSearchAPI'].map(commonFunc);
+//         'storyViewAPI',
+//         'storyAdaptationsAPI',
+//         'gearsAPI',
+//         'slidersAPI',
+//         'textSearchAPI'].map(commonFunc);
 
-    ['userAPI',
-        'organizerManagementAPI',
-        'playerManagementAPI',
-        'entityManagementAPI',
-        // 'permissionAPI',
-        'permissionSummaryAPI'].map(serverFunc);
+//     ['userAPI',
+//         'organizerManagementAPI',
+//         'playerManagementAPI',
+//         'entityManagementAPI',
+//         // 'permissionAPI',
+//         'permissionSummaryAPI'].map(serverFunc);
 
-    commonFunc('logAPI');
-};
+//     commonFunc('logAPI');
+// };
 
 exports.populateDatabase = function (database) {
 };

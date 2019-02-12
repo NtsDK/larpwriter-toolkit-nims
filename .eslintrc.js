@@ -26,7 +26,7 @@ module.exports = {
         MODE: false,
         DEV_OPTS: false,
         PRODUCT: false,
-        BASE_FILE_NAME: false
+        PROJECT_NAME: false
     },
 //    "extends": "eslint:recommended",
     "extends": "airbnb" ,

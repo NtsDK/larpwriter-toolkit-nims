@@ -157,7 +157,8 @@ module.exports = (env, argv) => {
             onlyModule: true
         });
         config.resolve.alias.push({
-            alias: 'front-db/DbmsFactory',
+            alias: 'core/serverDbmsFactory',
+            // alias: 'core/DbmsFactory',
             name: 'DbmsFactory',
             onlyModule: true
         });
@@ -176,7 +177,7 @@ module.exports = (env, argv) => {
     config.plugins.push(new webpack.DefinePlugin({
         PRODUCT: JSON.stringify(env.product === 'server' ? 'SERVER' : 'STANDALONE'),
         MODE: JSON.stringify(env.mode === 'production' ? 'PROD' : 'DEV'),
-        BASE_FILE_NAME: JSON.stringify('nims'),
+        PROJECT_NAME: JSON.stringify('nims'),
         DEV_OPTS
     }));
     return config;

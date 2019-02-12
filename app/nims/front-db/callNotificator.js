@@ -55,7 +55,7 @@ function onCallFail() {
     }, notificationTimeout);
 }
 
-exports.applyCallNotificatorProxy = function (dbms) {
+module.exports = function (dbms) {
     return new Proxy(dbms, {
         get(target, prop) {
             function isFunction(obj) {

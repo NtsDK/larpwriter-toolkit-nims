@@ -54,12 +54,16 @@ const emptyBase = require('resources/emptyBase');
 
 // projectName, enabledLogOverrides, logOverridesObject
 module.exports = function ({
-    projectName, serverSpecific, logModule, lastDb
+    projectName, serverSpecific, logModule, proxies
+    // lastDb
 } = {}) {
-    const { enabledLogOverrides, logOverridesObject } = serverSpecific;
+    serverSpecific = serverSpecific || {};
+    let { enabledLogOverrides } = serverSpecific;
+    const { logOverridesObject } = serverSpecific;
+
     const log = logModule(module);
     // const config = require('../config');
-
+    enabledLogOverrides = enabledLogOverrides || false;
 
     // const projectName = config.get('inits:projectName');
     const projectAPIs = require(`../${projectName}/server-apis`);
@@ -96,20 +100,189 @@ module.exports = function ({
         this._init(listeners);
     }
 
+    const apiModules = {
+        'baseAPI': require('../nims/core-apis/baseAPI'),
+        'consistencyCheckAPI': require('../nims/core-apis/consistencyCheckAPI'),
+        'statisticsAPI': require('../nims/core-apis/statisticsAPI'),
+        'profilesAPI': require('../nims/core-apis/profilesAPI'),
+        'profileBindingAPI': require('../nims/core-apis/profileBindingAPI'),
+
+        'profileViewAPI': require('../nims/core-apis/profileViewAPI'),
+        'groupsAPI': require('../nims/core-apis/groupsAPI'),
+        'groupSchemaAPI': require('../nims/core-apis/groupSchemaAPI'),
+        'relationsAPI': require('../nims/core-apis/relationsAPI'),
+        'briefingExportAPI': require('../nims/core-apis/briefingExportAPI'),
+
+        'profileConfigurerAPI': require('../nims/core-apis/profileConfigurerAPI'),
+        'entityAPI': require('../nims/core-apis/entityAPI'),
+        'storyBaseAPI': require('../nims/core-apis/storyBaseAPI'),
+        'storyEventsAPI': require('../nims/core-apis/storyEventsAPI'),
+        'storyCharactersAPI': require('../nims/core-apis/storyCharactersAPI'),
+
+        'storyViewAPI': require('../nims/core-apis/storyViewAPI'),
+        'storyAdaptationsAPI': require('../nims/core-apis/storyAdaptationsAPI'),
+        'gearsAPI': require('../nims/core-apis/gearsAPI'),
+        'slidersAPI': require('../nims/core-apis/slidersAPI'),
+        'textSearchAPI': require('../nims/core-apis/textSearchAPI'),
+
+        // 'userAPI': require('../nims/server-apis/userAPI'),
+        // 'organizerManagementAPI': require('../nims/server-apis/organizerManagementAPI'),
+        // 'playerManagementAPI': require('../nims/server-apis/playerManagementAPI'),
+        // 'entityManagementAPI': require('../nims/server-apis/entityManagementAPI'),
+        // 'permissionSummaryAPI': require('../nims/server-apis/permissionSummaryAPI'),
+
+        'logAPI': require('../nims/core-apis/logAPI'),
+
+        // 'consistencyCheckAPI',
+        // 'statisticsAPI',
+        // 'profilesAPI',
+        // 'profileBindingAPI',
+        // 'profileViewAPI',
+
+        // 'groupsAPI',
+        // 'groupSchemaAPI',
+        // 'relationsAPI',
+        // 'briefingExportAPI',
+        // 'profileConfigurerAPI',
+
+        // 'entityAPI',
+        // 'storyBaseAPI',
+        // 'storyEventsAPI',
+        // 'storyCharactersAPI',
+
+        // 'storyViewAPI',
+        // 'storyAdaptationsAPI',
+        // 'gearsAPI',
+        // 'slidersAPI',
+        // 'textSearchAPI',
+
+        // 'userAPI',
+        // 'organizerManagementAPI',
+        // 'playerManagementAPI',
+        // 'entityManagementAPI',
+        // 'permissionSummaryAPI',
+        // 'logAPI'
+    };
+
+    // function initAPIs(commonFunc, serverFunc) {
+    const apiInitOrder = [
+        'baseAPI',
+        'consistencyCheckAPI',
+        'statisticsAPI',
+        'profilesAPI',
+        'profileBindingAPI',
+
+        'profileViewAPI',
+
+        'groupsAPI',
+        'groupSchemaAPI',
+        'relationsAPI',
+        'briefingExportAPI',
+
+        'profileConfigurerAPI',
+        'entityAPI',
+        'storyBaseAPI',
+        'storyEventsAPI',
+        'storyCharactersAPI',
+
+        'storyViewAPI',
+        'storyAdaptationsAPI',
+        'gearsAPI',
+        'slidersAPI',
+        'textSearchAPI',
+
+        // 'userAPI',
+        // 'organizerManagementAPI',
+        // 'playerManagementAPI',
+        // 'entityManagementAPI',
+        // 'permissionSummaryAPI',
+        'logAPI'];
+
     const funcList = {};
-    const func = R.curry((path2, name) => {
+    const func = (apiName) => {
         const before = R.keys(LocalDBMS.prototype);
-        require(path2 + name)(LocalDBMS, opts);
+        apiModules[apiName](LocalDBMS, opts);
+        // require(path2 + name)(LocalDBMS, opts);
         const after = R.keys(LocalDBMS.prototype);
         const diff = R.difference(after, before);
-        log.info(`${name} ${diff}`);
-        funcList[name] = R.zipObj(diff, R.repeat(true, diff.length));
-    });
+        log.info(`${apiName} ${diff}`);
+        funcList[apiName] = R.zipObj(diff, R.repeat(true, diff.length));
+    };
 
-    const commonFunc = func('nims/core-apis/');
-    const serverFunc = func('../nims/server-apis/');
+    // const commonFunc = func('nims/core-apis/');
+    // const serverFunc = func('../nims/server-apis/');
 
-    projectAPIs.initAPIs(commonFunc, serverFunc);
+    apiInitOrder.forEach(func);
+
+    // function initAPIs(commonFunc, serverFunc) {
+    //     [
+    //     'baseAPI',
+    //     'consistencyCheckAPI',
+    //     'statisticsAPI',
+    //     'profilesAPI',
+    //     'profileBindingAPI',
+
+    //     'profileViewAPI',
+
+    //     'groupsAPI',
+    //     'groupSchemaAPI',
+    //     'relationsAPI',
+    //     'briefingExportAPI',
+
+    //     'profileConfigurerAPI',
+    //     'entityAPI',
+    //     'storyBaseAPI',
+    //     'storyEventsAPI',
+    //     'storyCharactersAPI',
+
+    //     'storyViewAPI',
+    //     'storyAdaptationsAPI',
+    //     'gearsAPI',
+    //     'slidersAPI',
+    //     'textSearchAPI'].map(commonFunc);
+
+    //     ['userAPI',
+    //     'organizerManagementAPI',
+    //     'playerManagementAPI',
+    //     'entityManagementAPI',
+    //     'permissionSummaryAPI'].map(serverFunc);
+
+    //     commonFunc('logAPI');
+    //     // ['baseAPI',
+    //     // 'consistencyCheckAPI',
+    //     // 'statisticsAPI',
+    //     // 'profilesAPI',
+    //     // 'profileBindingAPI',
+
+    //     // 'profileViewAPI',
+
+    //     // 'groupsAPI',
+    //     // 'groupSchemaAPI',
+    //     // 'relationsAPI',
+    //     // 'briefingExportAPI',
+
+    //     // 'profileConfigurerAPI',
+    //     // 'entityAPI',
+    //     // 'storyBaseAPI',
+    //     // 'storyEventsAPI',
+    //     // 'storyCharactersAPI',
+
+    //     // 'storyViewAPI',
+    //     // 'storyAdaptationsAPI',
+    //     // 'gearsAPI',
+    //     // 'slidersAPI',
+    //     // 'textSearchAPI'].map(commonFunc);
+
+    //     // ['userAPI',
+    //     // 'organizerManagementAPI',
+    //     // 'playerManagementAPI',
+    //     // 'entityManagementAPI',
+    //     // 'permissionSummaryAPI'].map(serverFunc);
+
+    //     // commonFunc('logAPI');
+    // }
+
+    // initAPIs(commonFunc, serverFunc);
 
     if (enabledLogOverrides) {
         Logger.apiInfo = R.merge(Logger.apiInfo, logOverridesObject);
@@ -118,9 +291,15 @@ module.exports = function ({
     //     Logger.apiInfo = R.merge(Logger.apiInfo, config.get('logOverrides:overrides'));
     // }
 
-    const baseAPIList = R.keys(R.mergeAll(R.values(funcList)));
-    const loggerAPIList = R.keys(R.mergeAll(R.values(Logger.apiInfo)));
-    const permissionAPIList = projectAPIs.getPermissionAPIList();
+    let baseAPIList = R.keys(R.mergeAll(R.values(funcList)));
+    let loggerAPIList = R.keys(R.mergeAll(R.values(Logger.apiInfo)));
+    let permissionAPIList = projectAPIs.getPermissionAPIList();
+
+    if(PRODUCT === 'STANDALONE'){
+        baseAPIList = R.difference(baseAPIList, Logger.offlineIgnoreList);
+        loggerAPIList = R.difference(loggerAPIList, Logger.offlineIgnoreList);
+        permissionAPIList = R.difference(permissionAPIList, Logger.offlineIgnoreList);
+    }
 
     const loggerDiff = R.symmetricDifference(loggerAPIList, baseAPIList);
     const permissionDiff = R.symmetricDifference(permissionAPIList, baseAPIList);
@@ -133,21 +312,21 @@ module.exports = function ({
     }
 
 
-    let db = new LocalDBMS();
+    const db = new LocalDBMS();
 
     //const permissionProxy = require(`./${projectName}/permissionProxy`);
 
-    if (lastDb !== null) {
-        // projectAPIs.populateDatabase(lastDb);
-        db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished);
-    } else {
-        log.info('init from default base');
-        console.log(emptyBase.data);
-        // projectAPIs.populateDatabase(emptyBase.data);
-        db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
-    }
+    // if (lastDb !== null) {
+    //     // projectAPIs.populateDatabase(lastDb);
+    //     db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished);
+    // } else {
+    //     log.info('init from default base');
+    //     console.log(emptyBase.data);
+    //     // projectAPIs.populateDatabase(emptyBase.data);
+    //     db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
+    // }
 
-    db = Logger.applyLoggerProxy(db, true);
+    const rawDb = Logger.applyLoggerProxy(db, PRODUCT !== 'STANDALONE');
 
     function onSetDatabaseFinished() {
         db.getConsistencyCheckResult().then((checkResult) => {
@@ -161,12 +340,16 @@ module.exports = function ({
         }, log.error);
     }
 
+    let preparedDb = rawDb;
+    if(proxies) {
+        preparedDb = proxies.reduce((db2, proxy) => {
+            return proxy(db2);
+        }, preparedDb);
+    }
+
     return {
-        db,
-        apiDb: projectAPIs.applyPermissionProxy(db, Precondition, Errors)
+        rawDb,
+        preparedDb
+        // apiDb: projectAPIs.applyPermissionProxy(Precondition.makeValidationError, db)
     };
-
-    // exports.db = db;
-
-    // exports.apiDb = projectAPIs.applyPermissionProxy(db, Precondition, Errors);
 };

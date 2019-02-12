@@ -7,7 +7,7 @@ const dateFormat = require('dateformat');
 const Migrator = require('db-utils/migrator');
 const Logger = require('db-utils/logger');
 const Schema = require('db-utils/schema');
-const ProjectUtils = require('db-utils/ProjectUtils');
+const ProjectUtils = require('db-utils/projectUtils');
 const Precondition = require('core/precondition');
 
 const CallNotificator = require('./callNotificator');
