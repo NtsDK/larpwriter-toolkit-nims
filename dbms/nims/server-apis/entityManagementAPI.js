@@ -1,5 +1,5 @@
-const { PermissionError } = require('../../error');
-const config = require('../../config');
+// const { PermissionError } = require('../../error');
+// const config = require('../../config');
 
 module.exports = function (LocalDBMS, opts) {
     const {

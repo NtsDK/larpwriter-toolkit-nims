@@ -9,11 +9,34 @@ const session = require('express-session');
 const errorHandler = require('errorhandler');
 const compression = require('compression');
 const cors = require('cors');
+const serverErrors = require('./error');
 
 const config = require('./config');
-const log = require('./libs/log')(module);
+const logModule = require('./libs/log');
+
+const log = logModule(module);
 const { HttpError } = require('./error');
-require('./autosave');
+
+const loader = require('./autosave/databaseLoader');
+
+const lastDb = loader.loadLastDatabase();
+
+const dbms = require('../dbms/core/serverDbmsFactory')({
+    projectName: config.get('inits:projectName'),
+    serverSpecific: {
+        enabledLogOverrides: config.get('logOverrides:enabled'),
+        logOverridesObject: config.get('logOverrides:overrides'),
+        enabledPlayerAccess: config.get('playerAccess:enabled'),
+        adminLogin: config.get('inits:adminLogin'),
+        adminPass: config.get('inits:adminPass'),
+        createOrganizer: config.get('inits:createOrganizer'),
+        serverErrors,
+    },
+    logModule,
+    lastDb
+});
+
+require('./autosave')(dbms.db);
 
 const app = express();
 
@@ -51,9 +74,9 @@ if (config.get('compression:enabled')) {
 }
 log.info(`compression enabled: ${config.get('compression:enabled')}`);
 
-require('./boot')(app);
-require('./middlewares')(app);
-require('./routes')(app);
+require('./boot')(app, dbms);
+require('./middlewares')(app, dbms);
+require('./routes')(app, dbms);
 
 app.use(express.static(config.get('frontendPath')));
 

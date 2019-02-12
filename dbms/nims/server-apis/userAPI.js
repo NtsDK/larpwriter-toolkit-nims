@@ -1,11 +1,12 @@
 const crypto = require('crypto');
 const util = require('util');
 const R = require('ramda');
-const config = require('../../config');
-const log = require('../../libs/log')(module);
+// const config = require('../../config');
+// const log = require('../../libs/log')(module);
 
 module.exports = function (LocalDBMS, opts) {
-    const { Errors } = opts;
+    const { Errors, serverSpecific, logModule } = opts;
+    const log = logModule(module);
 
     const typePrecondition = function (type) {
         if (type !== 'organizer' && type !== 'player') {
@@ -15,7 +16,7 @@ module.exports = function (LocalDBMS, opts) {
     };
 
     const signUpPrecondition = function (password, confirmPassword, database) {
-        if (!config.get('playerAccess:enabled')) {
+        if (!serverSpecific.enabledPlayerAccess) {
             return [null, 'errors-sign-up-operation-is-forbidden'];
         } if (!database.ManagementInfo.PlayersOptions.allowPlayerCreation) {
             return [null, 'errors-sign-up-operation-is-forbidden'];
@@ -106,7 +107,7 @@ module.exports = function (LocalDBMS, opts) {
                 .then((user) => {
                     if (user !== undefined) {
                         resolve(user);
-                    } else if (config.get('playerAccess:enabled')) {
+                    } else if (serverSpecific.enabledPlayerAccess) {
                         checkUser({
                             username, type: 'player', password, userStorage: that
                         })

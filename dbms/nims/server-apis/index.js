@@ -1,4 +1,6 @@
 // const applyPermissionProxy = require('./permissionProxy').applyPermissionProxy;
+const permissionProxy = require('./permissionProxy');
+const permissionProxySpec = require('./permissionProxy.spec');
 
 exports.initAPIs = function (commonFunc, serverFunc) {
     ['baseAPI',
@@ -40,13 +42,13 @@ exports.populateDatabase = function (database) {
 };
 
 exports.getPermissionAPIList = function () {
-    return require('./permissionProxy').permissionAPIList;
+    return permissionProxy.permissionAPIList;
 };
 
+
 exports.applyPermissionProxy = function (database, PC, Errors) {
-    // const permissionProxy = require()
-    const proxy = require('./permissionProxy').applyPermissionProxy(database, PC, Errors);
-    require('./permissionProxy.spec').test(proxy, database);
+    const proxy = permissionProxy.applyPermissionProxy(database, PC, Errors);
+    permissionProxySpec.test(proxy, database);
     return proxy;
     //return database;
 };

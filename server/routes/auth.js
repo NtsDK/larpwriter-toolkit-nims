@@ -1,8 +1,9 @@
 const passport = require('passport');
-const userStorage = require('../dbms').db;
+// const userStorage = require('../dbms').db;
 const log = require('../libs/log')(module);
 
-module.exports = function (app) {
+module.exports = function (app, dbms) {
+    const userStorage = dbms.db;
     app.post('/login', passport.authenticate('local'), (req, res) => {
         res.redirect('page.html');
     });

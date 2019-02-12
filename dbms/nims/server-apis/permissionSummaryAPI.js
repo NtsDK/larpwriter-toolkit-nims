@@ -1,8 +1,9 @@
-const { HttpError } = require('../../error');
-const log = require('../../libs/log')(module);
+// const { HttpError } = require('../../error');
+// const log = require('../../libs/log')(module);
 
 module.exports = function (LocalDBMS, opts) {
-    const { R } = opts;
+    const { R, logModule, serverSpecific } = opts;
+    const log = logModule(module);
 
     let clients = [];
 
@@ -46,7 +47,7 @@ module.exports = function (LocalDBMS, opts) {
 
     LocalDBMS.prototype.getPermissionsSummary = function (req, res, next) {
         if (!req.session.username) {
-            setTimeout(() => next(new HttpError(401, 'User is not authorized')), 5000);
+            setTimeout(() => next(new serverSpecific.serverErrors.HttpError(401, 'User is not authorized')), 5000);
             return;
         }
 
@@ -60,7 +61,7 @@ module.exports = function (LocalDBMS, opts) {
         log.info('subscribe');
 
         if (!req.session.username) {
-            setTimeout(() => next(new HttpError(401, 'User is not authorized')), 5000);
+            setTimeout(() => next(new serverSpecific.serverErrors.HttpError(401, 'User is not authorized')), 5000);
             return;
         }
 

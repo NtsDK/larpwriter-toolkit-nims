@@ -1,9 +1,9 @@
-const { PermissionError } = require('../../error');
-const config = require('../../config');
+// const { PermissionError } = require('../../error');
+// const config = require('../../config');
 
 module.exports = function (LocalDBMS, opts) {
     const {
-        R, addListener, Errors, Constants, CU, PC
+        R, addListener, Errors, Constants, CU, PC, serverSpecific
     } = opts;
 
     LocalDBMS.prototype.getManagementInfo = function () {
@@ -127,8 +127,8 @@ module.exports = function (LocalDBMS, opts) {
             const { ManagementInfo } = this.database;
             ManagementInfo.UsersInfo = {};
 
-            const adminLogin = config.get('inits:adminLogin');
-            this.createOrganizer({ name: adminLogin, password: config.get('inits:adminPass') }).then(() => {
+            const { adminLogin, adminPass } = serverSpecific;
+            this.createOrganizer({ name: adminLogin, password: adminPass }).then(() => {
                 ManagementInfo.admin = adminLogin;
                 ManagementInfo.editor = null;
                 ManagementInfo.adaptationRights = 'ByStory';
@@ -138,7 +138,7 @@ module.exports = function (LocalDBMS, opts) {
                     allowPlayerCreation: false,
                     allowCharacterCreation: false,
                 };
-                if (config.get('inits:createOrganizer')) {
+                if (serverSpecific.createOrganizer) {
                     this.createOrganizer({ name: 'user', password: 'user' }).catch(reject);
                 }
             }, reject);
