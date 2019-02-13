@@ -28,12 +28,6 @@ const Ajv = require('ajv');
 const path = 'common/';
 // const path = 'js/common/';
 // const path = pathTool.join(config.get('frontendPath'), 'js/common/');
-const Logger = require('nims/db-utils/logger');
-const Migrator = require('nims/db-utils/migrator');
-const ProjectUtils = require('nims/db-utils/projectUtils');
-const Schema = require('nims/db-utils/schema');
-
-const Constants = require('nims/constants');
 
 const Errors = require('core/errors');
 const CommonUtils = require('core/commonUtils');
@@ -54,10 +48,12 @@ const emptyBase = require('resources/emptyBase');
 
 // projectName, enabledLogOverrides, logOverridesObject
 module.exports = function ({
-    projectName, serverSpecific, logModule, proxies
+    projectName, serverSpecific = {}, logModule, proxies, apis
     // lastDb
 } = {}) {
-    serverSpecific = serverSpecific || {};
+    // serverSpecific = serverSpecific || {};
+    const { Logger, Permissions } = apis;
+
     let { enabledLogOverrides } = serverSpecific;
     const { logOverridesObject } = serverSpecific;
 
@@ -66,7 +62,7 @@ module.exports = function ({
     enabledLogOverrides = enabledLogOverrides || false;
 
     // const projectName = config.get('inits:projectName');
-    const projectAPIs = require(`../${projectName}/server-apis`);
+    // const projectAPIs = require(`../${projectName}/server-apis`);
 
     const listeners = {};
 
@@ -75,18 +71,15 @@ module.exports = function ({
         listeners[eventName].push(callback);
     }
 
-    const opts = {
-        Migrator,
+    const opts = R.mergeLeft({
+        // PU: ProjectUtils,
         CommonUtils,
         CU: CommonUtils,
-        ProjectUtils,
-        PU: ProjectUtils,
         Precondition,
         PC: Precondition,
         EventEmitter,
         R,
         Ajv,
-        Schema,
         Errors,
         addListener,
         Constants,
@@ -94,114 +87,16 @@ module.exports = function ({
         dateFormat,
         serverSpecific,
         logModule
-    };
+    }, apis.deps);
 
     function LocalDBMS() {
         this._init(listeners);
     }
 
-    const apiModules = {
-        'baseAPI': require('../nims/core-apis/baseAPI'),
-        'consistencyCheckAPI': require('../nims/core-apis/consistencyCheckAPI'),
-        'statisticsAPI': require('../nims/core-apis/statisticsAPI'),
-        'profilesAPI': require('../nims/core-apis/profilesAPI'),
-        'profileBindingAPI': require('../nims/core-apis/profileBindingAPI'),
-
-        'profileViewAPI': require('../nims/core-apis/profileViewAPI'),
-        'groupsAPI': require('../nims/core-apis/groupsAPI'),
-        'groupSchemaAPI': require('../nims/core-apis/groupSchemaAPI'),
-        'relationsAPI': require('../nims/core-apis/relationsAPI'),
-        'briefingExportAPI': require('../nims/core-apis/briefingExportAPI'),
-
-        'profileConfigurerAPI': require('../nims/core-apis/profileConfigurerAPI'),
-        'entityAPI': require('../nims/core-apis/entityAPI'),
-        'storyBaseAPI': require('../nims/core-apis/storyBaseAPI'),
-        'storyEventsAPI': require('../nims/core-apis/storyEventsAPI'),
-        'storyCharactersAPI': require('../nims/core-apis/storyCharactersAPI'),
-
-        'storyViewAPI': require('../nims/core-apis/storyViewAPI'),
-        'storyAdaptationsAPI': require('../nims/core-apis/storyAdaptationsAPI'),
-        'gearsAPI': require('../nims/core-apis/gearsAPI'),
-        'slidersAPI': require('../nims/core-apis/slidersAPI'),
-        'textSearchAPI': require('../nims/core-apis/textSearchAPI'),
-
-        // 'userAPI': require('../nims/server-apis/userAPI'),
-        // 'organizerManagementAPI': require('../nims/server-apis/organizerManagementAPI'),
-        // 'playerManagementAPI': require('../nims/server-apis/playerManagementAPI'),
-        // 'entityManagementAPI': require('../nims/server-apis/entityManagementAPI'),
-        // 'permissionSummaryAPI': require('../nims/server-apis/permissionSummaryAPI'),
-
-        'logAPI': require('../nims/core-apis/logAPI'),
-
-        // 'consistencyCheckAPI',
-        // 'statisticsAPI',
-        // 'profilesAPI',
-        // 'profileBindingAPI',
-        // 'profileViewAPI',
-
-        // 'groupsAPI',
-        // 'groupSchemaAPI',
-        // 'relationsAPI',
-        // 'briefingExportAPI',
-        // 'profileConfigurerAPI',
-
-        // 'entityAPI',
-        // 'storyBaseAPI',
-        // 'storyEventsAPI',
-        // 'storyCharactersAPI',
-
-        // 'storyViewAPI',
-        // 'storyAdaptationsAPI',
-        // 'gearsAPI',
-        // 'slidersAPI',
-        // 'textSearchAPI',
-
-        // 'userAPI',
-        // 'organizerManagementAPI',
-        // 'playerManagementAPI',
-        // 'entityManagementAPI',
-        // 'permissionSummaryAPI',
-        // 'logAPI'
-    };
-
-    // function initAPIs(commonFunc, serverFunc) {
-    const apiInitOrder = [
-        'baseAPI',
-        'consistencyCheckAPI',
-        'statisticsAPI',
-        'profilesAPI',
-        'profileBindingAPI',
-
-        'profileViewAPI',
-
-        'groupsAPI',
-        'groupSchemaAPI',
-        'relationsAPI',
-        'briefingExportAPI',
-
-        'profileConfigurerAPI',
-        'entityAPI',
-        'storyBaseAPI',
-        'storyEventsAPI',
-        'storyCharactersAPI',
-
-        'storyViewAPI',
-        'storyAdaptationsAPI',
-        'gearsAPI',
-        'slidersAPI',
-        'textSearchAPI',
-
-        // 'userAPI',
-        // 'organizerManagementAPI',
-        // 'playerManagementAPI',
-        // 'entityManagementAPI',
-        // 'permissionSummaryAPI',
-        'logAPI'];
-
     const funcList = {};
     const func = (apiName) => {
         const before = R.keys(LocalDBMS.prototype);
-        apiModules[apiName](LocalDBMS, opts);
+        apis.apiModules[apiName](LocalDBMS, opts);
         // require(path2 + name)(LocalDBMS, opts);
         const after = R.keys(LocalDBMS.prototype);
         const diff = R.difference(after, before);
@@ -209,80 +104,7 @@ module.exports = function ({
         funcList[apiName] = R.zipObj(diff, R.repeat(true, diff.length));
     };
 
-    // const commonFunc = func('nims/core-apis/');
-    // const serverFunc = func('../nims/server-apis/');
-
-    apiInitOrder.forEach(func);
-
-    // function initAPIs(commonFunc, serverFunc) {
-    //     [
-    //     'baseAPI',
-    //     'consistencyCheckAPI',
-    //     'statisticsAPI',
-    //     'profilesAPI',
-    //     'profileBindingAPI',
-
-    //     'profileViewAPI',
-
-    //     'groupsAPI',
-    //     'groupSchemaAPI',
-    //     'relationsAPI',
-    //     'briefingExportAPI',
-
-    //     'profileConfigurerAPI',
-    //     'entityAPI',
-    //     'storyBaseAPI',
-    //     'storyEventsAPI',
-    //     'storyCharactersAPI',
-
-    //     'storyViewAPI',
-    //     'storyAdaptationsAPI',
-    //     'gearsAPI',
-    //     'slidersAPI',
-    //     'textSearchAPI'].map(commonFunc);
-
-    //     ['userAPI',
-    //     'organizerManagementAPI',
-    //     'playerManagementAPI',
-    //     'entityManagementAPI',
-    //     'permissionSummaryAPI'].map(serverFunc);
-
-    //     commonFunc('logAPI');
-    //     // ['baseAPI',
-    //     // 'consistencyCheckAPI',
-    //     // 'statisticsAPI',
-    //     // 'profilesAPI',
-    //     // 'profileBindingAPI',
-
-    //     // 'profileViewAPI',
-
-    //     // 'groupsAPI',
-    //     // 'groupSchemaAPI',
-    //     // 'relationsAPI',
-    //     // 'briefingExportAPI',
-
-    //     // 'profileConfigurerAPI',
-    //     // 'entityAPI',
-    //     // 'storyBaseAPI',
-    //     // 'storyEventsAPI',
-    //     // 'storyCharactersAPI',
-
-    //     // 'storyViewAPI',
-    //     // 'storyAdaptationsAPI',
-    //     // 'gearsAPI',
-    //     // 'slidersAPI',
-    //     // 'textSearchAPI'].map(commonFunc);
-
-    //     // ['userAPI',
-    //     // 'organizerManagementAPI',
-    //     // 'playerManagementAPI',
-    //     // 'entityManagementAPI',
-    //     // 'permissionSummaryAPI'].map(serverFunc);
-
-    //     // commonFunc('logAPI');
-    // }
-
-    // initAPIs(commonFunc, serverFunc);
+    apis.apiApplyOrder.forEach(func);
 
     if (enabledLogOverrides) {
         Logger.apiInfo = R.merge(Logger.apiInfo, logOverridesObject);
@@ -291,12 +113,12 @@ module.exports = function ({
     //     Logger.apiInfo = R.merge(Logger.apiInfo, config.get('logOverrides:overrides'));
     // }
 
-    let baseAPIList = R.keys(R.mergeAll(R.values(funcList)));
+    const baseAPIList = R.keys(R.mergeAll(R.values(funcList)));
     let loggerAPIList = R.keys(R.mergeAll(R.values(Logger.apiInfo)));
-    let permissionAPIList = projectAPIs.getPermissionAPIList();
+    let permissionAPIList = Permissions.getPermissionAPIList();
 
-    if(PRODUCT === 'STANDALONE'){
-        baseAPIList = R.difference(baseAPIList, Logger.offlineIgnoreList);
+    if (PRODUCT === 'STANDALONE') {
+        // baseAPIList = R.difference(baseAPIList, Logger.offlineIgnoreList);
         loggerAPIList = R.difference(loggerAPIList, Logger.offlineIgnoreList);
         permissionAPIList = R.difference(permissionAPIList, Logger.offlineIgnoreList);
     }
@@ -341,10 +163,8 @@ module.exports = function ({
     }
 
     let preparedDb = rawDb;
-    if(proxies) {
-        preparedDb = proxies.reduce((db2, proxy) => {
-            return proxy(db2);
-        }, preparedDb);
+    if (proxies) {
+        preparedDb = proxies.reduce((db2, proxy) => proxy(db2), preparedDb);
     }
 
     return {

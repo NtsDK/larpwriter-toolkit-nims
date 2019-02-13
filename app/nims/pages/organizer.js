@@ -1,5 +1,6 @@
 const PermissionInformer = require('permissionInformer');
 const DbmsFactory = require('DbmsFactory');
+const apis = require('apis');
 
 const { TestUtils, LocalBackupCore } = require('core');
 const DemoBase = require('resources/demoBase');
@@ -53,7 +54,8 @@ if (PRODUCT === 'STANDALONE') {
         window.DBMS = DbmsFactory({
             logModule,
             projectName: PROJECT_NAME,
-            proxies: [CallNotificator]
+            proxies: [CallNotificator],
+            apis
         }).preparedDb;
         if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
             DBMS.setDatabase({ database: DemoBase.data }).then(onBaseLoaded, UI.handleError);

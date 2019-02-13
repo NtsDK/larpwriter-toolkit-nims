@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function groupsAPI(LocalDBMS, opts) {
         const {
-            R, Constants, Errors, addListener, CU, PC, PU
+            R, Constants, Errors, addListener, CU, PC, ProjectUtils: PU
         } = opts;
 
         LocalDBMS.prototype.getGroupNamesArray = function () {

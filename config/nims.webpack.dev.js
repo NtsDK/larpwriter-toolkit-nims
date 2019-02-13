@@ -157,6 +157,11 @@ module.exports = (env, argv) => {
             onlyModule: true
         });
         config.resolve.alias.push({
+            alias: 'nims/standaloneApis',
+            name: 'apis',
+            onlyModule: true
+        });
+        config.resolve.alias.push({
             alias: 'core/serverDbmsFactory',
             // alias: 'core/DbmsFactory',
             name: 'DbmsFactory',
