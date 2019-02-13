@@ -20,7 +20,9 @@
     "adminLogin":"admin",
     "adminPass":"zxpoYR65",
     "projectName":"nims",
-    "createMaster":false
+    "createMaster":false,
+    "apiModule":"../dbms/nims/serverApis",
+    "emptyBaseModule": "../app/nims/resources/emptyBase"
   },
   "frontendPath" : "I:\\workspaces\\nodeclipse\\NIMS\\dist",
   "https": {

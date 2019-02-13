@@ -23,7 +23,7 @@ const CallNotificator = require('./callNotificator');
 /* eslint-disable func-names,prefer-rest-params */
 
 
-exports.makeDBMS = function () {
+module.exports = function () {
     const showNotification = true;
     const notificationTimeout = 2000;
     //const notificationTimeout = 10000;
@@ -110,5 +110,5 @@ exports.makeDBMS = function () {
     });
 
     // return proxy;
-    return CallNotificator.applyCallNotificatorProxy(proxy);
+    return CallNotificator(proxy);
 };

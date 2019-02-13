@@ -29,9 +29,9 @@ const path = 'common/';
 // const path = 'js/common/';
 // const path = pathTool.join(config.get('frontendPath'), 'js/common/');
 
-const Errors = require('core/errors');
-const CommonUtils = require('core/commonUtils');
-const Precondition = require('core/precondition');
+const Errors = require('./errors');
+const CommonUtils = require('./commonUtils');
+const Precondition = require('./precondition');
 // const Logger = require(`${path}logger`);
 // const Migrator = require(`${path}migrator`);
 // const Constants = require(`${path}constants`);
@@ -43,7 +43,7 @@ const Precondition = require('core/precondition');
 
 //var baseExample = require(path + 'baseExample');
 // eslint-disable-next-line import/no-unresolved
-const emptyBase = require('resources/emptyBase');
+// const emptyBase = require('resources/emptyBase');
 // const log = require('../libs/log')(module);
 
 // projectName, enabledLogOverrides, logOverridesObject
@@ -82,7 +82,7 @@ module.exports = function ({
         Ajv,
         Errors,
         addListener,
-        Constants,
+        // Constants,
         dbmsUtils: {},
         dateFormat,
         serverSpecific,
@@ -138,29 +138,9 @@ module.exports = function ({
 
     //const permissionProxy = require(`./${projectName}/permissionProxy`);
 
-    // if (lastDb !== null) {
-    //     // projectAPIs.populateDatabase(lastDb);
-    //     db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished);
-    // } else {
-    //     log.info('init from default base');
-    //     console.log(emptyBase.data);
-    //     // projectAPIs.populateDatabase(emptyBase.data);
-    //     db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
-    // }
-
     const rawDb = Logger.applyLoggerProxy(db, isServer);
 
-    function onSetDatabaseFinished() {
-        db.getConsistencyCheckResult().then((checkResult) => {
-            const consoleLog = str => console.error(str);
-            checkResult.errors.forEach(consoleLog);
-            if (checkResult.errors.length > 0) {
-                log.info('overview-consistency-problem-detected');
-            } else {
-                log.info('Consistency check didn\'t find errors');
-            }
-        }, log.error);
-    }
+
 
     let preparedDb = rawDb;
     if (proxies) {
@@ -168,6 +148,7 @@ module.exports = function ({
     }
 
     return {
+        db,
         rawDb,
         preparedDb
         // apiDb: projectAPIs.applyPermissionProxy(Precondition.makeValidationError, db)

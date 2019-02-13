@@ -145,6 +145,11 @@ module.exports = (env, argv) => {
             name: 'DbmsFactory',
             onlyModule: true
         });
+        config.resolve.alias.push({
+            alias: 'nims/stub',
+            name: 'apis',
+            onlyModule: true
+        });
         break;
     default:
         console.error(`Unknown product "${argv.product}" switch to default: standalone`);

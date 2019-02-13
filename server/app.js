@@ -20,6 +20,10 @@ const { HttpError } = require('./error');
 const loader = require('./autosave/databaseLoader');
 
 const lastDb = loader.loadLastDatabase();
+const emptyBase = require(config.get('inits:emptyBaseModule'));
+
+// eslint-disable-next-line import/no-dynamic-require
+const apis = require(config.get('inits:apiModule'));
 
 const dbms = require('../dbms/core/serverDbmsFactory')({
     projectName: config.get('inits:projectName'),
@@ -33,8 +37,33 @@ const dbms = require('../dbms/core/serverDbmsFactory')({
         serverErrors,
     },
     logModule,
-    lastDb
+    // lastDb,
+    apis,
+    isServer: true,
+    proxies: [apis.permissionProxy]
 });
+
+function onSetDatabaseFinished() {
+    dbms.db.getConsistencyCheckResult().then((checkResult) => {
+        const consoleLog = str => console.error(str);
+        checkResult.errors.forEach(consoleLog);
+        if (checkResult.errors.length > 0) {
+            log.info('overview-consistency-problem-detected');
+        } else {
+            log.info('Consistency check didn\'t find errors');
+        }
+    }, log.error);
+}
+
+if (lastDb !== null) {
+    // projectAPIs.populateDatabase(lastDb);
+    dbms.db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished);
+} else {
+    log.info('init from default base');
+    console.log(emptyBase.data);
+    // projectAPIs.populateDatabase(emptyBase.data);
+    dbms.db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
+}
 
 require('./autosave')(dbms.db);
 

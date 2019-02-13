@@ -67,7 +67,7 @@ if (PRODUCT === 'STANDALONE') {
 } else {
     exports.onPageLoad = () => {
         initPage();
-        window.DBMS = makeDBMS();
+        window.DBMS = DbmsFactory();
         consistencyCheck((checkResult) => {
             consistencyCheckAlert(checkResult);
             onDatabaseLoad();

@@ -1,4 +1,4 @@
-const { makeDBMS } = require('DbmsFactory');
+const DbmsFactory = require('DbmsFactory');
 
 const {
     initPage, makeButton, btnOpts, postLogout, refreshView,
@@ -16,7 +16,7 @@ const { Player, About } = require('views');
 
 exports.onPageLoad = () => {
     initPage();
-    window.DBMS = makeDBMS();
+    window.DBMS = DbmsFactory();
 
     addView('player', 'Player', Player);
     addNavSeparator();

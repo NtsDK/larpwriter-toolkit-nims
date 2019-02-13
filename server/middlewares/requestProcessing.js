@@ -15,14 +15,14 @@ function startsWith(str1, str2) {
     return str1.substring(0, str2.length) === str2;
 }
 
-module.exports = ({ db, apiDb } = {}) => {
+module.exports = ({ db, preparedDb } = {}) => {
     function onGet(req, res, next) {
         const urlParsed = url.parse(req.url, true);
         const command = urlParsed.pathname.substring(1);
         const params = urlParsed.query.params ? JSON.parse(urlParsed.query.params) : [];
         log.info(`Command: ${command}, params: ${params}`);
         params.push(req.user);
-        apiDb[command](...params).then((result) => {
+        preparedDb[command](...params).then((result) => {
             setHeader(res);
             res.end(stringify(result));
         }, next);
@@ -35,7 +35,7 @@ module.exports = ({ db, apiDb } = {}) => {
         log.info(`Command: ${command}, params: ${params}`);
         command = command.substring(1);
         params.push(req.user);
-        apiDb[command](...params).then((result) => {
+        preparedDb[command](...params).then((result) => {
             setHeader(res);
             res.end();
         }, next);
