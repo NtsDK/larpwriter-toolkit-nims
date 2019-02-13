@@ -48,7 +48,7 @@ const emptyBase = require('resources/emptyBase');
 
 // projectName, enabledLogOverrides, logOverridesObject
 module.exports = function ({
-    projectName, serverSpecific = {}, logModule, proxies, apis
+    projectName, serverSpecific = {}, logModule, proxies, apis, isServer
     // lastDb
 } = {}) {
     // serverSpecific = serverSpecific || {};
@@ -117,7 +117,7 @@ module.exports = function ({
     let loggerAPIList = R.keys(R.mergeAll(R.values(Logger.apiInfo)));
     let permissionAPIList = Permissions.getPermissionAPIList();
 
-    if (PRODUCT === 'STANDALONE') {
+    if (!isServer) {
         // baseAPIList = R.difference(baseAPIList, Logger.offlineIgnoreList);
         loggerAPIList = R.difference(loggerAPIList, Logger.offlineIgnoreList);
         permissionAPIList = R.difference(permissionAPIList, Logger.offlineIgnoreList);
@@ -148,7 +148,7 @@ module.exports = function ({
     //     db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
     // }
 
-    const rawDb = Logger.applyLoggerProxy(db, PRODUCT !== 'STANDALONE');
+    const rawDb = Logger.applyLoggerProxy(db, isServer);
 
     function onSetDatabaseFinished() {
         db.getConsistencyCheckResult().then((checkResult) => {

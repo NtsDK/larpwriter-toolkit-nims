@@ -55,7 +55,8 @@ if (PRODUCT === 'STANDALONE') {
             logModule,
             projectName: PROJECT_NAME,
             proxies: [CallNotificator],
-            apis
+            apis,
+            isServer: PRODUCT !== 'STANDALONE'
         }).preparedDb;
         if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
             DBMS.setDatabase({ database: DemoBase.data }).then(onBaseLoaded, UI.handleError);
