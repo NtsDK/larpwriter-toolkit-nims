@@ -8,6 +8,7 @@
                 },
                 "debug": true
             }
-        ]
+        ],
+        "@babel/react"
     ]
 }

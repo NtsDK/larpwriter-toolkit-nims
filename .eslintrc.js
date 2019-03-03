@@ -55,7 +55,7 @@ module.exports = {
         "no-unused-vars": "off",
         "indent": [
             "error",
-            4
+            2
         ],
         "linebreak-style": [
             "error",
@@ -68,6 +68,15 @@ module.exports = {
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "react/jsx-indent": ["on", 2],
+        "react/jsx-indent-props": ["on", 2],
+        "import/extensions": [
+            "on",
+            "never",
+            {
+              "jsx": "always"
+            }
+          ]
     }
 };
