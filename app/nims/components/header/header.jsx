@@ -27,12 +27,13 @@ import LinkContainer from 'react-router-bootstrap/lib/LinkContainer';
 // import NavItem  from 'react-bootstrap/lib/NavItem';
 
 
-const Header = ({ onServiceChange }) => (
-  <Navbar bg="primary" variant="light" expand="lg">
+const Header = () => (
+  // expand="lg" bg="light" variant="primary"
+  <Navbar>
     {/* <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand> */}
     {/* <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav"> */}
-    <Nav className="mr-auto" variant="tabs" defaultActiveKey="#overview">
+    <Nav className="mr-auto" variant="tabs" defaultActiveKey="/overview">
       <LinkContainer to="/overview">
         <Nav.Link>Обзор</Nav.Link>
       </LinkContainer>

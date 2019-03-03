@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import Header from '../header';
+import Overview from '../../views2/overview';
 // import RandomPlanet from '../random-planet';
 // import ErrorBoundry from '../error-boundry';
 // import SwapiService from '../../services/swapi-service';
@@ -65,7 +66,7 @@ export default class App extends Component {
 
             <Route
               path="/overview"
-              render={() => <h2>overview</h2>}
+              component={Overview}
             />
             <Route
               path="/characterProfiles"
