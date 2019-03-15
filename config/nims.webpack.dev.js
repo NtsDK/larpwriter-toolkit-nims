@@ -113,6 +113,8 @@ const config = {
       path.resolve(__dirname, '../app/nims'),
       path.resolve(__dirname, '../dbms'),
       path.resolve(__dirname, '../dbms/nims'),
+      path.resolve(__dirname, '../dbms2'),
+      path.resolve(__dirname, '../dbms2/nims'),
     ],
     alias: []
   }
@@ -174,11 +176,17 @@ module.exports = (env, argv) => {
       onlyModule: true
     });
     config.resolve.alias.push({
-      alias: 'core/serverDbmsFactory',
+      alias: 'standaloneDbmsFactory',
       // alias: 'core/DbmsFactory',
       name: 'DbmsFactory',
       onlyModule: true
     });
+    // config.resolve.alias.push({
+    //   alias: 'core/serverDbmsFactory',
+    //   // alias: 'core/DbmsFactory',
+    //   name: 'DbmsFactory',
+    //   onlyModule: true
+    // });
     break;
   }
 

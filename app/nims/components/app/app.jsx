@@ -5,8 +5,15 @@ import {
   BrowserRouter as Router, Switch, Route, Redirect
 } from 'react-router-dom';
 
+import createDbms from 'DbmsFactory';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
+import { faDownload, faUpload } from '@fortawesome/free-solid-svg-icons';
 import Header from '../header';
 import Overview from '../../views2/overview';
+
+
 // import RandomPlanet from '../random-planet';
 // import ErrorBoundry from '../error-boundry';
 // import SwapiService from '../../services/swapi-service';
@@ -21,16 +28,17 @@ import Overview from '../../views2/overview';
 
 // import { SwapiServiceProvider } from '../swapi-service-context';
 
-import './app.css';
 
+import './app.css';
 
 // import StarshipDetails from '../sw-components/starship-details';
 
 export default class App extends Component {
-//   state = {
-//     swapiService: new SwapiService(),
-//     isLoggedIn: false
-//   };
+  state = {
+    dbms: createDbms(),
+    // swapiService: new SwapiService(),
+    // isLoggedIn: false
+  };
 
   //   onLogin = () => {
   //     this.setState({
@@ -51,10 +59,18 @@ export default class App extends Component {
   render() {
     // const { isLoggedIn } = this.state;
 
+    const { dbms } = this.state;
+
     return (
       <Router>
         <div>
           <Header />
+          <ButtonGroup>
+
+            <Button onClick={dbms.importDump}><FA icon={faUpload} /></Button>
+            <Button onClick={dbms.exportDump}><FA icon={faDownload} /></Button>
+          </ButtonGroup>
+
           {/* <div>Hello, App!</div> */}
           <Switch>
 

@@ -1,0 +1,15 @@
+@import 'bootstrap/scss/_functions.scss';
+@import 'bootstrap/scss/_variables.scss';
+@import "bootstrap/scss/_mixins.scss";
+
+
+
+@import 'bootswatch/dist/darkly/_variables.scss';
+
+$theme-colors: (
+  "primary": red,
+  "danger": #ff4136
+);
+
+@import 'bootswatch/dist/darkly/_bootswatch.scss';
+// @import 'bootstrap/scss/bootstrap.scss';
