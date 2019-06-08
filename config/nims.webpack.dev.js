@@ -129,14 +129,14 @@ module.exports = (env, argv) => {
     console.error(`Unknown mode "${argv.mode}" switch to default: development`);
     // eslint-disable-next-line no-fallthrough
   case 'development':
-    config.devtool = 'cheap-eval-source-map';
+    // config.devtool = 'cheap-eval-source-map';
     // config.optimization = {
     //     // usedExports:true,
     //     // splitChunks: {
     //     //     chunks: 'all'
     //     // }
     // };
-    // config.devtool = 'source-map';
+    config.devtool = 'source-map';
     config.mode = 'development';
     break;
   }
@@ -175,18 +175,18 @@ module.exports = (env, argv) => {
       name: 'apis',
       onlyModule: true
     });
-    config.resolve.alias.push({
-      alias: 'standaloneDbmsFactory',
-      // alias: 'core/DbmsFactory',
-      name: 'DbmsFactory',
-      onlyModule: true
-    });
     // config.resolve.alias.push({
-    //   alias: 'core/serverDbmsFactory',
+    //   // alias: 'standaloneDbmsFactory',
     //   // alias: 'core/DbmsFactory',
     //   name: 'DbmsFactory',
     //   onlyModule: true
     // });
+    config.resolve.alias.push({
+      alias: 'core/serverDbmsFactory',
+      // alias: 'core/DbmsFactory',
+      name: 'DbmsFactory',
+      onlyModule: true
+    });
     break;
   }
 

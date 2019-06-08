@@ -5,13 +5,15 @@ import {
   BrowserRouter as Router, Switch, Route, Redirect
 } from 'react-router-dom';
 
-import createDbms from 'DbmsFactory';
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
-import { faDownload, faUpload } from '@fortawesome/free-solid-svg-icons';
-import Header from '../header';
-import Overview from '../../views2/overview';
+// const DbmsFactory = require('DbmsFactory');
+
+import * as makeDBMS from 'DbmsFactory';
+// import Button from 'react-bootstrap/Button';
+// import ButtonGroup from 'react-bootstrap/ButtonGroup';
+// import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
+// import { faDownload, faUpload } from '@fortawesome/free-solid-svg-icons';
+// import Header from '../header';
+// import Overview from '../../views2/overview';
 
 
 // import RandomPlanet from '../random-planet';
@@ -31,14 +33,39 @@ import Overview from '../../views2/overview';
 
 import './app.css';
 
+import DemoBase from 'resources/demoBase';
+
+const apis = require('apis');
+const logModule = require('front-db/consoleLogModule');
+const CallNotificator = require('front-db/callNotificator');
+
+console.log(makeDBMS);
+
+console.log(DemoBase);
+
 // import StarshipDetails from '../sw-components/starship-details';
 
 export default class App extends Component {
   state = {
-    dbms: createDbms(),
+    dbms: makeDBMS(
+      {
+        logModule,
+        projectName: PROJECT_NAME,
+        proxies: [],
+        // proxies: [CallNotificator],
+        apis,
+        isServer: PRODUCT !== 'STANDALONE'
+      }
+    ).preparedDb
     // swapiService: new SwapiService(),
     // isLoggedIn: false
   };
+
+  componentDidMount() {
+    this.state.dbms.setDatabase({ database: DemoBase.data });
+  }
+
+  //
 
   //   onLogin = () => {
   //     this.setState({
@@ -62,62 +89,13 @@ export default class App extends Component {
     const { dbms } = this.state;
 
     return (
-      <Router>
-        <div>
-          <Header />
-          <ButtonGroup>
-
-            <Button onClick={dbms.importDump}><FA icon={faUpload} /></Button>
-            <Button onClick={dbms.exportDump}><FA icon={faDownload} /></Button>
-          </ButtonGroup>
-
-          {/* <div>Hello, App!</div> */}
-          <Switch>
-
-            {/* <Route
-              path="/"
-              render={() => <h2>overview2</h2>}
-            /> */}
-
-
-            <Route
-              path="/overview"
-              component={Overview}
-            />
-            <Route
-              path="/characterProfiles"
-              render={() => <h2>characterProfiles</h2>}
-            />
-            <Route
-              path="/characterProfileSchema"
-              render={() => <h2>characterProfileSchema</h2>}
-            />
-            <Route
-              path="/profileBindings"
-              render={() => <h2>profileBindings</h2>}
-            />
-            <Route
-              path="/stories"
-              render={() => <h2>stories</h2>}
-            />
-            <Route
-              path="/subjectiveVisions"
-              render={() => <h2>subjectiveVisions</h2>}
-            />
-            <Route
-              path="/characterSheetsPreview"
-              render={() => <h2>characterSheetsPreview</h2>}
-            />
-            <Route
-              path="/characterSheetsExport"
-              render={() => <h2>characterSheetsExport</h2>}
-            />
-
-
-            <Route render={() => <h2>Page not found</h2>} />
-          </Switch>
-        </div>
-      </Router>
+      <div className="nims-app">
+        <header>
+          <nav className="view-switch">nav</nav>
+        </header>
+        <main>main</main>
+        <footer><div id="debugNotification" className="hidden" /></footer>
+      </div>
     //   <ErrorBoundry>
     //     <SwapiServiceProvider value={this.state.swapiService} >
     //       <Router>
