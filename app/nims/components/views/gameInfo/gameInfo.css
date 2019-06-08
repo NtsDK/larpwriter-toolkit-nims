@@ -1,0 +1,24 @@
+/* body {
+    background-color: #ababab;
+}
+
+.view-switch, .sub-tab-navigation {
+    border-bottom: 4px solid #337ab7;
+    box-sizing: content-box;
+}
+.view-switch {
+    display: flex;
+    flex-wrap: wrap;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: hsla(0,0%,67%,.25);
+    z-index: 1;
+} */
+
+.game-info-view .stats-table {
+    /* width: auto; */
+}
+.game-info-view .stats-table th {
+    text-align: center;
+}

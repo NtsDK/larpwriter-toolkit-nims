@@ -72,3 +72,15 @@ main {
 .view-switch > ul > li:not(:last-of-type) {
     margin-right: 2px;
 } 
+
+.panel, .panel-body {
+    background-color: #ededed;
+}
+
+.panel-body {
+    padding: 0.5rem;
+}
+
+.block {
+    padding: 0.5rem;
+}

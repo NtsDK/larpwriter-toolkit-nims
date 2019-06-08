@@ -36,6 +36,7 @@ import './app.css';
 import DemoBase from 'resources/demoBase';
 
 // import Overview from '../views/overview';
+import GameInfo from '../views/gameInfo';
 // import Characters from '../views/characters';
 
 const apis = require('apis');
@@ -180,8 +181,6 @@ export default class App extends Component {
 
           </header>
           <main>
-            main
-
             <Route
               path="/overview"
               render={() => (
@@ -198,7 +197,9 @@ export default class App extends Component {
                   path={`/overview/${name}`}
                   render={({ match }) => {
                     this.addRoutingState('overview', match.url);
-                    return (<h2>{name}</h2>);
+                    return (
+                      <GameInfo dbms={dbms} />
+                    );
                   }}
                 />
               ))
