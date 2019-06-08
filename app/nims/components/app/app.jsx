@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 
 import {
-  BrowserRouter as Router, Switch, Route, Redirect
+  BrowserRouter as Router, Switch, Route, Redirect, Link, NavLink
 } from 'react-router-dom';
 
 // const DbmsFactory = require('DbmsFactory');
@@ -35,9 +35,20 @@ import './app.css';
 
 import DemoBase from 'resources/demoBase';
 
+// import Overview from '../views/overview';
+// import Characters from '../views/characters';
+
 const apis = require('apis');
 const logModule = require('front-db/consoleLogModule');
 const CallNotificator = require('front-db/callNotificator');
+
+// const nav = [
+//   {
+//     viewName: 'overview',
+//     view: Overview
+//   }
+// ];
+
 
 console.log(makeDBMS);
 
@@ -61,9 +72,22 @@ export default class App extends Component {
     // isLoggedIn: false
   };
 
+  settings = {
+    routing: {
+
+    }
+  };
+
   componentDidMount() {
+    // eslint-disable-next-line react/destructuring-assignment
     this.state.dbms.setDatabase({ database: DemoBase.data });
   }
+
+  addRoutingState = (path, subpath) => {
+    this.settings.routing[path] = subpath;
+  };
+
+  getRoutingState = path => this.settings.routing[path]
 
   //
 
@@ -89,13 +113,117 @@ export default class App extends Component {
     const { dbms } = this.state;
 
     return (
-      <div className="nims-app">
-        <header>
-          <nav className="view-switch">nav</nav>
-        </header>
-        <main>main</main>
-        <footer><div id="debugNotification" className="hidden" /></footer>
-      </div>
+      <Router>
+
+        <div className="nims-app">
+          <header>
+            <nav className="view-switch">
+              <ul>
+                <li>
+                  <NavLink to="/overview">Обзор</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/characters">Персонажи</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/stories">Истории</NavLink>
+                </li>
+              </ul>
+
+              <ul>
+                <li>
+                  <NavLink to="/223322">Загрузить базу</NavLink>
+                </li>
+              </ul>
+            </nav>
+
+            <Switch>
+              <Route path="/overview">
+                <nav className="view-switch view-switch-secondary">
+                  <ul>
+                    <li>
+                      <NavLink to="/overview/info">Информация об игре</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/overview/gameStats">Статистические диаграммы</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/overview/profileStats">Диаграммы досье</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/overview/gears">Шестеренка</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/overview/mixer">Микшерный пульт</NavLink>
+                    </li>
+                  </ul>
+                </nav>
+              </Route>
+
+              <Route path="/characters">
+                <nav className="view-switch view-switch-secondary">
+                  <ul>
+                    <li>
+                      <NavLink to="/characters/profiles">Заполнение досье</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/characters/profileStructureEditor">Изменение структуры досье</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/characters/binding">Сопоставление персонажей и игроков</NavLink>
+                    </li>
+                  </ul>
+                </nav>
+              </Route>
+
+            </Switch>
+
+          </header>
+          <main>
+            main
+
+            <Route
+              path="/overview"
+              render={() => (
+                <Redirect to={
+                  this.getRoutingState('overview') || '/overview/info'
+                }
+                />
+              )}
+              exact
+            />
+            {
+              ['info', 'gameStats', 'profileStats', 'gears', 'mixer'].map(name => (
+                <Route
+                  path={`/overview/${name}`}
+                  render={({ match }) => {
+                    this.addRoutingState('overview', match.url);
+                    return (<h2>{name}</h2>);
+                  }}
+                />
+              ))
+            }
+
+            <Route path="/characters" render={() => <Redirect to="/characters/profiles" />} exact />
+            <Route path="/characters/profiles" render={() => <h2>profiles</h2>} exact />
+            <Route path="/characters/profileStructureEditor" render={() => <h2>profileStructureEditor</h2>} exact />
+            <Route path="/characters/binding" render={() => <h2>binding</h2>} exact />
+
+            <Route path="/" render={() => <Redirect to="/overview" />} exact />
+            {/* <Redirect to="/overview" /> */}
+
+            {/* <Route path="/" render={() => <h2></h2>)} exact /> */}
+            {/* <Route path="/" component={Overview} exact />
+            <Route path="/overview" component={Overview} />
+            <Route path="/characters" component={Characters} /> */}
+
+          </main>
+          <footer>
+            {/* footer */}
+            <div id="debugNotification" className="hidden" />
+          </footer>
+        </div>
+      </Router>
     //   <ErrorBoundry>
     //     <SwapiServiceProvider value={this.state.swapiService} >
     //       <Router>

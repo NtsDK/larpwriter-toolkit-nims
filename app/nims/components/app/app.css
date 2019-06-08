@@ -1,7 +1,25 @@
+html {
+    font-size: 16px;
+}
+
 body {
     background-color: #ababab;
     /* overflow-y: auto; */
 }
+
+header {
+    position: sticky;
+    top: 0;
+}
+
+main {
+    /* margin-top: 4rem; */
+}
+
+/* footer {
+    position: sticky;
+    bottom: 0;
+} */
 
 .view-switch, .sub-tab-navigation {
     border-bottom: 4px solid #337ab7;
@@ -10,9 +28,47 @@ body {
 .view-switch {
     display: flex;
     flex-wrap: wrap;
-    position: fixed;
-    top: 0;
-    width: 100%;
+    /* position: fixed; */
+    justify-content: space-between;
+    /* top: 0; */
+    /* width: 100%; */
     background-color: hsla(0,0%,67%,.25);
-    z-index: 1;
+    /* z-index: 1; */
 }
+
+.view-switch.view-switch-secondary {
+    margin-top: 4px;
+}
+
+.view-switch > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.view-switch > ul a {
+    flex-grow: 0;
+    padding: 6px 8px;
+    background-color: #ddd;
+    border: none;
+    border-radius: 4px 4px 0 0;
+    display: inline-block;
+    text-decoration: none;
+} 
+
+.view-switch > ul a.active {
+    color: #fff;
+    background-color: #337ab7;
+}
+
+/* .navigation-button.active {
+    color: #fff;
+    background-color: #337ab7;
+}*/
+/* .view-switch > ul a:not(:last-of-type), .navigation-button:not(:last-of-type) {
+    margin-right: 2px;
+}  */
+.view-switch > ul > li:not(:last-of-type) {
+    margin-right: 2px;
+} 
