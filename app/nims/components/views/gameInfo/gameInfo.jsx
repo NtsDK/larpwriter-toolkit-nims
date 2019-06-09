@@ -3,6 +3,7 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 
+import dateFormat from 'dateformat';
 // import {
 //   BrowserRouter as Router, Switch, Route, Redirect
 // } from 'react-router-dom';
@@ -18,42 +19,17 @@ import React, { Component } from 'react';
 // import Overview from '../../views2/overview';
 
 
-// import RandomPlanet from '../random-planet';
-// import ErrorBoundry from '../error-boundry';
-// import SwapiService from '../../services/swapi-service';
-// import DummySwapiService from '../../services/dummy-swapi-service';
-
-// import {
-//   PeoplePage,
-//   PlanetsPage,
-//   StarshipsPage,
-//   LoginPage,
-//   SecretPage } from '../pages';
-
-// import { SwapiServiceProvider } from '../swapi-service-context';
-
-
 import './gameInfo.css';
-
-// import DemoBase from 'resources/demoBase';
-
-// const apis = require('apis');
-// const logModule = require('front-db/consoleLogModule');
-// const CallNotificator = require('front-db/callNotificator');
-
-// console.log(makeDBMS);
-
-// console.log(DemoBase);
-
-// import StarshipDetails from '../sw-components/starship-details';
 
 export default class GameInfo extends Component {
   state = {
-    meta: {
-      name: '',
-      description: '',
-      saveTime: '',
-    },
+    // meta: {
+    name: '',
+    description: '',
+    saveTime: new Date().toDateString(),
+    preGameDate: '',
+    date: '',
+    // },
     // stats: {
 
     // }
@@ -80,19 +56,76 @@ export default class GameInfo extends Component {
   componentDidMount() {
     // // eslint-disable-next-line react/destructuring-assignment
     // this.state.dbms.setDatabase({ database: DemoBase.data });
-    // this.props.dbms.getMetaInfo().then((metaInfo) => {
-    //   this.setState({
-    //     meta: {
-    //       name: metaInfo.name,
-    //       description: metaInfo.description,
-    //       saveTime: metaInfo.saveTime,
-    //     }
-    //     // .name.value = metaInfo.name;
-    //     // state.date.value = metaInfo.date;
-    //     // state.preDate.value = metaInfo.preGameDate;
-    //     // state.descr.value = metaInfo.description;
-    //   });
-    // });
+    this.getStateInfo();
+  }
+
+
+  // componentDidUpdate() {
+  //   this.getStateInfo();
+  // }
+
+  getStateInfo = () => {
+    this.props.dbms.getMetaInfo().then((metaInfo) => {
+      this.setState({
+        // meta: {
+        name: metaInfo.name,
+        description: metaInfo.description,
+        saveTime: metaInfo.saveTime,
+        preGameDate: metaInfo.preGameDate,
+        date: metaInfo.date,
+        // }
+      // .name.value = metaInfo.name;
+      // state.date.value = metaInfo.date;
+      // state.preDate.value = metaInfo.preGameDate;
+      // state.descr.value = metaInfo.description;
+      });
+    });
+  }
+
+  onStateChange = prop => (e) => {
+    // this.setState(({ meta }) => ({
+    //   meta: {
+    //     // ...meta,
+    //     [prop]: e.target.value
+    //   }
+    // }));
+    let funcName;
+    switch (prop) {
+    case 'name': case 'description':
+      funcName = 'setMetaInfoString';
+      break;
+    case 'date': case 'preGameDate':
+      funcName = 'setMetaInfoString';
+      break;
+    default:
+      console.error(`unexpected prop ${prop}`);
+      funcName = null;
+    }
+    const { value } = e.target;
+    this.props.dbms[funcName]({
+      name: prop,
+      value
+    }).then((res) => {
+      this.setState({
+        // meta: {
+        // ...meta,
+        [prop]: value
+        // }
+      });
+    }).catch(console.error);
+
+    //   function updateName(event) {
+    //     DBMS.setMetaInfoString({ name: 'name', value: event.target.value }).catch(UI.handleError);
+    // }
+    // function updateTime(dp, input) {
+    //     DBMS.setMetaInfoDate({ name: 'date', value: input.val() }).catch(UI.handleError);
+    // }
+    // function updatePreGameDate(dp, input) {
+    //     DBMS.setMetaInfoDate({ name: 'preGameDate', value: input.val() }).catch(UI.handleError);
+    // }
+    // function updateDescr(event) {
+    //     DBMS.setMetaInfoString({ name: 'description', value: event.target.value }).catch(UI.handleError);
+    // }
   }
 
   //
@@ -114,7 +147,14 @@ export default class GameInfo extends Component {
   //   };
 
   render() {
-    const { meta } = this.state;
+    const {
+      name,
+      description,
+      saveTime,
+      preGameDate,
+      date
+    } = this.state;
+    const { dbms } = this.props;
 
     // const { dbms } = this.state;
 
@@ -132,21 +172,21 @@ export default class GameInfo extends Component {
                       <div className="col-xs-6">
                         <div className="form-group">
                           <label className=" control-label" l10n-id="overview-name" htmlFor="gameNameInput">Название игры</label>
-                          <input id="gameNameInput" className="adminOnly form-control" value={meta.name} />
+                          <input id="gameNameInput" className="adminOnly form-control" value={name} onChange={this.onStateChange('name')} />
                         </div>
                         <div className="form-group">
                           <span className=" control-label" l10n-id="overview-last-save-time">Время последнего сохранения</span>
-                          <p id="lastSaveTime" className="form-control-static" l10n-id="overview-last-save-time">{meta.saveTime}</p>
+                          <p id="lastSaveTime" className="form-control-static" l10n-id="overview-last-save-time">{dateFormat(new Date(saveTime), 'yyyy/mm/dd HH:MM:ss')}</p>
                         </div>
                       </div>
                       <div className="col-xs-6">
                         <div className="form-group">
                           <label className=" control-label" l10n-id="overview-pre-game-start-date" htmlFor="preGameDatePicker">Дата начала доигровых событий</label>
-                          <input id="preGameDatePicker" className="adminOnly form-control" />
+                          <input id="preGameDatePicker" className="adminOnly form-control" value={preGameDate} onChange={this.onStateChange('preGameDate')} />
                         </div>
                         <div className="form-group">
                           <label className=" control-label" l10n-id="overview-pre-game-end-date" htmlFor="gameDatePicker">Дата окончания доигровых событий</label>
-                          <input id="gameDatePicker" className="adminOnly form-control" />
+                          <input id="gameDatePicker" className="adminOnly form-control" value={date} onChange={this.onStateChange('date')} />
                         </div>
                       </div>
                     </div>
@@ -154,7 +194,7 @@ export default class GameInfo extends Component {
                       <div className="col-xs-12">
                         <div className="form-group">
                           <label l10n-id="overview-descr" htmlFor="game-description-area">Описание игры</label>
-                          <textarea id="game-description-area" className="adminOnly game-description-area form-control" value={meta.description} />
+                          <textarea id="game-description-area" className="adminOnly game-description-area form-control" value={description} onChange={this.onStateChange('description')} />
                         </div>
                       </div>
                     </div>
@@ -255,3 +295,6 @@ export default class GameInfo extends Component {
     );
   }
 }
+// HelloEs6.propTypes = {
+//   name: PropTypes.string.isRequired,
+// };

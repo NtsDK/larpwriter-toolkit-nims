@@ -10,7 +10,7 @@ const serverEntry = {
   player: './app/nims/pages/player.js',
 };
 const standaloneEntry = {
-  organizer: './app/nims/pages/organizer.js',
+  // organizer: './app/nims/pages/organizer.js',
   organizer2: './app/nims/pages/organizer2.jsx',
 };
 

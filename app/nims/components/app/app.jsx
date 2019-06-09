@@ -37,6 +37,7 @@ import DemoBase from 'resources/demoBase';
 
 // import Overview from '../views/overview';
 import GameInfo from '../views/gameInfo';
+import { json2File, makeFileName, readJsonFile } from '../../utils/fileUtils';
 // import Characters from '../views/characters';
 
 const apis = require('apis');
@@ -59,16 +60,7 @@ console.log(DemoBase);
 
 export default class App extends Component {
   state = {
-    dbms: makeDBMS(
-      {
-        logModule,
-        projectName: PROJECT_NAME,
-        proxies: [],
-        // proxies: [CallNotificator],
-        apis,
-        isServer: PRODUCT !== 'STANDALONE'
-      }
-    ).preparedDb
+    dbms: null
     // swapiService: new SwapiService(),
     // isLoggedIn: false
   };
@@ -80,15 +72,87 @@ export default class App extends Component {
   };
 
   componentDidMount() {
+    this.setDatabase(DemoBase.data);
+  }
+
+  setDatabase = (database) => {
+    const dbms = makeDBMS(
+      {
+        logModule,
+        projectName: PROJECT_NAME,
+        proxies: [],
+        // proxies: [CallNotificator],
+        apis,
+        isServer: PRODUCT !== 'STANDALONE'
+      }
+    ).preparedDb;
     // eslint-disable-next-line react/destructuring-assignment
-    this.state.dbms.setDatabase({ database: DemoBase.data });
+    dbms.setDatabase({ database }).then(
+      () => {
+        console.log('fine!');
+        this.consistencyCheck(dbms).then((checkResult) => {
+          this.consistencyCheckAlert(checkResult);
+          this.setState({
+            dbms,
+            // dbmsUid: Math.random()
+          });
+          // this.forceUpdate();
+        });
+      },
+      err => console.log(err)
+    );
+  }
+
+  consistencyCheck = function (dbms) {
+    // eslint-disable-next-line react/destructuring-assignment
+    return dbms.getConsistencyCheckResult();
+  }
+
+  consistencyCheckAlert = function (checkResult) {
+    if (checkResult.errors.length > 0) {
+      // UI.alert(L10n.getValue('overview-consistency-problem-detected'));
+      console.log('overview-consistency-problem-detected');
+    } else {
+      console.log('Consistency check didn\'t find errors');
+    }
   }
 
   addRoutingState = (path, subpath) => {
     this.settings.routing[path] = subpath;
   };
 
-  getRoutingState = path => this.settings.routing[path]
+  getRoutingState = path => this.settings.routing[path];
+
+  downloadDatabaseAsFile = () => {
+    this.state.dbms.getDatabase().then((database) => {
+      json2File(database, makeFileName(`${PROJECT_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
+    }).catch(UI.handleError);
+  };
+
+  uploadDatabaseFile = (evt) => {
+    const input = evt.target.querySelector('input');
+    if (input) {
+      input.value = '';
+      input.click();
+    }
+    // console.log(evt);
+    // this.state.dbms.getDatabase().then((database) => {
+    //   json2File(database, makeFileName(`${PROJECT_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
+    // }).catch(UI.handleError);
+  };
+
+  onFileSelected = (evt) => {
+    readJsonFile(evt).then(database => this.setDatabase(database));
+    // const input = evt.target.querySelector('input');
+    // if (input) {
+    //   input.value = '';
+    //   input.click();
+    // }
+    // console.log(evt);
+    // this.state.dbms.getDatabase().then((database) => {
+    //   json2File(database, makeFileName(`${PROJECT_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
+    // }).catch(UI.handleError);
+  };
 
   //
 
@@ -113,6 +177,10 @@ export default class App extends Component {
 
     const { dbms } = this.state;
 
+    if (!dbms) {
+      return (<h2>Loading...</h2>);
+    }
+
     return (
       <Router>
 
@@ -133,7 +201,38 @@ export default class App extends Component {
 
               <ul>
                 <li>
-                  <NavLink to="/223322">Загрузить базу</NavLink>
+                  {/* <NavLink to="/223322">Загрузить базу</NavLink> */}
+                  <button
+                    type="button"
+                    className="dataLoadButton icon-button action-button mainNavButton"
+                    data-original-title=""
+                    title="Загрузить базу из файла"
+                    onClick={this.uploadDatabaseFile}
+                  >
+                    <input
+                      type="file"
+                      className="hidden"
+                      tabIndex="-1"
+                      onChange={this.onFileSelected}
+                    />
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="dataSaveButton icon-button action-button mainNavButton"
+                    data-original-title=""
+                    onClick={this.downloadDatabaseAsFile}
+                    title="Сохранить базу на диск"
+                  />
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="newBaseButton icon-button action-button mainNavButton"
+                    data-original-title=""
+                    title="Создать новую базу"
+                  />
                 </li>
               </ul>
             </nav>

@@ -10,6 +10,7 @@ body {
 header {
     position: sticky;
     top: 0;
+    z-index: 1;
 }
 
 main {
@@ -83,4 +84,50 @@ main {
 
 .block {
     padding: 0.5rem;
+}
+
+
+.icon-button {
+    background-color: #ddd;
+    width: 44px;
+    background-size: 28px;
+    font-size: 23px;
+}
+.mainNavButton {
+    background-color: #ddd!important;
+    width: 44px;
+    background-size: 28px;
+}
+.action-button {
+    flex-grow: 0;
+    width: 48px;
+    border: none;
+}
+.icon-button {
+    padding: 0;
+    height: 32px;
+    font-family: Font Awesome\ 5 Free;
+    font-weight: 900;
+}
+.dataLoadButton:before {
+    content: "\f093";
+}
+.refreshButton:before {
+    content: "\f2f1";
+}
+.newBaseButton:before {
+    content: "\f067";
+}
+.dataSaveButton:before {
+    content: "\f019";
+}
+.navigation-button:hover, .navigation-button:focus{
+    background-color:  #ccc;
+}
+
+.icon-button:hover {
+  background-color:  #ccc;
+}
+.navigation-button:hover, .navigation-button:focus{
+    background-color:  #ccc;
 }
