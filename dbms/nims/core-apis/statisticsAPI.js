@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,33 +26,52 @@ See the License for the specific language governing permissions and
             return new Promise((resolve, reject) => {
                 const that = this;
                 this.getAllCharacterGroupTexts().then((groupTexts) => {
-                    _getStatistics(that.database, groupTexts, resolve);
+                    resolve(_getStatistics(that.database, groupTexts));
                 }).catch(reject);
             });
         };
 
+        LocalDBMS.prototype.getStatisticsLevel1 = function (callback) {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                resolve(_getStatisticsLevel1(that.database));
+            });
+        };
+
+        function _getStatisticsLevel1(database) {
+          const statistics = {};
+          statistics.storyNumber = Object.keys(database.Stories).length;
+          statistics.characterNumber = Object.keys(database.Characters).length;
+          statistics.groupNumber = Object.keys(database.Groups).length;
+          statistics.playerNumber = Object.keys(database.Players).length;
+
+          statistics.eventsNumber = R.sum(R.values(database.Stories).map(R.compose(R.length, R.prop('events'))));
+
+          statistics.userNumber = 1;
+          if (database.ManagementInfo && database.ManagementInfo.UsersInfo) {
+              statistics.userNumber = Object.keys(database.ManagementInfo.UsersInfo).length;
+          }
+
+          const firstLastEventTime = _getFirstLastEventTime(database);
+
+          statistics.firstEvent = firstLastEventTime[0] ? firstLastEventTime[0] : '';
+          statistics.lastEvent = firstLastEventTime[1] ? firstLastEventTime[1] : '';
+
+          const textCharactersCount = _countTextCharacters(database);
+          statistics.textCharacterNumber = R.sum(R.values(textCharactersCount));
+
+          statistics.generalCompleteness = _getGeneralCompleteness(database);
+          statistics.storyCompleteness = _getStoryCompleteness(database);
+          statistics.relationCompleteness = _getRelationCompleteness(database);
+          return statistics;
+        }
+
         function _getStatistics(database, groupTexts, resolve) {
-            const statistics = {};
-            statistics.storyNumber = Object.keys(database.Stories).length;
-            statistics.characterNumber = Object.keys(database.Characters).length;
-            statistics.groupNumber = Object.keys(database.Groups).length;
-            statistics.playerNumber = Object.keys(database.Players).length;
-
-            statistics.eventsNumber = R.sum(R.values(database.Stories).map(R.compose(R.length, R.prop('events'))));
-
-            statistics.userNumber = 1;
-            if (database.ManagementInfo && database.ManagementInfo.UsersInfo) {
-                statistics.userNumber = Object.keys(database.ManagementInfo.UsersInfo).length;
-            }
+            const statisticsLevel1 = _getStatisticsLevel1(database);
+            const statistics = { ...statisticsLevel1 };
 
             statistics.textCharactersCount = _countTextCharacters(database);
-            statistics.textCharacterNumber = R.sum(R.values(statistics.textCharactersCount));
             statistics.bindingStats = _countBindingStats(database);
-
-            const firstLastEventTime = _getFirstLastEventTime(database);
-
-            statistics.firstEvent = firstLastEventTime[0] ? firstLastEventTime[0] : '';
-            statistics.lastEvent = firstLastEventTime[1] ? firstLastEventTime[1] : '';
 
             statistics.storyEventsHist = _getHistogram(database, story => story.events.length);
 
@@ -61,10 +81,6 @@ See the License for the specific language governing permissions and
             statistics.characterStoriesHist = _getCharacterHist(database, _countCharactersInStories);
             statistics.characterSymbolsHist = _getCharacterHist(database, _countCharacterSymbols(groupTexts));
 
-            statistics.generalCompleteness = _getGeneralCompleteness(database);
-            statistics.storyCompleteness = _getStoryCompleteness(database);
-            statistics.relationCompleteness = _getRelationCompleteness(database);
-
             statistics.characterChart = _getChartData(database, 'characters', 'Characters');
             statistics.storyChart = _getChartData(database, 'stories', 'Stories');
             statistics.groupChart = _getChartData(database, 'groups', 'Groups');
@@ -72,7 +88,7 @@ See the License for the specific language governing permissions and
 
             statistics.profileCharts = _getProfileChartData(database);
 
-            resolve(statistics);
+            return statistics;
         }
 
         function _makeNumberStep(array) {
@@ -282,7 +298,11 @@ See the License for the specific language governing permissions and
             const finishedStories = R.values(database.Stories).map(_getStoryAdaptationStats)
                 .filter(stats => stats.allAdaptations === stats.finishedAdaptations && stats.allAdaptations !== 0)
                 .length;
-            return [calcPercent(finishedStories, allStories), finishedStories, allStories];
+            return {
+              percent: calcPercent(finishedStories, allStories),
+              finished: finishedStories,
+              all: allStories
+            };
         }
 
         function _getGeneralCompleteness(database) {
@@ -292,7 +312,11 @@ See the License for the specific language governing permissions and
                 finishedAdaptations += stats.finishedAdaptations;
                 allAdaptations += stats.allAdaptations;
             });
-            return [calcPercent(finishedAdaptations, allAdaptations), finishedAdaptations, allAdaptations];
+            return {
+              percent: calcPercent(finishedAdaptations, allAdaptations),
+              finished: finishedAdaptations,
+              all: allAdaptations
+            };
         }
 
         const rel2bools = R.pipe(R.pick(['starterTextReady', 'enderTextReady']), R.values, R.filter(R.identity));
@@ -301,7 +325,11 @@ See the License for the specific language governing permissions and
             let finishedRelations = 0, allRelations = 0;
             allRelations = database.Relations.length * 2;
             finishedRelations = R.flatten(database.Relations.map(rel2bools)).length;
-            return [calcPercent(finishedRelations, allRelations), finishedRelations, allRelations];
+            return {
+              percent: calcPercent(finishedRelations, allRelations),
+              finished: finishedRelations,
+              all: allRelations
+            };
         }
 
         function _noWhiteSpaceLength(str) {

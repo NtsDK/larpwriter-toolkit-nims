@@ -177,6 +177,8 @@ export default class App extends Component {
 
     const { dbms } = this.state;
 
+    const { t, i18n } = this.props;
+
     if (!dbms) {
       return (<h2>Loading...</h2>);
     }
@@ -189,24 +191,24 @@ export default class App extends Component {
             <nav className="view-switch">
               <ul>
                 <li>
-                  <NavLink to="/overview">Обзор</NavLink>
+                  <NavLink to="/overview">{t('header.overview')}</NavLink>
+
                 </li>
                 <li>
-                  <NavLink to="/characters">Персонажи</NavLink>
+                  <NavLink to="/characters">{t('header.characters')}</NavLink>
                 </li>
                 <li>
-                  <NavLink to="/stories">Истории</NavLink>
+                  <NavLink to="/stories">{t('header.stories')}</NavLink>
                 </li>
               </ul>
 
               <ul>
                 <li>
-                  {/* <NavLink to="/223322">Загрузить базу</NavLink> */}
                   <button
                     type="button"
                     className="dataLoadButton icon-button action-button mainNavButton"
                     data-original-title=""
-                    title="Загрузить базу из файла"
+                    title={t('header.open-database')}
                     onClick={this.uploadDatabaseFile}
                   >
                     <input
@@ -223,7 +225,7 @@ export default class App extends Component {
                     className="dataSaveButton icon-button action-button mainNavButton"
                     data-original-title=""
                     onClick={this.downloadDatabaseAsFile}
-                    title="Сохранить базу на диск"
+                    title={t('header.save-database')}
                   />
                 </li>
                 <li>
@@ -231,7 +233,7 @@ export default class App extends Component {
                     type="button"
                     className="newBaseButton icon-button action-button mainNavButton"
                     data-original-title=""
-                    title="Создать новую базу"
+                    title={t('header.create-database')}
                   />
                 </li>
               </ul>
@@ -242,19 +244,19 @@ export default class App extends Component {
                 <nav className="view-switch view-switch-secondary">
                   <ul>
                     <li>
-                      <NavLink to="/overview/info">Информация об игре</NavLink>
+                      <NavLink to="/overview/info">{t('overview.about-game')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/overview/gameStats">Статистические диаграммы</NavLink>
+                      <NavLink to="/overview/gameStats">{t('overview.statistic-diagrams')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/overview/profileStats">Диаграммы досье</NavLink>
+                      <NavLink to="/overview/profileStats">{t('overview.profile-diagrams')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/overview/gears">Шестеренка</NavLink>
+                      <NavLink to="/overview/gears">{t('header.gears')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/overview/mixer">Микшерный пульт</NavLink>
+                      <NavLink to="/overview/mixer">{t('header.sliders')}</NavLink>
                     </li>
                   </ul>
                 </nav>
@@ -264,13 +266,13 @@ export default class App extends Component {
                 <nav className="view-switch view-switch-secondary">
                   <ul>
                     <li>
-                      <NavLink to="/characters/profiles">Заполнение досье</NavLink>
+                      <NavLink to="/characters/profiles">{t('header.filling-profile')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/characters/profileStructureEditor">Изменение структуры досье</NavLink>
+                      <NavLink to="/characters/profileStructureEditor">{t('header.changing-profile-structure')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/characters/binding">Сопоставление персонажей и игроков</NavLink>
+                      <NavLink to="/characters/binding">{t('header.binding-characters-and-players')}</NavLink>
                     </li>
                   </ul>
                 </nav>
@@ -293,6 +295,7 @@ export default class App extends Component {
             {
               ['info', 'gameStats', 'profileStats', 'gears', 'mixer'].map(name => (
                 <Route
+                  key={name}
                   path={`/overview/${name}`}
                   render={({ match }) => {
                     this.addRoutingState('overview', match.url);
