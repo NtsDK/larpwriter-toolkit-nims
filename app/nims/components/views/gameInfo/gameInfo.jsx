@@ -142,21 +142,21 @@ export default class GameInfo extends Component {
                     <div className="row">
                       <div className="col-xs-6">
                         <div className="form-group">
-                          <label className=" control-label" l10n-id="overview-name" htmlFor="gameNameInput">{t('overview.name')}</label>
+                          <label className=" control-label" htmlFor="gameNameInput">{t('overview.name')}</label>
                           <input id="gameNameInput" className="adminOnly form-control" value={name} onChange={this.onStateChange('name')} />
                         </div>
                         <div className="form-group">
-                          <span className=" control-label" l10n-id="overview-last-save-time">{t('overview.last-save-time')}</span>
-                          <p id="lastSaveTime" className="form-control-static" l10n-id="overview-last-save-time">{dateFormat(new Date(saveTime), 'yyyy/mm/dd HH:MM:ss')}</p>
+                          <span className=" control-label">{t('overview.last-save-time')}</span>
+                          <p id="lastSaveTime" className="form-control-static">{dateFormat(new Date(saveTime), 'yyyy/mm/dd HH:MM:ss')}</p>
                         </div>
                       </div>
                       <div className="col-xs-6">
                         <div className="form-group">
-                          <label className=" control-label" l10n-id="overview-pre-game-start-date" htmlFor="preGameDatePicker">{t('overview.pre-game-start-date')}</label>
+                          <label className=" control-label" htmlFor="preGameDatePicker">{t('overview.pre-game-start-date')}</label>
                           <input id="preGameDatePicker" className="adminOnly form-control" value={preGameDate} onChange={this.onStateChange('preGameDate')} />
                         </div>
                         <div className="form-group">
-                          <label className=" control-label" l10n-id="overview-pre-game-end-date" htmlFor="gameDatePicker">{t('overview.pre-game-end-date')}</label>
+                          <label className=" control-label" htmlFor="gameDatePicker">{t('overview.pre-game-end-date')}</label>
                           <input id="gameDatePicker" className="adminOnly form-control" value={date} onChange={this.onStateChange('date')} />
                         </div>
                       </div>
@@ -164,7 +164,7 @@ export default class GameInfo extends Component {
                     <div className="row">
                       <div className="col-xs-12">
                         <div className="form-group">
-                          <label l10n-id="overview-descr" htmlFor="game-description-area">{t('overview.descr')}</label>
+                          <label htmlFor="game-description-area">{t('overview.descr')}</label>
                           <textarea id="game-description-area" className="adminOnly game-description-area form-control" value={description} onChange={this.onStateChange('description')} />
                         </div>
                       </div>
@@ -176,7 +176,7 @@ export default class GameInfo extends Component {
                   <table className="table table-bordered table-striped stats-table">
                     <thead>
                       <tr>
-                        <th colSpan="2" l10n-id="overview-stats">{t('overview.stats')}</th>
+                        <th colSpan="2">{t('overview.stats')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -184,7 +184,7 @@ export default class GameInfo extends Component {
                         stats.map(obj => (
                           <tr key={obj.label}>
                             <td>
-                              <span className="statisticsLabel" l10n-id="overview-character-count">{t(`overview.${obj.label}`)}</span>
+                              <span className="statisticsLabel">{t(`overview.${obj.label}`)}</span>
                             </td>
                             <td>
                               <span className="statisticsValue">

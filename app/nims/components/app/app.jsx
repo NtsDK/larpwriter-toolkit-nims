@@ -135,23 +135,10 @@ export default class App extends Component {
       input.value = '';
       input.click();
     }
-    // console.log(evt);
-    // this.state.dbms.getDatabase().then((database) => {
-    //   json2File(database, makeFileName(`${PROJECT_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
-    // }).catch(UI.handleError);
   };
 
   onFileSelected = (evt) => {
     readJsonFile(evt).then(database => this.setDatabase(database));
-    // const input = evt.target.querySelector('input');
-    // if (input) {
-    //   input.value = '';
-    //   input.click();
-    // }
-    // console.log(evt);
-    // this.state.dbms.getDatabase().then((database) => {
-    //   json2File(database, makeFileName(`${PROJECT_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
-    // }).catch(UI.handleError);
   };
 
   //
