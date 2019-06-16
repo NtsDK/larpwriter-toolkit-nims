@@ -1,0 +1,23 @@
+.statistic-diagrams-view .hist-container {
+    width: 100%;
+    height: 8rem;
+}
+
+.statistic-diagrams-view h4 {
+  text-align: center;
+}
+
+.recharts-tooltip-wrapper .custom-tooltip {width:200px;margin:0;line-height:24px;border:1px solid #f5f5f5;background-color:hsla(0,0%,100%,.8);padding:10px}
+.recharts-tooltip-wrapper .custom-tooltip .label{margin:0;color:#666;font-weight:700}
+.recharts-tooltip-wrapper .custom-tooltip .desc{margin:0;color:#999}
+.recharts-tooltip-wrapper .custom-tooltip .intro{border-top:1px solid #f5f5f5;margin:0}
+
+.statistic-diagrams-view .belonging-diagrams-container {
+  display:flex;
+}
+
+.statistic-diagrams-view .belonging-diagrams-container > * {
+  flex-grow:1;
+  flex-basis:0;
+  text-align: center;
+}

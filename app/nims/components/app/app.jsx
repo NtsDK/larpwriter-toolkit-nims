@@ -35,9 +35,10 @@ import './app.css';
 
 import DemoBase from 'resources/demoBase';
 
-// import Overview from '../views/overview';
 import GameInfo from '../views/gameInfo';
+import StatisticDiagrams from '../views/statisticDiagrams';
 import { json2File, makeFileName, readJsonFile } from '../../utils/fileUtils';
+import ProfileStructureEditor from '../views/profileStructureEditor';
 // import Characters from '../views/characters';
 
 const apis = require('apis');
@@ -52,9 +53,9 @@ const CallNotificator = require('front-db/callNotificator');
 // ];
 
 
-console.log(makeDBMS);
+// console.log(makeDBMS);
 
-console.log(DemoBase);
+// console.log(DemoBase);
 
 // import StarshipDetails from '../sw-components/starship-details';
 
@@ -89,7 +90,6 @@ export default class App extends Component {
     // eslint-disable-next-line react/destructuring-assignment
     dbms.setDatabase({ database }).then(
       () => {
-        console.log('fine!');
         this.consistencyCheck(dbms).then((checkResult) => {
           this.consistencyCheckAlert(checkResult);
           this.setState({
@@ -239,12 +239,12 @@ export default class App extends Component {
                     <li>
                       <NavLink to="/overview/profileStats">{t('overview.profile-diagrams')}</NavLink>
                     </li>
-                    <li>
+                    {/* <li>
                       <NavLink to="/overview/gears">{t('header.gears')}</NavLink>
                     </li>
                     <li>
                       <NavLink to="/overview/mixer">{t('header.sliders')}</NavLink>
-                    </li>
+                    </li> */}
                   </ul>
                 </nav>
               </Route>
@@ -280,15 +280,26 @@ export default class App extends Component {
               exact
             />
             {
-              ['info', 'gameStats', 'profileStats', 'gears', 'mixer'].map(name => (
+              // todo gears and mixer later
+              // ['info', 'gameStats', 'profileStats', 'gears', 'mixer'].map(name => (
+              ['info', 'gameStats', 'profileStats'].map(name => (
                 <Route
                   key={name}
                   path={`/overview/${name}`}
                   render={({ match }) => {
                     this.addRoutingState('overview', match.url);
-                    return (
-                      <GameInfo dbms={dbms} />
-                    );
+                    switch (name) {
+                    case 'info':
+                      return <GameInfo dbms={dbms} />;
+                    case 'gameStats':
+                      return <StatisticDiagrams dbms={dbms} />;
+                    default:
+                      return (
+                        <div>
+                          {`${name} stub`}
+                        </div>
+                      );
+                    }
                   }}
                 />
               ))
@@ -296,7 +307,7 @@ export default class App extends Component {
 
             <Route path="/characters" render={() => <Redirect to="/characters/profiles" />} exact />
             <Route path="/characters/profiles" render={() => <h2>profiles</h2>} exact />
-            <Route path="/characters/profileStructureEditor" render={() => <h2>profileStructureEditor</h2>} exact />
+            <Route path="/characters/profileStructureEditor" render={() => <ProfileStructureEditor dbms={dbms} />} exact />
             <Route path="/characters/binding" render={() => <h2>binding</h2>} exact />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />

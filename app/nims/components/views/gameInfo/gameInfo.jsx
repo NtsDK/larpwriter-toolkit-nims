@@ -131,6 +131,19 @@ export default class GameInfo extends Component {
       format: formatI18n('overview.relation-completeness-value')
     }];
 
+    const statEls = stats.map(obj => (
+      <tr key={obj.label}>
+        <td>
+          <span className="statisticsLabel">{t(`overview.${obj.label}`)}</span>
+        </td>
+        <td>
+          <span className="statisticsValue">
+            {formatValue(obj, statistics[obj.value])}
+          </span>
+        </td>
+      </tr>
+    ));
+
     return (
       <div className="game-info-view block">
         <div className="panel panel-default">
@@ -181,18 +194,7 @@ export default class GameInfo extends Component {
                     </thead>
                     <tbody>
                       {
-                        stats.map(obj => (
-                          <tr key={obj.label}>
-                            <td>
-                              <span className="statisticsLabel">{t(`overview.${obj.label}`)}</span>
-                            </td>
-                            <td>
-                              <span className="statisticsValue">
-                                {formatValue(obj, statistics[obj.value])}
-                              </span>
-                            </td>
-                          </tr>
-                        ))
+                        statEls
                       }
                     </tbody>
                   </table>

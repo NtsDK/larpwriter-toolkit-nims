@@ -92,6 +92,7 @@ main {
     width: 44px;
     background-size: 28px;
     font-size: 23px;
+    line-height: 100%;
 }
 .mainNavButton {
     background-color: #ddd!important;
@@ -105,7 +106,7 @@ main {
 }
 .icon-button {
     padding: 0;
-    height: 32px;
+    height: 100%;
     font-family: Font Awesome\ 5 Free;
     font-weight: 900;
 }

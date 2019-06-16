@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 const Chart = require('chart.js');
 const dateFormat = require('dateformat');
 const PermissionInformer = require('permissionInformer');

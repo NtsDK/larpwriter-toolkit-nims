@@ -20,6 +20,8 @@ See the License for the specific language governing permissions and
     function statisticsAPI(LocalDBMS, opts) {
         const { R, Constants } = opts;
 
+        const EMPTY_HIST_ITEM = { value: 0, label: '', tip: '' };
+
         let _countCharacterSymbols;
 
         LocalDBMS.prototype.getStatistics = function (callback) {
@@ -37,6 +39,25 @@ See the License for the specific language governing permissions and
                 resolve(_getStatisticsLevel1(that.database));
             });
         };
+
+        LocalDBMS.prototype.getStatisticsLevel2 = function (callback) {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                this.getAllCharacterGroupTexts().then((groupTexts) => {
+                    resolve(_getOverviewStatisticsLevel2(that.database, groupTexts));
+                }).catch(reject);
+            });
+        };
+
+        function _getStatistics(database, groupTexts, resolve) {
+          const statisticsLevel1 = _getStatisticsLevel1(database);
+          const statisticsLevel2 = _getOverviewStatisticsLevel2(database, groupTexts);
+          const statistics = { ...statisticsLevel1, ...statisticsLevel2 };
+
+          statistics.profileCharts = _getProfileChartData(database);
+
+          return statistics;
+        }
 
         function _getStatisticsLevel1(database) {
           const statistics = {};
@@ -66,35 +87,27 @@ See the License for the specific language governing permissions and
           return statistics;
         }
 
-        function _getStatistics(database, groupTexts, resolve) {
-            const statisticsLevel1 = _getStatisticsLevel1(database);
-            const statistics = { ...statisticsLevel1 };
-
-            statistics.textCharactersCount = _countTextCharacters(database);
-            statistics.bindingStats = _countBindingStats(database);
-
-            statistics.storyEventsHist = _getHistogram(database, story => story.events.length);
-
-            statistics.storyCharactersHist = _getHistogram(database, story => Object.keys(story.characters).length);
-
-            statistics.eventCompletenessHist = _getEventCompletenessHist(database);
-            statistics.characterStoriesHist = _getCharacterHist(database, _countCharactersInStories);
-            statistics.characterSymbolsHist = _getCharacterHist(database, _countCharacterSymbols(groupTexts));
-
-            statistics.characterChart = _getChartData(database, 'characters', 'Characters');
-            statistics.storyChart = _getChartData(database, 'stories', 'Stories');
-            statistics.groupChart = _getChartData(database, 'groups', 'Groups');
-            statistics.playerChart = _getChartData(database, 'players', 'Players');
-
-            statistics.profileCharts = _getProfileChartData(database);
-
-            return statistics;
+        function _getOverviewStatisticsLevel2(database, groupTexts) {
+          const statistics = {};
+          statistics.storyEventsHist = _getHistogram(database, story => story.events.length);
+          statistics.storyCharactersHist = _getHistogram(database, story => Object.keys(story.characters).length);
+          statistics.characterStoriesHist = _getCharacterHist(database, _countCharactersInStories);
+          statistics.eventCompletenessHist = _getEventCompletenessHist(database);
+          statistics.characterSymbolsHist = _getCharacterHist(database, _countCharacterSymbols(groupTexts));
+          statistics.textCharactersCount = _countTextCharacters(database);
+          statistics.bindingStats = _countBindingStats(database);
+          statistics.characterChart = _getChartData(database, 'characters', 'Characters');
+          statistics.storyChart = _getChartData(database, 'stories', 'Stories');
+          statistics.groupChart = _getChartData(database, 'groups', 'Groups');
+          statistics.playerChart = _getChartData(database, 'players', 'Players');
+          return statistics;
         }
+
 
         function _makeNumberStep(array) {
             const max = array.reduce((max2, cur) => (cur > max2 ? cur : max2), array[0]);
             const min = array.reduce((min3, cur) => (cur < min3 ? cur : min3), array[0]);
-            let step = Math.ceil((max - min) / 20);
+            let step = Math.ceil((max - min) / 10);
             step = step === 0 ? 1 : step;
             let base = 1;
             while (step > base * 10) {
@@ -227,7 +240,7 @@ See the License for the specific language governing permissions and
         }
 
         function _makeTip(keyParam, step, tipData) {
-            return `${keyParam * step}-${((keyParam + 1) * step) - 1}: ${tipData.join(', ')}`;
+            return `${tipData.join(', ')}`;
         }
 
         function _getCharacterHist(database, statsCollector) {
@@ -247,9 +260,16 @@ See the License for the specific language governing permissions and
 
             for (let i = 0; i < R.max(hist.length, 10); i++) {
                 if (!hist[i]) {
-                    hist[i] = null;
+                    hist[i] = EMPTY_HIST_ITEM;
                 } else {
                     hist[i].tip = _makeTip(i, step, hist[i].tip);
+                    const first = i * step;
+                    const last = ((i + 1) * step) - 1;
+                    if (first === last) {
+                      hist[i].tooltipLabel = first;
+                    } else {
+                      hist[i].tooltipLabel = `${first}-${last}`;
+                    }
                 }
             }
             return hist;
@@ -265,9 +285,15 @@ See the License for the specific language governing permissions and
             });
             for (let i = 0; i < 11; i++) {
                 if (!hist[i]) {
-                    hist[i] = null;
+                    hist[i] = EMPTY_HIST_ITEM;
                 } else {
                     hist[i].tip = hist[i].tip.join(', ');
+                    hist[i].label *= 10;
+                    if (hist[i].label !== 100) {
+                      hist[i].tooltipLabel = `${hist[i].label}-${(hist[i].label + 10)}%`;
+                    } else {
+                      hist[i].tooltipLabel = '100%';
+                    }
                 }
             }
             return hist;
@@ -398,9 +424,9 @@ See the License for the specific language governing permissions and
             });
             for (let i = 0; i < hist.length; i++) {
                 if (!hist[i]) {
-                    hist[i] = null;
+                    hist[i] = EMPTY_HIST_ITEM;
                 } else {
-                    hist[i].tip = `${i}: ${hist[i].tip.join(', ')}`;
+                    hist[i].tip = `${hist[i].tip.join(', ')}`;
                 }
             }
             return hist;

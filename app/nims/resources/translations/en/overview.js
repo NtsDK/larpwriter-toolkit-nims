@@ -40,4 +40,20 @@ module.exports = {
   'character-symbols-diagram': 'Symbol count per character',
   'character-symbols-doughnut': 'Symbol count per text type',
   'binding-doughnut': 'Characters and players',
+
+  'story-events-tooltip': '{{value}} stories with {{label}} events in each',
+  'story-characters-tooltip': '{{value}} stories with {{label}} characters in each',
+  'character-stories-tooltip': '{{value}} characters with {{label}} stories per each',
+  'event-completeness-tooltip': '{{value}} stories with completeness {{label}}',
+  'character-symbols-hist': '{{value}} characters with {{label}} symbols per each',
+  // 'story-events-tooltip': '{{value}} истории с {{label}} событиями в каждой',
+  // 'story-characters-tooltip': '{{value}} истории с {{label}} персонажами в каждой',
+  // 'character-stories-tooltip': '{{value}} персонажей с {{label}} историями у каждого',
+  // 'event-completeness-tooltip': '{{value}} истории с завершенностью {{label}}',
+  // 'character-symbols-hist': '{{value}} персонажа с {{label}} символов во вводной',
+  // 2 истории с 11 событиями в каждой
+  // 2 истории с 12 персонажами в каждой
+  // 8 персонажей с 2-3 историями у каждого
+  // 3 истории с завершенностью 0-10%
+  // 2 персонажа с 2600-2799 символов во вводной
 };
