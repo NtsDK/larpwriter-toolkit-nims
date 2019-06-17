@@ -81,6 +81,7 @@ exports.apiInfo = {
     getStatistics: null,
     getStatisticsLevel1: null,
     getStatisticsLevel2: null,
+    getProfileStatisticsLevel2: null,
   },
   profilesAPI: {
     getProfileNamesArray: null,

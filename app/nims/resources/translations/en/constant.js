@@ -1,6 +1,9 @@
+/* eslint-disable indent */
 module.exports = {
     yes: 'Yes',
     no: 'No',
+    true: 'Yes',
+    false: 'No',
     // social network subsets
     allObjects: 'All objects',
     selectedCharacters: 'Selected characters',

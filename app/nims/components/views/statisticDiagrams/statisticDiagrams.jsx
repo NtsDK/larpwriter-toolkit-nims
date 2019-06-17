@@ -1,55 +1,11 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 
-import {
-  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie
-} from 'recharts';
+import PieChart from '../../util/pieChart';
+import HistChart from '../../util/histChart';
+import { makeBindingStatsPie, makePieData } from '../../../utils/diagramUtils';
 
 import './statisticDiagrams.css';
-
-console.log(Constants.colorPalette);
-
-const CustomHistTooltip = ({
-  active, payload, label, tooltipKey, t
-}) => {
-  if (active) {
-    if (payload[0].value === 0) {
-      return null;
-    }
-    return (
-      <div className="custom-tooltip">
-        <p className="intro">
-          {t(`overview.${tooltipKey}`, {
-            label: payload[0].payload.tooltipLabel || payload[0].payload.label,
-            value: payload[0].value
-          })}
-        </p>
-        <p className="desc">{payload[0].payload.tip}</p>
-      </div>
-    );
-  }
-
-  return null;
-};
-
-const CustomPieTooltip = ({
-  active, payload, label
-}) => {
-  if (active) {
-    if (payload[0].value === 0) {
-      return null;
-    }
-    return (
-      <div className="custom-tooltip">
-        <p className="intro">
-          {payload[0].payload.tooltipLabel || payload[0].payload.label}
-        </p>
-      </div>
-    );
-  }
-
-  return null;
-};
 
 export default class StatisticDiagrams extends Component {
   state = {
@@ -75,25 +31,7 @@ export default class StatisticDiagrams extends Component {
     });
   }
 
-  _makeTextCharactersPie = (counts, t) => {
-    const sum = R.sum(R.values(counts));
-    const pieData = R.toPairs(counts).map(pair => ({ label: pair[0], value: pair[1] }));
-    pieData.forEach((pieCell) => {
-      pieCell.tooltipLabel = `${t(`constant.${pieCell.label}`)}`;
-      if (sum > 0) {
-        pieCell.tooltipLabel += `: ${((pieCell.value / sum) * 100).toFixed(0)}% (${pieCell.value}/${sum})`;
-      }
-    });
-    return pieData;
-  }
-
-  _makeBindingStatsPie = (counts, t) => {
-    const pieData = R.toPairs(counts).map(pair => ({ label: pair[0], value: pair[1] }));
-    pieData.forEach((pieCell) => {
-      pieCell.tooltipLabel = `${t(`constant.${pieCell.label}`)}: ${pieCell.value}`;
-    });
-    return pieData;
-  }
+  tooltipKey = (key, t) => data => t(key, data);
 
   render() {
     const { statisticData } = this.state;
@@ -101,37 +39,7 @@ export default class StatisticDiagrams extends Component {
       return null;
     }
 
-    const { dbms, t } = this.props;
-
-    // const { dbms } = this.state;
-    const getHistogram = (name, tooltipKey, hideXAxis) => (
-      <div className="hist-container">
-        <ResponsiveContainer>
-          <BarChart data={statisticData[name]}>
-            <CartesianGrid strokeDasharray="3 3" />
-            {!hideXAxis ? <XAxis dataKey="label" /> : ''}
-            <YAxis width={30} interval="preserveStartEnd" />
-            <Tooltip content={<CustomHistTooltip tooltipKey={tooltipKey} t={t} />} />
-            <Bar dataKey="value" fill="#7be141" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    );
-
-    const getPie = data => (
-      <div className="hist-container">
-        <ResponsiveContainer>
-          <PieChart>
-            <Pie dataKey="value" data={data} innerRadius={30} outerRadius={55}>
-              {
-                data.map((entry, index) => <Cell fill={Constants.colorPalette[index % Constants.colorPalette.length].color.background} />)
-              }
-            </Pie>
-            <Tooltip content={<CustomPieTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    );
+    const { t } = this.props;
 
     return (
       <div className="statistic-diagrams-view block">
@@ -142,33 +50,52 @@ export default class StatisticDiagrams extends Component {
                 <div className="col-xs-4">
                   <h4>{t('overview.event-count-diagram')}</h4>
                   <div className="overviewHist storyEventsHist" />
-                  {getHistogram('storyEventsHist', 'story-events-tooltip')}
+                  <HistChart
+                    data={statisticData.storyEventsHist}
+                    tooltipKey={this.tooltipKey('overview.story-events-tooltip', t)}
+                  />
                 </div>
                 <div className="col-xs-4">
                   <h4>{t('overview.character-count-diagram')}</h4>
                   <div className="overviewHist storyCharactersHist" />
-                  {getHistogram('storyCharactersHist', 'story-characters-tooltip')}
+                  <HistChart
+                    data={statisticData.storyCharactersHist}
+                    tooltipKey={this.tooltipKey('overview.story-characters-tooltip', t)}
+                  />
                 </div>
                 <div className="col-xs-4">
                   <h4>{t('overview.character-stories-diagram')}</h4>
                   <div className="overviewHist characterStoriesHist" />
-                  {getHistogram('characterStoriesHist', 'character-stories-tooltip')}
+                  <HistChart
+                    data={statisticData.characterStoriesHist}
+                    tooltipKey={this.tooltipKey('overview.character-stories-tooltip', t)}
+                  />
                 </div>
               </div>
               <div className="row margin-bottom-16">
                 <div className="col-xs-4">
                   <h4>{t('overview.story-completeness-diagram')}</h4>
                   <div className="overviewHist eventCompletenessHist" />
-                  {getHistogram('eventCompletenessHist', 'event-completeness-tooltip', true)}
+                  <HistChart
+                    data={statisticData.eventCompletenessHist}
+                    tooltipKey={this.tooltipKey('overview.event-completeness-tooltip', t)}
+                    hideXAxis
+                  />
                 </div>
                 <div className="col-xs-4">
                   <h4>{t('overview.character-symbols-diagram')}</h4>
                   <div className="overviewHist characterSymbolsHist" />
-                  {getHistogram('characterSymbolsHist', 'character-symbols-hist', true)}
+                  <HistChart
+                    data={statisticData.characterSymbolsHist}
+                    tooltipKey={this.tooltipKey('overview.character-symbols-hist', t)}
+                    hideXAxis
+                  />
                 </div>
                 <div className="col-xs-4">
                   <h4>{t('overview.character-symbols-doughnut')}</h4>
-                  {getPie(this._makeTextCharactersPie(statisticData.textCharactersCount, t))}
+                  <PieChart
+                    data={makePieData(statisticData.textCharactersCount, l => t(`constant.${l}`))}
+                  />
                 </div>
               </div>
               <div className="row">
@@ -177,25 +104,25 @@ export default class StatisticDiagrams extends Component {
                   <div className="belonging-diagrams-container">
                     <div>
                       <span>{t('header.characters')}</span>
-                      {getPie(statisticData.characterChart)}
+                      <PieChart data={statisticData.characterChart} />
                     </div>
                     <div>
                       <span>{t('header.players')}</span>
-                      {getPie(statisticData.playerChart)}
+                      <PieChart data={statisticData.playerChart} />
                     </div>
                     <div>
                       <span>{t('header.stories')}</span>
-                      {getPie(statisticData.storyChart)}
+                      <PieChart data={statisticData.storyChart} />
                     </div>
                     <div>
                       <span>{t('header.groups')}</span>
-                      {getPie(statisticData.groupChart)}
+                      <PieChart data={statisticData.groupChart} />
                     </div>
                   </div>
                 </div>
                 <div className="col-xs-4">
                   <h4>{t('overview.binding-doughnut')}</h4>
-                  {getPie(this._makeBindingStatsPie(statisticData.bindingStats, t))}
+                  <PieChart data={makeBindingStatsPie(statisticData.bindingStats, t)} />
                 </div>
               </div>
             </div>

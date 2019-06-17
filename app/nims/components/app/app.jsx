@@ -37,6 +37,7 @@ import DemoBase from 'resources/demoBase';
 
 import GameInfo from '../views/gameInfo';
 import StatisticDiagrams from '../views/statisticDiagrams';
+import ProfileDiagrams from '../views/profileDiagrams';
 import { json2File, makeFileName, readJsonFile } from '../../utils/fileUtils';
 import ProfileStructureEditor from '../views/profileStructureEditor';
 // import Characters from '../views/characters';
@@ -293,6 +294,8 @@ export default class App extends Component {
                       return <GameInfo dbms={dbms} />;
                     case 'gameStats':
                       return <StatisticDiagrams dbms={dbms} />;
+                    case 'profileStats':
+                      return <ProfileDiagrams dbms={dbms} />;
                     default:
                       return (
                         <div>

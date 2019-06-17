@@ -24,7 +24,7 @@ See the License for the specific language governing permissions and
 
         let _countCharacterSymbols;
 
-        LocalDBMS.prototype.getStatistics = function (callback) {
+        LocalDBMS.prototype.getStatistics = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
                 this.getAllCharacterGroupTexts().then((groupTexts) => {
@@ -33,14 +33,14 @@ See the License for the specific language governing permissions and
             });
         };
 
-        LocalDBMS.prototype.getStatisticsLevel1 = function (callback) {
+        LocalDBMS.prototype.getStatisticsLevel1 = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
                 resolve(_getStatisticsLevel1(that.database));
             });
         };
 
-        LocalDBMS.prototype.getStatisticsLevel2 = function (callback) {
+        LocalDBMS.prototype.getStatisticsLevel2 = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
                 this.getAllCharacterGroupTexts().then((groupTexts) => {
@@ -49,13 +49,18 @@ See the License for the specific language governing permissions and
             });
         };
 
+        LocalDBMS.prototype.getProfileStatisticsLevel2 = function () {
+          return new Promise((resolve, reject) => {
+            const that = this;
+            resolve(_getProfileChartData(that.database));
+          });
+        };
+
         function _getStatistics(database, groupTexts, resolve) {
           const statisticsLevel1 = _getStatisticsLevel1(database);
           const statisticsLevel2 = _getOverviewStatisticsLevel2(database, groupTexts);
           const statistics = { ...statisticsLevel1, ...statisticsLevel2 };
-
           statistics.profileCharts = _getProfileChartData(database);
-
           return statistics;
         }
 
