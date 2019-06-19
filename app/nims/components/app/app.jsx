@@ -40,7 +40,7 @@ import GameInfo from '../views/gameInfo';
 import StatisticDiagrams from '../views/statisticDiagrams';
 import ProfileDiagrams from '../views/profileDiagrams';
 import { json2File, makeFileName, readJsonFile } from '../../utils/fileUtils';
-import ProfileStructureEditor from '../views/profileStructureEditor';
+import ProfileConstructor from '../views/profileConstructor';
 // import Characters from '../views/characters';
 
 const apis = require('apis');
@@ -311,7 +311,7 @@ export default class App extends Component {
 
             <Route path="/characters" render={() => <Redirect to="/characters/profiles" />} exact />
             <Route path="/characters/profiles" render={() => <h2>profiles</h2>} exact />
-            <Route path="/characters/profileStructureEditor" render={() => <ProfileStructureEditor dbms={dbms} />} exact />
+            <Route path="/characters/profileStructureEditor" render={() => <ProfileConstructor dbms={dbms} />} exact />
             <Route path="/characters/binding" render={() => <h2>binding</h2>} exact />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />

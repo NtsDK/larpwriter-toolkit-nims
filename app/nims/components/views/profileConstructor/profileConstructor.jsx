@@ -1,51 +1,10 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 
-// import {
-//   BrowserRouter as Router, Switch, Route, Redirect
-// } from 'react-router-dom';
 
-// const DbmsFactory = require('DbmsFactory');
+import './profileConstructor.css';
 
-// import * as makeDBMS from 'DbmsFactory';
-// import Button from 'react-bootstrap/Button';
-// import ButtonGroup from 'react-bootstrap/ButtonGroup';
-// import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
-// import { faDownload, faUpload } from '@fortawesome/free-solid-svg-icons';
-// import Header from '../header';
-// import Overview from '../../views2/overview';
-
-
-// import RandomPlanet from '../random-planet';
-// import ErrorBoundry from '../error-boundry';
-// import SwapiService from '../../services/swapi-service';
-// import DummySwapiService from '../../services/dummy-swapi-service';
-
-// import {
-//   PeoplePage,
-//   PlanetsPage,
-//   StarshipsPage,
-//   LoginPage,
-//   SecretPage } from '../pages';
-
-// import { SwapiServiceProvider } from '../swapi-service-context';
-
-
-import './profileStructureEditor.css';
-
-// import DemoBase from 'resources/demoBase';
-
-// const apis = require('apis');
-// const logModule = require('front-db/consoleLogModule');
-// const CallNotificator = require('front-db/callNotificator');
-
-// console.log(makeDBMS);
-
-// console.log(DemoBase);
-
-// import StarshipDetails from '../sw-components/starship-details';
-
-export default class ProfileStructureEditor extends Component {
+export default class ProfileConstructor extends Component {
   state = {
     profileStructure: null
   };
