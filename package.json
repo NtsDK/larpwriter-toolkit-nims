@@ -12,6 +12,9 @@
     "nims-wp-watch-server": "webpack --watch --env.product=server --env.ENABLE_EXTRAS=true",
     "nims-wp-build-server": "webpack --env.product=server",
     "nims-wp-build-stand": "webpack --env.product=standalone",
+
+    "nims-wp-build-stand-core": "webpack --config config\\nims-core.webpack.dev.js --env.product=standalone",
+
     "nims-wp-build-stand-stats": "webpack --env.product=standalone --env.mode=production --profile --json > stats.json",
     "nims-dev": "./node_modules/.bin/gulp dev --configFile \"config/nims-config.json\"",
     "nims-live": "node live.js --configFile \"config/nims-config.json\"",

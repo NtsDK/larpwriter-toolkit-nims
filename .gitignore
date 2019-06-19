@@ -6,3 +6,5 @@ dist/
 .project
 *-nims-base*.json
 .vscode/
+app/nims/pages/scss/
+build/

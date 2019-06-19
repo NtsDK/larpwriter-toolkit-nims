@@ -146,25 +146,7 @@ export default class ProfileConstructor extends Component {
           </div>
         </div>
 
-        {/* <template class="profile-configurer-row-tmpl">
-    <tr>
-      <td><span class="item-position adminOnly"></span></td>
-      <td><span class="item-name adminOnly"></span></td>
-      <td><select class="item-type adminOnly form-control"></select></td>
-      <td class="item-default-value-container"></td>
-      <td><select class="player-access adminOnly form-control"></select></td>
-      <td>
-        <button class="btn btn-default btn-reduced fa-icon print flex-0-0-auto adminOnly" l10n-title="profiles-profile-item-do-export"></button>
-      </td>
-      <td class="hidden"><input type="checkbox" class="show-in-role-grid adminOnly form-control"></td>
-      <td>
-        <button class="btn btn-default btn-reduced fa-icon move flex-0-0-auto adminOnly" l10n-title="profiles-move-profile-item"></button>
-        <button class="btn btn-default btn-reduced fa-icon rename rename-profile-item flex-0-0-auto adminOnly" l10n-title="profiles-rename-profile-item"></button>
-        <button class="btn btn-default btn-reduced fa-icon remove flex-0-0-auto adminOnly" l10n-title="profiles-remove-profile-item"></button>
-      </td>
-    </tr>
-  </template>
-
+        {/* 
   <template class="enum-value-editor-tmpl">
     <div class="flex-row">
       <div class="margin-right-8 flex-1-1-auto">

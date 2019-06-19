@@ -8,6 +8,7 @@ import {
 // const DbmsFactory = require('DbmsFactory');
 
 import * as makeDBMS from 'DbmsFactory';
+// import * as makeDBMS from '../../../../build/nimsCore-bundle';
 // import Button from 'react-bootstrap/Button';
 // import ButtonGroup from 'react-bootstrap/ButtonGroup';
 // import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
