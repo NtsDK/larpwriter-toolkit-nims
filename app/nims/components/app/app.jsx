@@ -32,7 +32,7 @@ import * as makeDBMS from 'DbmsFactory';
 // import { SwapiServiceProvider } from '../swapi-service-context';
 
 
-import './app.css';
+import './App.css';
 import './icons.css';
 
 import DemoBase from 'resources/demoBase';
