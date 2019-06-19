@@ -1,4 +1,4 @@
 import { withTranslation } from 'react-i18next';
-import ProfileConstructor from './profileConstructor.jsx';
+import ProfileConstructor from './ProfileConstructor.jsx';
 
 export default withTranslation()(ProfileConstructor);

@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 
 
-import './profileConstructor.css';
+import './ProfileConstructor.css';
 
 export default class ProfileConstructor extends Component {
   state = {
@@ -146,7 +146,7 @@ export default class ProfileConstructor extends Component {
           </div>
         </div>
 
-        {/* 
+        {/*
   <template class="enum-value-editor-tmpl">
     <div class="flex-row">
       <div class="margin-right-8 flex-1-1-auto">
