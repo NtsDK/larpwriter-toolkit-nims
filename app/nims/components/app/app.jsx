@@ -32,6 +32,7 @@ import * as makeDBMS from 'DbmsFactory';
 
 
 import './app.css';
+import './icons.css';
 
 import DemoBase from 'resources/demoBase';
 

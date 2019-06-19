@@ -132,3 +132,19 @@ main {
 .navigation-button:hover, .navigation-button:focus{
     background-color:  #ccc;
 }
+
+
+.btn-reduced{
+    padding: 4px 8px;
+}
+
+.btn-reduced {
+    padding: 4px 8px;
+}
+
+.flex-0-0-auto {
+    flex: 0 0 auto;
+}
+.flex-1-1-auto {
+    flex: 1 1 auto;
+}

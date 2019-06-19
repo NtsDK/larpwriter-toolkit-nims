@@ -1,0 +1,143 @@
+
+.fa-icon:before{
+    font-family: Font Awesome\ 5 Free;
+    font-weight: 900;
+  }
+  .starterToEnder:before {
+    content: "\f061";
+  }
+  .enderToStarter:before {
+    content: "\f060";
+  }
+  .allies:before {
+    content: "\f2b5";
+  }
+  .directional:before {
+    content: "\f060\f061";
+  }
+  .neutral:before {
+    content: "\f2c2";
+  }
+  .create:before,
+  .add:before {
+    content: "\f055";
+  }
+  .remove:before {
+    content: "\f2ed";
+    font-weight: 500;
+  }
+  .rename:before {
+    content: "\f044";
+  }
+  .change-password:before {
+    content: "\f084";
+  }
+  .replace:before {
+    content: "\f362";
+  }
+  .merge:before {
+    content: "\f061\f060";
+  }
+  .activity-icon-active:before {
+    content: "\f135";
+  }
+  .activity-icon-follower:before {
+    content: "\f234";
+  }
+  .activity-icon-defensive:before {
+    content: "\f21b";
+  }
+  .activity-icon-passive:before {
+    content: "\f236";
+  }
+  #activityBlock button,
+  #relationsBlock button {
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  }
+  
+  #activityBlock .activity-icon-active,
+  #relationsBlock .directional {
+    color: red;
+  }
+  #activityBlock .activity-icon-follower {
+    color: blue;
+  }
+  #activityBlock .activity-icon-defensive,
+  #relationsBlock .allies  {
+    color: green;
+  }
+  #activityBlock .activity-icon-passive,
+  #relationsBlock .neutral  {
+    color: grey;
+  }
+  
+  .unlink:before {
+    content: "\f127";
+  }
+  .print:before {
+    content: "\f02f";
+  }
+  .finished:before {
+    content: "\f11e";
+  }
+  .empty:before {
+    content: "\f15b";
+    font-weight: 500;
+  }
+  .unfinished:before {
+    content: "\f3c1";
+  }
+  .move:before {
+  /*   content: "\f338"; */
+    content: "\f30c\f309";
+  }
+  .clone:before {
+    font-weight: 500;
+    content: "\f24d";
+  }
+  .locked:before {
+    content: "\f023";
+  }
+  .unlocked:before {
+    content: "\f3c1";
+  }
+  .transparent{
+    color: rgba(0,0,0,0);
+    transition-property: color;
+    transition-duration: .2s;
+  }
+  .fa-icon:hover {
+    transition-property: color;
+    transition-duration: .2s;
+  }
+  .story-report-row .fa-icon, 
+  .relation-report-row .fa-icon,
+  #activityBlock .fa-icon,
+  #relationsBlock .fa-icon {
+    font-size: 1.5em;
+  }
+  
+  .transparent-icon:before{
+    color: transparent;
+  }
+  
+  .select-icon-padding:before {
+    width: 20px;
+    display: inline-block;
+  }
+  
+  .group-to-filter:before {
+    content: "\f0c0\00a0\f30b\00a0\f0b0";
+  }
+  .filter-to-group:before {
+    content: "\f0b0\00a0\f30b\00a0\f0c0";
+  }
+  
+  .assign:before {
+    content: "\f30b";
+  }
+  
+  .download-table:before {
+    content: "\f309\00a0\f0ce";
+  }
+  
