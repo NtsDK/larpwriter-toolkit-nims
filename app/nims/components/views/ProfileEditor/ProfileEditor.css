@@ -1,0 +1,10 @@
+/* .profile-editor .list-group {
+    margin-bottom: 0;
+} */
+
+.profile-editor .entity-list {
+    /* margin-bottom: 0; */
+    list-style: none;
+    padding: 0;
+}
+

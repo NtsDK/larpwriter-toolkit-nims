@@ -148,3 +148,10 @@ main {
 .flex-1-1-auto {
     flex: 1 1 auto;
 }
+.flex-row {
+    display: flex;
+}
+
+.entity-toolbar>*+* {
+    margin-left: 8px;
+}
