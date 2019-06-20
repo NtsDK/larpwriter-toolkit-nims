@@ -312,7 +312,7 @@ export default class App extends Component {
             }
 
             <Route path="/characters" render={() => <Redirect to="/characters/profiles" />} exact />
-            <Route path="/characters/profiles" render={() => <ProfileEditor dbms={dbms} />} exact />
+            <Route path="/characters/profiles" render={() => <ProfileEditor dbms={dbms} />} />
             <Route path="/characters/profileStructureEditor" render={() => <ProfileConstructor dbms={dbms} />} exact />
             <Route path="/characters/binding" render={() => <h2>binding</h2>} exact />
 
