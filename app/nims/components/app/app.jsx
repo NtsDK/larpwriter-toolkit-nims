@@ -43,6 +43,7 @@ import ProfileDiagrams from '../views/profileDiagrams';
 import { json2File, makeFileName, readJsonFile } from '../../utils/fileUtils';
 import ProfileConstructor from '../views/ProfileConstructor';
 import ProfileEditor from '../views/ProfileEditor';
+import ProfileBinding from '../views/ProfileBinding';
 // import Characters from '../views/characters';
 
 const apis = require('apis');
@@ -314,7 +315,7 @@ export default class App extends Component {
             <Route path="/characters" render={() => <Redirect to="/characters/profiles" />} exact />
             <Route path="/characters/profiles" render={() => <ProfileEditor dbms={dbms} />} />
             <Route path="/characters/profileStructureEditor" render={() => <ProfileConstructor dbms={dbms} />} exact />
-            <Route path="/characters/binding" render={() => <h2>binding</h2>} exact />
+            <Route path="/characters/binding" render={() => <ProfileBinding dbms={dbms} />} exact />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />
             {/* <Redirect to="/overview" /> */}

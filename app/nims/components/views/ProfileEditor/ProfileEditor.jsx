@@ -35,6 +35,7 @@ export default class ProfileEditor extends Component {
       dbms.getProfileBindings(),
     ]).then((results) => {
       const [primaryNames, secondaryNames, profileBinding] = results;
+      primaryNames.sort(CU.charOrdA);
       this.setState({
         primaryNames, secondaryNames, profileBinding
       });
@@ -47,8 +48,6 @@ export default class ProfileEditor extends Component {
     if (!primaryNames) {
       return null;
     }
-
-    primaryNames.sort(CU.charOrdA);
 
     const { dbms, t } = this.props;
 
