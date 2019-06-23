@@ -1,0 +1,14 @@
+.relation-report .relation-finished {
+    background-color: rgb(123, 225, 65);
+}
+
+.relation-report .relation-unfinished {
+    background-color: rgb(251, 126, 129);
+}
+
+.relation-report .activity-icon  {
+    color: #ddd;
+}
+.relation-report .activity-icon.active  {
+    color: #228B22;
+}

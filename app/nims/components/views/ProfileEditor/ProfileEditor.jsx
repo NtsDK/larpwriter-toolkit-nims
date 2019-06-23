@@ -7,6 +7,8 @@ import {
 } from 'react-router-dom';
 
 import CharacterProfile from './CharacterProfile';
+import StoryReport from './StoryReport';
+import RelationReport from './RelationReport';
 
 export default class ProfileEditor extends Component {
   state = {
@@ -49,15 +51,6 @@ export default class ProfileEditor extends Component {
     primaryNames.sort(CU.charOrdA);
 
     const { dbms, t } = this.props;
-
-    // <div class="btn-group flex-row">
-    //   <button class="btn btn-default btn-reduced fa-icon remove flex-0-0-auto transparent"></button>
-    //   <button class="btn btn-default btn-reduced fa-icon rename flex-0-0-auto transparent"></button>
-    //   <button type="button" class="select-button btn btn-default btn-reduced flex-1-1-auto text-align-left white-space-normal">
-    //     <span class="primary-name"></span>
-    //     <small><div class="secondary-name"></div></small>
-    //   </button>
-    // </div>
 
     return (
       <div className="profile-editor block">
@@ -111,8 +104,6 @@ export default class ProfileEditor extends Component {
             </div>
             <div className="col-xs-9 content-column height-100p">
               <div className="alert-block alert alert-info">{t('advices.no-character')}</div>
-              ProfileEditor body
-
               <Route
                 path="/characters/profiles"
                 render={() => (primaryNames.length === 0
@@ -131,11 +122,15 @@ export default class ProfileEditor extends Component {
                     return <Redirect to={`/characters/profiles/${primaryNames[0]}`} />;
                   }
 
-                  return <CharacterProfile id={id} dbms={dbms} />;
+                  return (
+                    <div>
+                      <StoryReport id={id} dbms={dbms} />
+                      <RelationReport id={id} dbms={dbms} />
+                      <CharacterProfile id={id} dbms={dbms} />
+                    </div>
+                  );
                 }}
               />
-              {/* return <StarshipDetails itemId={id} /> */}
-              {/* <Route path="/characters/profiles" render={() => <ProfileEditor dbms={dbms} />} /> */}
             </div>
           </div>
         </div>
