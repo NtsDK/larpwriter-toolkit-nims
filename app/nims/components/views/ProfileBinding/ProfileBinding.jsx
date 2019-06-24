@@ -29,21 +29,11 @@ export default class ProfileBinding extends Component {
       const [characterNames, playerNames, profileBindings] = results;
       characterNames.sort(CU.charOrdA);
       playerNames.sort(CU.charOrdA);
-      // const [profileModel, profile] = results;
       this.setState({
         characterNames, playerNames, profileBindings
       });
     });
   }
-
-  //   Promise.all([
-  //     PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
-  //     PermissionInformer.getEntityNamesArray({ type: 'player', editableOnly: false }),
-  //     DBMS.getProfileBindings()
-  // ]).then((results) => {
-  //     const [characterNames, playerNames, profileBindings] = results;
-  //     rebuildInterface(characterNames, playerNames, profileBindings);
-  // }).catch(UI.handleError);
 
   render() {
     const { characterNames, playerNames, profileBindings } = this.state;

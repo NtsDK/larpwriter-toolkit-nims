@@ -151,6 +151,11 @@
   display: inline-block;
 }
 
+.icon-padding:before {
+  padding-right: 6px;
+}
+
+
 .group-to-filter:before {
   content: "\f0c0\00a0\f30b\00a0\f0b0";
 }

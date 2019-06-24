@@ -44,6 +44,7 @@ import { json2File, makeFileName, readJsonFile } from '../../utils/fileUtils';
 import ProfileConstructor from '../views/ProfileConstructor';
 import ProfileEditor from '../views/ProfileEditor';
 import ProfileBinding from '../views/ProfileBinding';
+import Stories from '../views/Stories';
 // import Characters from '../views/characters';
 
 const apis = require('apis');
@@ -184,7 +185,6 @@ export default class App extends Component {
               <ul>
                 <li>
                   <NavLink to="/overview">{t('header.overview')}</NavLink>
-
                 </li>
                 <li>
                   <NavLink to="/characters">{t('header.characters')}</NavLink>
@@ -316,6 +316,8 @@ export default class App extends Component {
             <Route path="/characters/profiles" render={() => <ProfileEditor dbms={dbms} />} />
             <Route path="/characters/profileStructureEditor" render={() => <ProfileConstructor dbms={dbms} />} exact />
             <Route path="/characters/binding" render={() => <ProfileBinding dbms={dbms} />} exact />
+
+            <Route path="/stories" render={() => <Stories dbms={dbms} />} />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />
             {/* <Redirect to="/overview" /> */}

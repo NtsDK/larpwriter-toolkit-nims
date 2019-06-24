@@ -1,0 +1,19 @@
+/* .stories-body .stories-nav {
+    display: flex;
+    justify-content: space-between;
+} */
+
+.stories-body .stories-content-container {
+    display: flex;
+}
+
+.stories-body .stories-content-container > * {
+    flex-grow: 1;
+    width: 50%;
+} 
+
+.stories-body .stories-content-container > * + * {
+    margin-left: 8px;
+}
+
+

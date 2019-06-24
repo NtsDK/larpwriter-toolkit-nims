@@ -168,3 +168,6 @@ main {
     margin-bottom: 8px;
 }
 
+.common-select {
+    width: 200px;
+}
