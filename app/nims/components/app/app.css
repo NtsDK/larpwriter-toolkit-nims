@@ -144,15 +144,19 @@ main {
 
 
 
+.flex-row {
+    display: flex;
+}
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
 
 .flex-0-0-auto {
     flex: 0 0 auto;
 }
 .flex-1-1-auto {
     flex: 1 1 auto;
-}
-.flex-row {
-    display: flex;
 }
 .text-align-left {
     text-align: left;
@@ -171,3 +175,4 @@ main {
 .common-select {
     width: 200px;
 }
+

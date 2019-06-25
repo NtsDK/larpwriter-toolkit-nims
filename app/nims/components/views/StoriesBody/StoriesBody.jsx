@@ -7,6 +7,8 @@ import {
 } from 'react-router-dom';
 
 import WriterStory from './WriterStory';
+import Events from './Events';
+import Characters from './Characters';
 
 export default class StoriesBody extends Component {
   state = {
@@ -60,9 +62,9 @@ export default class StoriesBody extends Component {
     case 'writerStory':
       return <WriterStory id={id} dbms={dbms} />;
     case 'events':
-      return <div>events</div>;
+      return <Events id={id} dbms={dbms} />;
     case 'characters':
-      return <div>characters</div>;
+      return <Characters id={id} dbms={dbms} />;
     case 'presence':
       return <div>presence</div>;
     default:

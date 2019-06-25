@@ -78,6 +78,8 @@ module.exports = {
             {
               "jsx": "always"
             }
-          ]
+          ],
+        // this rule is deprecated https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/label-has-for.md
+        'jsx-a11y/label-has-for': 'off'
     }
 };

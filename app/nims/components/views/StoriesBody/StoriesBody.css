@@ -16,4 +16,6 @@
     margin-left: 8px;
 }
 
-
+.stories-body .stories-content-container .right-side:empty {
+    display: none;
+}
