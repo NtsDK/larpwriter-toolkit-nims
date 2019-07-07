@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 //const R = require('ramda');
 const dateFormat = require('dateformat');
 

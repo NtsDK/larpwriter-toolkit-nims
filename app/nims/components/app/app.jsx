@@ -45,10 +45,13 @@ import ProfileConstructor from '../views/ProfileConstructor';
 import ProfileEditor from '../views/ProfileEditor';
 import ProfileBinding from '../views/ProfileBinding';
 import Stories from '../views/Stories';
+
+import InBrowserBackuper, { readBackupBases } from '../../utils/inBrowserBackuper';
+import logModule from '../../utils/logger';
 // import Characters from '../views/characters';
 
 const apis = require('apis');
-const logModule = require('front-db/consoleLogModule');
+// const logModule = require('front-db/consoleLogModule');
 const CallNotificator = require('front-db/callNotificator');
 
 // const nav = [
@@ -58,12 +61,8 @@ const CallNotificator = require('front-db/callNotificator');
 //   }
 // ];
 
-
 // console.log(makeDBMS);
-
 // console.log(DemoBase);
-
-// import StarshipDetails from '../sw-components/starship-details';
 
 export default class App extends Component {
   state = {
@@ -79,13 +78,17 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    this.setDatabase(DemoBase.data);
+    // const bases
+    readBackupBases().then((bases = []) => {
+      this.setDatabase(bases[0] || DemoBase.data);
+    });
   }
 
   setDatabase = (database) => {
+    const log = logModule('dbms', 'debug');
     const dbms = makeDBMS(
       {
-        logModule,
+        logModule: () => log,
         projectName: PROJECT_NAME,
         proxies: [],
         // proxies: [CallNotificator],
@@ -93,6 +96,7 @@ export default class App extends Component {
         isServer: PRODUCT !== 'STANDALONE'
       }
     ).preparedDb;
+
     // eslint-disable-next-line react/destructuring-assignment
     dbms.setDatabase({ database }).then(
       () => {
@@ -107,7 +111,14 @@ export default class App extends Component {
       },
       err => console.log(err)
     );
+
+    if (this.backuper) {
+      this.backuper.stopAutoBackup();
+    }
+    this.backuper = new InBrowserBackuper(() => dbms.getDatabase());
+    this.backuper.startAutoBackup();
   }
+
 
   consistencyCheck = function (dbms) {
     // eslint-disable-next-line react/destructuring-assignment
