@@ -9,6 +9,7 @@ import {
 import WriterStory from './WriterStory';
 import Events from './Events';
 import Characters from './Characters';
+import Presence from './Presence';
 
 export default class StoriesBody extends Component {
   state = {
@@ -66,7 +67,7 @@ export default class StoriesBody extends Component {
     case 'characters':
       return <Characters id={id} dbms={dbms} />;
     case 'presence':
-      return <div>presence</div>;
+      return <Presence id={id} dbms={dbms} />;
     default:
       return null;
     }
