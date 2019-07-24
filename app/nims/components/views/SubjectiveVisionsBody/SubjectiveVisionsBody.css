@@ -1,0 +1,12 @@
+#personalStories {
+    width: 100%;
+}
+
+.time-input {
+    width: 200px;
+}
+
+textarea.eventPersonalStory {
+    height: 160px;
+    resize: vertical;
+}

@@ -176,3 +176,18 @@ main {
     width: 200px;
 }
 
+
+
+
+.entity-list {
+    /* margin-bottom: 0; */
+    list-style: none;
+    padding: 0;
+}
+
+.entity-list a.active,
+.entity-list a.active:focus,
+.entity-list a.active:hover {
+    color: #fff;
+    background-color: #337ab7;
+}

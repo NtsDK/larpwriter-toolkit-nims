@@ -45,6 +45,7 @@ import ProfileConstructor from '../views/ProfileConstructor';
 import ProfileEditor from '../views/ProfileEditor';
 import ProfileBinding from '../views/ProfileBinding';
 import Stories from '../views/Stories';
+import SubjectiveVisions from '../views/SubjectiveVisions';
 
 import InBrowserBackuper, { readBackupBases } from '../../utils/inBrowserBackuper';
 import logModule from '../../utils/logger';
@@ -203,6 +204,9 @@ export default class App extends Component {
                 <li>
                   <NavLink to="/stories">{t('header.stories')}</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/subjectiveVisions">{t('header.adaptations')}</NavLink>
+                </li>
               </ul>
 
               <ul>
@@ -329,6 +333,8 @@ export default class App extends Component {
             <Route path="/characters/binding" render={() => <ProfileBinding dbms={dbms} />} exact />
 
             <Route path="/stories" render={() => <Stories dbms={dbms} />} />
+
+            <Route path="/subjectiveVisions" render={() => <SubjectiveVisions dbms={dbms} />} />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />
             {/* <Redirect to="/overview" /> */}

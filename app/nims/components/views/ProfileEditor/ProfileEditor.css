@@ -2,15 +2,9 @@
     margin-bottom: 0;
 } */
 
-.profile-editor .entity-list {
-    /* margin-bottom: 0; */
-    list-style: none;
-    padding: 0;
-}
-
-.profile-editor ul a.active,
+/* .profile-editor ul a.active,
 .profile-editor ul a.active:focus,
 .profile-editor ul a.active:hover {
     color: #fff;
     background-color: #337ab7;
-}
+} */
