@@ -1,11 +1,8 @@
 module.exports = {
   descr: 'Description',
-  'about-game': 'About game',
   diagrams: 'Diagrams',
   'character-diagrams': 'Character profile diagrams',
   'player-diagrams': 'Player profile diagrams',
-  'statistic-diagrams': 'Statistic diagrams',
-  'profile-diagrams': 'Profile diagrams',
 
   name: 'Name',
   'pre-game-start-date': 'Backstory begin date',

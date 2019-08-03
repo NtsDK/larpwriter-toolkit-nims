@@ -207,6 +207,9 @@ export default class App extends Component {
                 <li>
                   <NavLink to="/subjectiveVisions">{t('header.adaptations')}</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/characterSheets">{t('header.briefings')}</NavLink>
+                </li>
               </ul>
 
               <ul>
@@ -251,13 +254,13 @@ export default class App extends Component {
                 <nav className="view-switch view-switch-secondary">
                   <ul>
                     <li>
-                      <NavLink to="/overview/info">{t('overview.about-game')}</NavLink>
+                      <NavLink to="/overview/info">{t('header.about-game')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/overview/gameStats">{t('overview.statistic-diagrams')}</NavLink>
+                      <NavLink to="/overview/gameStats">{t('header.statistic-diagrams')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/overview/profileStats">{t('overview.profile-diagrams')}</NavLink>
+                      <NavLink to="/overview/profileStats">{t('header.profile-diagrams')}</NavLink>
                     </li>
                     {/* <li>
                       <NavLink to="/overview/gears">{t('header.gears')}</NavLink>
@@ -274,6 +277,22 @@ export default class App extends Component {
                   <ul>
                     <li>
                       <NavLink to="/characters/profiles">{t('header.filling-profile')}</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/characters/profileStructureEditor">{t('header.changing-profile-structure')}</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/characters/binding">{t('header.binding-characters-and-players')}</NavLink>
+                    </li>
+                  </ul>
+                </nav>
+              </Route>
+
+              <Route path="/characterSheets">
+                <nav className="view-switch view-switch-secondary">
+                  <ul>
+                    <li>
+                      <NavLink to="/characterSheets/profiles">{t('header.filling-profile')}</NavLink>
                     </li>
                     <li>
                       <NavLink to="/characters/profileStructureEditor">{t('header.changing-profile-structure')}</NavLink>
