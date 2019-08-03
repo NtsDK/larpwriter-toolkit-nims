@@ -11,9 +11,12 @@ export default class CharacterProfile extends Component {
     this.getStateInfo();
   }
 
-  componentDidUpdate = () => {
-    // console.log('CharacterProfile did update');
-    // this.getStateInfo();
+  componentDidUpdate = (prevProps) => {
+    console.log('CharacterProfile did update');
+    if (prevProps.id === this.props.id) {
+      return;
+    }
+    this.getStateInfo();
   }
 
   componentWillUnmount = () => {

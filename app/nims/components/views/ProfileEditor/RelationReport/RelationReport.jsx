@@ -13,8 +13,12 @@ export default class RelationReport extends Component {
     this.getStateInfo();
   }
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
     console.log('RelationReport did update');
+    if (prevProps.id === this.props.id) {
+      return;
+    }
+    this.getStateInfo();
   }
 
   componentWillUnmount = () => {

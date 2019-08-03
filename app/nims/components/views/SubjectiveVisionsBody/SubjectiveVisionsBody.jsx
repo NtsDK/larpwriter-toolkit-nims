@@ -5,15 +5,21 @@ import './SubjectiveVisionsBody.css';
 
 export default class SubjectiveVisionsBody extends Component {
   state = {
+    story: null
   };
 
   componentDidMount = () => {
-    // console.log('SubjectiveVisionsBody mounted');
+    console.log('SubjectiveVisionsBody mounted');
     this.getStateInfo();
   }
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
     console.log('SubjectiveVisionsBody did update');
+    // console.log('this.props.id', this.props.id);
+    if (prevProps.id === this.props.id) {
+      return;
+    }
+    this.getStateInfo();
   }
 
   componentWillUnmount = () => {
@@ -22,6 +28,9 @@ export default class SubjectiveVisionsBody extends Component {
 
   getStateInfo = () => {
     const { id, dbms } = this.props;
+    if (!id) {
+      return;
+    }
     Promise.all([
       dbms.getMetaInfo(),
       dbms.getStory({ storyName: id }),
@@ -37,9 +46,11 @@ export default class SubjectiveVisionsBody extends Component {
   }
 
   render() {
+    // const { id } = this.state;
     const { story } = this.state;
-    const { t } = this.props;
+    const { t, id } = this.props;
 
+    // if (!id) {
     if (!story) {
       return null;
     }

@@ -13,7 +13,7 @@ export default class SubjectiveVisions extends Component {
   };
 
   componentDidMount = () => {
-    // console.log('SubjectiveVisions mounted');
+    console.log('SubjectiveVisions mounted');
     this.getStateInfo();
   }
 

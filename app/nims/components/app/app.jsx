@@ -81,7 +81,7 @@ export default class App extends Component {
   componentDidMount() {
     // const bases
     readBackupBases().then((bases = []) => {
-      this.setDatabase(bases[0] || DemoBase.data);
+      this.setDatabase(bases != null ? bases[0] : DemoBase.data);
     });
   }
 

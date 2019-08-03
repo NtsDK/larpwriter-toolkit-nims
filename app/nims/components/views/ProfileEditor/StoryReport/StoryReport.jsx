@@ -4,6 +4,7 @@ import './StoryReport.css';
 
 export default class StoryReport extends Component {
   state = {
+    characterReport: null
   };
 
   componentDidMount = () => {
@@ -11,8 +12,12 @@ export default class StoryReport extends Component {
     this.getStateInfo();
   }
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
     console.log('StoryReport did update');
+    if (prevProps.id === this.props.id) {
+      return;
+    }
+    this.getStateInfo();
   }
 
   componentWillUnmount = () => {
@@ -49,7 +54,7 @@ export default class StoryReport extends Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, id } = this.props;
     const { characterReport } = this.state;
 
     if (!characterReport) {
