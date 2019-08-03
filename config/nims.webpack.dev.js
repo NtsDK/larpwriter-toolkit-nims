@@ -136,6 +136,35 @@ module.exports = (env, argv) => {
     //     //     chunks: 'all'
     //     // }
     // };
+    config.optimization = {
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            // name: 'vendors',
+            priority: -10
+          },
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true
+          },
+          dbms: {
+            test: /[\\/]dbms[\\/]/,
+            // test: /[\\/]node_modules[\\/]/,
+            name: 'dbms',
+            // chunks: 'all'
+          },
+          views: {
+            test: /[\\/]views[\\/]/,
+            // test: /[\\/]node_modules[\\/]/,
+            name: 'views',
+            // chunks: 'all'
+          }
+        }
+      }
+    };
     config.devtool = 'source-map';
     config.mode = 'development';
     break;
