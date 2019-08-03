@@ -5,8 +5,8 @@ import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie
 } from 'recharts';
 
-import '../commonChart/commonChart.css';
-import './histChart.css';
+import '../CommonChart/CommonChart.css';
+import './HistChart.css';
 
 const CustomHistTooltip = ({
   active, payload, label, tooltipKey, t

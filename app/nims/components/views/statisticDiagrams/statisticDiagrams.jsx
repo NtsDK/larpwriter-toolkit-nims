@@ -1,11 +1,11 @@
 /* eslint-disable react/prefer-stateless-function */
-import React, { Component } from 'react';
+import React, { Component } from './node_modules/react';
 
 import PieChart from '../../util/pieChart';
 import HistChart from '../../util/histChart';
 import { makeBindingStatsPie, makePieData } from '../../../utils/diagramUtils';
 
-import './statisticDiagrams.css';
+import './StatisticDiagrams.css';
 
 export default class StatisticDiagrams extends Component {
   state = {

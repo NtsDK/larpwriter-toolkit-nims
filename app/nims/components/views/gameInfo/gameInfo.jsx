@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import dateFormat from 'dateformat';
 
-import './gameInfo.css';
+import './GameInfo.css';
 
 export default class GameInfo extends Component {
   state = {

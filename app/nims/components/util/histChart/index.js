@@ -1,4 +1,4 @@
 import { withTranslation } from 'react-i18next';
-import HistChart from './histChart.jsx';
+import HistChart from './HistChart.jsx';
 
 export default withTranslation()(HistChart);

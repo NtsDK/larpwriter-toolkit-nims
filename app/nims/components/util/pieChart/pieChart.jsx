@@ -5,8 +5,8 @@ import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie
 } from 'recharts';
 
-import '../commonChart/commonChart.css';
-import './pieChart.css';
+import '../CommonChart/CommonChart.css';
+import './PieChart.css';
 
 const CustomPieTooltip = ({
   active, payload, label
