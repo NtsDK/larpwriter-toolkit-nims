@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './SubjectiveVisionsBody.css';
 
+import EventOriginCard from '../EventOriginCard';
+import EventAdaptationCard from '../EventAdaptationCard';
+
 export default class SubjectiveVisionsBody extends Component {
   state = {
     story: null
@@ -114,48 +117,13 @@ export default class SubjectiveVisionsBody extends Component {
                 story.events.map(event => (
                   <div className="container-fluid eventRow-dependent">
                     <div className="row eventMainPanelRow-left events-eventsContainer">
-
                       <div className="col-xs-6">
-                        <div className="panel panel-primary">
-                          <div className="panel-heading flex-row">
-                            <h1 className="panel-title card-title flex-1-1-auto">{event.name}</h1>
-                            <input className="isStoryEditable time-input form-control flex-0-0-auto" value={event.time} />
-                            <button
-                              type="button"
-                              className="btn btn-default btn-reduced fa-icon locked btn-primary flex-0-0-auto margin-left-8 isStoryEditable"
-                              title={t('briefings.unlock-event-source')}
-                            />
-                          </div>
-                          <div className="panel-body">
-                            <textarea className="isStoryEditable eventPersonalStory form-control text-input" value={event.text} />
-                          </div>
-                        </div>
+                        <EventOriginCard event={event} />
                       </div>
                       {
                         R.toPairs(event.characters).map(([name, props]) => (
                           <div className="col-xs-6">
-                            <div className="panel panel-default">
-                              <div className="panel-heading flex-row">
-                                <h1 className="panel-title card-title flex-1-1-auto">{name}</h1>
-                                <input
-                                  className=" time-input form-control flex-0-0-auto"
-                                  value={props.time}
-                                  placeholder={t('adaptations.subjective-time')}
-                                />
-                                <button
-                                  type="button"
-                                  className="btn btn-default btn-reduced fa-icon finished flex-0-0-auto margin-left-8"
-                                  title={t('constant.adaptation-finished')}
-                                />
-                              </div>
-                              <div className="panel-body">
-                                <textarea
-                                  className="eventPersonalStory form-control text-input"
-                                  value={props.text}
-                                  placeholder={t('adaptations.adaptation-text')}
-                                />
-                              </div>
-                            </div>
+                            <EventAdaptationCard charName={name} data={props} />
                           </div>
                         ))
                       }

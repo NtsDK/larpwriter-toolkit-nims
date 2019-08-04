@@ -13,6 +13,8 @@ import Inventory from './Inventory';
 import Groups from './Groups';
 
 import RelationsBody from '../RelationsBody';
+import PreviewStories from './PreviewStories';
+import PreviewEvents from './PreviewEvents';
 
 
 export default class CharSheetPreviewBody extends Component {
@@ -138,6 +140,8 @@ export default class CharSheetPreviewBody extends Component {
               </div>
             </div>
             <div id="briefingContent">
+              <PreviewEvents id={id} dbms={dbms} />
+              <PreviewStories id={id} dbms={dbms} />
               <RelationsBody id={id} dbms={dbms} />
               <Groups id={id} dbms={dbms} />
               <Inventory id={id} dbms={dbms} />
