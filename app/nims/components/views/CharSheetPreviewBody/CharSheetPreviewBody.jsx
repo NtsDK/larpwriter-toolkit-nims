@@ -7,6 +7,8 @@ import {
 } from 'react-router-dom';
 
 import EntitySelect from '../../util/EntitySelect';
+import PreviewCharProfile from './PreviewCharProfile';
+import PreviewPlayerProfile from './PreviewPlayerProfile';
 
 
 export default class CharSheetPreviewBody extends Component {
@@ -62,7 +64,7 @@ export default class CharSheetPreviewBody extends Component {
 
   render() {
     const { charNames, redirect, to } = this.state;
-    const { t, id } = this.props;
+    const { t, id, dbms } = this.props;
 
 
     if (!charNames) {
@@ -131,7 +133,10 @@ export default class CharSheetPreviewBody extends Component {
                 </div>
               </div>
             </div>
-            <div id="briefingContent" />
+            <div id="briefingContent">
+              <PreviewPlayerProfile charId={id} dbms={dbms} />
+              <PreviewCharProfile id={id} dbms={dbms} />
+            </div>
           </div>
         </div>
 
