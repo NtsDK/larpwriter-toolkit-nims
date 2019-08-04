@@ -9,6 +9,8 @@ import {
 import EntitySelect from '../../util/EntitySelect';
 import PreviewCharProfile from './PreviewCharProfile';
 import PreviewPlayerProfile from './PreviewPlayerProfile';
+import Inventory from './Inventory';
+import Groups from './Groups';
 
 
 export default class CharSheetPreviewBody extends Component {
@@ -134,6 +136,8 @@ export default class CharSheetPreviewBody extends Component {
               </div>
             </div>
             <div id="briefingContent">
+              <Groups id={id} dbms={dbms} />
+              <Inventory id={id} dbms={dbms} />
               <PreviewPlayerProfile charId={id} dbms={dbms} />
               <PreviewCharProfile id={id} dbms={dbms} />
             </div>
