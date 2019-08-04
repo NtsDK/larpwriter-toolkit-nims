@@ -70,7 +70,6 @@ export default class SubjectiveVisions extends Component {
                   </div>
                   <div className="panel-body panel-resizable form-group">
                     <ul className="entity-list ">
-
                       {
                         storyNames.map(storyName => (
                           <li className="flex-row">

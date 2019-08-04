@@ -45,7 +45,7 @@ export default class Groups extends Component {
       <Panel title={`${t('header.groups')} (${groupTexts.length})`} className="Groups">
         {
           groupTexts.map(groupText => (
-            <div>
+            <div key={groupText.groupName}>
               <h4>{groupText.groupName}</h4>
               <textarea className="briefingTextSpan form-control" value={groupText.text} />
             </div>

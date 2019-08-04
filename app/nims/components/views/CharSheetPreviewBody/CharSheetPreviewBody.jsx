@@ -12,6 +12,8 @@ import PreviewPlayerProfile from './PreviewPlayerProfile';
 import Inventory from './Inventory';
 import Groups from './Groups';
 
+import RelationsBody from '../RelationsBody';
+
 
 export default class CharSheetPreviewBody extends Component {
   state = {
@@ -136,6 +138,7 @@ export default class CharSheetPreviewBody extends Component {
               </div>
             </div>
             <div id="briefingContent">
+              <RelationsBody id={id} dbms={dbms} />
               <Groups id={id} dbms={dbms} />
               <Inventory id={id} dbms={dbms} />
               <PreviewPlayerProfile charId={id} dbms={dbms} />

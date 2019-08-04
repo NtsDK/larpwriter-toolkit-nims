@@ -48,6 +48,7 @@ import Stories from '../views/Stories';
 import SubjectiveVisions from '../views/SubjectiveVisions';
 import CharSheetPreview from '../views/CharSheetPreview';
 import CharSheetExport from '../views/CharSheetExport';
+import Relations from '../views/Relations';
 import Stub from '../util/Stub';
 
 import InBrowserBackuper, { readBackupBases } from '../../utils/inBrowserBackuper';
@@ -214,6 +215,9 @@ export default class App extends Component {
                 <li>
                   <NavLink to="/characterSheets">{t('header.briefings')}</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/relations">{t('header.relations')}</NavLink>
+                </li>
               </ul>
 
               <ul>
@@ -359,6 +363,8 @@ export default class App extends Component {
             <Route path="/characterSheets" render={() => <Redirect to="/characterSheets/preview" />} exact />
             <Route path="/characterSheets/preview" render={() => <CharSheetPreview dbms={dbms} />} />
             <Route path="/characterSheets/export" render={() => <CharSheetExport dbms={dbms} />} />
+
+            <Route path="/relations" render={() => <Relations dbms={dbms} />} />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />
             {/* <Redirect to="/overview" /> */}
