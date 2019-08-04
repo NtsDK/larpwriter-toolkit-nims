@@ -45,16 +45,16 @@ export default class Characters extends Component {
     }
     return (
       <div className="characters panel panel-default">
-        <div className="alert alert-info" l10n-id="advices-no-characters-in-story">{t('advices.no-characters-in-story')}</div>
+        <div className="alert alert-info">{t('advices.no-characters-in-story')}</div>
         <table className="table table-bordered character-inventory-area">
           <thead>
             <tr>
-              <th l10n-id="stories-name">{t('stories.name')}</th>
-              <th l10n-id="stories-inventory">{t('stories.inventory')}</th>
-              <th l10n-id="constant-active">{t('constant.active')}</th>
-              <th l10n-id="constant-follower">{t('constant.follower')}</th>
-              <th l10n-id="constant-defensive">{t('constant.defensive')}</th>
-              <th l10n-id="constant-passive">{t('constant.passive')}</th>
+              <th>{t('stories.name')}</th>
+              <th>{t('stories.inventory')}</th>
+              <th>{t('constant.active')}</th>
+              <th>{t('constant.follower')}</th>
+              <th>{t('constant.defensive')}</th>
+              <th>{t('constant.passive')}</th>
             </tr>
           </thead>
           <tbody>

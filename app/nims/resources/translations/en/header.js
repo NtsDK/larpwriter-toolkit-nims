@@ -25,7 +25,11 @@ module.exports = {
 
   briefings: 'Character sheets',
   'briefing-preview': 'Preview',
+
   'briefing-export': 'Export',
+  'simple-export': 'Simple export',
+  'advanced-docx-export': 'Advanced export docx',
+  'advanced-txt-export': 'Advanced text export',
 
   relations: 'Relations',
   timeline: 'Timeline',

@@ -46,6 +46,9 @@ import ProfileEditor from '../views/ProfileEditor';
 import ProfileBinding from '../views/ProfileBinding';
 import Stories from '../views/Stories';
 import SubjectiveVisions from '../views/SubjectiveVisions';
+import CharSheetPreview from '../views/CharSheetPreview';
+import CharSheetExport from '../views/CharSheetExport';
+import Stub from '../util/Stub';
 
 import InBrowserBackuper, { readBackupBases } from '../../utils/inBrowserBackuper';
 import logModule from '../../utils/logger';
@@ -142,6 +145,7 @@ export default class App extends Component {
   getRoutingState = path => this.settings.routing[path];
 
   downloadDatabaseAsFile = () => {
+    // eslint-disable-next-line react/destructuring-assignment
     this.state.dbms.getDatabase().then((database) => {
       json2File(database, makeFileName(`${PROJECT_NAME}_${database.Meta.name}`, 'json', new Date(database.Meta.saveTime)));
     }).catch(UI.handleError);
@@ -292,13 +296,10 @@ export default class App extends Component {
                 <nav className="view-switch view-switch-secondary">
                   <ul>
                     <li>
-                      <NavLink to="/characterSheets/profiles">{t('header.filling-profile')}</NavLink>
+                      <NavLink to="/characterSheets/preview">{t('header.briefing-preview')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/characters/profileStructureEditor">{t('header.changing-profile-structure')}</NavLink>
-                    </li>
-                    <li>
-                      <NavLink to="/characters/binding">{t('header.binding-characters-and-players')}</NavLink>
+                      <NavLink to="/characterSheets/export">{t('header.briefing-export')}</NavLink>
                     </li>
                   </ul>
                 </nav>
@@ -354,6 +355,10 @@ export default class App extends Component {
             <Route path="/stories" render={() => <Stories dbms={dbms} />} />
 
             <Route path="/subjectiveVisions" render={() => <SubjectiveVisions dbms={dbms} />} />
+
+            <Route path="/characterSheets" render={() => <Redirect to="/characterSheets/preview" />} exact />
+            <Route path="/characterSheets/preview" render={() => <CharSheetPreview dbms={dbms} />} />
+            <Route path="/characterSheets/export" render={() => <CharSheetExport dbms={dbms} />} />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />
             {/* <Redirect to="/overview" /> */}

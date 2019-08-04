@@ -1,5 +1,5 @@
 /* eslint-disable react/prefer-stateless-function */
-import React, { Component } from './node_modules/react';
+import React, { Component } from 'react';
 
 import PieChart from '../../util/pieChart';
 import HistChart from '../../util/histChart';

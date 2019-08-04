@@ -11,6 +11,8 @@ import Events from './Events';
 import Characters from './Characters';
 import Presence from './Presence';
 
+import EntitySelect from '../../util/EntitySelect';
+
 export default class StoriesBody extends Component {
   state = {
     redirect: false
@@ -104,11 +106,7 @@ export default class StoriesBody extends Component {
               >
                 <span>{t('stories.story')}</span>
               </button>
-              <select id="storySelector" className="common-select form-control" onChange={this.onStoryChange}>
-                {
-                  storyNames.map(name => (<option value={name} selected={name === id}>{name}</option>))
-                }
-              </select>
+              <EntitySelect names={storyNames} id={id} onChange={this.onStoryChange} />
               <button
                 type="button"
                 className="btn btn-default btn-reduced fa-icon rename story flex-0-0-auto isStoryEditable"
