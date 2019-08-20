@@ -39,7 +39,7 @@ import DemoBase from 'resources/demoBase';
 
 import GameInfo from '../views/gameInfo';
 import StatisticDiagrams from '../views/statisticDiagrams';
-import ProfileDiagrams from '../views/profileDiagrams';
+import ProfileDiagrams from '../views/ProfileDiagrams';
 import { json2File, makeFileName, readJsonFile } from '../../utils/fileUtils';
 import ProfileConstructor from '../views/ProfileConstructor';
 import ProfileEditor from '../views/ProfileEditor';
@@ -49,6 +49,7 @@ import SubjectiveVisions from '../views/SubjectiveVisions';
 import CharSheetPreview from '../views/CharSheetPreview';
 import CharSheetExport from '../views/CharSheetExport';
 import Relations from '../views/Relations';
+import Timeline from '../views/Timeline';
 import Stub from '../util/Stub';
 
 import InBrowserBackuper, { readBackupBases } from '../../utils/inBrowserBackuper';
@@ -222,6 +223,13 @@ export default class App extends Component {
 
               <ul>
                 <li>
+                  <NavLink to="/timeline">{t('header.timeline')}</NavLink>
+                </li>
+              </ul>
+
+
+              <ul>
+                <li>
                   <button
                     type="button"
                     className="dataLoadButton icon-button action-button mainNavButton"
@@ -365,6 +373,8 @@ export default class App extends Component {
             <Route path="/characterSheets/export" render={() => <CharSheetExport dbms={dbms} />} />
 
             <Route path="/relations" render={() => <Relations dbms={dbms} />} />
+
+            <Route path="/timeline" render={() => <Timeline dbms={dbms} />} />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />
             {/* <Redirect to="/overview" /> */}

@@ -1,7 +1,7 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 
-import './profileDiagrams.css';
+import './ProfileDiagrams.css';
 
 import PieChart from '../../util/pieChart';
 import HistChart from '../../util/histChart';
