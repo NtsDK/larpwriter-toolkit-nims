@@ -1,0 +1,6 @@
+.timeline-list > .row:nth-child(odd) {
+  background-color: hsla(0,0%,100%,.8);
+}
+.timeline-list .row {
+  padding: 6px;
+}

@@ -191,3 +191,13 @@ main {
     color: #fff;
     background-color: #337ab7;
 }
+
+.font-weight-bold {
+  font-weight: bold;
+}
+
+.white-space-normal {
+  white-space: normal;
+  overflow: hidden;
+  word-wrap: break-word;
+}

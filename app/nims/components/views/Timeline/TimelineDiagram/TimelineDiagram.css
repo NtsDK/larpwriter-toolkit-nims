@@ -1,0 +1,20 @@
+.timeline-label {
+  width: 120px;
+  white-space: normal;
+  word-wrap: break-word;
+  display: block;
+}
+
+.visualObjectContainer {
+	flex-grow: 1;
+}
+
+.importantItem .vis-item-content {
+	color: white;
+	background-color: red;
+	border-color: darkred;
+}
+
+#timelineContainer {
+  background-color: #fff;
+}

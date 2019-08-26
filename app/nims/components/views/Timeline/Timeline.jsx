@@ -32,6 +32,7 @@ export default class Timeline extends Component {
   }
 
   getStateInfo = () => {
+    const { mode } = this.state;
     const { dbms } = this.props;
     Promise.all([
       dbms.getMetaInfo(),
@@ -40,8 +41,10 @@ export default class Timeline extends Component {
       dbms.getEntityNamesArray({ type: 'character' }),
     ]).then((results) => {
       const [metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames] = results;
+      const byStory = mode === 'ByStory';
+      const selectorValues = byStory ? allStoryNames : allCharacterNames;
       this.setState({
-        metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames
+        metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames, selectedValues: [selectorValues[0]]
       });
     });
   }
@@ -61,19 +64,57 @@ export default class Timeline extends Component {
     } : null));
   }
 
+  getData() {
+    const {
+      mode, metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames, selectedValues
+    } = this.state;
+    const byStory = mode === 'ByStory';
+
+    const selectorValues = byStory ? allStoryNames : allCharacterNames;
+
+    const eventsByStories = R.groupBy(R.prop('storyName'), eventsTimeInfo);
+    const eventsByCharacters1 = R.uniq(R.flatten(eventsTimeInfo.map(event => event.characters)));
+    const eventsByCharacters = R.zipObj(
+      eventsByCharacters1,
+      R.ap([R.clone], R.repeat([], eventsByCharacters1.length))
+    );
+    eventsTimeInfo.forEach(event => event.characters.forEach(character => eventsByCharacters[character].push(event)));
+
+    const data = byStory ? eventsByStories : eventsByCharacters;
+    const selectedValues2 = R.intersection(selectedValues, R.keys(data));
+    const usedData = R.pick(selectedValues2, data);
+
+    const events = R.uniq(R.flatten(R.values(usedData))
+      .map((event) => {
+        event.time = new Date(event.time !== '' ? event.time : metaInfo.date);
+        event.characters.sort(CU.charOrdA);
+        return event;
+      }));
+
+    events.sort(CU.charOrdAFactory(R.prop('time')));
+
+    return {
+      selectorValues,
+      usedData,
+      events
+    };
+  }
+
   render() {
     const {
       mode, metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames, selectedValues
     } = this.state;
     const { t, dbms } = this.props;
 
-    const selectorValues = mode === 'ByStory' ? allStoryNames : allCharacterNames;
-
     if (!eventsTimeInfo) {
       // return <div> Timeline stub </div>;
-
       return null;
     }
+
+    const {
+      selectorValues, usedData, events
+    } = this.getData();
+
     return (
       <div className="Timeline block">
         <Route path="/timeline" render={() => <Redirect to="/timeline/eventList" />} exact />
@@ -145,13 +186,18 @@ export default class Timeline extends Component {
               </ul>
             </nav>
 
-            <Route path="/timeline/eventList" render={() => <TimelineList dbms={dbms} />} />
-            <Route path="/timeline/interactiveDiagram" render={() => <TimelineDiagram dbms={dbms} />} />
-            {/* <Route path="/characterSheets/export" render={() => <CharSheetExport dbms={dbms} />} /> */}
-            {/* <div className="panel panel-default">
-
-              <div className="panel-body" >
-            </div> */}
+            <Route path="/timeline/eventList" render={() => <TimelineList dbms={dbms} events={events} />} />
+            <Route
+              path="/timeline/interactiveDiagram"
+              render={() => (
+                <TimelineDiagram
+                  selectedValues={selectedValues}
+                  usedData={usedData}
+                  metaInfo={metaInfo}
+                  dbms={dbms}
+                />
+              )}
+            />
           </div>
         </div>
       </div>
