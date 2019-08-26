@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*Copyright 2016 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");

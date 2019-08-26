@@ -80,10 +80,10 @@ exports.profileTypes = ['character', 'player'];
 
 exports.groupProfileStructure = [{
   name: 'filterModel',
-  type: 'container',
+  type: 'filterModel',
 }, {
   name: 'characterList',
-  type: 'container',
+  type: 'characterList',
 }, {
   name: 'masterDescription',
   type: 'text',

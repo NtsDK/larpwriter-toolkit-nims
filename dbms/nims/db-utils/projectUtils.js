@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 const R = require('ramda');
 const Constants = require('../constants');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
@@ -230,6 +231,18 @@ exports.isFilterModelCompatibleWithProfiles = (profileStructure, filterModel) =>
         filterModel
     );
     return charConflicts.concat(playerConflicts);
+};
+
+exports.getItemSetName = (item) => {
+  if (item.name.startsWith(Constants.CHAR_PREFIX)) {
+    return 'character';
+  } if (item.name.startsWith(Constants.PLAYER_PREFIX)) {
+    return 'player';
+  } if (item.name.startsWith(Constants.SUMMARY_PREFIX)) {
+    return 'summary';
+  }
+  console.error(`Unknown item set name ${item.name}`);
+  return null;
 };
 
 exports.rel2charArr = R.props(['starter', 'ender']);
