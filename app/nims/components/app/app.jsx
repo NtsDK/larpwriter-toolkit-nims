@@ -51,6 +51,7 @@ import CharSheetExport from '../views/CharSheetExport';
 import Relations from '../views/Relations';
 import Timeline from '../views/Timeline';
 import SocialNetwork from '../views/SocialNetwork';
+import ProfileFilter from '../views/ProfileFilter';
 import Groups from '../views/Groups';
 import Stub from '../util/Stub';
 
@@ -231,6 +232,9 @@ export default class App extends Component {
                   <NavLink to="/socialNetwork">{t('header.social-network')}</NavLink>
                 </li>
                 <li>
+                  <NavLink to="/profileFilter">{t('header.profile-filter')}</NavLink>
+                </li>
+                <li>
                   <NavLink to="/groups">{t('header.groups')}</NavLink>
                 </li>
               </ul>
@@ -385,6 +389,7 @@ export default class App extends Component {
             <Route path="/timeline" render={() => <Timeline dbms={dbms} />} />
             <Route path="/socialNetwork" render={() => <SocialNetwork dbms={dbms} />} />
 
+            <Route path="/profileFilter" render={() => <ProfileFilter dbms={dbms} />} />
             <Route path="/groups" render={() => <Groups dbms={dbms} />} />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />

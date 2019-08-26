@@ -87,12 +87,12 @@ exports.makeGroupedProfileFilterInfo = (opts) => {
     arr.push({
         name: Constants.CHAR_NAME,
         type: 'string',
-        displayName: 'profile-filter-character',
+        displayName: 'profile-filter.character',
     });
     arr.push({
         name: Constants.CHAR_OWNER,
         type: 'string',
-        displayName: 'profile-filter-character-owner',
+        displayName: 'profile-filter.character-owner',
     });
     arr = arr.concat(opts.characters.profileStructure.map(element => ({
         name: Constants.CHAR_PREFIX + element.name,
@@ -109,12 +109,12 @@ exports.makeGroupedProfileFilterInfo = (opts) => {
     arr.push({
         name: Constants.PLAYER_NAME,
         type: 'string',
-        displayName: 'profile-filter-player-name',
+        displayName: 'profile-filter.player-name',
     });
     arr.push({
         name: Constants.PLAYER_OWNER,
         type: 'string',
-        displayName: 'profile-filter-player-owner',
+        displayName: 'profile-filter.player-owner',
     });
     arr = arr.concat(opts.players.profileStructure.map(element => ({
         name: Constants.PLAYER_PREFIX + element.name,

@@ -1,0 +1,12 @@
+.settings-panel {
+  margin-right: 8px; 
+  min-width: 300px;
+}
+
+.filter-result-size {
+  padding: 10px 15px;
+}
+
+.lightGrey{
+  color: rgb(184,184,184);
+}

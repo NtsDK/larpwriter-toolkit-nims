@@ -268,12 +268,12 @@ exports.PLAYER_PREFIX = 'player-profile-';
 exports.SUMMARY_PREFIX = 'summary-';
 
 exports.summaryStats = [
-  ['active', 'constant-active'],
-  ['follower', 'constant-follower'],
-  ['defensive', 'constant-defensive'],
-  ['passive', 'constant-passive'],
-  ['completeness', 'profile-filter-completeness'],
-  ['totalStories', 'profile-filter-totalStories']
+  ['active', 'constant.active'],
+  ['follower', 'constant.follower'],
+  ['defensive', 'constant.defensive'],
+  ['passive', 'constant.passive'],
+  ['completeness', 'profile-filter.completeness'],
+  ['totalStories', 'profile-filter.totalStories']
 ];
 
 exports.socialNetworkOpts = {

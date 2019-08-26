@@ -118,7 +118,7 @@ export default class SocialNetwork extends Component {
                       <div className="margin-bottom-16">
                         <select id="networkNodeGroupSelector" className="form-control" />
                       </div>
-                      <span l10n-id="social-network-legend" className="margin-bottom-8 inline-block">{t('social-network.legend')}</span>
+                      <span className="margin-bottom-8 inline-block">{t('social-network.legend')}</span>
                       <div id="colorLegend" />
                     </div>
                   </div>
@@ -145,12 +145,12 @@ export default class SocialNetwork extends Component {
                     <div className="network-filter-area">
                       <select size="3" id="networkSubsetsSelector" className="form-control" />
                       <div id="networkCharacterDiv" className="hidden">
-                        <h4 l10n-id="social-network-characters">{t('social-network.characters')}</h4>
+                        <h4>{t('social-network.characters')}</h4>
                         <input selector-filter="#networkCharacterSelector" />
                         <select id="networkCharacterSelector" multiple className="form-control" />
                       </div>
                       <div id="networkStoryDiv" className="hidden">
-                        <h4 l10n-id="social-network-stories">{t('social-network.stories')}</h4>
+                        <h4>{t('social-network.stories')}</h4>
                         <input selector-filter="#networkStorySelector" />
                         <select id="networkStorySelector" multiple className="form-control" />
                       </div>
@@ -180,16 +180,16 @@ export default class SocialNetwork extends Component {
                       <select size="4" id="networkSelector" className="form-control" />
 
                       <div id="activityBlock" className="hidden">
-                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-active" data-value="active" l10n-title="constant-active" />
-                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-follower" data-value="follower" l10n-title="constant-follower" />
-                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-defensive" data-value="defensive" l10n-title="constant-defensive" />
-                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-passive" data-value="passive" l10n-title="constant-passive" />
+                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-active" data-value="active" title={t('constant.active')} />
+                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-follower" data-value="follower" title={t('constant.follower')} />
+                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-defensive" data-value="defensive" title={t('constant.defensive')} />
+                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-passive" data-value="passive" title={t('constant.passive')} />
                       </div>
 
                       <div id="relationsBlock" className="hidden">
-                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto allies" data-value="allies" l10n-title="briefings-allies" />
-                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto directional" data-value="directional" l10n-title="briefings-directional" />
-                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto neutral" data-value="neutral" l10n-title="briefings-neutral" />
+                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto allies" data-value="allies" title={t('briefings.allies')} />
+                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto directional" data-value="directional" title={t('briefings.directional')} />
+                        <button type="button" className="btn btn-default btn-reduced fa-icon flex-0-0-auto neutral" data-value="neutral" title={t('briefings.neutral')} />
                       </div>
                     </div>
                   </div>
@@ -199,7 +199,6 @@ export default class SocialNetwork extends Component {
               <button
                 type="button"
                 id="drawNetworkButton"
-                l10n-id="social-network-draw"
                 className="btn btn-default width-100p"
               >
                 {t('social-network.draw')}

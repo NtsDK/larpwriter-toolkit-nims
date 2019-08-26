@@ -11,7 +11,7 @@ function FilterConfiguration(info, t) {
   function populateProfileItems(item) {
     if (!R.startsWith(Constants.CHAR_PREFIX, item.name)
             && !R.startsWith(Constants.PLAYER_PREFIX, item.name)) {
-      item.displayName = item.displayName;
+      item.displayName = t(item.displayName);
       // item.displayName = L10n.getValue(item.displayName);
       item.value = '';
     }

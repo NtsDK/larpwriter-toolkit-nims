@@ -38,28 +38,16 @@ export default class GroupProfile extends Component {
   }
 
   getStateInfo = () => {
-    const { dbms, id } = this.props;
+    const { dbms, id, t } = this.props;
     Promise.all([
       dbms.getGroup({ groupName: id }),
-      FilterConfiguration.makeFilterConfiguration(dbms),
-      // dbms.getProfileStructure({ type: 'character' }),
-      // dbms.getProfile({ type: 'character', name: id })
+      FilterConfiguration.makeFilterConfiguration(dbms, t),
     ]).then((results) => {
       const [group, filterConfiguration] = results;
       this.setState({
         group, filterConfiguration
       });
     });
-
-    // const { dbms } = this.props;
-    // Promise.all([
-    //   dbms.getSomething(),
-    // ]).then((results) => {
-    //   const [something] = results;
-    //   this.setState({
-    //     something
-    //   });
-    // });
   }
 
   render() {
