@@ -155,31 +155,6 @@ export default class Characters extends Component {
         </table>
       </div>
     );
-
-  // <template class="story-character-row-tmpl">
-    // <td class="character-name"></td>
-    // <td><input class="inventoryInput isStoryEditable form-control"></td>
-    // <td class="vertical-aligned-td active"><input
-    //   class="isStoryEditable hidden" type="checkbox"><label
-    //   class="checkbox-label activity-icon-active fa-icon"></label></td>
-    // <td class="vertical-aligned-td follower"><input
-    //   class="isStoryEditable hidden" type="checkbox"><label
-    //   class="checkbox-label activity-icon-follower fa-icon"></label></td>
-    // <td class="vertical-aligned-td defensive"><input
-    //   class="isStoryEditable hidden" type="checkbox"><label
-    //   class="checkbox-label activity-icon-defensive fa-icon"></label></td>
-    // <td class="vertical-aligned-td passive"><input
-    //   class="isStoryEditable hidden" type="checkbox"><label
-    //   class="checkbox-label activity-icon-passive fa-icon"></label></td>
-    // <td>
-    //   <button
-    //     class="btn btn-default btn-reduced fa-icon replace character flex-0-0-auto isStoryEditable"
-    //     l10n-title="stories-replace-character"></button>
-    //   <button
-    //     class="btn btn-default btn-reduced fa-icon remove character flex-0-0-auto isStoryEditable"
-    //     l10n-title="stories-remove-character"></button>
-    // </td>
-  // </template>
   }
 }
 

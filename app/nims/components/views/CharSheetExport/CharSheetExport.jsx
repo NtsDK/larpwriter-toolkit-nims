@@ -179,35 +179,6 @@ export default class CharSheetExport extends Component {
 
       </div>
     );
-
-    //   <div id="advancedTextExportContainer" class="exportContainer container-fluid">
-    //     <div class="row">
-    //       <div class="col-xs-2">
-    //         <div class="margin-bottom-16">
-    //           <button class="btn btn-default btn-reduced white-space-normal" id="previewTextOutput" l10n-id="briefings-preview"></button>
-    //           <button class="btn btn-default btn-reduced white-space-normal" id="showRawData" l10n-id="briefings-raw-data"></button>
-    //           <button class="btn btn-default btn-reduced white-space-normal" id="convertToDocxTemplate" l10n-id="briefings-convert-to-docx-template"></button>
-    //           <button class="btn btn-default btn-reduced white-space-normal" id="generateByDocxTemplate" l10n-id="briefings-generate-by-docx-template"></button>
-    //           <button class="btn btn-default btn-reduced white-space-normal" id="makeCustomTextBriefings" l10n-id="briefings-export"></button>
-    //           <button class="btn btn-default btn-reduced white-space-normal" id="makeMarkdownBriefings" l10n-id="briefings-markdown-export"></button>
-    //         </div>
-    //         <div>
-    //           <label l10n-id="briefings-enter-text-file-type"></label>
-    //           <input id="textTypeSelector" value="txt" class="form-control"/>
-    //         </div>
-    //       </div>
-    //       <div class="col-xs-5">
-    //         <div>
-    //           <h3 l10n-id="briefings-template"></h3>
-    //           <textarea id="templateArea" class="form-control"></textarea>
-    //         </div>
-    //       </div>
-    //       <div class="col-xs-5">
-    //         <h3 l10n-id="briefings-exported-text"></h3>
-    //         <textarea id="textBriefingPreviewArea" class="form-control"></textarea>
-    //       </div>
-    //     </div>
-    //   </div>
   }
 }
 

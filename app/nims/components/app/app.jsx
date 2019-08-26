@@ -50,6 +50,7 @@ import CharSheetPreview from '../views/CharSheetPreview';
 import CharSheetExport from '../views/CharSheetExport';
 import Relations from '../views/Relations';
 import Timeline from '../views/Timeline';
+import SocialNetwork from '../views/SocialNetwork';
 import Stub from '../util/Stub';
 
 import InBrowserBackuper, { readBackupBases } from '../../utils/inBrowserBackuper';
@@ -225,6 +226,9 @@ export default class App extends Component {
                 <li>
                   <NavLink to="/timeline">{t('header.timeline')}</NavLink>
                 </li>
+                <li>
+                  <NavLink to="/socialNetwork">{t('header.social-network')}</NavLink>
+                </li>
               </ul>
 
 
@@ -375,6 +379,7 @@ export default class App extends Component {
             <Route path="/relations" render={() => <Relations dbms={dbms} />} />
 
             <Route path="/timeline" render={() => <Timeline dbms={dbms} />} />
+            <Route path="/socialNetwork" render={() => <SocialNetwork dbms={dbms} />} />
 
             <Route path="/" render={() => <Redirect to="/overview" />} exact />
             {/* <Redirect to="/overview" /> */}
