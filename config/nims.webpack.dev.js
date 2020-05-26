@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const serverEntry = {
     organizer: './app/nims/pages/organizer.js',
@@ -56,6 +56,9 @@ const config = {
                 use: [
                     { loader: 'file-loader', options: { name: '[name].html' } },
                     { loader: 'extract-loader' },
+
+                    // from version 1.0.0 it doesn't support interpolate option anymore
+                    // need to use alternatives
                     { loader: 'html-loader', options: { interpolate: true } },
                 ]
             },
@@ -90,9 +93,12 @@ const config = {
             // CU: ['core', 'CU'],
             // Errors: ['core', 'Errors'],
         }),
-        new CleanWebpackPlugin([distPath], {
-            root: process.cwd(),
-        }),
+        new CleanWebpackPlugin(
+            // [distPath],
+            // {
+            //     root: process.cwd(),
+            // }
+        ),
         // eslint-disable-next-line no-useless-escape
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /(ru|en)/)
         // new BundleAnalyzerPlugin({
