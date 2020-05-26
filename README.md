@@ -4,19 +4,21 @@ This repo contains sources of larpwriter toolkit NIMS project (frontend, core an
 
 # Install and run
 
+```
 npm i
+```
 
 How to run development environment for standalone version?
 
-1. npm run nims-wp-start
+1. `npm run nims-wp-start`
 2. Open http://localhost:8080/nims.html in browser.
 
 How to run development environment for server version?
 
-1. In first cmd run npm run nims-wp-watch-server
+1. In first cmd run `npm run nims-wp-watch-server`
 It will create dist folder with frontend build.
-2. Go to server\config\nims-frontend-local.json and set absolute path to dist folder in frontendPath
-3. In second cmd run npm run nims-nodemon
+2. Go to `server\config\nims-frontend-local.json` and set absolute path to dist folder in frontendPath
+3. In second cmd run `npm run nims-nodemon`
 4. Open http://localhost:3001/ admin/zxpoYR65
 5. Default base is empty. You need to load some base. You can download base example from standalone NIMS build.
 
