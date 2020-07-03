@@ -5,6 +5,7 @@
     "lerna": "^3.22.1"
   },
   "scripts": {
-    "wa333333tch:standalone": "lerna run watch:standalone"
+    "bootstrap": "lerna bootstrap --hoist",
+    "watch:standalone": "lerna run watch:standalone --stream"
   }
 }
