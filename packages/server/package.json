@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "0.7.2",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "nims-nodemon": "nodemon ./bin/www --configFile \"config/nims-frontend-local.json\"  --globalConfigFile \"config/nims-frontend-global.json\"",
+    "nims-node": "node ./bin/www --configFile \"config/nims-frontend-local.json\"  --globalConfigFile \"config/nims-frontend-global.json\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "resources" : "0.7.2",
+    "dbms-nims" : "0.7.2"
+  },
+  "private": true
+}
