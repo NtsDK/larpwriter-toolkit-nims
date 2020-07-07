@@ -8,7 +8,8 @@
   "autosave":{
     "root":"./"
   },
-  "frontendPath" : "C:\\Users\\Tim\\workspace\\nims\\packages\\app-nims\\dist",
+  "frontend000Path" : "C:\\Users\\Tim\\workspace\\nims\\packages\\app-nims\\dist",
+  "frontendPath" : "../app-nims/dist",
   "https": {
       "enabled" : false,
       "privateKey" : "I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.key",

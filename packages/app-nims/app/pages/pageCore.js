@@ -61,12 +61,8 @@ exports.initPage = () => {
     UI.initSelectorFilters();
     UI.initPanelTogglers();
     L10n.localizeStatic();
-    function updateDialogs() {
-        // vex.dialog.buttons.YES.text = L10n.getValue('common-ok');
-        // vex.dialog.buttons.NO.text = L10n.getValue('common-cancel');
-    }
-    updateDialogs();
-    L10n.onL10nChange(updateDialogs);
+    UI.updateDialogL10n();
+    L10n.onL10nChange(UI.updateDialogL10n);
     window.SM = new SettingsManager();
     stateInit();
 };

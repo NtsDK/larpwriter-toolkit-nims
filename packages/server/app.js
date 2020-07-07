@@ -108,7 +108,10 @@ require('./boot')(app, dbms);
 require('./middlewares')(app, dbms);
 require('./routes')(app, dbms);
 
-app.use(express.static(config.get('frontendPath')));
+// app.use(express.static(config.get('frontendPath')));
+// console.log(config.get('frontendPath'));
+// throw new Error(path.resolve(__dirname, config.get('frontendPath')));
+app.use(express.static(path.resolve(__dirname, config.get('frontendPath'))));
 
 app.use((err, req, res, next) => {
     console.error(`${new Date().toString()} ${err}`);

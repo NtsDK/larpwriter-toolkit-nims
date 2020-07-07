@@ -6,6 +6,7 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
-    "watch:standalone": "lerna run watch:standalone --stream"
+    "watch:standalone": "lerna run watch:standalone --stream",
+    "watch:server": "lerna run watch:server --stream"
   }
 }

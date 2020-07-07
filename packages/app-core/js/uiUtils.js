@@ -35,6 +35,11 @@ See the License for the specific language governing permissions and
 
 /* eslint-disable no-var,vars-on-top */
 
+exports.updateDialogL10n = function () {
+    vex.dialog.buttons.YES.text = L10n.getValue('common-ok');
+    vex.dialog.buttons.NO.text = L10n.getValue('common-cancel');
+};
+
 /** opts
     tooltip - add tooltip to button, used for iconic buttons
     id - set button id
