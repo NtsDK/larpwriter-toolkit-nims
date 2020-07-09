@@ -2,25 +2,65 @@
 
 This repo contains sources of larpwriter toolkit NIMS project (frontend, core and server).
 
-# Install and run
+# Dev install
 
-```
-npm i
-```
+Installing monorepo manager Lerna:
 
-How to run development environment for standalone version?
+`npm i -g lerna` 
 
-1. `npm run nims-wp-start`
+Installing project dev dependencies:
+
+`npm i` 
+
+
+# Dev run
+
+## Running development standalone version
+
+1. `npm run watch:standalone`
 2. Open http://localhost:8080/nims.html in browser.
 
-How to run development environment for server version?
+## Running development server version
 
-1. In first cmd run `npm run nims-wp-watch-server`
-It will create dist folder with frontend build.
-2. Go to `server\config\nims-frontend-local.json` and set absolute path to dist folder in frontendPath
-3. In second cmd run `npm run nims-nodemon`
-4. Open http://localhost:3001/ admin/zxpoYR65
-5. Default base is empty. You need to load some base. You can download base example from standalone NIMS build.
+1. `npm run watch:server`
+
+It will create dist folder in `packages/nims-app` with frontend build.
+
+2. Open http://localhost:3001/ 
+
+Default login/password: admin/zxpoYR65
+
+3. Default base is empty. You need to load some base. You can download base example from standalone NIMS build or take it from nims-resources.
+
+#  Package description
+
+## nims-app
+
+NIMS webclient interface - all pages and page control. Also DBMS tests are here too.
+
+## nims-app-core
+
+Common utilities for webclient interface. Common UI, l10n, utils and autosave in browser local storage.
+
+## nims-dbms
+
+NIMS data engine APIs. Includes all APIs both general and server specific.
+
+## nims-dbms-core
+
+NIMS data engine core. Generic part and utilities.
+
+## nims-resources
+
+Data resources - localization files and NIMS base examples.
+
+## nims-server
+
+NIMS express server.
+
+## wiki
+
+Old outdated package.
 
 # Description (Outdated)
 
