@@ -1,10 +1,12 @@
 {
+    "verbose": true,
     "ignore": [
         ".git",
-        "node_modules/**/node_modules"
+        "node_modules/**/node_modules",
+        "*-nims-base*.json"
     ],
     "watch" : [
         "*.*",
-        "I:\\workspaces\\nims-dist\\js\\common\\*"
+        "../nims-app/dist/*"
     ]
 }
