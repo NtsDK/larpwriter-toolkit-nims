@@ -1,0 +1,29 @@
+{
+  "port":3001,
+  "instanceName": "devServer2",
+  "session": {
+    "secret": "dfgdfgsdfgsd",
+    "key": "siddsfgdsfgsdfga"
+  },
+  "autosave":{
+    "root":"./"
+  },
+  "frontend000Path" : "C:\\Users\\Tim\\workspace\\nims\\packages\\app-nims\\dist",
+  "frontendPath" : "../nims-app/dist",
+  "https": {
+      "enabled" : false,
+      "privateKey" : "I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.key",
+      "certificate" : "I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.crt"
+  }, 
+  "playerAccess" :{
+      "enabled" : true
+  }, 
+  "logOverrides" :{
+      "enabled" : false,
+      "overrides" : {
+          "statisticsAPI" : {
+              "getStatistics" : {}
+          }
+      }
+  }
+}

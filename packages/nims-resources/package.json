@@ -1,0 +1,15 @@
+{
+  "name": "nims-resources",
+  "version": "0.7.2",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+  },
+  "private": true
+}

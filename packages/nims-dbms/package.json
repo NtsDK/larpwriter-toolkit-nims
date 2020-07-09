@@ -1,0 +1,17 @@
+{
+  "name": "nims-dbms",
+  "version": "0.7.2",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ramda": "^0.27.0",
+    "nims-dbms-core": "0.7.2"
+  },
+  "private": true
+}
