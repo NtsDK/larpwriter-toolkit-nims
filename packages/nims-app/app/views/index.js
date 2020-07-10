@@ -1,31 +1,33 @@
-exports.Overview = require('./overview/overview');
-exports.Stories = require('./stories/stories');
-exports.Adaptations = require('./adaptations/adaptations');
-exports.Relations = require('./briefings/relations');
-exports.RoleGrid = require('./profiles2/roleGrid');
-exports.Timeline = require('./timeline/timeline');
-exports.SocialNetwork = require('./network/socialNetwork');
-exports.TextSearch = require('./textSearch/textSearch');
-exports.ProfileFilter = require('./groups/profileFilter');
-exports.GroupProfile = require('./groups/groupProfile');
+import BriefingPreview from './briefings/briefingPreview';
+import BriefingExport from './briefings/briefingExport';
+import LogViewer from './logs/logViewer';
+import GroupSchema from './groups/groupSchema';
+import { CharacterEditor, PlayerEditor } from './profiles2/profileEditor2';
+import { CharacterConfigurer, PlayerConfigurer } from './profiles2/profileConfigurer2';
+import ProfileBinding2 from './profiles2/profileBinding2';
+import OrganizerManagement from './accessManager/organizerManagement';
+import PlayerManagement from './accessManager/playerManagement';
+import About from './logs/about';
 
-exports.Enter = require('./serverSpecific/enter');
-exports.Player = require('./serverSpecific/player');
-exports.SignUp = require('./serverSpecific/sign-up');
-exports.About = require('./logs/about');
+import buildRouteView from './tabRouting/routingTab';
 
-const BriefingPreview = require('./briefings/briefingPreview');
-const BriefingExport = require('./briefings/briefingExport');
-const LogViewer = require('./logs/logViewer');
-const GroupSchema = require('./groups/groupSchema');
-const { CharacterEditor, PlayerEditor } = require('./profiles2/profileEditor2');
-const { CharacterConfigurer, PlayerConfigurer } = require('./profiles2/profileConfigurer2');
-const ProfileBinding2 = require('./profiles2/profileBinding2');
-const OrganizerManagement = require('./accessManager/organizerManagement');
-const PlayerManagement = require('./accessManager/playerManagement');
+export { default as Overview } from './overview/overview';
+export { default as Stories } from './stories/stories';
+export { default as Adaptations } from './adaptations/adaptations';
+export { default as Relations } from './briefings/relations';
+export { default as RoleGrid } from './profiles2/roleGrid';
+export { default as Timeline } from './timeline/timeline';
+export { default as SocialNetwork } from './network/socialNetwork';
+export { default as TextSearch } from './textSearch/textSearch';
+export { default as ProfileFilter } from './groups/profileFilter';
+export { default as GroupProfile } from './groups/groupProfile';
 
+export { default as Enter } from './serverSpecific/enter';
+export { default as Player } from './serverSpecific/player';
+export { default as SignUp } from './serverSpecific/sign-up';
+export { default as About } from './logs/about';
 
-exports.Briefings = require('./tabRouting/routingTab')({
+export const Briefings = buildRouteView({
     firstTab: 'BriefingExport',
     tabs: [{
         btnName: 'briefing-preview',
@@ -38,9 +40,9 @@ exports.Briefings = require('./tabRouting/routingTab')({
     }]
 });
 
-
-exports.LogViewer2 = require('./tabRouting/routingTab')({
-    firstTab: 'GroupSchema',
+export const LogViewer2 = buildRouteView({
+    firstTab: 'About',
+    // firstTab: 'GroupSchema',
     tabs: [{
         btnName: 'logViewer',
         viewName: 'LogViewer',
@@ -52,11 +54,11 @@ exports.LogViewer2 = require('./tabRouting/routingTab')({
     }, {
         btnName: 'about',
         viewName: 'About',
-        viewBody: exports.About
+        viewBody: About
     }]
 });
 
-exports.Characters = require('./tabRouting/routingTab')({
+export const Characters = buildRouteView({
     firstTab: 'CharacterEditor',
     tabs: [{
         btnName: 'filling-profile',
@@ -73,7 +75,7 @@ exports.Characters = require('./tabRouting/routingTab')({
     }]
 });
 
-exports.Players = require('./tabRouting/routingTab')({
+export const Players = buildRouteView({
     firstTab: 'PlayerEditor',
     tabs: [{
         btnName: 'filling-profile',
@@ -90,8 +92,7 @@ exports.Players = require('./tabRouting/routingTab')({
     }]
 });
 
-
-exports.AccessManager = require('./tabRouting/routingTab')({
+export const AccessManager = buildRouteView({
     firstTab: 'OrganizerManagement',
     tabs: [{
         btnName: 'organizerManagement',

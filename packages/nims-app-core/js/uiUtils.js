@@ -583,7 +583,7 @@ exports.getSelect2Data = exports.getSelect2DataCommon(exports.remapProps4Select2
 
 exports.setFirstTab = function (containers, opts) {
     U.addClass(opts.button, 'active');
-    containers.content.appendChild(opts.view.content);
+    containers.content.appendChild(opts.view.content || opts.view.getContent());
     containers.root.currentView = opts.view;
 };
 

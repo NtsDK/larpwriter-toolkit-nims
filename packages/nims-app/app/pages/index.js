@@ -5,10 +5,6 @@ const {
 
 require('./index.html');
 
-// require('common.css');
-// require('icons.css');
-// require('style.css');
-// require('experimental.css');
 require('../style/common.css');
 require('../style/icons.css');
 require('../style/style.css');
