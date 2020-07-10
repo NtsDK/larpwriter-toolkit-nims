@@ -1,70 +1,59 @@
-const PermissionInformer = require('permissionInformer');
-// const PermissionInformer = require('nims/permissionInformer');
-// const DbmsFactory = require('dbms-core/DbmsFactory');
-const DbmsFactory = require('DbmsFactory');
-const apis = require('apis');
+import PermissionInformer from 'permissionInformer';
+import DbmsFactory from 'DbmsFactory';
+import apis from 'apis';
 
-const { TestUtils, LocalBackupCore } = require('nims-app-core');
-const DemoBase = require('nims-resources/demoBase');
-const EmptyBase = require('nims-resources/emptyBase');
-// const DemoBase = require('resources/demoBase');
-// const EmptyBase = require('resources/emptyBase');
+import { TestUtils, LocalBackupCore } from 'nims-app-core';
+import DemoBase from 'nims-resources/demoBase';
+import EmptyBase from 'nims-resources/emptyBase';
 
-// } = require('pages/pageCore');
+import './nims.html';
 
-require('./nims.html');
-
-// const CallNotificator = require('dbms-core/callNotificator');
-const CallNotificator = require('../front-db/callNotificator');
-const {
+import CallNotificator from '../front-db/callNotificator';
+import {
     initPage, makeButton, btnOpts, postLogout, refreshView,
     addNavSeparator, addNavEl, testView, addView, setFirstTab
-} = require('./pageCore');
+} from './pageCore';
 
-// require('common.css');
-// require('icons.css');
-// require('style.css');
-// require('experimental.css');
-require('../style/common.css');
-require('../style/common.css');
-require('../style/icons.css');
-require('../style/style.css');
-require('../style/experimental.css');
+import '../style/common.css';
+import '../style/icons.css';
+import '../style/style.css';
+import '../style/experimental.css';
 
-if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
-    // eslint-disable-next-line global-require
-    require('nims-app-core/tests/jasmine');
-    // require('core/tests/jasmine');
-    // eslint-disable-next-line global-require
-    require('../specs/baseAPI');
-    // eslint-disable-next-line global-require
-    require('../specs/smokeTest');
-    if (PRODUCT === 'SERVER') {
-        // eslint-disable-next-line global-require
-        require('../specs/serverSmokeTest');
-    }
-}
+import {
+    Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
+    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager
+} from '../views';
+
+import initLocalBaseBackup from '../front-db/localBaseBackup';
+
+import logModule from '../front-db/consoleLogModule';
+
+import 'nims-app-core/tests/jasmine';
+import '../specs/baseAPI';
+import '../specs/smokeTest';
+import '../specs/serverSmokeTest';
+
+// if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
+//     // eslint-disable-next-line global-require
+//     require('nims-app-core/tests/jasmine');
+//     // eslint-disable-next-line global-require
+//     require('../specs/baseAPI');
+//     // eslint-disable-next-line global-require
+//     require('../specs/smokeTest');
+//     // eslint-disable-next-line global-require
+//     require('../specs/serverSmokeTest');
+// }
 
 // eslint-disable-next-line import/order
-// const { localAutoSave, runBaseSelectDialog, makeBackup } = require('front-db/localBaseBackup')({
-const { localAutoSave, runBaseSelectDialog, makeBackup } = require('../front-db/localBaseBackup')({
+const { localAutoSave, runBaseSelectDialog, makeBackup } = initLocalBaseBackup({
     initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
 });
 
-const {
-    Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
-    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager
-// } = require('views');
-} = require('../views');
-
-// const logModule = require('front-db/consoleLogModule');
-const logModule = require('../front-db/consoleLogModule');
-// const CallNotificator = require('front-db/callNotificator');
-
 let firstBaseLoad = PRODUCT === 'STANDALONE';
 
+let onPageLoad = null;
 if (PRODUCT === 'STANDALONE') {
-    exports.onPageLoad = () => {
+    onPageLoad = () => {
         initPage();
         window.DBMS = DbmsFactory({
             logModule,
@@ -80,7 +69,7 @@ if (PRODUCT === 'STANDALONE') {
         }
     };
 } else {
-    exports.onPageLoad = () => {
+    onPageLoad = () => {
         initPage();
         window.DBMS = DbmsFactory();
         consistencyCheck((checkResult) => {
@@ -90,7 +79,7 @@ if (PRODUCT === 'STANDALONE') {
     };
 }
 
-window.onPageLoad = exports.onPageLoad;
+window.onPageLoad = onPageLoad;
 
 // exports.onServerOrgPageLoad = () => {
 //     initPage();
@@ -113,7 +102,8 @@ function onDatabaseLoad() {
         PermissionInformer.isAdmin().then((isAdmin) => {
             $.datetimepicker.setDateFormatter('moment');
 
-            const firstTab = 'Overview';
+            // const firstTab = 'Overview';
+            const firstTab = 'LogViewer2';
 
             addView('overview', 'Overview', Overview);
             addView('characters', 'Characters', Characters);
