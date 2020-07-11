@@ -1,5 +1,3 @@
-//const R = require('ramda');
-
 export default function RoutingTabTmpl(opts) {
     const state = {};
     const tmplRoot = '.tab-routing-tmpl';

@@ -1,24 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-//const Constants = require('dbms/constants');
-const PermissionInformer = require('permissionInformer');
-//const R = require('ramda');
+import PermissionInformer from 'permissionInformer';
 
 
 // Character/Player profiles already have field 'name'
@@ -31,7 +11,7 @@ const PermissionInformer = require('permissionInformer');
 // 3. simple and lesser complexity, I choose this way
 
 function ProfileConfigurerTmpl(opts) {
-    const exports = {};
+    const innerExports = {};
     const { tabType } = opts;
 
     const tmplRoot = '.profile-configurer2-tab-tmpl';
@@ -40,7 +20,7 @@ function ProfileConfigurerTmpl(opts) {
     const l10n = L10n.get('profiles');
     const state = {};
 
-    exports.init = () => {
+    innerExports.init = () => {
         const el = U.queryEl(tmplRoot).cloneNode(true);
 
         U.addClasses(el, ['profile-configurer2-tab', `${`${tabType}-type`}`]);
@@ -160,10 +140,10 @@ function ProfileConfigurerTmpl(opts) {
         UI.initPanelTogglers(el);
 
         U.listen(U.qe(`${tabRoot}.create`), 'click', () => createProfileItemDialog.showDlg());
-        exports.content = el;
+        innerExports.content = el;
     };
 
-    exports.refresh = () => {
+    innerExports.refresh = () => {
         refreshPanel(tabType, profilePanel);
     };
 
@@ -190,7 +170,7 @@ function ProfileConfigurerTmpl(opts) {
             } catch (err1) {
                 UI.handleError(err1); return;
             }
-            UI.enable(exports.content, 'adminOnly', isAdmin);
+            UI.enable(innerExports.content, 'adminOnly', isAdmin);
         }).catch(UI.handleError);
     }
 
@@ -206,7 +186,7 @@ function ProfileConfigurerTmpl(opts) {
             }).then(() => {
                 input.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                innerExports.refresh();
             }).catch(err => UI.setError(dialog, err));
         };
     }
@@ -376,7 +356,7 @@ function ProfileConfigurerTmpl(opts) {
                     type,
                     index,
                     profileItemName: profileSettings.name
-                }).then(exports.refresh, UI.handleError);
+                }).then(innerExports.refresh, UI.handleError);
             });
         });
 
@@ -486,7 +466,7 @@ function ProfileConfigurerTmpl(opts) {
             }).then(() => {
                 toInput.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                innerExports.refresh();
             }).catch(err => UI.setError(dialog, err));
         };
     }
@@ -501,7 +481,7 @@ function ProfileConfigurerTmpl(opts) {
                 newIndex
             }).then(() => {
                 dialog.hideDlg();
-                exports.refresh();
+                innerExports.refresh();
             }, err => UI.setError(dialog, err));
         };
     }
@@ -529,7 +509,7 @@ function ProfileConfigurerTmpl(opts) {
                 value: newVals.join(',')
             }).then(() => {
                 dialog.hideDlg();
-                exports.refresh();
+                innerExports.refresh();
             }, err => UI.setError(dialog, err));
         };
     }
@@ -547,7 +527,7 @@ function ProfileConfigurerTmpl(opts) {
                 toValue: renameInput.value.trim()
             }).then(() => {
                 dialog.hideDlg();
-                exports.refresh();
+                innerExports.refresh();
             }, err => UI.setError(dialog, err));
         };
     }
@@ -561,7 +541,7 @@ function ProfileConfigurerTmpl(opts) {
                     type,
                     profileItemName: name,
                     newType
-                }).then(exports.refresh, UI.handleError);
+                }).then(innerExports.refresh, UI.handleError);
             }, () => {
                 event.target.value = event.target.oldType;
             });
@@ -582,15 +562,15 @@ function ProfileConfigurerTmpl(opts) {
             });
         };
     }
-    return exports;
+    return innerExports;
 }
 
-exports.CharacterConfigurer = ProfileConfigurerTmpl({
+export const CharacterConfigurer = ProfileConfigurerTmpl({
     tabType: 'character',
     panelName: 'characters-profile-structure',
 });
 
-exports.PlayerConfigurer = ProfileConfigurerTmpl({
+export const PlayerConfigurer = ProfileConfigurerTmpl({
     tabType: 'player',
     panelName: 'players-profile-structure',
 });

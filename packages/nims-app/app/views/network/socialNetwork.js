@@ -1,29 +1,7 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS, StoryCharacters
- */
-
-const vis = require('vis');
-require('vis/dist/vis.min.css');
-//const R = require('ramda');
-
-//const Constants = require('dbms/constants');
-
-const PermissionInformer = require('permissionInformer');
-const NetworkSubsetsSelector = require('./networkSubsetsSelector');
+import vis from 'vis';
+import 'vis/dist/vis.min.css';
+import PermissionInformer from 'permissionInformer';
+import NetworkSubsetsSelector from './networkSubsetsSelector';
 
 
 // ((exports) => {
@@ -34,7 +12,15 @@ const CHAR_PREFIX = 'Ch:';
 const PROFILE_GROUP = 'prof-';
 const FILTER_GROUP = 'filter-';
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
     NetworkSubsetsSelector.init();
 
     U.listen(U.queryEl('#networkNodeGroupSelector'), 'change', colorNodes);
@@ -54,7 +40,7 @@ exports.init = () => {
 
     //    TimelinedNetwork.init();
 
-    exports.content = U.queryEl('#socialNetworkDiv');
+    content = U.queryEl('#socialNetworkDiv');
 };
 
 function initWarning() {
@@ -65,7 +51,7 @@ function initWarning() {
 }
 
 
-exports.refresh = () => {
+function refresh(){
     let selector = U.fillSelector(U.clearEl(U.queryEl('#networkSelector')), UI.constArr2Select(Constants.networks));
     [selector.value] = Constants.networks;
     onNetworkSelectorChangeDelegate({ target: selector });

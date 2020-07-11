@@ -1,5 +1,11 @@
 {
   "name": "root",
+  "author": "Timofey Rechkalov (NtsDK)",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NtsDK/larpwriter-toolkit-nims"
+  },
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.9.6",

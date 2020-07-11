@@ -1,51 +1,38 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+import './briefing-preview.css';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-require('./briefing-preview.css');
-
-const PermissionInformer = require('permissionInformer');
-//const Constants = require('dbms/constants');
-//const R = require('ramda');
-const Relations = require('./relations');
-const RelationsPreview = require('./relationsPreview');
-const Adaptations = require('../adaptations/adaptations');
-
+import PermissionInformer from "permissionInformer";
+import Relations from "./relations";
+import RelationsPreview from "./relationsPreview";
+import Adaptations from "../adaptations/adaptations";
 
 const state = {};
 const root = '#briefingPreviewDiv ';
 const settingsPath = 'BriefingPreview';
 const l10n = L10n.get('briefings');
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
     $('#briefingCharacter').select2().on('change', buildContentDelegate);
 
     let button = U.queryEl('#eventGroupingByStoryRadio');
-    U.listen(button, 'change', exports.refresh);
+    U.listen(button, 'change', refresh);
     button.checked = true;
 
     button = U.queryEl('#adaptationsModeRadio');
-    U.listen(button, 'change', exports.refresh);
+    U.listen(button, 'change', refresh);
     button.checked = true;
 
-    U.listen(U.queryEl('#eventGroupingByTimeRadio'), 'change', exports.refresh);
-    U.listen(U.queryEl('#proofreadingModeRadio'), 'change', exports.refresh);
-    U.listen(U.queryEl('#hideAllPanelsCheckbox'), 'change', exports.refresh);
-    U.listen(U.queryEl('#disableHeadersCheckbox'), 'change', exports.refresh);
+    U.listen(U.queryEl('#eventGroupingByTimeRadio'), 'change', refresh);
+    U.listen(U.queryEl('#proofreadingModeRadio'), 'change', refresh);
+    U.listen(U.queryEl('#hideAllPanelsCheckbox'), 'change', refresh);
+    U.listen(U.queryEl('#disableHeadersCheckbox'), 'change', refresh);
 
     U.queryEl('#hideAllPanelsCheckbox').checked = true;
 
@@ -54,7 +41,7 @@ exports.init = () => {
 
     initPanelsArr();
 
-    exports.content = U.queryEl('#briefingPreviewDiv');
+    content = U.queryEl('#briefingPreviewDiv');
 };
 
 //    function updateGutterScrollPos (){
@@ -98,7 +85,7 @@ exports.init = () => {
 //
 //    }
 
-exports.refresh = () => {
+function refresh() {
     U.clearEl(U.queryEl('#briefingCharacter'));
     U.clearEl(U.queryEl('#briefingContent'));
 
@@ -245,7 +232,7 @@ function initPanelsArr() {
             const label = `${L10n.getValue('header-relations')} (${data.relationsSummary.relations.length})`;
             const content = RelationsPreview.makeRelationsContent(
                 data, getFlags().isAdaptationsMode,
-                state.characterProfileStructure, exports.refresh
+                state.characterProfileStructure, refresh
             );
             U.addEl(el, makePanel(U.makeText(label), content, getFlags().hideAllPanels));
         }
@@ -268,7 +255,7 @@ function initPanelsArr() {
 function onBuildContentFinish() {
     UI.initTextAreas(`${root} #briefingContent textarea`);
     UI.refreshTextAreas(`${root} #briefingContent textarea`);
-    UI.enable(exports.content, 'notEditable', false);
+    UI.enable(content, 'notEditable', false);
 }
 
 

@@ -1,37 +1,24 @@
-/*Copyright 2015, 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-// const U = core.U;
-
-const PermissionInformer = require('permissionInformer');
-//const R = require('ramda');
+import PermissionInformer from "permissionInformer";
 
 const root = '.adaptations-tab ';
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+
+
+function init(){
     U.listen(U.queryEl('#events-storySelector'), 'change', updateAdaptationSelectorDelegate);
     U.listen(U.queryEl('#events-characterSelector'), 'change', showPersonalStoriesByCharacters);
     U.listen(U.queryEl('#events-eventSelector'), 'change', showPersonalStoriesByEvents);
-    U.listen(U.queryEl('#finishedStoryCheckbox'), 'change', exports.refresh);
+    U.listen(U.queryEl('#finishedStoryCheckbox'), 'change', refresh);
     U.queryEls('.adaptations-tab input[name=adaptationFilter]').map(U.listen(R.__, 'change', updateFilter));
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     const selector = U.clearEl(U.queryEl('#events-storySelector'));
     U.clearEl(U.queryEl('#events-characterSelector'));
     U.clearEl(U.queryEl('#events-eventSelector'));
@@ -148,20 +135,20 @@ function updateFilter(event) {
 }
 
 function showPersonalStoriesByCharacters() {
-    const eventRows = U.queryElEls(exports.content, '.eventRow-dependent');
+    const eventRows = U.queryElEls(content, '.eventRow-dependent');
     eventRows.map(U.removeClass(R.__, 'hidden'));
-    U.nl2array(U.queryElEls(exports.content, 'div[dependent-on-character]')).map(U.addClass(R.__, 'hidden'));
+    U.nl2array(U.queryElEls(content, 'div[dependent-on-character]')).map(U.addClass(R.__, 'hidden'));
 
     const characterNames = U.nl2array(U.queryEl('#events-characterSelector').selectedOptions).map(opt => opt.characterName);
-    characterNames.forEach(name => U.queryElEls(exports.content, `div[dependent-on-character="${name}"]`).map(U.removeClass(R.__, 'hidden')));
+    characterNames.forEach(name => U.queryElEls(content, `div[dependent-on-character="${name}"]`).map(U.removeClass(R.__, 'hidden')));
     eventRows.map(row => U.hideEl(row, R.intersection(row.dependsOnCharacters, characterNames).length === 0));
 
     updateSettings('characterNames', characterNames);
 }
 
 function showPersonalStoriesByEvents() {
-    U.queryElEls(exports.content, 'div[dependent-on-character]').map(U.removeClass(R.__, 'hidden'));
-    U.queryElEls(exports.content, '.eventRow-dependent').map(U.addClass(R.__, 'hidden'));
+    U.queryElEls(content, 'div[dependent-on-character]').map(U.removeClass(R.__, 'hidden'));
+    U.queryElEls(content, '.eventRow-dependent').map(U.addClass(R.__, 'hidden'));
 
     const eventIndexes = U.nl2array(U.queryEl('#events-eventSelector').selectedOptions).map(opt => opt.eventIndex222);
     eventIndexes.forEach(index => U.removeClass(U.queryEls(`.${index}-dependent`)[0], 'hidden'));
@@ -218,8 +205,8 @@ function showPersonalStories(storyName) {
                 metaInfo
             );
             updateAdaptationSelector(story, allCharacters);
-            UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
-            UI.enable(exports.content, 'notEditable', false);
+            UI.enable(content, 'isStoryEditable', isStoryEditable);
+            UI.enable(content, 'notEditable', false);
         }).catch(UI.handleError);
     }).catch(UI.handleError);
 }
@@ -250,7 +237,7 @@ function buildAdaptationInterface(storyName, characterNames, events, areAdaptati
         const row = U.qmte(`${root} .adaptation-row-tmpl`);
         U.addClass(row, `${event.index}-dependent`);
         row.dependsOnCharacters = R.keys(event.characters);
-        U.addEl(U.qee(row, '.eventMainPanelRow-left'), exports.makeOriginCard(event, metaInfo, storyName, {
+        U.addEl(U.qee(row, '.eventMainPanelRow-left'), makeOriginCard(event, metaInfo, storyName, {
 
             showTimeInput: true,
             showTextInput: true,
@@ -260,7 +247,7 @@ function buildAdaptationInterface(storyName, characterNames, events, areAdaptati
             .filter(characterName => event.characters[characterName])
             .map((characterName) => {
                 const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
-                return exports.makeAdaptationCard(isEditable, event, storyName, characterName, {
+                return makeAdaptationCard(isEditable, event, storyName, characterName, {
                     showFinishedButton: true,
                     showTimeInput: true,
                     showTextInput: true,
@@ -272,7 +259,7 @@ function buildAdaptationInterface(storyName, characterNames, events, areAdaptati
     }));
 }
 
-exports.makeOriginCard = (event, metaInfo, storyName, opts) => {
+const makeOriginCard = (event, metaInfo, storyName, opts) => {
     const card = U.qmte(`${root} .origin-tmpl`);
     U.addEl(U.qee(card, '.card-title'), U.makeText(opts.cardTitle));
     const textInput = U.qee(card, '.text-input');
@@ -323,7 +310,7 @@ function onOriginLockClick(timeInput, textInput) {
     };
 }
 
-exports.makeAdaptationCard = R.curry((isEditable, event, storyName, characterName, opts) => {
+const makeAdaptationCard = R.curry((isEditable, event, storyName, characterName, opts) => {
     const card = U.qmte(`${root} .adaptation-tmpl`);
     U.setAttr(card, 'dependent-on-character', characterName);
 
@@ -456,3 +443,6 @@ function getEventIndexes(eventArray) {
     return getNames(eventArray, 'index', 'eventIndexes');
 }
 // })(window.Adaptations = {});
+export default {
+    init, refresh, getContent, makeOriginCard, makeAdaptationCard
+}

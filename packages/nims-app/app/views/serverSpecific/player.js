@@ -1,24 +1,4 @@
-/*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-
-//const R = require('ramda');
-const ProfileEditorCore = require('../profiles2/profileEditorCore');
+import ProfileEditorCore from '../profiles2/profileEditorCore';
 
 // ((exports) => {
 const root = '.player-tab ';
@@ -29,12 +9,20 @@ const characterHeader = `${root}.character-profile-header`;
 
 let profileEditorCore;
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
     profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     Promise.all([
         DBMS.getWelcomeText(),
         DBMS.getPlayerProfileInfo(),
@@ -65,7 +53,7 @@ function buildInterface(text, profileInfo, playersOptions) {
             const button = U.addEl(U.makeEl('button'), U.makeText(L10n.getValue('common-create')));
             U.addClass(button, 'btn btn-default');
             U.listen(button, 'click', () => {
-                DBMS.createCharacterByPlayer({ characterName: input.value.trim() }).then(exports.refresh, UI.handleError);
+                DBMS.createCharacterByPlayer({ characterName: input.value.trim() }).then(refresh, UI.handleError);
             });
             U.addEls(el, [label, input, button]);
         } else {

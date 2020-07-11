@@ -1,33 +1,11 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+import Export from 'nims-resources/export';
+import PermissionInformer from "permissionInformer";
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-//const Constants = require('dbms/constants');
-// const Export = require('resources/export');
-const Export = require('nims-resources/export');
-const PermissionInformer = require('permissionInformer');
-//const R = require('ramda');
-
-const Mustache = require('mustache');
-const Docxtemplater = require('docxtemplater');
-const JSZip = require('jszip');
-const { saveAs } = require('file-saver');
-
-const markdownit = require('markdown-it');
+import Mustache from "mustache";
+import Docxtemplater from "docxtemplater";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+import markdownit from "markdown-it";
 
 const state = {};
 const root = '.briefing-export-tab ';
@@ -37,7 +15,15 @@ state.customDocxTemplate = null;
 
 let generateSingleDocx, generateSingleTxt, refreshStorySetSelect, refreshCharacterSetSelect;
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
 //        U.listen(U.queryEl('#makeDefaultTextBriefings'), 'click', () => {
 //            resolveTextTemplate((textTemplate) => {
 //                makeTextBriefings('txt', generateSingleTxt(textTemplate));
@@ -96,10 +82,10 @@ exports.init = () => {
     U.listen(U.queryEl('#convertToDocxTemplate'), 'click', convertToDocxTemplate);
     U.listen(U.queryEl('#generateByDocxTemplate'), 'click', generateByDocxTemplate);
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     resolveTextTemplate((textTemplate) => {
         U.queryEl('#templateArea').value = textTemplate;
         refreshCharacterRangeSelect();

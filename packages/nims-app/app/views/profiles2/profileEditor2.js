@@ -1,31 +1,10 @@
-/*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-const PermissionInformer = require('permissionInformer');
-// const ProjectUtils = require('db-utils/projectUtils');
-// const ProjectUtils = require('../../../../dbms_nims/db-utils/projectUtils');
-const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
-//const R = require('ramda');
-const ProfileEditorCore = require('./profileEditorCore');
-const CharacterReports = require('./characterReports');
+import PermissionInformer from 'permissionInformer';
+import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import ProfileEditorCore from './profileEditorCore';
+import CharacterReports from './characterReports';
 
 function ProfileEditorTmpl(opts) {
-    const exports = {};
+    const innerExports = {};
     const { firstType, secondType, settingsPath } = opts;
 
     const tmplRoot = '.profile-editor2-tab-tmpl';
@@ -41,7 +20,7 @@ function ProfileEditorTmpl(opts) {
     const reportByRelationsDiv = `${root}.report-by-relations-div tbody`;
     const alertBlock = `${root}.alert-block`;
 
-    exports.init = () => {
+    innerExports.init = () => {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
         const el = U.queryEl(tmplRoot).cloneNode(true);
 
@@ -77,11 +56,11 @@ function ProfileEditorTmpl(opts) {
         U.setAttr(U.qee(el, '.profile-panel a'), 'panel-toggler', `${root}.profile-div`);
         UI.initPanelTogglers(el);
 
-        exports.content = el;
+        innerExports.content = el;
         U.listen(U.queryEl(`${root} .entity-filter`), 'input', filterOptions);
     };
 
-    exports.refresh = () => {
+    innerExports.refresh = () => {
         Promise.all([
             PermissionInformer.getEntityNamesArray({ type: firstType, editableOnly: false }),
             PermissionInformer.getEntityNamesArray({ type: secondType, editableOnly: false }),
@@ -232,7 +211,7 @@ function ProfileEditorTmpl(opts) {
                 PermissionInformer.refresh().then(() => {
                     input.value = '';
                     dialog.hideDlg();
-                    exports.refresh();
+                    innerExports.refresh();
                 }).catch(UI.handleError);
             }).catch((err) => UI.setError(dialog, err));
         };
@@ -253,7 +232,7 @@ function ProfileEditorTmpl(opts) {
                     UI.updateEntitySetting(settingsPath, toName);
                     toInput.value = '';
                     dialog.hideDlg();
-                    exports.refresh();
+                    innerExports.refresh();
                 }).catch(UI.handleError);
             }).catch((err) => UI.setError(dialog, err));
         };
@@ -269,16 +248,16 @@ function ProfileEditorTmpl(opts) {
                         } else if (btn.prevName !== undefined) {
                             UI.updateEntitySetting(settingsPath, btn.prevName);
                         }
-                        exports.refresh();
+                        innerExports.refresh();
                     }).catch(UI.handleError);
                 }).catch(UI.handleError);
             });
         };
     }
-    return exports;
+    return innerExports;
 }
 
-exports.CharacterEditor = ProfileEditorTmpl({
+export const CharacterEditor = ProfileEditorTmpl({
     firstType: 'character',
     secondType: 'player',
     settingsPath: 'Characters',
@@ -293,7 +272,7 @@ exports.CharacterEditor = ProfileEditorTmpl({
     removeProfile: 'remove-character',
 });
 
-exports.PlayerEditor = ProfileEditorTmpl({
+export const PlayerEditor = ProfileEditorTmpl({
     firstType: 'player',
     secondType: 'character',
     settingsPath: 'Players',

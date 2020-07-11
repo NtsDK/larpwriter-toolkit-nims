@@ -1,38 +1,26 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-const PermissionInformer = require('permissionInformer');
-//const R = require('ramda');
-
+import PermissionInformer from 'permissionInformer';
 
 // ((exports) => {
 const root = '.profile-binding2-tab ';
 const l10n = L10n.get('binding');
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
     U.listen(U.queryEl(`${root} .character-filter`), 'input', filterList('.character-list'));
     U.listen(U.queryEl(`${root} .player-filter`), 'input', filterList('.player-list'));
     U.listen(U.queryEl(`${root} .binding-filter`), 'input', filterList('.binding-list'));
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     Promise.all([
         PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
         PermissionInformer.getEntityNamesArray({ type: 'player', editableOnly: false }),
@@ -158,13 +146,13 @@ var filterList = sel => (event) => {
 function createBinding(pair) {
     const characterName = pair[0].type === 'character' ? pair[0].name : pair[1].name;
     const playerName = pair[0].type === 'player' ? pair[0].name : pair[1].name;
-    DBMS.createBinding({ characterName, playerName }).then(exports.refresh, UI.handleError);
+    DBMS.createBinding({ characterName, playerName }).then(refresh, UI.handleError);
 }
 
 function removeBinding(binding) {
     DBMS.removeBinding({
         characterName: binding[0],
         playerName: binding[1]
-    }).then(exports.refresh, UI.handleError);
+    }).then(refresh, UI.handleError);
 }
 // })(window.ProfileBinding2 = {});
