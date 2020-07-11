@@ -1,26 +1,4 @@
-/*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-// const ProjectUtils = require('../../../../dbms_nims/db-utils/projectUtils');
-const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
-// const ProjectUtils = require('../db-utils/projectUtils');
-//const Constants = require('dbms/constants');
-//const R = require('ramda');
+import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 
 const relationTableHeader = ['character-name', 'direct-relation', 'relation-origin', 'reverse-relation'];
 const partialTableHeader = ['character-name', 'direct-relation'];
@@ -33,7 +11,7 @@ const findRel = R.curry((fromCharacter, toCharacter, relations) => {
     return R.find(findFunc(fromCharacter, toCharacter), relations);
 });
 
-exports.makeRelationsContent = (data, isAdaptationsMode, profileSettings, externalRefresh) => {
+function makeRelationsContent(data, isAdaptationsMode, profileSettings, externalRefresh){
     const {
         characterName, relationsSummary, profiles, profileBindings
     } = data;
@@ -239,3 +217,6 @@ function fillCharSelector(select1, button, data, fromCharacter, makeRowCallback)
     });
 }
 // })(window.RelationsPreview = {});
+export default {
+    makeRelationsContent
+}

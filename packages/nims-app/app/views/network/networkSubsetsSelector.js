@@ -1,33 +1,14 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, StoryCharacters
- */
-
-//const Constants = require('dbms/constants');
-//const R = require('ramda');
-
-
-// ((exports) => {
 const state = {};
 
-exports.init = () => {
+export default {
+    init, refresh, getStoryNames, getCharacterNames
+}
+
+export function init(){
     U.listen(U.queryEl('#networkSubsetsSelector'), 'change', onNetworkSubsetsChange);
 };
 
-exports.refresh = (parent) => {
+export function refresh(parent){
     state.parent = parent;
 
     let selector = U.fillSelector(U.clearEl(U.queryEl('#networkSubsetsSelector')), UI.constArr2Select(Constants.objectSubsets));
@@ -46,7 +27,7 @@ exports.refresh = (parent) => {
     U.setAttr(selector, 'size', selector.options.length > 15 ? 15 : selector.options.length);
 };
 
-exports.getStoryNames = () => {
+export function getStoryNames(){
     const { value } = U.queryEl('#networkSubsetsSelector');
 
     if (Constants.objectSubsets[0] === value) { // all objects
@@ -62,7 +43,7 @@ exports.getStoryNames = () => {
     throw new Error(`Unexpected subsets selector: ${value}`);
 };
 
-exports.getCharacterNames = () => {
+export function getCharacterNames(){
     const { value } = U.queryEl('#networkSubsetsSelector');
 
     if (Constants.objectSubsets[0] === value) { // all objects

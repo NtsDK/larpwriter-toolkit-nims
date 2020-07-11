@@ -1,25 +1,6 @@
-/*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
+import PermissionInformer from "permissionInformer";
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-//const R = require('ramda');
-const PermissionInformer = require('permissionInformer');
-
-// ((exports) => {
 const state = {};
 
 state.entities = ['characters', 'stories', 'groups', 'players'];
@@ -28,7 +9,15 @@ const root = '.organizer-management-tab ';
 
 let removePermission, assignPermission;
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
     const createUserDialog = UI.createModalDialog(root, createUser, {
         bodySelector: 'create-organizer-body',
         dialogTitle: 'admins-creating-user',
@@ -60,10 +49,10 @@ exports.init = () => {
 
     U.queryElEls(U.queryEl(root), '.adaptationRights').map(U.listen(R.__, 'click', changeAdaptationRightsMode));
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     PermissionInformer.refresh().then(() => {
         Promise.all([
             DBMS.getManagementInfo(),
@@ -87,8 +76,8 @@ exports.refresh = () => {
                 });
             }
             rebuildInterface(names, managementInfo, isAdmin);
-            UI.enable(exports.content, 'adminOnly', isAdmin);
-            UI.enable(exports.content, 'editorOrAdmin', isAdmin || isEditor);
+            UI.enable(content, 'adminOnly', isAdmin);
+            UI.enable(content, 'editorOrAdmin', isAdmin || isEditor);
         }).catch(UI.handleError);
     }).catch(UI.handleError);
 };
@@ -231,8 +220,8 @@ var onDrop = function (event) {
         const names = R.mapObjIndexed(arr => arr.map(R.prop('name')), R.groupBy(R.prop('type'), selected));
         btns.forEach(btn => U.removeClass(btn, 'btn-primary'));
 
-        DBMS.assignPermission({ userName, names }).then(exports.refresh, UI.handleError);
-        //            DBMS[action](userName, names, UI.processError(exports.refresh));
+        DBMS.assignPermission({ userName, names }).then(refresh, UI.handleError);
+        //            DBMS[action](userName, names, UI.processError(refresh));
         //        };
         //    }
         //
@@ -315,7 +304,7 @@ function createUser(dialog) {
             userNameInput.value = '';
             userPasswordInput.value = '';
             dialog.hideDlg();
-            exports.refresh();
+            refresh();
         }).catch(err => UI.setError(dialog, err));
     };
 }
@@ -328,7 +317,7 @@ function changePassword(dialog) {
 
         DBMS.changeOrganizerPassword({ userName, newPassword }).then(() => {
             dialog.hideDlg();
-            exports.refresh();
+            refresh();
         }).catch(err => UI.setError(dialog, err));
     };
 }
@@ -337,7 +326,7 @@ function removeOrganizer() {
 //        const name = U.queryEl(`${root}.remove-user-select`).value.trim();
     const name = U.queryEl(`${root}.change-password-user-select`).value.trim();
     UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-user-remove'), [name]), () => {
-        DBMS.removeOrganizer({ name }).then(exports.refresh, UI.handleError);
+        DBMS.removeOrganizer({ name }).then(refresh, UI.handleError);
     });
 }
 
@@ -358,7 +347,7 @@ function permissionAction(action) {
             names[entity] = getSelectedOptions(`${root}.permission-selector__${entity}`);
         });
 
-        DBMS[action]({ userName, names }).then(exports.refresh, UI.handleError);
+        DBMS[action]({ userName, names }).then(refresh, UI.handleError);
     };
 }
 
@@ -368,16 +357,16 @@ assignPermission = permissionAction('assignPermission');
 function assignNewAdmin() {
     const userName = U.queryEl(`${root}.change-password-user-select`).value.trim();
     UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-admin-assignment'), [userName]), () => {
-        DBMS.assignAdmin({ userName }).then(exports.refresh, UI.handleError);
+        DBMS.assignAdmin({ userName }).then(refresh, UI.handleError);
     });
 }
 function removeEditor() {
-    DBMS.removeEditor().then(exports.refresh, UI.handleError);
+    DBMS.removeEditor().then(refresh, UI.handleError);
 }
 function assignEditor() {
     const userName = U.queryEl(`${root}.change-password-user-select`).value.trim();
     UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-editor-assignment'), [userName]), () => {
-        DBMS.assignEditor({ name: userName }).then(exports.refresh, UI.handleError);
+        DBMS.assignEditor({ name: userName }).then(refresh, UI.handleError);
     });
 }
 function changeAdaptationRightsMode(event) {

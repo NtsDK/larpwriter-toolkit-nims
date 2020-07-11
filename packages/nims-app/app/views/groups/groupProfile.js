@@ -1,33 +1,19 @@
-/*Copyright 2016 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-//const Constants = require('dbms/constants');
-const PermissionInformer = require('permissionInformer');
-//const R = require('ramda');
-const FilterConfiguration = require('./FilterConfiguration');
+import PermissionInformer from "permissionInformer";
+import FilterConfiguration from "./FilterConfiguration";
 
 const state = {};
 const root = '.group-profile-tab ';
 const l10n = L10n.get('groups');
 const settingsPath = 'GroupProfile';
 
-exports.init = () => {
-    const createGroupDialog = UI.createModalDialog(root, exports.createGroup(true, exports.refresh), {
+let content;
+function getContent(){
+    return content;
+}
+
+
+function init(){
+    const createGroupDialog = UI.createModalDialog(root, createGroup(true, refresh), {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
         actionButtonTitle: 'common-create',
@@ -51,10 +37,10 @@ exports.init = () => {
 
     U.listen(U.queryEl(`${root} .entity-filter`), 'input', filterOptions);
 
-    exports.content = U.queryEl(`${root}`);
+    content = U.queryEl(`${root}`);
 };
 
-exports.refresh = () => {
+function refresh(){
     PermissionInformer.getEntityNamesArray({ type: 'group', editableOnly: false }).then((groupNames) => {
         U.showEl(U.qe(`${root} .alert`), groupNames.length === 0);
         U.showEl(U.qe(`${root} .col-xs-9`), groupNames.length !== 0);
@@ -81,7 +67,7 @@ exports.refresh = () => {
                     state.renameGroupDialog.fromName = name.value;
                     state.renameGroupDialog.showDlg();
                 });
-                U.listen(removeBtn, 'click', exports.removeGroup(() => name.value, exports.refresh, removeBtn));
+                U.listen(removeBtn, 'click', removeGroup(() => name.value, refresh, removeBtn));
             } else {
                 U.setAttr(U.qee(el, '.rename'), 'disabled', 'disabled');
                 U.setAttr(removeBtn, 'disabled', 'disabled');
@@ -186,7 +172,7 @@ function showProfileInfoCallback(groupName) {
             } else if (inputItems[inputName].type === 'container') {
                 if (inputName === 'filterModel') {
                     const table = U.qmte(`${root} .group-filter-template`);
-                    const datas = group.filterModel.map(exports.makeFilterItemString(name2DisplayName, name2Source));
+                    const datas = group.filterModel.map(makeFilterItemString(name2DisplayName, name2Source));
                     U.addEls(U.qee(table, 'tbody'), datas.map(data2row));
                     L10n.localizeStatic(table);
                     U.addEl(U.clearEl(inputItems[inputName]), table);
@@ -203,13 +189,13 @@ function showProfileInfoCallback(groupName) {
                 throw new Error(`Unexpected input type: ${inputItems[inputName].type}`);
             }
             inputItems[inputName].oldValue = group[inputName];
-            UI.enable(exports.content, 'isGroupEditable', isGroupEditable);
+            UI.enable(content, 'isGroupEditable', isGroupEditable);
         });
     }).catch(UI.handleError);
 }
 
 // eslint-disable-next-line no-var,vars-on-top
-exports.makeFilterItemString = R.curry((name2DisplayName, name2Source, filterItem) => {
+const makeFilterItemString = R.curry((name2DisplayName, name2Source, filterItem) => {
     const displayName = name2DisplayName[filterItem.name];
     const source = name2Source[filterItem.name];
     let condition, arr, value;
@@ -282,7 +268,7 @@ function filterOptions(event) {
     }
 }
 
-exports.createGroup = (updateSettingsFlag, refresh) => dialog => () => {
+const createGroup = (updateSettingsFlag, refresh) => dialog => () => {
     const input = U.qee(dialog, '.entity-input');
     const name = input.value.trim();
 
@@ -309,13 +295,13 @@ function renameGroup(dialog) {
                 UI.updateEntitySetting(settingsPath, toName);
                 toInput.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                refresh();
             }).catch(UI.handleError);
         }).catch(err => UI.setError(dialog, err));
     };
 }
 
-exports.removeGroup = (callback, refresh, btn) => () => {
+const removeGroup = (callback, refresh, btn) => () => {
     const name = callback();
 
     UI.confirm(CU.strFormat(L10n.getValue('groups-are-you-sure-about-group-removing'), [name]), () => {
@@ -332,3 +318,6 @@ exports.removeGroup = (callback, refresh, btn) => () => {
     });
 };
 // })(window.GroupProfile = {});
+export default {
+    init, refresh, getContent, makeFilterItemString, createGroup, removeGroup
+}

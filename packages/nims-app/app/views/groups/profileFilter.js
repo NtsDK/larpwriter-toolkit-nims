@@ -1,33 +1,22 @@
-/*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-//const Constants = require('dbms/constants');
-// const ProjectUtils = require('db-utils/projectUtils');
-const PermissionInformer = require('permissionInformer');
-// const ProjectUtils = require('../../../../dbms_nims/db-utils/projectUtils');
-const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
-//const R = require('ramda');
-
-const FilterConfiguration = require('./FilterConfiguration');
-const GroupProfile = require('./groupProfile');
+import PermissionInformer from "permissionInformer";
+import FilterConfiguration from "./FilterConfiguration";
+import GroupProfile from "./groupProfile";
+import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 
 // ((exports) => {
 const state = {};
 const root = '.profile-filter-tab ';
 
-exports.init = () => {
-    const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false, exports.refresh), {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
+    const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false, refresh), {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
         actionButtonTitle: 'common-create',
@@ -44,14 +33,14 @@ exports.init = () => {
 
     U.listen(U.queryEl(`${root}#profile-filter-columns .profile-item-selector`), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
 
-    //        UI.enable(exports.content, 'isGroupEditable', isGroupEditable);
+    //        UI.enable(content, 'isGroupEditable', isGroupEditable);
     //        listen U.queryEl(`${root}.save-entity-select`)
 
     $(`${root}.save-entity-select`).select2().on('change', (event) => {
         const group = event.target.value;
         const userGroups = state.userGroupNames.map(R.prop('value'));
         const isGroupEditable = R.contains(group, userGroups);
-        UI.enable(exports.content, 'isGroupEditable', isGroupEditable);
+        UI.enable(content, 'isGroupEditable', isGroupEditable);
     });
 
     U.listen(U.queryEl(`${root}.show-entity-button`), 'click', loadFilterFromGroup);
@@ -63,12 +52,12 @@ exports.init = () => {
         U.qee(renameGroupDialog, '.entity-input').value = U.queryEl(`${root}.save-entity-select`).value;
         renameGroupDialog.showDlg();
     });
-    U.listen(U.queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => U.queryEl(`${root}.save-entity-select`).value, exports.refresh));
+    U.listen(U.queryEl(`${root}.remove.group`), 'click', GroupProfile.removeGroup(() => U.queryEl(`${root}.save-entity-select`).value, refresh));
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     state.sortKey = Constants.CHAR_NAME;
     state.sortDir = 'asc';
     state.inputItems = {};
@@ -550,7 +539,7 @@ function renameGroup(selector) {
             PermissionInformer.refresh().then(() => {
                 toInput.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                refresh();
             }).catch(UI.handleError);
         }).catch((err) => UI.setError(dialog, err));
     };

@@ -1,30 +1,9 @@
-/*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-// const ProjectUtils = require('db-utils/projectUtils');
-// const ProjectUtils = require('../../../../dbms_nims/db-utils/projectUtils');
-const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
-//const R = require('ramda');
+import ProjectUtils from "nims-dbms/db-utils/projectUtils";
 
 // ((exports) => {
 const root = '.character-reports-tmpl';
 
-exports.makeStoryReportRow = (storyInfo) => {
+function makeStoryReportRow(storyInfo) {
     const act = storyInfo.activity;
     const completeness = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
     const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
@@ -43,7 +22,7 @@ exports.makeStoryReportRow = (storyInfo) => {
     return row;
 };
 
-exports.makeRelationReportRow = R.curry((characterName, rel) => {
+const makeRelationReportRow = R.curry((characterName, rel) => {
     const row = U.qte(`${root} .relation-report-row-tmpl`);
     const qe = U.qee(row);
     L10n.localizeStatic(row);
@@ -110,3 +89,7 @@ function getCompletenessColor(value, total) {
     return CU.strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
 }
 // })(window.CharacterReports = {});
+export default {
+    makeStoryReportRow,
+    makeRelationReportRow
+}

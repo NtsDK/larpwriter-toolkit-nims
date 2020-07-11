@@ -1,31 +1,24 @@
-/*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-const PermissionInformer = require('permissionInformer');
-//const R = require('ramda');
-const RelationsPreview = require('./relationsPreview');
+import PermissionInformer from "permissionInformer";
+import RelationsPreview from "./relationsPreview";
 
 const root = '.relations-tab ';
 const state = {};
 const settingsPath = 'Relations';
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent, load
+}
+
+function init(){
     $(`${root} .character-select`).select2().on('change', buildContent);
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     U.clearEl(U.queryEl(`${root} .character-select`));
     U.clearEl(U.queryEl(`${root} .panel-body`));
 
@@ -54,20 +47,20 @@ function buildContent(event) {
     UI.updateEntitySetting(settingsPath, characterName);
     state.data = {};
     state.data.characterName = characterName;
-    exports.load(state.data, buildContentInner);
+    load(state.data, buildContentInner);
 }
 
 function buildContentInner() {
     const content = RelationsPreview.makeRelationsContent(
         state.data, true, state.characterProfileStructure,
-        exports.refresh
+        refresh
     );
     U.addEl(U.queryEl(`${root} .panel-body`), content);
     UI.initTextAreas(`${root} .panel-body textarea`);
     UI.refreshTextAreas(`${root} .panel-body textarea`);
 }
 
-exports.load = (data, callback) => {
+function load(data, callback){
     Promise.all([
         DBMS.getAllProfiles({ type: 'character' }),
         DBMS.getRelationsSummary({ characterName: data.characterName }),

@@ -1,30 +1,19 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
-
-//const R = require('ramda');
-const PermissionInformer = require('permissionInformer');
+import PermissionInformer from "permissionInformer";
 
 // ((exports) => {
 const state = {};
 
 const root = '.player-management-tab ';
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
     const createUserDialog = UI.createModalDialog(root, createUser, {
         bodySelector: 'create-organizer-body',
         dialogTitle: 'admins-creating-player',
@@ -66,10 +55,10 @@ exports.init = () => {
     });
 
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     Promise.all([
         PermissionInformer.getEntityNamesArray({ type: 'player', editableOnly: false }),
         DBMS.getPlayerLoginsArray(),
@@ -96,7 +85,7 @@ exports.refresh = () => {
         //                            hasAccounts.sort(CU.charOrdAObject);
         $(U.clearEl(U.queryEl(`${root}.change-password-user-select`))).select2(UI.getSelect2Data(hasAccounts));
 
-        UI.enable(exports.content, 'adminOnly', isAdmin);
+        UI.enable(content, 'adminOnly', isAdmin);
 
         UI.enableEl(U.qe(`${root}.change-password-user-select`), hasAccounts.length > 0);
         UI.enableEl(U.qe(`${root}.user.change-password`), hasAccounts.length > 0);
@@ -117,7 +106,7 @@ function createUser(dialog) {
                 userNameInput.value = '';
                 userPasswordInput.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                refresh();
             }, UI.handleError);
         }).catch(err => UI.setError(dialog, err));
     };
@@ -130,7 +119,7 @@ function createUserAccount(dialog) {
         DBMS.createPlayerLogin({ userName: userNameSelect.value, password: passwordInput.value }).then(() => {
             passwordInput.value = '';
             dialog.hideDlg();
-            exports.refresh();
+            refresh();
         }).catch(err => UI.setError(dialog, err));
     };
 }
@@ -142,7 +131,7 @@ function changePassword(dialog) {
         const userName = U.queryEl(`${root}.change-password-user-select`).value.trim();
         DBMS.changePlayerPassword({ userName, newPassword }).then(() => {
             dialog.hideDlg();
-            exports.refresh();
+            refresh();
         }).catch(err => UI.setError(dialog, err));
     };
 }
@@ -150,7 +139,7 @@ function changePassword(dialog) {
 function removeUser() {
     const name = U.queryEl(`${root}.change-password-user-select`).value.trim();
     UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-user-account-remove'), [name]), () => {
-        DBMS.removePlayerLogin({ userName: name }).then(exports.refresh, UI.handleError);
+        DBMS.removePlayerLogin({ userName: name }).then(refresh, UI.handleError);
     });
 }
 

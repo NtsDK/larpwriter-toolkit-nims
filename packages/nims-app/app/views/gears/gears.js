@@ -1,27 +1,7 @@
-const vis = require('vis');
-require('vis/dist/vis.min.css');
-require('./gears.css');
-//const Constants = require('dbms/constants');
-//const R = require('ramda');
-const { saveAs } = require('file-saver');
-
-/*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*global
- Utils, DBMS
- */
+import vis from 'vis';
+import 'vis/dist/vis.min.css';
+import './gears.css';
+import { saveAs } from 'file-saver';
 
 const root = '.gears-tab';
 const state = {};
@@ -29,7 +9,15 @@ const l10n = L10n.get('gears');
 state.nodesDataset = new vis.DataSet();
 state.edgesDataset = new vis.DataSet();
 
-exports.init = () => {
+let content;
+function getContent(){
+    return content;
+}
+export default {
+    init, refresh, getContent
+}
+
+function init(){
     state.addNodeDialog = UI.createModalDialog(root, updateNode, {
         bodySelector: 'add-or-edit-node-body',
         dialogTitle: 'gears-add-node',
@@ -65,7 +53,7 @@ exports.init = () => {
     //        document.querySelector('.edgesText').value = edgesExample;
     //        U.setAttr(document.querySelector('.edgesText'),'rows', edgesExample.split('\n').length);
 
-    U.listen(U.qe(`${root} .draw-button`), 'click', exports.refresh);
+    U.listen(U.qe(`${root} .draw-button`), 'click', refresh);
     U.listen(U.qe(`${root} .get-image-button`), 'click', getImage);
     U.listen(U.qe(`${root} .download-button`), 'click', downloadCsv);
     U.listen(U.qe(`${root} .download-json-button`), 'click', downloadJSON);
@@ -109,7 +97,7 @@ exports.init = () => {
     U.queryEl(`${root} .show-notes-checkbox`).checked = false;
     U.listen(U.queryEl(`${root} .show-notes-checkbox`), 'change', (event) => {
         DBMS.setGearsShowNotesEnabled({ enabled: event.target.checked })
-            .then(exports.refresh).catch(UI.handleError);
+            .then(refresh).catch(UI.handleError);
     });
 
     U.queryEl(`${root} .big-picture-checkbox`).checked = false;
@@ -120,10 +108,10 @@ exports.init = () => {
     state.nodesDataset.on('*', () => {
         fillSearchSelect();
     });
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     DBMS.getAllGearsData().then((data) => {
         U.queryEl(`${root} .show-notes-checkbox`).checked = data.settings.showNotes;
         U.queryEl(`${root} .physics-enabled-checkbox`).checked = data.settings.physicsEnabled;
@@ -322,7 +310,7 @@ function clearNetwork() {
     UI.confirm(l10n('confirm-clearing'), () => {
         state.nodesDataset.clear();
         state.edgesDataset.clear();
-        storeData(exports.refresh);
+        storeData(refresh);
     });
 }
 
@@ -425,7 +413,7 @@ function updateNode(dialog) {
 
             state.nodeData = null;
             state.nodeCallback = null;
-            storeData(exports.refresh);
+            storeData(refresh);
             dialog.hideDlg();
         }
     };
