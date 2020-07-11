@@ -21,13 +21,19 @@ See the License for the specific language governing permissions and
 // ((exports) => {
 const root = '.text-search-tab ';
 
-exports.init = () => {
+let content;
+
+function getContent(){
+    return content;
+}
+
+function init(){
     U.listen(U.queryEl(`${root}.text-search-button`), 'click', findTexts);
     U.listenOnEnter(U.queryEl(`${root}.text-search-input`), findTexts);
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh() {
 };
 
 function findTexts() {
@@ -66,3 +72,4 @@ function makePanel(title, content) {
     return panelInfo.panel;
 }
 // })(window.TextSearch = {});
+export default {init, getContent, refresh};

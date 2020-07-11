@@ -20,12 +20,17 @@ See the License for the specific language governing permissions and
  */
 
 
-// ((exports) => {
 const root = '.sliders-tab ';
 const state = {};
 state.sliders = [];
 
-exports.init = () => {
+let content;
+
+function getContent(){
+    return content;
+}
+
+function init(){
     const createSliderDialog = UI.createModalDialog(root, createSlider, {
         bodySelector: 'create-slider-body',
         dialogTitle: 'sliders-create-slider',
@@ -46,10 +51,10 @@ exports.init = () => {
 
     U.listen(U.qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     DBMS.getSliderData().then(createSliders).catch(UI.handleError);
 };
 
@@ -101,7 +106,7 @@ function makeSliderBackbone(sl, i) {
     });
     U.listen(U.qee(el, 'button.remove'), 'click', () => {
         UI.confirm(L10n.format('sliders', 'are-you-sure-about-removing-slider', [sl.name]), () => {
-            DBMS.removeSlider({ index: i }).then(exports.refresh, UI.handleError);
+            DBMS.removeSlider({ index: i }).then(refresh, UI.handleError);
         });
     });
     L10n.localizeStatic(el);
@@ -118,7 +123,7 @@ function createSlider(dialog) {
             U.qee(dialog, '.slider-top').value = '';
             U.qee(dialog, '.slider-bottom').value = '';
             dialog.hideDlg();
-            exports.refresh();
+            refresh();
         }).catch(err => UI.setError(dialog, err));
     };
 }
@@ -139,7 +144,7 @@ function editSlider(dialog) {
             U.qee(dialog, '.slider-top').value = '';
             U.qee(dialog, '.slider-bottom').value = '';
             dialog.hideDlg();
-            exports.refresh();
+            refresh();
         }).catch(err => UI.setError(dialog, err));
     };
 }
@@ -151,8 +156,13 @@ function moveSlider(dialog) {
 
         DBMS.moveSlider({ index, pos }).then(() => {
             dialog.hideDlg();
-            exports.refresh();
+            refresh();
         }).catch(err => UI.setError(dialog, err));
     };
 }
+
+export default {
+    init, refresh, getContent
+}
+
 // })(window.Sliders = {});

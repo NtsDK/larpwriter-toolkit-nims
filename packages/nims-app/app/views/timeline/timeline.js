@@ -29,7 +29,13 @@ const dateFormat = require('dateformat');
 const state = {};
 const root = '.timeline-tab';
 
-exports.init = () => {
+let content;
+
+function getContent(){
+    return content;
+}
+
+function init(){
     U.listen(U.queryEl('#timelineStorySelector'), 'change', onStorySelectorChangeDelegate);
 
     state.TimelineDataset = new vis.DataSet();
@@ -61,10 +67,10 @@ exports.init = () => {
     timeline.setItems(state.TimelineDataset);
     state.timelineComponent = timeline;
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     Promise.all([
         DBMS.getMetaInfo(),
         DBMS.getEventsTimeInfo(),
@@ -191,3 +197,4 @@ function fillTimelines(usedData) {
     })));
 }
 // })(window.Timeline = {});
+export default {init, getContent, refresh};
