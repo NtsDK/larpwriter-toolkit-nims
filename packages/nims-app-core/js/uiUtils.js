@@ -94,7 +94,7 @@ exports.addView = function (containers, name, view, opts2) {
                 U.addClass(evt.target, 'active');
 
                 U.passEls(containers.content, U.queryEl('#warehouse'));
-                containers.content.appendChild(view2.content);
+                containers.content.appendChild(view2.content || view2.getContent());
                 U.removeClass(containers.content, 'hidden');
                 containers.root.currentView = view2;
                 view2.refresh();

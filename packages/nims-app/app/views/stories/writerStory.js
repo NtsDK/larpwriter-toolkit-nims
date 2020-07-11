@@ -18,15 +18,21 @@ See the License for the specific language governing permissions and
 
 
 module.exports = (Stories) => {
+// export default function (Stories){
     const exports = {};
     const state = {};
 
-    exports.init = () => {
+    let content;
+    function getContent() {
+        return content;
+    }
+
+    function init(){
         U.listen(U.queryEl('#writerStoryArea'), 'change', updateWriterStory);
-        exports.content = U.queryEl('#writerStoryDiv2');
+        content = U.queryEl('#writerStoryDiv2');
     };
 
-    exports.refresh = () => {
+    function refresh(){
         const storyArea = U.queryEl('#writerStoryArea');
         const storyName = Stories.getCurrentStoryName();
 
@@ -46,7 +52,9 @@ module.exports = (Stories) => {
             value: storyArea.value
         }).catch(UI.handleError);
     }
-    return exports;
+    return {
+        init, getContent, refresh
+    };
 };
 
 //(window.WriterStory = {});

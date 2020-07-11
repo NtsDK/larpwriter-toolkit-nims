@@ -20,18 +20,23 @@ See the License for the specific language governing permissions and
 //const R = require('ramda');
 
 
-// ((exports) => {
 const root = '.role-grid-tab ';
 let groupingOrder;
 let profilesData;
 let buttons;
 const l10n = L10n.get('role-grid');
 
-exports.init = () => {
-    exports.content = U.queryEl(root);
+let content;
+
+function getContent(){
+    return content;
+}
+
+function init(){
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     DBMS.getRoleGridInfo().then((data2) => {
         groupingOrder = [];
         buttons = [];
@@ -320,3 +325,6 @@ var makePanelList = profileArray => profileArray.sort(CU.charOrdAFactory(a => a.
     return panelInfo.panel;
 });
 // })(window.RoleGrid = {});
+export default {
+    init, refresh, getContent
+}

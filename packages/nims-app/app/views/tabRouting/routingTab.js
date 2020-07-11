@@ -1,11 +1,15 @@
 //const R = require('ramda');
 
-module.exports = function RoutingTabTmpl(opts) {
-    const exports = {};
+export default function RoutingTabTmpl(opts) {
     const state = {};
     const tmplRoot = '.tab-routing-tmpl';
 
-    exports.init = () => {
+    let content;
+    function getContent() {
+        return content;
+    }
+
+    function init(){
         const el = U.queryEl(tmplRoot).cloneNode(true);
         U.removeClass(el, 'tab-routing-tmpl');
         U.addEl(U.queryEl('.tab-container'), el);
@@ -21,14 +25,16 @@ module.exports = function RoutingTabTmpl(opts) {
         })));
 
         UI.setFirstTab(containers, tabs[opts.firstTab].viewRes);
-        exports.content = el;
+        content = el;
     };
 
-    exports.refresh = () => {
+    function refresh(){
         state.currentView.refresh();
     };
-    exports.test = () => {
-        state.currentView.test();
+
+    return {
+        getContent,
+        init,
+        refresh
     };
-    return exports;
 };

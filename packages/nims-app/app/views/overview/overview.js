@@ -1,15 +1,21 @@
-const Chart = require('chart.js');
-const dateFormat = require('dateformat');
-const PermissionInformer = require('permissionInformer');
+import Chart from "chart.js";
+import dateFormat from "dateformat";
+import PermissionInformer from "permissionInformer";
+// const Chart = require('chart.js');
+// const dateFormat = require('dateformat');
+// const PermissionInformer = require('permissionInformer');
 
 //const Constants = require('dbms/constants');
 
 // const {Gears, Sliders} = require('../index')
-require('./overview.css');
+// require('./overview.css');
+import './overview.css';
 //const R = require('ramda');
 
-const Gears = require('../gears/gears');
-const Sliders = require('../sliders/sliders');
+import Gears from "../gears/gears";
+import Sliders from "../sliders/sliders";
+// const Gears = require('../gears/gears');
+// const Sliders = require('../sliders/sliders');
 // require("moment");
 /*Copyright 2015-2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
@@ -30,6 +36,11 @@ See the License for the specific language governing permissions and
  */
 
 // //const R = require("ramda");
+let content;
+
+function getContent(){
+    return content;
+}
 
 
 // ((exports) => {
@@ -54,7 +65,7 @@ const state = {};
 
 state.Charts = {};
 
-exports.init = () => {
+function init(){
     state.name = U.queryEl('#gameNameInput');
     state.name.addEventListener('change', updateName);
 
@@ -112,14 +123,14 @@ exports.init = () => {
     U.addEl(slidersContainer, U.qe('.sliders-tab'));
     Sliders.init();
 
-    exports.content = U.queryEl(root);
+    content = U.queryEl(root);
 };
 
-exports.refresh = () => {
+function refresh(){
     Gears.refresh();
     Sliders.refresh();
     PermissionInformer.isAdmin().then((isAdmin) => {
-        UI.enable(exports.content, 'adminOnly', isAdmin);
+        UI.enable(content, 'adminOnly', isAdmin);
     }).catch(UI.handleError);
 
     Promise.all([DBMS.getMetaInfo(), DBMS.getStatistics()]).then(updateOverviewTab).catch(UI.handleError);
@@ -413,8 +424,7 @@ function customTooltips(tooltip) {
     tooltipEl.style.padding = `${tooltip.yPadding}px ${tooltip.xPadding}px`;
 }
 
-exports.test = () => {
-    U.queryEl('#gameNameInput').dispatchEvent(new Event('change'));
-    U.queryEl(`${root}.game-description-area`).dispatchEvent(new Event('change'));
-};
 // })(window.Overview = {});
+export default {
+    init, refresh, getContent
+};

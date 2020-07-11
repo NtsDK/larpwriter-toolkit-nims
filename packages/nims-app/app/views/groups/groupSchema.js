@@ -13,17 +13,23 @@ See the License for the specific language governing permissions and
     limitations under the License. */
 
 // const { d3, klay } = require('core/libs/klay-adapter');
-const { d3, klay } = require('nims-app-core/libs/klay-adapter');
+// const { d3, klay } = require('nims-app-core/libs/klay-adapter');
+import { d3, klay } from 'nims-app-core/libs/klay-adapter';
 //const R = require('ramda');
 
-const state = {};
 const rootTab = '.group-schema-tab';
 
-exports.init = () => {
-    exports.content = U.queryEl(rootTab);
+let content;
+
+function init(){
+    content = U.queryEl(rootTab);
 };
 
-exports.refresh = () => {
+function getContent(){
+    return content;
+}
+
+function refresh(){
     DBMS.getGroupSchemas().then((schemas) => {
         redrawSchema2(schemas.theory, 'theory');
         redrawSchema2(schemas.practice, 'practice');
@@ -173,3 +179,5 @@ function redrawSchema2(graphData, className) {
     layouter.start();
 }
 // })(window.GroupSchema = {});
+
+export default {init, getContent, refresh};

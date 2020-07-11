@@ -16,18 +16,23 @@ See the License for the specific language governing permissions and
  Utils, DBMS, StoryEvents, StoryCharacters, EventPresence
  */
 
+const Stories = {};
 
 const PermissionInformer = require('permissionInformer');
 //const R = require('ramda');
-const WriterStory = require('./writerStory')(module.exports);
-const StoryEvents = require('./storyEvents')(module.exports);
-const StoryCharacters = require('./storyCharacters')(module.exports);
-const EventPresence = require('./eventPresence')(module.exports);
+const WriterStory = require('./writerStory')(Stories);
+const StoryEvents = require('./storyEvents')(Stories);
+const StoryCharacters = require('./storyCharacters')(Stories);
+const EventPresence = require('./eventPresence')(Stories);
 
 const state = {};
 const root = '.stories-tab ';
+// let content;
+Stories.getContent = () => {
+    return Stories.content;
+}
 
-exports.init = () => {
+Stories.init = () => {
     const createStoryDialog = UI.createModalDialog(root, createStory, {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'stories-enter-story-name',
@@ -69,22 +74,24 @@ exports.init = () => {
         renameStoryDialog.showDlg();
     });
 
-    U.listen(U.qe(`${root}.create.event`), 'click', () => StoryEvents.createEventDialog.showDlg());
-    U.listen(U.qe(`${root}.add.character`), 'click', () => StoryCharacters.addCharacterDialog.showDlg());
+    // U.listen(U.qe(`${root}.create.event`), 'click', () => StoryEvents.createEventDialog.showDlg());
+    U.listen(U.qe(`${root}.create.event`), 'click', () => StoryEvents.getCreateEventDialog().showDlg());
+    // U.listen(U.qe(`${root}.add.character`), 'click', () => StoryCharacters.addCharacterDialog.showDlg());
+    U.listen(U.qe(`${root}.add.character`), 'click', () => StoryCharacters.getAddCharacterDialog().showDlg());
 
     $('#storySelector').select2().on('change', onStorySelectorChangeDelegate);
 
-    exports.content = U.queryEl(root);
+    Stories.content = U.queryEl(root);
 };
 
-exports.chainRefresh = () => {
+Stories.chainRefresh = () => {
     if ((state.left.currentView && state.left.currentView.name === 'EventPresence')
             || (state.right.currentView && state.right.currentView.name === 'EventPresence')) {
         EventPresence.refresh();
     }
 };
 
-exports.refresh = () => {
+Stories.refresh = () => {
     const storySelector = U.clearEl(U.queryEl('#storySelector'));
 
     PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }).then((allStoryNames) => {
@@ -139,7 +146,7 @@ function createStory(dialog) {
             PermissionInformer.refresh().then(() => {
                 input.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                Stories.refresh();
             }).catch(UI.handleError);
         }).catch(err => UI.setError(dialog, err));
     };
@@ -156,7 +163,7 @@ function renameStory(dialog) {
             PermissionInformer.refresh().then(() => {
                 toInput.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                Stories.refresh();
             }).catch(UI.handleError);
         }).catch(err => UI.setError(dialog, err));
     };
@@ -168,7 +175,7 @@ function removeStory() {
     UI.confirm(CU.strFormat(L10n.getValue('stories-are-you-sure-about-story-removing'), [name]), () => {
         DBMS.removeStory({ storyName: name }).then(() => {
             PermissionInformer.refresh().then(() => {
-                exports.refresh();
+                Stories.refresh();
             }).catch(UI.handleError);
         }).catch(UI.handleError);
     });
@@ -187,7 +194,7 @@ function onStorySelectorChange(storyName) {
         PermissionInformer.isEntityEditable({ type: 'story', name: storyName }).then((isStoryEditable) => {
             if (state.left.currentView)state.left.currentView.refresh();
             if (state.right.currentView)state.right.currentView.refresh();
-            UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            UI.enable(Stories.content, 'isStoryEditable', isStoryEditable);
         }).catch(UI.handleError);
     } else { // when there are no stories at all
         updateSettings(null);
@@ -196,9 +203,15 @@ function onStorySelectorChange(storyName) {
     }
 }
 
-exports.getCurrentStoryName = () => state.CurrentStoryName;
+Stories.getCurrentStoryName = () => state.CurrentStoryName;
 
 function updateSettings(storyName) {
     const settings = SM.getSettings();
     settings.Stories.storyName = storyName;
+}
+
+export default {
+    init: Stories.init,
+    refresh: Stories.refresh,
+    getContent: Stories.getContent,
 }

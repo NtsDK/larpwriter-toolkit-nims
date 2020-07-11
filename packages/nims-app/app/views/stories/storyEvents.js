@@ -21,14 +21,22 @@ const PermissionInformer = require('permissionInformer');
 
 
 module.exports = (Stories) => {
-    const exports = {};
     const state = {};
     const root = '.story-events-tab ';
     let initialized = false;
 
-    exports.init = () => {
+    let createEventDialog;
+    function getCreateEventDialog() {
+        return createEventDialog;
+    }
+    let content;
+    function getContent() {
+        return content;
+    }
+
+    function init(){
         if (initialized) return;
-        exports.createEventDialog = UI.createModalDialog('.stories-tab ', createEvent, {
+        createEventDialog = UI.createModalDialog('.stories-tab ', createEvent, {
             bodySelector: 'create-event-body',
             dialogTitle: 'stories-event-creation',
             actionButtonTitle: 'common-create',
@@ -41,11 +49,11 @@ module.exports = (Stories) => {
             dialogTitle: 'stories-move-event',
             actionButtonTitle: 'common-move',
         });
-        exports.content = U.qe(root);
+        content = U.qe(root);
         initialized = true;
     };
 
-    exports.refresh = () => {
+    function refresh(){
         clearInterface();
         if (Stories.getCurrentStoryName() === undefined) {
             return;
@@ -58,7 +66,7 @@ module.exports = (Stories) => {
         ]).then((results) => {
             const [isStoryEditable, metaInfo, events] = results;
             rebuildInterface(events, metaInfo);
-            UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            UI.enable(content, 'isStoryEditable', isStoryEditable);
             Stories.chainRefresh();
         }).catch(UI.handleError);
     };
@@ -129,7 +137,7 @@ module.exports = (Stories) => {
             }).then(() => {
                 eventNameInput.value = '';
                 dialog.hideDlg();
-                exports.refresh();
+                refresh();
             }).catch(err => UI.setError(dialog, err));
         };
     }
@@ -182,7 +190,7 @@ module.exports = (Stories) => {
                 newIndex
             }).then(() => {
                 dialog.hideDlg();
-                exports.refresh();
+                refresh();
             }).catch(err => UI.setError(dialog, err));
         };
     }
@@ -192,7 +200,7 @@ module.exports = (Stories) => {
             DBMS.cloneEvent({
                 storyName: Stories.getCurrentStoryName(),
                 index
-            }).then(exports.refresh, UI.handleError);
+            }).then(refresh, UI.handleError);
         };
     }
 
@@ -207,7 +215,7 @@ module.exports = (Stories) => {
                 DBMS.mergeEvents({
                     storyName: Stories.getCurrentStoryName(),
                     index
-                }).then(exports.refresh, UI.handleError);
+                }).then(refresh, UI.handleError);
             });
         };
     }
@@ -218,7 +226,7 @@ module.exports = (Stories) => {
                 DBMS.removeEvent({
                     storyName: Stories.getCurrentStoryName(),
                     index
-                }).then(exports.refresh, UI.handleError);
+                }).then(refresh, UI.handleError);
             });
         };
     }
@@ -249,7 +257,7 @@ module.exports = (Stories) => {
             index: input.eventIndex,
             property: 'name',
             value: input.value
-        }).then(exports.refresh, UI.handleError);
+        }).then(refresh, UI.handleError);
     }
 
     function updateEventText(event) {
@@ -261,6 +269,8 @@ module.exports = (Stories) => {
             value: input.value
         }).catch(UI.handleError);
     }
-    return exports;
+    return {
+        init, refresh, getContent, getCreateEventDialog
+    };
 };
 // )(window.StoryEvents = {});

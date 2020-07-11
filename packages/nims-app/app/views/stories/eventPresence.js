@@ -21,17 +21,19 @@ const PermissionInformer = require('permissionInformer');
 
 
 module.exports = (Stories) => {
-    const exports = {};
     const state = {};
-    exports.name = 'EventPresence';
     const root = '#eventPresenceDiv ';
+    let content;
+    function getContent() {
+        return content;
+    }
 
-    exports.init = () => {
+    function init(){
         U.listen(U.queryEl('#eventPresenceSelector'), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
-        exports.content = U.queryEl(root);
+        content = U.queryEl(root);
     };
 
-    exports.refresh = () => {
+    function refresh(){
         const tableHead = U.queryEl('#eventPresenceTableHead');
         const table = U.queryEl('#eventPresenceTable');
         const characterSelector = U.queryEl('#eventPresenceSelector');
@@ -75,7 +77,7 @@ module.exports = (Stories) => {
             appendTableHeader(tableHead, displayArray);
             events.forEach((event, i) => {
                 appendTableInput(table, event, i, characterArray2);
-                UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
+                UI.enable(content, 'isStoryEditable', isStoryEditable);
             });
         }).catch(UI.handleError);
     };
@@ -160,5 +162,7 @@ module.exports = (Stories) => {
             });
         }
     }
-    return exports;
+    return {
+        init, refresh, getContent
+    };
 };

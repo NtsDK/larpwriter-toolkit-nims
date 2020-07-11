@@ -218,8 +218,8 @@ module.exports = (env, argv) => {
         ENABLE_TESTS: valOrDefault(env.ENABLE_TESTS, true),
         ENABLE_BASE_SELECT_DLG: valOrDefault(env.ENABLE_BASE_SELECT_DLG, false),
         ENABLE_BASICS: valOrDefault(env.ENABLE_BASICS, true),
+        ENABLE_EXTRAS: valOrDefault(env.ENABLE_EXTRAS, false)
         // ENABLE_EXTRAS: valOrDefault(env.ENABLE_EXTRAS, true)
-        ENABLE_EXTRAS: valOrDefault(env.ENABLE_EXTRAS, true)
     };
 
     config.plugins.push(new webpack.DefinePlugin({

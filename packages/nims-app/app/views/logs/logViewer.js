@@ -1,30 +1,21 @@
-/*Copyright 2016 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+import ReactDOM from 'react-dom';
+import dateFormat from 'dateformat';
 
-http://www.apache.org/licenses/LICENSE-2.0
+import { getLogViewerTemplate } from "./LogViewerTemplate.jsx";
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
+import './logViewer.css';
 
-/*global
- Utils, DBMS
- */
-
-require('./logViewer.css');
-const dateFormat = require('dateformat');
-//const R = require('ramda');
-
-
-// ((exports) => {
 const root = '.log-viewer-tab ';
+let subContainer;
+const getContent = () => subContainer;
 
-exports.init = () => {
+function init(){
+    subContainer = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), subContainer);
+    ReactDOM.render(getLogViewerTemplate(), subContainer);
+    L10n.localizeStatic(subContainer);
+
     const pagination = U.clearEl(U.queryEl(`${root}.pagination`));
     U.addEls(pagination, R.range(0, 20).map((num) => {
         const a = U.setAttr(U.makeEl('a'), 'href', '#');
@@ -44,15 +35,13 @@ exports.init = () => {
 
     U.listen(U.queryEl(`${root}button.clear-filter`), 'click', () => {
         U.queryEls(`${root}input[filter]`).forEach(el => (el.value = ''));
-        exports.refresh();
+        refresh();
     });
 
-    U.queryEls(`${root}input[filter]`).forEach(U.listen(R.__, 'input', exports.refresh));
-
-    exports.content = U.queryEl(root);
+    U.queryEls(`${root}input[filter]`).forEach(U.listen(R.__, 'input', refresh));
 };
 
-exports.refresh = () => {
+function refresh() {
     U.queryEls(`${root}.pagination li a`)[0].click();
 };
 
@@ -81,4 +70,5 @@ function makeRow(rowData) {
         U.addEls(U.makeEl('td'), JSON.parse(rowData[5]).map(item => U.addEl(U.addClass(U.makeEl('div'), 'log-param'), U.makeText(R.is(Object, item) ? JSON.stringify(item) : item)))),
     ]);
 }
-// })(window.LogViewer = {});
+
+export default {init, getContent, refresh};

@@ -22,15 +22,23 @@ const PermissionInformer = require('permissionInformer');
 
 
 module.exports = (Stories) => {
-    const exports = {};
     const state = {};
     const root = '.story-characters-tab ';
     const superRoot = '.stories-tab ';
     let initialized = false;
 
-    exports.init = () => {
+    let addCharacterDialog;
+    function getAddCharacterDialog() {
+        return addCharacterDialog;
+    }
+    let content;
+    function getContent() {
+        return content;
+    }
+
+    function init(){
         if (initialized) return;
-        exports.addCharacterDialog = UI.createModalDialog(superRoot, addCharacter, {
+        addCharacterDialog = UI.createModalDialog(superRoot, addCharacter, {
             bodySelector: 'modal-add-character-body',
             dialogTitle: 'stories-add-character-title',
             actionButtonTitle: 'common-add',
@@ -46,11 +54,11 @@ module.exports = (Stories) => {
         state.ExternalCharacterSelectors = [U.queryEl(`${superRoot}.storyCharactersAddSelector`),
             U.queryEl(`${root}.storyCharactersToSelector`)];
 
-        exports.content = U.queryEl(root);
+        content = U.queryEl(root);
         initialized = true;
     };
 
-    exports.refresh = () => {
+    function refresh(){
         state.ExternalCharacterSelectors.forEach(U.clearEl);
 
         U.clearEl(U.queryEl(`${root}.storyCharactersTable`));
@@ -64,7 +72,7 @@ module.exports = (Stories) => {
         ]).then((results) => {
             const [isStoryEditable, allCharacters, localCharacters] = results;
             rebuildInterface(allCharacters, localCharacters);
-            UI.enable(exports.content, 'isStoryEditable', isStoryEditable);
+            UI.enable(content, 'isStoryEditable', isStoryEditable);
             Stories.chainRefresh();
         }).catch(UI.handleError);
     };
@@ -109,7 +117,7 @@ module.exports = (Stories) => {
                 characterName
             }).then(() => {
                 dialog.hideDlg();
-                exports.refresh();
+                refresh();
             }).catch(err => UI.setError(dialog, err));
         };
     }
@@ -123,7 +131,7 @@ module.exports = (Stories) => {
                 toName
             }).then(() => {
                 dialog.hideDlg();
-                exports.refresh();
+                refresh();
             }).catch(err => UI.setError(dialog, err));
         };
     }
@@ -134,7 +142,7 @@ module.exports = (Stories) => {
                 DBMS.removeStoryCharacter({
                     storyName: Stories.getCurrentStoryName(),
                     characterName
-                }).then(exports.refresh).catch(UI.handleError);
+                }).then(refresh).catch(UI.handleError);
             });
         };
     }
@@ -187,5 +195,7 @@ module.exports = (Stories) => {
             checked: event.target.checked
         }).catch(UI.handleError);
     }
-    return exports;
+    return {
+        init, refresh, getContent, getAddCharacterDialog
+    };
 };

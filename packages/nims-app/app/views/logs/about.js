@@ -1,15 +1,18 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { AboutComponent, getAboutComponent } from "./about.jsx";
+import { getAboutTemplate } from "./AboutTemplate.jsx";
+
+let subContainer;
+const getContent = () => subContainer;
 
 const init = () => {
-    const el = U.queryEl('#aboutDiv');
-    ReactDOM.render(getAboutComponent(), el);
-    L10n.localizeStatic(el);
+    subContainer = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), subContainer);
+    ReactDOM.render(getAboutTemplate(), subContainer);
+    L10n.localizeStatic(subContainer);
 };
 
-const getContent = () => U.queryEl('#aboutDiv');
+// const getContent = () => U.queryEl('#aboutDiv');
 
 const refresh = () => {
 };
