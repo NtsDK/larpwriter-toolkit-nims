@@ -1,4 +1,7 @@
 import Slider from 'bootstrap-slider';
+import ReactDOM from 'react-dom';
+import { getSliderContainer } from "./SliderContainer.jsx";
+import { getSlidersTemplate } from "./SlidersTemplate.jsx";
 import 'bootstrap-slider/dist/css/bootstrap-slider.min.css';
 import './sliders.css';
 
@@ -13,6 +16,11 @@ function getContent(){
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getSlidersTemplate(), content);
+    L10n.localizeStatic(content);
+
     const createSliderDialog = UI.createModalDialog(root, createSlider, {
         bodySelector: 'create-slider-body',
         dialogTitle: 'sliders-create-slider',
@@ -69,7 +77,11 @@ function createSliders(model) {
 }
 
 function makeSliderBackbone(sl, i) {
-    const el = U.qmte(`${root} .slider-container-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getSliderContainer(), content);
+    const el =  U.qee(content, '.SliderContainer');
+
+    // const el = U.qmte(`${root} .slider-container-tmpl`);
     U.setAttr(U.qee(el, 'input'), 'pos', i);
     U.addEl(U.qee(el, '.slider-name'), U.makeText(sl.name));
     U.addEl(U.qee(el, '.slider-top'), U.makeText(sl.top));

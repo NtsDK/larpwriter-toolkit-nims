@@ -1,4 +1,7 @@
 import PermissionInformer from "permissionInformer";
+import ReactDOM from 'react-dom';
+import { getStoryCharacterRow } from "./StoryCharacterRow.jsx";
+import { getStoryCharactersTemplate } from "./StoryCharactersTemplate.jsx";
 
 export default function createStoryCharacters(Stories) {
     const state = {};
@@ -17,6 +20,12 @@ export default function createStoryCharacters(Stories) {
 
     function init(){
         if (initialized) return;
+
+        content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getStoryCharactersTemplate(), content);
+        L10n.localizeStatic(content);
+
         addCharacterDialog = UI.createModalDialog(superRoot, addCharacter, {
             bodySelector: 'modal-add-character-body',
             dialogTitle: 'stories-add-character-title',
@@ -127,7 +136,10 @@ export default function createStoryCharacters(Stories) {
     }
 
     function getCharacterInput(characterMeta, character) {
-        const el = U.wrapEl('tr', U.qte(`${root} .story-character-row-tmpl`));
+        const content = U.makeEl('tbody');
+        ReactDOM.render(getStoryCharacterRow(), content);
+        const el =  U.qee(content, '.StoryCharacterRow');
+
         L10n.localizeStatic(el);
         const qe = U.qee(el);
 

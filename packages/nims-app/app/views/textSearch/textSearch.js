@@ -1,4 +1,6 @@
-// ((exports) => {
+import ReactDOM from 'react-dom';
+import { getTextSearchTemplate } from "./TextSearchTemplate.jsx";
+
 const root = '.text-search-tab ';
 
 let content;
@@ -8,6 +10,11 @@ function getContent(){
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getTextSearchTemplate(), content);
+    L10n.localizeStatic(content);
+
     U.listen(U.queryEl(`${root}.text-search-button`), 'click', findTexts);
     U.listenOnEnter(U.queryEl(`${root}.text-search-input`), findTexts);
     content = U.queryEl(root);

@@ -1,5 +1,8 @@
 
 import PermissionInformer from "permissionInformer";
+import ReactDOM from 'react-dom';
+import { getStoryEventTemplate } from "./StoryEventTemplate.jsx";
+import { getStoryEventsTemplate } from "./StoryEventsTemplate.jsx";
 
 export default function createStoryEvents(Stories){
     const state = {};
@@ -17,6 +20,12 @@ export default function createStoryEvents(Stories){
 
     function init(){
         if (initialized) return;
+
+        content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getStoryEventsTemplate(), content);
+        L10n.localizeStatic(content);
+
         createEventDialog = UI.createModalDialog('.stories-tab ', createEvent, {
             bodySelector: 'create-event-body',
             dialogTitle: 'stories-event-creation',
@@ -124,7 +133,10 @@ export default function createStoryEvents(Stories){
     }
 
     function appendEventInput(event, index, events, date, preGameDate) {
-        const el = U.wrapEl('tr', U.qte(`${root} .event-tmpl`));
+        const content = U.makeEl('tbody');
+        ReactDOM.render(getStoryEventTemplate(), content);
+        const el =  U.qee(content, '.StoryEventTemplate');
+
         L10n.localizeStatic(el);
         const qe = U.qee(el);
         U.addEl(qe('.event-number'), U.makeText(index + 1));

@@ -1,3 +1,6 @@
+import ReactDOM from 'react-dom';
+import { getWriterStoryTemplate } from "./WriterStoryTemplate.jsx";
+
 export default function createWriterStory(Stories){
     const state = {};
 
@@ -7,6 +10,11 @@ export default function createWriterStory(Stories){
     }
 
     function init(){
+        content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getWriterStoryTemplate(), content);
+        L10n.localizeStatic(content);
+
         U.listen(U.queryEl('#writerStoryArea'), 'change', updateWriterStory);
         content = U.queryEl('#writerStoryDiv2');
     };
