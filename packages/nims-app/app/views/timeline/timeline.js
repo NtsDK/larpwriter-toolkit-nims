@@ -2,9 +2,14 @@
 import vis from "vis";
 import dateFormat from "dateformat";
 import 'vis/dist/vis.min.css';
+import ReactDOM from 'react-dom';
 
 /* eslint-disable-next-line import/no-unresolved */
 import PermissionInformer from "permissionInformer";
+
+import { getTimelineEventTemplate } from "./TimelineEventTemplate.jsx";
+import { getTimelineTemplate } from "./TimelineTemplate.jsx";
+import { U } from "nims-app-core";
 
 // ((exports) => {
 const state = {};
@@ -17,6 +22,11 @@ function getContent(){
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getTimelineTemplate(), content);
+    L10n.localizeStatic(content);
+
     U.listen(U.queryEl('#timelineStorySelector'), 'change', onStorySelectorChangeDelegate);
 
     state.TimelineDataset = new vis.DataSet();
@@ -141,12 +151,14 @@ function onStorySelectorChange(entityNames) {
     events.sort(CU.charOrdAFactory(R.prop('time')));
 
     U.addEls(U.clearEl(U.queryEl(`${root} .timeline-list`)), events.map((event) => {
-        const row = U.qmte(`${root} .timeline-event-tmpl`);
-        U.addEl(U.qee(row, '.time'), U.makeText(dateFormat(event.time, 'yyyy/mm/dd h:MM')));
-        U.addEl(U.qee(row, '.story-name'), U.makeText(event.storyName));
-        U.addEl(U.qee(row, '.event-name'), U.makeText(event.name));
-        U.addEl(U.qee(row, '.characters'), U.makeText(event.characters.join(', ')));
-        return row;
+        const content = U.makeEl('div');
+        ReactDOM.render(getTimelineEventTemplate({
+            time: dateFormat(event.time, 'yyyy/mm/dd h:MM'),
+            storyName: event.storyName,
+            eventName: event.name,
+            characters: event.characters.join(', '),
+        }), content);
+        return U.qee(content, '.row');
     }));
 
     if (entityNames[0]) {

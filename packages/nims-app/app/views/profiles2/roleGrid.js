@@ -1,4 +1,7 @@
 
+import ReactDOM from 'react-dom';
+import { getRoleGridTemplate } from "./RoleGridTemplate.jsx";
+
 const root = '.role-grid-tab ';
 let groupingOrder;
 let profilesData;
@@ -12,6 +15,10 @@ function getContent(){
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getRoleGridTemplate(), content);
+    L10n.localizeStatic(content);
     content = U.queryEl(root);
 };
 

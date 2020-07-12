@@ -1,6 +1,8 @@
+import ReactDOM from 'react-dom';
 import Chart from "chart.js";
 import dateFormat from "dateformat";
 import PermissionInformer from "permissionInformer";
+import { getOverviewTemplate } from "./OverviewTemplate.jsx";
 
 import './overview.css';
 
@@ -36,6 +38,11 @@ const state = {};
 state.Charts = {};
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getOverviewTemplate(), content);
+    L10n.localizeStatic(content);
+
     state.name = U.queryEl('#gameNameInput');
     state.name.addEventListener('change', updateName);
 
@@ -90,10 +97,8 @@ function init(){
     });
 
     const slidersContainer = U.qee(U.queryEl(root), '#sliders');
-    U.addEl(slidersContainer, U.qe('.sliders-tab'));
     Sliders.init();
-
-    content = U.queryEl(root);
+    U.addEl(slidersContainer, U.qe('.sliders-tab'));
 };
 
 function refresh(){

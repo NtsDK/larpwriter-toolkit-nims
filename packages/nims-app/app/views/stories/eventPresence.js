@@ -1,6 +1,8 @@
 import PermissionInformer from "permissionInformer";
 
-
+import ReactDOM from 'react-dom';
+import { getEventPresenceCell } from "./EventPresenceCell.jsx";
+import { getEventPresenceTemplate } from "./EventPresenceTemplate.jsx";
 
 export default function createEventPresence(Stories) {
     const state = {};
@@ -11,6 +13,11 @@ export default function createEventPresence(Stories) {
     }
 
     function init(){
+        content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getEventPresenceTemplate(), content);
+        L10n.localizeStatic(content);
+
         U.listen(U.queryEl('#eventPresenceSelector'), 'change', UI.showSelectedEls3(root, 'dependent', 'dependent-index'));
         content = U.queryEl(root);
     };
@@ -82,7 +89,10 @@ export default function createEventPresence(Stories) {
         tr.appendChild(td1);
 
         U.addEls(tr, characterArray.map((character, j) => {
-            const td = U.qmte(`${root} .event-presence-cell`);
+            const content = U.makeEl('tr');
+            ReactDOM.render(getEventPresenceCell(), content);
+            const td =  U.qee(content, '.EventPresenceCell');
+
             U.addClass(td, 'dependent');
             U.setAttr(td, 'dependent-index', j);
             const input = U.qee(td, 'input');

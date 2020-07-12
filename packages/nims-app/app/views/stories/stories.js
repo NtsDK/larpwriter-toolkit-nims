@@ -1,3 +1,6 @@
+import ReactDOM from 'react-dom';
+import { getStoriesTemplate } from "./StoriesTemplate.jsx";
+
 const Stories = {};
 
 import PermissionInformer from "permissionInformer";
@@ -18,6 +21,11 @@ Stories.getContent = () => {
 }
 
 Stories.init = () => {
+    Stories.content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), Stories.content);
+    ReactDOM.render(getStoriesTemplate(), Stories.content);
+    L10n.localizeStatic(Stories.content);
+
     const createStoryDialog = UI.createModalDialog(root, createStory, {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'stories-enter-story-name',
