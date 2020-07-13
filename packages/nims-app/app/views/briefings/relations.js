@@ -1,5 +1,7 @@
 import PermissionInformer from "permissionInformer";
 import RelationsPreview from "./relationsPreview";
+import ReactDOM from 'react-dom';
+import { getRelationsTemplate } from "./RelationsTemplate.jsx";
 
 const root = '.relations-tab ';
 const state = {};
@@ -14,6 +16,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getRelationsTemplate(), content);
+    L10n.localizeStatic(content);
+
     $(`${root} .character-select`).select2().on('change', buildContent);
     content = U.queryEl(root);
 };

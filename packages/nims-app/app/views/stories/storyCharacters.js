@@ -2,6 +2,7 @@ import PermissionInformer from "permissionInformer";
 import ReactDOM from 'react-dom';
 import { getStoryCharacterRow } from "./StoryCharacterRow.jsx";
 import { getStoryCharactersTemplate } from "./StoryCharactersTemplate.jsx";
+import { createModalDialog } from "../commons/uiCommons";
 
 export default function createStoryCharacters(Stories) {
     const state = {};
@@ -26,7 +27,7 @@ export default function createStoryCharacters(Stories) {
         ReactDOM.render(getStoryCharactersTemplate(), content);
         L10n.localizeStatic(content);
 
-        addCharacterDialog = UI.createModalDialog(superRoot, addCharacter, {
+        addCharacterDialog = createModalDialog(superRoot, addCharacter, {
             bodySelector: 'modal-add-character-body',
             dialogTitle: 'stories-add-character-title',
             actionButtonTitle: 'common-add',
@@ -34,7 +35,7 @@ export default function createStoryCharacters(Stories) {
 
         //        U.listen(U.qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
 
-        state.switchCharacterDialog = UI.createModalDialog(root, switchCharacters, {
+        state.switchCharacterDialog = createModalDialog(root, switchCharacters, {
             bodySelector: 'modal-switch-event-body',
             dialogTitle: 'stories-switch-character-title',
             actionButtonTitle: 'common-replace',

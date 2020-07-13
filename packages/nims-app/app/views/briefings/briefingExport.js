@@ -7,6 +7,9 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import markdownit from "markdown-it";
 
+import ReactDOM from 'react-dom';
+import { getBriefingExportTemplate } from "./BriefingExportTemplate.jsx";
+
 const state = {};
 const root = '.briefing-export-tab ';
 
@@ -24,6 +27,10 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getBriefingExportTemplate(), content);
+    L10n.localizeStatic(content);
 //        U.listen(U.queryEl('#makeDefaultTextBriefings'), 'click', () => {
 //            resolveTextTemplate((textTemplate) => {
 //                makeTextBriefings('txt', generateSingleTxt(textTemplate));

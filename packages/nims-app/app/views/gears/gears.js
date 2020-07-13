@@ -2,6 +2,9 @@ import vis from 'vis';
 import 'vis/dist/vis.min.css';
 import './gears.css';
 import { saveAs } from 'file-saver';
+import ReactDOM from 'react-dom';
+import { getGearsTemplate } from "./GearsTemplate.jsx";
+import { createModalDialog } from "../commons/uiCommons";
 
 const root = '.gears-tab';
 const state = {};
@@ -18,27 +21,32 @@ export default {
 }
 
 function init(){
-    state.addNodeDialog = UI.createModalDialog(root, updateNode, {
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getGearsTemplate(), content);
+    L10n.localizeStatic(content);
+
+    state.addNodeDialog = createModalDialog(root, updateNode, {
         bodySelector: 'add-or-edit-node-body',
         dialogTitle: 'gears-add-node',
         actionButtonTitle: 'common-save',
         onCancel: onNodeCancel
     });
 
-    state.editNodeDialog = UI.createModalDialog(root, updateNode, {
+    state.editNodeDialog = createModalDialog(root, updateNode, {
         bodySelector: 'add-or-edit-node-body',
         dialogTitle: 'gears-edit-node',
         actionButtonTitle: 'common-save',
         onCancel: onNodeCancel
     });
 
-    state.renameEdgeDialog = UI.createModalDialog(root, renameEdge, {
+    state.renameEdgeDialog = createModalDialog(root, renameEdge, {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'gears-rename-edge',
         actionButtonTitle: 'common-save',
     });
 
-    const configureNetworkDialog = UI.createModalDialog(root, dialog => () => dialog.hideDlg(), {
+    const configureNetworkDialog = createModalDialog(root, dialog => () => dialog.hideDlg(), {
         bodySelector: 'config-inner-body',
         dialogTitle: 'gears-configure-network',
         actionButtonTitle: 'common-close',

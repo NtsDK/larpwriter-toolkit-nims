@@ -4,7 +4,7 @@ import ProfileEditorCore from './profileEditorCore';
 import CharacterReports from './characterReports';
 import ReactDOM from 'react-dom';
 import { getEntityItem, getProfileEditorTemplate } from "./ProfileEditorTemplate.jsx";
-
+import { createModalDialog } from "../commons/uiCommons";
 
 function ProfileEditorTmpl(opts) {
     const innerExports = {};
@@ -38,7 +38,7 @@ function ProfileEditorTmpl(opts) {
         U.removeClass(el, 'profile-editor2-tab-tmpl');
         U.addEl(U.queryEl('.tab-container'), el);
 
-        const createCharacterDialog = UI.createModalDialog(
+        const createCharacterDialog = createModalDialog(
             `.profile-editor2-tab.${`${firstType}-type`}`,
             createProfile, {
                 bodySelector: 'modal-prompt-body',
@@ -47,7 +47,7 @@ function ProfileEditorTmpl(opts) {
             }
         );
         U.listen(U.queryEl(`${root} .create`), 'click', () => createCharacterDialog.showDlg());
-        state.renameCharacterDialog = UI.createModalDialog(`.${`${firstType}-type`}`, renameProfile, {
+        state.renameCharacterDialog = createModalDialog(`.${`${firstType}-type`}`, renameProfile, {
             bodySelector: 'modal-prompt-body',
             dialogTitle: `profiles-${opts.renameMsg}`,
             actionButtonTitle: 'common-rename',

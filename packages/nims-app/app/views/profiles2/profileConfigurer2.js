@@ -5,6 +5,7 @@ import {
     getProfileConfigurerRow,
     getProfileConfigurerTemplate
 } from "./ProfileConfigurerTemplate.jsx";
+import { createModalDialog } from "../commons/uiCommons";
 
 // Character/Player profiles already have field 'name'
 // I had some choices:
@@ -38,7 +39,7 @@ function ProfileConfigurerTmpl(opts) {
         U.removeClass(el, 'profile-configurer2-tab-tmpl');
         U.addEl(U.queryEl('.tab-container'), el);
 
-        const createProfileItemDialog = UI.createModalDialog(
+        const createProfileItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             createProfileItem, {
                 bodySelector: 'create-profile-item-body',
@@ -53,7 +54,7 @@ function ProfileConfigurerTmpl(opts) {
             }
         );
 
-        state.renameProfileItemDialog = UI.createModalDialog(
+        state.renameProfileItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             renameProfileItem, {
                 bodySelector: 'modal-prompt-body',
@@ -62,7 +63,7 @@ function ProfileConfigurerTmpl(opts) {
             }
         );
 
-        state.moveProfileItemDialog = UI.createModalDialog(
+        state.moveProfileItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             moveProfileItem, {
                 bodySelector: 'move-profile-item-body',
@@ -71,7 +72,7 @@ function ProfileConfigurerTmpl(opts) {
             }
         );
 
-        state.renameEnumItemDialog = UI.createModalDialog(
+        state.renameEnumItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             renameEnumValue, {
                 bodySelector: 'rename-enum-value-tmpl',
@@ -87,7 +88,7 @@ function ProfileConfigurerTmpl(opts) {
             }
         );
 
-        state.enumEditorDialog = UI.createModalDialog(
+        state.enumEditorDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             updateEnumValues, {
                 bodySelector: 'enum-dialog-editor-tmpl',
@@ -122,7 +123,7 @@ function ProfileConfigurerTmpl(opts) {
             }
         );
 
-        state.multiEnumEditorDialog = UI.createModalDialog(
+        state.multiEnumEditorDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             updateEnumValues, {
                 bodySelector: 'multi-enum-dialog-editor-tmpl',

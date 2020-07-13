@@ -80,9 +80,9 @@ function init(){
     state.descr = U.queryEl(`${root}.game-description-area`);
     state.descr.addEventListener('change', updateDescr);
 
+    Gears.init();
     const gearsContainer = U.qee(U.queryEl(root), '#gears');
     U.addEl(gearsContainer, U.qe('.gears-tab'));
-    Gears.init();
     const observer = new MutationObserver(((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.attributeName === 'class') {

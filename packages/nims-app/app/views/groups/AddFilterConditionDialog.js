@@ -1,5 +1,7 @@
+import { createModalDialog } from "../commons/uiCommons";
+
 function AddFilterConditionDialog(root) {
-    this.dialog = UI.createModalDialog(root, this.onAction.bind(this), {
+    this.dialog = createModalDialog(root, this.onAction.bind(this), {
         bodySelector: 'add-filter-condition-body',
         dialogTitle: 'groups-add-filter-condition',
         actionButtonTitle: 'common-ok',

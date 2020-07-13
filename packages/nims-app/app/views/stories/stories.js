@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import { getStoriesTemplate } from "./StoriesTemplate.jsx";
+import { createModalDialog } from "../commons/uiCommons";
 
 const Stories = {};
 
@@ -26,13 +27,13 @@ Stories.init = () => {
     ReactDOM.render(getStoriesTemplate(), Stories.content);
     L10n.localizeStatic(Stories.content);
 
-    const createStoryDialog = UI.createModalDialog(root, createStory, {
+    const createStoryDialog = createModalDialog(root, createStory, {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'stories-enter-story-name',
         actionButtonTitle: 'common-create',
     });
 
-    const renameStoryDialog = UI.createModalDialog(root, renameStory, {
+    const renameStoryDialog = createModalDialog(root, renameStory, {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'stories-enter-new-story-name',
         actionButtonTitle: 'common-rename',

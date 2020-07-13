@@ -4,6 +4,7 @@ import { getSliderContainer } from "./SliderContainer.jsx";
 import { getSlidersTemplate } from "./SlidersTemplate.jsx";
 import 'bootstrap-slider/dist/css/bootstrap-slider.min.css';
 import './sliders.css';
+import { createModalDialog } from "../commons/uiCommons";
 
 const root = '.sliders-tab ';
 const state = {};
@@ -21,19 +22,19 @@ function init(){
     ReactDOM.render(getSlidersTemplate(), content);
     L10n.localizeStatic(content);
 
-    const createSliderDialog = UI.createModalDialog(root, createSlider, {
+    const createSliderDialog = createModalDialog(root, createSlider, {
         bodySelector: 'create-slider-body',
         dialogTitle: 'sliders-create-slider',
         actionButtonTitle: 'common-create',
     });
 
-    state.editSliderDialog = UI.createModalDialog(root, editSlider, {
+    state.editSliderDialog = createModalDialog(root, editSlider, {
         bodySelector: 'create-slider-body',
         dialogTitle: 'sliders-edit-slider',
         actionButtonTitle: 'common-save',
     });
 
-    state.moveSliderDialog = UI.createModalDialog(root, moveSlider, {
+    state.moveSliderDialog = createModalDialog(root, moveSlider, {
         bodySelector: 'move-slider-body',
         dialogTitle: 'sliders-move-slider',
         actionButtonTitle: 'common-move',
