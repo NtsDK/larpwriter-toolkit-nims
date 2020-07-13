@@ -2,6 +2,9 @@ import PermissionInformer from 'permissionInformer';
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import ProfileEditorCore from './profileEditorCore';
 import CharacterReports from './characterReports';
+import ReactDOM from 'react-dom';
+import { getEntityItem, getProfileEditorTemplate } from "./ProfileEditorTemplate.jsx";
+
 
 function ProfileEditorTmpl(opts) {
     const innerExports = {};
@@ -22,7 +25,14 @@ function ProfileEditorTmpl(opts) {
 
     innerExports.init = () => {
         profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
-        const el = U.queryEl(tmplRoot).cloneNode(true);
+
+        const content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getProfileEditorTemplate(), content);
+        L10n.localizeStatic(content);
+        const el = U.qee(content, ".ProfileEditorTemplate");
+
+        // const el = U.queryEl(tmplRoot).cloneNode(true);
 
         U.addClasses(el, ['profile-editor2-tab', `${`${firstType}-type`}`]);
         U.removeClass(el, 'profile-editor2-tab-tmpl');
@@ -76,7 +86,11 @@ function ProfileEditorTmpl(opts) {
     function rebuildInterface(primaryNames, secondaryNames, profileBindings) {
         const secDict = R.indexBy(R.prop('value'), secondaryNames);
         U.addEls(U.clearEl(U.queryEl(`${root} .entity-list`)), primaryNames.map((name, i, arr) => {
-            const el = U.wrapEl('div', U.qte(`${root} .entity-item-tmpl`));
+            const content = U.makeEl('div');
+            ReactDOM.render(getEntityItem(), content);
+            const el = U.qee(content, '.EntityItem');
+
+            // const el = U.wrapEl('div', U.qte(`${root} .entity-item-tmpl`));
             U.addEl(U.qee(el, '.primary-name'), U.makeText(name.displayName));
             U.setAttr(el, 'primary-name', name.displayName);
             U.setAttr(el, 'profile-name', name.value);

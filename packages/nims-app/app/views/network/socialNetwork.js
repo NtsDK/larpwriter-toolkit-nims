@@ -2,6 +2,8 @@ import vis from 'vis';
 import 'vis/dist/vis.min.css';
 import PermissionInformer from 'permissionInformer';
 import NetworkSubsetsSelector from './networkSubsetsSelector';
+import ReactDOM from 'react-dom';
+import { getSocialNetworkTemplate } from "./SocialNetworkTemplate.jsx";
 
 
 // ((exports) => {
@@ -21,6 +23,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getSocialNetworkTemplate(), content);
+    L10n.localizeStatic(content);
+
     NetworkSubsetsSelector.init();
 
     U.listen(U.queryEl('#networkNodeGroupSelector'), 'change', colorNodes);

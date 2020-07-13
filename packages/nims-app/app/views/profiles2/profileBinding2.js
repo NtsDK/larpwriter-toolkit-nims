@@ -1,4 +1,10 @@
 import PermissionInformer from 'permissionInformer';
+import ReactDOM from 'react-dom';
+import {
+    getBindingItem,
+    getProfileBindingTemplate,
+    getProfileItem
+} from "./ProfileBindingTemplate.jsx";
 
 // ((exports) => {
 const root = '.profile-binding2-tab ';
@@ -13,6 +19,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getProfileBindingTemplate(), content);
+    L10n.localizeStatic(content);
+
     U.listen(U.queryEl(`${root} .character-filter`), 'input', filterList('.character-list'));
     U.listen(U.queryEl(`${root} .player-filter`), 'input', filterList('.player-list'));
     U.listen(U.queryEl(`${root} .binding-filter`), 'input', filterList('.binding-list'));
@@ -66,7 +77,11 @@ function rebuildInterface(characterNames, playerNames, profileBindings) {
 }
 
 const profile2el = R.curry((type, name) => {
-    const el = U.qmte(`${root} .profile-item-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getProfileItem(), content);
+    const el =  U.qee(content, '.ProfileItem');
+
+    // const el = U.qmte(`${root} .profile-item-tmpl`);
     el.profileName = name.value;
     const btn = U.qee(el, '[role=button]');
     U.addEl(U.qee(el, '.primary-name'), U.makeText(name.displayName));
@@ -124,7 +139,11 @@ function handleDragLeave(event) {
 }
 
 function binding2el(binding) {
-    const el = U.wrapEl('div', U.qte(`${root} .binding-item-tmpl`));
+    const content = U.makeEl('div');
+    ReactDOM.render(getBindingItem(), content);
+    const el = U.qee(content, '.BindingItem');
+
+    // const el = U.wrapEl('div', U.qte(`${root} .binding-item-tmpl`));
     U.addEl(U.qee(el, '.primary-name'), U.makeText(binding.name));
     U.setAttr(el, 'primary-name', binding.name);
     U.setAttr(U.qee(el, '.unlink'), 'title', l10n('unlink-binding'));

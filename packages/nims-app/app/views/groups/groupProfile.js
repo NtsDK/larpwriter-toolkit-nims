@@ -1,5 +1,9 @@
 import PermissionInformer from "permissionInformer";
 import FilterConfiguration from "./FilterConfiguration";
+import ReactDOM from 'react-dom';
+import { getGroupFilter, getGroupFilterRow, getGroupProfileTemplate } from "./GroupProfileTemplate.jsx";
+import { getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx";
+import { getEntityItem } from "../profiles2/ProfileEditorTemplate.jsx";
 
 const state = {};
 const root = '.group-profile-tab ';
@@ -13,6 +17,11 @@ function getContent(){
 
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getGroupProfileTemplate(), content);
+    L10n.localizeStatic(content);
+
     const createGroupDialog = UI.createModalDialog(root, createGroup(true, refresh), {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
@@ -47,7 +56,11 @@ function refresh(){
         UI.enableEl(U.qe(`${root} .entity-filter`), groupNames.length !== 0);
 
         U.addEls(U.clearEl(U.queryEl(`${root} .entity-list`)), groupNames.map((name, i, arr) => {
-            const el = U.wrapEl('div', U.qte('.entity-item-tmpl'));
+            const content = U.makeEl('div');
+            ReactDOM.render(getEntityItem(), content);
+            const el = U.qee(content, '.EntityItem');
+
+            // const el = U.wrapEl('div', U.qte('.entity-item-tmpl'));
             U.addEl(U.qee(el, '.primary-name'), U.makeText(name.displayName));
             U.setAttr(el, 'primary-name', name.displayName);
             U.setAttr(el, 'profile-name', name.value);
@@ -104,7 +117,11 @@ function makeInput(profileItemConfig) {
     U.addClass(input, 'isGroupEditable');
     state.inputItems[profileItemConfig.name] = input;
 
-    const row = U.qmte('.profile-editor-row-tmpl');
+    const content = U.makeEl('div');
+    ReactDOM.render(getProfileEditorRow(), content);
+    const row = U.qee(content, '.ProfileEditorRow');
+
+    // const row = U.qmte('.profile-editor-row-tmpl');
     U.addEl(U.qee(row, '.profile-item-name'), U.makeText(profileItemConfig.displayName));
     U.setAttr(U.qee(row, '.profile-item-name'), 'l10n-id', `groups-${profileItemConfig.name}`);
     U.addEl(U.qee(row, '.profile-item-input'), input);
@@ -171,7 +188,11 @@ function showProfileInfoCallback(groupName) {
                 inputItems[inputName].checked = group[inputName];
             } else if (inputItems[inputName].type === 'container') {
                 if (inputName === 'filterModel') {
-                    const table = U.qmte(`${root} .group-filter-template`);
+                    const content = U.makeEl('div');
+                    ReactDOM.render(getGroupFilter(), content);
+                    const table = U.qee(content, '.GroupFilter');
+
+                    // const table = U.qmte(`${root} .group-filter-template`);
                     const datas = group.filterModel.map(makeFilterItemString(name2DisplayName, name2Source));
                     U.addEls(U.qee(table, 'tbody'), datas.map(data2row));
                     L10n.localizeStatic(table);
@@ -237,7 +258,11 @@ function data2row(data) {
     const {
         displayName, title, condition, value
     } = data;
-    const row = U.qmte(`${root} .group-filter-row-template`);
+    const content = U.makeEl('tbody');
+    ReactDOM.render(getGroupFilterRow(), content);
+    const row = U.qee(content, '.GroupFilterRow');
+
+    // const row = U.qmte(`${root} .group-filter-row-template`);
     U.addEl(U.qee(row, '.profile-item'), U.makeText(displayName));
     U.setAttr(U.qee(row, '.profile-item'), 'title', title);
     U.addEl(U.qee(row, '.condition'), U.makeText(condition));

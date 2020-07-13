@@ -2,6 +2,15 @@ import PermissionInformer from "permissionInformer";
 import FilterConfiguration from "./FilterConfiguration";
 import GroupProfile from "./groupProfile";
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import ReactDOM from 'react-dom';
+import {
+    getCommonEnumFilter,
+    getFilterItem,
+    getMultiEnumFilter,
+    getNumberFilter,
+    getProfileFilterTemplate,
+    getTextFilter
+} from "./ProfileFilterTemplate.jsx";
 
 // ((exports) => {
 const state = {};
@@ -16,6 +25,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getProfileFilterTemplate(), content);
+    L10n.localizeStatic(content);
+
     const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false, refresh), {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
@@ -398,7 +412,11 @@ function onSortChange(event) {
 }
 
 function makeInput(profileItemConfig) {
-    const el = U.qmte(`${root} .filter-item-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getFilterItem(), content);
+    const el = U.qee(content, '.FilterItem');
+
+    // const el = U.qmte(`${root} .filter-item-tmpl`);
     const checkbox = U.qee(el, 'input[type="checkbox"]');
     const id = `filter-item-${profileItemConfig.displayName}`;
     checkbox.checked = false;
@@ -441,7 +459,11 @@ function makeFilter(profileItemConfig) {
 }
 
 function makeTextFilter(profileItemConfig) {
-    const input = U.qmte(`${root} .text-filter-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getTextFilter(), content);
+    const input = U.qee(content, '.TextFilter');
+
+    // const input = U.qmte(`${root} .text-filter-tmpl`);
     input.selfInfo = profileItemConfig;
     input.value = '';
     input.addEventListener('input', rebuildContent);
@@ -450,7 +472,11 @@ function makeTextFilter(profileItemConfig) {
 }
 
 function makeCommonEnumFilter(profileItemConfig, values) {
-    const selector = U.qmte(`${root} .common-enum-filter-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getCommonEnumFilter(), content);
+    const selector = U.qee(content, '.CommonEnumFilter');
+
+    // const selector = U.qmte(`${root} .common-enum-filter-tmpl`);
     selector.selfInfo = profileItemConfig;
     selector.size = values.length;
 
@@ -480,7 +506,11 @@ function makeCheckboxFilter(profileItemConfig) {
 }
 
 function makeMultiEnumFilter(profileItemConfig) {
-    const filter = U.qmte(`${root} .multi-enum-filter-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getMultiEnumFilter(), content);
+    const filter = U.qee(content, '.MultiEnumFilter');
+
+    // const filter = U.qmte(`${root} .multi-enum-filter-tmpl`);
     const selector = U.qee(filter, '.multi-enum-filter-type');
     selector.selfInfo = profileItemConfig;
 
@@ -508,7 +538,11 @@ function makeMultiEnumFilter(profileItemConfig) {
 }
 
 function makeNumberFilter(profileItemConfig) {
-    const filter = U.qmte(`${root} .number-filter-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getNumberFilter(), content);
+    const filter = U.qee(content, '.NumberFilter');
+
+    // const filter = U.qmte(`${root} .number-filter-tmpl`);
     const selector = U.qee(filter, 'select');
     selector.selfInfo = profileItemConfig;
 

@@ -1,5 +1,6 @@
 import ProjectUtils from "nims-dbms/db-utils/projectUtils";
-
+import ReactDOM from 'react-dom';
+import { getRelationReportRow, getStoryReportRow } from "./CharacterReportsTemplate.jsx";
 // ((exports) => {
 const root = '.character-reports-tmpl';
 
@@ -7,7 +8,12 @@ function makeStoryReportRow(storyInfo) {
     const act = storyInfo.activity;
     const completeness = makeCompletenessLabel(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
     const color = getCompletenessColor(storyInfo.finishedAdaptations, storyInfo.totalAdaptations);
-    const row = U.qte(`${root} .story-report-row-tmpl`);
+    // const row = U.qte(`${root} .story-report-row-tmpl`);
+
+    const content = U.makeEl('tbody');
+    ReactDOM.render(getStoryReportRow(), content);
+    const row =  U.qee(content, '.StoryReportRow');
+
     const qe = U.qee(row);
     L10n.localizeStatic(row);
     U.addEl(qe('.story-name'), U.makeText(storyInfo.storyName));
@@ -23,7 +29,11 @@ function makeStoryReportRow(storyInfo) {
 };
 
 const makeRelationReportRow = R.curry((characterName, rel) => {
-    const row = U.qte(`${root} .relation-report-row-tmpl`);
+    // const row = U.qte(`${root} .relation-report-row-tmpl`);
+    const content = U.makeEl('tbody');
+    ReactDOM.render(getRelationReportRow(), content);
+    const row =  U.qee(content, '.RelationReportRow');
+
     const qe = U.qee(row);
     L10n.localizeStatic(row);
     const secondCharacter = ProjectUtils.get2ndRelChar(characterName, rel);
