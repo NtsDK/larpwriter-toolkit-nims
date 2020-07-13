@@ -1,5 +1,10 @@
 import PermissionInformer from 'permissionInformer';
-
+import ReactDOM from 'react-dom';
+import {
+    getEnumValueEditor,
+    getProfileConfigurerRow,
+    getProfileConfigurerTemplate
+} from "./ProfileConfigurerTemplate.jsx";
 
 // Character/Player profiles already have field 'name'
 // I had some choices:
@@ -21,7 +26,13 @@ function ProfileConfigurerTmpl(opts) {
     const state = {};
 
     innerExports.init = () => {
-        const el = U.queryEl(tmplRoot).cloneNode(true);
+        const content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getProfileConfigurerTemplate(), content);
+        L10n.localizeStatic(content);
+        const el = U.qee(content, '.ProfileConfigurerTemplate')
+
+        // const el = U.queryEl(tmplRoot).cloneNode(true);
 
         U.addClasses(el, ['profile-configurer2-tab', `${`${tabType}-type`}`]);
         U.removeClass(el, 'profile-configurer2-tab-tmpl');
@@ -197,7 +208,12 @@ function ProfileConfigurerTmpl(opts) {
 
     // eslint-disable-next-line no-var,vars-on-top
     var getInput = R.curry((type, profileSettings, index) => { // throws InternalError
-        const row = U.qte(`${tabRoot} .profile-configurer-row-tmpl`);
+        // const row = U.qte(`${tabRoot} .profile-configurer-row-tmpl`);
+
+        const content = U.makeEl('tbody');
+        ReactDOM.render(getProfileConfigurerRow(), content);
+        const row = U.qee(content, '.ProfileConfigurerRow');
+
         L10n.localizeStatic(row);
         U.addEl(U.qee(row, '.item-position'), U.makeText(index + 1));
         U.addEl(U.qee(row, '.item-name'), U.makeText(profileSettings.name));
@@ -217,7 +233,11 @@ function ProfileConfigurerTmpl(opts) {
             input.value = profileSettings.value;
             break;
         case 'enum':
-            input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
+            // input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
+            const content2 = U.makeEl('div');
+            ReactDOM.render(getEnumValueEditor(), content2);
+            input = U.qee(content2, '.EnumValueEditor');
+
             list = profileSettings.value.split(',');
             defaultValue = list[0];
             list.sort(CU.charOrdA);
@@ -254,7 +274,11 @@ function ProfileConfigurerTmpl(opts) {
             addDefaultListener = false;
             break;
         case 'multiEnum':
-            input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
+            // input = U.qmte(`${tabRoot} .enum-value-editor-tmpl`);
+            const content3 = U.makeEl('div');
+            ReactDOM.render(getEnumValueEditor(), content3);
+            input = U.qee(content3, '.EnumValueEditor');
+
             list2 = profileSettings.value.split(',');
             list2.sort(CU.charOrdA);
 

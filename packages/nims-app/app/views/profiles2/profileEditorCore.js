@@ -1,4 +1,5 @@
-
+import ReactDOM from 'react-dom';
+import { getProfileEditorContainer, getProfileEditorRow } from "./ProfileEditorCoreTemplate.jsx";
 
 // ((exports) => {
 export default {
@@ -15,7 +16,12 @@ function makeProfileEditorCore(){
     };
 
     innerExports.initProfileStructure = (profileDiv, type, profileStructure, callback) => {
-        const container = U.qte(`${root} .profile-editor-container-tmpl`);
+        // const container = U.qte(`${root} .profile-editor-container-tmpl`);
+
+        const content = U.makeEl('div');
+        ReactDOM.render(getProfileEditorContainer(), content);
+        const container =  U.qee(content, '.ProfileEditorContainer');
+
         U.addEl(U.clearEl(U.queryEl(profileDiv)), container);
         state[type].inputItems = {};
         state[type].profileStructure = profileStructure;
@@ -40,7 +46,12 @@ function makeProfileEditorCore(){
     var appendInput = R.curry((type, profileItemConfig) => {
         const itemInput = new ProfileItemInput(type, profileItemConfig);
         state[type].inputItems[profileItemConfig.name] = itemInput;
-        const row = U.qte(`${root} .profile-editor-row-tmpl`);
+        // const row = U.qte(`${root} .profile-editor-row-tmpl`);
+
+        const content = U.makeEl('div');
+        ReactDOM.render(getProfileEditorRow(), content);
+        const row =  U.qee(content, '.ProfileEditorRow');
+
         U.addEl(U.qee(row, '.profile-item-name'), U.makeText(profileItemConfig.name));
         U.addEl(U.qee(row, '.profile-item-input'), itemInput.dom);
         return row;
