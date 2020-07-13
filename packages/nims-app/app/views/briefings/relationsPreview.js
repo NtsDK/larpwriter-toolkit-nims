@@ -1,4 +1,6 @@
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import ReactDOM from 'react-dom';
+import { getRelation, getRelationRow } from "./RelationsTemplate.jsx";
 
 const relationTableHeader = ['character-name', 'direct-relation', 'relation-origin', 'reverse-relation'];
 const partialTableHeader = ['character-name', 'direct-relation'];
@@ -25,7 +27,11 @@ function makeRelationsContent(data, isAdaptationsMode, profileSettings, external
     const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop('value'));
     const [knownNoRels, unknownNoRels] = R.partition(predicate, noRelsList);
 
-    const relationTmpl = U.wrapEl('div', U.qte('.relation-tmpl'));
+    // const relationTmpl = U.wrapEl('div', U.qte('.relation-tmpl'));
+
+    const relationTmpl = U.makeEl('div');
+    ReactDOM.render(getRelation(), relationTmpl);
+
     const tmplQe = U.qee(relationTmpl);
     const content = tmplQe('.relation-content');
     const getProfileItemSelect = () => tmplQe('.profile-item-select');
@@ -82,7 +88,12 @@ makeNewRow = R.curry((
     externalRefresh, fromCharacter, toCharacter, rel
 ) => {
     const stories = knownCharacters[toCharacter];
-    const row = U.qmte('.relation-row-tmpl');
+
+    const content = U.makeEl('div');
+    ReactDOM.render(getRelationRow(), content);
+    const row = U.qee(content, '.RelationRow');
+
+    // const row = U.qmte('.relation-row-tmpl');
     const tmplQe = U.qee(row);
     U.addEl(tmplQe('.to-character-name'), U.makeText(`${toCharacter}/${profileBindings[toCharacter]}`));
     U.addEl(tmplQe('.where-meets-label'), U.makeText(l10n('where-meets')));

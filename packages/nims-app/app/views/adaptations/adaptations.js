@@ -1,5 +1,12 @@
 
 import PermissionInformer from "permissionInformer";
+import ReactDOM from 'react-dom';
+import {
+    getAdaptationsTemplate,
+    getAdaptationRow,
+    getOrigin,
+    getAdaptation
+} from "./AdaptationsTemplate.jsx";
 
 const root = '.adaptations-tab ';
 
@@ -10,6 +17,11 @@ function getContent(){
 
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getAdaptationsTemplate(), content);
+    L10n.localizeStatic(content);
+
     U.listen(U.queryEl('#events-storySelector'), 'change', updateAdaptationSelectorDelegate);
     U.listen(U.queryEl('#events-characterSelector'), 'change', showPersonalStoriesByCharacters);
     U.listen(U.queryEl('#events-eventSelector'), 'change', showPersonalStoriesByEvents);
@@ -234,7 +246,11 @@ function buildAdaptationInterface(storyName, characterNames, events, areAdaptati
     }
 
     U.addEls(div, events.map((event) => {
-        const row = U.qmte(`${root} .adaptation-row-tmpl`);
+        const content = U.makeEl('div');
+        ReactDOM.render(getAdaptationRow(), content);
+        const row = U.qee(content, '.AdaptationRow');
+
+        // const row = U.qmte(`${root} .adaptation-row-tmpl`);
         U.addClass(row, `${event.index}-dependent`);
         row.dependsOnCharacters = R.keys(event.characters);
         U.addEl(U.qee(row, '.eventMainPanelRow-left'), makeOriginCard(event, metaInfo, storyName, {
@@ -260,7 +276,11 @@ function buildAdaptationInterface(storyName, characterNames, events, areAdaptati
 }
 
 const makeOriginCard = (event, metaInfo, storyName, opts) => {
-    const card = U.qmte(`${root} .origin-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getOrigin(), content);
+    const card = U.qee(content, '.Origin');
+
+    // const card = U.qmte(`${root} .origin-tmpl`);
     U.addEl(U.qee(card, '.card-title'), U.makeText(opts.cardTitle));
     const textInput = U.qee(card, '.text-input');
     const timeInput = U.qee(card, '.time-input');
@@ -311,7 +331,11 @@ function onOriginLockClick(timeInput, textInput) {
 }
 
 const makeAdaptationCard = R.curry((isEditable, event, storyName, characterName, opts) => {
-    const card = U.qmte(`${root} .adaptation-tmpl`);
+    const content = U.makeEl('div');
+    ReactDOM.render(getAdaptation(), content);
+    const card = U.qee(content, '.Adaptation');
+
+    // const card = U.qmte(`${root} .adaptation-tmpl`);
     U.setAttr(card, 'dependent-on-character', characterName);
 
     U.addEl(U.qee(card, '.card-title'), U.makeText(opts.cardTitle));

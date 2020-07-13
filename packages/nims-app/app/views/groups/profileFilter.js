@@ -3,6 +3,8 @@ import FilterConfiguration from "./FilterConfiguration";
 import GroupProfile from "./groupProfile";
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import ReactDOM from 'react-dom';
+import { createModalDialog } from "../commons/uiCommons";
+
 import {
     getCommonEnumFilter,
     getFilterItem,
@@ -30,13 +32,13 @@ function init(){
     ReactDOM.render(getProfileFilterTemplate(), content);
     L10n.localizeStatic(content);
 
-    const createGroupDialog = UI.createModalDialog(root, GroupProfile.createGroup(false, refresh), {
+    const createGroupDialog = createModalDialog(root, GroupProfile.createGroup(false, refresh), {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
         actionButtonTitle: 'common-create',
     });
 
-    const renameGroupDialog = UI.createModalDialog(root, renameGroup(`${root}.save-entity-select`), {
+    const renameGroupDialog = createModalDialog(root, renameGroup(`${root}.save-entity-select`), {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-new-group-name',
         actionButtonTitle: 'common-rename',

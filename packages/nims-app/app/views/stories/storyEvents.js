@@ -3,6 +3,7 @@ import PermissionInformer from "permissionInformer";
 import ReactDOM from 'react-dom';
 import { getStoryEventTemplate } from "./StoryEventTemplate.jsx";
 import { getStoryEventsTemplate } from "./StoryEventsTemplate.jsx";
+import { createModalDialog } from "../commons/uiCommons";
 
 export default function createStoryEvents(Stories){
     const state = {};
@@ -26,7 +27,7 @@ export default function createStoryEvents(Stories){
         ReactDOM.render(getStoryEventsTemplate(), content);
         L10n.localizeStatic(content);
 
-        createEventDialog = UI.createModalDialog('.stories-tab ', createEvent, {
+        createEventDialog = createModalDialog('.stories-tab ', createEvent, {
             bodySelector: 'create-event-body',
             dialogTitle: 'stories-event-creation',
             actionButtonTitle: 'common-create',
@@ -34,7 +35,7 @@ export default function createStoryEvents(Stories){
 
         //        U.listen(U.qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
 
-        state.moveEventDialog = UI.createModalDialog(root, moveEvent, {
+        state.moveEventDialog = createModalDialog(root, moveEvent, {
             bodySelector: 'move-event-body',
             dialogTitle: 'stories-move-event',
             actionButtonTitle: 'common-move',

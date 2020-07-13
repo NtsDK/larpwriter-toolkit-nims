@@ -1,6 +1,7 @@
 
 import ReactDOM from 'react-dom';
 import { getRoleGridTemplate } from "./RoleGridTemplate.jsx";
+import { makeProfileTable } from "../commons/uiCommons";
 
 const root = '.role-grid-tab ';
 let groupingOrder;
@@ -294,10 +295,10 @@ const drawPlainPanelList = () => {
 
 // eslint-disable-next-line no-var,vars-on-top
 var makePanelList = profileArray => profileArray.sort(CU.charOrdAFactory(a => a.characterName.toLowerCase())).map((profileData) => {
-    const tables = [UI.makeProfileTable(Constants, profilesData.characterProfileStructure, profileData.character)];
+    const tables = [makeProfileTable(Constants, profilesData.characterProfileStructure, profileData.character)];
     let title = profileData.characterName;
     if (profileData.playerName !== undefined) {
-        tables.push(UI.makeProfileTable(Constants, profilesData.playerProfileStructure, profileData.player));
+        tables.push(makeProfileTable(Constants, profilesData.playerProfileStructure, profileData.player));
         title += `/${profileData.playerName}`;
     }
 

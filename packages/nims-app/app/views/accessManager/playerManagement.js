@@ -1,4 +1,5 @@
 import PermissionInformer from "permissionInformer";
+import { createModalDialog } from "../commons/uiCommons";
 
 // ((exports) => {
 const state = {};
@@ -14,21 +15,21 @@ export default {
 }
 
 function init(){
-    const createUserDialog = UI.createModalDialog(root, createUser, {
+    const createUserDialog = createModalDialog(root, createUser, {
         bodySelector: 'create-organizer-body',
         dialogTitle: 'admins-creating-player',
         actionButtonTitle: 'common-create',
     });
     U.listen(U.qe(`${root}.create.player`), 'click', () => createUserDialog.showDlg());
 
-    const createPlayerAccountDialog = UI.createModalDialog(root, createUserAccount, {
+    const createPlayerAccountDialog = createModalDialog(root, createUserAccount, {
         bodySelector: 'create-player-account-body',
         dialogTitle: 'admins-creating-player-account',
         actionButtonTitle: 'common-create',
     });
     U.listen(U.qe(`${root}.create.player-account`), 'click', () => createPlayerAccountDialog.showDlg());
 
-    const changePasswordDialog = UI.createModalDialog(root, changePassword, {
+    const changePasswordDialog = createModalDialog(root, changePassword, {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'admins-enter-new-password',
         actionButtonTitle: 'common-replace',

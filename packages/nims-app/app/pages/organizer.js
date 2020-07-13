@@ -24,6 +24,10 @@ import {
     Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager
 } from '../views';
 
+import {
+    showDiffExample
+} from '../views/commons/diffExample';
+
 import initLocalBaseBackup from '../front-db/localBaseBackup';
 
 import logModule from '../front-db/consoleLogModule';
@@ -154,7 +158,7 @@ function onDatabaseLoad() {
                 if (DEV_OPTS.ENABLE_EXTRAS) {
                     addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
                     addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', testView, btnOpts));
-                    addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', TestUtils.showDiffExample, btnOpts));
+                    addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
                 }
             }
 

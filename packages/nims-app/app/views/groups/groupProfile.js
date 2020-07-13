@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { getGroupFilter, getGroupFilterRow, getGroupProfileTemplate } from "./GroupProfileTemplate.jsx";
 import { getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx";
 import { getEntityItem } from "../profiles2/ProfileEditorTemplate.jsx";
+import { createModalDialog } from "../commons/uiCommons";
 
 const state = {};
 const root = '.group-profile-tab ';
@@ -22,14 +23,14 @@ function init(){
     ReactDOM.render(getGroupProfileTemplate(), content);
     L10n.localizeStatic(content);
 
-    const createGroupDialog = UI.createModalDialog(root, createGroup(true, refresh), {
+    const createGroupDialog = createModalDialog(root, createGroup(true, refresh), {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
         actionButtonTitle: 'common-create',
     });
     U.listen(U.qe(`${root}.create`), 'click', () => createGroupDialog.showDlg());
 
-    state.renameGroupDialog = UI.createModalDialog(root, renameGroup, {
+    state.renameGroupDialog = createModalDialog(root, renameGroup, {
         bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-new-group-name',
         actionButtonTitle: 'common-rename',

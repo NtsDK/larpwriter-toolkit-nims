@@ -4,6 +4,10 @@ import PermissionInformer from "permissionInformer";
 import Relations from "./relations";
 import RelationsPreview from "./relationsPreview";
 import Adaptations from "../adaptations/adaptations";
+import ReactDOM from 'react-dom';
+import { getBriefingPreviewTemplate } from "./BriefingPreviewTemplate.jsx";
+import { getProfileEditorContainer, getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx";
+import { makeProfileTable } from "../commons/uiCommons";
 
 const state = {};
 const root = '#briefingPreviewDiv ';
@@ -19,6 +23,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getBriefingPreviewTemplate(), content);
+    L10n.localizeStatic(content);
+
     $('#briefingCharacter').select2().on('change', buildContentDelegate);
 
     let button = U.queryEl('#eventGroupingByStoryRadio');
@@ -166,7 +175,7 @@ function initPanelsArr() {
             const label = CU.strFormat(L10n.getValue('briefings-character-profile'), [data.characterName]);
             U.addEl(el, makePanel(
                 U.makeText(label),
-                UI.makeProfileTable(Constants, state.characterProfileStructure, data.profile), getFlags().hideAllPanels
+                makeProfileTable(Constants, state.characterProfileStructure, data.profile), getFlags().hideAllPanels
             ));
         }
     }, {
@@ -190,7 +199,7 @@ function initPanelsArr() {
                 const label = CU.strFormat(L10n.getValue('briefings-player-profile'), [data.playerName]);
                 U.addEl(el, makePanel(
                     U.makeText(label),
-                    UI.makeProfileTable(Constants, state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
+                    makeProfileTable(Constants, state.playerProfileStructure, data.playerProfile), getFlags().hideAllPanels
                 ));
             }
         }
@@ -284,7 +293,11 @@ function makeGroupContent(groupTexts) {
 }
 
 function makeInventoryContent(allInventoryLists, characterName, userStoryNamesMap) {
-    const container = U.qmte('.profile-editor-container-tmpl');
+    // const container = U.qmte('.profile-editor-container-tmpl');
+    const content = U.makeEl('div');
+    ReactDOM.render(getProfileEditorContainer(), content);
+    const container =  U.qee(content, '.ProfileEditorContainer');
+
     return U.addEls(container, allInventoryLists.map((elem) => {
         const input = U.makeEl('input');
         input.value = elem.inventory;
@@ -296,7 +309,11 @@ function makeInventoryContent(allInventoryLists, characterName, userStoryNamesMa
         }
         U.listen(input, 'change', updateCharacterInventory);
 
-        const row = U.qmte('.profile-editor-row-tmpl');
+        const content = U.makeEl('div');
+        ReactDOM.render(getProfileEditorRow(), content);
+        const row =  U.qee(content, '.ProfileEditorRow');
+
+        // const row = U.qmte('.profile-editor-row-tmpl');
         U.addEl(U.qee(row, '.profile-item-name'), U.makeText(elem.storyName));
         U.addEl(U.qee(row, '.profile-item-input'), input);
         return row;
