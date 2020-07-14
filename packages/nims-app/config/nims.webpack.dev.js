@@ -34,12 +34,22 @@ const config = {
         rules: [
             {
                 test: /\.js$/,
-                use: [{ loader: 'babel-loader' }],
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        rootMode: "upward",
+                    }
+                }],
                 exclude: /node_modules/
             },
             {
                 test: /\.jsx$/,
-                use: [{ loader: 'babel-loader' }],
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        rootMode: "upward",
+                    }
+                }],
                 exclude: /node_modules/
             },
             {
