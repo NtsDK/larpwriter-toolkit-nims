@@ -1,11 +1,14 @@
-const dateFormat = require('dateformat');
+import dateFormat from 'dateformat';
+import DemoBase from 'nims-resources/demoBase';
+import EmptyBase from 'nims-resources/emptyBase';
+import { LocalBackupCore } from 'nims-app-core';
 
-module.exports = function (imports) {
-    const exports = {};
+export default function (imports) {
+    const innerExports = {};
     const BACKUP_NUMBER = 4;
     const BACKUP_INTERVAL = 60000 * 10; // 10 min
 
-    exports.runBaseSelectDialog = function () {
+    innerExports.runBaseSelectDialog = function () {
         const dbDialog = U.queryEl('.set-database-dialog');
         U.addEl(U.queryEl('body'), dbDialog);
         U.listen(U.qee(dbDialog, '.on-action-button'), 'click', (event) => {
@@ -26,10 +29,10 @@ module.exports = function (imports) {
             }));
 
             U.qee(dbDialog, 'input[name=dbSource]').checked = true;
-            U.qee(dbDialog, '#dbSourceDemoBase').base = R.clone(imports.DemoBase.data);
-            U.qee(dbDialog, '#dbSourceEmptyBase').base = R.clone(imports.EmptyBase.data);
+            U.qee(dbDialog, '#dbSourceDemoBase').base = R.clone(DemoBase.data);
+            U.qee(dbDialog, '#dbSourceEmptyBase').base = R.clone(EmptyBase.data);
 
-            U.addEl(U.qee(dbDialog, '.demo-base-name'), U.makeText(imports.DemoBase.data.Meta.name));
+            U.addEl(U.qee(dbDialog, '.demo-base-name'), U.makeText(DemoBase.data.Meta.name));
 
             const dialogOnBaseLoad = (err) => {
                 if (err) { UI.handleError(err); return; }
@@ -68,7 +71,7 @@ module.exports = function (imports) {
             counter = (counter + 1) % BACKUP_NUMBER;
         }
 
-        return Promise.all(counters.map(counter2 => imports.LocalBackupCore.get(`base${counter2}`))).then((bases) => {
+        return Promise.all(counters.map(counter2 => LocalBackupCore.get(`base${counter2}`))).then((bases) => {
             bases = bases.filter(base => !R.isNil(base));
             if (bases.length === 0) {
                 return null;
@@ -87,7 +90,7 @@ module.exports = function (imports) {
         makeBackup();
         setInterval(makeBackup, BACKUP_INTERVAL); // 5 min
     }
-    exports.localAutoSave = localAutoSave;
+    innerExports.localAutoSave = localAutoSave;
 
     let counter = 0;
     function makeBackup() {
@@ -96,7 +99,7 @@ module.exports = function (imports) {
         console.log('Starting autosave');
 
         DBMS.getDatabase().then((database) => {
-            imports.LocalBackupCore.put(`base${counter}`, database).then(() => {
+            LocalBackupCore.put(`base${counter}`, database).then(() => {
                 console.log(`Autosave OK ${new Date()}`);
                 //                LocalBackupCore.get('base' + counter).then((database) => {
                 //                    console.log(database);
@@ -104,6 +107,6 @@ module.exports = function (imports) {
             }).catch(UI.handleError);
         }).catch(UI.handleError);
     }
-    exports.makeBackup = makeBackup;
-    return exports;
+    innerExports.makeBackup = makeBackup;
+    return innerExports;
 };
