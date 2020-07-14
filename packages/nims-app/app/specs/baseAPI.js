@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-//const R = require('ramda');
-// const EmptyBase = require('resources/emptyBase');
 const EmptyBase = require('nims-resources/emptyBase');
 
 describe('baseAPI', () => {

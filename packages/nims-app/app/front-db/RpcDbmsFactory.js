@@ -1,7 +1,4 @@
-//const R = require('ramda');
-// const Constants = require('common/constants');
 const CallNotificator = require('./callNotificator');
-// const CallNotificator = require('dbms-core/callNotificator');
 
 /* eslint-disable func-names,prefer-rest-params */
 
