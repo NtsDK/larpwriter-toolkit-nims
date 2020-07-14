@@ -1,14 +1,15 @@
-require('bootstrap-sass');
-require('bootstrap-sass/assets/stylesheets/_bootstrap.scss');
+import 'bootstrap-sass';
+import 'bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 
-require('@fortawesome/fontawesome-free/css/all.css');
+import '@fortawesome/fontawesome-free/css/all.css';
 
-require('jquery-datetimepicker');
-require('jquery-datetimepicker/build/jquery.datetimepicker.min.css');
-window.moment = require('moment');
+import 'jquery-datetimepicker';
+import 'jquery-datetimepicker/build/jquery.datetimepicker.min.css';
+import moment from 'moment';
+window.moment = moment;
 
-require('select2');
-require('select2/dist/css/select2.min.css');
+import 'select2';
+import 'select2/dist/css/select2.min.css';
 
 // const vex = require('vex-js');
 // vex.registerPlugin(require('vex-dialog'));
@@ -23,21 +24,21 @@ state.views = {};
 
 const tabs = {};
 
-exports.addView = (btnName, viewName, view, opts) => {
+export const addView = (btnName, viewName, view, opts) => {
     tabs[viewName] = {
         viewName,
         viewRes: UI.addView(state.containers, btnName, view, opts)
     };
 };
 
-exports.setFirstTab = (firstTab) => UI.setFirstTab(state.containers, tabs[firstTab].viewRes);
+export const setFirstTab = (firstTab) => UI.setFirstTab(state.containers, tabs[firstTab].viewRes);
 
-const btnOpts = {
+export const btnOpts = {
     tooltip: true,
     className: 'mainNavButton'
 };
 
-exports.btnOpts = btnOpts;
+// export const btnOpts = btnOpts;
 
 function SettingsManager() {
     this.clearSettings();
@@ -55,7 +56,7 @@ SettingsManager.prototype.clearSettings = function () {
     };
 };
 
-exports.initPage = () => {
+export const initPage = () => {
     L10n.init();
     L10n.onL10nChange(() => state.currentView.refresh());
     UI.initSelectorFilters();
@@ -67,9 +68,9 @@ exports.initPage = () => {
     stateInit();
 };
 
-exports.refreshView = () => state.currentView.refresh();
+export const refreshView = () => state.currentView.refresh();
 
-exports.testView = () => () => {
+export const testView = () => () => {
     if (state.currentView.test) {
         state.currentView.test();
     } else {
@@ -86,7 +87,7 @@ function stateInit() {
     };
 }
 
-function makeL10nButton() {
+export function makeL10nButton() {
     const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
     const setIcon = () => {
         l10nBtn.style.backgroundImage = CU.strFormat('url("./images/{0}.svg")', [L10n.getValue('header-dictionary-icon')]);
@@ -95,14 +96,14 @@ function makeL10nButton() {
     setIcon();
     return l10nBtn;
 }
-exports.makeL10nButton = makeL10nButton;
+// export const makeL10nButton = makeL10nButton;
 
-function postLogout() {
+export function postLogout() {
     document.querySelector('#logoutForm button').click();
 }
-exports.postLogout = postLogout;
+// export const postLogout = postLogout;
 
-function makeButton(clazz, name, callback, opts) {
+export function makeButton(clazz, name, callback, opts) {
     const button = U.makeEl('button');
     U.addClass(button, clazz);
     if (opts.tooltip) {
@@ -124,8 +125,8 @@ function makeButton(clazz, name, callback, opts) {
     }
     return button;
 }
-exports.makeButton = makeButton;
+// export const makeButton = makeButton;
 
-exports.addNavSeparator = () => U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
+export const addNavSeparator = () => U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
 
-exports.addNavEl = (el) => U.addEl(state.navigation, el);
+export const addNavEl = (el) => U.addEl(state.navigation, el);
