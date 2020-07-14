@@ -1,4 +1,6 @@
 const root = '.enter-tab ';
+import ReactDOM from 'react-dom';
+import { getEnterTemplate } from "./EnterTemplate.jsx";
 
 let content;
 function getContent(){
@@ -9,6 +11,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getEnterTemplate(), content);
+    L10n.localizeStatic(content);
+
     $(document.forms['login-form']).on('submit', submit);
     content = U.queryEl(root);
 };

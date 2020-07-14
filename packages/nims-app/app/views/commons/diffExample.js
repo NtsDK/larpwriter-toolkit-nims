@@ -1,15 +1,30 @@
 import dateFormat from 'dateformat';
-import { TestUtils } from 'nims-app-core';
+import { TestUtils, U } from 'nims-app-core';
 import ReactDOM from 'react-dom';
 import {
     getDiffExampleTemplate
 } from "./DiffExampleTemplate.jsx";
+import {
+    getShowDiffDialog
+} from "./ShowDiffDialog.jsx";
 
 
 
 export const showDiffExample = () => {
-    U.addEl(U.queryEl('body'), U.queryEl('.show-diff-dialog'));
-    $(U.queryEl('.show-diff-dialog')).modal('show');
+    let dialog = U.queryEl('.show-diff-dialog');
+    if (dialog == null) {
+        const content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getShowDiffDialog(), content);
+        L10n.localizeStatic(content);
+        const newDialog = U.qee(content, '.show-diff-dialog');
+        // U.addEl(U.queryEl('body'), U.queryEl('.show-diff-dialog'));
+        U.addEl(U.queryEl('body'), newDialog);
+        dialog = newDialog;
+    }
+
+    // U.addEl(U.queryEl('body'), U.queryEl('.show-diff-dialog'));
+    $(dialog).modal('show');
 
     DBMS.getLog({
         pageNumber: 0,

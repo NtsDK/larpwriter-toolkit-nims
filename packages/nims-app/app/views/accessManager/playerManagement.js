@@ -1,5 +1,7 @@
 import PermissionInformer from "permissionInformer";
 import { createModalDialog } from "../commons/uiCommons";
+import ReactDOM from 'react-dom';
+import { getPlayerManagementTemplate } from "./PlayerManagementTemplate.jsx";
 
 // ((exports) => {
 const state = {};
@@ -15,6 +17,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getPlayerManagementTemplate(), content);
+    L10n.localizeStatic(content);
+
     const createUserDialog = createModalDialog(root, createUser, {
         bodySelector: 'create-organizer-body',
         dialogTitle: 'admins-creating-player',

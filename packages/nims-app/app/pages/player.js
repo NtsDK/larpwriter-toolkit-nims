@@ -1,4 +1,6 @@
 import DbmsFactory from 'DbmsFactory';
+import ReactDOM from 'react-dom';
+import { getLogoutFormTemplate } from "../views/serverSpecific/LogoutFormTemplate.jsx";
 
 import {
     PageCore, btnOpts, makeL10nButton, postLogout, makeButton
@@ -25,6 +27,12 @@ onPageLoad = () => {
     pageCore.addView('player', 'Player', Player);
     pageCore.addNavSeparator();
     pageCore.addView('about', 'About', About);
+
+    const content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getLogoutFormTemplate(), content);
+    L10n.localizeStatic(content);
+
     pageCore.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
 
     pageCore.setFirstTab('Player');
