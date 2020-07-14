@@ -2,7 +2,7 @@ import PermissionInformer from 'permissionInformer';
 import DbmsFactory from 'DbmsFactory';
 import apis from 'apis';
 
-import { TestUtils, LocalBackupCore } from 'nims-app-core';
+import { TestUtils } from 'nims-app-core';
 import DemoBase from 'nims-resources/demoBase';
 import EmptyBase from 'nims-resources/emptyBase';
 
@@ -41,7 +41,7 @@ import '../specs/serverSmokeTest';
 
 // eslint-disable-next-line import/order
 const { localAutoSave, runBaseSelectDialog, makeBackup } = initLocalBaseBackup({
-    initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
+    initBaseLoadBtn, onBaseLoaded
 });
 
 let firstBaseLoad = PRODUCT === 'STANDALONE';
