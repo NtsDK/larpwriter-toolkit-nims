@@ -1,5 +1,3 @@
-//const R = require('ramda');
-
 // ((exports) => {
 const showNotification = true;
 const notificationTimeout = 2000;

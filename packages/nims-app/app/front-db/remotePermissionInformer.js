@@ -1,7 +1,5 @@
-//const R = require('ramda');
 
 const state = {};
-// const Constants = require('common/constants');
 
 state.summary = {};
 

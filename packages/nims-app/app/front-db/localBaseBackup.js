@@ -1,4 +1,3 @@
-//const R = require('ramda');
 const dateFormat = require('dateformat');
 
 module.exports = function (imports) {

@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-//const Constants = require('dbms/constants');
-//const R = require('ramda');
 
 const getChecks = {
     baseAPI:

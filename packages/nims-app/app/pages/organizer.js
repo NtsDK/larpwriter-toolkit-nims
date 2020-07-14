@@ -31,20 +31,12 @@ import initLocalBaseBackup from '../front-db/localBaseBackup';
 
 import logModule from '../front-db/consoleLogModule';
 
+
+// if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
 import 'nims-app-core/tests/jasmine';
 import '../specs/baseAPI';
 import '../specs/smokeTest';
 import '../specs/serverSmokeTest';
-
-// if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
-//     // eslint-disable-next-line global-require
-//     require('nims-app-core/tests/jasmine');
-//     // eslint-disable-next-line global-require
-//     require('../specs/baseAPI');
-//     // eslint-disable-next-line global-require
-//     require('../specs/smokeTest');
-//     // eslint-disable-next-line global-require
-//     require('../specs/serverSmokeTest');
 // }
 
 // eslint-disable-next-line import/order
