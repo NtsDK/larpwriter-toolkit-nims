@@ -1,39 +1,42 @@
-const {
-    initPage, makeButton, btnOpts, postLogout, refreshView,
-    addNavSeparator, addNavEl, testView, addView, setFirstTab
-} = require('./pageCore');
+import {
+    PageCore, btnOpts, makeL10nButton, postLogout, makeButton
+} from './pageCore';
 
-require('./index.html');
+import './index.html';
 
-require('../style/common.css');
-require('../style/icons.css');
-require('../style/style.css');
-require('../style/experimental.css');
+import '../style/common.css';
+import '../style/icons.css';
+import '../style/style.css';
+import '../style/experimental.css';
 
-const { Enter, SignUp, About } = require('../views');
+import Enter from '../views/serverSpecific/enter';
+import SignUp from '../views/serverSpecific/sign-up';
+import About from '../views/logs/about';
 
-exports.onPageLoad = () => {
-    initPage();
+const pageCore = new PageCore();
+
+let onPageLoad = null;
+
+onPageLoad = () => {
+    pageCore.initPage();
     // window.DBMS = makeRemoteDBMS();
-    // exports.stateInit();
     // DBMS.getPlayersOptions().then((playersOptions) => {
 
     const playersOptions = {};
     playersOptions.allowPlayerCreation = true;
-    addNavSeparator();
+    pageCore.addNavSeparator();
 
-    // U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
-    addView('enter', 'Enter', Enter);
+    pageCore.addView('enter', 'Enter', Enter);
     if (playersOptions.allowPlayerCreation) {
-        addView('sign-up', 'SignUp', SignUp);
+        pageCore.addView('sign-up', 'SignUp', SignUp);
     }
-    addView('about', 'About', About);
+    pageCore.addView('about', 'About', About);
 
-    setFirstTab('Enter');
+    pageCore.setFirstTab('Enter');
     //            U.addEl(state.navigation, makeL10nButton());
-    refreshView();
+    pageCore.refreshView();
     // state.currentView.refresh();
     // }).catch(UI.handleError);
 };
 
-window.onPageLoad = exports.onPageLoad;
+window.onPageLoad = onPageLoad;

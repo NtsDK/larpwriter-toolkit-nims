@@ -1,30 +1,34 @@
-const DbmsFactory = require('DbmsFactory');
+import DbmsFactory from 'DbmsFactory';
 
-const {
-    initPage, makeButton, btnOpts, postLogout, refreshView,
-    addNavSeparator, addNavEl, testView, addView, setFirstTab
-} = require('./pageCore');
+import {
+    PageCore, btnOpts, makeL10nButton, postLogout, makeButton
+} from './pageCore';
 
-require('./player.html');
+import './player.html';
 
-require('../style/common.css');
-require('../style/icons.css');
-require('../style/style.css');
-require('../style/experimental.css');
+import '../style/common.css';
+import '../style/icons.css';
+import '../style/style.css';
+import '../style/experimental.css';
 
-const { Player, About } = require('../views');
+import Player from '../views/serverSpecific/player';
+import About from '../views/logs/about';
 
-exports.onPageLoad = () => {
-    initPage();
+const pageCore = new PageCore();
+
+let onPageLoad = null;
+
+onPageLoad = () => {
+    pageCore.initPage();
     window.DBMS = DbmsFactory();
 
-    addView('player', 'Player', Player);
-    addNavSeparator();
-    addView('about', 'About', About);
-    addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+    pageCore.addView('player', 'Player', Player);
+    pageCore.addNavSeparator();
+    pageCore.addView('about', 'About', About);
+    pageCore.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
 
-    setFirstTab('Player');
-    refreshView();
+    pageCore.setFirstTab('Player');
+    pageCore.refreshView();
 };
 
-window.onPageLoad = exports.onPageLoad;
+window.onPageLoad = onPageLoad;

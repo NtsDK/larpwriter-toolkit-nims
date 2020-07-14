@@ -13,13 +13,12 @@ import 'select2';
 import 'select2/dist/css/select2.min.css';
 
 export class PageCore {
+    state = {
+        views: {}
+    };
+    tabs = {};
 
-    constructor(){
-        this.state = {
-            views: {}
-        };
-        this.tabs = {};
-    }
+    constructor(){}
 
     addView(btnName, viewName, view, opts){
         this.tabs[viewName] = {
