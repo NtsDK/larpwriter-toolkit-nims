@@ -10,8 +10,7 @@ import './nims.html';
 
 import CallNotificator from '../front-db/callNotificator';
 import {
-    initPage, makeButton, btnOpts, postLogout, refreshView,
-    addNavSeparator, addNavEl, testView, addView, setFirstTab
+    PageCore, btnOpts, makeL10nButton, postLogout, makeButton
 } from './pageCore';
 
 import '../style/common.css';
@@ -55,10 +54,12 @@ const { localAutoSave, runBaseSelectDialog, makeBackup } = initLocalBaseBackup({
 
 let firstBaseLoad = PRODUCT === 'STANDALONE';
 
+const pageCore = new PageCore();
+
 let onPageLoad = null;
 if (PRODUCT === 'STANDALONE') {
     onPageLoad = () => {
-        initPage();
+        pageCore.initPage();
         window.DBMS = DbmsFactory({
             logModule,
             projectName: PROJECT_NAME,
@@ -74,7 +75,7 @@ if (PRODUCT === 'STANDALONE') {
     };
 } else {
     onPageLoad = () => {
-        initPage();
+        pageCore.initPage();
         window.DBMS = DbmsFactory();
         consistencyCheck((checkResult) => {
             consistencyCheckAlert(checkResult);
@@ -85,22 +86,6 @@ if (PRODUCT === 'STANDALONE') {
 
 window.onPageLoad = onPageLoad;
 
-// exports.onServerOrgPageLoad = () => {
-//     initPage();
-//     // const LocalDBMS = makeLocalDBMS(true);
-//     // if (PRODUCT === 'STANDALONE') {
-//     //     window.DBMS = makeLocalDBMS();
-//     //     DBMS.setDatabase({database: DemoBase.data}).then( onBaseLoaded, UI.handleError);
-//     //     // runBaseSelectDialog();
-//     // } else if (PRODUCT === 'SERVER') {
-//         window.DBMS = makeRemoteDBMS();
-//         consistencyCheck((checkResult) => {
-//             consistencyCheckAlert(checkResult);
-//             onDatabaseLoad();
-//         });
-//     // }
-// };
-
 function onDatabaseLoad() {
     PermissionInformer.refresh().then(() => {
         PermissionInformer.isAdmin().then((isAdmin) => {
@@ -109,39 +94,39 @@ function onDatabaseLoad() {
             // const firstTab = 'Overview';
             const firstTab = 'LogViewer2';
 
-            addView('overview', 'Overview', Overview);
-            addView('characters', 'Characters', Characters);
-            addView('players', 'Players', Players);
-            addView('stories', 'Stories', Stories);
-            addView('adaptations', 'Adaptations', Adaptations);
-            addView('briefings', 'Briefings', Briefings);
-            addView('relations', 'Relations', Relations);
+            pageCore.addView('overview', 'Overview', Overview);
+            pageCore.addView('characters', 'Characters', Characters);
+            pageCore.addView('players', 'Players', Players);
+            pageCore.addView('stories', 'Stories', Stories);
+            pageCore.addView('adaptations', 'Adaptations', Adaptations);
+            pageCore.addView('briefings', 'Briefings', Briefings);
+            pageCore.addView('relations', 'Relations', Relations);
 
-            addNavSeparator();
+            pageCore.addNavSeparator();
 
-            addView('timeline', 'Timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
-            addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
-            addView('profile-filter', 'ProfileFilter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
-            addView('groups', 'GroupProfile', GroupProfile, { clazz: 'groupsButton icon-button', tooltip: true });
-            addView('textSearch', 'TextSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
-            addView('roleGrid', 'RoleGrid', RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
+            pageCore.addView('timeline', 'Timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
+            pageCore.addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
+            pageCore.addView('profile-filter', 'ProfileFilter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
+            pageCore.addView('groups', 'GroupProfile', GroupProfile, { clazz: 'groupsButton icon-button', tooltip: true });
+            pageCore.addView('textSearch', 'TextSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
+            pageCore.addView('roleGrid', 'RoleGrid', RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
 
-            addNavSeparator();
+            pageCore.addNavSeparator();
 
             if (PRODUCT === 'SERVER') {
-                addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
+                pageCore.addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
             }
-            addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
+            pageCore.addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
 
-            addNavSeparator();
+            pageCore.addNavSeparator();
 
             if (isAdmin) {
-                addNavEl(makeLoadBaseButton());
+                pageCore.addNavEl(makeLoadBaseButton());
             }
 
-            addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
+            pageCore.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
             if (PRODUCT === 'STANDALONE') {
-                addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
+                pageCore.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
             }
             //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
@@ -149,27 +134,27 @@ function onDatabaseLoad() {
 
             if (MODE === 'DEV') {
                 if (DEV_OPTS.ENABLE_TESTS) {
-                    addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                    pageCore.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
                 }
                 if (DEV_OPTS.ENABLE_BASICS) {
-                    addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-                    addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                    pageCore.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+                    pageCore.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
                 }
                 if (DEV_OPTS.ENABLE_EXTRAS) {
-                    addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-                    addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', testView, btnOpts));
-                    addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
+                    pageCore.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+                    pageCore.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => pageCore.testView(), btnOpts));
+                    pageCore.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
                 }
             }
 
             if (PRODUCT === 'SERVER') {
-                addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                pageCore.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
             }
-            addNavEl(makeButton('refreshButton icon-button', 'refresh', () => refreshView(), btnOpts));
+            pageCore.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => pageCore.refreshView(), btnOpts));
 
-            setFirstTab(firstTab);
+            pageCore.setFirstTab(firstTab);
 
-            refreshView();
+            pageCore.refreshView();
             if (PRODUCT === 'STANDALONE') {
                 if (MODE === 'PROD') {
                     addBeforeUnloadListener();
@@ -213,7 +198,7 @@ function onBaseLoaded(err3) {
             onDatabaseLoad();
             firstBaseLoad = false;
         } else {
-            refreshView();
+            pageCore.refreshView();
         }
     });
 }

@@ -6,86 +6,80 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import 'jquery-datetimepicker';
 import 'jquery-datetimepicker/build/jquery.datetimepicker.min.css';
 import moment from 'moment';
+import { SettingsManager } from './SettingsManager';
 window.moment = moment;
 
 import 'select2';
 import 'select2/dist/css/select2.min.css';
 
-// const vex = require('vex-js');
-// vex.registerPlugin(require('vex-dialog'));
-// // vex.defaultOptions.className = 'vex-theme-os';
-// vex.defaultOptions.className = 'vex-theme-default';
+export class PageCore {
 
-// require('vex-js/dist/css/vex.css');
-// require('vex-js/dist/css/vex-theme-default.css');
+    constructor(){
+        this.state = {
+            views: {}
+        };
+        this.tabs = {};
+    }
 
-const state = {};
-state.views = {};
-
-const tabs = {};
-
-export const addView = (btnName, viewName, view, opts) => {
-    tabs[viewName] = {
-        viewName,
-        viewRes: UI.addView(state.containers, btnName, view, opts)
+    addView(btnName, viewName, view, opts){
+        this.tabs[viewName] = {
+            viewName,
+            viewRes: UI.addView(this.state.containers, btnName, view, opts)
+        };
     };
-};
 
-export const setFirstTab = (firstTab) => UI.setFirstTab(state.containers, tabs[firstTab].viewRes);
+    setFirstTab(firstTab) {
+        return UI.setFirstTab(this.state.containers, this.tabs[firstTab].viewRes);
+    }
+
+    initPage() {
+        L10n.init();
+        L10n.onL10nChange(() => this.state.currentView.refresh());
+        UI.initSelectorFilters();
+        UI.initPanelTogglers();
+        L10n.localizeStatic();
+        UI.updateDialogL10n();
+        L10n.onL10nChange(UI.updateDialogL10n);
+        window.SM = new SettingsManager();
+        this.stateInit();
+    };
+
+    refreshView() {
+        this.state.currentView.refresh();
+    }
+
+    testView() {
+        return () => {
+            if (this.state.currentView.test) {
+                this.state.currentView.test();
+            } else {
+                console.error('This tab has no tests');
+            }
+        };
+    }
+
+    stateInit() {
+        this.state.navigation = U.queryEl('#navigation');
+        this.state.containers = {
+            root: this.state,
+            navigation: this.state.navigation,
+            content: U.queryEl('#contentArea')
+        };
+    }
+
+    addNavSeparator() {
+        return U.addEl(this.state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
+    }
+
+    addNavEl(el) {
+        return U.addEl(this.state.navigation, el);
+    }
+}
 
 export const btnOpts = {
     tooltip: true,
     className: 'mainNavButton'
 };
-
-// export const btnOpts = btnOpts;
-
-function SettingsManager() {
-    this.clearSettings();
-}
-
-SettingsManager.prototype.getSettings = function () {
-    return this.Settings;
-};
-
-SettingsManager.prototype.clearSettings = function () {
-    this.Settings = {
-        BriefingPreview: {},
-        Stories: {},
-        ProfileEditor: {}
-    };
-};
-
-export const initPage = () => {
-    L10n.init();
-    L10n.onL10nChange(() => state.currentView.refresh());
-    UI.initSelectorFilters();
-    UI.initPanelTogglers();
-    L10n.localizeStatic();
-    UI.updateDialogL10n();
-    L10n.onL10nChange(UI.updateDialogL10n);
-    window.SM = new SettingsManager();
-    stateInit();
-};
-
-export const refreshView = () => state.currentView.refresh();
-
-export const testView = () => () => {
-    if (state.currentView.test) {
-        state.currentView.test();
-    } else {
-        console.error('This tab has no tests');
-    }
-};
-
-function stateInit() {
-    state.navigation = U.queryEl('#navigation');
-    state.containers = {
-        root: state,
-        navigation: state.navigation,
-        content: U.queryEl('#contentArea')
-    };
-}
 
 export function makeL10nButton() {
     const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
@@ -96,12 +90,10 @@ export function makeL10nButton() {
     setIcon();
     return l10nBtn;
 }
-// export const makeL10nButton = makeL10nButton;
 
 export function postLogout() {
     document.querySelector('#logoutForm button').click();
 }
-// export const postLogout = postLogout;
 
 export function makeButton(clazz, name, callback, opts) {
     const button = U.makeEl('button');
@@ -125,8 +117,3 @@ export function makeButton(clazz, name, callback, opts) {
     }
     return button;
 }
-// export const makeButton = makeButton;
-
-export const addNavSeparator = () => U.addEl(state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
-
-export const addNavEl = (el) => U.addEl(state.navigation, el);
