@@ -2,7 +2,7 @@
   "name": "nims-app-core",
   "version": "0.7.2",
   "description": "",
-  "main": "index.js",
+  "main": "js/index.js",
   "directories": {
     "test": "tests"
   },
