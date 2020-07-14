@@ -8,6 +8,9 @@ import ReactDOM from 'react-dom';
 import { getBriefingPreviewTemplate } from "./BriefingPreviewTemplate.jsx";
 import { getProfileEditorContainer, getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx";
 import { makeProfileTable } from "../commons/uiCommons";
+import {
+    getAdaptationRow,
+} from "../adaptations/AdaptationsTemplate.jsx";
 
 const state = {};
 const root = '#briefingPreviewDiv ';
@@ -417,7 +420,11 @@ function showEvent(event, characterName, opts, flags) {
     const showAdaptationText = event.characters[characterName].text !== '';
     const showSubjectiveTime = event.characters[characterName].time !== '';
 
-    const eventDiv = U.qmte('.adaptation-row-tmpl');
+    const content = U.makeEl('div');
+    ReactDOM.render(getAdaptationRow(), content);
+    const eventDiv = U.qee(content, '.AdaptationRow');
+
+    // const eventDiv = U.qmte('.adaptation-row-tmpl');
     const originCard = Adaptations.makeOriginCard(event, opts.metaInfo, event.storyName, {
         cardTitle: flags.disableHeaders ? L10n.format('briefings', 'event-header', [opts.index]) : event.name,
         showTimeInput: showAll || !showSubjectiveTime,
