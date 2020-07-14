@@ -1,4 +1,6 @@
 const root = '.sign-up-tab ';
+import ReactDOM from 'react-dom';
+import { getSignUpTemplate } from "./SignUpTemplate.jsx";
 
 let content;
 function getContent(){
@@ -9,6 +11,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getSignUpTemplate(), content);
+    L10n.localizeStatic(content);
+
     $(document.forms['sign-up-form']).on('submit', submit);
     content = U.queryEl(root);
 };

@@ -2,6 +2,9 @@ import dateFormat from 'dateformat';
 import DemoBase from 'nims-resources/demoBase';
 import EmptyBase from 'nims-resources/emptyBase';
 import { LocalBackupCore } from 'nims-app-core';
+import ReactDOM from 'react-dom';
+import { getBackupBaseTemplate } from "./BackupBaseTemplate.jsx";
+import { getSetDatabaseDialog } from "./SetDatabaseDialog.jsx";
 
 export default function (imports) {
     const innerExports = {};
@@ -9,15 +12,28 @@ export default function (imports) {
     const BACKUP_INTERVAL = 60000 * 10; // 10 min
 
     innerExports.runBaseSelectDialog = function () {
-        const dbDialog = U.queryEl('.set-database-dialog');
-        U.addEl(U.queryEl('body'), dbDialog);
+        let dbDialog = U.queryEl('.set-database-dialog');
+        if (dbDialog === null) {
+            const content = U.makeEl('div');
+            U.addEl(U.qe('.tab-container'), content);
+            ReactDOM.render(getSetDatabaseDialog(), content);
+            L10n.localizeStatic(content);
+            const newDialog = U.qee(content, '.set-database-dialog');
+            dbDialog = newDialog;
+            U.addEl(U.queryEl('body'), dbDialog);
+        }
+
         U.listen(U.qee(dbDialog, '.on-action-button'), 'click', (event) => {
             $(dbDialog).modal('hide');
         });
 
         readLocalBases().then((browserBases) => {
             U.addEls(U.qee(dbDialog, '.modal-body .backup-bases'), (browserBases || []).map((base, i) => {
-                const baseSelect = U.qmte('.backup-base-tmpl');
+                const content = U.makeEl('div');
+                ReactDOM.render(getBackupBaseTemplate(), content);
+                const baseSelect = U.qee(content, '.BackupBaseTemplate');
+
+                // const baseSelect = U.qmte('.backup-base-tmpl');
                 const input = U.qee(baseSelect, 'input');
                 U.setAttr(input, 'value', `browserBackup${i}`);
                 U.setAttr(input, 'id', `dbSourceBrowserBackup${i}`);

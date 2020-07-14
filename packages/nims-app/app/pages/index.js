@@ -1,5 +1,5 @@
 import {
-    PageCore, btnOpts, makeL10nButton, postLogout, makeButton
+    PageCore
 } from './pageCore';
 
 import './index.html';

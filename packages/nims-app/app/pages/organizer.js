@@ -2,6 +2,9 @@ import PermissionInformer from 'permissionInformer';
 import DbmsFactory from 'DbmsFactory';
 import apis from 'apis';
 
+import ReactDOM from 'react-dom';
+import { getLogoutFormTemplate } from "../views/serverSpecific/LogoutFormTemplate.jsx";
+
 import { TestUtils } from 'nims-app-core';
 import DemoBase from 'nims-resources/demoBase';
 import EmptyBase from 'nims-resources/emptyBase';
@@ -39,6 +42,9 @@ import { AccessManager } from '../views/accessManager';
 import {
     showDiffExample
 } from '../views/commons/diffExample';
+import {
+    showModuleSchema
+} from '../views/commons/showModuleSchema';
 
 import initLocalBaseBackup from '../front-db/localBaseBackup';
 
@@ -119,6 +125,11 @@ function onDatabaseLoad() {
             pageCore.addNavSeparator();
 
             if (PRODUCT === 'SERVER') {
+                const content = U.makeEl('div');
+                U.addEl(U.qe('.tab-container'), content);
+                ReactDOM.render(getLogoutFormTemplate(), content);
+                L10n.localizeStatic(content);
+
                 pageCore.addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
             }
             pageCore.addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
@@ -235,7 +246,7 @@ function initBaseLoadBtn(button, input, onBaseLoaded2) {
 }
 
 function showDbmsConsistencyState() {
-    consistencyCheck((checkRes) => TestUtils.showModuleSchema(checkRes));
+    consistencyCheck((checkRes) => showModuleSchema(checkRes));
 }
 
 function checkConsistency() {

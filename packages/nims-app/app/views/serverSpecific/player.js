@@ -1,4 +1,6 @@
 import ProfileEditorCore from '../profiles2/profileEditorCore';
+import ReactDOM from 'react-dom';
+import { getPlayerTemplate } from "./PlayerTemplate.jsx";
 
 // ((exports) => {
 const root = '.player-tab ';
@@ -18,6 +20,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getPlayerTemplate(), content);
+    L10n.localizeStatic(content);
+
     profileEditorCore = ProfileEditorCore.makeProfileEditorCore();
     content = U.queryEl(root);
 };

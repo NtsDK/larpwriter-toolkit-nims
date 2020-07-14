@@ -1,5 +1,10 @@
 import PermissionInformer from "permissionInformer";
 import { createModalDialog } from "../commons/uiCommons";
+import ReactDOM from 'react-dom';
+import {
+    getProfileItem
+} from "../profiles2/ProfileBindingTemplate.jsx";
+import { getOrganizerManagementTemplate } from "./OrganizerManagementTemplate.jsx";
 
 const state = {};
 
@@ -18,6 +23,11 @@ export default {
 }
 
 function init(){
+    content = U.makeEl('div');
+    U.addEl(U.qe('.tab-container'), content);
+    ReactDOM.render(getOrganizerManagementTemplate(), content);
+    L10n.localizeStatic(content);
+
     const createUserDialog = createModalDialog(root, createUser, {
         bodySelector: 'create-organizer-body',
         dialogTitle: 'admins-creating-user',
@@ -142,7 +152,11 @@ function rebuildInterface(names, managementInfo, isAdmin) {
 }
 
 const entity2el = R.curry((isAdmin, type, name) => {
-    const el = U.qmte('.profile-item-tmpl');
+    const content = U.makeEl('div');
+    ReactDOM.render(getProfileItem(), content);
+    const el =  U.qee(content, '.ProfileItem');
+
+    // const el = U.qmte('.profile-item-tmpl');
     el.profileName = name.value;
     U.addEl(U.qee(el, '.primary-name'), U.makeText(name.displayName));
     const btn = U.qee(el, '[role=button]');
@@ -164,7 +178,12 @@ const entity2el = R.curry((isAdmin, type, name) => {
 });
 
 const user2el = R.curry((name) => {
-    const el = U.wrapEl('div', U.qte('.profile-item-tmpl'));
+    // const el = U.wrapEl('div', U.qte('.profile-item-tmpl'));
+
+    const el = U.makeEl('div');
+    ReactDOM.render(getProfileItem(), el);
+    // const el =  U.qee(content, '.ProfileItem');
+
     //        el.profileName = name.value;
     U.addEl(U.qee(el, '.primary-name'), U.makeText(name));
     U.setAttr(el, 'profile-name', name);
