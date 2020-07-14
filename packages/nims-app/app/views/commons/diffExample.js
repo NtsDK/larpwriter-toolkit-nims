@@ -1,5 +1,6 @@
 import dateFormat from 'dateformat';
-import { TestUtils, U } from 'nims-app-core';
+import { U } from 'nims-app-core';
+import * as TestUtils from 'nims-app-core/testUtils';
 import ReactDOM from 'react-dom';
 import {
     getDiffExampleTemplate

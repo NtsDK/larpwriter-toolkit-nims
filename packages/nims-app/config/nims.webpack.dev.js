@@ -99,7 +99,7 @@ const config = {
             U: ['nims-app-core', 'U'],
             L10n: ['nims-app-core', 'L10n'],
             UI: ['nims-app-core', 'UI'],
-            FileUtils: ['nims-app-core', 'FileUtils'],
+            // FileUtils: ['nims-app-core', 'FileUtils'],
             // core: 'core',
             // U: ['core', 'U'],
             // L10n: ['core', 'L10n'],
@@ -229,7 +229,6 @@ module.exports = (env, argv) => {
         ENABLE_BASE_SELECT_DLG: valOrDefault(env.ENABLE_BASE_SELECT_DLG, false),
         ENABLE_BASICS: valOrDefault(env.ENABLE_BASICS, true),
         ENABLE_EXTRAS: valOrDefault(env.ENABLE_EXTRAS, false)
-        // ENABLE_EXTRAS: valOrDefault(env.ENABLE_EXTRAS, true)
     };
 
     config.plugins.push(new webpack.DefinePlugin({

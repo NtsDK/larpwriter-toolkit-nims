@@ -97,4 +97,3 @@ exports.arr2d2Csv = (arr, fileName) => {
     });
     saveAs(out, exports.makeFileName(fileName, 'csv'));
 };
-// })(window.FileUtils = {});
