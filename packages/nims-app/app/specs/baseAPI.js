@@ -1,4 +1,4 @@
-const EmptyBase = require('nims-resources/emptyBase');
+import EmptyBase from 'nims-resources/emptyBase';
 
 describe('baseAPI', () => {
     let oldBase;
