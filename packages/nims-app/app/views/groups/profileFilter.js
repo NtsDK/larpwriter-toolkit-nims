@@ -4,6 +4,7 @@ import GroupProfile from "./groupProfile";
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import ReactDOM from 'react-dom';
 import { createModalDialog } from "../commons/uiCommons";
+import * as FileUtils from 'nims-app-core/fileUtils';
 
 import {
     getCommonEnumFilter,

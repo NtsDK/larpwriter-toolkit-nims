@@ -1,7 +1,7 @@
 import dateFormat from 'dateformat';
 import DemoBase from 'nims-resources/demoBase';
 import EmptyBase from 'nims-resources/emptyBase';
-import { LocalBackupCore } from 'nims-app-core';
+import * as LocalBackupCore from 'nims-app-core/localAutoSave';
 import ReactDOM from 'react-dom';
 import { getBackupBaseTemplate } from "./BackupBaseTemplate.jsx";
 import { getSetDatabaseDialog } from "./SetDatabaseDialog.jsx";

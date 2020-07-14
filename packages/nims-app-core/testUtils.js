@@ -149,4 +149,3 @@ exports.addGroupTestingData = () => {
 //            makeGroup('group text ' + arr.join(''), 'text', {regexString: arr.join('')});
 //        });
 };
-// })(window.TestUtils = {});

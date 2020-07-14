@@ -5,7 +5,8 @@ import apis from 'apis';
 import ReactDOM from 'react-dom';
 import { getLogoutFormTemplate } from "../views/serverSpecific/LogoutFormTemplate.jsx";
 
-import { TestUtils } from 'nims-app-core';
+import * as TestUtils from 'nims-app-core/testUtils';
+import * as FileUtils from 'nims-app-core/fileUtils';
 import DemoBase from 'nims-resources/demoBase';
 import EmptyBase from 'nims-resources/emptyBase';
 
