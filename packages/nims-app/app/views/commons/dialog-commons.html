@@ -1,4 +1,5 @@
 <div class="dialog-commons">
+  <!-- uiCommons -->
   <template class="request-data-dialog-tmpl">
     <div class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -18,64 +19,48 @@
     </div>
   </template>
   
+  <!-- uiCommons -->
   <template class="modal-error-block">
     <div class="form-group has-error">
       <span class="help-block error-msg"></span>
     </div>
   </template>
   
+  <!-- many -->
   <template class="modal-prompt-body">
     <div class="form-group">
       <input class="entity-input form-control focusable onenterable"></input>
     </div>
   </template>
-  
+
+  <!-- storyCharacters -->
   <template class="modal-add-character-body">
     <div class="form-group">
       <select class="isStoryEditable storyCharactersAddSelector form-control" style="width: 100%;"></select>
     </div>
   </template>
   
+  <!-- storyCharacters -->
   <template class="modal-switch-event-body">
     <div class="form-group">
       <select class="isStoryEditable storyCharactersToSelector form-control" style="width: 100%;"></select>
     </div>
   </template>
   
-  <template class="move-profile-item-body">
-    <div class="form-group">
-      <select class="adminOnly form-control move-entity-position-select"></select> 
-    </div>
-  </template>
+
   
-  <template class="move-slider-body">
-    <div class="form-group">
-      <select class="form-control move-slider-pos-select"></select> 
-    </div>
-  </template>
+
   
+  <!-- storyEvents -->
   <template class="move-event-body">
     <div class="form-group">
       <select class="isStoryEditable eventPositionSelector movePositionSelector form-control"></select>
     </div>
   </template>
   
-  <template class="create-profile-item-body">
-    <div class="form-group">
-      <label class="control-label" l10n-id="profiles-profile-item-name"></label>
-      <input class="form-control create-entity-name-input focusable" ></input> 
-    </div>
-    <div class="form-group">
-      <label class="control-label" l10n-id="profiles-profile-item-position"></label>
-      <select class="adminOnly form-control create-entity-position-select">
-      </select> 
-    </div>
-    <div class="form-group">
-      <label class="control-label" l10n-id="profiles-profile-item-type"></label>
-      <select class="adminOnly form-control create-entity-type-select"></select> 
-    </div>
-  </template>
+
   
+  <!-- storyEvents -->
   <template class="create-event-body">
     <div class="form-group">
       <label class="control-label" l10n-id="stories-event-name"></label>
@@ -87,6 +72,7 @@
     </div>
   </template>
   
+  <!-- playerManagement, organizerManagement -->
   <template class="create-organizer-body">
     <div class="form-group">
       <label class="control-label" l10n-id="admins-login"></label>
@@ -98,6 +84,7 @@
     </div>
   </template>
   
+  <!-- playerManagement -->
   <template class="create-player-account-body">
     <div class="form-group">
       <label class="control-label" l10n-id="admins-player"></label>
@@ -109,10 +96,12 @@
     </div>
   </template>
   
+  <!-- profileEditorCore, adaptations -->
   <template class="alert-block-tmpl">
     <div class="alert alert-info"></div>
   </template>
-  
+
+  <!-- gears -->
   <template class="add-or-edit-node-body">
     <div class="form-group hidden">
       <input class="node-id" value="new value" />
@@ -131,11 +120,13 @@
     </div>
   </template>
   
+  
   <template class="config-inner-body">
     <div class="configInner" >
     </div>
   </template>
   
+  <!-- sliders -->
   <template class="create-slider-body">
     <div class="form-group">
       <label class="control-label" l10n-id="sliders-slider-name"></label>
@@ -150,67 +141,16 @@
       <input class="slider-bottom form-control"/>
     </div>
   </template>
-  
-  <template class="enum-dialog-editor-tmpl">
-    <div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-current-enum-value"></label>
-        <div class="initial-value"></div>
-      </div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-new-enum-value"></label>
-        <span class="control-label display-block" l10n-id="profiles-enum-filling-instruction"></span>
-        <textarea class="form-control enum-value-input focusable"></textarea> 
-      </div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-new-enum-values"></label>
-        <div class="new-enum-values"></div>
-      </div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-removed-enum-values"></label>
-        <div class="removed-enum-values"></div>
-      </div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-default-value"></label>
-        <select class="form-control default-value-select"></select> 
-      </div>
-    </div>
-  </template>
-  
-  <template class="multi-enum-dialog-editor-tmpl">
-    <div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-current-enum-value"></label>
-        <div class="initial-value"></div>
-      </div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-new-enum-value"></label>
-        <span class="control-label display-block" l10n-id="profiles-enum-filling-instruction"></span>
-        <textarea class="form-control enum-value-input focusable"></textarea> 
-      </div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-new-enum-values"></label>
-        <div class="new-enum-values"></div>
-      </div>
-      <div class="form-group">
-        <label class="control-label" l10n-id="profiles-removed-enum-values"></label>
-        <div class="removed-enum-values"></div>
-      </div>
-    </div>
-  </template>
-  
-  <template class="rename-enum-value-tmpl">
+
+  <!-- sliders -->
+  <template class="move-slider-body">
     <div class="form-group">
-      <label class="control-label" l10n-id="profiles-renamed-value"></label>
-      <select class="renamed-value-select form-control focusable"></select>
-    </div>
-    <div class="form-group">
-      <label class="control-label" l10n-id="profiles-new-enum-value-name"></label>
-      <input class="enum-value-name-input form-control"></input>
+      <select class="form-control move-slider-pos-select"></select> 
     </div>
   </template>
   
-  
+
+  <!-- AddFilterConditionDialog -->
   <template class="add-filter-condition-body">
     <div class="form-group">
       <label class="control-label" l10n-id2="profiles-profile-item-name">Select item</label>
@@ -245,6 +185,8 @@
       <option value="some" l10n-id="constant-some"></option>
     </select>
   </template>
+
+
   
   <template class="text-value-tmpl">
     <input class="form-control">
@@ -262,5 +204,90 @@
       <option value="false" selected l10n-id="constant-no"></option>
     </select>
   </template>
+
+
+  <!-- profileConfigurer2 -->
+  <template class="enum-dialog-editor-tmpl">
+    <div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-current-enum-value"></label>
+        <div class="initial-value"></div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-new-enum-value"></label>
+        <span class="control-label display-block" l10n-id="profiles-enum-filling-instruction"></span>
+        <textarea class="form-control enum-value-input focusable"></textarea> 
+      </div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-new-enum-values"></label>
+        <div class="new-enum-values"></div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-removed-enum-values"></label>
+        <div class="removed-enum-values"></div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-default-value"></label>
+        <select class="form-control default-value-select"></select> 
+      </div>
+    </div>
+  </template>
+
   
+  <template class="multi-enum-dialog-editor-tmpl">
+    <div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-current-enum-value"></label>
+        <div class="initial-value"></div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-new-enum-value"></label>
+        <span class="control-label display-block" l10n-id="profiles-enum-filling-instruction"></span>
+        <textarea class="form-control enum-value-input focusable"></textarea> 
+      </div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-new-enum-values"></label>
+        <div class="new-enum-values"></div>
+      </div>
+      <div class="form-group">
+        <label class="control-label" l10n-id="profiles-removed-enum-values"></label>
+        <div class="removed-enum-values"></div>
+      </div>
+    </div>
+  </template>
+  
+  <template class="rename-enum-value-tmpl">
+    <div class="form-group">
+      <label class="control-label" l10n-id="profiles-renamed-value"></label>
+      <select class="renamed-value-select form-control focusable"></select>
+    </div>
+    <div class="form-group">
+      <label class="control-label" l10n-id="profiles-new-enum-value-name"></label>
+      <input class="enum-value-name-input form-control"></input>
+    </div>
+  </template>
+
+  <!-- profileConfigurer2 -->
+  <template class="create-profile-item-body">
+    <div class="form-group">
+      <label class="control-label" l10n-id="profiles-profile-item-name"></label>
+      <input class="form-control create-entity-name-input focusable" ></input> 
+    </div>
+    <div class="form-group">
+      <label class="control-label" l10n-id="profiles-profile-item-position"></label>
+      <select class="adminOnly form-control create-entity-position-select">
+      </select> 
+    </div>
+    <div class="form-group">
+      <label class="control-label" l10n-id="profiles-profile-item-type"></label>
+      <select class="adminOnly form-control create-entity-type-select"></select> 
+    </div>
+  </template>
+
+  <!-- profileConfigurer2 -->
+  <template class="move-profile-item-body">
+    <div class="form-group">
+      <select class="adminOnly form-control move-entity-position-select"></select> 
+    </div>
+  </template>
 </div>
