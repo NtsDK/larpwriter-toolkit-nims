@@ -18,10 +18,23 @@ import '../style/icons.css';
 import '../style/style.css';
 import '../style/experimental.css';
 
-import {
-    Overview, Adaptations, Relations, RoleGrid, Timeline, SocialNetwork, TextSearch,
-    Briefings, LogViewer2, Characters, Players, Stories, ProfileFilter, GroupProfile, AccessManager
-} from '../views';
+import Overview from '../views/overview/overview';
+import Stories from '../views/stories/stories';
+import Adaptations from '../views/adaptations/adaptations';
+import Relations from '../views/briefings/relations';
+import RoleGrid from '../views/profiles2/roleGrid';
+import Timeline from '../views/timeline/timeline';
+import SocialNetwork from '../views/network/socialNetwork';
+import TextSearch from '../views/textSearch/textSearch';
+import ProfileFilter from '../views/groups/profileFilter';
+import GroupProfile from '../views/groups/groupProfile';
+
+import { Briefings } from '../views/briefings';
+import { LogViewer2 } from '../views/logs';
+import { Characters, Players } from '../views/profiles2';
+import { AccessManager } from '../views/accessManager';
+
+
 
 import {
     showDiffExample
