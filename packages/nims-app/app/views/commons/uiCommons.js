@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import { getProfileEditorContainer, getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx";
 import { UI, U, L10n } from 'nims-app-core';
+import { getRequestDataDialogTemplate, getModalErrorBlock } from './uiCommons.jsx'
 
 export const makeProfileTable = (Constants, profileStructure, profile) => {
     // const container = U.qmte('.profile-editor-container-tmpl');
@@ -42,7 +43,11 @@ export const makeProfileTable = (Constants, profileStructure, profile) => {
 
 export const createModalDialog = (root, onAction, opts) => {
     const commons = '.dialog-commons ';
-    const el2 = U.wrapEl('div', U.qte(`${commons} .request-data-dialog-tmpl`));
+
+    const el2 = U.makeEl('div');
+    ReactDOM.render(getRequestDataDialogTemplate(), el2);
+
+    // const el2 = U.wrapEl('div', U.qte(`${commons} .request-data-dialog-tmpl`));
     const el = U.qee(el2, '.modal');
     if (opts.dialogClass !== undefined) {
         U.addClass(el, opts.dialogClass);
@@ -54,7 +59,7 @@ export const createModalDialog = (root, onAction, opts) => {
     } else {
         const content = U.makeEl('div');
         ReactDOM.render(opts.getComponent(), content);
-        bodyContent = U.qee(content, opts.componentClass);
+        bodyContent = U.qee(content, '.' + opts.componentClass);
     }
 
     U.addEl(body, bodyContent);
@@ -64,7 +69,12 @@ export const createModalDialog = (root, onAction, opts) => {
     if (opts.initBody !== undefined) {
         opts.initBody(body);
     }
-    U.addEl(body, U.qte(`${commons} .modal-error-block`));
+    const content = U.makeEl('div');
+    ReactDOM.render(getModalErrorBlock(), content);
+    const errorBlock = U.qee(content, '.ModalErrorBlock');
+    U.addEl(body, errorBlock);
+
+    // U.addEl(body, U.qte(`${commons} .modal-error-block`));
     U.setAttr(U.qee(el, '.modal-title'), 'l10n-id', opts.dialogTitle);
     U.setAttr(U.qee(el, '.on-action-button'), 'l10n-id', opts.actionButtonTitle);
     L10n.localizeStatic(el);

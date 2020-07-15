@@ -26,3 +26,26 @@ export const StoryCharactersTemplate = function() {
 export function getStoryCharactersTemplate() {
   return <StoryCharactersTemplate />;
 }
+
+export const ModalSwitchEventBody = function() {
+  return (
+    <div className="ModalSwitchEventBody form-group">
+      <select className="isStoryEditable storyCharactersToSelector form-control" style={{width: "100%"}}></select>
+    </div>
+  );
+};
+
+export function getModalSwitchEventBody() {
+  return <ModalSwitchEventBody />;
+}
+export const ModalAddCharacterBody = function() {
+  return (
+    <div className="ModalAddCharacterBody form-group">
+      <select className="isStoryEditable storyCharactersAddSelector form-control" style={{width: "100%"}}></select>
+    </div>
+  );
+};
+
+export function getModalAddCharacterBody() {
+  return <ModalAddCharacterBody />;
+}

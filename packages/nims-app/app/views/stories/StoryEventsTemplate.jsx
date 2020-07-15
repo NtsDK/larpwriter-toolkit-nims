@@ -16,3 +16,37 @@ export const StoryEventsTemplate = function() {
 export function getStoryEventsTemplate() {
   return <StoryEventsTemplate />;
 }
+
+
+
+export const MoveEventBody = function() {
+  return (
+    <div className="MoveEventBody form-group">
+      <select className="isStoryEditable eventPositionSelector movePositionSelector form-control"></select>
+    </div>
+  );
+};
+
+export function getMoveEventBody() {
+  return <MoveEventBody />;
+}
+
+export const CreateEventBody = function() {
+  return (
+    <div className="CreateEventBody">
+      <div className="form-group">
+        <label className="control-label" l10n-id="stories-event-name"></label>
+        <input className="isStoryEditable form-control eventNameInput focusable"></input>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="stories-event-position"></label>
+        <select className="isStoryEditable eventPositionSelector positionSelector form-control"></select>
+      </div>
+    </div>
+  );
+};
+
+export function getCreateEventBody() {
+  return <CreateEventBody />;
+}
+

@@ -3,6 +3,8 @@ import { createModalDialog } from "../commons/uiCommons";
 import ReactDOM from 'react-dom';
 import { getPlayerManagementTemplate } from "./PlayerManagementTemplate.jsx";
 import { UI, U, L10n } from 'nims-app-core';
+import { getModalPromptBody } from '../commons/uiCommons2.jsx';
+import { getCreateOrganizerBody, getCreatePlayerAccountBody } from './ManagementTemplates.jsx';
 
 // ((exports) => {
 const state = {};
@@ -24,23 +26,29 @@ function init(){
     L10n.localizeStatic(content);
 
     const createUserDialog = createModalDialog(root, createUser, {
-        bodySelector: 'create-organizer-body',
+        // bodySelector: 'create-organizer-body',
         dialogTitle: 'admins-creating-player',
         actionButtonTitle: 'common-create',
+        getComponent: getCreateOrganizerBody,
+        componentClass: 'CreateOrganizerBody'
     });
     U.listen(U.qe(`${root}.create.player`), 'click', () => createUserDialog.showDlg());
 
     const createPlayerAccountDialog = createModalDialog(root, createUserAccount, {
-        bodySelector: 'create-player-account-body',
+        // bodySelector: 'create-player-account-body',
         dialogTitle: 'admins-creating-player-account',
         actionButtonTitle: 'common-create',
+        getComponent: getCreatePlayerAccountBody,
+        componentClass: 'CreatePlayerAccountBody'
     });
     U.listen(U.qe(`${root}.create.player-account`), 'click', () => createPlayerAccountDialog.showDlg());
 
     const changePasswordDialog = createModalDialog(root, changePassword, {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'admins-enter-new-password',
         actionButtonTitle: 'common-replace',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
     U.listen(U.qe(`${root}.user.change-password`), 'click', () => {
         U.qee(changePasswordDialog, '.entity-input').value = '';

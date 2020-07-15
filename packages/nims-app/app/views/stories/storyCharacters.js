@@ -1,7 +1,11 @@
 import PermissionInformer from "permissionInformer";
 import ReactDOM from 'react-dom';
 import { getStoryCharacterRow } from "./StoryCharacterRow.jsx";
-import { getStoryCharactersTemplate } from "./StoryCharactersTemplate.jsx";
+import {
+    getStoryCharactersTemplate,
+    getModalAddCharacterBody,
+    getModalSwitchEventBody
+} from "./StoryCharactersTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
 
@@ -29,17 +33,21 @@ export default function createStoryCharacters(Stories) {
         L10n.localizeStatic(content);
 
         addCharacterDialog = createModalDialog(superRoot, addCharacter, {
-            bodySelector: 'modal-add-character-body',
+            // bodySelector: 'modal-add-character-body',
             dialogTitle: 'stories-add-character-title',
             actionButtonTitle: 'common-add',
+            getComponent: getModalAddCharacterBody,
+            componentClass: 'ModalAddCharacterBody'
         });
 
         //        U.listen(U.qe(`${root}.add.character`), 'click', () => addCharacterDialog.showDlg());
 
         state.switchCharacterDialog = createModalDialog(root, switchCharacters, {
-            bodySelector: 'modal-switch-event-body',
+            // bodySelector: 'modal-switch-event-body',
             dialogTitle: 'stories-switch-character-title',
             actionButtonTitle: 'common-replace',
+            getComponent: getModalSwitchEventBody,
+            componentClass: 'ModalSwitchEventBody'
         });
         state.ExternalCharacterSelectors = [U.queryEl(`${superRoot}.storyCharactersAddSelector`),
             U.queryEl(`${root}.storyCharactersToSelector`)];

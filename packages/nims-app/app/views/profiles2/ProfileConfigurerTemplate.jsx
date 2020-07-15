@@ -82,3 +82,120 @@ export const EnumValueEditor = function() {
 export function getEnumValueEditor() {
   return <EnumValueEditor />;
 }
+
+
+
+export const EnumDialogEditor = function() {
+  return (
+    <div className="EnumDialogEditor">
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-current-enum-value"></label>
+        <div className="initial-value"></div>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-new-enum-value"></label>
+        <span className="control-label display-block" l10n-id="profiles-enum-filling-instruction"></span>
+        <textarea className="form-control enum-value-input focusable"></textarea> 
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-new-enum-values"></label>
+        <div className="new-enum-values"></div>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-removed-enum-values"></label>
+        <div className="removed-enum-values"></div>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-default-value"></label>
+        <select className="form-control default-value-select"></select> 
+      </div>
+    </div>
+  );
+};
+
+export function getEnumDialogEditor() {
+  return <EnumDialogEditor />;
+}
+
+export const MultiEnumDialogEditor = function() {
+  return (
+    <div className="MultiEnumDialogEditor">
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-current-enum-value"></label>
+        <div className="initial-value"></div>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-new-enum-value"></label>
+        <span className="control-label display-block" l10n-id="profiles-enum-filling-instruction"></span>
+        <textarea className="form-control enum-value-input focusable"></textarea> 
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-new-enum-values"></label>
+        <div className="new-enum-values"></div>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-removed-enum-values"></label>
+        <div className="removed-enum-values"></div>
+      </div>
+    </div>
+  );
+};
+
+export function getMultiEnumDialogEditor() {
+  return <MultiEnumDialogEditor />;
+}
+
+export const RenameEnumValue = function() {
+  return (
+    <div className="RenameEnumValue">
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-renamed-value"></label>
+        <select className="renamed-value-select form-control focusable"></select>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-new-enum-value-name"></label>
+        <input className="enum-value-name-input form-control"></input>
+      </div>
+    </div>
+  );
+};
+
+export function getRenameEnumValue() {
+  return <RenameEnumValue />;
+}
+
+export const CreateProfileItemBody = function() {
+  return (
+    <div className="CreateProfileItemBody">
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-profile-item-name"></label>
+        <input className="form-control create-entity-name-input focusable" ></input> 
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-profile-item-position"></label>
+        <select className="adminOnly form-control create-entity-position-select">
+        </select> 
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="profiles-profile-item-type"></label>
+        <select className="adminOnly form-control create-entity-type-select"></select> 
+      </div>
+    </div>
+  );
+};
+
+export function getCreateProfileItemBody() {
+  return <CreateProfileItemBody />;
+}
+
+export const MoveProfileItemBody = function() {
+  return (
+    <div className="MoveProfileItemBody form-group">
+      <select className="adminOnly form-control move-entity-position-select"></select> 
+    </div>
+  );
+};
+
+export function getMoveProfileItemBody() {
+  return <MoveProfileItemBody />;
+}

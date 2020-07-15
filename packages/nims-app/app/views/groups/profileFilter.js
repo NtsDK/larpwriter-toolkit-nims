@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { createModalDialog } from "../commons/uiCommons";
 import * as FileUtils from 'nims-app-core/fileUtils';
 import { UI, U, L10n } from 'nims-app-core';
+import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
 import {
     getCommonEnumFilter,
@@ -35,15 +36,19 @@ function init(){
     L10n.localizeStatic(content);
 
     const createGroupDialog = createModalDialog(root, GroupProfile.createGroup(false, refresh), {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
         actionButtonTitle: 'common-create',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
 
     const renameGroupDialog = createModalDialog(root, renameGroup(`${root}.save-entity-select`), {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-new-group-name',
         actionButtonTitle: 'common-rename',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
 
     //        state.addFilterConditionDialog = new AddFilterConditionDialog(root);

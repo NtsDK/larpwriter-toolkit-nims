@@ -6,6 +6,7 @@ import { getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx"
 import { getEntityItem } from "../profiles2/ProfileEditorTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
+import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
 const state = {};
 const root = '.group-profile-tab ';
@@ -25,16 +26,20 @@ function init(){
     L10n.localizeStatic(content);
 
     const createGroupDialog = createModalDialog(root, createGroup(true, refresh), {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-group-name',
         actionButtonTitle: 'common-create',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
     U.listen(U.qe(`${root}.create`), 'click', () => createGroupDialog.showDlg());
 
     state.renameGroupDialog = createModalDialog(root, renameGroup, {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'groups-enter-new-group-name',
         actionButtonTitle: 'common-rename',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
 
     const tbody = U.clearEl(U.queryEl(`${root} .entity-profile`));
