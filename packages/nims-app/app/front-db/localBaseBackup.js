@@ -5,6 +5,7 @@ import * as LocalBackupCore from 'nims-app-core/localAutoSave';
 import ReactDOM from 'react-dom';
 import { getBackupBaseTemplate } from "./BackupBaseTemplate.jsx";
 import { getSetDatabaseDialog } from "./SetDatabaseDialog.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 export default function (imports) {
     const innerExports = {};

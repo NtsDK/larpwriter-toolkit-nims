@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { getGearsTemplate } from "./GearsTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import * as FileUtils from 'nims-app-core/fileUtils';
+import { UI, U, L10n } from 'nims-app-core';
 
 const root = '.gears-tab';
 const state = {};

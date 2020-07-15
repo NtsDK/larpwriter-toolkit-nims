@@ -1,22 +1,16 @@
-//const R = require('ramda');
+import dateFormat from "dateformat";
+export { default as JsDiff } from "diff";
+import U from "./utils.js";
+import UI from "./uiUtils.js";
+import L10n from "./l10n.js";
 
-// const { d3, klay } = require('core/libs/klay-adapter');
-const dateFormat = require('dateformat');
 
-const JsDiff = require('diff');
-const U = require('./utils.js');
-const UI = require('./uiUtils.js');
-const L10n = require('./l10n.js');
-
-exports.JsDiff = JsDiff;
-
-// ((exports) => {
-exports.runTests = () => {
+export const runTests = () => {
     U.queryEl('body').style.overflow = 'auto';
     window.RunTests();
 };
 
-exports.showConsistencyCheckAlert = (checkRes) => {
+export const showConsistencyCheckAlert = (checkRes) => {
     if (checkRes === undefined || checkRes.errors.length === 0) {
         UI.alert(L10n.getValue('overview-consistency-is-ok'));
     } else {
@@ -24,7 +18,7 @@ exports.showConsistencyCheckAlert = (checkRes) => {
     }
 };
 
-exports.clickThroughtHeaders = () => {
+export const clickThroughtHeaders = () => {
     let tabs = U.queryEls('#navigation .navigation-button');
 
     let index = 0;
@@ -50,7 +44,7 @@ exports.clickThroughtHeaders = () => {
 
 const getAllSubsets = (theArray) => theArray.reduce((subsets, value) => subsets.concat(subsets.map((set) => [value, ...set])), [[]]);
 
-exports.addGroupTestingData = () => {
+export const addGroupTestingData = () => {
     DBMS.createProfileItem({
         type: 'character', name: 'text', itemType: 'text', selectedIndex: 0
     });

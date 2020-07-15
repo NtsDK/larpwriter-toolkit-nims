@@ -1,6 +1,7 @@
 import { d3, klay } from 'nims-app-core/libs/klay-adapter';
 import ReactDOM from 'react-dom';
 import { getGroupSchemaTemplate } from "./GroupSchemaTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 const rootTab = '.group-schema-tab';
 

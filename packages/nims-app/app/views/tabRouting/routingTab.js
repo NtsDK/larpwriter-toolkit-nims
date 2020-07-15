@@ -1,9 +1,10 @@
 import ReactDOM from 'react-dom';
 import { getRoutingTabTemplate } from "./RoutingTabTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 export default function RoutingTabTmpl(opts) {
     const state = {};
-    const tmplRoot = '.tab-routing-tmpl';
+    // const tmplRoot = '.tab-routing-tmpl';
 
     let content;
     function getContent() {

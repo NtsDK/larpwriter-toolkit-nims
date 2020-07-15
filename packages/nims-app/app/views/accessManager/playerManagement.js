@@ -2,6 +2,7 @@ import PermissionInformer from "permissionInformer";
 import { createModalDialog } from "../commons/uiCommons";
 import ReactDOM from 'react-dom';
 import { getPlayerManagementTemplate } from "./PlayerManagementTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 // ((exports) => {
 const state = {};

@@ -1,6 +1,7 @@
 import ProfileEditorCore from '../profiles2/profileEditorCore';
 import ReactDOM from 'react-dom';
 import { getPlayerTemplate } from "./PlayerTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 // ((exports) => {
 const root = '.player-tab ';

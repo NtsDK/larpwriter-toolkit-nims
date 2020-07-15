@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { getProfileEditorContainer, getProfileEditorRow } from "./ProfileEditorCoreTemplate.jsx";
-
+import { UI, U, L10n } from 'nims-app-core';
 // ((exports) => {
 export default {
     makeProfileEditorCore

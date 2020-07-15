@@ -1,41 +1,28 @@
-const $ = require('jquery');
-require('jquery-datetimepicker');
-require('jquery-datetimepicker/build/jquery.datetimepicker.min.css');
-require('bootstrap-sass');
+// const $ = require('jquery');
+import { default as $ } from 'jquery';
+import 'jquery-datetimepicker';
+import 'jquery-datetimepicker/build/jquery.datetimepicker.min.css';
+import 'bootstrap-sass';
 
-const vex = require('vex-js');
-vex.registerPlugin(require('vex-dialog'));
+import vex from "vex-js";
+import vexDialog from "vex-dialog";
+
+
+// const vex = require('vex-js');
+// vex.registerPlugin(require('vex-dialog'));
+vex.registerPlugin(vexDialog);
 // vex.defaultOptions.className = 'vex-theme-os';
 vex.defaultOptions.className = 'vex-theme-default';
 
-require('vex-js/dist/css/vex.css');
-require('vex-js/dist/css/vex-theme-default.css');
-
+import 'vex-js/dist/css/vex.css';
+import 'vex-js/dist/css/vex-theme-default.css';
 //const R = require('ramda');
-const U = require('./utils');
-// const UI = require('./uiUtils');
-const L10n = require('./l10n');
-// const Errors = require('./common/errors');
-const Timing = require('./Timing');
-// const CU = require('./common/commonUtils');
+import U from "./utils";
+import L10n from "./l10n";
+import Timing from "./Timing";
 
-/*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/* eslint-disable no-var,vars-on-top */
-
-exports.updateDialogL10n = function () {
+export const updateDialogL10n = function () {
     vex.dialog.buttons.YES.text = L10n.getValue('common-ok');
     vex.dialog.buttons.NO.text = L10n.getValue('common-cancel');
 };
@@ -46,7 +33,7 @@ exports.updateDialogL10n = function () {
     mainPage - enable view as first page - deprecated. Use Utils.setFirstTab instead
     toggle - toggle content, associated with button
 */
-exports.addView = function (containers, name, view, opts2) {
+export const addView = function (containers, name, view, opts2) {
     const opts = opts2 || {};
     view.init();
     const buttonClass = 'navigation-button';
@@ -111,15 +98,13 @@ exports.addView = function (containers, name, view, opts2) {
 
     // deprecated. Use Utils.setFirstTab instead
     if (opts.mainPage) {
-        exports.setFirstTab(containers, { button, view });
+        setFirstTab(containers, { button, view });
     }
     return { button, view };
 };
 
-// ((exports) => {
 
-
-exports.initTabPanel = (tabClazz, containerClazz) => {
+export const initTabPanel = (tabClazz, containerClazz) => {
     const containers = U.queryEls(`.${containerClazz}`);
 
     let i;
@@ -145,7 +130,7 @@ var tabButtonClick = (buttons, containers) => (event) => {
     }
 };
 
-exports.fillShowItemSelector = (selector, displayArray) => {
+export const fillShowItemSelector = (selector, displayArray) => {
     let el;
     U.setAttr(selector, 'size', displayArray.length);
     displayArray.forEach((value) => {
@@ -157,7 +142,7 @@ exports.fillShowItemSelector = (selector, displayArray) => {
     });
 };
 
-exports.fillShowItemSelector2 = (selector, optionGroups, setSize) => {
+export const fillShowItemSelector2 = (selector, optionGroups, setSize) => {
     let el, groupEl, counter = 0;
     U.addEls(selector, optionGroups.map((group) => {
         counter++;
@@ -203,7 +188,7 @@ exports.fillShowItemSelector2 = (selector, optionGroups, setSize) => {
 //        console.log('showSelectedEls2 time ' + (performance.now() - t1) + ' ms');
 //    };
 
-exports.showSelectedEls3 = (root, classKey, attr) => (event) => {
+export const showSelectedEls3 = (root, classKey, attr) => (event) => {
     const t1 = performance.now();
     const el = event.target;
     let i, j;
@@ -218,7 +203,7 @@ exports.showSelectedEls3 = (root, classKey, attr) => (event) => {
     console.log(`showSelectedEls3 time ${performance.now() - t1} ms`);
 };
 
-exports.initSelectorFilters = () => {
+export const initSelectorFilters = () => {
     U.queryEls('[selector-filter]').forEach((el) => {
         const sel = U.queryEl(U.getAttr(el, 'selector-filter'));
         el.value = '';
@@ -245,20 +230,20 @@ var filterOptions = (sel) => (event) => {
     sel.dispatchEvent(new Event('change'));
 };
 
-exports.initPanelToggler = (el) => {
+export function initPanelToggler(el){
     const attr = U.getAttr(el, 'panel-toggler');
     U.addClass(el, 'expanded');
     const sel = document.querySelector(attr);
     if (sel == null) {
         // UI.alert(`Panel toggler is broken: ${attr}`);
-        exports.alert(`Panel toggler is broken: ${attr}`);
+        alert(`Panel toggler is broken: ${attr}`);
     }
     U.listen(el, 'click', togglePanel(el, sel));
 };
 
-exports.initPanelTogglers = (el) => U.qees(el || document, '[panel-toggler]').forEach(exports.initPanelToggler);
+export const initPanelTogglers = (el) => U.qees(el || document, '[panel-toggler]').forEach(initPanelToggler);
 
-exports.attachPanelToggler = (header, content, callback) => {
+export const attachPanelToggler = (header, content, callback) => {
     U.addClass(header, 'expanded');
     U.listen(header, 'click', (event) => {
         if (callback) {
@@ -278,7 +263,7 @@ var togglePanel = (el, sel) => (event) => {
     U.toggleClass(sel, 'hidden');
 };
 
-exports.makeEventTimePicker = (opts) => {
+export const makeEventTimePicker = (opts) => {
     const input = U.makeEl('input');
     R.ap([U.addClass(input)], opts.extraClasses);
     U.addClass(input, 'eventTime');
@@ -305,7 +290,7 @@ exports.makeEventTimePicker = (opts) => {
     return input;
 };
 
-exports.makeEventTimePicker2 = (input, opts) => {
+export const makeEventTimePicker2 = (input, opts) => {
     input.value = opts.eventTime;
 
     input.eventIndex = opts.index;
@@ -362,34 +347,34 @@ exports.makeEventTimePicker2 = (input, opts) => {
 //      return input;
 //  };
 
-exports.initTextAreas = (sel) => {
-    R.ap([exports.attachTextareaResizer], U.queryEls(sel));
+export const initTextAreas = (sel) => {
+    R.ap([attachTextareaResizer], U.queryEls(sel));
 };
 
-exports.refreshTextAreas = (sel) => {
-    R.ap([exports.resizeTextarea], U.queryEls(sel).map((el) => ({ target: el })));
+export const refreshTextAreas = (sel) => {
+    R.ap([resizeTextarea], U.queryEls(sel).map((el) => ({ target: el })));
 };
 
-exports.attachTextareaResizer = (input) => {
-    U.listen(input, 'keydown', exports.resizeTextarea);
-    U.listen(input, 'paste', exports.resizeTextarea);
-    U.listen(input, 'cut', exports.resizeTextarea);
-    U.listen(input, 'change', exports.resizeTextarea);
-    U.listen(input, 'drop', exports.resizeTextarea);
+export function attachTextareaResizer(input){
+    U.listen(input, 'keydown', resizeTextarea);
+    U.listen(input, 'paste', resizeTextarea);
+    U.listen(input, 'cut', resizeTextarea);
+    U.listen(input, 'change', resizeTextarea);
+    U.listen(input, 'drop', resizeTextarea);
 };
 
-exports.resizeTextarea = (ev) => {
+export function resizeTextarea(ev){
     const that = ev.target;
     that.style.height = '24px';
     that.style.height = `${that.scrollHeight + 12}px`;
 };
 
-exports.resizeTextarea2 = (that) => {
+export const resizeTextarea2 = (that) => {
     that.style.height = '24px';
     that.style.height = `${that.scrollHeight + 12}px`;
 };
 
-exports.populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
+export const populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
     U.setClassByCondition(input, 'notEditable', !isEditable);
     input.value = event.characters[characterName].time;
     input.dataKey = JSON.stringify([storyName, event.index, characterName]);
@@ -406,10 +391,10 @@ var onChangePersonalTimeDelegate = (event) => {
         characterName: dataKey[2],
         type: 'time',
         value: time
-    }).catch(exports.handleError);
+    }).catch(handleError);
 };
 
-exports.populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
+export const populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
     const input = U.qee(div, 'input');
     U.setClassByCondition(input, 'notEditable', !isEditable);
     input.checked = checked;
@@ -419,7 +404,7 @@ exports.populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
     return div;
 };
 
-exports.onChangeAdaptationReadyStatus2 = (callback) => (event) => {
+export const onChangeAdaptationReadyStatus2 = (callback) => (event) => {
     const dataKey = JSON.parse(event.target.id);
     const value = !U.hasClass(event.target, 'btn-primary');
 
@@ -432,10 +417,10 @@ exports.onChangeAdaptationReadyStatus2 = (callback) => (event) => {
     }).then(() => {
         U.setClassByCondition(event.target, 'btn-primary', value);
         callback(value);
-    }).catch(exports.handleError);
+    }).catch(handleError);
 };
 
-exports.makePanelCore = (title, content) => {
+export const makePanelCore = (title, content) => {
     const panel = U.addClasses(U.makeEl('div'), ['panel', 'panel-default']);
     const h3 = U.addClass(U.addEl(U.makeEl('h3'), title), 'panel-title');
     const a = U.setAttr(U.makeEl('a'), 'href', '#/');
@@ -451,9 +436,9 @@ exports.makePanelCore = (title, content) => {
     };
 };
 
-exports.makeTableRow = (col1, col2) => U.addEls(U.makeEl('tr'), [U.addEl(U.makeEl('td'), col1), U.addEl(U.makeEl('td'), col2)]);
+export const makeTableRow = (col1, col2) => U.addEls(U.makeEl('tr'), [U.addEl(U.makeEl('td'), col1), U.addEl(U.makeEl('td'), col2)]);
 
-exports.checkAndGetEntitySetting = (settingsPath, names) => {
+export const checkAndGetEntitySetting = (settingsPath, names) => {
     if (names.length === 0) return null;
     const settings = SM.getSettings();
     if (!settings[settingsPath]) {
@@ -470,7 +455,7 @@ exports.checkAndGetEntitySetting = (settingsPath, names) => {
     return name;
 };
 
-exports.updateEntitySetting = (settingsPath, name) => {
+export const updateEntitySetting = (settingsPath, name) => {
     const settings = SM.getSettings();
     if (settings[settingsPath] === undefined) {
         settings[settingsPath] = {};
@@ -478,7 +463,7 @@ exports.updateEntitySetting = (settingsPath, name) => {
     settings[settingsPath].name = name;
 };
 
-exports.scrollTo = (container, element) => {
+export const scrollTo = (container, element) => {
     const domRect = element.getBoundingClientRect();
     const { scrollTop } = container;
     const scrollBottom = container.scrollTop + container.clientHeight;
@@ -488,7 +473,7 @@ exports.scrollTo = (container, element) => {
         const from = container.scrollTop;
         const to = element.offsetTop - container.clientHeight / 2 + domRect.height / 2;
 
-        exports.animate({
+        animate({
             duration: 500,
             timing: Timing.makeEaseInOut(Timing.poly(4)),
             draw(progress) {
@@ -498,34 +483,34 @@ exports.scrollTo = (container, element) => {
     }
 };
 
-exports.constArr2Select = R.map(R.compose(R.zipObj(['value', 'name']), (name) => [name, L10n.const(name)]));
+export const constArr2Select = R.map(R.compose(R.zipObj(['value', 'name']), (name) => [name, L10n.const(name)]));
 
-exports.remapProps = R.curry((outKeys, pickKeys, obj) => R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj));
+export const remapProps = R.curry((outKeys, pickKeys, obj) => R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj));
 
-exports.remapProps4Select2 = exports.remapProps(['id', 'text'], ['value', 'displayName']);
-exports.remapProps4Select = exports.remapProps(['value', 'name'], ['value', 'displayName']);
+export const remapProps4Select2 = remapProps(['id', 'text'], ['value', 'displayName']);
+export const remapProps4Select = remapProps(['value', 'name'], ['value', 'displayName']);
 
-exports.getSelect2DataCommon = R.curry((preparator, obj) => R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj));
-exports.getSelect2Data = exports.getSelect2DataCommon(exports.remapProps4Select2);
+export const getSelect2DataCommon = R.curry((preparator, obj) => R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj));
+export const getSelect2Data = getSelect2DataCommon(remapProps4Select2);
 // })(window.UI = {});
 
-exports.setFirstTab = function (containers, opts) {
+export function setFirstTab(containers, opts) {
     U.addClass(opts.button, 'active');
     containers.content.appendChild(opts.view.content || opts.view.getContent());
     containers.root.currentView = opts.view;
 };
 
-exports.alert = function (message) {
+export function alert(message) {
     vex.dialog.alert(message);
 };
 
-const setError = (el, err) => U.addEl(U.clearEl(U.qee(el, '.error-msg')), U.makeText(exports.handleErrorMsg(err)));
-const clearError = (el) => U.clearEl(U.qee(el, '.error-msg'));
+export const setError = (el, err) => U.addEl(U.clearEl(U.qee(el, '.error-msg')), U.makeText(handleErrorMsg(err)));
+export const clearError = (el) => U.clearEl(U.qee(el, '.error-msg'));
 
-exports.setError = setError;
-exports.clearError = clearError;
+// export const setError = setError;
+// export const clearError = clearError;
 
-exports.confirm = function (message, onOk, onCancel) {
+export const confirm = function (message, onOk, onCancel) {
     vex.dialog.confirm({
         message,
         callback: (val) => {
@@ -536,10 +521,10 @@ exports.confirm = function (message, onOk, onCancel) {
     });
 };
 
-exports.processError = function (callback) {
+export const processError = function (callback) {
     return function (err) {
         if (err) {
-            exports.handleError(err);
+            handleError(err);
             return;
         }
 
@@ -554,7 +539,7 @@ exports.processError = function (callback) {
     };
 };
 
-exports.handleErrorMsg = function (err) {
+export function handleErrorMsg(err) {
     const checkErrorType = R.curry((err2, name) => err2 instanceof Errors[name] || (err2.name && err2.name === name));
     if (R.keys(Errors).some(checkErrorType(err))) {
         const params = err.parameters.map((val) => (L10n.hasValue(val) ? L10n.getValue(val) : val));
@@ -565,12 +550,12 @@ exports.handleErrorMsg = function (err) {
     return err;
 };
 
-exports.handleError = (err) => {
+export function handleError(err){
     console.error(err);
-    exports.alert(exports.handleErrorMsg(err));
+    alert(handleErrorMsg(err));
 };
 
-exports.enableEl = R.curry((el, condition) => {
+export const enableEl = R.curry((el, condition) => {
     const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';
     if (condition) {
         el.removeAttribute(key);
@@ -579,11 +564,11 @@ exports.enableEl = R.curry((el, condition) => {
     }
 });
 
-exports.enable = function (root, className, condition) {
-    U.nl2array(root.getElementsByClassName(className)).map(exports.enableEl(R.__, condition));
+export const enable = function (root, className, condition) {
+    U.nl2array(root.getElementsByClassName(className)).map(enableEl(R.__, condition));
 };
 
-exports.rebuildSelector = function (selector, names) {
+export const rebuildSelector = function (selector, names) {
     U.clearEl(selector);
     names.forEach((nameInfo) => {
         const option = U.makeEl('option');
@@ -593,7 +578,7 @@ exports.rebuildSelector = function (selector, names) {
     });
 };
 
-exports.rebuildSelectorArr = function (selector, names) {
+export const rebuildSelectorArr = function (selector, names) {
     U.clearEl(selector);
     names.forEach((name) => {
         const option = U.makeEl('option');
@@ -603,7 +588,7 @@ exports.rebuildSelectorArr = function (selector, names) {
 };
 
 // from https://learn.javascript.ru/js-animation
-exports.animate = (options) => {
+export function animate(options){
     const start = performance.now();
 
     requestAnimationFrame(function animate(time) {
@@ -620,4 +605,52 @@ exports.animate = (options) => {
             requestAnimationFrame(animate);
         }
     });
+};
+
+
+export default {
+    updateDialogL10n,
+    addView,
+    initTabPanel,
+    fillShowItemSelector,
+    fillShowItemSelector2,
+    showSelectedEls3,
+    initSelectorFilters,
+    initPanelToggler,
+    initPanelTogglers,
+    attachPanelToggler,
+    makeEventTimePicker,
+    makeEventTimePicker2,
+    initTextAreas,
+    refreshTextAreas,
+    attachTextareaResizer,
+    resizeTextarea,
+    resizeTextarea2,
+    populateAdaptationTimeInput,
+    populateReadyCheckbox,
+    onChangeAdaptationReadyStatus2,
+    makePanelCore,
+    makeTableRow,
+    checkAndGetEntitySetting,
+    updateEntitySetting,
+    scrollTo,
+    constArr2Select,
+    remapProps,
+    remapProps4Select2,
+    remapProps4Select,
+    getSelect2DataCommon,
+    getSelect2Data,
+    setFirstTab,
+    alert,
+    setError,
+    clearError,
+    confirm,
+    processError,
+    handleErrorMsg,
+    handleError,
+    enableEl,
+    enable,
+    rebuildSelector,
+    rebuildSelectorArr,
+    animate
 };

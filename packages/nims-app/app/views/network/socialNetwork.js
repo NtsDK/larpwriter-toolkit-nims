@@ -4,7 +4,7 @@ import PermissionInformer from 'permissionInformer';
 import NetworkSubsetsSelector from './networkSubsetsSelector';
 import ReactDOM from 'react-dom';
 import { getSocialNetworkTemplate } from "./SocialNetworkTemplate.jsx";
-
+import { UI, U, L10n } from 'nims-app-core';
 
 // ((exports) => {
 const state = {};

@@ -5,6 +5,7 @@ import { getGroupFilter, getGroupFilterRow, getGroupProfileTemplate } from "./Gr
 import { getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx";
 import { getEntityItem } from "../profiles2/ProfileEditorTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 const state = {};
 const root = '.group-profile-tab ';

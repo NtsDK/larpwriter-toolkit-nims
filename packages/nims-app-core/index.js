@@ -1,3 +1,3 @@
-exports.L10n = require('./l10n');
-exports.UI = require('./uiUtils');
-exports.U = require('./utils');
+export { default as L10n } from './l10n';
+export { default as UI } from './uiUtils';
+export { default as U } from './utils';

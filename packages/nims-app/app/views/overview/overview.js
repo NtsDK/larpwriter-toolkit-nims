@@ -3,6 +3,7 @@ import Chart from "chart.js";
 import dateFormat from "dateformat";
 import PermissionInformer from "permissionInformer";
 import { getOverviewTemplate } from "./OverviewTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 import './overview.css';
 

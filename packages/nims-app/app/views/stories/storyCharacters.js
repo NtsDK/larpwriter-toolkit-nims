@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { getStoryCharacterRow } from "./StoryCharacterRow.jsx";
 import { getStoryCharactersTemplate } from "./StoryCharactersTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 export default function createStoryCharacters(Stories) {
     const state = {};

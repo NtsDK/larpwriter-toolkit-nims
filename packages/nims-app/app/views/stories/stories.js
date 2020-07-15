@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import { getStoriesTemplate } from "./StoriesTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 const Stories = {};
 

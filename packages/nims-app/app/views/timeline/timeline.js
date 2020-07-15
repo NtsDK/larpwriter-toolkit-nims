@@ -3,13 +3,13 @@ import vis from "vis";
 import dateFormat from "dateformat";
 import 'vis/dist/vis.min.css';
 import ReactDOM from 'react-dom';
+import { UI, U, L10n } from 'nims-app-core';
 
 /* eslint-disable-next-line import/no-unresolved */
 import PermissionInformer from "permissionInformer";
 
 import { getTimelineEventTemplate } from "./TimelineEventTemplate.jsx";
 import { getTimelineTemplate } from "./TimelineTemplate.jsx";
-import { U } from "nims-app-core";
 
 // ((exports) => {
 const state = {};

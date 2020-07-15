@@ -8,6 +8,7 @@ import 'jquery-datetimepicker/build/jquery.datetimepicker.min.css';
 import moment from 'moment';
 import { SettingsManager } from './SettingsManager';
 window.moment = moment;
+import { UI, U, L10n } from 'nims-app-core';
 
 import 'select2';
 import 'select2/dist/css/select2.min.css';

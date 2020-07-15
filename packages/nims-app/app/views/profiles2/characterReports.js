@@ -1,6 +1,7 @@
 import ProjectUtils from "nims-dbms/db-utils/projectUtils";
 import ReactDOM from 'react-dom';
 import { getRelationReportRow, getStoryReportRow } from "./CharacterReportsTemplate.jsx";
+import { U, L10n } from 'nims-app-core';
 // ((exports) => {
 const root = '.character-reports-tmpl';
 

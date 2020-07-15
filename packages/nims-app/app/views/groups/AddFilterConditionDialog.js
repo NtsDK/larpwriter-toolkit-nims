@@ -1,4 +1,5 @@
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 function AddFilterConditionDialog(root) {
     this.dialog = createModalDialog(root, this.onAction.bind(this), {

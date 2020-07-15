@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import { getProfileEditorContainer, getProfileEditorRow } from "../profiles2/ProfileEditorCoreTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 export const makeProfileTable = (Constants, profileStructure, profile) => {
     // const container = U.qmte('.profile-editor-container-tmpl');

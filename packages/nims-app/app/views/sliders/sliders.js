@@ -5,6 +5,7 @@ import { getSlidersTemplate } from "./SlidersTemplate.jsx";
 import 'bootstrap-slider/dist/css/bootstrap-slider.min.css';
 import './sliders.css';
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 const root = '.sliders-tab ';
 const state = {};

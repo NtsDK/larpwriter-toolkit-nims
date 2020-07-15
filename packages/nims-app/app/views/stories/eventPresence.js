@@ -3,6 +3,7 @@ import PermissionInformer from "permissionInformer";
 import ReactDOM from 'react-dom';
 import { getEventPresenceCell } from "./EventPresenceCell.jsx";
 import { getEventPresenceTemplate } from "./EventPresenceTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 export default function createEventPresence(Stories) {
     const state = {};

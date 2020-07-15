@@ -1,9 +1,9 @@
-const { d3, klay } = require('nims-app-core/libs/klay-adapter');
 import ReactDOM from 'react-dom';
 import {
     getModuleSchemaDialog
 } from "./ModuleSchemaDialog.jsx";
-
+import { U, L10n } from 'nims-app-core';
+import { d3, klay } from 'nims-app-core/libs/klay-adapter';
 
 export const showModuleSchema = (checkRes) => {
     let dialog = U.queryEl('.consistency-check-result-dialog');
