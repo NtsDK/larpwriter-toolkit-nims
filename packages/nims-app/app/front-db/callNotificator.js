@@ -1,3 +1,6 @@
+// import { U, L10n } from 'nims-app-core';
+const { L10n, U } = require('nims-app-core');
+
 // ((exports) => {
 const showNotification = true;
 const notificationTimeout = 2000;

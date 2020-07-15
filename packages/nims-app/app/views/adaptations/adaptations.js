@@ -7,6 +7,7 @@ import {
     getOrigin,
     getAdaptation
 } from "./AdaptationsTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 const root = '.adaptations-tab ';
 

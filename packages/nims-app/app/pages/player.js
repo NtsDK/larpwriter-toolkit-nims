@@ -15,6 +15,7 @@ import '../style/experimental.css';
 
 import Player from '../views/serverSpecific/player';
 import About from '../views/logs/about';
+import { U, L10n } from 'nims-app-core';
 
 const pageCore = new PageCore();
 

@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 
 import { getAboutTemplate } from "./AboutTemplate.jsx";
+import { U, L10n } from 'nims-app-core';
 
 let subContainer;
 const getContent = () => subContainer;

@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import { getWriterStoryTemplate } from "./WriterStoryTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 export default function createWriterStory(Stories){
     const state = {};

@@ -1,4 +1,5 @@
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import { U, L10n } from 'nims-app-core';
 
 function FilterConfiguration(info) {
     this.info = info;

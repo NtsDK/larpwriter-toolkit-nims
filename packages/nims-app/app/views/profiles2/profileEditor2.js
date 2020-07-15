@@ -5,6 +5,7 @@ import CharacterReports from './characterReports';
 import ReactDOM from 'react-dom';
 import { getEntityItem, getProfileEditorTemplate } from "./ProfileEditorTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 function ProfileEditorTmpl(opts) {
     const innerExports = {};

@@ -6,6 +6,7 @@ import {
     getProfileConfigurerTemplate
 } from "./ProfileConfigurerTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 // Character/Player profiles already have field 'name'
 // I had some choices:

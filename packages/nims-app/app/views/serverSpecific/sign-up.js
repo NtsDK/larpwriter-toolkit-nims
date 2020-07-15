@@ -1,6 +1,7 @@
 const root = '.sign-up-tab ';
 import ReactDOM from 'react-dom';
 import { getSignUpTemplate } from "./SignUpTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 let content;
 function getContent(){

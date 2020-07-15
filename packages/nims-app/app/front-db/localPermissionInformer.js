@@ -1,3 +1,5 @@
+import { UI } from 'nims-app-core';
+
 class LocalPermissionInformer {
     refresh = () => Promise.resolve();
 

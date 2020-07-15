@@ -7,6 +7,7 @@ import { getLogoutFormTemplate } from "../views/serverSpecific/LogoutFormTemplat
 
 import * as TestUtils from 'nims-app-core/testUtils';
 import * as FileUtils from 'nims-app-core/fileUtils';
+import { UI, U, L10n } from 'nims-app-core';
 import DemoBase from 'nims-resources/demoBase';
 import EmptyBase from 'nims-resources/emptyBase';
 

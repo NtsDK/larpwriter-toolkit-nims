@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import dateFormat from 'dateformat';
 
 import { getLogViewerTemplate } from "./LogViewerTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 import './logViewer.css';
 

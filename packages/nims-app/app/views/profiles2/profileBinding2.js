@@ -5,6 +5,7 @@ import {
     getProfileBindingTemplate,
     getProfileItem
 } from "./ProfileBindingTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 // ((exports) => {
 const root = '.profile-binding2-tab ';

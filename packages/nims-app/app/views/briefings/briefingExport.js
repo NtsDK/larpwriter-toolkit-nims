@@ -10,6 +10,7 @@ import markdownit from "markdown-it";
 import ReactDOM from 'react-dom';
 import { getBriefingExportTemplate } from "./BriefingExportTemplate.jsx";
 import * as FileUtils from 'nims-app-core/fileUtils';
+import { UI, U, L10n } from 'nims-app-core';
 
 const state = {};
 const root = '.briefing-export-tab ';

@@ -11,6 +11,7 @@ import { makeProfileTable } from "../commons/uiCommons";
 import {
     getAdaptationRow,
 } from "../adaptations/AdaptationsTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 const state = {};
 const root = '#briefingPreviewDiv ';

@@ -1,3 +1,4 @@
+import { UI, U } from 'nims-app-core';
 const state = {};
 
 export default {

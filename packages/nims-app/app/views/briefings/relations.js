@@ -2,6 +2,7 @@ import PermissionInformer from "permissionInformer";
 import RelationsPreview from "./relationsPreview";
 import ReactDOM from 'react-dom';
 import { getRelationsTemplate } from "./RelationsTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 const root = '.relations-tab ';
 const state = {};

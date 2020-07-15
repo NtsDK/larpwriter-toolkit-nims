@@ -1,5 +1,4 @@
 import dateFormat from 'dateformat';
-import { U } from 'nims-app-core';
 import * as TestUtils from 'nims-app-core/testUtils';
 import ReactDOM from 'react-dom';
 import {
@@ -8,7 +7,7 @@ import {
 import {
     getShowDiffDialog
 } from "./ShowDiffDialog.jsx";
-
+import { UI, U, L10n } from 'nims-app-core';
 
 
 export const showDiffExample = () => {

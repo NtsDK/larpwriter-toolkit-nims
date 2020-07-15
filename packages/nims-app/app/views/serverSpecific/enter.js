@@ -1,6 +1,7 @@
 const root = '.enter-tab ';
 import ReactDOM from 'react-dom';
 import { getEnterTemplate } from "./EnterTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 let content;
 function getContent(){

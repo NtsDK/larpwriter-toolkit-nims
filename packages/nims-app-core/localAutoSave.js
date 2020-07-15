@@ -1,17 +1,3 @@
-/*Copyright 2018 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
 
 // ((exports) => {
 const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -19,7 +5,7 @@ const IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || w
 const baseName = 'filesBase';
 const storeName = 'filesStore';
 
-exports.test = () => {
+export const test = () => {
 //        console.log('2323223');
 //        exports.put('base1', {
 //            'sd':12,
@@ -57,7 +43,7 @@ function connectDB(callback) {
     };
 }
 
-exports.get = id => new Promise(((resolve, reject) => {
+export const get = id => new Promise(((resolve, reject) => {
     connectDB((err, db) => {
         if (err) { reject(err); return; }
         const request = db.transaction([storeName], 'readonly').objectStore(storeName).get(id);
@@ -68,7 +54,7 @@ exports.get = id => new Promise(((resolve, reject) => {
     });
 }));
 
-exports.put = (id, obj) => new Promise(((resolve, reject) => {
+export const put = (id, obj) => new Promise(((resolve, reject) => {
     connectDB((err, db) => {
         if (err) { reject(err); return; }
         const request = db.transaction([storeName], 'readwrite').objectStore(storeName).put({ id, obj });

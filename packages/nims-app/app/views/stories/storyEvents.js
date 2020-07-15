@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { getStoryEventTemplate } from "./StoryEventTemplate.jsx";
 import { getStoryEventsTemplate } from "./StoryEventsTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 export default function createStoryEvents(Stories){
     const state = {};

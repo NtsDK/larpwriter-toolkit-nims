@@ -1,17 +1,3 @@
-/*Copyright 2015-2017 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
 //const R = require('ramda');
 
 // TODO need to lint utils with NIMS fixes
@@ -29,7 +15,7 @@ const addClass = R.curry((o, c) => {
 });
 
 const addClasses = R.curry((o, c) => {
-    R.ap([U.addClass(o)], c);
+    R.ap([addClass(o)], c);
     return o;
 });
 
@@ -50,18 +36,18 @@ const removeClasses = R.curry((o, c) => {
 });
 
 const toggleClass = R.curry((o, c) => {
-    if (U.hasClass(o, c)) {
-        U.removeClass(o, c);
+    if (hasClass(o, c)) {
+        removeClass(o, c);
     } else {
-        U.addClass(o, c);
+        addClass(o, c);
     }
 });
 
 const setClassByCondition = R.curry((o, c, condition) => {
     if (condition) {
-        U.addClass(o, c);
+        addClass(o, c);
     } else {
-        U.removeClass(o, c);
+        removeClass(o, c);
     }
     return o;
 });
@@ -84,12 +70,12 @@ function qte(sel){
 
 // query materialize template element
 function qmte(sel){
-    return U.addEl(U.makeEl('div'), U.qte(sel)).children[0];
-    // return U.addEl(U.makeEl('div'), U.qte(sel)).firstChild;
+    return addEl(makeEl('div'), qte(sel)).children[0];
+    // return addEl(makeEl('div'), qte(sel)).firstChild;
 }
 
 function queryEls(sel) {
-    return U.nl2array(document.querySelectorAll(sel));
+    return nl2array(document.querySelectorAll(sel));
 }
 
 const qes = queryEls;
@@ -115,11 +101,11 @@ function makeEl(elTag) {
 }
 
 const wrapEl = R.curry((elTag, el) => {
-    return U.addEl(U.makeEl(elTag), el);
+    return addEl(makeEl(elTag), el);
 })
 
 // const wrapEls = R.curry((elTag, els) => {
-//     return U.addEls(U.makeEl(elTag), els);
+//     return addEls(makeEl(elTag), els);
 // })
 
 function makeText(text) {
@@ -133,13 +119,13 @@ const addEl = R.curry((parent, child) => {
     return parent;
 });
 const addEls = R.curry((parent, children) => {
-    R.ap([U.addEl(parent)], children);
+    R.ap([addEl(parent)], children);
     return parent;
 });
 
 const makeOpt = function (label) {
-    const option = U.makeEl('option');
-    U.addEl(option, (U.makeText(label)));
+    const option = makeEl('option');
+    addEl(option, (makeText(label)));
     return option;
 };
 
@@ -195,7 +181,7 @@ function clearEls(els){
 
 function passEls(src, dst) {
     for (let i = 0; i < src.children.length; i++) {
-        U.addEl(dst, src.children[i]);
+        addEl(dst, src.children[i]);
     }
 }
 
@@ -205,7 +191,7 @@ const listen = R.curry((el, event, listener) => {
 });
 
 const listenOnEnter = R.curry((el, callback) => {
-    U.listen(el, 'keydown', (e) => {
+    listen(el, 'keydown', (e) => {
         if (e.keyCode === 13) {
             if(e.iAmNotAlone) {
                 throw new Error('Oh dear!');
@@ -217,12 +203,12 @@ const listenOnEnter = R.curry((el, callback) => {
     });
 });
 
-const fillSelector = R.curry((sel, data) => U.addEls(sel, data.map((item) => {
-    const opt = U.makeEl('option');
-    U.addEl(opt, U.makeText(item.name));
+const fillSelector = R.curry((sel, data) => addEls(sel, data.map((item) => {
+    const opt = makeEl('option');
+    addEl(opt, makeText(item.name));
     if (item.value !== undefined) { opt.value = item.value; }
     if (item.selected !== undefined) { opt.selected = true; }
-    if (item.className !== undefined) { U.addClass(opt, item.className); }
+    if (item.className !== undefined) { addClass(opt, item.className); }
     return opt;
 })));
 
@@ -248,7 +234,8 @@ const getSelectedRadio = function (el, query) {
 //     };
 // };
 
-const U = {
+// const U = {
+export default {
     setAttr, nl2array, qees, addEl, clearEl, makeText, getAttr,
     queryEls, queryEl, addClass, listen,
 
@@ -260,13 +247,15 @@ const U = {
 
     arr2Select,getSelectedRadio,removeClasses,
 
-    // charOrdAObject,
-
-    // getL10n,
-    // constL10n,
-
-    // strFormat,
     isEmpty, addClasses, hasClass, removeClass, toggleClass
 };
 
-module.exports = U;
+// export default U;
+// module.exports = U;
+// charOrdAObject,
+
+// getL10n,
+// constL10n,
+
+// strFormat,
+

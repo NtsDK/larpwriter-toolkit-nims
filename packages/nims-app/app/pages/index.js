@@ -36,7 +36,6 @@ onPageLoad = () => {
     //            U.addEl(state.navigation, makeL10nButton());
     pageCore.refreshView();
     // state.currentView.refresh();
-    // }).catch(UI.handleError);
 };
 
 window.onPageLoad = onPageLoad;

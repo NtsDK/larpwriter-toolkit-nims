@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import { getTextSearchTemplate } from "./TextSearchTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 const root = '.text-search-tab ';
 

@@ -1,6 +1,7 @@
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import ReactDOM from 'react-dom';
 import { getRelation, getRelationRow } from "./RelationsTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 const relationTableHeader = ['character-name', 'direct-relation', 'relation-origin', 'reverse-relation'];
 const partialTableHeader = ['character-name', 'direct-relation'];

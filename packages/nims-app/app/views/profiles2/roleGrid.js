@@ -2,6 +2,7 @@
 import ReactDOM from 'react-dom';
 import { getRoleGridTemplate } from "./RoleGridTemplate.jsx";
 import { makeProfileTable } from "../commons/uiCommons";
+import { UI, U, L10n } from 'nims-app-core';
 
 const root = '.role-grid-tab ';
 let groupingOrder;

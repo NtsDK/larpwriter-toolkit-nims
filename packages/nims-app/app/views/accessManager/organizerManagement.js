@@ -5,6 +5,7 @@ import {
     getProfileItem
 } from "../profiles2/ProfileBindingTemplate.jsx";
 import { getOrganizerManagementTemplate } from "./OrganizerManagementTemplate.jsx";
+import { UI, U, L10n } from 'nims-app-core';
 
 const state = {};
 
