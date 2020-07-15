@@ -1,7 +1,7 @@
 import Slider from 'bootstrap-slider';
 import ReactDOM from 'react-dom';
 import { getSliderContainer } from "./SliderContainer.jsx";
-import { getSlidersTemplate } from "./SlidersTemplate.jsx";
+import { getSlidersTemplate, getCreateSliderBody, getMoveSliderBody } from "./SlidersTemplate.jsx";
 import 'bootstrap-slider/dist/css/bootstrap-slider.min.css';
 import './sliders.css';
 import { createModalDialog } from "../commons/uiCommons";
@@ -24,21 +24,26 @@ function init(){
     L10n.localizeStatic(content);
 
     const createSliderDialog = createModalDialog(root, createSlider, {
-        bodySelector: 'create-slider-body',
         dialogTitle: 'sliders-create-slider',
         actionButtonTitle: 'common-create',
+        getComponent: getCreateSliderBody,
+        componentClass: '.CreateSliderBody'
     });
 
     state.editSliderDialog = createModalDialog(root, editSlider, {
-        bodySelector: 'create-slider-body',
+        // bodySelector: 'create-slider-body',
         dialogTitle: 'sliders-edit-slider',
         actionButtonTitle: 'common-save',
+        getComponent: getCreateSliderBody,
+        componentClass: '.CreateSliderBody'
     });
 
     state.moveSliderDialog = createModalDialog(root, moveSlider, {
-        bodySelector: 'move-slider-body',
+        // bodySelector: 'move-slider-body',
         dialogTitle: 'sliders-move-slider',
         actionButtonTitle: 'common-move',
+        getComponent: getMoveSliderBody,
+        componentClass: '.MoveSliderBody'
     });
 
     U.listen(U.qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());

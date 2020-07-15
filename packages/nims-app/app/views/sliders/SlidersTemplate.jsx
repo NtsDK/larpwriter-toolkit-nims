@@ -44,3 +44,37 @@ export const SlidersTemplate = function() {
 export function getSlidersTemplate() {
   return <SlidersTemplate />;
 }
+
+export const CreateSliderBody = function() {
+  return (
+    <div className="CreateSliderBody">
+      <div className=" form-group">
+        <label className="control-label" l10n-id="sliders-slider-name"></label>
+        <input className="slider-name form-control focusable onenterable"/>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="sliders-slider-top"></label>
+        <input className="slider-top form-control onenterable"/>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="sliders-slider-bottom"></label>
+        <input className="slider-bottom form-control"/>
+      </div>
+    </div>
+  );
+};
+
+export function getCreateSliderBody() {
+  return <CreateSliderBody />;
+}
+export const MoveSliderBody = function() {
+  return (
+    <div className="MoveSliderBody form-group">
+      <select className="form-control move-slider-pos-select"></select> 
+    </div>
+  );
+};
+
+export function getMoveSliderBody() {
+  return <MoveSliderBody />;
+}

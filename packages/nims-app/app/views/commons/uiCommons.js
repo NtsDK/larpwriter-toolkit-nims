@@ -48,7 +48,16 @@ export const createModalDialog = (root, onAction, opts) => {
         U.addClass(el, opts.dialogClass);
     }
     const body = U.qee(el, '.modal-body');
-    U.addEl(body, U.qte(`${commons} .${opts.bodySelector}`));
+    let bodyContent;
+    if(opts.bodySelector){
+        bodyContent = U.qte(`${commons} .${opts.bodySelector}`);
+    } else {
+        const content = U.makeEl('div');
+        ReactDOM.render(opts.getComponent(), content);
+        bodyContent = U.qee(content, opts.componentClass);
+    }
+
+    U.addEl(body, bodyContent);
     if (opts.body !== undefined) {
         R.toPairs(opts.body).map((pair) => U.setAttr(U.qee(body, pair[0]), 'l10n-id', pair[1]));
     }
