@@ -2,7 +2,11 @@
 import PermissionInformer from "permissionInformer";
 import ReactDOM from 'react-dom';
 import { getStoryEventTemplate } from "./StoryEventTemplate.jsx";
-import { getStoryEventsTemplate } from "./StoryEventsTemplate.jsx";
+import {
+    getStoryEventsTemplate,
+    getCreateEventBody,
+    getMoveEventBody
+} from "./StoryEventsTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
 
@@ -29,17 +33,21 @@ export default function createStoryEvents(Stories){
         L10n.localizeStatic(content);
 
         createEventDialog = createModalDialog('.stories-tab ', createEvent, {
-            bodySelector: 'create-event-body',
+            // bodySelector: 'create-event-body',
             dialogTitle: 'stories-event-creation',
             actionButtonTitle: 'common-create',
+            getComponent: getCreateEventBody,
+            componentClass: 'CreateEventBody'
         });
 
         //        U.listen(U.qe(`${root}.create.event`), 'click', () => createEventDialog.showDlg());
 
         state.moveEventDialog = createModalDialog(root, moveEvent, {
-            bodySelector: 'move-event-body',
+            // bodySelector: 'move-event-body',
             dialogTitle: 'stories-move-event',
             actionButtonTitle: 'common-move',
+            getComponent: getMoveEventBody,
+            componentClass: 'MoveEventBody'
         });
         content = U.qe(root);
         initialized = true;

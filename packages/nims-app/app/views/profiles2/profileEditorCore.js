@@ -1,6 +1,8 @@
 import ReactDOM from 'react-dom';
 import { getProfileEditorContainer, getProfileEditorRow } from "./ProfileEditorCoreTemplate.jsx";
 import { UI, U, L10n } from 'nims-app-core';
+import { getAlertBlock } from '../commons/uiCommons2.jsx'
+
 // ((exports) => {
 export default {
     makeProfileEditorCore
@@ -27,7 +29,11 @@ function makeProfileEditorCore(){
         state[type].profileStructure = profileStructure;
 
         if (profileStructure.length === 0) {
-            const alert = U.qmte('.alert-block-tmpl');
+            const content = U.makeEl('div');
+            ReactDOM.render(getAlertBlock(), content);
+            const alert = U.qee(content, '.AlertBlock');
+
+            // const alert = U.qmte('.alert-block-tmpl');
             U.addEl(alert, U.makeText(L10n.get('advices', `empty-${type}-profile-structure`)));
             U.addEl(U.queryEl(profileDiv), alert);
             if (callback) callback();

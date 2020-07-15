@@ -3,10 +3,16 @@ import ReactDOM from 'react-dom';
 import {
     getEnumValueEditor,
     getProfileConfigurerRow,
-    getProfileConfigurerTemplate
+    getProfileConfigurerTemplate,
+    getEnumDialogEditor,
+    getMultiEnumDialogEditor,
+    getRenameEnumValue,
+    getMoveProfileItemBody,
+    getCreateProfileItemBody
 } from "./ProfileConfigurerTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
+import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
 // Character/Player profiles already have field 'name'
 // I had some choices:
@@ -43,9 +49,11 @@ function ProfileConfigurerTmpl(opts) {
         const createProfileItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             createProfileItem, {
-                bodySelector: 'create-profile-item-body',
+                // bodySelector: 'create-profile-item-body',
                 dialogTitle: 'profiles-create-profile-item',
                 actionButtonTitle: 'common-create',
+                getComponent: getCreateProfileItemBody,
+                componentClass: 'CreateProfileItemBody',
                 initBody: (body) => {
                     const sel = U.clearEl(U.qee(body, '.create-entity-type-select'));
                     const fillMainSel = () => { fillItemTypesSel(U.clearEl(sel)); };
@@ -58,27 +66,33 @@ function ProfileConfigurerTmpl(opts) {
         state.renameProfileItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             renameProfileItem, {
-                bodySelector: 'modal-prompt-body',
+                // bodySelector: 'modal-prompt-body',
                 dialogTitle: 'profiles-enter-new-profile-item-name',
                 actionButtonTitle: 'common-rename',
+                getComponent: getModalPromptBody,
+                componentClass: 'ModalPromptBody'
             }
         );
 
         state.moveProfileItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             moveProfileItem, {
-                bodySelector: 'move-profile-item-body',
+                // bodySelector: 'move-profile-item-body',
                 dialogTitle: 'profiles-new-profile-item-position',
                 actionButtonTitle: 'common-move',
+                getComponent: getMoveProfileItemBody,
+                componentClass: 'MoveProfileItemBody',
             }
         );
 
         state.renameEnumItemDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             renameEnumValue, {
-                bodySelector: 'rename-enum-value-tmpl',
+                // bodySelector: 'rename-enum-value-tmpl',
                 dialogTitle: 'profiles-rename-enum-item',
                 actionButtonTitle: 'common-rename',
+                getComponent: getRenameEnumValue,
+                componentClass: 'RenameEnumValue',
                 initBody: (body) => {
                     const renameSelect = U.clearEl(U.qee(body, '.renamed-value-select'));
                     const renameInput = U.clearEl(U.qee(body, '.enum-value-name-input'));
@@ -92,9 +106,11 @@ function ProfileConfigurerTmpl(opts) {
         state.enumEditorDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             updateEnumValues, {
-                bodySelector: 'enum-dialog-editor-tmpl',
+                // bodySelector: 'enum-dialog-editor-tmpl',
                 dialogTitle: 'profiles-enum-editor',
                 actionButtonTitle: 'common-save',
+                getComponent: getEnumDialogEditor,
+                componentClass: 'EnumDialogEditor',
                 initBody: (body) => {
                     const addedValuesArea = U.qee(body, '.new-enum-values');
                     const removedValuesArea = U.qee(body, '.removed-enum-values');
@@ -127,9 +143,11 @@ function ProfileConfigurerTmpl(opts) {
         state.multiEnumEditorDialog = createModalDialog(
             `.profile-configurer2-tab.${`${tabType}-type`}`,
             updateEnumValues, {
-                bodySelector: 'multi-enum-dialog-editor-tmpl',
+                // bodySelector: 'multi-enum-dialog-editor-tmpl',
                 dialogTitle: 'profiles-multi-enum-editor',
                 actionButtonTitle: 'common-save',
+                getComponent: getMultiEnumDialogEditor,
+                componentClass: 'MultiEnumDialogEditor',
                 initBody: (body) => {
                     const addedValuesArea = U.qee(body, '.new-enum-values');
                     const removedValuesArea = U.qee(body, '.removed-enum-values');

@@ -8,6 +8,7 @@ import {
     getAdaptation
 } from "./AdaptationsTemplate.jsx";
 import { UI, U, L10n } from 'nims-app-core';
+import { getAlertBlock } from '../commons/uiCommons2.jsx';
 
 const root = '.adaptations-tab ';
 
@@ -227,20 +228,29 @@ function showPersonalStories(storyName) {
 function buildAdaptationInterface(storyName, characterNames, events, areAdaptationsEditable, metaInfo) {
     const div = U.clearEl(U.queryEl('#personalStories'));
     if (events.length === 0) {
-        const alert = U.qmte('.alert-block-tmpl');
+        const content = U.makeEl('div');
+        ReactDOM.render(getAlertBlock(), content);
+        const alert = U.qee(content, '.AlertBlock');
+        // const alert = U.qmte('.alert-block-tmpl');
         U.addEl(alert, U.makeText(L10n.get('advices', 'no-events-in-story')));
         U.addClass(alert, 'margin-bottom-8');
         U.addEl(div, alert);
     }
     if (characterNames.length === 0) {
-        const alert = U.qmte('.alert-block-tmpl');
+        const content = U.makeEl('div');
+        ReactDOM.render(getAlertBlock(), content);
+        const alert = U.qee(content, '.AlertBlock');
+        // const alert = U.qmte('.alert-block-tmpl');
         U.addEl(alert, U.makeText(L10n.get('advices', 'no-characters-in-story')));
         U.addClass(alert, 'margin-bottom-8');
         U.addEl(div, alert);
     }
     const adaptationsNum = R.flatten(events.map(event => R.keys(event.characters))).length;
     if (adaptationsNum === 0) {
-        const alert = U.qmte('.alert-block-tmpl');
+        const content = U.makeEl('div');
+        ReactDOM.render(getAlertBlock(), content);
+        const alert = U.qee(content, '.AlertBlock');
+        // const alert = U.qmte('.alert-block-tmpl');
         U.addEl(alert, U.makeText(L10n.get('advices', 'no-adaptations-in-story')));
         U.addClass(alert, 'margin-bottom-8');
         U.addEl(div, alert);

@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom';
 import { getStoriesTemplate } from "./StoriesTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
+import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
 const Stories = {};
 
@@ -29,15 +30,19 @@ Stories.init = () => {
     L10n.localizeStatic(Stories.content);
 
     const createStoryDialog = createModalDialog(root, createStory, {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'stories-enter-story-name',
         actionButtonTitle: 'common-create',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
 
     const renameStoryDialog = createModalDialog(root, renameStory, {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'stories-enter-new-story-name',
         actionButtonTitle: 'common-rename',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
 
     state.left = { views: {} };

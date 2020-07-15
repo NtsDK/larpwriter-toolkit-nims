@@ -27,7 +27,7 @@ function init(){
         dialogTitle: 'sliders-create-slider',
         actionButtonTitle: 'common-create',
         getComponent: getCreateSliderBody,
-        componentClass: '.CreateSliderBody'
+        componentClass: 'CreateSliderBody'
     });
 
     state.editSliderDialog = createModalDialog(root, editSlider, {
@@ -35,7 +35,7 @@ function init(){
         dialogTitle: 'sliders-edit-slider',
         actionButtonTitle: 'common-save',
         getComponent: getCreateSliderBody,
-        componentClass: '.CreateSliderBody'
+        componentClass: 'CreateSliderBody'
     });
 
     state.moveSliderDialog = createModalDialog(root, moveSlider, {
@@ -43,7 +43,7 @@ function init(){
         dialogTitle: 'sliders-move-slider',
         actionButtonTitle: 'common-move',
         getComponent: getMoveSliderBody,
-        componentClass: '.MoveSliderBody'
+        componentClass: 'MoveSliderBody'
     });
 
     U.listen(U.qe(`${root} .create`), 'click', () => createSliderDialog.showDlg());

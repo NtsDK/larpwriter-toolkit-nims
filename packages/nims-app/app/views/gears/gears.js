@@ -3,10 +3,11 @@ import 'vis/dist/vis.min.css';
 import './gears.css';
 import { saveAs } from 'file-saver';
 import ReactDOM from 'react-dom';
-import { getGearsTemplate } from "./GearsTemplate.jsx";
+import { getGearsTemplate, getAddOrEditNodeBody, getConfigInnerBody } from "./GearsTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import * as FileUtils from 'nims-app-core/fileUtils';
 import { UI, U, L10n } from 'nims-app-core';
+import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
 const root = '.gears-tab';
 const state = {};
@@ -29,29 +30,37 @@ function init(){
     L10n.localizeStatic(content);
 
     state.addNodeDialog = createModalDialog(root, updateNode, {
-        bodySelector: 'add-or-edit-node-body',
+        // bodySelector: 'add-or-edit-node-body',
         dialogTitle: 'gears-add-node',
         actionButtonTitle: 'common-save',
-        onCancel: onNodeCancel
+        onCancel: onNodeCancel,
+        getComponent: getAddOrEditNodeBody,
+        componentClass: "AddOrEditNodeBody"
     });
 
     state.editNodeDialog = createModalDialog(root, updateNode, {
-        bodySelector: 'add-or-edit-node-body',
+        // bodySelector: 'add-or-edit-node-body',
         dialogTitle: 'gears-edit-node',
         actionButtonTitle: 'common-save',
-        onCancel: onNodeCancel
+        onCancel: onNodeCancel,
+        getComponent: getAddOrEditNodeBody,
+        componentClass: "AddOrEditNodeBody"
     });
 
     state.renameEdgeDialog = createModalDialog(root, renameEdge, {
-        bodySelector: 'modal-prompt-body',
+        // bodySelector: 'modal-prompt-body',
         dialogTitle: 'gears-rename-edge',
         actionButtonTitle: 'common-save',
+        getComponent: getModalPromptBody,
+        componentClass: 'ModalPromptBody'
     });
 
     const configureNetworkDialog = createModalDialog(root, dialog => () => dialog.hideDlg(), {
-        bodySelector: 'config-inner-body',
+        // bodySelector: 'config-inner-body',
         dialogTitle: 'gears-configure-network',
         actionButtonTitle: 'common-close',
+        getComponent: getConfigInnerBody,
+        componentClass: "ConfigInnerBody"
     });
 
     U.addClass(U.qee(configureNetworkDialog, '.modal-dialog'), 'gears-config-dialog');

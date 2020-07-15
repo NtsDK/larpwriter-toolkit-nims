@@ -151,3 +151,40 @@ export const GearsTemplate = function() {
 export function getGearsTemplate() {
   return <GearsTemplate />;
 }
+
+export const AddOrEditNodeBody = function() {
+  return (
+    <div className="AddOrEditNodeBody">
+      <div className="form-group hidden">
+        <input className="node-id" value="new value" />
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="gears-node-name"></label>
+        <input className="node-name form-control focusable onenterable"/>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="gears-node-group"></label>
+        <input className="node-group form-control onenterable"/>
+      </div>
+      <div className="form-group">
+        <label className="control-label" l10n-id="gears-notes"></label>
+        <textarea className="node-notes form-control"></textarea>
+      </div>
+    </div>
+  );
+};
+
+export function getAddOrEditNodeBody() {
+  return <AddOrEditNodeBody />;
+}
+
+export const ConfigInnerBody = function() {
+  return (
+    <div className="ConfigInnerBody configInner" >
+    </div>
+  );
+};
+
+export function getConfigInnerBody() {
+  return <ConfigInnerBody />;
+}

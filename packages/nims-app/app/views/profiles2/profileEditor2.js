@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { getEntityItem, getProfileEditorTemplate } from "./ProfileEditorTemplate.jsx";
 import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
+import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
 function ProfileEditorTmpl(opts) {
     const innerExports = {};
@@ -42,16 +43,20 @@ function ProfileEditorTmpl(opts) {
         const createCharacterDialog = createModalDialog(
             `.profile-editor2-tab.${`${firstType}-type`}`,
             createProfile, {
-                bodySelector: 'modal-prompt-body',
+                // bodySelector: 'modal-prompt-body',
                 dialogTitle: `profiles-${opts.createMsg}`,
                 actionButtonTitle: 'common-create',
+                getComponent: getModalPromptBody,
+                componentClass: 'ModalPromptBody'
             }
         );
         U.listen(U.queryEl(`${root} .create`), 'click', () => createCharacterDialog.showDlg());
         state.renameCharacterDialog = createModalDialog(`.${`${firstType}-type`}`, renameProfile, {
-            bodySelector: 'modal-prompt-body',
+            // bodySelector: 'modal-prompt-body',
             dialogTitle: `profiles-${opts.renameMsg}`,
             actionButtonTitle: 'common-rename',
+            getComponent: getModalPromptBody,
+            componentClass: 'ModalPromptBody'
         });
 
         U.hideEl(U.qee(el, '.report-by-stories'), firstType === 'player');
