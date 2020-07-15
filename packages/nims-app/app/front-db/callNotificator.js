@@ -70,4 +70,3 @@ module.exports = function (dbms) {
 };
 
 
-// })(window.CallNotificator = {});

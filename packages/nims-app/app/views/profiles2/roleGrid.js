@@ -312,7 +312,6 @@ var makePanelList = profileArray => profileArray.sort(CU.charOrdAFactory(a => a.
 
     return panelInfo.panel;
 });
-// })(window.RoleGrid = {});
 export default {
     init, refresh, getContent
 }

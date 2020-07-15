@@ -169,6 +169,5 @@ function redrawSchema2(graphData, className) {
 
     layouter.start();
 }
-// })(window.GroupSchema = {});
 
 export default {init, getContent, refresh};

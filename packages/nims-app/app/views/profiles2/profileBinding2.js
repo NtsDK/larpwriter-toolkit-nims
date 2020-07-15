@@ -175,4 +175,3 @@ function removeBinding(binding) {
         playerName: binding[1]
     }).then(refresh, UI.handleError);
 }
-// })(window.ProfileBinding2 = {});

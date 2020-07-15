@@ -268,4 +268,3 @@ export default function createStoryEvents(Stories){
         init, refresh, getContent, getCreateEventDialog
     };
 };
-// )(window.StoryEvents = {});

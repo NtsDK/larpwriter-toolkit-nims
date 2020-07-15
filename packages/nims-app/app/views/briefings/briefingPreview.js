@@ -456,4 +456,3 @@ function updateCharacterInventory(event) {
     } = event.target;
     DBMS.updateCharacterInventory({ storyName, characterName, inventory: value }).catch(UI.handleError);
 }
-// })(window.BriefingPreview = {});

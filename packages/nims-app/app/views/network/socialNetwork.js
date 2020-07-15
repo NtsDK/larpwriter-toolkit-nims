@@ -514,4 +514,3 @@ function neighbourhoodHighlight(params) {
     // transform the object into an array
     state.nodesDataset.update(R.values(allNodes));
 }
-// })(window.SocialNetwork = {});

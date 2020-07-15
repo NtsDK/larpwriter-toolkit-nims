@@ -99,7 +99,6 @@ function getCompletenessColor(value, total) {
     p = (p - 0.5) * 2;
     return CU.strFormat('rgba({0},{1},{2}, 1)', [calc(255, 123, p), calc(255, 225, p), calc(0, 65, p)]); // yellow to green mapping
 }
-// })(window.CharacterReports = {});
 export default {
     makeStoryReportRow,
     makeRelationReportRow

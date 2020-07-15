@@ -96,9 +96,9 @@ const config = {
 
             // app
             // core: 'app-core',
-            U: ['nims-app-core', 'U'],
-            L10n: ['nims-app-core', 'L10n'],
-            UI: ['nims-app-core', 'UI'],
+            // U: ['nims-app-core', 'U'],
+            // L10n: ['nims-app-core', 'L10n'],
+            // UI: ['nims-app-core', 'UI'],
             // FileUtils: ['nims-app-core', 'FileUtils'],
             // core: 'core',
             // U: ['core', 'U'],

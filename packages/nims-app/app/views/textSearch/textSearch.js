@@ -59,5 +59,4 @@ function makePanel(title, content) {
     panelInfo.a.click();
     return panelInfo.panel;
 }
-// })(window.TextSearch = {});
 export default {init, getContent, refresh};

@@ -467,7 +467,6 @@ function getCharacterNames(characterArray) {
 function getEventIndexes(eventArray) {
     return getNames(eventArray, 'index', 'eventIndexes');
 }
-// })(window.Adaptations = {});
 export default {
     init, refresh, getContent, makeOriginCard, makeAdaptationCard
 }

@@ -75,4 +75,3 @@ function buildInterface(text, profileInfo, playersOptions) {
 
     U.queryEl(`${root}.welcome-text-area`).value = text;
 }
-// })(window.Player = {});

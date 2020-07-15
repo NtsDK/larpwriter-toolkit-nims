@@ -45,4 +45,3 @@ export default function createWriterStory(Stories){
     };
 };
 
-//(window.WriterStory = {});

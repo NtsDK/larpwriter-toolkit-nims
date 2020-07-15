@@ -259,7 +259,6 @@ function makeDocxTemplate(type) {
     const zip = new JSZip(state.templates.genericTemplate);
     doc.loadZip(zip);
 
-    // const doc = new window.Docxgen(state.templates.genericTemplate);
     doc.setData({
         splittedText: template
     });
@@ -370,7 +369,6 @@ function makeArchiveData(briefingData, generateSingleDelegate) {
 }
 
 generateSingleDocx = R.curry((type, template, data) => {
-    // const doc = new window.Docxgen(template);
     const doc = new Docxtemplater();
     const zip = new JSZip(template);
     doc.loadZip(zip);
@@ -391,4 +389,3 @@ generateSingleTxt = R.curry((template, data) => {
         throw err;
     }
 });
-// })(window.BriefingExport = {});
