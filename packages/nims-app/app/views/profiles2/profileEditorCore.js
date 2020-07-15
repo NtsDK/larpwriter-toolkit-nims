@@ -180,4 +180,3 @@ function makeProfileEditorCore(){
 
     return innerExports;
 };
-// })(window.ProfileEditorCore = {});

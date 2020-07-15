@@ -228,7 +228,6 @@ function fillCharSelector(select1, button, data, fromCharacter, makeRowCallback)
         }).catch(UI.handleError);
     });
 }
-// })(window.RelationsPreview = {});
 export default {
     makeRelationsContent
 }

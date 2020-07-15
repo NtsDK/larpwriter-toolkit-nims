@@ -159,4 +159,3 @@ function setWelcomeText(event) {
 function setPlayerOption(event) {
     DBMS.setPlayerOption({ name: event.target.value, value: event.target.checked }).catch(UI.handleError);
 }
-// })(window.PlayerManagement = {});

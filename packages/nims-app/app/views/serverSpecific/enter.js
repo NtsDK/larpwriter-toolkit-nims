@@ -48,8 +48,6 @@ function submit() {
         //             }
     });
     request.done((data) => {
-        //             //window.location.href = "/chat";
-        //             window.location.href = "/nims.html";
         window.location.href = '/page.html';
     });
 
@@ -68,4 +66,3 @@ function submit() {
 
     return false;
 }
-// })(window.Enter = {});

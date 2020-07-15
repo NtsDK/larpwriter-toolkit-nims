@@ -400,7 +400,6 @@ function customTooltips(tooltip) {
     tooltipEl.style.padding = `${tooltip.yPadding}px ${tooltip.xPadding}px`;
 }
 
-// })(window.Overview = {});
 export default {
     init, refresh, getContent
 };

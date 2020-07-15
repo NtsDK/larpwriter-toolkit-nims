@@ -582,4 +582,3 @@ function renameGroup(selector) {
         }).catch((err) => UI.setError(dialog, err));
     };
 }
-// })(window.ProfileFilter = {});

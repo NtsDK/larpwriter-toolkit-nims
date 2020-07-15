@@ -70,4 +70,3 @@ function onNetworkSubsetsChange(event) {
     U.hideEl(U.queryEl('#networkCharacterDiv'), selectedSubset !== Constants.objectSubsets[1]);
     U.hideEl(U.queryEl('#networkStoryDiv'), selectedSubset !== Constants.objectSubsets[2]);
 }
-// })(window.NetworkSubsetsSelector = {});

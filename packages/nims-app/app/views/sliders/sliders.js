@@ -161,4 +161,3 @@ export default {
     init, refresh, getContent
 }
 
-// })(window.Sliders = {});

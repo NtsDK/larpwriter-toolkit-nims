@@ -403,4 +403,3 @@ var filterList = sel => (event) => {
         U.hideEl(el, !isVisible);
     });
 };
-// })(window.OrganizerManagement = {});

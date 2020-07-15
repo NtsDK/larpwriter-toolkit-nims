@@ -83,4 +83,3 @@ function load(data, callback){
         callback();
     }).catch(UI.handleError);
 };
-// })(window.Relations = {});

@@ -189,5 +189,4 @@ function fillTimelines(usedData) {
         }));
     })));
 }
-// })(window.Timeline = {});
 export default {init, getContent, refresh};

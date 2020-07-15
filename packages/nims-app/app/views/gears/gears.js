@@ -436,4 +436,3 @@ function onNodeCancel() {
         state.nodeCallback = null;
     }
 }
-// })(window.Gears = {});

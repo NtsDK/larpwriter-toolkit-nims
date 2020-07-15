@@ -54,4 +54,3 @@ function submit() {
 
     return false;
 }
-// })(window.SignUp = {});

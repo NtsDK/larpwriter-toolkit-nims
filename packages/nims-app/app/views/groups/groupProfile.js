@@ -344,7 +344,6 @@ const removeGroup = (callback, refresh, btn) => () => {
         }).catch(UI.handleError);
     });
 };
-// })(window.GroupProfile = {});
 export default {
     init, refresh, getContent, makeFilterItemString, createGroup, removeGroup
 }

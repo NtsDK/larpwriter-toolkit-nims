@@ -16,4 +16,3 @@ function init(){
 function refresh(){
 
 };
-// })(window.Template = {});
