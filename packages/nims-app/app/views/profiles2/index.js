@@ -2,9 +2,9 @@ import { CharacterEditor, PlayerEditor } from './profileEditor2';
 import { CharacterConfigurer, PlayerConfigurer } from './profileConfigurer2';
 import ProfileBinding2 from './profileBinding2';
 
-import buildRouteView from '../tabRouting/routingTab';
+import { RoutingTab } from '../tabRouting/routingTab';
 
-export const Characters = buildRouteView({
+export const Characters = new RoutingTab({
     firstTab: 'CharacterEditor',
     tabs: [{
         btnName: 'filling-profile',
@@ -21,7 +21,7 @@ export const Characters = buildRouteView({
     }]
 });
 
-export const Players = buildRouteView({
+export const Players = new RoutingTab({
     firstTab: 'PlayerEditor',
     tabs: [{
         btnName: 'filling-profile',

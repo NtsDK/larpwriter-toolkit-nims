@@ -1,9 +1,9 @@
 import BriefingPreview from './briefingPreview';
 import BriefingExport from './briefingExport';
 
-import buildRouteView from '../tabRouting/routingTab';
+import { RoutingTab } from '../tabRouting/routingTab';
 
-export const Briefings = buildRouteView({
+export const Briefings = new RoutingTab({
     firstTab: 'BriefingExport',
     tabs: [{
         btnName: 'briefing-preview',

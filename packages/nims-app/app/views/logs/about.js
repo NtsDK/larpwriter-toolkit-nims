@@ -3,19 +3,25 @@ import ReactDOM from 'react-dom';
 import { getAboutTemplate } from "./AboutTemplate.jsx";
 import { U, L10n } from 'nims-app-core';
 
-let subContainer;
-const getContent = () => subContainer;
+export class About {
+    subContainer;
 
-const init = () => {
-    subContainer = U.makeEl('div');
-    U.addEl(U.qe('.tab-container'), subContainer);
-    ReactDOM.render(getAboutTemplate(), subContainer);
-    L10n.localizeStatic(subContainer);
-};
+    constructor(){
 
-// const getContent = () => U.queryEl('#aboutDiv');
+    }
 
-const refresh = () => {
-};
+    getContent = () => this.subContainer;
 
-export default {init, getContent, refresh};
+    init(){
+        this.subContainer = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), this.subContainer);
+        ReactDOM.render(getAboutTemplate(), this.subContainer);
+        L10n.localizeStatic(this.subContainer);
+    };
+
+    refresh(){
+    };
+}
+
+
+// export default {init, getContent, refresh};
