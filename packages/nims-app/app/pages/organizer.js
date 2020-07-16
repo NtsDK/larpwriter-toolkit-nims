@@ -27,12 +27,12 @@ import Overview from '../views/overview/overview';
 import Stories from '../views/stories/stories';
 import Adaptations from '../views/adaptations/adaptations';
 import Relations from '../views/briefings/relations';
-import RoleGrid from '../views/profiles2/roleGrid';
-import Timeline from '../views/timeline/timeline';
+import { RoleGrid } from '../views/profiles2/roleGrid';
+import { Timeline } from '../views/timeline/timeline';
 import SocialNetwork from '../views/network/socialNetwork';
-import TextSearch from '../views/textSearch/textSearch';
-import ProfileFilter from '../views/groups/profileFilter';
-import GroupProfile from '../views/groups/groupProfile';
+import { TextSearch } from '../views/textSearch/textSearch';
+import { ProfileFilter } from '../views/groups/profileFilter';
+import { GroupProfile } from '../views/groups/groupProfile';
 
 import { Briefings } from '../views/briefings';
 import { LogViewer2 } from '../views/logs';
@@ -104,8 +104,10 @@ function onDatabaseLoad() {
         PermissionInformer.isAdmin().then((isAdmin) => {
             $.datetimepicker.setDateFormatter('moment');
 
-            // const firstTab = 'Overview';
-            const firstTab = 'LogViewer2';
+            const firstTab = 'ProfileFilter';
+            // const firstTab = 'AccessManager';
+
+            const globalObjects = {L10n, DBMS, SM};
 
             pageCore.addView('overview', 'Overview', Overview);
             pageCore.addView('characters', 'Characters', Characters);
@@ -117,12 +119,12 @@ function onDatabaseLoad() {
 
             pageCore.addNavSeparator();
 
-            pageCore.addView('timeline', 'Timeline', Timeline, { clazz: 'timelineButton icon-button', tooltip: true });
+            pageCore.addView('timeline', 'Timeline', new Timeline(globalObjects), { clazz: 'timelineButton icon-button', tooltip: true });
             pageCore.addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
-            pageCore.addView('profile-filter', 'ProfileFilter', ProfileFilter, { clazz: 'filterButton icon-button', tooltip: true });
-            pageCore.addView('groups', 'GroupProfile', GroupProfile, { clazz: 'groupsButton icon-button', tooltip: true });
-            pageCore.addView('textSearch', 'TextSearch', TextSearch, { clazz: 'textSearchButton icon-button', tooltip: true });
-            pageCore.addView('roleGrid', 'RoleGrid', RoleGrid, { clazz: 'roleGridButton icon-button', tooltip: true });
+            pageCore.addView('profile-filter', 'ProfileFilter', new ProfileFilter(), { clazz: 'filterButton icon-button', tooltip: true });
+            pageCore.addView('groups', 'GroupProfile', new GroupProfile(globalObjects), { clazz: 'groupsButton icon-button', tooltip: true });
+            pageCore.addView('textSearch', 'TextSearch', new TextSearch(globalObjects), { clazz: 'textSearchButton icon-button', tooltip: true });
+            pageCore.addView('roleGrid', 'RoleGrid', new RoleGrid(globalObjects), { clazz: 'roleGridButton icon-button', tooltip: true });
 
             pageCore.addNavSeparator();
 

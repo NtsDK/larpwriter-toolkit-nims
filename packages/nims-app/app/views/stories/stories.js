@@ -11,6 +11,7 @@ import createWriterStory from "./writerStory";
 import createStoryEvents from "./storyEvents";
 import createStoryCharacters from "./storyCharacters";
 import createEventPresence from "./eventPresence";
+
 const WriterStory = createWriterStory(Stories);
 const StoryEvents = createStoryEvents(Stories);
 const StoryCharacters = createStoryCharacters(Stories);

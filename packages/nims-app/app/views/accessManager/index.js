@@ -1,9 +1,9 @@
 import OrganizerManagement from './organizerManagement';
 import PlayerManagement from './playerManagement';
 
-import buildRouteView from '../tabRouting/routingTab';
+import { RoutingTab } from '../tabRouting/routingTab';
 
-export const AccessManager = buildRouteView({
+export const AccessManager = new RoutingTab({
     firstTab: 'OrganizerManagement',
     tabs: [{
         btnName: 'organizerManagement',

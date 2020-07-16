@@ -1,22 +1,22 @@
-import LogViewer from './logViewer';
-import About from './About';
-import GroupSchema from '../groups/groupSchema';
+import { LogViewer } from './logViewer';
+import { About } from './About';
+import { GroupSchema } from '../groups/groupSchema';
 
-import buildRouteView from '../tabRouting/routingTab';
+import { RoutingTab } from '../tabRouting/routingTab';
 
-export const LogViewer2 = buildRouteView({
-    firstTab: 'About',
+export const LogViewer2 = new RoutingTab({
+    firstTab: 'GroupSchema',
     tabs: [{
         btnName: 'logViewer',
         viewName: 'LogViewer',
-        viewBody: LogViewer
+        viewBody: new LogViewer()
     }, {
         btnName: 'group-schema',
         viewName: 'GroupSchema',
-        viewBody: GroupSchema
+        viewBody: new GroupSchema()
     }, {
         btnName: 'about',
         viewName: 'About',
-        viewBody: About
+        viewBody: new About()
     }]
 });
