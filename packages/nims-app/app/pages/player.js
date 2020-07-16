@@ -37,7 +37,7 @@ onPageLoad = () => {
     pageCore.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
 
     pageCore.setFirstTab('Player');
-    pageCore.refreshView();
+    pageCore.refreshCurrentView();
 };
 
 window.onPageLoad = onPageLoad;
