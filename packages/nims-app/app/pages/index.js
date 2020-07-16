@@ -34,7 +34,7 @@ onPageLoad = () => {
 
     pageCore.setFirstTab('Enter');
     //            U.addEl(state.navigation, makeL10nButton());
-    pageCore.refreshView();
+    pageCore.refreshCurrentView();
     // state.currentView.refresh();
 };
 

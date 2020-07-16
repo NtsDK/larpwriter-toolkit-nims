@@ -15,7 +15,7 @@ import './nims.html';
 
 import CallNotificator from '../front-db/callNotificator';
 import {
-    PageCore, btnOpts, makeL10nButton, postLogout, makeButton
+    btnOpts, makeL10nButton, postLogout, makeButton, initPage
 } from './pageCore';
 
 import '../style/common.css';
@@ -67,12 +67,14 @@ const { localAutoSave, runBaseSelectDialog, makeBackup } = initLocalBaseBackup({
 
 let firstBaseLoad = PRODUCT === 'STANDALONE';
 
-const pageCore = new PageCore();
+// const pageCore = new PageCore();
+let navComponent = null;
 
 let onPageLoad = null;
 if (PRODUCT === 'STANDALONE') {
     onPageLoad = () => {
-        pageCore.initPage();
+        navComponent = initPage();
+        // pageCore.initPage();
         window.DBMS = DbmsFactory({
             logModule,
             projectName: PROJECT_NAME,
@@ -88,7 +90,8 @@ if (PRODUCT === 'STANDALONE') {
     };
 } else {
     onPageLoad = () => {
-        pageCore.initPage();
+        navComponent = initPage();
+        // pageCore.initPage();
         window.DBMS = DbmsFactory();
         consistencyCheck((checkResult) => {
             consistencyCheckAlert(checkResult);
@@ -109,24 +112,24 @@ function onDatabaseLoad() {
 
             const globalObjects = {L10n, DBMS, SM};
 
-            pageCore.addView('overview', 'Overview', Overview);
-            pageCore.addView('characters', 'Characters', Characters);
-            pageCore.addView('players', 'Players', Players);
-            pageCore.addView('stories', 'Stories', Stories);
-            pageCore.addView('adaptations', 'Adaptations', Adaptations);
-            pageCore.addView('briefings', 'Briefings', Briefings);
-            pageCore.addView('relations', 'Relations', Relations);
+            navComponent.addView('overview', 'Overview', Overview);
+            navComponent.addView('characters', 'Characters', Characters);
+            navComponent.addView('players', 'Players', Players);
+            navComponent.addView('stories', 'Stories', Stories);
+            navComponent.addView('adaptations', 'Adaptations', Adaptations);
+            navComponent.addView('briefings', 'Briefings', Briefings);
+            navComponent.addView('relations', 'Relations', Relations);
 
-            pageCore.addNavSeparator();
+            navComponent.addNavSeparator();
 
-            pageCore.addView('timeline', 'Timeline', new Timeline(globalObjects), { clazz: 'timelineButton icon-button', tooltip: true });
-            pageCore.addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
-            pageCore.addView('profile-filter', 'ProfileFilter', new ProfileFilter(), { clazz: 'filterButton icon-button', tooltip: true });
-            pageCore.addView('groups', 'GroupProfile', new GroupProfile(globalObjects), { clazz: 'groupsButton icon-button', tooltip: true });
-            pageCore.addView('textSearch', 'TextSearch', new TextSearch(globalObjects), { clazz: 'textSearchButton icon-button', tooltip: true });
-            pageCore.addView('roleGrid', 'RoleGrid', new RoleGrid(globalObjects), { clazz: 'roleGridButton icon-button', tooltip: true });
+            navComponent.addView('timeline', 'Timeline', new Timeline(globalObjects), { clazz: 'timelineButton icon-button', tooltip: true });
+            navComponent.addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
+            navComponent.addView('profile-filter', 'ProfileFilter', new ProfileFilter(), { clazz: 'filterButton icon-button', tooltip: true });
+            navComponent.addView('groups', 'GroupProfile', new GroupProfile(globalObjects), { clazz: 'groupsButton icon-button', tooltip: true });
+            navComponent.addView('textSearch', 'TextSearch', new TextSearch(globalObjects), { clazz: 'textSearchButton icon-button', tooltip: true });
+            navComponent.addView('roleGrid', 'RoleGrid', new RoleGrid(globalObjects), { clazz: 'roleGridButton icon-button', tooltip: true });
 
-            pageCore.addNavSeparator();
+            navComponent.addNavSeparator();
 
             if (PRODUCT === 'SERVER') {
                 const content = U.makeEl('div');
@@ -134,19 +137,19 @@ function onDatabaseLoad() {
                 ReactDOM.render(getLogoutFormTemplate(), content);
                 L10n.localizeStatic(content);
 
-                pageCore.addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
+                navComponent.addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
             }
-            pageCore.addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
+            navComponent.addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
 
-            pageCore.addNavSeparator();
+            navComponent.addNavSeparator();
 
             if (isAdmin) {
-                pageCore.addNavEl(makeLoadBaseButton());
+                navComponent.addNavEl(makeLoadBaseButton());
             }
 
-            pageCore.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
+            navComponent.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
             if (PRODUCT === 'STANDALONE') {
-                pageCore.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
+                navComponent.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
             }
             //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
@@ -154,27 +157,27 @@ function onDatabaseLoad() {
 
             if (MODE === 'DEV') {
                 if (DEV_OPTS.ENABLE_TESTS) {
-                    pageCore.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                    navComponent.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
                 }
                 if (DEV_OPTS.ENABLE_BASICS) {
-                    pageCore.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-                    pageCore.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                    navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+                    navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
                 }
                 if (DEV_OPTS.ENABLE_EXTRAS) {
-                    pageCore.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-                    pageCore.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => pageCore.testView(), btnOpts));
-                    pageCore.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
+                    navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+                    // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
+                    navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
                 }
             }
 
             if (PRODUCT === 'SERVER') {
-                pageCore.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                navComponent.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
             }
-            pageCore.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => pageCore.refreshView(), btnOpts));
+            navComponent.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts));
 
-            pageCore.setFirstTab(firstTab);
+            navComponent.setFirstTab(firstTab);
 
-            pageCore.refreshView();
+            navComponent.refreshCurrentView();
             if (PRODUCT === 'STANDALONE') {
                 if (MODE === 'PROD') {
                     addBeforeUnloadListener();
@@ -218,7 +221,7 @@ function onBaseLoaded(err3) {
             onDatabaseLoad();
             firstBaseLoad = false;
         } else {
-            pageCore.refreshView();
+            navComponent.refreshCurrentView();
         }
     });
 }

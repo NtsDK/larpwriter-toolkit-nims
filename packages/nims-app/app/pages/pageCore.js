@@ -12,69 +12,19 @@ import { UI, U, L10n } from 'nims-app-core';
 
 import 'select2';
 import 'select2/dist/css/select2.min.css';
+import { NavComponent } from "./NavComponent";
 
-export class PageCore {
-    state = {
-        views: {}
-    };
-    tabs = {};
-
-    constructor(){}
-
-    addView(btnName, viewName, view, opts){
-        this.tabs[viewName] = {
-            viewName,
-            viewRes: UI.addView(this.state.containers, btnName, view, opts)
-        };
-    };
-
-    setFirstTab(firstTab) {
-        return UI.setFirstTab(this.state.containers, this.tabs[firstTab].viewRes);
-    }
-
-    initPage() {
-        L10n.init();
-        L10n.onL10nChange(() => this.state.currentView.refresh());
-        UI.initSelectorFilters();
-        UI.initPanelTogglers();
-        L10n.localizeStatic();
-        UI.updateDialogL10n();
-        L10n.onL10nChange(UI.updateDialogL10n);
-        window.SM = new SettingsManager();
-        this.stateInit();
-    };
-
-    refreshView() {
-        this.state.currentView.refresh();
-    }
-
-    testView() {
-        return () => {
-            if (this.state.currentView.test) {
-                this.state.currentView.test();
-            } else {
-                console.error('This tab has no tests');
-            }
-        };
-    }
-
-    stateInit() {
-        this.state.navigation = U.queryEl('#navigation');
-        this.state.containers = {
-            root: this.state,
-            navigation: this.state.navigation,
-            content: U.queryEl('#contentArea')
-        };
-    }
-
-    addNavSeparator() {
-        return U.addEl(this.state.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
-    }
-
-    addNavEl(el) {
-        return U.addEl(this.state.navigation, el);
-    }
-}
+export function initPage() {
+    L10n.init();
+    L10n.onL10nChange(() => this.navComponent.refreshCurrentView());
+    UI.initSelectorFilters();
+    UI.initPanelTogglers();
+    L10n.localizeStatic();
+    UI.updateDialogL10n();
+    L10n.onL10nChange(UI.updateDialogL10n);
+    window.SM = new SettingsManager();
+    return new NavComponent(U.queryEl('#navigation'), U.queryEl('#contentArea'));
+};
 
 export const btnOpts = {
     tooltip: true,

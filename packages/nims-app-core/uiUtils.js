@@ -33,11 +33,64 @@ export const updateDialogL10n = function () {
     mainPage - enable view as first page - deprecated. Use Utils.setFirstTab instead
     toggle - toggle content, associated with button
 */
-export const addView = function (containers, name, view, opts2) {
-    const opts = opts2 || {};
+const navButtonClass = 'navigation-button';
+
+export const addView = function (containers, name, view, opts = {}) {
+    const { root, navigation } = containers;
+
     view.init();
-    const buttonClass = 'navigation-button';
-    containers.root.views[name] = view;
+    root.views[name] = view;
+    const button = makeNavButton(name, opts);
+
+    navigation.appendChild(button);
+
+    const onClickDelegate = makeNavButtonOnClick(name, containers, opts, view);
+
+    button.addEventListener('click', onClickDelegate);
+
+    // deprecated. Use Utils.setFirstTab instead
+    if (opts.mainPage) {
+        setFirstTab(containers, { button, view });
+    }
+    return { button, view };
+};
+
+function makeNavButtonOnClick(name, containers, opts, view) {
+    const { root, navigation, content } = containers;
+    return function (evt) {
+        //Tests.run();
+        const elems = navigation.getElementsByClassName(navButtonClass);
+        if (opts.toggle) {
+            const els = U.queryEls(`.-toggle-class-${name}`);
+            for (let i = 0; i < els.length; i++) {
+                if (!evt.target.isEqualNode(els[i]) && U.hasClass(els[i], 'active')) {
+                    els[i].click();
+                }
+            }
+        }
+
+        const isActive = U.hasClass(evt.target, 'active');
+        for (let i = 0; i < elems.length; i++) {
+            U.removeClass(elems[i], 'active');
+        }
+        if (!opts.toggle || (opts.toggle && !isActive)) {
+            U.addClass(evt.target, 'active');
+
+            U.passEls(content, U.queryEl('#warehouse'));
+            content.appendChild(view.content || view.getContent());
+            U.removeClass(content, 'hidden');
+            root.currentView = view;
+            view.refresh();
+        } else {
+            U.removeClass(evt.target, 'active');
+            U.passEls(content, U.queryEl('#warehouse'));
+            root.currentView = null;
+            U.addClass(content, 'hidden');
+        }
+    };
+}
+
+function makeNavButton(name, opts){
     const button = U.makeEl('button');
     function delegate() {
         $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
@@ -52,56 +105,14 @@ export const addView = function (containers, name, view, opts2) {
         U.addEl(button, U.makeText(L10n.getValue(`header-${name}`)));
         U.setAttr(button, 'l10n-id', `header-${name}`);
     }
-    U.addClass(button, buttonClass);
+    U.addClass(button, navButtonClass);
     U.addClass(button, `-test-${name}`);
     U.addClass(button, `-toggle-class-${name}`);
     if (opts.clazz) {
         U.addClass(button, opts.clazz);
     }
-    containers.navigation.appendChild(button);
-
-    const onClickDelegate = function (view2) {
-        return function (evt) {
-            //Tests.run();
-            const elems = containers.navigation.getElementsByClassName(buttonClass);
-            if (opts.toggle) {
-                const els = U.queryEls(`.-toggle-class-${name}`);
-                for (let i = 0; i < els.length; i++) {
-                    if (!evt.target.isEqualNode(els[i]) && U.hasClass(els[i], 'active')) {
-                        els[i].click();
-                    }
-                }
-            }
-
-            const isActive = U.hasClass(evt.target, 'active');
-            for (let i = 0; i < elems.length; i++) {
-                U.removeClass(elems[i], 'active');
-            }
-            if (!opts.toggle || (opts.toggle && !isActive)) {
-                U.addClass(evt.target, 'active');
-
-                U.passEls(containers.content, U.queryEl('#warehouse'));
-                containers.content.appendChild(view2.content || view2.getContent());
-                U.removeClass(containers.content, 'hidden');
-                containers.root.currentView = view2;
-                view2.refresh();
-            } else {
-                U.removeClass(evt.target, 'active');
-                U.passEls(containers.content, U.queryEl('#warehouse'));
-                containers.root.currentView = null;
-                U.addClass(containers.content, 'hidden');
-            }
-        };
-    };
-
-    button.addEventListener('click', onClickDelegate(view));
-
-    // deprecated. Use Utils.setFirstTab instead
-    if (opts.mainPage) {
-        setFirstTab(containers, { button, view });
-    }
-    return { button, view };
-};
+    return button;
+}
 
 
 export const initTabPanel = (tabClazz, containerClazz) => {
