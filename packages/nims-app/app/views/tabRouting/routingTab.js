@@ -1,9 +1,10 @@
 import ReactDOM from 'react-dom';
 import { getRoutingTabTemplate } from "./RoutingTabTemplate.jsx";
 import { UI, U, L10n } from 'nims-app-core';
+import { NavComponent } from "../../pages/NavComponent";
 
 export class RoutingTab {
-    state = {};
+    navComponent;
     content;
 
     constructor(opts) {
@@ -25,22 +26,17 @@ export class RoutingTab {
         // U.removeClass(el, 'tab-routing-tmpl');
         const el = U.qee(this.content, '.routing-tab');
         U.addEl(U.queryEl('.tab-container'), el);
-        this.state.views = {};
-        const containers = {
-            root: this.state,
-            navigation: U.qee(el, '.sub-tab-navigation'),
-            content: U.qee(el, '.sub-tab-content')
-        };
-        const tabs = R.indexBy(R.prop('viewName'), this.opts.tabs.map(tab => ({
-            viewName: tab.viewName,
-            viewRes: UI.addView(containers, tab.btnName, tab.viewBody)
-        })));
 
-        UI.setFirstTab(containers, tabs[this.opts.firstTab].viewRes);
+        this.navComponent = new NavComponent(
+            U.qee(el, '.sub-tab-navigation'),
+            U.qee(el, '.sub-tab-content')
+        );
+        this.opts.tabs.forEach(tab => this.navComponent.addView(tab.btnName, tab.viewName, tab.viewBody));
+        this.navComponent.setFirstTab(this.opts.firstTab);
         this.content = el;
     };
 
     refresh(){
-        this.state.currentView.refresh();
+        this.navComponent.refreshCurrentView();
     };
 };
