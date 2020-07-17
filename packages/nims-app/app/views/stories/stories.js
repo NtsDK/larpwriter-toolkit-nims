@@ -4,6 +4,8 @@ import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
 import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
+import { NavComponent } from "../../pages/NavComponent";
+
 const Stories = {};
 
 import PermissionInformer from "permissionInformer";
@@ -46,26 +48,24 @@ Stories.init = () => {
         componentClass: 'ModalPromptBody'
     });
 
-    state.left = { views: {} };
-    state.right = { views: {} };
-    let containers = {
-        root: state.left,
-        navigation: U.queryEl('.stories-navigation-container .left-side'),
-        content: U.queryEl('.stories-content-container .left-side')
-    };
-    UI.addView(containers, 'writer-story', WriterStory, { mainPage: true, toggle: true });
-    UI.addView(containers, 'story-events', StoryEvents, { toggle: true });
-    UI.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
-    UI.addView(containers, 'event-presence', EventPresence, { toggle: true });
-    containers = {
-        root: state.right,
-        navigation: U.queryEl('.stories-navigation-container .right-side'),
-        content: U.queryEl('.stories-content-container .right-side')
-    };
-    UI.addView(containers, 'writer-story', WriterStory, { toggle: true });
-    UI.addView(containers, 'story-events', StoryEvents, { mainPage: true, toggle: true });
-    UI.addView(containers, 'story-characters', StoryCharacters, { toggle: true });
-    UI.addView(containers, 'event-presence', EventPresence, { toggle: true });
+    state.left = new NavComponent(
+        U.queryEl('.stories-navigation-container .left-side'),
+        U.queryEl('.stories-content-container .left-side'),
+        true
+    );
+    state.left.addView('writer-story', 'WriterStory', WriterStory, { mainPage: true });
+    state.left.addView('story-events', 'StoryEvents', StoryEvents);
+    state.left.addView('story-characters', 'StoryCharacters', StoryCharacters);
+    state.left.addView('event-presence', 'EventPresence', EventPresence);
+    state.right = new NavComponent(
+        U.queryEl('.stories-navigation-container .right-side'),
+        U.queryEl('.stories-content-container .right-side'),
+        true
+    );
+    state.right.addView('writer-story', 'WriterStory', WriterStory);
+    state.right.addView('story-events', 'StoryEvents', StoryEvents, { mainPage: true });
+    state.right.addView('story-characters', 'StoryCharacters', StoryCharacters);
+    state.right.addView('event-presence', 'EventPresence', EventPresence);
 
     U.listen(U.queryEl(`${root}.remove.story`), 'click', removeStory);
 
@@ -86,8 +86,8 @@ Stories.init = () => {
 };
 
 Stories.chainRefresh = () => {
-    if ((state.left.currentView && state.left.currentView.name === 'EventPresence')
-            || (state.right.currentView && state.right.currentView.name === 'EventPresence')) {
+    if (state.left.сurrentViewNameIs('EventPresence') ||
+        state.right.сurrentViewNameIs('EventPresence')) {
         EventPresence.refresh();
     }
 };
@@ -116,9 +116,9 @@ Stories.refresh = () => {
             onStorySelectorChange();
         }
 
-        R.values(state.left.views).forEach(view => view.refresh());
-        if (state.left.currentView)state.left.currentView.refresh();
-        if (state.right.currentView)state.right.currentView.refresh();
+        state.left.refreshAllNews();
+        state.left.refreshCurrentView();
+        state.right.refreshCurrentView();
     }).catch(UI.handleError);
 };
 
@@ -193,14 +193,14 @@ function onStorySelectorChange(storyName) {
     if (storyName) {
         updateSettings(storyName);
         PermissionInformer.isEntityEditable({ type: 'story', name: storyName }).then((isStoryEditable) => {
-            if (state.left.currentView)state.left.currentView.refresh();
-            if (state.right.currentView)state.right.currentView.refresh();
+            state.left.refreshCurrentView();
+            state.right.refreshCurrentView();
             UI.enable(Stories.content, 'isStoryEditable', isStoryEditable);
         }).catch(UI.handleError);
     } else { // when there are no stories at all
         updateSettings(null);
-        if (state.left.currentView)state.left.currentView.refresh();
-        if (state.right.currentView)state.right.currentView.refresh();
+        state.left.refreshCurrentView();
+        state.right.refreshCurrentView();
     }
 }
 
