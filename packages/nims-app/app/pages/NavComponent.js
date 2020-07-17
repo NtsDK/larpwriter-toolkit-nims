@@ -54,7 +54,7 @@ export class NavComponent {
 
         this.navigation.appendChild(button);
 
-        const onClickDelegate = this.makeNavButtonOnClick(btnName, view);
+        const onClickDelegate = this.makeNavButtonOnClick(btnName);
 
         button.addEventListener('click', onClickDelegate);
 
@@ -84,37 +84,50 @@ export class NavComponent {
         R.values(this.viewIndex).forEach(obj => obj.view.refresh());
     }
 
-    makeNavButtonOnClick(btnName, view) {
+    makeNavButtonOnClick(btnName) {
         return (evt) => {
+            const button = evt.target;
             //Tests.run();
-            const elems = this.navigation.getElementsByClassName(navButtonClass);
             if (this.toggleMode) {
+                // untoggle other active buttons
                 const els = U.queryEls(`.-toggle-class-${btnName}`);
                 for (let i = 0; i < els.length; i++) {
-                    if (!evt.target.isEqualNode(els[i]) && U.hasClass(els[i], 'active')) {
+                    if (!button.isEqualNode(els[i]) && U.hasClass(els[i], 'active')) {
                         els[i].click();
                     }
                 }
             }
 
-            const isActive = U.hasClass(evt.target, 'active');
+            const isActive = U.hasClass(button, 'active');
+            const elems = this.navigation.getElementsByClassName(navButtonClass);
             for (let i = 0; i < elems.length; i++) {
                 U.removeClass(elems[i], 'active');
             }
-            if (!this.toggleMode || (this.toggleMode && !isActive)) {
-                U.addClass(evt.target, 'active');
-                U.passEls(this.content, U.queryEl('#warehouse'));
-                this.content.appendChild(view.content || view.getContent());
-                U.removeClass(this.content, 'hidden');
-                this.currentView = view;
-                view.refresh();
-            } else {
-                U.removeClass(evt.target, 'active');
-                U.passEls(this.content, U.queryEl('#warehouse'));
-                this.currentView = null;
-                U.addClass(this.content, 'hidden');
-            }
+            const activateView = !this.toggleMode || (this.toggleMode && !isActive);
+            U.setClassIf(button, 'active', activateView);
+            this.showView(activateView, btnName);
         };
+    }
+
+    showView(show, btnName) {
+        const obj = R.values(this.viewIndex).find(obj => obj.btnName === btnName);
+        if(!obj) {
+            console.warn('Obj for btnName not found: ', btnName);
+            return;
+        }
+        const { view } = obj;
+
+        if (show) {
+            U.passEls(this.content, U.queryEl('#warehouse'));
+            this.content.appendChild(view.content || view.getContent());
+            U.removeClass(this.content, 'hidden');
+            this.currentView = view;
+            view.refresh();
+        } else {
+            U.passEls(this.content, U.queryEl('#warehouse'));
+            this.currentView = null;
+            U.addClass(this.content, 'hidden');
+        }
     }
 
     makeNavButton(name, opts){
