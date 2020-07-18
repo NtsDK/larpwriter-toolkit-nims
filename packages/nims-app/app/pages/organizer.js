@@ -39,6 +39,7 @@ import { LogViewer2 } from '../views/logs';
 import { Characters, Players } from '../views/profiles2';
 import { AccessManager } from '../views/accessManager';
 
+import { getNavExperiment } from "./NavExperiment.jsx";
 
 
 import {
@@ -107,7 +108,9 @@ function onDatabaseLoad() {
         PermissionInformer.isAdmin().then((isAdmin) => {
             $.datetimepicker.setDateFormatter('moment');
 
-            const firstTab = 'ProfileFilter';
+            // ReactDOM.render(getNavExperiment(), U.qe('#navigation2'));
+
+            const firstTab = 'Stories';
             // const firstTab = 'AccessManager';
 
             const globalObjects = {L10n, DBMS, SM};
@@ -175,7 +178,9 @@ function onDatabaseLoad() {
             }
             navComponent.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts));
 
-            navComponent.setFirstTab(firstTab);
+            navComponent.setFirstView(firstTab);
+
+            navComponent.render();
 
             navComponent.refreshCurrentView();
             if (PRODUCT === 'STANDALONE') {

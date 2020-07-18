@@ -53,7 +53,7 @@ Stories.init = () => {
         U.queryEl('.stories-content-container .left-side'),
         true
     );
-    state.left.addView('writer-story', 'WriterStory', WriterStory, { mainPage: true });
+    state.left.addView('writer-story', 'WriterStory', WriterStory);
     state.left.addView('story-events', 'StoryEvents', StoryEvents);
     state.left.addView('story-characters', 'StoryCharacters', StoryCharacters);
     state.left.addView('event-presence', 'EventPresence', EventPresence);
@@ -62,10 +62,14 @@ Stories.init = () => {
         U.queryEl('.stories-content-container .right-side'),
         true
     );
+    state.left.setFirstView('WriterStory');
+    state.left.render();
     state.right.addView('writer-story', 'WriterStory', WriterStory);
-    state.right.addView('story-events', 'StoryEvents', StoryEvents, { mainPage: true });
+    state.right.addView('story-events', 'StoryEvents', StoryEvents);
     state.right.addView('story-characters', 'StoryCharacters', StoryCharacters);
     state.right.addView('event-presence', 'EventPresence', EventPresence);
+    state.right.setFirstView('StoryEvents');
+    state.right.render();
 
     U.listen(U.queryEl(`${root}.remove.story`), 'click', removeStory);
 

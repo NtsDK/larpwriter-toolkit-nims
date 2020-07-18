@@ -6,17 +6,20 @@ const navButtonClass = 'navigation-button';
  *  opts
     tooltip - add tooltip to button, used for iconic buttons
     id - set button id
-    mainPage - enable view as first page - deprecated. Use Utils.setFirstTab instead
+    mainPage - enable view as first page - deprecated. Use Utils.setFirstView instead
     toggle - toggle content, associated with button
 */
 
 
 export class NavComponent {
+    // nav toolbar
+    navigation = null;
+    toggleMode;
+    // nav body
     viewIndex = {};
     currentView = null;
-    navigation = null;
     content = null;
-    toggleMode;
+    navEls = [];
 
     constructor(navigation, content, toggleMode = false) {
         this.navigation = navigation;
@@ -24,67 +27,116 @@ export class NavComponent {
         this.toggleMode = toggleMode;
     }
 
+    // nav toolbar
     addNavSeparator() {
-        return U.addEl(this.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
+        this.addNavEl(U.addClass(U.makeEl('div'), 'nav-separator'));
+        // navEls.push({
+        //     type: 'element',
+        //     el: U.addClass(U.makeEl('div'), 'nav-separator')
+        // });
+        // return U.addEl(this.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
     }
 
+    // nav toolbar
     addNavEl(el) {
-        return U.addEl(this.navigation, el);
+        this.navEls.push({
+            type: 'element',
+            el
+        });
+        // return U.addEl(this.navigation, el);
     }
 
-    innerSetFirstTab({ button, view }) {
+    // both
+    setFirstView(viewName) {
+        this.firstViewName = viewName;
+        // const { button, view } = this.viewIndex[viewName]
+        // U.addClass(button, 'active');
+        // this.content.appendChild(view.content || view.getContent());
+        // this.currentView = view;
+    }
+
+    render() {
+        this.navEls.forEach(navEl => {
+            if(navEl.type === 'element') {
+                U.addEl(this.navigation, navEl.el);
+            } else if(navEl.type === 'link') {
+                const { btnName, viewName, view, opts } = navEl;
+                view.init();
+                const button = this.makeNavButton(btnName, opts);
+                // this.addNavEl(button);
+                U.addEl(this.navigation, button);
+
+                const onClickDelegate = this.makeNavButtonOnClick(btnName, (show, btnName) => this.showView(show, viewName));
+
+                button.addEventListener('click', onClickDelegate);
+
+                this.viewIndex[viewName] = {
+                    viewName,
+                    btnName,
+                    button,
+                    view
+                };
+            } else {
+                console.error('Unknown nav element type:', navEl.type);
+            }
+        });
+
+        const { button, view } = this.viewIndex[this.firstViewName]
         U.addClass(button, 'active');
         this.content.appendChild(view.content || view.getContent());
         this.currentView = view;
-    };
-
-    setFirstTab(firstTab) {
-        return this.innerSetFirstTab(this.viewIndex[firstTab]);
     }
 
+    // nav body
     refreshCurrentView() {
         if (this.hasCurrentView()) {
             this.currentView.refresh();
         }
     }
 
+    // both
     addView(btnName, viewName, view, opts = {}){
-        view.init();
-        const button = this.makeNavButton(btnName, opts);
-
-        this.navigation.appendChild(button);
-
-        const onClickDelegate = this.makeNavButtonOnClick(btnName);
-
-        button.addEventListener('click', onClickDelegate);
-
-        // deprecated. Use Utils.setFirstTab instead
-        if (opts.mainPage) {
-            this.innerSetFirstTab({ button, view });
-        }
-
-        this.viewIndex[viewName] = {
-            viewName,
+        this.navEls.push({
+            type: 'link',
             btnName,
-            button,
-            view
-        };
+            viewName,
+            view,
+            opts
+        });
+
+        // view.init();
+        // const button = this.makeNavButton(btnName, opts);
+        // this.addNavEl(button);
+
+        // const onClickDelegate = this.makeNavButtonOnClick(btnName, (show, btnName) => this.showView(show, viewName));
+
+        // button.addEventListener('click', onClickDelegate);
+
+        // this.viewIndex[viewName] = {
+        //     viewName,
+        //     btnName,
+        //     button,
+        //     view
+        // };
     };
 
+    // nav body
     hasCurrentView() {
         return this.currentView != undefined;
     }
 
-    // name used only for EventPresence
-    сurrentViewNameIs(name) {
-        return this.hasCurrentView() && this.currentView === this.viewIndex[name].view;
+    // nav body
+    сurrentViewNameIs(viewName) {
+        return this.hasCurrentView() && this.currentView === this.viewIndex[viewName].view;
     }
 
+    // nav body
     refreshAllNews() {
         R.values(this.viewIndex).forEach(obj => obj.view.refresh());
     }
 
-    makeNavButtonOnClick(btnName) {
+    // nav toolbar
+    makeNavButtonOnClick(btnName, onNavClick) {
         return (evt) => {
             const button = evt.target;
             //Tests.run();
@@ -105,14 +157,15 @@ export class NavComponent {
             }
             const activateView = !this.toggleMode || (this.toggleMode && !isActive);
             U.setClassIf(button, 'active', activateView);
-            this.showView(activateView, btnName);
+            onNavClick(activateView, btnName);
         };
     }
 
-    showView(show, btnName) {
-        const obj = R.values(this.viewIndex).find(obj => obj.btnName === btnName);
+    // nav body
+    showView(show, viewName) {
+        const obj = R.values(this.viewIndex).find(obj => obj.viewName === viewName);
         if(!obj) {
-            console.warn('Obj for btnName not found: ', btnName);
+            console.warn('Obj for viewName not found: ', viewName);
             return;
         }
         const { view } = obj;
@@ -130,24 +183,25 @@ export class NavComponent {
         }
     }
 
-    makeNavButton(name, opts){
+    // nav toolbar
+    makeNavButton(btnName, opts){
         const button = U.makeEl('button');
         function delegate() {
-            $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
+            $(button).attr('data-original-title', L10n.getValue(`header-${btnName}`));
         }
         if (opts.tooltip) {
             L10n.onL10nChange(delegate);
             $(button).tooltip({
-                title: L10n.getValue(`header-${name}`),
+                title: L10n.getValue(`header-${btnName}`),
                 placement: 'bottom'
             });
         } else {
-            U.addEl(button, U.makeText(L10n.getValue(`header-${name}`)));
-            U.setAttr(button, 'l10n-id', `header-${name}`);
+            U.addEl(button, U.makeText(L10n.getValue(`header-${btnName}`)));
+            U.setAttr(button, 'l10n-id', `header-${btnName}`);
         }
         U.addClass(button, navButtonClass);
-        U.addClass(button, `-test-${name}`);
-        U.addClass(button, `-toggle-class-${name}`);
+        U.addClass(button, `-test-${btnName}`);
+        U.addClass(button, `-toggle-class-${btnName}`);
         if (opts.clazz) {
             U.addClass(button, opts.clazz);
         }

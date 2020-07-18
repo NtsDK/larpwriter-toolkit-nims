@@ -557,7 +557,7 @@ export default {
     remapProps4Select,
     getSelect2DataCommon,
     getSelect2Data,
-    // setFirstTab,
+    // setFirstView,
     alert,
     setError,
     clearError,
