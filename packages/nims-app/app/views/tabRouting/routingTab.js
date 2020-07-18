@@ -32,7 +32,8 @@ export class RoutingTab {
             U.qee(el, '.sub-tab-content')
         );
         this.opts.tabs.forEach(tab => this.navComponent.addView(tab.btnName, tab.viewName, tab.viewBody));
-        this.navComponent.setFirstTab(this.opts.firstTab);
+        this.navComponent.setFirstView(this.opts.firstTab);
+        this.navComponent.render();
         this.content = el;
     };
 

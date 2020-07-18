@@ -32,7 +32,7 @@ onPageLoad = () => {
     }
     pageCore.addView('about', 'About', About);
 
-    pageCore.setFirstTab('Enter');
+    pageCore.setFirstView('Enter');
     //            U.addEl(state.navigation, makeL10nButton());
     pageCore.refreshCurrentView();
     // state.currentView.refresh();
