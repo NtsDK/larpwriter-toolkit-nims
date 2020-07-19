@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import { getRoutingTabTemplate } from "./RoutingTabTemplate.jsx";
 import { UI, U, L10n } from 'nims-app-core';
-import { NavComponent } from "../../pages/NavComponent";
+import { NavComponentV1 } from "../../pages/NavComponentV1";
 
 export class RoutingTab {
     navComponent;
@@ -27,7 +27,7 @@ export class RoutingTab {
         const el = U.qee(this.content, '.routing-tab');
         U.addEl(U.queryEl('.tab-container'), el);
 
-        this.navComponent = new NavComponent(
+        this.navComponent = new NavComponentV1(
             U.qee(el, '.sub-tab-navigation'),
             U.qee(el, '.sub-tab-content')
         );

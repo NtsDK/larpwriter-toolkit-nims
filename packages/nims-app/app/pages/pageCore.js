@@ -12,7 +12,8 @@ import { UI, U, L10n } from 'nims-app-core';
 
 import 'select2';
 import 'select2/dist/css/select2.min.css';
-import { NavComponent } from "./NavComponent";
+import { NavComponentV1 } from "./NavComponentV1";
+import { NavComponentV2 } from "./NavComponentV2";
 
 export function initPage() {
     L10n.init();
@@ -23,7 +24,11 @@ export function initPage() {
     UI.updateDialogL10n();
     L10n.onL10nChange(UI.updateDialogL10n);
     window.SM = new SettingsManager();
-    return new NavComponent(U.queryEl('.navigation.main-navigation'), U.queryEl('#contentArea'));
+    return {
+        nav1: new NavComponentV1(U.queryEl('.navigation.main-navigation'), U.queryEl('#contentArea')),
+        nav2: new NavComponentV2(U.queryEl('.navigation.test-navigation'), U.queryEl('#contentArea'))
+    }
+
 };
 
 export const btnOpts = {
