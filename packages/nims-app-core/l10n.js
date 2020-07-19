@@ -1,15 +1,19 @@
 import { Dictionaries, defaultLang } from 'nims-resources/translations';
 import U from './utils';
 
+import { i18n } from "./i18n";
+import { times } from 'ramda';
+
+const l10nModulesList = R.keys(Dictionaries[defaultLang]);
+
 class L10nManager {
-    state = {
-        initialized: false,
-        l10nDelegates: [],
-        dictionaries: {},
-        lang: defaultLang,
-        foundStatistics: {},
-        notFoundStatistics: {}
-    };
+    initialized = false;
+    l10nDelegates = [];
+    dictionaries = {};
+    lang = defaultLang;
+    foundStatistics = {};
+    notFoundStatistics = {};
+    cache = {};
     constructor(){
         this.checkDictionaryCompleteness = this.checkDictionaryCompleteness.bind(this);
         this.checkDictionaryInsertCount = this.checkDictionaryInsertCount.bind(this);
@@ -18,34 +22,29 @@ class L10nManager {
     }
 
     init(){
-        if (this.state.initialized) {
+        if (this.initialized) {
             return;
         }
         //        console.log(navigator.language);
 
-        this.state.dictionaries = R.map(this.processDictionary, Dictionaries);
+        this.dictionaries = R.map(this.processDictionary, Dictionaries);
 
         this.dictIterator(this.checkDictionaryCompleteness.bind(this));
         this.dictIterator(this.checkDictionaryInsertCount.bind(this));
         this.showDuplicates();
 
-        //    var lang = (navigator.languages ? navigator.languages[0] : navigator.browserLanguage).split('-')[0];
-        //    var lang = 'ru';
-        //        var lang = defaultLang;
-        //        console.log(lang);
-
-        if (this.state.dictionaries[defaultLang]) {
-            this.state.dict = this.state.dictionaries[defaultLang];
+        if (this.dictionaries[defaultLang]) {
+            this.dict = this.dictionaries[defaultLang];
         } else {
-            this.state.dict = this.state.dictionaries.en;
+            this.dict = this.dictionaries.en;
         }
         this.setHtmlLang(defaultLang);
         this.onL10nChange(this.localizeStatic.bind(this));
-        this.state.initialized = true;
+        this.initialized = true;
     };
 
     dictIterator(callback) {
-        const dictNames = R.keys(this.state.dictionaries);
+        const dictNames = R.keys(this.dictionaries);
         if (dictNames.length < 2) {
             return;
         }
@@ -56,13 +55,13 @@ class L10nManager {
     }
 
     checkDictionaryCompleteness(base, dictName) {
-        const baseToDict = R.difference(R.keys(this.state.dictionaries[base]), R.keys(this.state.dictionaries[dictName]));
+        const baseToDict = R.difference(R.keys(this.dictionaries[base]), R.keys(this.dictionaries[dictName]));
         if (baseToDict.length > 0) {
             console.log(`L10N: ${base} to ${dictName} difference is not empty `, baseToDict);
         } else {
             console.log(`L10N: ${base} to ${dictName} difference is empty (OK)`);
         }
-        const dictToBase = R.difference(R.keys(this.state.dictionaries[dictName]), R.keys(this.state.dictionaries[base]));
+        const dictToBase = R.difference(R.keys(this.dictionaries[dictName]), R.keys(this.dictionaries[base]));
         if (dictToBase.length > 0) {
             console.log(`L10N: ${dictName} to ${base} difference is not empty `, dictToBase);
         } else {
@@ -71,9 +70,9 @@ class L10nManager {
     }
 
     checkDictionaryInsertCount(base, dictName) {
-        const baseInst = this.state.dictionaries[base];
-        const dictInst = this.state.dictionaries[dictName];
-        const intersection = R.intersection(R.keys(baseInst), R.keys(this.state.dictionaries[dictName]));
+        const baseInst = this.dictionaries[base];
+        const dictInst = this.dictionaries[dictName];
+        const intersection = R.intersection(R.keys(baseInst), R.keys(this.dictionaries[dictName]));
         const notEqual = intersection.filter((key) => CU.strFormatInsertsCount(baseInst[key]) !== CU.strFormatInsertsCount(dictInst[key]));
         if (notEqual.length > 0) {
             console.log(`L10N: insert counts for ${dictName} and ${base} are not equal`, notEqual);
@@ -83,8 +82,8 @@ class L10nManager {
     }
 
     showDuplicates() {
-        R.keys(this.state.dictionaries).forEach((key) => {
-            const map = R.filter((arr) => arr.length > 1, R.invert(this.state.dictionaries[key]));
+        R.keys(this.dictionaries).forEach((key) => {
+            const map = R.filter((arr) => arr.length > 1, R.invert(this.dictionaries[key]));
             console.log(`L10N: Duplicates ${key} `, map);
         });
     }
@@ -109,56 +108,92 @@ class L10nManager {
     }
 
     getLocale() {
-        return this.state.lang;
+        return this.lang;
     }
 
     toggleL10n(){
-        if (this.state.lang === 'ru') {
-            this.state.dict = this.state.dictionaries.en;
-            this.state.lang = 'en';
+        if (this.lang === 'ru') {
+            this.dict = this.dictionaries.en;
+            this.lang = 'en';
         } else {
-            this.state.dict = this.state.dictionaries.ru;
-            this.state.lang = 'ru';
+            this.dict = this.dictionaries.ru;
+            this.lang = 'ru';
         }
-        this.state.foundStatistics.clear();
-        this.state.notFoundStatistics.clear();
+        this.foundStatistics.clear();
+        this.notFoundStatistics.clear();
 
-        this.setHtmlLang(this.state.lang);
-        this.state.l10nDelegates.forEach((delegate) => {
+        this.setHtmlLang(this.lang);
+        this.l10nDelegates.forEach((delegate) => {
             delegate();
         });
     };
 
     getLang() {
-        return this.state.lang.toLowerCase();
+        return this.lang.toLowerCase();
     }
 
     format = R.curry((namespace, name, args) => CU.strFormat(this.get(namespace, name), args));
 
-    getValue(name){
-        const value = this.state.dict[name];
-        if (value === undefined) {
-            console.log(`Value is not found: ${name}`);
-            this.state.notFoundStatistics[name] = (this.state.notFoundStatistics[name] || 0) + 1;
-        } else {
-            this.state.foundStatistics[name] = (this.state.foundStatistics[name] || 0) + 1;
+    parseKey(name) {
+        const parsedName = this.cache[name];
+        if (parsedName !== undefined) {
+            return parsedName;
         }
-        return value || `${name}:RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA`;
-    };
 
-    get = R.curry((namespace, name) => this.getValue(`${namespace}-${name}`));
+        const moduleName = l10nModulesList.find(moduleName => name.startsWith(moduleName));
+        if(moduleName === undefined) {
+            this.cache[name] = null;
+            return null;
+        }
+        const parsedName2 = {
+            namespace: moduleName,
+            name: name.substring(moduleName.length + 1)
+        }
 
-    const(key) {
-        return this.getValue(`constant-${key}`);
+        this.cache[name] = parsedName2;
+        // console.log(name, parsedName2);
+        return parsedName2;
     }
 
+    getValue(name){
+        // const value = this.dict[name];
+        const parsedName = this.parseKey(name);
+        if (parsedName === null) {
+            console.log('Name is not parsed:', name);
+            return `${name}:NOT PARSED`;
+        }
+        const value2 = i18n.t(`${parsedName.namespace}.${parsedName.name}`);
+
+        if (value2 === undefined) {
+            console.log(`Value is not found: ${name}`);
+            this.notFoundStatistics[name] = (this.notFoundStatistics[name] || 0) + 1;
+        } else {
+            this.foundStatistics[name] = (this.foundStatistics[name] || 0) + 1;
+        }
+        return value2 || `${name}:RA RA-AH-AH-AH ROMA ROMA-MA GAGA OH LA-LA`;
+    };
+
+    getValue2(namespace, name) {
+        return i18n.t(`${namespace}.${name}`);
+        // return this.getValue(`${namespace}-${name}`)
+    }
+
+    get = R.curry((namespace, name) => this.getValue2(namespace, name));
+
+    const(key) {
+        return this.getValue2('constant', key);
+    }
+    // const(key) {
+    //     return this.getValue(`constant-${key}`);
+    // }
+
     hasValue(name){
-        const value = this.state.dict[name];
+        const value = this.dict[name];
         return value !== undefined;
     };
 
     onL10nChange(delegate){
-        this.state.l10nDelegates.push(delegate);
+        this.l10nDelegates.push(delegate);
     };
 
     localizeStatic(el){
@@ -169,13 +204,13 @@ class L10nManager {
     };
 
     getFoundStatistics(){
-        return R.clone(this.state.foundStatistics);
+        return R.clone(this.foundStatistics);
     }
     getNotFoundStatistics(){
-        return R.clone(this.state.foundStanotFoundStatisticstistics);
+        return R.clone(this.notFoundStatistics);
     }
     getNotUsedByStatistics(){
-        return R.difference(R.keys(this.state.dict), R.keys(this.state.foundStatistics));
+        return R.difference(R.keys(this.dict), R.keys(this.foundStatistics));
     }
 }
 
