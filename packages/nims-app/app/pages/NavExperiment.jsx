@@ -62,6 +62,9 @@ export default function NavExperiment({navEls, L10n, firstRouteName}) {
                 if(el.type === 'separator') {
                   return <div className="nav-separator"/>;
                 }
+                if(el.type === 'customEl') {
+                  return el.elComponent;
+                }
                 if(el.type === 'link') {
                   const { opts } = el;
                   const text = L10n.getValue(`header-${el.btnName}`);

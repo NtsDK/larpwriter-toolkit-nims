@@ -47,7 +47,7 @@ import { getNavExperiment } from "./NavExperiment.jsx";
 import { I18nextProvider } from 'react-i18next';
 import { i18n } from "nims-app-core/i18n";
 
-
+import { makeLoadBaseButton2 } from "./makeLoadBaseButton.jsx";
 
 
 import {
@@ -105,7 +105,7 @@ let onPageLoad = null;
 if (PRODUCT === 'STANDALONE') {
     onPageLoad = () => {
         const res = initPage();
-        navComponent = res.nav1;
+        // navComponent = res.nav1;
         navComponent = res.nav2;
         // pageCore.initPage();
         window.DBMS = DbmsFactory({
@@ -124,7 +124,7 @@ if (PRODUCT === 'STANDALONE') {
 } else {
     onPageLoad = () => {
         const res = initPage();
-        navComponent = res.nav1;
+        // navComponent = res.nav1;
         navComponent = res.nav2;
         // pageCore.initPage();
         window.DBMS = DbmsFactory();
@@ -187,7 +187,17 @@ async function onDatabaseLoad() {
     navComponent.addNavSeparator();
 
     if (isAdmin) {
-        navComponent.addNavEl(makeLoadBaseButton());
+        // navComponent.addNavEl(makeLoadBaseButton());
+        navComponent.addCustomNavElComponent(
+            makeLoadBaseButton2(btnOpts, (evt) => {
+                // console.log('on change')
+                FileUtils.readSingleFile(evt)
+                    .then((database) => DBMS.setDatabase({ database }))
+                    .then(() => PermissionInformer.refresh())
+                    .then(onBaseLoaded, UI.handleError);
+            })
+        )
+
     }
 
     // navComponent.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
@@ -232,8 +242,7 @@ async function onDatabaseLoad() {
 
     ReactDOM.render(
         <I18nextProvider i18n={i18n}>
-            {/* <nav className="navigation main-navigation"></nav> */}
-            <nav className="navigation test-navigation">
+            <nav className="navigation main-navigation">
                 {navComponent.render()}
             </nav>
 
@@ -277,6 +286,7 @@ function makeLoadBaseButton() {
     initBaseLoadBtn(button, input, onBaseLoaded);
     return button;
 }
+
 
 function initBaseLoadBtn(button, input, onBaseLoaded2) {
     button.addEventListener('change', (evt) => {
