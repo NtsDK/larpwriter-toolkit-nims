@@ -1,0 +1,31 @@
+.navigation2 {
+  
+}
+.navigation2 ul {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.navigation2 li:not(:last-of-type) {
+  /* border-right: 1px solid grey; */
+  margin-right: 2px;
+}
+
+.navigation2 li {
+  list-style: none;
+  flex-grow: 0;
+  
+}
+
+.navigation2 a {
+  display: block;
+  text-decoration: none;
+  color: #333333;
+}
+
+.navigation2 a.icon-button {
+  /* display: block; */
+  text-align: center;
+}

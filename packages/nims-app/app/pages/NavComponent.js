@@ -1,4 +1,6 @@
 import { UI, U, L10n } from 'nims-app-core';
+import { getNavExperiment } from "./NavExperiment.jsx";
+import ReactDOM from 'react-dom';
 
 const navButtonClass = 'navigation-button';
 
@@ -29,12 +31,11 @@ export class NavComponent {
 
     // nav toolbar
     addNavSeparator() {
-        this.addNavEl(U.addClass(U.makeEl('div'), 'nav-separator'));
-        // navEls.push({
-        //     type: 'element',
-        //     el: U.addClass(U.makeEl('div'), 'nav-separator')
-        // });
-        // return U.addEl(this.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
+        this.navEls.push({
+            type: 'separator',
+            // el
+        });
+        // this.addNavEl(U.addClass(U.makeEl('div'), 'nav-separator'));
     }
 
     // nav toolbar
@@ -43,48 +44,87 @@ export class NavComponent {
             type: 'element',
             el
         });
-        // return U.addEl(this.navigation, el);
+    }
+
+    addButton(clazz, btnName, callback, opts) {
+        this.navEls.push({
+            type: 'button',
+            clazz,
+            btnName,
+            callback,
+            opts
+        });
     }
 
     // both
     setFirstView(viewName) {
         this.firstViewName = viewName;
-        // const { button, view } = this.viewIndex[viewName]
-        // U.addClass(button, 'active');
-        // this.content.appendChild(view.content || view.getContent());
-        // this.currentView = view;
     }
 
-    render() {
+    render(testNavEl) {
         this.navEls.forEach(navEl => {
             if(navEl.type === 'element') {
                 U.addEl(this.navigation, navEl.el);
+            } else if(navEl.type === 'button') {
+                const { clazz, btnName, callback, opts } = navEl;
+                const button = U.makeEl('button');
+                U.addClass(button, clazz);
+                if (opts.tooltip) {
+                    const delegate = () => {
+                        $(button).attr('data-original-title', L10n.getValue(`header-${btnName}`));
+                    };
+                    L10n.onL10nChange(delegate);
+                    $(button).tooltip({
+                        title: L10n.getValue(`header-${btnName}`),
+                        placement: 'bottom'
+                    });
+                }
+                U.addClass(button, 'action-button');
+                if (opts.className) {
+                    U.addClass(button, opts.className);
+                }
+                if (callback) {
+                    U.listen(button, 'click', callback);
+                }
+                U.addEl(this.navigation, button);
+            } else if(navEl.type === 'separator') {
+                U.addEl(this.navigation, U.addClass(U.makeEl('div'), 'nav-separator'));
             } else if(navEl.type === 'link') {
                 const { btnName, viewName, view, opts } = navEl;
                 view.init();
                 const button = this.makeNavButton(btnName, opts);
-                // this.addNavEl(button);
                 U.addEl(this.navigation, button);
 
-                const onClickDelegate = this.makeNavButtonOnClick(btnName, (show, btnName) => this.showView(show, viewName));
+                const callback = (show, btnName) => this.showView(show, viewName);
+
+                const onClickDelegate = this.makeNavButtonOnClick(btnName, callback);
 
                 button.addEventListener('click', onClickDelegate);
 
+                navEl.callback = callback;
                 this.viewIndex[viewName] = {
                     viewName,
                     btnName,
                     button,
-                    view
+                    view,
                 };
             } else {
                 console.error('Unknown nav element type:', navEl.type);
             }
         });
 
-        const { button, view } = this.viewIndex[this.firstViewName]
+        const { button, view, btnName } = this.viewIndex[this.firstViewName]
         U.addClass(button, 'active');
         this.content.appendChild(view.content || view.getContent());
         this.currentView = view;
+
+        if(testNavEl) {
+            ReactDOM.render(getNavExperiment({
+                navEls: this.navEls,
+                L10n,
+                firstRouteName: btnName
+            }), testNavEl);
+        }
     }
 
     // nav body
@@ -103,21 +143,6 @@ export class NavComponent {
             view,
             opts
         });
-
-        // view.init();
-        // const button = this.makeNavButton(btnName, opts);
-        // this.addNavEl(button);
-
-        // const onClickDelegate = this.makeNavButtonOnClick(btnName, (show, btnName) => this.showView(show, viewName));
-
-        // button.addEventListener('click', onClickDelegate);
-
-        // this.viewIndex[viewName] = {
-        //     viewName,
-        //     btnName,
-        //     button,
-        //     view
-        // };
     };
 
     // nav body

@@ -23,7 +23,7 @@ export function initPage() {
     UI.updateDialogL10n();
     L10n.onL10nChange(UI.updateDialogL10n);
     window.SM = new SettingsManager();
-    return new NavComponent(U.queryEl('#navigation'), U.queryEl('#contentArea'));
+    return new NavComponent(U.queryEl('.navigation.main-navigation'), U.queryEl('#contentArea'));
 };
 
 export const btnOpts = {
@@ -45,16 +45,16 @@ export function postLogout() {
     document.querySelector('#logoutForm button').click();
 }
 
-export function makeButton(clazz, name, callback, opts) {
+export function makeButton(clazz, btnName, callback, opts) {
     const button = U.makeEl('button');
     U.addClass(button, clazz);
     if (opts.tooltip) {
         const delegate = () => {
-            $(button).attr('data-original-title', L10n.getValue(`header-${name}`));
+            $(button).attr('data-original-title', L10n.getValue(`header-${btnName}`));
         };
         L10n.onL10nChange(delegate);
         $(button).tooltip({
-            title: L10n.getValue(`header-${name}`),
+            title: L10n.getValue(`header-${btnName}`),
             placement: 'bottom'
         });
     }

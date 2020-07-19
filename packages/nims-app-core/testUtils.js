@@ -19,7 +19,7 @@ export const showConsistencyCheckAlert = (checkRes) => {
 };
 
 export const clickThroughtHeaders = () => {
-    let tabs = U.queryEls('#navigation .navigation-button');
+    let tabs = U.queryEls('.navigation .navigation-button');
 
     let index = 0;
     let subTabsNum = 0;

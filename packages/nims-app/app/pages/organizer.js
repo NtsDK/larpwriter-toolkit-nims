@@ -150,9 +150,11 @@ function onDatabaseLoad() {
                 navComponent.addNavEl(makeLoadBaseButton());
             }
 
-            navComponent.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
+            // navComponent.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
+            navComponent.addButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts);
             if (PRODUCT === 'STANDALONE') {
-                navComponent.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
+                // navComponent.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
+                navComponent.addButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts);
             }
             //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
@@ -160,27 +162,35 @@ function onDatabaseLoad() {
 
             if (MODE === 'DEV') {
                 if (DEV_OPTS.ENABLE_TESTS) {
-                    navComponent.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                    // navComponent.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+                    navComponent.addButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts);
                 }
                 if (DEV_OPTS.ENABLE_BASICS) {
-                    navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-                    navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                    // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+                    // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+                    navComponent.addButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts);
+                    navComponent.addButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts);
                 }
                 if (DEV_OPTS.ENABLE_EXTRAS) {
-                    navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+                    navComponent.addButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts);
                     // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
-                    navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
+                    navComponent.addButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts);
+                    // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+                    // // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
+                    // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
                 }
             }
 
             if (PRODUCT === 'SERVER') {
-                navComponent.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                // navComponent.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+                navComponent.addButton('logoutButton icon-button', 'logout', postLogout, btnOpts);
             }
-            navComponent.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts));
+            // navComponent.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts));
+            navComponent.addButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts);
 
             navComponent.setFirstView(firstTab);
 
-            navComponent.render();
+            navComponent.render(U.queryEl('.navigation.test-navigation'));
 
             navComponent.refreshCurrentView();
             if (PRODUCT === 'STANDALONE') {
@@ -218,6 +228,20 @@ function makeLoadBaseButton() {
     return button;
 }
 
+function initBaseLoadBtn(button, input, onBaseLoaded2) {
+    button.addEventListener('change', (evt) => {
+        FileUtils.readSingleFile(evt)
+            .then((database) => DBMS.setDatabase({ database }))
+            .then(() => PermissionInformer.refresh())
+            .then(onBaseLoaded2, UI.handleError);
+    }, false);
+    button.addEventListener('click', (e) => {
+        input.value = '';
+        input.click();
+        //                    e.preventDefault(); // prevent navigation to "#"
+    });
+}
+
 function onBaseLoaded(err3) {
     if (err3) { UI.handleError(err3); return; }
     consistencyCheck((checkResult) => {
@@ -246,16 +270,7 @@ function consistencyCheckAlert(checkResult) {
     }
 }
 
-function initBaseLoadBtn(button, input, onBaseLoaded2) {
-    button.addEventListener('change', (evt) => {
-        FileUtils.readSingleFile(evt).then((database) => DBMS.setDatabase({ database })).then(() => PermissionInformer.refresh()).then(onBaseLoaded2, UI.handleError);
-    }, false);
-    button.addEventListener('click', (e) => {
-        input.value = '';
-        input.click();
-        //                    e.preventDefault(); // prevent navigation to "#"
-    });
-}
+
 
 function showDbmsConsistencyState() {
     consistencyCheck((checkRes) => showModuleSchema(checkRes));

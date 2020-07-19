@@ -4,11 +4,19 @@ import {
   Switch,
   Route,
   Link,
+  NavLink,
   Redirect
 } from "react-router-dom";
+import classNames from 'classnames';
 
-export function getNavExperiment() {
-  return <NavExperiment />;
+import "./NavExperiment.css";
+// component: () => {
+//   console.log('called characters');
+//   return <div>characters view</div>;
+// }
+
+export function getNavExperiment(props) {
+  return <NavExperiment {...props}/>;
 }
 
 class BodyStub extends Component {
@@ -17,10 +25,11 @@ class BodyStub extends Component {
     this.state = {};
   }
   componentDidMount(props) {
-    const {name} = this.props;
+    const {name, callback} = this.props;
     this.setState({
       name
     });
+    callback(true);
     console.log(name, 'componentDidMount');
   }
   componentDidUpdate() {
@@ -35,60 +44,71 @@ class BodyStub extends Component {
   render() {
     const {name} = this.state;
     console.log(name, 'render');
-    return <>{name}</>;
+    // return <>{name}</>;
+    return null;
   }
   
 }
 
-export default function NavExperiment() {
-  const routes = [{
-    btnName: "Characters",
-    route: "/characters",
-    component: <BodyStub name="characters"/>
-    // component: () => {
-    //   console.log('called characters');
-    //   return <div>characters view</div>;
-    // }
-  }, {
-    btnName: "About",
-    route: "/about",
-    component: <BodyStub name="about"/>
-    // component: () => {
-    //   console.log('called about');
-    //   return <div>about view</div>;
-    // }
-  }, {
-    btnName: "Users",
-    route: "/users",
-    component: <BodyStub name="users"/>
-    // component: () => {
-    //   console.log('called users');
-    //   return <div>users view</div>;
-    // }
-  }]
-
+export default function NavExperiment({navEls, L10n, firstRouteName}) {
+  console.log(navEls);
   return (
     <Router>
-      <div>
-        <nav>
-          <ul>
+      <div className="width-100p">
+        <nav className="navigation2 width-100p">
+          <ul className="width-100p">
             {
-              routes.map(routeData => <li key={routeData.route}>
-                <Link to={routeData.route}>{routeData.btnName}</Link>
-              </li>)
+              navEls.map(el => {
+                if(el.type === 'separator') {
+                  return <div className="nav-separator"/>;
+                }
+                if(el.type === 'link') {
+                  const { opts } = el;
+                  const text = L10n.getValue(`header-${el.btnName}`);
+                  return <li key={el.btnName}>
+                    <NavLink 
+                      className={classNames("navigation-button", {[opts.clazz]: !!opts.clazz})}
+                      to={'/' + el.btnName} title={opts.tooltip ? text : ''}>{opts.tooltip ? '' : text}</NavLink>
+                  </li>
+                }
+                if(el.type === 'button') {
+                  const { clazz, btnName, callback, opts } = el;
+                  return <button 
+                    type="button"
+                    className={classNames(clazz, 'action-button', {
+                      [opts.className]: !!opts.className
+                    })} 
+                    title={opts.tooltip ? L10n.getValue(`header-${btnName}`) : ''}
+                    onClick={callback}></button>
+                }
+                return null;
+              })
             }
+            {/* {
+              routes.map(routeData => <li key={routeData.route}>
+                <Link to={routeData.route}>{L10n.getValue(`header-${routeData.btnName}`)}</Link>
+              </li>)
+            } */}
           </ul>
         </nav>
         <Switch>
           {
+            navEls.filter(el => el.type === 'link').map(el => {
+              return <Route key={el.btnName} path={'/' + el.btnName}><BodyStub name={el.btnName} callback={el.callback}/></Route>;
+              // <li key={el.btnName}>
+              //   <Link to={'/' + el.btnName}>{L10n.getValue(`header-${el.btnName}`)}</Link>
+              // </li>
+            })
+          }
+          {/* {
             routes.map(routeData => 
               <Route key={routeData.route} path={routeData.route}>{routeData.component}</Route>
               )
-            }
+            } */}
             {/* <Route key={routeData.route} path={routeData.route}>{routeData.component()}</Route> */}
             {/* <Route key={routeData.route} path={routeData.route}>{routeData.route}</Route> */}
             {/* <Route key={routeData.route} path={routeData.route}>{routeData.component()}</Route> */}
-          <Redirect to="/users"/>
+          <Redirect to={"/" + firstRouteName}/>
         </Switch>
       </div>
     </Router>
