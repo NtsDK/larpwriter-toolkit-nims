@@ -3,6 +3,7 @@ import DbmsFactory from 'DbmsFactory';
 import apis from 'apis';
 
 import ReactDOM from 'react-dom';
+import React from "react";
 import { getLogoutFormTemplate } from "../views/serverSpecific/LogoutFormTemplate.jsx";
 
 import * as TestUtils from 'nims-app-core/testUtils';
@@ -41,7 +42,12 @@ import { AccessManager } from '../views/accessManager';
 
 import { getNavExperiment } from "./NavExperiment.jsx";
 
-// import { i18n } from "./i18n";
+// import { getRootComponent } from "./rootComponent.jsx";
+
+import { I18nextProvider } from 'react-i18next';
+import { i18n } from "nims-app-core/i18n";
+
+
 
 
 import {
@@ -62,6 +68,34 @@ import '../specs/baseAPI';
 import '../specs/smokeTest';
 import '../specs/serverSmokeTest';
 // }
+
+const RootComponent = function() {
+    return (
+        <>
+            <nav className="navigation main-navigation"></nav>
+            <nav className="navigation test-navigation"></nav>
+
+            <div id="contentArea"></div>
+
+            <div className="hidden tab-container">
+                <div id="warehouse"></div>
+            </div>
+
+            <div id="debugNotification" className="hidden"></div>
+        </>
+    );
+};
+
+function getRootComponent() {
+    return <RootComponent />;
+}
+
+ReactDOM.render(
+    <I18nextProvider i18n={i18n}>
+        {getRootComponent()}
+    </I18nextProvider>,
+    document.getElementById('root')
+);
 
 // eslint-disable-next-line import/order
 const { localAutoSave, runBaseSelectDialog, makeBackup } = initLocalBaseBackup({
@@ -108,7 +142,7 @@ if (PRODUCT === 'STANDALONE') {
     };
 }
 
-window.onPageLoad = onPageLoad;
+onPageLoad();
 
 function onDatabaseLoad() {
     PermissionInformer.refresh().then(() => {
