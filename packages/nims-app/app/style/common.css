@@ -19,17 +19,20 @@ body {
   display: none;
 }
 
-#navigation {
-  display: flex;
-  flex-wrap: wrap;
-  position: fixed;
+.navigation {
+  /* position: fixed;
   top: 0;
   width: 100%;
-  background-color: rgba(171, 171, 171, 0.25);
-  z-index: 1;
+  z-index: 1; */
 }
 
-#navigation,
+.navigation {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: rgba(171, 171, 171, 0.25);
+}
+
+.navigation,
 .sub-tab-navigation{
 /*   background-color: #ababab; */
   border-bottom: 4px solid rgb(51, 122, 183);
