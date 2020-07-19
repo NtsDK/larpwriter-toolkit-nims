@@ -69,33 +69,26 @@ import '../specs/smokeTest';
 import '../specs/serverSmokeTest';
 // }
 
-const RootComponent = function() {
-    return (
-        <>
-            <nav className="navigation main-navigation"></nav>
-            <nav className="navigation test-navigation"></nav>
+// const RootComponent = function() {
+//     return (
+//         <>
+//             <nav className="navigation main-navigation"></nav>
+//             <nav className="navigation test-navigation"></nav>
 
-            <div id="contentArea"></div>
+//             <div id="contentArea"></div>
 
-            <div className="hidden tab-container">
-                <div id="warehouse"></div>
-            </div>
+//             <div className="hidden tab-container">
+//                 <div id="warehouse"></div>
+//             </div>
+//         </>
+//     );
+// };
 
-            <div id="debugNotification" className="hidden"></div>
-        </>
-    );
-};
+// function getRootComponent() {
+//     return <RootComponent />;
+// }
 
-function getRootComponent() {
-    return <RootComponent />;
-}
 
-ReactDOM.render(
-    <I18nextProvider i18n={i18n}>
-        {getRootComponent()}
-    </I18nextProvider>,
-    document.getElementById('root')
-);
 
 // eslint-disable-next-line import/order
 const { localAutoSave, runBaseSelectDialog, makeBackup } = initLocalBaseBackup({
@@ -144,109 +137,125 @@ if (PRODUCT === 'STANDALONE') {
 
 onPageLoad();
 
-function onDatabaseLoad() {
-    PermissionInformer.refresh().then(() => {
-        PermissionInformer.isAdmin().then((isAdmin) => {
-            $.datetimepicker.setDateFormatter('moment');
+async function onDatabaseLoad() {
+    let isAdmin;
+    try {
+        await PermissionInformer.refresh();
+        isAdmin = await PermissionInformer.isAdmin();
+    } catch(err) {
+        UI.handleError(err);
+        return;
+    }
+    $.datetimepicker.setDateFormatter('moment');
 
-            // ReactDOM.render(getNavExperiment(), U.qe('#navigation2'));
+    // ReactDOM.render(getNavExperiment(), U.qe('#navigation2'));
 
-            const firstTab = 'Stories';
-            // const firstTab = 'AccessManager';
+    const firstTab = 'Stories';
+    // const firstTab = 'AccessManager';
 
-            const globalObjects = {L10n, DBMS, SM};
+    const globalObjects = {L10n, DBMS, SM};
 
-            navComponent.addView('overview', 'Overview', Overview);
-            navComponent.addView('characters', 'Characters', Characters);
-            navComponent.addView('players', 'Players', Players);
-            navComponent.addView('stories', 'Stories', Stories);
-            navComponent.addView('adaptations', 'Adaptations', Adaptations);
-            navComponent.addView('briefings', 'Briefings', Briefings);
-            navComponent.addView('relations', 'Relations', Relations);
+    navComponent.addView('overview', 'Overview', Overview);
+    navComponent.addView('characters', 'Characters', Characters);
+    navComponent.addView('players', 'Players', Players);
+    navComponent.addView('stories', 'Stories', Stories);
+    navComponent.addView('adaptations', 'Adaptations', Adaptations);
+    navComponent.addView('briefings', 'Briefings', Briefings);
+    navComponent.addView('relations', 'Relations', Relations);
 
-            navComponent.addNavSeparator();
+    navComponent.addNavSeparator();
 
-            navComponent.addView('timeline', 'Timeline', new Timeline(globalObjects), { clazz: 'timelineButton icon-button', tooltip: true });
-            navComponent.addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
-            navComponent.addView('profile-filter', 'ProfileFilter', new ProfileFilter(), { clazz: 'filterButton icon-button', tooltip: true });
-            navComponent.addView('groups', 'GroupProfile', new GroupProfile(globalObjects), { clazz: 'groupsButton icon-button', tooltip: true });
-            navComponent.addView('textSearch', 'TextSearch', new TextSearch(globalObjects), { clazz: 'textSearchButton icon-button', tooltip: true });
-            navComponent.addView('roleGrid', 'RoleGrid', new RoleGrid(globalObjects), { clazz: 'roleGridButton icon-button', tooltip: true });
+    navComponent.addView('timeline', 'Timeline', new Timeline(globalObjects), { clazz: 'timelineButton icon-button', tooltip: true });
+    navComponent.addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
+    navComponent.addView('profile-filter', 'ProfileFilter', new ProfileFilter(), { clazz: 'filterButton icon-button', tooltip: true });
+    navComponent.addView('groups', 'GroupProfile', new GroupProfile(globalObjects), { clazz: 'groupsButton icon-button', tooltip: true });
+    navComponent.addView('textSearch', 'TextSearch', new TextSearch(globalObjects), { clazz: 'textSearchButton icon-button', tooltip: true });
+    navComponent.addView('roleGrid', 'RoleGrid', new RoleGrid(globalObjects), { clazz: 'roleGridButton icon-button', tooltip: true });
 
-            navComponent.addNavSeparator();
+    navComponent.addNavSeparator();
 
-            if (PRODUCT === 'SERVER') {
-                const content = U.makeEl('div');
-                U.addEl(U.qe('.tab-container'), content);
-                ReactDOM.render(getLogoutFormTemplate(), content);
-                L10n.localizeStatic(content);
+    if (PRODUCT === 'SERVER') {
+        const content = U.makeEl('div');
+        U.addEl(U.qe('.tab-container'), content);
+        ReactDOM.render(getLogoutFormTemplate(), content);
+        L10n.localizeStatic(content);
 
-                navComponent.addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
-            }
-            navComponent.addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
+        navComponent.addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
+    }
+    navComponent.addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
 
-            navComponent.addNavSeparator();
+    navComponent.addNavSeparator();
 
-            if (isAdmin) {
-                navComponent.addNavEl(makeLoadBaseButton());
-            }
+    if (isAdmin) {
+        navComponent.addNavEl(makeLoadBaseButton());
+    }
 
-            // navComponent.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
-            navComponent.addButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts);
-            if (PRODUCT === 'STANDALONE') {
-                // navComponent.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
-                navComponent.addButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts);
-            }
-            //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
+    // navComponent.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
+    navComponent.addButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts);
+    if (PRODUCT === 'STANDALONE') {
+        // navComponent.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
+        navComponent.addButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts);
+    }
+    //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
 
-            //               addNavEl(makeL10nButton());
+    //               addNavEl(makeL10nButton());
 
-            if (MODE === 'DEV') {
-                if (DEV_OPTS.ENABLE_TESTS) {
-                    // navComponent.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
-                    navComponent.addButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts);
-                }
-                if (DEV_OPTS.ENABLE_BASICS) {
-                    // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-                    // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
-                    navComponent.addButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts);
-                    navComponent.addButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts);
-                }
-                if (DEV_OPTS.ENABLE_EXTRAS) {
-                    navComponent.addButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts);
-                    // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
-                    navComponent.addButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts);
-                    // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-                    // // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
-                    // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
-                }
-            }
+    if (MODE === 'DEV') {
+        if (DEV_OPTS.ENABLE_TESTS) {
+            // navComponent.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
+            navComponent.addButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts);
+        }
+        if (DEV_OPTS.ENABLE_BASICS) {
+            // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
+            // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
+            navComponent.addButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts);
+            navComponent.addButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts);
+        }
+        if (DEV_OPTS.ENABLE_EXTRAS) {
+            navComponent.addButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts);
+            // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
+            navComponent.addButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts);
+            // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
+            // // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
+            // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
+        }
+    }
 
-            if (PRODUCT === 'SERVER') {
-                // navComponent.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
-                navComponent.addButton('logoutButton icon-button', 'logout', postLogout, btnOpts);
-            }
-            // navComponent.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts));
-            navComponent.addButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts);
+    if (PRODUCT === 'SERVER') {
+        // navComponent.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
+        navComponent.addButton('logoutButton icon-button', 'logout', postLogout, btnOpts);
+    }
+    // navComponent.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts));
+    navComponent.addButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts);
 
-            navComponent.setFirstView(firstTab);
+    navComponent.setFirstView(firstTab);
 
-            navComponent.render();
+    ReactDOM.render(
+        <I18nextProvider i18n={i18n}>
+            {/* <nav className="navigation main-navigation"></nav> */}
+            <nav className="navigation test-navigation">
+                {navComponent.render()}
+            </nav>
 
-            navComponent.refreshCurrentView();
-            if (PRODUCT === 'STANDALONE') {
-                if (MODE === 'PROD') {
-                    addBeforeUnloadListener();
-                }
-                localAutoSave();
-            }
+            {/* <div id="contentArea"></div> */}
+        </I18nextProvider>,
+        document.getElementById('root')
+    );
 
-            // setTimeout(TestUtils.runTests, 1000);
-            // setTimeout(TestUtils.clickThroughtHeaders, 1000);
-            //                FileUtils.makeNewBase();
-            //                                runTests();
-        }).catch(UI.handleError);
-    }).catch(UI.handleError);
+    // navComponent.render();
+
+    navComponent.refreshCurrentView();
+    if (PRODUCT === 'STANDALONE') {
+        if (MODE === 'PROD') {
+            addBeforeUnloadListener();
+        }
+        localAutoSave();
+    }
+
+    // setTimeout(TestUtils.runTests, 1000);
+    // setTimeout(TestUtils.clickThroughtHeaders, 1000);
+    //                FileUtils.makeNewBase();
+    //                                runTests();
 }
 
 function loadEmptyBase() {

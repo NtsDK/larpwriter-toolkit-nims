@@ -116,12 +116,18 @@ export class NavComponentV2 {
         // this.content.appendChild(view.content || view.getContent());
         // this.currentView = view;
 
+        return getNavExperiment({
+            navEls: this.navEls,
+            L10n,
+            firstRouteName: btnName
+        });
+
         // if(testNavEl) {
-            ReactDOM.render(getNavExperiment({
-                navEls: this.navEls,
-                L10n,
-                firstRouteName: btnName
-            }), this.navigation);
+            // ReactDOM.render(getNavExperiment({
+            //     navEls: this.navEls,
+            //     L10n,
+            //     firstRouteName: btnName
+            // }), this.navigation);
         // }
     }
 
