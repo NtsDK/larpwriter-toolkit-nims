@@ -4,7 +4,7 @@ import { createModalDialog } from "../commons/uiCommons";
 import { UI, U, L10n } from 'nims-app-core';
 import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
-import { NavComponent } from "../../pages/NavComponent";
+import { NavComponentV1 } from "../../pages/NavComponentV1";
 
 const Stories = {};
 
@@ -48,7 +48,7 @@ Stories.init = () => {
         componentClass: 'ModalPromptBody'
     });
 
-    state.left = new NavComponent(
+    state.left = new NavComponentV1(
         U.queryEl('.stories-navigation-container .left-side'),
         U.queryEl('.stories-content-container .left-side'),
         true
@@ -57,7 +57,7 @@ Stories.init = () => {
     state.left.addView('story-events', 'StoryEvents', StoryEvents);
     state.left.addView('story-characters', 'StoryCharacters', StoryCharacters);
     state.left.addView('event-presence', 'EventPresence', EventPresence);
-    state.right = new NavComponent(
+    state.right = new NavComponentV1(
         U.queryEl('.stories-navigation-container .right-side'),
         U.queryEl('.stories-content-container .right-side'),
         true

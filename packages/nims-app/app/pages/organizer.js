@@ -41,6 +41,8 @@ import { AccessManager } from '../views/accessManager';
 
 import { getNavExperiment } from "./NavExperiment.jsx";
 
+// import { i18n } from "./i18n";
+
 
 import {
     showDiffExample
@@ -70,11 +72,14 @@ let firstBaseLoad = PRODUCT === 'STANDALONE';
 
 // const pageCore = new PageCore();
 let navComponent = null;
+let navComponent2 = null;
 
 let onPageLoad = null;
 if (PRODUCT === 'STANDALONE') {
     onPageLoad = () => {
-        navComponent = initPage();
+        const res = initPage();
+        navComponent = res.nav1;
+        navComponent = res.nav2;
         // pageCore.initPage();
         window.DBMS = DbmsFactory({
             logModule,
@@ -91,7 +96,9 @@ if (PRODUCT === 'STANDALONE') {
     };
 } else {
     onPageLoad = () => {
-        navComponent = initPage();
+        const res = initPage();
+        navComponent = res.nav1;
+        navComponent = res.nav2;
         // pageCore.initPage();
         window.DBMS = DbmsFactory();
         consistencyCheck((checkResult) => {
@@ -190,7 +197,7 @@ function onDatabaseLoad() {
 
             navComponent.setFirstView(firstTab);
 
-            navComponent.render(U.queryEl('.navigation.test-navigation'));
+            navComponent.render();
 
             navComponent.refreshCurrentView();
             if (PRODUCT === 'STANDALONE') {
