@@ -47,7 +47,18 @@ import { getNavExperiment } from "./NavExperiment.jsx";
 import { I18nextProvider } from 'react-i18next';
 import { i18n } from "nims-app-core/i18n";
 
-import { makeLoadBaseButton2 } from "./makeLoadBaseButton.jsx";
+import { LoadBaseButton } from "./makeLoadBaseButton.jsx";
+import { NavComponent } from "./NavComponent.jsx";
+import {
+    HashRouter as Router,
+    Switch,
+    Route,
+    Link,
+    NavLink,
+    Redirect
+  } from "react-router-dom";
+  import { ViewWrapper } from "./ViewWrapper.jsx";
+
 
 
 import {
@@ -67,6 +78,7 @@ import 'nims-app-core/tests/jasmine';
 import '../specs/baseAPI';
 import '../specs/smokeTest';
 import '../specs/serverSmokeTest';
+import { view } from 'ramda';
 // }
 
 // const RootComponent = function() {
@@ -148,9 +160,8 @@ async function onDatabaseLoad() {
     }
     $.datetimepicker.setDateFormatter('moment');
 
-    // ReactDOM.render(getNavExperiment(), U.qe('#navigation2'));
-
-    const firstTab = 'Stories';
+    // const firstTab = 'Stories';
+    const firstTab = 'Overview';
     // const firstTab = 'AccessManager';
 
     const globalObjects = {L10n, DBMS, SM};
@@ -189,13 +200,12 @@ async function onDatabaseLoad() {
     if (isAdmin) {
         // navComponent.addNavEl(makeLoadBaseButton());
         navComponent.addCustomNavElComponent(
-            makeLoadBaseButton2(btnOpts, (evt) => {
-                // console.log('on change')
+            <LoadBaseButton opts={btnOpts} onChange={(evt) => {
                 FileUtils.readSingleFile(evt)
                     .then((database) => DBMS.setDatabase({ database }))
                     .then(() => PermissionInformer.refresh())
                     .then(onBaseLoaded, UI.handleError);
-            })
+            }} />
         )
 
     }
@@ -240,11 +250,31 @@ async function onDatabaseLoad() {
 
     navComponent.setFirstView(firstTab);
 
+    const firstViewObj = navComponent.navEls.find(viewObj => viewObj.viewName === firstTab);
+    const firstRouteName = firstViewObj.btnName;
+
+    navComponent.navEls.filter(el => el.type === 'link').forEach(el => {
+        const { view } = el;
+        let viewContent = view.content || view.getContent();
+        if(viewContent === undefined) {
+            view.init();
+        }
+        // return <Route key={el.btnName} path={'/' + el.btnName}><BodyStub name={el.btnName} callback={el.callback}/></Route>;
+    });
+
     ReactDOM.render(
         <I18nextProvider i18n={i18n}>
-            <nav className="navigation main-navigation">
-                {navComponent.render()}
-            </nav>
+            <Router>
+                <NavComponent navEls={navComponent.navEls}/>
+                <Switch>
+                    {
+                        navComponent.navEls.filter(el => el.type === 'link').map(el => {
+                            return <Route key={el.btnName} path={'/' + el.btnName}><ViewWrapper view={el.view} name={el.btnName}/></Route>;
+                        })
+                    }
+                    <Redirect to={"/" + firstRouteName}/>
+                </Switch>
+            </Router>
 
             {/* <div id="contentArea"></div> */}
         </I18nextProvider>,

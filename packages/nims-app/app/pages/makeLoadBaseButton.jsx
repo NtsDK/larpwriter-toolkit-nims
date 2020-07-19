@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import classNames from 'classnames';
 import { L10n } from 'nims-app-core';
 
-class LoadBaseButton extends Component {
+export class LoadBaseButton extends Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
@@ -36,5 +36,5 @@ class LoadBaseButton extends Component {
 }
 
 export function makeLoadBaseButton2(opts, onChange) {
-  return <LoadBaseButton opts={opts} onChange={onChange} />
+  return <LoadBaseButton opts={opts} onChange={onChange} />;
 }
