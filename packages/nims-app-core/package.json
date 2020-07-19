@@ -10,17 +10,21 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "ramda": "^0.27.0",
-    "dateformat": "^3.0.3",
     "bootstrap-sass": "^3.4.1",
+    "dateformat": "^3.0.3",
     "diff": "^4.0.2",
     "file-saver": "^2.0.2",
+    "i18next": "^19.6.2",
+    "i18next-browser-languagedetector": "^5.0.0",
     "jquery": "^3.5.1",
     "jquery-datetimepicker": "^2.5.21",
-    "vex-dialog": "^1.1.0",
-    "vex-js": "^4.1.0",
+    "loglevel": "^1.6.8",
+    "loglevel-plugin-prefix": "^0.8.4",
     "nims-dbms-core": "0.7.2",
-    "nims-resources": "0.7.2"
+    "nims-resources": "0.7.2",
+    "ramda": "^0.27.0",
+    "vex-dialog": "^1.1.0",
+    "vex-js": "^4.1.0"
   },
   "private": true
 }
