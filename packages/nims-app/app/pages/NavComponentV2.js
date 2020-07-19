@@ -44,6 +44,13 @@ export class NavComponentV2 {
         });
     }
 
+    addCustomNavElComponent(elComponent) {
+        this.navEls.push({
+            type: 'customEl',
+            elComponent
+        });
+    }
+
     addButton(clazz, btnName, callback, opts) {
         this.navEls.push({
             type: 'button',
@@ -63,6 +70,7 @@ export class NavComponentV2 {
         this.navEls.forEach(navEl => {
             if(navEl.type === 'element') {
                 // U.addEl(this.navigation, navEl.el);
+            } else if(navEl.type === 'customEl') {
             } else if(navEl.type === 'button') {
                 // const { clazz, btnName, callback, opts } = navEl;
                 // const button = U.makeEl('button');

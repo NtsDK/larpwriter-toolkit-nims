@@ -25,7 +25,7 @@ export function initPage() {
     L10n.onL10nChange(UI.updateDialogL10n);
     window.SM = new SettingsManager();
     return {
-        nav1: new NavComponentV1(U.queryEl('.navigation.main-navigation'), U.queryEl('#contentArea')),
+        // nav1: new NavComponentV1(U.queryEl('.navigation.main-navigation'), U.queryEl('#contentArea')),
         nav2: new NavComponentV2(U.queryEl('.navigation.test-navigation'), U.queryEl('#contentArea'))
     }
 
