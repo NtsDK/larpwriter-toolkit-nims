@@ -4,7 +4,7 @@ import apis from 'apis';
 
 import ReactDOM from 'react-dom';
 import React from "react";
-import { getLogoutFormTemplate } from "../views/serverSpecific/LogoutFormTemplate.jsx";
+import { getLogoutFormTemplate, LogoutFormTemplate } from "../views/serverSpecific/LogoutFormTemplate.jsx";
 
 import * as TestUtils from 'nims-app-core/testUtils';
 import * as FileUtils from 'nims-app-core/fileUtils';
@@ -48,7 +48,7 @@ import { I18nextProvider } from 'react-i18next';
 import { i18n } from "nims-app-core/i18n";
 
 import { LoadBaseButton } from "./makeLoadBaseButton.jsx";
-import { NavComponent } from "./NavComponent.jsx";
+import { NavComponent, NavButton, NavSeparator, NavViewLink } from "./NavComponent.jsx";
 import {
     HashRouter as Router,
     Switch,
@@ -80,27 +80,6 @@ import '../specs/smokeTest';
 import '../specs/serverSmokeTest';
 import { view } from 'ramda';
 // }
-
-// const RootComponent = function() {
-//     return (
-//         <>
-//             <nav className="navigation main-navigation"></nav>
-//             <nav className="navigation test-navigation"></nav>
-
-//             <div id="contentArea"></div>
-
-//             <div className="hidden tab-container">
-//                 <div id="warehouse"></div>
-//             </div>
-//         </>
-//     );
-// };
-
-// function getRootComponent() {
-//     return <RootComponent />;
-// }
-
-
 
 // eslint-disable-next-line import/order
 const { localAutoSave, runBaseSelectDialog, makeBackup } = initLocalBaseBackup({
@@ -147,6 +126,21 @@ if (PRODUCT === 'STANDALONE') {
     };
 }
 
+class ViewCache {
+    cache = {};
+
+    add(key, view) {
+        this.cache[key] = view;
+        view.init();
+    }
+
+    get(key) {
+        return this.cache[key];
+    }
+}
+
+const viewCache = new ViewCache();
+
 onPageLoad();
 
 async function onDatabaseLoad() {
@@ -166,114 +160,122 @@ async function onDatabaseLoad() {
 
     const globalObjects = {L10n, DBMS, SM};
 
-    navComponent.addView('overview', 'Overview', Overview);
-    navComponent.addView('characters', 'Characters', Characters);
-    navComponent.addView('players', 'Players', Players);
-    navComponent.addView('stories', 'Stories', Stories);
-    navComponent.addView('adaptations', 'Adaptations', Adaptations);
-    navComponent.addView('briefings', 'Briefings', Briefings);
-    navComponent.addView('relations', 'Relations', Relations);
+    viewCache.add('overview', Overview);
+    viewCache.add('characters', Characters);
+    viewCache.add('players', Players);
+    viewCache.add('stories', Stories);
+    viewCache.add('adaptations', Adaptations);
+    viewCache.add('briefings', Briefings);
+    viewCache.add('relations', Relations);
 
-    navComponent.addNavSeparator();
-
-    navComponent.addView('timeline', 'Timeline', new Timeline(globalObjects), { clazz: 'timelineButton icon-button', tooltip: true });
-    navComponent.addView('social-network', 'SocialNetwork', SocialNetwork, { clazz: 'socialNetworkButton icon-button', tooltip: true });
-    navComponent.addView('profile-filter', 'ProfileFilter', new ProfileFilter(), { clazz: 'filterButton icon-button', tooltip: true });
-    navComponent.addView('groups', 'GroupProfile', new GroupProfile(globalObjects), { clazz: 'groupsButton icon-button', tooltip: true });
-    navComponent.addView('textSearch', 'TextSearch', new TextSearch(globalObjects), { clazz: 'textSearchButton icon-button', tooltip: true });
-    navComponent.addView('roleGrid', 'RoleGrid', new RoleGrid(globalObjects), { clazz: 'roleGridButton icon-button', tooltip: true });
-
-    navComponent.addNavSeparator();
+    viewCache.add('timeline', new Timeline(globalObjects));
+    viewCache.add('socialNetwork', SocialNetwork);
+    viewCache.add('profileFilter', new ProfileFilter());
+    viewCache.add('groups', new GroupProfile(globalObjects),);
+    viewCache.add('textSearch', new TextSearch(globalObjects));
+    viewCache.add('roleGrid', new RoleGrid(globalObjects));
 
     if (PRODUCT === 'SERVER') {
-        const content = U.makeEl('div');
-        U.addEl(U.qe('.tab-container'), content);
-        ReactDOM.render(getLogoutFormTemplate(), content);
-        L10n.localizeStatic(content);
-
-        navComponent.addView('admins', 'AccessManager', AccessManager, { clazz: 'accessManagerButton icon-button', tooltip: true });
+        viewCache.add('admins', AccessManager);
     }
-    navComponent.addView('logViewer', 'LogViewer2', LogViewer2, { clazz: 'logViewerButton icon-button', tooltip: true });
-
-    navComponent.addNavSeparator();
-
-    if (isAdmin) {
-        // navComponent.addNavEl(makeLoadBaseButton());
-        navComponent.addCustomNavElComponent(
-            <LoadBaseButton opts={btnOpts} onChange={(evt) => {
-                FileUtils.readSingleFile(evt)
-                    .then((database) => DBMS.setDatabase({ database }))
-                    .then(() => PermissionInformer.refresh())
-                    .then(onBaseLoaded, UI.handleError);
-            }} />
-        )
-
-    }
-
-    // navComponent.addNavEl(makeButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts));
-    navComponent.addButton('dataSaveButton icon-button', 'save-database', FileUtils.saveFile, btnOpts);
-    if (PRODUCT === 'STANDALONE') {
-        // navComponent.addNavEl(makeButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts));
-        navComponent.addButton('newBaseButton icon-button', 'create-database', loadEmptyBase, btnOpts);
-    }
-    //                addNavEl(makeButton('mainHelpButton icon-button', 'docs', FileUtils.openHelp, btnOpts));
-
-    //               addNavEl(makeL10nButton());
-
-    if (MODE === 'DEV') {
-        if (DEV_OPTS.ENABLE_TESTS) {
-            // navComponent.addNavEl(makeButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts));
-            navComponent.addButton('testButton icon-button', 'test', TestUtils.runTests, btnOpts);
-        }
-        if (DEV_OPTS.ENABLE_BASICS) {
-            // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts));
-            // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts));
-            navComponent.addButton('checkConsistencyButton icon-button', 'checkConsistency', checkConsistency, btnOpts);
-            navComponent.addButton('clickAllTabsButton icon-button', 'clickAllTabs', TestUtils.clickThroughtHeaders, btnOpts);
-        }
-        if (DEV_OPTS.ENABLE_EXTRAS) {
-            navComponent.addButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts);
-            // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
-            navComponent.addButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts);
-            // navComponent.addNavEl(makeButton('checkConsistencyButton icon-button', 'showDbmsConsistencyState', showDbmsConsistencyState, btnOpts));
-            // // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'testTab', () => navComponent.testView(), btnOpts));
-            // navComponent.addNavEl(makeButton('clickAllTabsButton icon-button', 'showDiff', showDiffExample, btnOpts));
-        }
-    }
-
-    if (PRODUCT === 'SERVER') {
-        // navComponent.addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
-        navComponent.addButton('logoutButton icon-button', 'logout', postLogout, btnOpts);
-    }
-    // navComponent.addNavEl(makeButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts));
-    navComponent.addButton('refreshButton icon-button', 'refresh', () => navComponent.refreshCurrentView(), btnOpts);
-
-    navComponent.setFirstView(firstTab);
-
-    const firstViewObj = navComponent.navEls.find(viewObj => viewObj.viewName === firstTab);
-    const firstRouteName = firstViewObj.btnName;
-
-    navComponent.navEls.filter(el => el.type === 'link').forEach(el => {
-        const { view } = el;
-        let viewContent = view.content || view.getContent();
-        if(viewContent === undefined) {
-            view.init();
-        }
-        // return <Route key={el.btnName} path={'/' + el.btnName}><BodyStub name={el.btnName} callback={el.callback}/></Route>;
-    });
+    viewCache.add('logViewer', LogViewer2);
 
     ReactDOM.render(
         <I18nextProvider i18n={i18n}>
             <Router>
-                <NavComponent navEls={navComponent.navEls}/>
+                <nav className="navigation main-navigation navigation2">
+                    <ul className="width-100p">
+                        <NavViewLink labelKey={'overview'} to={'/overview'}/>
+                        <NavViewLink labelKey={'characters'} to={'/characters'}/>
+                        <NavViewLink labelKey={'players'} to={'/players'}/>
+                        <NavViewLink labelKey={'stories'} to={'/stories'}/>
+                        <NavViewLink labelKey={'adaptations'} to={'/adaptations'}/>
+                        <NavViewLink labelKey={'briefings'} to={'/briefings'}/>
+                        <NavViewLink labelKey={'relations'} to={'/relations'}/>
+
+                        <NavSeparator/>
+                        <NavViewLink labelKey={'timeline'} to={'/timeline'} clazz={'timelineButton icon-button'} hasTooltip={true}/>
+                        <NavViewLink labelKey={'social-network'} to={'/social-network'} clazz={'socialNetworkButton icon-button'} hasTooltip={true}/>
+                        <NavViewLink labelKey={'profile-filter'} to={'/profile-filter'} clazz={'filterButton icon-button'} hasTooltip={true}/>
+                        <NavViewLink labelKey={'groups'} to={'/groups'} clazz={'groupsButton icon-button'} hasTooltip={true}/>
+                        <NavViewLink labelKey={'textSearch'} to={'/textSearch'} clazz={'textSearchButton icon-button'} hasTooltip={true}/>
+                        <NavViewLink labelKey={'roleGrid'} to={'/roleGrid'} clazz={'roleGridButton icon-button'} hasTooltip={true}/>
+
+                        <NavSeparator/>
+                        {
+                            PRODUCT === 'SERVER' &&
+                            <NavViewLink labelKey={'admins'} to={'/admins'} clazz={'accessManagerButton icon-button'} hasTooltip={true}/>
+                        }
+                        <NavViewLink labelKey={'logViewer'} to={'/logViewer'} clazz={'logViewerButton icon-button'} hasTooltip={true}/>
+
+                        <NavSeparator/>
+                        {
+                            isAdmin && <LoadBaseButton opts={btnOpts} onChange={(evt) => {
+                                FileUtils.readSingleFile(evt)
+                                    .then((database) => DBMS.setDatabase({ database }))
+                                    .then(() => PermissionInformer.refresh())
+                                    .then(onBaseLoaded, UI.handleError);
+                            }} />
+                        }
+                        <NavButton clazz={'dataSaveButton'} btnName={'save-database'} callback={FileUtils.saveFile} />
+                        {
+                            PRODUCT === 'STANDALONE' &&
+                            <NavButton clazz={'newBaseButton'} btnName={'create-database'} callback={loadEmptyBase} />
+                        }
+                        {
+                            MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS &&
+                            <NavButton clazz={'testButton'} btnName={'test'} callback={TestUtils.runTests} />
+                        }
+                        {
+                            MODE === 'DEV' && DEV_OPTS.ENABLE_BASICS &&
+                            <>
+                                <NavButton clazz={'checkConsistencyButton'} btnName={'checkConsistency'} callback={checkConsistency} />
+                                <NavButton clazz={'clickAllTabsButton'} btnName={'clickAllTabs'} callback={TestUtils.clickThroughtHeaders} />
+                            </>
+                        }
+                        {
+                            MODE === 'DEV' && DEV_OPTS.ENABLE_EXTRAS &&
+                            <>
+                                <NavButton clazz={'checkConsistencyButton'} btnName={'showDbmsConsistencyState'} callback={showDbmsConsistencyState} />
+                                <NavButton clazz={'clickAllTabsButton'} btnName={'showDiff'} callback={showDiffExample} />
+                            </>
+                        }
+                        {
+                            PRODUCT === 'SERVER' &&
+                            <NavButton clazz={'logoutButton'} btnName={'logout'} callback={postLogout} />
+                        }
+                        {/* <NavButton clazz={'refreshButton'} btnName={'refresh'} callback={() => navComponent.refreshCurrentView()} /> */}
+                    </ul>
+                </nav>
                 <Switch>
+                    <Route path="/overview">    <ViewWrapper view={viewCache.get('overview')}/></Route>
+                    <Route path="/characters">  <ViewWrapper view={viewCache.get('characters')}/></Route>
+                    <Route path="/players">     <ViewWrapper view={viewCache.get('players')}/></Route>
+                    <Route path="/stories">     <ViewWrapper view={viewCache.get('stories')}/></Route>
+                    <Route path="/adaptations"> <ViewWrapper view={viewCache.get('adaptations')}/></Route>
+                    <Route path="/briefings">   <ViewWrapper view={viewCache.get('briefings')}/></Route>
+                    <Route path="/relations">   <ViewWrapper view={viewCache.get('relations')}/></Route>
+
+                    <Route path="/timeline">    <ViewWrapper view={viewCache.get('timeline')}/></Route>
+                    <Route path="/social-network"><ViewWrapper view={viewCache.get('socialNetwork')}/></Route>
+                    <Route path="/profile-filter"><ViewWrapper view={viewCache.get('profileFilter')}/></Route>
+                    <Route path="/groups">      <ViewWrapper view={viewCache.get('groups')}/></Route>
+                    <Route path="/textSearch">  <ViewWrapper view={viewCache.get('textSearch')}/></Route>
+                    <Route path="/roleGrid">    <ViewWrapper view={viewCache.get('roleGrid')}/></Route>
+
                     {
-                        navComponent.navEls.filter(el => el.type === 'link').map(el => {
-                            return <Route key={el.btnName} path={'/' + el.btnName}><ViewWrapper view={el.view} name={el.btnName}/></Route>;
-                        })
+                        PRODUCT === 'SERVER' &&
+                        <Route path="/admins">    <ViewWrapper view={viewCache.get('admins')}/></Route>
                     }
-                    <Redirect to={"/" + firstRouteName}/>
+                    <Route path="/logViewer">    <ViewWrapper view={viewCache.get('logViewer')}/></Route>
+
+                    <Redirect to={"/overview"}/>
                 </Switch>
+                <div className="hidden">
+                    {
+                        PRODUCT === 'SERVER' && <LogoutFormTemplate/>
+                    }
+                </div>
             </Router>
 
             {/* <div id="contentArea"></div> */}
@@ -283,7 +285,7 @@ async function onDatabaseLoad() {
 
     // navComponent.render();
 
-    navComponent.refreshCurrentView();
+    // navComponent.refreshCurrentView();
     if (PRODUCT === 'STANDALONE') {
         if (MODE === 'PROD') {
             addBeforeUnloadListener();
@@ -340,7 +342,7 @@ function onBaseLoaded(err3) {
             onDatabaseLoad();
             firstBaseLoad = false;
         } else {
-            navComponent.refreshCurrentView();
+            // navComponent.refreshCurrentView();
         }
     });
 }
