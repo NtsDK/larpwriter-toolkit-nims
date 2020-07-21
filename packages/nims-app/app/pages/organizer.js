@@ -69,9 +69,9 @@ import {
     Link,
     NavLink,
     Redirect
-  } from "react-router-dom";
-  import { ViewWrapper } from "./ViewWrapper.jsx";
-
+} from "react-router-dom";
+import { ViewWrapper } from "./ViewWrapper.jsx";
+import { AboutV2 } from "../views/logs/AboutV2";
 
 
 import {
@@ -276,7 +276,7 @@ async function onDatabaseLoad() {
                     <Route path="/overview">    <ViewWrapper view={viewCache.get('overview')}/></Route>
                     {/* <Route path="/characters">  <ViewWrapper view={viewCache.get('characters')}/></Route> */}
                     <Route path="/characters">
-                        <nav className="navigation navigation2">
+                        <nav className="navigation navigation2 sub-tab-navigation">
                             <ul className="width-100p">
                                 <NavViewLink labelKey={'filling-profile'} to={'/characters/characterEditor'}/>
                                 <NavViewLink labelKey={'changing-profile-structure'} to={'/characters/characterConfigurer'}/>
@@ -292,7 +292,7 @@ async function onDatabaseLoad() {
                     </Route>
                     {/* <Route path="/players">     <ViewWrapper view={viewCache.get('players')}/></Route> */}
                     <Route path="/players">
-                        <nav className="navigation navigation2">
+                        <nav className="navigation navigation2 sub-tab-navigation">
                             <ul className="width-100p">
                                 <NavViewLink labelKey={'filling-profile'} to={'/players/playerEditor'}/>
                                 <NavViewLink labelKey={'changing-profile-structure'} to={'/players/playerConfigurer'}/>
@@ -309,7 +309,7 @@ async function onDatabaseLoad() {
                     <Route path="/stories">     <ViewWrapper view={viewCache.get('stories')}/></Route>
                     <Route path="/adaptations"> <ViewWrapper view={viewCache.get('adaptations')}/></Route>
                     <Route path="/briefings">
-                        <nav className="navigation navigation2">
+                        <nav className="navigation navigation2 sub-tab-navigation">
                             <ul className="width-100p">
                                 <NavViewLink labelKey={'briefing-preview'} to={'/briefings/briefingPreview'}/>
                                 <NavViewLink labelKey={'briefing-export'} to={'/briefings/briefingExport'}/>
@@ -334,7 +334,7 @@ async function onDatabaseLoad() {
                         PRODUCT === 'SERVER' &&
                         // <Route path="/admins">    <ViewWrapper view={viewCache.get('admins')}/></Route>
                         <Route path="/admins">
-                            <nav className="navigation navigation2">
+                            <nav className="navigation navigation2 sub-tab-navigation">
                                 <ul className="width-100p">
                                     <NavViewLink labelKey={'organizerManagement'} to={'/admins/organizerManagement'}/>
                                     <NavViewLink labelKey={'playerManagement'} to={'/admins/playerManagement'}/>
@@ -349,7 +349,7 @@ async function onDatabaseLoad() {
                     }
                     {/* <Route path="/logViewer">    <ViewWrapper view={viewCache.get('logViewer')}/></Route> */}
                     <Route path="/logViewer">
-                        <nav className="navigation navigation2">
+                        <nav className="navigation navigation2 sub-tab-navigation">
                             <ul className="width-100p">
                                 <NavViewLink labelKey={'group-schema'} to={'/logViewer/groupSchema'}/>
                                 <NavViewLink labelKey={'logViewer'} to={'/logViewer/logViewer'}/>
@@ -359,12 +359,13 @@ async function onDatabaseLoad() {
                         <Switch>
                             <Route path="/logViewer/groupSchema">   <ViewWrapper view={viewCache.get('groupSchema')}/></Route>
                             <Route path="/logViewer/logViewer">     <ViewWrapper view={viewCache.get('logViewer')}/></Route>
-                            <Route path="/logViewer/about">         <ViewWrapper view={viewCache.get('about')}/></Route>
+                            <Route path="/logViewer/about">         <AboutV2/></Route>
                             {/* <Redirect to={"/logViewer/logViewer"}/> */}
                         </Switch>
                     </Route>
 
                     {/* <Redirect to={"/overview"}/> */}
+                    <Redirect to={"/logViewer/about"}/>
                 </Switch>
                 <div className="hidden">
                     {
