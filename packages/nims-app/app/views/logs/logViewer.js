@@ -51,7 +51,7 @@ export class LogViewer {
     };
 
     refresh() {
-        U.queryEls(`${root}.pagination li a`)[0].click();
+        // U.queryEls(`${root}.pagination li a`)[0].click();
     }
 
     dataRecieved(data) {

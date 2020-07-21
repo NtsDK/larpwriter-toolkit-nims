@@ -35,10 +35,23 @@ import { TextSearch } from '../views/textSearch/textSearch';
 import { ProfileFilter } from '../views/groups/profileFilter';
 import { GroupProfile } from '../views/groups/groupProfile';
 
-import { Briefings } from '../views/briefings';
-import { LogViewer2 } from '../views/logs';
-import { Characters, Players } from '../views/profiles2';
-import { AccessManager } from '../views/accessManager';
+// import { Briefings } from '../views/briefings';
+import BriefingPreview from '../views/briefings/briefingPreview';
+import BriefingExport from '../views/briefings/briefingExport';
+
+// import { LogViewer2 } from '../views/logs';
+import { LogViewer } from '../views/logs/logViewer';
+import { About } from '../views/logs/About';
+import { GroupSchema } from '../views/groups/groupSchema';
+
+// import { Characters, Players } from '../views/profiles2';
+import { CharacterEditor, PlayerEditor } from '../views/profiles2/profileEditor2';
+import { CharacterConfigurer, PlayerConfigurer } from '../views/profiles2/profileConfigurer2';
+import ProfileBinding2 from '../views/profiles2/profileBinding2';
+
+// import { AccessManager } from '../views/accessManager';
+import { OrganizerManagement } from '../views/accessManager/organizerManagement';
+import { PlayerManagement } from '../views/accessManager/playerManagement';
 
 import { getNavExperiment } from "./NavExperiment.jsx";
 
@@ -161,11 +174,18 @@ async function onDatabaseLoad() {
     const globalObjects = {L10n, DBMS, SM};
 
     viewCache.add('overview', Overview);
-    viewCache.add('characters', Characters);
-    viewCache.add('players', Players);
+    // viewCache.add('characters', Characters);
+    // viewCache.add('players', Players);
+    viewCache.add('characterEditor', CharacterEditor);
+    viewCache.add('playerEditor', PlayerEditor);
+    viewCache.add('characterConfigurer', CharacterConfigurer);
+    viewCache.add('playerConfigurer', PlayerConfigurer);
+    viewCache.add('profileBinding', ProfileBinding2);
     viewCache.add('stories', Stories);
     viewCache.add('adaptations', Adaptations);
-    viewCache.add('briefings', Briefings);
+    // viewCache.add('briefings', Briefings);
+    viewCache.add('briefingPreview', BriefingPreview);
+    viewCache.add('briefingExport', BriefingExport);
     viewCache.add('relations', Relations);
 
     viewCache.add('timeline', new Timeline(globalObjects));
@@ -176,14 +196,19 @@ async function onDatabaseLoad() {
     viewCache.add('roleGrid', new RoleGrid(globalObjects));
 
     if (PRODUCT === 'SERVER') {
-        viewCache.add('admins', AccessManager);
+        // viewCache.add('admins', AccessManager);
+        viewCache.add('organizerManagement', OrganizerManagement);
+        viewCache.add('playerManagement', PlayerManagement);
     }
-    viewCache.add('logViewer', LogViewer2);
+    // viewCache.add('logViewer', LogViewer2);
+    viewCache.add('logViewer', new LogViewer());
+    viewCache.add('groupSchema', new GroupSchema());
+    viewCache.add('about', new About());
 
     ReactDOM.render(
         <I18nextProvider i18n={i18n}>
             <Router>
-                <nav className="navigation main-navigation navigation2">
+                <nav className="navigation navigation2">
                     <ul className="width-100p">
                         <NavViewLink labelKey={'overview'} to={'/overview'}/>
                         <NavViewLink labelKey={'characters'} to={'/characters'}/>
@@ -249,11 +274,53 @@ async function onDatabaseLoad() {
                 </nav>
                 <Switch>
                     <Route path="/overview">    <ViewWrapper view={viewCache.get('overview')}/></Route>
-                    <Route path="/characters">  <ViewWrapper view={viewCache.get('characters')}/></Route>
-                    <Route path="/players">     <ViewWrapper view={viewCache.get('players')}/></Route>
+                    {/* <Route path="/characters">  <ViewWrapper view={viewCache.get('characters')}/></Route> */}
+                    <Route path="/characters">
+                        <nav className="navigation navigation2">
+                            <ul className="width-100p">
+                                <NavViewLink labelKey={'filling-profile'} to={'/characters/characterEditor'}/>
+                                <NavViewLink labelKey={'changing-profile-structure'} to={'/characters/characterConfigurer'}/>
+                                <NavViewLink labelKey={'binding-characters-and-players'} to={'/characters/profileBinding'}/>
+                            </ul>
+                        </nav>
+                        <Switch>
+                            <Route path="/characters/characterEditor">  <ViewWrapper view={viewCache.get('characterEditor')}/></Route>
+                            <Route path="/characters/characterConfigurer">   <ViewWrapper view={viewCache.get('characterConfigurer')}/></Route>
+                            <Route path="/characters/profileBinding">   <ViewWrapper view={viewCache.get('profileBinding')}/></Route>
+                            {/* <Redirect to={"/characters/characterEditor"}/> */}
+                        </Switch>
+                    </Route>
+                    {/* <Route path="/players">     <ViewWrapper view={viewCache.get('players')}/></Route> */}
+                    <Route path="/players">
+                        <nav className="navigation navigation2">
+                            <ul className="width-100p">
+                                <NavViewLink labelKey={'filling-profile'} to={'/players/playerEditor'}/>
+                                <NavViewLink labelKey={'changing-profile-structure'} to={'/players/playerConfigurer'}/>
+                                <NavViewLink labelKey={'binding-characters-and-players'} to={'/players/profileBinding'}/>
+                            </ul>
+                        </nav>
+                        <Switch>
+                            <Route path="/players/playerEditor">  <ViewWrapper view={viewCache.get('playerEditor')}/></Route>
+                            <Route path="/players/playerConfigurer">   <ViewWrapper view={viewCache.get('playerConfigurer')}/></Route>
+                            <Route path="/players/profileBinding">   <ViewWrapper view={viewCache.get('profileBinding')}/></Route>
+                            {/* <Redirect to={"/players/playerEditor"}/> */}
+                        </Switch>
+                    </Route>
                     <Route path="/stories">     <ViewWrapper view={viewCache.get('stories')}/></Route>
                     <Route path="/adaptations"> <ViewWrapper view={viewCache.get('adaptations')}/></Route>
-                    <Route path="/briefings">   <ViewWrapper view={viewCache.get('briefings')}/></Route>
+                    <Route path="/briefings">
+                        <nav className="navigation navigation2">
+                            <ul className="width-100p">
+                                <NavViewLink labelKey={'briefing-preview'} to={'/briefings/briefingPreview'}/>
+                                <NavViewLink labelKey={'briefing-export'} to={'/briefings/briefingExport'}/>
+                            </ul>
+                        </nav>
+                        <Switch>
+                            <Route path="/briefings/briefingPreview">  <ViewWrapper view={viewCache.get('briefingPreview')}/></Route>
+                            <Route path="/briefings/briefingExport">   <ViewWrapper view={viewCache.get('briefingExport')}/></Route>
+                            {/* <Redirect to={"/briefings/briefingPreview"}/> */}
+                        </Switch>
+                    </Route>
                     <Route path="/relations">   <ViewWrapper view={viewCache.get('relations')}/></Route>
 
                     <Route path="/timeline">    <ViewWrapper view={viewCache.get('timeline')}/></Route>
@@ -265,11 +332,39 @@ async function onDatabaseLoad() {
 
                     {
                         PRODUCT === 'SERVER' &&
-                        <Route path="/admins">    <ViewWrapper view={viewCache.get('admins')}/></Route>
+                        // <Route path="/admins">    <ViewWrapper view={viewCache.get('admins')}/></Route>
+                        <Route path="/admins">
+                            <nav className="navigation navigation2">
+                                <ul className="width-100p">
+                                    <NavViewLink labelKey={'organizerManagement'} to={'/admins/organizerManagement'}/>
+                                    <NavViewLink labelKey={'playerManagement'} to={'/admins/playerManagement'}/>
+                                </ul>
+                            </nav>
+                            <Switch>
+                                <Route path="/admins/organizerManagement"><ViewWrapper view={viewCache.get('organizerManagement')}/></Route>
+                                <Route path="/admins/playerManagement">   <ViewWrapper view={viewCache.get('playerManagement')}/></Route>
+                                {/* <Redirect to={"/admins/organizerManagement"}/> */}
+                            </Switch>
+                        </Route>
                     }
-                    <Route path="/logViewer">    <ViewWrapper view={viewCache.get('logViewer')}/></Route>
+                    {/* <Route path="/logViewer">    <ViewWrapper view={viewCache.get('logViewer')}/></Route> */}
+                    <Route path="/logViewer">
+                        <nav className="navigation navigation2">
+                            <ul className="width-100p">
+                                <NavViewLink labelKey={'group-schema'} to={'/logViewer/groupSchema'}/>
+                                <NavViewLink labelKey={'logViewer'} to={'/logViewer/logViewer'}/>
+                                <NavViewLink labelKey={'about'} to={'/logViewer/about'}/>
+                            </ul>
+                        </nav>
+                        <Switch>
+                            <Route path="/logViewer/groupSchema">   <ViewWrapper view={viewCache.get('groupSchema')}/></Route>
+                            <Route path="/logViewer/logViewer">     <ViewWrapper view={viewCache.get('logViewer')}/></Route>
+                            <Route path="/logViewer/about">         <ViewWrapper view={viewCache.get('about')}/></Route>
+                            {/* <Redirect to={"/logViewer/logViewer"}/> */}
+                        </Switch>
+                    </Route>
 
-                    <Redirect to={"/overview"}/>
+                    {/* <Redirect to={"/overview"}/> */}
                 </Switch>
                 <div className="hidden">
                     {

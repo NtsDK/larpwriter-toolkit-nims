@@ -26,7 +26,7 @@ export function initPage() {
     window.SM = new SettingsManager();
     return {
         // nav1: new NavComponentV1(U.queryEl('.navigation.main-navigation'), U.queryEl('#contentArea')),
-        nav2: new NavComponentV2(U.queryEl('.navigation.test-navigation'), U.queryEl('#contentArea'))
+        // nav2: new NavComponentV2(U.queryEl('.navigation.test-navigation'), U.queryEl('#contentArea'))
     }
 
 };
