@@ -19,7 +19,7 @@ body {
   display: none;
 }
 
-.navigation {
+.fixed-navigation {
   position: fixed;
   top: 0;
   width: 100%;

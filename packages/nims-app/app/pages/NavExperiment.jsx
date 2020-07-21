@@ -82,7 +82,7 @@ export default function NavExperiment({navEls, L10n, firstRouteName}) {
             {/* <Route key={routeData.route} path={routeData.route}>{routeData.component()}</Route> */}
             {/* <Route key={routeData.route} path={routeData.route}>{routeData.route}</Route> */}
             {/* <Route key={routeData.route} path={routeData.route}>{routeData.component()}</Route> */}
-          <Redirect to={"/" + firstRouteName}/>
+          {/* <Redirect to={"/" + firstRouteName}/> */}
         </Switch>
       </div>
     </Router>
