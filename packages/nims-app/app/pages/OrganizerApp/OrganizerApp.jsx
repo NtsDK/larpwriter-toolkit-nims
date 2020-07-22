@@ -19,6 +19,8 @@ import {
 import { ViewWrapper } from '../ViewWrapper.jsx';
 
 import { AboutV2 } from '../../views/logs/AboutV2';
+import { GroupSchemaV2 } from '../../views/groups/GroupSchemaV2';
+
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
 import {
@@ -263,15 +265,14 @@ export class OrganizerApp extends Component {
               </nav>
               <Switch>
                 <Route path="/logViewer/groupSchema">
-
-                  <ViewWrapper view={viewCache.get('groupSchema')} />
+                  <GroupSchemaV2 />
+                  {/* <ViewWrapper view={viewCache.get('groupSchema')} /> */}
                 </Route>
                 <Route path="/logViewer/logViewer">
 
                   <ViewWrapper view={viewCache.get('logViewer')} />
                 </Route>
                 <Route path="/logViewer/about">
-
                   <AboutV2 />
                 </Route>
                 {/* <Redirect to={"/logViewer/logViewer"}/> */}
