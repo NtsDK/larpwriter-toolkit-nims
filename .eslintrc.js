@@ -44,7 +44,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'no-plusplus': 'off',
     'func-names': 'off',
-    'max-len': ['error', { code: 200, tabWidth: 4, ignoreStrings: true }],
+    'max-len': ['error', { code: 200, tabWidth: 2, ignoreStrings: true }],
     // "max-len": ["error",  { "code": 120, "tabWidth": 4, "ignoreStrings": true }],
     'one-var-declaration-per-line': 'off',
     'prefer-destructuring': ['error', {
@@ -84,6 +84,7 @@ module.exports = {
     'no-shadow': [0],
     'react/jsx-filename-extension': [0],
     'jsx-a11y/label-has-associated-control': [0],
-    'class-methods-use-this': [0]
+    'class-methods-use-this': [0],
+    'jsx-a11y/control-has-associated-label': [0]
   }
 };
