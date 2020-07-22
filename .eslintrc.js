@@ -83,5 +83,7 @@ module.exports = {
     'react/prop-types': [0],
     'no-shadow': [0],
     'react/jsx-filename-extension': [0],
+    'jsx-a11y/label-has-associated-control': [0],
+    'class-methods-use-this': [0]
   }
 };
