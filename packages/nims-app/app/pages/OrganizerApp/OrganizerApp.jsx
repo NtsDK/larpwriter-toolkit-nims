@@ -129,7 +129,6 @@ export class OrganizerApp extends Component {
           </nav>
           <Switch>
             <Route path="/overview">
-
               <ViewWrapper view={viewCache.get('overview')} />
             </Route>
             {/* <Route path="/characters">  <ViewWrapper view={viewCache.get('characters')}/></Route> */}
@@ -143,15 +142,12 @@ export class OrganizerApp extends Component {
               </nav>
               <Switch>
                 <Route path="/characters/characterEditor">
-
                   <ViewWrapper view={viewCache.get('characterEditor')} />
                 </Route>
                 <Route path="/characters/characterConfigurer">
-
                   <ViewWrapper view={viewCache.get('characterConfigurer')} />
                 </Route>
                 <Route path="/characters/profileBinding">
-
                   <ViewWrapper view={viewCache.get('profileBinding')} />
                 </Route>
                 {/* <Redirect to={"/characters/characterEditor"}/> */}
@@ -168,26 +164,21 @@ export class OrganizerApp extends Component {
               </nav>
               <Switch>
                 <Route path="/players/playerEditor">
-
                   <ViewWrapper view={viewCache.get('playerEditor')} />
                 </Route>
                 <Route path="/players/playerConfigurer">
-
                   <ViewWrapper view={viewCache.get('playerConfigurer')} />
                 </Route>
                 <Route path="/players/profileBinding">
-
                   <ViewWrapper view={viewCache.get('profileBinding')} />
                 </Route>
                 {/* <Redirect to={"/players/playerEditor"}/> */}
               </Switch>
             </Route>
             <Route path="/stories">
-
               <ViewWrapper view={viewCache.get('stories')} />
             </Route>
             <Route path="/adaptations">
-
               <ViewWrapper view={viewCache.get('adaptations')} />
             </Route>
             <Route path="/briefings">
@@ -199,39 +190,32 @@ export class OrganizerApp extends Component {
               </nav>
               <Switch>
                 <Route path="/briefings/briefingPreview">
-
                   <ViewWrapper view={viewCache.get('briefingPreview')} />
                 </Route>
                 <Route path="/briefings/briefingExport">
-
                   <ViewWrapper view={viewCache.get('briefingExport')} />
                 </Route>
                 {/* <Redirect to={"/briefings/briefingPreview"}/> */}
               </Switch>
             </Route>
             <Route path="/relations">
-
               <ViewWrapper view={viewCache.get('relations')} />
             </Route>
 
             <Route path="/timeline">
-
               <ViewWrapper view={viewCache.get('timeline')} />
             </Route>
             <Route path="/social-network"><ViewWrapper view={viewCache.get('socialNetwork')} /></Route>
             <Route path="/profile-filter"><ViewWrapper view={viewCache.get('profileFilter')} /></Route>
             <Route path="/groups">
-
               <ViewWrapper view={viewCache.get('groups')} />
             </Route>
             <Route path="/textSearch">
-
               <ViewWrapper view={viewCache.get('textSearch')} />
             </Route>
-            <Route path="/roleGrid">
-
+            {/* <Route path="/roleGrid">
               <ViewWrapper view={viewCache.get('roleGrid')} />
-            </Route>
+            </Route> */}
 
             {
               PRODUCT === 'SERVER'
