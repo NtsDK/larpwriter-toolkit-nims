@@ -85,6 +85,7 @@ module.exports = {
     'react/jsx-filename-extension': [0],
     'jsx-a11y/label-has-associated-control': [0],
     'class-methods-use-this': [0],
-    'jsx-a11y/control-has-associated-label': [0]
+    'jsx-a11y/control-has-associated-label': [0],
+    'react/sort-comp': [0]
   }
 };
