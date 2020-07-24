@@ -21,6 +21,7 @@ import { ViewWrapper } from '../ViewWrapper.jsx';
 import { AboutV2 } from '../../views/logs/AboutV2';
 import { LogViewerV2 } from '../../views/logs/LogViewerV2';
 import { GroupSchemaV2 } from '../../views/groups/GroupSchemaV2';
+import { TextSearch } from '../../views/textSearch/TextSearch/index';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -212,6 +213,7 @@ export class OrganizerApp extends Component {
             </Route>
             <Route path="/textSearch">
               <ViewWrapper view={viewCache.get('textSearch')} />
+              <TextSearch />
             </Route>
             {/* <Route path="/roleGrid">
               <ViewWrapper view={viewCache.get('roleGrid')} />
@@ -265,7 +267,8 @@ export class OrganizerApp extends Component {
             </Route>
 
             {/* <Redirect to={"/overview"}/> */}
-            <Redirect to="/logViewer/groupSchema" />
+            {/* <Redirect to="/logViewer/groupSchema" /> */}
+            <Redirect to="/textSearch" />
           </Switch>
           <div className="hidden">
             {

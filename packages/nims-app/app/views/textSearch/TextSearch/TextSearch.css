@@ -1,0 +1,8 @@
+button.panel-heading {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid transparent;
+  border-color: #ddd;
+}
