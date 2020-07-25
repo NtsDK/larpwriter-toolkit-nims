@@ -22,6 +22,7 @@ import { AboutV2 } from '../../views/logs/AboutV2';
 import { LogViewerV2 } from '../../views/logs/LogViewerV2';
 import { GroupSchemaV2 } from '../../views/groups/GroupSchemaV2';
 import { TextSearch } from '../../views/textSearch/TextSearch/index';
+import { TimelineCore } from '../../views/timeline/TimelineCore';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -61,28 +62,28 @@ export class OrganizerApp extends Component {
       <I18nextProvider i18n={i18n}>
         <Router>
           <NavContainer>
-            <NavViewLink labelKey="overview" to="/overview" />
-            <NavViewLink labelKey="characters" to="/characters" />
-            <NavViewLink labelKey="players" to="/players" />
-            <NavViewLink labelKey="stories" to="/stories" />
-            <NavViewLink labelKey="adaptations" to="/adaptations" />
-            <NavViewLink labelKey="briefings" to="/briefings" />
-            <NavViewLink labelKey="relations" to="/relations" />
+            <NavViewLink labelKey="header.overview" to="/overview" />
+            <NavViewLink labelKey="header.characters" to="/characters" />
+            <NavViewLink labelKey="header.players" to="/players" />
+            <NavViewLink labelKey="header.stories" to="/stories" />
+            <NavViewLink labelKey="header.adaptations" to="/adaptations" />
+            <NavViewLink labelKey="header.briefings" to="/briefings" />
+            <NavViewLink labelKey="header.relations" to="/relations" />
 
             <NavSeparator />
-            <NavViewLink labelKey="timeline" to="/timeline" clazz="timelineButton icon-button" hasTooltip />
-            <NavViewLink labelKey="social-network" to="/social-network" clazz="socialNetworkButton icon-button" hasTooltip />
-            <NavViewLink labelKey="profile-filter" to="/profile-filter" clazz="filterButton icon-button" hasTooltip />
-            <NavViewLink labelKey="groups" to="/groups" clazz="groupsButton icon-button" hasTooltip />
-            <NavViewLink labelKey="textSearch" to="/textSearch" clazz="textSearchButton icon-button" hasTooltip />
-            <NavViewLink labelKey="roleGrid" to="/roleGrid" clazz="roleGridButton icon-button" hasTooltip />
+            <NavViewLink labelKey="header.timeline" to="/timeline" clazz="timelineButton icon-button" hasTooltip />
+            <NavViewLink labelKey="header.social-network" to="/social-network" clazz="socialNetworkButton icon-button" hasTooltip />
+            <NavViewLink labelKey="header.profile-filter" to="/profile-filter" clazz="filterButton icon-button" hasTooltip />
+            <NavViewLink labelKey="header.groups" to="/groups" clazz="groupsButton icon-button" hasTooltip />
+            <NavViewLink labelKey="header.textSearch" to="/textSearch" clazz="textSearchButton icon-button" hasTooltip />
+            <NavViewLink labelKey="header.roleGrid" to="/roleGrid" clazz="roleGridButton icon-button" hasTooltip />
 
             <NavSeparator />
             {
               PRODUCT === 'SERVER'
-                          && <NavViewLink labelKey="admins" to="/admins" clazz="accessManagerButton icon-button" hasTooltip />
+                          && <NavViewLink labelKey="header.admins" to="/admins" clazz="accessManagerButton icon-button" hasTooltip />
             }
-            <NavViewLink labelKey="logViewer" to="/logViewer" clazz="logViewerButton icon-button" hasTooltip />
+            <NavViewLink labelKey="header.logViewer" to="/logViewer" clazz="logViewerButton icon-button" hasTooltip />
 
             <NavSeparator />
             {
@@ -93,21 +94,21 @@ export class OrganizerApp extends Component {
                 />
               )
             }
-            <NavButton clazz="dataSaveButton" btnName="save-database" callback={FileUtils.saveFile} />
+            <NavButton clazz="dataSaveButton" btnName="header.save-database" callback={FileUtils.saveFile} />
             {
               PRODUCT === 'STANDALONE'
-                          && <NavButton clazz="newBaseButton" btnName="create-database" callback={loadEmptyBase} />
+                          && <NavButton clazz="newBaseButton" btnName="header.create-database" callback={loadEmptyBase} />
             }
             {
               MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS
-                          && <NavButton clazz="testButton" btnName="test" callback={TestUtils.runTests} />
+                          && <NavButton clazz="testButton" btnName="header.test" callback={TestUtils.runTests} />
             }
             {
               MODE === 'DEV' && DEV_OPTS.ENABLE_BASICS
                           && (
                             <>
-                              <NavButton clazz="checkConsistencyButton" btnName="checkConsistency" callback={checkConsistency} />
-                              <NavButton clazz="clickAllTabsButton" btnName="clickAllTabs" callback={TestUtils.clickThroughtHeaders} />
+                              <NavButton clazz="checkConsistencyButton" btnName="header.checkConsistency" callback={checkConsistency} />
+                              <NavButton clazz="clickAllTabsButton" btnName="header.clickAllTabs" callback={TestUtils.clickThroughtHeaders} />
                             </>
                           )
             }
@@ -115,16 +116,16 @@ export class OrganizerApp extends Component {
               MODE === 'DEV' && DEV_OPTS.ENABLE_EXTRAS
                   && (
                     <>
-                      <NavButton clazz="checkConsistencyButton" btnName="showDbmsConsistencyState" callback={showDbmsConsistencyState} />
-                      <NavButton clazz="clickAllTabsButton" btnName="showDiff" callback={showDiffExample} />
+                      <NavButton clazz="checkConsistencyButton" btnName="header.showDbmsConsistencyState" callback={showDbmsConsistencyState} />
+                      <NavButton clazz="clickAllTabsButton" btnName="header.showDiff" callback={showDiffExample} />
                     </>
                   )
             }
             {
               PRODUCT === 'SERVER'
-                          && <NavButton clazz="logoutButton" btnName="logout" callback={postLogout} />
+                          && <NavButton clazz="logoutButton" btnName="header.logout" callback={postLogout} />
             }
-            {/* <NavButton clazz={'refreshButton'} btnName={'refresh'} callback={() => navComponent.refreshCurrentView()} /> */}
+            {/* <NavButton clazz={'refreshButton'} btnName={'header.refresh'} callback={() => navComponent.refreshCurrentView()} /> */}
           </NavContainer>
           <Switch>
             <Route path="/overview">
@@ -133,9 +134,9 @@ export class OrganizerApp extends Component {
             {/* <Route path="/characters">  <ViewWrapper view={viewCache.get('characters')}/></Route> */}
             <Route path="/characters">
               <NavContainer className="sub-tab-navigation">
-                <NavViewLink labelKey="filling-profile" to="/characters/characterEditor" />
-                <NavViewLink labelKey="changing-profile-structure" to="/characters/characterConfigurer" />
-                <NavViewLink labelKey="binding-characters-and-players" to="/characters/profileBinding" />
+                <NavViewLink labelKey="header.filling-profile" to="/characters/characterEditor" />
+                <NavViewLink labelKey="header.changing-profile-structure" to="/characters/characterConfigurer" />
+                <NavViewLink labelKey="header.binding-characters-and-players" to="/characters/profileBinding" />
               </NavContainer>
               <Switch>
                 <Route path="/characters/characterEditor">
@@ -153,9 +154,9 @@ export class OrganizerApp extends Component {
             {/* <Route path="/players">     <ViewWrapper view={viewCache.get('players')}/></Route> */}
             <Route path="/players">
               <NavContainer className="sub-tab-navigation">
-                <NavViewLink labelKey="filling-profile" to="/players/playerEditor" />
-                <NavViewLink labelKey="changing-profile-structure" to="/players/playerConfigurer" />
-                <NavViewLink labelKey="binding-characters-and-players" to="/players/profileBinding" />
+                <NavViewLink labelKey="header.filling-profile" to="/players/playerEditor" />
+                <NavViewLink labelKey="header.changing-profile-structure" to="/players/playerConfigurer" />
+                <NavViewLink labelKey="header.binding-characters-and-players" to="/players/profileBinding" />
               </NavContainer>
               <Switch>
                 <Route path="/players/playerEditor">
@@ -178,8 +179,8 @@ export class OrganizerApp extends Component {
             </Route>
             <Route path="/briefings">
               <NavContainer className="sub-tab-navigation">
-                <NavViewLink labelKey="briefing-preview" to="/briefings/briefingPreview" />
-                <NavViewLink labelKey="briefing-export" to="/briefings/briefingExport" />
+                <NavViewLink labelKey="header.briefing-preview" to="/briefings/briefingPreview" />
+                <NavViewLink labelKey="header.briefing-export" to="/briefings/briefingExport" />
               </NavContainer>
               <Switch>
                 <Route path="/briefings/briefingPreview">
@@ -196,7 +197,8 @@ export class OrganizerApp extends Component {
             </Route>
 
             <Route path="/timeline">
-              <ViewWrapper view={viewCache.get('timeline')} />
+              <TimelineCore />
+              {/* <ViewWrapper view={viewCache.get('timeline')} /> */}
             </Route>
             <Route path="/social-network"><ViewWrapper view={viewCache.get('socialNetwork')} /></Route>
             <Route path="/profile-filter"><ViewWrapper view={viewCache.get('profileFilter')} /></Route>
@@ -217,8 +219,8 @@ export class OrganizerApp extends Component {
                         && (
                           <Route path="/admins">
                             <NavContainer className="sub-tab-navigation">
-                              <NavViewLink labelKey="organizerManagement" to="/admins/organizerManagement" />
-                              <NavViewLink labelKey="playerManagement" to="/admins/playerManagement" />
+                              <NavViewLink labelKey="header.organizerManagement" to="/admins/organizerManagement" />
+                              <NavViewLink labelKey="header.playerManagement" to="/admins/playerManagement" />
                             </NavContainer>
                             <Switch>
                               <Route path="/admins/organizerManagement"><ViewWrapper view={viewCache.get('organizerManagement')} /></Route>
@@ -234,9 +236,9 @@ export class OrganizerApp extends Component {
             {/* <Route path="/logViewer">    <ViewWrapper view={viewCache.get('logViewer')}/></Route> */}
             <Route path="/logViewer">
               <NavContainer className="sub-tab-navigation">
-                <NavViewLink labelKey="group-schema" to="/logViewer/groupSchema" />
-                <NavViewLink labelKey="logViewer" to="/logViewer/logViewer" />
-                <NavViewLink labelKey="about" to="/logViewer/about" />
+                <NavViewLink labelKey="header.group-schema" to="/logViewer/groupSchema" />
+                <NavViewLink labelKey="header.logViewer" to="/logViewer/logViewer" />
+                <NavViewLink labelKey="header.about" to="/logViewer/about" />
               </NavContainer>
               <Switch>
                 <Route path="/logViewer/groupSchema">
