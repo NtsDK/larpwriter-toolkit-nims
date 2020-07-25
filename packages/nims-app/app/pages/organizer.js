@@ -21,9 +21,6 @@ import {
 } from 'react-router-dom';
 
 import { LoadBaseButton } from './makeLoadBaseButton.jsx';
-import {
-  NavComponent, NavButton, NavSeparator, NavViewLink
-} from './NavComponent.jsx';
 
 import { getLogoutFormTemplate, LogoutFormTemplate } from '../views/serverSpecific/LogoutFormTemplate.jsx';
 
@@ -69,7 +66,7 @@ import ProfileBinding2 from '../views/profiles2/profileBinding2';
 import OrganizerManagement from '../views/accessManager/organizerManagement';
 import PlayerManagement from '../views/accessManager/playerManagement';
 
-import { getNavExperiment } from './NavExperiment.jsx';
+// import { getNavExperiment } from './NavExperiment.jsx';
 
 // import { getRootComponent } from "./rootComponent.jsx";
 
