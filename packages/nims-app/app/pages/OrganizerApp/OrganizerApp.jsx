@@ -268,7 +268,7 @@ export class OrganizerApp extends Component {
 
             {/* <Redirect to={"/overview"}/> */}
             {/* <Redirect to="/logViewer/groupSchema" /> */}
-            <Redirect to="/textSearch" />
+            <Redirect to="/timeline" />
           </Switch>
           <div className="hidden">
             {
