@@ -287,7 +287,8 @@ textarea.eventPersonalStory {
 
 /** timeline.js */
 
-#timelineContainer {
+#timelineContainer, 
+.timelineContainer {
 	background-color: #fff;
 }
 
@@ -296,7 +297,8 @@ textarea.eventPersonalStory {
   height: calc(100% - 30px);
 }
 
-#timelineContainer .vis-item .vis-item-content{
+#timelineContainer .vis-item .vis-item-content, 
+.timelineContainer .vis-item .vis-item-content {
   padding: 4px;
   line-height: 14px;
 }

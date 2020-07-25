@@ -9,6 +9,7 @@ import {
   NavLink,
   Redirect
 } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import './NavComponent.css';
 
@@ -20,7 +21,8 @@ export function NavViewLink(props) {
   const {
     labelKey, clazz, to, hasTooltip = false
   } = props;
-  const text = L10n.getValue(`header-${labelKey}`);
+  const { t } = useTranslation();
+  const text = t(labelKey);
   return (
     <li>
       <NavLink
@@ -38,13 +40,14 @@ export function NavButton(props) {
   const {
     clazz, btnName, callback, hasTooltip = true, extraClass = 'mainNavButton icon-button'
   } = props;
+  const { t } = useTranslation();
   return (
     <button
       type="button"
       className={classNames(clazz, 'action-button', {
         [extraClass]: !!extraClass
       })}
-      title={hasTooltip ? L10n.getValue(`header-${btnName}`) : ''}
+      title={hasTooltip ? t(btnName) : ''}
       onClick={callback}
     />
   );
