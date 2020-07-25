@@ -671,8 +671,8 @@ textarea.game-description-area {
 }
 .text-search-tab .text-body span,
 .text-search-tab .string-body span{
-  background-color: green;
-  color: white;
+  /* background-color: green;
+  color: white; */
 }
 /* text-search-tab **/
 

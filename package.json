@@ -13,6 +13,7 @@
     "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.10.4",
+    "autoprefixer": "^9.8.5",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
@@ -31,9 +32,12 @@
     "lerna": "^3.22.1",
     "node-sass": "^4.14.1",
     "npm-check-updates": "^6.0.1",
+    "postcss-cli": "^7.1.1",
     "ramda": "^0.27.0",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
+    "tailwindcss": "^1.5.2",
+    "tailwindcss-enhanced-outlines-plugin": "^1.1.0",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
@@ -44,5 +48,6 @@
     "bootstrap": "lerna bootstrap",
     "watch:standalone": "lerna run watch:standalone --stream",
     "watch:server": "lerna run watch:server --stream"
-  }
+  },
+  "dependencies": {}
 }

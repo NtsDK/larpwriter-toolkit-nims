@@ -212,7 +212,7 @@ export class OrganizerApp extends Component {
               <ViewWrapper view={viewCache.get('groups')} />
             </Route>
             <Route path="/textSearch">
-              <ViewWrapper view={viewCache.get('textSearch')} />
+              {/* <ViewWrapper view={viewCache.get('textSearch')} /> */}
               <TextSearch />
             </Route>
             {/* <Route path="/roleGrid">

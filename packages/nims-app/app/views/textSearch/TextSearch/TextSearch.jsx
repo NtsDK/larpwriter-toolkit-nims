@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
 import * as CU from 'nims-dbms-core/commonUtils';
+import classNames from 'classnames';
+import Highlight from 'react-highlighter';
 import './TextSearch.css';
+import { PanelCore } from '../../commons/uiCommon3.jsx';
 
 const searchAreas = [{
   value: 'characterProfiles',
@@ -34,43 +37,17 @@ const searchAreas = [{
   label: 'text-search.eventAdaptations'
 }];
 
-function PanelCore(props) {
-  const { title, children } = props;
-  return (
-    <div className="panel panel-default">
-      <button type="button" className="panel-heading">
-        <span className="panel-title">{title}</span>
-      </button>
-      <div className="panel-body">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// export const makePanelCore = (title, content) => {
-//   const panel = U.addClasses(U.makeEl('div'), ['panel', 'panel-default']);
-//   const h3 = U.addClass(U.addEl(U.makeEl('h3'), title), 'panel-title');
-//   const a = U.setAttr(U.makeEl('a'), 'href', '#/');
-//   U.setAttr(a, 'panel-toggler', '');
-//   const headDiv = U.addClass(U.makeEl('div'), 'panel-heading');
-//   U.addEl(panel, U.addEl(headDiv, U.addEl(a, h3)));
-//   const contentDiv = U.addClass(U.makeEl('div'), 'panel-body');
-//   U.addEl(panel, U.addEl(contentDiv, content));
-//   return {
-//     panel,
-//     contentDiv,
-//     a
-//   };
-// };
-
 export class TextSearch extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      texts: []
+      texts: [],
+      searchStr: '',
+      caseSensitive: false
     };
     this.onSubmit = this.onSubmit.bind(this);
+    // this.onCaseSensitiveChange = this.onCaseSensitiveChange.bind(this);
+    // this.onSearchChange = this.onSearchChange.bind(this);
   }
 
   componentDidMount() {
@@ -84,6 +61,18 @@ export class TextSearch extends Component {
   componentWillUnmount() {
     console.log('TextSearch will unmount');
   }
+
+  // onCaseSensitiveChange(e) {
+  //   this.setState({
+  //     caseSensitive: e.target.checked
+  //   });
+  // }
+
+  // onSearchChange(e) {
+  //   this.setState({
+  //     searchStr: e.target.value
+  //   });
+  // }
 
   onSubmit(e) {
     e.preventDefault();
@@ -102,37 +91,27 @@ export class TextSearch extends Component {
       textTypes,
       caseSensitive: !!formData.get('caseSensitiveTextSearch'),
     };
+    this.setState({
+      searchStr: formData.get('searchString'),
+      caseSensitive: !!formData.get('caseSensitiveTextSearch')
+    });
     console.log(formData2);
     this.findTexts(formData2);
   }
 
   findTexts(params) {
-    // const selectedTextTypes = U.queryElEls(U.queryEl(root), `${root}.textSearchTypeRadio`)
-    //   .filter((el) => el.checked).map((el) => el.value);
-    // const searchStr = U.queryEl(`${root}.text-search-input`).value;
-    // const caseSensitive = U.queryEl('#caseSensitiveTextSearch').checked;
     DBMS.getTexts(params).then((texts) => {
       console.log(texts);
       texts.forEach((textsInfo) => textsInfo.result.sort(CU.charOrdAFactory(R.prop('name'))));
       this.setState({
         texts
       });
-      // const text2panel = (text) => makePanel(
-      //   U.makeText(`${this.L10nObj.getValue(`text-search-${text.textType}`)} (${text.result.length})`),
-      //   makePanelContent(text, searchStr, caseSensitive)
-      // );
-      // U.addEls(U.clearEl(U.queryEl(`${root}.result-panel`)), texts.map(text2panel));
     }).catch(UI.handleError);
   }
 
   render() {
-    const { texts } = this.state;
+    const { texts, searchStr, caseSensitive } = this.state;
     const { t } = this.props;
-
-    // if (!something) {
-    //   return <div> TextSearch stub </div>;
-    //   // return null;
-    // }
 
     return (
       <div className="TextSearch text-search-tab block">
@@ -145,7 +124,12 @@ export class TextSearch extends Component {
               <div className="panel-body panel-resizable">
                 <form onSubmit={this.onSubmit}>
                   <div className="margin-bottom-8">
-                    <input className="text-search-input form-control" name="searchString" placeholder={t('text-search.enter-search-string')} />
+                    <input
+                      className="text-search-input form-control"
+                      name="searchString"
+                      placeholder={t('text-search.enter-search-string')}
+                      // onChange={this.onSearchChange}
+                    />
                   </div>
 
                   <div className="margin-bottom-16">
@@ -158,7 +142,7 @@ export class TextSearch extends Component {
                             value={searchArea.value}
                             id={searchArea.id}
                             name={searchArea.id}
-                            checked="true"
+                            // checked="true"
                           />
                           <label htmlFor={searchArea.id} className="checkbox-label-icon common-checkbox">
                             <span>{t(searchArea.label)}</span>
@@ -175,6 +159,8 @@ export class TextSearch extends Component {
                       value="caseSensitive"
                       id="caseSensitiveTextSearch"
                       name="caseSensitiveTextSearch"
+                      // checked={caseSensitive}
+                      // onChange={this.onCaseSensitiveChange}
                     />
                     <label htmlFor="caseSensitiveTextSearch" className="checkbox-label-icon common-checkbox">
                       <span>{t('text-search.case-sensitive-search')}</span>
@@ -187,19 +173,23 @@ export class TextSearch extends Component {
           </div>
           <div className="result-panel">
             {
-              texts.map((text) => (
-                <PanelCore title={`${t(`text-search.${text.textType}`)} (${text.result.length})`}>
-                  123
+              texts.map((textsInfo) => (
+                <PanelCore initExpanded={false} title={`${t(`text-search.${textsInfo.textType}`)} (${textsInfo.result.length})`}>
+                  {
+                    textsInfo.result.map((textInfo) => (
+                      <div className="text-card">
+                        <div>{textInfo.name}</div>
+                        <div className={textInfo.type === 'text' ? 'text-body' : 'string-body'}>
+                          <Highlight search={searchStr} caseSensitive={caseSensitive} matchClass="tw-p-0 tw-bg-green-600 tw-text-white">
+                            {textInfo.text}
+                          </Highlight>
+                        </div>
+                      </div>
+                    ))
+                  }
                 </PanelCore>
               ))
             }
-
-            {/* // const text2panel = (text) => makePanel(
-      //   U.makeText(`${this.L10nObj.getValue(`text-search-${text.textType}`)} (${text.result.length})`),
-      //   makePanelContent(text, searchStr, caseSensitive)
-      // );
-      // U.addEls(U.clearEl(U.queryEl(`${root}.result-panel`)), texts.map(text2panel)); */}
-
           </div>
         </div>
       </div>
