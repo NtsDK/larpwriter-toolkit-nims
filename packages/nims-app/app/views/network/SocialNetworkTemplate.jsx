@@ -124,11 +124,6 @@ export const SocialNetworkTemplate = function () {
 
         <div className="visualObjectContainer full-screen-elem" id="socialNetworkContainer" />
       </div>
-      <div>
-        <div id="Stats-output" />
-        <div id="gui-settings-output" />
-        <div id="WebGL-output" />
-      </div>
     </div>
   );
 };

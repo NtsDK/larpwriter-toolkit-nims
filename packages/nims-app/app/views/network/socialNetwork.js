@@ -6,11 +6,17 @@ import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
-import * as NetworkSubsetsSelector from './networkSubsetsSelector';
+import { NetworkSubsetsSelector } from './networkSubsetsSelector';
 import { getSocialNetworkTemplate } from './SocialNetworkTemplate.jsx';
+import {
+  NetworkWrapper
+} from './networkWrapper';
+import {
+  getActivityEdges, getDetailedEdges, getRelationEdges, getStoryEdges, getStoryNodes
+} from './nodeAndEdgeGenerators';
 
-// ((exports) => {
 const state = {};
+const data = {};
 
 const STORY_PREFIX = 'St:';
 const CHAR_PREFIX = 'Ch:';
@@ -31,25 +37,20 @@ function init() {
   ReactDOM.render(getSocialNetworkTemplate(), content);
   L10n.localizeStatic(content);
 
-  NetworkSubsetsSelector.init();
+  state.networkWrapper = new NetworkWrapper();
+  state.networkSubsetsSelector = new NetworkSubsetsSelector();
 
   U.listen(U.queryEl('#networkNodeGroupSelector'), 'change', colorNodes);
   U.listen(U.queryEl('#showPlayerNamesCheckbox'), 'change', updateNodeLabels);
   U.listen(U.queryEl('#drawNetworkButton'), 'click', onDrawNetwork);
-  $('#nodeFocusSelector').select2().on('change', onNodeFocus);
+  $('#nodeFocusSelector').select2().on('change', state.networkWrapper.onNodeFocus);
   U.listen(U.queryEl('#networkSelector'), 'change', onNetworkSelectorChangeDelegate);
 
   U.queryEls('#activityBlock button').forEach(U.listen(R.__, 'click', (event) => U.toggleClass(event.target, 'btn-primary')));
   U.queryEls('#relationsBlock button').forEach(U.listen(R.__, 'click', (event) => U.toggleClass(event.target, 'btn-primary')));
 
-  //        state.network;
-  state.highlightActive = false;
-
   initWarning();
   L10n.onL10nChange(initWarning);
-
-  //    TimelinedNetwork.init();
-
   content = U.queryEl('#socialNetworkDiv');
 }
 
@@ -87,12 +88,12 @@ function refresh() {
       groupCharacterSets,
       metaInfo,
       relations] = results;
-    state.Stories = stories;
-    state.Characters = profiles;
-    state.profileBindings = profileBindings;
-    state.groupCharacterSets = groupCharacterSets;
-    state.metaInfo = metaInfo;
-    state.relations = relations;
+    data.Stories = stories;
+    data.Characters = profiles;
+    data.profileBindings = profileBindings;
+    data.groupCharacterSets = groupCharacterSets;
+    data.metaInfo = metaInfo;
+    data.relations = relations;
 
     const checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
     R.values(profiles).forEach((profile) => {
@@ -117,11 +118,7 @@ function refresh() {
 
     initGroupColors(colorGroups);
 
-    NetworkSubsetsSelector.refresh({
-      characterNames,
-      storyNames,
-      Stories: stories
-    });
+    state.networkSubsetsSelector.refresh(characterNames, storyNames, stories);
   }).catch(UI.handleError);
 }
 
@@ -147,13 +144,6 @@ function initGroupColors(colorGroups) {
   });
 }
 
-function makeLegendItem(label, color) {
-  const colorDiv = U.addEl(U.makeEl('div'), U.makeText(label));
-  colorDiv.style.backgroundColor = color.background;
-  colorDiv.style.border = `solid 2px ${color.border}`;
-  return colorDiv;
-}
-
 function refreshLegend(groupName) {
   const colorLegend = U.clearEl(U.queryEl('#colorLegend'));
   let els = [];
@@ -175,35 +165,44 @@ function refreshLegend(groupName) {
   U.addEls(colorLegend, els);
 }
 
+// called from refreshLegend
+function makeLegendItem(label, color) {
+  const colorDiv = U.addEl(U.makeEl('div'), U.makeText(label));
+  colorDiv.style.backgroundColor = color.background;
+  colorDiv.style.border = `solid 2px ${color.border}`;
+  return colorDiv;
+}
+
 function colorNodes(event) {
   const groupName = event.target.value;
   refreshLegend(groupName);
-  if (state.nodesDataset === undefined) return;
+  if (state.networkWrapper.isNetworkEmpty()) return;
 
-  NetworkSubsetsSelector.getCharacterNames().forEach((characterName) => {
-    state.nodesDataset.update({
+  state.networkSubsetsSelector.getCharacterNames().forEach((characterName) => {
+    state.networkWrapper.getNodesDataset().update({
       id: CHAR_PREFIX + characterName,
       group: getNodeGroup(characterName, groupName)
     });
   });
 }
 
+// called from colorNodes
 function getNodeGroup(characterName, groupName) {
   if (groupName === 'noGroup') {
     return groupName;
   } if (R.startsWith(PROFILE_GROUP, groupName)) {
-    const character = state.Characters[characterName];
+    const character = data.Characters[characterName];
     return `${groupName}.${character[groupName.substring(PROFILE_GROUP.length)]}`;
   } if (R.startsWith(FILTER_GROUP, groupName)) {
-    return state.groupCharacterSets[groupName.substring(FILTER_GROUP.length)][characterName] ? 'fromGroup' : 'noGroup';
+    return data.groupCharacterSets[groupName.substring(FILTER_GROUP.length)][characterName] ? 'fromGroup' : 'noGroup';
   }
   throw new Error(`Unexpected group name: ${groupName}`);
 }
 
 function updateNodeLabels() {
-  if (state.nodesDataset === undefined) return;
+  if (state.networkWrapper.isNetworkEmpty()) return;
   const showPlayer = U.queryEl('#showPlayerNamesCheckbox').checked;
-  const allNodes = state.nodesDataset.get({
+  const allNodes = state.networkWrapper.getNodesDataset().get({
     returnType: 'Object'
   });
 
@@ -218,7 +217,7 @@ function updateNodeLabels() {
     }
   });
 
-  state.nodesDataset.update(R.values(allNodes));
+  state.networkWrapper.getNodesDataset().update(R.values(allNodes));
 }
 
 function onNetworkSelectorChangeDelegate(event) {
@@ -228,14 +227,8 @@ function onNetworkSelectorChangeDelegate(event) {
   U.queryEls('#relationsBlock button').forEach((el) => U.addClass(el, 'btn-primary'));
 }
 
-function onNodeFocus(event) {
-  state.network.focus(event.target.value, Constants.snFocusOptions);
-}
-
 function onDrawNetwork() {
   onNetworkSelectorChange(U.queryEl('#networkSelector').value);
-  //    TimelinedNetwork.refresh(state.network, state.nodesDataset,
-  //            state.edgesDataset, getEventDetails(), state.metaInfo);
 }
 
 function onNetworkSelectorChange(selectedNetwork) {
@@ -243,22 +236,31 @@ function onNetworkSelectorChange(selectedNetwork) {
   let nodes = [];
   let edges = [];
 
+  const selectedRelations = U.queryEls('#relationsBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
+  const selectedActivities = U.queryEls('#activityBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
+  const storyNames = state.networkSubsetsSelector.getStoryNames();
+  const characterNames = state.networkSubsetsSelector.getCharacterNames();
+  const groupName = U.queryEl('#networkNodeGroupSelector').value;
+  const showPlayer = U.queryEl('#showPlayerNamesCheckbox').checked;
+
   switch (selectedNetwork) {
   case 'socialRelations':
-    nodes = getCharacterNodes();
-    edges = getDetailedEdges();
+    nodes = getCharacterNodes(data.Characters, groupName, showPlayer, characterNames);
+    edges = getDetailedEdges(data.Stories);
     break;
   case 'characterPresenceInStory':
-    nodes = getCharacterNodes().concat(getStoryNodes());
-    edges = getStoryEdges();
+    nodes = getCharacterNodes(data.Characters, groupName, showPlayer, characterNames)
+      .concat(getStoryNodes(data.Stories, storyNames));
+    edges = getStoryEdges(data.Stories);
     break;
   case 'characterActivityInStory':
-    nodes = getCharacterNodes().concat(getStoryNodes());
-    edges = getActivityEdges();
+    nodes = getCharacterNodes(data.Characters, groupName, showPlayer, characterNames)
+      .concat(getStoryNodes(data.Stories, storyNames));
+    edges = getActivityEdges(data.Stories, selectedActivities);
     break;
   case 'characterRelations':
-    nodes = getCharacterNodes();
-    edges = getRelationEdges();
+    nodes = getCharacterNodes(data.Characters, groupName, showPlayer, characterNames);
+    edges = getRelationEdges(data.relations, selectedRelations);
     break;
   default:
     throw new Error(`Unexpected network type: ${selectedNetwork}`);
@@ -270,29 +272,24 @@ function onNetworkSelectorChange(selectedNetwork) {
   const nodeSort = CU.charOrdAFactory((a) => a.label.toLowerCase());
   nodes.sort(nodeSort);
 
-  const data = UI.getSelect2DataCommon(UI.remapProps(['id', 'text'], ['id', 'originName']), nodes);
-  $('#nodeFocusSelector').select2(data);
+  const data2 = UI.getSelect2DataCommon(UI.remapProps(['id', 'text'], ['id', 'originName']), nodes);
+  $('#nodeFocusSelector').select2(data2);
 
-  state.nodesDataset = new vis.DataSet(nodes);
-  state.edgesDataset = new vis.DataSet(edges);
-
-  redrawAll();
+  state.networkWrapper.redrawAll(state.groupColors, nodes, edges);
 }
 
 function makeCharacterNodeLabel(showPlayer, characterName) {
   const label = characterName.split(' ').join('\n');
   if (showPlayer) {
-    const player = state.profileBindings[characterName] || '';
+    const player = data.profileBindings[characterName] || '';
     return `${label}/\n${player}`;
   }
   return label;
 }
 
-function getCharacterNodes() {
-  const groupName = U.queryEl('#networkNodeGroupSelector').value;
-  const showPlayer = U.queryEl('#showPlayerNamesCheckbox').checked;
-  return NetworkSubsetsSelector.getCharacterNames().map((characterName) => {
-    const profile = state.Characters[characterName];
+function getCharacterNodes(Characters, groupName, showPlayer, characterNames) {
+  return characterNames.map((characterName) => {
+    const profile = Characters[characterName];
     return {
       id: CHAR_PREFIX + characterName,
       label: makeCharacterNodeLabel(showPlayer, characterName),
@@ -301,218 +298,4 @@ function getCharacterNodes() {
       group: groupName === 'noGroup' ? L10n.const('noGroup') : `${groupName}.${profile[groupName]}`
     };
   });
-}
-
-function getStoryNodes() {
-  const nodes = NetworkSubsetsSelector.getStoryNames().map((name) => ({
-    id: STORY_PREFIX + name,
-    label: name.split(' ').join('\n'),
-    value: Object.keys(state.Stories[name].characters).length,
-    title: Object.keys(state.Stories[name].characters).length,
-    group: 'storyColor',
-    type: 'story',
-    originName: name,
-  }));
-  return nodes;
-}
-
-function getActivityEdges() {
-  const selectedActivities = U.queryEls('#activityBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
-  const stories = state.Stories;
-  return R.flatten(R.keys(stories).map((name) => R.keys(stories[name].characters)
-    .map((char1) => R.keys(stories[name].characters[char1].activity).filter(R.contains(R.__, selectedActivities))
-      .map((activity) => ({
-        from: STORY_PREFIX + name,
-        to: CHAR_PREFIX + char1,
-        color: Constants.snActivityColors[activity],
-        width: 2,
-        hoverWidth: 4
-      })))));
-}
-
-function getRelationEdges() {
-  const selectedRelations = U.queryEls('#relationsBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
-  const { relations } = state;
-  const checked = R.contains(R.__, selectedRelations);
-  return R.flatten(relations.map((rel) => {
-    const arr = [];
-    const { starter } = rel;
-    const { ender } = rel;
-    const edgeTmpl = {
-      from: CHAR_PREFIX + starter,
-      to: CHAR_PREFIX + ender,
-      color: Constants.snRelationColors.neutral,
-      width: 2,
-      hoverWidth: 4
-    };
-    if (rel.essence.length === 0) {
-      if (checked('neutral')) {
-        arr.push(R.merge(edgeTmpl, {
-          color: Constants.snRelationColors.neutral,
-        }));
-      }
-    } else {
-      if (checked('allies') && R.contains('allies', rel.essence)) {
-        arr.push(R.merge(edgeTmpl, {
-          color: Constants.snRelationColors.allies,
-        }));
-      }
-      if (checked('directional') && R.contains('starterToEnder', rel.essence)) {
-        arr.push(R.merge(edgeTmpl, {
-          color: Constants.snRelationColors.starterToEnder,
-          arrows: 'to'
-        }));
-      }
-      if (checked('directional') && R.contains('enderToStarter', rel.essence)) {
-        arr.push(R.merge(edgeTmpl, {
-          color: Constants.snRelationColors.enderToStarter,
-          arrows: 'from'
-        }));
-      }
-    }
-    return arr;
-  }));
-}
-
-function getStoryEdges() {
-  return R.flatten(R.keys(state.Stories).map((name) => R.keys(state.Stories[name].characters).map((char1) => ({
-    from: STORY_PREFIX + name,
-    to: CHAR_PREFIX + char1,
-    color: 'grey'
-  }))));
-}
-
-function getEventDetails() {
-  return R.flatten(R.values(state.Stories).map((story) => story.events.map((event) => ({
-    eventName: event.name,
-    storyName: story.name,
-    time: event.time,
-    characters: R.keys(event.characters)
-  }))));
-}
-
-function getDetailedEdges() {
-  const edgesCheck = {};
-  R.values(state.Stories).forEach((story) => {
-    story.events.forEach((event) => {
-      const charNames = R.keys(event.characters).sort();
-      charNames.forEach((char1, i) => {
-        charNames.forEach((char2, j) => {
-          if (i <= j) {
-            return;
-          }
-          const key = char1 + char2;
-          if (!edgesCheck[key]) {
-            edgesCheck[key] = {
-              from: CHAR_PREFIX + char1,
-              to: CHAR_PREFIX + char2,
-              title: {},
-            };
-          }
-          edgesCheck[key].title[story.name] = true;
-        });
-      });
-    });
-  });
-
-  return R.values(edgesCheck).map((edgeInfo) => {
-    const title = R.keys(edgeInfo.title).sort().join(', ');
-    const value = R.keys(edgeInfo.title).length;
-    return {
-      from: edgeInfo.from,
-      to: edgeInfo.to,
-      title: `${value}: ${title}`,
-      value,
-      color: 'grey'
-    };
-  });
-}
-
-function redrawAll() {
-  const container = U.queryEl('#socialNetworkContainer');
-
-  const data = {
-    nodes: state.nodesDataset,
-    edges: state.edgesDataset
-  }; // Note: data is coming from ./datasources/WorldCup2014.js
-
-  if (state.network) {
-    state.network.destroy();
-  }
-
-  const opts = R.clone(Constants.socialNetworkOpts);
-  opts.groups = state.groupColors;
-
-  state.network = new vis.Network(container, data, opts);
-
-  state.network.on('click', neighbourhoodHighlight);
-}
-
-function hideLabel(node) {
-  if (node.hiddenLabel === undefined) {
-    node.hiddenLabel = node.label;
-    node.label = undefined;
-  }
-}
-function showLabel(node) {
-  if (node.hiddenLabel !== undefined) {
-    node.label = node.hiddenLabel;
-    node.hiddenLabel = undefined;
-  }
-}
-
-function highlightNodes(network, allNodes, zeroDegreeNodes, firstDegreeNodes) {
-  // get the second degree nodes
-  const secondDegreeNodes = R.uniq(R.flatten(firstDegreeNodes.map((id) => network.getConnectedNodes(id))));
-  // mark all nodes as hard to read.
-  R.values(allNodes).forEach((node) => {
-    node.color = 'rgba(200,200,200,0.5)';
-    hideLabel(node);
-  });
-  // all second degree nodes get a different color and their label back
-  secondDegreeNodes.map((id) => allNodes[id]).forEach((node) => {
-    node.color = 'rgba(150,150,150,0.75)';
-    showLabel(node);
-  });
-  // all first degree nodes get their own color and their label back
-  firstDegreeNodes.map((id) => allNodes[id]).forEach((node) => {
-    node.color = undefined;
-    showLabel(node);
-  });
-  // the main node gets its own color and its label back.
-  zeroDegreeNodes.map((id) => allNodes[id]).forEach((node) => {
-    node.color = undefined;
-    showLabel(node);
-  });
-}
-
-function neighbourhoodHighlight(params) {
-  // get a JSON object
-  const allNodes = state.nodesDataset.get({
-    returnType: 'Object'
-  });
-
-  const { network } = state;
-  if (params.nodes.length > 0) {
-    state.highlightActive = true;
-    const selectedNode = params.nodes[0];
-    const zeroDegreeNodes = [selectedNode];
-    const firstDegreeNodes = network.getConnectedNodes(selectedNode);
-    highlightNodes(network, allNodes, zeroDegreeNodes, firstDegreeNodes);
-  } else if (params.edges.length > 0) {
-    state.highlightActive = true;
-    const selectedEdge = params.edges[0];
-    const firstDegreeNodes = network.getConnectedNodes(selectedEdge);
-    highlightNodes(network, allNodes, [], firstDegreeNodes);
-  } else if (state.highlightActive === true) {
-    // reset all nodes
-    R.values(allNodes).forEach((node) => {
-      node.color = undefined;
-      showLabel(node);
-    });
-    state.highlightActive = false;
-  }
-
-  // transform the object into an array
-  state.nodesDataset.update(R.values(allNodes));
 }
