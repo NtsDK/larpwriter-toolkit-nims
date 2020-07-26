@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
 import './NetworkSelector.css';
 import * as Constants from 'nims-dbms/nimsConstants';
+import classNames from 'classnames';
+
+const activitiesList = ['active', 'follower', 'defensive', 'passive'];
+const relationsList = ['allies', 'directional', 'neutral'];
 
 export class NetworkSelector extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      activitySelection: {
+        active: true,
+        follower: true,
+        defensive: true,
+        passive: true,
+      },
+      relationSelection: {
+        allies: true,
+        directional: true,
+        neutral: true,
+      }
     };
+    this.onTypeChange = this.onTypeChange.bind(this);
+    this.onActivityClick = this.onActivityClick.bind(this);
+    this.onRelationClick = this.onRelationClick.bind(this);
   }
 
   componentDidMount() {
@@ -21,68 +39,88 @@ export class NetworkSelector extends Component {
     console.log('NetworkSelector will unmount');
   }
 
-  render() {
-    const { something } = this.state;
-    const { t } = this.props;
+  onTypeChange(e) {
+    const { onNetworkSettingsChange } = this.props;
+    const { activitySelection, relationSelection } = this.state;
+    const { value } = e.target;
+    const result = { type: value };
+    if (value === 'characterActivityInStory') {
+      result.activitySelection = { ...activitySelection };
+    }
+    if (value === 'characterRelations') {
+      result.relationSelection = { ...relationSelection };
+    }
+    onNetworkSettingsChange(result);
+  }
 
-    // if (!something) {
-    //   return <div> NetworkSelector stub </div>;
-    //   // return null;
-    // }
+  onActivityClick(e) {
+    const { value } = e.target.dataset;
+    this.setState((prevState) => ({
+      activitySelection: {
+        ...prevState.activitySelection,
+        [value]: !prevState.activitySelection[value]
+      }
+    }));
+  }
+
+  onRelationClick(e) {
+    const { value } = e.target.dataset;
+    this.setState((prevState) => ({
+      relationSelection: {
+        ...prevState.relationSelection,
+        [value]: !prevState.relationSelection[value]
+      }
+    }));
+  }
+
+  render() {
+    const { activitySelection, relationSelection } = this.state;
+    const { t, networkSettings } = this.props;
+
     return (
       <div className="NetworkSelector network-type-area">
-        <select size={Constants.networks.length} id="networkSelector" className="form-control">
+        <select
+          value={networkSettings.type}
+          size={Constants.networks.length}
+          id="networkSelector"
+          className="form-control"
+          onChange={this.onTypeChange}
+        >
           {
             Constants.networks.map((networkType) => <option value={networkType}>{t(`constant.${networkType}`)}</option>)
           }
         </select>
 
-        <div id="activityBlock" className="hidden">
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-active"
-            data-value="active"
-            title={t('constant.active')}
-          />
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-follower"
-            data-value="follower"
-            title={t('constant.follower')}
-          />
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-defensive"
-            data-value="defensive"
-            title={t('constant.defensive')}
-          />
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-passive"
-            data-value="passive"
-            title={t('constant.passive')}
-          />
+        <div id="activityBlock">
+          {
+            networkSettings.type === 'characterActivityInStory' && activitiesList.map((activity) => (
+              <button
+                type="button"
+                className={classNames('btn btn-default btn-reduced fa-icon flex-0-0-auto', `activity-icon-${activity}`, {
+                  'btn-primary': activitySelection[activity]
+                })}
+                data-value={activity}
+                title={t(`constant.${activity}`)}
+                onClick={this.onActivityClick}
+              />
+            ))
+          }
         </div>
 
-        <div id="relationsBlock" className="hidden">
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon flex-0-0-auto allies"
-            data-value="allies"
-            title={t('briefings.allies')}
-          />
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon flex-0-0-auto directional"
-            data-value="directional"
-            title={t('briefings.directional')}
-          />
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon flex-0-0-auto neutral"
-            data-value="neutral"
-            title={t('briefings.neutral')}
-          />
+        <div id="relationsBlock">
+          {
+            networkSettings.type === 'characterRelations' && relationsList.map((relation) => (
+              <button
+                type="button"
+                className={classNames('btn btn-default btn-reduced fa-icon flex-0-0-auto', relation, {
+                  'btn-primary': relationSelection[relation]
+                })}
+                data-value={relation}
+                title={t(`briefings.${relation}`)}
+                onClick={this.onRelationClick}
+              />
+            ))
+          }
         </div>
       </div>
     );
