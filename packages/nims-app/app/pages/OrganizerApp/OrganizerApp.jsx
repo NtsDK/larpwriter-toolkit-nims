@@ -202,8 +202,8 @@ export class OrganizerApp extends Component {
               {/* <ViewWrapper view={viewCache.get('timeline')} /> */}
             </Route>
             <Route path="/social-network">
-              {/* <SocialNetwork /> */}
-              <ViewWrapper view={viewCache.get('socialNetwork')} />
+              <SocialNetwork />
+              {/* <ViewWrapper view={viewCache.get('socialNetwork')} /> */}
             </Route>
             <Route path="/profile-filter"><ViewWrapper view={viewCache.get('profileFilter')} /></Route>
             <Route path="/groups">
