@@ -6,38 +6,31 @@ import * as Constants from 'nims-dbms/nimsConstants';
 import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
+import { NodesColoringSelector } from './NodesColoringSelector';
+import { NetworkSubsetsSelector } from './NetworkSubsetsSelector';
+import { NetworkSelector } from './NetworkSelector';
+import { CommonNetworkSettings } from './CommonNetworkSettings';
+import { SocialNetworkArea } from './SocialNetworkArea';
+import { SocialNetworkWarning } from './SocialNetworkWarning';
 
 const STORY_PREFIX = 'St:';
 const CHAR_PREFIX = 'Ch:';
 const PROFILE_GROUP = 'prof-';
 const FILTER_GROUP = 'filter-';
 
-function SocialNetworkWarning() {
-  const { t } = useTranslation();
-  const [show, setShow] = useState(true);
-  return (
-    <div
-      id="socialNetworkWarning"
-      className={classNames('alert alert-warning', {
-        hidden: !show
-      })}
-    >
-      {t('social-network.require-resources-warning')}
-      <button
-        type="button"
-        onClick={() => setShow(!show)}
-        className="tw-bg-gray-200"
-      >
-        {t('social-network.remove-resources-warning')}
-      </button>
-    </div>
-  );
-}
-
 export class SocialNetwork extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      data: null,
+      nodesColoring: {
+        filter: 'noFilter'
+      },
+      networkSettings: {
+        type: 'socialConnections'
+      },
+      showPlayerNames: false,
+      focusNode: null
     };
   }
 
@@ -82,6 +75,7 @@ export class SocialNetwork extends Component {
         metaInfo,
         relations] = results;
 
+      // translating yes/no profile items
       const checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
       R.values(profiles).forEach((profile) => {
         checkboxes.map((item) => (profile[item.name] = L10n.const(Constants[profile[item.name]])));
@@ -182,16 +176,7 @@ export class SocialNetwork extends Component {
           <div className="storySelectorContainer sn-navigation-container">
             <div className="panel panel-default">
               <div className="panel-body">
-                <span className="display-block">{t('social-network.show-node')}</span>
-                <div className="margin-bottom-8">
-                  <select id="nodeFocusSelector" className="common-select " />
-                </div>
-                <div>
-                  <input id="showPlayerNamesCheckbox" type="checkbox" className="hidden" />
-                  <label htmlFor="showPlayerNamesCheckbox" className="checkbox-label-icon common-checkbox">
-                    <span>{t('social-network.show-player-names')}</span>
-                  </label>
-                </div>
+                <CommonNetworkSettings />
               </div>
             </div>
           </div>
@@ -215,17 +200,7 @@ export class SocialNetwork extends Component {
                 </div>
                 <div id="answerOne" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false" style={{ height: '0px' }}>
                   <div className="panel-body">
-                    <div className="network-coloring-area">
-                      <div className="margin-bottom-16">
-                        <select id="networkNodeGroupSelector" className="form-control">
-                          {
-                            networkNodeGroups.map((group) => <option value={group.value}>{group.name}</option>)
-                          }
-                        </select>
-                      </div>
-                      <span className="margin-bottom-8 inline-block">{t('social-network.legend')}</span>
-                      <div id="colorLegend" />
-                    </div>
+                    <NodesColoringSelector />
                   </div>
                 </div>
               </div>
@@ -247,19 +222,7 @@ export class SocialNetwork extends Component {
                 </div>
                 <div id="answerTwo" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false">
                   <div className="panel-body">
-                    <div className="network-filter-area">
-                      <select size={3} id="networkSubsetsSelector" className="form-control" />
-                      <div id="networkCharacterDiv" className="hidden">
-                        <h4>{t('social-network.characters')}</h4>
-                        <input selector-filter="#networkCharacterSelector" />
-                        <select id="networkCharacterSelector" multiple className="form-control" />
-                      </div>
-                      <div id="networkStoryDiv" className="hidden">
-                        <h4>{t('social-network.stories')}</h4>
-                        <input selector-filter="#networkStorySelector" />
-                        <select id="networkStorySelector" multiple className="form-control" />
-                      </div>
-                    </div>
+                    <NetworkSubsetsSelector />
                   </div>
                 </div>
               </div>
@@ -281,61 +244,7 @@ export class SocialNetwork extends Component {
                 </div>
                 <div id="answerThree" className="panel-collapse collapse in" role="tabpanel" aria-labelledby="" aria-expanded="false">
                   <div className="panel-body">
-                    <div className="network-type-area">
-                      <select size={Constants.networks.length} id="networkSelector" className="form-control">
-                        {
-                          Constants.networks.map((networkType) => <option value={networkType}>{t(`constant.${networkType}`)}</option>)
-                        }
-                      </select>
-
-                      <div id="activityBlock" className="hidden">
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-active"
-                          data-value="active"
-                          title={t('constant.active')}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-follower"
-                          data-value="follower"
-                          title={t('constant.follower')}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-defensive"
-                          data-value="defensive"
-                          title={t('constant.defensive')}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-passive"
-                          data-value="passive"
-                          title={t('constant.passive')}
-                        />
-                      </div>
-
-                      <div id="relationsBlock" className="hidden">
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon flex-0-0-auto allies"
-                          data-value="allies"
-                          title={t('briefings.allies')}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon flex-0-0-auto directional"
-                          data-value="directional"
-                          title={t('briefings.directional')}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon flex-0-0-auto neutral"
-                          data-value="neutral"
-                          title={t('briefings.neutral')}
-                        />
-                      </div>
-                    </div>
+                    <NetworkSelector />
                   </div>
                 </div>
               </div>
@@ -350,7 +259,7 @@ export class SocialNetwork extends Component {
             </div>
           </div>
 
-          <div className="visualObjectContainer full-screen-elem" id="socialNetworkContainer" />
+          <SocialNetworkArea />
         </div>
       </div>
     );
