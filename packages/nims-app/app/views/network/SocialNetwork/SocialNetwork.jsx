@@ -11,27 +11,24 @@ import { NetworkSubsetsSelector } from './NetworkSubsetsSelector';
 import { NetworkSelector } from './NetworkSelector';
 import { CommonNetworkSettings } from './CommonNetworkSettings';
 import { SocialNetworkArea } from './SocialNetworkArea';
-import { SocialNetworkWarning } from './SocialNetworkWarning';
-
-const STORY_PREFIX = 'St:';
-const CHAR_PREFIX = 'Ch:';
-const PROFILE_GROUP = 'prof-';
-const FILTER_GROUP = 'filter-';
+import { SocialNetworkWarning } from './SocialNetworkWarning.jsx';
 
 export class SocialNetwork extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: null,
+      data: {},
       nodesColoring: {
         filter: 'noFilter'
       },
       networkSettings: {
-        type: 'socialConnections'
+        type: 'socialConnections',
+        extras: {}
       },
       showPlayerNames: false,
       focusNode: null
     };
+    this.onNetworkSettingsChange = this.onNetworkSettingsChange.bind(this);
   }
 
   componentDidMount() {
@@ -83,7 +80,7 @@ export class SocialNetwork extends Component {
 
       // console.log(this.getNetworkNodeGroups(profileStructure, groupCharacterSets));
 
-      this.initGroupColors(profileStructure);
+      // this.initGroupColors(profileStructure);
 
       // NetworkSubsetsSelector.refresh({
       //   characterNames,
@@ -92,78 +89,37 @@ export class SocialNetwork extends Component {
       // });
 
       this.setState({
-        Stories: stories,
-        Characters: profiles,
-        profileBindings,
-        profileStructure,
-        groupCharacterSets,
-        metaInfo,
-        relations,
+        data: {
+          characterNames,
+          storyNames,
+          Stories: stories,
+          Characters: profiles,
+          profileBindings,
+          profileStructure,
+          groupCharacterSets,
+          metaInfo,
+          relations,
+        }
       });
     }).catch(UI.handleError);
   }
 
-  initGroupColors(profileStructure) {
-    const colorGroups = this.getColorGroups(profileStructure);
-    // const groupColors = R.clone(Constants.snFixedColors);
-    // const groupLists = {};
-
-    const info = colorGroups.reduce((acc, group) => {
-      if (group.type === 'enum') {
-        acc.groupLists[PROFILE_GROUP + group.name] = group.value.split(',').map((subGroupName, i) => {
-          acc.groupColors[`${PROFILE_GROUP + group.name}.${subGroupName.trim()}`] = Constants.colorPalette[i + 2];
-          return `${PROFILE_GROUP + group.name}.${subGroupName.trim()}`;
-        });
-      } else if (group.type === 'checkbox') {
-        const trueName = L10n.const(Constants.true);
-        const falseName = L10n.const(Constants.false);
-        acc.groupColors[`${PROFILE_GROUP + group.name}.${trueName}`] = Constants.colorPalette[group.value ? 0 + 2 : 1 + 2];
-        acc.groupColors[`${PROFILE_GROUP + group.name}.${falseName}`] = Constants.colorPalette[group.value ? 1 + 2 : 0 + 2];
-        acc.groupLists[PROFILE_GROUP + group.name] = [`${PROFILE_GROUP + group.name}.${trueName}`, `${PROFILE_GROUP + group.name}.${falseName}`];
-      } else {
-        throw new Error(`Unexpected profile item type: ${group.type}`);
-      }
-      return acc;
-    }, {
-      groupColors: R.clone(Constants.snFixedColors),
-      groupLists: {}
+  onNetworkSettingsChange(networkSettings) {
+    this.setState({
+      networkSettings
     });
-    return info;
-  }
-
-  getColorGroups(profileStructure) {
-    return profileStructure.filter((element) => R.contains(element.type, ['enum', 'checkbox']));
-  }
-
-  getNetworkNodeGroups(profileStructure, groupCharacterSets) {
-    const { t } = this.props;
-
-    const colorGroups = this.getColorGroups(profileStructure);
-    const defaultColorGroup = {
-      value: Constants.noGroup,
-      name: L10n.const(Constants.noGroup)
-    };
-
-    const profileGroups = R.pluck('name', colorGroups).map((name) => ({
-      value: PROFILE_GROUP + name,
-      name: t('social-network.profile-group2', { name })
-    }));
-    const filterGroups = R.keys(groupCharacterSets).map((name) => ({
-      value: FILTER_GROUP + name,
-      name: t('social-network.filter-group2', { name })
-    }));
-    return [defaultColorGroup].concat(profileGroups).concat(filterGroups);
   }
 
   render() {
-    const { profileStructure, groupCharacterSets } = this.state;
+    const { data, networkSettings } = this.state;
+    const { profileStructure, groupCharacterSets } = data;
     const { t } = this.props;
 
     if (profileStructure === undefined) {
       return null;
     }
 
-    const networkNodeGroups = this.getNetworkNodeGroups(profileStructure, groupCharacterSets);
+    // const networkNodeGroups = this.getNetworkNodeGroups(profileStructure, groupCharacterSets);
 
     // if (!something) {
     //   return <div> SocialNetwork stub </div>;
@@ -200,7 +156,10 @@ export class SocialNetwork extends Component {
                 </div>
                 <div id="answerOne" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false" style={{ height: '0px' }}>
                   <div className="panel-body">
-                    <NodesColoringSelector />
+                    <NodesColoringSelector
+                      profileStructure={profileStructure}
+                      groupCharacterSets={groupCharacterSets}
+                    />
                   </div>
                 </div>
               </div>
@@ -244,7 +203,7 @@ export class SocialNetwork extends Component {
                 </div>
                 <div id="answerThree" className="panel-collapse collapse in" role="tabpanel" aria-labelledby="" aria-expanded="false">
                   <div className="panel-body">
-                    <NetworkSelector />
+                    <NetworkSelector networkSettings={networkSettings} onNetworkSettingsChange={this.onNetworkSettingsChange} />
                   </div>
                 </div>
               </div>
