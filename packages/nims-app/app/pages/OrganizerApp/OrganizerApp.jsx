@@ -23,6 +23,7 @@ import { LogViewerV2 } from '../../views/logs/LogViewerV2';
 import { GroupSchemaV2 } from '../../views/groups/GroupSchemaV2';
 import { TextSearch } from '../../views/textSearch/TextSearch/index';
 import { TimelineCore } from '../../views/timeline/TimelineCore';
+import { SocialNetwork } from '../../views/network/SocialNetwork/index';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -200,7 +201,10 @@ export class OrganizerApp extends Component {
               <TimelineCore />
               {/* <ViewWrapper view={viewCache.get('timeline')} /> */}
             </Route>
-            <Route path="/social-network"><ViewWrapper view={viewCache.get('socialNetwork')} /></Route>
+            <Route path="/social-network">
+              {/* <SocialNetwork /> */}
+              <ViewWrapper view={viewCache.get('socialNetwork')} />
+            </Route>
             <Route path="/profile-filter"><ViewWrapper view={viewCache.get('profileFilter')} /></Route>
             <Route path="/groups">
               <ViewWrapper view={viewCache.get('groups')} />

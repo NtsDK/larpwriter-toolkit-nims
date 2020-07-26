@@ -10,9 +10,11 @@ import vexDialog from 'vex-dialog';
 import 'vex-js/dist/css/vex.css';
 import 'vex-js/dist/css/vex-theme-default.css';
 //const R = require('ramda');
+import * as R from 'ramda';
+import * as CU from 'nims-dbms-core/commonUtils';
 import U from './utils';
 import L10n from './l10n';
-import Timing from './Timing';
+import * as Timing from './Timing';
 
 // const vex = require('vex-js');
 // vex.registerPlugin(require('vex-dialog'));

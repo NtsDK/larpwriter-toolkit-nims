@@ -364,10 +364,6 @@ textarea.game-description-area {
   right: 0;
 }
 
-#WebGL-output{
-/*   height: calc(100vh - 60px); */
-}
-
 #commonSettingsContainer > .panel, #showSettingsButtonContainer > .panel{
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
@@ -377,15 +373,6 @@ textarea.game-description-area {
   height: calc(100vh - 60px);
   border: 1px solid lightgray;
   background-color: #EDEDED;
-}
-
-#Stats-output {
-  position: absolute;
-}
-
-#gui-settings-output{
-  position: absolute;
-  right: 8px;
 }
 
 #socialNetworkDiv > div {
