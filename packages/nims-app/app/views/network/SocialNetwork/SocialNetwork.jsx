@@ -6,6 +6,7 @@ import * as Constants from 'nims-dbms/nimsConstants';
 import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
+import * as CU from 'nims-dbms-core/commonUtils';
 import { NodesColoringSelector } from './NodesColoringSelector';
 import { NetworkSubsetsSelector } from './NetworkSubsetsSelector';
 import { NetworkSelector } from './NetworkSelector';
@@ -19,7 +20,14 @@ export class SocialNetwork extends Component {
     this.state = {
       data: {},
       nodesColoring: {
-        filter: 'noFilter'
+        filter: 'noFilter',
+      },
+      subset: {
+        type: 'allObjects',
+        selectedStoryNames: [],
+        selectedCharacterNames: [],
+        drawStoryNames: [],
+        drawCharacterNames: [],
       },
       networkSettings: {
         type: 'socialConnections',
@@ -29,6 +37,7 @@ export class SocialNetwork extends Component {
       focusNode: null
     };
     this.onNetworkSettingsChange = this.onNetworkSettingsChange.bind(this);
+    this.onSubsetChange = this.onSubsetChange.bind(this);
   }
 
   componentDidMount() {
@@ -88,6 +97,9 @@ export class SocialNetwork extends Component {
       //   Stories: stories
       // });
 
+      characterNames.sort(CU.charOrdAObject);
+      storyNames.sort(CU.charOrdAObject);
+
       this.setState({
         data: {
           characterNames,
@@ -99,7 +111,12 @@ export class SocialNetwork extends Component {
           groupCharacterSets,
           metaInfo,
           relations,
-        }
+        },
+        subset: {
+          type: 'allObjects',
+          storyNames: R.pluck('value', storyNames),
+          characterNames: R.pluck('value', characterNames)
+        },
       });
     }).catch(UI.handleError);
   }
@@ -110,9 +127,22 @@ export class SocialNetwork extends Component {
     });
   }
 
+  onSubsetChange(subset) {
+    console.log(subset);
+    this.setState({
+      subset
+    });
+  }
+
   render() {
-    const { data, networkSettings } = this.state;
-    const { profileStructure, groupCharacterSets } = data;
+    const { data, networkSettings, subset } = this.state;
+    const {
+      profileStructure,
+      groupCharacterSets,
+      characterNames,
+      storyNames,
+      Stories,
+    } = data;
     const { t } = this.props;
 
     if (profileStructure === undefined) {
@@ -181,7 +211,13 @@ export class SocialNetwork extends Component {
                 </div>
                 <div id="answerTwo" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false">
                   <div className="panel-body">
-                    <NetworkSubsetsSelector />
+                    <NetworkSubsetsSelector
+                      characterNames={characterNames}
+                      storyNames={storyNames}
+                      Stories={Stories}
+                      subset={subset}
+                      onSubsetChange={this.onSubsetChange}
+                    />
                   </div>
                 </div>
               </div>
