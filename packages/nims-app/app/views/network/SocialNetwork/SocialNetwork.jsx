@@ -7,7 +7,7 @@ import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
 import * as CU from 'nims-dbms-core/commonUtils';
-import { NodesColoringSelector } from './NodesColoringSelector';
+import { NodesColoringSelector, getGroupColors } from './NodesColoringSelector';
 import { NetworkSubsetsSelector } from './NetworkSubsetsSelector';
 import { NetworkSelector } from './NetworkSelector';
 import { CommonNetworkSettings } from './CommonNetworkSettings';
@@ -20,7 +20,7 @@ export class SocialNetwork extends Component {
     this.state = {
       data: {},
       nodesColoring: {
-        filter: 'noFilter',
+        selectedGroup: Constants.noGroup,
       },
       subset: {
         type: 'allObjects',
@@ -38,6 +38,7 @@ export class SocialNetwork extends Component {
     };
     this.onNetworkSettingsChange = this.onNetworkSettingsChange.bind(this);
     this.onSubsetChange = this.onSubsetChange.bind(this);
+    this.onNodesColoringChange = this.onNodesColoringChange.bind(this);
   }
 
   componentDidMount() {
@@ -128,14 +129,22 @@ export class SocialNetwork extends Component {
   }
 
   onSubsetChange(subset) {
-    console.log(subset);
+    // console.log(subset);
     this.setState({
       subset
     });
   }
 
+  onNodesColoringChange(nodesColoring) {
+    this.setState({
+      nodesColoring
+    });
+  }
+
   render() {
-    const { data, networkSettings, subset } = this.state;
+    const {
+      data, networkSettings, subset, nodesColoring
+    } = this.state;
     const {
       profileStructure,
       groupCharacterSets,
@@ -189,6 +198,9 @@ export class SocialNetwork extends Component {
                     <NodesColoringSelector
                       profileStructure={profileStructure}
                       groupCharacterSets={groupCharacterSets}
+                      nodesColoring={nodesColoring}
+                      networkSettings={networkSettings}
+                      onNodesColoringChange={this.onNodesColoringChange}
                     />
                   </div>
                 </div>
