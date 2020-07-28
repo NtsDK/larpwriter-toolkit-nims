@@ -40,8 +40,8 @@ export class NodesColoringSelector extends Component {
     super(props);
     this.state = {
       networkNodeGroups: [],
-      groupColors: {},
-      groupLists: {},
+      // groupColors: {},
+      // groupLists: {},
     };
     this.onNodeGroupChange = this.onNodeGroupChange.bind(this);
   }
@@ -62,10 +62,10 @@ export class NodesColoringSelector extends Component {
     if (profileStructure !== prevProps.profileStructure
       || groupCharacterSets !== prevProps.groupCharacterSets) {
       const networkNodeGroups = this.getNetworkNodeGroups();
-      const info = getGroupColors(profileStructure);
+      // const info = getGroupColors(profileStructure);
       this.setState({
         networkNodeGroups,
-        ...info
+        // ...info
       });
     }
     console.log('NodesColoringSelector did update');
@@ -76,8 +76,10 @@ export class NodesColoringSelector extends Component {
   }
 
   getLegendList() {
-    const { groupLists, groupColors } = this.state;
-    const { nodesColoring, t, networkSettings } = this.props;
+    const {
+      nodesColoring, t, networkSettings, groupColorsInfo
+    } = this.props;
+    const { groupLists, groupColors } = groupColorsInfo;
     const { selectedGroup } = nodesColoring;
     const els = [];
 

@@ -13,6 +13,10 @@ import { NetworkSelector } from './NetworkSelector';
 import { CommonNetworkSettings } from './CommonNetworkSettings';
 import { SocialNetworkArea } from './SocialNetworkArea';
 import { SocialNetworkWarning } from './SocialNetworkWarning.jsx';
+import { CHAR_PREFIX, PROFILE_GROUP, FILTER_GROUP } from './SocialNetworkConstants';
+import {
+  getActivityEdges, getDetailedEdges, getRelationEdges, getStoryEdges, getStoryNodes
+} from '../nodeAndEdgeGenerators';
 
 export class SocialNetwork extends Component {
   constructor(props) {
@@ -30,15 +34,20 @@ export class SocialNetwork extends Component {
         drawCharacterNames: [],
       },
       networkSettings: {
-        type: 'socialConnections',
+        type: 'socialRelations',
         extras: {}
       },
       showPlayerNames: false,
-      focusNode: null
+      focusNode: null,
+      groupColorsInfo: {
+        groupColors: {},
+        groupLists: {}
+      }
     };
     this.onNetworkSettingsChange = this.onNetworkSettingsChange.bind(this);
     this.onSubsetChange = this.onSubsetChange.bind(this);
     this.onNodesColoringChange = this.onNodesColoringChange.bind(this);
+    this.drawNetwork = this.drawNetwork.bind(this);
   }
 
   componentDidMount() {
@@ -115,9 +124,12 @@ export class SocialNetwork extends Component {
         },
         subset: {
           type: 'allObjects',
-          storyNames: R.pluck('value', storyNames),
-          characterNames: R.pluck('value', characterNames)
+          selectedStoryNames: [],
+          selectedCharacterNames: [],
+          drawStoryNames: R.pluck('value', storyNames),
+          drawCharacterNames: R.pluck('value', characterNames)
         },
+        groupColorsInfo: getGroupColors(profileStructure)
       });
     }).catch(UI.handleError);
   }
@@ -141,9 +153,87 @@ export class SocialNetwork extends Component {
     });
   }
 
+  drawNetwork() {
+    // state.selectedNetwork = selectedNetwork;
+    let nodes = [];
+    let edges = [];
+
+    const {
+      subset, networkSettings, nodesColoring, data
+    } = this.state;
+    const { drawCharacterNames, drawStoryNames } = subset;
+    const selectedNetwork = networkSettings.type;
+
+    const showPlayer = false;
+
+    // const selectedRelations = U.queryEls('#relationsBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
+    // const selectedActivities = U.queryEls('#activityBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
+    // const storyNames = state.networkSubsetsSelector.getStoryNames();
+    // const characterNames = state.networkSubsetsSelector.getCharacterNames();
+    // const groupName = U.queryEl('#networkNodeGroupSelector').value;
+    // const showPlayer = U.queryEl('#showPlayerNamesCheckbox').checked;
+
+    const characterNodes = this.getCharacterNodes(data.Characters, nodesColoring.selectedGroup, showPlayer, drawCharacterNames);
+    const storyNodes = getStoryNodes(data.Stories, drawStoryNames);
+    switch (selectedNetwork) {
+    case 'socialRelations':
+      nodes = characterNodes;
+      edges = getDetailedEdges(data.Stories);
+      break;
+    case 'characterPresenceInStory':
+      nodes = [...characterNodes, ...storyNodes];
+      edges = getStoryEdges(data.Stories);
+      break;
+    case 'characterActivityInStory':
+      nodes = [...characterNodes, ...storyNodes];
+      edges = getActivityEdges(data.Stories, networkSettings.activitySelection);
+      break;
+    case 'characterRelations':
+      nodes = characterNodes;
+      edges = getRelationEdges(data.relations, networkSettings.relationSelection);
+      break;
+    default:
+      throw new Error(`Unexpected network type: ${selectedNetwork}`);
+    }
+
+    // refreshLegend(U.queryEl('#networkNodeGroupSelector').value);
+
+    // U.clearEl(U.queryEl('#nodeFocusSelector'));
+    // const nodeSort = CU.charOrdAFactory((a) => a.label.toLowerCase());
+    // nodes.sort(nodeSort);
+
+    // const data2 = UI.getSelect2DataCommon(UI.remapProps(['id', 'text'], ['id', 'originName']), nodes);
+    // $('#nodeFocusSelector').select2(data2);
+
+    // state.networkWrapper.redrawAll(state.groupColors, nodes, edges);
+  }
+
+  makeCharacterNodeLabel(showPlayer, characterName) {
+    const { data } = this.state;
+    const label = characterName.split(' ').join('\n');
+    if (showPlayer) {
+      const player = data.profileBindings[characterName] || '';
+      return `${label}/\n${player}`;
+    }
+    return label;
+  }
+
+  getCharacterNodes(Characters, groupName, showPlayer, characterNames) {
+    return characterNames.map((characterName) => {
+      const profile = Characters[characterName];
+      return {
+        id: CHAR_PREFIX + characterName,
+        label: this.makeCharacterNodeLabel(showPlayer, characterName),
+        type: 'character',
+        originName: characterName,
+        group: groupName === 'noGroup' ? L10n.const('noGroup') : `${groupName}.${profile[groupName]}`
+      };
+    });
+  }
+
   render() {
     const {
-      data, networkSettings, subset, nodesColoring
+      data, networkSettings, subset, nodesColoring, groupColorsInfo
     } = this.state;
     const {
       profileStructure,
@@ -201,6 +291,7 @@ export class SocialNetwork extends Component {
                       nodesColoring={nodesColoring}
                       networkSettings={networkSettings}
                       onNodesColoringChange={this.onNodesColoringChange}
+                      groupColorsInfo={groupColorsInfo}
                     />
                   </div>
                 </div>
@@ -260,6 +351,7 @@ export class SocialNetwork extends Component {
                 type="button"
                 id="drawNetworkButton"
                 className="btn btn-default width-100p"
+                onClick={this.drawNetwork}
               >
                 {t('social-network.draw')}
               </button>
