@@ -54,23 +54,46 @@ export class NetworkSelector extends Component {
   }
 
   onActivityClick(e) {
+    const { onNetworkSettingsChange, networkSettings } = this.props;
     const { value } = e.target.dataset;
-    this.setState((prevState) => ({
-      activitySelection: {
+    this.setState((prevState) => {
+      const newActivitySelection = {
         ...prevState.activitySelection,
         [value]: !prevState.activitySelection[value]
-      }
-    }));
+      };
+      onNetworkSettingsChange({
+        type: networkSettings.type,
+        activitySelection: newActivitySelection
+      });
+      return {
+        activitySelection: newActivitySelection
+      };
+    });
   }
 
   onRelationClick(e) {
+    const { onNetworkSettingsChange, networkSettings } = this.props;
     const { value } = e.target.dataset;
-    this.setState((prevState) => ({
-      relationSelection: {
+    this.setState((prevState) => {
+      const newRelationSelection = {
         ...prevState.relationSelection,
         [value]: !prevState.relationSelection[value]
-      }
-    }));
+      };
+      onNetworkSettingsChange({
+        type: networkSettings.type,
+        relationSelection: newRelationSelection
+      });
+      return {
+        relationSelection: newRelationSelection
+      };
+    });
+    // const { value } = e.target.dataset;
+    // this.setState((prevState) => ({
+    //   relationSelection: {
+    //     ...prevState.relationSelection,
+    //     [value]: !prevState.relationSelection[value]
+    //   }
+    // }));
   }
 
   render() {
