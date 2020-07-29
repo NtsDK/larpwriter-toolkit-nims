@@ -23,10 +23,37 @@ export class SocialNetworkArea extends Component {
 
   componentDidMount() {
     this.initNetwork();
+    const { nodes, edges } = this.props;
+
+    this.nodesDataset.add(nodes);
+    this.edgesDataset.add(edges);
     console.log('SocialNetworkArea mounted');
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { nodes, edges } = this.props;
+    if (nodes !== prevProps.nodes
+      || edges !== prevProps.edges) {
+      this.nodesDataset.clear();
+      this.edgesDataset.clear();
+      this.nodesDataset.add(nodes);
+      this.edgesDataset.add(edges);
+
+      // this.network.destroy();
+
+      // this.nodesDataset = new vis.DataSet(nodes);
+
+      // this.edgesDataset = new vis.DataSet(edges);
+
+      // const data = {
+      //   nodes: this.nodesDataset,
+      //   edges: this.edgesDataset
+      // }; // Note: data is coming from ./datasources/WorldCup2014.js
+      // const opts = R.clone(Constants.socialNetworkOpts);
+      // // opts.groups = groupColors;
+
+      // this.network = new vis.Network(this.networkContainer.current, data, opts);
+    }
     console.log('SocialNetworkArea did update');
   }
 

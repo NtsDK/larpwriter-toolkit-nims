@@ -42,7 +42,9 @@ export class SocialNetwork extends Component {
       groupColorsInfo: {
         groupColors: {},
         groupLists: {}
-      }
+      },
+      nodes: [],
+      edges: []
     };
     this.onNetworkSettingsChange = this.onNetworkSettingsChange.bind(this);
     this.onSubsetChange = this.onSubsetChange.bind(this);
@@ -186,15 +188,20 @@ export class SocialNetwork extends Component {
       break;
     case 'characterActivityInStory':
       nodes = [...characterNodes, ...storyNodes];
-      edges = getActivityEdges(data.Stories, networkSettings.activitySelection);
+      edges = getActivityEdges(data.Stories, R.invert(networkSettings.activitySelection).true);
       break;
     case 'characterRelations':
       nodes = characterNodes;
-      edges = getRelationEdges(data.relations, networkSettings.relationSelection);
+      edges = getRelationEdges(data.relations, R.invert(networkSettings.relationSelection).true);
       break;
     default:
       throw new Error(`Unexpected network type: ${selectedNetwork}`);
     }
+
+    this.setState({
+      nodes,
+      edges
+    });
 
     // refreshLegend(U.queryEl('#networkNodeGroupSelector').value);
 
@@ -233,7 +240,7 @@ export class SocialNetwork extends Component {
 
   render() {
     const {
-      data, networkSettings, subset, nodesColoring, groupColorsInfo
+      data, networkSettings, subset, nodesColoring, groupColorsInfo, nodes, edges
     } = this.state;
     const {
       profileStructure,
@@ -358,7 +365,7 @@ export class SocialNetwork extends Component {
             </div>
           </div>
 
-          <SocialNetworkArea />
+          <SocialNetworkArea nodes={nodes} edges={edges} />
         </div>
       </div>
     );
