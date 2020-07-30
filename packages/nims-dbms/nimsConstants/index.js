@@ -282,9 +282,10 @@ exports.socialNetworkOpts = {
   },
   edges: {
     width: 0.15,
-    color: {
-      inherit: 'from'
-    },
+    // color: {
+    // //   inherit: 'from'
+    //   inherit: false
+    // },
     smooth: {
       //                    type : 'continuous'
       type: 'dynamic'
@@ -347,17 +348,25 @@ exports.groupSchemaOpts = {
 };
 
 exports.snActivityColors = {
-  active: 'red',
-  follower: 'blue',
-  defensive: 'green',
-  passive: 'grey'
+  active: '#FF0000',
+  follower: '#0000FF',
+  defensive: '#008000',
+  passive: '#808080'
+//   active: 'red',
+//   follower: 'blue',
+//   defensive: 'green',
+//   passive: 'grey'
 };
 
 exports.snRelationColors = {
-  starterToEnder: 'red',
-  enderToStarter: 'red',
-  allies: 'green',
-  neutral: 'grey'
+  starterToEnder: '#FF0000',
+  enderToStarter: '#FF0000',
+  allies: '#008000',
+  neutral: '#808080'
+  //   starterToEnder: 'red',
+  //   enderToStarter: 'red',
+//   allies: 'green',
+//   neutral: 'grey'
 };
 
 exports.snFocusOptions = {

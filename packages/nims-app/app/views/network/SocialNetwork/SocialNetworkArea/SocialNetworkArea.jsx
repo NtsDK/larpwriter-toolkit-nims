@@ -31,13 +31,16 @@ export class SocialNetworkArea extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { nodes, edges } = this.props;
+    const {
+      nodes, edges, groupColors, getNodeColorsUpdate, selectedGroup
+    } = this.props;
     if (nodes !== prevProps.nodes
       || edges !== prevProps.edges) {
       this.nodesDataset.clear();
       this.edgesDataset.clear();
       this.nodesDataset.add(nodes);
       this.edgesDataset.add(edges);
+      this.nodesDataset.update(getNodeColorsUpdate());
 
       // this.network.destroy();
 
@@ -54,6 +57,15 @@ export class SocialNetworkArea extends Component {
 
       // this.network = new vis.Network(this.networkContainer.current, data, opts);
     }
+    if (groupColors !== prevProps.groupColors) {
+      const opts = R.clone(Constants.socialNetworkOpts);
+      opts.groups = groupColors;
+      this.network.setOptions(opts);
+    }
+    if (selectedGroup !== prevProps.selectedGroup) {
+      this.nodesDataset.update(getNodeColorsUpdate());
+    }
+
     console.log('SocialNetworkArea did update');
   }
 
@@ -63,6 +75,7 @@ export class SocialNetworkArea extends Component {
 
   initNetwork() {
     if (this.network === undefined) {
+      const { groupColors } = this.props;
       // const timeline = new vis.Timeline(this.networkContainer.current, null, options);
       // timeline.setGroups(this.tagDataset);
       // timeline.setItems(this.timelineDataset);
@@ -72,7 +85,7 @@ export class SocialNetworkArea extends Component {
         edges: this.edgesDataset
       }; // Note: data is coming from ./datasources/WorldCup2014.js
       const opts = R.clone(Constants.socialNetworkOpts);
-      // opts.groups = groupColors;
+      opts.groups = groupColors;
 
       this.network = new vis.Network(this.networkContainer.current, data, opts);
     }

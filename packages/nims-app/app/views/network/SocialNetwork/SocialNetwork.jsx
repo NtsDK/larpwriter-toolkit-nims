@@ -50,6 +50,7 @@ export class SocialNetwork extends Component {
     this.onSubsetChange = this.onSubsetChange.bind(this);
     this.onNodesColoringChange = this.onNodesColoringChange.bind(this);
     this.drawNetwork = this.drawNetwork.bind(this);
+    this.getNodeColorsUpdate = this.getNodeColorsUpdate.bind(this);
   }
 
   componentDidMount() {
@@ -238,9 +239,32 @@ export class SocialNetwork extends Component {
     });
   }
 
+  getNodeColorsUpdate() {
+    const { subset, nodesColoring } = this.state;
+    const { drawCharacterNames } = subset;
+    return drawCharacterNames.map((characterName) => ({
+      id: CHAR_PREFIX + characterName,
+      group: this.getNodeGroup(characterName, nodesColoring.selectedGroup)
+    }));
+  }
+
+  // called from colorNodes
+  getNodeGroup(characterName, groupName) {
+    const { data } = this.state;
+    if (groupName === 'noGroup') {
+      return groupName;
+    } if (R.startsWith(PROFILE_GROUP, groupName)) {
+      const character = data.Characters[characterName];
+      return `${groupName}.${character[groupName.substring(PROFILE_GROUP.length)]}`;
+    } if (R.startsWith(FILTER_GROUP, groupName)) {
+      return data.groupCharacterSets[groupName.substring(FILTER_GROUP.length)][characterName] ? 'fromGroup' : 'noGroup';
+    }
+    throw new Error(`Unexpected group name: ${groupName}`);
+  }
+
   render() {
     const {
-      data, networkSettings, subset, nodesColoring, groupColorsInfo, nodes, edges
+      data, networkSettings, subset, nodesColoring, groupColorsInfo, nodes, edges, getNodeColorsUpdate
     } = this.state;
     const {
       profileStructure,
@@ -365,7 +389,13 @@ export class SocialNetwork extends Component {
             </div>
           </div>
 
-          <SocialNetworkArea nodes={nodes} edges={edges} />
+          <SocialNetworkArea
+            selectedGroup={nodesColoring.selectedGroup}
+            nodes={nodes}
+            edges={edges}
+            groupColors={groupColorsInfo.groupColors}
+            getNodeColorsUpdate={this.getNodeColorsUpdate}
+          />
         </div>
       </div>
     );
