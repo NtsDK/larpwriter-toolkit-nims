@@ -1,4 +1,3 @@
-
 // ((exports) => {
 const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 const IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -24,44 +23,44 @@ export const test = () => {
 };
 
 function logerr(err) {
-    console.log(err);
+  console.log(err);
 }
 
 const logerr2 = (err) => {
-    if (err) { console.log(err); }
+  if (err) { console.log(err); }
 };
 
 function connectDB(callback) {
-    const request = indexedDB.open(baseName, 1);
-    request.onerror = callback;
-    request.onsuccess = function () {
-        callback(null, request.result);
-    };
-    request.onupgradeneeded = function (e) {
-        e.currentTarget.result.createObjectStore(storeName, { keyPath: 'id' });
-        connectDB(callback);
-    };
+  const request = indexedDB.open(baseName, 1);
+  request.onerror = callback;
+  request.onsuccess = function () {
+    callback(null, request.result);
+  };
+  request.onupgradeneeded = function (e) {
+    e.currentTarget.result.createObjectStore(storeName, { keyPath: 'id' });
+    connectDB(callback);
+  };
 }
 
-export const get = id => new Promise(((resolve, reject) => {
-    connectDB((err, db) => {
-        if (err) { reject(err); return; }
-        const request = db.transaction([storeName], 'readonly').objectStore(storeName).get(id);
-        request.onerror = reject;
-        request.onsuccess = function () {
-            resolve(request.result ? request.result : null);
-        };
-    });
+export const get = (id) => new Promise(((resolve, reject) => {
+  connectDB((err, db) => {
+    if (err) { reject(err); return; }
+    const request = db.transaction([storeName], 'readonly').objectStore(storeName).get(id);
+    request.onerror = reject;
+    request.onsuccess = function () {
+      resolve(request.result ? request.result : null);
+    };
+  });
 }));
 
 export const put = (id, obj) => new Promise(((resolve, reject) => {
-    connectDB((err, db) => {
-        if (err) { reject(err); return; }
-        const request = db.transaction([storeName], 'readwrite').objectStore(storeName).put({ id, obj });
-        request.onerror = reject;
-        request.onsuccess = function () {
-            resolve(request.result);
-        };
-    });
+  connectDB((err, db) => {
+    if (err) { reject(err); return; }
+    const request = db.transaction([storeName], 'readwrite').objectStore(storeName).put({ id, obj });
+    request.onerror = reject;
+    request.onsuccess = function () {
+      resolve(request.result);
+    };
+  });
 }));
 // })(window.LocalBaseAPI = {});

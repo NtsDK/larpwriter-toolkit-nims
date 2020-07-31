@@ -1,9 +1,8 @@
 import React from 'react';
 
-export const Template = function() {
+export const Template = function () {
   return (
-    <div >
-    </div>
+    <div />
   );
 };
 

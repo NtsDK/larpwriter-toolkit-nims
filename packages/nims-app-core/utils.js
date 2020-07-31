@@ -1,4 +1,5 @@
 //const R = require('ramda');
+import * as R from 'ramda';
 
 // TODO need to lint utils with NIMS fixes
 /* eslint-disable */

@@ -1,11 +1,11 @@
 import React from 'react';
 
-export const EventPresenceCell = function() {
+export const EventPresenceCell = function () {
   return (
     <td className="EventPresenceCell vertical-aligned-td">
-      <input className="isStoryEditable hidden" type="checkbox"/>
+      <input className="isStoryEditable hidden" type="checkbox" />
       <label className="checkbox-label checkbox-label-icon">
-        <span className="margin-left-8"></span>
+        <span className="margin-left-8" />
       </label>
     </td>
   );
