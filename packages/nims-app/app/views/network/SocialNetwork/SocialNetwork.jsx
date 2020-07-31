@@ -51,6 +51,8 @@ export class SocialNetwork extends Component {
     this.onNodesColoringChange = this.onNodesColoringChange.bind(this);
     this.drawNetwork = this.drawNetwork.bind(this);
     this.getNodeColorsUpdate = this.getNodeColorsUpdate.bind(this);
+    this.onSelectFocusNode = this.onSelectFocusNode.bind(this);
+    this.onShowPlayerNames = this.onShowPlayerNames.bind(this);
   }
 
   componentDidMount() {
@@ -67,12 +69,6 @@ export class SocialNetwork extends Component {
   }
 
   refresh() {
-    // let selector = U.fillSelector(U.clearEl(U.queryEl('#networkSelector')), UI.constArr2Select(Constants.networks));
-    // [selector.value] = Constants.networks;
-    // onNetworkSelectorChangeDelegate({ target: selector });
-
-    // selector = U.clearEl(U.queryEl('#networkNodeGroupSelector'));
-
     Promise.all([
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }), // subset selector
       PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }), // subset selector
@@ -99,16 +95,6 @@ export class SocialNetwork extends Component {
       R.values(profiles).forEach((profile) => {
         checkboxes.map((item) => (profile[item.name] = L10n.const(Constants[profile[item.name]])));
       });
-
-      // console.log(this.getNetworkNodeGroups(profileStructure, groupCharacterSets));
-
-      // this.initGroupColors(profileStructure);
-
-      // NetworkSubsetsSelector.refresh({
-      //   characterNames,
-      //   storyNames,
-      //   Stories: stories
-      // });
 
       characterNames.sort(CU.charOrdAObject);
       storyNames.sort(CU.charOrdAObject);
@@ -157,26 +143,16 @@ export class SocialNetwork extends Component {
   }
 
   drawNetwork() {
-    // state.selectedNetwork = selectedNetwork;
     let nodes = [];
     let edges = [];
 
     const {
-      subset, networkSettings, nodesColoring, data
+      subset, networkSettings, nodesColoring, data, showPlayerNames
     } = this.state;
     const { drawCharacterNames, drawStoryNames } = subset;
     const selectedNetwork = networkSettings.type;
 
-    const showPlayer = false;
-
-    // const selectedRelations = U.queryEls('#relationsBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
-    // const selectedActivities = U.queryEls('#activityBlock button.btn-primary').map(U.getAttr(R.__, 'data-value'));
-    // const storyNames = state.networkSubsetsSelector.getStoryNames();
-    // const characterNames = state.networkSubsetsSelector.getCharacterNames();
-    // const groupName = U.queryEl('#networkNodeGroupSelector').value;
-    // const showPlayer = U.queryEl('#showPlayerNamesCheckbox').checked;
-
-    const characterNodes = this.getCharacterNodes(data.Characters, nodesColoring.selectedGroup, showPlayer, drawCharacterNames);
+    const characterNodes = this.getCharacterNodes(data.Characters, nodesColoring.selectedGroup, showPlayerNames, drawCharacterNames);
     const storyNodes = getStoryNodes(data.Stories, drawStoryNames);
     switch (selectedNetwork) {
     case 'socialRelations':
@@ -199,21 +175,13 @@ export class SocialNetwork extends Component {
       throw new Error(`Unexpected network type: ${selectedNetwork}`);
     }
 
+    const nodeSort = CU.charOrdAFactory((a) => a.label.toLowerCase());
+    nodes.sort(nodeSort);
+
     this.setState({
       nodes,
       edges
     });
-
-    // refreshLegend(U.queryEl('#networkNodeGroupSelector').value);
-
-    // U.clearEl(U.queryEl('#nodeFocusSelector'));
-    // const nodeSort = CU.charOrdAFactory((a) => a.label.toLowerCase());
-    // nodes.sort(nodeSort);
-
-    // const data2 = UI.getSelect2DataCommon(UI.remapProps(['id', 'text'], ['id', 'originName']), nodes);
-    // $('#nodeFocusSelector').select2(data2);
-
-    // state.networkWrapper.redrawAll(state.groupColors, nodes, edges);
   }
 
   makeCharacterNodeLabel(showPlayer, characterName) {
@@ -262,9 +230,23 @@ export class SocialNetwork extends Component {
     throw new Error(`Unexpected group name: ${groupName}`);
   }
 
+  onSelectFocusNode(focusNode) {
+    this.setState({
+      focusNode
+    });
+  }
+
+  onShowPlayerNames(showPlayerNames) {
+    this.setState({
+      showPlayerNames
+    });
+  }
+
   render() {
     const {
-      data, networkSettings, subset, nodesColoring, groupColorsInfo, nodes, edges, getNodeColorsUpdate
+      data, networkSettings, subset, nodesColoring,
+      groupColorsInfo, nodes, edges, getNodeColorsUpdate,
+      focusNode, showPlayerNames
     } = this.state;
     const {
       profileStructure,
@@ -279,12 +261,6 @@ export class SocialNetwork extends Component {
       return null;
     }
 
-    // const networkNodeGroups = this.getNetworkNodeGroups(profileStructure, groupCharacterSets);
-
-    // if (!something) {
-    //   return <div> SocialNetwork stub </div>;
-    //   // return null;
-    // }
     return (
       <div id="socialNetworkDiv" className="SocialNetwork block">
         <SocialNetworkWarning />
@@ -292,7 +268,13 @@ export class SocialNetwork extends Component {
           <div className="storySelectorContainer sn-navigation-container">
             <div className="panel panel-default">
               <div className="panel-body">
-                <CommonNetworkSettings />
+                <CommonNetworkSettings
+                  nodes={nodes}
+                  focusNode={focusNode}
+                  onSelectFocusNode={this.onSelectFocusNode}
+                  showPlayerNames={showPlayerNames}
+                  onShowPlayerNames={this.onShowPlayerNames}
+                />
               </div>
             </div>
           </div>
@@ -395,6 +377,7 @@ export class SocialNetwork extends Component {
             edges={edges}
             groupColors={groupColorsInfo.groupColors}
             getNodeColorsUpdate={this.getNodeColorsUpdate}
+            focusNode={focusNode}
           />
         </div>
       </div>
