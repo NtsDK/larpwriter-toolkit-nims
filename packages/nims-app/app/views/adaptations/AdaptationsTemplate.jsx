@@ -1,15 +1,15 @@
 import React from 'react';
 
-export const AdaptationsTemplate = function() {
+export const AdaptationsTemplate = function () {
   return (
     <div className="adaptations-tab block">
-      <div className="alert alert-info margin-bottom-8" l10n-id="advices-no-story"></div>
-        
+      <div className="alert alert-info margin-bottom-8" l10n-id="advices-no-story" />
+
       <div className="adaptations-content">
         <div className="panel panel-default">
           <div className="panel-body">
-            <input type="checkbox" id="finishedStoryCheckbox" className="hidden"/>
-            <label htmlFor="finishedStoryCheckbox" className="checkbox-label-icon common-checkbox"><span l10n-id="adaptations-show-only-unfinished-stories"></span></label>
+            <input type="checkbox" id="finishedStoryCheckbox" className="hidden" />
+            <label htmlFor="finishedStoryCheckbox" className="checkbox-label-icon common-checkbox"><span l10n-id="adaptations-show-only-unfinished-stories" /></label>
           </div>
         </div>
         <div className="main-container">
@@ -17,59 +17,58 @@ export const AdaptationsTemplate = function() {
             <div id="personalStoriesCharacterContainer">
               <div className="panel panel-default">
                 <div className="panel-heading">
-                  <h3 className="panel-title" l10n-id="adaptations-story"></h3>
+                  <h3 className="panel-title" l10n-id="adaptations-story" />
                 </div>
                 <div className="panel-body panel-resizable form-group">
-                  <input selector-filter="#events-storySelector"/>
-                  <select id="events-storySelector" className="form-control"></select>
+                  <input selector-filter="#events-storySelector" />
+                  <select id="events-storySelector" className="form-control" />
                 </div>
               </div>
               <div className="panel panel-default">
                 <div className="panel-heading">
-                  <h3 className="panel-title" l10n-id="adaptations-filter"></h3>
+                  <h3 className="panel-title" l10n-id="adaptations-filter" />
                 </div>
                 <div className="panel-body">
-                  
+
                   <div>
-                    <input type="radio" name="adaptationFilter" value="ByCharacter" id="adaptationFilterByCharacter" className="hidden"/>
-                    <label htmlFor="adaptationFilterByCharacter" className="radio-label-icon common-radio"><span l10n-id="adaptations-by-characters"></span></label>
+                    <input type="radio" name="adaptationFilter" value="ByCharacter" id="adaptationFilterByCharacter" className="hidden" />
+                    <label htmlFor="adaptationFilterByCharacter" className="radio-label-icon common-radio"><span l10n-id="adaptations-by-characters" /></label>
                   </div>
                   <div>
-                    <input type="radio" name="adaptationFilter" value="ByEvent" id="adaptationFilterByEvent" className="hidden"/>
-                    <label htmlFor="adaptationFilterByEvent" className="radio-label-icon common-radio"><span l10n-id="adaptations-by-events"></span></label>
+                    <input type="radio" name="adaptationFilter" value="ByEvent" id="adaptationFilterByEvent" className="hidden" />
+                    <label htmlFor="adaptationFilterByEvent" className="radio-label-icon common-radio"><span l10n-id="adaptations-by-events" /></label>
                   </div>
-                  
+
                   <div id="events-characterSelectorDiv">
-                    <h4 l10n-id="adaptations-characters"></h4>
-                    <select id="events-characterSelector" className="form-control" multiple></select>
+                    <h4 l10n-id="adaptations-characters" />
+                    <select id="events-characterSelector" className="form-control" multiple />
                   </div>
                   <div id="events-eventSelectorDiv" className="hidden">
-                    <h4 l10n-id="adaptations-events"></h4>
-                    <select id="events-eventSelector" className="form-control" multiple size="15"></select>
+                    <h4 l10n-id="adaptations-events" />
+                    <select id="events-eventSelector" className="form-control" multiple size="15" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div id="personalStories" style={{flexGrow:1}}>
-          </div>
+          <div id="personalStories" style={{ flexGrow: 1 }} />
         </div>
       </div>
-      
+
       {/* <template className="adaptation-row-tmpl">
         <div className="container-fluid eventRow-dependent">
           <div className="row eventMainPanelRow-left events-eventsContainer">
           </div>
         </div>
       </template>
-      
+
       <template className="origin-tmpl">
         <div className="col-xs-6">
           <div className="panel panel-primary">
             <div className="panel-heading flex-row">
               <h1 className="panel-title card-title flex-1-1-auto"></h1>
               <input className="isStoryEditable time-input form-control flex-0-0-auto"/>
-              <button className="btn btn-default btn-reduced fa-icon locked btn-primary flex-0-0-auto margin-left-8 isStoryEditable" 
+              <button className="btn btn-default btn-reduced fa-icon locked btn-primary flex-0-0-auto margin-left-8 isStoryEditable"
                       l10n-title="briefings-unlock-event-source"></button>
             </div>
             <div className="panel-body">
@@ -78,7 +77,7 @@ export const AdaptationsTemplate = function() {
           </div>
         </div>
       </template>
-      
+
       <template className="adaptation-tmpl">
         <div className="col-xs-6">
           <div className="panel panel-default">
@@ -101,11 +100,10 @@ export function getAdaptationsTemplate() {
   return <AdaptationsTemplate />;
 }
 
-export const AdaptationRow = function() {
+export const AdaptationRow = function () {
   return (
     <div className="AdaptationRow container-fluid eventRow-dependent">
-      <div className="row eventMainPanelRow-left events-eventsContainer">
-      </div>
+      <div className="row eventMainPanelRow-left events-eventsContainer" />
     </div>
   );
 };
@@ -114,18 +112,21 @@ export function getAdaptationRow() {
   return <AdaptationRow />;
 }
 
-export const Origin = function() {
+export const Origin = function () {
   return (
     <div className="Origin col-xs-6">
       <div className="panel panel-primary">
         <div className="panel-heading flex-row">
-          <h1 className="panel-title card-title flex-1-1-auto"></h1>
-          <input className="isStoryEditable time-input form-control flex-0-0-auto"/>
-          <button className="btn btn-default btn-reduced fa-icon locked btn-primary flex-0-0-auto margin-left-8 isStoryEditable" 
-                  l10n-title="briefings-unlock-event-source"></button>
+          <h1 className="panel-title card-title flex-1-1-auto" />
+          <input className="isStoryEditable time-input form-control flex-0-0-auto" />
+          <button
+            type="button"
+            className="btn btn-default btn-reduced fa-icon locked btn-primary flex-0-0-auto margin-left-8 isStoryEditable"
+            l10n-title="briefings-unlock-event-source"
+          />
         </div>
         <div className="panel-body">
-          <textarea className="isStoryEditable eventPersonalStory form-control text-input"></textarea>
+          <textarea className="isStoryEditable eventPersonalStory form-control text-input" />
         </div>
       </div>
     </div>
@@ -136,17 +137,17 @@ export function getOrigin() {
   return <Origin />;
 }
 
-export const Adaptation = function() {
+export const Adaptation = function () {
   return (
     <div className="Adaptation col-xs-6">
       <div className="panel panel-default">
         <div className="panel-heading flex-row">
-          <h1 className="panel-title card-title flex-1-1-auto"></h1>
-          <input className=" time-input form-control flex-0-0-auto" l10n-placeholder-id="adaptations-subjective-time"/>
-          <button className="btn btn-default btn-reduced fa-icon finished flex-0-0-auto margin-left-8" l10n-title="constant-adaptation-finished"></button>
+          <h1 className="panel-title card-title flex-1-1-auto" />
+          <input className=" time-input form-control flex-0-0-auto" l10n-placeholder-id="adaptations-subjective-time" />
+          <button type="button" className="btn btn-default btn-reduced fa-icon finished flex-0-0-auto margin-left-8" l10n-title="constant-adaptation-finished" />
         </div>
         <div className="panel-body">
-          <textarea className="eventPersonalStory form-control text-input" l10n-placeholder-id="adaptations-adaptation-text"></textarea>
+          <textarea className="eventPersonalStory form-control text-input" l10n-placeholder-id="adaptations-adaptation-text" />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-//const R = require('ramda');
+import * as R from 'ramda';
 
 // const Timing = {};
 // module.exports = Timing;
@@ -32,7 +32,7 @@ export const bounce = (timeFraction) => {
   }
 };
 
-export const elastic = (x, timeFraction) => (2 ** (10 * (timeFraction - 1))) * Math.cos(20 * Math.PI * x / 3 * timeFraction);
+export const elastic = (x, timeFraction) => (2 ** (10 * (timeFraction - 1))) * Math.cos(((20 * Math.PI * x) / 3) * timeFraction);
 
 export const makeEaseOut = (timing) => function (timeFraction) {
   return 1 - timing(1 - timeFraction);

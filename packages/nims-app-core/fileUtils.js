@@ -1,5 +1,6 @@
 import dateFormat from 'dateformat';
 import { saveAs } from 'file-saver';
+import * as R from 'ramda';
 import UI from './uiUtils';
 import L10n from './l10n';
 

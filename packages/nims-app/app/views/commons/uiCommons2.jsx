@@ -1,8 +1,8 @@
 import React from 'react';
 
-export const AlertBlock = function() {
+export const AlertBlock = function () {
   return (
-    <div className="AlertBlock alert alert-info"></div>
+    <div className="AlertBlock alert alert-info" />
   );
 };
 
@@ -10,10 +10,10 @@ export function getAlertBlock() {
   return <AlertBlock />;
 }
 
-export const ModalPromptBody = function() {
+export const ModalPromptBody = function () {
   return (
     <div className="ModalPromptBody form-group">
-      <input className="entity-input form-control focusable onenterable"></input>
+      <input className="entity-input form-control focusable onenterable" />
     </div>
   );
 };
@@ -21,4 +21,3 @@ export const ModalPromptBody = function() {
 export function getModalPromptBody() {
   return <ModalPromptBody />;
 }
-
