@@ -1,6 +1,7 @@
 import PermissionInformer from 'permissionInformer';
 import ReactDOM from 'react-dom';
 import { UI, U, L10n } from 'nims-app-core';
+import * as R from 'ramda';
 import RelationsPreview from './relationsPreview';
 import { getRelationsTemplate } from './RelationsTemplate.jsx';
 
