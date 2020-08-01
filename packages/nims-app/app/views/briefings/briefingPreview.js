@@ -282,7 +282,7 @@ function makePanel(title, content, hideAllPanels) {
     UI.refreshTextAreas(`${root} #briefingContent textarea`);
   });
   if (hideAllPanels) {
-    panelInfo.a.click();
+    // panelInfo.a.click();
   }
   return panelInfo.panel;
 }
