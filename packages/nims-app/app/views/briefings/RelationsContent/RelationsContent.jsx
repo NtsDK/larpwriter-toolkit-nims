@@ -5,6 +5,7 @@ import { UI, U, L10n } from 'nims-app-core';
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import * as CU from 'nims-dbms-core/commonUtils';
 import './RelationsContent.css';
+import { RelationRow } from './RelationRow';
 
 const findRel = R.curry((fromCharacter, toCharacter, relations) => {
   const findFunc = R.curry((fromCharacter2, toCharacter2, rel) => rel[fromCharacter2] !== undefined && rel[toCharacter2] !== undefined);
@@ -194,111 +195,6 @@ export class RelationsContent extends Component {
   //   });
   // }
 
-  // makeNewRow = R.curry((
-  //   profiles, getProfileItemSelect, isAdaptationsMode, knownCharacters, profileBindings,
-  //   externalRefresh, fromCharacter, toCharacter, rel
-  // ) => {
-  //   const stories = knownCharacters[toCharacter];
-
-  //   const content = U.makeEl('div');
-  //   ReactDOM.render(getRelationRow(), content);
-  //   const row = U.qee(content, '.RelationRow');
-
-  //   // const row = U.qmte('.relation-row-tmpl');
-  //   const tmplQe = U.qee(row);
-  //   U.addEl(tmplQe('.to-character-name'), U.makeText(`${toCharacter}/${profileBindings[toCharacter]}`));
-  //   U.addEl(tmplQe('.where-meets-label'), U.makeText(l10n('where-meets')));
-  //   U.addEl(tmplQe('.where-meets-content'), U.makeText(stories === undefined ? '' : R.keys(stories).join(', ')));
-  //   U.setAttr(tmplQe('[toCharacter]'), 'toCharacter', toCharacter);
-  //   fillProfileItemContent(row, getProfileItemSelect().value, profiles[toCharacter][getProfileItemSelect().value]);
-  //   U.listen(tmplQe('button.remove'), 'click', (event) => {
-  //     UI.confirm(CU.strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
-  //       DBMS.removeCharacterRelation({ fromCharacter, toCharacter }).then(externalRefresh).catch(UI.handleError);
-  //     });
-  //   });
-
-  //   const directText = tmplQe('.direct textarea');
-  //   directText.value = rel[fromCharacter];
-  //   U.setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
-  //   U.listen(directText, 'change', (event) => {
-  //     DBMS.setCharacterRelationText({
-  //       fromCharacter,
-  //       toCharacter,
-  //       character: fromCharacter,
-  //       text: event.target.value
-  //     }).catch(UI.handleError);
-  //   });
-
-  //   Constants.relationEssences.forEach((name) => {
-  //     const btn = tmplQe(`.${name}`);
-  //     $(btn).tooltip({
-  //       title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
-  //       placement: 'top'
-  //     });
-  //     let attrName = name;
-  //     if (rel.starter !== fromCharacter) {
-  //       if (name === 'starterToEnder') attrName = 'enderToStarter';
-  //       if (name === 'enderToStarter') attrName = 'starterToEnder';
-  //     }
-  //     U.setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
-  //     U.listen(btn, 'click', (event) => {
-  //       DBMS.setRelationEssenceStatus({
-  //         fromCharacter,
-  //         toCharacter,
-  //         essence: attrName,
-  //         flag: !U.hasClass(event.target, 'btn-primary')
-  //       }).then(() => {
-  //         U.toggleClass(event.target, 'btn-primary');
-  //       }).catch(UI.handleError);
-  //     });
-  //   });
-
-  //   const originText = tmplQe('.origin textarea');
-  //   originText.value = rel.origin;
-  //   U.setAttr(originText, 'placeholder', l10n('relation-origin'));
-  //   U.listen(originText, 'change', (event) => {
-  //     DBMS.setOriginRelationText({
-  //       fromCharacter,
-  //       toCharacter,
-  //       text: event.target.value
-  //     }).catch(UI.handleError);
-  //   });
-
-  //   const reverseText = tmplQe('.reverse textarea');
-  //   reverseText.value = rel[toCharacter];
-  //   U.setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
-  //   U.listen(reverseText, 'change', (event) => {
-  //     DBMS.setCharacterRelationText({
-  //       fromCharacter,
-  //       toCharacter,
-  //       character: toCharacter,
-  //       text: event.target.value
-  //     }).catch(UI.handleError);
-  //   });
-
-  //   const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
-  //   fillFinishedButton(
-  //     tmplQe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
-  //     toCharacter, fromCharacter, directChecked, directText
-  //   );
-
-  //   const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
-  //   fillFinishedButton(
-  //     tmplQe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
-  //     toCharacter, toCharacter, reverseChecked, reverseText
-  //   );
-
-  //   if (!isAdaptationsMode) {
-  //     U.removeClass(tmplQe('.direct'), 'col-xs-3');
-  //     U.addClass(tmplQe('.direct'), 'col-xs-9');
-  //     U.addClass(tmplQe('.origin'), 'hidden');
-  //     U.addClass(tmplQe('.reverse'), 'hidden');
-  //   }
-  //   L10n.localizeStatic(row);
-
-  //   return row;
-  // });
-
   onKnownCharacterChange(e) {
     this.setState({
       selectedKnownCharacter: e.target.value
@@ -325,11 +221,15 @@ export class RelationsContent extends Component {
       knownByStoriesNoRels,
       unknownByStoriesNoRels,
       selectedKnownCharacter,
-      selectedUnknownCharacter
+      selectedUnknownCharacter,
     } = this.state;
     const {
       t, characterName, isAdaptationsMode, characterProfileStructure
     } = this.props;
+
+    //
+    //     profiles, getProfileItemSelect, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
+    //     externalRefresh, characterName
 
     if (characterName === null || characterNamesArray === null) {
       // return <div> RelationsContent stub </div>;
@@ -410,62 +310,33 @@ export class RelationsContent extends Component {
 
         <div className="relation-content container-fluid">
           {
-            showCharacters.filter(toCharacterFilter).map((toChar) => (
-              <div className="RelationRow row">
-                <div className="to-character-data col-xs-3">
-                  <h4 className="to-character-name" />
-                  <div>
-                    <div className="where-meets-label bold-cursive">{t('briefings.where-meets')}</div>
-                    <div className="where-meets-content" />
-                  </div>
-                  <div tocharacter="">
-                    <div className="profile-item-name bold-cursive" />
-                    <div className="profile-item-value" />
-                  </div>
-                  <div>
-                    <button type="button" className="btn btn-default fa-icon remove" />
-                  </div>
-                </div>
-                <div className="direct text-column col-xs-3">
-                  <div className="pre-text-area">
-                    <button type="button" className="btn btn-default fa-icon finished" title={t('constant.finishedText')} />
-                  </div>
-                  <textarea className="briefing-relation-area form-control" />
-                </div>
-                <div className="origin text-column col-xs-3">
-                  <div className="pre-text-area btn-group">
-                    <button type="button" className="btn btn-default fa-icon starterToEnder" />
-                    <button type="button" className="btn btn-default fa-icon allies" />
-                    <button type="button" className="btn btn-default fa-icon enderToStarter" />
-                  </div>
-                  <textarea className="briefing-relation-area form-control" placeholder={t('briefings.relation-origin')} />
-                </div>
-                <div className="reverse text-column col-xs-3">
-                  <div className="pre-text-area">
-                    <button type="button" className="btn btn-default fa-icon finished" title={t('constant.finishedText')} />
-                  </div>
-                  <textarea className="briefing-relation-area form-control" />
-                </div>
-              </div>
+            showCharacters.filter(toCharacterFilter).map((toCharacter) => (
+              // makeNewRow = R.curry((
+              // profiles,  profiles
+              // getProfileItemSelect,  selectedProfileItem
+              // isAdaptationsMode,  isAdaptationsMode
+              // knownCharacters,  relationsSummary.knownCharacters
+              // profileBindings,    profileBindings
+              // externalRefresh,   ????
+              // fromCharacter,   characterName
+              // toCharacter, toCharacter
+              // rel findRelTmp(toCharacter)
+              // ) => {
+
+              <RelationRow
+                profiles={profiles}
+                selectedProfileItem={selectedProfileItem}
+                isAdaptationsMode={isAdaptationsMode}
+                knownCharacters={relationsSummary.knownCharacters}
+                profileBindings={profileBindings}
+                fromCharacter={characterName}
+                toCharacter={toCharacter}
+                rel={findRelTmp(toCharacter)}
+              />
             ))
           }
         </div>
       </div>
     );
-
-    // UI.confirm(CU.strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
-
-    //   const directText = tmplQe('.direct textarea');
-    //   directText.value = rel[fromCharacter];
-    //   U.setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
-
-    //   Constants.relationEssences.forEach((name) => {
-    //     const btn = tmplQe(`.${name}`);
-    //     $(btn).tooltip({
-    //       title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
-
-    //   const reverseText = tmplQe('.reverse textarea');
-    //   reverseText.value = rel[toCharacter];
-    //   U.setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
   }
 }
