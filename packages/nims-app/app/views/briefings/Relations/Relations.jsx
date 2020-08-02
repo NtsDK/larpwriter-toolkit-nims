@@ -67,31 +67,37 @@ export class Relations extends Component {
     const { characterNames, selectedCharacter, characterProfileStructure } = this.state;
     const { t } = this.props;
 
-    // if (!something) {
-    //   return <div> Relations stub </div>;
-    //   // return null;
-    // }
     return (
       <div className="Relations relations-tab block">
-        <div className="alert alert-info">
-          {t('advices.no-characters-for-relations')}
-        </div>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <select className="character-select common-select" value={selectedCharacter} onChange={this.onCharacterChange}>
-              {
-                characterNames.map((name) => <option key={name.value} value={name.value}>{name.displayName}</option>)
-              }
-            </select>
-          </div>
-          <div className="panel-body">
-            <RelationsContent
-              characterName={selectedCharacter}
-              isAdaptationsMode
-              characterProfileStructure={characterProfileStructure}
-            />
-          </div>
-        </div>
+        {
+          characterNames.length < 2
+          && (
+            <div className="alert alert-info">
+              {t('advices.no-characters-for-relations')}
+            </div>
+          )
+        }
+        {
+          characterNames.length > 1
+          && (
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <select className="character-select common-select" value={selectedCharacter} onChange={this.onCharacterChange}>
+                  {
+                    characterNames.map((name) => <option key={name.value} value={name.value}>{name.displayName}</option>)
+                  }
+                </select>
+              </div>
+              <div className="panel-body">
+                <RelationsContent
+                  characterName={selectedCharacter}
+                  isAdaptationsMode
+                  characterProfileStructure={characterProfileStructure}
+                />
+              </div>
+            </div>
+          )
+        }
       </div>
     );
   }
