@@ -1,8 +1,35 @@
 import React, { Component } from 'react';
 import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  Link,
+  NavLink,
+  Redirect,
+  useParams,
+  useHistory
+} from 'react-router-dom';
 import './Relations.css';
 import { RelationsContent } from '../RelationsContent';
+
+function RelationCharacterSelect(props) {
+  const { characterNames } = props;
+  const { id: selectedCharacterName } = useParams();
+  const history = useHistory();
+  function onChange(e) {
+    history.push(`/relations/${e.target.value}`);
+  }
+
+  return (
+    <select className="character-select common-select" value={selectedCharacterName} onChange={onChange}>
+      {
+        characterNames.map((name) => <option key={name.value} value={name.value}>{name.displayName}</option>)
+      }
+    </select>
+  );
+}
 
 export class Relations extends Component {
   constructor(props) {
@@ -10,9 +37,8 @@ export class Relations extends Component {
     this.state = {
       characterProfileStructure: {},
       characterNames: [],
-      selectedCharacter: null
     };
-    this.onCharacterChange = this.onCharacterChange.bind(this);
+    // this.onCharacterChange = this.onCharacterChange.bind(this);
   }
 
   componentDidMount() {
@@ -29,9 +55,6 @@ export class Relations extends Component {
   }
 
   refresh() {
-    // U.clearEl(U.queryEl(`${root} .character-select`));
-    // U.clearEl(U.queryEl(`${root} .panel-body`));
-
     Promise.all([
       DBMS.getProfileStructure({ type: 'character' }),
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
@@ -41,30 +64,12 @@ export class Relations extends Component {
       this.setState({
         characterProfileStructure,
         characterNames,
-        selectedCharacter: characterNames.length > 0 ? characterNames[0].value : null
       });
-      // state.characterProfileStructure = characterProfileStructure;
-
-      // U.showEl(U.qe(`${root} .alert`), names.length < 2);
-      // U.showEl(U.qe(`${root} > .panel`), names.length > 1);
-
-      // if (names.length > 0) {
-      //   const characterName = UI.checkAndGetEntitySetting(settingsPath, names);
-      //   const data = UI.getSelect2Data(names);
-      //   // this call trigger buildContent
-      //   $(`${root} .character-select`).select2(data).val(characterName).trigger('change');
-      // }
     }).catch(UI.handleError);
   }
 
-  onCharacterChange(e) {
-    this.setState({
-      selectedCharacter: e.target.value
-    });
-  }
-
   render() {
-    const { characterNames, selectedCharacter, characterProfileStructure } = this.state;
+    const { characterNames, characterProfileStructure } = this.state;
     const { t } = this.props;
 
     return (
@@ -82,19 +87,32 @@ export class Relations extends Component {
           && (
             <div className="panel panel-default">
               <div className="panel-heading">
-                <select className="character-select common-select" value={selectedCharacter} onChange={this.onCharacterChange}>
-                  {
-                    characterNames.map((name) => <option key={name.value} value={name.value}>{name.displayName}</option>)
-                  }
-                </select>
+                <Switch>
+                  <Route path="/relations/:id">
+                    <RelationCharacterSelect characterNames={characterNames} />
+                  </Route>
+                  <Route path="/relations">
+                    {characterNames.length > 0
+                  && <Redirect to={`/relations/${characterNames[0].value}`} />}
+                  </Route>
+                </Switch>
+
               </div>
-              <div className="panel-body">
-                <RelationsContent
-                  characterName={selectedCharacter}
-                  isAdaptationsMode
-                  characterProfileStructure={characterProfileStructure}
-                />
-              </div>
+              <Route
+                path="/relations/:id"
+                render={({ match }) => {
+                  const { id } = match.params;
+                  return (
+                    <div className="panel-body">
+                      <RelationsContent
+                        characterName={id}
+                        isAdaptationsMode
+                        characterProfileStructure={characterProfileStructure}
+                      />
+                    </div>
+                  );
+                }}
+              />
             </div>
           )
         }
