@@ -12,22 +12,39 @@ const findRel = R.curry((fromCharacter, toCharacter, relations) => {
   return R.find(findFunc(fromCharacter, toCharacter), relations);
 });
 
+const emptyState = {
+  profiles: null,
+  relationsSummary: null,
+  characterNamesArray: null,
+  profileBindings: null,
+  profileItemNames: null,
+  selectedProfileItem: null,
+  showCharacters: null,
+  knownByStoriesNoRels: null,
+  selectedKnownCharacter: null,
+  unknownByStoriesNoRels: null,
+  selectedUnknownCharacter: null
+};
+
+let count = 1;
+
 export class RelationsContent extends Component {
+  // static getDerivedStateFromProps(props, state) {
+  //   // Store prevId in state so we can compare when props change.
+  //   // Clear out previously-loaded data (so we don't render stale stuff).
+  //   if (props.id !== state.prevId) {
+  //     return {
+  //       externalData: null,
+  //       prevId: props.id,
+  //     };
+  //   }
+  //   // No state update necessary
+  //   return null;
+  // }
+
   constructor(props) {
     super(props);
-    this.state = {
-      profiles: null,
-      relationsSummary: null,
-      characterNamesArray: null,
-      profileBindings: null,
-      profileItemNames: null,
-      selectedProfileItem: null,
-      showCharacters: null,
-      knownByStoriesNoRels: null,
-      selectedKnownCharacter: null,
-      unknownByStoriesNoRels: null,
-      selectedUnknownCharacter: null
-    };
+    this.state = R.clone(emptyState);
     this.onKnownCharacterChange = this.onKnownCharacterChange.bind(this);
     this.onUnknownCharacterChange = this.onUnknownCharacterChange.bind(this);
     this.onSelectedProfileItemChange = this.onSelectedProfileItemChange.bind(this);
@@ -41,9 +58,12 @@ export class RelationsContent extends Component {
   componentDidUpdate(prevProps) {
     const { characterName } = this.props;
     if (characterName !== prevProps.characterName) {
+      this.setState(R.clone(emptyState));
       this.refresh();
     }
-    console.log('RelationsContent did update');
+    // console.log('RelationsContent did update');
+    console.log(`RelationsContent did update ${count}`);
+    count++;
   }
 
   componentWillUnmount() {
@@ -227,6 +247,9 @@ export class RelationsContent extends Component {
       t, characterName, isAdaptationsMode, characterProfileStructure
     } = this.props;
 
+    console.log(`RelationsContent render ${count}`);
+    count++;
+
     //
     //     profiles, getProfileItemSelect, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
     //     externalRefresh, characterName
@@ -322,17 +345,18 @@ export class RelationsContent extends Component {
               // toCharacter, toCharacter
               // rel findRelTmp(toCharacter)
               // ) => {
+              <div>stub</div>
 
-              <RelationRow
-                profiles={profiles}
-                selectedProfileItem={selectedProfileItem}
-                isAdaptationsMode={isAdaptationsMode}
-                knownCharacters={relationsSummary.knownCharacters}
-                profileBindings={profileBindings}
-                fromCharacter={characterName}
-                toCharacter={toCharacter}
-                rel={findRelTmp(toCharacter)}
-              />
+              // <RelationRow
+              //   profiles={profiles}
+              //   selectedProfileItem={selectedProfileItem}
+              //   isAdaptationsMode={isAdaptationsMode}
+              //   knownCharacters={relationsSummary.knownCharacters}
+              //   profileBindings={profileBindings}
+              //   fromCharacter={characterName}
+              //   toCharacter={toCharacter}
+              //   rel={findRelTmp(toCharacter)}
+              // />
             ))
           }
         </div>
