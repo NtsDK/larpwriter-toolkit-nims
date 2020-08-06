@@ -64,6 +64,7 @@
     "nims-resources": "0.7.2",
     "ramda": "^0.27.0",
     "react": "^16.13.1",
+    "react-bootstrap": "^0.33.1",
     "react-dom": "^16.13.1",
     "react-highlighter": "^0.4.3",
     "react-i18next": "^11.7.0",

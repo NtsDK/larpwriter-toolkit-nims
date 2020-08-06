@@ -31,7 +31,6 @@ import {
   btnOpts, makeL10nButton, postLogout, makeButton, initPage
 } from './pageCore';
 
-import '../style/tailwind.css';
 import '../style/common.css';
 import '../style/icons.css';
 import '../style/style.css';

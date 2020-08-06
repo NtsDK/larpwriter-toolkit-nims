@@ -105,6 +105,7 @@ export class Relations extends Component {
                   return (
                     <div className="panel-body">
                       <RelationsContent
+                        key={id}
                         characterName={id}
                         isAdaptationsMode
                         characterProfileStructure={characterProfileStructure}
