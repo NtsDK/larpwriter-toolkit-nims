@@ -73,6 +73,8 @@ module.exports = {
   neutral: 'Знакомый',
   enderToStarter: 'Активное отношение {1} к {0}',
   'are-you-sure-about-relation-removing': 'Вы уверены, что хотите удалить отношение {0}? Все данные связанные с отношением будут удалены безвозвратно.',
+  'are-you-sure-about-relation-removing2': 'Вы уверены, что хотите удалить отношение {{relationName}}? Все данные связанные с отношением будут удалены безвозвратно.',
+  deleteRelationTitle: 'Подтвердите удаление отношения',
   // export status
   'save-preparing': 'Подготовка к выгрузке.',
   'start-saving': 'Данные подготовлены. Начинаю выгрузку.',

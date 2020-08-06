@@ -2,12 +2,18 @@ import React, { Component } from 'react';
 import * as R from 'ramda';
 import classNames from 'classnames';
 import './RelationRow.css';
+import { UI, U, L10n } from 'nims-app-core';
+import { ConfirmDialog } from '../../../commons/uiCommon3.jsx';
 
 export class RelationRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showDeleteRequest: false
     };
+    this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
+    this.onDeleteCancel = this.onDeleteCancel.bind(this);
+    this.onDeleteRequest = this.onDeleteRequest.bind(this);
   }
 
   componentDidMount() {
@@ -109,20 +115,36 @@ export class RelationRow extends Component {
   //   return row;
   // });
 
+  onDeleteConfirm() {
+    const {
+      fromCharacter, toCharacter, externalRefresh
+    } = this.props;
+    this.setState({
+      showDeleteRequest: false
+    });
+    DBMS.removeCharacterRelation({ fromCharacter, toCharacter }).then(externalRefresh).catch(UI.handleError);
+  }
+
+  onDeleteCancel() {
+    this.setState({
+      showDeleteRequest: false
+    });
+  }
+
+  onDeleteRequest() {
+    this.setState({
+      showDeleteRequest: true
+    });
+  }
+
   render() {
-    // const { something } = this.state;
+    const { showDeleteRequest } = this.state;
     const {
       t, profiles, selectedProfileItem, isAdaptationsMode, knownCharacters,
       profileBindings, fromCharacter, toCharacter, rel
     } = this.props;
 
     const stories = knownCharacters[toCharacter];
-
-    //   U.listen(tmplQe('button.remove'), 'click', (event) => {
-    //     UI.confirm(CU.strFormat(l10n('are-you-sure-about-relation-removing'), [`${`${fromCharacter}-${toCharacter}`}`]), () => {
-    //       DBMS.removeCharacterRelation({ fromCharacter, toCharacter }).then(externalRefresh).catch(UI.handleError);
-    //     });
-    //   });
 
     //   const directText = tmplQe('.direct textarea');
     //   U.listen(directText, 'change', (event) => {
@@ -196,7 +218,14 @@ export class RelationRow extends Component {
             <div className="profile-item-value">{String(profiles[toCharacter][selectedProfileItem])}</div>
           </div>
           <div>
-            <button type="button" className="btn btn-default fa-icon remove" />
+            <button type="button" className="btn btn-default fa-icon remove" onClick={this.onDeleteRequest} />
+            <ConfirmDialog
+              show={showDeleteRequest}
+              title={t('briefings.deleteRelationTitle')}
+              message={t('briefings.are-you-sure-about-relation-removing2', { relationName: `${fromCharacter}-${toCharacter}` })}
+              onConfirm={this.onDeleteConfirm}
+              onCancel={this.onDeleteCancel}
+            />
           </div>
         </div>
         <div className={classNames('direct text-column', isAdaptationsMode ? 'col-xs-3' : 'col-xs-9')}>

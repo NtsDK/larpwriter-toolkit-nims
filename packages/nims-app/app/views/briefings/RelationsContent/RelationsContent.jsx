@@ -26,8 +26,6 @@ const emptyState = {
   selectedUnknownCharacter: null
 };
 
-let count = 1;
-
 export class RelationsContent extends Component {
   // static getDerivedStateFromProps(props, state) {
   //   // Store prevId in state so we can compare when props change.
@@ -48,6 +46,8 @@ export class RelationsContent extends Component {
     this.onKnownCharacterChange = this.onKnownCharacterChange.bind(this);
     this.onUnknownCharacterChange = this.onUnknownCharacterChange.bind(this);
     this.onSelectedProfileItemChange = this.onSelectedProfileItemChange.bind(this);
+    this.onAddCharacterRelation = this.onAddCharacterRelation.bind(this);
+    this.refresh = this.refresh.bind(this);
   }
 
   componentDidMount() {
@@ -61,9 +61,9 @@ export class RelationsContent extends Component {
       this.setState(R.clone(emptyState));
       this.refresh();
     }
-    // console.log('RelationsContent did update');
-    console.log(`RelationsContent did update ${count}`);
-    count++;
+    console.log('RelationsContent did update');
+    // console.log(`RelationsContent did update ${count}`);
+    // count++;
   }
 
   componentWillUnmount() {
@@ -215,6 +215,21 @@ export class RelationsContent extends Component {
   //   });
   // }
 
+  onAddCharacterRelation(e) {
+    const {
+      characterName
+    } = this.props;
+    const { selectProp } = e.target.dataset;
+    const fromCharacter = characterName;
+    const toCharacter = this.state[selectProp];
+    if (toCharacter === null) {
+      return;
+    }
+    DBMS.createCharacterRelation({ fromCharacter, toCharacter }).then(() => {
+      this.refresh();
+    }).catch(UI.handleError);
+  }
+
   onKnownCharacterChange(e) {
     this.setState({
       selectedKnownCharacter: e.target.value
@@ -247,8 +262,8 @@ export class RelationsContent extends Component {
       t, characterName, isAdaptationsMode, characterProfileStructure
     } = this.props;
 
-    console.log(`RelationsContent render ${count}`);
-    count++;
+    // console.log(`RelationsContent render ${count}`);
+    // count++;
 
     //
     //     profiles, getProfileItemSelect, isAdaptationsMode, relationsSummary.knownCharacters, profileBindings,
@@ -289,7 +304,14 @@ export class RelationsContent extends Component {
                 }
               </select>
             </span>
-            <button type="button" className="add-known-character-relation btn btn-default btn-reduced">{t('common.add')}</button>
+            <button
+              type="button"
+              className="add-known-character-relation btn btn-default btn-reduced"
+              data-select-prop="selectedKnownCharacter"
+              onClick={this.onAddCharacterRelation}
+            >
+              {t('common.add')}
+            </button>
           </div>
           <div>
             <span className="unknown-characters-label">{t('briefings.unknown-characters')}</span>
@@ -312,7 +334,14 @@ export class RelationsContent extends Component {
                 }
               </select>
             </span>
-            <button type="button" className="add-unknown-character-relation btn btn-default btn-reduced">{t('common.add')}</button>
+            <button
+              type="button"
+              className="add-unknown-character-relation btn btn-default btn-reduced"
+              data-select-prop="selectedUnknownCharacter"
+              onClick={this.onAddCharacterRelation}
+            >
+              {t('common.add')}
+            </button>
           </div>
           <div>
             <span className="profile-item-label">{t('briefings.profile-item')}</span>
@@ -345,18 +374,20 @@ export class RelationsContent extends Component {
               // toCharacter, toCharacter
               // rel findRelTmp(toCharacter)
               // ) => {
-              <div>stub</div>
+              // <div>stub</div>
 
-              // <RelationRow
-              //   profiles={profiles}
-              //   selectedProfileItem={selectedProfileItem}
-              //   isAdaptationsMode={isAdaptationsMode}
-              //   knownCharacters={relationsSummary.knownCharacters}
-              //   profileBindings={profileBindings}
-              //   fromCharacter={characterName}
-              //   toCharacter={toCharacter}
-              //   rel={findRelTmp(toCharacter)}
-              // />
+              <RelationRow
+                key={`${characterName}_${toCharacter}`}
+                profiles={profiles}
+                selectedProfileItem={selectedProfileItem}
+                isAdaptationsMode={isAdaptationsMode}
+                knownCharacters={relationsSummary.knownCharacters}
+                profileBindings={profileBindings}
+                fromCharacter={characterName}
+                toCharacter={toCharacter}
+                rel={findRelTmp(toCharacter)}
+                externalRefresh={this.refresh}
+              />
             ))
           }
         </div>

@@ -153,7 +153,7 @@ var filterOptions = (sel) => (event) => {
   sel.dispatchEvent(new Event('change'));
 };
 
-export function initPanelToggler(el) {
+function initPanelToggler(el) {
   const attr = U.getAttr(el, 'panel-toggler');
   U.addClass(el, 'expanded');
   const sel = document.querySelector(attr);
@@ -186,32 +186,32 @@ var togglePanel = (el, sel) => (event) => {
   U.toggleClass(sel, 'hidden');
 };
 
-export const makeEventTimePicker = (opts) => {
-  const input = U.makeEl('input');
-  R.ap([U.addClass(input)], opts.extraClasses);
-  U.addClass(input, 'eventTime');
-  input.value = opts.eventTime;
+// export const makeEventTimePicker = (opts) => {
+//   const input = U.makeEl('input');
+//   R.ap([U.addClass(input)], opts.extraClasses);
+//   U.addClass(input, 'eventTime');
+//   input.value = opts.eventTime;
 
-  input.eventIndex = opts.index;
+//   input.eventIndex = opts.index;
 
-  const pickerOpts = {
-    lang: L10n.getLang(),
-    mask: true,
-    startDate: new Date(opts.preGameDate),
-    endDate: new Date(opts.date),
-    onChangeDateTime: opts.onChangeDateTimeCreator(input),
-  };
+//   const pickerOpts = {
+//     lang: L10n.getLang(),
+//     mask: true,
+//     startDate: new Date(opts.preGameDate),
+//     endDate: new Date(opts.date),
+//     onChangeDateTime: opts.onChangeDateTimeCreator(input),
+//   };
 
-  if (opts.eventTime !== '') {
-    pickerOpts.value = opts.eventTime;
-  } else {
-    pickerOpts.value = opts.date;
-    U.addClass(input, 'defaultDate');
-  }
+//   if (opts.eventTime !== '') {
+//     pickerOpts.value = opts.eventTime;
+//   } else {
+//     pickerOpts.value = opts.date;
+//     U.addClass(input, 'defaultDate');
+//   }
 
-  jQuery(input).datetimepicker(pickerOpts);
-  return input;
-};
+//   jQuery(input).datetimepicker(pickerOpts);
+//   return input;
+// };
 
 export const makeEventTimePicker2 = (input, opts) => {
   input.value = opts.eventTime;
@@ -278,7 +278,7 @@ export const refreshTextAreas = (sel) => {
   R.ap([resizeTextarea], U.queryEls(sel).map((el) => ({ target: el })));
 };
 
-export function attachTextareaResizer(input) {
+function attachTextareaResizer(input) {
   U.listen(input, 'keydown', resizeTextarea);
   U.listen(input, 'paste', resizeTextarea);
   U.listen(input, 'cut', resizeTextarea);
@@ -292,10 +292,10 @@ export function resizeTextarea(ev) {
   that.style.height = `${that.scrollHeight + 12}px`;
 }
 
-export const resizeTextarea2 = (that) => {
-  that.style.height = '24px';
-  that.style.height = `${that.scrollHeight + 12}px`;
-};
+// export const resizeTextarea2 = (that) => {
+//   that.style.height = '24px';
+//   that.style.height = `${that.scrollHeight + 12}px`;
+// };
 
 export const populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
   U.setClassByCondition(input, 'notEditable', !isEditable);
@@ -317,15 +317,15 @@ var onChangePersonalTimeDelegate = (event) => {
   }).catch(handleError);
 };
 
-export const populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
-  const input = U.qee(div, 'input');
-  U.setClassByCondition(input, 'notEditable', !isEditable);
-  input.checked = checked;
-  input.id = id;
-  U.listen(input, 'change', callback);
-  U.setAttr(U.qee(div, 'label'), 'for', input.id);
-  return div;
-};
+// export const populateReadyCheckbox = (div, id, checked, isEditable, callback) => {
+//   const input = U.qee(div, 'input');
+//   U.setClassByCondition(input, 'notEditable', !isEditable);
+//   input.checked = checked;
+//   input.id = id;
+//   U.listen(input, 'change', callback);
+//   U.setAttr(U.qee(div, 'label'), 'for', input.id);
+//   return div;
+// };
 
 export const onChangeAdaptationReadyStatus2 = (callback) => (event) => {
   const dataKey = JSON.parse(event.target.id);
@@ -359,7 +359,7 @@ export const makePanelCore = (title, content) => {
   };
 };
 
-export const makeTableRow = (col1, col2) => U.addEls(U.makeEl('tr'), [U.addEl(U.makeEl('td'), col1), U.addEl(U.makeEl('td'), col2)]);
+// export const makeTableRow = (col1, col2) => U.addEls(U.makeEl('tr'), [U.addEl(U.makeEl('td'), col1), U.addEl(U.makeEl('td'), col2)]);
 
 export const checkAndGetEntitySetting = (settingsPath, names) => {
   if (names.length === 0) return null;
@@ -532,21 +532,21 @@ export default {
   fillShowItemSelector2,
   showSelectedEls3,
   initSelectorFilters,
-  initPanelToggler,
+  //   initPanelToggler,
   initPanelTogglers,
   attachPanelToggler,
-  makeEventTimePicker,
+  //   makeEventTimePicker,
   makeEventTimePicker2,
   initTextAreas,
   refreshTextAreas,
-  attachTextareaResizer,
+  //   attachTextareaResizer,
   resizeTextarea,
-  resizeTextarea2,
+  //   resizeTextarea2,
   populateAdaptationTimeInput,
-  populateReadyCheckbox,
+  //   populateReadyCheckbox,
   onChangeAdaptationReadyStatus2,
   makePanelCore,
-  makeTableRow,
+  //   makeTableRow,
   checkAndGetEntitySetting,
   updateEntitySetting,
   scrollTo,
