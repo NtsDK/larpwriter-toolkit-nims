@@ -14,6 +14,8 @@ export class RelationRow extends Component {
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
     this.onDeleteCancel = this.onDeleteCancel.bind(this);
     this.onDeleteRequest = this.onDeleteRequest.bind(this);
+    this.setCharacterRelationText = this.setCharacterRelationText.bind(this);
+    this.setOriginRelationText = this.setOriginRelationText.bind(this);
   }
 
   componentDidMount() {
@@ -137,6 +139,30 @@ export class RelationRow extends Component {
     });
   }
 
+  setCharacterRelationText(e) {
+    const {
+      fromCharacter, toCharacter
+    } = this.props;
+    const { character } = e.target.dataset;
+    DBMS.setCharacterRelationText({
+      fromCharacter,
+      toCharacter,
+      character,
+      text: e.target.value
+    }).catch(UI.handleError);
+  }
+
+  setOriginRelationText(e) {
+    const {
+      fromCharacter, toCharacter
+    } = this.props;
+    DBMS.setOriginRelationText({
+      fromCharacter,
+      toCharacter,
+      text: e.target.value
+    }).catch(UI.handleError);
+  }
+
   render() {
     const { showDeleteRequest } = this.state;
     const {
@@ -145,35 +171,6 @@ export class RelationRow extends Component {
     } = this.props;
 
     const stories = knownCharacters[toCharacter];
-
-    //   const directText = tmplQe('.direct textarea');
-    //   U.listen(directText, 'change', (event) => {
-    //     DBMS.setCharacterRelationText({
-    //       fromCharacter,
-    //       toCharacter,
-    //       character: fromCharacter,
-    //       text: event.target.value
-    //     }).catch(UI.handleError);
-    //   });
-
-    //   const originText = tmplQe('.origin textarea');
-    //   U.listen(originText, 'change', (event) => {
-    //     DBMS.setOriginRelationText({
-    //       fromCharacter,
-    //       toCharacter,
-    //       text: event.target.value
-    //     }).catch(UI.handleError);
-    //   });
-
-    //   const reverseText = tmplQe('.reverse textarea');
-    //   U.listen(reverseText, 'change', (event) => {
-    //     DBMS.setCharacterRelationText({
-    //       fromCharacter,
-    //       toCharacter,
-    //       character: toCharacter,
-    //       text: event.target.value
-    //     }).catch(UI.handleError);
-    //   });
 
     const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
     //   fillFinishedButton(
@@ -234,8 +231,10 @@ export class RelationRow extends Component {
           </div>
           <textarea
             className="briefing-relation-area form-control"
-            value={rel[fromCharacter]}
+            defaultValue={rel[fromCharacter]}
             placeholder={t('briefings.relation-from-to2', { fromCharacter, toCharacter })}
+            data-character={fromCharacter}
+            onChange={this.setCharacterRelationText}
           />
         </div>
         {
@@ -249,9 +248,10 @@ export class RelationRow extends Component {
                   <button type="button" className="btn btn-default fa-icon enderToStarter" />
                 </div>
                 <textarea
-                  value={rel.origin}
+                  defaultValue={rel.origin}
                   className="briefing-relation-area form-control"
                   placeholder={t('briefings.relation-origin')}
+                  onChange={this.setOriginRelationText}
                 />
               </div>
               <div className="reverse text-column col-xs-3">
@@ -259,9 +259,11 @@ export class RelationRow extends Component {
                   <button type="button" className="btn btn-default fa-icon finished" title={t('constant.finishedText')} />
                 </div>
                 <textarea
-                  value={rel[toCharacter]}
+                  defaultValue={rel[toCharacter]}
                   className="briefing-relation-area form-control"
                   placeholder={t('briefings.relation-from-to2', { fromCharacter: toCharacter, toCharacter: fromCharacter })}
+                  data-character={toCharacter}
+                  onChange={this.setCharacterRelationText}
                 />
               </div>
             </>
