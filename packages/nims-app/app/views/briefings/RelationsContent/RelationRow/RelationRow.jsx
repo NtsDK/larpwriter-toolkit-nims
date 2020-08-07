@@ -3,26 +3,112 @@ import * as R from 'ramda';
 import classNames from 'classnames';
 import './RelationRow.css';
 import { UI, U, L10n } from 'nims-app-core';
+import Tooltip from 'react-bootstrap/es/Tooltip';
+import OverlayTrigger from 'react-bootstrap/es/OverlayTrigger';
+import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from '../../../commons/uiCommon3.jsx';
+
+const tooltip = (
+  <Tooltip id="tooltip">
+    <strong>Holy guacamole!</strong>
+    {' '}
+    Check this info.
+  </Tooltip>
+);
+
+function ToggleButton(props) {
+  const {
+    checked, onChange, title, icon, data, tooltip, ...elementProps
+  } = props;
+  const dataAttrs = {};
+  if (data) {
+    R.keys(data).forEach((name) => (dataAttrs[`data-${name}`] = data[name]));
+  }
+
+  const body = (
+    <label
+      // need this to use OverlayTrigger. Otherwise it doesn't work
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...elementProps}
+      className={classNames('btn btn-default fa-icon', icon, { 'btn-primary': checked })}
+      title={title}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        autoComplete="off"
+        // className="sr-only"
+        className="tw-hidden"
+        onChange={onChange}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...dataAttrs}
+        // data-prop="directChecked"
+        // data-character={fromCharacter}
+      />
+    </label>
+  );
+
+  // return body;
+
+  // by unknown reason OverlayTrigger
+  return tooltip ? (
+    <OverlayTrigger placement="top" overlay={tooltip}>
+      {body}
+      {/* <label
+        className={classNames('btn btn-default fa-icon', icon, { 'btn-primary': checked })}
+        title={title}
+      >
+        <input
+          type="checkbox"
+          checked={checked}
+          autoComplete="off"
+          // className="sr-only"
+          className="tw-hidden"
+          onChange={onChange}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...dataAttrs}
+        />
+      </label> */}
+
+    </OverlayTrigger>
+  ) : body;
+
+  // // const { t } = useTranslation();
+  // return (
+  // );
+}
 
 export class RelationRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDeleteRequest: false
+      showDeleteRequest: false,
+      directChecked: false,
+      reverseChecked: false
     };
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
     this.onDeleteCancel = this.onDeleteCancel.bind(this);
     this.onDeleteRequest = this.onDeleteRequest.bind(this);
     this.setCharacterRelationText = this.setCharacterRelationText.bind(this);
     this.setOriginRelationText = this.setOriginRelationText.bind(this);
+    this.onFinishChange = this.onFinishChange.bind(this);
   }
 
   componentDidMount() {
+    this.updateFinishState();
     console.log('RelationRow mounted');
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { fromCharacter, toCharacter, rel } = this.props;
+    if (fromCharacter !== prevProps.fromCharacter
+      || toCharacter !== prevProps.toCharacter
+      || rel !== prevProps.rel
+    ) {
+      this.updateFinishState();
+      // this.setState(R.clone(emptyState));
+      // this.refresh();
+    }
     console.log('RelationRow did update');
   }
 
@@ -34,18 +120,6 @@ export class RelationRow extends Component {
   //   profiles, getProfileItemSelect, isAdaptationsMode, knownCharacters, profileBindings,
   //   externalRefresh, fromCharacter, toCharacter, rel
   // ) => {
-
-  //   const directText = tmplQe('.direct textarea');
-  //   directText.value = rel[fromCharacter];
-  //   U.setAttr(directText, 'placeholder', L10n.format('briefings', 'relation-from-to', [fromCharacter, toCharacter]));
-  //   U.listen(directText, 'change', (event) => {
-  //     DBMS.setCharacterRelationText({
-  //       fromCharacter,
-  //       toCharacter,
-  //       character: fromCharacter,
-  //       text: event.target.value
-  //     }).catch(UI.handleError);
-  //   });
 
   //   Constants.relationEssences.forEach((name) => {
   //     const btn = tmplQe(`.${name}`);
@@ -70,52 +144,6 @@ export class RelationRow extends Component {
   //       }).catch(UI.handleError);
   //     });
   //   });
-
-  //   const originText = tmplQe('.origin textarea');
-  //   originText.value = rel.origin;
-  //   U.setAttr(originText, 'placeholder', l10n('relation-origin'));
-  //   U.listen(originText, 'change', (event) => {
-  //     DBMS.setOriginRelationText({
-  //       fromCharacter,
-  //       toCharacter,
-  //       text: event.target.value
-  //     }).catch(UI.handleError);
-  //   });
-
-  //   const reverseText = tmplQe('.reverse textarea');
-  //   reverseText.value = rel[toCharacter];
-  //   U.setAttr(reverseText, 'placeholder', L10n.format('briefings', 'relation-from-to', [toCharacter, fromCharacter]));
-  //   U.listen(reverseText, 'change', (event) => {
-  //     DBMS.setCharacterRelationText({
-  //       fromCharacter,
-  //       toCharacter,
-  //       character: toCharacter,
-  //       text: event.target.value
-  //     }).catch(UI.handleError);
-  //   });
-
-  //   const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
-  //   fillFinishedButton(
-  //     tmplQe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
-  //     toCharacter, fromCharacter, directChecked, directText
-  //   );
-
-  //   const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
-  //   fillFinishedButton(
-  //     tmplQe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
-  //     toCharacter, toCharacter, reverseChecked, reverseText
-  //   );
-
-  //   if (!isAdaptationsMode) {
-  //     U.removeClass(tmplQe('.direct'), 'col-xs-3');
-  //     U.addClass(tmplQe('.direct'), 'col-xs-9');
-  //     U.addClass(tmplQe('.origin'), 'hidden');
-  //     U.addClass(tmplQe('.reverse'), 'hidden');
-  //   }
-  //   L10n.localizeStatic(row);
-
-  //   return row;
-  // });
 
   onDeleteConfirm() {
     const {
@@ -163,44 +191,64 @@ export class RelationRow extends Component {
     }).catch(UI.handleError);
   }
 
+  updateFinishState() {
+    const {
+      fromCharacter, toCharacter, rel
+    } = this.props;
+    if (!rel || !fromCharacter || !toCharacter) {
+      return;
+    }
+
+    const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
+    const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
+    this.setState({
+      directChecked,
+      reverseChecked
+    });
+  }
+
+  onFinishChange(e) {
+    const {
+      fromCharacter, toCharacter
+    } = this.props;
+    const { checked } = e.target;
+    const { prop, character } = e.target.dataset;
+    this.setState({
+      [prop]: checked
+    });
+    DBMS.setRelationReadyStatus({
+      fromCharacter,
+      toCharacter,
+      character,
+      ready: checked
+    }).catch(UI.handleError);
+  }
+
+  getTooltip(essenceName) {
+    const {
+      t, fromCharacter, toCharacter
+    } = this.props;
+    return (
+      <Tooltip id={essenceName}>
+        {t(`briefings.${essenceName}2`, { fromCharacter, toCharacter })}
+      </Tooltip>
+    );
+  }
+
+  // const positionerInstance = (
+  //   <ButtonToolbar>
+  //     <OverlayTrigger placement="left" overlay={tooltip}>
+  //       <Button bsStyle="default">Holy guacamole!</Button>
+  //     </OverlayTrigger>
+
   render() {
-    const { showDeleteRequest } = this.state;
+    const { showDeleteRequest, directChecked, reverseChecked } = this.state;
     const {
       t, profiles, selectedProfileItem, isAdaptationsMode, knownCharacters,
       profileBindings, fromCharacter, toCharacter, rel
     } = this.props;
 
     const stories = knownCharacters[toCharacter];
-
-    const directChecked = rel.starter === fromCharacter ? rel.starterTextReady : rel.enderTextReady;
-    //   fillFinishedButton(
-    //     tmplQe('.direct .finished'), JSON.stringify([fromCharacter, toCharacter]), fromCharacter,
-    //     toCharacter, fromCharacter, directChecked, directText
-    //   );
-
-    const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
-    //   fillFinishedButton(
-    //     tmplQe('.reverse .finished'), JSON.stringify([toCharacter, fromCharacter]), fromCharacter,
-    //     toCharacter, toCharacter, reverseChecked, reverseText
-    //   );
-
-    // function fillFinishedButton(button, id, fromCharacter, toCharacter, character, checked, textarea) {
-    //   U.setClassIf(button, 'btn-primary', checked);
-    //   UI.enableEl(textarea, !checked);
-    //   button.id = id;
-    //   U.listen(button, 'click', (event) => {
-    //     const newValue = !U.hasClass(button, 'btn-primary');
-    //     U.setClassByCondition(button, 'btn-primary', newValue);
-    //     UI.enableEl(textarea, !newValue);
-
-    //     DBMS.setRelationReadyStatus({
-    //       fromCharacter,
-    //       toCharacter,
-    //       character,
-    //       ready: newValue
-    //     }).catch(UI.handleError);
-    //   });
-    // }
 
     return (
       <div className="RelationRow row">
@@ -210,7 +258,7 @@ export class RelationRow extends Component {
             <div className="where-meets-label bold-cursive">{t('briefings.where-meets')}</div>
             <div className="where-meets-content">{stories === undefined ? '' : R.keys(stories).join(', ')}</div>
           </div>
-          <div toCharacter={toCharacter}>
+          <div>
             <div className="profile-item-name bold-cursive">{selectedProfileItem}</div>
             <div className="profile-item-value">{String(profiles[toCharacter][selectedProfileItem])}</div>
           </div>
@@ -227,7 +275,16 @@ export class RelationRow extends Component {
         </div>
         <div className={classNames('direct text-column', isAdaptationsMode ? 'col-xs-3' : 'col-xs-9')}>
           <div className="pre-text-area">
-            <button type="button" className="btn btn-default fa-icon finished" title={t('constant.finishedText')} />
+            <ToggleButton
+              checked={directChecked}
+              title={t('constant.finishedText')}
+              onChange={this.onFinishChange}
+              icon="finished"
+              data={{
+                prop: 'directChecked',
+                character: fromCharacter
+              }}
+            />
           </div>
           <textarea
             className="briefing-relation-area form-control"
@@ -235,6 +292,7 @@ export class RelationRow extends Component {
             placeholder={t('briefings.relation-from-to2', { fromCharacter, toCharacter })}
             data-character={fromCharacter}
             onChange={this.setCharacterRelationText}
+            readOnly={directChecked}
           />
         </div>
         {
@@ -247,6 +305,47 @@ export class RelationRow extends Component {
                   <button type="button" className="btn btn-default fa-icon allies" />
                   <button type="button" className="btn btn-default fa-icon enderToStarter" />
                 </div>
+                <div className="pre-text-area btn-group">
+                  {/* exports.relationEssences = ['starterToEnder', 'allies', 'enderToStarter']; */}
+
+                  {/* <OverlayTrigger  */}
+                  {/* <OverlayTrigger placement="top" overlay={this.getTooltip('starterToEnder')}> */}
+
+                  {/* <ToggleButton checked={false} icon="starterToEnder" tooltip={tooltip} /> */}
+                  <ToggleButton checked={false} icon="starterToEnder" tooltip={this.getTooltip('starterToEnder')} />
+                  {/* <OverlayTrigger placement="top" overlay={tooltip}> */}
+                  <ToggleButton checked={false} icon="allies" />
+                  {/* </OverlayTrigger> */}
+
+                  <ToggleButton checked={false} icon="enderToStarter" />
+                  {/* //   Constants.relationEssences.forEach((name) => {
+  //     const btn = tmplQe(`.${name}`);
+  //     $(btn).tooltip({
+  //       title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
+  //       placement: 'top'
+  //     });
+  //     let attrName = name;
+  //     if (rel.starter !== fromCharacter) {
+  //       if (name === 'starterToEnder') attrName = 'enderToStarter';
+  //       if (name === 'enderToStarter') attrName = 'starterToEnder';
+  //     }
+  //     U.setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
+  //     U.listen(btn, 'click', (event) => {
+  //       DBMS.setRelationEssenceStatus({
+  //         fromCharacter,
+  //         toCharacter,
+  //         essence: attrName,
+  //         flag: !U.hasClass(event.target, 'btn-primary')
+  //       }).then(() => {
+  //         U.toggleClass(event.target, 'btn-primary');
+  //       }).catch(UI.handleError);
+  //     });
+  //   }); */}
+
+                  {/* <button type="button" className="btn btn-default fa-icon starterToEnder" />
+                  <button type="button" className="btn btn-default fa-icon allies" />
+                  <button type="button" className="btn btn-default fa-icon enderToStarter" /> */}
+                </div>
                 <textarea
                   defaultValue={rel.origin}
                   className="briefing-relation-area form-control"
@@ -256,7 +355,16 @@ export class RelationRow extends Component {
               </div>
               <div className="reverse text-column col-xs-3">
                 <div className="pre-text-area">
-                  <button type="button" className="btn btn-default fa-icon finished" title={t('constant.finishedText')} />
+                  <ToggleButton
+                    checked={reverseChecked}
+                    title={t('constant.finishedText')}
+                    onChange={this.onFinishChange}
+                    icon="finished"
+                    data={{
+                      prop: 'reverseChecked',
+                      character: toCharacter
+                    }}
+                  />
                 </div>
                 <textarea
                   defaultValue={rel[toCharacter]}
@@ -264,6 +372,7 @@ export class RelationRow extends Component {
                   placeholder={t('briefings.relation-from-to2', { fromCharacter: toCharacter, toCharacter: fromCharacter })}
                   data-character={toCharacter}
                   onChange={this.setCharacterRelationText}
+                  readOnly={reverseChecked}
                 />
               </div>
             </>
