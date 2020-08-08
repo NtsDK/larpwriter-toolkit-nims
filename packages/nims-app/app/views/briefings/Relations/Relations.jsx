@@ -38,7 +38,6 @@ export class Relations extends Component {
       characterProfileStructure: {},
       characterNames: [],
     };
-    // this.onCharacterChange = this.onCharacterChange.bind(this);
   }
 
   componentDidMount() {
