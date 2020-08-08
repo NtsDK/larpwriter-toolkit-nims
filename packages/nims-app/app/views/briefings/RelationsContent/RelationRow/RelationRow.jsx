@@ -8,14 +8,6 @@ import OverlayTrigger from 'react-bootstrap/es/OverlayTrigger';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from '../../../commons/uiCommon3.jsx';
 
-const tooltip = (
-  <Tooltip id="tooltip">
-    <strong>Holy guacamole!</strong>
-    {' '}
-    Check this info.
-  </Tooltip>
-);
-
 function ToggleButton(props) {
   const {
     checked, onChange, title, icon, data, tooltip, ...elementProps
@@ -37,45 +29,20 @@ function ToggleButton(props) {
         type="checkbox"
         checked={checked}
         autoComplete="off"
-        // className="sr-only"
-        className="tw-hidden"
+        className="sr-only"
+        // className="tw-hidden"
         onChange={onChange}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...dataAttrs}
-        // data-prop="directChecked"
-        // data-character={fromCharacter}
       />
     </label>
   );
 
-  // return body;
-
-  // by unknown reason OverlayTrigger
   return tooltip ? (
     <OverlayTrigger placement="top" overlay={tooltip}>
       {body}
-      {/* <label
-        className={classNames('btn btn-default fa-icon', icon, { 'btn-primary': checked })}
-        title={title}
-      >
-        <input
-          type="checkbox"
-          checked={checked}
-          autoComplete="off"
-          // className="sr-only"
-          className="tw-hidden"
-          onChange={onChange}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...dataAttrs}
-        />
-      </label> */}
-
     </OverlayTrigger>
   ) : body;
-
-  // // const { t } = useTranslation();
-  // return (
-  // );
 }
 
 export class RelationRow extends Component {
@@ -84,7 +51,8 @@ export class RelationRow extends Component {
     this.state = {
       showDeleteRequest: false,
       directChecked: false,
-      reverseChecked: false
+      reverseChecked: false,
+      essence: []
     };
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
     this.onDeleteCancel = this.onDeleteCancel.bind(this);
@@ -92,6 +60,7 @@ export class RelationRow extends Component {
     this.setCharacterRelationText = this.setCharacterRelationText.bind(this);
     this.setOriginRelationText = this.setOriginRelationText.bind(this);
     this.onFinishChange = this.onFinishChange.bind(this);
+    this.onEssenceChange = this.onEssenceChange.bind(this);
   }
 
   componentDidMount() {
@@ -106,8 +75,6 @@ export class RelationRow extends Component {
       || rel !== prevProps.rel
     ) {
       this.updateFinishState();
-      // this.setState(R.clone(emptyState));
-      // this.refresh();
     }
     console.log('RelationRow did update');
   }
@@ -115,35 +82,6 @@ export class RelationRow extends Component {
   componentWillUnmount() {
     console.log('RelationRow will unmount');
   }
-
-  // makeNewRow = R.curry((
-  //   profiles, getProfileItemSelect, isAdaptationsMode, knownCharacters, profileBindings,
-  //   externalRefresh, fromCharacter, toCharacter, rel
-  // ) => {
-
-  //   Constants.relationEssences.forEach((name) => {
-  //     const btn = tmplQe(`.${name}`);
-  //     $(btn).tooltip({
-  //       title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
-  //       placement: 'top'
-  //     });
-  //     let attrName = name;
-  //     if (rel.starter !== fromCharacter) {
-  //       if (name === 'starterToEnder') attrName = 'enderToStarter';
-  //       if (name === 'enderToStarter') attrName = 'starterToEnder';
-  //     }
-  //     U.setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
-  //     U.listen(btn, 'click', (event) => {
-  //       DBMS.setRelationEssenceStatus({
-  //         fromCharacter,
-  //         toCharacter,
-  //         essence: attrName,
-  //         flag: !U.hasClass(event.target, 'btn-primary')
-  //       }).then(() => {
-  //         U.toggleClass(event.target, 'btn-primary');
-  //       }).catch(UI.handleError);
-  //     });
-  //   });
 
   onDeleteConfirm() {
     const {
@@ -203,7 +141,8 @@ export class RelationRow extends Component {
     const reverseChecked = rel.starter === toCharacter ? rel.starterTextReady : rel.enderTextReady;
     this.setState({
       directChecked,
-      reverseChecked
+      reverseChecked,
+      essence: [...rel.essence]
     });
   }
 
@@ -235,20 +174,36 @@ export class RelationRow extends Component {
     );
   }
 
-  // const positionerInstance = (
-  //   <ButtonToolbar>
-  //     <OverlayTrigger placement="left" overlay={tooltip}>
-  //       <Button bsStyle="default">Holy guacamole!</Button>
-  //     </OverlayTrigger>
+  onEssenceChange(e) {
+    const {
+      fromCharacter, toCharacter
+    } = this.props;
+    const { checked } = e.target;
+    const { attrName } = e.target.dataset;
+    DBMS.setRelationEssenceStatus({
+      fromCharacter,
+      toCharacter,
+      essence: attrName,
+      flag: checked
+    }).then(() => {
+      this.setState((prevState) => ({
+        essence: checked ? [...prevState.essence, attrName] : [...prevState.essence].filter((el) => attrName !== el)
+      }));
+    }).catch(UI.handleError);
+  }
 
   render() {
-    const { showDeleteRequest, directChecked, reverseChecked } = this.state;
+    const {
+      showDeleteRequest, directChecked, reverseChecked, essence
+    } = this.state;
     const {
       t, profiles, selectedProfileItem, isAdaptationsMode, knownCharacters,
       profileBindings, fromCharacter, toCharacter, rel
     } = this.props;
 
     const stories = knownCharacters[toCharacter];
+
+    const isDirectRel = rel.starter !== fromCharacter;
 
     return (
       <div className="RelationRow row">
@@ -301,50 +256,27 @@ export class RelationRow extends Component {
             <>
               <div className="origin text-column col-xs-3">
                 <div className="pre-text-area btn-group">
-                  <button type="button" className="btn btn-default fa-icon starterToEnder" />
-                  <button type="button" className="btn btn-default fa-icon allies" />
-                  <button type="button" className="btn btn-default fa-icon enderToStarter" />
-                </div>
-                <div className="pre-text-area btn-group">
-                  {/* exports.relationEssences = ['starterToEnder', 'allies', 'enderToStarter']; */}
-
-                  {/* <OverlayTrigger  */}
-                  {/* <OverlayTrigger placement="top" overlay={this.getTooltip('starterToEnder')}> */}
-
-                  {/* <ToggleButton checked={false} icon="starterToEnder" tooltip={tooltip} /> */}
-                  <ToggleButton checked={false} icon="starterToEnder" tooltip={this.getTooltip('starterToEnder')} />
-                  {/* <OverlayTrigger placement="top" overlay={tooltip}> */}
-                  <ToggleButton checked={false} icon="allies" />
-                  {/* </OverlayTrigger> */}
-
-                  <ToggleButton checked={false} icon="enderToStarter" />
-                  {/* //   Constants.relationEssences.forEach((name) => {
-  //     const btn = tmplQe(`.${name}`);
-  //     $(btn).tooltip({
-  //       title: L10n.format('briefings', `${name}`, [fromCharacter, toCharacter]),
-  //       placement: 'top'
-  //     });
-  //     let attrName = name;
-  //     if (rel.starter !== fromCharacter) {
-  //       if (name === 'starterToEnder') attrName = 'enderToStarter';
-  //       if (name === 'enderToStarter') attrName = 'starterToEnder';
-  //     }
-  //     U.setClassByCondition(btn, 'btn-primary', rel.essence.indexOf(attrName) !== -1);
-  //     U.listen(btn, 'click', (event) => {
-  //       DBMS.setRelationEssenceStatus({
-  //         fromCharacter,
-  //         toCharacter,
-  //         essence: attrName,
-  //         flag: !U.hasClass(event.target, 'btn-primary')
-  //       }).then(() => {
-  //         U.toggleClass(event.target, 'btn-primary');
-  //       }).catch(UI.handleError);
-  //     });
-  //   }); */}
-
-                  {/* <button type="button" className="btn btn-default fa-icon starterToEnder" />
-                  <button type="button" className="btn btn-default fa-icon allies" />
-                  <button type="button" className="btn btn-default fa-icon enderToStarter" /> */}
+                  <ToggleButton
+                    checked={essence.includes(isDirectRel ? 'starterToEnder' : 'enderToStarter')}
+                    icon="starterToEnder"
+                    tooltip={this.getTooltip('starterToEnder')}
+                    data={{ 'attr-name': isDirectRel ? 'starterToEnder' : 'enderToStarter' }}
+                    onChange={this.onEssenceChange}
+                  />
+                  <ToggleButton
+                    checked={essence.includes('allies')}
+                    icon="allies"
+                    tooltip={this.getTooltip('allies')}
+                    data={{ 'attr-name': 'allies' }}
+                    onChange={this.onEssenceChange}
+                  />
+                  <ToggleButton
+                    checked={essence.includes(isDirectRel ? 'enderToStarter' : 'starterToEnder')}
+                    icon="enderToStarter"
+                    tooltip={this.getTooltip('enderToStarter')}
+                    data={{ 'attr-name': isDirectRel ? 'enderToStarter' : 'starterToEnder' }}
+                    onChange={this.onEssenceChange}
+                  />
                 </div>
                 <textarea
                   defaultValue={rel.origin}
