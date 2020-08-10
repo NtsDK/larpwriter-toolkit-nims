@@ -31,7 +31,7 @@
     "core-eslint": "eslint app\\core\\js --fix && eslint dbms\\core --fix && eslint config --fix && eslint server --fix",
     "nims-eslint": "eslint app\\nims --fix && eslint dbms\\nims --fix",
     "nims-lint2": "\"node_modules/.bin/eslint\" app\\nims\\js --fix && \"node_modules/.bin/eslint\" app\\nims\\specs --fix",
-    "build:tailwind": "tailwindcss build app/style/tailwind.src.css -c tailwind.js -o app/style/tailwind.css"
+    "build:tailwind": "tailwindcss build app/style/tailwind.base.src.css -c tailwind.js -o app/style/tailwind.base.css && tailwindcss build app/style/tailwind.src.css -c tailwind.js -o app/style/tailwind.css"
   },
   "author": "Timofey Rechkalov (NtsDK)",
   "license": "Apache-2.0",
