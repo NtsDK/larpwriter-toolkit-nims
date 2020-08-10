@@ -25,6 +25,7 @@ import { TextSearch } from '../../views/textSearch/TextSearch/index';
 import { TimelineCore } from '../../views/timeline/TimelineCore';
 import { SocialNetwork } from '../../views/network/SocialNetwork/index';
 import { Relations } from '../../views/briefings/Relations/index';
+import { Adaptations } from '../../views/adaptations/Adaptations/index';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -177,6 +178,7 @@ export class OrganizerApp extends Component {
               <ViewWrapper view={viewCache.get('stories')} />
             </Route>
             <Route path="/adaptations">
+              <Adaptations />
               <ViewWrapper view={viewCache.get('adaptations')} />
             </Route>
             <Route path="/briefings">
@@ -264,7 +266,7 @@ export class OrganizerApp extends Component {
 
             {/* <Redirect to={"/overview"}/> */}
             {/* <Redirect to="/logViewer/groupSchema" /> */}
-            <Redirect to="/relations" />
+            <Redirect to="/adaptations" />
           </Switch>
           <div className="hidden">
             {

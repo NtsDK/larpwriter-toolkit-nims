@@ -2,16 +2,13 @@ import React, { Component, useState } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
+import { InlineNotification } from '../../commons/uiCommon3.jsx';
+
 export function SocialNetworkWarning() {
   const { t } = useTranslation();
   const [show, setShow] = useState(true);
   return (
-    <div
-      id="socialNetworkWarning"
-      className={classNames('alert alert-warning', {
-        hidden: !show
-      })}
-    >
+    <InlineNotification type="warning" showIf={show}>
       {t('social-network.require-resources-warning')}
       <button
         type="button"
@@ -20,6 +17,6 @@ export function SocialNetworkWarning() {
       >
         {t('social-network.remove-resources-warning')}
       </button>
-    </div>
+    </InlineNotification>
   );
 }

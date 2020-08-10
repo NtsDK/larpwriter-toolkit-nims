@@ -45,7 +45,7 @@ export const AdaptationsTemplate = function () {
                   </div>
                   <div id="events-eventSelectorDiv" className="hidden">
                     <h4 l10n-id="adaptations-events" />
-                    <select id="events-eventSelector" className="form-control" multiple size="15" />
+                    <select id="events-eventSelector" className="form-control" multiple size={15} />
                   </div>
                 </div>
               </div>
@@ -54,44 +54,6 @@ export const AdaptationsTemplate = function () {
           <div id="personalStories" style={{ flexGrow: 1 }} />
         </div>
       </div>
-
-      {/* <template className="adaptation-row-tmpl">
-        <div className="container-fluid eventRow-dependent">
-          <div className="row eventMainPanelRow-left events-eventsContainer">
-          </div>
-        </div>
-      </template>
-
-      <template className="origin-tmpl">
-        <div className="col-xs-6">
-          <div className="panel panel-primary">
-            <div className="panel-heading flex-row">
-              <h1 className="panel-title card-title flex-1-1-auto"></h1>
-              <input className="isStoryEditable time-input form-control flex-0-0-auto"/>
-              <button className="btn btn-default btn-reduced fa-icon locked btn-primary flex-0-0-auto margin-left-8 isStoryEditable"
-                      l10n-title="briefings-unlock-event-source"></button>
-            </div>
-            <div className="panel-body">
-              <textarea className="isStoryEditable eventPersonalStory form-control text-input"></textarea>
-            </div>
-          </div>
-        </div>
-      </template>
-
-      <template className="adaptation-tmpl">
-        <div className="col-xs-6">
-          <div className="panel panel-default">
-            <div className="panel-heading flex-row">
-              <h1 className="panel-title card-title flex-1-1-auto"></h1>
-              <input className=" time-input form-control flex-0-0-auto" l10n-placeholder-id="adaptations-subjective-time"/>
-              <button className="btn btn-default btn-reduced fa-icon finished flex-0-0-auto margin-left-8" l10n-title="constant-adaptation-finished"></button>
-            </div>
-            <div className="panel-body">
-              <textarea className="eventPersonalStory form-control text-input" l10n-placeholder-id="adaptations-adaptation-text"></textarea>
-            </div>
-          </div>
-        </div>
-      </template> */}
     </div>
   );
 };

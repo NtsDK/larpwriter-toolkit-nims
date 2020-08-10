@@ -13,6 +13,7 @@ import {
 } from 'react-router-dom';
 import './Relations.css';
 import { RelationsContent } from '../RelationsContent';
+import { InlineNotification } from '../../commons/uiCommon3.jsx';
 
 function RelationCharacterSelect(props) {
   const { characterNames } = props;
@@ -73,14 +74,9 @@ export class Relations extends Component {
 
     return (
       <div className="Relations relations-tab block">
-        {
-          characterNames.length < 2
-          && (
-            <div className="alert alert-info">
-              {t('advices.no-characters-for-relations')}
-            </div>
-          )
-        }
+        <InlineNotification showIf={characterNames.length < 2} type="info">
+          {t('advices.no-characters-for-relations')}
+        </InlineNotification>
         {
           characterNames.length > 1
           && (
