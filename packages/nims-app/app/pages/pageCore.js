@@ -1,6 +1,7 @@
-import '../style/tailwind.css';
+import '../style/tailwind.base.css';
 import 'bootstrap-sass';
 import 'bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+import '../style/tailwind.css';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 
