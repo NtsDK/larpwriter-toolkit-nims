@@ -6,44 +6,7 @@ import { UI, U, L10n } from 'nims-app-core';
 import Tooltip from 'react-bootstrap/es/Tooltip';
 import OverlayTrigger from 'react-bootstrap/es/OverlayTrigger';
 import { useTranslation } from 'react-i18next';
-import { ConfirmDialog } from '../../../commons/uiCommon3.jsx';
-
-function ToggleButton(props) {
-  const {
-    checked, onChange, title, icon, data, tooltip, ...elementProps
-  } = props;
-  const dataAttrs = {};
-  if (data) {
-    R.keys(data).forEach((name) => (dataAttrs[`data-${name}`] = data[name]));
-  }
-
-  const body = (
-    <label
-      // need this to use OverlayTrigger. Otherwise it doesn't work
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...elementProps}
-      className={classNames('btn btn-default fa-icon', icon, { 'btn-primary': checked })}
-      title={title}
-    >
-      <input
-        type="checkbox"
-        checked={checked}
-        autoComplete="off"
-        className="sr-only"
-        // className="tw-hidden"
-        onChange={onChange}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...dataAttrs}
-      />
-    </label>
-  );
-
-  return tooltip ? (
-    <OverlayTrigger placement="top" overlay={tooltip}>
-      {body}
-    </OverlayTrigger>
-  ) : body;
-}
+import { ConfirmDialog, ToggleButton } from '../../../commons/uiCommon3.jsx';
 
 export class RelationRow extends Component {
   constructor(props) {
@@ -231,10 +194,11 @@ export class RelationRow extends Component {
         <div className={classNames('direct text-column', isAdaptationsMode ? 'col-xs-3' : 'col-xs-9')}>
           <div className="pre-text-area">
             <ToggleButton
+              type="checkbox"
               checked={directChecked}
               title={t('constant.finishedText')}
               onChange={this.onFinishChange}
-              icon="finished"
+              className="finished"
               data={{
                 prop: 'directChecked',
                 character: fromCharacter
@@ -257,22 +221,25 @@ export class RelationRow extends Component {
               <div className="origin text-column col-xs-3">
                 <div className="pre-text-area btn-group">
                   <ToggleButton
+                    type="checkbox"
                     checked={essence.includes(isDirectRel ? 'starterToEnder' : 'enderToStarter')}
-                    icon="starterToEnder"
+                    className="starterToEnder"
                     tooltip={this.getTooltip('starterToEnder')}
                     data={{ 'attr-name': isDirectRel ? 'starterToEnder' : 'enderToStarter' }}
                     onChange={this.onEssenceChange}
                   />
                   <ToggleButton
+                    type="checkbox"
                     checked={essence.includes('allies')}
-                    icon="allies"
+                    className="allies"
                     tooltip={this.getTooltip('allies')}
                     data={{ 'attr-name': 'allies' }}
                     onChange={this.onEssenceChange}
                   />
                   <ToggleButton
+                    type="checkbox"
                     checked={essence.includes(isDirectRel ? 'enderToStarter' : 'starterToEnder')}
-                    icon="enderToStarter"
+                    className="enderToStarter"
                     tooltip={this.getTooltip('enderToStarter')}
                     data={{ 'attr-name': isDirectRel ? 'enderToStarter' : 'starterToEnder' }}
                     onChange={this.onEssenceChange}
@@ -288,10 +255,11 @@ export class RelationRow extends Component {
               <div className="reverse text-column col-xs-3">
                 <div className="pre-text-area">
                   <ToggleButton
+                    type="checkbox"
                     checked={reverseChecked}
                     title={t('constant.finishedText')}
                     onChange={this.onFinishChange}
-                    icon="finished"
+                    className="finished"
                     data={{
                       prop: 'reverseChecked',
                       character: toCharacter
