@@ -15,6 +15,7 @@ import {
 import './Adaptations.css';
 
 import { AdaptationsStorySelector } from './AdaptationsStorySelector';
+import { AdaptationsContent } from './AdaptationsContent';
 import { InlineNotification } from '../../commons/uiCommon3.jsx';
 
 function getEntityStatus(object) {
@@ -98,42 +99,29 @@ export class Adaptations extends Component {
 
         <div className="adaptations-content">
           <div className="main-container">
-            <div>
-              <div id="personalStoriesCharacterContainer">
-                <Route path="/adaptations/:id">
-                  <AdaptationsStorySelector options={storyNames2} />
-                </Route>
-                <div>Filter</div>
-
-                {/* <div className="panel panel-default">
-                  <div className="panel-heading">
-                    <h3 className="panel-title" l10n-id="adaptations-filter" />
-                  </div>
-                  <div className="panel-body">
-
-                    <div>
-                      <input type="radio" name="adaptationFilter" value="ByCharacter" id="adaptationFilterByCharacter" className="hidden" />
-                      <label htmlFor="adaptationFilterByCharacter" className="radio-label-icon common-radio"><span l10n-id="adaptations-by-characters" /></label>
-                    </div>
-                    <div>
-                      <input type="radio" name="adaptationFilter" value="ByEvent" id="adaptationFilterByEvent" className="hidden" />
-                      <label htmlFor="adaptationFilterByEvent" className="radio-label-icon common-radio"><span l10n-id="adaptations-by-events" /></label>
-                    </div>
-
-                    <div id="events-characterSelectorDiv">
-                      <h4 l10n-id="adaptations-characters" />
-                      <select id="events-characterSelector" className="form-control" multiple />
-                    </div>
-                    <div id="events-eventSelectorDiv" className="hidden">
-                      <h4 l10n-id="adaptations-events" />
-                      <select id="events-eventSelector" className="form-control" multiple size={15} />
-                    </div>
-                  </div>
-                </div> */}
-              </div>
+            {/* <div> */}
+            <div id="personalStoriesCharacterContainer">
+              <Route path="/adaptations/:id">
+                <AdaptationsStorySelector options={storyNames2} />
+              </Route>
             </div>
-            <div>Adaptation cards</div>
-            {/* <div id="personalStories" style={{ flexGrow: 1 }} /> */}
+            <Route
+              path="/adaptations/:id"
+              render={({ match }) => {
+                const { id } = match.params;
+                return (
+                  // <div className="panel-body">
+                  <AdaptationsContent
+                    key={id}
+                    storyName={id}
+                    // isAdaptationsMode
+                    // characterProfileStructure={characterProfileStructure}
+                  />
+                  // </div>
+                );
+              }}
+            />
+            {/* <AdaptationsContent /> */}
           </div>
         </div>
       </div>

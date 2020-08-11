@@ -10,6 +10,9 @@ import {
   getAdaptation
 } from './AdaptationsTemplate.jsx';
 import { getAlertBlock } from '../commons/uiCommons2.jsx';
+import {
+  getStoryCharacterCompleteness, getStoryEventCompleteness, getCharacterNames, getEventIndexes
+} from './adaptationUtils';
 
 const root = '.adaptations-tab ';
 
@@ -167,36 +170,6 @@ function showPersonalStoriesByEvents() {
   const eventIndexes = U.nl2array(U.queryEl('#events-eventSelector').selectedOptions).map((opt) => opt.eventIndex222);
   eventIndexes.forEach((index) => U.removeClass(U.queryEls(`.${index}-dependent`)[0], 'hidden'));
   updateSettings('eventIndexes', eventIndexes);
-}
-
-function getStoryCharacterCompleteness(story) {
-  return R.keys(story.characters).map((elem) => ({
-    characterName: elem,
-    isFinished: _isStoryFinishedForCharacter(story, elem),
-    isEmpty: _isStoryEmptyForCharacter(story, elem)
-  }));
-}
-
-function _isStoryEmptyForCharacter(story, characterName) {
-  return story.events.every((event) => event.characters[characterName] === undefined);
-}
-
-function _isStoryFinishedForCharacter(story, characterName) {
-  return story.events.filter((event) => event.characters[characterName] !== undefined)
-    .every((event) => event.characters[characterName].ready === true);
-}
-
-function getStoryEventCompleteness(story) {
-  return story.events.map((event, i) => ({
-    name: event.name,
-    index: i,
-    isFinished: _isEventReady(event),
-    isEmpty: Object.keys(event.characters).length === 0
-  }));
-}
-
-function _isEventReady(event) {
-  return R.values(event.characters).every((character) => character.ready);
 }
 
 function showPersonalStories(storyName) {
@@ -456,27 +429,6 @@ function getSelectedStoryName(storyNames) {
   return storyName;
 }
 
-function getNames(nameObjectArray, nameObjectProperty, settingsProperty) {
-  const namesOnly = nameObjectArray.map(R.prop(nameObjectProperty));
-  const names = SM.getSettings().Adaptations[settingsProperty];
-  let existingNames;
-  if (names === null) {
-    existingNames = namesOnly;
-  } else {
-    existingNames = names.filter((name) => namesOnly.indexOf(name) !== -1);
-  }
-
-  updateSettings(settingsProperty, existingNames);
-  return existingNames;
-}
-
-function getCharacterNames(characterArray) {
-  return getNames(characterArray, 'characterName', 'characterNames');
-}
-
-function getEventIndexes(eventArray) {
-  return getNames(eventArray, 'index', 'eventIndexes');
-}
 export default {
   init, refresh, getContent, makeOriginCard, makeAdaptationCard
 };
