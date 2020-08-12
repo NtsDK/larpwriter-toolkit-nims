@@ -51,3 +51,9 @@ export function getCharacterNames(characterArray) {
 export function getEventIndexes(eventArray) {
   return getNames(eventArray, 'index', 'eventIndexes');
 }
+
+export function getEntityStatus(object) {
+  if (object.isEmpty) return 'empty';
+  if (object.isFinished) return 'finished';
+  return 'unfinished';
+}

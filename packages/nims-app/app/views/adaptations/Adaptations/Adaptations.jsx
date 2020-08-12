@@ -17,15 +17,7 @@ import './Adaptations.css';
 import { AdaptationsStorySelector } from './AdaptationsStorySelector';
 import { AdaptationsContent } from './AdaptationsContent';
 import { InlineNotification } from '../../commons/uiCommon3.jsx';
-
-function getEntityStatus(object) {
-  if (object.isEmpty) return 'empty';
-  if (object.isFinished) return 'finished';
-  return 'unfinished';
-  // if (object.isEmpty) return 'fa-icon empty select-icon-padding';
-  // if (object.isFinished) return 'fa-icon finished select-icon-padding';
-  // return 'fa-icon finished transparent-icon select-icon-padding';
-}
+import { getEntityStatus } from '../adaptationUtils';
 
 export class Adaptations extends Component {
   constructor(props) {
