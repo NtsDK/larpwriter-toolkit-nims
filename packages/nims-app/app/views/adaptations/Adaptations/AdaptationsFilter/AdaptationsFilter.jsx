@@ -3,19 +3,33 @@ import { useTranslation } from 'react-i18next';
 import * as R from 'ramda';
 import * as CU from 'nims-dbms-core/commonUtils';
 import { UI, U, L10n } from 'nims-app-core';
+import classNames from 'classnames';
 import './AdaptationsFilter.css';
 import { ToggleButton } from '../../../commons/uiCommon3.jsx';
 
 import {
-  getStoryCharacterCompleteness, getStoryEventCompleteness, getCharacterNames, getEventIndexes
+  getEntityStatus
 } from '../../adaptationUtils';
 
 export function AdaptationsFilter(props) {
-  const { story, allCharacters } = props;
+  const {
+    characterArray, eventArray, selectedCharacterNames, selectedEventIndexes, filterBy, setFilterBy,
+
+    setSelectedCharacterNames, setSelectedEventIndexes
+  } = props;
   const { t } = useTranslation();
-  const [showType, setShowType] = useState('ByCharacter');
+  // const [showType, setShowType] = useState('ByCharacter');
   function onShowTypeChange(e) {
-    setShowType(e.target.dataset.showType);
+    setFilterBy(e.target.dataset.showType);
+  }
+
+  function onCharactersChange(e) {
+    const selectedCharacterNames = Array.from(e.target.selectedOptions, (option) => option.value);
+    setSelectedCharacterNames(selectedCharacterNames);
+  }
+  function onEventsChange(e) {
+    const selectedEventIndexes = Array.from(e.target.selectedOptions, (option) => option.value);
+    setSelectedEventIndexes(selectedEventIndexes);
   }
 
   return (
@@ -28,7 +42,7 @@ export function AdaptationsFilter(props) {
         <div className="btn-group tw-flex">
           <ToggleButton
             type="radio"
-            checked={showType === 'ByCharacter'}
+            checked={filterBy === 'ByCharacter'}
             text={t('adaptations.characters')}
             name="adaptation-story-switch"
             className="tw-flex-auto"
@@ -37,7 +51,7 @@ export function AdaptationsFilter(props) {
           />
           <ToggleButton
             type="radio"
-            checked={showType === 'ByEvent'}
+            checked={filterBy === 'ByEvent'}
             name="adaptation-story-switch"
             className="tw-flex-auto"
             text={t('adaptations.events')}
@@ -46,22 +60,70 @@ export function AdaptationsFilter(props) {
           />
         </div>
         {
-          showType === 'ByCharacter'
+          filterBy === 'ByCharacter'
           && (
-            <div id="events-characterSelectorDiv">
+            <div>
               {/* <h4 l10n-id="adaptations-characters" /> */}
-              123
-              <select id="events-characterSelector" className="form-control" multiple />
+              <select
+                className="form-control"
+                multiple
+                size={characterArray.length}
+                value={selectedCharacterNames}
+                onChange={onCharactersChange}
+              >
+                {
+                  characterArray.map((elem) => {
+                    const status = getEntityStatus(elem);
+                    return (
+                      <option
+                        className={classNames('fa-icon select-icon-padding', {
+                          empty: status === 'empty',
+                          finished: status === 'finished',
+                          'finished transparent-icon': status === 'unfinished',
+                        })}
+                        key={elem.value}
+                        value={elem.value}
+                      >
+                        {elem.displayName}
+                      </option>
+                    );
+                  })
+                }
+              </select>
             </div>
           )
         }
         {
-          showType === 'ByEvent'
+          filterBy === 'ByEvent'
           && (
-            <div id="events-eventSelectorDiv">
+            <div>
               {/* <h4 l10n-id="adaptations-events" /> */}
-              234
-              <select id="events-eventSelector" className="form-control" multiple size={15} />
+              <select
+                className="form-control"
+                multiple
+                size={eventArray.length}
+                value={selectedEventIndexes}
+                onChange={onEventsChange}
+              >
+                {
+                  eventArray.map((elem) => {
+                    const status = getEntityStatus(elem);
+                    return (
+                      <option
+                        className={classNames('fa-icon select-icon-padding', {
+                          empty: status === 'empty',
+                          finished: status === 'finished',
+                          'finished transparent-icon': status === 'unfinished',
+                        })}
+                        key={String(elem.index)}
+                        value={String(elem.index)}
+                      >
+                        {elem.name}
+                      </option>
+                    );
+                  })
+                }
+              </select>
             </div>
           )
         }
@@ -69,58 +131,3 @@ export function AdaptationsFilter(props) {
     </div>
   );
 }
-
-// function updateAdaptationSelector(story, allCharacters) {
-//   const characterSelector = U.clearEl(U.queryEl('#events-characterSelector'));
-//   const eventSelector = U.clearEl(U.queryEl('#events-eventSelector'));
-
-//   let characterArray = getStoryCharacterCompleteness(story);
-//   let eventArray = getStoryEventCompleteness(story);
-
-//   const showOnlyUnfinishedStories = U.queryEl('#finishedStoryCheckbox').checked;
-//   if (showOnlyUnfinishedStories) {
-//     characterArray = characterArray.filter((elem) => !elem.isFinished || elem.isEmpty);
-//     eventArray = eventArray.filter((elem) => !elem.isFinished || elem.isEmpty);
-//   }
-
-//   const characterNames = getCharacterNames(characterArray);
-//   const eventIndexes = getEventIndexes(eventArray);
-
-//   const map = R.indexBy(R.prop('value'), allCharacters);
-
-//   characterArray.forEach((elem) => {
-//     elem.displayName = map[elem.characterName].displayName;
-//     elem.value = map[elem.characterName].value;
-//   });
-
-//   characterArray.sort(CU.charOrdAObject);
-
-//   let option;
-//   characterArray.forEach((elem) => {
-//     option = U.addEl(U.makeEl('option'), (U.makeText(elem.displayName)));
-//     U.addClass(option, getIconClass(elem));
-//     U.setProp(option, 'selected', characterNames.indexOf(elem.value) !== -1);
-//     U.setProp(option, 'storyInfo', story.name);
-//     U.setProp(option, 'characterName', elem.value);
-//     U.addEl(characterSelector, option);
-//   });
-//   U.setAttr(characterSelector, 'size', characterArray.length);
-
-//   eventArray.forEach((elem) => {
-//     option = U.addEl(U.makeEl('option'), (U.makeText(elem.name)));
-//     U.addClass(option, getIconClass(elem));
-//     U.setProp(option, 'selected', eventIndexes.indexOf(elem.index) !== -1);
-//     U.setProp(option, 'storyInfo', story.name);
-//     U.setProp(option, 'eventIndex222', elem.index);
-//     U.addEl(eventSelector, option);
-//   });
-//   U.setAttr(eventSelector, 'size', eventArray.length);
-
-//   const { selectedFilter } = SM.getSettings().Adaptations;
-//   U.queryEl(`#${selectedFilter}`).checked = true;
-//   updateFilter({
-//     target: {
-//       id: selectedFilter
-//     }
-//   });
-// }

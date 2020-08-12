@@ -18,8 +18,16 @@ export class AdaptationsContent extends Component {
       areAdaptationsEditable: null,
       metaInfo: null,
       isStoryEditable: true,
-      allCharacters: null
+      allCharacters: null,
+      characterArray: null,
+      eventArray: null,
+      selectedCharacterNames: null,
+      selectedEventIndexes: null,
+      filterBy: 'ByCharacter'
     };
+    this.setFilterBy = this.setFilterBy.bind(this);
+    this.setSelectedCharacterNames = this.setSelectedCharacterNames.bind(this);
+    this.setSelectedEventIndexes = this.setSelectedEventIndexes.bind(this);
   }
 
   componentDidMount() {
@@ -52,7 +60,9 @@ export class AdaptationsContent extends Component {
       const characterArray = getStoryCharacterCompleteness(story);
       const eventArray = getStoryEventCompleteness(story);
 
-      // const characterNames = getCharacterNames(characterArray);
+      // const selectedCharacterNames = getCharacterNames(characterArray);
+      const selectedCharacterNames = R.pluck('characterName', characterArray);
+      const selectedEventIndexes = R.pluck('index', eventArray).map((index) => String(index));
       // const eventIndexes = getEventIndexes(eventArray);
 
       const map = R.indexBy(R.prop('value'), allCharacters);
@@ -72,7 +82,11 @@ export class AdaptationsContent extends Component {
           areAdaptationsEditable,
           metaInfo,
           isStoryEditable,
-          allCharacters
+          allCharacters,
+          characterArray,
+          eventArray,
+          selectedCharacterNames,
+          selectedEventIndexes,
         });
         // buildAdaptationInterface(
         //   storyName, characterNames, story.events, areAdaptationsEditable,
@@ -85,14 +99,32 @@ export class AdaptationsContent extends Component {
     }).catch(UI.handleError);
   }
 
+  setFilterBy(filterBy) {
+    this.setState({
+      filterBy
+    });
+  }
+
+  setSelectedCharacterNames(selectedCharacterNames) {
+    this.setState({
+      selectedCharacterNames
+    });
+  }
+
+  setSelectedEventIndexes(selectedEventIndexes) {
+    this.setState({
+      selectedEventIndexes
+    });
+  }
+
   render() {
     const {
-      metaInfo, events, characterNames, story, allCharacters
+      metaInfo, events, characterNames, story, allCharacters, characterArray, eventArray,
+      selectedCharacterNames, selectedEventIndexes, filterBy
     } = this.state;
     const { t } = this.props;
 
     if (!events) {
-      // return <div> AdaptationsContent stub </div>;
       return null;
     }
 
@@ -101,7 +133,16 @@ export class AdaptationsContent extends Component {
       <div className="AdaptationsContent tw-flex">
         {/* AdaptationsContent body */}
         <div>
-          <AdaptationsFilter story={story} allCharacters={allCharacters} />
+          <AdaptationsFilter
+            characterArray={characterArray}
+            eventArray={eventArray}
+            selectedCharacterNames={selectedCharacterNames}
+            selectedEventIndexes={selectedEventIndexes}
+            filterBy={filterBy}
+            setFilterBy={this.setFilterBy}
+            setSelectedCharacterNames={this.setSelectedCharacterNames}
+            setSelectedEventIndexes={this.setSelectedEventIndexes}
+          />
         </div>
         {/* </div> */}
         <div>Adaptation cards</div>
