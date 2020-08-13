@@ -12,7 +12,7 @@ import {
 } from 'react-router-dom';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { ToggleButton } from '../../../commons/uiCommon3.jsx';
+import { ToggleButton } from '../../../commons/uiCommon3';
 
 export function AdaptationsStorySelector(props) {
   const { options } = props;

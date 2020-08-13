@@ -5,7 +5,7 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import classNames from 'classnames';
 import Highlight from 'react-highlighter';
 import './TextSearch.css';
-import { PanelCore } from '../../commons/uiCommon3.jsx';
+import { PanelCore } from '../../commons/uiCommon3';
 
 const searchAreas = [{
   value: 'characterProfiles',
