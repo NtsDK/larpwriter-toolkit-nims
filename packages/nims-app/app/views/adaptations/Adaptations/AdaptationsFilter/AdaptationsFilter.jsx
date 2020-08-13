@@ -5,7 +5,7 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import { UI, U, L10n } from 'nims-app-core';
 import classNames from 'classnames';
 import './AdaptationsFilter.css';
-import { ToggleButton } from '../../../commons/uiCommon3.jsx';
+import { ToggleButton } from '../../../commons/uiCommon3';
 
 import {
   getEntityStatus

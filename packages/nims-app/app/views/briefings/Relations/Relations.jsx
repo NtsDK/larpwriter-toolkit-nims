@@ -13,7 +13,7 @@ import {
 } from 'react-router-dom';
 import './Relations.css';
 import { RelationsContent } from '../RelationsContent';
-import { InlineNotification } from '../../commons/uiCommon3.jsx';
+import { InlineNotification } from '../../commons/uiCommon3';
 
 function RelationCharacterSelect(props) {
   const { characterNames } = props;

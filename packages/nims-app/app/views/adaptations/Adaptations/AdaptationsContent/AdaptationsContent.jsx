@@ -4,7 +4,9 @@ import { UI, U, L10n } from 'nims-app-core';
 import PermissionInformer from 'permissionInformer';
 import './AdaptationsContent.css';
 import { AdaptationsFilter } from '../AdaptationsFilter';
-import { InlineNotification } from '../../../commons/uiCommon3.jsx';
+import { OriginCard } from '../OriginCard';
+import { AdaptationCard } from '../AdaptationCard';
+import { InlineNotification } from '../../../commons/uiCommon3';
 import {
   getStoryCharacterCompleteness, getStoryEventCompleteness, getCharacterNames, getEventIndexes
 } from '../../adaptationUtils';
@@ -122,7 +124,7 @@ export class AdaptationsContent extends Component {
       metaInfo, events, characterNames, story, allCharacters, characterArray, eventArray,
       selectedCharacterNames, selectedEventIndexes, filterBy
     } = this.state;
-    const { t } = this.props;
+    const { t, storyName } = this.props;
 
     if (!events) {
       return null;
@@ -130,7 +132,7 @@ export class AdaptationsContent extends Component {
 
     const adaptationsNum = R.flatten(events.map((event) => R.keys(event.characters))).length;
     return (
-      <div className="AdaptationsContent tw-flex">
+      <div className="AdaptationsContent tw-flex tw-flex-grow">
         {/* AdaptationsContent body */}
         <div>
           <AdaptationsFilter
@@ -145,18 +147,93 @@ export class AdaptationsContent extends Component {
           />
         </div>
         {/* </div> */}
-        <div>Adaptation cards</div>
-        <InlineNotification type="info" showIf={events.length === 0}>
-          {t('advices.no-events-in-story')}
-        </InlineNotification>
-        <InlineNotification type="info" showIf={characterNames.length === 0}>
-          {t('advices.no-characters-in-story')}
-        </InlineNotification>
-        <InlineNotification type="info" showIf={adaptationsNum === 0}>
-          {t('advices.no-adaptations-in-story')}
-        </InlineNotification>
+        <div className="tw-flex-grow">
+          <InlineNotification type="info" showIf={events.length === 0}>
+            {t('advices.no-events-in-story')}
+          </InlineNotification>
+          <InlineNotification type="info" showIf={characterNames.length === 0}>
+            {t('advices.no-characters-in-story')}
+          </InlineNotification>
+          <InlineNotification type="info" showIf={adaptationsNum === 0}>
+            {t('advices.no-adaptations-in-story')}
+          </InlineNotification>
+          {
+            events
+              .filter((event) => {
+                if (filterBy === 'ByEvent') {
+                  return selectedEventIndexes.includes(String(event.index));
+                }
+                if (filterBy === 'ByCharacter') {
+                  return R.intersection(R.keys(event.characters), selectedCharacterNames).length > 0;
+                }
+                throw new Error(`Unexpected filterBy type: ${filterBy}`);
+              })
+              .map((event) => (
+                <div key={String(event.index)} className="AdaptationRow container-fluid eventRow-dependent">
+                  <div className="row eventMainPanelRow-left events-eventsContainer">
+                    <OriginCard
+                      metaInfo={metaInfo}
+                      storyName={storyName}
+                      event={event}
+                      showTimeInput
+                      showTextInput
+                      cardTitle={event.name}
+                    />
+                    {
+
+                      R.keys(event.characters)
+                        .filter((characterName) => filterBy !== 'ByCharacter' || selectedCharacterNames.includes(characterName))
+                        .map((characterName) => (
+                          <AdaptationCard
+                            isEditable
+                            event={event}
+                            storyName={storyName}
+                            key={characterName}
+                            characterName={characterName}
+                            showFinishedButton
+                            showTimeInput
+                            showTextInput
+                            cardTitle={characterName}
+                          />
+                        ))
+                    }
+                  </div>
+                </div>
+              ))
+          }
+
+        </div>
         {/* <div id="personalStories" style={{ flexGrow: 1 }} /> */}
       </div>
     );
   }
 }
+
+// U.addEls(div, events.map((event) => {
+//   const content = U.makeEl('div');
+//   ReactDOM.render(getAdaptationRow(), content);
+//   const row = U.qee(content, '.AdaptationRow');
+
+//   // const row = U.qmte(`${root} .adaptation-row-tmpl`);
+//   U.addClass(row, `${event.index}-dependent`);
+//   row.dependsOnCharacters = R.keys(event.characters);
+//   U.addEl(U.qee(row, '.eventMainPanelRow-left'), makeOriginCard(event, metaInfo, storyName, {
+
+//     showTimeInput: true,
+//     showTextInput: true,
+//     cardTitle: event.name
+//   }));
+//   U.addEls(U.qee(row, '.events-eventsContainer'), characterNames
+//     .filter((characterName) => event.characters[characterName])
+//     .map((characterName) => {
+//       const isEditable = areAdaptationsEditable[`${storyName}-${characterName}`];
+//       return makeAdaptationCard(isEditable, event, storyName, characterName, {
+//         showFinishedButton: true,
+//         showTimeInput: true,
+//         showTextInput: true,
+//         cardTitle: characterName
+//       });
+//     }));
+
+//   return row;
+// }));

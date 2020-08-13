@@ -16,7 +16,7 @@ import './Adaptations.css';
 
 import { AdaptationsStorySelector } from './AdaptationsStorySelector';
 import { AdaptationsContent } from './AdaptationsContent';
-import { InlineNotification } from '../../commons/uiCommon3.jsx';
+import { InlineNotification } from '../../commons/uiCommon3';
 import { getEntityStatus } from '../adaptationUtils';
 
 export class Adaptations extends Component {

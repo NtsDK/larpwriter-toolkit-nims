@@ -6,7 +6,7 @@ import { UI, U, L10n } from 'nims-app-core';
 import Tooltip from 'react-bootstrap/es/Tooltip';
 import OverlayTrigger from 'react-bootstrap/es/OverlayTrigger';
 import { useTranslation } from 'react-i18next';
-import { ConfirmDialog, ToggleButton } from '../../../commons/uiCommon3.jsx';
+import { ConfirmDialog, ToggleButton } from '../../../commons/uiCommon3';
 
 export class RelationRow extends Component {
   constructor(props) {

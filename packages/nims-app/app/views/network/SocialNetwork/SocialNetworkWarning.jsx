@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
-import { InlineNotification } from '../../commons/uiCommon3.jsx';
+import { InlineNotification } from '../../commons/uiCommon3';
 
 export function SocialNetworkWarning() {
   const { t } = useTranslation();
