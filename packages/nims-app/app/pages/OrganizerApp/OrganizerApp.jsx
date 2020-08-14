@@ -79,7 +79,7 @@ export class OrganizerApp extends Component {
             <NavViewLink labelKey="header.profile-filter" to="/profile-filter" clazz="filterButton icon-button" hasTooltip />
             <NavViewLink labelKey="header.groups" to="/groups" clazz="groupsButton icon-button" hasTooltip />
             <NavViewLink labelKey="header.textSearch" to="/textSearch" clazz="textSearchButton icon-button" hasTooltip />
-            <NavViewLink labelKey="header.roleGrid" to="/roleGrid" clazz="roleGridButton icon-button" hasTooltip />
+            {/* <NavViewLink labelKey="header.roleGrid" to="/roleGrid" clazz="roleGridButton icon-button" hasTooltip /> */}
 
             <NavSeparator />
             {
@@ -179,7 +179,7 @@ export class OrganizerApp extends Component {
             </Route>
             <Route path="/adaptations">
               <Adaptations />
-              <ViewWrapper view={viewCache.get('adaptations')} />
+              {/* <ViewWrapper view={viewCache.get('adaptations')} /> */}
             </Route>
             <Route path="/briefings">
               <NavContainer className="sub-tab-navigation">
