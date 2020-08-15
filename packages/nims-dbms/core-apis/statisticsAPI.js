@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,73 +13,104 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-
 /* eslint-disable func-names */
 
 ((callback2) => {
     function statisticsAPI(LocalDBMS, opts) {
         const { R, Constants } = opts;
 
+        const EMPTY_HIST_ITEM = { value: 0, label: '', tip: '' };
+
         let _countCharacterSymbols;
 
-        LocalDBMS.prototype.getStatistics = function (callback) {
+        LocalDBMS.prototype.getStatistics = function () {
             return new Promise((resolve, reject) => {
                 const that = this;
                 this.getAllCharacterGroupTexts().then((groupTexts) => {
-                    _getStatistics(that.database, groupTexts, resolve);
+                    resolve(_getStatistics(that.database, groupTexts));
                 }).catch(reject);
             });
         };
 
+        LocalDBMS.prototype.getStatisticsLevel1 = function () {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                resolve(_getStatisticsLevel1(that.database));
+            });
+        };
+
+        LocalDBMS.prototype.getStatisticsLevel2 = function () {
+            return new Promise((resolve, reject) => {
+                const that = this;
+                this.getAllCharacterGroupTexts().then((groupTexts) => {
+                    resolve(_getOverviewStatisticsLevel2(that.database, groupTexts));
+                }).catch(reject);
+            });
+        };
+
+        LocalDBMS.prototype.getProfileStatisticsLevel2 = function () {
+          return new Promise((resolve, reject) => {
+            const that = this;
+            resolve(_getProfileChartData(that.database));
+          });
+        };
+
         function _getStatistics(database, groupTexts, resolve) {
-            const statistics = {};
-            statistics.storyNumber = Object.keys(database.Stories).length;
-            statistics.characterNumber = Object.keys(database.Characters).length;
-            statistics.groupNumber = Object.keys(database.Groups).length;
-            statistics.playerNumber = Object.keys(database.Players).length;
+          const statisticsLevel1 = _getStatisticsLevel1(database);
+          const statisticsLevel2 = _getOverviewStatisticsLevel2(database, groupTexts);
+          const statistics = { ...statisticsLevel1, ...statisticsLevel2 };
+          statistics.profileCharts = _getProfileChartData(database);
+          return statistics;
+        }
 
-            statistics.eventsNumber = R.sum(R.values(database.Stories).map(R.compose(R.length, R.prop('events'))));
+        function _getStatisticsLevel1(database) {
+          const statistics = {};
+          statistics.storyNumber = Object.keys(database.Stories).length;
+          statistics.characterNumber = Object.keys(database.Characters).length;
+          statistics.groupNumber = Object.keys(database.Groups).length;
+          statistics.playerNumber = Object.keys(database.Players).length;
 
-            statistics.userNumber = 1;
-            if (database.ManagementInfo && database.ManagementInfo.UsersInfo) {
-                statistics.userNumber = Object.keys(database.ManagementInfo.UsersInfo).length;
-            }
+          statistics.eventsNumber = R.sum(R.values(database.Stories).map(R.compose(R.length, R.prop('events'))));
 
-            statistics.textCharactersCount = _countTextCharacters(database);
-            statistics.textCharacterNumber = R.sum(R.values(statistics.textCharactersCount));
-            statistics.bindingStats = _countBindingStats(database);
+          statistics.userNumber = 1;
+          if (database.ManagementInfo && database.ManagementInfo.UsersInfo) {
+              statistics.userNumber = Object.keys(database.ManagementInfo.UsersInfo).length;
+          }
 
-            const firstLastEventTime = _getFirstLastEventTime(database);
+          const firstLastEventTime = _getFirstLastEventTime(database);
 
-            statistics.firstEvent = firstLastEventTime[0] ? firstLastEventTime[0] : '';
-            statistics.lastEvent = firstLastEventTime[1] ? firstLastEventTime[1] : '';
+          statistics.firstEvent = firstLastEventTime[0] ? firstLastEventTime[0] : '';
+          statistics.lastEvent = firstLastEventTime[1] ? firstLastEventTime[1] : '';
 
-            statistics.storyEventsHist = _getHistogram(database, story => story.events.length);
+          const textCharactersCount = _countTextCharacters(database);
+          statistics.textCharacterNumber = R.sum(R.values(textCharactersCount));
 
-            statistics.storyCharactersHist = _getHistogram(database, story => Object.keys(story.characters).length);
+          statistics.generalCompleteness = _getGeneralCompleteness(database);
+          statistics.storyCompleteness = _getStoryCompleteness(database);
+          statistics.relationCompleteness = _getRelationCompleteness(database);
+          return statistics;
+        }
 
-            statistics.eventCompletenessHist = _getEventCompletenessHist(database);
-            statistics.characterStoriesHist = _getCharacterHist(database, _countCharactersInStories);
-            statistics.characterSymbolsHist = _getCharacterHist(database, _countCharacterSymbols(groupTexts));
-
-            statistics.generalCompleteness = _getGeneralCompleteness(database);
-            statistics.storyCompleteness = _getStoryCompleteness(database);
-            statistics.relationCompleteness = _getRelationCompleteness(database);
-
-            statistics.characterChart = _getChartData(database, 'characters', 'Characters');
-            statistics.storyChart = _getChartData(database, 'stories', 'Stories');
-            statistics.groupChart = _getChartData(database, 'groups', 'Groups');
-            statistics.playerChart = _getChartData(database, 'players', 'Players');
-
-            statistics.profileCharts = _getProfileChartData(database);
-
-            resolve(statistics);
+        function _getOverviewStatisticsLevel2(database, groupTexts) {
+          const statistics = {};
+          statistics.storyEventsHist = _getHistogram(database, (story) => story.events.length);
+          statistics.storyCharactersHist = _getHistogram(database, (story) => Object.keys(story.characters).length);
+          statistics.characterStoriesHist = _getCharacterHist(database, _countCharactersInStories);
+          statistics.eventCompletenessHist = _getEventCompletenessHist(database);
+          statistics.characterSymbolsHist = _getCharacterHist(database, _countCharacterSymbols(groupTexts));
+          statistics.textCharactersCount = _countTextCharacters(database);
+          statistics.bindingStats = _countBindingStats(database);
+          statistics.characterChart = _getChartData(database, 'characters', 'Characters');
+          statistics.storyChart = _getChartData(database, 'stories', 'Stories');
+          statistics.groupChart = _getChartData(database, 'groups', 'Groups');
+          statistics.playerChart = _getChartData(database, 'players', 'Players');
+          return statistics;
         }
 
         function _makeNumberStep(array) {
             const max = array.reduce((max2, cur) => (cur > max2 ? cur : max2), array[0]);
             const min = array.reduce((min3, cur) => (cur < min3 ? cur : min3), array[0]);
-            let step = Math.ceil((max - min) / 20);
+            let step = Math.ceil((max - min) / 10);
             step = step === 0 ? 1 : step;
             let base = 1;
             while (step > base * 10) {
@@ -113,7 +145,7 @@ See the License for the specific language governing permissions and
             const profileItems = database[profileStructureType].filter(filter).map(R.pick(['name', 'type']));
 
             const groupProfiles = R.groupBy(R.__, R.values(database[profileType]));
-            const groupReduce = group => R.fromPairs(R.toPairs(group).map((elem) => {
+            const groupReduce = (group) => R.fromPairs(R.toPairs(group).map((elem) => {
                 elem[1] = elem[1].length;
                 return elem;
             }));
@@ -124,14 +156,14 @@ See the License for the specific language governing permissions and
                     const array = R.ap([R.prop(profileItem.name)], R.values(database[profileType]));
                     const step = _makeNumberStep(array);
                     return {
-                        groups: groupReduce(groupProfiles(profile => Math.floor(profile[profileItem.name] / step))),
+                        groups: groupReduce(groupProfiles((profile) => Math.floor(profile[profileItem.name] / step))),
                         step
                     };
                 }
                 throw new Error(`Unexpected profile item type: ${profileItem.type}`);
             });
 
-            return R.transpose([profileItems, groupedValues]).map(arr => R.assoc('data', arr[1], arr[0]));
+            return R.transpose([profileItems, groupedValues]).map((arr) => R.assoc('data', arr[1], arr[0]));
         }
 
         function _makeChartLabel(key, value, total) {
@@ -211,7 +243,7 @@ See the License for the specific language governing permissions and
         }
 
         function _makeTip(keyParam, step, tipData) {
-            return `${keyParam * step}-${((keyParam + 1) * step) - 1}: ${tipData.join(', ')}`;
+            return `${tipData.join(', ')}`;
         }
 
         function _getCharacterHist(database, statsCollector) {
@@ -231,9 +263,16 @@ See the License for the specific language governing permissions and
 
             for (let i = 0; i < R.max(hist.length, 10); i++) {
                 if (!hist[i]) {
-                    hist[i] = null;
+                    hist[i] = EMPTY_HIST_ITEM;
                 } else {
                     hist[i].tip = _makeTip(i, step, hist[i].tip);
+                    const first = i * step;
+                    const last = ((i + 1) * step) - 1;
+                    if (first === last) {
+                      hist[i].tooltipLabel = first;
+                    } else {
+                      hist[i].tooltipLabel = `${first}-${last}`;
+                    }
                 }
             }
             return hist;
@@ -249,9 +288,15 @@ See the License for the specific language governing permissions and
             });
             for (let i = 0; i < 11; i++) {
                 if (!hist[i]) {
-                    hist[i] = null;
+                    hist[i] = EMPTY_HIST_ITEM;
                 } else {
                     hist[i].tip = hist[i].tip.join(', ');
+                    hist[i].label *= 10;
+                    if (hist[i].label !== 100) {
+                      hist[i].tooltipLabel = `${hist[i].label}-${(hist[i].label + 10)}%`;
+                    } else {
+                      hist[i].tooltipLabel = '100%';
+                    }
                 }
             }
             return hist;
@@ -280,9 +325,13 @@ See the License for the specific language governing permissions and
         function _getStoryCompleteness(database) {
             const allStories = Object.keys(database.Stories).length;
             const finishedStories = R.values(database.Stories).map(_getStoryAdaptationStats)
-                .filter(stats => stats.allAdaptations === stats.finishedAdaptations && stats.allAdaptations !== 0)
+                .filter((stats) => stats.allAdaptations === stats.finishedAdaptations && stats.allAdaptations !== 0)
                 .length;
-            return [calcPercent(finishedStories, allStories), finishedStories, allStories];
+            return {
+              percent: calcPercent(finishedStories, allStories),
+              finished: finishedStories,
+              all: allStories
+            };
         }
 
         function _getGeneralCompleteness(database) {
@@ -292,7 +341,11 @@ See the License for the specific language governing permissions and
                 finishedAdaptations += stats.finishedAdaptations;
                 allAdaptations += stats.allAdaptations;
             });
-            return [calcPercent(finishedAdaptations, allAdaptations), finishedAdaptations, allAdaptations];
+            return {
+              percent: calcPercent(finishedAdaptations, allAdaptations),
+              finished: finishedAdaptations,
+              all: allAdaptations
+            };
         }
 
         const rel2bools = R.pipe(R.pick(['starterTextReady', 'enderTextReady']), R.values, R.filter(R.identity));
@@ -301,7 +354,11 @@ See the License for the specific language governing permissions and
             let finishedRelations = 0, allRelations = 0;
             allRelations = database.Relations.length * 2;
             finishedRelations = R.flatten(database.Relations.map(rel2bools)).length;
-            return [calcPercent(finishedRelations, allRelations), finishedRelations, allRelations];
+            return {
+              percent: calcPercent(finishedRelations, allRelations),
+              finished: finishedRelations,
+              all: allRelations
+            };
         }
 
         function _noWhiteSpaceLength(str) {
@@ -349,7 +406,7 @@ See the License for the specific language governing permissions and
         function _getFirstLastEventTime(database) {
             let lastEvent = null, firstEvent = null;
             R.values(database.Stories).forEach((story) => {
-                story.events.filter(event => event.time !== '').forEach((event) => {
+                story.events.filter((event) => event.time !== '').forEach((event) => {
                     const date = new Date(event.time);
                     if (lastEvent === null || date > lastEvent) {
                         lastEvent = date;
@@ -370,9 +427,9 @@ See the License for the specific language governing permissions and
             });
             for (let i = 0; i < hist.length; i++) {
                 if (!hist[i]) {
-                    hist[i] = null;
+                    hist[i] = EMPTY_HIST_ITEM;
                 } else {
-                    hist[i].tip = `${i}: ${hist[i].tip.join(', ')}`;
+                    hist[i].tip = `${hist[i].tip.join(', ')}`;
                 }
             }
             return hist;
@@ -380,4 +437,4 @@ See the License for the specific language governing permissions and
     }
 
     callback2(statisticsAPI);
-})(api => (typeof exports === 'undefined' ? (this.statisticsAPI = api) : (module.exports = api)));
+})((api) => (typeof exports === 'undefined' ? (this.statisticsAPI = api) : (module.exports = api)));
