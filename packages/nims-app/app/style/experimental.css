@@ -38,16 +38,16 @@ select:hover
 
 /** auroresizable textareas */
 /* textarea[autoresize] { */
-textarea.autoresizable {
+/* textarea.autoresizable {
   display: block;
   overflow: hidden;
   resize: none;
-}
+} */
 /* auroresizable textareas **/
 
 
 /* This sets the color for "TK" nodes to a light blue green. */
-g.type-TK > rect {
+/* g.type-TK > rect {
   fill: #00ffd0;
 }
 
@@ -80,7 +80,7 @@ g > text {
   stroke-opacity: .6;
   fill: none;
   stroke-width: 2px;
-}
+} */
 
 /* body {
   color: green;
