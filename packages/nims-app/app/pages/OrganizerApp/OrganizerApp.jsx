@@ -26,6 +26,7 @@ import { TimelineCore } from '../../views/timeline/TimelineCore';
 import { SocialNetwork } from '../../views/network/SocialNetwork/index';
 import { Relations } from '../../views/briefings/Relations/index';
 import { Adaptations } from '../../views/adaptations/Adaptations/index';
+import { GameInfo } from '../../views/overview/GameInfo/index';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -132,6 +133,19 @@ export class OrganizerApp extends Component {
           </NavContainer>
           <Switch>
             <Route path="/overview">
+              <NavContainer className="sub-tab-navigation">
+                <NavViewLink labelKey="overview.about-game" to="/overview/aboutGame" />
+                <NavViewLink labelKey="overview.statistic-diagrams" to="/overview/statisticDiagrams" />
+                <NavViewLink labelKey="overview.profile-diagrams" to="/overview/profileDiagrams" />
+                <NavViewLink labelKey="header.gears" to="/overview/gears" />
+                <NavViewLink labelKey="header.sliders" to="/overview/sliders" />
+              </NavContainer>
+              <Switch>
+                <Route path="/overview/aboutGame">
+                  <GameInfo />
+                </Route>
+                {/* <Redirect to="/overview/aboutGame" /> */}
+              </Switch>
               <ViewWrapper view={viewCache.get('overview')} />
             </Route>
             {/* <Route path="/characters">  <ViewWrapper view={viewCache.get('characters')}/></Route> */}

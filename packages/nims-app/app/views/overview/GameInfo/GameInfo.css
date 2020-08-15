@@ -1,0 +1,10 @@
+.game-info-view .stats-table {
+  /* width: auto; */
+}
+.game-info-view .stats-table th {
+  text-align: center;
+}
+
+.game-info-view .game-description-area {
+  height: 400px;
+}
