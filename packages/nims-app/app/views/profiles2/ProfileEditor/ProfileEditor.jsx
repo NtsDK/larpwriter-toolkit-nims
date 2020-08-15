@@ -98,16 +98,18 @@ export class ProfileEditor extends Component {
               />
 
               <Route
-                path="/characters/profiles/:id"
+                path="/characters/characterEditor/:id"
                 render={({ match }) => {
                   const { id } = match.params;
 
                   return (
-                    <div>
-                      {/* <StoryReport id={id} />
-                      <RelationReport id={id} />
-                      <CharacterProfile id={id} /> */}
-                    </div>
+                    <>
+                      <StoryReport id={id} />
+                      <RelationReport key={id} id={id} />
+                      {/*
+
+                      <CharacterProfile key={id} id={id} /> */}
+                    </>
                   );
                 }}
               />
