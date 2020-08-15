@@ -105,7 +105,7 @@ export class ProfileEditor extends Component {
                   return (
                     <>
                       <StoryReport id={id} />
-                      <RelationReport key={id} id={id} />
+                      <RelationReport id={id} />
                       {/*
 
                       <CharacterProfile key={id} id={id} /> */}
