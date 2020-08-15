@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
+import * as CU from 'nims-dbms-core/commonUtils';
+import * as R from 'ramda';
+import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import { InlineNotification } from '../../../commons/uiCommon3/InlineNotification.jsx';
+import { PanelCore } from '../../../commons/uiCommon3/PanelCore.jsx';
 import './RelationReport.css';
 
-import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 // const { get2ndRelChar } = require('db-utils/projectUtils');
 
 export class RelationReport extends Component {
@@ -11,27 +15,27 @@ export class RelationReport extends Component {
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     // console.log('RelationReport mounted');
-    this.getStateInfo();
+    this.refresh();
   }
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate(prevProps) {
     console.log('RelationReport did update');
-    if (prevProps.id === this.props.id) {
-      return;
-    }
-    this.getStateInfo();
+    // if (prevProps.id === this.props.id) {
+    //   return;
+    // }
+    // this.getStateInfo();
   }
 
-  componentWillUnmount = () => {
+  componentWillUnmount() {
     console.log('RelationReport will unmount');
   }
 
-  getStateInfo = () => {
-    const { dbms, id } = this.props;
+  refresh() {
+    const { id } = this.props;
     Promise.all([
-      dbms.getRelationsSummary({ characterName: id }),
+      DBMS.getRelationsSummary({ characterName: id }),
     ]).then((results) => {
       const [relationsSummary] = results;
       relationsSummary.relations.sort(CU.charOrdAFactory((rel) => ProjectUtils.get2ndRelChar(id, rel).toLowerCase()));
@@ -49,19 +53,21 @@ export class RelationReport extends Component {
       return null;
     }
     return (
-      <div className="relation-report panel panel-default">
-        <div className="panel-heading">
-          {/* <a href="#"> */}
-          <h3 className="panel-title">{t('profiles.character-report-by-relations')}</h3>
-          {/* </a> */}
-        </div>
-        <div className="panel-body report-by-relations-div">
-          <div className="alert alert-info">{t('advices.character-has-no-relations')}</div>
+      <PanelCore
+        className="relation-report"
+        title={t('profiles.character-report-by-relations')}
+      >
+        <InlineNotification type="info" showIf={relationsSummary.relations.length === 0}>
+          {t('advices.character-has-no-relations')}
+        </InlineNotification>
+        {
+          relationsSummary.relations.length !== 0
+        && (
           <table className="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>{t('profiles.character')}</th>
-                <th colSpan="3">{t('profiles.direction')}</th>
+                <th colSpan={3}>{t('profiles.direction')}</th>
                 <th>{t('profiles.completeness')}</th>
                 <th>{t('profiles.origin')}</th>
               </tr>
@@ -98,8 +104,9 @@ export class RelationReport extends Component {
               }
             </tbody>
           </table>
-        </div>
-      </div>
+        )
+        }
+      </PanelCore>
     );
   }
 }
