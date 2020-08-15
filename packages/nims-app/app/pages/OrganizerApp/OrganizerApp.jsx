@@ -27,6 +27,8 @@ import { SocialNetwork } from '../../views/network/SocialNetwork/index';
 import { Relations } from '../../views/briefings/Relations/index';
 import { Adaptations } from '../../views/adaptations/Adaptations/index';
 import { GameInfo } from '../../views/overview/GameInfo/index';
+import { StatisticDiagrams } from '../../views/overview/StatisticDiagrams/index';
+import { ProfileDiagrams } from '../../views/overview/ProfileDiagrams/index';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -143,6 +145,12 @@ export class OrganizerApp extends Component {
               <Switch>
                 <Route path="/overview/aboutGame">
                   <GameInfo />
+                </Route>
+                <Route path="/overview/statisticDiagrams">
+                  <StatisticDiagrams />
+                </Route>
+                <Route path="/overview/profileDiagrams">
+                  <ProfileDiagrams />
                 </Route>
                 {/* <Redirect to="/overview/aboutGame" /> */}
               </Switch>

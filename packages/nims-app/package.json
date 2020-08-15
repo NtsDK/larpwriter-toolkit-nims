@@ -71,6 +71,7 @@
     "react-highlighter": "^0.4.3",
     "react-i18next": "^11.7.0",
     "react-router-dom": "^5.2.0",
+    "recharts": "^1.8.5",
     "select2": "^4.0.13",
     "vex-dialog": "^1.1.0",
     "vex-js": "^4.1.0",

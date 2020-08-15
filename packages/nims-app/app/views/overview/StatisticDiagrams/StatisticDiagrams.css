@@ -1,0 +1,13 @@
+.statistic-diagrams-view h4 {
+  text-align: center;
+}
+
+.statistic-diagrams-view .belonging-diagrams-container {
+  display: flex;
+}
+
+.statistic-diagrams-view .belonging-diagrams-container>* {
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: center;
+}

@@ -428,7 +428,7 @@ textarea.game-description-area {
 
 /* histogram */
 
-.overviewHist{
+/* .overviewHist{
   display: flex;
   height:130px;
   width: 100%;
@@ -454,7 +454,7 @@ textarea.game-description-area {
 .overviewHist > .bar:hover{
   background-color: #A1EC76;
   border: 1px solid #41A906;
-}
+} */
 
 .statisticsLabel{
   text-align: right;
