@@ -766,8 +766,8 @@ a[tree-panel-toggler] h3{
 
 .panel.entity-select .entity-list {
 /*   max-height: calc(100vh - 36px - 120px); */
-  overflow: auto;
-  position: absolute;
+  /* overflow: auto; */
+  /* position: absolute; */
   top: 52px;
   bottom: 12px;
   right: 24px;
@@ -776,12 +776,25 @@ a[tree-panel-toggler] h3{
 
 .profile-binding2-tab .entity-list {
 /*   max-height: calc(100vh - 36px - 120px); */
-  overflow: auto;
-  position: absolute;
+  /* overflow-x: auto; */
+  /* position: absolute; */
   top: 84px;
   bottom: 24px;
   right: 15px;
   left: 15px;
+}
+
+.entity-list {
+  /* margin-bottom: 0; */
+  list-style: none;
+  padding: 0;
+}
+
+.entity-list a.active,
+.entity-list a.active:focus,
+.entity-list a.active:hover {
+  color: #fff;
+  background-color: #337ab7;
 }
 
 .profile-editor2-tab .content-column {

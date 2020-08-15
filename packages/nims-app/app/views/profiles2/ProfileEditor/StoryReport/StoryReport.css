@@ -1,0 +1,6 @@
+.story-report .activity-icon  {
+    color: #ddd;
+}
+.story-report .activity-icon.active  {
+    color: #228B22;
+}

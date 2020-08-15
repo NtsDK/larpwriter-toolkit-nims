@@ -30,6 +30,8 @@ import { GameInfo } from '../../views/overview/GameInfo/index';
 import { StatisticDiagrams } from '../../views/overview/StatisticDiagrams/index';
 import { ProfileDiagrams } from '../../views/overview/ProfileDiagrams/index';
 
+import { ProfileEditor } from '../../views/profiles2/ProfileEditor/index';
+
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
 import {
@@ -165,6 +167,7 @@ export class OrganizerApp extends Component {
               </NavContainer>
               <Switch>
                 <Route path="/characters/characterEditor">
+                  <ProfileEditor />
                   <ViewWrapper view={viewCache.get('characterEditor')} />
                 </Route>
                 <Route path="/characters/characterConfigurer">

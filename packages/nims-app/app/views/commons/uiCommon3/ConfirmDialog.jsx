@@ -32,10 +32,10 @@ export function ConfirmDialog(props) {
       }
       <Modal.Body>{message}</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleCancel}>
+        <Button onClick={handleCancel}>
           {t('common.cancel')}
         </Button>
-        <Button variant="primary" onClick={handleConfirm}>
+        <Button bsStyle="primary" onClick={handleConfirm}>
           {t('common.ok')}
         </Button>
       </Modal.Footer>

@@ -101,6 +101,9 @@
 .unlocked:before {
   content: "\f3c1";
 }
+.kebab:before {
+  content: "\f142";
+}
 .transparent{
   color: rgba(0,0,0,0);
   transition-property: color;
