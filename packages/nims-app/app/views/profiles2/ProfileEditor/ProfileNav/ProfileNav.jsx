@@ -6,11 +6,12 @@ import {
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
 import PermissionInformer from 'permissionInformer';
-import DropdownButton from 'react-bootstrap/es/DropdownButton';
+import Button from 'react-bootstrap/es/Button';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
 import { PromptDialog } from '../../../commons/uiCommon3/PromptDialog.jsx';
 import { ConfirmDialog } from '../../../commons/uiCommon3/ConfirmDialog.jsx';
+import { ModalTrigger } from '../../../commons/uiCommon3/ModalTrigger.jsx';
 
 import './ProfileNav.css';
 
@@ -18,18 +19,7 @@ export class ProfileNav extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCreateProfilePrompt: false,
-      showRenameProfilePrompt: false,
-      showRemoveProfileConfirm: false,
-      renamableProfile: '',
-      removableProfile: ''
     };
-    this.onCreateProfileCancel = this.onCreateProfileCancel.bind(this);
-    this.onRenameProfileCancel = this.onRenameProfileCancel.bind(this);
-    this.onRemoveProfileCancel = this.onRemoveProfileCancel.bind(this);
-    this.onCreateProfileRequest = this.onCreateProfileRequest.bind(this);
-    this.onRenameProfileRequest = this.onRenameProfileRequest.bind(this);
-    this.onRemoveProfileRequest = this.onRemoveProfileRequest.bind(this);
     this.createProfile = this.createProfile.bind(this);
     this.renameProfile = this.renameProfile.bind(this);
     this.removeProfile = this.removeProfile.bind(this);
@@ -47,47 +37,7 @@ export class ProfileNav extends Component {
     console.log('ProfileNav will unmount');
   }
 
-  onCreateProfileCancel() {
-    this.setState({
-      showCreateProfilePrompt: false
-    });
-  }
-
-  onRenameProfileCancel() {
-    this.setState({
-      showRenameProfilePrompt: false
-    });
-  }
-
-  onRemoveProfileCancel() {
-    this.setState({
-      showRemoveProfileConfirm: false
-    });
-  }
-
-  onCreateProfileRequest() {
-    this.setState({
-      showCreateProfilePrompt: true
-    });
-  }
-
-  onRenameProfileRequest(e) {
-    const { profileName } = e.target.dataset;
-    this.setState({
-      showRenameProfilePrompt: true,
-      renamableProfile: profileName
-    });
-  }
-
-  onRemoveProfileRequest(e) {
-    const { profileName } = e.target.dataset;
-    this.setState({
-      showRemoveProfileConfirm: true,
-      removableProfile: profileName
-    });
-  }
-
-  async createProfile(profileName) {
+  async createProfile({ value: profileName }) {
     const { history, refresh } = this.props;
     try {
       await DBMS.createProfile({ type: 'character', characterName: profileName });
@@ -105,10 +55,9 @@ export class ProfileNav extends Component {
     return null;
   }
 
-  async renameProfile(profileName) {
+  async renameProfile({ value: profileName }, { defaultValue: renamableProfile }) {
     const { history, match, refresh } = this.props;
     const { id: currentProfileName } = match.params;
-    const { renamableProfile } = this.state;
     try {
       await DBMS.renameProfile({ type: 'character', fromName: renamableProfile, toName: profileName });
       try {
@@ -127,12 +76,11 @@ export class ProfileNav extends Component {
     return null;
   }
 
-  async removeProfile(e) {
+  async removeProfile({ removableProfile }) {
     const {
       history, match, refresh, primaryNames
     } = this.props;
     const { id: currentProfileName } = match.params;
-    const { removableProfile } = this.state;
     try {
       await DBMS.removeProfile({ type: 'character', characterName: removableProfile });
       const index = R.findIndex(R.equals(removableProfile), primaryNames);
@@ -151,7 +99,6 @@ export class ProfileNav extends Component {
       if (removableProfile === currentProfileName && nextProfile !== null) {
         history.push(`/characters/characterEditor/${nextProfile}`);
       }
-      this.onRemoveProfileCancel();
     } catch (err) {
       UI.handleError(err);
     }
@@ -159,10 +106,6 @@ export class ProfileNav extends Component {
   }
 
   render() {
-    const {
-      showCreateProfilePrompt, showRenameProfilePrompt, renamableProfile,
-      showRemoveProfileConfirm, removableProfile
-    } = this.state;
     const { t, primaryNames, profileBinding } = this.props;
 
     return (
@@ -170,12 +113,19 @@ export class ProfileNav extends Component {
         <div className="panel-body height-100p">
           <div className="flex-row entity-toolbar">
             <input className="form-control entity-filter flex-1-1-auto" type="search" />
-            <button
-              type="button"
-              className="btn btn-default btn-reduced fa-icon create flex-0-0-auto"
-              onClick={this.onCreateProfileRequest}
-              title={t('profiles.create-character')}
-            />
+            <ModalTrigger
+              modal={(
+                <PromptDialog
+                  title={t('profiles.enter-character-name')}
+                  onSubmit={this.createProfile}
+                />
+              )}
+            >
+              <Button
+                className="btn-reduced fa-icon create flex-0-0-auto"
+                title={t('profiles.create-character')}
+              />
+            </ModalTrigger>
           </div>
           <ul className="entity-list ">
             {
@@ -185,22 +135,38 @@ export class ProfileNav extends Component {
                     <div>{primaryName}</div>
                     {profileBinding[primaryName] && <div className="small">{profileBinding[primaryName]}</div>}
                   </NavLink>
-                  <Dropdown id="dropdown-custom-2">
+                  <Dropdown>
                     <Dropdown.Toggle noCaret className="btn btn-default fa-icon kebab" />
                     <Dropdown.Menu>
-                      <MenuItem
-                        onClick={this.onRenameProfileRequest}
-                        data-profile-name={primaryName}
+
+                      <ModalTrigger
+                        modal={(
+                          <PromptDialog
+                            title={t('profiles.enter-new-character-name')}
+                            defaultValue={primaryName}
+                            onSubmit={this.renameProfile}
+                          />
+                        )}
                       >
-                        {t('profiles.rename-character')}
-                      </MenuItem>
+                        <MenuItem>
+                          {t('profiles.rename-character')}
+                        </MenuItem>
+                      </ModalTrigger>
                       <MenuItem divider />
-                      <MenuItem
-                        onClick={this.onRemoveProfileRequest}
-                        data-profile-name={primaryName}
+
+                      <ModalTrigger
+                        modal={(
+                          <ConfirmDialog
+                            message={t('profiles.are-you-sure-about-character-removing2', { profileName: primaryName })}
+                            onConfirm={this.removeProfile}
+                            data={{ removableProfile: primaryName }}
+                          />
+                        )}
                       >
-                        {t('profiles.remove-character')}
-                      </MenuItem>
+                        <MenuItem>
+                          {t('profiles.remove-character')}
+                        </MenuItem>
+                      </ModalTrigger>
                     </Dropdown.Menu>
                   </Dropdown>
                 </li>
@@ -208,25 +174,6 @@ export class ProfileNav extends Component {
             }
           </ul>
         </div>
-        <PromptDialog
-          show={showCreateProfilePrompt}
-          title={t('profiles.enter-character-name')}
-          onSubmit={this.createProfile}
-          onCancel={this.onCreateProfileCancel}
-        />
-        <PromptDialog
-          show={showRenameProfilePrompt}
-          title={t('profiles.enter-new-character-name')}
-          defaultValue={renamableProfile}
-          onSubmit={this.renameProfile}
-          onCancel={this.onRenameProfileCancel}
-        />
-        <ConfirmDialog
-          show={showRemoveProfileConfirm}
-          message={t('profiles.are-you-sure-about-character-removing2', { profileName: removableProfile })}
-          onConfirm={this.removeProfile}
-          onCancel={this.onRemoveProfileCancel}
-        />
       </div>
     );
   }

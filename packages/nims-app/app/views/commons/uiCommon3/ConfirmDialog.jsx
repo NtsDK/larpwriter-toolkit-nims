@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 export function ConfirmDialog(props) {
   const {
-    message, onConfirm, onCancel, show, title
+    message, onConfirm, onCancel, show, title, data
   } = props;
   if (!show) {
     return null;
@@ -15,7 +15,10 @@ export function ConfirmDialog(props) {
 
   const callback = (val) => {
     if (val) {
-      if (onConfirm) onConfirm();
+      if (onConfirm) {
+        onConfirm(data);
+        onCancel();
+      }
     } else if (onCancel) onCancel();
   };
 
