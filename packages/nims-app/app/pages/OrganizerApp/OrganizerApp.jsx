@@ -31,6 +31,7 @@ import { StatisticDiagrams } from '../../views/overview/StatisticDiagrams/index'
 import { ProfileDiagrams } from '../../views/overview/ProfileDiagrams/index';
 
 import { ProfileEditor } from '../../views/profiles2/ProfileEditor/index';
+import { ProfileConstructor } from '../../views/profiles2/ProfileConstructor/index';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -171,6 +172,7 @@ export class OrganizerApp extends Component {
                   <ViewWrapper view={viewCache.get('characterEditor')} />
                 </Route>
                 <Route path="/characters/characterConfigurer">
+                  <ProfileConstructor />
                   <ViewWrapper view={viewCache.get('characterConfigurer')} />
                 </Route>
                 <Route path="/characters/profileBinding">
