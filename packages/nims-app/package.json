@@ -73,6 +73,7 @@
     "react-router-dom": "^5.2.0",
     "recharts": "^1.8.5",
     "select2": "^4.0.13",
+    "shortid": "^2.2.15",
     "vex-dialog": "^1.1.0",
     "vex-js": "^4.1.0",
     "vis": "^4.21.0"

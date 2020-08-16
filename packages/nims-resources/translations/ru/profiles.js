@@ -12,6 +12,7 @@ module.exports = {
   'rename-profile-item': 'Переименовать поле досье',
   'remove-profile-item': 'Удалить поле досье',
   'move-profile-item': 'Переместить поле досье',
+  'change-profile-item-type': 'Изменить тип поля досье',
 
   profile: 'Досье',
   'character-profile': 'Досье персонажа',

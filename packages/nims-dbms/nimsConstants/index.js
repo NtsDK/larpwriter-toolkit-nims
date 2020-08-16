@@ -1,3 +1,5 @@
+const R = require('ramda');
+
 exports.profileFieldTypes = {
   text: {
     name: 'text',
@@ -24,6 +26,8 @@ exports.profileFieldTypes = {
     value: ''
   }
 };
+
+exports.profileFieldTypesNames = R.keys(exports.profileFieldTypes);
 
 exports.relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'];
 

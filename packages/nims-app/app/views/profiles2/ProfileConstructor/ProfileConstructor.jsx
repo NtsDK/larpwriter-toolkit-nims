@@ -1,20 +1,26 @@
 import React, { Component } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 
+import Button from 'react-bootstrap/es/Button';
+import FormGroup from 'react-bootstrap/es/FormGroup';
+import FormControl from 'react-bootstrap/es/FormControl';
+import ControlLabel from 'react-bootstrap/es/ControlLabel';
+import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { ProfileConstructorRow } from './ProfileConstructorRow';
+import { CreateProfileItemDialog } from './CreateProfileItemDialog';
+import { FormDialog } from '../../commons/uiCommon3/FormDialog.jsx';
+import { ModalTrigger } from '../../commons/uiCommon3/ModalTrigger.jsx';
 import './ProfileConstructor.css';
 
 export class ProfileConstructor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      profileStructure: null
+      profileStructure: null,
     };
-    // this.refresh = this.refresh.bind(this);
+    this.createProfileItem = this.createProfileItem.bind(this);
+    this.refresh = this.refresh.bind(this);
   }
-  // state = {
-  //   profileStructure: null
-  // };
 
   componentDidMount() {
     this.refresh();
@@ -34,12 +40,15 @@ export class ProfileConstructor extends Component {
     }).catch(UI.handleError);
   }
 
+  createProfileItem() {
+    return Promise.resolve();
+  }
+
   render() {
     const { profileStructure } = this.state;
     if (!profileStructure) {
       return null;
     }
-    // if()
 
     const { dbms, t } = this.props;
 
@@ -49,14 +58,24 @@ export class ProfileConstructor extends Component {
           <div className="panel-body profile-panel">
             <div className="entity-management">
               <div>
-                <button
-                  type="button"
-                  className="btn btn-default btn-reduced fa-icon create adminOnly"
-                  title={t('profiles.create-profile-item')}
-                />
+                <ModalTrigger
+                  modal={(
+                    <CreateProfileItemDialog profileStructure={profileStructure} onCreate={this.refresh} />
+                  )}
+                >
+                  <Button
+                    className="fa-icon create adminOnly icon-padding"
+                  >
+                    {t('profiles.create-profile-item')}
+                  </Button>
+                </ModalTrigger>
               </div>
             </div>
-            <div className="alert alert-info">{t('advices.empty-character-profile-structure')}</div>
+            {/* profileStructure.length === 0 */}
+            <InlineNotification type="info" showIf={profileStructure.length === 0}>
+              {t('advices.empty-character-profile-structure')}
+            </InlineNotification>
+            {/* <div className="alert alert-info">{t('advices.empty-character-profile-structure')}</div> */}
             <table className="table table-bordered">
               <thead>
                 <tr>
