@@ -100,7 +100,8 @@ export class TextSearch extends Component {
   }
 
   findTexts(params) {
-    DBMS.getTexts(params).then((texts) => {
+    const { dbms } = this.props;
+    dbms.getTexts(params).then((texts) => {
       console.log(texts);
       texts.forEach((textsInfo) => textsInfo.result.sort(CU.charOrdAFactory(R.prop('name'))));
       this.setState({

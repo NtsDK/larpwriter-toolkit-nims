@@ -55,8 +55,9 @@ export class Relations extends Component {
   }
 
   refresh() {
+    const { dbms } = this.props;
     Promise.all([
-      DBMS.getProfileStructure({ type: 'character' }),
+      dbms.getProfileStructure({ type: 'character' }),
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
     ]).then((results) => {
       const [characterProfileStructure, characterNames] = results;

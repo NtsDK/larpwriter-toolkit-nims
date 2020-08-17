@@ -213,6 +213,7 @@ async function onDatabaseLoad() {
       checkConsistency={checkConsistency}
       showDiffExample={showDiffExample}
       showDbmsConsistencyState={showDbmsConsistencyState}
+      dbms={DBMS}
       onLoadBaseClick={(evt) => {
         FileUtils.readSingleFile(evt)
           .then((database) => DBMS.setDatabase({ database }))

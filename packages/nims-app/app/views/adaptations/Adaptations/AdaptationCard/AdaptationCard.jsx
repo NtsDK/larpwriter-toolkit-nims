@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UI, U, L10n } from 'nims-app-core';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { ToggleButton } from '../../../commons/uiCommon3';
 import './AdaptationCard.css';
 
@@ -10,12 +11,13 @@ export function AdaptationCard(props) {
     showFinishedButton, showTimeInput, showTextInput, cardTitle
   } = props;
   const { t } = useTranslation();
+  const dbms = useContext(DbmsContext);
 
   const [isFinished, setIsFinished] = useState(event.characters[characterName].ready);
 
   function onChangePersonalTime(e) {
     const time = e.target.value;
-    DBMS.setEventAdaptationProperty({
+    dbms.setEventAdaptationProperty({
       storyName,
       eventIndex: event.index,
       characterName,
@@ -27,7 +29,7 @@ export function AdaptationCard(props) {
   function onChangeAdaptationText(e) {
     // const dataKey = JSON.parse(event.target.dataKey);
     const text = e.target.value;
-    DBMS.setEventAdaptationProperty({
+    dbms.setEventAdaptationProperty({
       storyName,
       eventIndex: event.index,
       characterName,
@@ -40,7 +42,7 @@ export function AdaptationCard(props) {
     const { checked } = e.target;
     setIsFinished(checked);
 
-    DBMS.setEventAdaptationProperty({
+    dbms.setEventAdaptationProperty({
       storyName,
       eventIndex: event.index,
       characterName,

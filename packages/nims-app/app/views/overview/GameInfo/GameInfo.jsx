@@ -35,41 +35,45 @@ export class GameInfo extends Component {
   }
 
   updateName(event) {
+    const { dbms } = this.props;
     this.setState({
       name: event.target.value
     });
-    DBMS.setMetaInfoString({ name: 'name', value: event.target.value }).catch(UI.handleError);
+    dbms.setMetaInfoString({ name: 'name', value: event.target.value }).catch(UI.handleError);
   }
 
   updateTime({ dateStr }) {
     // this.setState({
     //   name: event.target.value
     // });
+    const { dbms } = this.props;
     this.setState({
       date: dateStr
     });
-    DBMS.setMetaInfoDate({ name: 'date', value: dateStr }).catch(UI.handleError);
+    dbms.setMetaInfoDate({ name: 'date', value: dateStr }).catch(UI.handleError);
   }
 
   updatePreGameDate({ dateStr }) {
+    const { dbms } = this.props;
     this.setState({
       preGameDate: dateStr
     });
-    DBMS.setMetaInfoDate({ name: 'preGameDate', value: dateStr }).catch(UI.handleError);
+    dbms.setMetaInfoDate({ name: 'preGameDate', value: dateStr }).catch(UI.handleError);
   }
 
   updateDescr(event) {
+    const { dbms } = this.props;
     this.setState({
       description: event.target.value
     });
-    DBMS.setMetaInfoString({ name: 'description', value: event.target.value }).catch(UI.handleError);
+    dbms.setMetaInfoString({ name: 'description', value: event.target.value }).catch(UI.handleError);
   }
 
   refresh() {
-    // const { dbms } = this.props;
+    const { dbms } = this.props;
     Promise.all([
-      DBMS.getMetaInfo(),
-      DBMS.getStatisticsLevel1()
+      dbms.getMetaInfo(),
+      dbms.getStatisticsLevel1()
     ]).then((results) => {
       const [metaInfo, statistics] = results;
       this.setState({

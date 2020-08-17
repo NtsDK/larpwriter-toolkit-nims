@@ -1,9 +1,12 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, {
+  Component, useEffect, useState, useContext
+} from 'react';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import { useTranslation } from 'react-i18next';
 import { UI, U, L10n } from 'nims-app-core';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { InlineNotification } from '../../../commons/uiCommon3/InlineNotification.jsx';
 import { PanelCore } from '../../../commons/uiCommon3/PanelCore.jsx';
 import './RelationReport.css';
@@ -11,10 +14,11 @@ import './RelationReport.css';
 export function RelationReport(props) {
   const { id } = props;
   const { t } = useTranslation();
+  const dbms = useContext(DbmsContext);
 
   const [relationsSummary, setRelationsSummary] = useState(null);
   useEffect(() => {
-    DBMS.getRelationsSummary({ characterName: id }).then((relationsSummary) => {
+    dbms.getRelationsSummary({ characterName: id }).then((relationsSummary) => {
       setRelationsSummary(relationsSummary);
     }).catch(UI.handleError);
   }, [id]);

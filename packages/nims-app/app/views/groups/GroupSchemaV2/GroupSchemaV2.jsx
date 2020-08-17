@@ -26,7 +26,8 @@ export class GroupSchemaV2 extends Component {
   }
 
   refresh() {
-    DBMS.getGroupSchemas().then((schemas) => {
+    const { dbms } = this.props;
+    dbms.getGroupSchemas().then((schemas) => {
       U.clearEl(this.theorySvg.current);
       drawSchema(schemas.theory, this.theorySvg.current);
       U.clearEl(this.practiceSvg.current);

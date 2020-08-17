@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Constants from 'nims-dbms/nimsConstants';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { ConfirmDialog } from '../../commons/uiCommon3/ConfirmDialog.jsx';
 
 export function RemoveProfileItemDialog(props) {
@@ -11,9 +12,10 @@ export function RemoveProfileItemDialog(props) {
   } = props;
 
   const { t } = useTranslation();
+  const dbms = useContext(DbmsContext);
 
   async function onSubmit() {
-    return DBMS.removeProfileItem({
+    return dbms.removeProfileItem({
       type: 'character', index, profileItemName
     }).then(onRemove).catch((err) => UI.handleErrorMsg(err));
   }

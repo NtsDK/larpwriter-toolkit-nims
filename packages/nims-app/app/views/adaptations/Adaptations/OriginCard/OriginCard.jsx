@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import { useTranslation } from 'react-i18next';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 import './OriginCard.css';
 import { DateTimePicker } from '../../../commons/uiCommon3';
 
@@ -10,10 +11,11 @@ export function OriginCard(props) {
     showTimeInput, showTextInput, showLockButton
   } = props;
   const { t } = useTranslation();
+  const dbms = useContext(DbmsContext);
 
   function onChangeOriginText(e) {
     const text = e.target.value;
-    DBMS.setEventOriginProperty({
+    dbms.setEventOriginProperty({
       storyName,
       index: event.index,
       property: 'text',
@@ -22,7 +24,7 @@ export function OriginCard(props) {
   }
 
   function onChangeDateTimeCreator({ dateStr }) {
-    DBMS.setEventOriginProperty({
+    dbms.setEventOriginProperty({
       storyName,
       index: event.index,
       property: 'time',

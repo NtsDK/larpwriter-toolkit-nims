@@ -75,9 +75,10 @@ export class TimelineCore extends Component {
   }
 
   refresh() {
+    const { dbms } = this.props;
     Promise.all([
-      DBMS.getMetaInfo(),
-      DBMS.getEventsTimeInfo(),
+      dbms.getMetaInfo(),
+      dbms.getEventsTimeInfo(),
       PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
     ]).then((results) => {
