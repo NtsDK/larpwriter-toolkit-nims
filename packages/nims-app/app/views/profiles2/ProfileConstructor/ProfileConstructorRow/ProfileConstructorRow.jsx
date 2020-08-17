@@ -5,6 +5,9 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
+import { RenameProfileItemDialog } from '../RenameProfileItemDialog.jsx';
+import { RemoveProfileItemDialog } from '../RemoveProfileItemDialog.jsx';
+import { ModalTrigger } from '../../../commons/uiCommon3/ModalTrigger.jsx';
 import './ProfileConstructorRow.css';
 
 export class ProfileConstructorRow extends Component {
@@ -26,7 +29,9 @@ export class ProfileConstructorRow extends Component {
   render() {
     // const { something } = this.state;
 
-    const { profileStructureItem, i, t } = this.props;
+    const {
+      profileStructureItem, i, t, refresh
+    } = this.props;
 
     const selectData = R.keys(Constants.profileFieldTypes).map((type) => ({
       value: type,
@@ -99,41 +104,40 @@ export class ProfileConstructorRow extends Component {
           <Dropdown pullRight>
             <Dropdown.Toggle noCaret className="btn btn-default fa-icon kebab" />
             <Dropdown.Menu>
-
-              {/* <ModalTrigger
-                modal={(
-                  <PromptDialog
-                    title={t('profiles.enter-new-character-name')}
-                    defaultValue={primaryName}
-                    onSubmit={this.renameProfile}
-                  />
-                )}
-              > */}
               <MenuItem>
                 {t('profiles.move-profile-item')}
               </MenuItem>
-              {/* </ModalTrigger> */}
-              <MenuItem>
-                {t('profiles.rename-profile-item')}
-              </MenuItem>
+
+              <ModalTrigger
+                modal={(
+                  <RenameProfileItemDialog
+                    profileItemName={profileStructureItem.name}
+                    onRename={refresh}
+                  />
+                )}
+              >
+                <MenuItem>
+                  {t('profiles.rename-profile-item')}
+                </MenuItem>
+              </ModalTrigger>
               <MenuItem>
                 {t('profiles.change-profile-item-type')}
               </MenuItem>
               <MenuItem divider />
 
-              {/* <ModalTrigger
+              <ModalTrigger
                 modal={(
-                  <ConfirmDialog
-                    message={t('profiles.are-you-sure-about-character-removing2', { profileName: primaryName })}
-                    onConfirm={this.removeProfile}
-                    data={{ removableProfile: primaryName }}
+                  <RemoveProfileItemDialog
+                    profileItemName={profileStructureItem.name}
+                    index={i}
+                    onRemove={refresh}
                   />
                 )}
-              > */}
-              <MenuItem>
-                {t('profiles.remove-profile-item')}
-              </MenuItem>
-              {/* </ModalTrigger> */}
+              >
+                <MenuItem>
+                  {t('profiles.remove-profile-item')}
+                </MenuItem>
+              </ModalTrigger>
             </Dropdown.Menu>
           </Dropdown>
 

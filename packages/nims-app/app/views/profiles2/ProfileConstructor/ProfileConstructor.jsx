@@ -7,8 +7,7 @@ import FormControl from 'react-bootstrap/es/FormControl';
 import ControlLabel from 'react-bootstrap/es/ControlLabel';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { ProfileConstructorRow } from './ProfileConstructorRow';
-import { CreateProfileItemDialog } from './CreateProfileItemDialog';
-import { FormDialog } from '../../commons/uiCommon3/FormDialog.jsx';
+import { CreateProfileItemDialog } from './CreateProfileItemDialog.jsx';
 import { ModalTrigger } from '../../commons/uiCommon3/ModalTrigger.jsx';
 import './ProfileConstructor.css';
 
@@ -90,7 +89,7 @@ export class ProfileConstructor extends Component {
               <tbody className="profile-config-container">
                 {
                   profileStructure.map((profileStructureItem, i) => (
-                    <ProfileConstructorRow profileStructureItem={profileStructureItem} i={i} />
+                    <ProfileConstructorRow profileStructureItem={profileStructureItem} i={i} refresh={this.refresh} />
                   ))
                 }
               </tbody>

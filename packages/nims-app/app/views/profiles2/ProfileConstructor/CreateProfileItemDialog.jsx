@@ -6,9 +6,7 @@ import ControlLabel from 'react-bootstrap/es/ControlLabel';
 import * as Constants from 'nims-dbms/nimsConstants';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
-import { FormDialog } from '../../../commons/uiCommon3/FormDialog.jsx';
-
-import './CreateProfileItemDialog.css';
+import { FormDialog } from '../../commons/uiCommon3/FormDialog.jsx';
 
 export function CreateProfileItemDialog(props) {
   const { profileStructure, onCreate, ...elementProps } = props;
@@ -26,6 +24,7 @@ export function CreateProfileItemDialog(props) {
     <FormDialog
       formId="createProfileItem"
       title={t('profiles.create-profile-item')}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...elementProps}
       onSubmit={onSubmit}
     >
