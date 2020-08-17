@@ -44,13 +44,13 @@ export class GroupSchemaV2 extends Component {
             <label>{t('groups.theoretical-group-schema')}</label>
             <div className="" style={{ display: 'flex', justifyContent: 'center' }}>
               <div className="flex-0-0-auto">
-                <svg ref={this.theorySvg} className="theory" width="960" height="450" />
+                <svg ref={this.theorySvg} className="svg-hierarchy-schema theory" width="960" height="450" />
               </div>
             </div>
             <label>{t('groups.practical-group-schema')}</label>
             <div className="" style={{ display: 'flex', justifyContent: 'center' }}>
               <div className="flex-0-0-auto">
-                <svg ref={this.practiceSvg} className="practice" width="960" height="450" />
+                <svg ref={this.practiceSvg} className="svg-hierarchy-schema practice" width="960" height="450" />
               </div>
             </div>
           </div>

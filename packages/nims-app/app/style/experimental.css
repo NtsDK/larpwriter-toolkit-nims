@@ -47,40 +47,40 @@ select:hover
 
 
 /* This sets the color for "TK" nodes to a light blue green. */
-/* g.type-TK > rect {
+.svg-hierarchy-schema g.type-TK > rect {
   fill: #00ffd0;
 }
 
-text {
+.svg-hierarchy-schema text {
   font-weight: 300;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
   font-size: 14px;
 }
 
-.node {
+.svg-hierarchy-schema .node {
   stroke-width: 1px;
 }
 
-.node.valid {
+.svg-hierarchy-schema .node.valid {
   stroke: #255C03;
   fill: #399605;
 }
 
-.node.invalid {
+.svg-hierarchy-schema .node.invalid {
   stroke: #990000;
   fill: #EE0000;
 }
 
-g > text {
+.svg-hierarchy-schema g > text {
   fill: #ffffff;
 }
 
-.link {
+.svg-hierarchy-schema .link {
   stroke: #999;
   stroke-opacity: .6;
   fill: none;
   stroke-width: 2px;
-} */
+}
 
 /* body {
   color: green;

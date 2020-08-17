@@ -11,7 +11,7 @@ export const ModuleSchemaDialog = function () {
           </div>
           <div className="modal-body" style={{ display: 'flex', justifyContent: 'center' }}>
             <div className="image-place flex-0-0-auto">
-              <svg id="svg-canvas" width="960" height="450" />
+              <svg className="svg-hierarchy-schema" id="svg-canvas" width="960" height="450" />
             </div>
           </div>
           <div className="modal-footer">
