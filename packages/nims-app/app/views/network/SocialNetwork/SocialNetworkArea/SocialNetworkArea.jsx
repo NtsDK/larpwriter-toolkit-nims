@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import vis from 'vis';
 import 'vis/dist/vis.min.css';
-import PermissionInformer from 'permissionInformer';
 import ReactDOM from 'react-dom';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
