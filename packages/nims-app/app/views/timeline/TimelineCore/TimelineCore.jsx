@@ -4,7 +4,6 @@ import { UI, U, L10n } from 'nims-app-core';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
 import PermissionInformer from 'permissionInformer';
-import { classNames } from 'classnames';
 import {
   HashRouter as Router,
   Switch,
