@@ -46,10 +46,10 @@ export class AdaptationsContent extends Component {
   }
 
   refresh() {
-    const { storyName } = this.props;
+    const { storyName, dbms } = this.props;
     Promise.all([
-      DBMS.getMetaInfo(),
-      DBMS.getStory({ storyName }),
+      dbms.getMetaInfo(),
+      dbms.getStory({ storyName }),
       PermissionInformer.isEntityEditable({ type: 'story', name: storyName }),
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
     ]).then((results) => {

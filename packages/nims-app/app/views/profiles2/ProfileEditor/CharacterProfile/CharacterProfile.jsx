@@ -32,10 +32,10 @@ export class CharacterProfile extends Component {
   }
 
   refresh() {
-    const { id } = this.props;
+    const { id, dbms } = this.props;
     Promise.all([
-      DBMS.getProfileStructure({ type: 'character' }),
-      DBMS.getProfile({ type: 'character', name: id })
+      dbms.getProfileStructure({ type: 'character' }),
+      dbms.getProfile({ type: 'character', name: id })
     ]).then((results) => {
       const [profileModel, profile] = results;
       this.setState({
@@ -178,7 +178,8 @@ export class CharacterProfile extends Component {
       // UI.handleError(new Errors.InternalError('errors-unexpected-switch-argument', [this.type]));
       return;
     }
-    DBMS.updateProfileField({
+    const { dbms } = this.props;
+    dbms.updateProfileField({
       type: 'character',
       characterName: profile.name,
       fieldName,

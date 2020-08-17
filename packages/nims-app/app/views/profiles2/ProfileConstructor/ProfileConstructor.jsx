@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 
 import Button from 'react-bootstrap/es/Button';
 import FormGroup from 'react-bootstrap/es/FormGroup';
@@ -30,8 +31,8 @@ export class ProfileConstructor extends Component {
   // }
 
   refresh() {
-    // const { dbms } = this.props;
-    Promise.all([DBMS.getProfileStructure({ type: 'character' })]).then((results) => {
+    const { dbms } = this.props;
+    Promise.all([dbms.getProfileStructure({ type: 'character' })]).then((results) => {
       const [profileStructure] = results;
       this.setState({
         profileStructure

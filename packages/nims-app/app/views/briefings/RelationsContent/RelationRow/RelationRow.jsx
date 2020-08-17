@@ -48,12 +48,12 @@ export class RelationRow extends Component {
 
   onDeleteConfirm() {
     const {
-      fromCharacter, toCharacter, externalRefresh
+      fromCharacter, toCharacter, externalRefresh, dbms
     } = this.props;
     this.setState({
       showDeleteRequest: false
     });
-    DBMS.removeCharacterRelation({ fromCharacter, toCharacter }).then(externalRefresh).catch(UI.handleError);
+    dbms.removeCharacterRelation({ fromCharacter, toCharacter }).then(externalRefresh).catch(UI.handleError);
   }
 
   onDeleteCancel() {
@@ -70,10 +70,10 @@ export class RelationRow extends Component {
 
   setCharacterRelationText(e) {
     const {
-      fromCharacter, toCharacter
+      fromCharacter, toCharacter, dbms
     } = this.props;
     const { character } = e.target.dataset;
-    DBMS.setCharacterRelationText({
+    dbms.setCharacterRelationText({
       fromCharacter,
       toCharacter,
       character,
@@ -83,9 +83,9 @@ export class RelationRow extends Component {
 
   setOriginRelationText(e) {
     const {
-      fromCharacter, toCharacter
+      fromCharacter, toCharacter, dbms
     } = this.props;
-    DBMS.setOriginRelationText({
+    dbms.setOriginRelationText({
       fromCharacter,
       toCharacter,
       text: e.target.value
@@ -111,14 +111,14 @@ export class RelationRow extends Component {
 
   onFinishChange(e) {
     const {
-      fromCharacter, toCharacter
+      fromCharacter, toCharacter, dbms
     } = this.props;
     const { checked } = e.target;
     const { prop, character } = e.target.dataset;
     this.setState({
       [prop]: checked
     });
-    DBMS.setRelationReadyStatus({
+    dbms.setRelationReadyStatus({
       fromCharacter,
       toCharacter,
       character,
@@ -139,11 +139,11 @@ export class RelationRow extends Component {
 
   onEssenceChange(e) {
     const {
-      fromCharacter, toCharacter
+      fromCharacter, toCharacter, dbms
     } = this.props;
     const { checked } = e.target;
     const { attrName } = e.target.dataset;
-    DBMS.setRelationEssenceStatus({
+    dbms.setRelationEssenceStatus({
       fromCharacter,
       toCharacter,
       essence: attrName,

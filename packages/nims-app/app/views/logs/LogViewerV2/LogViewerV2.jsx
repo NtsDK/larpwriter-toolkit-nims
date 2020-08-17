@@ -69,7 +69,8 @@ export class LogViewerV2 extends Component {
 
   getData(pageNumber) {
     const { filters } = this.state;
-    DBMS.getLog({ pageNumber, filter: filters }).then(this.dataRecieved).catch(UI.handleError);
+    const { dbms } = this.props;
+    dbms.getLog({ pageNumber, filter: filters }).then(this.dataRecieved).catch(UI.handleError);
   }
 
   onFilterChange(e) {

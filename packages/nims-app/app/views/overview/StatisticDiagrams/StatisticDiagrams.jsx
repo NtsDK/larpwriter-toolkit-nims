@@ -28,8 +28,8 @@ export class StatisticDiagrams extends Component {
   }
 
   refresh() {
-    // const { dbms } = this.props;
-    Promise.all([DBMS.getStatisticsLevel2()]).then((results) => {
+    const { dbms } = this.props;
+    Promise.all([dbms.getStatisticsLevel2()]).then((results) => {
       const [statisticData] = results;
       this.setState({
         statisticData

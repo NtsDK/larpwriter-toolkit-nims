@@ -38,9 +38,9 @@ export class ProfileNav extends Component {
   }
 
   async createProfile({ value: profileName }) {
-    const { history, refresh } = this.props;
+    const { history, refresh, dbms } = this.props;
     try {
-      await DBMS.createProfile({ type: 'character', characterName: profileName });
+      await dbms.createProfile({ type: 'character', characterName: profileName });
       try {
         await PermissionInformer.refresh();
         await refresh();
@@ -56,10 +56,12 @@ export class ProfileNav extends Component {
   }
 
   async renameProfile({ value: profileName }, { defaultValue: renamableProfile }) {
-    const { history, match, refresh } = this.props;
+    const {
+      history, match, refresh, dbms
+    } = this.props;
     const { id: currentProfileName } = match.params;
     try {
-      await DBMS.renameProfile({ type: 'character', fromName: renamableProfile, toName: profileName });
+      await dbms.renameProfile({ type: 'character', fromName: renamableProfile, toName: profileName });
       try {
         await PermissionInformer.refresh();
         await refresh();
@@ -78,11 +80,11 @@ export class ProfileNav extends Component {
 
   async removeProfile({ removableProfile }) {
     const {
-      history, match, refresh, primaryNames
+      history, match, refresh, primaryNames, dbms
     } = this.props;
     const { id: currentProfileName } = match.params;
     try {
-      await DBMS.removeProfile({ type: 'character', characterName: removableProfile });
+      await dbms.removeProfile({ type: 'character', characterName: removableProfile });
       const index = R.findIndex(R.equals(removableProfile), primaryNames);
       let nextProfile = null;
       if (index === -1 || primaryNames.length === 1) {

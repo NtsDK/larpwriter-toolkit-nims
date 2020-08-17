@@ -23,6 +23,7 @@
     "nims-dbms-core": "0.7.2",
     "nims-resources": "0.7.2",
     "ramda": "^0.27.0",
+    "react": "^16.13.1",
     "vex-dialog": "^1.1.0",
     "vex-js": "^4.1.0"
   },

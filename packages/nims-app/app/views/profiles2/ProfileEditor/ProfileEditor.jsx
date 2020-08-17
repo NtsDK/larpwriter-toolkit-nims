@@ -38,11 +38,11 @@ export class ProfileEditor extends Component {
   }
 
   refresh() {
-    // const { dbms } = this.props;
+    const { dbms } = this.props;
     return Promise.all([
-      DBMS.getEntityNamesArray({ type: 'character' }),
-      DBMS.getEntityNamesArray({ type: 'player' }),
-      DBMS.getProfileBindings(),
+      dbms.getEntityNamesArray({ type: 'character' }),
+      dbms.getEntityNamesArray({ type: 'player' }),
+      dbms.getProfileBindings(),
     ]).then((results) => {
       const [primaryNames, secondaryNames, profileBinding] = results;
       primaryNames.sort(CU.charOrdA);

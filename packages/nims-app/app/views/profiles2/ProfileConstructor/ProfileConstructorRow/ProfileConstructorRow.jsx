@@ -48,7 +48,7 @@ export class ProfileConstructorRow extends Component {
     const item2Option = (selectedValue) => (item) => (
       <option
         value={item.value}
-        selected={selectedValue === item.value}
+        // selected={selectedValue === item.value}
       >
         {item.displayName}
       </option>
@@ -71,7 +71,7 @@ export class ProfileConstructorRow extends Component {
         </td>
         <td className="item-default-value-container" />
         <td>
-          <select className="player-access form-control">
+          <select className="player-access form-control" value={profileStructureItem.playerAccess}>
             {
               playerAccessData.map(item2Option(profileStructureItem.playerAccess))
             }

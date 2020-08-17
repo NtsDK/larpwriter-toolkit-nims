@@ -69,16 +69,17 @@ export class SocialNetwork extends Component {
   }
 
   refresh() {
+    const { dbms } = this.props;
     Promise.all([
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }), // subset selector
       PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }), // subset selector
-      DBMS.getAllProfiles({ type: 'character' }), // node coloring
-      DBMS.getAllStories(), // contains most part of SN data
-      DBMS.getProfileStructure({ type: 'character' }), // node coloring
-      DBMS.getProfileBindings(), // node coloring
-      DBMS.getGroupCharacterSets(), // node coloring
-      DBMS.getMetaInfo(), // timelined network
-      DBMS.getRelations() // relations
+      dbms.getAllProfiles({ type: 'character' }), // node coloring
+      dbms.getAllStories(), // contains most part of SN data
+      dbms.getProfileStructure({ type: 'character' }), // node coloring
+      dbms.getProfileBindings(), // node coloring
+      dbms.getGroupCharacterSets(), // node coloring
+      dbms.getMetaInfo(), // timelined network
+      dbms.getRelations() // relations
     ]).then((results) => {
       const [characterNames,
         storyNames,

@@ -44,10 +44,11 @@ export class Adaptations extends Component {
   }
 
   refresh() {
+    const { dbms } = this.props;
     const { showOnlyUnfinishedStories } = this.state;
     Promise.all([
       PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
-      DBMS.getFilteredStoryNames({ showOnlyUnfinishedStories })
+      dbms.getFilteredStoryNames({ showOnlyUnfinishedStories })
     ]).then((results) => {
       const [allStoryNames, storyNames] = results;
 

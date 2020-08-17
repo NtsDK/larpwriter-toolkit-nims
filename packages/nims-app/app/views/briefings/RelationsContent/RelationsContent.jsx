@@ -58,15 +58,15 @@ export class RelationsContent extends Component {
   }
 
   refresh() {
-    const { characterName, characterProfileStructure } = this.props;
+    const { characterName, characterProfileStructure, dbms } = this.props;
     if (characterName === null) {
       return;
     }
 
     Promise.all([
-      DBMS.getAllProfiles({ type: 'character' }),
-      DBMS.getRelationsSummary({ characterName }),
-      DBMS.getExtendedProfileBindings(),
+      dbms.getAllProfiles({ type: 'character' }),
+      dbms.getRelationsSummary({ characterName }),
+      dbms.getExtendedProfileBindings(),
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
     ]).then((results) => {
       const [profiles, relationsSummary, profileBindings, characterNamesArray] = results;
@@ -100,7 +100,7 @@ export class RelationsContent extends Component {
 
   onAddCharacterRelation(e) {
     const {
-      characterName
+      characterName, dbms
     } = this.props;
     const { selectProp } = e.target.dataset;
     const fromCharacter = characterName;
@@ -108,7 +108,7 @@ export class RelationsContent extends Component {
     if (toCharacter === null) {
       return;
     }
-    DBMS.createCharacterRelation({ fromCharacter, toCharacter }).then(() => {
+    dbms.createCharacterRelation({ fromCharacter, toCharacter }).then(() => {
       this.refresh();
     }).catch(UI.handleError);
   }

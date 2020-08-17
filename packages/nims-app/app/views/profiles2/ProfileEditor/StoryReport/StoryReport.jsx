@@ -1,7 +1,10 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, {
+  Component, useEffect, useState, useContext
+} from 'react';
 import * as CU from 'nims-dbms-core/commonUtils';
 import { UI, U, L10n } from 'nims-app-core';
 import { useTranslation } from 'react-i18next';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { InlineNotification } from '../../../commons/uiCommon3/InlineNotification.jsx';
 import { PanelCore } from '../../../commons/uiCommon3/PanelCore.jsx';
 import './StoryReport.css';
@@ -26,10 +29,11 @@ const getCompletenessColor = (value, total) => {
 export function StoryReport(props) {
   const { id } = props;
   const { t } = useTranslation();
+  const dbms = useContext(DbmsContext);
 
   const [characterReport, setCharacterReport] = useState(null);
   useEffect(() => {
-    DBMS.getCharacterReport({ characterName: id }).then((characterReport) => {
+    dbms.getCharacterReport({ characterName: id }).then((characterReport) => {
       setCharacterReport(characterReport);
     }).catch(UI.handleError);
   }, [id]);

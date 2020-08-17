@@ -29,8 +29,8 @@ export class ProfileDiagrams extends Component {
   }
 
   refresh() {
-    // const { dbms } = this.props;
-    Promise.all([DBMS.getProfileStatisticsLevel2()]).then((results) => {
+    const { dbms } = this.props;
+    Promise.all([dbms.getProfileStatisticsLevel2()]).then((results) => {
       const [profileData] = results;
       console.log(profileData);
       this.setState({
