@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 export function InlineNotification(props) {
-  const { showIf, children, type } = props;
+  const { showIf = true, children, type = 'info' } = props;
   if (!showIf) {
     return null;
   }

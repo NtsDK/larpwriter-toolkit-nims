@@ -7,12 +7,19 @@ import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
 import { RenameProfileItemDialog } from '../RenameProfileItemDialog.jsx';
 import { RemoveProfileItemDialog } from '../RemoveProfileItemDialog.jsx';
+import { ChangeProfileItemTypeDialog } from '../ChangeProfileItemTypeDialog.jsx';
 import { ModalTrigger } from '../../../commons/uiCommon3/ModalTrigger.jsx';
+import { ToggleButton } from '../../../commons/uiCommon3/ToggleButton.jsx';
 import './ProfileConstructorRow.css';
 
 export class ProfileConstructorRow extends Component {
-  state = {
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+    };
+    this.changeProfileItemPlayerAccess = this.changeProfileItemPlayerAccess.bind(this);
+    this.doExportProfileItemChange = this.doExportProfileItemChange.bind(this);
+  }
 
   componentDidMount() {
     console.log('ProfileConstructorRow mounted');
@@ -24,6 +31,37 @@ export class ProfileConstructorRow extends Component {
 
   componentWillUnmount() {
     console.log('ProfileConstructorRow will unmount');
+  }
+
+  changeProfileItemPlayerAccess(event) {
+    const {
+      dbms, refresh
+    } = this.props;
+    const { value } = event.target;
+    const { profileItemName } = event.target.dataset;
+
+    dbms.changeProfileItemPlayerAccess({
+      type: 'character',
+      profileItemName,
+      playerAccessType: value
+    }).then(refresh).catch((err) => {
+      UI.processError()(err);
+    });
+  }
+
+  doExportProfileItemChange(e) {
+    const { checked } = e.target;
+    const {
+      dbms, refresh
+    } = this.props;
+    const { profileItemName } = e.target.dataset;
+    dbms.doExportProfileItemChange({
+      type: 'character',
+      profileItemName,
+      checked
+    }).then(refresh).catch((err) => {
+      UI.processError()(err);
+    });
   }
 
   render() {
@@ -45,62 +83,44 @@ export class ProfileConstructorRow extends Component {
       displayName: t(`constant.${type}`)
     }));
 
-    const item2Option = (selectedValue) => (item) => (
-      <option
-        value={item.value}
-        // selected={selectedValue === item.value}
-      >
-        {item.displayName}
-      </option>
-    );
-
-    // if (!something) {
-    //   return null;
-    // }
     return (
       <tr>
         <td><span>{i + 1}</span></td>
         <td><span>{profileStructureItem.name}</span></td>
         <td>
           <span>{t(`constant.${profileStructureItem.type}`)}</span>
-          {/* <select className="item-type form-control">
-            {
-              selectData.map(item2Option(profileStructureItem.type))
-            }
-          </select> */}
         </td>
         <td className="item-default-value-container" />
         <td>
-          <select className="player-access form-control" value={profileStructureItem.playerAccess}>
+          <select
+            className="player-access form-control"
+            value={profileStructureItem.playerAccess}
+            onChange={this.changeProfileItemPlayerAccess}
+            data-profile-item-name={profileStructureItem.name}
+          >
             {
-              playerAccessData.map(item2Option(profileStructureItem.playerAccess))
+              playerAccessData.map((item) => (
+                <option
+                  key={item.value}
+                  value={item.value}
+                >
+                  {item.displayName}
+                </option>
+              ))
             }
           </select>
         </td>
         <td>
-          <button
-            type="button"
-            className={`btn btn-default btn-reduced fa-icon print flex-0-0-auto ${profileStructureItem.doExport && 'btn-primary'}`}
+          <ToggleButton
+            type="checkbox"
+            checked={profileStructureItem.doExport}
             title={t('profiles.profile-item-do-export')}
+            onChange={this.doExportProfileItemChange}
+            className="print"
+            data={{ 'profile-item-name': profileStructureItem.name }}
           />
         </td>
-        {/* <td className="hidden"><input type="checkbox" className="show-in-role-grid  form-control" /></td> */}
         <td>
-          {/* <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon move flex-0-0-auto "
-            title={t('profiles.move-profile-item')}
-          />
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon rename rename-profile-item flex-0-0-auto "
-            title={t('profiles.rename-profile-item')}
-          />
-          <button
-            type="button"
-            className="btn btn-default btn-reduced fa-icon remove flex-0-0-auto "
-            title={t('profiles.remove-profile-item')}
-          /> */}
           <Dropdown pullRight>
             <Dropdown.Toggle noCaret className="btn btn-default fa-icon kebab" />
             <Dropdown.Menu>
@@ -120,9 +140,21 @@ export class ProfileConstructorRow extends Component {
                   {t('profiles.rename-profile-item')}
                 </MenuItem>
               </ModalTrigger>
-              <MenuItem>
-                {t('profiles.change-profile-item-type')}
-              </MenuItem>
+
+              <ModalTrigger
+                modal={(
+                  <ChangeProfileItemTypeDialog
+                    profileItemName={profileStructureItem.name}
+                    profileItemType={profileStructureItem.type}
+                    onChange={refresh}
+                  />
+                )}
+              >
+                <MenuItem>
+                  {t('profiles.change-profile-item-type')}
+                </MenuItem>
+              </ModalTrigger>
+
               <MenuItem divider />
 
               <ModalTrigger
