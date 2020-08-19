@@ -6,8 +6,10 @@ import Button from 'react-bootstrap/es/Button';
 import FormGroup from 'react-bootstrap/es/FormGroup';
 import FormControl from 'react-bootstrap/es/FormControl';
 import ControlLabel from 'react-bootstrap/es/ControlLabel';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { ProfileConstructorRow } from './ProfileConstructorRow';
+import { ProfileConstructorRow2 } from './ProfileConstructorRow2';
 import { CreateProfileItemDialog } from './CreateProfileItemDialog.jsx';
 import { ModalTrigger } from '../../commons/uiCommon3/ModalTrigger.jsx';
 import './ProfileConstructor.css';
@@ -20,6 +22,7 @@ export class ProfileConstructor extends Component {
     };
     this.createProfileItem = this.createProfileItem.bind(this);
     this.refresh = this.refresh.bind(this);
+    this.onDragEnd = this.onDragEnd.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +45,24 @@ export class ProfileConstructor extends Component {
 
   createProfileItem() {
     return Promise.resolve();
+  }
+
+  onDragEnd(result) {
+    const { dbms } = this.props;
+    const { destination, source, draggableId } = result;
+    if (!destination) {
+      return;
+    }
+    if (destination.droppableId === source.droppableId
+      && destination.index === source.index) {
+      return;
+    }
+
+    dbms.moveProfileItem({
+      type: 'character',
+      index: source.index,
+      newIndex: destination.index
+    }).then(this.refresh).catch(UI.handleError);
   }
 
   render() {
@@ -71,11 +92,25 @@ export class ProfileConstructor extends Component {
                 </ModalTrigger>
               </div>
             </div>
-            {/* profileStructure.length === 0 */}
             <InlineNotification type="info" showIf={profileStructure.length === 0}>
               {t('advices.empty-character-profile-structure')}
             </InlineNotification>
-            {/* <div className="alert alert-info">{t('advices.empty-character-profile-structure')}</div> */}
+            <DragDropContext onDragEnd={this.onDragEnd}>
+              <Droppable droppableId="profileItems">
+                {
+                  (provided) => (
+                    <div className="tw-m-auto tw-max-w-screen-md" ref={provided.innerRef} {...provided.droppableProps}>
+                      {
+                        profileStructure.map((profileStructureItem, i) => (
+                          <ProfileConstructorRow2 key={profileStructureItem.name} profileStructureItem={profileStructureItem} i={i} refresh={this.refresh} />
+                        ))
+                      }
+                      {provided.placeholder}
+                    </div>
+                  )
+                }
+              </Droppable>
+            </DragDropContext>
             <table className="table table-bordered">
               <thead>
                 <tr>
