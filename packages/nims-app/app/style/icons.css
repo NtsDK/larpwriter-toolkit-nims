@@ -80,6 +80,14 @@
 .finished:before {
   content: "\f11e";
 }
+.checked:before {
+  font-weight: 500;
+  content: "\f0c8";
+}
+.unchecked:before {
+  font-weight: 500;
+  content: "\f14a";
+}
 .empty:before {
   content: "\f15b";
   font-weight: 500;

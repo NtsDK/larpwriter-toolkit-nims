@@ -8,13 +8,19 @@ import { DbmsContext } from 'nims-app-core/dbmsContext';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
 import { Draggable } from 'react-beautiful-dnd';
+import Checkbox from 'react-bootstrap/es/Checkbox';
+import FormControl from 'react-bootstrap/es/FormControl';
+import SplitButton from 'react-bootstrap/es/SplitButton';
+import DropdownButton from 'react-bootstrap/es/DropdownButton';
 import { RenameProfileItemDialog } from '../RenameProfileItemDialog.jsx';
 import { RemoveProfileItemDialog } from '../RemoveProfileItemDialog.jsx';
 import { ChangeProfileItemTypeDialog } from '../ChangeProfileItemTypeDialog.jsx';
+import { EnumEditor } from '../EnumEditor.jsx';
 import { ModalTrigger } from '../../../commons/uiCommon3/ModalTrigger.jsx';
 import { ToggleButton } from '../../../commons/uiCommon3/ToggleButton.jsx';
 
 import './ProfileConstructorRow2.css';
+import { clearError } from '../../../../../../nims-app-core/uiUtils';
 
 export function ProfileConstructorRow2(props) {
   const { t } = useTranslation();
@@ -44,6 +50,18 @@ export function ProfileConstructorRow2(props) {
       type: 'character',
       profileItemName,
       checked
+    }).then(refresh).catch((err) => {
+      UI.processError()(err);
+    });
+  }
+
+  function updateDefaultCheckboxValue(e) {
+    const { checked } = e.target;
+    const { profileItemName } = e.target.dataset;
+    dbms.updateDefaultValue({
+      type: 'character',
+      profileItemName,
+      value: checked
     }).then(refresh).catch((err) => {
       UI.processError()(err);
     });
@@ -125,11 +143,28 @@ export function ProfileConstructorRow2(props) {
               </Dropdown>
             </div>
             <div className="tw-mb-8">
-              <div className="tw-text-4xl tw-mb-2">{profileStructureItem.name}</div>
-              <div className="tw-text-2xl tw-text-gray-600">{t(`constant.${profileStructureItem.type}`)}</div>
+              <div className="tw-text-3xl tw-mb-2">{profileStructureItem.name}</div>
+              <div className="tw-text-xl tw-text-gray-600">{t(`constant.${profileStructureItem.type}`)}</div>
             </div>
             <div className="tw-mb-8">
-              body
+              {
+                profileStructureItem.type === 'checkbox' && (
+                  <>
+                    <span className="tw-mr-4">{t('profiles.default-value-with-colon')}</span>
+                    <FormControl
+                      type="checkbox"
+                      className="tw-inline-block tw-w-10 tw-align-middle tw-m-0 tw-shadow-none"
+                      style={{ margin: 0 }}
+                      checked={profileStructureItem.value}
+                      onChange={updateDefaultCheckboxValue}
+                      data-profile-item-name={profileStructureItem.name}
+                    />
+                  </>
+                )
+              }
+              {
+                profileStructureItem.type === 'enum' && <EnumEditor profileStructureItem={profileStructureItem} />
+              }
             </div>
             <div className="tw-text-right">
               <span className="tw-mr-16">
@@ -155,14 +190,12 @@ export function ProfileConstructorRow2(props) {
                 </span>
               </span>
 
-              {/* <span>{t('profiles.profile-item-do-export')}</span> */}
               <span>
                 <ToggleButton
                   type="switch"
                   checked={profileStructureItem.doExport}
                   title={t('profiles.profile-item-do-export')}
                   onChange={doExportProfileItemChange}
-                  // className="print"
                   data={{ 'profile-item-name': profileStructureItem.name }}
                 />
               </span>

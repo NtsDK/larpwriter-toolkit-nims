@@ -32,6 +32,7 @@ module.exports = {
   'table-profile-item-name': 'Название поля',
   'profile-item-default-value': 'Настройка значения(й)',
   'default-value': 'Значение по умолчанию',
+  'default-value-with-colon': 'Значение по умолчанию:',
   'value-list': 'Список значений',
   'add-remove-values': 'Добавить/удалить значения из выбора',
   'rename-enum-item': 'Переименовать значение из выбора',

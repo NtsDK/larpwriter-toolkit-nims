@@ -111,7 +111,7 @@ export class ProfileConstructor extends Component {
                 }
               </Droppable>
             </DragDropContext>
-            <table className="table table-bordered">
+            {/* <table className="table table-bordered">
               <thead>
                 <tr>
                   <th>№</th>
@@ -119,7 +119,6 @@ export class ProfileConstructor extends Component {
                   <th>{t('profiles.profile-item-type')}</th>
                   <th>{t('profiles.profile-item-default-value')}</th>
                   <th>{t('profiles.profile-item-player-access')}</th>
-                  {/* <th className="hidden">{t('profiles.show-in-role-grid')}</th> */}
                 </tr>
               </thead>
               <tbody className="profile-config-container">
@@ -129,7 +128,7 @@ export class ProfileConstructor extends Component {
                   ))
                 }
               </tbody>
-            </table>
+            </table> */}
           </div>
         </div>
 
