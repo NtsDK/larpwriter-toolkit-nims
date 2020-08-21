@@ -8,28 +8,19 @@ import FormControl from 'react-bootstrap/es/FormControl';
 import Button from 'react-bootstrap/es/Button';
 import HelpBlock from 'react-bootstrap/es/HelpBlock';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
+import { useTranslation } from 'react-i18next';
 
 export function EnumEditor(props) {
+  const { t } = useTranslation();
   const dbms = useContext(DbmsContext);
   const { profileStructureItem, refresh } = props;
-  // const list = profileStructureItem.value.split(',');
-  // const defaultValue = list[0];
-  // list.sort(CU.charOrdA);
   const [errorText, setErrorText] = useState(null);
   const [newEnum, setNewEnum] = useState('');
   const [list, setList] = useState(profileStructureItem.value.split(','));
+  const [renameValue, setRenameValue] = useState(null);
   // const [errorText, setErrorText] = useState('sdfsdfsdf');
 
-  // DBMS.updateDefaultValue({
-  //   type: tabType,
-  //   profileItemName: name,
-  //   value: newVals.join(',')
-  // }).then(() => {
-  //   dialog.hideDlg();
-  //   innerExports.refresh();
-  // }, (err) => UI.setError(dialog, err));
-
-  function onSubmit(e) {
+  function onAddSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const { target } = e;
@@ -38,56 +29,174 @@ export function EnumEditor(props) {
       return;
     }
     if (enumName.includes(',')) {
-      setErrorText('Запятые нельзя использовать');
       return;
     }
+    const newList = [...list, enumName];
     dbms.updateDefaultValue({
       type: 'character',
       profileItemName: profileStructureItem.name,
-      value: [...list, enumName].join(',')
+      value: newList.join(',')
     }).then(() => {
       setNewEnum('');
-      setList([...list, enumName]);
+      setList(newList);
     }).catch((err) => {
       UI.processError()(err);
     });
   }
-  function onChange(e) {
-    setNewEnum(e.target.value);
-    if (errorText !== null) {
+  function onRenameSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const { target } = e;
+    const enumName = formData.get('enumName').trim();
+    if (enumName === '' || list.includes(enumName)) {
+      return;
+    }
+    if (enumName.includes(',')) {
+      return;
+    }
+    const newList = [...list];
+    const index = newList.findIndex((el) => el === renameValue);
+    newList[index] = enumName;
+    dbms.updateDefaultValue({
+      type: 'character',
+      profileItemName: profileStructureItem.name,
+      value: newList.join(',')
+    }).then(() => {
+      setRenameValue(null);
+      setList(newList);
+    }).catch((err) => {
+      UI.processError()(err);
+    });
+  }
+  function cancelRename() {
+    setRenameValue(null);
+  }
+
+  function onAddEnumNameChange(e) {
+    const enumName = e.target.value;
+    setNewEnum(enumName);
+    if (enumName.includes(',')) {
+      setErrorText(t('profiles.error-prohibited-to-use-commas'));
+    } else {
       setErrorText(null);
     }
   }
+  function onRenameEnumNameChange(e) {
+    const enumName = e.target.value;
+    if (enumName.includes(',')) {
+      setErrorText(t('profiles.error-prohibited-to-use-commas'));
+    } else {
+      setErrorText(null);
+    }
+  }
+
+  function setDefaultValue(e) {
+    const { value } = e.target;
+    const newList = [value, ...R.without([value], list)];
+
+    dbms.updateDefaultValue({
+      type: 'character',
+      profileItemName: profileStructureItem.name,
+      value: newList.join(',')
+    }).then(() => {
+      setList(newList);
+    }).catch((err) => {
+      UI.processError()(err);
+    });
+  }
+
+  function renameEnumItem(e) {
+    const { enumItemName } = e.target.dataset;
+    setRenameValue(enumItemName);
+  }
+
+  function removeEnumItem(e) {
+    const { enumItemName } = e.target.dataset;
+    const newList = R.without([enumItemName], list);
+
+    dbms.updateDefaultValue({
+      type: 'character',
+      profileItemName: profileStructureItem.name,
+      value: newList.join(',')
+    }).then(() => {
+      setList(newList);
+    }).catch((err) => {
+      UI.processError()(err);
+    });
+  }
   return (
     <div>
-      <div className="tw-mb-6">
-        {
-          R.sort(CU.charOrdA, list).map((name) => (
-            <DropdownButton
-              bsStyle={name === list[0] ? 'primary' : 'default'}
-              title={name}
-              key={name}
-              className="tw-mr-4"
-            >
-              <MenuItem>Переименовать</MenuItem>
-              <MenuItem>Выбрать значением по умолчанию</MenuItem>
-              <MenuItem divider />
-              <MenuItem>Удалить</MenuItem>
-            </DropdownButton>
-          ))
-        }
-      </div>
-      <form onSubmit={onSubmit}>
+      <div className="tw-mb-4">
+        <span className="tw-mr-4">{t('profiles.default-value-with-colon')}</span>
         <FormControl
-          className="tw-w-64 tw-inline-block tw-mr-4"
-          name="enumName"
-          autoComplete="off"
-          onChange={onChange}
-          value={newEnum}
-        />
-        <Button type="submit">Добавить</Button>
+          componentClass="select"
+          className="tw-inline-block tw-w-auto"
+          style={{ minWidth: '15rem' }}
+          value={list[0]}
+          onChange={setDefaultValue}
+        >
+          {
+            R.sort(CU.charOrdA, list).map((value) => (
+              <option value={value} key={value}>{value}</option>
+            ))
+          }
+        </FormControl>
+      </div>
+      <div className="tw-mb-6 tw-flex tw-flex-wrap">
+        {
+          R.sort(CU.charOrdA, list).map((name) => {
+            if (name === renameValue) {
+              return (
+                <form className="tw-inline-block tw-mb-2 tw-mr-2" key={name} onSubmit={onRenameSubmit}>
+                  <FormControl
+                    className="tw-w-64 tw-inline-block"
+                    name="enumName"
+                    autoComplete="off"
+                    autoFocus
+                    defaultValue={renameValue}
+                    onBlur={cancelRename}
+                    onChange={onRenameEnumNameChange}
+                  />
+                </form>
+              );
+            }
+
+            return (
+              <DropdownButton
+                // bsStyle={name === list[0] ? 'primary' : 'default'}
+                bsStyle="default"
+                title={name}
+                key={name}
+                className="tw-mr-2 tw-mb-2"
+              >
+                <MenuItem onClick={renameEnumItem} data-enum-item-name={name}>{t('common.rename')}</MenuItem>
+                {
+                  list.length > 1
+                  && (
+                    <>
+                      <MenuItem divider />
+                      <MenuItem onClick={removeEnumItem} data-enum-item-name={name}>{t('common.remove')}</MenuItem>
+                    </>
+                  )
+                }
+              </DropdownButton>
+            );
+          })
+        }
+        <form className="tw-inline-block tw-mb-2" onSubmit={onAddSubmit}>
+          <FormControl
+            className="tw-w-64 tw-inline-block"
+            name="enumName"
+            autoComplete="off"
+            onChange={onAddEnumNameChange}
+            value={newEnum}
+            placeholder={t('profiles.add-enum-value')}
+          />
+        </form>
+      </div>
+      <div>
         {errorText && <HelpBlock>{errorText}</HelpBlock>}
-      </form>
+      </div>
     </div>
   );
 }

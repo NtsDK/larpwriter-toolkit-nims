@@ -93,10 +93,6 @@ export function ProfileConstructorRow2(props) {
               <Dropdown pullRight>
                 <Dropdown.Toggle noCaret className="btn btn-default fa-icon kebab" />
                 <Dropdown.Menu>
-                  <MenuItem>
-                    {t('profiles.move-profile-item')}
-                  </MenuItem>
-
                   <ModalTrigger
                     modal={(
                       <RenameProfileItemDialog
