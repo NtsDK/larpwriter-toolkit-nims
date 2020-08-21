@@ -16,6 +16,7 @@ import { RenameProfileItemDialog } from '../RenameProfileItemDialog.jsx';
 import { RemoveProfileItemDialog } from '../RemoveProfileItemDialog.jsx';
 import { ChangeProfileItemTypeDialog } from '../ChangeProfileItemTypeDialog.jsx';
 import { EnumEditor } from '../EnumEditor.jsx';
+import { MultiEnumEditor } from '../MultiEnumEditor.jsx';
 import { ModalTrigger } from '../../../commons/uiCommon3/ModalTrigger.jsx';
 import { ToggleButton } from '../../../commons/uiCommon3/ToggleButton.jsx';
 
@@ -160,6 +161,9 @@ export function ProfileConstructorRow2(props) {
               }
               {
                 profileStructureItem.type === 'enum' && <EnumEditor profileStructureItem={profileStructureItem} />
+              }
+              {
+                profileStructureItem.type === 'multiEnum' && <MultiEnumEditor profileStructureItem={profileStructureItem} />
               }
             </div>
             <div className="tw-text-right">

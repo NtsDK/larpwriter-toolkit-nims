@@ -6,27 +6,20 @@ import HelpBlock from 'react-bootstrap/es/HelpBlock';
 import { EnumListEditor } from './EnumListEditor.jsx';
 import { EnumDefaultValueEditor } from './EnumDefaultValueEditor.jsx';
 
-export function EnumEditor(props) {
+export function MultiEnumEditor(props) {
   const { profileStructureItem, refresh } = props;
   const [errorText, setErrorText] = useState(null);
   const [list, setList] = useState(profileStructureItem.value.split(','));
 
   return (
     <div>
-      <div className="tw-mb-4">
-        <EnumDefaultValueEditor
-          profileItemName={profileStructureItem.name}
-          list={list}
-          setList={setList}
-        />
-      </div>
       <div className="tw-mb-6">
         <EnumListEditor
           profileItemName={profileStructureItem.name}
           list={list}
           setList={setList}
           setErrorText={setErrorText}
-          canRemoveLast={false}
+          canRemoveLast
         />
       </div>
       <div>
