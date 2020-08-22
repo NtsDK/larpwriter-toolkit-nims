@@ -33,6 +33,7 @@ import { ProfileDiagrams } from '../../views/overview/ProfileDiagrams/index';
 
 import { ProfileEditor } from '../../views/profiles2/ProfileEditor/index';
 import { ProfileConstructor } from '../../views/profiles2/ProfileConstructor/index';
+import { ProfileBinding } from '../../views/profiles2/ProfileBinding/index';
 
 import { LogoutFormTemplate } from '../../views/serverSpecific/LogoutFormTemplate.jsx';
 import { LoadBaseButton } from '../makeLoadBaseButton.jsx';
@@ -180,6 +181,7 @@ export class OrganizerApp extends Component {
                     <ViewWrapper view={viewCache.get('characterConfigurer')} />
                   </Route>
                   <Route path="/characters/profileBinding">
+                    <ProfileBinding />
                     <ViewWrapper view={viewCache.get('profileBinding')} />
                   </Route>
                   <Redirect to="/characters/characterEditor" />
