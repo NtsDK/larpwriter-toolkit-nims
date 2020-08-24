@@ -8,14 +8,84 @@ import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import PermissionInformer from 'permissionInformer';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import classNames from 'classnames';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
+
+function ProfileList(props) {
+  const { droppableId, profileNames, profileType } = props;
+  return (
+    <Droppable droppableId={droppableId} isCombineEnabled>
+      {
+        (provided) => (
+          <div className="entity-list tw-flex tw-flex-col" ref={provided.innerRef} {...provided.droppableProps}>
+            {
+              profileNames.map((profile, i) => (
+                <Draggable
+                  draggableId={JSON.stringify([profileType, profile.displayName])}
+                  index={i}
+                >
+                  {
+                    (provided2, snapshot) => (
+                      <div
+                        className={classNames('btn btn-default tw-flex-auto tw-text-left', {
+                          'tw-border-dashed tw-border-2 tw-border-blue-900': snapshot.combineTargetFor
+                            && JSON.parse(snapshot.combineTargetFor)[0] !== profileType
+                        })}
+                        // && (JSON.parse(snapshot.combineTargetFor)[0] !== JSON.parse(snapshot.combineWith)[0])
+                        // className={classNames('btn btn-default tw-flex-auto tw-text-left', {
+                        //   'tw-bg-green-500 tw-border-dashed tw-border-2 tw-border-blue-900': snapshot.combineTargetFor && snapshot.combineWith
+                        //   && (JSON.parse(snapshot.combineTargetFor)[0] !== JSON.parse(snapshot.combineWith)[0])
+                        // })}
+                        {...provided2.draggableProps}
+                        {...provided2.dragHandleProps}
+                        ref={provided2.innerRef}
+                      >
+                        {profile.displayName}
+                      </div>
+                    )
+                  }
+                </Draggable>
+              ))
+            }
+            {provided.placeholder}
+          </div>
+        )
+      }
+    </Droppable>
+  );
+}
+
+function BindingList(props) {
+  const { bindings, removeBinding } = props;
+  return (
+    <div className="entity-list binding-list2">
+      {
+        bindings.map((binding) => (
+          <div className="BindingItem btn-group tw-flex">
+            <div className="btn btn-default tw-text-left tw-flex-auto">
+              {binding.name}
+            </div>
+            <button
+              type="button"
+              className="btn btn-default btn-reduced fa-icon unlink flex-0-0-auto transparent"
+              onClick={removeBinding}
+              data-binding-str={JSON.stringify(binding.value)}
+            />
+          </div>
+        ))
+      }
+    </div>
+  );
+}
 
 export function ProfileBinding(props) {
   const { t } = useTranslation();
   const dbms = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
-  useEffect(() => {
+
+  function refresh() {
     Promise.all([
       PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
       PermissionInformer.getEntityNamesArray({ type: 'player', editableOnly: false }),
@@ -24,8 +94,9 @@ export function ProfileBinding(props) {
       const [characterNames, playerNames, profileBindings] = results;
       setState({ characterNames, playerNames, profileBindings });
     }).catch(UI.handleError);
-    // console.log('useEffect called');
-  }, []);
+  }
+
+  useEffect(refresh, []);
 
   if (!state) {
     return null;
@@ -43,111 +114,86 @@ export function ProfileBinding(props) {
   }));
   bindings.sort(CU.charOrdAFactory(R.prop('name')));
 
-  // function rebuildInterface(characterNames, playerNames, profileBindings) {
-  //   const bondedCharacterList = R.keys(profileBindings);
-  //   const bondedPlayerList = R.values(profileBindings);
-  //   const filter = (list) => R.compose(R.not, R.contains(R.__, list), R.prop('value'));
+  function removeBinding(e) {
+    const { bindingStr } = e.target.dataset;
+    const binding = JSON.parse(bindingStr);
+    dbms.removeBinding({
+      characterName: binding[0],
+      playerName: binding[1]
+    }).then(refresh, UI.handleError);
+  }
 
-  //   U.showEl(U.queryEl(`${root} .alert.no-character`), characterNames.length === 0);
-  //   UI.enableEl(U.queryEl(`${root} .character-filter`), characterNames.length !== 0);
-  //   U.showEl(U.queryEl(`${root} .character-list`), characterNames.length !== 0);
-
-  //   U.showEl(U.queryEl(`${root} .alert.no-player`), playerNames.length === 0);
-  //   UI.enableEl(U.queryEl(`${root} .player-filter`), playerNames.length !== 0);
-  //   U.showEl(U.queryEl(`${root} .player-list`), playerNames.length !== 0);
-
-  //   UI.enableEl(U.queryEl(`${root} .binding-filter`), R.keys(profileBindings).length !== 0);
-
-  //   U.addEls(
-  //     U.clearEl(U.queryEl(`${root} .entity-list.character-list`)),
-  //     characterNames.filter(filter(bondedCharacterList)).map(profile2el('character'))
-  //   );
-
-  //   U.addEls(
-  //     U.clearEl(U.queryEl(`${root} .entity-list.player-list`)),
-  //     playerNames.filter(filter(bondedPlayerList)).map(profile2el('player'))
-  //   );
-
-  //   const bindings = R.toPairs(profileBindings).map((binding) => ({
-  //     name: R.join('/', binding),
-  //     value: binding
-  //   }));
-  //   bindings.sort(CU.charOrdAFactory(R.prop('name')));
-
-  //   U.addEls(U.clearEl(U.queryEl(`${root} .entity-list.binding-list`)), bindings.map(binding2el));
-  // }
-
-  // const { t } = props;
+  function onDragEnd(result) {
+    console.log(result);
+    const { combine, source, draggableId } = result;
+    if (!combine) {
+      return;
+    }
+    if (combine.droppableId === source.droppableId) {
+      return;
+    }
+    const pair1 = JSON.parse(draggableId);
+    const pair2 = JSON.parse(combine.draggableId);
+    // console.log(result);
+    dbms.createBinding({
+      [pair1[0]]: pair1[1],
+      [pair2[0]]: pair2[1],
+    }).then(refresh, UI.handleError);
+  }
 
   return (
-    <div className="ProfileBinding profile-binding2-tab block fixed-tab">
+    <div className="ProfileBinding profile-binding2-tab block">
       <div className="panel panel-default height-100p">
         <div className="panel-body height-100p">
           <label>{t('binding.binding-tip')}</label>
-          <div className="container-fluid height-100p">
-            <div className="row height-100p">
-              <div className="col-xs-4 height-100p">
-                <h4>{t('binding.characters')}</h4>
-                <InlineNotification type="info" showIf={characterNames.length === 0}>
-                  {t('advices.no-character')}
-                </InlineNotification>
-                {
-                  characterNames.length !== 0 && (
-                    <>
-                      <input className="form-control character-filter" type="search" placeholder={t('binding.character-search')} />
-                      <div className="entity-list character-list2 tw-flex tw-flex-col">
-                        {
-                          characterNames.filter(filter(bondedCharacterList)).map((character) => (
-                            <div className="btn btn-default tw-flex-auto tw-text-left">{character.displayName}</div>
-                          ))
-                        }
-                      </div>
-                    </>
-                  )
-                }
-              </div>
-              <div className="col-xs-4 height-100p">
-                <h4>{t('binding.players')}</h4>
-                <InlineNotification type="info" showIf={playerNames.length === 0}>
-                  {t('advices.no-player')}
-                </InlineNotification>
-                {
-                  playerNames.length !== 0 && (
-                    <>
-                      <input className="form-control player-filter" type="search" placeholder={t('binding.player-search')} />
-                      <div className="entity-list player-list2 tw-flex tw-flex-col">
-                        {
-                          playerNames.filter(filter(bondedPlayerList)).map((player) => (
-                            <div className="btn btn-default tw-flex-auto tw-text-left">{player.displayName}</div>
-                          ))
-                        }
-                      </div>
-                    </>
-                  )
-                }
-                {/* <input className="form-control player-filter" type="search" placeholder={t('binding.player-search')} />
-                <div className="entity-list player-list2" /> */}
-              </div>
-              <div className="col-xs-4 height-100p">
-                <h4>{t('binding.bonded-characters-n-players')}</h4>
-                <input className="form-control binding-filter" type="search" placeholder={t('binding.binding-search')} />
-                <div className="entity-list binding-list2">
+          <DragDropContext onDragEnd={onDragEnd}>
+
+            <div className="container-fluid height-100p">
+              <div className="row height-100p">
+                <div className="col-xs-4 height-100p">
+                  <h4>{t('binding.characters')}</h4>
+                  <InlineNotification type="info" showIf={characterNames.length === 0}>
+                    {t('advices.no-character')}
+                  </InlineNotification>
                   {
-                    bindings.map((binding) => (
-                      <div className="BindingItem btn-group tw-flex">
-                        <div className="btn btn-default tw-text-left tw-flex-auto">
-                          {/* <span className="primary-name" /> */}
-                          {binding.name}
-                        </div>
-                        <button type="button" className="btn btn-default btn-reduced fa-icon unlink flex-0-0-auto transparent" />
-                      </div>
-                      // <div className="btn btn-default tw-flex-auto tw-text-left">{player.displayName}</div>
-                    ))
+                    characterNames.length !== 0 && (
+                      <>
+                        <input className="form-control character-filter tw-mb-4" type="search" placeholder={t('binding.character-search')} />
+                        <ProfileList
+                          droppableId="characterNames"
+                          profileType="characterName"
+                          profileNames={characterNames.filter(filter(bondedCharacterList))}
+                        />
+                      </>
+                    )
                   }
+                </div>
+                <div className="col-xs-4 height-100p">
+                  <h4>{t('binding.players')}</h4>
+                  <InlineNotification type="info" showIf={playerNames.length === 0}>
+                    {t('advices.no-player')}
+                  </InlineNotification>
+                  {
+                    playerNames.length !== 0 && (
+                      <>
+                        <input className="form-control player-filter tw-mb-4" type="search" placeholder={t('binding.player-search')} />
+                        <ProfileList
+                          droppableId="playerNames"
+                          profileType="playerName"
+                          profileNames={playerNames.filter(filter(bondedPlayerList))}
+                        />
+                      </>
+                    )
+                  }
+                </div>
+                <div className="col-xs-4 height-100p">
+                  <h4>{t('binding.bonded-characters-n-players')}</h4>
+                  <input className="form-control binding-filter tw-mb-4" type="search" placeholder={t('binding.binding-search')} />
+                  <BindingList bindings={bindings} removeBinding={removeBinding} />
                 </div>
               </div>
             </div>
-          </div>
+          </DragDropContext>
         </div>
       </div>
     </div>
