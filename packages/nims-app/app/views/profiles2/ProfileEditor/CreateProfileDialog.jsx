@@ -1,30 +1,40 @@
-import React, { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import * as Constants from 'nims-dbms/nimsConstants';
-import * as R from 'ramda';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
+import React, { Component } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
-import { PromptDialog } from '../../commons/uiCommon3/PromptDialog.jsx';
+import {
+  NavLink, Route, Redirect, Switch, useHistory, useRouteMatch
+} from 'react-router-dom';
+import * as CU from 'nims-dbms-core/commonUtils';
+import * as R from 'ramda';
+import PermissionInformer from 'permissionInformer';
+import Button from 'react-bootstrap/es/Button';
+import Dropdown from 'react-bootstrap/es/Dropdown';
+import MenuItem from 'react-bootstrap/es/MenuItem';
+import { useTranslation } from 'react-i18next';
+import { CommonCreateProfileDialog } from './CommonCreateProfileDialog.jsx';
 
 export function CreateProfileDialog(props) {
-  const { profileName, onCreate, ...elementProps } = props;
-
-  const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
-
-  function onSubmit({ value: profileName }) {
-    return dbms.createProfile({
-      type: 'character',
-      characterName: profileName
-    }).then(() => onCreate({
-      profileName
-    })).catch((err) => UI.handleErrorMsg(err));
+  const {
+    refresh, ...elementProps
+  } = props;
+  const history = useHistory();
+  async function onCreateProfile({ profileName }) {
+    try {
+      try {
+        await PermissionInformer.refresh();
+        await refresh();
+        history.push(`/characters/characterEditor/${profileName}`);
+      } catch (err) {
+        UI.handleError(err);
+      }
+    } catch (err) {
+      console.error(err);
+      return UI.handleErrorMsg(err);
+    }
+    return null;
   }
-
   return (
-    <PromptDialog
-      title={t('profiles.enter-character-name')}
-      onSubmit={onSubmit}
+    <CommonCreateProfileDialog
+      onCreate={onCreateProfile}
       {...elementProps}
     />
   );
