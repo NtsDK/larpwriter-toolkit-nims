@@ -2,6 +2,7 @@ module.exports = {
   'character-or-player-not-selected': 'Персонаж или игрок не выбран',
   'binding-is-not-selected': 'Сопоставление не выбрано',
   'bonded-characters-n-players': 'Сопоставленные персонажи и игроки',
+  'bind-character-n-player': 'Сопоставить персонажа и игрока',
   'binding-tip': 'Перетащите персонажа на игрока, чтобы их сопоставить. Нажмите кнопку разъединения, чтобы разбить пару.',
 
   characters: 'Персонажи',

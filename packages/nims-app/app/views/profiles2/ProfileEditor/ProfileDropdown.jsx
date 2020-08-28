@@ -14,9 +14,13 @@ import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { ModalTrigger } from '../../commons/uiCommon3/ModalTrigger.jsx';
 import { RenameProfileDialog } from './RenameProfileDialog.jsx';
 import { RemoveProfileDialog } from './RemoveProfileDialog.jsx';
+import { BindProfileDialog } from './BindProfileDialog.jsx';
 
 export function ProfileDropdown(props) {
-  const { entity, primaryNames, refresh } = props;
+  const {
+    entity, primaryNames, secondaryNames, profileBinding, refresh
+  } = props;
+
   const { t } = useTranslation();
   const match = useRouteMatch('/characters/characterEditor/:id');
   const history = useHistory();
@@ -89,6 +93,25 @@ export function ProfileDropdown(props) {
             {t('profiles.rename-character')}
           </MenuItem>
         </ModalTrigger>
+        {
+          secondaryNames.length !== 0 && entity.secondaryName === undefined
+          && (
+            <ModalTrigger
+              modal={(
+                <BindProfileDialog
+                  primaryName={entity.primaryName}
+                  secondaryNames={secondaryNames}
+                  profileBinding={R.invertObj(profileBinding)}
+                  onBind={refresh}
+                />
+              )}
+            >
+              <MenuItem>
+                {t('binding.bind-character-n-player')}
+              </MenuItem>
+            </ModalTrigger>
+          )
+        }
         <MenuItem divider />
         {
           entity.secondaryName !== undefined

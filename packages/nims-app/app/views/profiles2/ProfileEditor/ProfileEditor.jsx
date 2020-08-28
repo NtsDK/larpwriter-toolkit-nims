@@ -64,9 +64,17 @@ export class ProfileEditor extends Component {
 
   getEntityDropdown(entity) {
     const {
-      primaryNames
+      primaryNames, secondaryNames, profileBinding
     } = this.state;
-    return <ProfileDropdown entity={entity} primaryNames={primaryNames} refresh={this.refresh} />;
+    return (
+      <ProfileDropdown
+        entity={entity}
+        primaryNames={primaryNames}
+        secondaryNames={secondaryNames}
+        profileBinding={profileBinding}
+        refresh={this.refresh}
+      />
+    );
   }
 
   render() {
