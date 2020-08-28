@@ -10,8 +10,10 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import { CharacterProfile } from './CharacterProfile';
 import { StoryReport } from './StoryReport';
 import { RelationReport } from './RelationReport';
-import { ProfileNav } from './ProfileNav';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
+import { EntityNav } from '../../commons/EntityNav';
+import { CreateProfileDialog } from './CreateProfileDialog.jsx';
+import { ProfileDropdown } from './ProfileDropdown.jsx';
 
 export class ProfileEditor extends Component {
   constructor(props) {
@@ -20,8 +22,10 @@ export class ProfileEditor extends Component {
       primaryNames: null,
       secondaryNames: null,
       profileBinding: null,
+      profileList: null
     };
     this.refresh = this.refresh.bind(this);
+    this.getEntityDropdown = this.getEntityDropdown.bind(this);
   }
 
   componentDidMount() {
@@ -46,14 +50,29 @@ export class ProfileEditor extends Component {
     ]).then((results) => {
       const [primaryNames, secondaryNames, profileBinding] = results;
       primaryNames.sort(CU.charOrdA);
+
+      const profileList = primaryNames.map((primaryName) => ({
+        primaryName,
+        secondaryName: profileBinding[primaryName]
+      }));
+
       this.setState({
-        primaryNames, secondaryNames, profileBinding
+        primaryNames, secondaryNames, profileBinding, profileList
       });
     }).catch(UI.handleError);
   }
 
+  getEntityDropdown(entity) {
+    const {
+      primaryNames
+    } = this.state;
+    return <ProfileDropdown entity={entity} primaryNames={primaryNames} refresh={this.refresh} />;
+  }
+
   render() {
-    const { primaryNames, secondaryNames, profileBinding } = this.state;
+    const {
+      primaryNames, secondaryNames, profileBinding, profileList
+    } = this.state;
 
     if (!primaryNames) {
       return null;
@@ -70,10 +89,12 @@ export class ProfileEditor extends Component {
           <div className="row height-100p">
             <div className="col-xs-3 height-100p">
               <Route path={['/characters/characterEditor/:id', '/characters/characterEditor']}>
-                <ProfileNav
-                  primaryNames={primaryNames}
-                  profileBinding={profileBinding}
-                  refresh={this.refresh}
+                <EntityNav
+                  entityList={profileList}
+                  createEntityText="profiles.create-character"
+                  entityUrl="/characters/characterEditor"
+                  createEntityDialog={<CreateProfileDialog refresh={this.refresh} />}
+                  getEntityDropdown={this.getEntityDropdown}
                 />
               </Route>
             </div>
