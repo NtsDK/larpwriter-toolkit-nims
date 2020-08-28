@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import {
   NavLink, Route, Redirect, Switch, useHistory, useRouteMatch
@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/es/Button';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
 import { useTranslation } from 'react-i18next';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { ModalTrigger } from '../../commons/uiCommon3/ModalTrigger.jsx';
 import { RenameProfileDialog } from './RenameProfileDialog.jsx';
 import { RemoveProfileDialog } from './RemoveProfileDialog.jsx';
@@ -19,6 +20,7 @@ export function ProfileDropdown(props) {
   const { t } = useTranslation();
   const match = useRouteMatch('/characters/characterEditor/:id');
   const history = useHistory();
+  const dbms = useContext(DbmsContext);
 
   async function onRenameProfile({ toName, fromName }) {
     const { id: currentProfileName } = match.params;
@@ -63,6 +65,14 @@ export function ProfileDropdown(props) {
     }
     return null;
   }
+  function removeBinding(e) {
+    const { characterName, playerName } = e.target.dataset;
+    dbms.removeBinding({
+      characterName,
+      playerName
+    }).then(refresh, UI.handleError);
+  }
+
   return (
     <Dropdown>
       <Dropdown.Toggle noCaret className="btn btn-default fa-icon kebab" />
@@ -80,6 +90,18 @@ export function ProfileDropdown(props) {
           </MenuItem>
         </ModalTrigger>
         <MenuItem divider />
+        {
+          entity.secondaryName !== undefined
+          && (
+            <MenuItem
+              onClick={removeBinding}
+              data-character-name={entity.primaryName}
+              data-player-name={entity.secondaryName}
+            >
+              {t('binding.unlink-binding2')}
+            </MenuItem>
+          )
+        }
         <ModalTrigger
           modal={(
             <RemoveProfileDialog
