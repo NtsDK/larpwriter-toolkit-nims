@@ -6,11 +6,13 @@ import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
 import PermissionInformer from 'permissionInformer';
-import './Stories.css';
-
 import {
   NavLink, Route, Redirect
 } from 'react-router-dom';
+import {
+  NavButton, NavSeparator, NavViewLink, NavContainer
+} from '../../commons/NavComponent.jsx';
+import './Stories.css';
 
 // import { CharacterProfile } from './CharacterProfile';
 // import { StoryReport } from './StoryReport';
@@ -78,6 +80,7 @@ export function Stories(props) {
             <InlineNotification type="info" showIf={allStoryNames.length === 0}>
               {t('advices.no-story')}
             </InlineNotification>
+
             <Route
               path="/stories/:id"
               render={({ match }) => {
@@ -93,6 +96,36 @@ export function Stories(props) {
               }}
             />
 
+            <Route
+              path="/stories/:id"
+              exact
+              render={({ match }) => {
+                const { id } = match.params;
+                return (
+                  <Redirect to={`/stories/${id}/writerStory`} />
+                );
+              }}
+            />
+
+            <Route
+              path="/stories/:id"
+              render={({ match }) => {
+                const { id } = match.params;
+                return (
+                  <>
+                    <NavContainer className="sub-tab-navigation">
+                      <NavViewLink labelKey="header.writer-story" to={`/stories/${id}/writerStory`} />
+                      <NavViewLink labelKey="header.story-events" to={`/stories/${id}/storyEvents`} />
+                      <NavViewLink labelKey="header.story-characters" to={`/stories/${id}/storyCharacters`} />
+                      <NavViewLink labelKey="header.event-presence" to={`/stories/${id}/eventPresence`} />
+                    </NavContainer>
+                    {/* <StoryReport id={id} />
+                    <RelationReport id={id} />
+                    <CharacterProfile key={id} id={id} /> */}
+                  </>
+                );
+              }}
+            />
             {/* <Route
               path="/characters/characterEditor/:id"
               render={({ match }) => {
