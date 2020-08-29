@@ -30,6 +30,7 @@ import { Adaptations } from '../../views/adaptations/Adaptations/index';
 import { GameInfo } from '../../views/overview/GameInfo/index';
 import { StatisticDiagrams } from '../../views/overview/StatisticDiagrams/index';
 import { ProfileDiagrams } from '../../views/overview/ProfileDiagrams/index';
+import { Stories } from '../../views/stories/Stories/index';
 
 import { ProfileEditor } from '../../views/profiles2/ProfileEditor/index';
 import { ProfileConstructor } from '../../views/profiles2/ProfileConstructor/index';
@@ -208,6 +209,7 @@ export class OrganizerApp extends Component {
                 </Switch>
               </Route>
               <Route path="/stories">
+                <Stories />
                 <ViewWrapper view={viewCache.get('stories')} />
               </Route>
               <Route path="/adaptations">
