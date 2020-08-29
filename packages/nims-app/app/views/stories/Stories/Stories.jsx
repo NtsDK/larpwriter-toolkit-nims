@@ -21,6 +21,7 @@ import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.j
 import { EntityNav } from '../../commons/EntityNav';
 import { CreateStoryDialog } from './CreateStoryDialog.jsx';
 import { StoryDropdown } from './StoryDropdown.jsx';
+import { WriterStory } from './WriterStory.jsx';
 
 export function Stories(props) {
   const { t } = useTranslation();
@@ -119,6 +120,9 @@ export function Stories(props) {
                       <NavViewLink labelKey="header.story-characters" to={`/stories/${id}/storyCharacters`} />
                       <NavViewLink labelKey="header.event-presence" to={`/stories/${id}/eventPresence`} />
                     </NavContainer>
+                    <Route path="/stories/:id/writerStory">
+                      <WriterStory storyName={id} key={id} />
+                    </Route>
                     {/* <StoryReport id={id} />
                     <RelationReport id={id} />
                     <CharacterProfile key={id} id={id} /> */}
