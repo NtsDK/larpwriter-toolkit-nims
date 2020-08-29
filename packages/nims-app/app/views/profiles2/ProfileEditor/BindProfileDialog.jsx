@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Constants from 'nims-dbms/nimsConstants';
 import * as R from 'ramda';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { UI, U, L10n } from 'nims-app-core';
-// import { PromptDialog } from '../../commons/uiCommon3/PromptDialog.jsx';
 import FormGroup from 'react-bootstrap/es/FormGroup';
 import FormControl from 'react-bootstrap/es/FormControl';
 import { FormDialog } from '../../commons/uiCommon3/FormDialog.jsx';
@@ -16,72 +15,69 @@ export function BindProfileDialog(props) {
   } = props;
 
   const { t } = useTranslation();
+  const [selectedFilter, setSelectedFilter] = useState('unbonded');
   const dbms = useContext(DbmsContext);
 
-  function onSubmit({ secondaryName }) {
-    console.log(secondaryName);
-    return Promise.resolve();
-    // return dbms.renameProfile({
-    //   type: 'character',
-    //   fromName: profileName,
-    //   toName
-    // }).then(() => onRename({
-    //   fromName: profileName,
-    //   toName
-    // })).catch((err) => UI.handleErrorMsg(err));
+  function onSelectedFilterChange(e) {
+    setSelectedFilter(e.target.dataset.selectedFilter);
   }
 
-  // async function onSubmit({ newItemType }) {
-  //   return dbms.changeProfileItemType({
-  //     type: 'character', profileItemName, newType: newItemType
-  //   }).then(onChange).catch((err) => UI.handleErrorMsg(err));
-  // }
+  function onSubmit({ secondaryName }) {
+    return dbms.createBinding({
+      characterName: primaryName,
+      playerName: secondaryName,
+    }).then(onBind, UI.handleError);
+  }
+
+  const secondaryNamesList = secondaryNames
+    .filter((value) => {
+      if (selectedFilter === 'unbonded') {
+        return profileBinding[value] === undefined;
+      }
+      if (selectedFilter === 'bonded') {
+        return profileBinding[value] !== undefined;
+      }
+      return true; // selectedFilter === 'all'
+    });
 
   return (
-    // <PromptDialog
-    //   title={t('profiles.enter-new-character-name')}
-    //   defaultValue={profileName}
-    //   onSubmit={onSubmit}
-    //   {...elementProps}
-    // />
-    // data={{ defaultValue }}
     <FormDialog {...elementProps} formId="bindProfileForm" title={t('binding.bind-character-n-player')} onSubmit={onSubmit}>
       <FormGroup>
         <div className="btn-group tw-flex">
           <ToggleButton
             type="radio"
-            // checked={filterBy === 'ByCharacter'}
-            text={t('binding.bonded')}
-            name="adaptation-story-switch"
-            // className="tw-flex-auto"
-            // data={{ 'show-type': 'ByCharacter' }}
-            // onChange={onShowTypeChange}
-          />
-          <ToggleButton
-            type="radio"
-            // checked={filterBy === 'ByEvent'}
-            name="adaptation-story-switch"
+            checked={selectedFilter === 'unbonded'}
+            name="selected-filter-radio"
             // className="tw-flex-auto"
             text={t('binding.unbonded')}
-            // data={{ 'show-type': 'ByEvent' }}
-            // onChange={onShowTypeChange}
+            data={{ 'selected-filter': 'unbonded' }}
+            onChange={onSelectedFilterChange}
           />
           <ToggleButton
             type="radio"
-            // checked={filterBy === 'ByEvent'}
-            name="adaptation-story-switch"
+            checked={selectedFilter === 'bonded'}
+            name="selected-filter-radio"
+            // className="tw-flex-auto"
+            text={t('binding.bonded')}
+            data={{ 'selected-filter': 'bonded' }}
+            onChange={onSelectedFilterChange}
+          />
+          <ToggleButton
+            type="radio"
+            checked={selectedFilter === 'all'}
+            name="selected-filter-radio"
             // className="tw-flex-auto"
             text={t('binding.all')}
-            // data={{ 'show-type': 'ByEvent' }}
-            // onChange={onShowTypeChange}
+            data={{ 'selected-filter': 'all' }}
+            onChange={onSelectedFilterChange}
           />
         </div>
 
       </FormGroup>
       <FormGroup>
-        <FormControl componentClass="select" name="secondaryName" autoFocus>
+        <FormControl componentClass="select" name="secondaryName" autoFocus disabled={secondaryNamesList.length === 0}>
           {
-            secondaryNames.map((value) => (
+            secondaryNamesList.map((value) => (
               <option
                 value={value}
                 key={value}
@@ -91,24 +87,7 @@ export function BindProfileDialog(props) {
             ))
           }
         </FormControl>
-        {/* <FormControl
-          type="text"
-          name="value"
-          autoFocus
-          // defaultValue={defaultValue}
-          // onChange={() => setErrorText(null)}
-          // validationState={errorText ? 'error' : null}
-          autoComplete="off"
-        /> */}
       </FormGroup>
     </FormDialog>
   );
 }
-
-// export function PromptDialog(props) {
-//   const {
-//     defaultValue = '', ...elementProps
-//   } = props;
-//   return (
-//   );
-// }

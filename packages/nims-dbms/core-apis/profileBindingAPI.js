@@ -55,12 +55,17 @@
     LocalDBMS.prototype.createBinding = function ({ characterName, playerName } = {}) {
       return new Promise((resolve, reject) => {
         const bindings = R.path(path, this.database);
+        const invertBinding = R.invertObj(bindings);
         const conditions = [PC.isString(characterName),
           PC.entityExists(characterName, R.keys(this.database.Characters)), PC.isString(playerName),
           PC.entityExists(playerName, R.keys(this.database.Players)),
-          PC.entityIsNotUsed(characterName, R.keys(bindings)),
-          PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))];
+        //   PC.entityIsNotUsed(characterName, R.keys(bindings)),
+        //   PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))
+        ];
         PC.precondition(PC.chainCheck(conditions), reject, () => {
+          if (invertBinding[playerName] !== undefined) {
+            delete bindings[invertBinding[playerName]];
+          }
           bindings[characterName] = playerName;
           resolve();
         });

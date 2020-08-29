@@ -94,7 +94,7 @@ export function ProfileDropdown(props) {
           </MenuItem>
         </ModalTrigger>
         {
-          secondaryNames.length !== 0 && entity.secondaryName === undefined
+          secondaryNames.length !== 0
           && (
             <ModalTrigger
               modal={(
