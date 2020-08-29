@@ -15,4 +15,7 @@ module.exports = {
   'binding-search': 'Поиск сопоставлений',
   'unlink-binding': 'Разъединить',
   'unlink-binding2': 'Разъединить персонажа и игрока',
+  bonded: 'Сопоставленные',
+  unbonded: 'Несопоставленные',
+  all: 'Все',
 };
