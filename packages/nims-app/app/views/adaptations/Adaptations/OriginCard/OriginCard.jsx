@@ -63,7 +63,7 @@ export function OriginCard(props) {
                   // showTimeInput && (
                   <DateTimePicker
                     className="time-input form-control tw-mr-4"
-                    date={new Date(event.time)}
+                    date={event.time !== '' ? new Date(event.time) : null}
                     defaultDate={new Date(metaInfo.date)}
                     onChange={onChangeDateTimeCreator}
                   />

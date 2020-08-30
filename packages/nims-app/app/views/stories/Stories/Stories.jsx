@@ -21,6 +21,7 @@ import { StoryDropdown } from './StoryDropdown.jsx';
 import { WriterStory } from './WriterStory.jsx';
 import { EventPresence } from './EventPresence.jsx';
 import { StoryEvents } from './StoryEvents.jsx';
+import { CreateStoryEventDialog } from './CreateStoryEventDialog.jsx';
 import { StoryCharacters } from './StoryCharacters/StoryCharacters.jsx';
 
 export function Stories(props) {
@@ -28,6 +29,7 @@ export function Stories(props) {
   const dbms = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
+  const [showCreateEventDialog, setShowCreateEventDialog] = useState(false);
 
   function refresh() {
     PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }).then((allStoryNames) => {
@@ -55,6 +57,13 @@ export function Stories(props) {
         refresh={refresh}
       />
     );
+  }
+
+  function showCreateEvent() {
+    setShowCreateEventDialog(true);
+  }
+  function hideCreateEvent() {
+    setShowCreateEventDialog(false);
   }
 
   return (
@@ -115,12 +124,35 @@ export function Stories(props) {
                 const { id } = match.params;
                 return (
                   <>
-                    <NavContainer className="sub-tab-navigation">
-                      <NavViewLink labelKey="header.writer-story" to={`/stories/${id}/writerStory`} />
-                      <NavViewLink labelKey="header.story-events" to={`/stories/${id}/storyEvents`} />
-                      <NavViewLink labelKey="header.story-characters" to={`/stories/${id}/storyCharacters`} />
-                      <NavViewLink labelKey="header.event-presence" to={`/stories/${id}/eventPresence`} />
-                    </NavContainer>
+                    <div className="tw-flex">
+                      <NavContainer className="sub-tab-navigation tw-flex-auto">
+                        <NavViewLink labelKey="header.writer-story" to={`/stories/${id}/writerStory`} />
+                        <NavViewLink labelKey="header.story-events" to={`/stories/${id}/storyEvents`} />
+                        <NavViewLink labelKey="header.story-characters" to={`/stories/${id}/storyCharacters`} />
+                        <NavViewLink labelKey="header.event-presence" to={`/stories/${id}/eventPresence`} />
+                      </NavContainer>
+
+                      <div>
+                        <button
+                          type="button"
+                          className="btn btn-default btn-reduced fa-icon create event flex-0-0-auto icon-padding isStoryEditable tw-mr-4"
+                          onClick={showCreateEvent}
+                        >
+                          <span>{t('stories.create-event')}</span>
+                        </button>
+                        <CreateStoryEventDialog
+                          show={showCreateEventDialog}
+                          onCancel={hideCreateEvent}
+                          storyName={id}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-default btn-reduced fa-icon add character flex-0-0-auto icon-padding isStoryEditable"
+                        >
+                          <span>{t('stories.add-character')}</span>
+                        </button>
+                      </div>
+                    </div>
                     <Route path="/stories/:id/writerStory">
                       <WriterStory storyName={id} key={id} />
                     </Route>
