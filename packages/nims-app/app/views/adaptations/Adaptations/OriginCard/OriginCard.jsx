@@ -2,16 +2,28 @@ import React, { useContext } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import { useTranslation } from 'react-i18next';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
+import FormControl from 'react-bootstrap/es/FormControl';
 import './OriginCard.css';
 import { DateTimePicker } from '../../../commons/uiCommon3';
+import { StoryEventDropdown } from '../../../stories/Stories/StoryEventDropdown/index';
 
 export function OriginCard(props) {
   const {
-    event, metaInfo, storyName, cardTitle,
-    showTimeInput, showTextInput, showLockButton
+    event, metaInfo, storyName, refresh, nextEvent
+    // showTimeInput, showTextInput, showLockButton
   } = props;
   const { t } = useTranslation();
   const dbms = useContext(DbmsContext);
+
+  function onChangeEventName(e) {
+    const text = e.target.value;
+    dbms.setEventOriginProperty({
+      storyName,
+      index: event.index,
+      property: 'name',
+      value: text
+    }).then(UI.handleError);
+  }
 
   function onChangeOriginText(e) {
     const text = e.target.value;
@@ -33,22 +45,22 @@ export function OriginCard(props) {
   }
 
   return (
-    <div className="OriginCard Origin col-xs-6">
+    <div className="OriginCard Origin">
       <div className="panel panel-primary">
         <div className="panel-heading flex-row">
-          <h1 className="panel-title card-title flex-1-1-auto">{cardTitle}</h1>
+          <FormControl defaultValue={event.name} onChange={onChangeEventName} className="tw-mr-4" />
           {
             // showTimeInput && <input className="isStoryEditable time-input form-control flex-0-0-auto" />
-            showTimeInput && (
-              <DateTimePicker
-                className="time-input form-control"
-                date={new Date(event.time)}
-                defaultDate={new Date(metaInfo.date)}
-                onChange={onChangeDateTimeCreator}
-              />
-            )
+            // showTimeInput && (
+            <DateTimePicker
+              className="time-input form-control tw-mr-4"
+              date={new Date(event.time)}
+              defaultDate={new Date(metaInfo.date)}
+              onChange={onChangeDateTimeCreator}
+            />
+            // )
           }
-          {
+          {/* {
             showLockButton && (
               <button
                 type="button"
@@ -56,18 +68,24 @@ export function OriginCard(props) {
                 title={t('briefings.unlock-event-source')}
               />
             )
-          }
+          } */}
+          <StoryEventDropdown
+            event={event}
+            storyName={storyName}
+            refresh={refresh}
+            nextEvent={nextEvent}
+          />
         </div>
         <div className="panel-body">
-          {
-            showTextInput && (
-              <textarea
-                className="isStoryEditable eventPersonalStory form-control text-input"
-                defaultValue={event.text}
-                onChange={onChangeOriginText}
-              />
-            )
-          }
+          {/* {
+            showTextInput && ( */}
+          <textarea
+            className="isStoryEditable eventPersonalStory form-control text-input"
+            defaultValue={event.text}
+            onChange={onChangeOriginText}
+          />
+          {/* )
+          } */}
         </div>
       </div>
     </div>

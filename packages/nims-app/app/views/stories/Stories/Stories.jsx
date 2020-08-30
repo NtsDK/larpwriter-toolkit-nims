@@ -20,6 +20,7 @@ import { CreateStoryDialog } from './CreateStoryDialog.jsx';
 import { StoryDropdown } from './StoryDropdown.jsx';
 import { WriterStory } from './WriterStory.jsx';
 import { EventPresence } from './EventPresence.jsx';
+import { StoryEvents } from './StoryEvents.jsx';
 import { StoryCharacters } from './StoryCharacters/StoryCharacters.jsx';
 
 export function Stories(props) {
@@ -103,7 +104,7 @@ export function Stories(props) {
                 const { id } = match.params;
                 return (
                   // <Redirect to={`/stories/${id}/writerStory`} />
-                  <Redirect to={`/stories/${id}/storyCharacters`} />
+                  <Redirect to={`/stories/${id}/storyEvents`} />
                 );
               }}
             />
@@ -128,6 +129,9 @@ export function Stories(props) {
                     </Route>
                     <Route path="/stories/:id/storyCharacters">
                       <StoryCharacters storyName={id} key={id} />
+                    </Route>
+                    <Route path="/stories/:id/storyEvents">
+                      <StoryEvents storyName={id} key={id} />
                     </Route>
                   </>
                 );
