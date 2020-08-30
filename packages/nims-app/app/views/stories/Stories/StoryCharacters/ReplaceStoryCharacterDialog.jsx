@@ -7,7 +7,7 @@ import * as Constants from 'nims-dbms/nimsConstants';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { FormDialog } from '../../commons/uiCommon3/FormDialog.jsx';
+import { FormDialog } from '../../../commons/uiCommon3/FormDialog.jsx';
 
 export function ReplaceStoryCharacterDialog(props) {
   const {
