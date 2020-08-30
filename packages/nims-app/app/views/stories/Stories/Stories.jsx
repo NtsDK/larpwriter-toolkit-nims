@@ -20,7 +20,7 @@ import { CreateStoryDialog } from './CreateStoryDialog.jsx';
 import { StoryDropdown } from './StoryDropdown.jsx';
 import { WriterStory } from './WriterStory.jsx';
 import { EventPresence } from './EventPresence.jsx';
-import { StoryCharacters } from './StoryCharacters.jsx';
+import { StoryCharacters } from './StoryCharacters/StoryCharacters.jsx';
 
 export function Stories(props) {
   const { t } = useTranslation();
