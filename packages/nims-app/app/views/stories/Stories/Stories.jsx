@@ -14,15 +14,13 @@ import {
 } from '../../commons/NavComponent.jsx';
 import './Stories.css';
 
-// import { CharacterProfile } from './CharacterProfile';
-// import { StoryReport } from './StoryReport';
-// import { RelationReport } from './RelationReport';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { EntityNav } from '../../commons/EntityNav';
 import { CreateStoryDialog } from './CreateStoryDialog.jsx';
 import { StoryDropdown } from './StoryDropdown.jsx';
 import { WriterStory } from './WriterStory.jsx';
 import { EventPresence } from './EventPresence.jsx';
+import { StoryCharacters } from './StoryCharacters.jsx';
 
 export function Stories(props) {
   const { t } = useTranslation();
@@ -105,7 +103,7 @@ export function Stories(props) {
                 const { id } = match.params;
                 return (
                   // <Redirect to={`/stories/${id}/writerStory`} />
-                  <Redirect to={`/stories/${id}/eventPresence`} />
+                  <Redirect to={`/stories/${id}/storyCharacters`} />
                 );
               }}
             />
@@ -128,27 +126,13 @@ export function Stories(props) {
                     <Route path="/stories/:id/eventPresence">
                       <EventPresence storyName={id} key={id} />
                     </Route>
-                    {/* <StoryReport id={id} />
-                    <RelationReport id={id} />
-                    <CharacterProfile key={id} id={id} /> */}
+                    <Route path="/stories/:id/storyCharacters">
+                      <StoryCharacters storyName={id} key={id} />
+                    </Route>
                   </>
                 );
               }}
             />
-            {/* <Route
-              path="/characters/characterEditor/:id"
-              render={({ match }) => {
-                const { id } = match.params;
-
-                return (
-                  <>
-                    <StoryReport id={id} />
-                    <RelationReport id={id} />
-                    <CharacterProfile key={id} id={id} />
-                  </>
-                );
-              }}
-            /> */}
           </div>
         </div>
       </div>
