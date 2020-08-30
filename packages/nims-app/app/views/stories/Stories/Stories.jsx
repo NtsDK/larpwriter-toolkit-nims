@@ -22,6 +22,7 @@ import { WriterStory } from './WriterStory.jsx';
 import { EventPresence } from './EventPresence.jsx';
 import { StoryEvents } from './StoryEvents.jsx';
 import { CreateStoryEventDialog } from './CreateStoryEventDialog.jsx';
+import { AddStoryCharacterDialog } from './AddStoryCharacterDialog.jsx';
 import { StoryCharacters } from './StoryCharacters/StoryCharacters.jsx';
 
 export function Stories(props) {
@@ -30,6 +31,7 @@ export function Stories(props) {
 
   const [state, setState] = useState(null);
   const [showCreateEventDialog, setShowCreateEventDialog] = useState(false);
+  const [showAddCharacterDialog, setShowAddCharacterDialog] = useState(false);
 
   function refresh() {
     PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }).then((allStoryNames) => {
@@ -64,6 +66,12 @@ export function Stories(props) {
   }
   function hideCreateEvent() {
     setShowCreateEventDialog(false);
+  }
+  function showAddCharacter() {
+    setShowAddCharacterDialog(true);
+  }
+  function hideAddCharacter() {
+    setShowAddCharacterDialog(false);
   }
 
   return (
@@ -140,17 +148,33 @@ export function Stories(props) {
                         >
                           <span>{t('stories.create-event')}</span>
                         </button>
-                        <CreateStoryEventDialog
-                          show={showCreateEventDialog}
-                          onCancel={hideCreateEvent}
-                          storyName={id}
-                        />
+                        {
+                          showCreateEventDialog
+                        && (
+                          <CreateStoryEventDialog
+                            show={showCreateEventDialog}
+                            onCancel={hideCreateEvent}
+                            storyName={id}
+                          />
+                        )
+                        }
                         <button
                           type="button"
                           className="btn btn-default btn-reduced fa-icon add character flex-0-0-auto icon-padding isStoryEditable"
+                          onClick={showAddCharacter}
                         >
                           <span>{t('stories.add-character')}</span>
                         </button>
+                        {
+                          showAddCharacterDialog
+                        && (
+                          <AddStoryCharacterDialog
+                            show={showAddCharacterDialog}
+                            onCancel={hideAddCharacter}
+                            storyName={id}
+                          />
+                        )
+                        }
                       </div>
                     </div>
                     <Route path="/stories/:id/writerStory">
