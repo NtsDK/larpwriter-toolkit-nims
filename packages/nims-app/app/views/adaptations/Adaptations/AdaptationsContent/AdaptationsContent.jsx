@@ -171,14 +171,13 @@ export class AdaptationsContent extends Component {
               .map((event) => (
                 <div key={String(event.index)} className="AdaptationRow container-fluid eventRow-dependent">
                   <div className="row eventMainPanelRow-left events-eventsContainer">
-                    <OriginCard
-                      metaInfo={metaInfo}
-                      storyName={storyName}
-                      event={event}
-                      showTimeInput
-                      showTextInput
-                      cardTitle={event.name}
-                    />
+                    <div className="col-xs-6">
+                      <OriginCard
+                        metaInfo={metaInfo}
+                        storyName={storyName}
+                        event={event}
+                      />
+                    </div>
                     {
 
                       R.keys(event.characters)

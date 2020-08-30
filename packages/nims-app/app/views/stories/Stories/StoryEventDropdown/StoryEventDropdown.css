@@ -1,0 +1,4 @@
+/* hard overriding color from bootstrap heading */
+.story-event-dropdown-btn {
+  color: #333333 !important;
+}
