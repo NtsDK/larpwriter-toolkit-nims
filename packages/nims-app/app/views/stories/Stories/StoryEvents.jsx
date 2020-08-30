@@ -6,6 +6,7 @@ import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
 import PermissionInformer from 'permissionInformer';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { OriginCard } from '../../adaptations/Adaptations/OriginCard/index';
 
@@ -38,6 +39,23 @@ export function StoryEvents(props) {
     return null;
   }
 
+  function onDragEnd(result) {
+    const { destination, source, draggableId } = result;
+    if (!destination) {
+      return;
+    }
+    if (destination.droppableId === source.droppableId
+      && destination.index === source.index) {
+      return;
+    }
+
+    dbms.moveEvent({
+      storyName,
+      index: source.index,
+      newIndex: destination.index
+    }).then(refresh).catch(UI.handleError);
+  }
+
   const { isStoryEditable, metaInfo, events } = state;
 
   return (
@@ -46,20 +64,29 @@ export function StoryEvents(props) {
         <InlineNotification type="info" showIf={events.length === 0}>
           {t('advices.no-events-in-story')}
         </InlineNotification>
-        <div className="tw-m-auto tw-max-w-screen-md">
-          {
-            events.map((event, i) => (
-              <OriginCard
-                metaInfo={metaInfo}
-                storyName={storyName}
-                event={event}
-                nextEvent={events[i + 1]}
-                key={storyName + event.index}
-                refresh={refresh}
-              />
-            ))
-          }
-        </div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="storyEvent">
+            {
+              (provided) => (
+                <div className="tw-m-auto tw-max-w-screen-md" ref={provided.innerRef} {...provided.droppableProps}>
+                  {
+                    events.map((event, i) => (
+                      <OriginCard
+                        metaInfo={metaInfo}
+                        storyName={storyName}
+                        event={event}
+                        nextEvent={events[i + 1]}
+                        key={storyName + event.index}
+                        refresh={refresh}
+                      />
+                    ))
+                  }
+                  {provided.placeholder}
+                </div>
+              )
+            }
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );
