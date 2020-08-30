@@ -15,40 +15,42 @@ See the License for the specific language governing permissions and
 const R = require('ramda');
 
 exports.removeFromArrayByIndex = (array, from, to) => {
-    const rest = array.slice((to || from) + 1 || array.length);
-    array.length = from < 0 ? array.length + from : from;
-    return array.push(...rest);
+  const rest = array.slice((to || from) + 1 || array.length);
+  array.length = from < 0 ? array.length + from : from;
+  return array.push(...rest);
 };
 
 exports.charOrdAFactoryBase = R.curry((sortDir, greater, prepare) => function cmp(a, b) {
-    a = prepare(a);
-    b = prepare(b);
-    if (R.isNil(a) && R.isNil(b)) return 0;
-    if (R.isNil(a)) return 1;
-    if (R.isNil(b)) return -1;
-    if (greater(a, b)) { return sortDir === 'asc' ? 1 : -1; }
-    if (greater(b, a)) { return sortDir === 'asc' ? -1 : 1; }
-    return 0;
+  a = prepare(a);
+  b = prepare(b);
+  if (R.isNil(a) && R.isNil(b)) return 0;
+  if (R.isNil(a)) return 1;
+  if (R.isNil(b)) return -1;
+  if (greater(a, b)) { return sortDir === 'asc' ? 1 : -1; }
+  if (greater(b, a)) { return sortDir === 'asc' ? -1 : 1; }
+  return 0;
 });
 
 exports.charOrdAFactory = exports.charOrdAFactoryBase('asc', (a, b) => a > b);
 
-exports.charOrdA = exports.charOrdAFactory(a => a.toLowerCase());
+exports.charOrdA = exports.charOrdAFactory((a) => a.toLowerCase());
 
-exports.eventsByTime = exports.charOrdAFactory(a => new Date(a.time));
+exports.sortStrIgnoreCase = R.sort(exports.charOrdA);
 
-exports.charOrdAObject = exports.charOrdAFactory(a => a.displayName.toLowerCase());
+exports.eventsByTime = exports.charOrdAFactory((a) => new Date(a.time));
+
+exports.charOrdAObject = exports.charOrdAFactory((a) => a.displayName.toLowerCase());
 
 exports.strFormat = R.curry((str, vals) => str.replace(/\{\{|\}\}|\{(\d+)\}/g, (m, n) => {
-    if (m === '{{') { return '{'; }
-    if (m === '}}') { return '}'; }
-    return vals[n];
+  if (m === '{{') { return '{'; }
+  if (m === '}}') { return '}'; }
+  return vals[n];
 }));
 
-exports.strFormatInsertsCount = str => (str.match(/\{\{|\}\}|\{(\d+)\}/g) || []).length;
+exports.strFormatInsertsCount = (str) => (str.match(/\{\{|\}\}|\{(\d+)\}/g) || []).length;
 
 // taken from MDN https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-exports.escapeRegExp = string => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+exports.escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 
 // exports.colorPattern = /^#[0-9A-Fa-f]{6}$/;
 
@@ -64,12 +66,12 @@ const windowsReservedRe = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
 const windowsTrailingRe = /[\. ]+$/;
 
 exports.sanitizeStr2FileName = (input, replacement) => {
-    replacement = replacement || '';
-    const sanitized = input
-        .replace(illegalRe, replacement)
-        .replace(controlRe, replacement)
-        .replace(reservedRe, replacement)
-        .replace(windowsReservedRe, replacement)
-        .replace(windowsTrailingRe, replacement);
-    return sanitized.substring(0, 255);
+  replacement = replacement || '';
+  const sanitized = input
+    .replace(illegalRe, replacement)
+    .replace(controlRe, replacement)
+    .replace(reservedRe, replacement)
+    .replace(windowsReservedRe, replacement)
+    .replace(windowsTrailingRe, replacement);
+  return sanitized.substring(0, 255);
 };
