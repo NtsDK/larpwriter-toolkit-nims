@@ -22,6 +22,7 @@ import { EntityNav } from '../../commons/EntityNav';
 import { CreateStoryDialog } from './CreateStoryDialog.jsx';
 import { StoryDropdown } from './StoryDropdown.jsx';
 import { WriterStory } from './WriterStory.jsx';
+import { EventPresence } from './EventPresence.jsx';
 
 export function Stories(props) {
   const { t } = useTranslation();
@@ -103,7 +104,8 @@ export function Stories(props) {
               render={({ match }) => {
                 const { id } = match.params;
                 return (
-                  <Redirect to={`/stories/${id}/writerStory`} />
+                  // <Redirect to={`/stories/${id}/writerStory`} />
+                  <Redirect to={`/stories/${id}/eventPresence`} />
                 );
               }}
             />
@@ -122,6 +124,9 @@ export function Stories(props) {
                     </NavContainer>
                     <Route path="/stories/:id/writerStory">
                       <WriterStory storyName={id} key={id} />
+                    </Route>
+                    <Route path="/stories/:id/eventPresence">
+                      <EventPresence storyName={id} key={id} />
                     </Route>
                     {/* <StoryReport id={id} />
                     <RelationReport id={id} />
