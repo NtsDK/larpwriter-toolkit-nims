@@ -26,9 +26,6 @@ export function StoryCharacters(props) {
       dbms.getStoryCharacters({ storyName })
     ]).then((results) => {
       const [isStoryEditable, allCharacters, localCharacters] = results;
-      const addArray = [];
-      const removeArray = [];
-
       const charGroups = R.groupBy((nameInfo) => (localCharacters[nameInfo.value] ? 'inStoryChars' : 'outOfStoryChars'), allCharacters);
       setState({
         ...charGroups,
