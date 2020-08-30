@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import FormControl from 'react-bootstrap/es/FormControl';
 import './OriginCard.css';
+import { Draggable } from 'react-beautiful-dnd';
 import { DateTimePicker } from '../../../commons/uiCommon3';
 import { StoryEventDropdown } from '../../../stories/Stories/StoryEventDropdown/index';
 
@@ -45,22 +46,30 @@ export function OriginCard(props) {
   }
 
   return (
-    <div className="OriginCard Origin">
-      <div className="panel panel-primary">
-        <div className="panel-heading flex-row">
-          <FormControl defaultValue={event.name} onChange={onChangeEventName} className="tw-mr-4" />
-          {
-            // showTimeInput && <input className="isStoryEditable time-input form-control flex-0-0-auto" />
-            // showTimeInput && (
-            <DateTimePicker
-              className="time-input form-control tw-mr-4"
-              date={new Date(event.time)}
-              defaultDate={new Date(metaInfo.date)}
-              onChange={onChangeDateTimeCreator}
-            />
-            // )
-          }
-          {/* {
+    <Draggable draggableId={storyName + event.name + event.index} index={event.index}>
+      {
+        (provided) => (
+          <div
+            className="OriginCard Origin"
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+          >
+            <div className="panel panel-primary">
+              <div className="panel-heading flex-row">
+                <FormControl defaultValue={event.name} onChange={onChangeEventName} className="tw-mr-4" />
+                {
+                  // showTimeInput && <input className="isStoryEditable time-input form-control flex-0-0-auto" />
+                  // showTimeInput && (
+                  <DateTimePicker
+                    className="time-input form-control tw-mr-4"
+                    date={new Date(event.time)}
+                    defaultDate={new Date(metaInfo.date)}
+                    onChange={onChangeDateTimeCreator}
+                  />
+                  // )
+                }
+                {/* {
             showLockButton && (
               <button
                 type="button"
@@ -69,79 +78,26 @@ export function OriginCard(props) {
               />
             )
           } */}
-          <StoryEventDropdown
-            event={event}
-            storyName={storyName}
-            refresh={refresh}
-            nextEvent={nextEvent}
-          />
-        </div>
-        <div className="panel-body">
-          {/* {
+                <StoryEventDropdown
+                  event={event}
+                  storyName={storyName}
+                  refresh={refresh}
+                  nextEvent={nextEvent}
+                />
+              </div>
+              <div className="panel-body">
+                {/* {
             showTextInput && ( */}
-          <textarea
-            className="isStoryEditable eventPersonalStory form-control text-input"
-            defaultValue={event.text}
-            onChange={onChangeOriginText}
-          />
-          {/* )
-          } */}
-        </div>
-      </div>
-    </div>
+                <textarea
+                  className="isStoryEditable eventPersonalStory form-control text-input"
+                  defaultValue={event.text}
+                  onChange={onChangeOriginText}
+                />
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </Draggable>
   );
 }
-
-// // eslint-disable-next-line no-var,vars-on-top
-// var onChangeDateTimeCreator = R.curry((storyName, myInput) => (dp, input) => {
-//   DBMS.setEventOriginProperty({
-//     storyName,
-//     index: myInput.eventIndex,
-//     property: 'time',
-//     value: input.val()
-//   }).catch(UI.handleError);
-//   U.removeClass(myInput, 'defaultDate');
-// });
-
-// const makeOriginCard = (event, metaInfo, storyName, opts) => {
-//   const content = U.makeEl('div');
-//   ReactDOM.render(getOrigin(), content);
-//   const card = U.qee(content, '.Origin');
-
-//   // const card = U.qmte(`${root} .origin-tmpl`);
-//   U.addEl(U.qee(card, '.card-title'), U.makeText(opts.cardTitle));
-//   const textInput = U.qee(card, '.text-input');
-//   const timeInput = U.qee(card, '.time-input');
-//   const lockButton = U.qee(card, 'button.locked');
-
-//   if (opts.showTimeInput === true) {
-//     UI.makeEventTimePicker2(timeInput, {
-//       eventTime: event.time,
-//       index: event.index,
-//       preGameDate: metaInfo.preGameDate,
-//       date: metaInfo.date,
-//       onChangeDateTimeCreator: onChangeDateTimeCreator(storyName)
-//     });
-//   } else {
-//     U.addClass(timeInput, 'hidden');
-//   }
-
-//   if (opts.showTextInput === true) {
-//     textInput.value = event.text;
-//     textInput.dataKey = JSON.stringify([storyName, event.index]);
-//     U.listen(textInput, 'change', onChangeOriginText);
-//   } else {
-//     U.addClass(textInput, 'hidden');
-//   }
-
-//   if (opts.showLockButton === true) {
-//     U.listen(lockButton, 'click', onOriginLockClick(timeInput, textInput));
-//     UI.enableEl(timeInput, false);
-//     UI.enableEl(textInput, false);
-//     L10n.localizeStatic(card);
-//   } else {
-//     U.addClass(lockButton, 'hidden');
-//   }
-
-//   return card;
-// };
