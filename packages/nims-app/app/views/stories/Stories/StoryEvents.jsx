@@ -11,7 +11,7 @@ import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.j
 import { OriginCard } from '../../adaptations/Adaptations/OriginCard/index';
 
 export function StoryEvents(props) {
-  const { storyName } = props;
+  const { storyName, ee } = props;
 
   const { t } = useTranslation();
   const dbms = useContext(DbmsContext);
@@ -34,6 +34,20 @@ export function StoryEvents(props) {
   }
 
   useEffect(refresh, []);
+
+  // function stub() {
+  //   console.log('stub called');
+  //   refresh();
+  // }
+
+  useEffect(() => {
+    // console.log('on eventsChange subscription');
+    ee.on('eventsChange', refresh);
+    return () => {
+      // console.log('off eventsChange subscription');
+      ee.off('eventsChange', refresh);
+    };
+  }, []);
 
   if (!state) {
     return null;

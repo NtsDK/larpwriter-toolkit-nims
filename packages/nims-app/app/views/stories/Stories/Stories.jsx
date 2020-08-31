@@ -1,4 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useState, useMemo
+} from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
 import * as CU from 'nims-dbms-core/commonUtils';
@@ -9,6 +11,7 @@ import PermissionInformer from 'permissionInformer';
 import {
   NavLink, Route, Redirect
 } from 'react-router-dom';
+import EventEmitter from 'events';
 import {
   NavButton, NavSeparator, NavViewLink, NavContainer
 } from '../../commons/NavComponent.jsx';
@@ -38,6 +41,11 @@ export function Stories(props) {
       setState({ allStoryNames });
     }).catch(UI.handleError);
   }
+
+  const ee = useMemo(() => new EventEmitter(), []);
+
+  // ee.on('eventsChange', () => console.log('on eventsChange'));
+  // ee.on('charactersChange', () => console.log('on charactersChange'));
 
   useEffect(refresh, []);
 
@@ -72,6 +80,12 @@ export function Stories(props) {
   }
   function hideAddCharacter() {
     setShowAddCharacterDialog(false);
+  }
+  function onCreateEvent() {
+    ee.emit('eventsChange');
+  }
+  function onCharacterAdded() {
+    ee.emit('charactersChange');
   }
 
   return (
@@ -155,6 +169,7 @@ export function Stories(props) {
                             show={showCreateEventDialog}
                             onCancel={hideCreateEvent}
                             storyName={id}
+                            onCreate={onCreateEvent}
                           />
                         )
                         }
@@ -172,6 +187,7 @@ export function Stories(props) {
                             show={showAddCharacterDialog}
                             onCancel={hideAddCharacter}
                             storyName={id}
+                            onAdd={onCharacterAdded}
                           />
                         )
                         }
@@ -181,13 +197,13 @@ export function Stories(props) {
                       <WriterStory storyName={id} key={id} />
                     </Route>
                     <Route path="/stories/:id/eventPresence">
-                      <EventPresence storyName={id} key={id} />
+                      <EventPresence storyName={id} key={id} ee={ee} />
                     </Route>
                     <Route path="/stories/:id/storyCharacters">
-                      <StoryCharacters storyName={id} key={id} />
+                      <StoryCharacters storyName={id} key={id} ee={ee} />
                     </Route>
                     <Route path="/stories/:id/storyEvents">
-                      <StoryEvents storyName={id} key={id} />
+                      <StoryEvents storyName={id} key={id} ee={ee} />
                     </Route>
                   </>
                 );

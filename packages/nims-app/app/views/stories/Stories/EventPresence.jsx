@@ -13,7 +13,7 @@ import { ConfirmDialog } from '../../commons/uiCommon3/ConfirmDialog.jsx';
 import { EventPresenceCell } from './EventPresenceCell.jsx';
 
 export function EventPresence(props) {
-  const { storyName } = props;
+  const { storyName, ee } = props;
 
   const { t } = useTranslation();
   const dbms = useContext(DbmsContext);
@@ -42,6 +42,15 @@ export function EventPresence(props) {
   }
 
   useEffect(refresh, []);
+
+  useEffect(() => {
+    ee.on('eventsChange', refresh);
+    ee.on('charactersChange', refresh);
+    return () => {
+      ee.off('eventsChange', refresh);
+      ee.off('charactersChange', refresh);
+    };
+  }, []);
 
   if (!state) {
     return null;
