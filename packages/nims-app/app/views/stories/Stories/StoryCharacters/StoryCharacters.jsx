@@ -12,7 +12,7 @@ import { InlineNotification } from '../../../commons/uiCommon3/InlineNotificatio
 import { StoryCharacterRow } from './StoryCharacterRow.jsx';
 
 export function StoryCharacters(props) {
-  const { storyName } = props;
+  const { storyName, ee } = props;
 
   const { t } = useTranslation();
   const dbms = useContext(DbmsContext);
@@ -35,6 +35,15 @@ export function StoryCharacters(props) {
   }
 
   useEffect(refresh, []);
+
+  useEffect(() => {
+    // console.log('on eventsChange subscription');
+    ee.on('charactersChange', refresh);
+    return () => {
+      // console.log('off eventsChange subscription');
+      ee.off('charactersChange', refresh);
+    };
+  }, []);
 
   if (!state) {
     return null;
