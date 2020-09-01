@@ -14,6 +14,13 @@ See the License for the specific language governing permissions and
 
 const R = require('ramda');
 
+/** sdsfsdf
+ * @ param {any[]} array
+ * @ param {number} from
+ * @ param {number} to
+ * @ return {any[]}
+ */
+
 exports.removeFromArrayByIndex = (array, from, to) => {
   const rest = array.slice((to || from) + 1 || array.length);
   array.length = from < 0 ? array.length + from : from;
@@ -33,7 +40,13 @@ exports.charOrdAFactoryBase = R.curry((sortDir, greater, prepare) => function cm
 
 exports.charOrdAFactory = exports.charOrdAFactoryBase('asc', (a, b) => a > b);
 
-exports.charOrdA = exports.charOrdAFactory((a) => a.toLowerCase());
+/**
+ * @param {any} a
+ * @param {any} b
+ * @return {0|1|-1}
+ */
+const charOrdA = exports.charOrdAFactory((a) => a.toLowerCase());
+exports.charOrdA = charOrdA;
 
 exports.sortStrIgnoreCase = R.sort(exports.charOrdA);
 
@@ -65,8 +78,12 @@ const windowsReservedRe = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
 // eslint-disable-next-line no-useless-escape
 const windowsTrailingRe = /[\. ]+$/;
 
-exports.sanitizeStr2FileName = (input, replacement) => {
-  replacement = replacement || '';
+/**
+ * @param {string} input
+ * @param {string} replacement
+ * @return {string}
+ */
+exports.sanitizeStr2FileName = (input, replacement = '') => {
   const sanitized = input
     .replace(illegalRe, replacement)
     .replace(controlRe, replacement)

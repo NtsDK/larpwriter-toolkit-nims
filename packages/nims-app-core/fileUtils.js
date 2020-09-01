@@ -1,6 +1,7 @@
 import dateFormat from 'dateformat';
 import { saveAs } from 'file-saver';
 import * as R from 'ramda';
+import * as CU from 'nims-dbms-core/commonUtils';
 import UI from './uiUtils';
 import L10n from './l10n';
 
