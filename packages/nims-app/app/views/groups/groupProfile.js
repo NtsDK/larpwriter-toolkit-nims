@@ -1,7 +1,10 @@
 import PermissionInformer from 'permissionInformer';
 import ReactDOM from 'react-dom';
 import { UI, U, L10n } from 'nims-app-core';
-import FilterConfiguration from './FilterConfiguration';
+import * as R from 'ramda';
+import * as CU from 'nims-dbms-core/commonUtils';
+import * as Constants from 'nims-dbms/nimsConstants';
+import { FilterConfiguration } from './FilterConfiguration';
 import { getGroupFilter, getGroupFilterRow, getGroupProfileTemplate } from './GroupProfileTemplate.jsx';
 import { getProfileEditorRow } from '../profiles2/ProfileEditorCoreTemplate.jsx';
 import { getEntityItem } from '../profiles2/ProfileEditorTemplate.jsx';
@@ -188,7 +191,7 @@ export class GroupProfile {
     showProfileInfoCallback(groupName) {
       Promise.all([
         DBMS.getGroup({ groupName }),
-        FilterConfiguration.makeFilterConfiguration(),
+        FilterConfiguration.makeFilterConfiguration(DBMS),
         PermissionInformer.isEntityEditable({ type: 'group', name: groupName })
       ]).then((results) => {
         const [group, filterConfiguration, isGroupEditable] = results;
