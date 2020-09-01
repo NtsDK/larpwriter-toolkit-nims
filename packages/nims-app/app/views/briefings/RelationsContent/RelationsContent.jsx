@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import * as R from 'ramda';
-import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import * as CU from 'nims-dbms-core/commonUtils';
@@ -58,7 +57,9 @@ export class RelationsContent extends Component {
   }
 
   refresh() {
-    const { characterName, characterProfileStructure, dbms } = this.props;
+    const {
+      characterName, characterProfileStructure, dbms, permissionInformer
+    } = this.props;
     if (characterName === null) {
       return;
     }
@@ -67,7 +68,7 @@ export class RelationsContent extends Component {
       dbms.getAllProfiles({ type: 'character' }),
       dbms.getRelationsSummary({ characterName }),
       dbms.getExtendedProfileBindings(),
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
     ]).then((results) => {
       const [profiles, relationsSummary, profileBindings, characterNamesArray] = results;
       const profileItemNames = characterProfileStructure.map(R.prop('name')).sort();

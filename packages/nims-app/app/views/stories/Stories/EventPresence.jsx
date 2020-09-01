@@ -5,7 +5,6 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
-import PermissionInformer from 'permissionInformer';
 import FormControl from 'react-bootstrap/es/FormControl';
 import classNames from 'classnames';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
@@ -16,15 +15,15 @@ export function EventPresence(props) {
   const { storyName, ee } = props;
 
   const { t } = useTranslation();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
   const [selectedCharacters, setSelectedCharacters] = useState([]);
 
   function refresh() {
     Promise.all([
-      PermissionInformer.isEntityEditable({ type: 'story', name: storyName }),
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
+      permissionInformer.isEntityEditable({ type: 'story', name: storyName }),
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
       dbms.getStoryCharacterNamesArray({ storyName }),
       dbms.getStoryEvents({ storyName })
     ]).then((results) => {

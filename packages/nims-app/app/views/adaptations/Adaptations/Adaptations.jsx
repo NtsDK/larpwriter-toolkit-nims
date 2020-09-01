@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
 import {
@@ -44,10 +43,10 @@ export class Adaptations extends Component {
   }
 
   refresh() {
-    const { dbms } = this.props;
+    const { dbms, permissionInformer } = this.props;
     const { showOnlyUnfinishedStories } = this.state;
     Promise.all([
-      PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
+      permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
       dbms.getFilteredStoryNames({ showOnlyUnfinishedStories })
     ]).then((results) => {
       const [allStoryNames, storyNames] = results;

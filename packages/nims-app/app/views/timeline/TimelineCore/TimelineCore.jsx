@@ -3,7 +3,6 @@ import './TimelineCore.css';
 import { UI, U, L10n } from 'nims-app-core';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
-import PermissionInformer from 'permissionInformer';
 import {
   HashRouter as Router,
   Switch,
@@ -74,12 +73,12 @@ export class TimelineCore extends Component {
   }
 
   refresh() {
-    const { dbms } = this.props;
+    const { dbms, permissionInformer } = this.props;
     Promise.all([
       dbms.getMetaInfo(),
       dbms.getEventsTimeInfo(),
-      PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
+      permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
     ]).then((results) => {
       const [metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames] = results;
       // this.state.eventsTimeInfo = eventsTimeInfo;

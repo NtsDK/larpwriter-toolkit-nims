@@ -7,7 +7,6 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import Dropdown from 'react-bootstrap/es/Dropdown';
-import PermissionInformer from 'permissionInformer';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import classNames from 'classnames';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
@@ -16,14 +15,14 @@ import { ProfileList } from './ProfileList.jsx';
 
 export function ProfileBinding(props) {
   const { t } = useTranslation();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 
   function refresh() {
     Promise.all([
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
-      PermissionInformer.getEntityNamesArray({ type: 'player', editableOnly: false }),
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
+      permissionInformer.getEntityNamesArray({ type: 'player', editableOnly: false }),
       dbms.getProfileBindings()
     ]).then((results) => {
       const [characterNames, playerNames, profileBindings] = results;

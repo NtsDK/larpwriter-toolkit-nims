@@ -7,14 +7,13 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
-import PermissionInformer from 'permissionInformer';
 import { FilterConfiguration } from '../../FilterConfiguration';
 import './GroupProfile.css';
 
 export function GroupProfile(props) {
   const { id: groupName } = props;
   const { t } = useTranslation();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 
@@ -22,7 +21,7 @@ export function GroupProfile(props) {
     Promise.all([
       dbms.getGroup({ groupName }),
       FilterConfiguration.makeFilterConfiguration(dbms),
-      PermissionInformer.isEntityEditable({ type: 'group', name: groupName })
+      permissionInformer.isEntityEditable({ type: 'group', name: groupName })
     ]).then((results) => {
       const [group, filterConfiguration, isGroupEditable] = results;
       const { name } = group;

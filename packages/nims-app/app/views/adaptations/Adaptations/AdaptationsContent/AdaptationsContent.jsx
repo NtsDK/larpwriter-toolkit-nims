@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
-import PermissionInformer from 'permissionInformer';
 import './AdaptationsContent.css';
 import { AdaptationsFilter } from '../AdaptationsFilter';
 import { OriginCard } from '../OriginCard';
@@ -46,12 +45,12 @@ export class AdaptationsContent extends Component {
   }
 
   refresh() {
-    const { storyName, dbms } = this.props;
+    const { storyName, dbms, permissionInformer } = this.props;
     Promise.all([
       dbms.getMetaInfo(),
       dbms.getStory({ storyName }),
-      PermissionInformer.isEntityEditable({ type: 'story', name: storyName }),
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
+      permissionInformer.isEntityEditable({ type: 'story', name: storyName }),
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
     ]).then((results) => {
       const [metaInfo, story, isStoryEditable, allCharacters] = results;
       const characterNames = R.keys(story.characters);
@@ -76,7 +75,7 @@ export class AdaptationsContent extends Component {
 
       characterArray.sort(CU.charOrdAObject);
 
-      PermissionInformer.areAdaptationsEditable({ adaptations }).then((areAdaptationsEditable) => {
+      permissionInformer.areAdaptationsEditable({ adaptations }).then((areAdaptationsEditable) => {
         story.events.forEach((item, i) => (item.index = i));
         this.setState({
           characterNames,

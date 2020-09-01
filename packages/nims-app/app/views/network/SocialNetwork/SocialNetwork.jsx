@@ -3,7 +3,6 @@ import './SocialNetwork.css';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import * as Constants from 'nims-dbms/nimsConstants';
-import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
 import * as CU from 'nims-dbms-core/commonUtils';
@@ -69,10 +68,10 @@ export class SocialNetwork extends Component {
   }
 
   refresh() {
-    const { dbms } = this.props;
+    const { dbms, permissionInformer } = this.props;
     Promise.all([
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }), // subset selector
-      PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }), // subset selector
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }), // subset selector
+      permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }), // subset selector
       dbms.getAllProfiles({ type: 'character' }), // node coloring
       dbms.getAllStories(), // contains most part of SN data
       dbms.getProfileStructure({ type: 'character' }), // node coloring

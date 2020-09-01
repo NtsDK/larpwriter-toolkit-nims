@@ -7,7 +7,6 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
-import PermissionInformer from 'permissionInformer';
 import {
   NavLink, Route, Redirect
 } from 'react-router-dom';
@@ -30,14 +29,14 @@ import { StoryCharacters } from './StoryCharacters/StoryCharacters.jsx';
 
 export function Stories(props) {
   const { t } = useTranslation();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
   const [showCreateEventDialog, setShowCreateEventDialog] = useState(false);
   const [showAddCharacterDialog, setShowAddCharacterDialog] = useState(false);
 
   function refresh() {
-    PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }).then((allStoryNames) => {
+    permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }).then((allStoryNames) => {
       setState({ allStoryNames });
     }).catch(UI.handleError);
   }

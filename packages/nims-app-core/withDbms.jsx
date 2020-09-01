@@ -4,8 +4,14 @@ import { DbmsContextConsumer } from './dbmsContext';
 export const withDbms = (Wrapped) => (props) => (
   <DbmsContextConsumer>
     {
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      ({ dbms }) => <Wrapped {...props} dbms={dbms} />
+      ({ dbms, permissionInformer }) => (
+        <Wrapped
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...props}
+          dbms={dbms}
+          permissionInformer={permissionInformer}
+        />
+      )
     }
   </DbmsContextConsumer>
 );

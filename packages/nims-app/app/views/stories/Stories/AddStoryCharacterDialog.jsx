@@ -5,7 +5,6 @@ import FormControl from 'react-bootstrap/es/FormControl';
 import ControlLabel from 'react-bootstrap/es/ControlLabel';
 import * as Constants from 'nims-dbms/nimsConstants';
 import * as R from 'ramda';
-import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { FormDialog } from '../../commons/uiCommon3/FormDialog.jsx';
@@ -16,7 +15,7 @@ export function AddStoryCharacterDialog(props) {
   } = props;
 
   const { t } = useTranslation();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 
@@ -25,7 +24,7 @@ export function AddStoryCharacterDialog(props) {
     // I don't know why
     // setState(null);
     Promise.all([
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
       dbms.getStoryCharacters({ storyName })
     ]).then((results) => {
       const [allCharacters, localCharacters] = results;
