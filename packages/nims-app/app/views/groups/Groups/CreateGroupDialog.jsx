@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import {
   NavLink, Route, Redirect, Switch, useHistory, useRouteMatch
 } from 'react-router-dom';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
-import PermissionInformer from 'permissionInformer';
+import { DbmsContext } from 'nims-app-core/dbmsContext';
 import Button from 'react-bootstrap/es/Button';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
@@ -16,11 +16,12 @@ export function CreateGroupDialog(props) {
   const {
     refresh, ...elementProps
   } = props;
+  const { permissionInformer } = useContext(DbmsContext);
   const history = useHistory();
   async function onCreate({ groupName }) {
     try {
       try {
-        await PermissionInformer.refresh();
+        await permissionInformer.refresh();
         await refresh();
         history.push(`/groups/${groupName}`);
       } catch (err) {

@@ -5,7 +5,6 @@ import {
 } from 'react-router-dom';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
-import PermissionInformer from 'permissionInformer';
 import Button from 'react-bootstrap/es/Button';
 import { useTranslation } from 'react-i18next';
 import { ModalTrigger } from '../uiCommon3/ModalTrigger.jsx';

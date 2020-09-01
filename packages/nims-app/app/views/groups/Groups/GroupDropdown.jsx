@@ -5,7 +5,6 @@ import {
 } from 'react-router-dom';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
-import PermissionInformer from 'permissionInformer';
 import Button from 'react-bootstrap/es/Button';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
@@ -23,13 +22,13 @@ export function GroupDropdown(props) {
   const { t } = useTranslation();
   const match = useRouteMatch('/groups/:id');
   const history = useHistory();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   async function onRenameGroup({ toName, fromName }) {
     const { id: currentStoryName } = match.params;
     try {
       try {
-        await PermissionInformer.refresh();
+        await permissionInformer.refresh();
         await refresh();
         if (fromName === currentStoryName) {
           history.push(`/groups/${toName}`);
@@ -57,7 +56,7 @@ export function GroupDropdown(props) {
         nextProfile = primaryNames[index - 1];
       }
 
-      await PermissionInformer.refresh();
+      await permissionInformer.refresh();
       await refresh();
 
       if (removableGroup === currentStoryName && nextProfile !== null) {

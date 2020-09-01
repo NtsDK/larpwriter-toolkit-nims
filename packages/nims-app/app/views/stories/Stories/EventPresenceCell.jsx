@@ -5,7 +5,6 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
-import PermissionInformer from 'permissionInformer';
 import FormControl from 'react-bootstrap/es/FormControl';
 import classNames from 'classnames';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';

@@ -5,7 +5,6 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
-import PermissionInformer from 'permissionInformer';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { OriginCard } from '../../adaptations/Adaptations/OriginCard/index';
@@ -14,7 +13,7 @@ export function StoryEvents(props) {
   const { storyName, ee } = props;
 
   const { t } = useTranslation();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 
@@ -23,7 +22,7 @@ export function StoryEvents(props) {
     // I don't know why
     setState(null);
     Promise.all([
-      PermissionInformer.isEntityEditable({ type: 'story', name: storyName }),
+      permissionInformer.isEntityEditable({ type: 'story', name: storyName }),
       dbms.getMetaInfo(),
       dbms.getStoryEvents({ storyName })
     ]).then((results) => {

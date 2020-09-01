@@ -70,12 +70,12 @@ export class OrganizerApp extends Component {
     const {
       viewCache, isAdmin, loadEmptyBase, checkConsistency,
       showDiffExample, showDbmsConsistencyState, onLoadBaseClick,
-      dbms
+      dbms, permissionInformer
     } = this.props;
 
     return (
       <I18nextProvider i18n={i18n}>
-        <DbmsContextProvider value={{ dbms }}>
+        <DbmsContextProvider value={{ dbms, permissionInformer }}>
           <Router>
             <NavContainer>
               <NavViewLink labelKey="header.overview" to="/overview" />

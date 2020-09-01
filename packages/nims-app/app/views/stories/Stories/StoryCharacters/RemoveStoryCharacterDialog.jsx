@@ -4,7 +4,6 @@ import * as Constants from 'nims-dbms/nimsConstants';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
-import PermissionInformer from 'permissionInformer';
 import { ConfirmDialog } from '../../../commons/uiCommon3/ConfirmDialog.jsx';
 
 export function RemoveStoryCharacterDialog(props) {

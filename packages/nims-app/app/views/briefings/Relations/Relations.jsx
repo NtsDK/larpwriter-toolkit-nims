@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import {
   HashRouter as Router,
@@ -55,10 +54,10 @@ export class Relations extends Component {
   }
 
   refresh() {
-    const { dbms } = this.props;
+    const { dbms, permissionInformer } = this.props;
     Promise.all([
       dbms.getProfileStructure({ type: 'character' }),
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
+      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false })
     ]).then((results) => {
       const [characterProfileStructure, characterNames] = results;
 

@@ -5,7 +5,6 @@ import {
 } from 'react-router-dom';
 import * as CU from 'nims-dbms-core/commonUtils';
 import * as R from 'ramda';
-import PermissionInformer from 'permissionInformer';
 import Button from 'react-bootstrap/es/Button';
 import Dropdown from 'react-bootstrap/es/Dropdown';
 import MenuItem from 'react-bootstrap/es/MenuItem';
@@ -24,13 +23,13 @@ export function ProfileDropdown(props) {
   const { t } = useTranslation();
   const match = useRouteMatch('/characters/characterEditor/:id');
   const history = useHistory();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   async function onRenameProfile({ toName, fromName }) {
     const { id: currentProfileName } = match.params;
     try {
       try {
-        await PermissionInformer.refresh();
+        await permissionInformer.refresh();
         await refresh();
         if (fromName === currentProfileName) {
           history.push(`/characters/characterEditor/${toName}`);
@@ -58,7 +57,7 @@ export function ProfileDropdown(props) {
         nextProfile = primaryNames[index - 1];
       }
 
-      await PermissionInformer.refresh();
+      await permissionInformer.refresh();
       await refresh();
 
       if (removableProfile === currentProfileName && nextProfile !== null) {

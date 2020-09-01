@@ -214,6 +214,7 @@ async function onDatabaseLoad() {
       showDiffExample={showDiffExample}
       showDbmsConsistencyState={showDbmsConsistencyState}
       dbms={DBMS}
+      permissionInformer={PermissionInformer}
       onLoadBaseClick={(evt) => {
         FileUtils.readSingleFile(evt)
           .then((database) => DBMS.setDatabase({ database }))

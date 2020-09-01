@@ -7,7 +7,6 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
-import PermissionInformer from 'permissionInformer';
 import {
   NavLink, Route, Redirect
 } from 'react-router-dom';
@@ -25,12 +24,12 @@ import './Groups.css';
 
 export function Groups(props) {
   const { t } = useTranslation();
-  const { dbms } = useContext(DbmsContext);
+  const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 
   function refresh() {
-    PermissionInformer.getEntityNamesArray({ type: 'group', editableOnly: false }).then((groupNames) => {
+    permissionInformer.getEntityNamesArray({ type: 'group', editableOnly: false }).then((groupNames) => {
       setState({ groupNames });
     }).catch(UI.handleError);
   }
