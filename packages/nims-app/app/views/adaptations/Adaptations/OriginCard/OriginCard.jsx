@@ -46,30 +46,30 @@ export function OriginCard(props) {
   }
 
   return (
-    <Draggable draggableId={storyName + event.name + event.index} index={event.index}>
-      {
-        (provided) => (
-          <div
-            className="OriginCard Origin"
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-          >
-            <div className="panel panel-primary">
-              <div className="panel-heading flex-row">
-                <FormControl defaultValue={event.name} onChange={onChangeEventName} className="tw-mr-4" />
-                {
-                  // showTimeInput && <input className="isStoryEditable time-input form-control flex-0-0-auto" />
-                  // showTimeInput && (
-                  <DateTimePicker
-                    className="time-input form-control tw-mr-4"
-                    date={event.time !== '' ? new Date(event.time) : null}
-                    defaultDate={new Date(metaInfo.date)}
-                    onChange={onChangeDateTimeCreator}
-                  />
-                  // )
-                }
-                {/* {
+    // <Draggable draggableId={storyName + event.name + event.index} index={event.index}>
+    //   {
+    //     (provided) => (
+    <div
+      className="OriginCard Origin"
+      // {...provided.draggableProps}
+      // {...provided.dragHandleProps}
+      // ref={provided.innerRef}
+    >
+      <div className="panel panel-primary">
+        <div className="panel-heading flex-row">
+          <FormControl defaultValue={event.name} onChange={onChangeEventName} className="tw-mr-4" />
+          {
+            // showTimeInput && <input className="isStoryEditable time-input form-control flex-0-0-auto" />
+            // showTimeInput && (
+            <DateTimePicker
+              className="time-input form-control tw-mr-4"
+              date={event.time !== '' ? new Date(event.time) : null}
+              defaultDate={new Date(metaInfo.date)}
+              onChange={onChangeDateTimeCreator}
+            />
+            // )
+          }
+          {/* {
             showLockButton && (
               <button
                 type="button"
@@ -78,26 +78,26 @@ export function OriginCard(props) {
               />
             )
           } */}
-                <StoryEventDropdown
-                  event={event}
-                  storyName={storyName}
-                  refresh={refresh}
-                  nextEvent={nextEvent}
-                />
-              </div>
-              <div className="panel-body">
-                {/* {
+          <StoryEventDropdown
+            event={event}
+            storyName={storyName}
+            refresh={refresh}
+            nextEvent={nextEvent}
+          />
+        </div>
+        <div className="panel-body">
+          {/* {
             showTextInput && ( */}
-                <textarea
-                  className="isStoryEditable eventPersonalStory form-control text-input"
-                  defaultValue={event.text}
-                  onChange={onChangeOriginText}
-                />
-              </div>
-            </div>
-          </div>
-        )
-      }
-    </Draggable>
+          <textarea
+            className="isStoryEditable eventPersonalStory form-control text-input"
+            defaultValue={event.text}
+            onChange={onChangeOriginText}
+          />
+        </div>
+      </div>
+    </div>
+    //     )
+    //   }
+    // </Draggable>
   );
 }
