@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
+import * as CU from 'nims-dbms-core/commonUtils';
 import './AdaptationsContent.css';
 import { AdaptationsFilter } from '../AdaptationsFilter';
 import { OriginCard } from '../OriginCard';
@@ -16,9 +17,9 @@ export class AdaptationsContent extends Component {
     this.state = {
       characterNames: null,
       events: null,
-      areAdaptationsEditable: null,
+      // areAdaptationsEditable: null,
       metaInfo: null,
-      isStoryEditable: true,
+      // isStoryEditable: true,
       allCharacters: null,
       characterArray: null,
       eventArray: null,
@@ -80,9 +81,9 @@ export class AdaptationsContent extends Component {
         this.setState({
           characterNames,
           events: story.events,
-          areAdaptationsEditable,
+          // areAdaptationsEditable,
           metaInfo,
-          isStoryEditable,
+          // isStoryEditable,
           allCharacters,
           characterArray,
           eventArray,

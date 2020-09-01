@@ -1,7 +1,16 @@
 import * as R from 'ramda';
 
+/**
+ * @typedef Story
+ * @property {{[props: string]: any}} characters - The person's name
+ */
+
+/**
+ * @param {Story} story
+ */
 export function getStoryCharacterCompleteness(story) {
-  return R.keys(story.characters).map((elem) => ({
+  const characterList = R.keys(story.characters);
+  return characterList.map((elem) => ({
     characterName: elem,
     isFinished: _isStoryFinishedForCharacter(story, elem),
     isEmpty: _isStoryEmptyForCharacter(story, elem)
