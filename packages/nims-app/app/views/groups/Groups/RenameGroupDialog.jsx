@@ -10,7 +10,7 @@ export function RenameGroupDialog(props) {
   const { groupName, onRename, ...elementProps } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onSubmit({ value: toName }) {
     return dbms.renameGroup({

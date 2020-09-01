@@ -10,7 +10,7 @@ export function RenameStoryDialog(props) {
   const { storyName, onRename, ...elementProps } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onSubmit({ value: toName }) {
     return dbms.renameStory({

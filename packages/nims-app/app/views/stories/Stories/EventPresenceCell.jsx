@@ -17,7 +17,7 @@ export function EventPresenceCell(props) {
     isReady, hasText, storyName, refresh
   } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   function onChange(event) {

@@ -23,7 +23,7 @@ export function StoryDropdown(props) {
   const { t } = useTranslation();
   const match = useRouteMatch('/stories/:id');
   const history = useHistory();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   async function onRenameStory({ toName, fromName }) {
     const { id: currentStoryName } = match.params;

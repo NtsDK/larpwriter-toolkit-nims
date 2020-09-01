@@ -10,7 +10,7 @@ export function WriterStory(props) {
   const { storyName } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [state, setState] = useState({ storyText: null });
 

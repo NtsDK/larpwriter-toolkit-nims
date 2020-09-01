@@ -16,7 +16,7 @@ export function BindProfileDialog(props) {
 
   const { t } = useTranslation();
   const [selectedFilter, setSelectedFilter] = useState('unbonded');
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onSelectedFilterChange(e) {
     setSelectedFilter(e.target.dataset.selectedFilter);

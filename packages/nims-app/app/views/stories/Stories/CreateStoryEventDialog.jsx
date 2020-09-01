@@ -15,7 +15,7 @@ export function CreateStoryEventDialog(props) {
   } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 

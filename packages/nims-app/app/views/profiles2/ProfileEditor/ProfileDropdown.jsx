@@ -24,7 +24,7 @@ export function ProfileDropdown(props) {
   const { t } = useTranslation();
   const match = useRouteMatch('/characters/characterEditor/:id');
   const history = useHistory();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   async function onRenameProfile({ toName, fromName }) {
     const { id: currentProfileName } = match.params;

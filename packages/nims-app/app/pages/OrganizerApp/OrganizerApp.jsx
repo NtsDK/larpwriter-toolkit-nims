@@ -75,7 +75,7 @@ export class OrganizerApp extends Component {
 
     return (
       <I18nextProvider i18n={i18n}>
-        <DbmsContextProvider value={dbms}>
+        <DbmsContextProvider value={{ dbms }}>
           <Router>
             <NavContainer>
               <NavViewLink labelKey="header.overview" to="/overview" />

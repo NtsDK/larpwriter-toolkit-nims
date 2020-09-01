@@ -10,7 +10,7 @@ export function CommonCreateProfileDialog(props) {
   const { profileName, onCreate, ...elementProps } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onSubmit({ value: profileName }) {
     return dbms.createProfile({

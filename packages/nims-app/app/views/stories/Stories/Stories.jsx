@@ -30,7 +30,7 @@ import { StoryCharacters } from './StoryCharacters/StoryCharacters.jsx';
 
 export function Stories(props) {
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
   const [showCreateEventDialog, setShowCreateEventDialog] = useState(false);

@@ -16,7 +16,7 @@ export function EventPresence(props) {
   const { storyName, ee } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
   const [selectedCharacters, setSelectedCharacters] = useState([]);

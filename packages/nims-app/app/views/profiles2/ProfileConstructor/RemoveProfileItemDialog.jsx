@@ -12,7 +12,7 @@ export function RemoveProfileItemDialog(props) {
   } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   async function onSubmit() {
     return dbms.removeProfileItem({

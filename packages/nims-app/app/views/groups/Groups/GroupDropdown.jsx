@@ -23,7 +23,7 @@ export function GroupDropdown(props) {
   const { t } = useTranslation();
   const match = useRouteMatch('/groups/:id');
   const history = useHistory();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   async function onRenameGroup({ toName, fromName }) {
     const { id: currentStoryName } = match.params;

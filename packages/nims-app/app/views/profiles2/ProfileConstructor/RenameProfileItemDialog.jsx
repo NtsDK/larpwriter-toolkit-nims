@@ -10,7 +10,7 @@ export function RenameProfileItemDialog(props) {
   const { profileItemName, onRename, ...elementProps } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   async function onSubmit({ value: newName }) {
     return dbms.renameProfileItem({

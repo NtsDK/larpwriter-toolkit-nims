@@ -16,7 +16,7 @@ import { ProfileList } from './ProfileList.jsx';
 
 export function ProfileBinding(props) {
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 

@@ -11,7 +11,7 @@ export function AdaptationCard(props) {
     showFinishedButton, showTimeInput, showTextInput, cardTitle
   } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [isFinished, setIsFinished] = useState(event.characters[characterName].ready);
 

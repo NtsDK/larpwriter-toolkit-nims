@@ -9,7 +9,7 @@ export function StoryCharacterRow(props) {
   const {
     character, storyName, refresh, outOfStoryChars
   } = props;
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onInventoryChange(event) {
     dbms.updateCharacterInventory({
