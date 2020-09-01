@@ -31,6 +31,7 @@ import { GameInfo } from '../../views/overview/GameInfo/index';
 import { StatisticDiagrams } from '../../views/overview/StatisticDiagrams/index';
 import { ProfileDiagrams } from '../../views/overview/ProfileDiagrams/index';
 import { Stories } from '../../views/stories/Stories/index';
+import { Groups } from '../../views/groups/Groups/index';
 
 import { ProfileEditor } from '../../views/profiles2/ProfileEditor/index';
 import { ProfileConstructor } from '../../views/profiles2/ProfileConstructor/index';
@@ -246,6 +247,7 @@ export class OrganizerApp extends Component {
               </Route>
               <Route path="/profile-filter"><ViewWrapper view={viewCache.get('profileFilter')} /></Route>
               <Route path="/groups">
+                <Groups />
                 <ViewWrapper view={viewCache.get('groups')} />
               </Route>
               <Route path="/textSearch">
@@ -301,7 +303,8 @@ export class OrganizerApp extends Component {
 
               {/* <Redirect to={"/overview"}/> */}
               {/* <Redirect to="/logViewer/groupSchema" /> */}
-              <Redirect to="/adaptations" />
+              {/* <Redirect to="/adaptations" /> */}
+              <Redirect to="/groups" />
             </Switch>
             <div className="hidden">
               {
