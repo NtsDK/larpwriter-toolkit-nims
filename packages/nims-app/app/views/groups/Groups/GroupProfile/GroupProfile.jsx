@@ -14,7 +14,7 @@ import './GroupProfile.css';
 export function GroupProfile(props) {
   const { id: groupName } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 

@@ -29,7 +29,7 @@ const getCompletenessColor = (value, total) => {
 export function StoryReport(props) {
   const { id } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [characterReport, setCharacterReport] = useState(null);
   useEffect(() => {

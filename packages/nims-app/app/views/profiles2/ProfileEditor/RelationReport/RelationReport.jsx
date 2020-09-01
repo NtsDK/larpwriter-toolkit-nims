@@ -14,7 +14,7 @@ import './RelationReport.css';
 export function RelationReport(props) {
   const { id } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [relationsSummary, setRelationsSummary] = useState(null);
   useEffect(() => {

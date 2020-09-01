@@ -14,7 +14,7 @@ export function StoryEvents(props) {
   const { storyName, ee } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
 

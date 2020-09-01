@@ -10,7 +10,7 @@ export function CommonCreateStoryDialog(props) {
   const { onCreate, ...elementProps } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onSubmit({ value: storyName }) {
     return dbms.createStory({

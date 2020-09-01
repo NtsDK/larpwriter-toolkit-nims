@@ -13,7 +13,7 @@ export function RemoveGroupDialog(props) {
   } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onSubmit() {
     return dbms.removeGroup({

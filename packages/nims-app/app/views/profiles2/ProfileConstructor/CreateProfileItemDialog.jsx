@@ -12,7 +12,7 @@ import { FormDialog } from '../../commons/uiCommon3/FormDialog.jsx';
 export function CreateProfileItemDialog(props) {
   const { profileStructure, onCreate, ...elementProps } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
   const getPositionOptions = R.pipe(R.pluck('name'), R.map((name) => t('common.set-item-before2', { name })));
   const positionOptions = [...getPositionOptions(profileStructure), t('common.set-item-as-last')];
 

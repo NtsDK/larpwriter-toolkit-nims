@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 export function EnumListEditor(props) {
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
   const {
     profileItemName, list, setList, setErrorText, canRemoveLast
   } = props;

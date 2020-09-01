@@ -22,7 +22,7 @@ export function StoryEventDropdown(props) {
   } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function cloneEvent() {
     dbms.cloneEvent({

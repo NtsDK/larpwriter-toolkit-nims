@@ -29,7 +29,7 @@ export function ProfileConstructorRow2(props) {
     profileStructureItem, i, refresh
   } = props;
 
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function changeProfileItemPlayerAccess(event) {
     const { value } = event.target;

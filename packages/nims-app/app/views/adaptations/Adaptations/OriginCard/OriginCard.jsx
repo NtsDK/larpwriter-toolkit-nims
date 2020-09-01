@@ -14,7 +14,7 @@ export function OriginCard(props) {
     // showTimeInput, showTextInput, showLockButton
   } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   function onChangeEventName(e) {
     const text = e.target.value;

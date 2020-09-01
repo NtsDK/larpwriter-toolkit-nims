@@ -15,7 +15,7 @@ export function ReplaceStoryCharacterDialog(props) {
   } = props;
 
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   async function onSubmit({ toCharacter }) {
     return dbms.switchStoryCharacters({

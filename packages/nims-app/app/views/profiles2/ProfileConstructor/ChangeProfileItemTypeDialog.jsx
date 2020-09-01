@@ -15,7 +15,7 @@ export function ChangeProfileItemTypeDialog(props) {
     profileItemName, onChange, profileItemType, ...elementProps
   } = props;
   const { t } = useTranslation();
-  const dbms = useContext(DbmsContext);
+  const { dbms } = useContext(DbmsContext);
 
   async function onSubmit({ newItemType }) {
     return dbms.changeProfileItemType({
