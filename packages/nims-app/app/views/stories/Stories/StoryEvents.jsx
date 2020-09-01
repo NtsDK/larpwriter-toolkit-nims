@@ -5,7 +5,7 @@ import * as CU from 'nims-dbms-core/commonUtils';
 import * as Constants from 'nims-dbms/nimsConstants';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { OriginCard } from '../../adaptations/Adaptations/OriginCard/index';
 
@@ -84,14 +84,26 @@ export function StoryEvents(props) {
                 <div className="tw-m-auto tw-max-w-screen-md" ref={provided.innerRef} {...provided.droppableProps}>
                   {
                     events.map((event, i) => (
-                      <OriginCard
-                        metaInfo={metaInfo}
-                        storyName={storyName}
-                        event={event}
-                        nextEvent={events[i + 1]}
-                        key={storyName + event.index}
-                        refresh={refresh}
-                      />
+                      <Draggable draggableId={storyName + event.name + event.index} index={event.index}>
+                        {
+                          (provided) => (
+                            <div
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                            >
+                              <OriginCard
+                                metaInfo={metaInfo}
+                                storyName={storyName}
+                                event={event}
+                                nextEvent={events[i + 1]}
+                                key={storyName + event.index}
+                                refresh={refresh}
+                              />
+                            </div>
+                          )
+                        }
+                      </Draggable>
                     ))
                   }
                   {provided.placeholder}
