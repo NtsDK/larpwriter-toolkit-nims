@@ -9,7 +9,7 @@ import * as Constants from 'nims-dbms/nimsConstants';
 
 import { createModalDialog } from '../commons/uiCommons';
 import { createGroup, removeGroup } from './groupProfile';
-import FilterConfiguration from './FilterConfiguration';
+import { FilterConfiguration } from './FilterConfiguration';
 import { getModalPromptBody } from '../commons/uiCommons2.jsx';
 
 import {
@@ -111,7 +111,7 @@ export class ProfileFilter {
 
       this.groupAreaRefresh();
 
-      FilterConfiguration.makeFilterConfiguration().then((filterConfiguration) => {
+      FilterConfiguration.makeFilterConfiguration(DBMS).then((filterConfiguration) => {
         this.state.filterConfiguration = filterConfiguration;
 
         U.showEl(U.qe(`${root} .alert.no-characters`), !filterConfiguration.haveProfiles());

@@ -19,6 +19,7 @@ import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.j
 import { EntityNav } from '../../commons/EntityNav';
 import { GroupDropdown } from './GroupDropdown.jsx';
 import { CreateGroupDialog } from './CreateGroupDialog.jsx';
+import { GroupProfile } from './GroupProfile/index';
 
 import './Groups.css';
 
@@ -95,88 +96,17 @@ export function Groups(props) {
               }}
             />
 
-            {/*
             <Route
-              path="/stories/:id"
-              exact
+              path="/groups/:id"
               render={({ match }) => {
                 const { id } = match.params;
+
                 return (
-                // <Redirect to={`/stories/${id}/writerStory`} />
-                  <Redirect to={`/stories/${id}/storyEvents`} />
+                  <GroupProfile key={id} id={id} />
+                  // <GroupProfile id={id} />
                 );
               }}
             />
-
-            <Route
-              path="/stories/:id"
-              render={({ match }) => {
-                const { id } = match.params;
-                return (
-                  <>
-                    <div className="tw-flex">
-                      <NavContainer className="sub-tab-navigation tw-flex-auto">
-                        <NavViewLink labelKey="header.writer-story" to={`/stories/${id}/writerStory`} />
-                        <NavViewLink labelKey="header.story-events" to={`/stories/${id}/storyEvents`} />
-                        <NavViewLink labelKey="header.story-characters" to={`/stories/${id}/storyCharacters`} />
-                        <NavViewLink labelKey="header.event-presence" to={`/stories/${id}/eventPresence`} />
-                      </NavContainer>
-
-                      <div>
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon create event flex-0-0-auto icon-padding isStoryEditable tw-mr-4"
-                          onClick={showCreateEvent}
-                        >
-                          <span>{t('stories.create-event')}</span>
-                        </button>
-                        {
-                          showCreateEventDialog
-                  && (
-                    <CreateStoryEventDialog
-                      show={showCreateEventDialog}
-                      onCancel={hideCreateEvent}
-                      storyName={id}
-                      onCreate={onCreateEvent}
-                    />
-                  )
-                        }
-                        <button
-                          type="button"
-                          className="btn btn-default btn-reduced fa-icon add character flex-0-0-auto icon-padding isStoryEditable"
-                          onClick={showAddCharacter}
-                        >
-                          <span>{t('stories.add-character')}</span>
-                        </button>
-                        {
-                          showAddCharacterDialog
-                  && (
-                    <AddStoryCharacterDialog
-                      show={showAddCharacterDialog}
-                      onCancel={hideAddCharacter}
-                      storyName={id}
-                      onAdd={onCharacterAdded}
-                    />
-                  )
-                        }
-                      </div>
-                    </div>
-                    <Route path="/stories/:id/writerStory">
-                      <WriterStory storyName={id} key={id} />
-                    </Route>
-                    <Route path="/stories/:id/eventPresence">
-                      <EventPresence storyName={id} key={id} ee={ee} />
-                    </Route>
-                    <Route path="/stories/:id/storyCharacters">
-                      <StoryCharacters storyName={id} key={id} ee={ee} />
-                    </Route>
-                    <Route path="/stories/:id/storyEvents">
-                      <StoryEvents storyName={id} key={id} ee={ee} />
-                    </Route>
-                  </>
-                );
-              }}
-            /> */}
           </div>
         </div>
       </div>

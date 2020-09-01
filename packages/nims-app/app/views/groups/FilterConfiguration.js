@@ -1,7 +1,9 @@
 import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
 import { U, L10n } from 'nims-app-core';
+import * as R from 'ramda';
+import * as Constants from 'nims-dbms/nimsConstants';
 
-function FilterConfiguration(info) {
+export function FilterConfiguration(info) {
   this.info = info;
   function populateProfileItems(item) {
     if (!R.startsWith(Constants.CHAR_PREFIX, item.name)
@@ -14,9 +16,9 @@ function FilterConfiguration(info) {
   this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
 }
 
-FilterConfiguration.makeFilterConfiguration = function () {
+FilterConfiguration.makeFilterConfiguration = function (dbms) {
   return new Promise((resolve, reject) => {
-    DBMS.getProfileFilterInfo().then((info) => {
+    dbms.getProfileFilterInfo().then((info) => {
       const filterConfiguration = new FilterConfiguration(info);
       resolve(filterConfiguration);
     }).catch(reject);
@@ -90,5 +92,3 @@ FilterConfiguration.prototype.getProfileIds = function (filterModel) {
   const offset = this.groupedProfileFilterItems[0].profileFilterItems.length;
   return this.getDataArrays(filterModel).map((dataArray) => `${dataArray[0].value || ''}/${dataArray[offset].value || ''}`).sort();
 };
-
-export default FilterConfiguration;
