@@ -32,6 +32,7 @@ import { StatisticDiagrams } from '../../views/overview/StatisticDiagrams/index'
 import { ProfileDiagrams } from '../../views/overview/ProfileDiagrams/index';
 import { Stories } from '../../views/stories/Stories/index';
 import { Groups } from '../../views/groups/Groups/index';
+import { ProfileFilter } from '../../views/groups/ProfileFilter/index';
 
 import { ProfileEditor } from '../../views/profiles2/ProfileEditor/index';
 import { ProfileConstructor } from '../../views/profiles2/ProfileConstructor/index';
@@ -245,7 +246,10 @@ export class OrganizerApp extends Component {
                 <SocialNetwork />
                 {/* <ViewWrapper view={viewCache.get('socialNetwork')} /> */}
               </Route>
-              <Route path="/profile-filter"><ViewWrapper view={viewCache.get('profileFilter')} /></Route>
+              <Route path="/profile-filter">
+                <ProfileFilter />
+                <ViewWrapper view={viewCache.get('profileFilter')} />
+              </Route>
               <Route path="/groups">
                 <Groups />
                 <ViewWrapper view={viewCache.get('groups')} />

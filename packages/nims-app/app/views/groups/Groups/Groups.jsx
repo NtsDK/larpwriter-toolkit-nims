@@ -10,9 +10,6 @@ import { useTranslation } from 'react-i18next';
 import {
   NavLink, Route, Redirect
 } from 'react-router-dom';
-import {
-  NavButton, NavSeparator, NavViewLink, NavContainer
-} from '../../commons/NavComponent.jsx';
 
 import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
 import { EntityNav } from '../../commons/EntityNav';
