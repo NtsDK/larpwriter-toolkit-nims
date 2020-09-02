@@ -22,6 +22,10 @@ export function ProfileFilter(props) {
   const { dbms, permissionInformer } = useContext(DbmsContext);
 
   const [state, setState] = useState(null);
+  const [sortState, setSortState] = useState({
+    sortKey: Constants.CHAR_NAME,
+    sortDir: 'asc'
+  });
 
   function refresh() {
     FilterConfiguration.makeFilterConfiguration(dbms).then((filterConfiguration) => {
@@ -39,7 +43,44 @@ export function ProfileFilter(props) {
 
   const headerData = R.map(R.pick(['name', 'displayName', 'type']), filterConfiguration.getProfileFilterItems());
 
-  const dataArrays = filterConfiguration.getDataArrays([]);
+  const rawDataArrays = filterConfiguration.getDataArrays([]);
+
+  const sortFunc = CU.charOrdAFactoryBase(sortState.sortDir, (a, b) => a > b, (a) => {
+    const map = R.indexBy(R.prop('itemName'), a);
+    const item = map[sortState.sortKey];
+    let { value } = item;
+    if (value === undefined) return value;
+    switch (item.type) {
+    case 'text':
+    case 'string':
+    case 'enum':
+    case 'multiEnum':
+      value = value.toLowerCase();
+      break;
+    case 'checkbox':
+    case 'number':
+      break;
+    default:
+      throw new Error(`Unexpected type ${item.type}`);
+    }
+    return value;
+  });
+  const dataArrays = R.sort(sortFunc, rawDataArrays);
+  function onSortChange(e) {
+    const { sortDir, sortKey } = e.target.dataset;
+    if (sortKey === sortState.sortKey) {
+      setSortState({
+        sortKey,
+        // eslint-disable-next-line no-nested-ternary
+        sortDir: sortDir === 'noSort' ? 'asc' : (sortDir === 'asc' ? 'desc' : 'asc')
+      });
+    } else {
+      setSortState({
+        sortKey,
+        sortDir: 'asc'
+      });
+    }
+  }
 
   return (
     <div className="ProfileFilter profile-filter-tab block">
@@ -63,10 +104,19 @@ export function ProfileFilter(props) {
                 headerData.map((elem, i) => (
                   <th className={classNames('sorting', {
                     'text-align-right': elem.type === 'number',
-                    'text-align-left': elem.type !== 'number'
+                    'text-align-left': elem.type !== 'number',
+                    sortDesc: sortState.sortKey === elem.name && sortState.sortDir !== 'desc',
+                    sortAsc: sortState.sortKey === elem.name && sortState.sortDir !== 'asc',
                   })}
                   >
-                    {elem.displayName}
+                    <button
+                      type="button"
+                      data-sort-key={elem.name}
+                      data-sort-dir={sortState.sortKey === elem.name ? sortState.sortDir : 'noSort'}
+                      onClick={onSortChange}
+                    >
+                      {elem.displayName}
+                    </button>
                   </th>
                 ))
               }
