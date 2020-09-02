@@ -403,9 +403,9 @@ select[disabled]{
   display: inline-block;
 }
 
-.sorting {
+/* .sorting {
   cursor: pointer;
-}
+} */
 
 .bold {
   font-weight: bold;
