@@ -23,6 +23,7 @@ module.exports = {
   'text-contains': 'содержит \'{0}\'',
   'one-from': 'один из',
   total: 'Всего: ',
+  total2: 'Всего: {{total}}',
 
   'profile-item': 'Поле досье/статистика',
   'profile-item-type': 'Тип поля',
