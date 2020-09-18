@@ -8,9 +8,11 @@ Installing monorepo manager Lerna:
 
 `npm i -g lerna` 
 
-Installing project dev dependencies:
+Installing project dependencies:
 
 `npm i` 
+
+`npm run bootstrap` 
 
 
 # Dev run
