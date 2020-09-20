@@ -38,7 +38,9 @@
     "type": "git",
     "url": "https://github.com/NtsDK/larpwriter-toolkit-nims"
   },
-  "devDependencies": {},
+  "devDependencies": {
+     "webpack-dev-server": "^3.11.0"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "ajv": "^6.12.2",
