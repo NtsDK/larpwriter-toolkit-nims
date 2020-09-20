@@ -33,5 +33,8 @@
     "nims-dbms" : "0.7.2",
     "nims-dbms-core" : "0.7.2"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }
