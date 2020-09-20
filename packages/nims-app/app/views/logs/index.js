@@ -1,5 +1,5 @@
 import LogViewer from './logViewer';
-import About from './About';
+import About from './about';
 import GroupSchema from '../groups/groupSchema';
 
 import buildRouteView from '../tabRouting/routingTab';
