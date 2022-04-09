@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './NodesColoringSelector.css';
 import * as R from 'ramda';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 import { UI, U, L10n } from 'nims-app-core';
 import { CHAR_PREFIX, PROFILE_GROUP, FILTER_GROUP } from '../SocialNetworkConstants';
 

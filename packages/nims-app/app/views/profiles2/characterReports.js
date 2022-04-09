@@ -1,8 +1,8 @@
-import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import { ProjectUtils } from 'nims-dbms';
 import ReactDOM from 'react-dom';
 import { U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 
 import { getRelationReportRow, getStoryReportRow } from './CharacterReportsTemplate.jsx';
 // ((exports) => {

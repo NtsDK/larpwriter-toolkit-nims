@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './NetworkSelector.css';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 import classNames from 'classnames';
 
 const activitiesList = ['active', 'follower', 'defensive', 'passive'];

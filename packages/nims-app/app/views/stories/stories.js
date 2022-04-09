@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import { UI, U, L10n } from 'nims-app-core';
 import PermissionInformer from 'permissionInformer';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 
 import { getStoriesTemplate } from './StoriesTemplate.jsx';
 import { createModalDialog } from '../commons/uiCommons';

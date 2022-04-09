@@ -5,7 +5,7 @@ import './ProfileEditor.css';
 import {
   NavLink, Route, Redirect
 } from 'react-router-dom';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 
 import { CharacterProfile } from './CharacterProfile';
 import { StoryReport } from './StoryReport';

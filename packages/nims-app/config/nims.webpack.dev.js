@@ -111,9 +111,9 @@ const config = {
       // Constants: 'constants',
       // Constants: 'nimsConstants',
       // Constants: 'dbms_nims/nimsConstants',
-      Constants: 'nims-dbms/nimsConstants',
-      CU: 'nims-dbms-core/commonUtils',
-      Errors: 'nims-dbms-core/errors',
+    //   Constants: 'nims-dbms/nimsConstants',
+      CU: 'nims-dbms-core/dist/commonUtils',
+      Errors: 'nims-dbms-core/dist/errors',
       // CU: 'core/commonUtils',
       // Errors: 'core/errors',
       // CU: ['core', 'CU'],
@@ -216,7 +216,7 @@ module.exports = (env, argv) => {
     config.resolve.alias.push({
       // alias: 'nims/stub',
       // alias: 'dbms_nims/stub',
-      alias: 'nims-dbms/stub',
+      alias: 'nims-dbms/dist/stub',
       name: 'apis',
       onlyModule: true
     });
@@ -237,13 +237,13 @@ module.exports = (env, argv) => {
     config.resolve.alias.push({
       // alias: 'nims/standaloneApis',
       // alias: 'dbms_nims/standaloneApis',
-      alias: 'nims-dbms/standaloneApis',
+      alias: 'nims-dbms/dist/standaloneApis',
       name: 'apis',
       onlyModule: true
     });
     config.resolve.alias.push({
       // alias: 'core/serverDbmsFactory',
-      alias: 'nims-dbms-core/serverDbmsFactory',
+      alias: 'nims-dbms-core/dist/serverDbmsFactory',
       // alias: 'core/DbmsFactory',
       name: 'DbmsFactory',
       onlyModule: true

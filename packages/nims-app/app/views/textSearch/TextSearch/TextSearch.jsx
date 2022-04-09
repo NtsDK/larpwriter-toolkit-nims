@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import classNames from 'classnames';
 import Highlight from 'react-highlighter';
 import './TextSearch.css';

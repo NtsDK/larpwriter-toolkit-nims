@@ -1,7 +1,7 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip,

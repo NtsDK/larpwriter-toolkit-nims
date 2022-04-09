@@ -1,6 +1,6 @@
 const R = require('ramda');
 // const CU = require('../../core/commonUtils');
-const CU = require('nims-dbms-core/commonUtils');
+const { CU } = require('nims-dbms-core');
 const Constants = require('../nimsConstants');
 // const { CU } = require('core');
 // const { CU } = require('js/common');

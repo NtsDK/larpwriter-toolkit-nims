@@ -4,8 +4,8 @@ import 'vis/dist/vis.min.css';
 import ReactDOM from 'react-dom';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { CU } from 'nims-dbms-core';
+import { Constants } from 'nims-dbms';
 import './SocialNetworkArea.css';
 
 export class SocialNetworkArea extends Component {

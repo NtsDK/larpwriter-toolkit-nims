@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { UI, U, L10n } from 'nims-app-core';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import * as R from 'ramda';
 import { getTextSearchTemplate } from './TextSearchTemplate.jsx';
 

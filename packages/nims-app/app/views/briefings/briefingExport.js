@@ -8,8 +8,8 @@ import { saveAs } from 'file-saver';
 import markdownit from 'markdown-it';
 
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { CU } from 'nims-dbms-core';
+import { Constants } from 'nims-dbms';
 
 import ReactDOM from 'react-dom';
 import * as FileUtils from 'nims-app-core/fileUtils';

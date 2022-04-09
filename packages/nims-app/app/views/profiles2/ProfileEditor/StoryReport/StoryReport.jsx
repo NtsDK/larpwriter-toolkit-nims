@@ -1,7 +1,7 @@
 import React, {
   Component, useEffect, useState, useContext
 } from 'react';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import { UI, U, L10n } from 'nims-app-core';
 import { useTranslation } from 'react-i18next';
 import { DbmsContext } from 'nims-app-core/dbmsContext';

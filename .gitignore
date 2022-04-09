@@ -6,3 +6,5 @@ dist/
 .project
 *-nims-base*.json
 nims.code-workspace
+
+tsconfig.tsbuildinfo

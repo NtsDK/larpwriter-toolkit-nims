@@ -11,7 +11,7 @@ import 'vex-js/dist/css/vex.css';
 import 'vex-js/dist/css/vex-theme-default.css';
 //const R = require('ramda');
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import U from './utils';
 import L10n from './l10n';
 import * as Timing from './Timing';

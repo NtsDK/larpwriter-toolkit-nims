@@ -1,5 +1,5 @@
 import PermissionInformer from 'permissionInformer';
-import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import { ProjectUtils } from 'nims-dbms';
 import ReactDOM from 'react-dom';
 import { UI, U, L10n } from 'nims-app-core';
 import ProfileEditorCore from './profileEditorCore';

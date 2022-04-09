@@ -1,7 +1,7 @@
-import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
+import { ProjectUtils } from 'nims-dbms';
 import { U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 
 export function FilterConfiguration(info) {
   this.info = info;

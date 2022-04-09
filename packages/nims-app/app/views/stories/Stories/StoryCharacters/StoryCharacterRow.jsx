@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import FormControl from 'react-bootstrap/es/FormControl';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { UI, U, L10n } from 'nims-app-core';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 import { StoryCharacterDropdown } from './StoryCharacterDropdown.jsx';
 
 export function StoryCharacterRow(props) {

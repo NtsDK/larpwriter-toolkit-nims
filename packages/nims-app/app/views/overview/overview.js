@@ -4,8 +4,8 @@ import dateFormat from 'dateformat';
 import PermissionInformer from 'permissionInformer';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { CU } from 'nims-dbms-core';
+import { Constants } from 'nims-dbms';
 import { getOverviewTemplate } from './OverviewTemplate.jsx';
 
 import './overview.css';
