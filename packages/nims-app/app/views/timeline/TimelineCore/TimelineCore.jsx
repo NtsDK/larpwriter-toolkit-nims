@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './TimelineCore.css';
 import { UI, U, L10n } from 'nims-app-core';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import * as R from 'ramda';
 import {
   HashRouter as Router,

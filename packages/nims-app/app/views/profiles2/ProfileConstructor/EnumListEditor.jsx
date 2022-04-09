@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import { UI, U, L10n } from 'nims-app-core';
 import DropdownButton from 'react-bootstrap/es/DropdownButton';
 import MenuItem from 'react-bootstrap/es/MenuItem';

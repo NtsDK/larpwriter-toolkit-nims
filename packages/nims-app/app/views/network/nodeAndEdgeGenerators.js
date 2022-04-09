@@ -1,4 +1,4 @@
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 import * as R from 'ramda';
 
 const STORY_PREFIX = 'St:';

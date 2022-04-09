@@ -1,7 +1,7 @@
 import { Dictionaries, defaultLang } from 'nims-resources/translations';
 import { times } from 'ramda';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import U from './utils';
 
 import { i18n } from './i18n';

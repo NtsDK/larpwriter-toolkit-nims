@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
-import ProjectUtils from 'nims-dbms/db-utils/projectUtils';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { ProjectUtils } from 'nims-dbms';
+import { CU } from 'nims-dbms-core';
 import './RelationsContent.css';
 import { RelationRow } from './RelationRow';
 

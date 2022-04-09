@@ -8,3 +8,4 @@ dist/
 nims.code-workspace
 nginx/ssl/fullchain.pem
 nginx/ssl/privkey.pem
+tsconfig.tsbuildinfo

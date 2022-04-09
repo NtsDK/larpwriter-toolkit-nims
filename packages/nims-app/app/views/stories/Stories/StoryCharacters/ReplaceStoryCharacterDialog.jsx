@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import FormGroup from 'react-bootstrap/es/FormGroup';
 import FormControl from 'react-bootstrap/es/FormControl';
 import ControlLabel from 'react-bootstrap/es/ControlLabel';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 import * as R from 'ramda';
 import { UI, U, L10n } from 'nims-app-core';
 import { DbmsContext } from 'nims-app-core/dbmsContext';

@@ -3,7 +3,7 @@ import { UI, U, L10n } from 'nims-app-core';
 import {
   NavLink
 } from 'react-router-dom';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import * as R from 'ramda';
 import Button from 'react-bootstrap/es/Button';
 import { useTranslation } from 'react-i18next';

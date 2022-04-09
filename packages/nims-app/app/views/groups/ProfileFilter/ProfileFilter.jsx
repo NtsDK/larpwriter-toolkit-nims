@@ -3,8 +3,8 @@ import React, {
 } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { CU } from 'nims-dbms-core';
+import { Constants } from 'nims-dbms';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { UI, U, L10n } from 'nims-app-core';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import FormControl from 'react-bootstrap/es/FormControl';
 import { PanelCore } from '../../../commons/uiCommon3/PanelCore.jsx';
 import './CharacterProfile.css';

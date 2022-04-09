@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as R from 'ramda';
-import * as CU from 'nims-dbms-core/commonUtils';
+import { CU } from 'nims-dbms-core';
 import { UI, U, L10n } from 'nims-app-core';
 import classNames from 'classnames';
 import './AdaptationsFilter.css';

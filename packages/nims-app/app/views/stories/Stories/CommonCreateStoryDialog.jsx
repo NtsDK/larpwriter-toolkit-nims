@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import * as Constants from 'nims-dbms/nimsConstants';
+import { Constants } from 'nims-dbms';
 import * as R from 'ramda';
 import { DbmsContext } from 'nims-app-core/dbmsContext';
 import { UI, U, L10n } from 'nims-app-core';
