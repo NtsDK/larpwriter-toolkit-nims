@@ -16,12 +16,13 @@ See the License for the specific language governing permissions and
  // Utils
  */
 
-const R = require('ramda');
+import * as R from 'ramda';
+// const R = require('ramda');
 
 /* eslint-disable func-names,prefer-rest-params */
 
 // ((exports) => {
-exports.offlineIgnoreList = ['getUser',
+export const offlineIgnoreList = ['getUser',
   'setPassword',
   'checkPassword',
   'login',
@@ -64,7 +65,7 @@ exports.offlineIgnoreList = ['getUser',
 //     Example - we need all meta info calls except description.
 // rewrite - make true if you don't want to flood log with some repeated call.
 //     For example auto call of getDatabase will flood everything.
-exports.apiInfo = {
+export const apiInfo = {
   baseAPI: {
     _init: null,
     getDatabase: { rewrite: true },
@@ -257,8 +258,8 @@ exports.apiInfo = {
 };
 
 // isServer - used in server mode. If false then user in logs will be named "user".
-exports.applyLoggerProxy = function (dbms, isServer) {
-  const apiInfoObj = R.mergeAll(R.values(exports.apiInfo));
+export const applyLoggerProxy = function (dbms, isServer) {
+  const apiInfoObj = R.mergeAll(R.values(apiInfo));
   const filteredApi = R.filter(R.compose(R.not, R.isNil), apiInfoObj);
 
   return new Proxy(dbms, {

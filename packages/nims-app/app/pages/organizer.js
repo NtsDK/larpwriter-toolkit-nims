@@ -1,6 +1,7 @@
 import PermissionInformer from 'permissionInformer';
 import DbmsFactory from 'DbmsFactory';
-import apis from 'apis';
+// import apis from 'apis';
+import * as apis from 'apis';
 
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -110,6 +111,7 @@ if (PRODUCT === 'STANDALONE') {
     // navComponent = res.nav1;
     navComponent = res.nav2;
     // pageCore.initPage();
+    // console.log('apis', apis);
     window.DBMS = DbmsFactory({
       logModule,
       projectName: PROJECT_NAME,
