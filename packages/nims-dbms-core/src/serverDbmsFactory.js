@@ -96,7 +96,9 @@ module.exports = function ({
     const funcList = {};
     const func = (apiName) => {
         const before = R.keys(LocalDBMS.prototype);
-        apis.apiModules[apiName](LocalDBMS, opts);
+        // console.log('apiName', apis.apiModules[apiName]);
+        // apis.apiModules[apiName](LocalDBMS, opts);
+        apis.apiModules[apiName].default(LocalDBMS, opts);
         // require(path2 + name)(LocalDBMS, opts);
         const after = R.keys(LocalDBMS.prototype);
         const diff = R.difference(after, before);

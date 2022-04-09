@@ -16,11 +16,12 @@ See the License for the specific language governing permissions and
  // Utils
  */
 
-const R = require('ramda');
+import * as R from 'ramda';
+// const R = require('ramda');
 
 // ((callback) => {
 // exportsfunction (exports, R) {
-exports.migrate = (data) => {
+export const migrate = (data) => {
     if (!data.Version) {
         data.Settings = {};
 

@@ -1,5 +1,7 @@
-const R = require('ramda');
-const Constants = require('../nimsConstants');
+import * as R from 'ramda';
+import * as Constants from '../nimsConstants';
+// const R = require('ramda');
+// const Constants = require('../nimsConstants');
 /*Copyright 2017 Timofey Rechkalov <ntsdk@yandex.ru>
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +18,13 @@ See the License for the specific language governing permissions and
 
 // ((callback) => {
 // function ProjectUtils(exports, R, Constants, Errors, CU) {
-exports.acceptDataRow = R.curry((model, dataString) => {
+export const acceptDataRow = R.curry((model, dataString) => {
+  // @ts-ignore
   const dataMap = R.indexBy(R.prop('itemName'), dataString);
   return model.every((filterItem) => {
     let regex, result, values;
     result = true;
+    // @ts-ignore
     const { value } = dataMap[filterItem.name];
     if (value === undefined) {
       result = false;
@@ -79,9 +83,20 @@ exports.acceptDataRow = R.curry((model, dataString) => {
   });
 });
 
-exports.makeGroupedProfileFilterInfo = (opts) => {
-  const groupedProfileFilterItems = [];
-  let arr = [];
+interface ProfileFilterItem {
+  name: string;
+  type: string;
+  displayName: string;
+}
+
+interface ProfileFilterItemGroup {
+  name: string;
+  profileFilterItems: ProfileFilterItem[];
+}
+
+export const makeGroupedProfileFilterInfo = (opts) => {
+  const groupedProfileFilterItems: ProfileFilterItemGroup[] = [];
+  let arr: ProfileFilterItem[] = [];
   arr.push({
     name: Constants.CHAR_NAME,
     type: 'string',
@@ -186,7 +201,7 @@ const getCharacterInfoValue2 = (info, profileId, profileItemName) => {
   throw new Error(`Unexpected profileItemName: ${profileItemName}`);
 };
 
-exports.getDataArray = R.curry((info, profileId) => R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map((profileItemInfo) => {
+export const getDataArray = R.curry((info, profileId) => R.flatten(info.groupedProfileFilterItems.map(R.prop('profileFilterItems'))).map((profileItemInfo) => {
   const value = getCharacterInfoValue2(info, profileId, profileItemInfo.name);
   return {
     value,
@@ -195,15 +210,17 @@ exports.getDataArray = R.curry((info, profileId) => R.flatten(info.groupedProfil
   };
 }));
 
-exports.getDataArrays = (info, filterModel) => info.bindingData.map(exports.getDataArray(info)).filter(exports.acceptDataRow(filterModel));
+export const getDataArrays = (info, filterModel) => info.bindingData.map(getDataArray(info)).filter(acceptDataRow(filterModel));
 
 const findProfileStructureConflicts = (prefix, profileStructure, filterModel) => {
-  const conflictTypes = [];
+  const conflictTypes: string[] = [];
+  // @ts-ignore
   const profilePart = filterModel.filter(R.compose(R.test(new RegExp(`^${prefix}`)), R.prop('name')));
+  // @ts-ignore
   const profileSettingsMap = R.indexBy(R.prop('name'), profileStructure);
   profilePart.forEach((modelItem) => {
     const itemName = modelItem.name.substring(prefix.length);
-    const profileItem = profileSettingsMap[itemName];
+    const profileItem: any = profileSettingsMap[itemName];
     if (!profileItem || profileItem.type !== modelItem.type) {
       conflictTypes.push(itemName);
       return;
@@ -219,7 +236,7 @@ const findProfileStructureConflicts = (prefix, profileStructure, filterModel) =>
   return conflictTypes;
 };
 
-exports.isFilterModelCompatibleWithProfiles = (profileStructure, filterModel) => {
+export const isFilterModelCompatibleWithProfiles = (profileStructure, filterModel) => {
   const charConflicts = findProfileStructureConflicts(
     Constants.CHAR_PREFIX, profileStructure.characters,
     filterModel
@@ -231,5 +248,5 @@ exports.isFilterModelCompatibleWithProfiles = (profileStructure, filterModel) =>
   return charConflicts.concat(playerConflicts);
 };
 
-exports.rel2charArr = R.props(['starter', 'ender']);
-exports.get2ndRelChar = R.curry((char1, rel) => (rel.starter === char1 ? rel.ender : rel.starter));
+export const rel2charArr = R.props(['starter', 'ender']);
+export const get2ndRelChar = R.curry((char1, rel) => (rel.starter === char1 ? rel.ender : rel.starter));

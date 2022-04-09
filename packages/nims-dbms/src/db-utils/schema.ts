@@ -1,7 +1,9 @@
-const R = require('ramda');
+import * as R from 'ramda';
+import { CU } from "nims-dbms-core";
+import * as Constants from "../nimsConstants";
 // const CU = require('../../core/commonUtils');
-const { CU } = require('nims-dbms-core');
-const Constants = require('../nimsConstants');
+// const { CU } = require('nims-dbms-core');
+// const Constants = require('../nimsConstants');
 // const { CU } = require('core');
 // const { CU } = require('js/common');
 /*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
@@ -27,14 +29,7 @@ See the License for the specific language governing permissions and
 // ((callback) => {
 let makeProfileStructureItemSchema;
 
-exports.getSchema = function (base) {
-    const schema = {
-        title: 'Larpwriter Toolkit NIMS base',
-        description: 'Larpwriter Toolkit base schema.',
-        type: 'object',
-        definitions: {}
-    };
-
+export const getSchema = function (base) {
     const Meta = getMetaSchema();
     const CharacterProfileStructure = getProfileSettingsSchema();
     const PlayerProfileStructure = CharacterProfileStructure;
@@ -45,7 +40,7 @@ exports.getSchema = function (base) {
     const Stories = getStoriesSchema(base.Characters);
     const Groups = getGroupsSchema(base.CharacterProfileStructure, base.PlayerProfileStructure);
     const InvestigationBoard = getInvestigationBoardSchema(base.Groups, base.InvestigationBoard);
-    const Relations = getRelationsSchema(base.Characters, schema.definitions);
+    const Relations = getRelationsSchema(base.Characters);
     const Gears = getGearsSchema();
     const Sliders = getSlidersSchema();
     let ManagementInfo = {};
@@ -56,7 +51,7 @@ exports.getSchema = function (base) {
         );
     }
 
-    schema.properties = {
+    const properties = {
         Meta,
         CharacterProfileStructure,
         PlayerProfileStructure,
@@ -77,12 +72,17 @@ exports.getSchema = function (base) {
         ManagementInfo
     };
 
-    schema.required = ['Meta', 'CharacterProfileStructure', 'PlayerProfileStructure', 'Version', 'Characters',
-        'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations', 'Gears', 'Sliders'];
-    schema.additionalProperties = false;
-
-    schema.moduleList = R.keys(schema.properties);
-    schema.moduleDeps = [
+    return {
+      title: 'Larpwriter Toolkit NIMS base',
+      description: 'Larpwriter Toolkit base schema.',
+      type: 'object',
+      definitions: {},
+      properties,
+      required: ['Meta', 'CharacterProfileStructure', 'PlayerProfileStructure', 'Version', 'Characters',
+        'Players', 'ProfileBindings', 'Stories', 'Log', 'Groups', 'InvestigationBoard', 'Relations', 'Gears', 'Sliders'],
+      additionalProperties: false,
+      moduleList: R.keys(properties),
+      moduleDeps: [
         ['InvestigationBoard', 'Groups'],
         ['Groups', 'CharacterProfileStructure'],
         ['Groups', 'PlayerProfileStructure'],
@@ -98,9 +98,8 @@ exports.getSchema = function (base) {
         ['ProfileBindings', 'Characters'],
         ['Relations', 'Characters'],
         ['Stories', 'Characters'],
-    ];
-
-    return schema;
+      ]
+    };
 };
 
 function getMetaSchema() {
@@ -369,7 +368,12 @@ function getInvestigationBoardSchema(groups, investigationBoard) {
         };
     });
 
-    const relationsSchema = {
+    const relationsSchema: {
+      type: string;
+      properties: any;
+      additionalProperties: boolean;
+      required?: string[];
+    } = {
         type: 'object',
         properties: {},
         additionalProperties: false
@@ -438,7 +442,7 @@ function getInvestigationBoardSchema(groups, investigationBoard) {
 }
 
 function getGroupsSchema(characterProfileSettings, playerProfileSettings) {
-    let filterItems = [];
+    let filterItems: any[] = [];
     const staticStringTemplate = {
         type: 'object',
         properties: {
@@ -470,6 +474,7 @@ function getGroupsSchema(characterProfileSettings, playerProfileSettings) {
     filterItems = filterItems.concat(playerProfileSettings
         .map(makeProfileStructureItemSchema(Constants.PLAYER_PREFIX)));
 
+    // @ts-ignore
     R.keys(R.fromPairs(Constants.summaryStats)).forEach((item) => {
         filterItems.push({
             type: 'object',
@@ -548,16 +553,19 @@ makeProfileStructureItemSchema = R.curry((prefix, item) => {
     switch (item.type) {
     case 'text':
     case 'string':
-        data.properties.regexString = {
-            type: 'string',
-            minLength: 0
-        };
-        data.required.push('regexString');
-        break;
+      // @ts-ignore
+      data.properties.regexString = {
+        type: 'string',
+        minLength: 0
+      };
+      data.required.push('regexString');
+      break;
     case 'number':
+      // @ts-ignore
         data.properties.num = {
             type: 'number'
         };
+        // @ts-ignore
         data.properties.condition = {
             type: 'string',
             enum: ['greater', 'lesser', 'equal']
@@ -566,6 +574,7 @@ makeProfileStructureItemSchema = R.curry((prefix, item) => {
         data.required.push('condition');
         break;
     case 'checkbox':
+      // @ts-ignore
         data.properties.selectedOptions = {
             type: 'object',
             properties: {
@@ -581,6 +590,7 @@ makeProfileStructureItemSchema = R.curry((prefix, item) => {
             result[item2] = {};
             return result;
         }, {});
+        // @ts-ignore
         data.properties.selectedOptions = {
             type: 'object',
             properties,
@@ -589,6 +599,7 @@ makeProfileStructureItemSchema = R.curry((prefix, item) => {
         data.required.push('selectedOptions');
         break;
     case 'multiEnum':
+      // @ts-ignore
         data.properties.condition = {
             type: 'string',
             enum: ['every', 'equal', 'some']
@@ -597,6 +608,7 @@ makeProfileStructureItemSchema = R.curry((prefix, item) => {
             result[item2] = {};
             return result;
         }, {});
+        // @ts-ignore
         data.properties.selectedOptions = {
             type: 'object',
             properties,
@@ -909,6 +921,7 @@ function getManagementInfoSchema(managementInfo, characters, stories, groups, pl
             },
             editor: {
                 type: ['string', 'null'],
+                // @ts-ignore
                 enum: userNames.concat(null)
             },
             adaptationRights: {
@@ -927,7 +940,7 @@ function getManagementInfoSchema(managementInfo, characters, stories, groups, pl
     return managementInfoSchema;
 }
 
-function getRelationsSchema(Characters, definitions) {
+function getRelationsSchema(Characters) {
     let chars = R.keys(Characters);
     const names = `^(${R.keys(Characters).map(CU.escapeRegExp).join('|')})$`;
     if (chars.length === 0) {
