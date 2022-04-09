@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-const R = require('ramda');
+import * as R from 'ramda';
 
 /** sdsfsdf
  * @ param {any[]} array
@@ -21,13 +21,13 @@ const R = require('ramda');
  * @ return {any[]}
  */
 
-exports.removeFromArrayByIndex = (array, from, to) => {
+export function removeFromArrayByIndex(array, from, to) {
   const rest = array.slice((to || from) + 1 || array.length);
   array.length = from < 0 ? array.length + from : from;
   return array.push(...rest);
 };
 
-exports.charOrdAFactoryBase = R.curry((sortDir, greater, prepare) => function cmp(a, b) {
+export const charOrdAFactoryBase = R.curry((sortDir, greater, prepare) => function cmp(a, b) {
   a = prepare(a);
   b = prepare(b);
   if (R.isNil(a) && R.isNil(b)) return 0;
@@ -38,32 +38,32 @@ exports.charOrdAFactoryBase = R.curry((sortDir, greater, prepare) => function cm
   return 0;
 });
 
-exports.charOrdAFactory = exports.charOrdAFactoryBase('asc', (a, b) => a > b);
+export const charOrdAFactory = charOrdAFactoryBase('asc', (a, b) => a > b);
 
 /**
  * @param {any} a
  * @param {any} b
  * @return {0|1|-1}
  */
-const charOrdA = exports.charOrdAFactory((a) => a.toLowerCase());
-exports.charOrdA = charOrdA;
+export const charOrdA = charOrdAFactory((a) => a.toLowerCase());
+// exports.charOrdA = charOrdA;
 
-exports.sortStrIgnoreCase = R.sort(exports.charOrdA);
+export const sortStrIgnoreCase = R.sort(charOrdA);
 
-exports.eventsByTime = exports.charOrdAFactory((a) => new Date(a.time));
+export const eventsByTime = charOrdAFactory((a) => new Date(a.time));
 
-exports.charOrdAObject = exports.charOrdAFactory((a) => a.displayName.toLowerCase());
+export const charOrdAObject = charOrdAFactory((a) => a.displayName.toLowerCase());
 
-exports.strFormat = R.curry((str, vals) => str.replace(/\{\{|\}\}|\{(\d+)\}/g, (m, n) => {
+export const strFormat = R.curry((str, vals) => str.replace(/\{\{|\}\}|\{(\d+)\}/g, (m, n) => {
   if (m === '{{') { return '{'; }
   if (m === '}}') { return '}'; }
   return vals[n];
 }));
 
-exports.strFormatInsertsCount = (str) => (str.match(/\{\{|\}\}|\{(\d+)\}/g) || []).length;
+export const strFormatInsertsCount = (str) => (str.match(/\{\{|\}\}|\{(\d+)\}/g) || []).length;
 
 // taken from MDN https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-exports.escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+export const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 
 // exports.colorPattern = /^#[0-9A-Fa-f]{6}$/;
 
@@ -83,7 +83,7 @@ const windowsTrailingRe = /[\. ]+$/;
  * @param {string} replacement
  * @return {string}
  */
-exports.sanitizeStr2FileName = (input, replacement = '') => {
+export const sanitizeStr2FileName = (input, replacement = '') => {
   const sanitized = input
     .replace(illegalRe, replacement)
     .replace(controlRe, replacement)
