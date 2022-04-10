@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 ((callback2) => {
     function gearsAPI(LocalDBMS, opts) {
         const {
-            Migrator, EventEmitter, Constants, CU, PC, R
+            R
         } = opts;
 
         // DBMS.gears.get()

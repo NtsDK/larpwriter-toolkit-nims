@@ -10,8 +10,8 @@ import { getOverviewTemplate } from './OverviewTemplate.jsx';
 
 import './overview.css';
 
-import Gears from '../gears/gears';
-import Sliders from '../sliders/sliders';
+// import Gears from '../gears/gears';
+// import Sliders from '../sliders/sliders';
 
 let content;
 
@@ -84,30 +84,30 @@ function init() {
   state.descr = U.queryEl(`${root}.game-description-area`);
   state.descr.addEventListener('change', updateDescr);
 
-  Gears.init();
-  const gearsContainer = U.qee(U.queryEl(root), '#gears');
-  U.addEl(gearsContainer, U.qe('.gears-tab'));
-  const observer = new MutationObserver(((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.attributeName === 'class') {
-        if (U.hasClass(gearsContainer, 'active')) {
-          Gears.refresh();
-        }
-      }
-    });
-  }));
-  observer.observe(gearsContainer, {
-    attributes: true
-  });
+//   Gears.init();
+//   const gearsContainer = U.qee(U.queryEl(root), '#gears');
+//   U.addEl(gearsContainer, U.qe('.gears-tab'));
+//   const observer = new MutationObserver(((mutations) => {
+//     mutations.forEach((mutation) => {
+//       if (mutation.attributeName === 'class') {
+//         if (U.hasClass(gearsContainer, 'active')) {
+//           Gears.refresh();
+//         }
+//       }
+//     });
+//   }));
+//   observer.observe(gearsContainer, {
+//     attributes: true
+//   });
 
-  const slidersContainer = U.qee(U.queryEl(root), '#sliders');
-  Sliders.init();
-  U.addEl(slidersContainer, U.qe('.sliders-tab'));
+//   const slidersContainer = U.qee(U.queryEl(root), '#sliders');
+//   Sliders.init();
+//   U.addEl(slidersContainer, U.qe('.sliders-tab'));
 }
 
 function refresh() {
-  Gears.refresh();
-  Sliders.refresh();
+//   Gears.refresh();
+//   Sliders.refresh();
   PermissionInformer.isAdmin().then((isAdmin) => {
     UI.enable(content, 'adminOnly', isAdmin);
   }).catch(UI.handleError);
