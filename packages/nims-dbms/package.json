@@ -17,8 +17,11 @@
     "dist"
   ],
   "dependencies": {
-    "ramda": "^0.27.0",
-    "nims-dbms-core": "0.7.2"
+    "@types/dateformat": "^5.0.0",
+    "ajv": "^6.12.6",
+    "dateformat": "^5.0.3",
+    "nims-dbms-core": "0.7.2",
+    "ramda": "^0.27.0"
   },
   "devDependencies": {
     "@types/ramda": "^0.28.7",

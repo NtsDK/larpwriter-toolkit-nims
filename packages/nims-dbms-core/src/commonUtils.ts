@@ -21,7 +21,7 @@ import * as R from 'ramda';
  * @ return {any[]}
  */
 
-export function removeFromArrayByIndex(array, from, to) {
+export function removeFromArrayByIndex<T extends any[]>(array: T, from: number, to?: number): number {
   const rest = array.slice((to || from) + 1 || array.length);
   array.length = from < 0 ? array.length + from : from;
   return array.push(...rest);

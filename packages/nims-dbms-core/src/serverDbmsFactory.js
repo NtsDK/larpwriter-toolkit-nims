@@ -16,14 +16,16 @@ See the License for the specific language governing permissions and
 /* eslint-disable import/no-dynamic-require */
 
 
-const pathTool = require('path');
-
+// const pathTool = require('path');
+// import * as R from "ramda";
 
 const R = require('ramda');
 
-const dateFormat = require('dateformat');
-const { EventEmitter } = require('events');
-const Ajv = require('ajv');
+// import dateFormat from 'dateformat';
+
+// const dateFormat = require('dateformat');
+// const { EventEmitter } = require('events');
+// const Ajv = require('ajv');
 
 const path = 'common/';
 // const path = 'js/common/';
@@ -77,14 +79,14 @@ module.exports = function ({
         CU: CommonUtils,
         Precondition,
         PC: Precondition,
-        EventEmitter,
+        // EventEmitter,
         R,
-        Ajv,
+        // Ajv,
         Errors,
         addListener,
         // Constants,
         dbmsUtils: {},
-        dateFormat,
+        // dateFormat,
         serverSpecific,
         logModule
     }, apis.deps);

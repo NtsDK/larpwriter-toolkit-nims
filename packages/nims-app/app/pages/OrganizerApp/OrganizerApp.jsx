@@ -20,8 +20,8 @@ import {
 import { ViewWrapper } from '../ViewWrapper.jsx';
 
 import { AboutV2 } from '../../views/logs/AboutV2';
-import { LogViewerV2 } from '../../views/logs/LogViewerV2';
-import { GroupSchemaV2 } from '../../views/groups/GroupSchemaV2';
+// import { LogViewerV2 } from '../../views/logs/LogViewerV2';
+// import { GroupSchemaV2 } from '../../views/groups/GroupSchemaV2';
 import { TextSearch } from '../../views/textSearch/TextSearch/index';
 import { TimelineCore } from '../../views/timeline/TimelineCore';
 import { SocialNetwork } from '../../views/network/SocialNetwork/index';
@@ -291,11 +291,11 @@ export class OrganizerApp extends Component {
                 </NavContainer>
                 <Switch>
                   <Route path="/logViewer/groupSchema">
-                    <GroupSchemaV2 />
+                    {/* <GroupSchemaV2 /> */}
                     {/* <ViewWrapper view={viewCache.get('groupSchema')} /> */}
                   </Route>
                   <Route path="/logViewer/logViewer">
-                    <LogViewerV2 />
+                    {/* <LogViewerV2 /> */}
                     {/* <ViewWrapper view={viewCache.get('logViewer')} /> */}
                   </Route>
                   <Route path="/logViewer/about">

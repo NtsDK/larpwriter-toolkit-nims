@@ -5,6 +5,7 @@ import * as apis from 'apis';
 
 import ReactDOM from 'react-dom';
 import React from 'react';
+import { makeDbms } from 'nims-dbms';
 import { UI, U, L10n } from 'nims-app-core';
 import * as TestUtils from 'nims-app-core/testUtils';
 import * as FileUtils from 'nims-app-core/fileUtils';
@@ -112,13 +113,14 @@ if (PRODUCT === 'STANDALONE') {
     navComponent = res.nav2;
     // pageCore.initPage();
     // console.log('apis', apis);
-    window.DBMS = DbmsFactory({
-      logModule,
-      projectName: PROJECT_NAME,
-      proxies: [CallNotificator],
-      apis,
-      isServer: PRODUCT !== 'STANDALONE'
-    }).preparedDb;
+    window.DBMS = makeDbms(EmptyBase.data).preparedDb;
+    // window.DBMS = DbmsFactory({
+    //   logModule,
+    //   projectName: PROJECT_NAME,
+    //   proxies: [CallNotificator],
+    //   apis,
+    //   isServer: PRODUCT !== 'STANDALONE'
+    // }).preparedDb;
     if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
       DBMS.setDatabase({ database: DemoBase.data }).then(onBaseLoaded, UI.handleError);
     } else {
