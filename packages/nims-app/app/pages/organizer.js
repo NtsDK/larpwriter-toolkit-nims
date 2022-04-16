@@ -9,8 +9,7 @@ import { makeDbms } from 'nims-dbms';
 import { UI, U, L10n } from 'nims-app-core';
 import * as TestUtils from 'nims-app-core/testUtils';
 import * as FileUtils from 'nims-app-core/fileUtils';
-import DemoBase from 'nims-resources/demoBase';
-import EmptyBase from 'nims-resources/emptyBase';
+import { DemoBase, EmptyBase } from 'nims-resources';
 import { I18nextProvider } from 'react-i18next';
 import { i18n } from 'nims-app-core/i18n';
 import {
@@ -113,7 +112,7 @@ if (PRODUCT === 'STANDALONE') {
     navComponent = res.nav2;
     // pageCore.initPage();
     // console.log('apis', apis);
-    window.DBMS = makeDbms(EmptyBase.data).preparedDb;
+    window.DBMS = makeDbms(EmptyBase).preparedDb;
     // window.DBMS = DbmsFactory({
     //   logModule,
     //   projectName: PROJECT_NAME,
@@ -122,7 +121,7 @@ if (PRODUCT === 'STANDALONE') {
     //   isServer: PRODUCT !== 'STANDALONE'
     // }).preparedDb;
     if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
-      DBMS.setDatabase({ database: DemoBase.data }).then(onBaseLoaded, UI.handleError);
+      DBMS.setDatabase({ database: DemoBase }).then(onBaseLoaded, UI.handleError);
     } else {
       runBaseSelectDialog();
     }

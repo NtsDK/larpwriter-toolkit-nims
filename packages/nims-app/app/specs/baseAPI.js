@@ -1,4 +1,4 @@
-import EmptyBase from 'nims-resources/emptyBase';
+import { EmptyBase } from 'nims-resources';
 
 describe('baseAPI', () => {
     let oldBase;
@@ -7,7 +7,7 @@ describe('baseAPI', () => {
         DBMS.getDatabase().then((data) => {
             oldBase = data;
             DBMS.setDatabase({
-                database: R.clone(EmptyBase.data)
+                database: R.clone(EmptyBase)
             }).then(() => done()).catch((err) => {
                 throw err;
             });
@@ -40,7 +40,7 @@ describe('baseAPI', () => {
 
     it('setDatabase(emptyBase) -> ok', (done) => {
         DBMS.setDatabase({
-            database: R.clone(EmptyBase.data)
+            database: R.clone(EmptyBase)
         }).then(() => {
             expect(123).not.toBeNull();
             done();
