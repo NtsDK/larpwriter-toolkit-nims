@@ -1,5 +1,4 @@
-import { Dictionaries, defaultLang } from 'nims-resources/translations';
-import { times } from 'ramda';
+import { Dictionaries, defaultLang } from 'nims-resources';
 import * as R from 'ramda';
 import { CU } from 'nims-dbms-core';
 import U from './utils';

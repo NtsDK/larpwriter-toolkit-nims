@@ -8,7 +8,7 @@ import L10n from './l10n';
 export function makeNewBase(base) {
   return new Promise((resolve, reject) => {
     UI.confirm(L10n.getValue('utils-new-base-warning'), () => {
-      DBMS.setDatabase({ database: R.clone(base.data) }).then(() => {
+      DBMS.setDatabase({ database: R.clone(base) }).then(() => {
         resolve(true);
         // TestUtils.addGroupTestingData();
       }).catch(reject);

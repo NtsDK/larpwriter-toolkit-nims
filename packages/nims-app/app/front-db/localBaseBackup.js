@@ -1,6 +1,5 @@
 import dateFormat from 'dateformat';
-import DemoBase from 'nims-resources/demoBase';
-import EmptyBase from 'nims-resources/emptyBase';
+import { DemoBase, EmptyBase } from 'nims-resources';
 import * as LocalBackupCore from 'nims-app-core/localAutoSave';
 import ReactDOM from 'react-dom';
 import { getBackupBaseTemplate } from "./BackupBaseTemplate.jsx";
@@ -46,10 +45,10 @@ export default function (imports) {
             }));
 
             U.qee(dbDialog, 'input[name=dbSource]').checked = true;
-            U.qee(dbDialog, '#dbSourceDemoBase').base = R.clone(DemoBase.data);
-            U.qee(dbDialog, '#dbSourceEmptyBase').base = R.clone(EmptyBase.data);
+            U.qee(dbDialog, '#dbSourceDemoBase').base = R.clone(DemoBase);
+            U.qee(dbDialog, '#dbSourceEmptyBase').base = R.clone(EmptyBase);
 
-            U.addEl(U.qee(dbDialog, '.demo-base-name'), U.makeText(DemoBase.data.Meta.name));
+            U.addEl(U.qee(dbDialog, '.demo-base-name'), U.makeText(DemoBase.Meta.name));
 
             const dialogOnBaseLoad = (err) => {
                 if (err) { UI.handleError(err); return; }
