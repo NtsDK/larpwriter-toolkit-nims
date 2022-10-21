@@ -3,6 +3,7 @@ const webpack = require('webpack');
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const serverEntry = {
     organizer: './app/pages/organizer.js',
@@ -27,14 +28,21 @@ const config = {
         publicPath: '/'
     },
     devServer: {
-        contentBase: 'dist',
-        overlay: true
+        static: 'dist',
+        client: {
+            overlay: true
+        }
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
-                use: [{ loader: 'babel-loader' }],
+                use: [{
+                    loader: 'babel-loader' ,
+                    options: {
+                        presets: ['@babel/preset-env'],
+                    }
+                }],
                 exclude: /node_modules/
             },
             {
@@ -49,7 +57,17 @@ const config = {
                     'sass-loader' // compiles Sass to CSS, using Node Sass by default
                 ]
             },
-            { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' },
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 100000,
+                        }
+                    }
+                ]
+            },
             {
                 test: /(nims|index|player).html$/,
                 //include: path.join(__dirname, 'src/views'),
@@ -74,6 +92,7 @@ const config = {
         ]
     },
     plugins: [
+        new NodePolyfillPlugin(),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
@@ -97,8 +116,11 @@ const config = {
             // Constants: 'nimsConstants',
             // Constants: 'dbms_nims/nimsConstants',
             Constants: 'nims-dbms/nimsConstants',
-            CU: 'nims-dbms-core/commonUtils',
-            Errors: 'nims-dbms-core/errors',
+            CU: 'nims-dbms-core/dist/commonUtils',
+            Errors: 'nims-dbms-core/dist/errors',
+            // CU: 'nims-dbms-core/commonUtils',
+            // Errors: 'nims-dbms-core/errors',
+
             // CU: 'core/commonUtils',
             // Errors: 'core/errors',
             // CU: ['core', 'CU'],
@@ -141,7 +163,8 @@ module.exports = (env, argv) => {
         console.error(`Unknown mode "${argv.mode}" switch to default: development`);
     // eslint-disable-next-line no-fallthrough
     case 'development':
-        config.devtool = 'cheap-eval-source-map';
+        // config.devtool = 'cheap-eval-source-map';
+        config.devtool = 'eval-cheap-source-map';
         // config.optimization = {
         //     // usedExports:true,
         //     // splitChunks: {
@@ -199,7 +222,7 @@ module.exports = (env, argv) => {
         });
         config.resolve.alias.push({
             // alias: 'core/serverDbmsFactory',
-            alias: 'nims-dbms-core/serverDbmsFactory',
+            alias: 'nims-dbms-core/dist/serverDbmsFactory',
             // alias: 'core/DbmsFactory',
             name: 'DbmsFactory',
             onlyModule: true

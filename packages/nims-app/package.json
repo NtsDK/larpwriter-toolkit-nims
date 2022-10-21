@@ -8,7 +8,7 @@
     "measurelook-dev": "./node_modules/.bin/gulp dev --configFile \"config/measurelook-config.json\"",
     "nims-wp-start": "./node_modules/.bin/webpack-dev-server --env.mode=development",
     "watch:stan000dalone": "./node_modules/.bin/webpack-dev-server --env.mode=development",
-    "watch:standalone": "webpack-dev-server --env.mode=development",
+    "watch:standalone": "webpack-dev-server --mode=development",
     "nims-wp-start-server": "./node_modules/.bin/webpack-dev-server --env.mode=development  --env.product=server",
     "nims-wp-start-prod": "./node_modules/.bin/webpack-dev-server --config config\\nims.webpack.dev.js --env.mode=production",
     "nims-wp-watch-server": "webpack --watch --env.product=server",

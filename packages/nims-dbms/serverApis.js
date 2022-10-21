@@ -3,7 +3,7 @@
 // ];
 const R = require('ramda');
 
-const Precondition = require('nims-dbms-core/precondition');
+const { Precondition } = require('nims-dbms-core');
 const Logger = require('./db-utils/logger');
 const Migrator = require('./db-utils/migrator');
 const ProjectUtils = require('./db-utils/projectUtils');

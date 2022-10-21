@@ -1,18 +1,26 @@
 {
   "name": "nims-dbms-core",
-  "version": "0.7.2",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
+  "version": "0.7.2",
+  "private": true,
+  "scripts": {
+    "ts:build": "tsc",
+    "ts:watch": "tsc --watch --preserveWatchOutput"
   },
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "lib": "dist"
+  },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "ajv": "^6.12.2",
     "dateformat": "^3.0.3",
     "ramda": "^0.27.0"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "private": true
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
 }
