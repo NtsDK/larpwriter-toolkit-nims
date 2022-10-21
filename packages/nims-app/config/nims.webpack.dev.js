@@ -115,9 +115,10 @@ const config = {
             // Constants: 'constants',
             // Constants: 'nimsConstants',
             // Constants: 'dbms_nims/nimsConstants',
-            Constants: 'nims-dbms/nimsConstants',
+            Constants: 'nims-dbms/dist/nimsConstants',
             CU: 'nims-dbms-core/dist/commonUtils',
             Errors: 'nims-dbms-core/dist/errors',
+            ProjectUtils: 'nims-dbms/dist/db-utils/projectUtils',
             // CU: 'nims-dbms-core/commonUtils',
             // Errors: 'nims-dbms-core/errors',
 
@@ -216,7 +217,7 @@ module.exports = (env, argv) => {
         config.resolve.alias.push({
             // alias: 'nims/standaloneApis',
             // alias: 'dbms_nims/standaloneApis',
-            alias: 'nims-dbms/standaloneApis',
+            alias: 'nims-dbms/dist/standaloneApis',
             name: 'apis',
             onlyModule: true
         });

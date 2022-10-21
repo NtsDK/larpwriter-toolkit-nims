@@ -1,23 +1,4 @@
-/*Copyright 2015 Timofey Rechkalov <ntsdk@yandex.ru>, Maria Sidekhmenova <matilda_@list.ru>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-    limitations under the License. */
-
-/*
- */
-
-
-// ((exports) => {
-exports.profileFieldTypes = {
+export const profileFieldTypes = {
     text: {
         name: 'text',
         value: ''
@@ -44,41 +25,41 @@ exports.profileFieldTypes = {
     }
 };
 
-exports.relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'];
+export const relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'];
 
-exports.relationEssences = ['starterToEnder', 'allies', 'enderToStarter'];
+export const relationEssences = ['starterToEnder', 'allies', 'enderToStarter'];
 
-exports.playerAccessTypes = ['write', 'readonly', 'hidden'];
+export const playerAccessTypes = ['write', 'readonly', 'hidden'];
 
-exports.originProperties = ['name', 'text', 'time'];
+export const originProperties = ['name', 'text', 'time'];
 
-exports.adaptationProperties = ['text', 'time', 'ready'];
+export const adaptationProperties = ['text', 'time', 'ready'];
 
-exports.playersOptionTypes = ['allowPlayerCreation', 'allowCharacterCreation'];
+export const playersOptionTypes = ['allowPlayerCreation', 'allowCharacterCreation'];
 
-exports.objectSubsets = [
+export const objectSubsets = [
     'allObjects',
     'selectedCharacters',
     'selectedStories',
 ];
 
-exports.networks = [
+export const networks = [
     'socialRelations',
     'characterPresenceInStory',
     'characterActivityInStory',
     'characterRelations',
 ];
 
-exports.ownedEntityTypes = ['character', 'player', 'story', 'group'];
-exports.ownedEntityTypes2 = ['characters', 'players', 'stories', 'groups'];
+export const ownedEntityTypes = ['character', 'player', 'story', 'group'];
+export const ownedEntityTypes2 = ['characters', 'players', 'stories', 'groups'];
 
-exports.metaInfoStrings = ['name', 'description'];
+export const metaInfoStrings = ['name', 'description'];
 
-exports.metaInfoDates = ['date', 'preGameDate'];
+export const metaInfoDates = ['date', 'preGameDate'];
 
-exports.profileTypes = ['character', 'player'];
+export const profileTypes = ['character', 'player'];
 
-exports.groupProfileStructure = [{
+export const groupProfileStructure = [{
     name: 'filterModel',
     type: 'container',
 }, {
@@ -95,49 +76,51 @@ exports.groupProfileStructure = [{
     type: 'text',
 }];
 
-exports.groupEditableItems = ['masterDescription', 'characterDescription'];
+export const groupEditableItems = ['masterDescription', 'characterDescription'];
 
-exports.noGroup = 'noGroup';
+export const noGroup = 'noGroup';
 
-exports.characterActivityTypes = [
+export const characterActivityTypes = [
     'active',
     'follower',
     'defensive',
     'passive',
 ];
 
-exports.characterRelationTypes = [
+export const characterRelationTypes = [
     'allies',
     'directional',
     'neutral',
 ];
 
-exports.numberFilter = [
+export const numberFilter = [
     'ignore',
     'greater',
     'equal',
     'lesser',
 ];
 
-exports.multiEnumFilter = [
+export const multiEnumFilter = [
     'ignore',
     'every',
     'equal',
     'some',
 ];
 
-exports.finishedText = 'finishedText';
-exports.finishedSuffix = 'finishedSuffix';
-exports.emptySuffix = 'emptySuffix';
+export const finishedText = 'finishedText';
+export const finishedSuffix = 'finishedSuffix';
+export const emptySuffix = 'emptySuffix';
 
-exports.true = 'yes';
-exports.false = 'no';
+export const yesNo = ['yes', 'no'];
 
-exports.yesNo = [exports.true, exports.false];
+// exports.true = 'yes';
+// exports.false = 'no';
 
-exports.briefingNumber = [1, 5, 10, 20, 50];
+// export const yesNo = [exports.true, exports.false];
 
-exports.logFilterTypes = [
+export const briefingNumber = [1, 5, 10, 20, 50];
+
+export const logFilterTypes = [
     'date',
     'user',
     'action',
@@ -145,9 +128,9 @@ exports.logFilterTypes = [
     'status',
 ];
 
-exports.adaptationRightsModes = ['ByStory', 'ByCharacter'];
+export const adaptationRightsModes = ['ByStory', 'ByCharacter'];
 
-exports.colorPalette = [
+export const colorPalette = [
     {
         color: {
             border: '#2B7CE9',
@@ -259,15 +242,15 @@ exports.colorPalette = [
     } // 20:bright red
 ];
 
-exports.CHAR_NAME = 'char-name';
-exports.CHAR_OWNER = 'char-owner';
-exports.CHAR_PREFIX = 'profile-';
-exports.PLAYER_NAME = 'player-name';
-exports.PLAYER_OWNER = 'player-owner';
-exports.PLAYER_PREFIX = 'player-profile-';
-exports.SUMMARY_PREFIX = 'summary-';
+export const CHAR_NAME = 'char-name';
+export const CHAR_OWNER = 'char-owner';
+export const CHAR_PREFIX = 'profile-';
+export const PLAYER_NAME = 'player-name';
+export const PLAYER_OWNER = 'player-owner';
+export const PLAYER_PREFIX = 'player-profile-';
+export const SUMMARY_PREFIX = 'summary-';
 
-exports.summaryStats = [
+export const summaryStats = [
     ['active', 'constant-active'],
     ['follower', 'constant-follower'],
     ['defensive', 'constant-defensive'],
@@ -276,7 +259,7 @@ exports.summaryStats = [
     ['totalStories', 'profile-filter-totalStories']
 ];
 
-exports.socialNetworkOpts = {
+export const socialNetworkOpts = {
     nodes: {
         shape: 'dot',
         scaling: {
@@ -333,7 +316,7 @@ exports.socialNetworkOpts = {
     },
 };
 
-exports.groupSchemaOpts = {
+export const groupSchemaOpts = {
     nodes: {
         scaling: {
             min: 10,
@@ -365,21 +348,21 @@ exports.groupSchemaOpts = {
     }
 };
 
-exports.snActivityColors = {
+export const snActivityColors = {
     active: 'red',
     follower: 'blue',
     defensive: 'green',
     passive: 'grey'
 };
 
-exports.snRelationColors = {
+export const snRelationColors = {
     starterToEnder: 'red',
     enderToStarter: 'red',
     allies: 'green',
     neutral: 'grey'
 };
 
-exports.snFocusOptions = {
+export const snFocusOptions = {
     scale: 1.2,
     offset: {
         x: 0,
@@ -391,7 +374,7 @@ exports.snFocusOptions = {
     }
 };
 
-exports.snFixedColors = {
+export const snFixedColors = {
     storyColor: {
         color: {
             background: 'rgb(255,255,0)',
@@ -431,54 +414,57 @@ exports.snFixedColors = {
 };
 
 
-exports.visLocales = {
-    ru: {
-        edit: 'Редактировать',
-        del: 'Удалить выбранное',
-        back: 'Назад',
-        addNode: 'Добавить узел',
-        addEdge: 'Добавить ребро',
-        editNode: 'Редактировать узел',
-        editEdge: 'Редактировать ребро',
-        addDescription: 'Кликните в свободное место, чтобы добавить новый узел.',
-        edgeDescription: 'Кликните на узел и протяните ребро к другому узлу, чтобы соединить их.',
-        editEdgeDescription: 'Кликните на контрольные точки и перетащите их к другому узлу, чтобы соединить узлы.',
-        createEdgeError: 'Невозможно соединить ребра в кластер.',
-        deleteClusterError: 'Кластеры не могут быть удалены',
-        editClusterError: 'Кластеры недоступны для редактирования.'
-    },
-    en: {
-        edit: 'Edit',
-        del: 'Delete selected',
-        back: 'Back',
-        addNode: 'Add Node',
-        addEdge: 'Add Edge',
-        editNode: 'Edit Node',
-        editEdge: 'Edit Edge',
-        addDescription: 'Click in an empty space to place a new node.',
-        edgeDescription: 'Click on a node and drag the edge to another node to connect them.',
-        editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
-        createEdgeError: 'Cannot link edges to a cluster.',
-        deleteClusterError: 'Clusters cannot be deleted.',
-        editClusterError: 'Clusters cannot be edited.'
-    }
+
+const visLocaleRu = {
+    edit: 'Редактировать',
+    del: 'Удалить выбранное',
+    back: 'Назад',
+    addNode: 'Добавить узел',
+    addEdge: 'Добавить ребро',
+    editNode: 'Редактировать узел',
+    editEdge: 'Редактировать ребро',
+    addDescription: 'Кликните в свободное место, чтобы добавить новый узел.',
+    edgeDescription: 'Кликните на узел и протяните ребро к другому узлу, чтобы соединить их.',
+    editEdgeDescription: 'Кликните на контрольные точки и перетащите их к другому узлу, чтобы соединить узлы.',
+    createEdgeError: 'Невозможно соединить ребра в кластер.',
+    deleteClusterError: 'Кластеры не могут быть удалены',
+    editClusterError: 'Кластеры недоступны для редактирования.'
+};
+const visLocaleEn = {
+    edit: 'Edit',
+    del: 'Delete selected',
+    back: 'Back',
+    addNode: 'Add Node',
+    addEdge: 'Add Edge',
+    editNode: 'Edit Node',
+    editEdge: 'Edit Edge',
+    addDescription: 'Click in an empty space to place a new node.',
+    edgeDescription: 'Click on a node and drag the edge to another node to connect them.',
+    editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
+    createEdgeError: 'Cannot link edges to a cluster.',
+    deleteClusterError: 'Clusters cannot be deleted.',
+    editClusterError: 'Clusters cannot be edited.'
 };
 
-exports.visLocales.en_EN = exports.visLocales.en;
-exports.visLocales.en_US = exports.visLocales.en;
-exports.visLocales.ru_RU = exports.visLocales.ru;
+export const visLocales = {
+    ru: visLocaleRu,
+    ru_RU: visLocaleRu,
+    en: visLocaleEn,
+    en_EN: visLocaleEn,
+    en_US: visLocaleEn,
+};
 
-exports.serverSpecificFunctions = ['getManagementInfo', 'assignAdmin', 'assignEditor', 'removeEditor',
+export const serverSpecificFunctions = ['getManagementInfo', 'assignAdmin', 'assignEditor', 'removeEditor',
     'changeAdaptationRightsMode',
     'removeOrganizer', 'removePermission', 'assignPermission', 'getPlayerLoginsArray', 'removePlayerLogin',
     'getWelcomeText', 'setWelcomeText', 'getPlayersOptions', 'setPlayerOption', 'createOrganizer',
     'changeOrganizerPassword', 'createPlayer', 'createPlayerLogin', 'changePlayerPassword',
     'getPlayerProfileInfo', 'createCharacterByPlayer', 'publishPermissionsUpdate'];
 
-exports.commonIgnoreList = ['_init', 'log'];
+export const commonIgnoreList = ['_init', 'log'];
 
 
-exports.yedGmlBase = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+export const yedGmlBase = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
         xmlns:java="http://www.yworks.com/xml/yfiles-common/1.0/java"
         xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0"
@@ -510,7 +496,7 @@ exports.yedGmlBase = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         </data>
         </graphml>`;
 
-exports.yedNodeTmpl = `<node id="{0}">
+export const yedNodeTmpl = `<node id="{0}">
         <data key="d5"/>
         <data key="d6">
             <y:ShapeNode>
@@ -532,7 +518,7 @@ exports.yedNodeTmpl = `<node id="{0}">
         </data>
         </node>`;
 
-exports.yedEdgeTmpl = `<edge id="{0}" source="{2}" target="{3}">
+export const yedEdgeTmpl = `<edge id="{0}" source="{2}" target="{3}">
         <data key="d9"/>
         <data key="d10">
             <y:ArcEdge>
@@ -560,7 +546,6 @@ exports.yedEdgeTmpl = `<edge id="{0}" source="{2}" target="{3}">
         </data>
         </edge>`;
 
-exports.gearsNodeRequiredFields = ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'];
+export const gearsNodeRequiredFields = ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'];
 
-exports.httpTimeout = 60000;
-// })(typeof exports === 'undefined' ? this.Constants = {} : exports);
+export const httpTimeout = 60000;

@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 // const ProjectUtils = require('db-utils/projectUtils');
 const PermissionInformer = require('permissionInformer');
 // const ProjectUtils = require('../../../../dbms_nims/db-utils/projectUtils');
-const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
+// const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
 //const R = require('ramda');
 
 const FilterConfiguration = require('./FilterConfiguration');

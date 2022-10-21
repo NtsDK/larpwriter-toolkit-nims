@@ -21,7 +21,7 @@ See the License for the specific language governing permissions and
 //const Constants = require('dbms/constants');
 // const ProjectUtils = require('db-utils/projectUtils');
 // const ProjectUtils = require('../../../../dbms_nims/db-utils/projectUtils');
-const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
+// const ProjectUtils = require('nims-dbms/db-utils/projectUtils');
 //const R = require('ramda');
 
 function FilterConfiguration(info) {

@@ -1,17 +1,22 @@
 {
   "name": "nims-dbms",
-  "version": "0.7.2",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
+  "version": "0.7.2",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "ts:build": "tsc",
+    "ts:watch": "tsc --watch --preserveWatchOutput"
   },
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "lib": "dist"
+  },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "ramda": "^0.27.0",
     "nims-dbms-core": "0.7.2"
-  },
-  "private": true
+  }
 }
