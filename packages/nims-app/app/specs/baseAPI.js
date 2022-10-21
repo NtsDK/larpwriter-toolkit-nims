@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 //const R = require('ramda');
 // const EmptyBase = require('resources/emptyBase');
-const EmptyBase = require('nims-resources/emptyBase');
+const { emptyBase } = require('nims-resources');
 
 describe('baseAPI', () => {
     let oldBase;
@@ -10,7 +10,7 @@ describe('baseAPI', () => {
         DBMS.getDatabase().then((data) => {
             oldBase = data;
             DBMS.setDatabase({
-                database: R.clone(EmptyBase.data)
+                database: R.clone(emptyBase)
             }).then(() => done()).catch((err) => {
                 throw err;
             });
@@ -43,7 +43,7 @@ describe('baseAPI', () => {
 
     it('setDatabase(emptyBase) -> ok', (done) => {
         DBMS.setDatabase({
-            database: R.clone(EmptyBase.data)
+            database: R.clone(emptyBase)
         }).then(() => {
             expect(123).not.toBeNull();
             done();

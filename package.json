@@ -1,8 +1,12 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "watch:standalone": "lerna run watch:standalone --stream",
+    "watch:server": "lerna run watch:server --stream"
+  },
   "devDependencies": {
-    "lerna": "^3.22.1",
     "@babel/core": "^7.9.6",
     "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.9.6",
@@ -17,23 +21,20 @@
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.20.0",
+    "extract-loader": "^5.0.1",
     "file-loader": "^6.0.0",
     "html-loader": "^0.5.5",
+    "lerna": "^3.22.1",
     "node-sass": "^4.14.1",
     "npm-check-updates": "^6.0.1",
+    "ramda": "^0.27.0",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
+    "typescript": "^4.8.4",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0",
-    "extract-loader": "^5.0.1",
-    "ramda": "^0.27.0"
-  },
-  "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "watch:standalone": "lerna run watch:standalone --stream",
-    "watch:server": "lerna run watch:server --stream"
+    "webpack-dev-server": "^3.11.0"
   }
 }

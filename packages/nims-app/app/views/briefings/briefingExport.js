@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 
 //const Constants = require('dbms/constants');
 // const Export = require('resources/export');
-const Export = require('nims-resources/export');
+const { getTemplate } = require('nims-resources');
 const PermissionInformer = require('permissionInformer');
 //const R = require('ramda');
 
@@ -114,7 +114,7 @@ function resolveTextTemplate(callback) {
         const filter = R.compose(R.equals(true), R.prop('doExport'));
         const value = profileSettings.filter(filter).map(func).join('');
 
-        callback(R.replace(/\{0\}/g, value, Export.getTemplate(L10n.getLang(), 'textTemplate')));
+        callback(R.replace(/\{0\}/g, value, getTemplate(L10n.getLang(), 'textTemplate')));
     }).catch(UI.handleError);
 }
 
@@ -193,7 +193,7 @@ refreshCharacterSetSelect = () => refreshSetSelect('character', 'characterSetSel
 function makeExport(type) {
     return () => {
         // if (!state.templates[type]) {
-        state.templates[type] = atob(Export.getTemplate(L10n.getLang(), type));
+        state.templates[type] = atob(getTemplate(L10n.getLang(), type));
         // }
         exportDocxByTemplate(state.templates[type]);
     };
@@ -257,7 +257,7 @@ function makeDocxTemplate(type) {
     template = replaceBrackets(template).split('\n').map((string) => ({ string }));
 
     // if (!state.templates.genericTemplate) {
-    state.templates.genericTemplate = atob(Export.getTemplate(L10n.getLang(), 'genericTemplate'));
+    state.templates.genericTemplate = atob(getTemplate(L10n.getLang(), 'genericTemplate'));
     // }
 
     const doc = new Docxtemplater();

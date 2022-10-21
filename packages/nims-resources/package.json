@@ -1,15 +1,22 @@
 {
   "name": "nims-resources",
-  "version": "0.7.2",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
+  "version": "0.7.2",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "ts:build": "tsc",
+    "ts:watch": "tsc --watch --preserveWatchOutput"
   },
-  "dependencies": {
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "lib": "dist"
   },
-  "private": true
+  "files": [
+    "dist"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
 }

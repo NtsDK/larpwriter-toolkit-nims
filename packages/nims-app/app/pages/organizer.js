@@ -1,16 +1,9 @@
 const PermissionInformer = require('permissionInformer');
-// const PermissionInformer = require('nims/permissionInformer');
-// const DbmsFactory = require('dbms-core/DbmsFactory');
 const DbmsFactory = require('DbmsFactory');
 const apis = require('apis');
 
 const { TestUtils, LocalBackupCore } = require('nims-app-core');
-const DemoBase = require('nims-resources/demoBase');
-const EmptyBase = require('nims-resources/emptyBase');
-// const DemoBase = require('resources/demoBase');
-// const EmptyBase = require('resources/emptyBase');
-
-// } = require('pages/pageCore');
+const { demoBase, emptyBase } = require('nims-resources');
 
 require('./nims.html');
 
@@ -48,7 +41,7 @@ if (MODE === 'DEV' && DEV_OPTS.ENABLE_TESTS) {
 // eslint-disable-next-line import/order
 // const { localAutoSave, runBaseSelectDialog, makeBackup } = require('front-db/localBaseBackup')({
 const { localAutoSave, runBaseSelectDialog, makeBackup } = require('../front-db/localBaseBackup')({
-    initBaseLoadBtn, onBaseLoaded, EmptyBase, DemoBase, LocalBackupCore
+    initBaseLoadBtn, onBaseLoaded, emptyBase, demoBase, LocalBackupCore
 });
 
 const {
@@ -74,7 +67,7 @@ if (PRODUCT === 'STANDALONE') {
             isServer: PRODUCT !== 'STANDALONE'
         }).preparedDb;
         if (MODE === 'DEV' && !DEV_OPTS.ENABLE_BASE_SELECT_DLG) {
-            DBMS.setDatabase({ database: DemoBase.data }).then(onBaseLoaded, UI.handleError);
+            DBMS.setDatabase({ database: demoBase }).then(onBaseLoaded, UI.handleError);
         } else {
             runBaseSelectDialog();
         }
@@ -192,7 +185,7 @@ function onDatabaseLoad() {
 }
 
 function loadEmptyBase() {
-    FileUtils.makeNewBase(EmptyBase).then((confirmed) => {
+    FileUtils.makeNewBase(emptyBase).then((confirmed) => {
         if (confirmed) {
             onBaseLoaded();
         }

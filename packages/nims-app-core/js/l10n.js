@@ -1,5 +1,5 @@
 // const { Dictionaries, defaultLang } = require('resources/translations');
-const { Dictionaries, defaultLang } = require('nims-resources/translations');
+const { Dictionaries, defaultLang } = require('nims-resources');
 
 //const R = require('ramda');
 // const CU = require('./common/commonUtils.js');
