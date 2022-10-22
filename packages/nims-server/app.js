@@ -20,13 +20,13 @@ const { HttpError } = require('./error');
 const loader = require('./autosave/databaseLoader');
 
 const lastDb = loader.loadLastDatabase();
-const emptyBase = require(config.get('inits:emptyBaseModule'));
+const { emptyBase } = require(config.get('inits:emptyBaseModule'));
 
 // eslint-disable-next-line import/no-dynamic-require
 const apis = require(config.get('inits:apiModule'));
 
 // const dbms = require('../dbms/core/serverDbmsFactory')({
-const dbms = require('nims-dbms-core/serverDbmsFactory')({
+const dbms = require('nims-dbms-core/dist/serverDbmsFactory')({
     projectName: config.get('inits:projectName'),
     serverSpecific: {
         enabledLogOverrides: config.get('logOverrides:enabled'),
@@ -44,6 +44,7 @@ const dbms = require('nims-dbms-core/serverDbmsFactory')({
     proxies: [apis.permissionProxy]
 });
 
+
 function onSetDatabaseFinished() {
     dbms.db.getConsistencyCheckResult().then((checkResult) => {
         const consoleLog = (str) => console.error(str);
@@ -58,13 +59,19 @@ function onSetDatabaseFinished() {
 
 if (lastDb !== null) {
     // projectAPIs.populateDatabase(lastDb);
-    dbms.db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished);
+    dbms.db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished).catch(console.error);
 } else {
     log.info('init from default base');
-    console.log(emptyBase.data);
+    console.log('emptyBase', emptyBase);
     // projectAPIs.populateDatabase(emptyBase.data);
-    dbms.db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
+    dbms.db.setDatabase({ database: emptyBase })
+        .then(onSetDatabaseFinished)
+        .catch(err => {
+            console.error(err);
+            process.exit(1);
+        });
 }
+
 
 require('./autosave')(dbms.db);
 

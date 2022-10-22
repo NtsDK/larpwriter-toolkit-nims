@@ -196,7 +196,7 @@ module.exports = (env, argv) => {
         config.resolve.alias.push({
             // alias: 'nims/stub',
             // alias: 'dbms_nims/stub',
-            alias: 'nims-dbms/stub',
+            alias: 'nims-dbms/dist/stub',
             name: 'apis',
             onlyModule: true
         });

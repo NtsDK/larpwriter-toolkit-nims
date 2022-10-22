@@ -21,9 +21,9 @@
     "adminPass":"zxpoYR65",
     "projectName":"nims",
     "createMaster":false,
-    "apiModule":"nims-dbms/serverApis",
+    "apiModule":"nims-dbms/dist/serverApis",
     "apiModule000":"../dbms/nims/serverApis",
-    "emptyBaseModule": "nims-resources/emptyBase",
+    "emptyBaseModule": "nims-resources/dist/emptyBase",
     "emptyBaseModule000": "../app/nims/resources/emptyBase"
   },
   "frontendPath" : "I:\\workspaces\\nodeclipse\\NIMS\\dist",
