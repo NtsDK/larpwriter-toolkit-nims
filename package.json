@@ -36,5 +36,8 @@
     "bootstrap": "lerna bootstrap",
     "watch:standalone": "lerna run watch:standalone --stream",
     "watch:server": "lerna run watch:server --stream"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.7"
   }
 }

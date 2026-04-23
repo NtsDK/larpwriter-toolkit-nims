@@ -6,3 +6,5 @@ dist/
 .project
 *-nims-base*.json
 nims.code-workspace
+nginx/ssl/fullchain.pem
+nginx/ssl/privkey.pem
