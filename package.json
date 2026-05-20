@@ -22,7 +22,7 @@
     "lerna": "^3.22.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "node-sass": "^7.0.3",
-    "npm-check-updates": "^6.0.1",
+    "npm-check-updates": "^16.7.4",
     "ramda": "^0.27.0",
     "sass-loader": "^13.1.0",
     "style-loader": "^1.2.1",
