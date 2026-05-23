@@ -4,15 +4,16 @@ This repo contains sources of larpwriter toolkit NIMS project (frontend, core an
 
 # Dev install
 
+Use Node 20.
+
 Installing monorepo manager Lerna:
 
-`npm i -g lerna` 
+`npm i -g lerna`
 
 Installing project dev dependencies:
 
-`npm i` 
-`npm run bootstrap` 
-
+`npm i`
+`npm run bootstrap`
 
 # Dev run
 
@@ -27,13 +28,13 @@ Installing project dev dependencies:
 
 It will create dist folder in `packages/nims-app` with frontend build.
 
-2. Open http://localhost:3001/ 
+2. Open http://localhost:3001/
 
 Default login/password: admin/zxpoYR65
 
 3. Default base is empty. You need to load some base. You can download base example from standalone NIMS build or take it from nims-resources.
 
-#  Package description
+# Package description
 
 ## nims-app
 
