@@ -21,10 +21,10 @@
     "html-loader": "^0.5.5",
     "lerna": "^3.22.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
-    "node-sass": "^7.0.3",
+    "node-sass": "^8.0.0",
     "npm-check-updates": "^6.0.1",
     "ramda": "^0.27.0",
-    "sass-loader": "^13.1.0",
+    "sass-loader": "^14.2.1",
     "style-loader": "^1.2.1",
     "url-loader": "^4.1.0",
     "webpack": "^5.74.0",
@@ -34,6 +34,7 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
+    "clean-bootstrap": "lerna clean && lerna bootstrap",
     "lerna:clean": "lerna clean",
     "watch:standalone": "lerna run watch:standalone --stream",
     "watch:server": "lerna run watch:server --stream"
