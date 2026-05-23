@@ -55,7 +55,7 @@
     "file-saver": "^2.0.2",
     "jquery": "^3.5.1",
     "jquery-datetimepicker": "^2.5.21",
-    "jszip": "^3.4.0",
+    "jszip": "^2.6.1",
     "markdown-it": "^11.0.0",
     "moment": "^2.26.0",
     "mustache": "^4.0.1",
