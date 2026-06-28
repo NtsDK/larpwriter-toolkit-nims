@@ -9,10 +9,12 @@
     "nims-wp-start": "./node_modules/.bin/webpack-dev-server --env.mode=development",
     "watch:stan000dalone": "./node_modules/.bin/webpack-dev-server --env.mode=development",
     "watch:standalone": "webpack-dev-server --env mode=development",
+    "build:standalone": "webpack --env product=standalone mode=production",
     "nims-wp-start-server": "./node_modules/.bin/webpack-dev-server --env.mode=development  --env.product=server",
     "nims-wp-start-prod": "./node_modules/.bin/webpack-dev-server --config config\\nims.webpack.dev.js --env.mode=production",
     "nims-wp-watch-server": "webpack --watch --env.product=server",
     "watch:server": "webpack --watch --env product=server",
+    "build:server": "webpack --env product=server mode=production",
     "nims-wp-build-server": "webpack --env.product=server",
     "nims-wp-build-stand": "webpack --env.product=standalone",
     "nims-wp-build-stand-stats": "webpack --env.product=standalone --env.mode=production --profile --json > stats.json",
@@ -38,8 +40,7 @@
     "type": "git",
     "url": "https://github.com/NtsDK/larpwriter-toolkit-nims"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "ajv": "^6.12.2",

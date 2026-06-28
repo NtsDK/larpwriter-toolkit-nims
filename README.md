@@ -34,6 +34,18 @@ Default login/password: admin/zxpoYR65
 
 3. Default base is empty. You need to load some base. You can download base example from standalone NIMS build or take it from nims-resources.
 
+## Building standalone version
+
+1. Run `npm run build:standalone`
+2. Nims will be built in `nims-app\dist`
+
+## Building server version
+
+1. Run `npm run build:server`
+2. Nims will be built in `nims-app\dist`
+3. To be done
+
+
 # Package description
 
 ## nims-app

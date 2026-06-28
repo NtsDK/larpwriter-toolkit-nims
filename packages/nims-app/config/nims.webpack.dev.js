@@ -152,8 +152,9 @@ module.exports = (env, argv) => {
         config.mode = 'production';
         break;
     default:
-        console.error(`Unknown mode "${argv.mode}" switch to default: development`);
+        console.error(`Unknown mode "${env.mode}" switch to default: development. Use production or development.`);
     // eslint-disable-next-line no-fallthrough
+    case 'dev':
     case 'development':
         config.devtool = 'eval-cheap-source-map';
         // config.optimization = {
@@ -192,7 +193,7 @@ module.exports = (env, argv) => {
         });
         break;
     default:
-        console.error(`Unknown product "${argv.product}" switch to default: standalone`);
+        console.error(`Unknown product "${env.product}" switch to default: standalone. Use server or standalone.`);
     // eslint-disable-next-line no-fallthrough
     case 'standalone':
         config.entry = standaloneEntry;
