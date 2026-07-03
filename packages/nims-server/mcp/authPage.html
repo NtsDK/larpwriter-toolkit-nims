@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NIMS MCP — авторизация</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f5f7;
+      color: #1a1a1a;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      max-width: 480px;
+      width: 100%;
+      padding: 2rem;
+    }
+    h1 { font-size: 1.25rem; margin: 0 0 .25rem; }
+    .subtitle { color: #666; font-size: .9rem; margin-bottom: 1.5rem; }
+    label { display: block; font-size: .85rem; font-weight: 500; margin-bottom: .35rem; }
+    input {
+      width: 100%;
+      padding: .6rem .75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,.2); }
+    button {
+      width: 100%;
+      padding: .65rem;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .error {
+      background: #fef2f2;
+      color: #b91c1c;
+      padding: .75rem;
+      border-radius: 4px;
+      font-size: .9rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .result { display: none; margin-top: 1.5rem; }
+    .result.visible { display: block; }
+    .token-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: .75rem;
+      font-family: ui-monospace, monospace;
+      font-size: .8rem;
+      word-break: break-all;
+      margin: .75rem 0;
+    }
+    .meta { font-size: .85rem; color: #555; }
+    .copy-btn {
+      width: auto;
+      padding: .4rem .75rem;
+      font-size: .85rem;
+      margin-right: .5rem;
+    }
+    .hint {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #eee;
+      font-size: .8rem;
+      color: #666;
+      line-height: 1.5;
+    }
+    code { background: #f1f5f9; padding: .1rem .35rem; border-radius: 3px; font-size: .85em; }
+    pre {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: .75rem;
+      font-size: .75rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>NIMS MCP</h1>
+    <p class="subtitle">Войдите учётной записью NIMS, чтобы получить токен для Cursor или другого MCP-клиента.</p>
+
+    <div id="error" class="error"></div>
+
+    <form id="login-form">
+      <label for="username">Логин</label>
+      <input type="text" id="username" name="username" autocomplete="username" required>
+
+      <label for="password">Пароль</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+      <button type="submit" id="submit-btn">Получить токен</button>
+    </form>
+
+    <div id="result" class="result">
+      <p class="meta">Пользователь: <strong id="user-name"></strong> (<span id="user-role"></span>)</p>
+      <p class="meta">Токен действует <span id="ttl-hours"></span> ч.</p>
+      <div class="token-box" id="token"></div>
+      <button type="button" class="copy-btn" id="copy-btn">Скопировать токен</button>
+      <span id="copy-status" class="meta"></span>
+
+      <div class="hint">
+        <p><strong>Cursor</strong> — добавьте в окружение и <code>.cursor/mcp.json</code>:</p>
+        <pre>export NIMS_MCP_TOKEN="ваш-токен"
+
+{
+  "mcpServers": {
+    "nims": {
+      "url": "<span id="mcp-url-full"></span>",
+      "headers": { "Authorization": "Bearer ${env:NIMS_MCP_TOKEN}" }
+    },
+    "nims-readonly": {
+      "url": "<span id="mcp-url-readonly"></span>",
+      "headers": { "Authorization": "Bearer ${env:NIMS_MCP_TOKEN}" }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('error');
+    const resultEl = document.getElementById('result');
+    const submitBtn = document.getElementById('submit-btn');
+    const ttlHours = Math.round((window.__MCP_TOKEN_TTL_MS__ || 86400000) / 3600000);
+
+    document.getElementById('ttl-hours').textContent = ttlHours;
+    document.getElementById('mcp-url-full').textContent = location.origin + '/mcp';
+    document.getElementById('mcp-url-readonly').textContent = location.origin + '/mcp/readonly';
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+    }
+
+    function hideError() {
+      errorEl.style.display = 'none';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Вход…';
+
+      try {
+        const res = await fetch('/mcp/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showError(data.error === 'Invalid credentials' ? 'Неверный логин или пароль' : (data.error || 'Ошибка входа'));
+          return;
+        }
+        document.getElementById('user-name').textContent = data.user.name;
+        document.getElementById('user-role').textContent = data.user.role;
+        document.getElementById('token').textContent = data.token;
+        resultEl.classList.add('visible');
+        form.style.display = 'none';
+      } catch (err) {
+        showError('Не удалось связаться с сервером');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Получить токен';
+      }
+    });
+
+    document.getElementById('copy-btn').addEventListener('click', () => {
+      const token = document.getElementById('token').textContent;
+      navigator.clipboard.writeText(token).then(() => {
+        document.getElementById('copy-status').textContent = 'Скопировано';
+        setTimeout(() => { document.getElementById('copy-status').textContent = ''; }, 2000);
+      });
+    });
+  </script>
+</body>
+</html>

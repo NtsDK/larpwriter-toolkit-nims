@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "nims": {
+      "url": "http://localhost:3001/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:NIMS_MCP_TOKEN}"
+      }
+    },
+    "nims-readonly": {
+      "url": "http://localhost:3001/mcp/readonly",
+      "headers": {
+        "Authorization": "Bearer ${env:NIMS_MCP_TOKEN}"
+      }
+    }
+  }
+}

@@ -26,6 +26,14 @@
 	set NODE_ENV=dev && set MODE=server && set LANG=ru && npm run nims-dev
 	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run vtmcl-dev
 	set NODE_ENV=dev && set MODE=standalone && set LANG=ru && npm run measurelook-dev
+
+### MCP (AI-ассистенты и server-режим) ###
+
+При запуске НИМС как сервера (`npm run watch:server` или Docker) доступен MCP для любого совместимого клиента.
+
+Документация по настройке клиента: [MCP_RU.md](MCP_RU.md) (English: [MCP_EN.md](MCP_EN.md)).
+
+Токен получают на `http://localhost:3001/mcp/auth` (или через `POST /mcp/auth`).
 	
 Пример команды сборки конечного архива.
 
