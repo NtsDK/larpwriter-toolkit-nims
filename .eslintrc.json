@@ -1,7 +1,15 @@
 {
   "root": true,
-  "ignorePatterns": ["packages/**/node_modules/", "packages/**/dist/", "packages/nims-app-core/libs0000/"],
-  "plugins": ["import", "prettier", "react"],
+  "ignorePatterns": [
+    "packages/**/node_modules/",
+    "packages/**/dist/",
+    "packages/nims-app-core/libs0000/"
+  ],
+  "plugins": [
+    "import",
+    "prettier",
+    "react"
+  ],
   "extends": [
     // "eslint:recommended",
     "prettier",
@@ -13,5 +21,9 @@
     "react": {
       "version": "16.13"
     }
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
   }
 }

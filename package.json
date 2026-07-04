@@ -57,7 +57,7 @@
     "watch:server": "lerna run watch:server --stream",
     "build:server": "lerna run build:server --stream",
     "ts:watch": "lerna run ts:watch --stream",
-    "lint": "eslint ./packages/nims-dbms-core --color --quiet"
+    "lint": "eslint ./packages --color --quiet"
   },
   "dependencies": {
     "nodemon": "^2.0.7"
