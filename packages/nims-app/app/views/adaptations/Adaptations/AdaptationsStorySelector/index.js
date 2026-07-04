@@ -1,3 +1,3 @@
-import { AdaptationsStorySelector } from './AdaptationsStorySelector.jsx';
+import { AdaptationsStorySelector } from "./AdaptationsStorySelector.jsx";
 
 export { AdaptationsStorySelector };

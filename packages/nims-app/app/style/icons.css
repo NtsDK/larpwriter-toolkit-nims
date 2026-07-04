@@ -1,6 +1,5 @@
-
-.fa-icon:before{
-  font-family: Font Awesome\ 5 Free;
+.fa-icon:before {
+  font-family: Font Awesome\5 Free;
   font-weight: 900;
 }
 .starterToEnder:before {
@@ -52,7 +51,11 @@
 }
 #activityBlock button,
 #relationsBlock button {
-  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  text-shadow:
+    -1px 0 white,
+    0 1px white,
+    1px 0 white,
+    0 -1px white;
 }
 
 #activityBlock .activity-icon-active,
@@ -63,11 +66,11 @@
   color: blue;
 }
 #activityBlock .activity-icon-defensive,
-#relationsBlock .allies  {
+#relationsBlock .allies {
   color: green;
 }
 #activityBlock .activity-icon-passive,
-#relationsBlock .neutral  {
+#relationsBlock .neutral {
   color: grey;
 }
 
@@ -96,7 +99,7 @@
   content: "\f3c1";
 }
 .move:before {
-/*   content: "\f338"; */
+  /*   content: "\f338"; */
   content: "\f30c\f309";
 }
 .clone:before {
@@ -112,23 +115,23 @@
 .kebab:before {
   content: "\f142";
 }
-.transparent{
-  color: rgba(0,0,0,0);
+.transparent {
+  color: rgba(0, 0, 0, 0);
   transition-property: color;
-  transition-duration: .2s;
+  transition-duration: 0.2s;
 }
 .fa-icon:hover {
   transition-property: color;
-  transition-duration: .2s;
+  transition-duration: 0.2s;
 }
-.story-report-row .fa-icon, 
+.story-report-row .fa-icon,
 .relation-report-row .fa-icon,
 #activityBlock .fa-icon,
 #relationsBlock .fa-icon {
   font-size: 1.5em;
 }
 
-.transparent-icon:before{
+.transparent-icon:before {
   color: transparent;
 }
 

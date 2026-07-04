@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const RequestDataDialogTemplate = function () {
   return (
@@ -6,7 +6,9 @@ export const RequestDataDialogTemplate = function () {
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <button type="button" className="close on-close-button" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" className="close on-close-button" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
             <h4 className="modal-title" />
           </div>
           <div className="modal-body" />

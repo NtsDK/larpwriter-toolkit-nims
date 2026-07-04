@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
     limitations under the License. */
 
-import * as R from 'ramda';
+import * as R from "ramda";
 
 /** sdsfsdf
  * @ param {any[]} array
@@ -25,20 +25,27 @@ export function removeFromArrayByIndex<T extends any[]>(array: T, from: number, 
   const rest = array.slice((to || from) + 1 || array.length);
   array.length = from < 0 ? array.length + from : from;
   return array.push(...rest);
-};
+}
 
-export const charOrdAFactoryBase = R.curry((sortDir, greater, prepare) => function cmp(a, b) {
-  a = prepare(a);
-  b = prepare(b);
-  if (R.isNil(a) && R.isNil(b)) return 0;
-  if (R.isNil(a)) return 1;
-  if (R.isNil(b)) return -1;
-  if (greater(a, b)) { return sortDir === 'asc' ? 1 : -1; }
-  if (greater(b, a)) { return sortDir === 'asc' ? -1 : 1; }
-  return 0;
-});
+export const charOrdAFactoryBase = R.curry(
+  (sortDir, greater, prepare) =>
+    function cmp(a, b) {
+      a = prepare(a);
+      b = prepare(b);
+      if (R.isNil(a) && R.isNil(b)) return 0;
+      if (R.isNil(a)) return 1;
+      if (R.isNil(b)) return -1;
+      if (greater(a, b)) {
+        return sortDir === "asc" ? 1 : -1;
+      }
+      if (greater(b, a)) {
+        return sortDir === "asc" ? -1 : 1;
+      }
+      return 0;
+    }
+);
 
-export const charOrdAFactory = charOrdAFactoryBase('asc', (a, b) => a > b);
+export const charOrdAFactory = charOrdAFactoryBase("asc", (a, b) => a > b);
 
 /**
  * @param {any} a
@@ -54,16 +61,22 @@ export const eventsByTime = charOrdAFactory((a) => new Date(a.time));
 
 export const charOrdAObject = charOrdAFactory((a) => a.displayName.toLowerCase());
 
-export const strFormat = R.curry((str, vals) => str.replace(/\{\{|\}\}|\{(\d+)\}/g, (m, n) => {
-  if (m === '{{') { return '{'; }
-  if (m === '}}') { return '}'; }
-  return vals[n];
-}));
+export const strFormat = R.curry((str, vals) =>
+  str.replace(/\{\{|\}\}|\{(\d+)\}/g, (m, n) => {
+    if (m === "{{") {
+      return "{";
+    }
+    if (m === "}}") {
+      return "}";
+    }
+    return vals[n];
+  })
+);
 
 export const strFormatInsertsCount = (str) => (str.match(/\{\{|\}\}|\{(\d+)\}/g) || []).length;
 
 // taken from MDN https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-export const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+export const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 
 // exports.colorPattern = /^#[0-9A-Fa-f]{6}$/;
 
@@ -83,7 +96,7 @@ const windowsTrailingRe = /[\. ]+$/;
  * @param {string} replacement
  * @return {string}
  */
-export const sanitizeStr2FileName = (input, replacement = '') => {
+export const sanitizeStr2FileName = (input, replacement = "") => {
   const sanitized = input
     .replace(illegalRe, replacement)
     .replace(controlRe, replacement)

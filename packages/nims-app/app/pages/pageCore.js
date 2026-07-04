@@ -1,18 +1,18 @@
-import '../style/tailwind.base.css';
-import 'bootstrap-sass';
-import 'bootstrap-sass/assets/stylesheets/_bootstrap.scss';
-import '../style/tailwind.css';
+import "../style/tailwind.base.css";
+import "bootstrap-sass";
+import "bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+import "../style/tailwind.css";
 
-import '@fortawesome/fontawesome-free/css/all.css';
+import "@fortawesome/fontawesome-free/css/all.css";
 
-import 'jquery-datetimepicker';
-import 'jquery-datetimepicker/build/jquery.datetimepicker.min.css';
-import moment from 'moment';
-import { UI, U, L10n } from 'nims-app-core';
-import { SettingsManager } from './SettingsManager';
+import "jquery-datetimepicker";
+import "jquery-datetimepicker/build/jquery.datetimepicker.min.css";
+import moment from "moment";
+import { UI, U, L10n } from "nims-app-core";
+import { SettingsManager } from "./SettingsManager";
 
-import 'select2';
-import 'select2/dist/css/select2.min.css';
+import "select2";
+import "select2/dist/css/select2.min.css";
 
 window.moment = moment;
 
@@ -33,13 +33,13 @@ export function initPage() {
 
 export const btnOpts = {
   tooltip: true,
-  className: 'mainNavButton'
+  className: "mainNavButton",
 };
 
 export function makeL10nButton() {
-  const l10nBtn = makeButton('toggleL10nButton', 'l10n', L10n.toggleL10n, btnOpts);
+  const l10nBtn = makeButton("toggleL10nButton", "l10n", L10n.toggleL10n, btnOpts);
   const setIcon = () => {
-    l10nBtn.style.backgroundImage = CU.strFormat('url("./images/{0}.svg")', [L10n.getValue('header-dictionary-icon')]);
+    l10nBtn.style.backgroundImage = CU.strFormat('url("./images/{0}.svg")', [L10n.getValue("header-dictionary-icon")]);
   };
   L10n.onL10nChange(setIcon);
   setIcon();
@@ -47,28 +47,28 @@ export function makeL10nButton() {
 }
 
 export function postLogout() {
-  document.querySelector('#logoutForm button').click();
+  document.querySelector("#logoutForm button").click();
 }
 
 export function makeButton(clazz, btnName, callback, opts) {
-  const button = U.makeEl('button');
+  const button = U.makeEl("button");
   U.addClass(button, clazz);
   if (opts.tooltip) {
     const delegate = () => {
-      $(button).attr('data-original-title', L10n.getValue(`header-${btnName}`));
+      $(button).attr("data-original-title", L10n.getValue(`header-${btnName}`));
     };
     L10n.onL10nChange(delegate);
     $(button).tooltip({
       title: L10n.getValue(`header-${btnName}`),
-      placement: 'bottom'
+      placement: "bottom",
     });
   }
-  U.addClass(button, 'action-button');
+  U.addClass(button, "action-button");
   if (opts.className) {
     U.addClass(button, opts.className);
   }
   if (callback) {
-    U.listen(button, 'click', callback);
+    U.listen(button, "click", callback);
   }
   return button;
 }

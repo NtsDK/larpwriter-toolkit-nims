@@ -10,10 +10,10 @@ const templates = {
     inventoryTemplate: inventoryTemplate_ru,
     templateByStory: templateByStory_ru,
     templateByTime: templateByTime_ru,
-    textTemplate: textTemplate_ru
-  }
+    textTemplate: textTemplate_ru,
+  },
 };
 
-export function getTemplate (lang: keyof typeof templates, template: keyof typeof templates['ru']) {
+export function getTemplate(lang: keyof typeof templates, template: keyof (typeof templates)["ru"]) {
   return templates[lang][template];
 }

@@ -1,3 +1,3 @@
-import { EntityNav } from './EntityNav.jsx';
+import { EntityNav } from "./EntityNav.jsx";
 
 export { EntityNav };

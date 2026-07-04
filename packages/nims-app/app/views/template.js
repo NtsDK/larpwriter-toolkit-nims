@@ -1,4 +1,4 @@
-const root = '.-tab ';
+const root = ".-tab ";
 const state = {};
 
 let content;
@@ -6,13 +6,13 @@ function getContent() {
   return content;
 }
 export default {
-  init, refresh, getContent
+  init,
+  refresh,
+  getContent,
 };
 
 function init() {
   //content = U.queryEl(root);
 }
 
-function refresh() {
-
-}
+function refresh() {}

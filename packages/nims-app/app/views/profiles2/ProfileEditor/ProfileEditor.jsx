@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
-import { UI, U, L10n } from 'nims-app-core';
-import './ProfileEditor.css';
+import React, { Component } from "react";
+import { UI, U, L10n } from "nims-app-core";
+import "./ProfileEditor.css";
 
-import {
-  NavLink, Route, Redirect
-} from 'react-router-dom';
-import { CU } from 'nims-dbms-core';
+import { NavLink, Route, Redirect } from "react-router-dom";
+import { CU } from "nims-dbms-core";
 
-import { CharacterProfile } from './CharacterProfile';
-import { StoryReport } from './StoryReport';
-import { RelationReport } from './RelationReport';
-import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
-import { EntityNav } from '../../commons/EntityNav';
-import { CreateProfileDialog } from './CreateProfileDialog.jsx';
-import { ProfileDropdown } from './ProfileDropdown.jsx';
+import { CharacterProfile } from "./CharacterProfile";
+import { StoryReport } from "./StoryReport";
+import { RelationReport } from "./RelationReport";
+import { InlineNotification } from "../../commons/uiCommon3/InlineNotification.jsx";
+import { EntityNav } from "../../commons/EntityNav";
+import { CreateProfileDialog } from "./CreateProfileDialog.jsx";
+import { ProfileDropdown } from "./ProfileDropdown.jsx";
 
 export class ProfileEditor extends Component {
   constructor(props) {
@@ -22,7 +20,7 @@ export class ProfileEditor extends Component {
       primaryNames: null,
       secondaryNames: null,
       profileBinding: null,
-      profileList: null
+      profileList: null,
     };
     this.refresh = this.refresh.bind(this);
     this.getEntityDropdown = this.getEntityDropdown.bind(this);
@@ -30,42 +28,45 @@ export class ProfileEditor extends Component {
 
   componentDidMount() {
     this.refresh();
-    console.log('ProfileEditor mounted');
+    console.log("ProfileEditor mounted");
   }
 
   componentDidUpdate() {
-    console.log('ProfileEditor did update');
+    console.log("ProfileEditor did update");
   }
 
   componentWillUnmount() {
-    console.log('ProfileEditor will unmount');
+    console.log("ProfileEditor will unmount");
   }
 
   refresh() {
     const { dbms } = this.props;
     return Promise.all([
-      dbms.getEntityNamesArray({ type: 'character' }),
-      dbms.getEntityNamesArray({ type: 'player' }),
+      dbms.getEntityNamesArray({ type: "character" }),
+      dbms.getEntityNamesArray({ type: "player" }),
       dbms.getProfileBindings(),
-    ]).then((results) => {
-      const [primaryNames, secondaryNames, profileBinding] = results;
-      primaryNames.sort(CU.charOrdA);
+    ])
+      .then((results) => {
+        const [primaryNames, secondaryNames, profileBinding] = results;
+        primaryNames.sort(CU.charOrdA);
 
-      const profileList = primaryNames.map((primaryName) => ({
-        primaryName,
-        secondaryName: profileBinding[primaryName]
-      }));
+        const profileList = primaryNames.map((primaryName) => ({
+          primaryName,
+          secondaryName: profileBinding[primaryName],
+        }));
 
-      this.setState({
-        primaryNames, secondaryNames, profileBinding, profileList
-      });
-    }).catch(UI.handleError);
+        this.setState({
+          primaryNames,
+          secondaryNames,
+          profileBinding,
+          profileList,
+        });
+      })
+      .catch(UI.handleError);
   }
 
   getEntityDropdown(entity) {
-    const {
-      primaryNames, secondaryNames, profileBinding
-    } = this.state;
+    const { primaryNames, secondaryNames, profileBinding } = this.state;
     return (
       <ProfileDropdown
         entity={entity}
@@ -78,9 +79,7 @@ export class ProfileEditor extends Component {
   }
 
   render() {
-    const {
-      primaryNames, secondaryNames, profileBinding, profileList
-    } = this.state;
+    const { primaryNames, secondaryNames, profileBinding, profileList } = this.state;
 
     if (!primaryNames) {
       return null;
@@ -96,7 +95,7 @@ export class ProfileEditor extends Component {
         <div className="container-fluid height-100p">
           <div className="row height-100p">
             <div className="col-xs-3 height-100p">
-              <Route path={['/characters/characterEditor/:id', '/characters/characterEditor']}>
+              <Route path={["/characters/characterEditor/:id", "/characters/characterEditor"]}>
                 <EntityNav
                   entityList={profileList}
                   createEntityText="profiles.create-character"
@@ -109,7 +108,7 @@ export class ProfileEditor extends Component {
 
             <div className="col-xs-9 content-column height-100p">
               <InlineNotification type="info" showIf={primaryNames.length === 0}>
-                {t('advices.no-character')}
+                {t("advices.no-character")}
               </InlineNotification>
               <Route
                 path="/characters/characterEditor/:id"
@@ -120,7 +119,7 @@ export class ProfileEditor extends Component {
                   }
                   return (
                     <InlineNotification type="info" showIf>
-                      {t('advices.character-not-found', { characterName: id })}
+                      {t("advices.character-not-found", { characterName: id })}
                     </InlineNotification>
                   );
                 }}

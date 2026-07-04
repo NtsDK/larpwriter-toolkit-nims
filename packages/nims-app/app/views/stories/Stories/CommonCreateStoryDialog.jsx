@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Constants } from 'nims-dbms';
-import * as R from 'ramda';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { UI, U, L10n } from 'nims-app-core';
-import { PromptDialog } from '../../commons/uiCommon3/PromptDialog.jsx';
+import React, { useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { Constants } from "nims-dbms";
+import * as R from "ramda";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { UI, U, L10n } from "nims-app-core";
+import { PromptDialog } from "../../commons/uiCommon3/PromptDialog.jsx";
 
 export function CommonCreateStoryDialog(props) {
   const { onCreate, ...elementProps } = props;
@@ -13,18 +13,17 @@ export function CommonCreateStoryDialog(props) {
   const { dbms } = useContext(DbmsContext);
 
   function onSubmit({ value: storyName }) {
-    return dbms.createStory({
-      storyName
-    }).then(() => onCreate({
-      storyName
-    })).catch((err) => UI.handleErrorMsg(err));
+    return dbms
+      .createStory({
+        storyName,
+      })
+      .then(() =>
+        onCreate({
+          storyName,
+        })
+      )
+      .catch((err) => UI.handleErrorMsg(err));
   }
 
-  return (
-    <PromptDialog
-      title={t('stories.enter-story-name')}
-      onSubmit={onSubmit}
-      {...elementProps}
-    />
-  );
+  return <PromptDialog title={t("stories.enter-story-name")} onSubmit={onSubmit} {...elementProps} />;
 }

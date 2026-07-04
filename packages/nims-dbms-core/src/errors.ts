@@ -16,7 +16,10 @@ See the License for the specific language governing permissions and
 
 // ((exports) => {
 export class ValidationError extends Error {
-  constructor(public messageId: string, public parameters: any[] = []) {
+  constructor(
+    public messageId: string,
+    public parameters: any[] = []
+  ) {
     super(messageId);
     // this.messageId = messageId;
     // this.parameters = parameters || [];
@@ -25,7 +28,10 @@ export class ValidationError extends Error {
 }
 
 export class InternalError extends Error {
-  constructor(public messageId: string, public parameters: any[] = []) {
+  constructor(
+    public messageId: string,
+    public parameters: any[] = []
+  ) {
     super(messageId);
     // this.messageId = messageId;
     // this.parameters = parameters || [];

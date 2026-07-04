@@ -1,49 +1,27 @@
-import React from 'react';
+import React from "react";
 
 export const StoryCharacterRow = function () {
   return (
     <tr className="StoryCharacterRow">
       <td className="character-name" />
-      <td><input className="inventoryInput isStoryEditable form-control" /></td>
+      <td>
+        <input className="inventoryInput isStoryEditable form-control" />
+      </td>
       <td className="vertical-aligned-td active">
-        <input
-          className="isStoryEditable hidden"
-          type="checkbox"
-        />
-        <label
-          className="checkbox-label activity-icon-active fa-icon"
-        />
-
+        <input className="isStoryEditable hidden" type="checkbox" />
+        <label className="checkbox-label activity-icon-active fa-icon" />
       </td>
       <td className="vertical-aligned-td follower">
-        <input
-          className="isStoryEditable hidden"
-          type="checkbox"
-        />
-        <label
-          className="checkbox-label activity-icon-follower fa-icon"
-        />
-
+        <input className="isStoryEditable hidden" type="checkbox" />
+        <label className="checkbox-label activity-icon-follower fa-icon" />
       </td>
       <td className="vertical-aligned-td defensive">
-        <input
-          className="isStoryEditable hidden"
-          type="checkbox"
-        />
-        <label
-          className="checkbox-label activity-icon-defensive fa-icon"
-        />
-
+        <input className="isStoryEditable hidden" type="checkbox" />
+        <label className="checkbox-label activity-icon-defensive fa-icon" />
       </td>
       <td className="vertical-aligned-td passive">
-        <input
-          className="isStoryEditable hidden"
-          type="checkbox"
-        />
-        <label
-          className="checkbox-label activity-icon-passive fa-icon"
-        />
-
+        <input className="isStoryEditable hidden" type="checkbox" />
+        <label className="checkbox-label activity-icon-passive fa-icon" />
       </td>
       <td>
         <button

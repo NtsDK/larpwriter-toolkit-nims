@@ -1,4 +1,4 @@
-import * as R from 'ramda';
+import * as R from "ramda";
 
 /**
  * @typedef Story
@@ -13,7 +13,7 @@ export function getStoryCharacterCompleteness(story) {
   return characterList.map((elem) => ({
     characterName: elem,
     isFinished: _isStoryFinishedForCharacter(story, elem),
-    isEmpty: _isStoryEmptyForCharacter(story, elem)
+    isEmpty: _isStoryEmptyForCharacter(story, elem),
   }));
 }
 
@@ -22,7 +22,8 @@ function _isStoryEmptyForCharacter(story, characterName) {
 }
 
 function _isStoryFinishedForCharacter(story, characterName) {
-  return story.events.filter((event) => event.characters[characterName] !== undefined)
+  return story.events
+    .filter((event) => event.characters[characterName] !== undefined)
     .every((event) => event.characters[characterName].ready === true);
 }
 
@@ -31,7 +32,7 @@ export function getStoryEventCompleteness(story) {
     name: event.name,
     index: i,
     isFinished: _isEventReady(event),
-    isEmpty: Object.keys(event.characters).length === 0
+    isEmpty: Object.keys(event.characters).length === 0,
   }));
 }
 
@@ -54,15 +55,15 @@ function getNames(nameObjectArray, nameObjectProperty, settingsProperty) {
 }
 
 export function getCharacterNames(characterArray) {
-  return getNames(characterArray, 'characterName', 'characterNames');
+  return getNames(characterArray, "characterName", "characterNames");
 }
 
 export function getEventIndexes(eventArray) {
-  return getNames(eventArray, 'index', 'eventIndexes');
+  return getNames(eventArray, "index", "eventIndexes");
 }
 
 export function getEntityStatus(object) {
-  if (object.isEmpty) return 'empty';
-  if (object.isFinished) return 'finished';
-  return 'unfinished';
+  if (object.isEmpty) return "empty";
+  if (object.isFinished) return "finished";
+  return "unfinished";
 }

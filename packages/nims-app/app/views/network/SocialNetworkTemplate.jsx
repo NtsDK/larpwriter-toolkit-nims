@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const SocialNetworkTemplate = function () {
   return (
@@ -14,7 +14,9 @@ export const SocialNetworkTemplate = function () {
               </div>
               <div>
                 <input id="showPlayerNamesCheckbox" type="checkbox" className="hidden" />
-                <label htmlFor="showPlayerNamesCheckbox" className="checkbox-label-icon common-checkbox"><span l10n-id="social-network-show-player-names" /></label>
+                <label htmlFor="showPlayerNamesCheckbox" className="checkbox-label-icon common-checkbox">
+                  <span l10n-id="social-network-show-player-names" />
+                </label>
               </div>
             </div>
           </div>
@@ -36,7 +38,14 @@ export const SocialNetworkTemplate = function () {
                   />
                 </h3>
               </div>
-              <div id="answerOne" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false" style={{ height: '0px' }}>
+              <div
+                id="answerOne"
+                className="panel-collapse collapse"
+                role="tabpanel"
+                aria-labelledby=""
+                aria-expanded="false"
+                style={{ height: "0px" }}
+              >
                 <div className="panel-body">
                   <div className="network-coloring-area">
                     <div className="margin-bottom-16">
@@ -63,7 +72,13 @@ export const SocialNetworkTemplate = function () {
                   />
                 </h3>
               </div>
-              <div id="answerTwo" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false">
+              <div
+                id="answerTwo"
+                className="panel-collapse collapse"
+                role="tabpanel"
+                aria-labelledby=""
+                aria-expanded="false"
+              >
                 <div className="panel-body">
                   <div className="network-filter-area">
                     <select size="3" id="networkSubsetsSelector" className="form-control" />
@@ -96,22 +111,56 @@ export const SocialNetworkTemplate = function () {
                   />
                 </h3>
               </div>
-              <div id="answerThree" className="panel-collapse collapse in" role="tabpanel" aria-labelledby="" aria-expanded="false">
+              <div
+                id="answerThree"
+                className="panel-collapse collapse in"
+                role="tabpanel"
+                aria-labelledby=""
+                aria-expanded="false"
+              >
                 <div className="panel-body">
                   <div className="network-type-area">
                     <select size="4" id="networkSelector" className="form-control" />
 
                     <div id="activityBlock" className="hidden">
-                      <button className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-active" data-value="active" l10n-title="constant-active" />
-                      <button className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-follower" data-value="follower" l10n-title="constant-follower" />
-                      <button className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-defensive" data-value="defensive" l10n-title="constant-defensive" />
-                      <button className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-passive" data-value="passive" l10n-title="constant-passive" />
+                      <button
+                        className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-active"
+                        data-value="active"
+                        l10n-title="constant-active"
+                      />
+                      <button
+                        className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-follower"
+                        data-value="follower"
+                        l10n-title="constant-follower"
+                      />
+                      <button
+                        className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-defensive"
+                        data-value="defensive"
+                        l10n-title="constant-defensive"
+                      />
+                      <button
+                        className="btn btn-default btn-reduced fa-icon flex-0-0-auto activity-icon-passive"
+                        data-value="passive"
+                        l10n-title="constant-passive"
+                      />
                     </div>
 
                     <div id="relationsBlock" className="hidden">
-                      <button className="btn btn-default btn-reduced fa-icon flex-0-0-auto allies" data-value="allies" l10n-title="briefings-allies" />
-                      <button className="btn btn-default btn-reduced fa-icon flex-0-0-auto directional" data-value="directional" l10n-title="briefings-directional" />
-                      <button className="btn btn-default btn-reduced fa-icon flex-0-0-auto neutral" data-value="neutral" l10n-title="briefings-neutral" />
+                      <button
+                        className="btn btn-default btn-reduced fa-icon flex-0-0-auto allies"
+                        data-value="allies"
+                        l10n-title="briefings-allies"
+                      />
+                      <button
+                        className="btn btn-default btn-reduced fa-icon flex-0-0-auto directional"
+                        data-value="directional"
+                        l10n-title="briefings-directional"
+                      />
+                      <button
+                        className="btn btn-default btn-reduced fa-icon flex-0-0-auto neutral"
+                        data-value="neutral"
+                        l10n-title="briefings-neutral"
+                      />
                     </div>
                   </div>
                 </div>

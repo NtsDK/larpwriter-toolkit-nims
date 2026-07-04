@@ -1,29 +1,27 @@
-import React, { useState } from 'react';
-import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker';
-import ru from 'date-fns/locale/ru';
-import { useTranslation } from 'react-i18next';
-import 'react-datepicker/dist/react-datepicker.css';
-import dateFormat from 'dateformat';
+import React, { useState } from "react";
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import ru from "date-fns/locale/ru";
+import { useTranslation } from "react-i18next";
+import "react-datepicker/dist/react-datepicker.css";
+import dateFormat from "dateformat";
 
-registerLocale('ru', ru);
+registerLocale("ru", ru);
 
-const DATE_FORMAT_PATTERN = 'yyyy/mm/dd HH:MM';
+const DATE_FORMAT_PATTERN = "yyyy/mm/dd HH:MM";
 
 export function DateTimePicker(props) {
   // const [startDate, setStartDate] = useState(new Date());
-  const {
-    defaultDate, date, onChange, ...elementProps
-  } = props;
+  const { defaultDate, date, onChange, ...elementProps } = props;
   const [dateValue, setDateValue] = useState(date || null);
   const { t, i18n } = useTranslation();
   // console.log(i18n);
   // isClearable
   // readOnly
 
-  let placeholderText = '';
+  let placeholderText = "";
   if (defaultDate) {
-    placeholderText = t('common.date-by-default', {
-      displayDate: dateFormat(defaultDate, DATE_FORMAT_PATTERN)
+    placeholderText = t("common.date-by-default", {
+      displayDate: dateFormat(defaultDate, DATE_FORMAT_PATTERN),
     });
   }
   function innerOnChange(date) {
@@ -31,7 +29,7 @@ export function DateTimePicker(props) {
     if (onChange) {
       onChange({
         date,
-        dateStr: dateFormat(date, DATE_FORMAT_PATTERN)
+        dateStr: dateFormat(date, DATE_FORMAT_PATTERN),
       });
     }
   }
@@ -47,7 +45,7 @@ export function DateTimePicker(props) {
       onChange={innerOnChange}
       timeIntervals={15}
       // dropdownMode="select"
-      timeCaption={t('common.time')}
+      timeCaption={t("common.time")}
       locale={i18n.language}
       // locale="ru-RU"
       // locale="ru"

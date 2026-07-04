@@ -1,12 +1,10 @@
-import React from 'react';
-import Button from 'react-bootstrap/es/Button';
-import Modal from 'react-bootstrap/es/Modal';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import Button from "react-bootstrap/es/Button";
+import Modal from "react-bootstrap/es/Modal";
+import { useTranslation } from "react-i18next";
 
 export function ConfirmDialog(props) {
-  const {
-    message, onConfirm, onCancel, show, title, data
-  } = props;
+  const { message, onConfirm, onCancel, show, title, data } = props;
   if (!show) {
     return null;
   }
@@ -26,20 +24,16 @@ export function ConfirmDialog(props) {
   const handleConfirm = () => callback(true);
   return (
     <Modal show onHide={handleCancel}>
-      {
-        title && (
-          <Modal.Header closeButton>
-            <Modal.Title>{title}</Modal.Title>
-          </Modal.Header>
-        )
-      }
+      {title && (
+        <Modal.Header closeButton>
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
+      )}
       <Modal.Body>{message}</Modal.Body>
       <Modal.Footer>
-        <Button onClick={handleCancel}>
-          {t('common.cancel')}
-        </Button>
+        <Button onClick={handleCancel}>{t("common.cancel")}</Button>
         <Button bsStyle="primary" onClick={handleConfirm}>
-          {t('common.ok')}
+          {t("common.ok")}
         </Button>
       </Modal.Footer>
     </Modal>

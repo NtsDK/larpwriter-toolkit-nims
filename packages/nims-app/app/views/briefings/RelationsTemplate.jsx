@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const RelationsTemplate = function () {
   return (
@@ -24,17 +24,23 @@ export const Relation = function () {
       <div className="Relation entity-management relations-management">
         <div>
           <span className="known-characters-label" />
-          <span><select className="common-select known-characters-select" style={{ width: '200px' }} /></span>
+          <span>
+            <select className="common-select known-characters-select" style={{ width: "200px" }} />
+          </span>
           <button type="button" className="add-known-character-relation btn btn-default btn-reduced" />
         </div>
         <div>
           <span className="unknown-characters-label" />
-          <span><select className="common-select unknown-characters-select" style={{ width: '200px' }} /></span>
+          <span>
+            <select className="common-select unknown-characters-select" style={{ width: "200px" }} />
+          </span>
           <button type="button" className="add-unknown-character-relation btn btn-default btn-reduced" />
         </div>
         <div>
           <span className="profile-item-label" />
-          <span><select className="common-select profile-item-select" style={{ width: '200px' }} /></span>
+          <span>
+            <select className="common-select profile-item-select" style={{ width: "200px" }} />
+          </span>
         </div>
       </div>
 

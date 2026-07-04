@@ -1,19 +1,17 @@
-import PermissionInformer from 'permissionInformer';
-import ReactDOM from 'react-dom';
-import { UI, U, L10n } from 'nims-app-core';
-import { createModalDialog } from '../commons/uiCommons';
-import {
-  getProfileItem
-} from '../profiles2/ProfileBindingTemplate.jsx';
-import { getOrganizerManagementTemplate } from './OrganizerManagementTemplate.jsx';
-import { getModalPromptBody } from '../commons/uiCommons2.jsx';
-import { getCreateOrganizerBody } from './ManagementTemplates.jsx';
+import PermissionInformer from "permissionInformer";
+import ReactDOM from "react-dom";
+import { UI, U, L10n } from "nims-app-core";
+import { createModalDialog } from "../commons/uiCommons";
+import { getProfileItem } from "../profiles2/ProfileBindingTemplate.jsx";
+import { getOrganizerManagementTemplate } from "./OrganizerManagementTemplate.jsx";
+import { getModalPromptBody } from "../commons/uiCommons2.jsx";
+import { getCreateOrganizerBody } from "./ManagementTemplates.jsx";
 
 const state = {};
 
-state.entities = ['characters', 'stories', 'groups', 'players'];
+state.entities = ["characters", "stories", "groups", "players"];
 
-const root = '.organizer-management-tab ';
+const root = ".organizer-management-tab ";
 
 let removePermission, assignPermission;
 
@@ -22,81 +20,87 @@ function getContent() {
   return content;
 }
 export default {
-  init, refresh, getContent
+  init,
+  refresh,
+  getContent,
 };
 
 function init() {
-  content = U.makeEl('div');
-  U.addEl(U.qe('.tab-container'), content);
+  content = U.makeEl("div");
+  U.addEl(U.qe(".tab-container"), content);
   ReactDOM.render(getOrganizerManagementTemplate(), content);
   L10n.localizeStatic(content);
 
   const createUserDialog = createModalDialog(root, createUser, {
     // bodySelector: 'create-organizer-body',
-    dialogTitle: 'admins-creating-user',
-    actionButtonTitle: 'common-create',
+    dialogTitle: "admins-creating-user",
+    actionButtonTitle: "common-create",
     getComponent: getCreateOrganizerBody,
-    componentClass: 'CreateOrganizerBody'
+    componentClass: "CreateOrganizerBody",
   });
-  U.listen(U.qe(`${root}.create.user`), 'click', () => createUserDialog.showDlg());
+  U.listen(U.qe(`${root}.create.user`), "click", () => createUserDialog.showDlg());
 
   const changePasswordDialog = createModalDialog(root, changePassword, {
     // bodySelector: 'modal-prompt-body',
-    dialogTitle: 'admins-enter-new-password',
-    actionButtonTitle: 'common-replace',
+    dialogTitle: "admins-enter-new-password",
+    actionButtonTitle: "common-replace",
     getComponent: getModalPromptBody,
-    componentClass: 'ModalPromptBody'
+    componentClass: "ModalPromptBody",
   });
-  U.listen(U.qe(`${root}.user.change-password`), 'click', () => {
-    U.qee(changePasswordDialog, '.entity-input').value = '';
+  U.listen(U.qe(`${root}.user.change-password`), "click", () => {
+    U.qee(changePasswordDialog, ".entity-input").value = "";
     changePasswordDialog.showDlg();
   });
 
-  U.listen(U.queryEl(`${root}.remove-user-button`), 'click', removeOrganizer);
+  U.listen(U.queryEl(`${root}.remove-user-button`), "click", removeOrganizer);
 
-  U.listen(U.queryEl(`${root}.assign-permission-button`), 'click', assignPermission);
-  U.listen(U.queryEl(`${root}.remove-permission-button`), 'click', removePermission);
-  U.listen(U.queryEl(`${root}.assign-admin-button`), 'click', assignNewAdmin);
-  U.listen(U.queryEl(`${root}.remove-editor-button`), 'click', removeEditor);
-  U.listen(U.queryEl(`${root}.assign-editor-button`), 'click', assignEditor);
+  U.listen(U.queryEl(`${root}.assign-permission-button`), "click", assignPermission);
+  U.listen(U.queryEl(`${root}.remove-permission-button`), "click", removePermission);
+  U.listen(U.queryEl(`${root}.assign-admin-button`), "click", assignNewAdmin);
+  U.listen(U.queryEl(`${root}.remove-editor-button`), "click", removeEditor);
+  U.listen(U.queryEl(`${root}.assign-editor-button`), "click", assignEditor);
 
   state.entities.forEach((type) => {
-    U.listen(U.queryEl(`${root} .entity-filter.${type}`), 'input', filterList(`.entity-list.${type}`));
+    U.listen(U.queryEl(`${root} .entity-filter.${type}`), "input", filterList(`.entity-list.${type}`));
   });
 
-  U.queryElEls(U.queryEl(root), '.adaptationRights').map(U.listen(R.__, 'click', changeAdaptationRightsMode));
+  U.queryElEls(U.queryEl(root), ".adaptationRights").map(U.listen(R.__, "click", changeAdaptationRightsMode));
 
   content = U.queryEl(root);
 }
 
 function refresh() {
-  PermissionInformer.refresh().then(() => {
-    Promise.all([
-      DBMS.getManagementInfo(),
-      PermissionInformer.isAdmin(),
-      PermissionInformer.isEditor(),
-      PermissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
-      PermissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
-      PermissionInformer.getEntityNamesArray({ type: 'group', editableOnly: false }),
-      PermissionInformer.getEntityNamesArray({ type: 'player', editableOnly: false }),
-    ]).then((results) => {
-      const [managementInfo, isAdmin, isEditor, characterNames, storyNames, groupNames, playerNames] = results;
-      const names = {
-        characters: characterNames,
-        groups: groupNames,
-        stories: storyNames,
-        players: playerNames,
-      };
-      if (!isAdmin && isEditor) {
-        R.keys(names).forEach((entity) => {
-          names[entity] = names[entity].filter(R.prop('isOwner'));
-        });
-      }
-      rebuildInterface(names, managementInfo, isAdmin);
-      UI.enable(content, 'adminOnly', isAdmin);
-      UI.enable(content, 'editorOrAdmin', isAdmin || isEditor);
-    }).catch(UI.handleError);
-  }).catch(UI.handleError);
+  PermissionInformer.refresh()
+    .then(() => {
+      Promise.all([
+        DBMS.getManagementInfo(),
+        PermissionInformer.isAdmin(),
+        PermissionInformer.isEditor(),
+        PermissionInformer.getEntityNamesArray({ type: "character", editableOnly: false }),
+        PermissionInformer.getEntityNamesArray({ type: "story", editableOnly: false }),
+        PermissionInformer.getEntityNamesArray({ type: "group", editableOnly: false }),
+        PermissionInformer.getEntityNamesArray({ type: "player", editableOnly: false }),
+      ])
+        .then((results) => {
+          const [managementInfo, isAdmin, isEditor, characterNames, storyNames, groupNames, playerNames] = results;
+          const names = {
+            characters: characterNames,
+            groups: groupNames,
+            stories: storyNames,
+            players: playerNames,
+          };
+          if (!isAdmin && isEditor) {
+            R.keys(names).forEach((entity) => {
+              names[entity] = names[entity].filter(R.prop("isOwner"));
+            });
+          }
+          rebuildInterface(names, managementInfo, isAdmin);
+          UI.enable(content, "adminOnly", isAdmin);
+          UI.enable(content, "editorOrAdmin", isAdmin || isEditor);
+        })
+        .catch(UI.handleError);
+    })
+    .catch(UI.handleError);
 }
 
 function rebuildInterface(names, managementInfo, isAdmin) {
@@ -145,39 +149,33 @@ function rebuildInterface(names, managementInfo, isAdmin) {
 
   state.entities.forEach((entity) => {
     //            UI.rebuildSelector(U.queryEl(`${root}.permission-selector__${entity}`), names[entity]);
-    U.addEls(
-      U.clearEl(U.queryEl(`${root} .entity-list.${entity}`)),
-      names[entity].map(entity2el(isAdmin, entity))
-    );
+    U.addEls(U.clearEl(U.queryEl(`${root} .entity-list.${entity}`)), names[entity].map(entity2el(isAdmin, entity)));
   });
 
-  U.addEls(
-    U.clearEl(U.queryEl(`${root} .entity-list.users`)),
-    userNames.map(user2el)
-  );
+  U.addEls(U.clearEl(U.queryEl(`${root} .entity-list.users`)), userNames.map(user2el));
   buildPermissionList(names, usersInfo);
 }
 
 const entity2el = R.curry((isAdmin, type, name) => {
-  const content = U.makeEl('div');
+  const content = U.makeEl("div");
   ReactDOM.render(getProfileItem(), content);
-  const el = U.qee(content, '.ProfileItem');
+  const el = U.qee(content, ".ProfileItem");
 
   // const el = U.qmte('.profile-item-tmpl');
   el.profileName = name.value;
-  U.addEl(U.qee(el, '.primary-name'), U.makeText(name.displayName));
-  const btn = U.qee(el, '[role=button]');
-  U.setAttr(btn, 'profile-name', name.value);
-  U.setAttr(btn, 'primary-name', name.displayName);
-  U.setAttr(btn, 'button-type', 'entity');
-  U.setAttr(btn, 'profile-type', type);
+  U.addEl(U.qee(el, ".primary-name"), U.makeText(name.displayName));
+  const btn = U.qee(el, "[role=button]");
+  U.setAttr(btn, "profile-name", name.value);
+  U.setAttr(btn, "primary-name", name.displayName);
+  U.setAttr(btn, "button-type", "entity");
+  U.setAttr(btn, "profile-type", type);
   if (name.isOwner || isAdmin) {
-    U.listen(btn, 'dragstart', onDragStart);
-    U.listen(btn, 'drop', onDrop);
-    U.listen(btn, 'dragover', allowDrop);
-    U.listen(btn, 'dragenter', handleDragEnter);
-    U.listen(btn, 'dragleave', handleDragLeave);
-    U.listen(btn, 'click', (e) => U.toggleClass(btn, 'btn-primary'));
+    U.listen(btn, "dragstart", onDragStart);
+    U.listen(btn, "drop", onDrop);
+    U.listen(btn, "dragover", allowDrop);
+    U.listen(btn, "dragenter", handleDragEnter);
+    U.listen(btn, "dragleave", handleDragLeave);
+    U.listen(btn, "click", (e) => U.toggleClass(btn, "btn-primary"));
   } else {
     UI.enableEl(btn, false);
   }
@@ -187,64 +185,67 @@ const entity2el = R.curry((isAdmin, type, name) => {
 const user2el = R.curry((name) => {
   // const el = U.wrapEl('div', U.qte('.profile-item-tmpl'));
 
-  const el = U.makeEl('div');
+  const el = U.makeEl("div");
   ReactDOM.render(getProfileItem(), el);
   // const el =  U.qee(content, '.ProfileItem');
 
   //        el.profileName = name.value;
-  U.addEl(U.qee(el, '.primary-name'), U.makeText(name));
-  U.setAttr(el, 'profile-name', name);
-  U.setAttr(el, 'button-type', 'user');
+  U.addEl(U.qee(el, ".primary-name"), U.makeText(name));
+  U.setAttr(el, "profile-name", name);
+  U.setAttr(el, "button-type", "user");
   //        U.setAttr(el, 'primary-name', name.displayName);
   //        U.setAttr(el, 'profile-type', type);
-  U.listen(el, 'dragstart', onDragStart);
-  U.listen(el, 'drop', onDrop);
-  U.listen(el, 'dragover', allowDrop);
-  U.listen(el, 'dragenter', handleDragEnter);
-  U.listen(el, 'dragleave', handleDragLeave);
+  U.listen(el, "dragstart", onDragStart);
+  U.listen(el, "drop", onDrop);
+  U.listen(el, "dragover", allowDrop);
+  U.listen(el, "dragenter", handleDragEnter);
+  U.listen(el, "dragleave", handleDragLeave);
   return el;
 });
 
 // eslint-disable-next-line no-var,vars-on-top
 var onDragStart = function (event) {
-  if (U.getAttr(this, 'button-type') === 'entity') {
-    U.addClass(this, 'btn-primary');
+  if (U.getAttr(this, "button-type") === "entity") {
+    U.addClass(this, "btn-primary");
   }
   console.log(`onDragStart ${this.profileName}`);
-  event.dataTransfer.setData('data', JSON.stringify({
-    name: U.getAttr(this, 'profile-name'),
-    type: U.getAttr(this, 'profile-type'),
-    buttonType: U.getAttr(this, 'button-type'),
-  }));
-  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData(
+    "data",
+    JSON.stringify({
+      name: U.getAttr(this, "profile-name"),
+      type: U.getAttr(this, "profile-type"),
+      buttonType: U.getAttr(this, "button-type"),
+    })
+  );
+  event.dataTransfer.effectAllowed = "move";
 };
 
 // eslint-disable-next-line no-var,vars-on-top
 var onDrop = function (event) {
-  U.removeClass(this, 'over');
-  console.log(`onDrop ${this.profileName}${event.dataTransfer.getData('data')}`);
+  U.removeClass(this, "over");
+  console.log(`onDrop ${this.profileName}${event.dataTransfer.getData("data")}`);
   if (event.stopPropagation) {
     event.stopPropagation(); // stops the browser from redirecting.
   }
-  const thatData = JSON.parse(event.dataTransfer.getData('data'));
-  if (thatData.type === U.getAttr(this, 'profile-type')) {
+  const thatData = JSON.parse(event.dataTransfer.getData("data"));
+  if (thatData.type === U.getAttr(this, "profile-type")) {
     return;
   }
-  const type1 = U.getAttr(this, 'button-type');
+  const type1 = U.getAttr(this, "button-type");
   const type2 = thatData.buttonType;
 
   if (type1 !== type2) {
-    const userName = type1 === 'user' ? U.getAttr(this, 'profile-name') : thatData.name;
+    const userName = type1 === "user" ? U.getAttr(this, "profile-name") : thatData.name;
     //            const entityBtn =  type1 === 'user' ?
 
     //            console.log(user);
     const btns = U.qes(`${root} .rights-panel .btn-primary[role=button]`);
     const selected = btns.map((btn) => ({
-      type: U.getAttr(btn, 'profile-type'),
-      name: U.getAttr(btn, 'profile-name'),
+      type: U.getAttr(btn, "profile-type"),
+      name: U.getAttr(btn, "profile-name"),
     }));
-    const names = R.mapObjIndexed((arr) => arr.map(R.prop('name')), R.groupBy(R.prop('type'), selected));
-    btns.forEach((btn) => U.removeClass(btn, 'btn-primary'));
+    const names = R.mapObjIndexed((arr) => arr.map(R.prop("name")), R.groupBy(R.prop("type"), selected));
+    btns.forEach((btn) => U.removeClass(btn, "btn-primary"));
 
     DBMS.assignPermission({ userName, names }).then(refresh, UI.handleError);
     //            DBMS[action](userName, names, UI.processError(refresh));
@@ -255,10 +256,10 @@ var onDrop = function (event) {
     //    assignPermission = permissionAction('assignPermission');
   }
 
-//        createBinding([thatData, {
-//            name: U.getAttr(this, 'profile-name'),
-//            type: U.getAttr(this, 'profile-type'),
-//        }]);
+  //        createBinding([thatData, {
+  //            name: U.getAttr(this, 'profile-name'),
+  //            type: U.getAttr(this, 'profile-type'),
+  //        }]);
 };
 
 // eslint-disable-next-line no-var,vars-on-top
@@ -268,20 +269,20 @@ var allowDrop = function (event) {
 };
 
 function handleDragEnter(event) {
-  U.addClass(this, 'over');
+  U.addClass(this, "over");
 }
 
 function handleDragLeave(event) {
-  U.removeClass(this, 'over');
+  U.removeClass(this, "over");
 }
 
 function buildPermissionList(names, usersInfo) {
   const permissionTable = U.clearEl(U.queryEl(`${root}.permission-table`));
-  const treeRoot = U.makeEl('ul');
+  const treeRoot = U.makeEl("ul");
   U.addEl(permissionTable, treeRoot);
 
   R.keys(names).forEach((entity) => {
-    names[entity] = names[entity].map(R.prop('value'));
+    names[entity] = names[entity].map(R.prop("value"));
   });
 
   R.values(usersInfo).forEach((userInfo) => {
@@ -290,68 +291,75 @@ function buildPermissionList(names, usersInfo) {
     });
   });
 
-  usersInfo[L10n.getValue('admins-have-not-owner')] = names;
+  usersInfo[L10n.getValue("admins-have-not-owner")] = names;
 
   const headers = {
-    characters: L10n.getValue('admins-characters'),
-    stories: L10n.getValue('admins-stories'),
-    groups: L10n.getValue('admins-groups'),
-    players: L10n.getValue('admins-players'),
+    characters: L10n.getValue("admins-characters"),
+    stories: L10n.getValue("admins-stories"),
+    groups: L10n.getValue("admins-groups"),
+    players: L10n.getValue("admins-players"),
   };
 
   function liMaker(text) {
-    return U.addEl(U.makeEl('li'), U.makeText(text));
+    return U.addEl(U.makeEl("li"), U.makeText(text));
   }
 
   function makeEntityLists(userInfo) {
     return state.entities.reduce((result, entity) => {
       result.push(liMaker(headers[entity]));
-      result.push(U.addEls(U.makeEl('ol'), userInfo[entity].sort(CU.charOrdA).map(liMaker)));
+      result.push(U.addEls(U.makeEl("ol"), userInfo[entity].sort(CU.charOrdA).map(liMaker)));
       return result;
     }, []);
   }
 
   const userNames = Object.keys(usersInfo).sort(CU.charOrdA);
-  U.addEls(treeRoot, userNames.reduce((result, userName) => {
-    result.push(liMaker(userName));
-    result.push(U.addEls(U.makeEl('ol'), makeEntityLists(usersInfo[userName])));
-    return result;
-  }, []));
+  U.addEls(
+    treeRoot,
+    userNames.reduce((result, userName) => {
+      result.push(liMaker(userName));
+      result.push(U.addEls(U.makeEl("ol"), makeEntityLists(usersInfo[userName])));
+      return result;
+    }, [])
+  );
 }
 
 function createUser(dialog) {
   return () => {
-    const userNameInput = U.qee(dialog, '.create-user-name-input');
-    const userPasswordInput = U.qee(dialog, '.create-user-password-input');
+    const userNameInput = U.qee(dialog, ".create-user-name-input");
+    const userPasswordInput = U.qee(dialog, ".create-user-password-input");
     DBMS.createOrganizer({
       name: userNameInput.value.trim(),
-      password: userPasswordInput.value
-    }).then(() => {
-      userNameInput.value = '';
-      userPasswordInput.value = '';
-      dialog.hideDlg();
-      refresh();
-    }).catch((err) => UI.setError(dialog, err));
+      password: userPasswordInput.value,
+    })
+      .then(() => {
+        userNameInput.value = "";
+        userPasswordInput.value = "";
+        dialog.hideDlg();
+        refresh();
+      })
+      .catch((err) => UI.setError(dialog, err));
   };
 }
 
 function changePassword(dialog) {
   return () => {
-    const toInput = U.qee(dialog, '.entity-input');
+    const toInput = U.qee(dialog, ".entity-input");
     const newPassword = toInput.value;
     const userName = U.queryEl(`${root}.change-password-user-select`).value.trim();
 
-    DBMS.changeOrganizerPassword({ userName, newPassword }).then(() => {
-      dialog.hideDlg();
-      refresh();
-    }).catch((err) => UI.setError(dialog, err));
+    DBMS.changeOrganizerPassword({ userName, newPassword })
+      .then(() => {
+        dialog.hideDlg();
+        refresh();
+      })
+      .catch((err) => UI.setError(dialog, err));
   };
 }
 
 function removeOrganizer() {
-//        const name = U.queryEl(`${root}.remove-user-select`).value.trim();
+  //        const name = U.queryEl(`${root}.remove-user-select`).value.trim();
   const name = U.queryEl(`${root}.change-password-user-select`).value.trim();
-  UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-user-remove'), [name]), () => {
+  UI.confirm(CU.strFormat(L10n.getValue("admins-confirm-user-remove"), [name]), () => {
     DBMS.removeOrganizer({ name }).then(refresh, UI.handleError);
   });
 }
@@ -363,8 +371,8 @@ function permissionAction(action) {
     const userName = U.queryEl(`${root}.user-permission-select`).value.trim();
 
     // TODO remove this check
-    if (userName === '') {
-      UI.alert(L10n.getValue('admins-user-is-not-selected'));
+    if (userName === "") {
+      UI.alert(L10n.getValue("admins-user-is-not-selected"));
       return;
     }
 
@@ -377,12 +385,12 @@ function permissionAction(action) {
   };
 }
 
-removePermission = permissionAction('removePermission');
-assignPermission = permissionAction('assignPermission');
+removePermission = permissionAction("removePermission");
+assignPermission = permissionAction("assignPermission");
 
 function assignNewAdmin() {
   const userName = U.queryEl(`${root}.change-password-user-select`).value.trim();
-  UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-admin-assignment'), [userName]), () => {
+  UI.confirm(CU.strFormat(L10n.getValue("admins-confirm-admin-assignment"), [userName]), () => {
     DBMS.assignAdmin({ userName }).then(refresh, UI.handleError);
   });
 }
@@ -391,7 +399,7 @@ function removeEditor() {
 }
 function assignEditor() {
   const userName = U.queryEl(`${root}.change-password-user-select`).value.trim();
-  UI.confirm(CU.strFormat(L10n.getValue('admins-confirm-editor-assignment'), [userName]), () => {
+  UI.confirm(CU.strFormat(L10n.getValue("admins-confirm-editor-assignment"), [userName]), () => {
     DBMS.assignEditor({ name: userName }).then(refresh, UI.handleError);
   });
 }
@@ -405,7 +413,7 @@ var filterList = (sel) => (event) => {
 
   const els = U.queryEls(`${root} ${sel} [primary-name]`);
   els.forEach((el) => {
-    const isVisible = U.getAttr(el, 'primary-name').toLowerCase().indexOf(str) !== -1;
+    const isVisible = U.getAttr(el, "primary-name").toLowerCase().indexOf(str) !== -1;
     U.hideEl(el, !isVisible);
   });
 };

@@ -1,4 +1,4 @@
-import React, { cloneElement, useState } from 'react';
+import React, { cloneElement, useState } from "react";
 
 export function ModalTrigger(props) {
   const { children, modal } = props;

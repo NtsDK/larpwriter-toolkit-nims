@@ -1,19 +1,18 @@
-
-/** full screen experiments */ 
-.full-screen{
-/*  position: absolute; */
-/*  top:0; */
-/*  left:0; */
-/*  width: 100vw !important; */
-/*   height: 100vh !important; */
+/** full screen experiments */
+.full-screen {
+  /*  position: absolute; */
+  /*  top:0; */
+  /*  left:0; */
+  /*  width: 100vw !important; */
+  /*   height: 100vh !important; */
 }
 
-.fullScreenButton{
-/*  position: relative; */
-/*  top:20px; */
-/*   left:20px; */
+.fullScreenButton {
+  /*  position: relative; */
+  /*  top:20px; */
+  /*   left:20px; */
 }
-/* full screen experiments **/ 
+/* full screen experiments **/
 
 /** East express colouring */
 input:hover,
@@ -21,20 +20,19 @@ textarea:hover,
 button:hover,
 .navigation-button:hover,
 .action-button:hover,
-select:hover
- {
-/*  background-color: red !important; */
-/*  border: 3px solid green !important; */
-/*  color: white !important; */
-/*  font-size:20px !important; */
-/*  font-weight: bold !important; */
+select:hover {
+  /*  background-color: red !important; */
+  /*  border: 3px solid green !important; */
+  /*  color: white !important; */
+  /*  font-size:20px !important; */
+  /*  font-weight: bold !important; */
 }
 
-.panel, .panel-body {
-/*   background-color: greenyellow !important; */
+.panel,
+.panel-body {
+  /*   background-color: greenyellow !important; */
 }
 /* East express colouring **/
-
 
 /** auroresizable textareas */
 /* textarea[autoresize] { */
@@ -44,7 +42,6 @@ select:hover
   resize: none;
 } */
 /* auroresizable textareas **/
-
 
 /* This sets the color for "TK" nodes to a light blue green. */
 .svg-hierarchy-schema g.type-TK > rect {
@@ -62,13 +59,13 @@ select:hover
 }
 
 .svg-hierarchy-schema .node.valid {
-  stroke: #255C03;
+  stroke: #255c03;
   fill: #399605;
 }
 
 .svg-hierarchy-schema .node.invalid {
   stroke: #990000;
-  fill: #EE0000;
+  fill: #ee0000;
 }
 
 .svg-hierarchy-schema g > text {
@@ -77,7 +74,7 @@ select:hover
 
 .svg-hierarchy-schema .link {
   stroke: #999;
-  stroke-opacity: .6;
+  stroke-opacity: 0.6;
   fill: none;
   stroke-width: 2px;
 }

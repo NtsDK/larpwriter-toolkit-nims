@@ -4,46 +4,46 @@
  * Module dependencies.
  */
 
-var fs = require('fs');
-var app = require('../app');
-var debug = require('debug')('app4:server');
-var http = require('http');
-var https = require('https');
-var config = require('../config');
-var log = require('../libs/log')(module);
+var fs = require("fs");
+var app = require("../app");
+var debug = require("debug")("app4:server");
+var http = require("http");
+var https = require("https");
+var config = require("../config");
+var log = require("../libs/log")(module);
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(config.get('port') || '3000');
-app.set('port', port);
+var port = normalizePort(config.get("port") || "3000");
+app.set("port", port);
 
 /**
  * Create HTTP server.
  */
 
 var server;
-if(config.get('https:enabled') === true){
-    log.info('https on');
-    var privateKey  = fs.readFileSync(config.get('https:privateKey'), 'utf8');
-    var certificate = fs.readFileSync(config.get('https:certificate'), 'utf8');
-    var credentials = {key: privateKey, cert: certificate};
-    server = https.createServer(credentials, app);
+if (config.get("https:enabled") === true) {
+  log.info("https on");
+  var privateKey = fs.readFileSync(config.get("https:privateKey"), "utf8");
+  var certificate = fs.readFileSync(config.get("https:certificate"), "utf8");
+  var credentials = { key: privateKey, cert: certificate };
+  server = https.createServer(credentials, app);
 } else {
-    log.info('https off');
-    server = http.createServer(app);
+  log.info("https off");
+  server = http.createServer(app);
 }
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port, function() {
-    log.info('Express server listening on port ' + port);
+server.listen(port, function () {
+  log.info("Express server listening on port " + port);
 });
-server.on('error', onError);
-server.on('listening', onListening);
+server.on("error", onError);
+server.on("listening", onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -70,22 +70,20 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
+  if (error.syscall !== "listen") {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
       process.exit(1);
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
       process.exit(1);
       break;
     default:
@@ -99,8 +97,6 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  debug("Listening on " + bind);
 }

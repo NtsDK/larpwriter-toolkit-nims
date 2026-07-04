@@ -1,25 +1,24 @@
-import React, { Component } from 'react';
-import './CommonNetworkSettings.css';
+import React, { Component } from "react";
+import "./CommonNetworkSettings.css";
 
 export class CommonNetworkSettings extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
     this.onChangeNode = this.onChangeNode.bind(this);
     this.onShowPlayerNames = this.onShowPlayerNames.bind(this);
   }
 
   componentDidMount() {
-    console.log('CommonNetworkSettings mounted');
+    console.log("CommonNetworkSettings mounted");
   }
 
   componentDidUpdate() {
-    console.log('CommonNetworkSettings did update');
+    console.log("CommonNetworkSettings did update");
   }
 
   componentWillUnmount() {
-    console.log('CommonNetworkSettings will unmount');
+    console.log("CommonNetworkSettings will unmount");
   }
 
   onChangeNode(e) {
@@ -34,9 +33,7 @@ export class CommonNetworkSettings extends Component {
 
   render() {
     const { something } = this.state;
-    const {
-      t, nodes = [], focusNode, showPlayerNames
-    } = this.props;
+    const { t, nodes = [], focusNode, showPlayerNames } = this.props;
 
     //     nodes={nodes}
     // focusNode={focusNode}
@@ -48,12 +45,14 @@ export class CommonNetworkSettings extends Component {
     // }
     return (
       <div className="CommonNetworkSettings">
-        <span className="display-block">{t('social-network.show-node')}</span>
+        <span className="display-block">{t("social-network.show-node")}</span>
         <div className="margin-bottom-8">
           <select id="nodeFocusSelector" className="common-select " value={focusNode} onChange={this.onChangeNode}>
-            {
-              nodes.map((node) => <option key={node.id} value={node.id}>{node.originName}</option>)
-            }
+            {nodes.map((node) => (
+              <option key={node.id} value={node.id}>
+                {node.originName}
+              </option>
+            ))}
           </select>
         </div>
         <div>
@@ -65,7 +64,7 @@ export class CommonNetworkSettings extends Component {
             onChange={this.onShowPlayerNames}
           />
           <label htmlFor="showPlayerNamesCheckbox" className="checkbox-label-icon common-checkbox">
-            <span>{t('social-network.show-player-names')}</span>
+            <span>{t("social-network.show-player-names")}</span>
           </label>
         </div>
       </div>

@@ -1,3 +1,3 @@
-import { AdaptationCard } from './AdaptationCard.jsx';
+import { AdaptationCard } from "./AdaptationCard.jsx";
 
 export { AdaptationCard };

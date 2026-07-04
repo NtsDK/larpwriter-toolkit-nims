@@ -1,3 +1,3 @@
-import { ProfileBinding } from './ProfileBinding.jsx';
+import { ProfileBinding } from "./ProfileBinding.jsx";
 
 export { ProfileBinding };

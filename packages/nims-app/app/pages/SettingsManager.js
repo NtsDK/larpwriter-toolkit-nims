@@ -1,17 +1,17 @@
 export class SettingsManager {
-    constructor() {
-        this.clearSettings();
-    }
+  constructor() {
+    this.clearSettings();
+  }
 
-    getSettings(){
-        return this.Settings;
-    };
+  getSettings() {
+    return this.Settings;
+  }
 
-    clearSettings(){
-        this.Settings = {
-            BriefingPreview: {},
-            Stories: {},
-            ProfileEditor: {}
-        };
+  clearSettings() {
+    this.Settings = {
+      BriefingPreview: {},
+      Stories: {},
+      ProfileEditor: {},
     };
+  }
 }

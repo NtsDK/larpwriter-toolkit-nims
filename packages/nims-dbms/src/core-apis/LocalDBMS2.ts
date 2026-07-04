@@ -1,30 +1,30 @@
-import { EventEmitter } from 'events';
-import * as R from 'ramda';
+import { EventEmitter } from "events";
+import * as R from "ramda";
 
-import * as baseAPI2 from './baseAPI2';
-import * as consistencyCheckAPI2 from './consistencyCheckAPI2';
-import * as statisticsAPI2 from './statisticsAPI2';
-import * as profilesAPI2 from './profilesAPI2';
-import * as profileBindingAPI2 from './profileBindingAPI2';
+import * as baseAPI2 from "./baseAPI2";
+import * as consistencyCheckAPI2 from "./consistencyCheckAPI2";
+import * as statisticsAPI2 from "./statisticsAPI2";
+import * as profilesAPI2 from "./profilesAPI2";
+import * as profileBindingAPI2 from "./profileBindingAPI2";
 
 // import * as profileViewAPI2 from './profileViewAPI2';
-import * as groupsAPI2 from './groupsAPI2';
+import * as groupsAPI2 from "./groupsAPI2";
 // import * as groupSchemaAPI from './groupSchemaAPI';
-import * as relationsAPI2 from './relationsAPI2';
-import * as briefingExportAPI2 from './briefingExportAPI2';
+import * as relationsAPI2 from "./relationsAPI2";
+import * as briefingExportAPI2 from "./briefingExportAPI2";
 
-import * as profileConfigurerAPI2 from './profileConfigurerAPI2';
-import * as entityAPI2 from './entityAPI2';
-import * as storyBaseAPI2 from './storyBaseAPI2';
-import * as storyEventsAPI2 from './storyEventsAPI2';
-import * as storyCharactersAPI2 from './storyCharactersAPI2';
+import * as profileConfigurerAPI2 from "./profileConfigurerAPI2";
+import * as entityAPI2 from "./entityAPI2";
+import * as storyBaseAPI2 from "./storyBaseAPI2";
+import * as storyEventsAPI2 from "./storyEventsAPI2";
+import * as storyCharactersAPI2 from "./storyCharactersAPI2";
 
-import * as storyViewAPI2 from './storyViewAPI2';
-import * as storyAdaptationsAPI2 from './storyAdaptationsAPI2';
+import * as storyViewAPI2 from "./storyViewAPI2";
+import * as storyAdaptationsAPI2 from "./storyAdaptationsAPI2";
 // import * as gearsAPI from './core-apis/gearsAPI';
 // import * as slidersAPI from './core-apis/slidersAPI';
-import * as textSearchAPI2 from './textSearchAPI2';
-import { ILocalDBMS } from './ILocalDBMS';
+import * as textSearchAPI2 from "./textSearchAPI2";
+import { ILocalDBMS } from "./ILocalDBMS";
 
 // import * as logAPI from './core-apis/logAPI';
 
@@ -55,17 +55,17 @@ export class LocalDBMS2 implements ILocalDBMS {
         that.ee.on(triggerName, listener.bind(that));
       });
     });
-  };
-  
+  }
+
   // _init = baseAPI2._init;
   getDatabase = baseAPI2.getDatabase;
   getMetaInfo = baseAPI2.getMetaInfo;
   setDatabase = baseAPI2.setDatabase;
   setMetaInfoDate = baseAPI2.setMetaInfoDate;
   setMetaInfoString = baseAPI2.setMetaInfoString;
-  
+
   getConsistencyCheckResult = consistencyCheckAPI2.getConsistencyCheckResult;
-  
+
   getProfileStatisticsLevel2 = statisticsAPI2.getProfileStatisticsLevel2;
   getStatistics = statisticsAPI2.getStatistics;
   getStatisticsLevel1 = statisticsAPI2.getStatisticsLevel1;
@@ -97,7 +97,7 @@ export class LocalDBMS2 implements ILocalDBMS {
   renameGroup = groupsAPI2.renameGroup;
   saveFilterToGroup = groupsAPI2.saveFilterToGroup;
   updateGroupField = groupsAPI2.updateGroupField;
-  
+
   createCharacterRelation = relationsAPI2.createCharacterRelation;
   getCharacterRelation = relationsAPI2.getCharacterRelation;
   getRelations = relationsAPI2.getRelations;

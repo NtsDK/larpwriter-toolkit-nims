@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const TimelineTemplate = function () {
   return (
@@ -11,12 +11,28 @@ export const TimelineTemplate = function () {
             </div>
             <div className="panel-body panel-resizable">
               <div>
-                <input type="radio" name="timelineFilter" value="ByStory" id="timelineFilterByStory" className="hidden" />
-                <label htmlFor="timelineFilterByStory" className="radio-label-icon common-radio"><span l10n-id="timeline-filter-by-stories" /></label>
+                <input
+                  type="radio"
+                  name="timelineFilter"
+                  value="ByStory"
+                  id="timelineFilterByStory"
+                  className="hidden"
+                />
+                <label htmlFor="timelineFilterByStory" className="radio-label-icon common-radio">
+                  <span l10n-id="timeline-filter-by-stories" />
+                </label>
               </div>
               <div>
-                <input type="radio" name="timelineFilter" value="ByCharacter" id="timelineFilterByCharacter" className="hidden" />
-                <label htmlFor="timelineFilterByCharacter" className="radio-label-icon common-radio"><span l10n-id="timeline-filter-by-characters" /></label>
+                <input
+                  type="radio"
+                  name="timelineFilter"
+                  value="ByCharacter"
+                  id="timelineFilterByCharacter"
+                  className="hidden"
+                />
+                <label htmlFor="timelineFilterByCharacter" className="radio-label-icon common-radio">
+                  <span l10n-id="timeline-filter-by-characters" />
+                </label>
               </div>
 
               <input selector-filter="#timelineStorySelector" />
@@ -30,16 +46,34 @@ export const TimelineTemplate = function () {
               <li className="btn-default active">
                 <a href="#timeline-list" data-toggle="tab" l10n-id="timeline-list" />
               </li>
-              <li className="btn-default"><a href="#timeline-interactive" data-toggle="tab" l10n-id="timeline-interactive" /></li>
+              <li className="btn-default">
+                <a href="#timeline-interactive" data-toggle="tab" l10n-id="timeline-interactive" />
+              </li>
             </ul>
             <div className="tab-content clearfix">
               <div className="tab-pane active" id="timeline-list">
                 <div className="container-fluid">
                   <div className="row margin-bottom-8">
-                    <div className="col-xs-2 white-space-normal" style={{ fontWeight: 'bold' }} l10n-id="timeline-time" />
-                    <div className="col-xs-2 white-space-normal" style={{ fontWeight: 'bold' }} l10n-id="timeline-story-name" />
-                    <div className="col-xs-3 white-space-normal" style={{ fontWeight: 'bold' }} l10n-id="timeline-event-name" />
-                    <div className="col-xs-5 white-space-normal" style={{ fontWeight: 'bold' }} l10n-id="timeline-characters" />
+                    <div
+                      className="col-xs-2 white-space-normal"
+                      style={{ fontWeight: "bold" }}
+                      l10n-id="timeline-time"
+                    />
+                    <div
+                      className="col-xs-2 white-space-normal"
+                      style={{ fontWeight: "bold" }}
+                      l10n-id="timeline-story-name"
+                    />
+                    <div
+                      className="col-xs-3 white-space-normal"
+                      style={{ fontWeight: "bold" }}
+                      l10n-id="timeline-event-name"
+                    />
+                    <div
+                      className="col-xs-5 white-space-normal"
+                      style={{ fontWeight: "bold" }}
+                      l10n-id="timeline-characters"
+                    />
                   </div>
                 </div>
                 <div className="container-fluid timeline-list" />
@@ -59,12 +93,7 @@ export function getTimelineTemplate() {
   return <TimelineTemplate />;
 }
 
-export const TimelineEventTemplate = function ({
-  time,
-  storyName,
-  eventName,
-  characters
-}) {
+export const TimelineEventTemplate = function ({ time, storyName, eventName, characters }) {
   return (
     <div className="row">
       <div className="col-xs-2 white-space-normal time">{time}</div>

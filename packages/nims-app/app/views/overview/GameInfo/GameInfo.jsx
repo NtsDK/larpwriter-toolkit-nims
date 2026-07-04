@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import dateFormat from 'dateformat';
-import { UI, U, L10n } from 'nims-app-core';
-import { DateTimePicker } from '../../commons/uiCommon3';
-import './GameInfo.css';
+import React, { Component } from "react";
+import dateFormat from "dateformat";
+import { UI, U, L10n } from "nims-app-core";
+import { DateTimePicker } from "../../commons/uiCommon3";
+import "./GameInfo.css";
 
 export class GameInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       saveTime: new Date().toDateString(),
-      preGameDate: '',
-      date: '',
-      statistics: null
+      preGameDate: "",
+      date: "",
+      statistics: null,
     };
     this.updateName = this.updateName.bind(this);
     this.updateTime = this.updateTime.bind(this);
@@ -23,23 +23,23 @@ export class GameInfo extends Component {
 
   componentDidMount() {
     this.refresh();
-    console.log('GameInfo mounted');
+    console.log("GameInfo mounted");
   }
 
   componentDidUpdate() {
-    console.log('GameInfo did update');
+    console.log("GameInfo did update");
   }
 
   componentWillUnmount() {
-    console.log('GameInfo will unmount');
+    console.log("GameInfo will unmount");
   }
 
   updateName(event) {
     const { dbms } = this.props;
     this.setState({
-      name: event.target.value
+      name: event.target.value,
     });
-    dbms.setMetaInfoString({ name: 'name', value: event.target.value }).catch(UI.handleError);
+    dbms.setMetaInfoString({ name: "name", value: event.target.value }).catch(UI.handleError);
   }
 
   updateTime({ dateStr }) {
@@ -48,112 +48,117 @@ export class GameInfo extends Component {
     // });
     const { dbms } = this.props;
     this.setState({
-      date: dateStr
+      date: dateStr,
     });
-    dbms.setMetaInfoDate({ name: 'date', value: dateStr }).catch(UI.handleError);
+    dbms.setMetaInfoDate({ name: "date", value: dateStr }).catch(UI.handleError);
   }
 
   updatePreGameDate({ dateStr }) {
     const { dbms } = this.props;
     this.setState({
-      preGameDate: dateStr
+      preGameDate: dateStr,
     });
-    dbms.setMetaInfoDate({ name: 'preGameDate', value: dateStr }).catch(UI.handleError);
+    dbms.setMetaInfoDate({ name: "preGameDate", value: dateStr }).catch(UI.handleError);
   }
 
   updateDescr(event) {
     const { dbms } = this.props;
     this.setState({
-      description: event.target.value
+      description: event.target.value,
     });
-    dbms.setMetaInfoString({ name: 'description', value: event.target.value }).catch(UI.handleError);
+    dbms.setMetaInfoString({ name: "description", value: event.target.value }).catch(UI.handleError);
   }
 
   refresh() {
     const { dbms } = this.props;
-    Promise.all([
-      dbms.getMetaInfo(),
-      dbms.getStatisticsLevel1()
-    ]).then((results) => {
-      const [metaInfo, statistics] = results;
-      this.setState({
-        name: metaInfo.name,
-        description: metaInfo.description,
-        saveTime: metaInfo.saveTime,
-        preGameDate: metaInfo.preGameDate,
-        date: metaInfo.date,
-        statistics
-      });
-    }).catch(UI.handleError);
+    Promise.all([dbms.getMetaInfo(), dbms.getStatisticsLevel1()])
+      .then((results) => {
+        const [metaInfo, statistics] = results;
+        this.setState({
+          name: metaInfo.name,
+          description: metaInfo.description,
+          saveTime: metaInfo.saveTime,
+          preGameDate: metaInfo.preGameDate,
+          date: metaInfo.date,
+          statistics,
+        });
+      })
+      .catch(UI.handleError);
   }
 
   render() {
-    const {
-      name,
-      description,
-      saveTime,
-      preGameDate,
-      date,
-      statistics
-    } = this.state;
+    const { name, description, saveTime, preGameDate, date, statistics } = this.state;
     const { dbms, t } = this.props;
 
     if (!statistics) {
       return null;
     }
 
-    const formatDate = (str) => (str !== '' ? dateFormat(new Date(str), 'yyyy/mm/dd h:MM') : '');
+    const formatDate = (str) => (str !== "" ? dateFormat(new Date(str), "yyyy/mm/dd h:MM") : "");
     const formatI18n = (key) => (obj) => t(key, obj);
 
     const formatValue = (obj, str) => {
       if (str === undefined) {
-        return '';
+        return "";
       }
       return obj.format ? obj.format(str) : str;
     };
 
-    const stats = [{
-      label: 'character-count',
-      value: 'characterNumber'
-    }, {
-      label: 'player-count',
-      value: 'playerNumber'
-    }, {
-      label: 'story-count',
-      value: 'storyNumber'
-    }, {
-      label: 'group-count',
-      value: 'groupNumber'
-    }, {
-      label: 'event-count',
-      value: 'eventsNumber'
-    }, {
-      label: 'user-count',
-      value: 'userNumber'
-    }, {
-      label: 'first-event',
-      value: 'firstEvent',
-      format: formatDate
-    }, {
-      label: 'last-event',
-      value: 'lastEvent',
-      format: formatDate
-    }, {
-      label: 'symbol-count',
-      value: 'textCharacterNumber'
-    }, {
-      label: 'story-completeness',
-      value: 'storyCompleteness',
-      format: formatI18n('overview.story-completeness-value2')
-    }, {
-      label: 'general-completeness',
-      value: 'generalCompleteness',
-      format: formatI18n('overview.general-completeness-value2')
-    }, {
-      label: 'relation-completeness',
-      value: 'relationCompleteness',
-      format: formatI18n('overview.relation-completeness-value2')
-    }];
+    const stats = [
+      {
+        label: "character-count",
+        value: "characterNumber",
+      },
+      {
+        label: "player-count",
+        value: "playerNumber",
+      },
+      {
+        label: "story-count",
+        value: "storyNumber",
+      },
+      {
+        label: "group-count",
+        value: "groupNumber",
+      },
+      {
+        label: "event-count",
+        value: "eventsNumber",
+      },
+      {
+        label: "user-count",
+        value: "userNumber",
+      },
+      {
+        label: "first-event",
+        value: "firstEvent",
+        format: formatDate,
+      },
+      {
+        label: "last-event",
+        value: "lastEvent",
+        format: formatDate,
+      },
+      {
+        label: "symbol-count",
+        value: "textCharacterNumber",
+      },
+      {
+        label: "story-completeness",
+        value: "storyCompleteness",
+        format: formatI18n("overview.story-completeness-value2"),
+      },
+      {
+        label: "general-completeness",
+        value: "generalCompleteness",
+        format: formatI18n("overview.general-completeness-value2"),
+      },
+      {
+        label: "relation-completeness",
+        value: "relationCompleteness",
+        format: formatI18n("overview.relation-completeness-value2"),
+      },
+    ];
 
     const statEls = stats.map((obj) => (
       <tr key={obj.label}>
@@ -161,9 +166,7 @@ export class GameInfo extends Component {
           <span className="statisticsLabel">{t(`overview.${obj.label}`)}</span>
         </td>
         <td>
-          <span className="statisticsValue">
-            {formatValue(obj, statistics[obj.value])}
-          </span>
+          <span className="statisticsValue">{formatValue(obj, statistics[obj.value])}</span>
         </td>
       </tr>
     ));
@@ -179,7 +182,9 @@ export class GameInfo extends Component {
                     <div className="row">
                       <div className="col-xs-6">
                         <div className="form-group">
-                          <label className=" control-label" htmlFor="gameNameInput">{t('overview.name')}</label>
+                          <label className=" control-label" htmlFor="gameNameInput">
+                            {t("overview.name")}
+                          </label>
                           <input
                             id="gameNameInput"
                             className="adminOnly form-control"
@@ -188,13 +193,17 @@ export class GameInfo extends Component {
                           />
                         </div>
                         <div className="form-group">
-                          <span className=" control-label">{t('overview.last-save-time')}</span>
-                          <p id="lastSaveTime" className="form-control-static">{dateFormat(new Date(saveTime), 'yyyy/mm/dd HH:MM:ss')}</p>
+                          <span className=" control-label">{t("overview.last-save-time")}</span>
+                          <p id="lastSaveTime" className="form-control-static">
+                            {dateFormat(new Date(saveTime), "yyyy/mm/dd HH:MM:ss")}
+                          </p>
                         </div>
                       </div>
                       <div className="col-xs-6">
                         <div className="form-group">
-                          <label className=" control-label" htmlFor="preGameDatePicker">{t('overview.pre-game-start-date')}</label>
+                          <label className=" control-label" htmlFor="preGameDatePicker">
+                            {t("overview.pre-game-start-date")}
+                          </label>
                           <div>
                             <DateTimePicker
                               className="adminOnly time-input form-control"
@@ -204,7 +213,9 @@ export class GameInfo extends Component {
                           </div>
                         </div>
                         <div className="form-group">
-                          <label className=" control-label" htmlFor="gameDatePicker">{t('overview.pre-game-end-date')}</label>
+                          <label className=" control-label" htmlFor="gameDatePicker">
+                            {t("overview.pre-game-end-date")}
+                          </label>
                           <div>
                             <DateTimePicker
                               className="adminOnly time-input form-control"
@@ -218,7 +229,7 @@ export class GameInfo extends Component {
                     <div className="row">
                       <div className="col-xs-12">
                         <div className="form-group">
-                          <label htmlFor="game-description-area">{t('overview.descr')}</label>
+                          <label htmlFor="game-description-area">{t("overview.descr")}</label>
                           <textarea
                             id="game-description-area"
                             className="adminOnly game-description-area form-control"
@@ -229,20 +240,15 @@ export class GameInfo extends Component {
                       </div>
                     </div>
                   </div>
-
                 </div>
                 <div className="col-xs-3">
                   <table className="table table-bordered table-striped stats-table">
                     <thead>
                       <tr>
-                        <th colSpan={2}>{t('overview.stats')}</th>
+                        <th colSpan={2}>{t("overview.stats")}</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {
-                        statEls
-                      }
-                    </tbody>
+                    <tbody>{statEls}</tbody>
                   </table>
                 </div>
               </div>

@@ -1,31 +1,25 @@
-import React, {
-  useContext, useEffect, useState, useMemo
-} from 'react';
-import { UI, U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import { Constants } from 'nims-dbms';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { useTranslation } from 'react-i18next';
-import {
-  NavLink, Route, Redirect
-} from 'react-router-dom';
-import EventEmitter from 'events';
-import {
-  NavButton, NavSeparator, NavViewLink, NavContainer
-} from '../../commons/NavComponent.jsx';
-import './Stories.css';
+import React, { useContext, useEffect, useState, useMemo } from "react";
+import { UI, U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import { Constants } from "nims-dbms";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { useTranslation } from "react-i18next";
+import { NavLink, Route, Redirect } from "react-router-dom";
+import EventEmitter from "events";
+import { NavButton, NavSeparator, NavViewLink, NavContainer } from "../../commons/NavComponent.jsx";
+import "./Stories.css";
 
-import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
-import { EntityNav } from '../../commons/EntityNav';
-import { CreateStoryDialog } from './CreateStoryDialog.jsx';
-import { StoryDropdown } from './StoryDropdown.jsx';
-import { WriterStory } from './WriterStory.jsx';
-import { EventPresence } from './EventPresence.jsx';
-import { StoryEvents } from './StoryEvents.jsx';
-import { CreateStoryEventDialog } from './CreateStoryEventDialog.jsx';
-import { AddStoryCharacterDialog } from './AddStoryCharacterDialog.jsx';
-import { StoryCharacters } from './StoryCharacters/StoryCharacters.jsx';
+import { InlineNotification } from "../../commons/uiCommon3/InlineNotification.jsx";
+import { EntityNav } from "../../commons/EntityNav";
+import { CreateStoryDialog } from "./CreateStoryDialog.jsx";
+import { StoryDropdown } from "./StoryDropdown.jsx";
+import { WriterStory } from "./WriterStory.jsx";
+import { EventPresence } from "./EventPresence.jsx";
+import { StoryEvents } from "./StoryEvents.jsx";
+import { CreateStoryEventDialog } from "./CreateStoryEventDialog.jsx";
+import { AddStoryCharacterDialog } from "./AddStoryCharacterDialog.jsx";
+import { StoryCharacters } from "./StoryCharacters/StoryCharacters.jsx";
 
 export function Stories(props) {
   const { t } = useTranslation();
@@ -36,9 +30,12 @@ export function Stories(props) {
   const [showAddCharacterDialog, setShowAddCharacterDialog] = useState(false);
 
   function refresh() {
-    permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }).then((allStoryNames) => {
-      setState({ allStoryNames });
-    }).catch(UI.handleError);
+    permissionInformer
+      .getEntityNamesArray({ type: "story", editableOnly: false })
+      .then((allStoryNames) => {
+        setState({ allStoryNames });
+      })
+      .catch(UI.handleError);
   }
 
   const ee = useMemo(() => new EventEmitter(), []);
@@ -55,17 +52,11 @@ export function Stories(props) {
   const { allStoryNames } = state;
 
   const storyList = allStoryNames.map((el) => ({
-    primaryName: el.displayName
+    primaryName: el.displayName,
   }));
 
   function getEntityDropdown(entity) {
-    return (
-      <StoryDropdown
-        entity={entity}
-        primaryNames={storyList}
-        refresh={refresh}
-      />
-    );
+    return <StoryDropdown entity={entity} primaryNames={storyList} refresh={refresh} />;
   }
 
   function showCreateEvent() {
@@ -81,14 +72,13 @@ export function Stories(props) {
     setShowAddCharacterDialog(false);
   }
   function onCreateEvent() {
-    ee.emit('eventsChange');
+    ee.emit("eventsChange");
   }
   function onCharacterAdded() {
-    ee.emit('charactersChange');
+    ee.emit("charactersChange");
   }
 
   return (
-
     <div className="Stories block">
       <Route path="/stories">
         {allStoryNames.length > 0 && <Redirect to={`/stories/${allStoryNames[0].displayName}`} />}
@@ -96,7 +86,7 @@ export function Stories(props) {
       <div className="container-fluid height-100p">
         <div className="row height-100p">
           <div className="col-xs-3 height-100p">
-            <Route path={['/stories/:id', '/stories']}>
+            <Route path={["/stories/:id", "/stories"]}>
               <EntityNav
                 entityList={storyList}
                 createEntityText="stories.create-entity"
@@ -109,19 +99,19 @@ export function Stories(props) {
 
           <div className="col-xs-9 content-column height-100p">
             <InlineNotification type="info" showIf={allStoryNames.length === 0}>
-              {t('advices.no-story')}
+              {t("advices.no-story")}
             </InlineNotification>
 
             <Route
               path="/stories/:id"
               render={({ match }) => {
                 const { id } = match.params;
-                if (R.pluck('primaryName', storyList).includes(id)) {
+                if (R.pluck("primaryName", storyList).includes(id)) {
                   return null;
                 }
                 return (
                   <InlineNotification type="info" showIf>
-                    {t('advices.story-not-found', { storyName: id })}
+                    {t("advices.story-not-found", { storyName: id })}
                   </InlineNotification>
                 );
               }}
@@ -159,37 +149,31 @@ export function Stories(props) {
                           className="btn btn-default btn-reduced fa-icon create event flex-0-0-auto icon-padding isStoryEditable tw-mr-4"
                           onClick={showCreateEvent}
                         >
-                          <span>{t('stories.create-event')}</span>
+                          <span>{t("stories.create-event")}</span>
                         </button>
-                        {
-                          showCreateEventDialog
-                        && (
+                        {showCreateEventDialog && (
                           <CreateStoryEventDialog
                             show={showCreateEventDialog}
                             onCancel={hideCreateEvent}
                             storyName={id}
                             onCreate={onCreateEvent}
                           />
-                        )
-                        }
+                        )}
                         <button
                           type="button"
                           className="btn btn-default btn-reduced fa-icon add character flex-0-0-auto icon-padding isStoryEditable"
                           onClick={showAddCharacter}
                         >
-                          <span>{t('stories.add-character')}</span>
+                          <span>{t("stories.add-character")}</span>
                         </button>
-                        {
-                          showAddCharacterDialog
-                        && (
+                        {showAddCharacterDialog && (
                           <AddStoryCharacterDialog
                             show={showAddCharacterDialog}
                             onCancel={hideAddCharacter}
                             storyName={id}
                             onAdd={onCharacterAdded}
                           />
-                        )
-                        }
+                        )}
                       </div>
                     </div>
                     <Route path="/stories/:id/writerStory">

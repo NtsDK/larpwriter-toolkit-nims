@@ -1,6 +1,6 @@
-import { withTranslation } from 'react-i18next';
-import { pipe } from 'ramda';
-import { PieChart } from './PieChart.jsx';
+import { withTranslation } from "react-i18next";
+import { pipe } from "ramda";
+import { PieChart } from "./PieChart.jsx";
 
 const tmp = pipe(withTranslation())(PieChart);
 

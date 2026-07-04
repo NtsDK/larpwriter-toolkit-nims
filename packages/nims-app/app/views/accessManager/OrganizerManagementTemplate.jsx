@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const OrganizerManagementTemplate = function () {
   return (
@@ -28,7 +28,6 @@ export const OrganizerManagementTemplate = function () {
               l10n-title="admins-assign-admin"
             >
               <span l10n-id="admins-admin" />
-
             </button>
             <button
               type="button"
@@ -36,7 +35,6 @@ export const OrganizerManagementTemplate = function () {
               l10n-title="admins-assign-editor"
             >
               <span l10n-id="admins-editor" />
-
             </button>
           </div>
         </div>
@@ -55,7 +53,11 @@ export const OrganizerManagementTemplate = function () {
             <legend l10n-id="admins-current-editor" />
             <div>
               <label className="current-editor-label" />
-              <button type="button" className="btn btn-default editorOrAdmin remove-editor-button fa-icon remove" l10n-title="admins-remove-editor" />
+              <button
+                type="button"
+                className="btn btn-default editorOrAdmin remove-editor-button fa-icon remove"
+                l10n-title="admins-remove-editor"
+              />
             </div>
           </fieldset>
 
@@ -69,7 +71,9 @@ export const OrganizerManagementTemplate = function () {
                 value="ByStory"
                 id="adaptationRightsByStory"
               />
-              <label htmlFor="adaptationRightsByStory" className="radio-label-icon common-radio"><span l10n-id="admins-by-stories" /></label>
+              <label htmlFor="adaptationRightsByStory" className="radio-label-icon common-radio">
+                <span l10n-id="admins-by-stories" />
+              </label>
             </div>
             <div>
               <input
@@ -79,7 +83,9 @@ export const OrganizerManagementTemplate = function () {
                 value="ByCharacter"
                 id="adaptationRightsByCharacter"
               />
-              <label htmlFor="adaptationRightsByCharacter" className="radio-label-icon common-radio"><span l10n-id="admins-by-characters" /></label>
+              <label htmlFor="adaptationRightsByCharacter" className="radio-label-icon common-radio">
+                <span l10n-id="admins-by-characters" />
+              </label>
             </div>
           </fieldset>
         </div>
@@ -91,22 +97,38 @@ export const OrganizerManagementTemplate = function () {
             <div className="flex-row ">
               <div className="flex-1-1-auto margin-rl-16">
                 <h4 l10n-id="admins-characters" />
-                <input className="form-control entity-filter characters margin-bottom-8" type="search" l10n-placeholder-id="admins-character-search" />
+                <input
+                  className="form-control entity-filter characters margin-bottom-8"
+                  type="search"
+                  l10n-placeholder-id="admins-character-search"
+                />
                 <div className="entity-list characters" />
               </div>
               <div className="flex-1-1-auto margin-rl-16">
                 <h4 l10n-id="admins-stories" />
-                <input className="form-control entity-filter stories margin-bottom-8" type="search" l10n-placeholder-id="admins-story-search" />
+                <input
+                  className="form-control entity-filter stories margin-bottom-8"
+                  type="search"
+                  l10n-placeholder-id="admins-story-search"
+                />
                 <div className="entity-list stories" />
               </div>
               <div className="flex-1-1-auto margin-rl-16">
                 <h4 l10n-id="admins-groups" />
-                <input className="form-control entity-filter groups margin-bottom-8" type="search" l10n-placeholder-id="admins-group-search" />
+                <input
+                  className="form-control entity-filter groups margin-bottom-8"
+                  type="search"
+                  l10n-placeholder-id="admins-group-search"
+                />
                 <div className="entity-list groups" />
               </div>
               <div className="flex-1-1-auto margin-rl-16">
                 <h4 l10n-id="admins-players" />
-                <input className="form-control entity-filter players margin-bottom-8" type="search" l10n-placeholder-id="admins-player-search" />
+                <input
+                  className="form-control entity-filter players margin-bottom-8"
+                  type="search"
+                  l10n-placeholder-id="admins-player-search"
+                />
                 <div className="entity-list players" />
               </div>
               <div className="flex-1-1-auto margin-rl-16">
@@ -122,7 +144,7 @@ export const OrganizerManagementTemplate = function () {
         <div className="panel-heading">
           <h3 className="panel-title" l10n-id="admins-editing-rights" />
         </div>
-        <div className="panel-body " style={{ display: 'flex' }}>
+        <div className="panel-body " style={{ display: "flex" }}>
           <div>
             <span l10n-id="admins-rights" />
             <div className="permission-table" />
@@ -157,7 +179,7 @@ export const OrganizerManagementTemplate = function () {
                     <select size="15" className="permission-selector__players" multiple />
                   </td>
                   <td>
-                    <select size="10" className="user-permission-select" style={{ minWidth: '96px' }} />
+                    <select size="10" className="user-permission-select" style={{ minWidth: "96px" }} />
                   </td>
                 </tr>
               </tbody>

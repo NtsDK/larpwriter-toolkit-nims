@@ -1,12 +1,14 @@
-import React from 'react';
+import React from "react";
 
 export const ShowDiffDialog = function () {
   return (
     <div className="modal fade show-diff-dialog" tabIndex="-1" role="dialog">
-      <div className="modal-dialog" role="document" style={{ width: '100%' }}>
+      <div className="modal-dialog" role="document" style={{ width: "100%" }}>
         <div className="modal-content">
           <div className="modal-header">
-            <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
             <h4 className="modal-title" />
           </div>
           <div className="modal-body">

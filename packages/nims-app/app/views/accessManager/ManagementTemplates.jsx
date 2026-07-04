@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const CreateOrganizerBody = function () {
   return (
@@ -23,7 +23,7 @@ export const CreatePlayerAccountBody = function () {
     <div className="CreatePlayerAccountBody">
       <div className="form-group">
         <label className="control-label" l10n-id="admins-player" />
-        <select className="adminOnly create-login-name-select form-control" style={{ width: '100%' }} />
+        <select className="adminOnly create-login-name-select form-control" style={{ width: "100%" }} />
       </div>
       <div className="form-group">
         <label className="control-label" l10n-id="admins-user-password" />

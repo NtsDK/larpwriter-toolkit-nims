@@ -3,10 +3,10 @@
   text-align: center;
 }
 
-.profile-diagrams-view .profile-diagram-container{
+.profile-diagrams-view .profile-diagram-container {
   flex-wrap: wrap;
 }
-.profile-diagrams-view .profile-diagram-container > div{
+.profile-diagrams-view .profile-diagram-container > div {
   flex-basis: 0;
   flex-grow: 1;
   display: flex;

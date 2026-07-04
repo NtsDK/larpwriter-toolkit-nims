@@ -1,32 +1,34 @@
-import React, { useContext, useEffect, useState } from 'react';
-import FormControl from 'react-bootstrap/es/FormControl';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { UI, U, L10n } from 'nims-app-core';
-import { Constants } from 'nims-dbms';
-import { StoryCharacterDropdown } from './StoryCharacterDropdown.jsx';
+import React, { useContext, useEffect, useState } from "react";
+import FormControl from "react-bootstrap/es/FormControl";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { UI, U, L10n } from "nims-app-core";
+import { Constants } from "nims-dbms";
+import { StoryCharacterDropdown } from "./StoryCharacterDropdown.jsx";
 
 export function StoryCharacterRow(props) {
-  const {
-    character, storyName, refresh, outOfStoryChars
-  } = props;
+  const { character, storyName, refresh, outOfStoryChars } = props;
   const { dbms } = useContext(DbmsContext);
 
   function onInventoryChange(event) {
-    dbms.updateCharacterInventory({
-      storyName,
-      characterName: character.name,
-      inventory: event.target.value
-    }).catch(UI.handleError);
+    dbms
+      .updateCharacterInventory({
+        storyName,
+        characterName: character.name,
+        inventory: event.target.value,
+      })
+      .catch(UI.handleError);
   }
 
   function onChangeCharacterActivity(event) {
     const { activityType } = event.target.dataset;
-    dbms.onChangeCharacterActivity({
-      storyName,
-      characterName: character.name,
-      activityType,
-      checked: event.target.checked
-    }).catch(UI.handleError);
+    dbms
+      .onChangeCharacterActivity({
+        storyName,
+        characterName: character.name,
+        activityType,
+        checked: event.target.checked,
+      })
+      .catch(UI.handleError);
   }
 
   return (
@@ -47,24 +49,22 @@ export function StoryCharacterRow(props) {
           onChange={onInventoryChange}
         />
       </td>
-      {
-        Constants.characterActivityTypes.map((activityType) => (
-          <td className={`vertical-aligned-td ${activityType}`}>
-            <input
-              className="isStoryEditable hidden"
-              type="checkbox"
-              defaultChecked={!!character.activity[activityType]}
-              id={character.name + activityType}
-              onChange={onChangeCharacterActivity}
-              data-activity-type={activityType}
-            />
-            <label
-              htmlFor={character.name + activityType}
-              className={`${'checkbox-label fa-icon activity-icon-'}${activityType}`}
-            />
-          </td>
-        ))
-      }
+      {Constants.characterActivityTypes.map((activityType) => (
+        <td className={`vertical-aligned-td ${activityType}`}>
+          <input
+            className="isStoryEditable hidden"
+            type="checkbox"
+            defaultChecked={!!character.activity[activityType]}
+            id={character.name + activityType}
+            onChange={onChangeCharacterActivity}
+            data-activity-type={activityType}
+          />
+          <label
+            htmlFor={character.name + activityType}
+            className={`${"checkbox-label fa-icon activity-icon-"}${activityType}`}
+          />
+        </td>
+      ))}
     </tr>
   );
 }

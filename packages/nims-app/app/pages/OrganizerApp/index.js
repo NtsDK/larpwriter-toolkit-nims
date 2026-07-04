@@ -1,3 +1,3 @@
-import { OrganizerApp } from './OrganizerApp.jsx';
+import { OrganizerApp } from "./OrganizerApp.jsx";
 
 export { OrganizerApp };

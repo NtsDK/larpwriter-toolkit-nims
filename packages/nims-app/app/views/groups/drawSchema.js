@@ -1,25 +1,26 @@
-import { d3, klay } from 'nims-app-core/libs/klay-adapter';
+import { d3, klay } from "nims-app-core/libs/klay-adapter";
 
 export function drawSchema(graphData, el) {
   //   const svg = d3.select(`${rootTab} svg.${className}`);
   const svg = d3.select(el);
-  const svgGroup = svg.append('g');
-  const root = svgGroup.append('g');
+  const svgGroup = svg.append("g");
+  const root = svgGroup.append("g");
 
   // define an arrow head
-  svg.append('svg:defs')
-    .append('svg:marker')
-    .attr('id', 'end')
-    .attr('viewBox', '0 -5 10 10')
-    .attr('refX', 10)
-    .attr('refY', 0)
-    .attr('markerWidth', 3) // marker settings
-    .attr('markerHeight', 5)
-    .attr('orient', 'auto')
-    .style('fill', '#999')
-    .style('stroke-opacity', 0.6) // arrowhead color
-    .append('svg:path')
-    .attr('d', 'M0,-5L10,0L0,5');
+  svg
+    .append("svg:defs")
+    .append("svg:marker")
+    .attr("id", "end")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 10)
+    .attr("refY", 0)
+    .attr("markerWidth", 3) // marker settings
+    .attr("markerHeight", 5)
+    .attr("orient", "auto")
+    .style("fill", "#999")
+    .style("stroke-opacity", 0.6) // arrowhead color
+    .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
 
   const nodeDict = graphData.nodes.reduce((dict, node, i) => {
     dict[node.id] = i;
@@ -35,18 +36,18 @@ export function drawSchema(graphData, el) {
     title: obj.title,
     label: obj.label,
     width: nodeWidth,
-    height: nodeHeight
+    height: nodeHeight,
   });
 
   const pair2Edge = (obj, i) => ({
     id: i + graphData.nodes.length,
     source: nodeDict[obj.to],
-    target: nodeDict[obj.from]
+    target: nodeDict[obj.from],
   });
 
   const graph = {
     nodes: graphData.nodes.map(name2Node),
-    links: graphData.edges.map(pair2Edge)
+    links: graphData.edges.map(pair2Edge),
   };
 
   const layouter = klay.d3adapter();
@@ -59,69 +60,70 @@ export function drawSchema(graphData, el) {
     .size([width, height])
     .transformGroup(root)
     .options({
-      edgeRouting: 'ORTHOGONAL',
-      direction: 'RIGHT',
-      intCoordinates: false
+      edgeRouting: "ORTHOGONAL",
+      direction: "RIGHT",
+      intCoordinates: false,
     })
     .defaultPortSize([2, 2])
     .start();
 
-  const link = root.selectAll('.link')
+  const link = root
+    .selectAll(".link")
     .data(graph.links)
     .enter()
-    .append('path')
-    .attr('class', 'link')
-    .attr('d', 'M0 0')
-    .attr('marker-end', 'url(#end)');
+    .append("path")
+    .attr("class", "link")
+    .attr("d", "M0 0")
+    .attr("marker-end", "url(#end)");
 
   // we group nodes along with their ports
-  const node = root.selectAll('.node')
-    .data(graph.nodes)
-    .enter()
-    .append('g');
+  const node = root.selectAll(".node").data(graph.nodes).enter().append("g");
 
   //                const details = checkRes.details[d.name];
   //                if (details === undefined || details.length === 0) {
   //                    return 'node valid';
   //                }
   //                return 'node invalid';
-  node.append('rect')
-    .attr('class', (d) => 'node valid')
-    .attr('width', nodeWidth)
-    .attr('height', nodeHeight)
-    .attr('title', 'link')
-    .attr('rx', 5)
-    .attr('ry', 5)
-    .attr('x', 0)
-    .attr('y', 0);
+  node
+    .append("rect")
+    .attr("class", (d) => "node valid")
+    .attr("width", nodeWidth)
+    .attr("height", nodeHeight)
+    .attr("title", "link")
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("x", 0)
+    .attr("y", 0);
 
-  node.append('title').text((d) => d.title);
+  node.append("title").text((d) => d.title);
 
-  node.append('text')
-    .attr('x', nodeWidth / 2)
-    .attr('y', nodeHeight / 2)
-    .attr('alignment-baseline', 'middle')
-    .attr('text-anchor', 'middle')
-  //            .text(d => d.name)
+  node
+    .append("text")
+    .attr("x", nodeWidth / 2)
+    .attr("y", nodeHeight / 2)
+    .attr("alignment-baseline", "middle")
+    .attr("text-anchor", "middle")
+    //            .text(d => d.name)
     .text((d) => d.label)
-    .attr('font-size', '4px');
+    .attr("font-size", "4px");
 
   // ports
-  const port = node.selectAll('.port')
+  const port = node
+    .selectAll(".port")
     .data((d) => d.ports)
     .enter()
-    .append('rect')
-    .attr('class', 'port')
-    .attr('width', 2)
-    .attr('height', 2)
-    .attr('x', 0)
-    .attr('y', 0);
+    .append("rect")
+    .attr("class", "port")
+    .attr("width", 2)
+    .attr("height", 2)
+    .attr("x", 0)
+    .attr("y", 0);
 
   // apply layout
-  layouter.on('finish', (d2) => {
+  layouter.on("finish", (d2) => {
     // apply edge routes
-    link.transition().attr('d', (d) => {
-      let path = '';
+    link.transition().attr("d", (d) => {
+      let path = "";
       path += `M${d.sourcePoint.x} ${d.sourcePoint.y} `;
       d.bendPoints.forEach((bp, i) => {
         path += `L${bp.x} ${bp.y} `;
@@ -131,13 +133,13 @@ export function drawSchema(graphData, el) {
     });
 
     // apply node positions
-    node.transition()
-      .attr('transform', (d) => `translate(${d.x} ${d.y})`);
+    node.transition().attr("transform", (d) => `translate(${d.x} ${d.y})`);
 
     // apply port positions
-    port.transition()
-      .attr('x', (d) => d.x)
-      .attr('y', (d) => d.y);
+    port
+      .transition()
+      .attr("x", (d) => d.x)
+      .attr("y", (d) => d.y);
   });
 
   layouter.start();

@@ -1,4 +1,4 @@
-import type { EventEmitter } from 'events';
+import type { EventEmitter } from "events";
 
 export interface ILocalDBMS {
   ee: EventEmitter;

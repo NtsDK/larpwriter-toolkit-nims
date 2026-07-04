@@ -52,7 +52,7 @@ import { textSearch_en } from "./en/text-search";
 import { timeline_en } from "./en/timeline";
 import { utils_en } from "./en/utils";
 
-export const defaultLang = 'ru';
+export const defaultLang = "ru";
 
 const dictionary_ru = {
   about: about_ru,
@@ -69,15 +69,15 @@ const dictionary_ru = {
   gears: gears_ru,
   groups: groups_ru,
   header: header_ru,
-  'log-viewer': logViewer_ru,
+  "log-viewer": logViewer_ru,
   overview: overview_ru,
-  'profile-filter': profileFilter_ru,
+  "profile-filter": profileFilter_ru,
   profiles: profiles_ru,
-  'role-grid': roleGrid_ru,
+  "role-grid": roleGrid_ru,
   sliders: sliders_ru,
-  'social-network': socialNetwork_ru,
+  "social-network": socialNetwork_ru,
   stories: stories_ru,
-  'text-search': textSearch_ru,
+  "text-search": textSearch_ru,
   timeline: timeline_ru,
   utils: utils_ru,
   dialogs: dialogs_ru,
@@ -100,15 +100,15 @@ const dictionary_en: DictionaryContent = {
   gears: gears_en,
   groups: groups_en,
   header: header_en,
-  'log-viewer': logViewer_en,
+  "log-viewer": logViewer_en,
   overview: overview_en,
-  'profile-filter': profileFilter_en,
+  "profile-filter": profileFilter_en,
   profiles: profiles_en,
-  'role-grid': roleGrid_en,
+  "role-grid": roleGrid_en,
   sliders: sliders_en,
-  'social-network': socialNetwork_en,
+  "social-network": socialNetwork_en,
   stories: stories_en,
-  'text-search': textSearch_en,
+  "text-search": textSearch_en,
   timeline: timeline_en,
   utils: utils_en,
   dialogs: dialogs_en,

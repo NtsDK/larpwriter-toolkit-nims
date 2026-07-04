@@ -1,269 +1,300 @@
-import * as R from 'ramda';
+import * as R from "ramda";
 
 export const profileFieldTypes = {
   text: {
-    name: 'text',
-    value: ''
+    name: "text",
+    value: "",
   },
   string: {
-    name: 'string',
-    value: ''
+    name: "string",
+    value: "",
   },
   enum: {
-    name: 'enum',
-    value: '_'
+    name: "enum",
+    value: "_",
   },
   number: {
-    name: 'number',
-    value: 0
+    name: "number",
+    value: 0,
   },
   checkbox: {
-    name: 'checkbox',
-    value: false
+    name: "checkbox",
+    value: false,
   },
   multiEnum: {
-    name: 'multiEnum',
-    value: ''
-  }
+    name: "multiEnum",
+    value: "",
+  },
 };
 
 export const profileFieldTypesNames = R.keys(profileFieldTypes);
 
-export const relationFields = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'];
+export const relationFields = ["origin", "starterTextReady", "enderTextReady", "essence", "starter", "ender"];
 
-export const relationEssences = ['starterToEnder', 'allies', 'enderToStarter'];
+export const relationEssences = ["starterToEnder", "allies", "enderToStarter"];
 
-export const playerAccessTypes = ['write', 'readonly', 'hidden'];
+export const playerAccessTypes = ["write", "readonly", "hidden"];
 
-export const originProperties = ['name', 'text', 'time'];
+export const originProperties = ["name", "text", "time"];
 
-export const adaptationProperties = ['text', 'time', 'ready'];
+export const adaptationProperties = ["text", "time", "ready"];
 
-export const playersOptionTypes = ['allowPlayerCreation', 'allowCharacterCreation'];
+export const playersOptionTypes = ["allowPlayerCreation", "allowCharacterCreation"];
 
-export const objectSubsets = [
-  'allObjects',
-  'selectedCharacters',
-  'selectedStories',
-];
+export const objectSubsets = ["allObjects", "selectedCharacters", "selectedStories"];
 
 export const networks = [
-  'socialRelations',
-  'characterPresenceInStory',
-  'characterActivityInStory',
-  'characterRelations',
+  "socialRelations",
+  "characterPresenceInStory",
+  "characterActivityInStory",
+  "characterRelations",
 ];
 
-export const ownedEntityTypes = ['character', 'player', 'story', 'group'];
-export const ownedEntityTypes2 = ['characters', 'players', 'stories', 'groups'];
+export const ownedEntityTypes = ["character", "player", "story", "group"];
+export const ownedEntityTypes2 = ["characters", "players", "stories", "groups"];
 
-export const metaInfoStrings = ['name', 'description'];
+export const metaInfoStrings = ["name", "description"];
 
-export const metaInfoDates = ['date', 'preGameDate'];
+export const metaInfoDates = ["date", "preGameDate"];
 
-export const profileTypes = ['character', 'player'];
+export const profileTypes = ["character", "player"];
 
-export const groupProfileStructure = [{
-  name: 'filterModel',
-  type: 'container',
-}, {
-  name: 'characterList',
-  type: 'container',
-}, {
-  name: 'masterDescription',
-  type: 'text',
-}, {
-  name: 'doExport',
-  type: 'checkbox',
-}, {
-  name: 'characterDescription',
-  type: 'text',
-}];
-
-export const groupEditableItems = ['masterDescription', 'characterDescription'];
-
-export const noGroup = 'noGroup';
-
-export const characterActivityTypes = [
-  'active',
-  'follower',
-  'defensive',
-  'passive',
+export const groupProfileStructure = [
+  {
+    name: "filterModel",
+    type: "container",
+  },
+  {
+    name: "characterList",
+    type: "container",
+  },
+  {
+    name: "masterDescription",
+    type: "text",
+  },
+  {
+    name: "doExport",
+    type: "checkbox",
+  },
+  {
+    name: "characterDescription",
+    type: "text",
+  },
 ];
 
-export const characterRelationTypes = [
-  'allies',
-  'directional',
-  'neutral',
-];
+export const groupEditableItems = ["masterDescription", "characterDescription"];
 
-export const numberFilter = [
-  'ignore',
-  'greater',
-  'equal',
-  'lesser',
-];
+export const noGroup = "noGroup";
 
-export const multiEnumFilter = [
-  'ignore',
-  'every',
-  'equal',
-  'some',
-];
+export const characterActivityTypes = ["active", "follower", "defensive", "passive"];
 
-export const finishedText = 'finishedText';
-export const finishedSuffix = 'finishedSuffix';
-export const emptySuffix = 'emptySuffix';
+export const characterRelationTypes = ["allies", "directional", "neutral"];
 
-export const trueVar = 'yes';
-export const falseVar = 'no';
+export const numberFilter = ["ignore", "greater", "equal", "lesser"];
+
+export const multiEnumFilter = ["ignore", "every", "equal", "some"];
+
+export const finishedText = "finishedText";
+export const finishedSuffix = "finishedSuffix";
+export const emptySuffix = "emptySuffix";
+
+export const trueVar = "yes";
+export const falseVar = "no";
 
 export const yesNo = [trueVar, falseVar];
 
 export const briefingNumber = [1, 5, 10, 20, 50];
 
-export const logFilterTypes = [
-  'date',
-  'user',
-  'action',
-  'params',
-  'status',
-];
+export const logFilterTypes = ["date", "user", "action", "params", "status"];
 
-export const adaptationRightsModes = ['ByStory', 'ByCharacter'];
+export const adaptationRightsModes = ["ByStory", "ByCharacter"];
 
 export const colorPalette = [
   {
     color: {
-      border: '#2B7CE9',
-      background: '#97C2FC',
-      highlight: { border: '#2B7CE9', background: '#D2E5FF' },
-      hover: { border: '#2B7CE9', background: '#D2E5FF' }
-    }
+      border: "#2B7CE9",
+      background: "#97C2FC",
+      highlight: { border: "#2B7CE9", background: "#D2E5FF" },
+      hover: { border: "#2B7CE9", background: "#D2E5FF" },
+    },
   }, // 0: blue
   {
     color: {
-      border: '#FFA500',
-      background: '#FFFF00',
-      highlight: { border: '#FFA500', background: '#FFFFA3' },
-      hover: { border: '#FFA500', background: '#FFFFA3' }
-    }
+      border: "#FFA500",
+      background: "#FFFF00",
+      highlight: { border: "#FFA500", background: "#FFFFA3" },
+      hover: { border: "#FFA500", background: "#FFFFA3" },
+    },
   }, // 1: yellow
   {
     color: {
-      border: '#FA0A10', background: '#FB7E81', highlight: { border: '#FA0A10', background: '#FFAFB1' }, hover: { border: '#FA0A10', background: '#FFAFB1' }
-    }
+      border: "#FA0A10",
+      background: "#FB7E81",
+      highlight: { border: "#FA0A10", background: "#FFAFB1" },
+      hover: { border: "#FA0A10", background: "#FFAFB1" },
+    },
   }, // 2: red
   {
     color: {
-      border: '#41A906', background: '#7BE141', highlight: { border: '#41A906', background: '#A1EC76' }, hover: { border: '#41A906', background: '#A1EC76' }
-    }
+      border: "#41A906",
+      background: "#7BE141",
+      highlight: { border: "#41A906", background: "#A1EC76" },
+      hover: { border: "#41A906", background: "#A1EC76" },
+    },
   }, // 3: green
   {
     color: {
-      border: '#E129F0', background: '#EB7DF4', highlight: { border: '#E129F0', background: '#F0B3F5' }, hover: { border: '#E129F0', background: '#F0B3F5' }
-    }
+      border: "#E129F0",
+      background: "#EB7DF4",
+      highlight: { border: "#E129F0", background: "#F0B3F5" },
+      hover: { border: "#E129F0", background: "#F0B3F5" },
+    },
   }, // 4: magenta
   {
     color: {
-      border: '#7C29F0', background: '#AD85E4', highlight: { border: '#7C29F0', background: '#D3BDF0' }, hover: { border: '#7C29F0', background: '#D3BDF0' }
-    }
+      border: "#7C29F0",
+      background: "#AD85E4",
+      highlight: { border: "#7C29F0", background: "#D3BDF0" },
+      hover: { border: "#7C29F0", background: "#D3BDF0" },
+    },
   }, // 5: purple
   {
     color: {
-      border: '#C37F00', background: '#FFA807', highlight: { border: '#C37F00', background: '#FFCA66' }, hover: { border: '#C37F00', background: '#FFCA66' }
-    }
+      border: "#C37F00",
+      background: "#FFA807",
+      highlight: { border: "#C37F00", background: "#FFCA66" },
+      hover: { border: "#C37F00", background: "#FFCA66" },
+    },
   }, // 6: orange
   {
     color: {
-      border: '#4220FB', background: '#6E6EFD', highlight: { border: '#4220FB', background: '#9B9BFD' }, hover: { border: '#4220FB', background: '#9B9BFD' }
-    }
+      border: "#4220FB",
+      background: "#6E6EFD",
+      highlight: { border: "#4220FB", background: "#9B9BFD" },
+      hover: { border: "#4220FB", background: "#9B9BFD" },
+    },
   }, // 7: darkblue
   {
     color: {
-      border: '#FD5A77', background: '#FFC0CB', highlight: { border: '#FD5A77', background: '#FFD1D9' }, hover: { border: '#FD5A77', background: '#FFD1D9' }
-    }
+      border: "#FD5A77",
+      background: "#FFC0CB",
+      highlight: { border: "#FD5A77", background: "#FFD1D9" },
+      hover: { border: "#FD5A77", background: "#FFD1D9" },
+    },
   }, // 8: pink
   {
     color: {
-      border: '#4AD63A', background: '#C2FABC', highlight: { border: '#4AD63A', background: '#E6FFE3' }, hover: { border: '#4AD63A', background: '#E6FFE3' }
-    }
+      border: "#4AD63A",
+      background: "#C2FABC",
+      highlight: { border: "#4AD63A", background: "#E6FFE3" },
+      hover: { border: "#4AD63A", background: "#E6FFE3" },
+    },
   }, // 9: mint
 
   {
     color: {
-      border: '#990000', background: '#EE0000', highlight: { border: '#BB0000', background: '#FF3333' }, hover: { border: '#BB0000', background: '#FF3333' }
-    }
+      border: "#990000",
+      background: "#EE0000",
+      highlight: { border: "#BB0000", background: "#FF3333" },
+      hover: { border: "#BB0000", background: "#FF3333" },
+    },
   }, // 10:bright red
 
   {
     color: {
-      border: '#FF6000', background: '#FF6000', highlight: { border: '#FF6000', background: '#FF6000' }, hover: { border: '#FF6000', background: '#FF6000' }
-    }
+      border: "#FF6000",
+      background: "#FF6000",
+      highlight: { border: "#FF6000", background: "#FF6000" },
+      hover: { border: "#FF6000", background: "#FF6000" },
+    },
   }, // 12: real orange
   {
     color: {
-      border: '#97C2FC', background: '#2B7CE9', highlight: { border: '#D2E5FF', background: '#2B7CE9' }, hover: { border: '#D2E5FF', background: '#2B7CE9' }
-    }
+      border: "#97C2FC",
+      background: "#2B7CE9",
+      highlight: { border: "#D2E5FF", background: "#2B7CE9" },
+      hover: { border: "#D2E5FF", background: "#2B7CE9" },
+    },
   }, // 13: blue
   {
     color: {
-      border: '#399605', background: '#255C03', highlight: { border: '#399605', background: '#255C03' }, hover: { border: '#399605', background: '#255C03' }
-    }
+      border: "#399605",
+      background: "#255C03",
+      highlight: { border: "#399605", background: "#255C03" },
+      hover: { border: "#399605", background: "#255C03" },
+    },
   }, // 14: green
   {
     color: {
-      border: '#B70054', background: '#FF007E', highlight: { border: '#B70054', background: '#FF007E' }, hover: { border: '#B70054', background: '#FF007E' }
-    }
+      border: "#B70054",
+      background: "#FF007E",
+      highlight: { border: "#B70054", background: "#FF007E" },
+      hover: { border: "#B70054", background: "#FF007E" },
+    },
   }, // 15: magenta
   {
     color: {
-      border: '#AD85E4', background: '#7C29F0', highlight: { border: '#D3BDF0', background: '#7C29F0' }, hover: { border: '#D3BDF0', background: '#7C29F0' }
-    }
+      border: "#AD85E4",
+      background: "#7C29F0",
+      highlight: { border: "#D3BDF0", background: "#7C29F0" },
+      hover: { border: "#D3BDF0", background: "#7C29F0" },
+    },
   }, // 16: purple
   {
     color: {
-      border: '#4557FA', background: '#000EA1', highlight: { border: '#6E6EFD', background: '#000EA1' }, hover: { border: '#6E6EFD', background: '#000EA1' }
-    }
+      border: "#4557FA",
+      background: "#000EA1",
+      highlight: { border: "#6E6EFD", background: "#000EA1" },
+      hover: { border: "#6E6EFD", background: "#000EA1" },
+    },
   }, // 17: darkblue
   {
     color: {
-      border: '#FFC0CB', background: '#FD5A77', highlight: { border: '#FFD1D9', background: '#FD5A77' }, hover: { border: '#FFD1D9', background: '#FD5A77' }
-    }
+      border: "#FFC0CB",
+      background: "#FD5A77",
+      highlight: { border: "#FFD1D9", background: "#FD5A77" },
+      hover: { border: "#FFD1D9", background: "#FD5A77" },
+    },
   }, // 18: pink
   {
     color: {
-      border: '#C2FABC', background: '#74D66A', highlight: { border: '#E6FFE3', background: '#74D66A' }, hover: { border: '#E6FFE3', background: '#74D66A' }
-    }
+      border: "#C2FABC",
+      background: "#74D66A",
+      highlight: { border: "#E6FFE3", background: "#74D66A" },
+      hover: { border: "#E6FFE3", background: "#74D66A" },
+    },
   }, // 19: mint
 
   {
     color: {
-      border: '#EE0000', background: '#990000', highlight: { border: '#FF3333', background: '#BB0000' }, hover: { border: '#FF3333', background: '#BB0000' }
-    }
-  } // 20:bright red
+      border: "#EE0000",
+      background: "#990000",
+      highlight: { border: "#FF3333", background: "#BB0000" },
+      hover: { border: "#FF3333", background: "#BB0000" },
+    },
+  }, // 20:bright red
 ];
 
-export const CHAR_NAME = 'char-name';
-export const CHAR_OWNER = 'char-owner';
-export const CHAR_PREFIX = 'profile-';
-export const PLAYER_NAME = 'player-name';
-export const PLAYER_OWNER = 'player-owner';
-export const PLAYER_PREFIX = 'player-profile-';
-export const SUMMARY_PREFIX = 'summary-';
+export const CHAR_NAME = "char-name";
+export const CHAR_OWNER = "char-owner";
+export const CHAR_PREFIX = "profile-";
+export const PLAYER_NAME = "player-name";
+export const PLAYER_OWNER = "player-owner";
+export const PLAYER_PREFIX = "player-profile-";
+export const SUMMARY_PREFIX = "summary-";
 
 export const summaryStats = [
-  ['active', 'constant-active'],
-  ['follower', 'constant-follower'],
-  ['defensive', 'constant-defensive'],
-  ['passive', 'constant-passive'],
-  ['completeness', 'profile-filter-completeness'],
-  ['totalStories', 'profile-filter-totalStories']
+  ["active", "constant-active"],
+  ["follower", "constant-follower"],
+  ["defensive", "constant-defensive"],
+  ["passive", "constant-passive"],
+  ["completeness", "profile-filter-completeness"],
+  ["totalStories", "profile-filter-totalStories"],
 ];
 
 export const socialNetworkOpts = {
   nodes: {
-    shape: 'dot',
+    shape: "dot",
     scaling: {
       min: 10,
       max: 30,
@@ -274,15 +305,15 @@ export const socialNetworkOpts = {
         // max : 50,
         // drawThreshold : 12,
         drawThreshold: 5,
-        maxVisible: 30
+        maxVisible: 30,
         // maxVisible : 20
-      }
+      },
     },
     font: {
       // size : 12,
       size: 20,
-      face: 'Tahoma'
-    }
+      face: "Tahoma",
+    },
   },
   edges: {
     width: 0.15,
@@ -292,8 +323,8 @@ export const socialNetworkOpts = {
     // },
     smooth: {
       //                    type : 'continuous'
-      type: 'dynamic'
-    }
+      type: "dynamic",
+    },
   },
   physics: {
     barnesHut: {
@@ -301,17 +332,17 @@ export const socialNetworkOpts = {
       gravitationalConstant: -30000,
       //                 gravitationalConstant : -60000
       //                    springLength: 20,
-      springConstant: 0.1
+      springConstant: 0.1,
     },
     stabilization: {
       //                    iterations : 2500
-      iterations: 50
-    }
+      iterations: 50,
+    },
   },
   // physics : false,
   // layout : true,
   layout: {
-    randomSeed: 1200
+    randomSeed: 1200,
   },
   interaction: {
     tooltipDelay: 200,
@@ -328,131 +359,131 @@ export const groupSchemaOpts = {
         min: 8,
         max: 30,
         drawThreshold: 5,
-        maxVisible: 30
-      }
+        maxVisible: 30,
+      },
     },
     font: {
       size: 20,
-      face: 'Tahoma'
-    }
+      face: "Tahoma",
+    },
   },
   manipulation: false,
-  height: '90%',
+  height: "90%",
   layout: {
     hierarchical: {
       enabled: true,
-      levelSeparation: 200
-    }
+      levelSeparation: 200,
+    },
   },
   physics: {
     hierarchicalRepulsion: {
-      nodeDistance: 140
-    }
-  }
+      nodeDistance: 140,
+    },
+  },
 };
 
 export const snActivityColors = {
-  active: '#FF0000',
-  follower: '#0000FF',
-  defensive: '#008000',
-  passive: '#808080'
-//   active: 'red',
-//   follower: 'blue',
-//   defensive: 'green',
-//   passive: 'grey'
+  active: "#FF0000",
+  follower: "#0000FF",
+  defensive: "#008000",
+  passive: "#808080",
+  //   active: 'red',
+  //   follower: 'blue',
+  //   defensive: 'green',
+  //   passive: 'grey'
 };
 
 export const snRelationColors = {
-  starterToEnder: '#FF0000',
-  enderToStarter: '#FF0000',
-  allies: '#008000',
-  neutral: '#808080'
+  starterToEnder: "#FF0000",
+  enderToStarter: "#FF0000",
+  allies: "#008000",
+  neutral: "#808080",
   //   starterToEnder: 'red',
   //   enderToStarter: 'red',
-//   allies: 'green',
-//   neutral: 'grey'
+  //   allies: 'green',
+  //   neutral: 'grey'
 };
 
 export const snFocusOptions = {
   scale: 1.2,
   offset: {
     x: 0,
-    y: 0
+    y: 0,
   },
   animation: {
     duration: 1000,
-    easingFunction: 'easeInOutQuad'
-  }
+    easingFunction: "easeInOutQuad",
+  },
 };
 
 export const snFixedColors = {
   storyColor: {
     color: {
-      background: 'rgb(255,255,0)',
-      border: 'rgb(255,168,3)'
-    }
+      background: "rgb(255,255,0)",
+      border: "rgb(255,168,3)",
+    },
   },
   noGroup: {
     color: {
-      background: 'rgb(151,194,252)',
-      border: 'rgb(43,124,233)'
-    }
+      background: "rgb(151,194,252)",
+      border: "rgb(43,124,233)",
+    },
   },
   fromGroup: {
     color: {
-      background: '#7BE141',
-      border: '#41A906'
-    }
+      background: "#7BE141",
+      border: "#41A906",
+    },
   },
   thirdDegreeNode: {
     color: {
-      background: 'rgba(200,200,200,0.5)',
-      border: 'rgba(200,200,200,0.5)'
-    }
+      background: "rgba(200,200,200,0.5)",
+      border: "rgba(200,200,200,0.5)",
+    },
   },
   secondDegreeNode: {
     color: {
-      background: 'rgba(150,150,150,0.75)',
-      border: 'rgba(150,150,150,0.75)'
-    }
+      background: "rgba(150,150,150,0.75)",
+      border: "rgba(150,150,150,0.75)",
+    },
   },
   firstDegreeNode: {
     color: {
-      background: 'rgb(151,194,252)',
-      border: 'rgb(43,124,233)'
-    }
-  }
+      background: "rgb(151,194,252)",
+      border: "rgb(43,124,233)",
+    },
+  },
 };
 
 const ruLocale = {
-  edit: 'Редактировать',
-  del: 'Удалить выбранное',
-  back: 'Назад',
-  addNode: 'Добавить узел',
-  addEdge: 'Добавить ребро',
-  editNode: 'Редактировать узел',
-  editEdge: 'Редактировать ребро',
-  addDescription: 'Кликните в свободное место, чтобы добавить новый узел.',
-  edgeDescription: 'Кликните на узел и протяните ребро к другому узлу, чтобы соединить их.',
-  editEdgeDescription: 'Кликните на контрольные точки и перетащите их к другому узлу, чтобы соединить узлы.',
-  createEdgeError: 'Невозможно соединить ребра в кластер.',
-  deleteClusterError: 'Кластеры не могут быть удалены',
-  editClusterError: 'Кластеры недоступны для редактирования.'
+  edit: "Редактировать",
+  del: "Удалить выбранное",
+  back: "Назад",
+  addNode: "Добавить узел",
+  addEdge: "Добавить ребро",
+  editNode: "Редактировать узел",
+  editEdge: "Редактировать ребро",
+  addDescription: "Кликните в свободное место, чтобы добавить новый узел.",
+  edgeDescription: "Кликните на узел и протяните ребро к другому узлу, чтобы соединить их.",
+  editEdgeDescription: "Кликните на контрольные точки и перетащите их к другому узлу, чтобы соединить узлы.",
+  createEdgeError: "Невозможно соединить ребра в кластер.",
+  deleteClusterError: "Кластеры не могут быть удалены",
+  editClusterError: "Кластеры недоступны для редактирования.",
 };
 const enLocale = {
-  edit: 'Edit',
-  del: 'Delete selected',
-  back: 'Back',
-  addNode: 'Add Node',
-  addEdge: 'Add Edge',
-  editNode: 'Edit Node',
-  editEdge: 'Edit Edge',
-  addDescription: 'Click in an empty space to place a new node.',
-  edgeDescription: 'Click on a node and drag the edge to another node to connect them.',
-  editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
-  createEdgeError: 'Cannot link edges to a cluster.',
-  deleteClusterError: 'Clusters cannot be deleted.',
-  editClusterError: 'Clusters cannot be edited.'
+  edit: "Edit",
+  del: "Delete selected",
+  back: "Back",
+  addNode: "Add Node",
+  addEdge: "Add Edge",
+  editNode: "Edit Node",
+  editEdge: "Edit Edge",
+  addDescription: "Click in an empty space to place a new node.",
+  edgeDescription: "Click on a node and drag the edge to another node to connect them.",
+  editEdgeDescription: "Click on the control points and drag them to a node to connect to it.",
+  createEdgeError: "Cannot link edges to a cluster.",
+  deleteClusterError: "Clusters cannot be deleted.",
+  editClusterError: "Clusters cannot be edited.",
 };
 
 export const visLocales = {
@@ -463,14 +494,32 @@ export const visLocales = {
   en_US: enLocale,
 };
 
-export const serverSpecificFunctions = ['getManagementInfo', 'assignAdmin', 'assignEditor', 'removeEditor',
-  'changeAdaptationRightsMode',
-  'removeOrganizer', 'removePermission', 'assignPermission', 'getPlayerLoginsArray', 'removePlayerLogin',
-  'getWelcomeText', 'setWelcomeText', 'getPlayersOptions', 'setPlayerOption', 'createOrganizer',
-  'changeOrganizerPassword', 'createPlayer', 'createPlayerLogin', 'changePlayerPassword',
-  'getPlayerProfileInfo', 'createCharacterByPlayer', 'publishPermissionsUpdate'];
+export const serverSpecificFunctions = [
+  "getManagementInfo",
+  "assignAdmin",
+  "assignEditor",
+  "removeEditor",
+  "changeAdaptationRightsMode",
+  "removeOrganizer",
+  "removePermission",
+  "assignPermission",
+  "getPlayerLoginsArray",
+  "removePlayerLogin",
+  "getWelcomeText",
+  "setWelcomeText",
+  "getPlayersOptions",
+  "setPlayerOption",
+  "createOrganizer",
+  "changeOrganizerPassword",
+  "createPlayer",
+  "createPlayerLogin",
+  "changePlayerPassword",
+  "getPlayerProfileInfo",
+  "createCharacterByPlayer",
+  "publishPermissionsUpdate",
+];
 
-export const commonIgnoreList = ['_init', 'log'];
+export const commonIgnoreList = ["_init", "log"];
 
 export const yedGmlBase = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
@@ -554,6 +603,6 @@ export const yedEdgeTmpl = `<edge id="{0}" source="{2}" target="{3}">
         </data>
         </edge>`;
 
-export const gearsNodeRequiredFields = ['id', 'x', 'y', 'label', 'name', 'group', 'notes', 'shape'];
+export const gearsNodeRequiredFields = ["id", "x", "y", "label", "name", "group", "notes", "shape"];
 
 export const httpTimeout = 60000;

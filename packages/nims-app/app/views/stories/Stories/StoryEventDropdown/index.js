@@ -1,3 +1,3 @@
-import { StoryEventDropdown } from './StoryEventDropdown.jsx';
+import { StoryEventDropdown } from "./StoryEventDropdown.jsx";
 
 export { StoryEventDropdown };

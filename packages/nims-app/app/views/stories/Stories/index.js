@@ -1,3 +1,3 @@
-import { Stories } from './Stories.jsx';
+import { Stories } from "./Stories.jsx";
 
 export { Stories };

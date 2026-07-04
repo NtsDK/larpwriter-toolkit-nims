@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const ProfileConfigurerTemplate = function () {
   return (
@@ -12,11 +12,15 @@ export const ProfileConfigurerTemplate = function () {
         <div className="panel-body profile-panel">
           <div className="entity-management">
             <div>
-              <button type="button" className="btn btn-default btn-reduced fa-icon create adminOnly" l10n-title="profiles-create-profile-item" />
+              <button
+                type="button"
+                className="btn btn-default btn-reduced fa-icon create adminOnly"
+                l10n-title="profiles-create-profile-item"
+              />
             </div>
           </div>
           <div className="alert alert-info" />
-          <table className="table table-bordered" style={{ width: 'auto' }}>
+          <table className="table table-bordered" style={{ width: "auto" }}>
             <thead>
               <tr>
                 <th>№</th>
@@ -42,19 +46,45 @@ export function getProfileConfigurerTemplate() {
 export const ProfileConfigurerRow = function () {
   return (
     <tr className="ProfileConfigurerRow">
-      <td><span className="item-position adminOnly" /></td>
-      <td><span className="item-name adminOnly" /></td>
-      <td><select className="item-type adminOnly form-control" /></td>
-      <td className="item-default-value-container" />
-      <td><select className="player-access adminOnly form-control" /></td>
       <td>
-        <button type="button" className="btn btn-default btn-reduced fa-icon print flex-0-0-auto adminOnly" l10n-title="profiles-profile-item-do-export" />
+        <span className="item-position adminOnly" />
       </td>
-      <td className="hidden"><input type="checkbox" className="show-in-role-grid adminOnly form-control" /></td>
       <td>
-        <button type="button" className="btn btn-default btn-reduced fa-icon move flex-0-0-auto adminOnly" l10n-title="profiles-move-profile-item" />
-        <button type="button" className="btn btn-default btn-reduced fa-icon rename rename-profile-item flex-0-0-auto adminOnly" l10n-title="profiles-rename-profile-item" />
-        <button type="button" className="btn btn-default btn-reduced fa-icon remove flex-0-0-auto adminOnly" l10n-title="profiles-remove-profile-item" />
+        <span className="item-name adminOnly" />
+      </td>
+      <td>
+        <select className="item-type adminOnly form-control" />
+      </td>
+      <td className="item-default-value-container" />
+      <td>
+        <select className="player-access adminOnly form-control" />
+      </td>
+      <td>
+        <button
+          type="button"
+          className="btn btn-default btn-reduced fa-icon print flex-0-0-auto adminOnly"
+          l10n-title="profiles-profile-item-do-export"
+        />
+      </td>
+      <td className="hidden">
+        <input type="checkbox" className="show-in-role-grid adminOnly form-control" />
+      </td>
+      <td>
+        <button
+          type="button"
+          className="btn btn-default btn-reduced fa-icon move flex-0-0-auto adminOnly"
+          l10n-title="profiles-move-profile-item"
+        />
+        <button
+          type="button"
+          className="btn btn-default btn-reduced fa-icon rename rename-profile-item flex-0-0-auto adminOnly"
+          l10n-title="profiles-rename-profile-item"
+        />
+        <button
+          type="button"
+          className="btn btn-default btn-reduced fa-icon remove flex-0-0-auto adminOnly"
+          l10n-title="profiles-remove-profile-item"
+        />
       </td>
     </tr>
   );
@@ -71,8 +101,16 @@ export const EnumValueEditor = function () {
         <span className="text" />
       </div>
       <div className="flex-0-0-auto">
-        <button type="button" className="btn btn-default btn-reduced fa-icon add flex-0-0-auto adminOnly" l10n-title="profiles-add-remove-values" />
-        <button type="button" className="btn btn-default btn-reduced fa-icon rename flex-0-0-auto adminOnly" l10n-title="profiles-rename-enum-item" />
+        <button
+          type="button"
+          className="btn btn-default btn-reduced fa-icon add flex-0-0-auto adminOnly"
+          l10n-title="profiles-add-remove-values"
+        />
+        <button
+          type="button"
+          className="btn btn-default btn-reduced fa-icon rename flex-0-0-auto adminOnly"
+          l10n-title="profiles-rename-enum-item"
+        />
       </div>
     </div>
   );

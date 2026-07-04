@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const StoryCharactersTemplate = function () {
   return (
@@ -30,7 +30,7 @@ export function getStoryCharactersTemplate() {
 export const ModalSwitchEventBody = function () {
   return (
     <div className="ModalSwitchEventBody form-group">
-      <select className="isStoryEditable storyCharactersToSelector form-control" style={{ width: '100%' }} />
+      <select className="isStoryEditable storyCharactersToSelector form-control" style={{ width: "100%" }} />
     </div>
   );
 };
@@ -41,7 +41,7 @@ export function getModalSwitchEventBody() {
 export const ModalAddCharacterBody = function () {
   return (
     <div className="ModalAddCharacterBody form-group">
-      <select className="isStoryEditable storyCharactersAddSelector form-control" style={{ width: '100%' }} />
+      <select className="isStoryEditable storyCharactersAddSelector form-control" style={{ width: "100%" }} />
     </div>
   );
 };

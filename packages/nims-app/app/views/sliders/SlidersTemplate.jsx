@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const SlidersTemplate = function () {
   return (
@@ -11,20 +11,32 @@ export const SlidersTemplate = function () {
         </div>
         <div className="panel-body hidden">
           <div className="margin-bottom-16">
-            <a target="_blank" href="http://analoggamestudies.org/2016/11/the-mixing-desk-of-larp-history-and-current-state-of-a-design-theory/" l10n-id="sliders-link1" />
+            <a
+              target="_blank"
+              href="http://analoggamestudies.org/2016/11/the-mixing-desk-of-larp-history-and-current-state-of-a-design-theory/"
+              l10n-id="sliders-link1"
+            />
           </div>
           <div className="margin-bottom-16">
             <a target="_blank" href="http://larpschool.blogspot.ru/p/mixing-desk.html" l10n-id="sliders-link2" />
           </div>
           <div>
-            <a target="_blank" href="https://www.youtube.com/watch?list=PLkcfpOLbv_drrBejHm3g38jIQWgwpAcvn&v=nDmHZ2gmSnc" l10n-id="sliders-link3" />
+            <a
+              target="_blank"
+              href="https://www.youtube.com/watch?list=PLkcfpOLbv_drrBejHm3g38jIQWgwpAcvn&v=nDmHZ2gmSnc"
+              l10n-id="sliders-link3"
+            />
           </div>
         </div>
       </div>
 
       <div className="panel panel-default mixer-settings-panel">
         <div className="panel-body">
-          <button type="button" className="btn btn-default btn-reduced fa-icon create flex-0-0-auto" l10n-title="sliders-create-slider" />
+          <button
+            type="button"
+            className="btn btn-default btn-reduced fa-icon create flex-0-0-auto"
+            l10n-title="sliders-create-slider"
+          />
         </div>
       </div>
 

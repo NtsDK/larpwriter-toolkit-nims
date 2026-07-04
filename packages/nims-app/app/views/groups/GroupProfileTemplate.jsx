@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const GroupProfileTemplate = function () {
   return (
@@ -9,16 +9,19 @@ export const GroupProfileTemplate = function () {
           <div className="col-xs-3 height-100p">
             <div className="panel panel-default entity-select height-100p">
               <div className="panel-body height-100p">
-
                 <div className="flex-row entity-toolbar">
                   <button type="button" className="btn btn-default btn-reduced fa-icon create flex-0-0-auto" />
-                  <input className="form-control entity-filter flex-1-1-auto" type="search" l10n-placeholder-id="groups-find-group" />
+                  <input
+                    className="form-control entity-filter flex-1-1-auto"
+                    type="search"
+                    l10n-placeholder-id="groups-find-group"
+                  />
                 </div>
                 <div className="entity-list" />
               </div>
             </div>
           </div>
-          <div className="col-xs-9 height-100p" style={{ overflow: 'auto' }}>
+          <div className="col-xs-9 height-100p" style={{ overflow: "auto" }}>
             <div className="panel panel-default">
               <div className="panel-body">
                 <div className="form-horizontal insertion-point entity-profile" />

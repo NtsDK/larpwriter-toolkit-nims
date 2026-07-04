@@ -1,10 +1,7 @@
-import React from 'react';
+import React from "react";
 
-export const Template = function() {
-  return (
-    <div >
-    </div>
-  );
+export const Template = function () {
+  return <div></div>;
 };
 
 export function getTemplate() {

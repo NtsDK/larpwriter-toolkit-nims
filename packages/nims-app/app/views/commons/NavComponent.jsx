@@ -1,53 +1,38 @@
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { UI, U, L10n } from 'nims-app-core';
-import {
-  HashRouter as Router,
-  Switch,
-  Route,
-  Link,
-  NavLink,
-  Redirect
-} from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import React, { Component } from "react";
+import classNames from "classnames";
+import { UI, U, L10n } from "nims-app-core";
+import { HashRouter as Router, Switch, Route, Link, NavLink, Redirect } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-import './NavComponent.css';
+import "./NavComponent.css";
 
 export function NavSeparator() {
   return <div className="nav-separator" />;
 }
 
 export function NavViewLink(props) {
-  const {
-    labelKey, clazz, to, hasTooltip = false
-  } = props;
+  const { labelKey, clazz, to, hasTooltip = false } = props;
   const { t } = useTranslation();
   const text = t(labelKey);
   return (
     <li>
-      <NavLink
-        className={classNames('navigation-button', { [clazz]: !!clazz })}
-        to={to}
-        title={hasTooltip ? text : ''}
-      >
-        {hasTooltip ? '' : text}
+      <NavLink className={classNames("navigation-button", { [clazz]: !!clazz })} to={to} title={hasTooltip ? text : ""}>
+        {hasTooltip ? "" : text}
       </NavLink>
     </li>
   );
 }
 
 export function NavButton(props) {
-  const {
-    clazz, btnName, callback, hasTooltip = true, extraClass = 'mainNavButton icon-button'
-  } = props;
+  const { clazz, btnName, callback, hasTooltip = true, extraClass = "mainNavButton icon-button" } = props;
   const { t } = useTranslation();
   return (
     <button
       type="button"
-      className={classNames(clazz, 'action-button', {
-        [extraClass]: !!extraClass
+      className={classNames(clazz, "action-button", {
+        [extraClass]: !!extraClass,
       })}
-      title={hasTooltip ? t(btnName) : ''}
+      title={hasTooltip ? t(btnName) : ""}
       onClick={callback}
     />
   );
@@ -56,10 +41,8 @@ export function NavButton(props) {
 export function NavContainer(props) {
   const { children, className } = props;
   return (
-    <nav className={classNames('navigation navigation2', className)}>
-      <ul className="width-100p">
-        {children}
-      </ul>
+    <nav className={classNames("navigation navigation2", className)}>
+      <ul className="width-100p">{children}</ul>
     </nav>
   );
 }

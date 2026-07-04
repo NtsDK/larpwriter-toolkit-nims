@@ -1,9 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export const StoryEventTemplate = function () {
   return (
     <tr className="StoryEventTemplate">
-      <td><span className="event-number" /></td>
+      <td>
+        <span className="event-number" />
+      </td>
       <td>
         <div className="story-events-div-main">
           <div className="story-events-div-left">
@@ -14,7 +16,6 @@ export const StoryEventTemplate = function () {
           </div>
         </div>
         <textarea className="isStoryEditable  form-control event-text " />
-
       </td>
       <td>
         <div className="flex-column">

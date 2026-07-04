@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const AboutTemplate = function () {
   return (
@@ -8,21 +8,11 @@ export const AboutTemplate = function () {
           <p l10n-id="about-about-authors" />
           <p>
             <span l10n-id="about-site-mention" />
-            <a href="http://trechkalov.com/index-en.html">trechkalov.com</a>
-            {' '}
-            <span
-              l10n-id="about-site-description"
-            />
-
+            <a href="http://trechkalov.com/index-en.html">trechkalov.com</a> <span l10n-id="about-site-description" />
           </p>
           <p>
-            <span l10n-id="about-program-is-free-in-rep" />
-            {' '}
-            <a
-              href="https://github.com/NtsDK/larpwriter-toolkit-nims"
-              l10n-id="about-by-link"
-            />
-
+            <span l10n-id="about-program-is-free-in-rep" />{" "}
+            <a href="https://github.com/NtsDK/larpwriter-toolkit-nims" l10n-id="about-by-link" />
           </p>
 
           <p l10n-id="about-icons-authors" />
@@ -40,7 +30,6 @@ export const AboutTemplate = function () {
             <li l10n-id="about-var042" />
             <li l10n-id="about-var041" />
           </ul>
-
         </div>
       </div>
     </div>

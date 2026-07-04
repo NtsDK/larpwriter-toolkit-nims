@@ -1,7 +1,7 @@
-import * as R from 'ramda';
+import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC, CU } from "nims-dbms-core";
-import { ILocalDBMS } from './ILocalDBMS';
+import { ILocalDBMS } from "./ILocalDBMS";
 
 // ((callback2) => {
 //   function storyEventsAPI(LocalDBMS, opts) {
@@ -16,40 +16,41 @@ export function getStoryEvents(this: ILocalDBMS, { storyName }: any = {}) {
       resolve(R.clone(this.database.Stories[storyName].events));
     });
   });
-};
+}
 
 //story events
-export function createEvent(
-  this: ILocalDBMS, 
-  { storyName, eventName, selectedIndex }: any = {}
-): Promise<void> {
+export function createEvent(this: ILocalDBMS, { storyName, eventName, selectedIndex }: any = {}): Promise<void> {
   return new Promise((resolve, reject) => {
-    const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(selectedIndex),
-      PC.isString(eventName), PC.isNotEmptyString(eventName)];
+    const chain = [
+      PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
+      PC.isNumber(selectedIndex),
+      PC.isString(eventName),
+      PC.isNotEmptyString(eventName),
+    ];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       const story = this.database.Stories[storyName];
       PC.precondition(PC.isInRange(selectedIndex, 0, story.events.length), reject, () => {
         const event = {
           name: eventName,
-          text: '',
-          time: '',
-          characters: {}
+          text: "",
+          time: "",
+          characters: {},
         };
         story.events.splice(selectedIndex, 0, event);
         resolve();
       });
     });
   });
-};
+}
 
 //story events
-export function moveEvent(
-  this: ILocalDBMS, 
-  { storyName, index, newIndex }: any = {}
-): Promise<void> {
+export function moveEvent(this: ILocalDBMS, { storyName, index, newIndex }: any = {}): Promise<void> {
   return new Promise((resolve, reject) => {
-    let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index),
-      PC.isNumber(newIndex)];
+    let chain = [
+      PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
+      PC.isNumber(index),
+      PC.isNumber(newIndex),
+    ];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       const { events } = this.database.Stories[storyName];
       chain = [PC.isInRange(index, 0, events.length - 1), PC.isInRange(newIndex, 0, events.length)];
@@ -61,13 +62,10 @@ export function moveEvent(
       });
     });
   });
-};
+}
 
 //story events
-export function cloneEvent(
-  this: ILocalDBMS, 
-  { storyName, index }: any = {}
-): Promise<void> {
+export function cloneEvent(this: ILocalDBMS, { storyName, index }: any = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -79,13 +77,10 @@ export function cloneEvent(
       });
     });
   });
-};
+}
 
 //story events
-export function mergeEvents(
-  this: ILocalDBMS, 
-  { storyName, index }: any = {}
-): Promise<void> {
+export function mergeEvents(this: ILocalDBMS, { storyName, index }: any = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -113,13 +108,10 @@ export function mergeEvents(
       });
     });
   });
-};
+}
 
 //story events
-export function removeEvent(
-  this: ILocalDBMS, 
-  { storyName, index }: any = {}
-): Promise<void> {
+export function removeEvent(this: ILocalDBMS, { storyName, index }: any = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -132,15 +124,21 @@ export function removeEvent(
       });
     });
   });
-};
+}
 
 // story events, preview, adaptations
-export function setEventOriginProperty(this: ILocalDBMS, {
-  storyName, index, property, value
-}: any = {}): Promise<void> {
+export function setEventOriginProperty(
+  this: ILocalDBMS,
+  { storyName, index, property, value }: any = {}
+): Promise<void> {
   return new Promise((resolve, reject) => {
-    let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index),
-      PC.isString(property), PC.elementFromEnum(property, Constants.originProperties), PC.isString(value)];
+    let chain = [
+      PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
+      PC.isNumber(index),
+      PC.isString(property),
+      PC.elementFromEnum(property, Constants.originProperties),
+      PC.isString(value),
+    ];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       const story = this.database.Stories[storyName];
       chain = [PC.isInRange(index, 0, story.events.length - 1)];
@@ -150,7 +148,7 @@ export function setEventOriginProperty(this: ILocalDBMS, {
       });
     });
   });
-};
+}
 //   }
 //   callback2(storyEventsAPI);
 // })((api) => (typeof exports === 'undefined' ? (this.storyEventsAPI = api) : (module.exports = api)));

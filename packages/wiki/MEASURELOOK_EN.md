@@ -2,6 +2,7 @@
 
 When performing scientific research it is necessary to preserve the data of the computational experiments carried out.
 The naive approach is to save all information in an unstructured text file. This approach has many shortcomings:
+
 - To understand what is contained in the file, it must be explicitly read
 - non-fixed file format increases the access time to information
 - the data in the file requires post-processing for both visualization and any other purposes
@@ -11,6 +12,7 @@ To solve these problems, a special file format and visualization mechanism was d
 # Measurelook format
 
 The results of the experiment are saved in the JSON file in the following format (version 0.2.0):
+
 - meta, object - description of the experiment in an arbitrary format.
 - constantParams, array - array of unchanged parameters of the algorithm
   - name, string - name of the parameter

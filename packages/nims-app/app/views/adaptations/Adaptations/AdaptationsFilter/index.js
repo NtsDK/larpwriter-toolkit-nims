@@ -1,3 +1,3 @@
-import { AdaptationsFilter } from './AdaptationsFilter.jsx';
+import { AdaptationsFilter } from "./AdaptationsFilter.jsx";
 
 export { AdaptationsFilter };

@@ -16,45 +16,46 @@ See the License for the specific language governing permissions and
  // Utils
  */
 
-import * as R from 'ramda';
+import * as R from "ramda";
 // const R = require('ramda');
 
 /* eslint-disable func-names,prefer-rest-params */
 
 // ((exports) => {
-export const offlineIgnoreList = ['getUser',
-  'setPassword',
-  'checkPassword',
-  'login',
-  'signUp',
+export const offlineIgnoreList = [
+  "getUser",
+  "setPassword",
+  "checkPassword",
+  "login",
+  "signUp",
   // 'hasPermission',
-  '_getOwnerMap',
-  'getPermissionsSummary',
-  'subscribeOnPermissionsUpdate',
+  "_getOwnerMap",
+  "getPermissionsSummary",
+  "subscribeOnPermissionsUpdate",
 
-  'createOrganizer',
-  'changeOrganizerPassword',
-  'removePermission',
-  'assignPermission',
-  'publishPermissionsUpdate',
-  'createPlayer',
-  'createPlayerLogin',
-  'changePlayerPassword',
-  'getPlayerProfileInfo',
-  'createCharacterByPlayer',
+  "createOrganizer",
+  "changeOrganizerPassword",
+  "removePermission",
+  "assignPermission",
+  "publishPermissionsUpdate",
+  "createPlayer",
+  "createPlayerLogin",
+  "changePlayerPassword",
+  "getPlayerProfileInfo",
+  "createCharacterByPlayer",
 
-  'getManagementInfo',
-  'assignAdmin',
-  'assignEditor',
-  'removeEditor',
-  'changeAdaptationRightsMode',
-  'removeOrganizer',
-  'getPlayerLoginsArray',
-  'removePlayerLogin',
-  'getWelcomeText',
-  'setWelcomeText',
-  'getPlayersOptions',
-  'setPlayerOption'
+  "getManagementInfo",
+  "assignAdmin",
+  "assignEditor",
+  "removeEditor",
+  "changeAdaptationRightsMode",
+  "removeOrganizer",
+  "getPlayerLoginsArray",
+  "removePlayerLogin",
+  "getWelcomeText",
+  "setWelcomeText",
+  "getPlayersOptions",
+  "setPlayerOption",
 ];
 
 // argument description
@@ -72,10 +73,10 @@ export const apiInfo = {
     setDatabase: { ignoreParams: true },
     getMetaInfo: null,
     setMetaInfoString: {},
-    setMetaInfoDate: {}
+    setMetaInfoDate: {},
   },
   consistencyCheckAPI: {
-    getConsistencyCheckResult: null
+    getConsistencyCheckResult: null,
   },
   statisticsAPI: {
     getStatistics: null,
@@ -90,14 +91,14 @@ export const apiInfo = {
     createProfile: {},
     renameProfile: {},
     removeProfile: {},
-    updateProfileField: {} // text
+    updateProfileField: {}, // text
   },
   profileBindingAPI: {
     getProfileBindings: null,
     getExtendedProfileBindings: null,
     getProfileBinding: null,
     createBinding: {},
-    removeBinding: {}
+    removeBinding: {},
   },
   profileViewAPI: {
     getRoleGridInfo: null,
@@ -114,10 +115,10 @@ export const apiInfo = {
     updateGroupField: {}, // text
     doExportGroup: {},
     getProfileFilterInfo: null,
-    getGroupCharacterSets: null
+    getGroupCharacterSets: null,
   },
   groupSchemaAPI: {
-    getGroupSchemas: null
+    getGroupSchemas: null,
   },
   relationsAPI: {
     getCharacterRelation: null,
@@ -131,7 +132,7 @@ export const apiInfo = {
     getRelationsSummary: null,
   },
   briefingExportAPI: {
-    getBriefingData: {}
+    getBriefingData: {},
   },
   profileConfigurerAPI: {
     getProfileStructure: null,
@@ -144,10 +145,10 @@ export const apiInfo = {
     doExportProfileItemChange: {},
     showInRoleGridProfileItemChange: {},
     updateDefaultValue: {},
-    renameEnumValue: {}
+    renameEnumValue: {},
   },
   entityAPI: {
-    getEntityNamesArray: null
+    getEntityNamesArray: null,
   },
   storyBaseAPI: {
     getStoryNamesArray: null,
@@ -156,7 +157,7 @@ export const apiInfo = {
     setWriterStory: {}, // text
     createStory: {},
     renameStory: {},
-    removeStory: {}
+    removeStory: {},
   },
   storyEventsAPI: {
     getStoryEvents: null,
@@ -165,7 +166,7 @@ export const apiInfo = {
     cloneEvent: {},
     mergeEvents: {},
     removeEvent: {},
-    setEventOriginProperty: {} // text
+    setEventOriginProperty: {}, // text
   },
   storyCharactersAPI: {
     getStoryCharacterNamesArray: null,
@@ -176,7 +177,7 @@ export const apiInfo = {
     updateCharacterInventory: {}, // text+-
     onChangeCharacterActivity: {},
     addCharacterToEvent: {},
-    removeCharacterFromEvent: {}
+    removeCharacterFromEvent: {},
   },
   storyViewAPI: {
     getAllInventoryLists: null,
@@ -184,12 +185,12 @@ export const apiInfo = {
     getCharacterEventsByTime: null,
     getEventsTimeInfo: null,
     getCharactersSummary: null,
-    getCharacterReport: null
+    getCharacterReport: null,
   },
   storyAdaptationsAPI: {
     getFilteredStoryNames: null,
     getStory: null,
-    setEventAdaptationProperty: {} // text
+    setEventAdaptationProperty: {}, // text
   },
   organizerManagementAPI: {
     getManagementInfo: null,
@@ -212,21 +213,21 @@ export const apiInfo = {
     getPlayersOptions: null,
     setPlayerOption: {},
     getPlayerProfileInfo: null,
-    createCharacterByPlayer: {}
+    createCharacterByPlayer: {},
   },
   entityManagementAPI: {
     removePermission: {},
     assignPermission: {},
   },
   textSearchAPI: {
-    getTexts: null
+    getTexts: null,
   },
   userAPI: {
     getUser: null,
     setPassword: null,
     checkPassword: null,
     login: null,
-    signUp: null
+    signUp: null,
   },
   // permissionAPI: {
   //     hasPermission: null
@@ -235,17 +236,17 @@ export const apiInfo = {
     _getOwnerMap: null,
     publishPermissionsUpdate: null,
     getPermissionsSummary: null, // special case
-    subscribeOnPermissionsUpdate: null // special case
+    subscribeOnPermissionsUpdate: null, // special case
   },
   logAPI: {
     log: null,
-    getLog: null
+    getLog: null,
   },
   gearsAPI: {
     getAllGearsData: null,
     setGearsData: null,
     setGearsPhysicsEnabled: {},
-    setGearsShowNotesEnabled: {}
+    setGearsShowNotesEnabled: {},
   },
   slidersAPI: {
     getSliderData: null,
@@ -254,7 +255,7 @@ export const apiInfo = {
     createSlider: {},
     removeSlider: {},
     moveSlider: {},
-  }
+  },
 };
 
 // isServer - used in server mode. If false then user in logs will be named "user".
@@ -265,7 +266,7 @@ export const applyLoggerProxy = function (dbms, isServer) {
   return new Proxy(dbms, {
     get(target, prop) {
       function isFunction(obj) {
-        return typeof obj === 'function';
+        return typeof obj === "function";
       }
 
       if (target[prop] === undefined || !isFunction(target[prop])) {
@@ -292,7 +293,7 @@ export const applyLoggerProxy = function (dbms, isServer) {
             // return oldFun.apply(this, arguments);
             return func.apply(thisArg, arr);
           }
-          let userName = 'user';
+          let userName = "user";
           if (isServer && arr[arr.length - 1] !== undefined) {
             userName = arr[arr.length - 1].name;
           }
@@ -304,36 +305,39 @@ export const applyLoggerProxy = function (dbms, isServer) {
             funcName,
             rewrite: !!filteredApi[funcName].rewrite,
             params: filteredApi[funcName].ignoreParams ? [] : getArgs(arr),
-            status: JSON.stringify(['begin'])
+            status: JSON.stringify(["begin"]),
           };
 
           thisArg.log(logInfo);
 
           return new Promise((resolve, reject) => {
-            func.apply(thisArg, arr).then((result) => {
-              const endTime = new Date().toString();
-              const text = 'OK';
-              logInfo.time = endTime;
-              logInfo.status = JSON.stringify([beginTime, text]);
-              thisArg.log(logInfo);
+            func
+              .apply(thisArg, arr)
+              .then((result) => {
+                const endTime = new Date().toString();
+                const text = "OK";
+                logInfo.time = endTime;
+                logInfo.status = JSON.stringify([beginTime, text]);
+                thisArg.log(logInfo);
 
-              resolve(result);
-            }).catch((err) => {
-              const endTime = new Date().toString();
-              let text = 'ERR: ';
-              if (err.messageId !== undefined) {
-                text += `${err.messageId}, ${JSON.stringify(err.parameters)}`;
-              } else {
-                text += err;
-              }
-              logInfo.time = endTime;
-              logInfo.status = JSON.stringify([beginTime, text]);
-              thisArg.log(logInfo);
+                resolve(result);
+              })
+              .catch((err) => {
+                const endTime = new Date().toString();
+                let text = "ERR: ";
+                if (err.messageId !== undefined) {
+                  text += `${err.messageId}, ${JSON.stringify(err.parameters)}`;
+                } else {
+                  text += err;
+                }
+                logInfo.time = endTime;
+                logInfo.status = JSON.stringify([beginTime, text]);
+                thisArg.log(logInfo);
 
-              reject(err);
-            });
+                reject(err);
+              });
           });
-        }
+        },
       });
     },
   });

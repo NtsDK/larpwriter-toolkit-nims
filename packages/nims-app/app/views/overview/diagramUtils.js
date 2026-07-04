@@ -1,4 +1,4 @@
-import * as R from 'ramda';
+import * as R from "ramda";
 
 const makePieData = (counts, label2tooltip) => {
   const sum = R.sum(R.values(counts));
@@ -30,12 +30,12 @@ function makeHistData(data) {
     if (groups[i]) {
       prepared.push({
         value: groups[i],
-        label: `${i * step}-${(i * step) + (step - 1)}`,
+        label: `${i * step}-${i * step + (step - 1)}`,
       });
     } else {
       prepared.push({
         value: 0,
-        label: ''
+        label: "",
       });
     }
   }

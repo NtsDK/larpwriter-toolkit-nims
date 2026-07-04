@@ -6,7 +6,7 @@
   display: flex;
 }
 
-.statistic-diagrams-view .belonging-diagrams-container>* {
+.statistic-diagrams-view .belonging-diagrams-container > * {
   flex-grow: 1;
   flex-basis: 0;
   text-align: center;

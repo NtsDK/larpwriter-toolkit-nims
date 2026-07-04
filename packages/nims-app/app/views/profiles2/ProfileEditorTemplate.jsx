@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const ProfileEditorTemplate = function () {
   return (
@@ -88,9 +88,14 @@ export const EntityItem = function () {
     <div className="EntityItem btn-group flex-row">
       <button className="btn btn-default btn-reduced fa-icon remove flex-0-0-auto transparent" />
       <button className="btn btn-default btn-reduced fa-icon rename flex-0-0-auto transparent" />
-      <button type="button" className="select-button btn btn-default btn-reduced flex-1-1-auto text-align-left white-space-normal">
+      <button
+        type="button"
+        className="select-button btn btn-default btn-reduced flex-1-1-auto text-align-left white-space-normal"
+      >
         <span className="primary-name" />
-        <small><div className="secondary-name" /></small>
+        <small>
+          <div className="secondary-name" />
+        </small>
       </button>
     </div>
   );

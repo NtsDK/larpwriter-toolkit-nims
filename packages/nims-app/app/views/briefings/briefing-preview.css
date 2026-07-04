@@ -24,11 +24,11 @@
 /* } */
 
 #briefingPreviewDiv .data-area {
-/*   margin-right: 36px; */
+  /*   margin-right: 36px; */
 }
 
 #contentArea {
-/*   overflow-y: scroll; */
+  /*   overflow-y: scroll; */
   overflow-x: auto;
 }
 

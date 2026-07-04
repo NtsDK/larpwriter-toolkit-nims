@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export const StoriesTemplate = function () {
   return (
@@ -12,7 +12,6 @@ export const StoriesTemplate = function () {
               l10n-title="stories-create-entity"
             >
               <span l10n-id="stories-story" />
-
             </button>
             <select id="storySelector" className="common-select" />
             <button
@@ -31,7 +30,6 @@ export const StoriesTemplate = function () {
               l10n-title="stories-create-event"
             >
               <span l10n-id="stories-event" />
-
             </button>
             <button
               type="button"
@@ -39,7 +37,6 @@ export const StoriesTemplate = function () {
               l10n-title="stories-add-character"
             >
               <span l10n-id="stories-character" />
-
             </button>
           </div>
         </div>

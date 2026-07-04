@@ -1,21 +1,25 @@
-import React, { Component, useState } from 'react';
-import './SocialNetwork.css';
-import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
-import { Constants } from 'nims-dbms';
-import { UI, U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import { NodesColoringSelector, getGroupColors } from './NodesColoringSelector';
-import { NetworkSubsetsSelector } from './NetworkSubsetsSelector';
-import { NetworkSelector } from './NetworkSelector';
-import { CommonNetworkSettings } from './CommonNetworkSettings';
-import { SocialNetworkArea } from './SocialNetworkArea';
-import { SocialNetworkWarning } from './SocialNetworkWarning.jsx';
-import { CHAR_PREFIX, PROFILE_GROUP, FILTER_GROUP } from './SocialNetworkConstants';
+import React, { Component, useState } from "react";
+import "./SocialNetwork.css";
+import { useTranslation } from "react-i18next";
+import classNames from "classnames";
+import { Constants } from "nims-dbms";
+import { UI, U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import { NodesColoringSelector, getGroupColors } from "./NodesColoringSelector";
+import { NetworkSubsetsSelector } from "./NetworkSubsetsSelector";
+import { NetworkSelector } from "./NetworkSelector";
+import { CommonNetworkSettings } from "./CommonNetworkSettings";
+import { SocialNetworkArea } from "./SocialNetworkArea";
+import { SocialNetworkWarning } from "./SocialNetworkWarning.jsx";
+import { CHAR_PREFIX, PROFILE_GROUP, FILTER_GROUP } from "./SocialNetworkConstants";
 import {
-  getActivityEdges, getDetailedEdges, getRelationEdges, getStoryEdges, getStoryNodes
-} from '../nodeAndEdgeGenerators';
+  getActivityEdges,
+  getDetailedEdges,
+  getRelationEdges,
+  getStoryEdges,
+  getStoryNodes,
+} from "../nodeAndEdgeGenerators";
 
 export class SocialNetwork extends Component {
   constructor(props) {
@@ -26,24 +30,24 @@ export class SocialNetwork extends Component {
         selectedGroup: Constants.noGroup,
       },
       subset: {
-        type: 'allObjects',
+        type: "allObjects",
         selectedStoryNames: [],
         selectedCharacterNames: [],
         drawStoryNames: [],
         drawCharacterNames: [],
       },
       networkSettings: {
-        type: 'socialRelations',
-        extras: {}
+        type: "socialRelations",
+        extras: {},
       },
       showPlayerNames: false,
       focusNode: null,
       groupColorsInfo: {
         groupColors: {},
-        groupLists: {}
+        groupLists: {},
       },
       nodes: [],
-      edges: []
+      edges: [],
     };
     this.onNetworkSettingsChange = this.onNetworkSettingsChange.bind(this);
     this.onSubsetChange = this.onSubsetChange.bind(this);
@@ -56,89 +60,93 @@ export class SocialNetwork extends Component {
 
   componentDidMount() {
     this.refresh();
-    console.log('SocialNetwork mounted');
+    console.log("SocialNetwork mounted");
   }
 
   componentDidUpdate() {
-    console.log('SocialNetwork did update');
+    console.log("SocialNetwork did update");
   }
 
   componentWillUnmount() {
-    console.log('SocialNetwork will unmount');
+    console.log("SocialNetwork will unmount");
   }
 
   refresh() {
     const { dbms, permissionInformer } = this.props;
     Promise.all([
-      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }), // subset selector
-      permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }), // subset selector
-      dbms.getAllProfiles({ type: 'character' }), // node coloring
+      permissionInformer.getEntityNamesArray({ type: "character", editableOnly: false }), // subset selector
+      permissionInformer.getEntityNamesArray({ type: "story", editableOnly: false }), // subset selector
+      dbms.getAllProfiles({ type: "character" }), // node coloring
       dbms.getAllStories(), // contains most part of SN data
-      dbms.getProfileStructure({ type: 'character' }), // node coloring
+      dbms.getProfileStructure({ type: "character" }), // node coloring
       dbms.getProfileBindings(), // node coloring
       dbms.getGroupCharacterSets(), // node coloring
       dbms.getMetaInfo(), // timelined network
-      dbms.getRelations() // relations
-    ]).then((results) => {
-      const [characterNames,
-        storyNames,
-        profiles,
-        stories,
-        profileStructure,
-        profileBindings,
-        groupCharacterSets,
-        metaInfo,
-        relations] = results;
-
-      // translating yes/no profile items
-      const checkboxes = profileStructure.filter((element) => R.equals(element.type, 'checkbox'));
-      R.values(profiles).forEach((profile) => {
-        checkboxes.map((item) => (profile[item.name] = L10n.const(Constants[profile[item.name]])));
-      });
-
-      characterNames.sort(CU.charOrdAObject);
-      storyNames.sort(CU.charOrdAObject);
-
-      this.setState({
-        data: {
+      dbms.getRelations(), // relations
+    ])
+      .then((results) => {
+        const [
           characterNames,
           storyNames,
-          Stories: stories,
-          Characters: profiles,
-          profileBindings,
+          profiles,
+          stories,
           profileStructure,
+          profileBindings,
           groupCharacterSets,
           metaInfo,
           relations,
-        },
-        subset: {
-          type: 'allObjects',
-          selectedStoryNames: [],
-          selectedCharacterNames: [],
-          drawStoryNames: R.pluck('value', storyNames),
-          drawCharacterNames: R.pluck('value', characterNames)
-        },
-        groupColorsInfo: getGroupColors(profileStructure)
-      });
-    }).catch(UI.handleError);
+        ] = results;
+
+        // translating yes/no profile items
+        const checkboxes = profileStructure.filter((element) => R.equals(element.type, "checkbox"));
+        R.values(profiles).forEach((profile) => {
+          checkboxes.map((item) => (profile[item.name] = L10n.const(Constants[profile[item.name]])));
+        });
+
+        characterNames.sort(CU.charOrdAObject);
+        storyNames.sort(CU.charOrdAObject);
+
+        this.setState({
+          data: {
+            characterNames,
+            storyNames,
+            Stories: stories,
+            Characters: profiles,
+            profileBindings,
+            profileStructure,
+            groupCharacterSets,
+            metaInfo,
+            relations,
+          },
+          subset: {
+            type: "allObjects",
+            selectedStoryNames: [],
+            selectedCharacterNames: [],
+            drawStoryNames: R.pluck("value", storyNames),
+            drawCharacterNames: R.pluck("value", characterNames),
+          },
+          groupColorsInfo: getGroupColors(profileStructure),
+        });
+      })
+      .catch(UI.handleError);
   }
 
   onNetworkSettingsChange(networkSettings) {
     this.setState({
-      networkSettings
+      networkSettings,
     });
   }
 
   onSubsetChange(subset) {
     // console.log(subset);
     this.setState({
-      subset
+      subset,
     });
   }
 
   onNodesColoringChange(nodesColoring) {
     this.setState({
-      nodesColoring
+      nodesColoring,
     });
   }
 
@@ -146,33 +154,36 @@ export class SocialNetwork extends Component {
     let nodes = [];
     let edges = [];
 
-    const {
-      subset, networkSettings, nodesColoring, data, showPlayerNames
-    } = this.state;
+    const { subset, networkSettings, nodesColoring, data, showPlayerNames } = this.state;
     const { drawCharacterNames, drawStoryNames } = subset;
     const selectedNetwork = networkSettings.type;
 
-    const characterNodes = this.getCharacterNodes(data.Characters, nodesColoring.selectedGroup, showPlayerNames, drawCharacterNames);
+    const characterNodes = this.getCharacterNodes(
+      data.Characters,
+      nodesColoring.selectedGroup,
+      showPlayerNames,
+      drawCharacterNames
+    );
     const storyNodes = getStoryNodes(data.Stories, drawStoryNames);
     switch (selectedNetwork) {
-    case 'socialRelations':
-      nodes = characterNodes;
-      edges = getDetailedEdges(data.Stories);
-      break;
-    case 'characterPresenceInStory':
-      nodes = [...characterNodes, ...storyNodes];
-      edges = getStoryEdges(data.Stories);
-      break;
-    case 'characterActivityInStory':
-      nodes = [...characterNodes, ...storyNodes];
-      edges = getActivityEdges(data.Stories, R.invert(networkSettings.activitySelection).true);
-      break;
-    case 'characterRelations':
-      nodes = characterNodes;
-      edges = getRelationEdges(data.relations, R.invert(networkSettings.relationSelection).true);
-      break;
-    default:
-      throw new Error(`Unexpected network type: ${selectedNetwork}`);
+      case "socialRelations":
+        nodes = characterNodes;
+        edges = getDetailedEdges(data.Stories);
+        break;
+      case "characterPresenceInStory":
+        nodes = [...characterNodes, ...storyNodes];
+        edges = getStoryEdges(data.Stories);
+        break;
+      case "characterActivityInStory":
+        nodes = [...characterNodes, ...storyNodes];
+        edges = getActivityEdges(data.Stories, R.invert(networkSettings.activitySelection).true);
+        break;
+      case "characterRelations":
+        nodes = characterNodes;
+        edges = getRelationEdges(data.relations, R.invert(networkSettings.relationSelection).true);
+        break;
+      default:
+        throw new Error(`Unexpected network type: ${selectedNetwork}`);
     }
 
     const nodeSort = CU.charOrdAFactory((a) => a.label.toLowerCase());
@@ -180,15 +191,15 @@ export class SocialNetwork extends Component {
 
     this.setState({
       nodes,
-      edges
+      edges,
     });
   }
 
   makeCharacterNodeLabel(showPlayer, characterName) {
     const { data } = this.state;
-    const label = characterName.split(' ').join('\n');
+    const label = characterName.split(" ").join("\n");
     if (showPlayer) {
-      const player = data.profileBindings[characterName] || '';
+      const player = data.profileBindings[characterName] || "";
       return `${label}/\n${player}`;
     }
     return label;
@@ -200,9 +211,9 @@ export class SocialNetwork extends Component {
       return {
         id: CHAR_PREFIX + characterName,
         label: this.makeCharacterNodeLabel(showPlayer, characterName),
-        type: 'character',
+        type: "character",
         originName: characterName,
-        group: groupName === 'noGroup' ? L10n.const('noGroup') : `${groupName}.${profile[groupName]}`
+        group: groupName === "noGroup" ? L10n.const("noGroup") : `${groupName}.${profile[groupName]}`,
       };
     });
   }
@@ -212,49 +223,52 @@ export class SocialNetwork extends Component {
     const { drawCharacterNames } = subset;
     return drawCharacterNames.map((characterName) => ({
       id: CHAR_PREFIX + characterName,
-      group: this.getNodeGroup(characterName, nodesColoring.selectedGroup)
+      group: this.getNodeGroup(characterName, nodesColoring.selectedGroup),
     }));
   }
 
   // called from colorNodes
   getNodeGroup(characterName, groupName) {
     const { data } = this.state;
-    if (groupName === 'noGroup') {
+    if (groupName === "noGroup") {
       return groupName;
-    } if (R.startsWith(PROFILE_GROUP, groupName)) {
+    }
+    if (R.startsWith(PROFILE_GROUP, groupName)) {
       const character = data.Characters[characterName];
       return `${groupName}.${character[groupName.substring(PROFILE_GROUP.length)]}`;
-    } if (R.startsWith(FILTER_GROUP, groupName)) {
-      return data.groupCharacterSets[groupName.substring(FILTER_GROUP.length)][characterName] ? 'fromGroup' : 'noGroup';
+    }
+    if (R.startsWith(FILTER_GROUP, groupName)) {
+      return data.groupCharacterSets[groupName.substring(FILTER_GROUP.length)][characterName] ? "fromGroup" : "noGroup";
     }
     throw new Error(`Unexpected group name: ${groupName}`);
   }
 
   onSelectFocusNode(focusNode) {
     this.setState({
-      focusNode
+      focusNode,
     });
   }
 
   onShowPlayerNames(showPlayerNames) {
     this.setState({
-      showPlayerNames
+      showPlayerNames,
     });
   }
 
   render() {
     const {
-      data, networkSettings, subset, nodesColoring,
-      groupColorsInfo, nodes, edges, getNodeColorsUpdate,
-      focusNode, showPlayerNames
+      data,
+      networkSettings,
+      subset,
+      nodesColoring,
+      groupColorsInfo,
+      nodes,
+      edges,
+      getNodeColorsUpdate,
+      focusNode,
+      showPlayerNames,
     } = this.state;
-    const {
-      profileStructure,
-      groupCharacterSets,
-      characterNames,
-      storyNames,
-      Stories,
-    } = data;
+    const { profileStructure, groupCharacterSets, characterNames, storyNames, Stories } = data;
     const { t } = this.props;
 
     if (profileStructure === undefined) {
@@ -292,11 +306,18 @@ export class SocialNetwork extends Component {
                       aria-controls="answerOne"
                       className="collapsed"
                     >
-                      {t('social-network.color-nodes')}
+                      {t("social-network.color-nodes")}
                     </a>
                   </h3>
                 </div>
-                <div id="answerOne" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false" style={{ height: '0px' }}>
+                <div
+                  id="answerOne"
+                  className="panel-collapse collapse"
+                  role="tabpanel"
+                  aria-labelledby=""
+                  aria-expanded="false"
+                  style={{ height: "0px" }}
+                >
                   <div className="panel-body">
                     <NodesColoringSelector
                       profileStructure={profileStructure}
@@ -321,11 +342,17 @@ export class SocialNetwork extends Component {
                       aria-controls="answerTwo"
                       className="collapsed"
                     >
-                      {t('social-network.selection')}
+                      {t("social-network.selection")}
                     </a>
                   </h3>
                 </div>
-                <div id="answerTwo" className="panel-collapse collapse" role="tabpanel" aria-labelledby="" aria-expanded="false">
+                <div
+                  id="answerTwo"
+                  className="panel-collapse collapse"
+                  role="tabpanel"
+                  aria-labelledby=""
+                  aria-expanded="false"
+                >
                   <div className="panel-body">
                     <NetworkSubsetsSelector
                       characterNames={characterNames}
@@ -349,13 +376,22 @@ export class SocialNetwork extends Component {
                       aria-controls="answerThree"
                       className="collapsed"
                     >
-                      {t('social-network.social-network')}
+                      {t("social-network.social-network")}
                     </a>
                   </h3>
                 </div>
-                <div id="answerThree" className="panel-collapse collapse in" role="tabpanel" aria-labelledby="" aria-expanded="false">
+                <div
+                  id="answerThree"
+                  className="panel-collapse collapse in"
+                  role="tabpanel"
+                  aria-labelledby=""
+                  aria-expanded="false"
+                >
                   <div className="panel-body">
-                    <NetworkSelector networkSettings={networkSettings} onNetworkSettingsChange={this.onNetworkSettingsChange} />
+                    <NetworkSelector
+                      networkSettings={networkSettings}
+                      onNetworkSettingsChange={this.onNetworkSettingsChange}
+                    />
                   </div>
                 </div>
               </div>
@@ -366,7 +402,7 @@ export class SocialNetwork extends Component {
                 className="btn btn-default width-100p"
                 onClick={this.drawNetwork}
               >
-                {t('social-network.draw')}
+                {t("social-network.draw")}
               </button>
             </div>
           </div>

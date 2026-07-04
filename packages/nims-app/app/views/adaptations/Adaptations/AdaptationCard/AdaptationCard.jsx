@@ -1,15 +1,13 @@
-import React, { useState, useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import { UI, U, L10n } from 'nims-app-core';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { ToggleButton } from '../../../commons/uiCommon3';
-import './AdaptationCard.css';
+import React, { useState, useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { UI, U, L10n } from "nims-app-core";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { ToggleButton } from "../../../commons/uiCommon3";
+import "./AdaptationCard.css";
 
 export function AdaptationCard(props) {
-  const {
-    isEditable, event, storyName, characterName,
-    showFinishedButton, showTimeInput, showTextInput, cardTitle
-  } = props;
+  const { isEditable, event, storyName, characterName, showFinishedButton, showTimeInput, showTextInput, cardTitle } =
+    props;
   const { t } = useTranslation();
   const { dbms } = useContext(DbmsContext);
 
@@ -17,38 +15,44 @@ export function AdaptationCard(props) {
 
   function onChangePersonalTime(e) {
     const time = e.target.value;
-    dbms.setEventAdaptationProperty({
-      storyName,
-      eventIndex: event.index,
-      characterName,
-      type: 'time',
-      value: time
-    }).catch(UI.handleError);
+    dbms
+      .setEventAdaptationProperty({
+        storyName,
+        eventIndex: event.index,
+        characterName,
+        type: "time",
+        value: time,
+      })
+      .catch(UI.handleError);
   }
 
   function onChangeAdaptationText(e) {
     // const dataKey = JSON.parse(event.target.dataKey);
     const text = e.target.value;
-    dbms.setEventAdaptationProperty({
-      storyName,
-      eventIndex: event.index,
-      characterName,
-      type: 'text',
-      value: text
-    }).catch(UI.handleError);
+    dbms
+      .setEventAdaptationProperty({
+        storyName,
+        eventIndex: event.index,
+        characterName,
+        type: "text",
+        value: text,
+      })
+      .catch(UI.handleError);
   }
 
   function onChangeAdaptationReadyStatus2(e) {
     const { checked } = e.target;
     setIsFinished(checked);
 
-    dbms.setEventAdaptationProperty({
-      storyName,
-      eventIndex: event.index,
-      characterName,
-      type: 'ready',
-      value: checked
-    }).catch(UI.handleError);
+    dbms
+      .setEventAdaptationProperty({
+        storyName,
+        eventIndex: event.index,
+        characterName,
+        type: "ready",
+        value: checked,
+      })
+      .catch(UI.handleError);
   }
 
   return (
@@ -56,44 +60,35 @@ export function AdaptationCard(props) {
       <div className="panel panel-default">
         <div className="panel-heading flex-row">
           <h1 className="panel-title card-title flex-1-1-auto">{cardTitle}</h1>
-          {
-            showTimeInput
-            && (
-              <input
-                className=" time-input form-control flex-0-0-auto"
-                placeholder={t('adaptations.subjective-time')}
-                defaultValue={event.characters[characterName].time}
-                onChange={onChangePersonalTime}
-                disabled={isFinished}
-              />
-            )
-          }
-          {
-            showFinishedButton
-            && (
-              <ToggleButton
-                type="checkbox"
-                checked={isFinished}
-                title={t('constant.finishedText')}
-                onChange={onChangeAdaptationReadyStatus2}
-                className="finished"
-              />
-            )
-          }
+          {showTimeInput && (
+            <input
+              className=" time-input form-control flex-0-0-auto"
+              placeholder={t("adaptations.subjective-time")}
+              defaultValue={event.characters[characterName].time}
+              onChange={onChangePersonalTime}
+              disabled={isFinished}
+            />
+          )}
+          {showFinishedButton && (
+            <ToggleButton
+              type="checkbox"
+              checked={isFinished}
+              title={t("constant.finishedText")}
+              onChange={onChangeAdaptationReadyStatus2}
+              className="finished"
+            />
+          )}
         </div>
         <div className="panel-body">
-          {
-            showTextInput
-            && (
-              <textarea
-                className="eventPersonalStory form-control text-input"
-                placeholder={t('adaptations.adaptation-text')}
-                defaultValue={event.characters[characterName].text}
-                onChange={onChangeAdaptationText}
-                readOnly={isFinished}
-              />
-            )
-          }
+          {showTextInput && (
+            <textarea
+              className="eventPersonalStory form-control text-input"
+              placeholder={t("adaptations.adaptation-text")}
+              defaultValue={event.characters[characterName].text}
+              onChange={onChangeAdaptationText}
+              readOnly={isFinished}
+            />
+          )}
         </div>
       </div>
     </div>

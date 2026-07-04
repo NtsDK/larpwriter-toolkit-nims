@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import vis from 'vis';
-import dateFormat from 'dateformat';
-import 'vis/dist/vis.min.css';
-import ReactDOM from 'react-dom';
-import { UI, U, L10n } from 'nims-app-core';
-import { CU } from 'nims-dbms-core';
-import * as R from 'ramda';
+import React, { Component } from "react";
+import vis from "vis";
+import dateFormat from "dateformat";
+import "vis/dist/vis.min.css";
+import ReactDOM from "react-dom";
+import { UI, U, L10n } from "nims-app-core";
+import { CU } from "nims-dbms-core";
+import * as R from "ramda";
 
 const prepareLabel = (label) => `<span class="timeline-label">${label}</span>`;
 
 // specify options
 const options = {
-  orientation: 'top',
+  orientation: "top",
   showCurrentTime: false,
   //        editable : {
   //            updateTime : true
@@ -34,8 +34,7 @@ export class InteractiveTimeline extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
     this.timelineContainer = React.createRef();
   }
 
@@ -43,14 +42,14 @@ export class InteractiveTimeline extends Component {
     this.initTimeline();
     this.setState({});
     // this.refresh();
-    console.log('InteractiveTimeline mounted');
+    console.log("InteractiveTimeline mounted");
   }
 
   componentDidUpdate() {
     // if (this.timeline === undefined) {
     //   this.initTimeline();
     // }
-    console.log('InteractiveTimeline did update');
+    console.log("InteractiveTimeline did update");
   }
 
   // compo
@@ -58,7 +57,7 @@ export class InteractiveTimeline extends Component {
   componentWillUnmount() {
     // this.timeline.destroy();
     // delete this.timeline;
-    console.log('InteractiveTimeline will unmount');
+    console.log("InteractiveTimeline will unmount");
   }
 
   initTimeline() {
@@ -72,21 +71,23 @@ export class InteractiveTimeline extends Component {
 
   fillTimelines() {
     const { postDate, usedData } = this.props;
-    this.timelineDataset.add(R.flatten(R.toPairs(usedData).map((pair) => {
-      const entityName = pair[0];
-      return pair[1].map((event) => ({
-        content: prepareLabel(event.name),
-        start: event.time !== '' ? event.time : postDate,
-        group: entityName
-      }));
-    })));
+    this.timelineDataset.add(
+      R.flatten(
+        R.toPairs(usedData).map((pair) => {
+          const entityName = pair[0];
+          return pair[1].map((event) => ({
+            content: prepareLabel(event.name),
+            start: event.time !== "" ? event.time : postDate,
+            group: entityName,
+          }));
+        })
+      )
+    );
   }
 
   render() {
     if (this.timeline !== undefined) {
-      const {
-        usedData, postDate, preDate, selectedValues, t
-      } = this.props;
+      const { usedData, postDate, preDate, selectedValues, t } = this.props;
 
       this.tagDataset.clear();
       this.timelineDataset.clear();
@@ -109,18 +110,18 @@ export class InteractiveTimeline extends Component {
 
       if (selectedValues[0]) {
         this.timelineDataset.add({
-          content: prepareLabel(t('overview.pre-game-end-date')),
+          content: prepareLabel(t("overview.pre-game-end-date")),
           start: new Date(postDate),
           group: selectedValues[0],
-          className: 'importantItem',
-          editable: false
+          className: "importantItem",
+          editable: false,
         });
         this.timelineDataset.add({
-          content: prepareLabel(t('overview.pre-game-start-date')),
+          content: prepareLabel(t("overview.pre-game-start-date")),
           start: new Date(preDate),
           group: selectedValues[0],
-          className: 'importantItem',
-          editable: false
+          className: "importantItem",
+          editable: false,
         });
       }
     }

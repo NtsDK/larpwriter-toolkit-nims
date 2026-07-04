@@ -1,3 +1,3 @@
-import { OriginCard } from './OriginCard.jsx';
+import { OriginCard } from "./OriginCard.jsx";
 
 export { OriginCard };

@@ -1,9 +1,7 @@
-import React from 'react';
+import React from "react";
 
 export const ProfileEditorContainer = function () {
-  return (
-    <div className="ProfileEditorContainer form-horizontal insertion-point" />
-  );
+  return <div className="ProfileEditorContainer form-horizontal insertion-point" />;
 };
 
 export function getProfileEditorContainer() {

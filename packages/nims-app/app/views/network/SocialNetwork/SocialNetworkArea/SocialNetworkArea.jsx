@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import vis from 'vis';
-import 'vis/dist/vis.min.css';
-import ReactDOM from 'react-dom';
-import { UI, U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import { Constants } from 'nims-dbms';
-import './SocialNetworkArea.css';
+import React, { Component } from "react";
+import vis from "vis";
+import "vis/dist/vis.min.css";
+import ReactDOM from "react-dom";
+import { UI, U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import { Constants } from "nims-dbms";
+import "./SocialNetworkArea.css";
 
 export class SocialNetworkArea extends Component {
   nodesDataset = new vis.DataSet();
@@ -15,8 +15,7 @@ export class SocialNetworkArea extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
     this.networkContainer = React.createRef();
     this.neighbourhoodHighlight = this.neighbourhoodHighlight.bind(this);
   }
@@ -27,15 +26,12 @@ export class SocialNetworkArea extends Component {
 
     this.nodesDataset.add(nodes);
     this.edgesDataset.add(edges);
-    console.log('SocialNetworkArea mounted');
+    console.log("SocialNetworkArea mounted");
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      nodes, edges, groupColors, getNodeColorsUpdate, selectedGroup, focusNode
-    } = this.props;
-    if (nodes !== prevProps.nodes
-      || edges !== prevProps.edges) {
+    const { nodes, edges, groupColors, getNodeColorsUpdate, selectedGroup, focusNode } = this.props;
+    if (nodes !== prevProps.nodes || edges !== prevProps.edges) {
       this.nodesDataset.clear();
       this.edgesDataset.clear();
       this.nodesDataset.add(nodes);
@@ -70,11 +66,11 @@ export class SocialNetworkArea extends Component {
       this.network.focus(focusNode, Constants.snFocusOptions);
     }
 
-    console.log('SocialNetworkArea did update');
+    console.log("SocialNetworkArea did update");
   }
 
   componentWillUnmount() {
-    console.log('SocialNetworkArea will unmount');
+    console.log("SocialNetworkArea will unmount");
   }
 
   initNetwork() {
@@ -86,14 +82,14 @@ export class SocialNetworkArea extends Component {
       // this.timeline = timeline;
       const data = {
         nodes: this.nodesDataset,
-        edges: this.edgesDataset
+        edges: this.edgesDataset,
       }; // Note: data is coming from ./datasources/WorldCup2014.js
       const opts = R.clone(Constants.socialNetworkOpts);
       opts.groups = groupColors;
 
       this.network = new vis.Network(this.networkContainer.current, data, opts);
 
-      this.network.on('click', this.neighbourhoodHighlight);
+      this.network.on("click", this.neighbourhoodHighlight);
     }
   }
 
@@ -102,7 +98,7 @@ export class SocialNetworkArea extends Component {
     // if()
     // get a JSON object
     const allNodes = this.nodesDataset.get({
-      returnType: 'Object'
+      returnType: "Object",
     });
 
     const { network } = this;
@@ -168,24 +164,30 @@ function highlightNodes(network, allNodes, zeroDegreeNodes, firstDegreeNodes) {
   const secondDegreeNodes = R.uniq(R.flatten(firstDegreeNodes.map((id) => network.getConnectedNodes(id))));
   // mark all nodes as hard to read.
   R.values(allNodes).forEach((node) => {
-    node.color = 'rgba(200,200,200,0.5)';
+    node.color = "rgba(200,200,200,0.5)";
     hideLabel(node);
   });
   // all second degree nodes get a different color and their label back
-  secondDegreeNodes.map((id) => allNodes[id]).forEach((node) => {
-    node.color = 'rgba(150,150,150,0.75)';
-    showLabel(node);
-  });
+  secondDegreeNodes
+    .map((id) => allNodes[id])
+    .forEach((node) => {
+      node.color = "rgba(150,150,150,0.75)";
+      showLabel(node);
+    });
   // all first degree nodes get their own color and their label back
-  firstDegreeNodes.map((id) => allNodes[id]).forEach((node) => {
-    node.color = undefined;
-    showLabel(node);
-  });
+  firstDegreeNodes
+    .map((id) => allNodes[id])
+    .forEach((node) => {
+      node.color = undefined;
+      showLabel(node);
+    });
   // the main node gets its own color and its label back.
-  zeroDegreeNodes.map((id) => allNodes[id]).forEach((node) => {
-    node.color = undefined;
-    showLabel(node);
-  });
+  zeroDegreeNodes
+    .map((id) => allNodes[id])
+    .forEach((node) => {
+      node.color = undefined;
+      showLabel(node);
+    });
 }
 
 function hideLabel(node) {

@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { UI, U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import { Constants } from 'nims-dbms';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { useTranslation } from 'react-i18next';
-import FormControl from 'react-bootstrap/es/FormControl';
-import classNames from 'classnames';
-import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
-import { ConfirmDialog } from '../../commons/uiCommon3/ConfirmDialog.jsx';
-import { EventPresenceCell } from './EventPresenceCell.jsx';
+import React, { useContext, useEffect, useState } from "react";
+import { UI, U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import { Constants } from "nims-dbms";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { useTranslation } from "react-i18next";
+import FormControl from "react-bootstrap/es/FormControl";
+import classNames from "classnames";
+import { InlineNotification } from "../../commons/uiCommon3/InlineNotification.jsx";
+import { ConfirmDialog } from "../../commons/uiCommon3/ConfirmDialog.jsx";
+import { EventPresenceCell } from "./EventPresenceCell.jsx";
 
 export function EventPresence(props) {
   const { storyName, ee } = props;
@@ -22,32 +22,33 @@ export function EventPresence(props) {
 
   function refresh() {
     Promise.all([
-      permissionInformer.isEntityEditable({ type: 'story', name: storyName }),
-      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
+      permissionInformer.isEntityEditable({ type: "story", name: storyName }),
+      permissionInformer.getEntityNamesArray({ type: "character", editableOnly: false }),
       dbms.getStoryCharacterNamesArray({ storyName }),
-      dbms.getStoryEvents({ storyName })
-    ]).then((results) => {
-      const [isStoryEditable, allCharacters, characterArray, events] = results;
-      const allCharactersIndex = R.indexBy(R.prop('value'), allCharacters);
+      dbms.getStoryEvents({ storyName }),
+    ])
+      .then((results) => {
+        const [isStoryEditable, allCharacters, characterArray, events] = results;
+        const allCharactersIndex = R.indexBy(R.prop("value"), allCharacters);
 
-      const sortedCharacterList = R.sort(CU.charOrdAObject,
-        R.values(R.pick(characterArray, allCharactersIndex)));
-      setState({
-        sortedCharacterList,
-        events,
-      });
-      setSelectedCharacters(CU.sortStrIgnoreCase(characterArray));
-    }).catch(UI.handleError);
+        const sortedCharacterList = R.sort(CU.charOrdAObject, R.values(R.pick(characterArray, allCharactersIndex)));
+        setState({
+          sortedCharacterList,
+          events,
+        });
+        setSelectedCharacters(CU.sortStrIgnoreCase(characterArray));
+      })
+      .catch(UI.handleError);
   }
 
   useEffect(refresh, []);
 
   useEffect(() => {
-    ee.on('eventsChange', refresh);
-    ee.on('charactersChange', refresh);
+    ee.on("eventsChange", refresh);
+    ee.on("charactersChange", refresh);
     return () => {
-      ee.off('eventsChange', refresh);
-      ee.off('charactersChange', refresh);
+      ee.off("eventsChange", refresh);
+      ee.off("charactersChange", refresh);
     };
   }, []);
 
@@ -66,67 +67,62 @@ export function EventPresence(props) {
     <div id="eventPresenceDiv">
       <div className="panel panel-default">
         <InlineNotification type="info" showIf={sortedCharacterList.length === 0}>
-          {t('advices.no-characters-in-story')}
+          {t("advices.no-characters-in-story")}
         </InlineNotification>
         <InlineNotification type="info" showIf={events.length === 0}>
-          {t('advices.no-events-in-story')}
+          {t("advices.no-events-in-story")}
         </InlineNotification>
-        {
-          events.length !== 0 && sortedCharacterList.length !== 0
-          && (
-            <div className="panel-body flex-row" style={{ overflowX: 'auto' }}>
-              <div className="flex-0-0-auto margin-right-8">
-                <span className="margin-bottom-8 inline-block">{t('stories.show-characters')}</span>
-                <FormControl
-                  multiple
-                  size={sortedCharacterList.length}
-                  componentClass="select"
-                  value={selectedCharacters}
-                  onChange={onSelectedCharactersChange}
-                >
-                  {
-                    sortedCharacterList.map((char) => <option value={char.value} key={char.value}>{char.displayName}</option>)
-                  }
-                </FormControl>
-              </div>
-              <div className="flex-1-1-auto">
-                <table cellSpacing="0" cellPadding="0" className="table table-bordered">
-                  <thead id="eventPresenceTableHead">
-                    <tr>
-                      <th>{t('stories.event')}</th>
-                      {
-                        selectedCharacters.map((el) => <th key={el}>{el}</th>)
-                      }
-                    </tr>
-                  </thead>
-                  <tbody id="eventPresenceTable">
-                    {
-                      events.map((event, i) => (
-                        <tr>
-                          <td>{event.name}</td>
-                          {
-                            selectedCharacters.map((char) => (
-                              <EventPresenceCell
-                                checked={!!event.characters[char]}
-                                eventIndex={i}
-                                eventName={event.name}
-                                characterName={char}
-                                isReady={event.characters[char]?.ready}
-                                hasText={event.characters[char] && event.characters[char].text !== ''}
-                                refresh={refresh}
-                                storyName={storyName}
-                              />
-                            ))
-                          }
-                        </tr>
-                      ))
-                    }
-                  </tbody>
-                </table>
-              </div>
+        {events.length !== 0 && sortedCharacterList.length !== 0 && (
+          <div className="panel-body flex-row" style={{ overflowX: "auto" }}>
+            <div className="flex-0-0-auto margin-right-8">
+              <span className="margin-bottom-8 inline-block">{t("stories.show-characters")}</span>
+              <FormControl
+                multiple
+                size={sortedCharacterList.length}
+                componentClass="select"
+                value={selectedCharacters}
+                onChange={onSelectedCharactersChange}
+              >
+                {sortedCharacterList.map((char) => (
+                  <option value={char.value} key={char.value}>
+                    {char.displayName}
+                  </option>
+                ))}
+              </FormControl>
             </div>
-          )
-        }
+            <div className="flex-1-1-auto">
+              <table cellSpacing="0" cellPadding="0" className="table table-bordered">
+                <thead id="eventPresenceTableHead">
+                  <tr>
+                    <th>{t("stories.event")}</th>
+                    {selectedCharacters.map((el) => (
+                      <th key={el}>{el}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody id="eventPresenceTable">
+                  {events.map((event, i) => (
+                    <tr>
+                      <td>{event.name}</td>
+                      {selectedCharacters.map((char) => (
+                        <EventPresenceCell
+                          checked={!!event.characters[char]}
+                          eventIndex={i}
+                          eventName={event.name}
+                          characterName={char}
+                          isReady={event.characters[char]?.ready}
+                          hasText={event.characters[char] && event.characters[char].text !== ""}
+                          refresh={refresh}
+                          storyName={storyName}
+                        />
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

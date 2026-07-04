@@ -1,9 +1,7 @@
-import React from 'react';
+import React from "react";
 
 export const AlertBlock = function () {
-  return (
-    <div className="AlertBlock alert alert-info" />
-  );
+  return <div className="AlertBlock alert alert-info" />;
 };
 
 export function getAlertBlock() {

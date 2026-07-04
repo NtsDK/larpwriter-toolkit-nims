@@ -1,52 +1,53 @@
 // const $ = require('jquery');
-import { default as $ } from 'jquery';
-import 'jquery-datetimepicker';
-import 'jquery-datetimepicker/build/jquery.datetimepicker.min.css';
-import 'bootstrap-sass';
+import { default as $ } from "jquery";
+import "jquery-datetimepicker";
+import "jquery-datetimepicker/build/jquery.datetimepicker.min.css";
+import "bootstrap-sass";
 
-import vex from 'vex-js';
-import vexDialog from 'vex-dialog';
+import vex from "vex-js";
+import vexDialog from "vex-dialog";
 
-import 'vex-js/dist/css/vex.css';
-import 'vex-js/dist/css/vex-theme-default.css';
+import "vex-js/dist/css/vex.css";
+import "vex-js/dist/css/vex-theme-default.css";
 //const R = require('ramda');
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import U from './utils';
-import L10n from './l10n';
-import * as Timing from './Timing';
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import U from "./utils";
+import L10n from "./l10n";
+import * as Timing from "./Timing";
 
 // const vex = require('vex-js');
 // vex.registerPlugin(require('vex-dialog'));
 vex.registerPlugin(vexDialog);
 // vex.defaultOptions.className = 'vex-theme-os';
-vex.defaultOptions.className = 'vex-theme-default';
+vex.defaultOptions.className = "vex-theme-default";
 
 export const updateDialogL10n = function () {
-  vex.dialog.buttons.YES.text = L10n.getValue('common-ok');
-  vex.dialog.buttons.NO.text = L10n.getValue('common-cancel');
+  vex.dialog.buttons.YES.text = L10n.getValue("common-ok");
+  vex.dialog.buttons.NO.text = L10n.getValue("common-cancel");
 };
 
 export const initTabPanel = (tabClazz, containerClazz) => {
   const containers = U.queryEls(`.${containerClazz}`);
 
   let i;
-  for (i = 1; i < containers.length; i++) { // don't hide 1st element
-    U.addClass(containers[i], 'hidden');
+  for (i = 1; i < containers.length; i++) {
+    // don't hide 1st element
+    U.addClass(containers[i], "hidden");
   }
 
   const tabButtons = U.queryEls(`.${tabClazz}`);
 
-  U.addClass(tabButtons[0], 'active');
+  U.addClass(tabButtons[0], "active");
 
   for (i = 0; i < tabButtons.length; i++) {
-    U.listen(tabButtons[i], 'click', tabButtonClick(tabButtons, containers));
+    U.listen(tabButtons[i], "click", tabButtonClick(tabButtons, containers));
   }
 };
 
 var tabButtonClick = (buttons, containers) => (event) => {
   for (let i = 0; i < buttons.length; i++) {
-    U.setClassByCondition(buttons[i], 'active', event.target.id === buttons[i].id);
+    U.setClassByCondition(buttons[i], "active", event.target.id === buttons[i].id);
   }
   for (let i = 0; i < containers.length; i++) {
     U.hideEl(containers[i], `${event.target.id}Container` !== containers[i].id);
@@ -55,9 +56,9 @@ var tabButtonClick = (buttons, containers) => (event) => {
 
 export const fillShowItemSelector = (selector, displayArray) => {
   let el;
-  U.setAttr(selector, 'size', displayArray.length);
+  U.setAttr(selector, "size", displayArray.length);
   displayArray.forEach((value) => {
-    el = U.setProps(U.makeEl('option'), {
+    el = U.setProps(U.makeEl("option"), {
       selected: true,
     });
     U.hideEl(el, value.hidden);
@@ -66,22 +67,30 @@ export const fillShowItemSelector = (selector, displayArray) => {
 };
 
 export const fillShowItemSelector2 = (selector, optionGroups, setSize) => {
-  let el, groupEl, counter = 0;
-  U.addEls(selector, optionGroups.map((group) => {
-    counter++;
-    groupEl = U.setAttr(U.makeEl('optgroup'), 'label', group.displayName);
-    U.addEls(groupEl, group.array.map((option) => {
-      el = U.setProps(U.makeEl('option'), {
-        selected: true,
-      });
-      U.setAttr(el, 'value', option.name);
+  let el,
+    groupEl,
+    counter = 0;
+  U.addEls(
+    selector,
+    optionGroups.map((group) => {
       counter++;
-      return U.addEl(el, U.makeText(option.displayName));
-    }));
-    return groupEl;
-  }));
+      groupEl = U.setAttr(U.makeEl("optgroup"), "label", group.displayName);
+      U.addEls(
+        groupEl,
+        group.array.map((option) => {
+          el = U.setProps(U.makeEl("option"), {
+            selected: true,
+          });
+          U.setAttr(el, "value", option.name);
+          counter++;
+          return U.addEl(el, U.makeText(option.displayName));
+        })
+      );
+      return groupEl;
+    })
+  );
   if (setSize) {
-    U.setAttr(selector, 'size', counter);
+    U.setAttr(selector, "size", counter);
   }
 };
 
@@ -127,12 +136,12 @@ export const showSelectedEls3 = (root, classKey, attr) => (event) => {
 };
 
 export const initSelectorFilters = () => {
-  U.queryEls('[selector-filter]').forEach((el) => {
-    const sel = U.queryEl(U.getAttr(el, 'selector-filter'));
-    el.value = '';
-    U.setAttr(el, 'l10n-placeholder-id', 'constant-filter');
-    U.addClass(el, 'form-control margin-bottom-8');
-    U.listen(el, 'input', filterOptions(sel));
+  U.queryEls("[selector-filter]").forEach((el) => {
+    const sel = U.queryEl(U.getAttr(el, "selector-filter"));
+    el.value = "";
+    U.setAttr(el, "l10n-placeholder-id", "constant-filter");
+    U.addClass(el, "form-control margin-bottom-8");
+    U.listen(el, "input", filterOptions(sel));
   });
 };
 
@@ -150,25 +159,25 @@ var filterOptions = (sel) => (event) => {
     U.hideEl(opt, !isVisible);
     //                U.setClassByCondition(opt, "hidden", opt.innerHTML.toLowerCase().search(val) === -1);
   }
-  sel.dispatchEvent(new Event('change'));
+  sel.dispatchEvent(new Event("change"));
 };
 
 function initPanelToggler(el) {
-  const attr = U.getAttr(el, 'panel-toggler');
-  U.addClass(el, 'expanded');
+  const attr = U.getAttr(el, "panel-toggler");
+  U.addClass(el, "expanded");
   const sel = document.querySelector(attr);
   if (sel == null) {
     // UI.alert(`Panel toggler is broken: ${attr}`);
     alert(`Panel toggler is broken: ${attr}`);
   }
-  U.listen(el, 'click', togglePanel(el, sel));
+  U.listen(el, "click", togglePanel(el, sel));
 }
 
-export const initPanelTogglers = (el) => U.qees(el || document, '[panel-toggler]').forEach(initPanelToggler);
+export const initPanelTogglers = (el) => U.qees(el || document, "[panel-toggler]").forEach(initPanelToggler);
 
 export const attachPanelToggler = (header, content, callback) => {
-  U.addClass(header, 'expanded');
-  U.listen(header, 'click', (event) => {
+  U.addClass(header, "expanded");
+  U.listen(header, "click", (event) => {
     if (callback) {
       callback(event, () => {
         togglePanel(header, content)(event);
@@ -180,10 +189,10 @@ export const attachPanelToggler = (header, content, callback) => {
 };
 
 var togglePanel = (el, sel) => (event) => {
-  const isExpanded = U.hasClass(el, 'expanded');
-  U.removeClasses(el, ['expanded', 'collapsed']);
-  U.addClass(el, isExpanded ? 'collapsed' : 'expanded');
-  U.toggleClass(sel, 'hidden');
+  const isExpanded = U.hasClass(el, "expanded");
+  U.removeClasses(el, ["expanded", "collapsed"]);
+  U.addClass(el, isExpanded ? "collapsed" : "expanded");
+  U.toggleClass(sel, "hidden");
 };
 
 // export const makeEventTimePicker = (opts) => {
@@ -226,11 +235,11 @@ export const makeEventTimePicker2 = (input, opts) => {
     onChangeDateTime: opts.onChangeDateTimeCreator(input),
   };
 
-  if (opts.eventTime !== '') {
+  if (opts.eventTime !== "") {
     pickerOpts.value = opts.eventTime;
   } else {
     pickerOpts.value = opts.date;
-    U.addClass(input, 'defaultDate');
+    U.addClass(input, "defaultDate");
   }
 
   jQuery(input).datetimepicker(pickerOpts);
@@ -275,20 +284,23 @@ export const initTextAreas = (sel) => {
 };
 
 export const refreshTextAreas = (sel) => {
-  R.ap([resizeTextarea], U.queryEls(sel).map((el) => ({ target: el })));
+  R.ap(
+    [resizeTextarea],
+    U.queryEls(sel).map((el) => ({ target: el }))
+  );
 };
 
 function attachTextareaResizer(input) {
-  U.listen(input, 'keydown', resizeTextarea);
-  U.listen(input, 'paste', resizeTextarea);
-  U.listen(input, 'cut', resizeTextarea);
-  U.listen(input, 'change', resizeTextarea);
-  U.listen(input, 'drop', resizeTextarea);
+  U.listen(input, "keydown", resizeTextarea);
+  U.listen(input, "paste", resizeTextarea);
+  U.listen(input, "cut", resizeTextarea);
+  U.listen(input, "change", resizeTextarea);
+  U.listen(input, "drop", resizeTextarea);
 }
 
 export function resizeTextarea(ev) {
   const that = ev.target;
-  that.style.height = '24px';
+  that.style.height = "24px";
   that.style.height = `${that.scrollHeight + 12}px`;
 }
 
@@ -298,10 +310,10 @@ export function resizeTextarea(ev) {
 // };
 
 export const populateAdaptationTimeInput = (input, storyName, event, characterName, isEditable) => {
-  U.setClassByCondition(input, 'notEditable', !isEditable);
+  U.setClassByCondition(input, "notEditable", !isEditable);
   input.value = event.characters[characterName].time;
   input.dataKey = JSON.stringify([storyName, event.index, characterName]);
-  U.listen(input, 'change', onChangePersonalTimeDelegate);
+  U.listen(input, "change", onChangePersonalTimeDelegate);
   return input;
 };
 
@@ -312,8 +324,8 @@ var onChangePersonalTimeDelegate = (event) => {
     storyName: dataKey[0],
     eventIndex: dataKey[1],
     characterName: dataKey[2],
-    type: 'time',
-    value: time
+    type: "time",
+    value: time,
   }).catch(handleError);
 };
 
@@ -329,33 +341,35 @@ var onChangePersonalTimeDelegate = (event) => {
 
 export const onChangeAdaptationReadyStatus2 = (callback) => (event) => {
   const dataKey = JSON.parse(event.target.id);
-  const value = !U.hasClass(event.target, 'btn-primary');
+  const value = !U.hasClass(event.target, "btn-primary");
 
   DBMS.setEventAdaptationProperty({
     storyName: dataKey[0],
     eventIndex: dataKey[1],
     characterName: dataKey[2],
-    type: 'ready',
-    value
-  }).then(() => {
-    U.setClassByCondition(event.target, 'btn-primary', value);
-    callback(value);
-  }).catch(handleError);
+    type: "ready",
+    value,
+  })
+    .then(() => {
+      U.setClassByCondition(event.target, "btn-primary", value);
+      callback(value);
+    })
+    .catch(handleError);
 };
 
 export const makePanelCore = (title, content) => {
-  const panel = U.addClasses(U.makeEl('div'), ['panel', 'panel-default']);
-  const h3 = U.addClass(U.addEl(U.makeEl('h3'), title), 'panel-title');
-  const a = U.setAttr(U.makeEl('a'), 'href', '#/');
-  U.setAttr(a, 'panel-toggler', '');
-  const headDiv = U.addClass(U.makeEl('div'), 'panel-heading');
+  const panel = U.addClasses(U.makeEl("div"), ["panel", "panel-default"]);
+  const h3 = U.addClass(U.addEl(U.makeEl("h3"), title), "panel-title");
+  const a = U.setAttr(U.makeEl("a"), "href", "#/");
+  U.setAttr(a, "panel-toggler", "");
+  const headDiv = U.addClass(U.makeEl("div"), "panel-heading");
   U.addEl(panel, U.addEl(headDiv, U.addEl(a, h3)));
-  const contentDiv = U.addClass(U.makeEl('div'), 'panel-body');
+  const contentDiv = U.addClass(U.makeEl("div"), "panel-body");
   U.addEl(panel, U.addEl(contentDiv, content));
   return {
     panel,
     contentDiv,
-    a
+    a,
   };
 };
 
@@ -366,11 +380,11 @@ export const checkAndGetEntitySetting = (settingsPath, names) => {
   const settings = SM.getSettings();
   if (!settings[settingsPath]) {
     settings[settingsPath] = {
-      name: names[0].value
+      name: names[0].value,
     };
   }
   let { name } = settings[settingsPath];
-  const rawNames = names.map(R.prop('value'));
+  const rawNames = names.map(R.prop("value"));
   if (rawNames.indexOf(name) === -1) {
     settings[settingsPath].name = names[0].value;
     name = names[0].value;
@@ -390,7 +404,7 @@ export const scrollTo = (container, element) => {
   const domRect = element.getBoundingClientRect();
   const { scrollTop } = container;
   const scrollBottom = container.scrollTop + container.clientHeight;
-  const condition = (element.offsetTop < scrollTop) || (element.offsetTop + domRect.height) > scrollBottom;
+  const condition = element.offsetTop < scrollTop || element.offsetTop + domRect.height > scrollBottom;
 
   if (condition) {
     const from = container.scrollTop;
@@ -401,19 +415,23 @@ export const scrollTo = (container, element) => {
       timing: Timing.makeEaseInOut(Timing.poly(4)),
       draw(progress) {
         container.scrollTop = from + (to - from) * progress;
-      }
+      },
     });
   }
 };
 
-export const constArr2Select = R.map(R.compose(R.zipObj(['value', 'name']), (name) => [name, L10n.const(name)]));
+export const constArr2Select = R.map(R.compose(R.zipObj(["value", "name"]), (name) => [name, L10n.const(name)]));
 
-export const remapProps = R.curry((outKeys, pickKeys, obj) => R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj));
+export const remapProps = R.curry((outKeys, pickKeys, obj) =>
+  R.compose(R.zipObj(outKeys), R.values, R.pick(pickKeys))(obj)
+);
 
-export const remapProps4Select2 = remapProps(['id', 'text'], ['value', 'displayName']);
-export const remapProps4Select = remapProps(['value', 'name'], ['value', 'displayName']);
+export const remapProps4Select2 = remapProps(["id", "text"], ["value", "displayName"]);
+export const remapProps4Select = remapProps(["value", "name"], ["value", "displayName"]);
 
-export const getSelect2DataCommon = R.curry((preparator, obj) => R.compose(R.zipObj(['data']), R.append(R.__, []), R.map(preparator))(obj));
+export const getSelect2DataCommon = R.curry((preparator, obj) =>
+  R.compose(R.zipObj(["data"]), R.append(R.__, []), R.map(preparator))(obj)
+);
 export const getSelect2Data = getSelect2DataCommon(remapProps4Select2);
 // })(window.UI = {});
 
@@ -421,8 +439,8 @@ export function alert(message) {
   vex.dialog.alert(message);
 }
 
-export const setError = (el, err) => U.addEl(U.clearEl(U.qee(el, '.error-msg')), U.makeText(handleErrorMsg(err)));
-export const clearError = (el) => U.clearEl(U.qee(el, '.error-msg'));
+export const setError = (el, err) => U.addEl(U.clearEl(U.qee(el, ".error-msg")), U.makeText(handleErrorMsg(err)));
+export const clearError = (el) => U.clearEl(U.qee(el, ".error-msg"));
 
 // export const setError = setError;
 // export const clearError = clearError;
@@ -434,7 +452,7 @@ export const confirm = function (message, onOk, onCancel) {
       if (val) {
         if (onOk) onOk();
       } else if (onCancel) onCancel();
-    }
+    },
   });
 };
 
@@ -461,7 +479,8 @@ export function handleErrorMsg(err) {
   if (R.keys(Errors).some(checkErrorType(err))) {
     const params = err.parameters.map((val) => (L10n.hasValue(val) ? L10n.getValue(val) : val));
     return CU.strFormat(L10n.getValue(err.messageId), params);
-  } if (typeof err === 'object') {
+  }
+  if (typeof err === "object") {
     return err.message;
   }
   return err;
@@ -473,7 +492,7 @@ export function handleError(err) {
 }
 
 export const enableEl = R.curry((el, condition) => {
-  const key = el.tagName.toLowerCase() === 'textarea' ? 'readonly' : 'disabled';
+  const key = el.tagName.toLowerCase() === "textarea" ? "readonly" : "disabled";
   if (condition) {
     el.removeAttribute(key);
   } else {
@@ -488,7 +507,7 @@ export const enable = function (root, className, condition) {
 export const rebuildSelector = function (selector, names) {
   U.clearEl(selector);
   names.forEach((nameInfo) => {
-    const option = U.makeEl('option');
+    const option = U.makeEl("option");
     option.appendChild(U.makeText(nameInfo.displayName));
     option.value = nameInfo.value;
     selector.appendChild(option);
@@ -498,7 +517,7 @@ export const rebuildSelector = function (selector, names) {
 export const rebuildSelectorArr = function (selector, names) {
   U.clearEl(selector);
   names.forEach((name) => {
-    const option = U.makeEl('option');
+    const option = U.makeEl("option");
     option.appendChild(U.makeText(name));
     selector.appendChild(option);
   });
@@ -568,5 +587,5 @@ export default {
   enable,
   rebuildSelector,
   rebuildSelectorArr,
-  animate
+  animate,
 };

@@ -1,38 +1,40 @@
-import { ProjectUtils } from 'nims-dbms';
-import { U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import { Constants } from 'nims-dbms';
+import { ProjectUtils } from "nims-dbms";
+import { U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { Constants } from "nims-dbms";
 
 export function FilterConfiguration(info) {
   this.info = info;
   function populateProfileItems(item) {
-    if (!R.startsWith(Constants.CHAR_PREFIX, item.name)
-            && !R.startsWith(Constants.PLAYER_PREFIX, item.name)) {
+    if (!R.startsWith(Constants.CHAR_PREFIX, item.name) && !R.startsWith(Constants.PLAYER_PREFIX, item.name)) {
       item.displayName = L10n.getValue(item.displayName);
-      item.value = '';
+      item.value = "";
     }
   }
   this.groupedProfileFilterItems = R.clone(info.groupedProfileFilterItems);
-  this.groupedProfileFilterItems.map(R.prop('profileFilterItems')).map(R.map(populateProfileItems));
+  this.groupedProfileFilterItems.map(R.prop("profileFilterItems")).map(R.map(populateProfileItems));
 }
 
 FilterConfiguration.makeFilterConfiguration = function (dbms) {
   return new Promise((resolve, reject) => {
-    dbms.getProfileFilterInfo().then((info) => {
-      const filterConfiguration = new FilterConfiguration(info);
-      resolve(filterConfiguration);
-    }).catch(reject);
+    dbms
+      .getProfileFilterInfo()
+      .then((info) => {
+        const filterConfiguration = new FilterConfiguration(info);
+        resolve(filterConfiguration);
+      })
+      .catch(reject);
   });
 };
 
 FilterConfiguration.prototype.getProfileFilterItems = function () {
-  return R.flatten(this.groupedProfileFilterItems.map(R.prop('profileFilterItems')));
+  return R.flatten(this.groupedProfileFilterItems.map(R.prop("profileFilterItems")));
 };
 
 FilterConfiguration.prototype.getProfileItemSource = function (name) {
   let source;
   this.groupedProfileFilterItems.forEach((el) => {
-    const arr = el.profileFilterItems.map(R.prop('name'));
+    const arr = el.profileFilterItems.map(R.prop("name"));
     if (R.contains(name, arr)) {
       source = el.name;
     }
@@ -61,14 +63,14 @@ FilterConfiguration.prototype.getGroupedProfileFilterItems = function () {
 FilterConfiguration.prototype.getGroupsForSelect = function () {
   return this.groupedProfileFilterItems.map((group) => ({
     displayName: L10n.getValue(`profile-filter-${group.name}`),
-    array: group.profileFilterItems
+    array: group.profileFilterItems,
   }));
 };
 
 FilterConfiguration.prototype.getBaseProfileSettings = function () {
   return {
     characters: this.info.characters.profileStructure,
-    players: this.info.players.profileStructure
+    players: this.info.players.profileStructure,
   };
 };
 
@@ -90,5 +92,7 @@ FilterConfiguration.prototype.haveData = function () {
 
 FilterConfiguration.prototype.getProfileIds = function (filterModel) {
   const offset = this.groupedProfileFilterItems[0].profileFilterItems.length;
-  return this.getDataArrays(filterModel).map((dataArray) => `${dataArray[0].value || ''}/${dataArray[offset].value || ''}`).sort();
+  return this.getDataArrays(filterModel)
+    .map((dataArray) => `${dataArray[0].value || ""}/${dataArray[offset].value || ""}`)
+    .sort();
 };

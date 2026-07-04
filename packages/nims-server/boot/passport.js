@@ -1,4 +1,1 @@
-
-
-module.exports = function (app, dbms) {
-};
+module.exports = function (app, dbms) {};

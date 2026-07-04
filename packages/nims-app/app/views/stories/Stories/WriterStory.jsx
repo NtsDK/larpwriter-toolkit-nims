@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { UI, U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import { Constants } from 'nims-dbms';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { useTranslation } from 'react-i18next';
+import React, { useContext, useEffect, useState } from "react";
+import { UI, U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import { Constants } from "nims-dbms";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { useTranslation } from "react-i18next";
 
 export function WriterStory(props) {
   const { storyName } = props;
@@ -15,19 +15,24 @@ export function WriterStory(props) {
   const [state, setState] = useState({ storyText: null });
 
   function refresh() {
-    dbms.getWriterStory({ storyName }).then((storyText) => {
-      setState({ storyText });
-    }).catch(UI.handleError);
+    dbms
+      .getWriterStory({ storyName })
+      .then((storyText) => {
+        setState({ storyText });
+      })
+      .catch(UI.handleError);
   }
 
   useEffect(refresh, []);
 
   function onStoryChange(e) {
     const { value } = e.target;
-    dbms.setWriterStory({
-      storyName,
-      value
-    }).catch(UI.handleError);
+    dbms
+      .setWriterStory({
+        storyName,
+        value,
+      })
+      .catch(UI.handleError);
   }
 
   // if (!state) {

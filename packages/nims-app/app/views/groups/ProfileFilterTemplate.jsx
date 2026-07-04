@@ -1,9 +1,8 @@
-import React from 'react';
+import React from "react";
 
 export const ProfileFilterTemplate = function () {
   return (
     <div className="ProfileFilterTemplate profile-filter-tab block">
-
       <div className="panel panel-default">
         <div className="panel-body first-panel">
           <div className="flex-row entity-toolbar">
@@ -13,7 +12,6 @@ export const ProfileFilterTemplate = function () {
               l10n-title="groups-create-entity"
             >
               <span l10n-id="groups-group" />
-
             </button>
             <select className="common-select save-entity-select" />
             <button
@@ -46,17 +44,21 @@ export const ProfileFilterTemplate = function () {
       </div>
 
       <div className="flex-row">
-        <div className="flex-0-0-auto" style={{ marginRight: '8px', minWidth: '300px' }}>
-
+        <div className="flex-0-0-auto" style={{ marginRight: "8px", minWidth: "300px" }}>
           <div id="exTab3" className="panel panel-default">
             <div className="panel-body">
-
               <ul className="nav nav-pills margin-bottom-16">
                 <li className="btn-default active">
                   <a href="#profile-filter-rows" data-toggle="tab" l10n-id="profile-filter-rows" />
                 </li>
-                <li className="btn-default"><a href="#profile-filter-columns" data-toggle="tab" l10n-id="profile-filter-columns" /></li>
-                <li className="filter-result-size" style={{ padding: '10px 15px' }} l10n-title="profile-filter-results" />
+                <li className="btn-default">
+                  <a href="#profile-filter-columns" data-toggle="tab" l10n-id="profile-filter-columns" />
+                </li>
+                <li
+                  className="filter-result-size"
+                  style={{ padding: "10px 15px" }}
+                  l10n-title="profile-filter-results"
+                />
               </ul>
 
               <div className="tab-content clearfix">
@@ -75,8 +77,14 @@ export const ProfileFilterTemplate = function () {
         <div className="flex-0-0-auto profile-filter-container">
           <div className="alert alert-info no-characters margin-bottom-8" l10n-id="advices-no-character" />
           <div className="alert alert-info no-players margin-bottom-8" l10n-id="advices-no-player" />
-          <div className="alert alert-info no-character-profile margin-bottom-8" l10n-id="advices-empty-character-profile-structure" />
-          <div className="alert alert-info no-player-profile margin-bottom-8" l10n-id="advices-empty-player-profile-structure" />
+          <div
+            className="alert alert-info no-character-profile margin-bottom-8"
+            l10n-id="advices-empty-character-profile-structure"
+          />
+          <div
+            className="alert alert-info no-player-profile margin-bottom-8"
+            l10n-id="advices-empty-player-profile-structure"
+          />
           <div className="panel panel-default">
             <table className="table table-striped table-bordered">
               <thead className="filter-head" />
@@ -107,9 +115,7 @@ export function getMultiEnumFilter() {
 }
 
 export const CommonEnumFilter = function () {
-  return (
-    <select className="CommonEnumFilter form-control" multiple />
-  );
+  return <select className="CommonEnumFilter form-control" multiple />;
 };
 
 export function getCommonEnumFilter() {
@@ -130,9 +136,7 @@ export function getNumberFilter() {
 }
 
 export const TextFilter = function () {
-  return (
-    <input className="TextFilter form-control" />
-  );
+  return <input className="TextFilter form-control" />;
 };
 
 export function getTextFilter() {
@@ -143,7 +147,9 @@ export const FilterItem = function () {
   return (
     <div className="FilterItem">
       <input type="checkbox" className="hidden" />
-      <label className="checkbox-label-icon common-checkbox"><span className="filter-item-name" /></label>
+      <label className="checkbox-label-icon common-checkbox">
+        <span className="filter-item-name" />
+      </label>
       <div className="hidden filter-item-container" />
     </div>
   );

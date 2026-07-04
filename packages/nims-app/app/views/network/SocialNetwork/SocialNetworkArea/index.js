@@ -1,3 +1,3 @@
-import { SocialNetworkArea } from './SocialNetworkArea.jsx';
+import { SocialNetworkArea } from "./SocialNetworkArea.jsx";
 
 export { SocialNetworkArea };

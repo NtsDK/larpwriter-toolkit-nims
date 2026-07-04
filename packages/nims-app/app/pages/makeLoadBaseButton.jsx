@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import classNames from 'classnames';
-import { L10n } from 'nims-app-core';
+import classNames from "classnames";
+import { L10n } from "nims-app-core";
 
 export class LoadBaseButton extends Component {
   constructor(props) {
@@ -10,27 +10,27 @@ export class LoadBaseButton extends Component {
   }
   onClick() {
     const input = this.inputRef.current;
-    input.value = '';
+    input.value = "";
     input.click();
   }
 
   render() {
     const { opts, onChange } = this.props;
-    const clazz = 'dataLoadButton icon-button';
-    const btnName = 'open-database';
+    const clazz = "dataLoadButton icon-button";
+    const btnName = "open-database";
 
     return (
-      <button 
+      <button
         onChange={onChange}
         onClick={this.onClick}
         type="button"
-        className={classNames(clazz, 'action-button', {
-          [opts.className]: !!opts.className
-        })} 
-        title={opts.tooltip ? L10n.getValue(`header-${btnName}`) : ''}
-        >
-          <input ref={this.inputRef} type="file" className="hidden" tabIndex="-1" />
-        </button>
+        className={classNames(clazz, "action-button", {
+          [opts.className]: !!opts.className,
+        })}
+        title={opts.tooltip ? L10n.getValue(`header-${btnName}`) : ""}
+      >
+        <input ref={this.inputRef} type="file" className="hidden" tabIndex="-1" />
+      </button>
     );
   }
 }

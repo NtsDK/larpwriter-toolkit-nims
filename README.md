@@ -45,7 +45,6 @@ Default login/password: admin/zxpoYR65
 2. Nims will be built in `nims-app\dist`
 3. To be done
 
-
 # Package description
 
 ## nims-app

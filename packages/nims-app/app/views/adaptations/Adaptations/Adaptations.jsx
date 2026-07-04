@@ -1,22 +1,13 @@
-import React, { Component } from 'react';
-import { UI, U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import {
-  HashRouter as Router,
-  Switch,
-  Route,
-  Link,
-  NavLink,
-  Redirect,
-  useParams,
-  useHistory
-} from 'react-router-dom';
-import './Adaptations.css';
+import React, { Component } from "react";
+import { UI, U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { HashRouter as Router, Switch, Route, Link, NavLink, Redirect, useParams, useHistory } from "react-router-dom";
+import "./Adaptations.css";
 
-import { AdaptationsStorySelector } from './AdaptationsStorySelector';
-import { AdaptationsContent } from './AdaptationsContent';
-import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
-import { getEntityStatus } from '../adaptationUtils';
+import { AdaptationsStorySelector } from "./AdaptationsStorySelector";
+import { AdaptationsContent } from "./AdaptationsContent";
+import { InlineNotification } from "../../commons/uiCommon3/InlineNotification.jsx";
+import { getEntityStatus } from "../adaptationUtils";
 
 export class Adaptations extends Component {
   constructor(props) {
@@ -25,48 +16,52 @@ export class Adaptations extends Component {
       showOnlyUnfinishedStories: false,
       allStoryNames: null,
       storyNames: null,
-      storyNames2: null
+      storyNames2: null,
     };
   }
 
   componentDidMount() {
     this.refresh();
-    console.log('Adaptations mounted');
+    console.log("Adaptations mounted");
   }
 
   componentDidUpdate() {
-    console.log('Adaptations did update');
+    console.log("Adaptations did update");
   }
 
   componentWillUnmount() {
-    console.log('Adaptations will unmount');
+    console.log("Adaptations will unmount");
   }
 
   refresh() {
     const { dbms, permissionInformer } = this.props;
     const { showOnlyUnfinishedStories } = this.state;
     Promise.all([
-      permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
-      dbms.getFilteredStoryNames({ showOnlyUnfinishedStories })
-    ]).then((results) => {
-      const [allStoryNames, storyNames] = results;
+      permissionInformer.getEntityNamesArray({ type: "story", editableOnly: false }),
+      dbms.getFilteredStoryNames({ showOnlyUnfinishedStories }),
+    ])
+      .then((results) => {
+        const [allStoryNames, storyNames] = results;
 
-      const filteredArr = R.indexBy(R.prop('storyName'), storyNames);
+        const filteredArr = R.indexBy(R.prop("storyName"), storyNames);
 
-      const storyNames2 = allStoryNames.filter((story) => R.contains(story.value, R.keys(filteredArr))).map((story) => {
-        const elem = filteredArr[story.value];
-        elem.status = getEntityStatus(elem);
-        elem.displayName = story.displayName;
-        elem.value = story.value;
-        return elem;
-      });
+        const storyNames2 = allStoryNames
+          .filter((story) => R.contains(story.value, R.keys(filteredArr)))
+          .map((story) => {
+            const elem = filteredArr[story.value];
+            elem.status = getEntityStatus(elem);
+            elem.displayName = story.displayName;
+            elem.value = story.value;
+            return elem;
+          });
 
-      this.setState({
-        allStoryNames,
-        storyNames,
-        storyNames2
-      });
-    }).catch(UI.handleError);
+        this.setState({
+          allStoryNames,
+          storyNames,
+          storyNames2,
+        });
+      })
+      .catch(UI.handleError);
   }
 
   render() {
@@ -86,7 +81,7 @@ export class Adaptations extends Component {
         </Switch>
 
         <InlineNotification type="info" showIf={storyNames.length === 0}>
-          {t('advices.no-story')}
+          {t("advices.no-story")}
         </InlineNotification>
 
         <div className="adaptations-content">

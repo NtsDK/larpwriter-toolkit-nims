@@ -1,10 +1,4 @@
 {
-    "ignore": [
-        ".git",
-        "node_modules/**/node_modules"
-    ],
-    "watch" : [
-        "*.*",
-        "I:\\workspaces\\nims-dist\\js\\common\\*"
-    ]
+  "ignore": [".git", "node_modules/**/node_modules"],
+  "watch": ["*.*", "I:\\workspaces\\nims-dist\\js\\common\\*"]
 }

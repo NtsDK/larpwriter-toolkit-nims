@@ -1,15 +1,15 @@
-import React, { useContext, useState } from 'react';
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import { UI, U, L10n } from 'nims-app-core';
-import HelpBlock from 'react-bootstrap/es/HelpBlock';
-import { EnumListEditor } from './EnumListEditor.jsx';
-import { EnumDefaultValueEditor } from './EnumDefaultValueEditor.jsx';
+import React, { useContext, useState } from "react";
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import { UI, U, L10n } from "nims-app-core";
+import HelpBlock from "react-bootstrap/es/HelpBlock";
+import { EnumListEditor } from "./EnumListEditor.jsx";
+import { EnumDefaultValueEditor } from "./EnumDefaultValueEditor.jsx";
 
 export function MultiEnumEditor(props) {
   const { profileStructureItem, refresh } = props;
   const [errorText, setErrorText] = useState(null);
-  const [list, setList] = useState(profileStructureItem.value.split(','));
+  const [list, setList] = useState(profileStructureItem.value.split(","));
 
   return (
     <div>
@@ -22,9 +22,7 @@ export function MultiEnumEditor(props) {
           canRemoveLast
         />
       </div>
-      <div>
-        {errorText && <HelpBlock>{errorText}</HelpBlock>}
-      </div>
+      <div>{errorText && <HelpBlock>{errorText}</HelpBlock>}</div>
     </div>
   );
 }

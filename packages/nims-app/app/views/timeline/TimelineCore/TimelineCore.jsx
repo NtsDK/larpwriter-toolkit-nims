@@ -1,23 +1,14 @@
-import React, { Component } from 'react';
-import './TimelineCore.css';
-import { UI, U, L10n } from 'nims-app-core';
-import { CU } from 'nims-dbms-core';
-import * as R from 'ramda';
-import {
-  HashRouter as Router,
-  Switch,
-  Route,
-  Link,
-  NavLink,
-  Redirect
-} from 'react-router-dom';
+import React, { Component } from "react";
+import "./TimelineCore.css";
+import { UI, U, L10n } from "nims-app-core";
+import { CU } from "nims-dbms-core";
+import * as R from "ramda";
+import { HashRouter as Router, Switch, Route, Link, NavLink, Redirect } from "react-router-dom";
 
-import {
-  NavButton, NavSeparator, NavViewLink, NavContainer
-} from '../../commons/NavComponent.jsx';
-import { TimelineList } from './TimelineList.jsx';
-import { InteractiveTimeline } from './InteractiveTimeline.jsx';
-import { EventGroupSelector } from './EventGroupSelector.jsx';
+import { NavButton, NavSeparator, NavViewLink, NavContainer } from "../../commons/NavComponent.jsx";
+import { TimelineList } from "./TimelineList.jsx";
+import { InteractiveTimeline } from "./InteractiveTimeline.jsx";
+import { EventGroupSelector } from "./EventGroupSelector.jsx";
 
 function suffixy(entityNames, data) {
   entityNames.forEach((nameInfo) => {
@@ -31,10 +22,10 @@ export class TimelineCore extends Component {
     this.state = {
       allStoryNames: [],
       allCharacterNames: [],
-      timelineFilter: 'ByStory',
+      timelineFilter: "ByStory",
       eventsByStories: {},
       eventsByCharacters: {},
-      selectedValues: []
+      selectedValues: [],
     };
     this.onTimelineFilterChange = this.onTimelineFilterChange.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
@@ -42,21 +33,21 @@ export class TimelineCore extends Component {
 
   componentDidMount() {
     this.refresh();
-    console.log('TimelineCore mounted');
+    console.log("TimelineCore mounted");
   }
 
   componentDidUpdate() {
-    console.log('TimelineCore did update');
+    console.log("TimelineCore did update");
   }
 
   componentWillUnmount() {
-    console.log('TimelineCore will unmount');
+    console.log("TimelineCore will unmount");
   }
 
   onSelectChange(e) {
     const value = Array.from(e.target.selectedOptions, (option) => option.value);
     this.setState({
-      selectedValues: value
+      selectedValues: value,
     });
     // console.log(value);
   }
@@ -64,10 +55,10 @@ export class TimelineCore extends Component {
   onTimelineFilterChange(e) {
     const { value } = e.target;
     this.setState((prevState) => {
-      const selectorValues = value === 'ByStory' ? prevState.allStoryNames : prevState.allCharacterNames;
+      const selectorValues = value === "ByStory" ? prevState.allStoryNames : prevState.allCharacterNames;
       return {
         timelineFilter: value,
-        selectedValues: selectorValues.length > 0 ? [selectorValues[0].value] : []
+        selectedValues: selectorValues.length > 0 ? [selectorValues[0].value] : [],
       };
     });
   }
@@ -77,56 +68,68 @@ export class TimelineCore extends Component {
     Promise.all([
       dbms.getMetaInfo(),
       dbms.getEventsTimeInfo(),
-      permissionInformer.getEntityNamesArray({ type: 'story', editableOnly: false }),
-      permissionInformer.getEntityNamesArray({ type: 'character', editableOnly: false }),
-    ]).then((results) => {
-      const [metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames] = results;
-      // this.state.eventsTimeInfo = eventsTimeInfo;
-      const eventsByStories = R.groupBy(R.prop('storyName'), eventsTimeInfo);
-      const eventsByCharacters1 = R.uniq(R.flatten(eventsTimeInfo.map((event) => event.characters)));
-      const eventsByCharacters = R.zipObj(
-        eventsByCharacters1,
-        R.ap([R.clone], R.repeat([], eventsByCharacters1.length))
-      );
-      eventsTimeInfo.forEach((event) => event.characters.forEach((character) => eventsByCharacters[character].push(event)));
-      suffixy(allStoryNames, eventsByStories);
-      suffixy(allCharacterNames, eventsByCharacters);
-      this.setState((prevState) => {
-        const selectorValues = prevState.timelineFilter === 'ByStory' ? allStoryNames : allCharacterNames;
-        return {
-          postDate: metaInfo.date,
-          preDate: metaInfo.preGameDate,
-          allStoryNames,
-          allCharacterNames,
-          eventsByStories,
-          eventsByCharacters,
-          selectedValues: selectorValues.length > 0 ? [selectorValues[0].value] : []
-        };
-      });
-    }).catch(UI.handleError);
+      permissionInformer.getEntityNamesArray({ type: "story", editableOnly: false }),
+      permissionInformer.getEntityNamesArray({ type: "character", editableOnly: false }),
+    ])
+      .then((results) => {
+        const [metaInfo, eventsTimeInfo, allStoryNames, allCharacterNames] = results;
+        // this.state.eventsTimeInfo = eventsTimeInfo;
+        const eventsByStories = R.groupBy(R.prop("storyName"), eventsTimeInfo);
+        const eventsByCharacters1 = R.uniq(R.flatten(eventsTimeInfo.map((event) => event.characters)));
+        const eventsByCharacters = R.zipObj(
+          eventsByCharacters1,
+          R.ap([R.clone], R.repeat([], eventsByCharacters1.length))
+        );
+        eventsTimeInfo.forEach((event) =>
+          event.characters.forEach((character) => eventsByCharacters[character].push(event))
+        );
+        suffixy(allStoryNames, eventsByStories);
+        suffixy(allCharacterNames, eventsByCharacters);
+        this.setState((prevState) => {
+          const selectorValues = prevState.timelineFilter === "ByStory" ? allStoryNames : allCharacterNames;
+          return {
+            postDate: metaInfo.date,
+            preDate: metaInfo.preGameDate,
+            allStoryNames,
+            allCharacterNames,
+            eventsByStories,
+            eventsByCharacters,
+            selectedValues: selectorValues.length > 0 ? [selectorValues[0].value] : [],
+          };
+        });
+      })
+      .catch(UI.handleError);
   }
 
   render() {
     const {
-      timelineFilter, allStoryNames, allCharacterNames, selectedValues, eventsByStories, eventsByCharacters, postDate, preDate
+      timelineFilter,
+      allStoryNames,
+      allCharacterNames,
+      selectedValues,
+      eventsByStories,
+      eventsByCharacters,
+      postDate,
+      preDate,
     } = this.state;
     const { t } = this.props;
 
-    const selectorValues = timelineFilter === 'ByStory' ? allStoryNames : allCharacterNames;
+    const selectorValues = timelineFilter === "ByStory" ? allStoryNames : allCharacterNames;
 
     // const byStory = U.queryEl('#timelineFilterByStory').checked;
-    const data = timelineFilter === 'ByStory' ? eventsByStories : eventsByCharacters;
+    const data = timelineFilter === "ByStory" ? eventsByStories : eventsByCharacters;
     const entityNames = R.intersection(selectedValues, R.keys(data));
     const usedData = R.pick(entityNames, data);
     // this.fillTimelines(usedData);
-    const events = R.uniq(R.flatten(R.values(usedData))
-      .map((event) => {
-        event.time = new Date(event.time !== '' ? event.time : postDate);
+    const events = R.uniq(
+      R.flatten(R.values(usedData)).map((event) => {
+        event.time = new Date(event.time !== "" ? event.time : postDate);
         event.characters.sort(CU.charOrdA);
         return event;
-      }));
+      })
+    );
 
-    events.sort(CU.charOrdAFactory(R.prop('time')));
+    events.sort(CU.charOrdAFactory(R.prop("time")));
 
     return (
       <div className="TimelineCore timeline-tab block">

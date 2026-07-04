@@ -1,23 +1,19 @@
-import React, {
-  useContext, useEffect, useState, useMemo
-} from 'react';
-import { UI, U, L10n } from 'nims-app-core';
-import * as R from 'ramda';
-import { CU } from 'nims-dbms-core';
-import { Constants } from 'nims-dbms';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { useTranslation } from 'react-i18next';
-import {
-  NavLink, Route, Redirect
-} from 'react-router-dom';
+import React, { useContext, useEffect, useState, useMemo } from "react";
+import { UI, U, L10n } from "nims-app-core";
+import * as R from "ramda";
+import { CU } from "nims-dbms-core";
+import { Constants } from "nims-dbms";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { useTranslation } from "react-i18next";
+import { NavLink, Route, Redirect } from "react-router-dom";
 
-import { InlineNotification } from '../../commons/uiCommon3/InlineNotification.jsx';
-import { EntityNav } from '../../commons/EntityNav';
-import { GroupDropdown } from './GroupDropdown.jsx';
-import { CreateGroupDialog } from './CreateGroupDialog.jsx';
-import { GroupProfile } from './GroupProfile/index';
+import { InlineNotification } from "../../commons/uiCommon3/InlineNotification.jsx";
+import { EntityNav } from "../../commons/EntityNav";
+import { GroupDropdown } from "./GroupDropdown.jsx";
+import { CreateGroupDialog } from "./CreateGroupDialog.jsx";
+import { GroupProfile } from "./GroupProfile/index";
 
-import './Groups.css';
+import "./Groups.css";
 
 export function Groups(props) {
   const { t } = useTranslation();
@@ -26,9 +22,12 @@ export function Groups(props) {
   const [state, setState] = useState(null);
 
   function refresh() {
-    permissionInformer.getEntityNamesArray({ type: 'group', editableOnly: false }).then((groupNames) => {
-      setState({ groupNames });
-    }).catch(UI.handleError);
+    permissionInformer
+      .getEntityNamesArray({ type: "group", editableOnly: false })
+      .then((groupNames) => {
+        setState({ groupNames });
+      })
+      .catch(UI.handleError);
   }
 
   useEffect(refresh, []);
@@ -40,28 +39,20 @@ export function Groups(props) {
   const { groupNames } = state;
 
   const groupList = groupNames.map((el) => ({
-    primaryName: el.displayName
+    primaryName: el.displayName,
   }));
 
   function getEntityDropdown(entity) {
-    return (
-      <GroupDropdown
-        entity={entity}
-        primaryNames={groupList}
-        refresh={refresh}
-      />
-    );
+    return <GroupDropdown entity={entity} primaryNames={groupList} refresh={refresh} />;
   }
 
   return (
     <div className="Groups block">
-      <Route path="/groups">
-        {groupNames.length > 0 && <Redirect to={`/groups/${groupNames[0].displayName}`} />}
-      </Route>
+      <Route path="/groups">{groupNames.length > 0 && <Redirect to={`/groups/${groupNames[0].displayName}`} />}</Route>
       <div className="container-fluid height-100p">
         <div className="row height-100p">
           <div className="col-xs-3 height-100p">
-            <Route path={['/groups/:id', '/groups']}>
+            <Route path={["/groups/:id", "/groups"]}>
               <EntityNav
                 entityList={groupList}
                 createEntityText="groups.create-entity"
@@ -74,19 +65,19 @@ export function Groups(props) {
 
           <div className="col-xs-9 content-column height-100p">
             <InlineNotification type="info" showIf={groupNames.length === 0}>
-              {t('advices.no-group')}
+              {t("advices.no-group")}
             </InlineNotification>
 
             <Route
               path="/groups/:id"
               render={({ match }) => {
                 const { id } = match.params;
-                if (R.pluck('primaryName', groupList).includes(id)) {
+                if (R.pluck("primaryName", groupList).includes(id)) {
                   return null;
                 }
                 return (
                   <InlineNotification type="info" showIf>
-                    {t('advices.group-not-found', { groupName: id })}
+                    {t("advices.group-not-found", { groupName: id })}
                   </InlineNotification>
                 );
               }}

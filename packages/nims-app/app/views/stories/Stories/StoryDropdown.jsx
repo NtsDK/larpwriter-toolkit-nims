@@ -1,26 +1,22 @@
-import React, { Component, useContext } from 'react';
-import { UI, U, L10n } from 'nims-app-core';
-import {
-  NavLink, Route, Redirect, Switch, useHistory, useRouteMatch
-} from 'react-router-dom';
-import { CU } from 'nims-dbms-core';
-import * as R from 'ramda';
-import Button from 'react-bootstrap/es/Button';
-import Dropdown from 'react-bootstrap/es/Dropdown';
-import MenuItem from 'react-bootstrap/es/MenuItem';
-import { useTranslation } from 'react-i18next';
-import { DbmsContext } from 'nims-app-core/dbmsContext';
-import { ModalTrigger } from '../../commons/uiCommon3/ModalTrigger.jsx';
-import { RenameStoryDialog } from './RenameStoryDialog.jsx';
-import { RemoveStoryDialog } from './RemoveStoryDialog.jsx';
+import React, { Component, useContext } from "react";
+import { UI, U, L10n } from "nims-app-core";
+import { NavLink, Route, Redirect, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { CU } from "nims-dbms-core";
+import * as R from "ramda";
+import Button from "react-bootstrap/es/Button";
+import Dropdown from "react-bootstrap/es/Dropdown";
+import MenuItem from "react-bootstrap/es/MenuItem";
+import { useTranslation } from "react-i18next";
+import { DbmsContext } from "nims-app-core/dbmsContext";
+import { ModalTrigger } from "../../commons/uiCommon3/ModalTrigger.jsx";
+import { RenameStoryDialog } from "./RenameStoryDialog.jsx";
+import { RemoveStoryDialog } from "./RemoveStoryDialog.jsx";
 
 export function StoryDropdown(props) {
-  const {
-    entity, primaryNames, refresh
-  } = props;
+  const { entity, primaryNames, refresh } = props;
 
   const { t } = useTranslation();
-  const match = useRouteMatch('/stories/:id');
+  const match = useRouteMatch("/stories/:id");
   const history = useHistory();
   const { dbms, permissionInformer } = useContext(DbmsContext);
 
@@ -72,30 +68,12 @@ export function StoryDropdown(props) {
     <Dropdown>
       <Dropdown.Toggle noCaret className="btn btn-default fa-icon kebab" />
       <Dropdown.Menu>
-        <ModalTrigger
-          modal={(
-            <RenameStoryDialog
-              storyName={entity.primaryName}
-              onRename={onRenameStory}
-            />
-          )}
-        >
-          <MenuItem>
-            {t('stories.rename-entity')}
-          </MenuItem>
+        <ModalTrigger modal={<RenameStoryDialog storyName={entity.primaryName} onRename={onRenameStory} />}>
+          <MenuItem>{t("stories.rename-entity")}</MenuItem>
         </ModalTrigger>
         <MenuItem divider />
-        <ModalTrigger
-          modal={(
-            <RemoveStoryDialog
-              storyName={entity.primaryName}
-              onRemove={onRemoveStory}
-            />
-          )}
-        >
-          <MenuItem>
-            {t('stories.remove-entity')}
-          </MenuItem>
+        <ModalTrigger modal={<RemoveStoryDialog storyName={entity.primaryName} onRemove={onRemoveStory} />}>
+          <MenuItem>{t("stories.remove-entity")}</MenuItem>
         </ModalTrigger>
       </Dropdown.Menu>
     </Dropdown>

@@ -1,6 +1,6 @@
-import { withTranslation } from 'react-i18next';
-import { pipe } from 'ramda';
-import { NodesColoringSelector, getGroupColors } from './NodesColoringSelector.jsx';
+import { withTranslation } from "react-i18next";
+import { pipe } from "ramda";
+import { NodesColoringSelector, getGroupColors } from "./NodesColoringSelector.jsx";
 
 const tmp = pipe(withTranslation())(NodesColoringSelector);
 
