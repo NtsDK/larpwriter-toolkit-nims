@@ -16,16 +16,17 @@
     "@babel/preset-react": "^7.10.4",
     "autoprefixer": "^9.8.5",
     "babel-cli": "^6.26.0",
+    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.5",
     "clean-webpack-plugin": "^4.0.0",
-    "babel-eslint": "^10.1.0",
     "css-loader": "^3.5.3",
     "del": "^5.1.0",
     "editorconfig": "^0.15.3",
-    "eslint": "^7.1.0",
-    "eslint-config-airbnb": "^18.1.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react": "^7.20.0",
     "extract-loader": "^5.0.1",
     "file-loader": "^6.0.0",
@@ -35,6 +36,7 @@
     "node-sass": "^9.0.0",
     "npm-check-updates": "^6.0.1",
     "postcss-cli": "^7.1.1",
+    "prettier": "^3.9.4",
     "ramda": "^0.28.0",
     "sass-loader": "^14.2.1",
     "style-loader": "^1.2.1",
@@ -54,7 +56,8 @@
     "build:standalone": "lerna run build:standalone --stream",
     "watch:server": "lerna run watch:server --stream",
     "build:server": "lerna run build:server --stream",
-    "ts:watch": "lerna run ts:watch --stream"
+    "ts:watch": "lerna run ts:watch --stream",
+    "lint": "eslint ./packages/nims-dbms-core --color --quiet"
   },
   "dependencies": {
     "nodemon": "^2.0.7"
