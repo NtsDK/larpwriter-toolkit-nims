@@ -189,7 +189,7 @@ export const migrate = (data) => {
             return acc;
         }, {});
 
-        data.Relations = R.values(acc2).map(R.merge({
+        data.Relations = R.values(acc2).map(R.mergeRight({
             origin: '',
             starterTextReady: false,
             enderTextReady: false,

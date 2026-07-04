@@ -220,7 +220,7 @@ const isInconsistent = (charValue, type, profileItemValue) => {
             return true;
         }
         values = profileItemValue.split(',').map(R.trim);
-        return !R.contains(charValue.trim(), values);
+        return !R.includes(charValue.trim(), values);
 
     case 'multiEnum':
         if (!R.is(String, charValue)) {
@@ -289,6 +289,7 @@ function checkProfileStructureConsistency(data, type, structure: string) {
     if (profileItems.length !== R.uniq(profileItems).length) {
         // @ts-ignore
         const diff = R.toPairs(R.groupBy(name => name, profileItems))
+        // @ts-ignore
             .filter(pair => pair[1].length > 1).map(pair => pair[0]);
         const msg = 'Profile structure inconsistent, item names are repeated: type {0}, values {1}';
         errors.push([msg, [type, diff]]);

@@ -31,7 +31,7 @@ export function getAllInventoryLists(this: ILocalDBMS, { characterName }: any = 
 export function getCharacterEventGroupsByStory(this: ILocalDBMS, { characterName }: any = {}) {
     return new Promise((resolve, reject) => {
         PC.precondition(characterCheck(characterName, this.database), reject, () => {
-            const eventGroups = [];
+            const eventGroups: any[] = [];
 
             let events;
 
@@ -89,7 +89,7 @@ export function getCharacterEventsByTime(this: ILocalDBMS, { characterName }: an
 
 // timeline
 export function getEventsTimeInfo(this: ILocalDBMS, callback) {
-    const result = R.flatten(R.values(R.clone(this.database.Stories)).map(story => story.events.map((event, index) => R.merge(R.pick(['name', 'time'], event), {
+    const result = R.flatten(R.values(R.clone(this.database.Stories)).map(story => story.events.map((event, index) => R.mergeRight(R.pick(['name', 'time'], event), {
         characters: R.keys(event.characters),
         storyName: story.name,
         index

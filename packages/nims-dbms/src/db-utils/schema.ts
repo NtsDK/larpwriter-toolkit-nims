@@ -481,6 +481,7 @@ function getGroupsSchema(characterProfileSettings, playerProfileSettings) {
             properties: {
                 name: {
                     type: 'string',
+                    //@ts-ignore
                     enum: [Constants.SUMMARY_PREFIX + item]
                 },
                 type: {

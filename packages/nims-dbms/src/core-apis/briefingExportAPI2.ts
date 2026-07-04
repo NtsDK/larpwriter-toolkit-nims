@@ -111,11 +111,11 @@ _getBriefingData = (
             relations: _makeRelationsInfo(dbmsUtils._getKnownCharacters(database, charName), database, charName)
         };
 
-        dataObject = R.merge(dataObject, _makeProfileInfo(charName, 'character', database));
+        dataObject = R.mergeRight(dataObject, _makeProfileInfo(charName, 'character', database));
 
         const playerName = database.ProfileBindings[charName];
         if (playerName !== undefined) {
-            dataObject = R.merge(dataObject, _makeProfileInfo(playerName, 'player', database));
+            dataObject = R.mergeRight(dataObject, _makeProfileInfo(playerName, 'player', database));
             // @ts-ignore
             dataObject.playerName = playerName;
         }
@@ -145,12 +145,12 @@ _makeProfileInfo = (profileName, profileType, database) => {
     }
     let dataObject = {};
     dataObject[`${prefix}Array`] = _getProfileInfoArray(profile, profileStructure);
-    dataObject = R.merge(dataObject, _getSimpleProfileInfoObject(`${prefix}-`, profile, profileStructure));
-    dataObject = R.merge(dataObject, _getSplittedProfileInfoObject(
+    dataObject = R.mergeRight(dataObject, _getSimpleProfileInfoObject(`${prefix}-`, profile, profileStructure));
+    dataObject = R.mergeRight(dataObject, _getSplittedProfileInfoObject(
         `${prefix}-splitted-`, profile,
         profileStructure
     ));
-    dataObject = R.merge(dataObject, _getProfileInfoNotEmpty(`${prefix}-notEmpty-`, profile, profileStructure));
+    dataObject = R.mergeRight(dataObject, _getProfileInfoNotEmpty(`${prefix}-notEmpty-`, profile, profileStructure));
     return dataObject;
 };
 
@@ -164,12 +164,13 @@ _makeRelationsInfo = (knownCharacters, database, charName) => {
             splittedText: _splitText(relations[toCharacter]),
             stories: R.keys(knownCharacters[toCharacter] || {}).join(', ')
         };
-        obj = R.merge(obj, _makeProfileInfo(toCharacter, 'character', database));
+        obj = R.mergeRight(obj, _makeProfileInfo(toCharacter, 'character', database));
         return obj;
     }).sort(CU.charOrdAFactory(R.prop('toCharacter')));
 };
 
 _makeCharInventory = (database, charName) => R.values(database.Stories)
+// @ts-ignore
     .filter(story => !R.isNil(story.characters[charName]) && !R.isEmpty(story.characters[charName].inventory))
     .map(story => story.characters[charName].inventory).join(', ');
 
@@ -195,7 +196,7 @@ _getProfileInfoArray = (profile, profileStructure) => {
 };
 
 _getStoriesInfo = (database, charName, selectedStories, exportOnlyFinishedStories) => R.values(database.Stories).filter((story) => {
-    if (!R.contains(story.name, selectedStories)) return false;
+    if (!R.includes(story.name, selectedStories)) return false;
     if (exportOnlyFinishedStories) {
         if (!dbmsUtils._isStoryFinished(database, story.name)
                 || dbmsUtils._isStoryEmpty(database, story.name)) {
@@ -210,7 +211,7 @@ _getStoriesInfo = (database, charName, selectedStories, exportOnlyFinishedStorie
 
 _getEventsInfo = (database, charName, selectedStories, exportOnlyFinishedStories) => {
     let eventsInfo = R.values(database.Stories).filter((story) => {
-        if (!R.contains(story.name, selectedStories)) return false;
+        if (!R.includes(story.name, selectedStories)) return false;
         if (exportOnlyFinishedStories) {
             if (!dbmsUtils._isStoryFinished(database, story.name)
                     || dbmsUtils._isStoryEmpty(database, story.name)) {

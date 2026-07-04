@@ -19,13 +19,16 @@ export function getProfileBindings(this: ILocalDBMS) {
 };
 
 export function getExtendedProfileBindings(this: ILocalDBMS) {
+  // @ts-ignore
   let characters = R.keys(R.path(charPath, this.database));
+  // @ts-ignore
   let players = R.keys(R.path(playerPath, this.database));
   const bindings = R.clone(R.path(path, this.database));
+  // @ts-ignore
   characters = R.difference(characters, R.keys(bindings));
   // @ts-ignore
   players = R.difference(players, R.values(bindings));
-  
+
   // @ts-ignore
   const bindingData = R.reduce(R.concat, [], [R.toPairs(bindings),
     R.zip(characters, R.repeat('', characters.length)),
@@ -59,7 +62,7 @@ export function getProfileBinding(this: ILocalDBMS, { type, name }: any = {}) {
 };
 
 export function createBinding(
-  this: ILocalDBMS, 
+  this: ILocalDBMS,
   { characterName, playerName }: any = {}
 ): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -85,7 +88,7 @@ export function createBinding(
 };
 
 export function removeBinding(
-  this: ILocalDBMS, 
+  this: ILocalDBMS,
   { characterName, playerName }: any = {}
 ): Promise<void> {
   return new Promise((resolve, reject) => {

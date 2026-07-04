@@ -76,7 +76,7 @@ export function getCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharac
 };
 
 export function createCharacterRelation(
-  this: ILocalDBMS, 
+  this: ILocalDBMS,
   { fromCharacter, toCharacter }: any = {}
 ): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -103,7 +103,7 @@ export function createCharacterRelation(
 };
 
 export function removeCharacterRelation(
-  this: ILocalDBMS, 
+  this: ILocalDBMS,
   { fromCharacter, toCharacter }: any = {}
 ): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -122,7 +122,7 @@ export function removeCharacterRelation(
 };
 
 export function setCharacterRelationText(
-  this: ILocalDBMS, 
+  this: ILocalDBMS,
     {
         fromCharacter, toCharacter, character, text
     }: any = {}
@@ -181,6 +181,7 @@ export function setRelationEssenceStatus(this: ILocalDBMS, {
         PC.precondition(chain, reject, () => {
             const rel = findRel(fromCharacter, toCharacter, relData);
             if (flag === true) {
+              // @ts-ignore
                 rel.essence = R.uniq(R.append(essence, rel.essence));
             } else {
                 rel.essence.splice(R.indexOf(essence, rel.essence), 1);
@@ -191,7 +192,7 @@ export function setRelationEssenceStatus(this: ILocalDBMS, {
 };
 
 export function setOriginRelationText(
-  this: ILocalDBMS, 
+  this: ILocalDBMS,
   { fromCharacter, toCharacter, text }: any = {}
 ): Promise<void> {
     return new Promise((resolve, reject) => {

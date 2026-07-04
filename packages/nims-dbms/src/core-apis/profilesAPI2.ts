@@ -38,7 +38,7 @@ export function getProfile(this: ILocalDBMS, { type, name }: any = {}) {
           // @ts-ignore
             const container = R.path(getPath(type), this.database);
             PC.precondition(PC.entityExistsCheck(name, R.keys(container)), reject, () => {
-              // @ts-ignore  
+              // @ts-ignore
               resolve(R.clone(container[name]));
             });
         });
@@ -89,7 +89,7 @@ export function renameProfile(this: ILocalDBMS, { type, fromName, toName }: any 
           // @ts-ignore
             const container = R.path(getPath(type), this.database);
             PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(container)), reject, () => {
-              // @ts-ignore  
+              // @ts-ignore
               const data = container[fromName];
                 data.name = toName;
                 // @ts-ignore
@@ -105,7 +105,7 @@ export function renameProfile(this: ILocalDBMS, { type, fromName, toName }: any 
 
 // profiles
 export function removeProfile(
-  this: ILocalDBMS, 
+  this: ILocalDBMS,
   { type, characterName }: any = {}
 ): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -113,7 +113,7 @@ export function removeProfile(
           // @ts-ignore
             const container = R.path(getPath(type), this.database);
             PC.precondition(PC.removeEntityCheck(characterName, R.keys(container)), reject, () => {
-              // @ts-ignore  
+              // @ts-ignore
               delete container[characterName];
                 this.ee.emit('removeProfile', arguments);
                 resolve();
@@ -162,7 +162,7 @@ export function updateProfileField(this: ILocalDBMS, {
               // @ts-ignore
                 const itemDesc = R.find(R.propEq('name', fieldName), containerStructure);
                 PC.precondition(typeSpecificPreconditions(itemType, itemDesc, value), reject, () => {
-                  // @ts-ignore  
+                  // @ts-ignore
                   const profileInfo = container[characterName];
                     switch (itemType) {
                     case 'text':
@@ -203,7 +203,7 @@ function _createProfileItem(this: ILocalDBMS, [{
 // addListener('createProfileItem', _createProfileItem);
 
 function _removeProfileItem(this: ILocalDBMS, [{ type, index, profileItemName }] = []) {
-  // @ts-ignore  
+  // @ts-ignore
   const profileSet = R.path(getPath(type), this.database);
   // @ts-ignore
     Object.keys(profileSet).forEach((characterName) => {
@@ -307,7 +307,7 @@ function _renameMultiEnumValue(this: ILocalDBMS, [{
         const value = profileSet[characterName][profileItemName];
         if (value !== '') {
             const list = value.split(',');
-            if (R.contains(fromValue, list)) {
+            if (R.includes(fromValue, list)) {
                 list[R.indexOf(fromValue, list)] = toValue;
                 // @ts-ignore
                 profileSet[characterName][profileItemName] = list.join(',');
