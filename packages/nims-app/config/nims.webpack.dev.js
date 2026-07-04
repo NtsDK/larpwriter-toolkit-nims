@@ -161,7 +161,13 @@ const config = {
       path.resolve(__dirname, "../"),
       // path.resolve(__dirname, '../dbms/nims'),
     ],
-    alias: [],
+    alias: [
+      {
+        alias: "core",
+        name: "nims-app-core",
+        // onlyModule: true,
+      },
+    ],
   },
 };
 
