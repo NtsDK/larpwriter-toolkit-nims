@@ -6,7 +6,7 @@ import * as R from "ramda";
 import * as Migrator from "../db-utils/migrator";
 import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
-import type { GameMeta, ILocalDBMS } from "../domain";
+import type { Database, GameMeta, ILocalDBMS } from "../domain";
 import { getGameMetaStore } from "../IoC";
 
 // ((callback2) => {
@@ -32,7 +32,7 @@ export function getDatabase(this: ILocalDBMS) {
 }
 
 // DBMS.set
-export function setDatabase(this: ILocalDBMS, { database }: any = {}): Promise<void> {
+export function setDatabase(this: ILocalDBMS, { database }: { database: Database }): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
       this.database = Migrator.migrate(database);

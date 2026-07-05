@@ -46,11 +46,14 @@ export function getCharacterEventGroupsByStory(this: ILocalDBMS, { characterName
           const tmpEvents = R.clone(that.database.Stories[storyName].events);
           tmpEvents
             .map((elem, i) => {
-              elem.index = i;
-              elem.storyName = storyName;
-              elem.isTimeEmpty = elem.time === "";
-              elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
-              return elem;
+              const isTimeEmpty = elem.time === "";
+              return {
+                ...elem,
+                index: i,
+                storyName,
+                isTimeEmpty,
+                time: isTimeEmpty ? that.database.Meta.date : elem.time,
+              }
             })
             .filter((event) => event.characters[characterName])
             .forEach((event) => {
@@ -74,7 +77,7 @@ export function getCharacterEventGroupsByStory(this: ILocalDBMS, { characterName
 export function getCharacterEventsByTime(this: ILocalDBMS, { characterName }: any = {}) {
   return new Promise((resolve, reject) => {
     PC.precondition(characterCheck(characterName, this.database), reject, () => {
-      let allEvents = [];
+      let allEvents: any[] = [];
 
       const that = this;
       Object.keys(this.database.Stories)
@@ -84,11 +87,14 @@ export function getCharacterEventsByTime(this: ILocalDBMS, { characterName }: an
           allEvents = allEvents.concat(
             events
               .map((elem, i) => {
-                elem.index = i;
-                elem.storyName = storyName;
-                elem.isTimeEmpty = elem.time === "";
-                elem.time = elem.isTimeEmpty ? that.database.Meta.date : elem.time;
-                return elem;
+                const isTimeEmpty = elem.time === "";
+                return {
+                  ...elem,
+                  index: i,
+                  storyName,
+                  isTimeEmpty,
+                  time: isTimeEmpty ? that.database.Meta.date : elem.time,
+                }
               })
               .filter((event) => event.characters[characterName])
           );
@@ -138,8 +144,8 @@ export function getCharactersSummary(this: ILocalDBMS) {
       const characterInfo = charactersInfo[storyCharacter.name];
       characterInfo.totalStories++;
       R.toPairs(storyCharacter.activity).forEach((activity) => {
-        if (activity[1] === true) {
-          characterInfo[activity[0]]++;
+        if (activity![1] === true) {
+          characterInfo[activity![0]]++;
         }
       });
     });

@@ -1,17 +1,14 @@
 import * as R from "ramda";
 import { CU } from "nims-dbms-core";
+import { Database } from "../domain";
 
-const path = ["ProfileBindings"];
-
-export function _getProfileBinding(type, name, db) {
-  let arr;
+export function _getProfileBinding(type: "character" | "player", name: string, db: Database): [string, string] {
+  let arr: [string, string];
   if (type === "character") {
-    const bindings = R.path(path, db);
-    // @ts-ignore
+    const bindings = db.ProfileBindings;
     arr = [name, bindings[name] || ""];
   } else {
-    // @ts-ignore
-    const bindings = R.invertObj(R.path(path, db));
+    const bindings = R.invertObj(db.ProfileBindings);
     arr = [bindings[name] || "", name];
   }
   return arr;
@@ -22,9 +19,10 @@ export const _rel2RelKey = rel2RelKey;
 const arr2RelKey = R.pipe(R.sort(CU.charOrdA), JSON.stringify);
 export const _arr2RelKey = arr2RelKey;
 
-export function _getKnownCharacters(database, characterName) {
+export function _getKnownCharacters(database: Database, characterName: string) {
   const stories = database.Stories;
-  const knownCharacters = {};
+  // const knownCharacters: Record<string, Record<string, boolean>> = {};
+  const knownCharacters: Record<string, any> = {};
   R.values(stories).forEach((story) => {
     // @ts-ignore
     const filter = R.compose(R.not, R.isNil, R.prop(characterName), R.prop("characters"));
@@ -39,9 +37,9 @@ export function _getKnownCharacters(database, characterName) {
   return knownCharacters;
 }
 
-export const _isStoryEmpty = (database, storyName) => database.Stories[storyName].events.length === 0;
+export const _isStoryEmpty = (database: Database, storyName: string) => database.Stories[storyName].events.length === 0;
 
-export const _isStoryFinished = (database, storyName) =>
+export const _isStoryFinished = (database: Database, storyName: string) =>
   database.Stories[storyName].events.every(
     (event) => !R.isEmpty(event.characters) && R.values(event.characters).every((adaptation) => adaptation.ready)
   );

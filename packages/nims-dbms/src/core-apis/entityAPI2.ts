@@ -1,6 +1,7 @@
 import { PC, Errors } from "nims-dbms-core";
 import * as Constants from "../nimsConstants";
 import { ILocalDBMS } from "../domain";
+import { OwnedEntityTypes } from "../nimsConstants";
 
 // ((callback2) => {
 //     function entityAPI(LocalDBMS, opts) {
@@ -9,7 +10,7 @@ import { ILocalDBMS } from "../domain";
 //         } = opts;
 
 // DBMS.groups.names.get()
-export function getEntityNamesArray(this: ILocalDBMS, { type }: any = {}) {
+export function getEntityNamesArray(this: ILocalDBMS, { type }: { type: OwnedEntityTypes }) {
   return new Promise((resolve, reject) => {
     // @ts-ignore
     const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);

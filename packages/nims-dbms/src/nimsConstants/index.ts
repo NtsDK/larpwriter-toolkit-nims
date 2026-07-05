@@ -25,39 +25,44 @@ export const profileFieldTypes = {
     name: "multiEnum",
     value: "",
   },
-};
+} as const;
 
 export const profileFieldTypesNames = R.keys(profileFieldTypes);
 
-export const relationFields = ["origin", "starterTextReady", "enderTextReady", "essence", "starter", "ender"];
+export const relationFields = ["origin", "starterTextReady", "enderTextReady", "essence", "starter", "ender"] as const;
 
-export const relationEssences = ["starterToEnder", "allies", "enderToStarter"];
+export const relationEssences = ["starterToEnder", "allies", "enderToStarter"] as const;
+export type RelationEssences = typeof relationEssences[number];
 
-export const playerAccessTypes = ["write", "readonly", "hidden"];
+export const playerAccessTypes = ["write", "readonly", "hidden"] as const;
 
-export const originProperties = ["name", "text", "time"];
+export const originProperties = ["name", "text", "time"] as const;
 
-export const adaptationProperties = ["text", "time", "ready"];
+export const adaptationProperties = ["text", "time", "ready"] as const;
 
-export const playersOptionTypes = ["allowPlayerCreation", "allowCharacterCreation"];
+export const playersOptionTypes = ["allowPlayerCreation", "allowCharacterCreation"] as const;
 
-export const objectSubsets = ["allObjects", "selectedCharacters", "selectedStories"];
+export const objectSubsets = ["allObjects", "selectedCharacters", "selectedStories"] as const;
 
 export const networks = [
   "socialRelations",
   "characterPresenceInStory",
   "characterActivityInStory",
   "characterRelations",
-];
+] as const;
 
-export const ownedEntityTypes = ["character", "player", "story", "group"];
-export const ownedEntityTypes2 = ["characters", "players", "stories", "groups"];
+export const ownedEntityTypes = ["character", "player", "story", "group"] as const;
+export type OwnedEntityTypes = typeof ownedEntityTypes[number];
 
-export const metaInfoStrings = ["name", "description"];
+export const ownedEntityTypes2 = ["characters", "players", "stories", "groups"] as const;
+export type OwnedEntityTypes2 = typeof ownedEntityTypes2[number];
 
-export const metaInfoDates = ["date", "preGameDate"];
+export const metaInfoStrings = ["name", "description"] as const;
 
-export const profileTypes = ["character", "player"];
+export const metaInfoDates = ["date", "preGameDate"] as const;
+
+export const profileTypes = ["character", "player"] as const;
+export type ProfileTypes = typeof profileTypes[number];
 
 export const groupProfileStructure = [
   {

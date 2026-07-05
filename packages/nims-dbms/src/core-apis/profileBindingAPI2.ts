@@ -3,6 +3,7 @@ import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
 import { ILocalDBMS } from "../domain";
+import { ProfileTypes } from "../nimsConstants";
 
 // ((callback2) => {
 //   function profileBindingAPI(LocalDBMS, opts) {
@@ -10,32 +11,21 @@ import { ILocalDBMS } from "../domain";
 //   R, Constants, Errors, addListener, dbmsUtils, CU, PC
 // } = opts;
 
-const path = ["ProfileBindings"];
-const charPath = ["Characters"];
-const playerPath = ["Players"];
-
 export function getProfileBindings(this: ILocalDBMS) {
-  return Promise.resolve(R.clone(R.path(path, this.database)));
+  return Promise.resolve(R.clone(this.database.ProfileBindings));
 }
 
 export function getExtendedProfileBindings(this: ILocalDBMS) {
-  // @ts-ignore
-  let characters = R.keys(R.path(charPath, this.database));
-  // @ts-ignore
-  let players = R.keys(R.path(playerPath, this.database));
-  const bindings = R.clone(R.path(path, this.database));
-  // @ts-ignore
+  let characters = R.keys(this.database.Characters);
+  let players = R.keys(this.database.Players);
+  const bindings = R.clone(this.database.ProfileBindings);
   characters = R.difference(characters, R.keys(bindings));
-  // @ts-ignore
   players = R.difference(players, R.values(bindings));
 
-  // @ts-ignore
   const bindingData = R.reduce(
     R.concat,
-    // @ts-ignore
     [],
     [
-      // @ts-ignore
       R.toPairs(bindings),
       R.zip(characters, R.repeat("", characters.length)),
       R.zip(R.repeat("", players.length), players),
@@ -59,7 +49,7 @@ export function getExtendedProfileBindings(this: ILocalDBMS) {
 // dbmsUtils._getProfileBinding = _getProfileBinding;
 
 // DBMS.profileBindings.characters[name].get()
-export function getProfileBinding(this: ILocalDBMS, { type, name }: any = {}) {
+export function getProfileBinding(this: ILocalDBMS, { type, name }: { type: ProfileTypes, name: string }) {
   return new Promise((resolve, reject) => {
     const conditions = [
       PC.isString(type),
@@ -77,7 +67,7 @@ export function getProfileBinding(this: ILocalDBMS, { type, name }: any = {}) {
 
 export function createBinding(this: ILocalDBMS, { characterName, playerName }: any = {}): Promise<void> {
   return new Promise((resolve, reject) => {
-    const bindings = R.path(path, this.database);
+    const bindings = this.database.ProfileBindings;
     // @ts-ignore
     const invertBinding = R.invertObj(bindings);
     const conditions = [
@@ -105,7 +95,7 @@ export function createBinding(this: ILocalDBMS, { characterName, playerName }: a
 export function removeBinding(this: ILocalDBMS, { characterName, playerName }: any = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     // @ts-ignore
-    const bindingArr = R.toPairs(R.path(path, this.database)).map((pair) => `${pair[0]}/${pair[1]}`);
+    const bindingArr = R.toPairs(this.database.ProfileBindings).map((pair) => `${pair[0]}/${pair[1]}`);
     const conditions = [
       PC.isString(characterName),
       // @ts-ignore
@@ -118,14 +108,14 @@ export function removeBinding(this: ILocalDBMS, { characterName, playerName }: a
     ];
     PC.precondition(PC.chainCheck(conditions), reject, () => {
       // @ts-ignore
-      delete R.path(path, this.database)[characterName];
+      delete this.database.ProfileBindings[characterName];
       resolve();
     });
   });
 }
 
 function _renameProfile(this: ILocalDBMS, [{ type, fromName, toName }] = []) {
-  const bindings = R.path(path, this.database);
+  const bindings = this.database.ProfileBindings;
   if (type === "character") {
     // @ts-ignore
     const playerName = bindings[fromName];
@@ -151,7 +141,7 @@ function _renameProfile(this: ILocalDBMS, [{ type, fromName, toName }] = []) {
 // addListener('renameProfile', _renameProfile);
 
 function _removeProfile(this: ILocalDBMS, [{ type, characterName }] = []) {
-  const bindings = R.path(path, this.database);
+  const bindings = this.database.ProfileBindings;
   if (type === "character") {
     // @ts-ignore
     delete bindings[characterName];

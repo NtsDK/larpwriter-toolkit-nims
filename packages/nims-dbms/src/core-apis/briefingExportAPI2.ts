@@ -1,7 +1,7 @@
 import * as R from "ramda";
 import { PC, CU } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
-import { ILocalDBMS } from "../domain";
+import { Database, ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function briefingExportAPI(LocalDBMS, opts) {
@@ -79,13 +79,13 @@ let _getBriefingData,
 //  ]
 
 // DBMS.briefings.get()
-export function getBriefingData(this: ILocalDBMS, { selCharacters, selStories, exportOnlyFinishedStories }: any = {}) {
+export function getBriefingData(this: ILocalDBMS, { selCharacters, selStories, exportOnlyFinishedStories }:
+  { selCharacters: string[], selStories: string[], exportOnlyFinishedStories: boolean }) {
   return new Promise((resolve, reject) => {
     PC.precondition(check(selCharacters, selStories, exportOnlyFinishedStories, this.database), reject, () => {
       const that = this;
       selCharacters = selCharacters || R.keys(this.database.Characters);
       selStories = selStories || R.keys(this.database.Stories);
-      // @ts-ignore
       that
         // @ts-ignore
         .getAllCharacterGroupTexts()
@@ -110,7 +110,7 @@ export function getBriefingData(this: ILocalDBMS, { selCharacters, selStories, e
   });
 }
 
-_getBriefingData = (database, selectedCharacters, selectedStories, groupTexts, exportOnlyFinishedStories, callback) => {
+_getBriefingData = (database: Database, selectedCharacters: string[], selectedStories: string[], groupTexts, exportOnlyFinishedStories: boolean, callback) => {
   const charArray = selectedCharacters.map((charName) => {
     groupTexts[charName].forEach((groupText) => {
       groupText.splittedText = _splitText(groupText.text);
@@ -168,7 +168,7 @@ _makeProfileInfo = (profileName, profileType, database) => {
   return dataObject;
 };
 
-_makeRelationsInfo = (knownCharacters, database, charName) => {
+_makeRelationsInfo = (knownCharacters, database: Database, charName) => {
   const relations = database.Relations[charName];
   const profiles = database.Characters;
   return R.keys(relations)
@@ -185,7 +185,7 @@ _makeRelationsInfo = (knownCharacters, database, charName) => {
     .sort(CU.charOrdAFactory(R.prop("toCharacter")));
 };
 
-_makeCharInventory = (database, charName) =>
+_makeCharInventory = (database: Database, charName) =>
   R.values(database.Stories)
     // @ts-ignore
     .filter((story) => !R.isNil(story.characters[charName]) && !R.isEmpty(story.characters[charName].inventory))
@@ -215,7 +215,7 @@ _getProfileInfoArray = (profile, profileStructure) => {
   });
 };
 
-_getStoriesInfo = (database, charName, selectedStories, exportOnlyFinishedStories) =>
+_getStoriesInfo = (database: Database, charName, selectedStories, exportOnlyFinishedStories) =>
   R.values(database.Stories)
     .filter((story) => {
       if (!R.includes(story.name, selectedStories)) return false;
@@ -232,7 +232,7 @@ _getStoriesInfo = (database, charName, selectedStories, exportOnlyFinishedStorie
     }))
     .sort(CU.charOrdAFactory((a) => a.storyName.toLowerCase()));
 
-_getEventsInfo = (database, charName, selectedStories, exportOnlyFinishedStories) => {
+_getEventsInfo = (database: Database, charName, selectedStories, exportOnlyFinishedStories) => {
   let eventsInfo = R.values(database.Stories)
     .filter((story) => {
       if (!R.includes(story.name, selectedStories)) return false;
