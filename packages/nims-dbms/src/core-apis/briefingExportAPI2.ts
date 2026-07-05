@@ -1,7 +1,7 @@
 import * as R from "ramda";
 import { PC, CU } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function briefingExportAPI(LocalDBMS, opts) {

@@ -4,7 +4,7 @@ import * as R from "ramda";
 import { CU } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
 import * as Schema from "../db-utils/schema";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function consistencyCheckAPI(LocalDBMS, opts) {

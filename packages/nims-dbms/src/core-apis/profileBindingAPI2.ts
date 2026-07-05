@@ -2,7 +2,7 @@ import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //   function profileBindingAPI(LocalDBMS, opts) {

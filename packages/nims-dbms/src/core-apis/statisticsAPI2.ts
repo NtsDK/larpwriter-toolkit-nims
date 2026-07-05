@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import * as Constants from "../nimsConstants";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function statisticsAPI(LocalDBMS, opts) {

@@ -24,7 +24,7 @@ import * as storyAdaptationsAPI2 from "./storyAdaptationsAPI2";
 // import * as gearsAPI from './core-apis/gearsAPI';
 // import * as slidersAPI from './core-apis/slidersAPI';
 import * as textSearchAPI2 from "./textSearchAPI2";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // import * as logAPI from './core-apis/logAPI';
 

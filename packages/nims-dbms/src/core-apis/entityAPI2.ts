@@ -1,6 +1,6 @@
 import { PC, Errors } from "nims-dbms-core";
 import * as Constants from "../nimsConstants";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function entityAPI(LocalDBMS, opts) {

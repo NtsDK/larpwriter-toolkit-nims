@@ -2,7 +2,7 @@ import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC, CU, Errors } from "nims-dbms-core";
 import * as PU from "../db-utils/projectUtils";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function groupsAPI(LocalDBMS, opts) {

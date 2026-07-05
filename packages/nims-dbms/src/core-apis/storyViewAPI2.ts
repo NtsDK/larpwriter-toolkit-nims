@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import { PC, CU } from "nims-dbms-core";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function storyViewAPI(LocalDBMS, opts) {

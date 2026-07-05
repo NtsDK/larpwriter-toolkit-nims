@@ -1,7 +1,7 @@
 import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function textSearchAPI(LocalDBMS, opts) {

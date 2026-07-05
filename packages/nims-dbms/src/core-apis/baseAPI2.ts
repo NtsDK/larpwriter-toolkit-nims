@@ -6,7 +6,7 @@ import * as R from "ramda";
 import * as Migrator from "../db-utils/migrator";
 import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
-import type { ILocalDBMS } from "./ILocalDBMS";
+import type { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function baseAPI(LocalDBMS) {

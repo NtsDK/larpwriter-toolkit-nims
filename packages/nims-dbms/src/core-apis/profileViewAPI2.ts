@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import { ILocalDBMS } from "./ILocalDBMS";
+import { ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function profileViewAPI(LocalDBMS, opts) {
