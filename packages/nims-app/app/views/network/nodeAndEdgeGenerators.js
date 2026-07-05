@@ -24,7 +24,7 @@ export function getActivityEdges(stories, selectedActivities) {
     R.keys(stories).map((name) =>
       R.keys(stories[name].characters).map((char1) =>
         R.keys(stories[name].characters[char1].activity)
-          .filter(R.contains(R.__, selectedActivities))
+          .filter(R.includes(R.__, selectedActivities))
           .map((activity) => ({
             from: STORY_PREFIX + name,
             to: CHAR_PREFIX + char1,
@@ -38,7 +38,7 @@ export function getActivityEdges(stories, selectedActivities) {
 }
 
 export function getRelationEdges(relations, selectedRelations) {
-  const checked = R.contains(R.__, selectedRelations);
+  const checked = R.includes(R.__, selectedRelations);
   return R.flatten(
     relations.map((rel) => {
       const arr = [];
@@ -54,30 +54,30 @@ export function getRelationEdges(relations, selectedRelations) {
       if (rel.essence.length === 0) {
         if (checked("neutral")) {
           arr.push(
-            R.merge(edgeTmpl, {
+            R.mergeRight(edgeTmpl, {
               color: Constants.snRelationColors.neutral,
             })
           );
         }
       } else {
-        if (checked("allies") && R.contains("allies", rel.essence)) {
+        if (checked("allies") && R.includes("allies", rel.essence)) {
           arr.push(
-            R.merge(edgeTmpl, {
+            R.mergeRight(edgeTmpl, {
               color: Constants.snRelationColors.allies,
             })
           );
         }
-        if (checked("directional") && R.contains("starterToEnder", rel.essence)) {
+        if (checked("directional") && R.includes("starterToEnder", rel.essence)) {
           arr.push(
-            R.merge(edgeTmpl, {
+            R.mergeRight(edgeTmpl, {
               color: Constants.snRelationColors.starterToEnder,
               arrows: "to",
             })
           );
         }
-        if (checked("directional") && R.contains("enderToStarter", rel.essence)) {
+        if (checked("directional") && R.includes("enderToStarter", rel.essence)) {
           arr.push(
-            R.merge(edgeTmpl, {
+            R.mergeRight(edgeTmpl, {
               color: Constants.snRelationColors.enderToStarter,
               arrows: "from",
             })

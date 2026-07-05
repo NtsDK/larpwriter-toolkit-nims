@@ -45,6 +45,7 @@ export function getFilteredStoryNames(this: ILocalDBMS, { showOnlyUnfinishedStor
 //adaptations
 export function getStory(this: ILocalDBMS, { storyName }: any = {}) {
   return new Promise((resolve, reject) => {
+    // @ts-ignore
     const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       resolve(R.clone(this.database.Stories[storyName]));
@@ -72,9 +73,11 @@ export function setEventAdaptationProperty(
   return new Promise((resolve, reject) => {
     let chain = [
       PC.isString(storyName),
+      // @ts-ignore
       PC.entityExists(storyName, R.keys(this.database.Stories)),
       PC.isNumber(eventIndex),
       PC.isString(type),
+      // @ts-ignore
       PC.elementFromEnum(type, Constants.adaptationProperties),
       PC.isString(characterName),
     ];
@@ -82,6 +85,7 @@ export function setEventAdaptationProperty(
       const story = this.database.Stories[storyName];
       // @ts-ignore
       chain = [
+        // @ts-ignore
         PC.entityExists(characterName, R.keys(story.characters)),
         // @ts-ignore
         PC.isInRange(eventIndex, 0, story.events.length - 1),
@@ -89,6 +93,7 @@ export function setEventAdaptationProperty(
       ];
       PC.precondition(PC.chainCheck(chain), reject, () => {
         const event = story.events[eventIndex];
+        // @ts-ignore
         PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), reject, () => {
           event.characters[characterName][type] = value;
           resolve();

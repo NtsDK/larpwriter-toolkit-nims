@@ -21,6 +21,7 @@ const findRel = R.curry((fromCharacter, toCharacter, relations) => {
   const findFunc = R.curry(
     (fromCharacter2, toCharacter2, rel) => rel[fromCharacter2] !== undefined && rel[toCharacter2] !== undefined
   );
+  // @ts-ignore
   return R.find(findFunc(fromCharacter, toCharacter), relations);
 });
 
@@ -41,6 +42,7 @@ const findRel = R.curry((fromCharacter, toCharacter, relations) => {
 // };
 
 const characterCheck = (characterName, database) =>
+  // @ts-ignore
   PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
 
 // @ts-ignore
@@ -133,6 +135,7 @@ export function setCharacterRelationText(
       characterCheck(fromCharacter, this.database),
       characterCheck(toCharacter, this.database),
       PC.isString(character),
+      // @ts-ignore
       PC.elementFromEnum(character, [fromCharacter, toCharacter]),
       PC.isString(text),
       // @ts-ignore
@@ -157,6 +160,7 @@ export function setRelationReadyStatus(
       characterCheck(fromCharacter, this.database),
       characterCheck(toCharacter, this.database),
       PC.isString(character),
+      // @ts-ignore
       PC.elementFromEnum(character, [fromCharacter, toCharacter]),
       PC.isBoolean(ready),
       // @ts-ignore
@@ -164,9 +168,12 @@ export function setRelationReadyStatus(
     ]);
     PC.precondition(chain, reject, () => {
       const rel = findRel(fromCharacter, toCharacter, relData);
+      // @ts-ignore
       if (rel.starter === character) {
+        // @ts-ignore
         rel.starterTextReady = ready;
       } else {
+        // @ts-ignore
         rel.enderTextReady = ready;
       }
       resolve();
@@ -184,6 +191,7 @@ export function setRelationEssenceStatus(
       characterCheck(fromCharacter, this.database),
       characterCheck(toCharacter, this.database),
       PC.isString(essence),
+      // @ts-ignore
       PC.elementFromEnum(essence, Constants.relationEssences),
       PC.isBoolean(flag),
       // @ts-ignore
@@ -195,6 +203,7 @@ export function setRelationEssenceStatus(
         // @ts-ignore
         rel.essence = R.uniq(R.append(essence, rel.essence));
       } else {
+        // @ts-ignore
         rel.essence.splice(R.indexOf(essence, rel.essence), 1);
       }
       resolve();
@@ -215,6 +224,7 @@ export function setOriginRelationText(this: ILocalDBMS, { fromCharacter, toChara
     PC.precondition(chain, reject, () => {
       const rel = findRel(fromCharacter, toCharacter, relData);
       text = text.trim();
+      // @ts-ignore
       rel.origin = text;
       resolve();
     });

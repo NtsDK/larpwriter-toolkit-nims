@@ -46,7 +46,7 @@ export class Adaptations extends Component {
         const filteredArr = R.indexBy(R.prop("storyName"), storyNames);
 
         const storyNames2 = allStoryNames
-          .filter((story) => R.contains(story.value, R.keys(filteredArr)))
+          .filter((story) => R.includes(story.value, R.keys(filteredArr)))
           .map((story) => {
             const elem = filteredArr[story.value];
             elem.status = getEntityStatus(elem);
@@ -101,8 +101,8 @@ export class Adaptations extends Component {
                   <AdaptationsContent
                     key={id}
                     storyName={id}
-                    // isAdaptationsMode
-                    // characterProfileStructure={characterProfileStructure}
+                  // isAdaptationsMode
+                  // characterProfileStructure={characterProfileStructure}
                   />
                   // </div>
                 );

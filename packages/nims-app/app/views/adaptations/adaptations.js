@@ -57,7 +57,7 @@ function refresh() {
       const filteredArr = R.indexBy(R.prop("storyName"), storyNames);
 
       const storyNames2 = allStoryNames
-        .filter((story) => R.contains(story.value, R.keys(filteredArr)))
+        .filter((story) => R.includes(story.value, R.keys(filteredArr)))
         .map((story) => {
           const elem = filteredArr[story.value];
           elem.displayName = story.displayName;

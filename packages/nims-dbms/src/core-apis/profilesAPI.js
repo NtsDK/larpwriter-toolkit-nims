@@ -246,7 +246,7 @@
         const value = profileSet[characterName][profileItemName];
         if (value !== "") {
           const list = value.split(",");
-          if (R.contains(fromValue, list)) {
+          if (R.includes(fromValue, list)) {
             list[R.indexOf(fromValue, list)] = toValue;
             profileSet[characterName][profileItemName] = list.join(",");
           }

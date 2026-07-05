@@ -53,13 +53,13 @@ const arrContainsElsCheck = R.curry((msg, els, valueList) => () => {
 exports.elementsFromEnum = arrContainsElsCheck("errors-unsupported-types-in-list");
 exports.entitiesExist = arrContainsElsCheck("errors-entities-are-not-exist");
 
-const arrContainsElCheck = R.curry((msg, el, valueList) => () => (R.contains(el, valueList) ? null : [msg, [el]]));
+const arrContainsElCheck = R.curry((msg, el, valueList) => () => (R.includes(el, valueList) ? null : [msg, [el]]));
 
 exports.elementFromEnum = arrContainsElCheck("errors-unsupported-type-in-list");
 exports.entityExists = arrContainsElCheck("errors-entity-is-not-exist");
 
 exports.entityIsNotUsed = R.curry(
-  (el, valueList) => () => (!R.contains(el, valueList) ? null : ["errors-entity-is-used", [el]])
+  (el, valueList) => () => (!R.includes(el, valueList) ? null : ["errors-entity-is-used", [el]])
 );
 
 exports.isString = R.curry((el) => () => (R.is(String, el) ? null : ["errors-argument-is-not-a-string", [el]]));

@@ -99,7 +99,7 @@ export const addGroupTestingData = () => {
     DBMS.createGroup({ groupName: name });
     DBMS.saveFilterToGroup({
       groupName: name,
-      filterModel: [R.merge(obj, { type: profileItem, name: `profile-${profileItem}` })],
+      filterModel: [R.mergeRight(obj, { type: profileItem, name: `profile-${profileItem}` })],
     });
   };
   //

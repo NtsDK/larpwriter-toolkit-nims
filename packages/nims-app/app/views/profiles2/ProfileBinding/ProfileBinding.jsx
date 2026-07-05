@@ -42,7 +42,7 @@ export function ProfileBinding(props) {
 
   const bondedCharacterList = R.keys(profileBindings);
   const bondedPlayerList = R.values(profileBindings);
-  const filter = (list) => R.compose(R.not, R.contains(R.__, list), R.prop("value"));
+  const filter = (list) => R.compose(R.not, R.includes(R.__, list), R.prop("value"));
 
   const bindings = R.toPairs(profileBindings).map((binding) => ({
     name: R.join("/", binding),

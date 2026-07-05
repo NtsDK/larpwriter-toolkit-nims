@@ -214,7 +214,7 @@ const Ajv = require("ajv");
             return true;
           }
           values = profileItemValue.split(",").map(R.trim);
-          return !R.contains(charValue.trim(), values);
+          return !R.includes(charValue.trim(), values);
 
         case "multiEnum":
           if (!R.is(String, charValue)) {
@@ -263,7 +263,7 @@ const Ajv = require("ajv");
             errors.push([msg, [profile.name, difference]]);
             return;
           }
-          if (!R.all(R.contains(R.__, profileItems))(charItems)) {
+          if (!R.all(R.includes(R.__, profileItems))(charItems)) {
             const msg = "Character profile inconsistent, item name inconsistency: char {0}, difference [{1}]";
             errors.push([msg, [profile.name, difference]]);
           }

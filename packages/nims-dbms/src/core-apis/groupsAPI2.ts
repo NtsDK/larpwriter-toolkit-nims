@@ -15,6 +15,7 @@ export function getGroupNamesArray(this: ILocalDBMS) {
 }
 // DBMS.groups.names.get()
 const groupCheck = (groupName, database) =>
+  // @ts-ignore
   PC.chainCheck([PC.isString(groupName), PC.entityExists(groupName, R.keys(database.Groups))]);
 
 //        [
@@ -252,6 +253,7 @@ export function updateGroupField(this: ILocalDBMS, { groupName, fieldName, value
     const chain = PC.chainCheck([
       groupCheck(groupName, this.database),
       PC.isString(fieldName),
+      // @ts-ignore
       PC.elementFromEnum(fieldName, Constants.groupEditableItems),
       PC.isString(value),
     ]);

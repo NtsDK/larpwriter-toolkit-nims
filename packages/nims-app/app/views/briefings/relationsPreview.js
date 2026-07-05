@@ -27,8 +27,8 @@ function makeRelationsContent(data, isAdaptationsMode, profileSettings, external
 
   const get2ndCharName = ProjectUtils.get2ndRelChar(characterName);
   const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CU.charOrdA);
-  const noRelsList = characterNamesArray.filter(R.compose(R.not, R.contains(R.__, showCharacters), R.prop("value")));
-  const predicate = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop("value"));
+  const noRelsList = characterNamesArray.filter(R.compose(R.not, R.includes(R.__, showCharacters), R.prop("value")));
+  const predicate = R.compose(R.includes(R.__, R.keys(relationsSummary.knownCharacters)), R.prop("value"));
   const [knownNoRels, unknownNoRels] = R.partition(predicate, noRelsList);
 
   // const relationTmpl = U.wrapEl('div', U.qte('.relation-tmpl'));

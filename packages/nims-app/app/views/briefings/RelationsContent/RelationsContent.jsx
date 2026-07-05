@@ -79,9 +79,9 @@ export class RelationsContent extends Component {
 
         const get2ndCharName = ProjectUtils.get2ndRelChar(characterName);
         const showCharacters = relationsSummary.relations.map(get2ndCharName).sort(CU.charOrdA);
-        const hasRelWithCharacter = R.compose(R.not, R.contains(R.__, showCharacters), R.prop("value"));
+        const hasRelWithCharacter = R.compose(R.not, R.includes(R.__, showCharacters), R.prop("value"));
         const noRelsList = otherCharacters.filter(hasRelWithCharacter);
-        const meetInStories = R.compose(R.contains(R.__, R.keys(relationsSummary.knownCharacters)), R.prop("value"));
+        const meetInStories = R.compose(R.includes(R.__, R.keys(relationsSummary.knownCharacters)), R.prop("value"));
         const [knownByStoriesNoRels, unknownByStoriesNoRels] = R.partition(meetInStories, noRelsList);
 
         this.setState({

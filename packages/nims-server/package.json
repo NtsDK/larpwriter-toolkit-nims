@@ -25,13 +25,13 @@
     "nconf": "^0.10.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "ramda": "^0.27.0",
+    "ramda": "^0.32.0",
     "serve-favicon": "^2.5.0",
     "winston": "^3.2.1",
     "dateformat": "^3.0.3",
-    "nims-resources" : "0.7.2",
-    "nims-dbms" : "0.7.2",
-    "nims-dbms-core" : "0.7.2"
+    "nims-resources": "0.7.2",
+    "nims-dbms": "0.7.2",
+    "nims-dbms-core": "0.7.2"
   },
   "private": true
 }

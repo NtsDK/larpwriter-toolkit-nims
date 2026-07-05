@@ -87,7 +87,7 @@ export class ProfileFilter {
       .on("change", (event) => {
         const group = event.target.value;
         const userGroups = this.state.userGroupNames.map(R.prop("value"));
-        const isGroupEditable = R.contains(group, userGroups);
+        const isGroupEditable = R.includes(group, userGroups);
         UI.enable(this.content, "isGroupEditable", isGroupEditable);
       });
 
@@ -449,7 +449,7 @@ export class ProfileFilter {
         } else if (valueInfo.type === "text") {
           pos = value.toLowerCase().indexOf(inputItems[valueInfo.itemName].value.toLowerCase());
           displayValue = value.substring(pos - 5, pos + 15);
-        } else if (R.contains(valueInfo.type, ["number", "enum", "multiEnum", "string"])) {
+        } else if (R.includes(valueInfo.type, ["number", "enum", "multiEnum", "string"])) {
           displayValue = value;
         } else {
           throw new Error(`Unexpected valueInfo.type: ${valueInfo.type}`);

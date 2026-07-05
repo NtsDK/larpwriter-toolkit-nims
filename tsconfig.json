@@ -8,9 +8,15 @@
     "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
+    "target": "esnext",
     "sourceMap": true,
-    "lib": ["es6", "dom"]
+    "lib": [
+      "esnext",
+      "dom"
+    ]
   },
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

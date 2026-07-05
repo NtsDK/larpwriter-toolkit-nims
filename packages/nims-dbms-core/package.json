@@ -19,10 +19,10 @@
   "dependencies": {
     "ajv": "^6.12.2",
     "dateformat": "^3.0.3",
-    "ramda": "^0.27.0"
+    "ramda": "^0.32.0"
   },
   "devDependencies": {
-    "@types/ramda": "^0.28.7",
-    "typescript": "^4.6.3"
+    "@types/ramda": "^0.32.0",
+    "typescript": "^5.9.3"
   }
 }

@@ -107,7 +107,7 @@ export class NetworkSubsetsSelector extends Component {
       // returns character and his neighbours
       // const primaryCharacters = U.nl2array(U.queryEl('#networkCharacterSelector').selectedOptions).map(R.prop('value'));
       const primaryCharacters = selectedCharacterNames;
-      const isPrimaryCharacter = R.contains(R.__, primaryCharacters);
+      const isPrimaryCharacter = R.includes(R.__, primaryCharacters);
       const secondaryCharacters = R.values(Stories)
         .filter((story) => R.keys(story.characters).some(isPrimaryCharacter))
         .map((story) =>
@@ -135,7 +135,7 @@ export class NetworkSubsetsSelector extends Component {
     if (Constants.objectSubsets[1] === type) {
       // "selected characters"
       const primaryCharacters = selectedCharacterNames;
-      const isPrimaryCharacter = R.contains(R.__, primaryCharacters);
+      const isPrimaryCharacter = R.includes(R.__, primaryCharacters);
       return R.values(Stories)
         .filter((story) => R.keys(story.characters).some(isPrimaryCharacter))
         .map(R.prop("name"));

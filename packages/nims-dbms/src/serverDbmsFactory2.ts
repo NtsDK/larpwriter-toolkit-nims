@@ -97,10 +97,10 @@ export function makeDbms(
   // apis.apiApplyOrder.forEach(func);
 
   // if (enabledLogOverrides) {
-  //     Logger.apiInfo = R.merge(Logger.apiInfo, logOverridesObject);
+  //     Logger.apiInfo = R.mergeRight(Logger.apiInfo, logOverridesObject);
   // }
   // // if (config.get('logOverrides:enabled')) {
-  // //     Logger.apiInfo = R.merge(Logger.apiInfo, config.get('logOverrides:overrides'));
+  // //     Logger.apiInfo = R.mergeRight(Logger.apiInfo, config.get('logOverrides:overrides'));
   // // }
 
   // const baseAPIList = R.keys(R.mergeAll(R.values(funcList)));

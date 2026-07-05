@@ -99,7 +99,7 @@
       const result = R.flatten(
         R.values(R.clone(this.database.Stories)).map((story) =>
           story.events.map((event, index) =>
-            R.merge(R.pick(["name", "time"], event), {
+            R.mergeRight(R.pick(["name", "time"], event), {
               characters: R.keys(event.characters),
               storyName: story.name,
               index,
@@ -172,7 +172,7 @@
               let meets = {};
               charEvents.forEach((event) => {
                 const chars = R.keys(event.characters);
-                meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
+                meets = R.mergeRight(meets, R.zipObj(chars, R.repeat(true, chars.length)));
               });
 
               delete meets[characterName];

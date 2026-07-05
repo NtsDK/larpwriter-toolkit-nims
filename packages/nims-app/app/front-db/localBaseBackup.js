@@ -91,7 +91,7 @@ export default function (imports) {
 
     let counter = 0;
     const counters = [];
-    while (!R.contains(counter, counters)) {
+    while (!R.includes(counter, counters)) {
       counters.push(counter);
       counter = (counter + 1) % BACKUP_NUMBER;
     }

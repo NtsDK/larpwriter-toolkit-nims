@@ -194,7 +194,7 @@ module.exports = function (LocalDBMS, opts) {
 
   // eslint-disable-next-line no-var,vars-on-top
   var _getObjectOwnerName = R.curry((collectionName, objectName, usersInfo) => {
-    const owners = R.keys(usersInfo).filter((key) => R.contains(objectName, usersInfo[key][collectionName]));
+    const owners = R.keys(usersInfo).filter((key) => R.includes(objectName, usersInfo[key][collectionName]));
     if (owners.length > 0) {
       return owners[0];
     }

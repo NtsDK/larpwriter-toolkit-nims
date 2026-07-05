@@ -137,7 +137,7 @@ export function ProfileFilter(props) {
                     pos = 0;
                     // pos = value.toLowerCase().indexOf(inputItems[valueInfo.itemName].value.toLowerCase());
                     displayValue = value.substring(pos - 5, pos + 15);
-                  } else if (R.contains(valueInfo.type, ["number", "enum", "multiEnum", "string"])) {
+                  } else if (R.includes(valueInfo.type, ["number", "enum", "multiEnum", "string"])) {
                     displayValue = value;
                   } else {
                     throw new Error(`Unexpected valueInfo.type: ${valueInfo.type}`);

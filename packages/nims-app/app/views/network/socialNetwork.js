@@ -111,7 +111,7 @@ function refresh() {
         checkboxes.map((item) => (profile[item.name] = L10n.const(Constants[profile[item.name]])));
       });
 
-      const colorGroups = profileStructure.filter((element) => R.contains(element.type, ["enum", "checkbox"]));
+      const colorGroups = profileStructure.filter((element) => R.includes(element.type, ["enum", "checkbox"]));
       const defaultColorGroup = {
         value: Constants.noGroup,
         name: L10n.const(Constants.noGroup),

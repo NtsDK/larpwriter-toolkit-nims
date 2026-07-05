@@ -75,7 +75,7 @@ const isProfileOwner = R.curry(
       if (type === "player") type = "players";
       db.getManagementInfo()
         .then((res) => {
-          R.contains(profile, res.usersInfo[user.name][type])
+          R.includes(profile, res.usersInfo[user.name][type])
             ? resolve()
             : reject(["errors-organizer-is-not-an-owner", [profile]]);
         })
@@ -88,7 +88,7 @@ const isGroupOwner = R.curry(
       const group = args[property];
       db.getManagementInfo()
         .then((res) => {
-          R.contains(group, res.usersInfo[user.name].groups)
+          R.includes(group, res.usersInfo[user.name].groups)
             ? resolve()
             : reject(["errors-organizer-is-not-an-owner", [group]]);
         })
@@ -101,7 +101,7 @@ const isStoryOwner = R.curry(
       const story = args[property];
       db.getManagementInfo()
         .then((res) => {
-          R.contains(story, res.usersInfo[user.name].stories)
+          includes(story, res.usersInfo[user.name].stories)
             ? resolve()
             : reject(["errors-organizer-is-not-an-owner", [story]]);
         })
@@ -114,7 +114,7 @@ const isCharacterOwner = R.curry(
       const story = args[property];
       db.getManagementInfo()
         .then((res) => {
-          R.contains(story, res.usersInfo[user.name].characters)
+          R.includes(story, res.usersInfo[user.name].characters)
             ? resolve()
             : reject(["errors-organizer-is-not-an-owner", [story]]);
         })
@@ -180,7 +180,7 @@ const canUpdateProfileField = (property, args, user, db) =>
 //     return new Promise((resolve, reject) => {
 //         const player = args[property];
 //         db.getManagementInfo().then(res => {
-//             R.contains(player, res.usersInfo[user.name].players) ? resolve() : reject(['errors-organizer-is-not-an-owner', [player]]);
+//             R.includes(player, res.usersInfo[user.name].players) ? resolve() : reject(['errors-organizer-is-not-an-owner', [player]]);
 //         }).catch(reject);
 //     });
 // });

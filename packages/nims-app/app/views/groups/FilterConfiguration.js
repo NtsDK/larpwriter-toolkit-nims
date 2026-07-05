@@ -35,7 +35,7 @@ FilterConfiguration.prototype.getProfileItemSource = function (name) {
   let source;
   this.groupedProfileFilterItems.forEach((el) => {
     const arr = el.profileFilterItems.map(R.prop("name"));
-    if (R.contains(name, arr)) {
+    if (R.includes(name, arr)) {
       source = el.name;
     }
   });

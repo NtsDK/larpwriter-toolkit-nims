@@ -154,7 +154,7 @@ function _makeNumberStep(array) {
 }
 
 // @ts-ignore
-const filter = R.compose(R.contains(R.__, ["enum", "number", "checkbox"]), R.prop("type"));
+const filter = R.compose(R.includes(R.__, ["enum", "number", "checkbox"]), R.prop("type"));
 
 function _getProfileChartData(database) {
   const characterCharts = _getProfileChartArray(database, "Characters", "CharacterProfileStructure");
@@ -467,10 +467,12 @@ function _getFirstLastEventTime(database) {
       .filter((event) => event.time !== "")
       .forEach((event) => {
         const date = new Date(event.time);
+        // @ts-ignore
         if (lastEvent === null || date > lastEvent) {
           // @ts-ignore
           lastEvent = date;
         }
+        // @ts-ignore
         if (firstEvent === null || date < firstEvent) {
           // @ts-ignore
           firstEvent = date;

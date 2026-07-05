@@ -9,6 +9,7 @@ import { ILocalDBMS } from "./ILocalDBMS";
 //         } = opts;
 
 const characterCheck = (characterName, database) =>
+  // @ts-ignore
   PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
 
 // preview
@@ -155,9 +156,10 @@ export function getCharactersSummary(this: ILocalDBMS) {
   R.values(charactersInfo).forEach((characterInfo) => {
     //@ts-ignore
     characterInfo.completeness = Math.round(
+      //@ts-ignore
       (characterInfo.finishedAdaptations * 100) /
-        //@ts-ignore
-        (characterInfo.totalAdaptations !== 0 ? characterInfo.totalAdaptations : 1)
+      //@ts-ignore
+      (characterInfo.totalAdaptations !== 0 ? characterInfo.totalAdaptations : 1)
     );
   });
   return Promise.resolve(charactersInfo);
@@ -180,7 +182,7 @@ export function getCharacterReport(this: ILocalDBMS, { characterName }: any = {}
           charEvents.forEach((event) => {
             const chars = R.keys(event.characters);
             // @ts-ignore
-            meets = R.merge(meets, R.zipObj(chars, R.repeat(true, chars.length)));
+            meets = R.mergeRight(meets, R.zipObj(chars, R.repeat(true, chars.length)));
           });
 
           delete meets[characterName];

@@ -133,7 +133,7 @@ function ProfileConfigurerTmpl(opts) {
             return;
           }
 
-          if (!R.contains(defaultValue, newVals)) {
+          if (!R.includes(defaultValue, newVals)) {
             defaultValue = newVals[0];
           }
           U.fillSelector(defaultValueSelect, U.arr2Select(newVals));

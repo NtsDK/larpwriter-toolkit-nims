@@ -118,6 +118,7 @@ export function onChangeCharacterActivity(
     const chain = [
       PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
       PC.isString(activityType),
+      // @ts-ignore
       PC.elementFromEnum(activityType, Constants.characterActivityTypes),
       PC.isBoolean(checked),
     ];
@@ -178,6 +179,7 @@ export function removeCharacterFromEvent(
       ];
       PC.precondition(PC.chainCheck(chain), reject, () => {
         const event = story.events[eventIndex];
+        // @ts-ignore
         PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), reject, () => {
           delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
           resolve();

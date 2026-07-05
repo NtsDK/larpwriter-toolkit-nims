@@ -72,7 +72,7 @@ function init() {
     .on("change", (event) => {
       const player = event.target.value;
       const yourPlayers = state.playerNames.filter(R.prop("isOwner")).map(R.prop("value"));
-      const isPlayerEditable = R.contains(player, yourPlayers);
+      const isPlayerEditable = R.includes(player, yourPlayers);
       UI.enableEl(U.qe(`${root}.user.change-password`), isPlayerEditable);
       UI.enableEl(U.qe(`${root}.remove-user-button`), isPlayerEditable);
     });
@@ -94,7 +94,7 @@ function refresh() {
       R.toPairs(playersOptions).map((pair) => (U.queryEl(`#${pair[0]}`).checked = pair[1]));
 
       U.queryEl(`${root}.welcome-text-area`).value = text;
-      const playerHasLogin = R.compose(R.contains(R.__, playerLogins), R.prop("value"));
+      const playerHasLogin = R.compose(R.includes(R.__, playerLogins), R.prop("value"));
       const hasLoginObj = R.groupBy(playerHasLogin, playerNames);
 
       state.playerNames = playerNames;

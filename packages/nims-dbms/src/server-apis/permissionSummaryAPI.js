@@ -21,7 +21,7 @@ module.exports = function (LocalDBMS, opts) {
         return R.zipObj(entityArr, R.repeat(userName, entityArr.length));
       })
     );
-    return R.merge(zeroMap, ownedEntities);
+    return R.mergeRight(zeroMap, ownedEntities);
   };
 
   const _getPermissionsSummary = function (userName) {

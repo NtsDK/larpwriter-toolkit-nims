@@ -136,6 +136,7 @@ export function setEventOriginProperty(
       PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
       PC.isNumber(index),
       PC.isString(property),
+      // @ts-ignore
       PC.elementFromEnum(property, Constants.originProperties),
       PC.isString(value),
     ];

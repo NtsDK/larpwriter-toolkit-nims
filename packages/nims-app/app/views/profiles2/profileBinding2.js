@@ -49,7 +49,7 @@ function refresh() {
 function rebuildInterface(characterNames, playerNames, profileBindings) {
   const bondedCharacterList = R.keys(profileBindings);
   const bondedPlayerList = R.values(profileBindings);
-  const filter = (list) => R.compose(R.not, R.contains(R.__, list), R.prop("value"));
+  const filter = (list) => R.compose(R.not, R.includes(R.__, list), R.prop("value"));
 
   U.showEl(U.queryEl(`${root} .alert.no-character`), characterNames.length === 0);
   UI.enableEl(U.queryEl(`${root} .character-filter`), characterNames.length !== 0);

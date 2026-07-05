@@ -414,8 +414,8 @@ const testProfile = R.curry(
             }
           });
       });
-      // const okExpected = R.contains(profileName, behavior.accept) ? true :
-      //     (R.contains(profileName, behavior.reject) ? false : null);
+      // const okExpected = R.includes(profileName, behavior.accept) ? true :
+      //     (R.includes(profileName, behavior.reject) ? false : null);
       // if(okExpected === null) throw new Error(`Unexpected profile ${profileName}, ${behavior}`);
     })
 );

@@ -66,6 +66,7 @@ export function setMetaInfoString(this: ILocalDBMS, { name, value }: any = {}): 
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([
       PC.isString(name),
+      // @ts-ignore
       PC.elementFromEnum(name, Constants.metaInfoStrings),
       PC.isString(value),
     ]);
@@ -98,6 +99,7 @@ export function setMetaInfoDate(this: ILocalDBMS, { name, value }: any = {}): Pr
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([
       PC.isString(name),
+      // @ts-ignore
       PC.elementFromEnum(name, Constants.metaInfoDates),
       PC.isString(value),
     ]);

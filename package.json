@@ -37,7 +37,7 @@
     "npm-check-updates": "^6.0.1",
     "postcss-cli": "^7.1.1",
     "prettier": "^3.9.4",
-    "ramda": "^0.28.0",
+    "ramda": "^0.32.0",
     "sass-loader": "^14.2.1",
     "style-loader": "^1.2.1",
     "tailwindcss": "^1.5.2",
@@ -60,6 +60,7 @@
     "lint": "eslint ./packages --color --quiet"
   },
   "dependencies": {
+    "@types/node": "^20.19.43",
     "nodemon": "^2.0.7"
   }
 }

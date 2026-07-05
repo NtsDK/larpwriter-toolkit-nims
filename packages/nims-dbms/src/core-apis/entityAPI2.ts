@@ -11,6 +11,7 @@ import { ILocalDBMS } from "./ILocalDBMS";
 // DBMS.groups.names.get()
 export function getEntityNamesArray(this: ILocalDBMS, { type }: any = {}) {
   return new Promise((resolve, reject) => {
+    // @ts-ignore
     const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
     // const callback = (err, result) => {
     //     if(err){

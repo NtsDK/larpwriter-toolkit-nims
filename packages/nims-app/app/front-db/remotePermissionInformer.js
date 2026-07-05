@@ -152,7 +152,7 @@ export default remotePermissionInformer;
 //     exports[funcName] = function () {
 //         try {
 //             // const exclude = ['_init','refreshInner', 'subscribe'];
-//             // if(!funcName.endsWith('') && !R.contains(funcName, exclude)){
+//             // if(!funcName.endsWith('') && !R.includes(funcName, exclude)){
 //             //     console.error('Old PermInfo call', funcName, arguments);
 //             //     // console.trace('Old API call', funcName);
 //             // }

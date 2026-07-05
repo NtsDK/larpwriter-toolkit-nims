@@ -19,7 +19,7 @@ function getStructurePath(type) {
   if (type === "player") return ["PlayerProfileStructure"];
   return null;
 }
-
+// @ts-ignore
 const typeCheck = (type) => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 
 export function getProfileNamesArray(this: ILocalDBMS, { type }: any = {}) {
@@ -131,8 +131,10 @@ const typeSpecificPreconditions = (itemType, itemDesc, value) => {
     case "number":
       return PC.nil();
     case "enum":
+      // @ts-ignore
       return PC.elementFromEnum(value, itemDesc.value.split(","));
     case "multiEnum":
+      // @ts-ignore
       return PC.eitherCheck(PC.elementsFromEnum(value.split(","), itemDesc.value.split(",")), PC.isEmptyString(value));
     default:
       throw new Error(`Unexpected itemType ${itemType}`);
@@ -160,8 +162,7 @@ export function updateProfileField(
         PC.getValueCheck(itemType)(value),
       ];
       PC.precondition(PC.chainCheck(arr), reject, () => {
-        // @ts-ignore
-        const itemDesc = R.find(R.propEq("name", fieldName), containerStructure);
+        const itemDesc = containerStructure.find(((el) => el.name === fieldName));
         PC.precondition(typeSpecificPreconditions(itemType, itemDesc, value), reject, () => {
           // @ts-ignore
           const profileInfo = container[characterName];

@@ -65,7 +65,7 @@
     "nims-dbms": "0.7.2",
     "nims-dbms-core": "0.7.2",
     "nims-resources": "0.7.2",
-    "ramda": "^0.27.0",
+    "ramda": "^0.32.0",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^0.33.1",

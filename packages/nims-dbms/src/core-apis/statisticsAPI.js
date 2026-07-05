@@ -115,7 +115,7 @@
       return step;
     }
 
-    const filter = R.compose(R.contains(R.__, ["enum", "number", "checkbox"]), R.prop("type"));
+    const filter = R.compose(R.includes(R.__, ["enum", "number", "checkbox"]), R.prop("type"));
 
     function _getProfileChartData(database) {
       const characterCharts = _getProfileChartArray(database, "Characters", "CharacterProfileStructure");

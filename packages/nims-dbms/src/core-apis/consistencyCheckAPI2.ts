@@ -55,6 +55,7 @@ export function getConsistencyCheckResult(this: ILocalDBMS) {
       // @ts-ignore
       errors2 = R.concat(
         errors2,
+        // @ts-ignore
         schema.required.map((moduleName) => {
           const validate2 = validator.compile(schema.properties[moduleName]);
           const valid2 = validate2(this.database[moduleName]);
@@ -77,6 +78,7 @@ export function getConsistencyCheckResult(this: ILocalDBMS) {
     }
     // @ts-ignore
     const details = R.mapObjIndexed(
+      // @ts-ignore
       (arr) => R.flatten(arr.map(R.prop("errors"))),
       R.groupBy(R.prop("module"), errors2)
     );
@@ -279,7 +281,7 @@ function checkProfileConsistency(data, profiles: string, structure) {
         return;
       }
       // @ts-ignore
-      if (!R.all(R.contains(R.__, profileItems))(charItems)) {
+      if (!R.all(R.includes(R.__, profileItems))(charItems)) {
         const msg = "Character profile inconsistent, item name inconsistency: char {0}, difference [{1}]";
         errors.push([msg, [profile.name, difference]]);
       }

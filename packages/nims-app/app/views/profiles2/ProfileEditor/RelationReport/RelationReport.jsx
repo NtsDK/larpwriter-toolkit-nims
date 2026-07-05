@@ -49,8 +49,8 @@ export function RelationReport(props) {
               const first = rel.starter === id ? rel.starter : rel.ender;
               const second = rel.starter !== id ? rel.starter : rel.ender;
               const finished = isStarter ? rel.starterTextReady : rel.enderTextReady;
-              const starterToEnderActive = R.contains(isStarter ? "starterToEnder" : "enderToStarter", rel.essence);
-              const enderToStarterActive = R.contains(!isStarter ? "starterToEnder" : "enderToStarter", rel.essence);
+              const starterToEnderActive = R.includes(isStarter ? "starterToEnder" : "enderToStarter", rel.essence);
+              const enderToStarterActive = R.includes(!isStarter ? "starterToEnder" : "enderToStarter", rel.essence);
               return (
                 <tr className="relation-report-row">
                   <td className="character-name">{ProjectUtils.get2ndRelChar(id, rel)}</td>
@@ -59,7 +59,7 @@ export function RelationReport(props) {
                     title={t("briefings.starterToEnder", { first, second })}
                   />
                   <td
-                    className={`activity-icon fa-icon allies text-center ${R.contains("allies", rel.essence) && "active"}`}
+                    className={`activity-icon fa-icon allies text-center ${R.includes("allies", rel.essence) && "active"}`}
                     title={t("constant.allies")}
                   />
                   <td

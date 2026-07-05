@@ -11,10 +11,12 @@ import { ILocalDBMS } from "./ILocalDBMS";
 
 const check = (selChars, selStories, exportOnlyFinishedStories, database) => {
   const charsCheck = PC.eitherCheck(
+    // @ts-ignore
     PC.chainCheck([PC.isArray(selChars), PC.entitiesExist(selChars, R.keys(database.Characters))]),
     PC.isNil(selChars)
   );
   const storiesCheck = PC.eitherCheck(
+    // @ts-ignore
     PC.chainCheck([PC.isArray(selStories), PC.entitiesExist(selStories, R.keys(database.Stories))]),
     PC.isNil(selStories)
   );
@@ -85,6 +87,7 @@ export function getBriefingData(this: ILocalDBMS, { selCharacters, selStories, e
       selStories = selStories || R.keys(this.database.Stories);
       // @ts-ignore
       that
+        // @ts-ignore
         .getAllCharacterGroupTexts()
         .then((groupTexts) => {
           _getBriefingData(

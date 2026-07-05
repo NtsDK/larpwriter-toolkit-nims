@@ -52,10 +52,12 @@ const searchers = {};
 // eslint-disable-next-line func-names
 export function getTexts(this: ILocalDBMS, { searchStr, textTypes, caseSensitive }: any = {}) {
   return new Promise((resolve, reject) => {
+    // @ts-ignore
     const textTypesPrecondition = PC.elementsFromEnum(R.__, R.keys(searchers));
     const check = PC.chainCheck([
       PC.isString(searchStr),
       PC.isArray(textTypes),
+      // @ts-ignore
       textTypesPrecondition(textTypes),
       PC.isBoolean(caseSensitive),
     ]);

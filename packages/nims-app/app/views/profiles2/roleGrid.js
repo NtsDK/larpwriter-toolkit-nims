@@ -193,7 +193,7 @@ export class RoleGrid {
 
     const groupingItemInfo = R.indexBy(
       R.prop("name"),
-      this.profilesData.characterProfileStructure.filter((el) => R.contains(el.name, this.groupingOrder))
+      this.profilesData.characterProfileStructure.filter((el) => R.includes(el.name, this.groupingOrder))
     );
 
     return [

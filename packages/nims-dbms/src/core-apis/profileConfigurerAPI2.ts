@@ -15,10 +15,13 @@ function getPath(type) {
   return null;
 }
 
+// @ts-ignore
 const typeCheck = (type) => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 const itemTypeCheck = (type) =>
+  // @ts-ignore
   PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, R.keys(Constants.profileFieldTypes))]);
 const playerAccessCheck = (type) =>
+  // @ts-ignore
   PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.playerAccessTypes)]);
 
 export function getProfileStructure(this: ILocalDBMS, { type }: any = {}) {
@@ -107,6 +110,7 @@ export function removeProfileItem(this: ILocalDBMS, { type, index, profileItemNa
       const container = R.path(getPath(type), this.database);
       // @ts-ignore
       const els = container.map((item, i) => `${i}/${item.name}`);
+      // @ts-ignore
       PC.precondition(PC.entityExists(`${index}/${profileItemName}`, els), reject, () => {
         // @ts-ignore
         CU.removeFromArrayByIndex(container, index);
@@ -304,9 +308,11 @@ export function renameEnumValue(
       PC.precondition(PC.entityExists(profileItemName, container.map(R.prop("name"))), reject, () => {
         // @ts-ignore
         const info = container.filter(R.compose(R.equals(profileItemName), R.prop("name")))[0];
+        // @ts-ignore
         chain = [PC.elementFromEnum(info.type, ["enum", "multiEnum"])];
         PC.precondition(PC.chainCheck(chain), reject, () => {
           const list = info.value.trim() === "" ? [] : info.value.split(",");
+          // @ts-ignore
           chain = [PC.elementFromEnum(fromValue, list), PC.createEntityCheck(toValue, list)];
           PC.precondition(PC.chainCheck(chain), reject, () => {
             list[R.indexOf(fromValue, list)] = toValue;

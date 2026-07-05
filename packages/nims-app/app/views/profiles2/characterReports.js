@@ -71,13 +71,13 @@ const makeRelationReportRow = R.curry((characterName, rel) => {
   U.setClassByCondition(
     qe(".direction-starterToEnder"),
     "active-item-in-report",
-    R.contains(isStarter ? "starterToEnder" : "enderToStarter", rel.essence)
+    R.includes(isStarter ? "starterToEnder" : "enderToStarter", rel.essence)
   );
-  U.setClassByCondition(qe(".direction-allies"), "active-item-in-report", R.contains("allies", rel.essence));
+  U.setClassByCondition(qe(".direction-allies"), "active-item-in-report", R.includes("allies", rel.essence));
   U.setClassByCondition(
     qe(".direction-enderToStarter"),
     "active-item-in-report",
-    R.contains(!isStarter ? "starterToEnder" : "enderToStarter", rel.essence)
+    R.includes(!isStarter ? "starterToEnder" : "enderToStarter", rel.essence)
   );
 
   const finished = isStarter ? rel.starterTextReady : rel.enderTextReady;

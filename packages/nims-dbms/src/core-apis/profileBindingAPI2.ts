@@ -32,8 +32,10 @@ export function getExtendedProfileBindings(this: ILocalDBMS) {
   // @ts-ignore
   const bindingData = R.reduce(
     R.concat,
+    // @ts-ignore
     [],
     [
+      // @ts-ignore
       R.toPairs(bindings),
       R.zip(characters, R.repeat("", characters.length)),
       R.zip(R.repeat("", players.length), players),
@@ -61,8 +63,10 @@ export function getProfileBinding(this: ILocalDBMS, { type, name }: any = {}) {
   return new Promise((resolve, reject) => {
     const conditions = [
       PC.isString(type),
+      // @ts-ignore
       PC.elementFromEnum(type, Constants.profileTypes),
       PC.isString(name),
+      // @ts-ignore
       PC.entityExists(name, R.keys(this.database[type === "character" ? "Characters" : "Players"])),
     ];
     PC.precondition(PC.chainCheck(conditions), reject, () => {
@@ -78,8 +82,10 @@ export function createBinding(this: ILocalDBMS, { characterName, playerName }: a
     const invertBinding = R.invertObj(bindings);
     const conditions = [
       PC.isString(characterName),
+      // @ts-ignore
       PC.entityExists(characterName, R.keys(this.database.Characters)),
       PC.isString(playerName),
+      // @ts-ignore
       PC.entityExists(playerName, R.keys(this.database.Players)),
       //   PC.entityIsNotUsed(characterName, R.keys(bindings)),
       //   PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))
@@ -102,9 +108,12 @@ export function removeBinding(this: ILocalDBMS, { characterName, playerName }: a
     const bindingArr = R.toPairs(R.path(path, this.database)).map((pair) => `${pair[0]}/${pair[1]}`);
     const conditions = [
       PC.isString(characterName),
+      // @ts-ignore
       PC.entityExists(characterName, R.keys(this.database.Characters)),
       PC.isString(playerName),
+      // @ts-ignore
       PC.entityExists(playerName, R.keys(this.database.Players)),
+      // @ts-ignore
       PC.entityExists(`${characterName}/${playerName}`, bindingArr),
     ];
     PC.precondition(PC.chainCheck(conditions), reject, () => {

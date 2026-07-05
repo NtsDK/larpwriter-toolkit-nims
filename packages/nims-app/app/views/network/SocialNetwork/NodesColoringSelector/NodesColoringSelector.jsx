@@ -6,7 +6,7 @@ import { UI, U, L10n } from "nims-app-core";
 import { CHAR_PREFIX, PROFILE_GROUP, FILTER_GROUP } from "../SocialNetworkConstants";
 
 function getColorGroups(profileStructure) {
-  return profileStructure.filter((element) => R.contains(element.type, ["enum", "checkbox"]));
+  return profileStructure.filter((element) => R.includes(element.type, ["enum", "checkbox"]));
 }
 
 export function getGroupColors(profileStructure) {
