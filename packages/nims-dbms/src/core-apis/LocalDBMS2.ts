@@ -25,6 +25,7 @@ import * as storyAdaptationsAPI2 from "./storyAdaptationsAPI2";
 // import * as slidersAPI from './core-apis/slidersAPI';
 import * as textSearchAPI2 from "./textSearchAPI2";
 import { ILocalDBMS } from "../domain";
+import { initIoCContainer } from "../IoC/container";
 
 // import * as logAPI from './core-apis/logAPI';
 
@@ -40,6 +41,8 @@ Object.entries(profileBindingAPI2.listeners).forEach(addListener);
 Object.entries(profilesAPI2.listeners).forEach(addListener);
 Object.entries(relationsAPI2.listeners).forEach(addListener);
 Object.entries(storyCharactersAPI2.listeners).forEach(addListener);
+
+initIoCContainer();
 
 export class LocalDBMS2 implements ILocalDBMS {
   ee: EventEmitter;

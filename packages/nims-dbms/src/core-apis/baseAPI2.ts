@@ -6,7 +6,8 @@ import * as R from "ramda";
 import * as Migrator from "../db-utils/migrator";
 import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
-import type { ILocalDBMS } from "../domain";
+import type { GameMeta, ILocalDBMS } from "../domain";
+import { getGameMetaStore } from "../IoC";
 
 // ((callback2) => {
 //     function baseAPI(LocalDBMS) {
@@ -23,7 +24,10 @@ import type { ILocalDBMS } from "../domain";
 
 // DBMS.get
 export function getDatabase(this: ILocalDBMS) {
-  this.database.Meta.saveTime = new Date().toString();
+  // this.database.Meta.saveTime = new Date().toString();
+  const metaStore = getGameMetaStore();
+  metaStore.saveTime = new Date().toString();
+  this.database.Meta = metaStore.get();
   return Promise.resolve(R.clone(this.database));
 }
 
@@ -32,6 +36,8 @@ export function setDatabase(this: ILocalDBMS, { database }: any = {}): Promise<v
   return new Promise((resolve, reject) => {
     try {
       this.database = Migrator.migrate(database);
+      const metaStore = getGameMetaStore();
+      metaStore.set(this.database.Meta);
       this.ee.emit("setDatabase", [{ database, reject }]);
       resolve();
     } catch (err) {
@@ -41,7 +47,9 @@ export function setDatabase(this: ILocalDBMS, { database }: any = {}): Promise<v
 }
 // DBMS.meta.get
 export function getMetaInfo(this: ILocalDBMS) {
-  return Promise.resolve(R.clone(this.database.Meta));
+  const metaStore = getGameMetaStore();
+  return Promise.resolve(R.clone(metaStore.get()));
+  // return Promise.resolve(R.clone(this.database.Meta));
 }
 //  [
 //      {
@@ -62,7 +70,7 @@ export function getMetaInfo(this: ILocalDBMS) {
 //  ]
 // overview
 // DBMS.meta.property.set()
-export function setMetaInfoString(this: ILocalDBMS, { name, value }: any = {}): Promise<void> {
+export function setMetaInfoString(this: ILocalDBMS, { name, value }: { name: "name" | "description", value: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([
       PC.isString(name),
@@ -71,7 +79,9 @@ export function setMetaInfoString(this: ILocalDBMS, { name, value }: any = {}): 
       PC.isString(value),
     ]);
     PC.precondition(chain, reject, () => {
-      this.database.Meta[name] = value;
+      const metaStore = getGameMetaStore();
+      metaStore[name] = value;
+      // this.database.Meta[name] = value;
       resolve();
     });
   });
@@ -95,7 +105,7 @@ export function setMetaInfoString(this: ILocalDBMS, { name, value }: any = {}): 
 //          }]
 //      },
 //  ]
-export function setMetaInfoDate(this: ILocalDBMS, { name, value }: any = {}): Promise<void> {
+export function setMetaInfoDate(this: ILocalDBMS, { name, value }: { name: "date" | "preGameDate", value: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([
       PC.isString(name),
@@ -104,7 +114,9 @@ export function setMetaInfoDate(this: ILocalDBMS, { name, value }: any = {}): Pr
       PC.isString(value),
     ]);
     PC.precondition(chain, reject, () => {
-      this.database.Meta[name] = value;
+      const metaStore = getGameMetaStore();
+      metaStore[name] = value;
+      // this.database.Meta[name] = value;
       resolve();
     });
   });
