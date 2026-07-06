@@ -1,6 +1,6 @@
 # NIMS: MCP client setup
 
-MCP (Model Context Protocol) connects an AI assistant to a running NIMS server: read and edit characters, stories, events, relations, export/import the database and player briefings (quents). Any MCP client with **Streamable HTTP** support will work.
+MCP (Model Context Protocol) connects an AI assistant to a running NIMS server: read and edit characters, stories, events, relations, export/import the database and player briefings. Any MCP client with **Streamable HTTP** support will work.
 
 The server must run in **server mode** (`npm run watch:server` or Docker). MCP is embedded in `nims-server` — no separate process.
 
@@ -110,8 +110,8 @@ Server: `http://localhost:3001`, MCP: `http://localhost:3001/mcp`.
 |------|------|-------------|
 | `export_database` | read | Export full JSON (excludes `ManagementInfo` by default) |
 | `import_database` | write, admin | Import database from JSON |
-| `export_quents` | read | Player briefings: JSON or `format: markdown` |
-| `import_quents` | write | Apply event adaptations from briefing JSON |
+| `export_briefings` | read | Player briefings: JSON or `format: markdown` |
+| `import_briefings` | write | Apply event adaptations from briefing JSON |
 | `load_database_preset` | write, admin | Presets: `empty`, `demo`, `negriat` |
 | `list_database_presets` | read | List presets |
 | `get_consistency_check` | read | Schema consistency check |
@@ -134,7 +134,7 @@ Characters, stories, events, relations, and groups — see `packages/nims-server
 | `nims://character/{name}` | Character profile |
 | `nims://story/{name}` | Full story |
 | `nims://database` | Database export |
-| `nims://quents` | All briefings JSON |
+| `nims://briefings` | All briefings JSON |
 
 ## Troubleshooting
 

@@ -1,6 +1,6 @@
 # НИМС: настройка MCP на клиенте
 
-MCP (Model Context Protocol) позволяет подключить AI-ассистент к запущенному серверу НИМС: читать и редактировать персонажей, сюжеты, события, отношения, выгружать и загружать базу и квенты (вводные). Подойдёт любой MCP-клиент с поддержкой **Streamable HTTP** (IDE, десктопное приложение, CLI).
+MCP (Model Context Protocol) позволяет подключить AI-ассистент к запущенному серверу НИМС: читать и редактировать персонажей, сюжеты, события, отношения, выгружать и загружать базу и вводные. Подойдёт любой MCP-клиент с поддержкой **Streamable HTTP** (IDE, десктопное приложение, CLI).
 
 Сервер должен работать в **server-режиме** (`npm run watch:server` или Docker). MCP встроен в `nims-server` и не требует отдельного процесса.
 
@@ -106,14 +106,14 @@ docker compose -f docker-compose.test.yml up --build
 
 ## Инструменты (tools)
 
-### База и квенты
+### База и вводные
 
 | Tool | Режим | Описание |
 |------|-------|----------|
 | `export_database` | read | Выгрузить базу JSON (без `ManagementInfo` по умолчанию) |
 | `import_database` | write, admin | Загрузить базу из JSON |
-| `export_quents` | read | Квенты (вводные): JSON или `format: markdown` |
-| `import_quents` | write | Обновить адаптации событий из JSON квентов |
+| `export_briefings` | read | Вводные: JSON или `format: markdown` |
+| `import_briefings` | write | Обновить адаптации событий из JSON вводных |
 | `load_database_preset` | write, admin | Пресеты: `empty`, `demo`, `negriat` |
 | `list_database_presets` | read | Список пресетов |
 | `get_consistency_check` | read | Проверка целостности базы |
@@ -135,7 +135,7 @@ docker compose -f docker-compose.test.yml up --build
 | `get_meta`, `set_meta` | read / write | Название игры, даты, описание |
 | `search_text` | read | Полнотекстовый поиск |
 | `get_statistics` | read | Статистика проекта |
-| `get_briefing` | read | Квенты (JSON, как `export_quents`) |
+| `get_briefing` | read | Вводные (JSON, как `export_briefings`) |
 | `get_character_report` | read | Отчёт по персонажу |
 
 Полный список — в исходниках `packages/nims-server/mcp/tools/`.
@@ -150,7 +150,7 @@ docker compose -f docker-compose.test.yml up --build
 | `nims://character/{name}` | Профиль персонажа |
 | `nims://story/{name}` | Полный сюжет |
 | `nims://database` | Выгрузка базы (без ManagementInfo) |
-| `nims://quents` | Все квенты JSON |
+| `nims://briefings` | Все вводные JSON |
 
 ## Типичные сценарии
 
@@ -162,7 +162,7 @@ docker compose -f docker-compose.test.yml up --build
 
 **Восстановление / перенос** — `import_database` (admin), с `preserveManagementInfo: true` по умолчанию — пользователи сервера не затрутся.
 
-**Редактирование вводных вне НИМС** — `export_quents` с `format: markdown` → правки → `import_quents`.
+**Редактирование вводных вне НИМС** — `export_briefings` с `format: markdown` → правки → `import_briefings`.
 
 ## Устранение неполадок
 

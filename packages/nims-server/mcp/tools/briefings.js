@@ -6,7 +6,7 @@ const { callDb, formatError } = require('../dbCall');
 function registerReadTools(server, db, user) {
     server.tool(
         'get_briefing',
-        'Get assembled briefing data (квенты / вводные) for selected characters and stories. Alias of export_quents with JSON output — see also export_quents (markdown).',
+        'Get assembled player briefing data (вводные) for selected characters and stories. Same JSON as export_briefings; use export_briefings with format markdown for readable output.',
         {
             selCharacters: z.array(z.string()).optional().describe('Character names to include (omit for all)'),
             selStories: z.array(z.string()).optional().describe('Story names to include (omit for all)'),

@@ -2,7 +2,7 @@
 
 const { z } = require('zod');
 const { callDb, formatError } = require('../dbCall');
-const { formatQuentsMarkdown } = require('../formatQuents');
+const { formatBriefingsMarkdown } = require('../formatBriefings');
 
 const emptyBase = require('nims-resources/emptyBase');
 const demoBase = require('nims-resources/demoBase');
@@ -48,7 +48,7 @@ function findEventIndex(story, eventName) {
     return story.events.findIndex((ev) => ev.name === eventName);
 }
 
-async function importQuentsFromBriefings(db, user, briefings) {
+async function importBriefings(db, user, briefings) {
     const errors = [];
     let updated = 0;
 
@@ -96,11 +96,11 @@ async function importQuentsFromBriefings(db, user, briefings) {
     return { updated, errors };
 }
 
-const quentParams = {
+const briefingExportParams = {
     selCharacters: z.array(z.string()).optional().describe('Имена персонажей (все, если не указано)'),
     selStories: z.array(z.string()).optional().describe('Имена сюжетов (все, если не указано)'),
     exportOnlyFinishedStories: z.boolean().optional().describe('Только сюжеты с готовыми адаптациями'),
-    format: z.enum(['json', 'markdown']).optional().describe('Формат выгрузки квентов (по умолчанию json)'),
+    format: z.enum(['json', 'markdown']).optional().describe('Формат выгрузки вводных (по умолчанию json)'),
 };
 
 function registerReadTools(server, db, user) {
@@ -130,14 +130,14 @@ function registerReadTools(server, db, user) {
     );
 
     server.tool(
-        'export_quents',
-        'Выгрузить квенты (вводные) для персонажей: профиль, снаряжение, сюжеты, события, группы, отношения. Формат json или markdown.',
-        quentParams,
+        'export_briefings',
+        'Выгрузить вводные для персонажей: профиль, снаряжение, сюжеты, события, группы, отношения. Формат json или markdown.',
+        briefingExportParams,
         async (params) => {
             try {
                 const data = await fetchBriefingData(db, user, params);
                 if ((params.format || 'json') === 'markdown') {
-                    return { content: [{ type: 'text', text: formatQuentsMarkdown(data) }] };
+                    return { content: [{ type: 'text', text: formatBriefingsMarkdown(data) }] };
                 }
                 return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
             } catch (err) {
@@ -207,8 +207,8 @@ function registerWriteTools(server, db, user) {
     );
 
     server.tool(
-        'import_quents',
-        'Загрузить квенты обратно в базу: обновляет тексты и время адаптаций событий. Принимает массив briefings или полный JSON из export_quents.',
+        'import_briefings',
+        'Загрузить вводные обратно в базу: обновляет тексты и время адаптаций событий. Принимает массив briefings или полный JSON из export_briefings.',
         {
             data: z.union([
                 z.object({
@@ -216,12 +216,12 @@ function registerWriteTools(server, db, user) {
                     gameName: z.string().optional(),
                 }),
                 z.array(z.record(z.string(), z.unknown())),
-            ]).describe('briefings[] или { briefings, gameName } из export_quents'),
+            ]).describe('briefings[] или { briefings, gameName } из export_briefings'),
         },
         async ({ data }) => {
             try {
                 const briefings = Array.isArray(data) ? data : data.briefings;
-                const { updated, errors } = await importQuentsFromBriefings(db, user, briefings);
+                const { updated, errors } = await importBriefings(db, user, briefings);
                 const text = `Обновлено адаптаций: ${updated}.${errors.length ? `\n\nПредупреждения:\n${errors.join('\n')}` : ''}`;
                 return {
                     content: [{ type: 'text', text }],

@@ -1,7 +1,7 @@
 'use strict';
 
-function formatQuentsMarkdown({ briefings, gameName } = {}) {
-    const lines = [`# Вводные (квенты): ${gameName || 'без названия'}`, ''];
+function formatBriefingsMarkdown({ briefings, gameName } = {}) {
+    const lines = [`# Вводные: ${gameName || 'без названия'}`, ''];
     (briefings || []).forEach((b) => {
         lines.push(`## ${b.charName}`);
         if (b.playerName) {
@@ -58,4 +58,4 @@ function formatQuentsMarkdown({ briefings, gameName } = {}) {
     return lines.join('\n');
 }
 
-module.exports = { formatQuentsMarkdown };
+module.exports = { formatBriefingsMarkdown };

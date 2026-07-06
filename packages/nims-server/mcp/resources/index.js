@@ -143,9 +143,9 @@ async function registerResources(server, db, user) {
     );
 
     server.resource(
-        'quents',
-        'nims://quents',
-        { description: 'Player briefings (квенты / вводные) for all characters, JSON' },
+        'briefings',
+        'nims://briefings',
+        { description: 'Player briefings (вводные) for all characters, JSON' },
         async (uri) => {
             try {
                 const data = await callDb(db, 'getBriefingData', {
