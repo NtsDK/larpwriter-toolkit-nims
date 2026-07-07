@@ -10,9 +10,8 @@ import { OwnedEntityTypes } from "../nimsConstants";
 //         } = opts;
 
 // DBMS.groups.names.get()
-export function getEntityNamesArray(this: ILocalDBMS, { type }: { type: OwnedEntityTypes }) {
+export function getEntityNamesArray(this: ILocalDBMS, { type }: { type: OwnedEntityTypes }): Promise<string[]> {
   return new Promise((resolve, reject) => {
-    // @ts-ignore
     const chain = PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.ownedEntityTypes)]);
     // const callback = (err, result) => {
     //     if(err){
@@ -26,7 +25,6 @@ export function getEntityNamesArray(this: ILocalDBMS, { type }: { type: OwnedEnt
         case "character":
         case "player":
           // this.getProfileNamesArray(type, callback);
-          // @ts-ignore
           this.getProfileNamesArray({ type }).then(resolve).catch(reject);
           break;
         case "group":

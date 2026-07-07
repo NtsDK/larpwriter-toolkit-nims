@@ -55,7 +55,6 @@ export function createProfileItem(this: ILocalDBMS, { type, name, itemType, sele
     ];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       const container = getProfileStructure2(this.database, type);
-      // @ts-ignore
       chain = [
         PC.createEntityCheck2(name, container.map(R.prop("name")), "entity-lifeless-name", "entity-of-profile-item"),
         PC.isInRange(selectedIndex, 0, container.length),
@@ -88,7 +87,8 @@ export function createProfileItem(this: ILocalDBMS, { type, name, itemType, sele
 }
 
 //profile configurer
-export function moveProfileItem(this: ILocalDBMS, { type, index, newIndex }: { type: ProfileTypes, index: number, newIndex: number }): Promise<void> {
+export function moveProfileItem(this: ILocalDBMS, { type, index, newIndex }:
+  { type: ProfileTypes, index: number, newIndex: number }): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [typeCheck(type), PC.isNumber(index), PC.isNumber(newIndex)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -107,7 +107,8 @@ export function moveProfileItem(this: ILocalDBMS, { type, index, newIndex }: { t
   });
 }
 // profile configurer
-export function removeProfileItem(this: ILocalDBMS, { type, index, profileItemName }: { type: ProfileTypes, index: number, profileItemName: string }): Promise<void> {
+export function removeProfileItem(this: ILocalDBMS, { type, index, profileItemName }:
+  { type: ProfileTypes, index: number, profileItemName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [typeCheck(type), PC.isNumber(index), PC.isString(profileItemName)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -174,7 +175,8 @@ export function renameProfileItem(this: ILocalDBMS, { type, newName, oldName }:
 
 export function doExportProfileItemChange(
   this: ILocalDBMS,
-  { type, profileItemName, checked }: { type: ProfileTypes, checked: boolean, profileItemName: string }
+  { type, profileItemName, checked }:
+    { type: ProfileTypes, checked: boolean, profileItemName: string }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [typeCheck(type), PC.isString(profileItemName), PC.isBoolean(checked)];
@@ -192,7 +194,8 @@ export function doExportProfileItemChange(
 
 export function showInRoleGridProfileItemChange(
   this: ILocalDBMS,
-  { type, profileItemName, checked }: { type: ProfileTypes, checked: boolean, profileItemName: string }
+  { type, profileItemName, checked }:
+    { type: ProfileTypes, checked: boolean, profileItemName: string }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [typeCheck(type), PC.isString(profileItemName), PC.isBoolean(checked)];

@@ -8,6 +8,7 @@ import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
 import type { Database, GameMeta, ILocalDBMS } from "../domain";
 import { getGameMetaStore } from "../IoC";
+import { MetaInfoDates, MetaInfoStrings } from "../nimsConstants";
 
 // ((callback2) => {
 //     function baseAPI(LocalDBMS) {
@@ -26,7 +27,7 @@ import { getGameMetaStore } from "../IoC";
 export function getDatabase(this: ILocalDBMS) {
   // this.database.Meta.saveTime = new Date().toString();
   const metaStore = getGameMetaStore();
-  metaStore.saveTime = new Date().toString();
+  metaStore.setSaveTime(new Date().toString());
   this.database.Meta = metaStore.get();
   return Promise.resolve(R.clone(this.database));
 }
@@ -70,17 +71,21 @@ export function getMetaInfo(this: ILocalDBMS) {
 //  ]
 // overview
 // DBMS.meta.property.set()
-export function setMetaInfoString(this: ILocalDBMS, { name, value }: { name: "name" | "description", value: string }): Promise<void> {
+export function setMetaInfoString(this: ILocalDBMS, { name, value }:
+  { name: MetaInfoStrings, value: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([
       PC.isString(name),
-      // @ts-ignore
       PC.elementFromEnum(name, Constants.metaInfoStrings),
       PC.isString(value),
     ]);
     PC.precondition(chain, reject, () => {
       const metaStore = getGameMetaStore();
-      metaStore[name] = value;
+      if (name === "name") {
+        metaStore.setName(value);
+      } else {
+        metaStore.setDescription(value);
+      }
       // this.database.Meta[name] = value;
       resolve();
     });
@@ -105,17 +110,23 @@ export function setMetaInfoString(this: ILocalDBMS, { name, value }: { name: "na
 //          }]
 //      },
 //  ]
-export function setMetaInfoDate(this: ILocalDBMS, { name, value }: { name: "date" | "preGameDate", value: string }): Promise<void> {
+export function setMetaInfoDate(this: ILocalDBMS, { name, value }:
+  { name: MetaInfoDates, value: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([
       PC.isString(name),
-      // @ts-ignore
       PC.elementFromEnum(name, Constants.metaInfoDates),
       PC.isString(value),
     ]);
     PC.precondition(chain, reject, () => {
+      // const metaStore = getGameMetaStore();
+      // metaStore[name] = value;
       const metaStore = getGameMetaStore();
-      metaStore[name] = value;
+      if (name === "date") {
+        metaStore.setDate(value);
+      } else {
+        metaStore.setPreGameDate(value);
+      }
       // this.database.Meta[name] = value;
       resolve();
     });

@@ -1,5 +1,5 @@
 import type { EventEmitter } from "events";
-import { PlayerAccessTypes, ProfileFieldTypesNames } from "../nimsConstants";
+import { PlayerAccessTypes, ProfileFieldTypesNames, ProfileTypes } from "../nimsConstants";
 
 export interface ILocalDBMS {
   ee: EventEmitter;
@@ -20,6 +20,52 @@ export interface ILocalDBMS {
   }): Promise<void>;
 
   getProfileBindings(this: ILocalDBMS): Promise<ProfileBindings>;
+
+  getProfileNamesArray(this: ILocalDBMS, { type }: { type: ProfileTypes }): Promise<string[]>
+  getProfile(this: ILocalDBMS, { type, name }: { type: ProfileTypes, name: string }): Promise<ProfileItem>;
+  getAllProfiles(this: ILocalDBMS, { type }: { type: ProfileTypes }): Promise<Profiles>;
+  createProfile(this: ILocalDBMS, { type, characterName }: { type: ProfileTypes, characterName: string }): Promise<void>;
+  renameProfile(this: ILocalDBMS, { type, fromName, toName }:
+    { type: ProfileTypes, fromName: string, toName: string }): Promise<void>;
+  removeProfile(this: ILocalDBMS, { type, characterName }:
+    { type: ProfileTypes, characterName: string }): Promise<void>;
+  updateProfileField(
+    this: ILocalDBMS,
+    { type, characterName, fieldName, itemType, value }:
+      { type: ProfileTypes, characterName: string, fieldName: string, itemType: ProfileFieldTypesNames, value }
+  ): Promise<void>;
+
+  createProfileItem(this: ILocalDBMS, { type, name, itemType, selectedIndex }:
+    { type: ProfileTypes, name: string, itemType: ProfileFieldTypesNames, selectedIndex: number }): Promise<void>;
+  moveProfileItem(this: ILocalDBMS, { type, index, newIndex }:
+    { type: ProfileTypes, index: number, newIndex: number }): Promise<void>;
+  removeProfileItem(this: ILocalDBMS, { type, index, profileItemName }:
+    { type: ProfileTypes, index: number, profileItemName: string }): Promise<void>;
+  changeProfileItemType(this: ILocalDBMS, { type, profileItemName, newType }:
+    { type: ProfileTypes, newType: ProfileFieldTypesNames, profileItemName: string }): Promise<void>;
+  changeProfileItemPlayerAccess(
+    this: ILocalDBMS,
+    { type, profileItemName, playerAccessType }: { type: ProfileTypes, playerAccessType: PlayerAccessTypes, profileItemName: string }
+  ): Promise<void>;
+  renameProfileItem(this: ILocalDBMS, { type, newName, oldName }:
+    { type: ProfileTypes, newName: string, oldName: string }): Promise<void>;
+  doExportProfileItemChange(
+    this: ILocalDBMS,
+    { type, profileItemName, checked }:
+      { type: ProfileTypes, checked: boolean, profileItemName: string }
+  ): Promise<void>;
+  showInRoleGridProfileItemChange(
+    this: ILocalDBMS,
+    { type, profileItemName, checked }:
+      { type: ProfileTypes, checked: boolean, profileItemName: string }
+  ): Promise<void>;
+  updateDefaultValue(this: ILocalDBMS, { type, profileItemName, value }:
+    { type: ProfileTypes, value: boolean | string | number, profileItemName: string }): Promise<void>;
+  renameEnumValue(
+    this: ILocalDBMS,
+    { type, profileItemName, fromValue, toValue }:
+      { type: ProfileTypes, fromValue: string, toValue: string, profileItemName: string }
+  ): Promise<void>;
 }
 
 export type Database = {

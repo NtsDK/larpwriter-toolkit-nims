@@ -50,7 +50,7 @@ export function getRelations(this: ILocalDBMS) {
   return Promise.resolve(R.clone(this.database.Relations));
 }
 
-export function getRelationsSummary(this: ILocalDBMS, { characterName }: any = {}) {
+export function getRelationsSummary(this: ILocalDBMS, { characterName }: { characterName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(characterCheck(characterName, this.database), reject, () => {
       const relData = R.clone(this.database.Relations);
@@ -64,7 +64,8 @@ export function getRelationsSummary(this: ILocalDBMS, { characterName }: any = {
   });
 }
 
-export function getCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharacter }: { fromCharacter: string, toCharacter: string }) {
+export function getCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharacter }:
+  { fromCharacter: string, toCharacter: string }): Promise<Relation> {
   return new Promise((resolve, reject) => {
     const relData = this.database.Relations;
     const chain = PC.chainCheck([
@@ -73,12 +74,13 @@ export function getCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharac
       PC.entityExistsCheck(dbmsUtils._arr2RelKey([fromCharacter, toCharacter]), relData.map(dbmsUtils._rel2RelKey)),
     ]);
     PC.precondition(chain, reject, () => {
-      resolve(R.clone(findRel(fromCharacter, toCharacter, relData)));
+      resolve(R.clone(findRel(fromCharacter, toCharacter, relData)!));
     });
   });
 }
 
-export function createCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharacter }: { fromCharacter: string, toCharacter: string }): Promise<void> {
+export function createCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharacter }:
+  { fromCharacter: string, toCharacter: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const relData = this.database.Relations;
     const chain = PC.chainCheck([
@@ -102,7 +104,8 @@ export function createCharacterRelation(this: ILocalDBMS, { fromCharacter, toCha
   });
 }
 
-export function removeCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharacter }: { fromCharacter: string, toCharacter: string }): Promise<void> {
+export function removeCharacterRelation(this: ILocalDBMS, { fromCharacter, toCharacter }:
+  { fromCharacter: string, toCharacter: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const relData = this.database.Relations;
     const chain = PC.chainCheck([
@@ -120,7 +123,8 @@ export function removeCharacterRelation(this: ILocalDBMS, { fromCharacter, toCha
 
 export function setCharacterRelationText(
   this: ILocalDBMS,
-  { fromCharacter, toCharacter, character, text }: { fromCharacter: string, toCharacter: string, character: string, text: string }
+  { fromCharacter, toCharacter, character, text }:
+    { fromCharacter: string, toCharacter: string, character: string, text: string }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const relData = this.database.Relations;
@@ -143,7 +147,8 @@ export function setCharacterRelationText(
 
 export function setRelationReadyStatus(
   this: ILocalDBMS,
-  { fromCharacter, toCharacter, character, ready }: { fromCharacter: string, toCharacter: string, character: string, ready: boolean }
+  { fromCharacter, toCharacter, character, ready }:
+    { fromCharacter: string, toCharacter: string, character: string, ready: boolean }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const relData = this.database.Relations;
@@ -171,7 +176,6 @@ export function setRelationEssenceStatus(
   this: ILocalDBMS,
   { fromCharacter, toCharacter, essence, flag }:
     { fromCharacter: string, toCharacter: string, essence: RelationEssences, flag: boolean }
-
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const relData = this.database.Relations;

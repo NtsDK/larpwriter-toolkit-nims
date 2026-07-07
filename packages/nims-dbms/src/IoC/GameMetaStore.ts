@@ -38,4 +38,20 @@ export class GameMetaStore {
       saveTime: this.saveTime,
     })
   }
+
+  setSaveTime(saveTime: string) {
+    this.saveTime = saveTime;
+  }
+  setName(name: string) {
+    this.name = name;
+  }
+  setDescription(description: string) {
+    this.description = description;
+  }
+  setDate(date: string) {
+    this.date = date;
+  }
+  setPreGameDate(preGameDate: string) {
+    this.preGameDate = preGameDate;
+  }
 }

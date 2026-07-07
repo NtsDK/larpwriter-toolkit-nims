@@ -42,7 +42,7 @@ function getProfileStructure(database: Database, type: ProfileTypes): ProfileStr
 
 const typeCheck = (type) => PC.chainCheck([PC.isString(type), PC.elementFromEnum(type, Constants.profileTypes)]);
 
-export function getProfileNamesArray(this: ILocalDBMS, { type }: { type: ProfileTypes }) {
+export function getProfileNamesArray(this: ILocalDBMS, { type }: { type: ProfileTypes }): Promise<string[]> {
   return new Promise((resolve, reject) => {
     PC.precondition(typeCheck(type), reject, () => {
       resolve(Object.keys(getProfiles(this.database, type)).sort(CU.charOrdA));
@@ -100,7 +100,8 @@ export function createProfile(this: ILocalDBMS, { type, characterName }: { type:
   });
 }
 // profiles
-export function renameProfile(this: ILocalDBMS, { type, fromName, toName }: { type: ProfileTypes, fromName: string, toName: string }): Promise<void> {
+export function renameProfile(this: ILocalDBMS, { type, fromName, toName }:
+  { type: ProfileTypes, fromName: string, toName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     PC.precondition(typeCheck(type), reject, () => {
       const container = getProfiles(this.database, type);
@@ -117,7 +118,8 @@ export function renameProfile(this: ILocalDBMS, { type, fromName, toName }: { ty
 }
 
 // profiles
-export function removeProfile(this: ILocalDBMS, { type, characterName }: { type: ProfileTypes, characterName: string }): Promise<void> {
+export function removeProfile(this: ILocalDBMS, { type, characterName }:
+  { type: ProfileTypes, characterName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     PC.precondition(typeCheck(type), reject, () => {
       const container = getProfiles(this.database, type);
@@ -194,9 +196,7 @@ export function updateProfileField(
 function _createProfileItem(this: ILocalDBMS, [{ type, name, itemType, value }] = []) {
   // throw new Error(arguments);
   const profileSet = getProfiles(this.database, type);
-  // @ts-ignore
   Object.keys(profileSet).forEach((characterName) => {
-    // @ts-ignore
     profileSet[characterName][name] = value;
   });
 }

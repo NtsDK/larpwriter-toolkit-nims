@@ -31,9 +31,10 @@ function getProfileStructure(database: Database, type: ProfileTypes): ProfileStr
 const getProfileInfo = (type: ProfileTypes, database: Database) => {
   // var structure = R.path(getStructurePath(type), database).filter(el => el.showInRoleGrid === true);
   const structure = getProfileStructure(database, type);
+  const profiles = getProfiles(database, type);
   return {
     structure,
-    profiles: R.mapObjIndexed(R.pick(structure.map(R.prop("name"))), getProfiles(database, type)),
+    profiles: R.mapObjIndexed(R.pick(structure.map(R.prop("name"))), profiles),
   };
 };
 

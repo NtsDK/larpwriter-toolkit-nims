@@ -62,8 +62,10 @@ export const ownedEntityTypes2 = ["characters", "players", "stories", "groups"] 
 export type OwnedEntityTypes2 = typeof ownedEntityTypes2[number];
 
 export const metaInfoStrings = ["name", "description"] as const;
+export type MetaInfoStrings = typeof metaInfoStrings[number];
 
 export const metaInfoDates = ["date", "preGameDate"] as const;
+export type MetaInfoDates = typeof metaInfoDates[number];
 
 export const profileTypes = ["character", "player"] as const;
 export type ProfileTypes = typeof profileTypes[number];

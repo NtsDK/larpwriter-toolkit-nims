@@ -294,8 +294,9 @@ export function doExportGroup(this: ILocalDBMS, { groupName, value }: { groupNam
 
 const initProfileInfo = (that: ILocalDBMS, type, ownerMapType) =>
   new Promise((resolve, reject) => {
+    Promise.all([that.getAllProfiles({ type }),
     // @ts-ignore
-    Promise.all([that.getAllProfiles({ type }), that.getProfileStructure({ type })])
+    that.getProfileStructure({ type })])
       .then((results) => {
         const [profiles, profileStructure] = results;
         let owners = R.keys(profiles);
