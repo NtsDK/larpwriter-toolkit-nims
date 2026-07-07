@@ -3,6 +3,7 @@ import * as Constants from "../nimsConstants";
 import { PC, CU } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
 import { ILocalDBMS } from "../domain";
+import { AdaptationProperties } from "../nimsConstants";
 
 // ((callback2) => {
 //     function storyAdaptationsAPI(LocalDBMS, opts) {
@@ -13,23 +14,22 @@ import { ILocalDBMS } from "../domain";
 // let _isStoryEmpty, _isStoryFinished;
 
 //events
-export function getFilteredStoryNames(this: ILocalDBMS, { showOnlyUnfinishedStories }: any = {}) {
+export function getFilteredStoryNames(this: ILocalDBMS, { showOnlyUnfinishedStories }:
+  { showOnlyUnfinishedStories: boolean }) {
   return new Promise((resolve, reject) => {
     PC.precondition(PC.isBoolean(showOnlyUnfinishedStories), reject, () => {
       let storyArray = Object.keys(this.database.Stories).sort(CU.charOrdA);
       const that = this;
-      // @ts-ignore
-      storyArray = storyArray.map((elem) => ({
+      let storyArray2 = storyArray.map((elem) => ({
         storyName: elem,
         isFinished: dbmsUtils._isStoryFinished(that.database, elem),
         isEmpty: dbmsUtils._isStoryEmpty(that.database, elem),
       }));
 
       if (showOnlyUnfinishedStories) {
-        // @ts-ignore
-        storyArray = storyArray.filter((elem) => !elem.isFinished || elem.isEmpty);
+        storyArray2 = storyArray2.filter((elem) => !elem.isFinished || elem.isEmpty);
       }
-      resolve(storyArray);
+      resolve(storyArray2);
     });
   });
 }
@@ -43,9 +43,8 @@ export function getFilteredStoryNames(this: ILocalDBMS, { showOnlyUnfinishedStor
 // dbmsUtils._isStoryFinished = _isStoryFinished;
 
 //adaptations
-export function getStory(this: ILocalDBMS, { storyName }: any = {}) {
+export function getStory(this: ILocalDBMS, { storyName }: { storyName: string }) {
   return new Promise((resolve, reject) => {
-    // @ts-ignore
     const chain = [PC.isString(storyName), PC.entityExists(storyName, R.keys(this.database.Stories))];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       resolve(R.clone(this.database.Stories[storyName]));
@@ -53,7 +52,7 @@ export function getStory(this: ILocalDBMS, { storyName }: any = {}) {
   });
 }
 
-const getValueCheck = function (type, value) {
+const getValueCheck = function (type: AdaptationProperties, value: string | boolean) {
   switch (type) {
     case "text":
     case "time":
@@ -68,33 +67,29 @@ const getValueCheck = function (type, value) {
 // preview, events
 export function setEventAdaptationProperty(
   this: ILocalDBMS,
-  { storyName, eventIndex, characterName, type, value }: any = {}
+  { storyName, eventIndex, characterName, type, value }:
+    { storyName: string, eventIndex: number, characterName: string, type: AdaptationProperties, value: string | boolean }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [
       PC.isString(storyName),
-      // @ts-ignore
       PC.entityExists(storyName, R.keys(this.database.Stories)),
       PC.isNumber(eventIndex),
       PC.isString(type),
-      // @ts-ignore
       PC.elementFromEnum(type, Constants.adaptationProperties),
       PC.isString(characterName),
     ];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       const story = this.database.Stories[storyName];
-      // @ts-ignore
       chain = [
-        // @ts-ignore
         PC.entityExists(characterName, R.keys(story.characters)),
-        // @ts-ignore
         PC.isInRange(eventIndex, 0, story.events.length - 1),
         getValueCheck(type, value),
       ];
       PC.precondition(PC.chainCheck(chain), reject, () => {
         const event = story.events[eventIndex];
-        // @ts-ignore
         PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), reject, () => {
+          // @ts-ignore
           event.characters[characterName][type] = value;
           resolve();
         });

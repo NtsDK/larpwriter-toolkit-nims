@@ -2,6 +2,7 @@ import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC, CU } from "nims-dbms-core";
 import { ILocalDBMS } from "../domain";
+import { CharacterActivityTypes } from "../nimsConstants";
 
 // ((callback2) => {
 //     function storyCharactersAPI(LocalDBMS, opts) {
@@ -10,7 +11,7 @@ import { ILocalDBMS } from "../domain";
 //         } = opts;
 
 //event presence
-export function getStoryCharacterNamesArray(this: ILocalDBMS, { storyName }: any = {}) {
+export function getStoryCharacterNamesArray(this: ILocalDBMS, { storyName }: { storyName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
       const localCharacters = this.database.Stories[storyName].characters;
@@ -20,7 +21,7 @@ export function getStoryCharacterNamesArray(this: ILocalDBMS, { storyName }: any
 }
 
 //story characters
-export function getStoryCharacters(this: ILocalDBMS, { storyName }: any = {}) {
+export function getStoryCharacters(this: ILocalDBMS, { storyName }: { storyName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
       resolve(R.clone(this.database.Stories[storyName].characters));
@@ -29,7 +30,8 @@ export function getStoryCharacters(this: ILocalDBMS, { storyName }: any = {}) {
 }
 
 //story characters
-export function addStoryCharacter(this: ILocalDBMS, { storyName, characterName }: any = {}): Promise<void> {
+export function addStoryCharacter(this: ILocalDBMS, { storyName, characterName }:
+  { storyName: string, characterName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [
       PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
@@ -51,7 +53,8 @@ export function addStoryCharacter(this: ILocalDBMS, { storyName, characterName }
 }
 
 //story characters
-export function switchStoryCharacters(this: ILocalDBMS, { storyName, fromName, toName }: any = {}): Promise<void> {
+export function switchStoryCharacters(this: ILocalDBMS, { storyName, fromName, toName }:
+  { storyName: string, fromName: string, toName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     let cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
     PC.precondition(cond, reject, () => {
@@ -76,7 +79,8 @@ export function switchStoryCharacters(this: ILocalDBMS, { storyName, fromName, t
 }
 
 //story characters
-export function removeStoryCharacter(this: ILocalDBMS, { storyName, characterName }: any = {}): Promise<void> {
+export function removeStoryCharacter(this: ILocalDBMS, { storyName, characterName }:
+  { storyName: string, characterName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const cond = PC.entityExistsCheck(storyName, R.keys(this.database.Stories));
     PC.precondition(cond, reject, () => {
@@ -95,7 +99,7 @@ export function removeStoryCharacter(this: ILocalDBMS, { storyName, characterNam
 // story characters
 export function updateCharacterInventory(
   this: ILocalDBMS,
-  { storyName, characterName, inventory }: any = {}
+  { storyName, characterName, inventory }: { storyName: string, characterName: string, inventory: string }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(inventory)];
@@ -112,13 +116,13 @@ export function updateCharacterInventory(
 //story characters
 export function onChangeCharacterActivity(
   this: ILocalDBMS,
-  { storyName, characterName, activityType, checked }: any = {}
+  { storyName, characterName, activityType, checked }:
+    { storyName: string, characterName: string, activityType: CharacterActivityTypes, checked: boolean }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [
       PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
       PC.isString(activityType),
-      // @ts-ignore
       PC.elementFromEnum(activityType, Constants.characterActivityTypes),
       PC.isBoolean(checked),
     ];
@@ -140,7 +144,7 @@ export function onChangeCharacterActivity(
 //event presence
 export function addCharacterToEvent(
   this: ILocalDBMS,
-  { storyName, eventIndex, characterName }: any = {}
+  { storyName, eventIndex, characterName }: { storyName: string, eventIndex: number, characterName: string }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
@@ -167,7 +171,7 @@ export function addCharacterToEvent(
 // event presence
 export function removeCharacterFromEvent(
   this: ILocalDBMS,
-  { storyName, eventIndex, characterName }: any = {}
+  { storyName, eventIndex, characterName }: { storyName: string, eventIndex: number, characterName: string }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(eventIndex)];
@@ -179,7 +183,6 @@ export function removeCharacterFromEvent(
       ];
       PC.precondition(PC.chainCheck(chain), reject, () => {
         const event = story.events[eventIndex];
-        // @ts-ignore
         PC.precondition(PC.entityExists(characterName, R.keys(event.characters)), reject, () => {
           delete this.database.Stories[storyName].events[eventIndex].characters[characterName];
           resolve();

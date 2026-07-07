@@ -2,6 +2,7 @@ import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC, CU } from "nims-dbms-core";
 import { ILocalDBMS } from "../domain";
+import { OriginProperties } from "../nimsConstants";
 
 // ((callback2) => {
 //   function storyEventsAPI(LocalDBMS, opts) {
@@ -10,7 +11,7 @@ import { ILocalDBMS } from "../domain";
 //     } = opts;
 
 //story events, event presence
-export function getStoryEvents(this: ILocalDBMS, { storyName }: any = {}) {
+export function getStoryEvents(this: ILocalDBMS, { storyName }: { storyName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
       resolve(R.clone(this.database.Stories[storyName].events));
@@ -19,7 +20,8 @@ export function getStoryEvents(this: ILocalDBMS, { storyName }: any = {}) {
 }
 
 //story events
-export function createEvent(this: ILocalDBMS, { storyName, eventName, selectedIndex }: any = {}): Promise<void> {
+export function createEvent(this: ILocalDBMS, { storyName, eventName, selectedIndex }:
+  { storyName: string, eventName: string, selectedIndex: number }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [
       PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
@@ -44,7 +46,8 @@ export function createEvent(this: ILocalDBMS, { storyName, eventName, selectedIn
 }
 
 //story events
-export function moveEvent(this: ILocalDBMS, { storyName, index, newIndex }: any = {}): Promise<void> {
+export function moveEvent(this: ILocalDBMS, { storyName, index, newIndex }:
+  { storyName: string, index: number, newIndex: number }): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [
       PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
@@ -65,7 +68,7 @@ export function moveEvent(this: ILocalDBMS, { storyName, index, newIndex }: any 
 }
 
 //story events
-export function cloneEvent(this: ILocalDBMS, { storyName, index }: any = {}): Promise<void> {
+export function cloneEvent(this: ILocalDBMS, { storyName, index }: { storyName: string, index: number }): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -80,7 +83,7 @@ export function cloneEvent(this: ILocalDBMS, { storyName, index }: any = {}): Pr
 }
 
 //story events
-export function mergeEvents(this: ILocalDBMS, { storyName, index }: any = {}): Promise<void> {
+export function mergeEvents(this: ILocalDBMS, { storyName, index }: { storyName: string, index: number }): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -101,7 +104,6 @@ export function mergeEvents(this: ILocalDBMS, { storyName, index }: any = {}): P
             event1.characters[characterName] = event2.characters[characterName];
           }
         });
-        // @ts-ignore
         CU.removeFromArrayByIndex(events, index + 1);
 
         resolve();
@@ -111,14 +113,13 @@ export function mergeEvents(this: ILocalDBMS, { storyName, index }: any = {}): P
 }
 
 //story events
-export function removeEvent(this: ILocalDBMS, { storyName, index }: any = {}): Promise<void> {
+export function removeEvent(this: ILocalDBMS, { storyName, index }: { storyName: string, index: number }): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isNumber(index)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
       const { events } = this.database.Stories[storyName];
       chain = [PC.isInRange(index, 0, events.length - 1)];
       PC.precondition(PC.chainCheck(chain), reject, () => {
-        // @ts-ignore
         CU.removeFromArrayByIndex(events, index);
         resolve();
       });
@@ -129,14 +130,14 @@ export function removeEvent(this: ILocalDBMS, { storyName, index }: any = {}): P
 // story events, preview, adaptations
 export function setEventOriginProperty(
   this: ILocalDBMS,
-  { storyName, index, property, value }: any = {}
+  { storyName, index, property, value }:
+    { storyName: string, index: number, property: OriginProperties, value: any }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     let chain = [
       PC.entityExistsCheck(storyName, R.keys(this.database.Stories)),
       PC.isNumber(index),
       PC.isString(property),
-      // @ts-ignore
       PC.elementFromEnum(property, Constants.originProperties),
       PC.isString(value),
     ];

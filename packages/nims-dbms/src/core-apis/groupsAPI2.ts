@@ -3,6 +3,7 @@ import * as Constants from "../nimsConstants";
 import { PC, CU, Errors } from "nims-dbms-core";
 import * as PU from "../db-utils/projectUtils";
 import { Database, Group, ILocalDBMS } from "../domain";
+import { GroupEditableItems } from "../nimsConstants";
 
 // ((callback2) => {
 //     function groupsAPI(LocalDBMS, opts) {
@@ -76,7 +77,6 @@ export function getAllCharacterGroupTexts(this: ILocalDBMS) {
     Promise.all([
       // @ts-ignore
       this.getProfileFilterInfo(),
-      // @ts-ignore
       this.getProfileBindings(),
     ])
       .then((results) => {
@@ -248,12 +248,11 @@ export function saveFilterToGroup(this: ILocalDBMS, { groupName, filterModel }: 
 //      },
 //  ]
 // DBMS.groups[name][fieldName].set({value})
-export function updateGroupField(this: ILocalDBMS, { groupName, fieldName, value }: any = {}): Promise<void> {
+export function updateGroupField(this: ILocalDBMS, { groupName, fieldName, value }: { groupName: string, fieldName: GroupEditableItems, value: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([
       groupCheck(groupName, this.database),
       PC.isString(fieldName),
-      // @ts-ignore
       PC.elementFromEnum(fieldName, Constants.groupEditableItems),
       PC.isString(value),
     ]);
@@ -282,7 +281,7 @@ export function updateGroupField(this: ILocalDBMS, { groupName, fieldName, value
 //          }]
 //      },
 //  ]
-export function doExportGroup(this: ILocalDBMS, { groupName, value }: any = {}): Promise<void> {
+export function doExportGroup(this: ILocalDBMS, { groupName, value }: { groupName: string, value: boolean }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = PC.chainCheck([groupCheck(groupName, this.database), PC.isBoolean(value)]);
     PC.precondition(chain, reject, () => {

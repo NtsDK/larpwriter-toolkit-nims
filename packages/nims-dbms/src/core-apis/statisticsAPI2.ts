@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import * as Constants from "../nimsConstants";
-import { ILocalDBMS } from "../domain";
+import { Database, ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function statisticsAPI(LocalDBMS, opts) {
@@ -54,7 +54,7 @@ export function getProfileStatisticsLevel2(this: ILocalDBMS) {
   });
 }
 
-function _getStatistics(database, groupTexts) {
+function _getStatistics(database: Database, groupTexts) {
   const statisticsLevel1 = _getStatisticsLevel1(database);
   const statisticsLevel2 = _getOverviewStatisticsLevel2(database, groupTexts);
   const statistics = {
@@ -65,7 +65,7 @@ function _getStatistics(database, groupTexts) {
   return statistics;
 }
 
-function _getStatisticsLevel1(database) {
+function _getStatisticsLevel1(database: Database) {
   const storyNumber = Object.keys(database.Stories).length;
   const characterNumber = Object.keys(database.Characters).length;
   const groupNumber = Object.keys(database.Groups).length;
@@ -106,7 +106,7 @@ function _getStatisticsLevel1(database) {
   };
 }
 
-function _getOverviewStatisticsLevel2(database, groupTexts) {
+function _getOverviewStatisticsLevel2(database: Database, groupTexts) {
   // const statistics = {};
   const storyEventsHist = _getHistogram(database, (story) => story.events.length);
   const storyCharactersHist = _getHistogram(database, (story) => Object.keys(story.characters).length);
@@ -156,7 +156,7 @@ function _makeNumberStep(array) {
 // @ts-ignore
 const filter = R.compose(R.includes(R.__, ["enum", "number", "checkbox"]), R.prop("type"));
 
-function _getProfileChartData(database) {
+function _getProfileChartData(database: Database) {
   const characterCharts = _getProfileChartArray(database, "Characters", "CharacterProfileStructure");
   const playerCharts = _getProfileChartArray(database, "Players", "PlayerProfileStructure");
   const postProcess = R.curry((prefix, el) => {
@@ -171,7 +171,7 @@ function _getProfileChartData(database) {
   };
 }
 
-function _getProfileChartArray(database, profileType, profileStructureType) {
+function _getProfileChartArray(database: Database, profileType, profileStructureType) {
   const profileItems = database[profileStructureType].filter(filter).map(R.pick(["name", "type"]));
 
   // @ts-ignore
@@ -207,7 +207,7 @@ function _makeChartLabel(key, value, total) {
   return [key, ": ", ((value / total) * 100).toFixed(0), "% (", value, "/", total, ")"].join("");
 }
 
-function _getChartData(database, objectKey, totalKey) {
+function _getChartData(database: Database, objectKey, totalKey) {
   const characterChartData: {
     value: number;
     label: string;
@@ -253,7 +253,7 @@ function _addToHist(hist, value, keyParam, label, startValue, mergeValues) {
   }
 }
 
-function _countCharactersInStories(database, stats) {
+function _countCharactersInStories(database: Database, stats) {
   R.values(database.Stories).forEach((story) => {
     R.keys(story.characters).forEach((characterName) => {
       stats[characterName]++;
@@ -286,7 +286,7 @@ function _makeTip(keyParam, step, tipData) {
   return `${tipData.join(", ")}`;
 }
 
-function _getCharacterHist(database, statsCollector) {
+function _getCharacterHist(database: Database, statsCollector) {
   const characterList = R.keys(database.Characters);
   // @ts-ignore
   const stats = R.zipObj(characterList, R.repeat(0, characterList.length));
@@ -324,7 +324,7 @@ function _getCharacterHist(database, statsCollector) {
   return hist;
 }
 
-function _getEventCompletenessHist(database) {
+function _getEventCompletenessHist(database: Database) {
   const hist = [];
   R.values(database.Stories).forEach((story) => {
     const storyCompleteness = _calcStoryCompleteness(story);
@@ -374,7 +374,7 @@ function _calcStoryCompleteness(story) {
 
 const calcPercent = (part, all) => ((part / (all === 0 ? 1 : all)) * 100).toFixed(1);
 
-function _getStoryCompleteness(database) {
+function _getStoryCompleteness(database: Database) {
   const allStories = Object.keys(database.Stories).length;
   const finishedStories = R.values(database.Stories)
     .map(_getStoryAdaptationStats)
@@ -386,7 +386,7 @@ function _getStoryCompleteness(database) {
   };
 }
 
-function _getGeneralCompleteness(database) {
+function _getGeneralCompleteness(database: Database) {
   let finishedAdaptations = 0,
     allAdaptations = 0;
 
@@ -406,7 +406,7 @@ function _getGeneralCompleteness(database) {
 // @ts-ignore
 const rel2bools = R.pipe(R.pick(["starterTextReady", "enderTextReady"]), R.values, R.filter(R.identity));
 
-function _getRelationCompleteness(database) {
+function _getRelationCompleteness(database: Database) {
   let finishedRelations = 0,
     allRelations = 0;
   allRelations = database.Relations.length * 2;
@@ -422,7 +422,7 @@ function _noWhiteSpaceLength(str) {
   return str.replace(/\s/g, "").length;
 }
 
-function _countTextCharacters(database) {
+function _countTextCharacters(database: Database) {
   const counts = {
     writerStories: 0,
     eventOrigins: 0,
@@ -442,12 +442,13 @@ function _countTextCharacters(database) {
   counts.groups = R.sum(R.values(database.Groups).map(R.compose(_noWhiteSpaceLength, R.prop("characterDescription"))));
   const extraFields = R.difference(Constants.relationFields, ["origin"]);
   counts.relations = R.sum(
+    // @ts-ignore
     R.flatten(database.Relations.map(R.pipe(R.omit(extraFields), R.values))).map(_noWhiteSpaceLength)
   );
   return counts;
 }
 
-function _countBindingStats(database) {
+function _countBindingStats(database: Database) {
   const charNum = R.keys(database.Characters).length;
   const playerNum = R.keys(database.Players).length;
   const bindingNum = R.keys(database.ProfileBindings).length;
@@ -459,7 +460,7 @@ function _countBindingStats(database) {
   };
 }
 
-function _getFirstLastEventTime(database) {
+function _getFirstLastEventTime(database: Database) {
   let lastEvent = null,
     firstEvent = null;
   R.values(database.Stories).forEach((story) => {
@@ -482,7 +483,7 @@ function _getFirstLastEventTime(database) {
   return [firstEvent, lastEvent];
 }
 
-function _getHistogram(database, keyParamDelegate) {
+function _getHistogram(database: Database, keyParamDelegate) {
   const hist = [];
   R.values(database.Stories).forEach((story) => {
     const keyParam = keyParamDelegate(story);

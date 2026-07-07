@@ -1,4 +1,5 @@
 import type { EventEmitter } from "events";
+import { PlayerAccessTypes, ProfileFieldTypesNames } from "../nimsConstants";
 
 export interface ILocalDBMS {
   ee: EventEmitter;
@@ -17,24 +18,67 @@ export interface ILocalDBMS {
     name: "name" | "description";
     value: string;
   }): Promise<void>;
+
+  getProfileBindings(this: ILocalDBMS): Promise<ProfileBindings>;
 }
 
 export type Database = {
   Meta: GameMeta,
   Stories: Record<string, Story>,
-  Characters: Record<string, Character>,
-  Players: Record<string, Player>,
+  Characters: Profiles,
+  Players: Profiles,
   Relations: Relation[],
-  ProfileBindings: Record<string, string>,
+  ProfileBindings: ProfileBindings,
   Groups: Record<string, Group>,
-  PlayerProfileStructure: ProfileStructureItem[],
-  CharacterProfileStructure: ProfileStructureItem[],
+  PlayerProfileStructure: ProfileStructure,
+  CharacterProfileStructure: ProfileStructure,
   ManagementInfo: any,
 }
 
-export type ProfileStructureItem = {
+export type ProfileBindings = Record<string, string>;
 
+export type ProfileStructure = ProfileStructureItem[];
+
+interface BaseProfileStructureItem {
+  name: string;
+  playerAccess: PlayerAccessTypes;
+  doExport: boolean;
+  showInRoleGrid: boolean;
 }
+
+export interface EnumProfileStructureItem extends BaseProfileStructureItem {
+  type: "enum";
+  value: string;
+}
+
+export interface MultiEnumProfileStructureItem extends BaseProfileStructureItem {
+  type: "multiEnum";
+  value: string;
+}
+
+export interface StringProfileStructureItem extends BaseProfileStructureItem {
+  type: "string";
+  value: string;
+}
+export interface TextProfileStructureItem extends BaseProfileStructureItem {
+  type: "text";
+  value: string;
+}
+export interface NumberProfileStructureItem extends BaseProfileStructureItem {
+  type: "number";
+  value: number;
+}
+export interface CheckboxProfileStructureItem extends BaseProfileStructureItem {
+  type: "checkbox";
+  value: boolean;
+}
+
+export type ProfileStructureItem = EnumProfileStructureItem |
+  MultiEnumProfileStructureItem |
+  StringProfileStructureItem |
+  TextProfileStructureItem |
+  NumberProfileStructureItem |
+  CheckboxProfileStructureItem;
 
 export type Relation = {
   "origin": string,
@@ -55,8 +99,8 @@ export type Group = {
   filterModel: any[];
 }
 
-export type Character = Record<string, string | number | boolean>;
-export type Player = Character;
+export type Profiles = Record<string, ProfileItem>;
+export type ProfileItem = Record<string, string | number | boolean>;
 
 export type Story = {
   name: string;
@@ -95,4 +139,17 @@ export type GameMeta = {
   description: string;
   date: string;
   preGameDate: string;
+}
+
+
+
+export type CharacterStatInfo = {
+  active: number,
+  follower: number,
+  defensive: number,
+  passive: number,
+  totalAdaptations: number,
+  finishedAdaptations: number,
+  totalStories: number,
+  completeness: number,
 }

@@ -18,7 +18,7 @@ export function getAllStories(this: ILocalDBMS) {
 }
 
 //stories
-export function getWriterStory(this: ILocalDBMS, { storyName }: any = {}) {
+export function getWriterStory(this: ILocalDBMS, { storyName }: { storyName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), reject, () => {
       resolve(this.database.Stories[storyName].story);
@@ -26,7 +26,8 @@ export function getWriterStory(this: ILocalDBMS, { storyName }: any = {}) {
   });
 }
 //stories
-export function setWriterStory(this: ILocalDBMS, { storyName, value }: any = {}): Promise<void> {
+export function setWriterStory(this: ILocalDBMS, { storyName, value }:
+  { storyName: string, value: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const chain = [PC.entityExistsCheck(storyName, R.keys(this.database.Stories)), PC.isString(value)];
     PC.precondition(PC.chainCheck(chain), reject, () => {
@@ -37,7 +38,7 @@ export function setWriterStory(this: ILocalDBMS, { storyName, value }: any = {})
 }
 
 // stories
-export function createStory(this: ILocalDBMS, { storyName }: any = {}): Promise<void> {
+export function createStory(this: ILocalDBMS, { storyName }: { storyName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     PC.precondition(
       PC.createEntityCheck2(storyName, R.keys(this.database.Stories), "entity-lifeless-name", "entity-of-story"),
@@ -56,7 +57,7 @@ export function createStory(this: ILocalDBMS, { storyName }: any = {}): Promise<
   });
 }
 // stories
-export function renameStory(this: ILocalDBMS, { fromName, toName }: any = {}): Promise<void> {
+export function renameStory(this: ILocalDBMS, { fromName, toName }: { fromName: string, toName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     PC.precondition(PC.renameEntityCheck(fromName, toName, R.keys(this.database.Stories)), reject, () => {
       const data = this.database.Stories[fromName];
@@ -70,7 +71,7 @@ export function renameStory(this: ILocalDBMS, { fromName, toName }: any = {}): P
 }
 
 // stories
-export function removeStory(this: ILocalDBMS, { storyName }: any = {}): Promise<void> {
+export function removeStory(this: ILocalDBMS, { storyName }: { storyName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     PC.precondition(PC.removeEntityCheck(storyName, R.keys(this.database.Stories)), reject, () => {
       delete this.database.Stories[storyName];

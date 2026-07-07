@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import { PC, CU } from "nims-dbms-core";
-import { ILocalDBMS } from "../domain";
+import { CharacterStatInfo, Database, ILocalDBMS } from "../domain";
 
 // ((callback2) => {
 //     function storyViewAPI(LocalDBMS, opts) {
@@ -8,12 +8,11 @@ import { ILocalDBMS } from "../domain";
 //             R, dateFormat, CU, PC
 //         } = opts;
 
-const characterCheck = (characterName, database) =>
-  // @ts-ignore
+const characterCheck = (characterName: string, database: Database) =>
   PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
 
 // preview
-export function getAllInventoryLists(this: ILocalDBMS, { characterName }: any = {}) {
+export function getAllInventoryLists(this: ILocalDBMS, { characterName }: { characterName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(characterCheck(characterName, this.database), reject, () => {
       const array = R.values(this.database.Stories)
@@ -30,7 +29,7 @@ export function getAllInventoryLists(this: ILocalDBMS, { characterName }: any = 
 }
 
 // preview
-export function getCharacterEventGroupsByStory(this: ILocalDBMS, { characterName }: any = {}) {
+export function getCharacterEventGroupsByStory(this: ILocalDBMS, { characterName }: { characterName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(characterCheck(characterName, this.database), reject, () => {
       const eventGroups: any[] = [];
@@ -61,9 +60,7 @@ export function getCharacterEventGroupsByStory(this: ILocalDBMS, { characterName
             });
 
           eventGroups.push({
-            // @ts-ignore
             storyName,
-            // @ts-ignore
             events,
           });
         });
@@ -74,7 +71,7 @@ export function getCharacterEventGroupsByStory(this: ILocalDBMS, { characterName
 }
 
 // preview
-export function getCharacterEventsByTime(this: ILocalDBMS, { characterName }: any = {}) {
+export function getCharacterEventsByTime(this: ILocalDBMS, { characterName }: { characterName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(characterCheck(characterName, this.database), reject, () => {
       let allEvents: any[] = [];
@@ -126,7 +123,7 @@ export function getEventsTimeInfo(this: ILocalDBMS, callback) {
 // character filter
 export function getCharactersSummary(this: ILocalDBMS) {
   const characters = R.keys(this.database.Characters);
-  const charactersInfo = {};
+  const charactersInfo: Record<string, CharacterStatInfo> = {};
   characters.forEach((character) => {
     charactersInfo[character] = {
       active: 0,
@@ -136,6 +133,7 @@ export function getCharactersSummary(this: ILocalDBMS) {
       totalAdaptations: 0,
       finishedAdaptations: 0,
       totalStories: 0,
+      completeness: 0
     };
   });
 
@@ -160,11 +158,8 @@ export function getCharactersSummary(this: ILocalDBMS) {
     });
   });
   R.values(charactersInfo).forEach((characterInfo) => {
-    //@ts-ignore
     characterInfo.completeness = Math.round(
-      //@ts-ignore
       (characterInfo.finishedAdaptations * 100) /
-      //@ts-ignore
       (characterInfo.totalAdaptations !== 0 ? characterInfo.totalAdaptations : 1)
     );
   });
@@ -172,7 +167,7 @@ export function getCharactersSummary(this: ILocalDBMS) {
 }
 
 // character profile
-export function getCharacterReport(this: ILocalDBMS, { characterName }: any = {}) {
+export function getCharacterReport(this: ILocalDBMS, { characterName }: { characterName: string }) {
   return new Promise((resolve, reject) => {
     PC.precondition(characterCheck(characterName, this.database), reject, () => {
       const characterReport = R.values(this.database.Stories)
@@ -187,7 +182,6 @@ export function getCharacterReport(this: ILocalDBMS, { characterName }: any = {}
           let meets = {};
           charEvents.forEach((event) => {
             const chars = R.keys(event.characters);
-            // @ts-ignore
             meets = R.mergeRight(meets, R.zipObj(chars, R.repeat(true, chars.length)));
           });
 

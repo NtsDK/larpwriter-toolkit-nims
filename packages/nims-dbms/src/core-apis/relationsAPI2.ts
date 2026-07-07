@@ -2,7 +2,7 @@ import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC, CU } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
-import { ILocalDBMS, Relation } from "../domain";
+import { Database, ILocalDBMS, Relation } from "../domain";
 import { RelationEssences } from "../nimsConstants";
 
 // ((callback2) => {
@@ -11,7 +11,7 @@ import { RelationEssences } from "../nimsConstants";
 //             R, Constants, Errors, addListener, dbmsUtils, CU, PC
 //         } = opts;
 
-const relationsPath = ["Relations"];
+// const relationsPath = ["Relations"];
 
 // const rel2RelKey = R.pipe(R.props(['starter', 'ender']), R.sort(CU.charOrdA), JSON.stringify);
 // dbmsUtils._rel2RelKey = rel2RelKey;
@@ -41,8 +41,7 @@ const findRel = (fromCharacter: string, toCharacter: string, relations: Relation
 //     return knownCharacters;
 // };
 
-const characterCheck = (characterName, database) =>
-  // @ts-ignore
+const characterCheck = (characterName: string, database: Database) =>
   PC.chainCheck([PC.isString(characterName), PC.entityExists(characterName, R.keys(database.Characters))]);
 
 const charFilter = R.curry((char: string, data: Relation[]) => R.filter((rel) => rel[char] !== undefined, data));
@@ -170,7 +169,8 @@ export function setRelationReadyStatus(
 
 export function setRelationEssenceStatus(
   this: ILocalDBMS,
-  { fromCharacter, toCharacter, essence, flag }: { fromCharacter: string, toCharacter: string, essence: RelationEssences, flag: boolean }
+  { fromCharacter, toCharacter, essence, flag }:
+    { fromCharacter: string, toCharacter: string, essence: RelationEssences, flag: boolean }
 
 ): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -181,16 +181,13 @@ export function setRelationEssenceStatus(
       PC.isString(essence),
       PC.elementFromEnum(essence, Constants.relationEssences),
       PC.isBoolean(flag),
-      // @ts-ignore
       PC.entityExistsCheck(dbmsUtils._arr2RelKey([fromCharacter, toCharacter]), relData.map(dbmsUtils._rel2RelKey)),
     ]);
     PC.precondition(chain, reject, () => {
-      const rel = findRel(fromCharacter, toCharacter, relData);
+      const rel = findRel(fromCharacter, toCharacter, relData)!;
       if (flag === true) {
-        // @ts-ignore
         rel.essence = R.uniq(R.append(essence, rel.essence));
       } else {
-        // @ts-ignore
         rel.essence.splice(R.indexOf(essence, rel.essence), 1);
       }
       resolve();
@@ -198,20 +195,19 @@ export function setRelationEssenceStatus(
   });
 }
 
-export function setOriginRelationText(this: ILocalDBMS, { fromCharacter, toCharacter, text }: any = {}): Promise<void> {
+export function setOriginRelationText(this: ILocalDBMS, { fromCharacter, toCharacter, text }:
+  { fromCharacter: string, toCharacter: string, essence: RelationEssences, text: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const relData = this.database.Relations;
     const chain = PC.chainCheck([
       characterCheck(fromCharacter, this.database),
       characterCheck(toCharacter, this.database),
       PC.isString(text),
-      // @ts-ignore
       PC.entityExistsCheck(dbmsUtils._arr2RelKey([fromCharacter, toCharacter]), relData.map(dbmsUtils._rel2RelKey)),
     ]);
     PC.precondition(chain, reject, () => {
-      const rel = findRel(fromCharacter, toCharacter, relData);
+      const rel = findRel(fromCharacter, toCharacter, relData)!;
       text = text.trim();
-      // @ts-ignore
       rel.origin = text;
       resolve();
     });
@@ -221,26 +217,18 @@ export function setOriginRelationText(this: ILocalDBMS, { fromCharacter, toChara
 function _renameCharacter(this: ILocalDBMS, [{ type, fromName, toName }] = []) {
   if (type === "player") return;
   const relData = this.database.Relations;
-  // @ts-ignore
   const arrPair = R.partition(R.pipe(R.prop(fromName), R.isNil), relData);
   arrPair[1] = arrPair[1].map((rel) => {
-    // @ts-ignore
     rel[toName] = rel[fromName];
-    // @ts-ignore
     delete rel[fromName];
-    // @ts-ignore
     if (rel.starter === fromName) {
-      // @ts-ignore
       rel.starter = toName;
     }
-    // @ts-ignore
     if (rel.ender === fromName) {
-      // @ts-ignore
       rel.ender = toName;
     }
     return rel;
   });
-  // @ts-ignore
   this.database.Relations = R.concat(arrPair[0], arrPair[1]);
 }
 
@@ -249,7 +237,6 @@ function _renameCharacter(this: ILocalDBMS, [{ type, fromName, toName }] = []) {
 function _removeCharacter(this: ILocalDBMS, [{ type, characterName }] = []) {
   if (type === "player") return;
   const relData = this.database.Relations;
-  // @ts-ignore
   this.database.Relations = R.filter(R.pipe(R.prop(characterName), R.isNil), relData);
 }
 

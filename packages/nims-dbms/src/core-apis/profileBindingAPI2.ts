@@ -2,7 +2,7 @@ import * as R from "ramda";
 import * as Constants from "../nimsConstants";
 import { PC } from "nims-dbms-core";
 import * as dbmsUtils from "./dbmsUtils";
-import { ILocalDBMS } from "../domain";
+import { ILocalDBMS, ProfileBindings } from "../domain";
 import { ProfileTypes } from "../nimsConstants";
 
 // ((callback2) => {
@@ -11,7 +11,7 @@ import { ProfileTypes } from "../nimsConstants";
 //   R, Constants, Errors, addListener, dbmsUtils, CU, PC
 // } = opts;
 
-export function getProfileBindings(this: ILocalDBMS) {
+export function getProfileBindings(this: ILocalDBMS): Promise<ProfileBindings> {
   return Promise.resolve(R.clone(this.database.ProfileBindings));
 }
 
@@ -53,10 +53,8 @@ export function getProfileBinding(this: ILocalDBMS, { type, name }: { type: Prof
   return new Promise((resolve, reject) => {
     const conditions = [
       PC.isString(type),
-      // @ts-ignore
       PC.elementFromEnum(type, Constants.profileTypes),
       PC.isString(name),
-      // @ts-ignore
       PC.entityExists(name, R.keys(this.database[type === "character" ? "Characters" : "Players"])),
     ];
     PC.precondition(PC.chainCheck(conditions), reject, () => {
@@ -65,49 +63,39 @@ export function getProfileBinding(this: ILocalDBMS, { type, name }: { type: Prof
   });
 }
 
-export function createBinding(this: ILocalDBMS, { characterName, playerName }: any = {}): Promise<void> {
+export function createBinding(this: ILocalDBMS, { characterName, playerName }: { characterName: string, playerName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
     const bindings = this.database.ProfileBindings;
-    // @ts-ignore
     const invertBinding = R.invertObj(bindings);
     const conditions = [
       PC.isString(characterName),
-      // @ts-ignore
       PC.entityExists(characterName, R.keys(this.database.Characters)),
       PC.isString(playerName),
-      // @ts-ignore
       PC.entityExists(playerName, R.keys(this.database.Players)),
       //   PC.entityIsNotUsed(characterName, R.keys(bindings)),
       //   PC.entityIsNotUsed(playerName, R.keys(R.invertObj(bindings)))
     ];
     PC.precondition(PC.chainCheck(conditions), reject, () => {
       if (invertBinding[playerName] !== undefined) {
-        // @ts-ignore
         delete bindings[invertBinding[playerName]];
       }
-      // @ts-ignore
       bindings[characterName] = playerName;
       resolve();
     });
   });
 }
 
-export function removeBinding(this: ILocalDBMS, { characterName, playerName }: any = {}): Promise<void> {
+export function removeBinding(this: ILocalDBMS, { characterName, playerName }: { characterName: string, playerName: string }): Promise<void> {
   return new Promise((resolve, reject) => {
-    // @ts-ignore
     const bindingArr = R.toPairs(this.database.ProfileBindings).map((pair) => `${pair[0]}/${pair[1]}`);
     const conditions = [
       PC.isString(characterName),
-      // @ts-ignore
       PC.entityExists(characterName, R.keys(this.database.Characters)),
       PC.isString(playerName),
-      // @ts-ignore
       PC.entityExists(playerName, R.keys(this.database.Players)),
-      // @ts-ignore
       PC.entityExists(`${characterName}/${playerName}`, bindingArr),
     ];
     PC.precondition(PC.chainCheck(conditions), reject, () => {
-      // @ts-ignore
       delete this.database.ProfileBindings[characterName];
       resolve();
     });

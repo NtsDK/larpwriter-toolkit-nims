@@ -28,6 +28,7 @@ export const profileFieldTypes = {
 } as const;
 
 export const profileFieldTypesNames = R.keys(profileFieldTypes);
+export type ProfileFieldTypesNames = typeof profileFieldTypesNames[number];
 
 export const relationFields = ["origin", "starterTextReady", "enderTextReady", "essence", "starter", "ender"] as const;
 
@@ -35,10 +36,13 @@ export const relationEssences = ["starterToEnder", "allies", "enderToStarter"] a
 export type RelationEssences = typeof relationEssences[number];
 
 export const playerAccessTypes = ["write", "readonly", "hidden"] as const;
+export type PlayerAccessTypes = typeof playerAccessTypes[number];
 
 export const originProperties = ["name", "text", "time"] as const;
+export type OriginProperties = typeof originProperties[number];
 
 export const adaptationProperties = ["text", "time", "ready"] as const;
+export type AdaptationProperties = typeof adaptationProperties[number];
 
 export const playersOptionTypes = ["allowPlayerCreation", "allowCharacterCreation"] as const;
 
@@ -87,11 +91,13 @@ export const groupProfileStructure = [
   },
 ];
 
-export const groupEditableItems = ["masterDescription", "characterDescription"];
+export const groupEditableItems = ["masterDescription", "characterDescription"] as const;
+export type GroupEditableItems = typeof groupEditableItems[number];
 
 export const noGroup = "noGroup";
 
 export const characterActivityTypes = ["active", "follower", "defensive", "passive"];
+export type CharacterActivityTypes = typeof characterActivityTypes[number];
 
 export const characterRelationTypes = ["allies", "directional", "neutral"];
 

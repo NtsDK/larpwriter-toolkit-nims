@@ -1,5 +1,6 @@
 import * as R from "ramda";
-import { ILocalDBMS } from "../domain";
+import { Database, ILocalDBMS, Profiles, ProfileStructure } from "../domain";
+import { ProfileTypes } from "../nimsConstants";
 
 // ((callback2) => {
 //     function profileViewAPI(LocalDBMS, opts) {
@@ -7,25 +8,32 @@ import { ILocalDBMS } from "../domain";
 //             R, CU, Constants, Errors
 //         } = opts;
 
-function getPath(type) {
-  if (type === "character") return ["Characters"];
-  if (type === "player") return ["Players"];
-  return null;
+function getProfiles(database: Database, type: ProfileTypes): Profiles {
+  if (type === "character") {
+    return database.Characters;
+  }
+  if (type === "player") {
+    return database.Players;
+  }
+  throw new Error("unexpected type " + type);
 }
-function getStructurePath(type) {
-  if (type === "character") return ["CharacterProfileStructure"];
-  if (type === "player") return ["PlayerProfileStructure"];
-  return null;
+function getProfileStructure(database: Database, type: ProfileTypes): ProfileStructure {
+  if (type === "character") {
+    return database.CharacterProfileStructure;
+  }
+  if (type === "player") {
+    return database.PlayerProfileStructure;
+  }
+  throw new Error("unexpected type " + type);
 }
 
-const getProfileInfo = (type, database) => {
+
+const getProfileInfo = (type: ProfileTypes, database: Database) => {
   // var structure = R.path(getStructurePath(type), database).filter(el => el.showInRoleGrid === true);
-  // @ts-ignore
-  const structure = R.path(getStructurePath(type), database);
+  const structure = getProfileStructure(database, type);
   return {
     structure,
-    // @ts-ignore
-    profiles: R.mapObjIndexed(R.pick(structure.map(R.prop("name"))), R.path(getPath(type), database)),
+    profiles: R.mapObjIndexed(R.pick(structure.map(R.prop("name"))), getProfiles(database, type)),
   };
 };
 
