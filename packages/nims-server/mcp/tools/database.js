@@ -1,7 +1,7 @@
 'use strict';
 
 const { z } = require('zod');
-const { callDb, formatError } = require('../dbCall');
+const { callDb, callDbAdmin, formatError } = require('../dbCall');
 const { formatBriefingsMarkdown } = require('../formatBriefings');
 
 const emptyBase = require('nims-resources/emptyBase');
@@ -181,6 +181,8 @@ function registerWriteTools(server, db, user) {
         },
         async ({ database, preserveManagementInfo }) => {
             try {
+                const { requireAdmin } = require('../permissions');
+                requireAdmin(user, db);
                 const prepared = await prepareDatabaseForImport(
                     db, user, database, preserveManagementInfo !== false
                 );
@@ -242,6 +244,8 @@ function registerWriteTools(server, db, user) {
         },
         async ({ preset, preserveManagementInfo }) => {
             try {
+                const { requireAdmin } = require('../permissions');
+                requireAdmin(user, db);
                 const managementInfo = preserveManagementInfo !== false
                     ? await getManagementInfo(db, user)
                     : undefined;
@@ -252,6 +256,9 @@ function registerWriteTools(server, db, user) {
                 const database = factory(managementInfo);
                 if (!database) {
                     return { content: [{ type: 'text', text: `Пресет «${preset}» не найден на сервере.` }], isError: true };
+                }
+                if (managementInfo) {
+                    database.ManagementInfo = managementInfo;
                 }
                 await callDb(db, 'setDatabase', { database }, user);
                 return {

@@ -15,6 +15,9 @@
       "privateKey" : "I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.key",
       "certificate" : "I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.crt"
   }, 
+  "api" :{
+      "enabled" : true
+  }, 
   "playerAccess" :{
       "enabled" : true
   }, 

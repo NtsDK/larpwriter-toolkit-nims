@@ -2,6 +2,7 @@
 
 const { z } = require('zod');
 const { callDb, formatError } = require('../dbCall');
+const { requireStoryAccess } = require('../permissions');
 
 function registerReadTools(server, db, user) {
     server.tool(
@@ -69,6 +70,12 @@ function registerWriteTools(server, db, user) {
         async ({ storyName }) => {
             try {
                 await callDb(db, 'createStory', { storyName }, user);
+                if (db.database && db.database.ManagementInfo && db.database.ManagementInfo.UsersInfo) {
+                    const userInfo = db.database.ManagementInfo.UsersInfo[user.name];
+                    if (userInfo && userInfo.stories && !userInfo.stories.includes(storyName)) {
+                        userInfo.stories.push(storyName);
+                    }
+                }
                 return { content: [{ type: 'text', text: `Story "${storyName}" created.` }] };
             } catch (err) {
                 return { content: [{ type: 'text', text: formatError(err) }], isError: true };
@@ -85,6 +92,7 @@ function registerWriteTools(server, db, user) {
         },
         async ({ storyName, value }) => {
             try {
+                requireStoryAccess(user, db, storyName);
                 await callDb(db, 'setWriterStory', { storyName, value }, user);
                 return { content: [{ type: 'text', text: `Story text for "${storyName}" updated.` }] };
             } catch (err) {
@@ -102,6 +110,7 @@ function registerWriteTools(server, db, user) {
         },
         async ({ fromName, toName }) => {
             try {
+                requireStoryAccess(user, db, fromName);
                 await callDb(db, 'renameStory', { fromName, toName }, user);
                 return { content: [{ type: 'text', text: `Story renamed from "${fromName}" to "${toName}".` }] };
             } catch (err) {
@@ -116,6 +125,7 @@ function registerWriteTools(server, db, user) {
         { storyName: z.string().describe('Story name to remove') },
         async ({ storyName }) => {
             try {
+                requireStoryAccess(user, db, storyName);
                 await callDb(db, 'removeStory', { storyName }, user);
                 return { content: [{ type: 'text', text: `Story "${storyName}" removed.` }] };
             } catch (err) {

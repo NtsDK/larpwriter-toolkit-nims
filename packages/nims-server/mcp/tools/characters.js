@@ -2,6 +2,7 @@
 
 const { z } = require('zod');
 const { callDb, formatError } = require('../dbCall');
+const { requireCharacterAccess } = require('../permissions');
 
 function registerReadTools(server, db, user) {
     server.tool(
@@ -55,6 +56,12 @@ function registerWriteTools(server, db, user) {
         async ({ characterName }) => {
             try {
                 await callDb(db, 'createProfile', { type: 'character', characterName }, user);
+                if (db.database && db.database.ManagementInfo && db.database.ManagementInfo.UsersInfo) {
+                    const userInfo = db.database.ManagementInfo.UsersInfo[user.name];
+                    if (userInfo && userInfo.characters && !userInfo.characters.includes(characterName)) {
+                        userInfo.characters.push(characterName);
+                    }
+                }
                 return { content: [{ type: 'text', text: `Character "${characterName}" created successfully.` }] };
             } catch (err) {
                 return { content: [{ type: 'text', text: formatError(err) }], isError: true };
@@ -92,6 +99,7 @@ function registerWriteTools(server, db, user) {
         },
         async ({ fromName, toName }) => {
             try {
+                requireCharacterAccess(user, db, fromName);
                 await callDb(db, 'renameProfile', { type: 'character', fromName, toName }, user);
                 return { content: [{ type: 'text', text: `Character renamed from "${fromName}" to "${toName}".` }] };
             } catch (err) {
@@ -106,6 +114,7 @@ function registerWriteTools(server, db, user) {
         { characterName: z.string().describe('Character name to remove') },
         async ({ characterName }) => {
             try {
+                requireCharacterAccess(user, db, characterName);
                 await callDb(db, 'removeProfile', { type: 'character', characterName }, user);
                 return { content: [{ type: 'text', text: `Character "${characterName}" removed.` }] };
             } catch (err) {

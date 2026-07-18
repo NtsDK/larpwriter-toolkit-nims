@@ -1,0 +1,23 @@
+{
+  "port": 3001,
+  "instanceName": "prod",
+  "session": {
+    "secret": "nims-prod-change-me-7f3a9c2e",
+    "key": "nims_sid"
+  },
+  "autosave": {
+    "root": "./data",
+    "interval": 60000,
+    "copyNumber": 3
+  },
+  "frontendPath": "../nims-app/dist",
+  "https": {
+    "enabled": false
+  },
+  "playerAccess": {
+    "enabled": true
+  },
+  "logOverrides": {
+    "enabled": false
+  }
+}

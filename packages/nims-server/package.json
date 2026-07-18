@@ -1,6 +1,6 @@
 {
   "name": "nims-server",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -31,9 +31,9 @@
     "winston": "^3.2.1",
     "dateformat": "^3.0.3",
     "zod": "^3.23.0",
-    "nims-resources" : "0.7.2",
-    "nims-dbms" : "0.7.2",
-    "nims-dbms-core" : "0.7.2"
+    "nims-resources" : "0.8.0",
+    "nims-dbms" : "0.8.0",
+    "nims-dbms-core" : "0.8.0"
   },
   "private": true
 }

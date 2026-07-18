@@ -22,27 +22,14 @@ const loader = require('./autosave/databaseLoader');
 const lastDb = loader.loadLastDatabase();
 const emptyBase = require(config.get('inits:emptyBaseModule'));
 
-// eslint-disable-next-line import/no-dynamic-require
-const apis = require(config.get('inits:apiModule'));
+const { createServerDbms } = require('nims-dbms');
 
-// const dbms = require('../dbms/core/serverDbmsFactory')({
-const dbms = require('nims-dbms-core/serverDbmsFactory')({
-    projectName: config.get('inits:projectName'),
-    serverSpecific: {
-        enabledLogOverrides: config.get('logOverrides:enabled'),
-        logOverridesObject: config.get('logOverrides:overrides'),
-        enabledPlayerAccess: config.get('playerAccess:enabled'),
-        adminLogin: config.get('inits:adminLogin'),
-        adminPass: config.get('inits:adminPass'),
-        createOrganizer: config.get('inits:createOrganizer'),
-        serverErrors,
-    },
-    logModule,
-    // lastDb,
-    apis,
-    isServer: true,
-    proxies: [apis.permissionProxy]
+const emptyDatabase = emptyBase.data;
+const db = createServerDbms(emptyDatabase, {
+    adminLogin: config.get('inits:adminLogin'),
+    adminPass: config.get('inits:adminPass'),
 });
+const dbms = { db, rawDb: db, preparedDb: db };
 
 function onSetDatabaseFinished() {
     dbms.db.getConsistencyCheckResult().then((checkResult) => {
