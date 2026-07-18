@@ -35,3 +35,9 @@ My site: http://trechkalov.com
 VK: http://vk.com/larp_nims
 
 [YouTube channel (including SMTK NIMS screencasts)](https://www.youtube.com/channel/UC8RDnWbZRcrIDVRYg-b0A1Q)
+
+### MCP (AI assistant integration) ###
+
+When NIMS runs in server mode, an MCP server is available for AI assistants and compatible MCP clients.
+
+Client setup guide: [MCP_EN.md](MCP_EN.md)

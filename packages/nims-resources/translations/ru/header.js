@@ -19,6 +19,7 @@ module.exports = {
     admins: 'Администрирование',
     chat: 'Чат',
     logout: 'Выход',
+    'mcp-token': 'Токен MCP для AI-ассистента',
     test: 'Запустить тесты',
     logViewer: 'Логи',
     l10n: 'Русский',

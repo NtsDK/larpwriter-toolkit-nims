@@ -169,6 +169,9 @@ function onDatabaseLoad() {
             }
 
             if (PRODUCT === 'SERVER') {
+                addNavEl(makeButton('mcpTokenButton icon-button', 'mcp-token', () => {
+                    window.open('/mcp/auth', '_blank', 'noopener,noreferrer');
+                }, btnOpts));
                 addNavEl(makeButton('logoutButton icon-button', 'logout', postLogout, btnOpts));
             }
             addNavEl(makeButton('refreshButton icon-button', 'refresh', () => refreshView(), btnOpts));

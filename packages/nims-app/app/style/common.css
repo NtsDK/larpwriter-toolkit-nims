@@ -136,6 +136,9 @@ body {
 .mainHelpButton::before{
   content: "\f059";
 }
+.mcpTokenButton::before{
+  content: "\f084";
+}
 .logoutButton::before{
   content: "\f2f5";
 }

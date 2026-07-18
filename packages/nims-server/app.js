@@ -106,6 +106,7 @@ log.info(`compression enabled: ${config.get('compression:enabled')}`);
 
 require('./boot')(app, dbms);
 require('./middlewares')(app, dbms);
+require('./mcp')(app, dbms);
 require('./routes')(app, dbms);
 
 // app.use(express.static(config.get('frontendPath')));

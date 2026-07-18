@@ -41,6 +41,9 @@
   "compression" :{
       "enabled" : false
   },
+  "mcp": {
+      "tokenTtlMs": 86400000
+  },
   "logOverrides" :{
       "enabled" : false
   }

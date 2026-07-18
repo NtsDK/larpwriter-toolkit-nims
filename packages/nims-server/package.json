@@ -13,6 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -29,6 +30,7 @@
     "serve-favicon": "^2.5.0",
     "winston": "^3.2.1",
     "dateformat": "^3.0.3",
+    "zod": "^3.23.0",
     "nims-resources" : "0.7.2",
     "nims-dbms" : "0.7.2",
     "nims-dbms-core" : "0.7.2"
