@@ -19,6 +19,7 @@ module.exports = {
     admins: 'Administrative tools',
     chat: 'Chat',
     logout: 'Exit',
+    'mcp-token': 'MCP token for AI assistant',
     test: 'Test',
     logViewer: 'Logs',
     l10n: 'English',
