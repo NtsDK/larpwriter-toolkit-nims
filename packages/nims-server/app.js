@@ -96,10 +96,13 @@ require('./middlewares')(app, dbms);
 require('./mcp')(app, dbms);
 require('./routes')(app, dbms);
 
-// app.use(express.static(config.get('frontendPath')));
-// console.log(config.get('frontendPath'));
-// throw new Error(path.resolve(__dirname, config.get('frontendPath')));
-app.use(express.static(path.resolve(__dirname, config.get('frontendPath'))));
+const frontendDir = path.resolve(__dirname, config.get('frontendPath'));
+app.use(express.static(frontendDir));
+app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/mcp')) return next();
+    const indexPath = path.join(frontendDir, 'index.html');
+    res.sendFile(indexPath, (err) => { if (err) next(); });
+});
 
 app.use((err, req, res, next) => {
     console.error(`${new Date().toString()} ${err}`);
