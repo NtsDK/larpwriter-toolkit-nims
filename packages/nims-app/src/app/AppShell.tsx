@@ -10,6 +10,8 @@ import {
   Tooltip,
   Button,
   Alert,
+  Divider,
+  Stack,
 } from '@mantine/core';
 import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -120,12 +122,17 @@ export const AppShell = observer(function AppShell({ children }: { children: Rea
           </Group>
           <Group gap="xs" wrap="nowrap">
             {auth.user && (
-              <Text size="sm" c="dimmed" visibleFrom="sm" truncate maw={140}>
+              <Text size="sm" c="dimmed" visibleFrom="md" truncate maw={140}>
                 {auth.user.name}
               </Text>
             )}
             <ThemeToggle compact />
-            <Button size="compact-sm" variant="default" onClick={() => void auth.logout()}>
+            <Button
+              size="compact-sm"
+              variant="default"
+              visibleFrom="md"
+              onClick={() => void auth.logout()}
+            >
               Выйти
             </Button>
           </Group>
@@ -133,7 +140,7 @@ export const AppShell = observer(function AppShell({ children }: { children: Rea
       </MantineAppShell.Header>
 
       <MantineAppShell.Navbar p="xs">
-        <ScrollArea type="scroll" offsetScrollbars style={{ height: '100%' }}>
+        <MantineAppShell.Section grow component={ScrollArea} type="scroll" offsetScrollbars>
           {navItems.map((item) => {
             const key = 'path' in item ? item.path : item.action;
             const active = 'path' in item && location.pathname === item.path;
@@ -166,7 +173,25 @@ export const AppShell = observer(function AppShell({ children }: { children: Rea
               />
             );
           })}
-        </ScrollArea>
+        </MantineAppShell.Section>
+        <MantineAppShell.Section hiddenFrom="md" mt="xs">
+          <Divider mb="sm" />
+          <Stack gap="xs">
+            {auth.user && (
+              <Text size="sm" c="dimmed" truncate>
+                {auth.user.name}
+              </Text>
+            )}
+            <Button
+              fullWidth
+              variant="default"
+              styles={{ root: { minHeight: 44 } }}
+              onClick={() => void auth.logout()}
+            >
+              Выйти
+            </Button>
+          </Stack>
+        </MantineAppShell.Section>
       </MantineAppShell.Navbar>
 
       <MantineAppShell.Main>

@@ -6,6 +6,8 @@ import {
   Button,
   NavLink,
   Burger,
+  Divider,
+  Stack,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -67,12 +69,17 @@ export const PlayerShell = observer(function PlayerShell({ children }: { childre
           </Group>
           <Group gap="xs" wrap="nowrap">
             {auth.user && (
-              <Text size="sm" c="dimmed" visibleFrom="xs" truncate maw={140}>
+              <Text size="sm" c="dimmed" visibleFrom="sm" truncate maw={140}>
                 {auth.user.name}
               </Text>
             )}
             <ThemeToggle compact />
-            <Button size="compact-sm" variant="default" onClick={() => void auth.logout()}>
+            <Button
+              size="compact-sm"
+              variant="default"
+              visibleFrom="sm"
+              onClick={() => void auth.logout()}
+            >
               Выйти
             </Button>
           </Group>
@@ -80,22 +87,42 @@ export const PlayerShell = observer(function PlayerShell({ children }: { childre
       </MantineAppShell.Header>
 
       <MantineAppShell.Navbar p="xs">
-        {playerNav.map((item) => {
-          const disabled = !item.always && !hasCharacter;
-          return (
-            <NavLink
-              key={item.path}
-              label={item.label}
-              leftSection={<span aria-hidden style={{ fontSize: 18 }}>{item.icon}</span>}
-              active={location.pathname === item.path}
-              disabled={disabled}
-              onClick={() => { if (!disabled) go(item.path); }}
-              styles={{
-                root: { minHeight: 44, borderRadius: 8, marginBottom: 2 },
-              }}
-            />
-          );
-        })}
+        <MantineAppShell.Section grow>
+          {playerNav.map((item) => {
+            const disabled = !item.always && !hasCharacter;
+            return (
+              <NavLink
+                key={item.path}
+                label={item.label}
+                leftSection={<span aria-hidden style={{ fontSize: 18 }}>{item.icon}</span>}
+                active={location.pathname === item.path}
+                disabled={disabled}
+                onClick={() => { if (!disabled) go(item.path); }}
+                styles={{
+                  root: { minHeight: 44, borderRadius: 8, marginBottom: 2 },
+                }}
+              />
+            );
+          })}
+        </MantineAppShell.Section>
+        <MantineAppShell.Section hiddenFrom="sm" mt="xs">
+          <Divider mb="sm" />
+          <Stack gap="xs">
+            {auth.user && (
+              <Text size="sm" c="dimmed" truncate>
+                {auth.user.name}
+              </Text>
+            )}
+            <Button
+              fullWidth
+              variant="default"
+              styles={{ root: { minHeight: 44 } }}
+              onClick={() => void auth.logout()}
+            >
+              Выйти
+            </Button>
+          </Stack>
+        </MantineAppShell.Section>
       </MantineAppShell.Navbar>
 
       <MantineAppShell.Main>
