@@ -1,6 +1,6 @@
 {
   "name": "nims-server",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -10,7 +10,9 @@
     "nims-nodemon": "nodemon ./bin/www --configFile \"config/nims-frontend-local.json\"  --globalConfigFile \"config/nims-frontend-global.json\"",
     "watch:server": "nodemon ./bin/www --configFile \"config/nims-frontend-local.json\"  --globalConfigFile \"config/nims-frontend-global.json\"",
     "nims-node": "node ./bin/www --configFile \"config/nims-frontend-local.json\"  --globalConfigFile \"config/nims-frontend-global.json\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test tests/",
+    "test:integration": "node mcp/test/api-rbac-test.mjs && node mcp/test/mcp-permissions-test.mjs",
+    "test:all": "npm test && npm run test:integration"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
@@ -31,9 +33,9 @@
     "winston": "^3.2.1",
     "dateformat": "^3.0.3",
     "zod": "^3.23.0",
-    "nims-resources" : "0.7.2",
-    "nims-dbms" : "0.7.2",
-    "nims-dbms-core" : "0.7.2"
+    "nims-resources" : "0.8.0",
+    "nims-dbms" : "0.8.0",
+    "nims-dbms-core" : "0.8.0"
   },
   "private": true
 }

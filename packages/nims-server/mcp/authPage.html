@@ -17,6 +17,17 @@
       justify-content: center;
       padding: 1rem;
     }
+    html.embedded body {
+      min-height: 100%;
+      align-items: flex-start;
+      padding: 1.25rem;
+      background: transparent;
+    }
+    html.embedded .card {
+      box-shadow: none;
+      max-width: none;
+      padding: 0.25rem 0.5rem 1rem;
+    }
     .card {
       background: #fff;
       border-radius: 8px;
@@ -28,7 +39,8 @@
     h1 { font-size: 1.25rem; margin: 0 0 .25rem; }
     .subtitle { color: #666; font-size: .9rem; margin-bottom: 1.5rem; }
     label { display: block; font-size: .85rem; font-weight: 500; margin-bottom: .35rem; }
-    input {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       padding: .6rem .75rem;
       border: 1px solid #ccc;
@@ -94,28 +106,70 @@
       font-size: .75rem;
       overflow-x: auto;
     }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: 1rem;
+      font-weight: 400;
+      font-size: .85rem;
+    }
+    .check-row input { width: auto; margin: 0; }
+    .linkish {
+      background: none;
+      border: none;
+      color: #2563eb;
+      padding: 0;
+      width: auto;
+      font-size: .85rem;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: .75rem;
+    }
+    .linkish:hover { background: none; color: #1d4ed8; }
+    #login-fields { display: none; }
+    #session-panel { display: none; }
+    #loading { color: #666; font-size: .9rem; }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>NIMS MCP</h1>
-    <p class="subtitle">Войдите учётной записью NIMS, чтобы получить токен для Cursor или другого MCP-клиента.</p>
+    <p class="subtitle" id="subtitle">Токен для Cursor или другого MCP-клиента.</p>
 
     <div id="error" class="error"></div>
+    <p id="loading">Проверка сессии…</p>
 
-    <form id="login-form">
-      <label for="username">Логин</label>
-      <input type="text" id="username" name="username" autocomplete="username" required>
+    <div id="session-panel">
+      <label class="check-row">
+        <input type="checkbox" id="longLived" checked>
+        Долгоживущий токен (~10 лет, сохраняется на сервере)
+      </label>
+      <button type="button" id="session-btn">Получить токен</button>
+      <button type="button" class="linkish" id="show-login-btn">Войти другим пользователем</button>
+    </div>
 
-      <label for="password">Пароль</label>
-      <input type="password" id="password" name="password" autocomplete="current-password" required>
+    <form id="login-form" style="display:none;">
+      <div id="login-fields">
+        <label for="username">Логин</label>
+        <input type="text" id="username" name="username" autocomplete="username">
+
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password" autocomplete="current-password">
+      </div>
+
+      <label class="check-row">
+        <input type="checkbox" id="longLivedLogin" checked>
+        Долгоживущий токен (~10 лет, сохраняется на сервере)
+      </label>
 
       <button type="submit" id="submit-btn">Получить токен</button>
+      <button type="button" class="linkish" id="back-session-btn" style="display:none;">Назад к текущей сессии</button>
     </form>
 
     <div id="result" class="result">
       <p class="meta">Пользователь: <strong id="user-name"></strong> (<span id="user-role"></span>)</p>
-      <p class="meta">Токен действует <span id="ttl-hours"></span> ч.</p>
+      <p class="meta">Срок: <span id="ttl-label"></span></p>
       <div class="token-box" id="token"></div>
       <button type="button" class="copy-btn" id="copy-btn">Скопировать токен</button>
       <span id="copy-status" class="meta"></span>
@@ -141,15 +195,34 @@
   </div>
 
   <script>
+    try {
+      if (window.self !== window.top) {
+        document.documentElement.classList.add('embedded');
+      }
+    } catch (_) { /* cross-origin */ }
+
     const form = document.getElementById('login-form');
+    const sessionPanel = document.getElementById('session-panel');
+    const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const resultEl = document.getElementById('result');
     const submitBtn = document.getElementById('submit-btn');
-    const ttlHours = Math.round((window.__MCP_TOKEN_TTL_MS__ || 86400000) / 3600000);
+    const sessionBtn = document.getElementById('session-btn');
+    const subtitle = document.getElementById('subtitle');
+    const shortTtlMs = window.__MCP_TOKEN_TTL_MS__ || 86400000;
+    const longTtlMs = window.__MCP_LONG_LIVED_TTL_MS__ || 315360000000;
 
-    document.getElementById('ttl-hours').textContent = ttlHours;
+    let hasSession = false;
+
     document.getElementById('mcp-url-full').textContent = location.origin + '/mcp';
     document.getElementById('mcp-url-readonly').textContent = location.origin + '/mcp/readonly';
+
+    function formatTtl(ms) {
+      const years = ms / (365 * 24 * 60 * 60 * 1000);
+      if (years >= 1) return '~' + Math.round(years) + ' лет';
+      const hours = Math.round(ms / 3600000);
+      return hours + ' ч.';
+    }
 
     function showError(msg) {
       errorEl.textContent = msg;
@@ -160,6 +233,118 @@
       errorEl.style.display = 'none';
     }
 
+    function showResult(data, longLived) {
+      document.getElementById('user-name').textContent = data.user.name;
+      document.getElementById('user-role').textContent = data.user.role;
+      document.getElementById('ttl-label').textContent = formatTtl(data.ttlMs || (longLived ? longTtlMs : shortTtlMs));
+      document.getElementById('token').textContent = data.token;
+      resultEl.classList.add('visible');
+      sessionPanel.style.display = 'none';
+      form.style.display = 'none';
+      loadingEl.style.display = 'none';
+      subtitle.textContent = 'Токен для Cursor или другого MCP-клиента.';
+    }
+
+    function showSessionUi() {
+      hasSession = true;
+      loadingEl.style.display = 'none';
+      sessionPanel.style.display = 'block';
+      form.style.display = 'none';
+      subtitle.textContent = 'Вы уже вошли в НИМС — токен будет создан для текущей сессии.';
+    }
+
+    function showLoginUi() {
+      hasSession = false;
+      loadingEl.style.display = 'none';
+      sessionPanel.style.display = 'none';
+      form.style.display = 'block';
+      document.getElementById('login-fields').style.display = 'block';
+      document.getElementById('back-session-btn').style.display = 'none';
+      subtitle.textContent = 'Войдите учётной записью NIMS, чтобы получить токен для Cursor или другого MCP-клиента.';
+    }
+
+    async function probeSession() {
+      try {
+        // Lightweight probe: empty longLived false still creates a short token —
+        // we only check HTTP status without consuming UI. Use HEAD-less: try token with longLived
+        // but only to detect session; discard by not showing if we want auto... Better: just check login.
+        const res = await fetch('/mcp/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ longLived: true, probe: true }),
+        });
+        if (res.ok) {
+          // Don't auto-show token — wait for click. But we already created one.
+          // Revert: probe shouldn't mint. Check another endpoint.
+        }
+      } catch (_) { /* ignore */ }
+    }
+
+    // Probe via a no-op API that requires session cookie
+    async function checkLoggedIn() {
+      try {
+        const res = await fetch('/api/getMetaInfo', { credentials: 'include' });
+        if (res.ok) {
+          showSessionUi();
+          return;
+        }
+      } catch (_) { /* fall through */ }
+      try {
+        const res = await fetch('/api/getDatabase', { credentials: 'include' });
+        if (res.ok) {
+          showSessionUi();
+          return;
+        }
+      } catch (_) { /* fall through */ }
+      showLoginUi();
+    }
+
+    sessionBtn.addEventListener('click', async () => {
+      hideError();
+      sessionBtn.disabled = true;
+      sessionBtn.textContent = 'Создание…';
+      try {
+        const longLived = document.getElementById('longLived').checked;
+        const res = await fetch('/mcp/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ longLived }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 401) {
+            showLoginUi();
+            showError('Сессия истекла — войдите снова');
+          } else {
+            showError(data.error || 'Ошибка');
+          }
+          return;
+        }
+        showResult(data, longLived);
+      } catch (err) {
+        showError('Не удалось связаться с сервером');
+      } finally {
+        sessionBtn.disabled = false;
+        sessionBtn.textContent = 'Получить токен';
+      }
+    });
+
+    document.getElementById('show-login-btn').addEventListener('click', () => {
+      sessionPanel.style.display = 'none';
+      form.style.display = 'block';
+      document.getElementById('login-fields').style.display = 'block';
+      document.getElementById('back-session-btn').style.display = hasSession ? 'inline' : 'none';
+      subtitle.textContent = 'Войдите учётной записью NIMS, чтобы получить токен.';
+    });
+
+    document.getElementById('back-session-btn').addEventListener('click', () => {
+      form.style.display = 'none';
+      showSessionUi();
+      hideError();
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       hideError();
@@ -167,12 +352,14 @@
       submitBtn.textContent = 'Вход…';
 
       try {
+        const longLived = document.getElementById('longLivedLogin').checked;
         const res = await fetch('/mcp/auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: document.getElementById('username').value,
             password: document.getElementById('password').value,
+            longLived,
           }),
         });
         const data = await res.json();
@@ -180,11 +367,7 @@
           showError(data.error === 'Invalid credentials' ? 'Неверный логин или пароль' : (data.error || 'Ошибка входа'));
           return;
         }
-        document.getElementById('user-name').textContent = data.user.name;
-        document.getElementById('user-role').textContent = data.user.role;
-        document.getElementById('token').textContent = data.token;
-        resultEl.classList.add('visible');
-        form.style.display = 'none';
+        showResult(data, longLived);
       } catch (err) {
         showError('Не удалось связаться с сервером');
       } finally {
@@ -200,6 +383,8 @@
         setTimeout(() => { document.getElementById('copy-status').textContent = ''; }, 2000);
       });
     });
+
+    checkLoggedIn();
   </script>
 </body>
 </html>

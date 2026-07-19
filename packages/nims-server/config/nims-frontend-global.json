@@ -1,50 +1,54 @@
 {
-  "port":3001,
+  "port": 3001,
   "session": {
-    "secret": "KillerIsJim",
+    "secret": "CHANGE_ME",
     "key": "sid",
     "cookie": {
       "path": "/",
       "httpOnly": true,
+      "sameSite": "lax",
       "maxAge": null
     },
     "saveUninitialized": true,
     "resave": false
   },
-  "autosave":{
+  "autosave": {
     "interval": 60000,
     "copyNumber": 3,
-    "root":""
+    "root": ""
   },
-  "inits":{
-    "adminLogin":"admin",
-    "adminPass":"zxpoYR65",
-    "projectName":"nims",
-    "createMaster":false,
-    "apiModule":"nims-dbms/serverApis",
-    "apiModule000":"../dbms/nims/serverApis",
+  "inits": {
+    "adminLogin": "admin",
+    "adminPass": "",
+    "ensureAdmin": false,
+    "projectName": "nims",
+    "createMaster": false,
+    "apiModule": "nims-dbms/serverApis",
+    "apiModule000": "../dbms/nims/serverApis",
     "emptyBaseModule": "nims-resources/emptyBase",
     "emptyBaseModule000": "../app/nims/resources/emptyBase"
   },
-  "frontendPath" : "I:\\workspaces\\nodeclipse\\NIMS\\dist",
+  "frontendPath": "I:\\workspaces\\nodeclipse\\NIMS\\dist",
   "https": {
-      "enabled" : false,
-      "privateKey" : "path I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.key",
-      "certificate" : "path I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.crt"
-  }, 
-  "api" :{
-      "enabled" : false
-  }, 
-  "playerAccess" :{
-      "enabled" : false
-  }, 
-  "compression" :{
-      "enabled" : false
+    "enabled": false,
+    "privateKey": "path I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.key",
+    "certificate": "path I:\\workspaces\\nodeclipse\\NIMS Server Next\\server.crt"
+  },
+  "api": {
+    "enabled": false,
+    "corsOrigins": []
+  },
+  "playerAccess": {
+    "enabled": false
+  },
+  "compression": {
+    "enabled": false
   },
   "mcp": {
-      "tokenTtlMs": 86400000
+    "tokenTtlMs": 86400000,
+    "longLivedTokenTtlMs": 7776000000
   },
-  "logOverrides" :{
-      "enabled" : false
+  "logOverrides": {
+    "enabled": false
   }
 }

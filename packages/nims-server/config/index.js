@@ -31,4 +31,7 @@ if (!globalConfigFile || !fs.existsSync(globalConfigFile)) {
 nconf.file('local', { file: configFile });
 nconf.file('global', { file: globalConfigFile });
 
+const { applyEnvOverrides } = require('./applyEnvOverrides');
+applyEnvOverrides(nconf);
+
 module.exports = nconf;

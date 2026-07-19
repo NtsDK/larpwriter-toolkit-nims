@@ -1,3 +1,5 @@
-exports.CU = require('./commonUtils');
-exports.Errors = require('./errors');
-exports.Precondition = require('./precondition');
+'use strict';
+
+const { createServerDbms } = require('nims-dbms');
+
+module.exports = { createServerDbms };

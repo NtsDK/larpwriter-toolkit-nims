@@ -1,7 +1,7 @@
 'use strict';
 
 const { z } = require('zod');
-const { callDb, formatError } = require('../dbCall');
+const { callDb, callDbAdmin, formatError } = require('../dbCall');
 const { formatBriefingsMarkdown } = require('../formatBriefings');
 
 const emptyBase = require('nims-resources/emptyBase');
@@ -33,14 +33,8 @@ async function getManagementInfo(db, user) {
     return database.ManagementInfo;
 }
 
-async function prepareDatabaseForImport(db, user, database, preserveManagementInfo) {
-    if (!preserveManagementInfo) {
-        return database;
-    }
-    const current = await callDb(db, 'getDatabase', null, user);
-    if (current.ManagementInfo) {
-        return { ...database, ManagementInfo: current.ManagementInfo };
-    }
+async function prepareDatabaseForImport(_db, _user, database, _preserveManagementInfo) {
+    // ManagementInfo merge (keep existing + add missing) is done inside setDatabase.
     return database;
 }
 
@@ -181,10 +175,15 @@ function registerWriteTools(server, db, user) {
         },
         async ({ database, preserveManagementInfo }) => {
             try {
+                const { requireAdmin } = require('../permissions');
+                requireAdmin(user, db);
                 const prepared = await prepareDatabaseForImport(
                     db, user, database, preserveManagementInfo !== false
                 );
-                await callDb(db, 'setDatabase', { database: prepared }, user);
+                await callDb(db, 'setDatabase', {
+                    database: prepared,
+                    preserveManagementInfo: preserveManagementInfo !== false,
+                }, user);
                 const check = await callDb(db, 'getConsistencyCheckResult', null, user);
                 const errCount = (check.errors || []).length;
                 const summary = {
@@ -242,6 +241,8 @@ function registerWriteTools(server, db, user) {
         },
         async ({ preset, preserveManagementInfo }) => {
             try {
+                const { requireAdmin } = require('../permissions');
+                requireAdmin(user, db);
                 const managementInfo = preserveManagementInfo !== false
                     ? await getManagementInfo(db, user)
                     : undefined;
@@ -252,6 +253,9 @@ function registerWriteTools(server, db, user) {
                 const database = factory(managementInfo);
                 if (!database) {
                     return { content: [{ type: 'text', text: `Пресет «${preset}» не найден на сервере.` }], isError: true };
+                }
+                if (managementInfo) {
+                    database.ManagementInfo = managementInfo;
                 }
                 await callDb(db, 'setDatabase', { database }, user);
                 return {

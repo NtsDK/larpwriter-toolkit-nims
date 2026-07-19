@@ -9,3 +9,10 @@ nims.code-workspace
 nginx/ssl/fullchain.pem
 nginx/ssl/privkey.pem
 .cursor/mcp.json
+
+# Local/host deploy overrides (not part of the project tree)
+.env.prod
+.env.v2
+docker-compose.prod.yml
+docker-compose.v2.yml
+nginx/nginx.prod.conf

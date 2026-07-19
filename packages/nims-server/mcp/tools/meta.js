@@ -2,6 +2,7 @@
 
 const { z } = require('zod');
 const { callDb, formatError } = require('../dbCall');
+const { requireAdmin } = require('../permissions');
 
 function registerReadTools(server, db, user) {
     server.tool(
@@ -68,6 +69,7 @@ function registerWriteTools(server, db, user) {
         },
         async ({ name, value }) => {
             try {
+                requireAdmin(user, db);
                 if (name === 'name' || name === 'description') {
                     await callDb(db, 'setMetaInfoString', { name, value }, user);
                 } else {

@@ -22,27 +22,26 @@ const loader = require('./autosave/databaseLoader');
 const lastDb = loader.loadLastDatabase();
 const emptyBase = require(config.get('inits:emptyBaseModule'));
 
-// eslint-disable-next-line import/no-dynamic-require
-const apis = require(config.get('inits:apiModule'));
+const { createServerDbms } = require('nims-dbms');
+const { wrapWithPermissions } = require('./permissions');
 
-// const dbms = require('../dbms/core/serverDbmsFactory')({
-const dbms = require('nims-dbms-core/serverDbmsFactory')({
-    projectName: config.get('inits:projectName'),
-    serverSpecific: {
-        enabledLogOverrides: config.get('logOverrides:enabled'),
-        logOverridesObject: config.get('logOverrides:overrides'),
-        enabledPlayerAccess: config.get('playerAccess:enabled'),
-        adminLogin: config.get('inits:adminLogin'),
-        adminPass: config.get('inits:adminPass'),
-        createOrganizer: config.get('inits:createOrganizer'),
-        serverErrors,
-    },
-    logModule,
-    // lastDb,
-    apis,
-    isServer: true,
-    proxies: [apis.permissionProxy]
-});
+const emptyDatabase = emptyBase.data;
+const shouldEnsureAdmin = !!(
+    config.get('inits:ensureAdmin')
+    && config.get('inits:adminLogin')
+    && config.get('inits:adminPass')
+);
+const db = createServerDbms(
+    emptyDatabase,
+    shouldEnsureAdmin
+        ? {
+            adminLogin: config.get('inits:adminLogin'),
+            adminPass: config.get('inits:adminPass'),
+        }
+        : undefined,
+);
+const preparedDb = wrapWithPermissions(db);
+const dbms = { db, rawDb: db, preparedDb };
 
 function onSetDatabaseFinished() {
     dbms.db.getConsistencyCheckResult().then((checkResult) => {
@@ -56,14 +55,22 @@ function onSetDatabaseFinished() {
     }, log.error);
 }
 
+function afterDatabaseReady() {
+    // Only bootstrap/repair missing admin credentials when explicitly enabled.
+    // Never overwrite an existing admin password from config defaults.
+    if (shouldEnsureAdmin) {
+        dbms.db.ensureAdminExists(config.get('inits:adminLogin'), config.get('inits:adminPass'));
+    }
+    onSetDatabaseFinished();
+}
+
 if (lastDb !== null) {
-    // projectAPIs.populateDatabase(lastDb);
-    dbms.db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished);
+    // Merge ManagementInfo: keep bootstrap admin, add users from autosaved file.
+    dbms.db.setDatabase({ database: lastDb, preserveManagementInfo: true }).then(afterDatabaseReady);
 } else {
     log.info('init from default base');
     console.log(emptyBase.data);
-    // projectAPIs.populateDatabase(emptyBase.data);
-    dbms.db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
+    dbms.db.setDatabase({ database: emptyBase.data, preserveManagementInfo: true }).then(afterDatabaseReady);
 }
 
 require('./autosave')(dbms.db);
@@ -83,19 +90,36 @@ app.use(logger('dev', {
 }));
 
 if (config.get('api:enabled')) {
+    const allowlist = config.get('api:corsOrigins');
+    const origins = Array.isArray(allowlist) ? allowlist.filter(Boolean) : [];
     const corsOpts = {
-        origin: true,
-        credentials: true
+        origin: origins.length > 0
+            ? (origin, cb) => {
+                if (!origin || origins.includes(origin)) cb(null, true);
+                else cb(new Error('CORS origin denied'));
+            }
+            : false,
+        credentials: true,
     };
-
     app.use(cors(corsOpts));
-    app.options('*', cors());
+    app.options('*', cors(corsOpts));
 }
 log.info(`api enabled: ${config.get('api:enabled')}`);
 app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session(sessionOptions));
+
+// Trust proxy so secure cookies work behind HTTPS terminators.
+app.set('trust proxy', 1);
+const sessionOpts = { ...sessionOptions };
+const cookieOpts = { ...(sessionOpts.cookie || {}) };
+if (config.get('session:cookie:secure') || process.env.NIMS_COOKIE_SECURE === '1') {
+    cookieOpts.secure = true;
+}
+if (cookieOpts.sameSite == null) cookieOpts.sameSite = 'lax';
+if (cookieOpts.httpOnly == null) cookieOpts.httpOnly = true;
+sessionOpts.cookie = cookieOpts;
+app.use(session(sessionOpts));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -109,10 +133,13 @@ require('./middlewares')(app, dbms);
 require('./mcp')(app, dbms);
 require('./routes')(app, dbms);
 
-// app.use(express.static(config.get('frontendPath')));
-// console.log(config.get('frontendPath'));
-// throw new Error(path.resolve(__dirname, config.get('frontendPath')));
-app.use(express.static(path.resolve(__dirname, config.get('frontendPath'))));
+const frontendDir = path.resolve(__dirname, config.get('frontendPath'));
+app.use(express.static(frontendDir));
+app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/mcp')) return next();
+    const indexPath = path.join(frontendDir, 'index.html');
+    res.sendFile(indexPath, (err) => { if (err) next(); });
+});
 
 app.use((err, req, res, next) => {
     console.error(`${new Date().toString()} ${err}`);

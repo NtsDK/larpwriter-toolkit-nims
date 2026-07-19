@@ -1,0 +1,43 @@
+FROM node:20-bookworm AS frontend
+
+WORKDIR /app/packages/nims-app
+COPY packages/nims-app/package.json ./
+RUN npm install
+COPY packages/nims-app/ ./
+RUN npx vite build
+
+FROM node:20-bookworm
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 make g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY package.json package-lock.json* lerna.json ./
+COPY packages/nims-dbms/package.json packages/nims-dbms/
+COPY packages/nims-dbms/tsconfig.json packages/nims-dbms/
+COPY packages/nims-dbms-core/package.json packages/nims-dbms-core/
+COPY packages/nims-resources/package.json packages/nims-resources/
+COPY packages/nims-server/package.json packages/nims-server/
+
+RUN npm install && npm run bootstrap || true
+
+COPY packages/nims-dbms/ packages/nims-dbms/
+COPY packages/nims-dbms-core/ packages/nims-dbms-core/
+COPY packages/nims-resources/ packages/nims-resources/
+COPY packages/nims-server/ packages/nims-server/
+
+RUN cd packages/nims-dbms && npx tsc || true
+
+COPY --from=frontend /app/packages/nims-app/dist packages/nims-app/dist/
+
+RUN mkdir -p packages/nims-server/data
+
+ENV NODE_ENV=development
+EXPOSE 3001
+
+WORKDIR /app/packages/nims-server
+CMD ["node", "./bin/www", \
+     "--configFile", "config/nims-frontend-local.json", \
+     "--globalConfigFile", "config/nims-frontend-global.json"]
