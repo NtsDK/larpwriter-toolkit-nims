@@ -6,9 +6,14 @@ RUN npm install
 COPY packages/nims-app/ ./
 RUN npx vite build
 
-FROM node:20-bookworm-slim
+FROM node:20-bookworm
 
 WORKDIR /app
+
+# native deps for some packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 make g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json* lerna.json ./
 COPY packages/nims-dbms/package.json packages/nims-dbms/
@@ -17,18 +22,20 @@ COPY packages/nims-dbms-core/package.json packages/nims-dbms-core/
 COPY packages/nims-resources/package.json packages/nims-resources/
 COPY packages/nims-server/package.json packages/nims-server/
 
-RUN npm install --omit=dev && npm run bootstrap || true
+# lerna is a root devDependency — need full install for bootstrap
+RUN npm install && npm run bootstrap
 
 COPY packages/nims-dbms/ packages/nims-dbms/
 COPY packages/nims-dbms-core/ packages/nims-dbms-core/
 COPY packages/nims-resources/ packages/nims-resources/
 COPY packages/nims-server/ packages/nims-server/
 
-RUN cd packages/nims-dbms && npx tsc || true
+RUN cd packages/nims-dbms && npm run build
 
 COPY --from=frontend /app/packages/nims-app/dist packages/nims-app/dist/
 
-RUN mkdir -p packages/nims-server/data
+RUN mkdir -p packages/nims-server/data \
+    && npm cache clean --force
 
 ENV NODE_ENV=production
 EXPOSE 3001

@@ -111,17 +111,33 @@ export class ProfilesEngine {
 
     if (fromName === toName) return;
 
+    if (type === 'player') {
+      const playersInfo = this.engine.database.ManagementInfo?.PlayersInfo as
+        | Record<string, { name?: string; salt?: string; hashedPassword?: string; profileName?: string }>
+        | undefined;
+      // Same-name login would move with the profile — refuse if target login already exists.
+      if (
+        playersInfo?.[fromName]
+        && !playersInfo[fromName].profileName
+        && playersInfo[toName]
+      ) {
+        throw new Error('errors-player-login-already-exists');
+      }
+    }
+
     profiles[toName] = profiles[fromName];
     profiles[toName].name = toName;
     delete profiles[fromName];
 
     if (type === 'character') {
       const bindings = this.engine.database.ProfileBindings;
-      for (const [player, char] of Object.entries(bindings)) {
-        if (char === fromName) {
-          bindings[player] = toName;
+      for (const [charName, playerName] of Object.entries(bindings)) {
+        if (charName === fromName) {
+          bindings[toName] = playerName;
+          delete bindings[charName];
         }
       }
+      this.engine.users.rewriteOwnershipName('characters', fromName, toName);
     }
     if (type === 'player') {
       this.renameQuestionnaire(fromName, toName);
@@ -129,12 +145,10 @@ export class ProfilesEngine {
         | Record<string, { name?: string; salt?: string; hashedPassword?: string; profileName?: string }>
         | undefined;
       if (playersInfo) {
-        // Same-name login: rename the login key with the profile.
         if (playersInfo[fromName] && !playersInfo[fromName].profileName) {
           playersInfo[toName] = { ...playersInfo[fromName], name: toName };
           delete playersInfo[fromName];
         }
-        // Update explicit links pointing at this profile.
         for (const info of Object.values(playersInfo)) {
           if (info.profileName === fromName) info.profileName = toName;
         }
@@ -143,15 +157,7 @@ export class ProfilesEngine {
       for (const [charName, playerName] of Object.entries(bindings)) {
         if (playerName === fromName) bindings[charName] = toName;
       }
-      const usersInfo = this.engine.database.ManagementInfo?.UsersInfo as
-        | Record<string, { players?: string[] }>
-        | undefined;
-      if (usersInfo) {
-        for (const user of Object.values(usersInfo)) {
-          if (!Array.isArray(user.players)) continue;
-          user.players = user.players.map((p) => (p === fromName ? toName : p));
-        }
-      }
+      this.engine.users.rewriteOwnershipName('players', fromName, toName);
     }
 
     this.engine.ee.emit('renameProfile', [{ type, fromName, toName }]);
@@ -167,16 +173,34 @@ export class ProfilesEngine {
 
     delete profiles[characterName];
 
+    // ProfileBindings: characterName → playerName
     if (type === 'character') {
-      const bindings = this.engine.database.ProfileBindings;
-      for (const [player, char] of Object.entries(bindings)) {
-        if (char === characterName) {
-          delete bindings[player];
-        }
-      }
+      delete this.engine.database.ProfileBindings[characterName];
+      this.engine.users.removeOwnershipName('characters', characterName);
     }
     if (type === 'player') {
+      const bindings = this.engine.database.ProfileBindings;
+      for (const [charName, playerName] of Object.entries(bindings)) {
+        if (playerName === characterName) delete bindings[charName];
+      }
+      this.engine.users.removeOwnershipName('players', characterName);
       this.removeQuestionnaire(characterName);
+      const playersInfo = this.engine.database.ManagementInfo?.PlayersInfo as
+        | Record<string, { name?: string; profileName?: string }>
+        | undefined;
+      if (playersInfo) {
+        for (const [login, info] of Object.entries(playersInfo)) {
+          if (info.profileName === characterName) {
+            delete info.profileName;
+            // Restore a blank sheet under the login so the cabinet still works.
+            this.engine.users.ensurePlayerSheets(login);
+          }
+        }
+        // Same-name login left without a sheet — recreate empty profile/questionnaire.
+        if (playersInfo[characterName] && !this.getProfiles('player')[characterName]) {
+          this.engine.users.ensurePlayerSheets(characterName);
+        }
+      }
     }
 
     this.engine.ee.emit('removeProfile', [{ type, characterName }]);

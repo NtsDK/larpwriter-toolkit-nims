@@ -122,10 +122,16 @@ export class AuthStore {
         return false;
       }
       const data = await res.json().catch(() => ({}));
+      if (!data.user?.name || !data.user?.role) {
+        runInAction(() => {
+          this.user = null;
+          this.lastError = 'Некорректный ответ сервера при входе';
+        });
+        this.root.permissions.clear();
+        return false;
+      }
       runInAction(() => {
-        this.user = data.user
-          ? { name: data.user.name, role: data.user.role }
-          : { name: username, role: 'organizer' };
+        this.user = { name: data.user.name, role: data.user.role };
       });
       await this.root.permissions.load();
       return true;

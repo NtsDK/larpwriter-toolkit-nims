@@ -12,6 +12,7 @@ import { EntityPageLayout } from '@/components/EntityPageLayout';
 import { DeleteEntityButton } from '@/components/DeleteEntityButton';
 import { EmptyState } from '@/components/EmptyState';
 import { OwnerBadge } from '@/components/OwnerBadge';
+import { PermissionHint } from '@/components/PermissionHint';
 import { useEntityOwners } from '@/hooks/useEntityOwners';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -49,7 +50,7 @@ type RelEssence = 'starterToEnder' | 'allies' | 'enderToStarter';
 
 function RelationsPage() {
   const { t } = useTranslation();
-  const { api } = useRootStore();
+  const { api, permissions } = useRootStore();
   const isMobile = useIsMobile();
   const [searchParams] = useSearchParams();
   const [charNames, setCharNames] = useState<string[]>([]);
@@ -200,13 +201,24 @@ function RelationsPage() {
   };
 
   const handleRemove = async (rel: Relation) => {
-    await api.call('removeCharacterRelation', { fromCharacter: rel.starter, toCharacter: rel.ender });
-    const other = getOther(rel);
-    if (selectedPartner === other) setSelectedPartner(null);
-    await load();
-    if (selectedChar) await loadSummary(selectedChar);
-    notifications.show({ title: 'Удалено', message: `${rel.starter} ↔ ${rel.ender}`, color: 'gray' });
+    try {
+      await api.call('removeCharacterRelation', { fromCharacter: rel.starter, toCharacter: rel.ender });
+      const other = getOther(rel);
+      if (selectedPartner === other) setSelectedPartner(null);
+      await load();
+      if (selectedChar) await loadSummary(selectedChar);
+      notifications.show({ title: 'Удалено', message: `${rel.starter} ↔ ${rel.ender}`, color: 'gray' });
+    } catch (e: any) {
+      notifications.show({ title: 'Ошибка', message: e.message, color: 'red' });
+    }
   };
+
+  const canEditSelected = selectedChar
+    ? permissions.canEditEntity(owners[selectedChar])
+    : false;
+  const editBlockedReason = selectedChar
+    ? permissions.contentEditBlockedReason(owners[selectedChar])
+    : null;
 
   const handleTextSave = async (rel: Relation, character: string, text: string) => {
     try {
@@ -322,6 +334,7 @@ function RelationsPage() {
                 <Text size="sm" c="dimmed">Владелец:</Text>
                 <OwnerBadge owner={owners[selectedChar]} />
               </Group>
+              <PermissionHint reason={editBlockedReason} />
 
               {isMobile && selectedPartner && (
                 <Group gap="xs">
@@ -363,7 +376,7 @@ function RelationsPage() {
                     <Button
                       size="xs"
                       onClick={() => createWith(addKnown)}
-                      disabled={!addKnown}
+                      disabled={!addKnown || !canEditSelected}
                       style={{ alignSelf: 'flex-end' }}
                     >
                       Добавить
@@ -388,7 +401,7 @@ function RelationsPage() {
                       size="xs"
                       variant="light"
                       onClick={() => createWith(addUnknown)}
-                      disabled={!addUnknown}
+                      disabled={!addUnknown || !canEditSelected}
                       style={{ alignSelf: 'flex-end' }}
                     >
                       Добавить
@@ -577,6 +590,7 @@ function RelationsPage() {
                         description="Видно мастерам; не путать с личными текстами вводных"
                         defaultValue={activeRel.origin || ''}
                         rows={4}
+                        readOnly={!canEditSelected}
                         styles={{
                           label: { fontSize: '1rem' },
                           description: { fontSize: '0.9rem' },
@@ -597,6 +611,7 @@ function RelationsPage() {
                               value={active.myReady ? 'ready' : 'draft'}
                               onChange={(v) => handleReadyToggle(activeRel, selectedChar, v === 'ready')}
                               color={active.myReady ? 'green' : undefined}
+                              disabled={!canEditSelected}
                               data={[
                                 { value: 'draft', label: 'Черновик' },
                                 { value: 'ready', label: 'Готово' },
@@ -607,6 +622,7 @@ function RelationsPage() {
                             placeholder={`Отношение ${selectedChar} к ${selectedPartner}…`}
                             defaultValue={String(activeRel[selectedChar] || '')}
                             rows={isMobile ? 12 : 8}
+                            readOnly={!canEditSelected}
                             styles={{ input: { fontSize: '1.1rem', lineHeight: 1.55 } }}
                             onBlur={(e) => handleTextSave(activeRel, selectedChar, e.currentTarget.value)}
                           />
@@ -623,6 +639,7 @@ function RelationsPage() {
                               value={active.theirReady ? 'ready' : 'draft'}
                               onChange={(v) => handleReadyToggle(activeRel, selectedPartner, v === 'ready')}
                               color={active.theirReady ? 'green' : undefined}
+                              disabled={!canEditSelected}
                               data={[
                                 { value: 'draft', label: 'Черновик' },
                                 { value: 'ready', label: 'Готово' },
@@ -633,6 +650,7 @@ function RelationsPage() {
                             placeholder={`Отношение ${selectedPartner} к ${selectedChar}…`}
                             defaultValue={String(activeRel[selectedPartner] || '')}
                             rows={isMobile ? 12 : 8}
+                            readOnly={!canEditSelected}
                             styles={{ input: { fontSize: '1.1rem', lineHeight: 1.55 } }}
                             onBlur={(e) => handleTextSave(activeRel, selectedPartner, e.currentTarget.value)}
                           />
@@ -643,6 +661,7 @@ function RelationsPage() {
                         entityLabel="отношение"
                         entityName={`${activeRel.starter} ↔ ${activeRel.ender}`}
                         onConfirm={() => handleRemove(activeRel)}
+                        disabled={!canEditSelected}
                       />
                     </>
                   )}

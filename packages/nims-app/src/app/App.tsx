@@ -53,7 +53,7 @@ export function App() {
     <MantineProvider
       theme={theme}
       cssVariablesResolver={cssVariablesResolver}
-      defaultColorScheme="auto"
+      defaultColorScheme="dark"
     >
       <Notifications position="top-right" />
       <RootStoreProvider>

@@ -15,6 +15,7 @@ export interface MgmtUserInfo {
 export class PermissionsStore {
   loaded = false;
   loading = false;
+  loadError: string | null = null;
   admins: string[] = [];
   editors: string[] = [];
   usersInfo: Record<string, MgmtUserInfo> = {};
@@ -50,9 +51,11 @@ export class PermissionsStore {
     return this.isOrganizer && this.isProjectAdmin;
   }
 
-  /** Create characters/stories/groups (any organizer) */
+  /** Create characters/stories/groups — respect editor lock when active */
   get canCreateEntities() {
-    return this.isOrganizer;
+    if (!this.isOrganizer) return false;
+    if (this.editorModeActive) return this.isEditor;
+    return true;
   }
 
   /**
@@ -88,6 +91,7 @@ export class PermissionsStore {
       return;
     }
     this.loading = true;
+    this.loadError = null;
     try {
       const data = await this.root.api.get<{
         admins?: string[];
@@ -106,10 +110,14 @@ export class PermissionsStore {
         this.admins = admins;
         this.editors = editors;
         this.usersInfo = data?.usersInfo || {};
+        this.loadError = null;
         this.loaded = true;
       });
-    } catch {
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Не удалось загрузить права доступа';
       runInAction(() => {
+        // Keep previous admins/editors — do not silently wipe RBAC state.
+        this.loadError = msg;
         this.loaded = true;
       });
     } finally {
@@ -121,6 +129,7 @@ export class PermissionsStore {
     this.admins = [];
     this.editors = [];
     this.usersInfo = {};
+    this.loadError = null;
     this.loaded = false;
   }
 }

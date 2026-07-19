@@ -187,6 +187,23 @@ const canPlayerCreateCharCheck = (args, user, db) => Promise.all([
     userIsLogged(args, user, db),
     canPlayerCreateChar(args, user, db),
 ]);
+
+/** Players may only resolve their own login; organizers may resolve any. */
+const canResolvePlayerProfileName = (args, user, db) => Promise.all([
+    userIsLogged(args, user, db),
+    new Promise((resolve, reject) => {
+        const target = args && args.userName;
+        if (!target) {
+            reject(['errors-user-is-not-found']);
+            return;
+        }
+        if (user.role === 'organizer' || user.name === target) {
+            resolve();
+            return;
+        }
+        reject(['errors-forbidden']);
+    }),
+]);
 // After checkEditorMode: if editors are assigned, caller is already an editor → allow.
 // If editor mode is off → admin or entity owner (prefer owner error message).
 const contentMutateOr = (ownerCheck) => (args, user, db) => db.getManagementInfo().then((res) => {
@@ -247,7 +264,7 @@ const bindCharacterCheck = (args, user, db) => Promise.all([
 const apiInfo = {
     baseAPI: {
         _init: forbidden,
-        getDatabase: roleIsOrganizerCheck,
+        getDatabase: organizerIsAdminCheck,
         setDatabase: organizerIsAdminCheck,
         getMetaInfo: roleIsOrganizerCheck,
         setMetaInfoString: organizerIsAdminCheck,
@@ -380,7 +397,7 @@ const apiInfo = {
         promotePlayerToOrganizer: organizerIsAdminCheck,
         linkPlayerLoginToProfile: organizerIsAdminCheck,
         unlinkPlayerLoginFromProfile: organizerIsAdminCheck,
-        getResolvedPlayerProfileName: userIsLogged,
+        getResolvedPlayerProfileName: canResolvePlayerProfileName,
         getPlayerProfileInfo: userIsLogged,
         getWelcomeText: userIsLogged,
         getPlayersOptions: roleIsOrganizerCheck,

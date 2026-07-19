@@ -1,33 +1,56 @@
+import { useEffect, useState } from 'react';
 import {
   AppShell as MantineAppShell,
   Group,
   Text,
-  ActionIcon,
-  Tooltip,
   Button,
-  useMantineColorScheme,
   NavLink,
+  Burger,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useRootStore } from '@/stores';
 
 const playerNav = [
-  { path: '/', label: 'О вас', icon: '🧑' },
-  { path: '/questionnaire', label: 'Анкета', icon: '📝' },
-  { path: '/character', label: 'Персонаж', icon: '🎭' },
-];
+  { path: '/', label: 'О вас', icon: '🧑', always: true },
+  { path: '/questionnaire', label: 'Анкета', icon: '📝', always: true },
+  { path: '/character', label: 'Персонаж', icon: '🎭', always: false },
+] as const;
 
 export const PlayerShell = observer(function PlayerShell({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { auth } = useRootStore();
+  const { auth, api } = useRootStore();
+  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] = useDisclosure();
+  const [hasCharacter, setHasCharacter] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    api.get<{ character?: { name: string } }>('getPlayerProfileInfo')
+      .then((info) => {
+        if (!cancelled) setHasCharacter(!!info?.character);
+      })
+      .catch(() => {
+        if (!cancelled) setHasCharacter(false);
+      });
+    return () => { cancelled = true; };
+  }, [api, location.pathname]);
+
+  useEffect(() => {
+    closeMobile();
+  }, [location.pathname, closeMobile]);
+
+  const go = (path: string) => {
+    navigate(path);
+    closeMobile();
+  };
 
   return (
     <MantineAppShell
       header={{ height: 52 }}
-      navbar={{ width: 200, breakpoint: 'sm', collapsed: { mobile: false } }}
+      navbar={{ width: 200, breakpoint: 'sm', collapsed: { mobile: !mobileOpened } }}
       padding={{ base: 'sm', md: 'md' }}
       styles={{
         main: {
@@ -38,8 +61,9 @@ export const PlayerShell = observer(function PlayerShell({ children }: { childre
       <MantineAppShell.Header>
         <Group h="100%" px="md" justify="space-between" wrap="nowrap">
           <Group gap="sm" wrap="nowrap">
+            <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" aria-label="Меню" />
             <Text fw={700} size="lg">NIMS</Text>
-            <Text size="sm" c="dimmed">Кабинет игрока</Text>
+            <Text size="sm" c="dimmed" visibleFrom="xs">Кабинет игрока</Text>
           </Group>
           <Group gap="xs" wrap="nowrap">
             {auth.user && (
@@ -47,11 +71,7 @@ export const PlayerShell = observer(function PlayerShell({ children }: { childre
                 {auth.user.name}
               </Text>
             )}
-            <Tooltip label={colorScheme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}>
-              <ActionIcon variant="subtle" onClick={() => toggleColorScheme()} size="lg" aria-label="Тема">
-                {colorScheme === 'dark' ? '☀' : '☾'}
-              </ActionIcon>
-            </Tooltip>
+            <ThemeToggle compact />
             <Button size="compact-sm" variant="default" onClick={() => void auth.logout()}>
               Выйти
             </Button>
@@ -60,18 +80,22 @@ export const PlayerShell = observer(function PlayerShell({ children }: { childre
       </MantineAppShell.Header>
 
       <MantineAppShell.Navbar p="xs">
-        {playerNav.map((item) => (
-          <NavLink
-            key={item.path}
-            label={item.label}
-            leftSection={<span aria-hidden style={{ fontSize: 18 }}>{item.icon}</span>}
-            active={location.pathname === item.path}
-            onClick={() => navigate(item.path)}
-            styles={{
-              root: { minHeight: 44, borderRadius: 8, marginBottom: 2 },
-            }}
-          />
-        ))}
+        {playerNav.map((item) => {
+          const disabled = !item.always && !hasCharacter;
+          return (
+            <NavLink
+              key={item.path}
+              label={item.label}
+              leftSection={<span aria-hidden style={{ fontSize: 18 }}>{item.icon}</span>}
+              active={location.pathname === item.path}
+              disabled={disabled}
+              onClick={() => { if (!disabled) go(item.path); }}
+              styles={{
+                root: { minHeight: 44, borderRadius: 8, marginBottom: 2 },
+              }}
+            />
+          );
+        })}
       </MantineAppShell.Navbar>
 
       <MantineAppShell.Main>

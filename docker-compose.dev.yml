@@ -10,6 +10,10 @@ services:
       - nims-dev-data:/app/packages/nims-server/data
     environment:
       - NODE_ENV=development
+      - NIMS_SESSION_SECRET=${NIMS_SESSION_SECRET:-dev-only-session-secret}
+      - NIMS_ADMIN_LOGIN=${NIMS_ADMIN_LOGIN:-admin}
+      - NIMS_ADMIN_PASS=${NIMS_ADMIN_PASS:-zxpoYR65}
+      - NIMS_ENSURE_ADMIN=${NIMS_ENSURE_ADMIN:-1}
     restart: unless-stopped
 
 volumes:

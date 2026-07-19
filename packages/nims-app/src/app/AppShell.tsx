@@ -9,13 +9,14 @@ import {
   ActionIcon,
   Tooltip,
   Button,
-  useMantineColorScheme,
+  Alert,
 } from '@mantine/core';
 import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { McpTokenModal } from '@/features/mcp/McpTokenModal';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useRootStore } from '@/stores';
 
 type NavItem =
@@ -47,8 +48,7 @@ export const AppShell = observer(function AppShell({ children }: { children: Rea
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { auth } = useRootStore();
+  const { auth, permissions } = useRootStore();
 
   const navWidth = collapsed ? 64 : 220;
 
@@ -124,11 +124,7 @@ export const AppShell = observer(function AppShell({ children }: { children: Rea
                 {auth.user.name}
               </Text>
             )}
-            <Tooltip label={colorScheme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}>
-              <ActionIcon variant="subtle" onClick={() => toggleColorScheme()} size="lg" aria-label="Тема">
-                {colorScheme === 'dark' ? '☀' : '☾'}
-              </ActionIcon>
-            </Tooltip>
+            <ThemeToggle compact />
             <Button size="compact-sm" variant="default" onClick={() => void auth.logout()}>
               Выйти
             </Button>
@@ -174,6 +170,11 @@ export const AppShell = observer(function AppShell({ children }: { children: Rea
       </MantineAppShell.Navbar>
 
       <MantineAppShell.Main>
+        {permissions.loadError && (
+          <Alert color="orange" mb="sm" title="Права доступа не загружены">
+            {permissions.loadError}. Режим редактора и владельцы могут отображаться неверно.
+          </Alert>
+        )}
         {children}
       </MantineAppShell.Main>
 

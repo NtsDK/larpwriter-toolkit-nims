@@ -210,8 +210,9 @@ describe('permissionProxy RBAC', () => {
             await expectAllowed(fx.db.getDatabase(fx.users.admin));
         });
 
-        it('getDatabase includes password hashes for backup/restore', async () => {
-            const dump = await fx.db.getDatabase(fx.users.org);
+        it('getDatabase is admin-only and includes password hashes for backup/restore', async () => {
+            await expectDenied(fx.db.getDatabase(fx.users.org), 'forbidden-for-non-admin');
+            const dump = await fx.db.getDatabase(fx.users.admin);
             const adminUser = dump.ManagementInfo?.UsersInfo?.admin;
             assert.ok(adminUser?.salt);
             assert.ok(adminUser?.hashedPassword);

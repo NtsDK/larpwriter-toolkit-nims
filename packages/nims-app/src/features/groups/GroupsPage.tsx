@@ -124,10 +124,14 @@ function GroupsPage() {
   };
 
   const handleRemove = async (name: string) => {
-    await api.call('removeGroup', { groupName: name });
-    if (selected === name) setSelected(null);
-    await loadNames();
-    notifications.show({ title: 'Удалено', message: `«${name}»`, color: 'gray' });
+    try {
+      await api.call('removeGroup', { groupName: name });
+      if (selected === name) setSelected(null);
+      await loadNames();
+      notifications.show({ title: 'Удалено', message: `«${name}»`, color: 'gray' });
+    } catch (e: any) {
+      notifications.show({ title: 'Ошибка', message: e.message, color: 'red' });
+    }
   };
 
   const handleRename = async () => {
@@ -179,7 +183,7 @@ function GroupsPage() {
     <Stack gap="lg">
       <Group justify="space-between">
         <Title order={2}>{t('groups.title')}</Title>
-        <Button onClick={open}>{t('groups.create')}</Button>
+        <Button onClick={open} disabled={!permissions.canCreateEntities}>{t('groups.create')}</Button>
       </Group>
 
       {names.length === 0 ? (

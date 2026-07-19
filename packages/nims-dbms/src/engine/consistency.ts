@@ -70,12 +70,13 @@ export class ConsistencyEngine {
     const charNames = Object.keys(db.Characters);
     const playerNames = Object.keys(db.Players);
 
-    for (const [player, char] of Object.entries(db.ProfileBindings)) {
-      if (!playerNames.includes(player)) {
-        errors.push(`Binding references non-existent player "${player}"`);
-      }
+    // ProfileBindings: characterName → playerName
+    for (const [char, player] of Object.entries(db.ProfileBindings)) {
       if (!charNames.includes(char)) {
         errors.push(`Binding references non-existent character "${char}"`);
+      }
+      if (!playerNames.includes(player)) {
+        errors.push(`Binding references non-existent player "${player}"`);
       }
     }
   }

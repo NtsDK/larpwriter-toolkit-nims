@@ -98,10 +98,14 @@ function CharactersPage() {
   };
 
   const handleRemove = async (name: string) => {
-    await api.call('removeProfile', { type: 'character', characterName: name });
-    if (selected === name) { setSelected(null); setProfile(null); }
-    await loadNames();
-    notifications.show({ title: 'Удалено', message: `«${name}»`, color: 'gray' });
+    try {
+      await api.call('removeProfile', { type: 'character', characterName: name });
+      if (selected === name) { setSelected(null); setProfile(null); }
+      await loadNames();
+      notifications.show({ title: 'Удалено', message: `«${name}»`, color: 'gray' });
+    } catch (e: any) {
+      notifications.show({ title: 'Ошибка', message: e.message, color: 'red' });
+    }
   };
 
   const handleRename = async () => {
@@ -200,6 +204,7 @@ function CharactersPage() {
                         characterNames={names}
                         playerNames={playerNames}
                         onChanged={loadBindings}
+                        disabled={!canEditSelected}
                       />
                     </Group>
                     <Button

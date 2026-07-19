@@ -5,9 +5,17 @@ const path = require('path');
 const { randomUUID } = require('crypto');
 const config = require('../config');
 
+const { createRateLimiter } = require('../middlewares/rateLimit');
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_TTL_MS = DAY_MS;
-const DEFAULT_LONG_LIVED_TTL_MS = 10 * 365 * DAY_MS; // ~10 years
+const DEFAULT_LONG_LIVED_TTL_MS = 90 * DAY_MS; // 90 days
+
+const mcpAuthRateLimit = createRateLimiter({
+    windowMs: 60_000,
+    max: 20,
+    message: 'Too many MCP auth attempts, try again later',
+});
 
 const tokenStore = new Map();
 const authPageHtml = fs.readFileSync(path.join(__dirname, 'authPage.html'), 'utf8');
@@ -134,13 +142,13 @@ function mountAuthRoute(app, rawDb) {
             String(ttlMs)
         );
         html = html.replace(
-            'window.__MCP_LONG_LIVED_TTL_MS__ || 315360000000',
+            'window.__MCP_LONG_LIVED_TTL_MS__ || 7776000000',
             String(longLivedTtlMs)
         );
         res.type('html').send(html);
     });
 
-    app.post('/mcp/auth', async (req, res) => {
+    app.post('/mcp/auth', mcpAuthRateLimit, async (req, res) => {
         const { username, password, longLived } = req.body || {};
         if (!username || !password) {
             res.status(400).json({ error: 'username and password are required' });

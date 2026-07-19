@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import {
-  Paper, Stack, Title, TextInput, PasswordInput, Button, Alert, Center, Tabs, Text,
+  Paper, Stack, Title, TextInput, PasswordInput, Button, Alert, Center, Tabs, Text, Group,
 } from '@mantine/core';
 import { observer } from 'mobx-react-lite';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useRootStore } from '@/stores';
 
 export const LoginPage = observer(function LoginPage() {
@@ -55,7 +56,10 @@ export const LoginPage = observer(function LoginPage() {
     <Center mih="100vh" p="md" style={{ background: 'var(--mantine-color-body)' }}>
       <Paper withBorder shadow="sm" p="xl" radius="md" w="100%" maw={400}>
         <Stack gap="md">
-          <Title order={2}>NIMS</Title>
+          <Group justify="space-between" align="center" wrap="nowrap">
+            <Title order={2}>NIMS</Title>
+            <ThemeToggle compact />
+          </Group>
 
           {allowSignup ? (
             <Tabs value={mode} onChange={(v) => { setMode((v as 'login' | 'signup') || 'login'); setError(null); }}>

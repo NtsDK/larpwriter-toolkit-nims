@@ -6,9 +6,14 @@ services:
     container_name: larpwriter-app
     restart: always
     volumes:
-      - nims-data:/app
+      - nims-data:/app/packages/nims-server/data
     environment:
       - NODE_ENV=production
+      - NIMS_SESSION_SECRET=${NIMS_SESSION_SECRET}
+      - NIMS_ADMIN_LOGIN=${NIMS_ADMIN_LOGIN:-admin}
+      - NIMS_ADMIN_PASS=${NIMS_ADMIN_PASS}
+      - NIMS_ENSURE_ADMIN=${NIMS_ENSURE_ADMIN:-0}
+      - NIMS_COOKIE_SECURE=${NIMS_COOKIE_SECURE:-1}
     expose:
       - "3001"
     networks:

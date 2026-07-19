@@ -145,4 +145,86 @@ describe('player signup and login↔profile link', () => {
         assert.equal(off.allowPlayerCreation, false);
         await db.setPlayerOption({ name: 'allowPlayerCreation', value: true }, admin);
     });
+
+    it('renameProfile refuses to clobber an existing player login', async () => {
+        await raw.signUp({
+            userName: 'rename_src',
+            password: 'Player1!',
+            confirmPassword: 'Player1!',
+        });
+        await raw.signUp({
+            userName: 'rename_dst',
+            password: 'Player1!',
+            confirmPassword: 'Player1!',
+        });
+        await assert.rejects(
+            () => db.renameProfile({
+                type: 'player', fromName: 'rename_src', toName: 'rename_dst',
+            }, admin),
+            (err) => String(err.messageId || err.message).includes('already'),
+        );
+        const mgmt = await db.getManagementInfo(admin);
+        assert.ok(mgmt.PlayersInfo.rename_src);
+        assert.ok(mgmt.PlayersInfo.rename_dst);
+        assert.ok(mgmt.PlayersInfo.rename_dst.salt || mgmt.PlayersInfo.rename_dst);
+        // Credentials of rename_dst must still work
+        const user = await raw.login({ username: 'rename_dst', password: 'Player1!' });
+        assert.equal(user.role, 'player');
+    });
+
+    it('link merge keeps explicit checkbox false from player sheet', async () => {
+        await db.createProfileItem({
+            type: 'questionnaire', name: 'Готов помочь', itemType: 'checkbox', selectedIndex: 0,
+        }, admin);
+        await db.createProfile({ type: 'player', characterName: 'CheckHand' }, admin);
+        await db.updateProfileField({
+            type: 'questionnaire', characterName: 'CheckHand', fieldName: 'Готов помочь',
+            itemType: 'checkbox', value: true,
+        }, admin);
+
+        await raw.signUp({
+            userName: 'check_player',
+            password: 'Player1!',
+            confirmPassword: 'Player1!',
+        });
+        const player = { name: 'check_player', role: 'player' };
+        await db.updateProfileField({
+            type: 'questionnaire', characterName: 'check_player', fieldName: 'Готов помочь',
+            itemType: 'checkbox', value: false,
+        }, player);
+
+        await db.linkPlayerLoginToProfile({
+            userName: 'check_player',
+            profileName: 'CheckHand',
+        }, admin);
+
+        const quest = await db.getProfile({ type: 'questionnaire', name: 'CheckHand' }, admin);
+        assert.equal(quest['Готов помочь'], false);
+    });
+
+    it('removeProfile clears links and restores sheet for remaining login', async () => {
+        await db.createProfile({ type: 'player', characterName: 'ToDelete' }, admin);
+        await raw.signUp({
+            userName: 'orphan_login',
+            password: 'Player1!',
+            confirmPassword: 'Player1!',
+        });
+        await db.linkPlayerLoginToProfile({
+            userName: 'orphan_login',
+            profileName: 'ToDelete',
+        }, admin);
+
+        await db.removeProfile({ type: 'player', characterName: 'ToDelete' }, admin);
+
+        const names = await db.getProfileNamesArray({ type: 'player' }, admin);
+        assert.ok(!names.includes('ToDelete'));
+        assert.ok(names.includes('orphan_login'));
+
+        const mgmt = await db.getManagementInfo(admin);
+        assert.equal(mgmt.PlayersInfo.orphan_login.profileName, undefined);
+        assert.equal(mgmt.PlayersInfo.orphan_login.resolvedProfileName, 'orphan_login');
+
+        const info = await db.getPlayerProfileInfo({ name: 'orphan_login', role: 'player' });
+        assert.equal(info.player.name, 'orphan_login');
+    });
 });

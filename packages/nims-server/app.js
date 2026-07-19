@@ -26,10 +26,20 @@ const { createServerDbms } = require('nims-dbms');
 const { wrapWithPermissions } = require('./permissions');
 
 const emptyDatabase = emptyBase.data;
-const db = createServerDbms(emptyDatabase, {
-    adminLogin: config.get('inits:adminLogin'),
-    adminPass: config.get('inits:adminPass'),
-});
+const shouldEnsureAdmin = !!(
+    config.get('inits:ensureAdmin')
+    && config.get('inits:adminLogin')
+    && config.get('inits:adminPass')
+);
+const db = createServerDbms(
+    emptyDatabase,
+    shouldEnsureAdmin
+        ? {
+            adminLogin: config.get('inits:adminLogin'),
+            adminPass: config.get('inits:adminPass'),
+        }
+        : undefined,
+);
 const preparedDb = wrapWithPermissions(db);
 const dbms = { db, rawDb: db, preparedDb };
 
@@ -46,7 +56,9 @@ function onSetDatabaseFinished() {
 }
 
 function afterDatabaseReady() {
-    if (config.get('inits:adminLogin') && config.get('inits:adminPass')) {
+    // Only bootstrap/repair missing admin credentials when explicitly enabled.
+    // Never overwrite an existing admin password from config defaults.
+    if (shouldEnsureAdmin) {
         dbms.db.ensureAdminExists(config.get('inits:adminLogin'), config.get('inits:adminPass'));
     }
     onSetDatabaseFinished();
@@ -78,19 +90,36 @@ app.use(logger('dev', {
 }));
 
 if (config.get('api:enabled')) {
+    const allowlist = config.get('api:corsOrigins');
+    const origins = Array.isArray(allowlist) ? allowlist.filter(Boolean) : [];
     const corsOpts = {
-        origin: true,
-        credentials: true
+        origin: origins.length > 0
+            ? (origin, cb) => {
+                if (!origin || origins.includes(origin)) cb(null, true);
+                else cb(new Error('CORS origin denied'));
+            }
+            : false,
+        credentials: true,
     };
-
     app.use(cors(corsOpts));
-    app.options('*', cors());
+    app.options('*', cors(corsOpts));
 }
 log.info(`api enabled: ${config.get('api:enabled')}`);
 app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session(sessionOptions));
+
+// Trust proxy so secure cookies work behind HTTPS terminators.
+app.set('trust proxy', 1);
+const sessionOpts = { ...sessionOptions };
+const cookieOpts = { ...(sessionOpts.cookie || {}) };
+if (config.get('session:cookie:secure') || process.env.NIMS_COOKIE_SECURE === '1') {
+    cookieOpts.secure = true;
+}
+if (cookieOpts.sameSite == null) cookieOpts.sameSite = 'lax';
+if (cookieOpts.httpOnly == null) cookieOpts.httpOnly = true;
+sessionOpts.cookie = cookieOpts;
+app.use(session(sessionOpts));
 app.use(passport.initialize());
 app.use(passport.session());
 

@@ -49,6 +49,7 @@ export class StoriesEngine {
     data.name = toName;
     this.engine.database.Stories[toName] = data;
     delete this.engine.database.Stories[fromName];
+    this.engine.users.rewriteOwnershipName('stories', fromName, toName);
     this.engine.ee.emit('renameStory', [{ fromName, toName }]);
   }
 
@@ -56,6 +57,7 @@ export class StoriesEngine {
     ensureString(storyName, 'storyName');
     ensureEntityExists(storyName, Object.keys(this.engine.database.Stories));
     delete this.engine.database.Stories[storyName];
+    this.engine.users.removeOwnershipName('stories', storyName);
     this.engine.ee.emit('removeStory', [{ storyName }]);
   }
 }

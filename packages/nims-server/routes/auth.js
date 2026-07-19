@@ -1,5 +1,34 @@
 const passport = require('passport');
 const log = require('../libs/log')(module);
+const { createRateLimiter } = require('../middlewares/rateLimit');
+
+const authRateLimit = createRateLimiter({
+    windowMs: 60_000,
+    max: 20,
+    message: 'Too many login attempts, try again later',
+});
+
+function sessionLogIn(req, user) {
+    return new Promise((resolve, reject) => {
+        const finish = () => {
+            req.logIn(user, (loginErr) => {
+                if (loginErr) reject(loginErr);
+                else resolve();
+            });
+        };
+        if (typeof req.session.regenerate === 'function') {
+            req.session.regenerate((err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                finish();
+            });
+            return;
+        }
+        finish();
+    });
+}
 
 module.exports = function (app, dbms) {
     const db = dbms.db;
@@ -29,7 +58,7 @@ module.exports = function (app, dbms) {
             .catch(next);
     });
 
-    app.post('/login', (req, res, next) => {
+    app.post('/login', authRateLimit, (req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
             if (err) {
                 next(err);
@@ -42,12 +71,7 @@ module.exports = function (app, dbms) {
                 });
                 return;
             }
-            req.logIn(user, (loginErr) => {
-                if (loginErr) {
-                    next(loginErr);
-                    return;
-                }
-                // SPA: JSON; classic clients still get redirect via Accept
+            sessionLogIn(req, user).then(() => {
                 const wantsJson = (req.get('Accept') || '').includes('application/json')
                     || req.get('X-Requested-With') === 'XMLHttpRequest'
                     || req.query.format === 'json';
@@ -58,7 +82,7 @@ module.exports = function (app, dbms) {
                     return;
                 }
                 res.redirect('page.html');
-            });
+            }).catch(next);
         })(req, res, next);
     });
 
@@ -77,7 +101,7 @@ module.exports = function (app, dbms) {
         });
     });
 
-    app.post('/signUp', (req, res, next) => {
+    app.post('/signUp', authRateLimit, (req, res, next) => {
         const body = req.body || {};
         const userName = (body.userName || body.username || '').trim();
         const password = body.password || '';
@@ -96,23 +120,12 @@ module.exports = function (app, dbms) {
             })
             .then((result) => {
                 if (result === null) return;
-                // Auto-login after signup
-                return new Promise((resolve, reject) => {
-                    db.login({ username: userName, password })
-                        .then((user) => {
-                            req.logIn(user, (loginErr) => {
-                                if (loginErr) {
-                                    reject(loginErr);
-                                    return;
-                                }
-                                res.json({
-                                    user: { name: user.name, role: user.role },
-                                });
-                                resolve();
-                            });
-                        })
-                        .catch(reject);
-                });
+                return db.login({ username: userName, password })
+                    .then((user) => sessionLogIn(req, user).then(() => {
+                        res.json({
+                            user: { name: user.name, role: user.role },
+                        });
+                    }));
             })
             .catch((err) => {
                 const msg = (err && (err.messageId || err.message)) || 'Ошибка регистрации';

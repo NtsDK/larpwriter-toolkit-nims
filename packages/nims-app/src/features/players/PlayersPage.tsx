@@ -155,10 +155,14 @@ function PlayersPage() {
   };
 
   const handleRemove = async (name: string) => {
-    await api.call('removeProfile', { type: 'player', characterName: name });
-    if (selected === name) { setSelected(null); setProfile(null); }
-    await loadNames();
-    notifications.show({ title: 'Удалено', message: `«${name}»`, color: 'gray' });
+    try {
+      await api.call('removeProfile', { type: 'player', characterName: name });
+      if (selected === name) { setSelected(null); setProfile(null); }
+      await loadNames();
+      notifications.show({ title: 'Удалено', message: `«${name}»`, color: 'gray' });
+    } catch (e: any) {
+      notifications.show({ title: 'Ошибка', message: e.message, color: 'red' });
+    }
   };
 
   const handleFieldChange = async (fieldName: string, itemType: string, value: unknown) => {
@@ -196,7 +200,7 @@ function PlayersPage() {
       <Group justify="space-between">
         <Title order={2}>{t('players.title')}</Title>
         <Group>
-          <Button onClick={open}>{t('players.create')}</Button>
+          <Button onClick={open} disabled={!permissions.canCreateEntities}>{t('players.create')}</Button>
           {canAdmin && selected && !selectedLogin && (
             <Button
               variant="default"
@@ -272,6 +276,7 @@ function PlayersPage() {
                       characterNames={charNames}
                       playerNames={names}
                       onChanged={loadBindings}
+                      disabled={!canEditSelected}
                     />
                   </Group>
                   <ProfileFieldsForm

@@ -23,12 +23,16 @@ function AdminPage() {
   const [opened, { open, close }] = useDisclosure(false);
   const [playerOpened, { open: openPlayer, close: closePlayer }] = useDisclosure(false);
   const [linkOpened, { open: openLink, close: closeLink }] = useDisclosure(false);
+  const [passOpened, { open: openPass, close: closePass }] = useDisclosure(false);
   const [newName, setNewName] = useState('');
   const [newPass, setNewPass] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [playerPass, setPlayerPass] = useState('');
   const [linkLogin, setLinkLogin] = useState<string | null>(null);
   const [linkProfile, setLinkProfile] = useState<string | null>(null);
+  const [passTarget, setPassTarget] = useState<{ kind: 'organizer' | 'player'; name: string } | null>(null);
+  const [passValue, setPassValue] = useState('');
+  const [passSaving, setPassSaving] = useState(false);
   const [assignUser, setAssignUser] = useState<string | null>(null);
   const resetRef = useRef<() => void>(null);
 
@@ -144,13 +148,36 @@ function AdminPage() {
     } catch (e: any) { notifications.show({ title: 'Ошибка', message: e.message, color: 'red' }); }
   };
 
-  const handleChangePassword = async (name: string) => {
-    const newPassword = prompt(`Новый пароль для ${name}:`);
-    if (!newPassword) return;
+  const openChangePassword = (kind: 'organizer' | 'player', name: string) => {
+    setPassTarget({ kind, name });
+    setPassValue('');
+    openPass();
+  };
+
+  const handleConfirmPasswordChange = async () => {
+    if (!passTarget || !passValue.trim()) return;
+    setPassSaving(true);
     try {
-      await api.call('changeOrganizerPassword', { userName: name, newPassword });
+      if (passTarget.kind === 'organizer') {
+        await api.call('changeOrganizerPassword', {
+          userName: passTarget.name,
+          newPassword: passValue.trim(),
+        });
+      } else {
+        await api.call('changePlayerPassword', {
+          userName: passTarget.name,
+          newPassword: passValue.trim(),
+        });
+      }
       notifications.show({ title: 'Готово', message: 'Пароль изменён', color: 'green' });
-    } catch (e: any) { notifications.show({ title: 'Ошибка', message: e.message, color: 'red' }); }
+      setPassTarget(null);
+      setPassValue('');
+      closePass();
+    } catch (e: any) {
+      notifications.show({ title: 'Ошибка', message: e.message, color: 'red' });
+    } finally {
+      setPassSaving(false);
+    }
   };
 
   const handleCreatePlayer = async () => {
@@ -231,17 +258,6 @@ function AdminPage() {
       await api.call('removePlayerLogin', { userName: name });
       await loadMgmt();
       notifications.show({ title: 'Удалено', message: `Логин «${name}»`, color: 'gray' });
-    } catch (e: any) {
-      notifications.show({ title: 'Ошибка', message: e.message, color: 'red' });
-    }
-  };
-
-  const handleChangePlayerPassword = async (name: string) => {
-    const newPassword = prompt(`Новый пароль для игрока ${name}:`);
-    if (!newPassword) return;
-    try {
-      await api.call('changePlayerPassword', { userName: name, newPassword });
-      notifications.show({ title: 'Готово', message: 'Пароль изменён', color: 'green' });
     } catch (e: any) {
       notifications.show({ title: 'Ошибка', message: e.message, color: 'red' });
     }
@@ -421,7 +437,7 @@ function AdminPage() {
                                 ) : (
                                   <Button size="xs" variant="subtle" color="blue" onClick={() => handleAssignEditor(name)}>Редактор</Button>
                                 )}
-                                <Button size="xs" variant="subtle" onClick={() => handleChangePassword(name)}>Пароль</Button>
+                                <Button size="xs" variant="subtle" onClick={() => openChangePassword('organizer', name)}>Пароль</Button>
                                 <Button size="xs" variant="subtle" color="red" onClick={() => handleRemoveOrg(name)}>Удалить</Button>
                               </Group>
                             </Table.Td>
@@ -597,7 +613,7 @@ function AdminPage() {
                                       Отвязать
                                     </Button>
                                   )}
-                                  <Button size="compact-xs" variant="subtle" onClick={() => handleChangePlayerPassword(name)}>
+                                  <Button size="compact-xs" variant="subtle" onClick={() => openChangePassword('player', name)}>
                                     Пароль
                                   </Button>
                                   <Button size="compact-xs" variant="subtle" color="blue" onClick={() => handlePromotePlayer(name)}>
@@ -723,6 +739,37 @@ function AdminPage() {
             <Button variant="subtle" onClick={closeLink}>{t('common.cancel')}</Button>
             <Button onClick={handleLinkLogin} disabled={!linkLogin || !linkProfile}>
               Связать
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+
+      <Modal
+        opened={passOpened}
+        onClose={() => { closePass(); setPassTarget(null); setPassValue(''); }}
+        title={passTarget ? `Новый пароль: ${passTarget.name}` : 'Смена пароля'}
+      >
+        <Stack>
+          <PasswordInput
+            label="Новый пароль"
+            value={passValue}
+            onChange={(e) => setPassValue(e.currentTarget.value)}
+            autoFocus
+            autoComplete="new-password"
+          />
+          <Group justify="flex-end">
+            <Button
+              variant="subtle"
+              onClick={() => { closePass(); setPassTarget(null); setPassValue(''); }}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              onClick={handleConfirmPasswordChange}
+              loading={passSaving}
+              disabled={!passValue.trim()}
+            >
+              Сохранить
             </Button>
           </Group>
         </Stack>

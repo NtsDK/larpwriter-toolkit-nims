@@ -38,12 +38,16 @@ export class GroupsEngine {
     data.name = toName;
     this.engine.database.Groups[toName] = data;
     delete this.engine.database.Groups[fromName];
+    this.engine.users.rewriteOwnershipName('groups', fromName, toName);
+    this.engine.ee.emit('renameGroup', [{ fromName, toName }]);
   }
 
   async removeGroup({ groupName }: { groupName: string }): Promise<void> {
     ensureString(groupName, 'groupName');
     ensureEntityExists(groupName, Object.keys(this.engine.database.Groups));
     delete this.engine.database.Groups[groupName];
+    this.engine.users.removeOwnershipName('groups', groupName);
+    this.engine.ee.emit('removeGroup', [{ groupName }]);
   }
 
   async getGroupMembers({ groupName }: { groupName: string }): Promise<string[]> {

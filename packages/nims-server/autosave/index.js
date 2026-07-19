@@ -24,7 +24,8 @@ module.exports = (db) => {
         const filePath = path.normalize(path.join(root, `${instanceName}-${projectName}-base${curIndex + 1}.json`));
         log.info(`filePath:${filePath}`);
 
-        //  fs.writeFile(filePath, filePath, function(err) {
+        // Full dump including password hashes — required for restore.
+        // Treat autosave volume as sensitive; API getDatabase is admin-only.
         db.getDatabase().then((data) => {
             fs.writeFile(filePath, JSON.stringify(data, null, 2), (err2) => {
                 if (err2) { console.error(err2); }

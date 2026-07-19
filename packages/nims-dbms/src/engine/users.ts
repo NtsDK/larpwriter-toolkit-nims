@@ -24,7 +24,8 @@ const PLAYER_OPTION_TYPES = ['allowPlayerCreation', 'allowCharacterCreation'] as
 
 export function isProfileFieldEmpty(value: unknown, itemType: string): boolean {
   if (value === null || value === undefined) return true;
-  if (itemType === 'checkbox') return value === false;
+  // Explicit false is a filled value (player unchecked the box).
+  if (itemType === 'checkbox') return typeof value !== 'boolean';
   if (itemType === 'number') {
     if (value === '') return true;
     if (typeof value === 'number' && Number.isNaN(value)) return true;
@@ -59,8 +60,40 @@ export interface SessionUser {
   role: string;
 }
 
-function encryptPassword(salt: string, password: string): string {
+const SCRYPT_PREFIX = 'scrypt$';
+const SCRYPT_KEYLEN = 64;
+
+/** Legacy HMAC-SHA1 (pre-migration). */
+function encryptPasswordLegacy(salt: string, password: string): string {
   return crypto.createHmac('sha1', salt).update(password).digest('hex');
+}
+
+function hashPassword(password: string): { salt: string; hashedPassword: string } {
+  const saltBytes = crypto.randomBytes(16);
+  const saltHex = saltBytes.toString('hex');
+  const hash = crypto.scryptSync(password, saltHex, SCRYPT_KEYLEN).toString('hex');
+  return { salt: `${SCRYPT_PREFIX}${saltHex}`, hashedPassword: hash };
+}
+
+function verifyPassword(salt: string, hashedPassword: string, password: string): boolean {
+  if (!salt || !hashedPassword) return false;
+  try {
+    if (salt.startsWith(SCRYPT_PREFIX)) {
+      const saltHex = salt.slice(SCRYPT_PREFIX.length);
+      const hash = crypto.scryptSync(password, saltHex, SCRYPT_KEYLEN).toString('hex');
+      const a = Buffer.from(hash, 'hex');
+      const b = Buffer.from(hashedPassword, 'hex');
+      if (a.length !== b.length) return false;
+      return crypto.timingSafeEqual(a, b);
+    }
+    return encryptPasswordLegacy(salt, password) === hashedPassword;
+  } catch {
+    return false;
+  }
+}
+
+function isLegacyPasswordHash(salt: string): boolean {
+  return !!salt && !salt.startsWith(SCRYPT_PREFIX);
 }
 
 export class UsersEngine {
@@ -108,15 +141,27 @@ export class UsersEngine {
     const { username, type, password } = args;
     const user = type === 'organizer' ? this.usersInfo[username] : this.playersInfo[username];
     if (!user || !user.salt || !user.hashedPassword) return false;
-    return encryptPassword(user.salt, password) === user.hashedPassword;
+    return verifyPassword(user.salt, user.hashedPassword, password);
   }
 
   async setPassword(args: { username: string; type: string; password: string }): Promise<void> {
     const { username, type, password } = args;
     const user = type === 'organizer' ? this.usersInfo[username] : this.playersInfo[username];
     if (!user) throw new Error('errors-user-is-not-found');
-    user.salt = `${Math.random()}`;
-    user.hashedPassword = encryptPassword(user.salt, password);
+    const hashed = hashPassword(password);
+    user.salt = hashed.salt;
+    user.hashedPassword = hashed.hashedPassword;
+  }
+
+  private upgradePasswordIfLegacy(
+    user: UserInfo | PlayerInfo,
+    password: string,
+  ): void {
+    if (user.salt && isLegacyPasswordHash(user.salt)) {
+      const hashed = hashPassword(password);
+      user.salt = hashed.salt;
+      user.hashedPassword = hashed.hashedPassword;
+    }
   }
 
   async login(args: { username: string; password: string }): Promise<SessionUser> {
@@ -124,14 +169,16 @@ export class UsersEngine {
 
     const orgUser = this.usersInfo[username];
     if (orgUser && orgUser.salt && orgUser.hashedPassword) {
-      if (encryptPassword(orgUser.salt, password) === orgUser.hashedPassword) {
+      if (verifyPassword(orgUser.salt, orgUser.hashedPassword, password)) {
+        this.upgradePasswordIfLegacy(orgUser, password);
         return { name: orgUser.name, role: 'organizer' };
       }
     }
 
     const playerUser = this.playersInfo[username];
     if (playerUser && playerUser.salt && playerUser.hashedPassword) {
-      if (encryptPassword(playerUser.salt, password) === playerUser.hashedPassword) {
+      if (verifyPassword(playerUser.salt, playerUser.hashedPassword, password)) {
+        this.upgradePasswordIfLegacy(playerUser, password);
         return { name: playerUser.name, role: 'player' };
       }
     }
@@ -169,7 +216,8 @@ export class UsersEngine {
     return this.resolvePlayerProfileName(args.userName);
   }
 
-  private ensurePlayerSheets(userName: string): void {
+  /** Create empty player + questionnaire sheets for a login if missing. */
+  ensurePlayerSheets(userName: string): void {
     const db = this.engine.database;
     if (!db.PlayerProfileStructure) db.PlayerProfileStructure = [];
     if (!db.Players[userName]) {
@@ -520,7 +568,8 @@ export class UsersEngine {
 
   /**
    * Move a player login into UsersInfo as organizer, keeping the same password hash.
-   * Player profile (Players sheet) stays; only the login role changes.
+   * Linked hand profile (profileName) is left as an orphan profile without a login.
+   * Same-name Players sheet under the login name is kept if present.
    */
   async promotePlayerToOrganizer(args: { userName: string }): Promise<void> {
     const { userName } = args;
@@ -538,6 +587,7 @@ export class UsersEngine {
       players: [],
       groups: [],
     };
+    // Drop login; do not delete Players/Questionnaires sheets (hand or same-name).
     delete this.playersInfo[userName];
   }
 
@@ -571,6 +621,31 @@ export class UsersEngine {
     this.mgmt.editor = editors[0] || '';
   }
 
+  /** Keep UsersInfo ownership lists in sync when entities are renamed. */
+  rewriteOwnershipName(
+    kind: 'stories' | 'groups' | 'characters' | 'players',
+    fromName: string,
+    toName: string,
+  ): void {
+    for (const user of Object.values(this.usersInfo)) {
+      const list = user[kind];
+      if (!Array.isArray(list)) continue;
+      user[kind] = list.map((n) => (n === fromName ? toName : n));
+    }
+  }
+
+  /** Drop an entity name from all ownership lists. */
+  removeOwnershipName(
+    kind: 'stories' | 'groups' | 'characters' | 'players',
+    name: string,
+  ): void {
+    for (const user of Object.values(this.usersInfo)) {
+      const list = user[kind];
+      if (!Array.isArray(list)) continue;
+      user[kind] = list.filter((n) => n !== name);
+    }
+  }
+
   ensureAdminExists(adminLogin: string, adminPass: string): void {
     if (!this.usersInfo[adminLogin]) {
       this.usersInfo[adminLogin] = {
@@ -582,11 +657,12 @@ export class UsersEngine {
       };
     }
     // Restore credentials if missing (e.g. autosave written without hashes).
+    // Never overwrite an existing password hash.
     const admin = this.usersInfo[adminLogin];
     if (!admin.salt || !admin.hashedPassword) {
-      const salt = `${Math.random()}`;
-      admin.salt = salt;
-      admin.hashedPassword = encryptPassword(salt, adminPass);
+      const hashed = hashPassword(adminPass);
+      admin.salt = hashed.salt;
+      admin.hashedPassword = hashed.hashedPassword;
     }
     const admins = this.getAdmins();
     if (!admins.includes(adminLogin)) {

@@ -2,8 +2,12 @@
   "port": 3001,
   "instanceName": "prod",
   "session": {
-    "secret": "nims-prod-change-me-7f3a9c2e",
-    "key": "nims_sid"
+    "secret": "CHANGE_ME",
+    "key": "nims_sid",
+    "cookie": {
+      "httpOnly": true,
+      "sameSite": "lax"
+    }
   },
   "autosave": {
     "root": "./data",

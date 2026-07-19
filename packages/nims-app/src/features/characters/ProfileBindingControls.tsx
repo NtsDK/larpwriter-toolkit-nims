@@ -20,6 +20,7 @@ interface BindingChangeButtonProps {
   characterNames: string[];
   playerNames: string[];
   onChanged: () => void | Promise<void>;
+  disabled?: boolean;
 }
 
 /** Button + modal near the name to change character↔player binding. */
@@ -30,6 +31,7 @@ export function BindingChangeButton({
   characterNames,
   playerNames,
   onChanged,
+  disabled = false,
 }: BindingChangeButtonProps) {
   const { api } = useRootStore();
   const [opened, { open, close }] = useDisclosure(false);
@@ -113,8 +115,14 @@ export function BindingChangeButton({
         ) : (
           <Text size="sm" c="dimmed">{partnerLabel}: не привязан</Text>
         )}
-        <Tooltip label="Изменить привязку" withArrow>
-          <ActionIcon size="sm" variant="subtle" onClick={open} aria-label="Изменить привязку">
+        <Tooltip label={disabled ? 'Недостаточно прав' : 'Изменить привязку'} withArrow>
+          <ActionIcon
+            size="sm"
+            variant="subtle"
+            onClick={open}
+            disabled={disabled}
+            aria-label="Изменить привязку"
+          >
             🔗
           </ActionIcon>
         </Tooltip>
