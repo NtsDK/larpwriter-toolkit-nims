@@ -11,7 +11,9 @@ module.exports = function (app, dbms) {
 
     // passport.use('local', new AuthLocalStrategy(userStorage.login.bind(userStorage)));
     passport.use('local', new AuthLocalStrategy(function (username, password, callback) {
-        this.login({ username, password }).then(res => callback(null, res)).catch(callback);
+        this.login({ username, password })
+            .then((user) => callback(null, user))
+            .catch(() => callback(null, false, { message: 'Неверный логин или пароль' }));
     }.bind(userStorage)));
 
     passport.serializeUser((user, done) => {

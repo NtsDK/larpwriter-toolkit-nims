@@ -48,6 +48,8 @@ See the License for the specific language governing permissions and
         Relations: [],
         CharacterProfileStructure: [],
         PlayerProfileStructure: [],
+        QuestionnaireStructure: [],
+        Questionnaires: {},
         Players: {},
         ProfileBindings: {},
         Gears: {

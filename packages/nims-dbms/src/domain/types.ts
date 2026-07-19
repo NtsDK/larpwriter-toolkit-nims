@@ -1,4 +1,4 @@
-export type ProfileType = 'character' | 'player';
+export type ProfileType = 'character' | 'player' | 'questionnaire';
 
 export type ProfileFieldType = 'text' | 'string' | 'enum' | 'number' | 'checkbox' | 'multiEnum';
 
@@ -83,13 +83,55 @@ export interface Group {
   filterModel: unknown[];
 }
 
+export interface PlayersOptions {
+  allowPlayerCreation: boolean;
+  allowCharacterCreation: boolean;
+}
+
 export interface ManagementInfo {
   UsersInfo?: Record<string, unknown>;
   PlayersInfo?: Record<string, unknown>;
+  PlayersOptions?: PlayersOptions;
+  WelcomeText?: string;
   admin?: string;
   editor?: string;
   adaptationRights?: string;
   [key: string]: unknown;
+}
+
+export interface GearNode {
+  id: string | number;
+  name: string;
+  group?: string;
+  notes?: string;
+  label?: string;
+  x?: number;
+  y?: number;
+  [key: string]: unknown;
+}
+
+export interface GearEdge {
+  id: string | number;
+  from: string | number;
+  to: string | number;
+  label?: string;
+  [key: string]: unknown;
+}
+
+export interface GearsData {
+  nodes: GearNode[];
+  edges: GearEdge[];
+  settings: {
+    physicsEnabled: boolean;
+    showNotes: boolean;
+  };
+}
+
+export interface SliderItem {
+  name: string;
+  top: string;
+  bottom: string;
+  value: number;
 }
 
 export interface Database {
@@ -101,7 +143,12 @@ export interface Database {
   Groups: Record<string, Group>;
   CharacterProfileStructure: ProfileStructure;
   PlayerProfileStructure: ProfileStructure;
+  /** Separate from player profile — player-facing questionnaire answers. */
+  QuestionnaireStructure: ProfileStructure;
+  Questionnaires: Profiles;
   ProfileBindings: ProfileBindings;
+  Gears: GearsData;
+  Sliders: SliderItem[];
   ManagementInfo?: ManagementInfo;
   Version?: string;
   Log?: unknown[];

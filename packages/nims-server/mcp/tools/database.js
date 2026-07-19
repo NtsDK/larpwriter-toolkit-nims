@@ -33,14 +33,8 @@ async function getManagementInfo(db, user) {
     return database.ManagementInfo;
 }
 
-async function prepareDatabaseForImport(db, user, database, preserveManagementInfo) {
-    if (!preserveManagementInfo) {
-        return database;
-    }
-    const current = await callDb(db, 'getDatabase', null, user);
-    if (current.ManagementInfo) {
-        return { ...database, ManagementInfo: current.ManagementInfo };
-    }
+async function prepareDatabaseForImport(_db, _user, database, _preserveManagementInfo) {
+    // ManagementInfo merge (keep existing + add missing) is done inside setDatabase.
     return database;
 }
 
@@ -186,7 +180,10 @@ function registerWriteTools(server, db, user) {
                 const prepared = await prepareDatabaseForImport(
                     db, user, database, preserveManagementInfo !== false
                 );
-                await callDb(db, 'setDatabase', { database: prepared }, user);
+                await callDb(db, 'setDatabase', {
+                    database: prepared,
+                    preserveManagementInfo: preserveManagementInfo !== false,
+                }, user);
                 const check = await callDb(db, 'getConsistencyCheckResult', null, user);
                 const errCount = (check.errors || []).length;
                 const summary = {

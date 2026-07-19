@@ -28,8 +28,8 @@ export class SearchEngine {
     ensureBoolean(caseSensitive, 'caseSensitive');
 
     const test = caseSensitive
-      ? (text: string) => text.includes(searchStr)
-      : (text: string) => text.toLowerCase().includes(searchStr.toLowerCase());
+      ? (text: string) => typeof text === 'string' && text.includes(searchStr)
+      : (text: string) => typeof text === 'string' && text.toLowerCase().includes(searchStr.toLowerCase());
 
     return textTypes.map(textType => ({
       textType,
@@ -88,14 +88,14 @@ export class SearchEngine {
     const structure = db[structureKey];
     const textItems = structure.filter(item => item.type === 'string' || item.type === 'text');
 
-    return Object.values(db[profilesKey]).flatMap(profile =>
+    return Object.entries(db[profilesKey]).flatMap(([profileName, profile]) =>
       textItems
         .filter(item => {
           const val = profile[item.name];
           return typeof val === 'string' && test(val);
         })
         .map(item => ({
-          name: `${profile.name}/${item.name}`,
+          name: `${profileName}/${item.name}`,
           type: item.type,
           text: String(profile[item.name]),
         }))

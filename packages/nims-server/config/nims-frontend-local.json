@@ -6,7 +6,7 @@
     "key": "siddsfgdsfgsdfga"
   },
   "autosave":{
-    "root":"./"
+    "root":"./data"
   },
   "frontend000Path" : "C:\\Users\\Tim\\workspace\\nims\\packages\\app-nims\\dist",
   "frontendPath" : "../nims-app/dist",

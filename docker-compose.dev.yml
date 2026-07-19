@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: nims-dev
     ports:
-      - "3001:3001"
+      - "0.0.0.0:3001:3001"
     volumes:
       - nims-dev-data:/app/packages/nims-server/data
     environment:

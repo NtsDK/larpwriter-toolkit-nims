@@ -46,14 +46,61 @@ export class GroupsEngine {
     delete this.engine.database.Groups[groupName];
   }
 
+  async getGroupMembers({ groupName }: { groupName: string }): Promise<string[]> {
+    ensureString(groupName, 'groupName');
+    ensureEntityExists(groupName, Object.keys(this.engine.database.Groups));
+    const group = this.engine.database.Groups[groupName];
+    return (group as any).members || [];
+  }
+
+  async addCharacterToGroup({ groupName, characterName }: { groupName: string; characterName: string }): Promise<void> {
+    ensureString(groupName, 'groupName');
+    ensureString(characterName, 'characterName');
+    ensureEntityExists(groupName, Object.keys(this.engine.database.Groups));
+    ensureEntityExists(characterName, Object.keys(this.engine.database.Characters));
+    const group = this.engine.database.Groups[groupName] as any;
+    if (!group.members) group.members = [];
+    if (!group.members.includes(characterName)) {
+      group.members.push(characterName);
+    }
+  }
+
+  async removeCharacterFromGroup({ groupName, characterName }: { groupName: string; characterName: string }): Promise<void> {
+    ensureString(groupName, 'groupName');
+    ensureString(characterName, 'characterName');
+    ensureEntityExists(groupName, Object.keys(this.engine.database.Groups));
+    const group = this.engine.database.Groups[groupName] as any;
+    if (group.members) {
+      group.members = group.members.filter((m: string) => m !== characterName);
+    }
+  }
+
+  async getGroupProfile({ groupName }: { groupName: string }): Promise<Record<string, string>> {
+    ensureEntityExists(groupName, Object.keys(this.engine.database.Groups));
+    const group = this.engine.database.Groups[groupName];
+    return { masterDescription: group.masterDescription || '', characterDescription: group.characterDescription || '' };
+  }
+
+  async updateGroupProfileField({ groupName, fieldName, value }: { groupName: string; fieldName: string; value: string }): Promise<void> {
+    ensureEntityExists(groupName, Object.keys(this.engine.database.Groups));
+    const group = this.engine.database.Groups[groupName] as any;
+    group[fieldName] = value;
+  }
+
+  async getGroupProfileStructure(): Promise<Array<{ name: string; type: string }>> {
+    return [
+      { name: 'masterDescription', type: 'text' },
+      { name: 'characterDescription', type: 'text' },
+    ];
+  }
+
   async getAllCharacterGroupTexts(): Promise<Record<string, Record<string, string>>> {
     const result: Record<string, Record<string, string>> = {};
     for (const [groupName, group] of Object.entries(this.engine.database.Groups)) {
-      if (group.filterModel && group.filterModel.length > 0) {
-        for (const charName of Object.keys(this.engine.database.Characters)) {
-          if (!result[charName]) result[charName] = {};
-          result[charName][groupName] = group.characterDescription;
-        }
+      const members = (group as any).members || [];
+      for (const charName of members) {
+        if (!result[charName]) result[charName] = {};
+        result[charName][groupName] = group.characterDescription;
       }
     }
     return result;

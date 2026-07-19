@@ -17,6 +17,8 @@ export default defineConfig({
       '/login': 'http://localhost:3001',
       '/logout': 'http://localhost:3001',
       '/signUp': 'http://localhost:3001',
+      '/signup-status': 'http://localhost:3001',
+      '/me': 'http://localhost:3001',
     },
   },
   build: {

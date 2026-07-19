@@ -45,6 +45,39 @@ export class RelationsEngine {
     return structuredClone(this.engine.database.Relations);
   }
 
+  /** Classic NIMS: relations of a character + who they meet in shared story events. */
+  async getRelationsSummary({ characterName }: { characterName: string }): Promise<{
+    relations: Relation[];
+    knownCharacters: Record<string, Record<string, boolean>>;
+  }> {
+    this.ensureCharacterExists(characterName);
+    const db = this.engine.database;
+
+    const relations = db.Relations
+      .filter((rel) => rel[characterName] !== undefined)
+      .map((rel) => structuredClone(rel))
+      .sort((a, b) => {
+        const otherA = a.starter === characterName ? a.ender : a.starter;
+        const otherB = b.starter === characterName ? b.ender : b.starter;
+        return otherA.localeCompare(otherB);
+      });
+
+    const knownCharacters: Record<string, Record<string, boolean>> = {};
+    for (const [storyName, story] of Object.entries(db.Stories)) {
+      if (!story.characters[characterName]) continue;
+      for (const event of story.events) {
+        if (!event.characters[characterName]) continue;
+        for (const other of Object.keys(event.characters)) {
+          if (other === characterName) continue;
+          if (!knownCharacters[other]) knownCharacters[other] = {};
+          knownCharacters[other][storyName] = true;
+        }
+      }
+    }
+
+    return { relations, knownCharacters };
+  }
+
   async getCharacterRelation({ fromCharacter, toCharacter }: { fromCharacter: string; toCharacter: string }): Promise<Relation> {
     this.ensureCharacterExists(fromCharacter);
     this.ensureCharacterExists(toCharacter);
@@ -85,6 +118,16 @@ export class RelationsEngine {
     this.engine.database.Relations.splice(index, 1);
   }
 
+  async getCharacterRelationText({ fromCharacter, toCharacter, character }: {
+    fromCharacter: string; toCharacter: string; character: string;
+  }): Promise<string> {
+    this.ensureCharacterExists(fromCharacter);
+    this.ensureCharacterExists(toCharacter);
+    ensureString(character, 'character');
+    const rel = this.ensureRelationExists(fromCharacter, toCharacter);
+    return (rel[character] as string) || '';
+  }
+
   async setCharacterRelationText({ fromCharacter, toCharacter, character, text }: {
     fromCharacter: string; toCharacter: string; character: string; text: string;
   }): Promise<void> {
@@ -99,6 +142,38 @@ export class RelationsEngine {
 
     const rel = this.ensureRelationExists(fromCharacter, toCharacter);
     rel[character] = text.trim();
+  }
+
+  async setRelationOrigin({ fromCharacter, toCharacter, text }: {
+    fromCharacter: string; toCharacter: string; text: string;
+  }): Promise<void> {
+    this.ensureCharacterExists(fromCharacter);
+    this.ensureCharacterExists(toCharacter);
+    ensureString(text, 'text');
+    const rel = this.ensureRelationExists(fromCharacter, toCharacter);
+    rel.origin = text;
+  }
+
+  async setRelationEssence({ fromCharacter, toCharacter, essence }: {
+    fromCharacter: string; toCharacter: string; essence: string[];
+  }): Promise<void> {
+    this.ensureCharacterExists(fromCharacter);
+    this.ensureCharacterExists(toCharacter);
+    const rel = this.ensureRelationExists(fromCharacter, toCharacter);
+    rel.essence = essence as any;
+  }
+
+  async setRelationReadyStatus({ fromCharacter, toCharacter, character, ready }: {
+    fromCharacter: string; toCharacter: string; character: string; ready: boolean;
+  }): Promise<void> {
+    this.ensureCharacterExists(fromCharacter);
+    this.ensureCharacterExists(toCharacter);
+    const rel = this.ensureRelationExists(fromCharacter, toCharacter);
+    if (character === rel.starter) {
+      rel.starterTextReady = ready;
+    } else if (character === rel.ender) {
+      rel.enderTextReady = ready;
+    }
   }
 
   private onRenameProfile(args: any[]): void {

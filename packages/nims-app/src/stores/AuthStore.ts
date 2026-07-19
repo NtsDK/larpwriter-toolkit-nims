@@ -9,6 +9,9 @@ export interface User {
 export class AuthStore {
   user: User | null = null;
   loading = false;
+  /** Initial /me check in progress */
+  bootstrapping = true;
+  lastError: string | null = null;
 
   constructor(private root: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -18,26 +21,120 @@ export class AuthStore {
     return this.user !== null;
   }
 
-  get isAdmin() {
+  get isOrganizer() {
     return this.user?.role === 'organizer';
+  }
+
+  async bootstrap() {
+    this.bootstrapping = true;
+    try {
+      const ok = await this.fetchMe();
+      if (ok) await this.root.permissions.load();
+      else this.root.permissions.clear();
+    } finally {
+      runInAction(() => { this.bootstrapping = false; });
+    }
+  }
+
+  async fetchMe(): Promise<boolean> {
+    try {
+      const res = await fetch('/me', { credentials: 'include' });
+      if (!res.ok) {
+        runInAction(() => { this.user = null; });
+        return false;
+      }
+      const data = await res.json();
+      runInAction(() => {
+        this.user = data.user ? { name: data.user.name, role: data.user.role } : null;
+      });
+      return !!this.user;
+    } catch {
+      runInAction(() => { this.user = null; });
+      return false;
+    }
+  }
+
+  async signUp(username: string, password: string, confirmPassword: string) {
+    this.loading = true;
+    this.lastError = null;
+    try {
+      const res = await fetch('/signUp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          userName: username,
+          password,
+          confirmPassword,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        runInAction(() => {
+          this.user = null;
+          this.lastError = data.message || data.error || 'Не удалось зарегистрироваться';
+        });
+        return false;
+      }
+      runInAction(() => {
+        this.user = data.user
+          ? { name: data.user.name, role: data.user.role }
+          : { name: username, role: 'player' };
+      });
+      await this.root.permissions.load();
+      return true;
+    } catch (e: any) {
+      runInAction(() => {
+        this.lastError = e.message || 'Не удалось связаться с сервером';
+        this.user = null;
+      });
+      this.root.permissions.clear();
+      return false;
+    } finally {
+      runInAction(() => { this.loading = false; });
+    }
   }
 
   async login(username: string, password: string) {
     this.loading = true;
+    this.lastError = null;
     try {
       const res = await fetch('/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
         credentials: 'include',
         body: new URLSearchParams({ username, password }),
-        redirect: 'manual',
       });
-      if (res.ok || res.status === 302) {
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
         runInAction(() => {
-          this.user = { name: username, role: 'organizer' };
+          this.user = null;
+          this.lastError = data.message || data.error || 'Неверный логин или пароль';
         });
-        return true;
+        return false;
       }
+      const data = await res.json().catch(() => ({}));
+      runInAction(() => {
+        this.user = data.user
+          ? { name: data.user.name, role: data.user.role }
+          : { name: username, role: 'organizer' };
+      });
+      await this.root.permissions.load();
+      return true;
+    } catch (e: any) {
+      runInAction(() => {
+        this.lastError = e.message || 'Не удалось связаться с сервером';
+        this.user = null;
+      });
+      this.root.permissions.clear();
       return false;
     } finally {
       runInAction(() => { this.loading = false; });
@@ -45,7 +142,21 @@ export class AuthStore {
   }
 
   async logout() {
-    await fetch('/logout', { method: 'POST', credentials: 'include' });
-    runInAction(() => { this.user = null; });
+    try {
+      await fetch('/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+      });
+    } finally {
+      runInAction(() => { this.user = null; });
+      this.root.permissions.clear();
+    }
+  }
+
+  /** Called when API returns 401 */
+  clearSession() {
+    this.user = null;
+    this.root.permissions.clear();
   }
 }

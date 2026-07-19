@@ -3104,7 +3104,7 @@ exports.data = {
             type: 'enum',
             value: 'Тёмный,Светлый,Нейтрал',
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3112,7 +3112,7 @@ exports.data = {
             type: 'enum',
             value: 'Свободна,Занята,На обсуждении',
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3120,7 +3120,7 @@ exports.data = {
             type: 'enum',
             value: 'человек,эльф,гном,орк,хоббит,майар,другое',
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3128,7 +3128,7 @@ exports.data = {
             type: 'enum',
             value: 'не важно,М,Ж',
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3136,7 +3136,7 @@ exports.data = {
             type: 'multiEnum',
             value: 'меч,лук,нож,каштаны,посох,магия,топор,эльфийские ножи',
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3144,7 +3144,7 @@ exports.data = {
             type: 'string',
             value: '',
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3152,7 +3152,7 @@ exports.data = {
             type: 'number',
             value: 0,
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3160,7 +3160,7 @@ exports.data = {
             type: 'checkbox',
             value: false,
             doExport: false,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3168,7 +3168,7 @@ exports.data = {
             type: 'text',
             value: '',
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'write',
             showInRoleGrid: false
         },
         {
@@ -3176,7 +3176,7 @@ exports.data = {
             type: 'checkbox',
             value: false,
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         },
         {
@@ -3184,7 +3184,7 @@ exports.data = {
             type: 'checkbox',
             value: false,
             doExport: true,
-            playerAccess: 'hidden',
+            playerAccess: 'readonly',
             showInRoleGrid: false
         }
     ],
@@ -3201,6 +3201,56 @@ exports.data = {
             name: 'Способ связи',
             type: 'multiEnum',
             value: 'Мессенджеры,телефон,телеграф,дымовые сигналы,почта,электронная почта',
+            doExport: false,
+            playerAccess: 'write',
+            showInRoleGrid: false
+        }
+    ],
+    QuestionnaireStructure: [
+        {
+            name: 'Возраст',
+            type: 'number',
+            value: 0,
+            doExport: false,
+            playerAccess: 'write',
+            showInRoleGrid: false
+        },
+        {
+            name: 'Опыт ролевых игр',
+            type: 'enum',
+            value: 'нет,немного,средний,большой',
+            doExport: false,
+            playerAccess: 'write',
+            showInRoleGrid: false
+        },
+        {
+            name: 'О себе',
+            type: 'text',
+            value: '',
+            doExport: false,
+            playerAccess: 'write',
+            showInRoleGrid: false
+        },
+        {
+            name: 'Ограничения по здоровью',
+            type: 'text',
+            value: '',
+            doExport: false,
+            playerAccess: 'write',
+            showInRoleGrid: false
+        },
+        {
+            name: 'Комментарий организатору',
+            type: 'text',
+            value: '',
+            doExport: false,
+            playerAccess: 'write',
+            showInRoleGrid: false
+        },
+        {
+            name: 'Готов помочь мастерам',
+            type: 'checkbox',
+            value: false,
             doExport: false,
             playerAccess: 'write',
             showInRoleGrid: false
@@ -3226,6 +3276,44 @@ exports.data = {
             name: 'Галина',
             Город: 'НН',
             'Способ связи': ''
+        }
+    },
+    Questionnaires: {
+        Аркадий: {
+            name: 'Аркадий',
+            Возраст: 32,
+            'Опыт ролевых игр': 'большой',
+            'О себе': '',
+            'Ограничения по здоровью': '',
+            'Комментарий организатору': '',
+            'Готов помочь мастерам': false
+        },
+        Белла: {
+            name: 'Белла',
+            Возраст: 28,
+            'Опыт ролевых игр': 'средний',
+            'О себе': '',
+            'Ограничения по здоровью': '',
+            'Комментарий организатору': '',
+            'Готов помочь мастерам': true
+        },
+        Вальдемар: {
+            name: 'Вальдемар',
+            Возраст: 35,
+            'Опыт ролевых игр': 'немного',
+            'О себе': '',
+            'Ограничения по здоровью': '',
+            'Комментарий организатору': '',
+            'Готов помочь мастерам': false
+        },
+        Галина: {
+            name: 'Галина',
+            Возраст: 0,
+            'Опыт ролевых игр': '',
+            'О себе': '',
+            'Ограничения по здоровью': '',
+            'Комментарий организатору': '',
+            'Готов помочь мастерам': false
         }
     },
     ProfileBindings: {

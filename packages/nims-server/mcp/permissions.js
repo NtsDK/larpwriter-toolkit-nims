@@ -4,23 +4,26 @@ function getMgmt(db) {
     return db && db.database ? db.database.ManagementInfo : null;
 }
 
-function getAdminName(db) {
+function getAdmins(db) {
     const mgmt = getMgmt(db);
-    return mgmt ? mgmt.admin || '' : '';
+    if (!mgmt) return [];
+    if (Array.isArray(mgmt.admins)) return mgmt.admins.filter(Boolean);
+    return mgmt.admin ? [mgmt.admin] : [];
 }
 
-function getEditorName(db) {
+function getEditors(db) {
     const mgmt = getMgmt(db);
-    return mgmt ? mgmt.editor || '' : '';
+    if (!mgmt) return [];
+    if (Array.isArray(mgmt.editors)) return mgmt.editors.filter(Boolean);
+    return mgmt.editor ? [mgmt.editor] : [];
 }
 
 function isAdmin(user, db) {
-    return user && user.role === 'organizer' && user.name === getAdminName(db);
+    return user && user.role === 'organizer' && getAdmins(db).includes(user.name);
 }
 
 function isEditor(user, db) {
-    const editor = getEditorName(db);
-    return editor && user && user.name === editor;
+    return user && user.role === 'organizer' && getEditors(db).includes(user.name);
 }
 
 function isOrganizer(user) {
@@ -54,16 +57,33 @@ function requireOrganizer(user) {
     }
 }
 
-function canModifyCharacter(user, db, characterName) {
-    denyPlayer(user);
-    const editor = getEditorName(db);
-    if (editor && user.name === editor) return true;
-    if (isAdmin(user, db)) return true;
+function ownedList(db, userName, collection) {
     const mgmt = getMgmt(db);
-    if (!mgmt || !mgmt.UsersInfo) return true;
-    const userInfo = mgmt.UsersInfo[user.name];
-    if (!userInfo) return false;
-    return userInfo.characters && userInfo.characters.includes(characterName);
+    if (!mgmt || !mgmt.UsersInfo) return null;
+    const userInfo = mgmt.UsersInfo[userName];
+    if (!userInfo) return [];
+    return userInfo[collection] || [];
+}
+
+/**
+ * Content mutation rules (stories/characters):
+ * - editor mode ON → only assigned editors may mutate content
+ * - editor mode OFF → admin may mutate anything; organizers only their owned entities
+ */
+function canModifyOwned(user, db, collection, entityName) {
+    denyPlayer(user);
+    const editors = getEditors(db);
+    if (editors.length > 0) {
+        return editors.includes(user.name);
+    }
+    if (isAdmin(user, db)) return true;
+    const list = ownedList(db, user.name, collection);
+    if (list === null) return true;
+    return list.includes(entityName);
+}
+
+function canModifyCharacter(user, db, characterName) {
+    return canModifyOwned(user, db, 'characters', characterName);
 }
 
 function requireCharacterAccess(user, db, characterName) {
@@ -73,22 +93,12 @@ function requireCharacterAccess(user, db, characterName) {
 }
 
 function canModifyStory(user, db, storyName) {
-    denyPlayer(user);
-    const editor = getEditorName(db);
-    if (editor) {
-        return user.name === editor;
-    }
-    if (isAdmin(user, db)) return true;
-    const mgmt = getMgmt(db);
-    if (!mgmt || !mgmt.UsersInfo) return true;
-    const userInfo = mgmt.UsersInfo[user.name];
-    if (!userInfo) return false;
-    return userInfo.stories && userInfo.stories.includes(storyName);
+    return canModifyOwned(user, db, 'stories', storyName);
 }
 
 function requireStoryAccess(user, db, storyName) {
     if (!canModifyStory(user, db, storyName)) {
-        throw new Error(`Доступ запрещён: нет прав на сюжет «${storyName}»`);
+        throw new Error(`Доступ запрещён: нет прав на историю «${storyName}»`);
     }
 }
 

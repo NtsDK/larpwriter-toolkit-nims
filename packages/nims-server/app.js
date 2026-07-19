@@ -23,13 +23,15 @@ const lastDb = loader.loadLastDatabase();
 const emptyBase = require(config.get('inits:emptyBaseModule'));
 
 const { createServerDbms } = require('nims-dbms');
+const { wrapWithPermissions } = require('./permissions');
 
 const emptyDatabase = emptyBase.data;
 const db = createServerDbms(emptyDatabase, {
     adminLogin: config.get('inits:adminLogin'),
     adminPass: config.get('inits:adminPass'),
 });
-const dbms = { db, rawDb: db, preparedDb: db };
+const preparedDb = wrapWithPermissions(db);
+const dbms = { db, rawDb: db, preparedDb };
 
 function onSetDatabaseFinished() {
     dbms.db.getConsistencyCheckResult().then((checkResult) => {
@@ -43,14 +45,20 @@ function onSetDatabaseFinished() {
     }, log.error);
 }
 
+function afterDatabaseReady() {
+    if (config.get('inits:adminLogin') && config.get('inits:adminPass')) {
+        dbms.db.ensureAdminExists(config.get('inits:adminLogin'), config.get('inits:adminPass'));
+    }
+    onSetDatabaseFinished();
+}
+
 if (lastDb !== null) {
-    // projectAPIs.populateDatabase(lastDb);
-    dbms.db.setDatabase({ database: lastDb }).then(onSetDatabaseFinished);
+    // Merge ManagementInfo: keep bootstrap admin, add users from autosaved file.
+    dbms.db.setDatabase({ database: lastDb, preserveManagementInfo: true }).then(afterDatabaseReady);
 } else {
     log.info('init from default base');
     console.log(emptyBase.data);
-    // projectAPIs.populateDatabase(emptyBase.data);
-    dbms.db.setDatabase({ database: emptyBase.data }).then(onSetDatabaseFinished);
+    dbms.db.setDatabase({ database: emptyBase.data, preserveManagementInfo: true }).then(afterDatabaseReady);
 }
 
 require('./autosave')(dbms.db);

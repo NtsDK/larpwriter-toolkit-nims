@@ -1,4 +1,5 @@
 import type { DatabaseEngine } from './DatabaseEngine';
+import { ensureEntityExists } from '../utils/precondition';
 
 export interface BriefingCharData {
   charName: string;
@@ -10,6 +11,18 @@ export interface BriefingCharData {
   storiesInfo: Array<{ storyName: string; eventsInfo: Array<{ eventName: string; time: string; displayTime: string; text: string }> }>;
 }
 
+export interface CharacterStoryReport {
+  storyName: string;
+  inventory: string;
+  activity: Partial<Record<'active' | 'follower' | 'defensive' | 'passive', boolean>>;
+  meets: string[];
+  totalAdaptations: number;
+  finishedAdaptations: number;
+  /** Alias for UI that used eventsCount/finished */
+  eventsCount: number;
+  finished: number;
+}
+
 export interface CharacterReport {
   name: string;
   storiesCount: number;
@@ -17,7 +30,7 @@ export interface CharacterReport {
   totalAdaptations: number;
   finishedAdaptations: number;
   completeness: number;
-  stories: Array<{ storyName: string; eventsCount: number; finished: number }>;
+  stories: CharacterStoryReport[];
 }
 
 export class BriefingsEngine {
@@ -68,28 +81,41 @@ export class BriefingsEngine {
 
   async getCharacterReport({ characterName }: { characterName: string }): Promise<CharacterReport> {
     const db = this.engine.database;
-    const storiesList: Array<{ storyName: string; eventsCount: number; finished: number }> = [];
+    ensureEntityExists(characterName, Object.keys(db.Characters));
+
+    const storiesList: CharacterStoryReport[] = [];
     let totalAdaptations = 0;
     let finishedAdaptations = 0;
 
-    for (const [storyName, story] of Object.entries(db.Stories)) {
-      if (!story.characters[characterName]) continue;
+    for (const storyName of Object.keys(db.Stories).sort((a, b) => a.localeCompare(b))) {
+      const story = db.Stories[storyName];
+      const storyChar = story.characters[characterName];
+      if (!storyChar) continue;
 
-      let storyEvents = 0;
-      let storyFinished = 0;
+      const charEvents = story.events.filter((event) => event.characters[characterName] !== undefined);
+      const storyFinished = charEvents.filter((event) => event.characters[characterName].ready === true).length;
+      const storyTotal = charEvents.length;
 
-      for (const event of story.events) {
-        if (event.characters[characterName]) {
-          storyEvents++;
-          totalAdaptations++;
-          if (event.characters[characterName].ready) {
-            storyFinished++;
-            finishedAdaptations++;
-          }
+      const meetsSet = new Set<string>();
+      for (const event of charEvents) {
+        for (const other of Object.keys(event.characters)) {
+          if (other !== characterName) meetsSet.add(other);
         }
       }
 
-      storiesList.push({ storyName, eventsCount: storyEvents, finished: storyFinished });
+      totalAdaptations += storyTotal;
+      finishedAdaptations += storyFinished;
+
+      storiesList.push({
+        storyName,
+        inventory: storyChar.inventory || '',
+        activity: { ...(storyChar.activity || {}) },
+        meets: Array.from(meetsSet).sort((a, b) => a.localeCompare(b)),
+        totalAdaptations: storyTotal,
+        finishedAdaptations: storyFinished,
+        eventsCount: storyTotal,
+        finished: storyFinished,
+      });
     }
 
     return {
@@ -115,15 +141,19 @@ export class BriefingsEngine {
     return items.join(', ');
   }
 
+  /** Only groups where the character is a member, export is on, and there is text for the character. */
   private getGroupTexts(charName: string): Array<{ groupName: string; text: string }> {
     const db = this.engine.database;
     const result: Array<{ groupName: string; text: string }> = [];
     for (const [groupName, group] of Object.entries(db.Groups)) {
-      if (group.characterDescription) {
-        result.push({ groupName, text: group.characterDescription });
-      }
+      if (group.doExport === false) continue;
+      const members: string[] = (group as { members?: string[] }).members || [];
+      if (!members.includes(charName)) continue;
+      const text = (group.characterDescription || '').trim();
+      if (!text) continue;
+      result.push({ groupName, text });
     }
-    return result;
+    return result.sort((a, b) => a.groupName.localeCompare(b.groupName));
   }
 
   private getRelations(charName: string): Array<{ toCharacter: string; text: string; stories: string }> {
@@ -133,7 +163,8 @@ export class BriefingsEngine {
     for (const rel of db.Relations) {
       if (rel[charName] === undefined) continue;
       const otherChar = rel.starter === charName ? rel.ender : rel.starter;
-      const text = (rel[charName] as string) || '';
+      const text = String(rel[charName] || '').trim();
+      if (!text) continue;
 
       const commonStories: string[] = [];
       for (const [storyName, story] of Object.entries(db.Stories)) {
@@ -144,14 +175,15 @@ export class BriefingsEngine {
 
       result.push({ toCharacter: otherChar, text, stories: commonStories.join(', ') });
     }
-    return result;
+    return result.sort((a, b) => a.toCharacter.localeCompare(b.toCharacter));
   }
 
   private getStoriesInfo(charName: string, storyNames: string[], exportOnlyFinished: boolean): Array<{ storyName: string; eventsInfo: Array<{ eventName: string; time: string; displayTime: string; text: string }> }> {
     const db = this.engine.database;
     const result: Array<{ storyName: string; eventsInfo: Array<{ eventName: string; time: string; displayTime: string; text: string }> }> = [];
+    const defaultTime = db.Meta?.date || '';
 
-    for (const storyName of storyNames) {
+    for (const storyName of storyNames.sort((a, b) => a.localeCompare(b))) {
       const story = db.Stories[storyName];
       if (!story || !story.characters[charName]) continue;
 
@@ -164,14 +196,18 @@ export class BriefingsEngine {
 
       const eventsInfo: Array<{ eventName: string; time: string; displayTime: string; text: string }> = [];
       for (const event of story.events) {
-        if (event.characters[charName]) {
-          eventsInfo.push({
-            eventName: event.name,
-            time: event.time,
-            displayTime: event.characters[charName].time || event.time,
-            text: event.characters[charName].text,
-          });
-        }
+        const adapt = event.characters[charName];
+        if (!adapt) continue;
+        const time = event.time || defaultTime;
+        const displayTime = adapt.time || time;
+        // Like classic NIMS: adaptation text, else master event text
+        const text = (adapt.text && adapt.text.trim()) ? adapt.text : (event.text || '');
+        eventsInfo.push({
+          eventName: event.name,
+          time,
+          displayTime,
+          text,
+        });
       }
 
       if (eventsInfo.length > 0) {

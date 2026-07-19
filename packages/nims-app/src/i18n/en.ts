@@ -1,6 +1,7 @@
 export default {
   'nav.overview': 'Overview',
   'nav.characters': 'Characters',
+  'nav.players': 'Players',
   'nav.stories': 'Stories',
   'nav.groups': 'Groups',
   'nav.relations': 'Relations',
@@ -8,7 +9,10 @@ export default {
   'nav.briefings': 'Briefings',
   'nav.timeline': 'Timeline',
   'nav.network': 'Network',
+  'nav.roleGrid': 'Role grid',
+  'nav.profileFilter': 'Character filter',
   'nav.search': 'Search',
+  'nav.mcp': 'MCP',
   'nav.admin': 'Admin',
 
   'common.create': 'Create',
@@ -46,9 +50,19 @@ export default {
   'relations.create': 'Create relation',
 
   'adaptations.title': 'Adaptations',
+  'adaptations.story': 'Story',
   'briefings.title': 'Briefings',
   'timeline.title': 'Timeline',
   'network.title': 'Network',
+  'roleGrid.title': 'Role grid',
+  'profileFilter.title': 'Character filter',
   'search.title': 'Search',
+  'players.title': 'Players',
+  'players.create': 'Create profile',
+  'players.namePrompt': 'Player name',
+
   'admin.title': 'Admin',
+  'admin.database': 'Database',
+  'admin.downloadDb': 'Download database',
+  'admin.uploadDb': 'Upload database',
 };

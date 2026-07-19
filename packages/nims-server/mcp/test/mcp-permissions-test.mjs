@@ -185,28 +185,21 @@ async function setupUsers(adminCookie) {
     await callTool(c2, 'set_story_text', { storyName: ADMIN_STORY, value: 'Текст админа.' });
     await t2.close();
 
-    for (const u of Object.values(USERS)) {
+    for (const u of [USERS.org, USERS.editor]) {
         const auth = await fetchToken(u.name, u.password);
-        record(`MCP auth ${u.name}`, auth.user.role === (u.name === USERS.player.name ? 'player' : 'organizer') ? 'pass' : 'fail', auth.user.role);
+        record(`MCP auth ${u.name}`, auth.user.role === 'organizer' ? 'pass' : 'fail', auth.user.role);
     }
 }
 
 async function testPlayer() {
     console.log('\n=== Player (mcp_player) ===');
-    const { token } = await fetchToken(USERS.player.name, USERS.player.password);
-    const { client, transport } = await connectMcp('/mcp', token);
-
-    await expectToolDenied(client, 'player: list_characters denied', 'list_characters', {});
-    await expectToolDenied(client, 'player: get_meta denied', 'get_meta', {});
-    await expectToolDenied(client, 'player: export_database denied', 'export_database', {});
-    await expectToolDenied(client, 'player: create_character denied', 'create_character', { characterName: 'Хакер' });
-    await expectToolDenied(client, 'player: import_database denied', 'import_database', { database: {} });
-
-    await transport.close();
-
-    const ro = await connectMcp('/mcp/readonly', token);
-    await expectToolDenied(ro.client, 'player readonly: list_characters denied', 'list_characters', {});
-    await ro.transport.close();
+    // Players are denied MCP tokens entirely (stricter than tool-level deny).
+    try {
+        await fetchToken(USERS.player.name, USERS.player.password);
+        record('player: MCP auth denied', 'fail', 'unexpected token issued');
+    } catch (err) {
+        record('player: MCP auth denied', /403/.test(err.message) ? 'pass' : 'fail', err.message.slice(0, 100));
+    }
 }
 
 async function testOrganizer() {

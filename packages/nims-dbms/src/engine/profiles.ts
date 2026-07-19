@@ -11,13 +11,39 @@ export class ProfilesEngine {
   constructor(private engine: DatabaseEngine) {}
 
   private getProfiles(type: ProfileType): Profiles {
-    return type === 'character' ? this.engine.database.Characters : this.engine.database.Players;
+    if (type === 'character') return this.engine.database.Characters;
+    if (type === 'questionnaire') return this.engine.database.Questionnaires;
+    return this.engine.database.Players;
   }
 
   private getStructure(type: ProfileType): ProfileStructure {
-    return type === 'character'
-      ? this.engine.database.CharacterProfileStructure
-      : this.engine.database.PlayerProfileStructure;
+    if (type === 'character') return this.engine.database.CharacterProfileStructure;
+    if (type === 'questionnaire') return this.engine.database.QuestionnaireStructure;
+    return this.engine.database.PlayerProfileStructure;
+  }
+
+  /** Answer sheet for a player — separate from player profile properties. */
+  private ensureQuestionnaire(playerName: string): void {
+    const sheets = this.engine.database.Questionnaires;
+    if (sheets[playerName]) return;
+    const structure = this.engine.database.QuestionnaireStructure;
+    const sheet: ProfileItem = { name: playerName };
+    for (const item of structure) {
+      sheet[item.name] = item.value;
+    }
+    sheets[playerName] = sheet;
+  }
+
+  private renameQuestionnaire(fromName: string, toName: string): void {
+    const sheets = this.engine.database.Questionnaires;
+    if (!sheets[fromName]) return;
+    sheets[toName] = sheets[fromName];
+    sheets[toName].name = toName;
+    delete sheets[fromName];
+  }
+
+  private removeQuestionnaire(playerName: string): void {
+    delete this.engine.database.Questionnaires[playerName];
   }
 
   async getProfileNamesArray({ type }: { type: string }): Promise<string[]> {
@@ -47,8 +73,22 @@ export class ProfilesEngine {
     return structuredClone(this.engine.database.ProfileBindings);
   }
 
+  async bindCharacterToPlayer(args: { characterName: string; playerName: string }): Promise<void> {
+    const { characterName, playerName } = args;
+    const chars = this.engine.database.Characters;
+    ensureEntityExists(characterName, Object.keys(chars));
+    const players = this.engine.database.Players;
+    ensureEntityExists(playerName, Object.keys(players));
+    this.engine.database.ProfileBindings[characterName] = playerName;
+  }
+
+  async unbindCharacterFromPlayer(args: { characterName: string }): Promise<void> {
+    delete this.engine.database.ProfileBindings[args.characterName];
+  }
+
   async createProfile({ type, characterName }: { type: string; characterName: string }): Promise<void> {
     ensureEnum(type, PROFILE_TYPES, 'type');
+    if (type === 'questionnaire') throw new Error('errors-questionnaire-created-with-player');
     const profiles = this.getProfiles(type as ProfileType);
     ensureEntityCanBeCreated(characterName, Object.keys(profiles));
 
@@ -58,10 +98,14 @@ export class ProfilesEngine {
       newProfile[item.name] = item.value;
     }
     profiles[characterName] = newProfile;
+    if (type === 'player') {
+      this.ensureQuestionnaire(characterName);
+    }
   }
 
   async renameProfile({ type, fromName, toName }: { type: string; fromName: string; toName: string }): Promise<void> {
     ensureEnum(type, PROFILE_TYPES, 'type');
+    if (type === 'questionnaire') throw new Error('errors-questionnaire-renamed-with-player');
     const profiles = this.getProfiles(type as ProfileType);
     ensureEntityCanBeRenamed(fromName, toName, Object.keys(profiles));
 
@@ -79,12 +123,45 @@ export class ProfilesEngine {
         }
       }
     }
+    if (type === 'player') {
+      this.renameQuestionnaire(fromName, toName);
+      const playersInfo = this.engine.database.ManagementInfo?.PlayersInfo as
+        | Record<string, { name?: string; salt?: string; hashedPassword?: string; profileName?: string }>
+        | undefined;
+      if (playersInfo) {
+        // Same-name login: rename the login key with the profile.
+        if (playersInfo[fromName] && !playersInfo[fromName].profileName) {
+          playersInfo[toName] = { ...playersInfo[fromName], name: toName };
+          delete playersInfo[fromName];
+        }
+        // Update explicit links pointing at this profile.
+        for (const info of Object.values(playersInfo)) {
+          if (info.profileName === fromName) info.profileName = toName;
+        }
+      }
+      const bindings = this.engine.database.ProfileBindings;
+      for (const [charName, playerName] of Object.entries(bindings)) {
+        if (playerName === fromName) bindings[charName] = toName;
+      }
+      const usersInfo = this.engine.database.ManagementInfo?.UsersInfo as
+        | Record<string, { players?: string[] }>
+        | undefined;
+      if (usersInfo) {
+        for (const user of Object.values(usersInfo)) {
+          if (!Array.isArray(user.players)) continue;
+          user.players = user.players.map((p) => (p === fromName ? toName : p));
+        }
+      }
+    }
 
     this.engine.ee.emit('renameProfile', [{ type, fromName, toName }]);
   }
 
   async removeProfile({ type, characterName }: { type: string; characterName: string }): Promise<void> {
     ensureEnum(type, PROFILE_TYPES, 'type');
+    if (type === 'questionnaire') {
+      throw new Error('errors-questionnaire-removed-with-player');
+    }
     const profiles = this.getProfiles(type as ProfileType);
     ensureEntityExists(characterName, Object.keys(profiles));
 
@@ -97,6 +174,9 @@ export class ProfilesEngine {
           delete bindings[player];
         }
       }
+    }
+    if (type === 'player') {
+      this.removeQuestionnaire(characterName);
     }
 
     this.engine.ee.emit('removeProfile', [{ type, characterName }]);
@@ -138,12 +218,19 @@ export class ProfilesEngine {
       name,
       type: itemType as ProfileFieldType,
       value: PROFILE_FIELD_DEFAULTS[itemType as ProfileFieldType],
-      playerAccess: 'hidden',
+      // Questionnaire: player fills by default. Player profile / character: readonly unless masters open write.
+      playerAccess: type === 'questionnaire' ? 'write' : 'readonly',
       doExport: true,
       showInRoleGrid: false,
     };
 
     structure.splice(selectedIndex, 0, newItem);
+
+    if (type === 'questionnaire') {
+      for (const playerName of Object.keys(this.engine.database.Players)) {
+        this.ensureQuestionnaire(playerName);
+      }
+    }
 
     const profiles = this.getProfiles(type as ProfileType);
     for (const profile of Object.values(profiles)) {
@@ -262,5 +349,103 @@ export class ProfilesEngine {
     const item = structure.find(s => s.name === profileItemName);
     if (!item) throw new Error(`Profile item "${profileItemName}" not found`);
     item.value = value as string | number | boolean;
+  }
+
+  /**
+   * Player cabinet: visible (non-hidden) fields for the logged-in player
+   * and their bound character, if any.
+   * Called as getPlayerProfileInfo(user) from /api (user is the sole arg).
+   */
+  async getPlayerProfileInfo(user: { name: string; role?: string }): Promise<{
+    login: string;
+    player: { name: string; profile: ProfileItem; profileStructure: ProfileStructure };
+    questionnaire: { name: string; profile: ProfileItem; profileStructure: ProfileStructure };
+    character?: { name: string; profile: ProfileItem; profileStructure: ProfileStructure };
+  }> {
+    const login = user?.name;
+    if (!login) throw new Error('errors-user-is-not-logged');
+
+    const playersInfo = this.engine.database.ManagementInfo?.PlayersInfo || {};
+    if (!playersInfo[login]) throw new Error('errors-user-is-not-found');
+
+    const profileName = this.engine.users.resolvePlayerProfileName(login);
+    if (!profileName) throw new Error('errors-entity-is-not-exist');
+
+    const playerStructure = this.getStructure('player');
+    const playerProfile = this.getProfiles('player')[profileName];
+    if (!playerProfile) throw new Error('errors-entity-is-not-exist');
+
+    this.ensureQuestionnaire(profileName);
+    const questionnaireStructure = this.getStructure('questionnaire');
+    const questionnaireProfile = this.getProfiles('questionnaire')[profileName];
+
+    const player = this.preparePlayerView(profileName, playerProfile, playerStructure, 'playerSelf');
+    const questionnaire = this.preparePlayerView(
+      profileName,
+      questionnaireProfile,
+      questionnaireStructure,
+      'playerSelf',
+    );
+
+    const bindings = this.engine.database.ProfileBindings || {};
+    let characterName = '';
+    for (const [char, boundPlayer] of Object.entries(bindings)) {
+      if (boundPlayer === profileName) {
+        characterName = char;
+        break;
+      }
+    }
+
+    if (!characterName) {
+      return { login, player, questionnaire };
+    }
+
+    const charStructure = this.getStructure('character');
+    const charProfile = this.getProfiles('character')[characterName];
+    if (!charProfile) {
+      return { login, player, questionnaire };
+    }
+
+    return {
+      login,
+      player,
+      questionnaire,
+      character: this.preparePlayerView(characterName, charProfile, charStructure, 'boundCharacter'),
+    };
+  }
+
+  /**
+   * Player cabinet (own card + bound character): show the full structure.
+   * playerAccess only controls editability — write stays writable, everything
+   * else is readonly. Masters must not put secrets in the player-facing sheet;
+   * use organizer-only areas for that. Field ACL still blocks updates unless write.
+   */
+  private preparePlayerView(
+    name: string,
+    profile: ProfileItem,
+    structure: ProfileStructure,
+    _mode: 'playerSelf' | 'boundCharacter',
+  ): { name: string; profile: ProfileItem; profileStructure: ProfileStructure } {
+    const visibleStructure: ProfileStructure = structure.map((item) => ({
+      ...item,
+      playerAccess: item.playerAccess === 'write' ? 'write' : 'readonly',
+    }));
+
+    const visibleNames = new Set(visibleStructure.map((item) => item.name));
+    const filtered: ProfileItem = { name };
+    for (const item of visibleStructure) {
+      filtered[item.name] = profile[item.name] !== undefined ? profile[item.name] : item.value;
+    }
+    for (const key of Object.keys(profile)) {
+      if (key !== 'name' && visibleNames.has(key) && filtered[key] === undefined) {
+        filtered[key] = profile[key];
+      }
+    }
+
+    return {
+      name,
+      profile: structuredClone(filtered),
+      profileStructure: structuredClone(visibleStructure),
+    };
   }
 }

@@ -14,7 +14,7 @@ export const RELATION_ESSENCES: readonly RelationEssence[] = ['starterToEnder', 
 
 export const RELATION_FIELDS = ['origin', 'starterTextReady', 'enderTextReady', 'essence', 'starter', 'ender'] as const;
 
-export const PROFILE_TYPES = ['character', 'player'] as const;
+export const PROFILE_TYPES = ['character', 'player', 'questionnaire'] as const;
 
 export const OWNED_ENTITY_TYPES: readonly OwnedEntityType[] = ['character', 'player', 'story', 'group'];
 

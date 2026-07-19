@@ -42,7 +42,8 @@
       "enabled" : false
   },
   "mcp": {
-      "tokenTtlMs": 86400000
+      "tokenTtlMs": 86400000,
+      "longLivedTokenTtlMs": 315360000000
   },
   "logOverrides" :{
       "enabled" : false

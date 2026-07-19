@@ -10,7 +10,9 @@
     "lerna:clean": "lerna clean",
     "build:app": "cd packages/nims-app && npm run build",
     "build:dbms": "cd packages/nims-dbms && npx tsc",
-    "dev": "cd packages/nims-server && node ./bin/www --configFile config/nims-frontend-local.json --globalConfigFile config/nims-frontend-global.json"
+    "dev": "cd packages/nims-server && node ./bin/www --configFile config/nims-frontend-local.json --globalConfigFile config/nims-frontend-global.json",
+    "test": "cd packages/nims-server && npm test",
+    "test:all": "cd packages/nims-server && npm run test:all"
   },
   "dependencies": {}
 }
