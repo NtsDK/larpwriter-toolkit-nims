@@ -171,7 +171,9 @@ function RelationsPage() {
     return list.filter((p) => p.other.toLowerCase().includes(q));
   }, [charRelations, selectedChar, partnerFilter, knownCharacters]);
 
-  // Keep partner selection valid when character/list changes
+  // Keep partner selection valid when character/list changes.
+  // Desktop: auto-focus first partner (3-column layout).
+  // Mobile: stay on the partners list until the user picks one.
   useEffect(() => {
     if (!selectedChar) {
       setSelectedPartner(null);
@@ -179,8 +181,8 @@ function RelationsPage() {
     }
     const names = charRelations.map(getOther);
     if (selectedPartner && names.includes(selectedPartner)) return;
-    setSelectedPartner(names[0] || null);
-  }, [selectedChar, relations]);
+    setSelectedPartner(isMobile ? null : (names[0] || null));
+  }, [selectedChar, relations, isMobile]);
 
   const active = partners.find((p) => p.other === selectedPartner) || null;
   const activeRel = active?.rel || null;
