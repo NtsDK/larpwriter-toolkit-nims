@@ -1,8 +1,8 @@
 import { type ReactNode } from 'react';
-import { Group, Card, Loader, Center, Button, Stack } from '@mantine/core';
+import { Group, Card, Loader, Center, Button, Stack, Badge } from '@mantine/core';
 import { EntitySidebar, type EntitySidebarProps } from './EntitySidebar';
 import { EmptyState } from './EmptyState';
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { useIsCompact } from '@/hooks/useIsCompact';
 
 interface EntityPageLayoutProps {
   sidebar: EntitySidebarProps;
@@ -10,7 +10,7 @@ interface EntityPageLayoutProps {
   selected: string | null;
   emptySelectTitle?: string;
   emptySelectDescription?: string;
-  /** Clear selection on mobile «back to list» */
+  /** Clear selection on compact «back to list» */
   onMobileBack?: () => void;
   children: ReactNode;
 }
@@ -24,9 +24,9 @@ export function EntityPageLayout({
   onMobileBack,
   children,
 }: EntityPageLayoutProps) {
-  const isMobile = useIsMobile();
-  const showList = !isMobile || !selected;
-  const showDetail = !isMobile || !!selected;
+  const isCompact = useIsCompact();
+  const showList = !isCompact || !selected;
+  const showDetail = !isCompact || !!selected;
 
   const detailCard = (
     <Card
@@ -36,22 +36,35 @@ export function EntityPageLayout({
       style={{
         flex: 1,
         alignSelf: 'stretch',
-        overflowY: isMobile ? undefined : 'auto',
-        maxHeight: isMobile ? undefined : 'calc(100vh - 140px)',
+        overflowY: isCompact ? undefined : 'auto',
+        maxHeight: isCompact ? undefined : 'calc(100vh - 140px)',
         minWidth: 0,
-        width: isMobile ? '100%' : undefined,
+        width: isCompact ? '100%' : undefined,
       }}
     >
-      {isMobile && selected && onMobileBack && (
-        <Button
-          variant="subtle"
-          size="sm"
-          mb="sm"
-          onClick={onMobileBack}
-          styles={{ root: { minHeight: 44, justifySelf: 'flex-start' } }}
-        >
-          ← К списку
-        </Button>
+      {isCompact && selected && onMobileBack && (
+        <Group gap="sm" mb="sm" wrap="nowrap" align="center">
+          <Button
+            variant="subtle"
+            size="sm"
+            onClick={onMobileBack}
+            styles={{ root: { minHeight: 44, flexShrink: 0 } }}
+          >
+            ← К списку
+          </Button>
+          <Badge
+            size="lg"
+            variant="light"
+            style={{
+              textTransform: 'none',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {selected}
+          </Badge>
+        </Group>
       )}
       {loading ? (
         <Center h={200}><Loader size="md" /></Center>
@@ -63,14 +76,13 @@ export function EntityPageLayout({
     </Card>
   );
 
-  if (isMobile) {
+  if (isCompact) {
     return (
       <Stack gap="md" style={{ minHeight: '60vh' }}>
         {showList && (
           <EntitySidebar
             {...sidebar}
             fullWidth
-            // On mobile list-only mode, don't keep selection highlight forcing detail
           />
         )}
         {showDetail && detailCard}

@@ -63,10 +63,11 @@ export function EntitySidebar({
   owners,
   allowGroupByOwner,
   footer,
-  width = 260,
+  width,
   fullWidth = false,
 }: EntitySidebarProps) {
   const isMobile = useIsMobile();
+  const listWidth = width ?? 220;
   const [groupByOwner, setGroupByOwner] = useState(false);
   const showOwnerUi = !!owners && (allowGroupByOwner !== false);
 
@@ -141,13 +142,17 @@ export function EntitySidebar({
           </Text>
           {showOwnerUi && !groupByOwner && (
             owner ? (
-              <Badge
-                size="xs"
-                color={selected === name ? 'gray' : ownerColor(owner)}
-                variant={selected === name ? 'white' : 'light'}
-              >
-                {owner}
-              </Badge>
+              <Tooltip label={owner} withArrow>
+                <Badge
+                  size="xs"
+                  color={selected === name ? 'gray' : ownerColor(owner)}
+                  variant={selected === name ? 'white' : 'light'}
+                  maw={72}
+                  style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+                >
+                  {owner}
+                </Badge>
+              </Tooltip>
             ) : (
               <Badge size="xs" color="gray" variant={selected === name ? 'white' : 'outline'}>
                 —
@@ -165,9 +170,9 @@ export function EntitySidebar({
       padding="sm"
       withBorder
       style={{
-        width: fullWidth ? '100%' : width,
+        width: fullWidth ? '100%' : listWidth,
         minWidth: fullWidth ? 0 : 160,
-        maxWidth: fullWidth ? 'none' : 480,
+        maxWidth: fullWidth ? 'none' : 400,
         flexShrink: 0,
         alignSelf: 'stretch',
         resize: fullWidth ? undefined : 'horizontal',

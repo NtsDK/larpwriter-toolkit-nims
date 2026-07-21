@@ -20,6 +20,7 @@ import { observer } from 'mobx-react-lite';
 import { McpTokenModal } from '@/features/mcp/McpTokenModal';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useRootStore } from '@/stores';
+import { useIsCompact } from '@/hooks/useIsCompact';
 
 type NavItem =
   | { path: string; labelKey: string; icon: string }
@@ -46,7 +47,23 @@ const navItems: NavItem[] = [
 export const AppShell = observer(function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] = useDisclosure();
   const [mcpOpened, { open: openMcp, close: closeMcp }] = useDisclosure();
-  const [collapsed, setCollapsed] = useLocalStorage({ key: 'nims-nav-collapsed', defaultValue: false });
+  /** null = no explicit choice → auto-collapse on compact screens */
+  const [userCollapsed, setUserCollapsed] = useLocalStorage<boolean | null>({
+    key: 'nims-nav-collapsed-user',
+    defaultValue: null,
+    serialize: (v) => JSON.stringify(v),
+    deserialize: (v) => {
+      if (v == null || v === '') return null;
+      try {
+        return JSON.parse(v) as boolean | null;
+      } catch {
+        return null;
+      }
+    },
+  });
+  const isCompact = useIsCompact();
+  const collapsed = userCollapsed !== null ? userCollapsed : isCompact;
+  const setCollapsed = (next: boolean) => setUserCollapsed(next);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();

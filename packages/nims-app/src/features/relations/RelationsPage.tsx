@@ -15,6 +15,7 @@ import { OwnerBadge } from '@/components/OwnerBadge';
 import { PermissionHint } from '@/components/PermissionHint';
 import { useEntityOwners } from '@/hooks/useEntityOwners';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useIsCompact } from '@/hooks/useIsCompact';
 
 function CharacterLink({ name, fw, size = 'md' }: { name: string; fw?: number; size?: string }) {
   return (
@@ -52,6 +53,7 @@ function RelationsPage() {
   const { t } = useTranslation();
   const { api, permissions } = useRootStore();
   const isMobile = useIsMobile();
+  const isCompact = useIsCompact();
   const [searchParams] = useSearchParams();
   const [charNames, setCharNames] = useState<string[]>([]);
   const { owners } = useEntityOwners('character', charNames.length);
@@ -172,8 +174,8 @@ function RelationsPage() {
   }, [charRelations, selectedChar, partnerFilter, knownCharacters]);
 
   // Keep partner selection valid when character/list changes.
-  // Desktop: auto-focus first partner (3-column layout).
-  // Mobile: stay on the partners list until the user picks one.
+  // Wide: auto-focus first partner (3-column layout).
+  // Compact/phone: stay on the partners list until the user picks one.
   useEffect(() => {
     if (!selectedChar) {
       setSelectedPartner(null);
@@ -181,8 +183,8 @@ function RelationsPage() {
     }
     const names = charRelations.map(getOther);
     if (selectedPartner && names.includes(selectedPartner)) return;
-    setSelectedPartner(isMobile ? null : (names[0] || null));
-  }, [selectedChar, relations, isMobile]);
+    setSelectedPartner(isCompact ? null : (names[0] || null));
+  }, [selectedChar, relations, isCompact]);
 
   const active = partners.find((p) => p.other === selectedPartner) || null;
   const activeRel = active?.rel || null;
@@ -291,7 +293,7 @@ function RelationsPage() {
       <div>
         <Title order={2}>{t('relations.title')}</Title>
         <Text size="sm" c="dimmed" mt={4}>
-          {isMobile
+          {isCompact
             ? 'Персонаж → партнёр → редактор пары.'
             : 'Слева — персонаж. В центре — с кем есть связь. Справа — редактор одной пары.'}
         </Text>
@@ -338,7 +340,7 @@ function RelationsPage() {
               </Group>
               <PermissionHint reason={editBlockedReason} />
 
-              {isMobile && selectedPartner && (
+              {isCompact && selectedPartner && (
                 <Group gap="xs">
                   <Button
                     variant="subtle"
@@ -356,8 +358,8 @@ function RelationsPage() {
                 </Group>
               )}
 
-              {/* Add controls + dossier — hide on mobile when editing a pair */}
-              {(!isMobile || !selectedPartner) && (
+              {/* Add controls + dossier — hide on compact when editing a pair */}
+              {(!isCompact || !selectedPartner) && (
               <Card withBorder padding="sm">
                 <Stack gap="sm">
                   <Group align="flex-end" grow preventGrowOverflow={false} wrap="wrap">
@@ -424,19 +426,19 @@ function RelationsPage() {
               </Card>
               )}
 
-              <Group align="start" wrap={isMobile ? 'wrap' : 'nowrap'} gap="md">
+              <Group align="start" wrap={isCompact ? 'wrap' : 'nowrap'} gap="md">
                 {/* Partner list */}
-                {(!isMobile || !selectedPartner) && (
+                {(!isCompact || !selectedPartner) && (
                 <Card
                   withBorder
                   padding="sm"
                   style={{
-                    width: isMobile ? '100%' : 220,
-                    minWidth: isMobile ? 0 : 180,
-                    maxWidth: isMobile ? 'none' : 280,
+                    width: isCompact ? '100%' : 220,
+                    minWidth: isCompact ? 0 : 180,
+                    maxWidth: isCompact ? 'none' : 280,
                     flexShrink: 0,
                     alignSelf: 'stretch',
-                    resize: isMobile ? undefined : 'horizontal',
+                    resize: isCompact ? undefined : 'horizontal',
                     overflow: 'auto' }}
                 >
                   <Stack gap="sm">
@@ -503,8 +505,8 @@ function RelationsPage() {
                 )}
 
                 {/* Focused editor */}
-                {(!isMobile || !!selectedPartner) && (
-                <Stack gap="md" style={{ flex: 1, minWidth: 0, width: isMobile ? '100%' : undefined }}>
+                {(!isCompact || !!selectedPartner) && (
+                <Stack gap="md" style={{ flex: 1, minWidth: 0, width: isCompact ? '100%' : undefined }}>
                   {!activeRel || !selectedPartner ? (
                     <EmptyState
                       title="Выберите партнёра"
