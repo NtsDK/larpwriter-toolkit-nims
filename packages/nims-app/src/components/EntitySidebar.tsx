@@ -106,59 +106,71 @@ export function EntitySidebar({
     const status = itemStatuses?.[name];
     const meta = status ? STATUS_META[status] : null;
     const owner = owners?.[name] || '';
-    const right = (
-      <Group gap={4} wrap="nowrap">
-        {meta && (
-          <Tooltip label={meta.title} withArrow>
-            <Badge size="sm" color={meta.color} variant="filled" circle>
-              {meta.label}
-            </Badge>
-          </Tooltip>
-        )}
-        {count > 0 && <Badge size="sm" circle>{count}</Badge>}
-      </Group>
-    );
-    const hasRight = !!meta || count > 0;
 
     return (
       <Button
         key={name}
-        variant={selected === name ? 'filled' : 'subtle'}
+        variant={selected === name ? 'filled' : 'light'}
         size="sm"
         fullWidth
-        justify={hasRight ? 'space-between' : 'start'}
+        justify="space-between"
         onClick={() => onSelect(name)}
-        rightSection={hasRight ? right : undefined}
-        styles={listItemStyles}
+        styles={{
+          ...listItemStyles,
+          root: {
+            ...listItemStyles.root,
+            paddingInline: 12,
+          },
+          inner: {
+            justifyContent: 'space-between',
+            width: '100%',
+          },
+          label: {
+            ...listItemStyles.label,
+            flex: 1,
+            minWidth: 0,
+            width: '100%',
+          },
+        }}
       >
-        <Group gap={6} wrap="wrap" justify="flex-start" style={{ width: '100%' }}>
+        <Group gap="sm" wrap="nowrap" justify="space-between" style={{ width: '100%' }}>
           <Text
-            span
             size="sm"
-            fw={selected === name ? 600 : 400}
-            style={{ whiteSpace: 'normal', textAlign: 'left' }}
+            fw={selected === name ? 600 : 500}
+            truncate
+            style={{ flex: 1, minWidth: 0, textAlign: 'left' }}
           >
             {name}
           </Text>
-          {showOwnerUi && !groupByOwner && (
-            owner ? (
-              <Tooltip label={owner} withArrow>
-                <Badge
-                  size="xs"
-                  color={selected === name ? 'gray' : ownerColor(owner)}
-                  variant={selected === name ? 'white' : 'light'}
-                  maw={72}
-                  style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
-                >
-                  {owner}
+          <Group gap={6} wrap="nowrap" style={{ flexShrink: 0 }}>
+            {showOwnerUi && !groupByOwner && (
+              owner ? (
+                <Tooltip label={owner} withArrow>
+                  <Badge
+                    size="xs"
+                    color={selected === name ? 'gray' : ownerColor(owner)}
+                    variant={selected === name ? 'white' : 'light'}
+                    maw={80}
+                    style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+                  >
+                    {owner}
+                  </Badge>
+                </Tooltip>
+              ) : (
+                <Badge size="xs" color="gray" variant={selected === name ? 'white' : 'outline'}>
+                  —
+                </Badge>
+              )
+            )}
+            {meta && (
+              <Tooltip label={meta.title} withArrow>
+                <Badge size="sm" color={meta.color} variant="filled" circle>
+                  {meta.label}
                 </Badge>
               </Tooltip>
-            ) : (
-              <Badge size="xs" color="gray" variant={selected === name ? 'white' : 'outline'}>
-                —
-              </Badge>
-            )
-          )}
+            )}
+            {count > 0 && <Badge size="sm" circle>{count}</Badge>}
+          </Group>
         </Group>
       </Button>
     );
@@ -172,9 +184,11 @@ export function EntitySidebar({
       style={{
         width: fullWidth ? '100%' : listWidth,
         minWidth: fullWidth ? 0 : 160,
-        maxWidth: fullWidth ? 'none' : 400,
+        // Compact picker: readable column, not a stretched empty band
+        maxWidth: fullWidth ? (isMobile ? '100%' : 440) : 400,
+        marginInline: fullWidth && !isMobile ? 'auto' : undefined,
         flexShrink: 0,
-        alignSelf: 'stretch',
+        alignSelf: fullWidth ? 'center' : 'stretch',
         resize: fullWidth ? undefined : 'horizontal',
         overflow: 'auto',
         display: 'flex',

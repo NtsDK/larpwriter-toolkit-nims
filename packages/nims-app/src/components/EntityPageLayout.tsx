@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Group, Card, Loader, Center, Button, Stack, Badge } from '@mantine/core';
+import { Group, Card, Loader, Center, Button, Stack, Badge, Text } from '@mantine/core';
 import { EntitySidebar, type EntitySidebarProps } from './EntitySidebar';
 import { EmptyState } from './EmptyState';
 import { useIsCompact } from '@/hooks/useIsCompact';
@@ -78,12 +78,17 @@ export function EntityPageLayout({
 
   if (isCompact) {
     return (
-      <Stack gap="md" style={{ minHeight: '60vh' }}>
+      <Stack gap="md" style={{ minHeight: '60vh', width: '100%' }}>
         {showList && (
-          <EntitySidebar
-            {...sidebar}
-            fullWidth
-          />
+          <Stack gap="xs" style={{ width: '100%', maxWidth: 440, marginInline: 'auto' }}>
+            <Text size="sm" c="dimmed" ta="center">
+              Выберите из списка
+            </Text>
+            <EntitySidebar
+              {...sidebar}
+              fullWidth
+            />
+          </Stack>
         )}
         {showDetail && detailCard}
       </Stack>
